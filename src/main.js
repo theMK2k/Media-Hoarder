@@ -12,8 +12,6 @@ Vue.config.productionTip = false
 export const eventBus = new Vue({
 });
 
-
-
 new Vue({
 	vuetify: new Vuetify({ iconfont: 'mdi' }),
 	render: h => h(App),

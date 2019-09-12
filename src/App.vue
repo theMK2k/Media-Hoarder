@@ -74,7 +74,7 @@
           :append-icon-cb="() => {}"
           placeholder="Search..."
           single-line
-          append-icon="search"
+          append-icon="mdi-magnify"
           color="white"
           hide-details
         ></v-text-field>
