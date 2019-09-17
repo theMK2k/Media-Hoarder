@@ -1,6 +1,7 @@
 const logger = require('loglevel');
 const fs = require('fs');
 const sqlite3 = require('sqlite3').verbose();
+const helpers = require('./helpers')
 
 let _db;
 
@@ -73,11 +74,11 @@ module.exports = {
 function initSQLite(callback) {
     logger.debug('Initializing SQLite');
 
-    if (!fs.existsSync('./data/mediabox.db')) {
-        fs.copyFileSync('./data/mediabox.db_initial', './data/tdcmanagement.db');
+    if (!fs.existsSync(helpers.getDBPath())) {
+        fs.copyFileSync(helpers.getInitialDBPath(), helpers.getDBPath());
     }
 
-    _db = new sqlite3.Database('./data/tdcmanagement.dbö', (err) => {
+    _db = new sqlite3.Database(helpers.getDBPath(), (err) => {
         callback(err, _db);
     });
 };
