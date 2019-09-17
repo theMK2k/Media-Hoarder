@@ -49,7 +49,7 @@
           <v-list-item-action>
             <v-icon color="grey darken-1">mdi-settings</v-icon>
           </v-list-item-action>
-          <v-list-item-title class="grey--text text--darken-1">Manage Subscriptions</v-list-item-title>
+          <v-list-item-title class="grey--text text--darken-1">Settings</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -124,6 +124,8 @@
 </template>
 
 <script>
+  const fs = require('fs');
+
   export default {
     props: {
       source: String,
@@ -146,7 +148,10 @@
       ],
     }),
     created () {
-      this.$vuetify.theme.dark = true
+      this.$vuetify.theme.dark = true;
+
+      const result = fs.readdirSync('c:\\');
+      console.log(result);
     },
   }
 </script>
