@@ -16,10 +16,10 @@ export default {
 		logger.debug('Syncing DB...');
 
 		if (!fs.existsSync(templateDBPath)) {
-			return callback(definedError.create('templateDBPath not found: ' + templateDBPath, null, null, null));
+			return callback(definedError.default.create('templateDBPath not found: ' + templateDBPath, null, 'SYNCERR', null));
 		}
 		if (!fs.existsSync(workingDBPath)) {
-			return callback(definedError.create('workingDBPath not found: ' + workingDBPath, null, null, null));
+			return callback(definedError.default.create('workingDBPath not found: ' + workingDBPath, null, 'SYNCWARN', null));
 		}
 
 		templateDb = new sqlite3.Database(templateDBPath, (err) => {
@@ -35,12 +35,12 @@ export default {
 				syncTables(doCreateTables, (err) => {
 					if (err) {
 						return callback(err);
-					};
+					}
 
 					syncColumns(doCreateColumns, (err) => {
 						if (err) {
 							return callback(err);
-						};
+						}
 
 						syncContent(doCopyContent, (err) => {
 							return callback(err);
@@ -119,7 +119,7 @@ function syncTables(doCreateTables, callback) {
 			});
 		});
 	});
-};
+}
 
 function syncColumns(doCreateColumns, callback) {
 	if (!doCreateColumns) {
@@ -161,7 +161,7 @@ function syncColumns(doCreateColumns, callback) {
 			});
 		});
 	});
-};
+}
 
 function syncColumnsTable(table, callback) {
 	if (!table) {
@@ -212,7 +212,7 @@ function syncColumnsTable(table, callback) {
 			})
 		});
 	});
-};
+}
 
 function syncContent(doCopyContent, callback) {
 	if (!doCopyContent) {
@@ -251,7 +251,7 @@ function syncContent(doCopyContent, callback) {
 			});
 		});
 	});
-};
+}
 
 function syncContentTable(tableName, callback) {
 	if (!tableName) {
@@ -333,7 +333,7 @@ function syncContentTable(tableName, callback) {
 			});
 		});
 	});
-};
+}
 
 function syncContentTableRow(content, callback) {
 	// logger.debug('syncing content table row:', content);

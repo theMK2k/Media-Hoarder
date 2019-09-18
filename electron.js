@@ -5,7 +5,11 @@ let win
 function createWindow () {
     win = new BrowserWindow({ width: 800, height: 600 })
 
-    win.loadFile('dist/index.html')
+		win.removeMenu();
+		win.maximize();
+		win.setFullScreen(true);
+		
+		win.loadFile('dist/index.html')
 
     win.webContents.openDevTools()
 
