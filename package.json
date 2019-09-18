@@ -11,7 +11,7 @@
     "invokebuilder": "vue invoke electron-builder",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
-    "start": "vue-cli-service electron:serve"
+    "start": "vue invoke electron-builder && vue-cli-service electron:serve"
   },
   "main": "background.js",
   "dependencies": {

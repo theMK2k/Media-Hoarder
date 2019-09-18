@@ -9,7 +9,9 @@ import * as helpers from './helpers/helpers';
 
 const isBuild = process.env.NODE_ENV === 'production';
 
-logger.setLevel(isBuild ? 2 : 0);
+if (!isBuild) {
+	logger.setLevel(0);
+}
 
 console.log('logLevel:', logger.getLevel());
 

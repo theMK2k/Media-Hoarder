@@ -7,11 +7,13 @@
 
     <h3>TV - Sourcepaths</h3>
     <v-btn text small color="primary" v-on:click="addSource('tv')">Add Source Path</v-btn>
+
+		<v-btn text small color="primary" v-on:click="openDevTools">Open DevTools</v-btn>
   </div>
 </template>
 
 <script>
-const { dialog } = require("electron").remote;
+const { dialog, BrowserWindow } = require("electron").remote;
 
 export default {
   methods: {
@@ -28,7 +30,11 @@ export default {
 					console.log('folderposition:', folderposition[0]);
         }
       );
-    }
+		},
+		
+		openDevTools() {
+			BrowserWindow.getFocusedWindow().webContents.openDevTools();
+		}
   }
 };
 </script>
