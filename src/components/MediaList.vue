@@ -1,9 +1,11 @@
 <template>
   <div>
-    <v-btn class="ma-2" outlined fab color="teal">
-      <v-icon>mdi-format-list-bulleted-square</v-icon>
-    </v-btn>
-    <h1>Media - {{ mediatype.toUpperCase() }}</h1>
+    <h1>
+      <v-btn text v-on:click="$router.go(-1)">
+        <v-icon>mdi-arrow-left</v-icon>
+      </v-btn>
+      Media - {{ mediatype.toUpperCase() }}
+    </h1>
   </div>
 </template>
 

@@ -58,15 +58,16 @@
         <span class="title">MediaBox</span>
       </v-toolbar-title>
       <div class="flex-grow-1"></div>
-      <v-row align="center" style="max-width: 650px">
-        <v-text-field
+      <v-row align="center" style="max-width: 650px; align: right">
+        <!-- <v-text-field
           :append-icon-cb="() => {}"
           placeholder="Search..."
           single-line
           append-icon="mdi-magnify"
           color="white"
           hide-details
-        ></v-text-field>
+        ></v-text-field> -->
+				scanning...
       </v-row>
     </v-app-bar>
 
