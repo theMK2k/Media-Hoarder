@@ -7,7 +7,7 @@ export default {
 		/* eslint-disable no-undef */
 		return path.join(
 			(isBuild ? __dirname : __static),
-			(isBuild ? '../../' : '../'),
+			(isBuild ? '../' : '../'),
 			relativePath,
 		);
 		/* eslint-enable no-undef */

@@ -15,6 +15,9 @@ export default {
 	runSync: (templateDBPath, workingDBPath, { doCreateTables, doCreateColumns, doCopyContent }, callback) => {
 		logger.debug('Syncing DB...');
 
+		logger.debug('Template DB Path:', templateDBPath);
+		logger.debug('Working DB Path :', workingDBPath);
+
 		if (!fs.existsSync(templateDBPath)) {
 			return callback(definedError.default.create('templateDBPath not found: ' + templateDBPath, null, 'SYNCERR', null));
 		}
@@ -33,16 +36,24 @@ export default {
 				}
 
 				syncTables(doCreateTables, (err) => {
+					logger.log('syncTables done');
+					
 					if (err) {
+						logger.log(err);
 						return callback(err);
 					}
 
 					syncColumns(doCreateColumns, (err) => {
 						if (err) {
+							logger.log(err);
 							return callback(err);
 						}
 
 						syncContent(doCopyContent, (err) => {
+							if (err) {
+								logger.log(err);
+							}
+
 							return callback(err);
 						});
 					});
@@ -85,18 +96,21 @@ function syncTables(doCreateTables, callback) {
 	logger.debug('syncTables start');
 
 	templateDb.all(`select tbl_name, sql from sqlite_master WHERE type='table' AND name not like 'sqlite%' AND name not like 'xtb_Database_Properties'`, [], (err, rowsTemplate) => {
+		logger.debug('  got result');
+
 		if (err) {
+			logger.log(definedError.default.create('error in query', {err}));
 			return callback(err);
 		}
 
-		// logger.debug('rowsTemplate:', rowsTemplate);
+		logger.debug('rowsTemplate:', rowsTemplate);
 
 		workingDb.all(`select tbl_name from sqlite_master WHERE type='table' AND name not like 'sqlite%' AND name not like 'xtb_Database_Properties'`, [], (err, rowsWorking) => {
 			if (err) {
 				return callback(err);
 			}
 
-			// logger.debug('rowsWorking:', rowsWorking);
+			logger.debug('rowsWorking:', rowsWorking);
 
 			let sqlStatements = [{ db: workingDb, query: null, params: [] }];	// we always include a null-statement in order to at least call the creation routine one time
 
