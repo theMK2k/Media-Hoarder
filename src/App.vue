@@ -121,11 +121,11 @@ export default {
 			}
 
 			if (itemid == 'movies') {
-	      return this.$router.push("/main/movies");
+	      return this.$router.push("/medialist/movies");
 			}
 
 			if (itemid == 'tv') {
-	      return this.$router.push("/main/tv");
+	      return this.$router.push("/medialist/tv");
 			}
 		},
 		openSettings() {

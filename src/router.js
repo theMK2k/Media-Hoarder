@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import Main from '@/components/Main'
+import Home from '@/components/Home'
+import MediaList from '@/components/MediaList'
 import Settings from '@/components/Settings'
 
 const logger = require('loglevel')
@@ -13,15 +14,15 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'main',
-			component: Main,
+      name: 'home',
+			component: Home,
 			props: true
 		},
 
 		{
-			path: '/main/:mediatype',
-			name: 'mainmediatype',
-			component: Main,
+			path: '/medialist/:mediatype',
+			name: 'medialist',
+			component: MediaList,
 			props: true
 		},
 
