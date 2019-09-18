@@ -3,14 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "vue-cli-service electron:serve",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "electron:build": "vue-cli-service electron:build",
     "electron:serve": "vue-cli-service electron:serve",
+    "invokebuilder": "vue invoke electron-builder",
     "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps"
+    "postuninstall": "electron-builder install-app-deps",
+    "start": "vue-cli-service electron:serve"
   },
   "main": "background.js",
   "dependencies": {
@@ -57,5 +58,5 @@
   "browserslist": [
     "> 1%",
     "last 2 versions"
-	]
+  ]
 }

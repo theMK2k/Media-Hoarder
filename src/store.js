@@ -1,20 +1,20 @@
-const logger		= require('loglevel');
-const helpers = require("./helpers/helpers");
-const db = require("./helpers/db");
-const dbsyncSQLite = require('./helpers/dbsync-sqlite');
+import path from 'path';
 
-dbsyncSQLite.runSync(helpers.getInitialDBPath(), helpers.getDBPath(), {doCreateTables: true, doCreateColumns: true, doCopyContent: true}, (err) => {
+import * as db from './helpers/db';
+import * as dbsyncSQLite from './helpers/dbsync-sqlite';
+import * as helpers from './helpers/helpers';
+
+let dbsync = dbsyncSQLite;
+
+dbsync.default.runSync(helpers.default.getPath('data/mediabox.db_initial'), helpers.default.getPath('data/mediabox.db'), {doCreateTables: true, doCreateColumns: true, doCopyContent: true}, (err) => {
 	if (err) {
-		//logger.error('ERROR:', err);
-		console.error('ERROR:', err);
+		logger.error('ERROR:', err);
 		return;
 	}
 
-	db.initDbCB((err) => {
+	db.default.initDbCB((err) => {
 		if (err) {
-			// logger.error(chalk.red(err));
-			console.error('ERROR:', err);
-
+			logger.error(err);
 		}
-	});
-})
+	})
+});

@@ -1,21 +1,13 @@
 import path from 'path'
 
-const isBuild = process.env.NODE_ENV === 'production'
+const isBuild = process.env.NODE_ENV === 'production';
 
-module.exports = {
-	getDBPath: () => {
+export default {
+	getPath: (relativePath) => {
 		return path.join(
 			(isBuild ? __dirname : __static),
-			(isBuild ? '../../' : ''),
-			'../data/mediabox.db'
-		);
-	},
-
-	getInitialDBPath: () => {
-		return path.join(
-			(isBuild ? __dirname : __static),
-			(isBuild ? '../../' : ''),
-			'../data/mediabox.db_initial'
-		);
-	},
+			(isBuild ? '../../' : '../'),
+			relativePath,
+		  );
+	}
 }

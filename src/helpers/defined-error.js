@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	create: (message, details, errorCode, statusCode) => {
 		return {
 			error: {

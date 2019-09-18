@@ -1,11 +1,12 @@
 const logger = require('loglevel');
 const fs = require('fs');
 const sqlite3 = require('sqlite3').verbose();
-const helpers = require('./helpers')
+
+import * as helpers from './helpers';
 
 let _db;
 
-module.exports = {
+export default {
     getDb: () => {
         assert.ok(_db, "Db has not been initialized. Please call init first.");
         return _db;
@@ -74,11 +75,11 @@ module.exports = {
 function initSQLite(callback) {
     logger.debug('Initializing SQLite');
 
-    if (!fs.existsSync(helpers.getDBPath())) {
-        fs.copyFileSync(helpers.getInitialDBPath(), helpers.getDBPath());
+    if (!fs.existsSync(helpers.default.getPath('data/mediabox.db'))) {
+        fs.copyFileSync(helpers.default.getPath('data/mediabox.db_initial'), helpers.default.getPath('data/mediabox.db'));
     }
 
-    _db = new sqlite3.Database(helpers.getDBPath(), (err) => {
+    _db = new sqlite3.Database(helpers.default.getPath('data/mediabox.db'), (err) => {
         callback(err, _db);
     });
 };

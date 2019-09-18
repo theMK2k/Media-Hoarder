@@ -11,7 +11,7 @@ const dryRun = false;	// if true, don't actually run sqlStatements
 let templateDb = null;
 let workingDb = null;
 
-module.exports = {
+export default {
 	runSync: (templateDBPath, workingDBPath, { doCreateTables, doCreateColumns, doCopyContent }, callback) => {
 		logger.debug('Syncing DB...');
 
