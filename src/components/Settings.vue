@@ -40,11 +40,10 @@
       v-bind:question="`Please provide a description for the source path ${sourcePathDescriptionDialog.Path} (${sourcePathDescriptionDialog.MediaTypeUpper})`"
 			enterTextValue="true"
 			v-bind:textValue="sourcePathDescriptionDialog.Description"
-      yes="OK"
+      ok="OK"
       cancel="Cancel"
-      yesColor="primary"
       cancelColor="secondary"
-      v-on:yes="onSourcePathDescriptionDialogOK"
+      v-on:ok="onSourcePathDescriptionDialogOK"
       v-on:cancel="onSourcePathDescriptionDialogCancel"
     ></mk-sourcepath-description-dialog>
     <mk-sourcepath-remove-dialog
