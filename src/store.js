@@ -17,7 +17,7 @@ console.log('logLevel:', logger.getLevel());
 
 let dbsync = dbsyncSQLite;
 
-dbsync.default.runSync(helpers.default.getPath('data/mediabox.db_initial'), helpers.default.getPath('data/mediabox.db'), {doCreateTables: true, doCreateColumns: true, doCopyContent: true}, (err) => {
+dbsync.default.runSync(helpers.default.getPath('data/mediabox.db_initial'), helpers.default.getPath('data/mediabox.db'), { doCreateTables: true, doCreateColumns: true, doCopyContent: true }, (err) => {
 	if (err) {
 		if (err.error && err.error.errorCode == 'SYNCERR') {
 			dialog.showMessageBox(null, {
@@ -40,8 +40,6 @@ dbsync.default.runSync(helpers.default.getPath('data/mediabox.db_initial'), help
 });
 
 async function fetchSourcePaths() {
-	console.log('FETCH FETCH FETCH!');
-
 	const result = await db.default.fireProcedureReturnAll(`
 			SELECT 
 			id_SourcePaths
@@ -50,11 +48,12 @@ async function fetchSourcePaths() {
 			, Description
 			, created_at
 		FROM tbl_SourcePaths`,
-	[]);
+		[]);
 
 	return result;
 };
 
 export default {
+	db,
 	fetchSourcePaths
 }

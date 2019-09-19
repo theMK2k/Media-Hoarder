@@ -97,7 +97,7 @@ export default {
     },
 
     onButtonClick(eventName) {
-      this.$emit(eventName, { dontAskAgain: this.dontAskAgainValue });
+      this.$emit(eventName, { dontAskAgain: this.dontAskAgainValue, textValue: this.textValueLocal });
 
       this.resetData();
     }

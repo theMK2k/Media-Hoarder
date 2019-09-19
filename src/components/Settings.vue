@@ -9,7 +9,7 @@
     <h3>Movies - Source Paths</h3>
     <div v-if="moviesSourcePaths.length == 0">no paths defined</div>
 
-    <div v-for="sourcePath in moviesSourcePaths" v-bind:key="sourcePath.id_SourcePath">
+    <div v-for="sourcePath in moviesSourcePaths" v-bind:key="sourcePath.id_SourcePaths">
       <mk-sourcepath
         v-bind:value="sourcePath"
         v-on:edit-description="onSourcePathEditDescription"
@@ -22,7 +22,7 @@
     <h3>TV - Sourcepaths</h3>
     <div v-if="tvSourcePaths.length == 0">no paths defined</div>
 
-    <div v-for="sourcePath in tvSourcePaths" v-bind:key="sourcePath.id_SourcePath">
+    <div v-for="sourcePath in tvSourcePaths" v-bind:key="sourcePath.id_SourcePaths">
       <mk-sourcepath
         v-bind:value="sourcePath"
         v-on:edit-description="onSourcePathEditDescription"
@@ -38,8 +38,8 @@
       v-bind:show="sourcePathDescriptionDialog.show"
       title="Edit Description"
       v-bind:question="`Please provide a description for the source path ${sourcePathDescriptionDialog.Path} (${sourcePathDescriptionDialog.MediaTypeUpper})`"
-			enterTextValue="true"
-			v-bind:textValue="sourcePathDescriptionDialog.Description"
+      enterTextValue="true"
+      v-bind:textValue="sourcePathDescriptionDialog.Description"
       ok="OK"
       cancel="Cancel"
       cancelColor="secondary"
@@ -79,16 +79,16 @@ export default {
 
     sourcePathDescriptionDialog: {
       show: false,
-      id_SourcePath: null,
+      id_SourcePaths: null,
       MediaType: null,
       MediaTypeUpper: null,
-			Path: null,
-			Description: null
+      Path: null,
+      Description: null
     },
 
     sourcePathRemoveDialog: {
       show: false,
-      id_SourcePath: null,
+      id_SourcePaths: null,
       MediaType: null,
       MediaTypeUpper: null,
       Path: null
@@ -121,11 +121,27 @@ export default {
             return;
           }
 
-          this.sourcePathDescriptionDialog.id_SourcePath = null;
+          const chosenPath = folderposition[0];
+          const chosenPathLower = chosenPath.toLowerCase();
+
+          let isAlreadyInUse = false;
+          this.sourcePaths.forEach(sourcePath => {
+            const pathLower = sourcePath.Path.toLowerCase();
+
+            if (chosenPathLower.includes(pathLower)) {
+              isAlreadyInUse = true;
+            }
+          });
+
+          if (isAlreadyInUse) {
+            return eventBus.showSnackbar("error", 6000, `The chosen path is already in use.`);
+          }
+
+          this.sourcePathDescriptionDialog.id_SourcePaths = null;
           this.sourcePathDescriptionDialog.MediaType = MediaType;
           this.sourcePathDescriptionDialog.MediaTypeUpper = MediaType.toUpperCase();
-					this.sourcePathDescriptionDialog.Path = folderposition[0];
-					this.sourcePathDescriptionDialog.Description = null;
+          this.sourcePathDescriptionDialog.Path = folderposition[0];
+          this.sourcePathDescriptionDialog.Description = null;
 
           this.sourcePathDescriptionDialog.show = true;
         }
@@ -149,17 +165,18 @@ export default {
     },
 
     onSourcePathEditDescription(sourcePathItem) {
-      this.sourcePathDescriptionDialog.id_SourcePath =
-        sourcePathItem.id_SourcePath;
+      this.sourcePathDescriptionDialog.id_SourcePaths =
+        sourcePathItem.id_SourcePaths;
       this.sourcePathDescriptionDialog.Path = sourcePathItem.Path;
       this.sourcePathDescriptionDialog.MediaTypeUpper = sourcePathItem.MediaType.toUpperCase();
-			this.sourcePathDescriptionDialog.Description = sourcePathItem.Description;
+      this.sourcePathDescriptionDialog.Description = sourcePathItem.Description;
 
       this.sourcePathDescriptionDialog.show = true;
     },
 
     onSourcePathDelete(sourcePathItem) {
-      this.sourcePathRemoveDialog.id_SourcePath = sourcePathItem.id_SourcePath;
+      this.sourcePathRemoveDialog.id_SourcePaths =
+        sourcePathItem.id_SourcePaths;
       this.sourcePathRemoveDialog.Path = sourcePathItem.Path;
       this.sourcePathRemoveDialog.MediaTypeUpper = sourcePathItem.MediaType.toUpperCase();
 
@@ -179,16 +196,61 @@ export default {
       this.sourcePathDescriptionDialog.show = false;
     },
 
-    onSourcePathDescriptionDialogOK() {
+    onSourcePathDescriptionDialogOK(dialogResult) {
       this.sourcePathDescriptionDialog.show = false;
 
-      eventBus.showSnackbar(
-        "success",
-        6000,
-        `${folderposition[0]} added to ${
-          this.sourcePathDescriptionDialog.MediaTypeUpper
-        } source directories`
-      );
+      if (this.sourcePathDescriptionDialog.id_SourcePaths) {
+        return this.saveSourcePathDescriptionEdit(dialogResult);
+      }
+
+      return this.saveNewSourcePath(dialogResult);
+    },
+
+    saveSourcePathDescriptionEdit(dialogResult) {
+      (async () => {
+        try {
+          await store.default.db.default.fireProcedure(
+            `UPDATE tbl_SourcePaths SET Description = $Description WHERE id_SourcePaths = $id_SourcePaths`,
+            {
+              $id_SourcePaths: this.sourcePathDescriptionDialog.id_SourcePaths,
+              $Description: dialogResult.textValue
+            }
+          );
+
+          this.fetchSourcePaths();
+
+          eventBus.showSnackbar("success", 6000, `Description updated.`);
+        } catch (err) {
+          eventBus.showSnackbar("error", 6000, err);
+        }
+      })();
+    },
+
+    saveNewSourcePath(dialogResult) {
+      (async () => {
+        try {
+          await store.default.db.default.fireProcedure(
+            `INSERT INTO tbl_SourcePaths (MediaType, Path, Description, created_at) VALUES ($MediaType, $Path, $Description, DATETIME('now'))`,
+            {
+              $MediaType: this.sourcePathDescriptionDialog.MediaType,
+              $Path: this.sourcePathDescriptionDialog.Path,
+              $Description: dialogResult.textValue
+            }
+          );
+
+          this.fetchSourcePaths();
+
+          eventBus.showSnackbar(
+            "success",
+            6000,
+            `${this.sourcePathDescriptionDialog.Path} added to ${
+              this.sourcePathDescriptionDialog.MediaTypeUpper
+            } source directories`
+          );
+        } catch (err) {
+          eventBus.showSnackbar("error", 6000, err);
+        }
+      })();
     }
   },
 
