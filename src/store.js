@@ -38,3 +38,23 @@ dbsync.default.runSync(helpers.default.getPath('data/mediabox.db_initial'), help
 		}
 	})
 });
+
+async function fetchSourcePaths() {
+	console.log('FETCH FETCH FETCH!');
+
+	const result = await db.default.fireProcedureReturnAll(`
+			SELECT 
+			id_SourcePaths
+			, MediaType
+			, Path
+			, Description
+			, created_at
+		FROM tbl_SourcePaths`,
+	[]);
+
+	return result;
+};
+
+export default {
+	fetchSourcePaths
+}
