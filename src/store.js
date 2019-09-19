@@ -3,9 +3,9 @@ const logger = require('loglevel');
 
 import path from 'path';
 
-import * as db from './helpers/db';
-import * as dbsyncSQLite from './helpers/dbsync-sqlite';
-import * as helpers from './helpers/helpers';
+import * as db from '@/helpers/db';
+import * as dbsyncSQLite from '@/helpers/dbsync-sqlite';
+import * as helpers from '@/helpers/helpers';
 
 const isBuild = process.env.NODE_ENV === 'production';
 

@@ -58,7 +58,15 @@
         <span class="title">MediaBox</span>
       </v-toolbar-title>
       <div class="flex-grow-1"></div>
-      <v-row align="center" style="max-width: 650px; align: right">
+      <v-row
+        align-content="end"
+        justify="end"
+        style="max-width: 650px; text-align: right!important"
+      >
+        <div v-if="scanInfo.show">
+          <p style="margin: 0px!important">{{scanInfo.header}}</p>
+          <p style="margin: 0px!important; font-size: 12px">{{scanInfo.text}}</p>
+        </div>
         <!-- <v-text-field
           :append-icon-cb="() => {}"
           placeholder="Search..."
@@ -66,8 +74,7 @@
           append-icon="mdi-magnify"
           color="white"
           hide-details
-        ></v-text-field> -->
-				scanning...
+        ></v-text-field>-->
       </v-row>
     </v-app-bar>
 
@@ -78,18 +85,36 @@
             <router-view></router-view>
           </v-col>
         </v-row>
-      </v-container> -->
+      </v-container>-->
       <v-container style="max-width: 100%!important">
         <router-view></router-view>
       </v-container>
     </v-content>
+
+    <v-snackbar
+      v-model="snackbar.show"
+      :color="snackbar.color"
+      :timeout="snackbar.timeout"
+    >
+			<div>
+				<strong v-if="snackbar.details && snackbar.details.length > 0">{{ snackbar.text }}</strong>
+				<div v-if="!snackbar.details || snackbar.details.length === 0">{{ snackbar.text }}</div>
+				<div v-for="(snackbardetail, index) in snackbar.details" v-bind:key="index" style="padding-left: 8px">
+						{{snackbardetail}}
+				</div>
+			</div>
+			<v-spacer/>
+			<v-btn dark text @click="snackbar.show = false">Close</v-btn>
+    </v-snackbar>
+
   </v-app>
 </template>
 
 <script>
-import * as store from './store';
-
-const fs = require("fs");
+// eslint-disable-next-line no-unused-var
+import * as store from "@/store";
+import { eventBus } from "@/main";
+const logger = require('loglevel');
 
 export default {
   props: {
@@ -98,38 +123,40 @@ export default {
   data: () => ({
     drawer: null,
     items: [
-      { icon: "mdi-movie", text: "My Movies", id: "movies" },
-      { icon: "mdi-television", text: "My TV Shows", id: "tv" }
-      /*
-				{ icon: 'history', text: 'History' },
-        { icon: 'featured_play_list', text: 'Playlists' },
-				{ icon: 'watch_later', text: 'Watch Later' },
-*/
+      { icon: "mdi-movie", text: "Movies", id: "movies" },
+      { icon: "mdi-television", text: "TV", id: "tv" }
     ],
-    items2: [
-      { picture: 28, text: "Joseph" },
-      { picture: 38, text: "Apple" },
-      { picture: 48, text: "Xbox Ahoy" },
-      { picture: 58, text: "Nokia" },
-      { picture: 78, text: "MKBHD" }
-    ]
+
+    scanInfo: {
+      show: false,
+      header: "",
+      details: ""
+    },
+
+    snackbar: {
+      show: false,
+      color: "",
+      timeout: 6000,
+      text: "",
+      details: []
+    }
   }),
 
   methods: {
-		goto(itemid) {
-			if (!itemid) {
-				return;
-			}
+    goto(itemid) {
+      if (!itemid) {
+        return;
+      }
 
-			if (itemid == 'movies') {
-	      return this.$router.push("/medialist/movies");
-			}
+      if (itemid == "movies") {
+        return this.$router.push("/medialist/movies");
+      }
 
-			if (itemid == 'tv') {
-	      return this.$router.push("/medialist/tv");
-			}
-		},
-		openSettings() {
+      if (itemid == "tv") {
+        return this.$router.push("/medialist/tv");
+      }
+    },
+    openSettings() {
       return this.$router.push("/settings");
     }
   },
@@ -138,8 +165,48 @@ export default {
   created() {
     this.$vuetify.theme.dark = true;
 
-    // const result = fs.readdirSync("c:\\");
-    // console.log(result);
+    eventBus.$on("showSnackbar", ({ color, timeout, textOrErrorObject }) => {
+      logger.debug("snackbar called:", textOrErrorObject);
+      this.snackbar.details = [];
+      this.snackbar.color = color;
+      this.snackbar.timeout = timeout;
+
+      if (
+        typeof textOrErrorObject === "string" ||
+        textOrErrorObject instanceof String
+      ) {
+        this.snackbar.text = textOrErrorObject;
+      } else if (textOrErrorObject.error) {
+        this.snackbar.text = textOrErrorObject.error.message;
+
+        if (
+          typeof textOrErrorObject.error.details === "string" ||
+          textOrErrorObject.error.details instanceof String
+        ) {
+          this.snackbar.details.push(textOrErrorObject.error.details);
+        } else {
+          if (Array.isArray(textOrErrorObject.error.details)) {
+            textOrErrorObject.error.details.forEach(detail => {
+              if (
+                typeof textOrErrorObject.error.details === "string" ||
+                textOrErrorObject.error.details instanceof String
+              ) {
+                this.snackbar.details.push(detail);
+              }
+            });
+          }
+        }
+      } else {
+        this.snackbar.text = "<unknown text>";
+      }
+
+      this.snackbar.show = true;
+    });
   }
 };
 </script>
+<style>
+h1 {
+  margin-bottom: 16px;
+}
+</style>

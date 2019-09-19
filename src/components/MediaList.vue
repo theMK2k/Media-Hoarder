@@ -4,7 +4,7 @@
       <v-btn text v-on:click="$router.go(-1)">
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
-      Media - {{ mediatype.toUpperCase() }}
+      {{ mediatype.toUpperCase() }}
     </h1>
   </div>
 </template>
@@ -17,4 +17,5 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
 </style>

@@ -19,6 +19,7 @@
 
 <script>
 const { dialog, BrowserWindow } = require("electron").remote;
+import { eventBus } from "@/main";
 
 export default {
   methods: {
@@ -32,7 +33,8 @@ export default {
             return;
           }
 
-          console.log("folderposition:", folderposition[0]);
+          // console.log("folderposition:", folderposition[0]);
+          eventBus.showSnackbar('success', 6000, `${folderposition[0]} added to ${mediaType} source directories`);
         }
       );
     },
