@@ -67,6 +67,16 @@
           <p style="margin: 0px!important">{{scanInfo.header}}</p>
           <p style="margin: 0px!important; font-size: 12px">{{scanInfo.text}}</p>
         </div>
+
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn text v-on:click="rescan">
+              <v-icon>mdi-reload</v-icon>
+            </v-btn>
+          </template>
+          <span>Tooltip</span>
+        </v-tooltip>
+
         <!-- <v-text-field
           :append-icon-cb="() => {}"
           placeholder="Search..."
@@ -91,22 +101,19 @@
       </v-container>
     </v-content>
 
-    <v-snackbar
-      v-model="snackbar.show"
-      :color="snackbar.color"
-      :timeout="snackbar.timeout"
-    >
-			<div>
-				<strong v-if="snackbar.details && snackbar.details.length > 0">{{ snackbar.text }}</strong>
-				<div v-if="!snackbar.details || snackbar.details.length === 0">{{ snackbar.text }}</div>
-				<div v-for="(snackbardetail, index) in snackbar.details" v-bind:key="index" style="padding-left: 8px">
-						{{snackbardetail}}
-				</div>
-			</div>
-			<v-spacer/>
-			<v-btn dark text @click="snackbar.show = false">Close</v-btn>
+    <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
+      <div>
+        <strong v-if="snackbar.details && snackbar.details.length > 0">{{ snackbar.text }}</strong>
+        <div v-if="!snackbar.details || snackbar.details.length === 0">{{ snackbar.text }}</div>
+        <div
+          v-for="(snackbardetail, index) in snackbar.details"
+          v-bind:key="index"
+          style="padding-left: 8px"
+        >{{snackbardetail}}</div>
+      </div>
+      <v-spacer />
+      <v-btn dark text @click="snackbar.show = false">Close</v-btn>
     </v-snackbar>
-
   </v-app>
 </template>
 
@@ -114,7 +121,7 @@
 // eslint-disable-next-line no-unused-var
 import * as store from "@/store";
 import { eventBus } from "@/main";
-const logger = require('loglevel');
+const logger = require("loglevel");
 
 export default {
   props: {
@@ -158,7 +165,11 @@ export default {
     },
     openSettings() {
       return this.$router.push("/settings");
-    }
+		},
+		
+		rescan() {
+			store.default.rescan(true);
+		}
   },
 
   // ### LifeCycleHooks ###
@@ -201,8 +212,18 @@ export default {
       }
 
       this.snackbar.show = true;
-    });
-  }
+		});
+		
+		eventBus.$on("scanInfoShow", ({ header, details }) => {
+			this.scanInfo.header = header;
+			this.scanInfo.details = details;
+			this.scanInfo.show = true;
+		});
+
+		eventBus.$on("scanInfoOff", () => {
+			this.scanInfo.show = false;
+		});
+	}
 };
 </script>
 <style>

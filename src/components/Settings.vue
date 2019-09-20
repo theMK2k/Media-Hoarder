@@ -188,8 +188,28 @@ export default {
     },
 
     onSourcePathRemoveDialogOK() {
-      this.sourcePathRemoveDialog.show = false;
-      eventBus.showSnackbar("error", 6000, `TODO!`);
+      (async () => {
+        try {
+					this.sourcePathRemoveDialog.show = false;
+					
+					await store.default.db.default.fireProcedure(
+            `DELETE FROM tbl_SourcePaths WHERE id_SourcePaths = $id_SourcePaths`,
+            {
+              $id_SourcePaths: this.sourcePathRemoveDialog.id_SourcePaths
+            }
+          );
+
+					await store.default.db.default.fireProcedure(
+            `DELETE FROM tbl_Movies WHERE id_SourcePaths NOT IN (SELECT id_SourcePaths FROM tbl_SourcePaths)`, []
+          );
+
+          this.fetchSourcePaths();
+
+          eventBus.showSnackbar("success", 6000, `Source path removed.`);
+        } catch (err) {
+          eventBus.showSnackbar("error", 6000, err);
+        }
+      })();
     },
 
     onSourcePathDescriptionDialogCancel() {

@@ -39,14 +39,14 @@
         <v-btn
           class="xs-fullwidth"
           v-if="yes"
-          v-bind:disabled="!textValueEmptyAllowed && !textValueLocal"
+          v-bind:disabled="enterTextValue && !textValueEmptyAllowed && !textValueLocal"
           v-bind:color="yesColor ? yesColor : 'primary'"
           v-on:click.native="onButtonClick('yes')"
         >{{yes}}</v-btn>
         <v-btn
           class="xs-fullwidth"
           v-if="ok"
-          v-bind:disabled="!textValueEmptyAllowed && !textValueLocal"
+          v-bind:disabled="enterTextValue && !textValueEmptyAllowed && !textValueLocal"
           v-bind:color="okColor ? okColor : 'primary'"
           v-on:click.native="onButtonClick('ok')"
         >{{ok}}</v-btn>

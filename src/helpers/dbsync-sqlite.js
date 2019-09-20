@@ -103,14 +103,14 @@ function syncTables(doCreateTables, callback) {
 			return callback(err);
 		}
 
-		logger.debug('rowsTemplate:', rowsTemplate);
+		// logger.debug('rowsTemplate:', rowsTemplate);
 
 		workingDb.all(`select tbl_name from sqlite_master WHERE type='table' AND name not like 'sqlite%' AND name not like 'xtb_Database_Properties'`, [], (err, rowsWorking) => {
 			if (err) {
 				return callback(err);
 			}
 
-			logger.debug('rowsWorking:', rowsWorking);
+			// logger.debug('rowsWorking:', rowsWorking);
 
 			let sqlStatements = [{ db: workingDb, query: null, params: [] }];	// we always include a null-statement in order to at least call the creation routine one time
 
