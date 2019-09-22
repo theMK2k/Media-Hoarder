@@ -4,10 +4,14 @@ const { dialog } = require("electron").remote;
 const logger = require('loglevel');
 const child_process = require('child_process');
 const xml2js = require('xml2js');
+const request = require('request');
+
+
 
 const readdirAsync = util.promisify(fs.readdir);
 // const lstatAsync = util.promisify(fs.lstat);
 const execAsync = util.promisify(child_process.exec);
+const requestGetAsync = util.promisify(request.get);
 
 import path from 'path';
 
@@ -206,6 +210,7 @@ async function rescanMoviesMetaData(onlyNonDone) {
 				, Filename
 				, MI_Done
 				, IMDB_Done
+				, IMDB_tconst
 			FROM tbl_Movies`,
 		[]);
 
@@ -213,7 +218,7 @@ async function rescanMoviesMetaData(onlyNonDone) {
 		const movie = movies[i];
 
 		// KILLME
-		// if (i > 10) break;
+		if (i > 10) break;
 
 		// eventBus.scanInfoOff();
 		eventBus.scanInfoShow('Rescanning Movies', `${movie.Name || movie.Filename}`);
@@ -353,7 +358,26 @@ async function applyMediaInfo(movie, onlyNonDone) {
 async function findIMDBtconst(movie, onlyNonDone) {
 	// TODO:	find IMDB tconst (currently just from filename)
 	//				save IMDB_tconst to db
-	return;
+	if (onlyNonDone && movie.IMDB_Done) {
+		return;
+	}
+
+	// TODO: currently we just use the tconst contained in the filename
+	if (/\[tt\d*?\]/.test(movie.Filename)) {
+		movie.IMDB_tconst = movie.Filename.match(/\[(tt\d*?)\]/)[1];
+
+		await db.fireProcedure(
+			`UPDATE tbl_Movies
+				SET
+				IMDB_tconst = $IMDB_tconst
+			WHERE id_Movies = $id_Movies
+			`,
+			{
+				$id_Movies: movie.id_Movies,
+				$IMDB_tconst: movie.IMDB_tconst
+			}
+		);
+	}
 }
 
 async function applyIMDBdata(movie, onlyNonDone) {
@@ -363,19 +387,30 @@ async function applyIMDBdata(movie, onlyNonDone) {
 		return;
 	}
 
-	// TODO: currently we just use the tconst contained in the filename
-	if (/\[tt\d*?\]/.test(movie.Filename)) {
-		await db.fireProcedure(
-			`UPDATE tbl_Movies
-				SET
-				IMDB_tconst = $IMDB_tconst
-			WHERE id_Movies = $id_Movies
-			`,
-			{
-				$id_Movies: movie.id_Movies,
-				$IMDB_tconst: movie.Filename.match(/\[(tt\d*?)\]/)[1]
-			}
-		);
+	if (!movie.IMDB_tconst) {
+		return;
+	}
+
+	try {
+		const releaseinfo = await getIMDBreleaseinfo(movie);
+	} catch(err) {
+		logger.log(err);
+		return;
+	}
+}
+
+async function getIMDBreleaseinfo(movie) {
+	const imdbReleaseinfoReponse = await requestGetAsync(`https://www.imdb.com/title/${movie.IMDB_tconst}/releaseinfo`)
+	const imdbReleaseinfoHTML = imdbReleaseinfoReponse.body;
+	// logger.log('imdbReleaseinfoHTML', imdbReleaseinfoHTML);
+
+	const rxOriginalTitle = /td class="aka-item__name"> \(original title\)<\/td>[\s\S]*?<td class="aka-item__title">(.*?)<\/td>/;
+	const originalTitle = null
+	if (rxOriginalTitle.test(imdbReleaseinfoHTML)) {
+		logger.log('is match!');
+		logger.log(imdbReleaseinfoHTML.match(rxOriginalTitle));
+	} else {
+		logger.log('no match :(');
 	}
 }
 
