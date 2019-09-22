@@ -23,7 +23,8 @@
     "vue": "^2.6.10",
     "vue-router": "^3.0.1",
     "vuetify": "^2.0.7",
-    "vuex": "^3.0.1"
+    "vuex": "^3.0.1",
+    "xml2js": "^0.4.22"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.11.0",

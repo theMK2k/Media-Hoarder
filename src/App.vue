@@ -53,22 +53,21 @@
 
     <v-app-bar app clipped-left color="red" dense>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-icon class="mx-4">fab fa-youtube</v-icon>
-      <v-toolbar-title class="mr-12 align-center">
+      <v-toolbar-title class="mr-12 align-center noshrink">
         <span class="title">MediaBox</span>
       </v-toolbar-title>
       <div class="flex-grow-1"></div>
       <v-row
         align-content="end"
         justify="end"
-        style="max-width: 650px; text-align: right!important"
+        style="text-align: right!important"
       >
         <div v-if="scanInfo.show">
           <p style="margin: 0px!important">{{scanInfo.header}}</p>
-          <p style="margin: 0px!important; font-size: 12px">{{scanInfo.text}}</p>
+          <p style="margin: 0px!important; font-size: 12px;text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">{{scanInfo.details}}</p>
         </div>
 
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="!scanInfo.show">
           <template v-slot:activator="{ on }">
             <v-btn text v-on:click="rescan">
               <v-icon>mdi-reload</v-icon>
@@ -168,7 +167,7 @@ export default {
 		},
 		
 		rescan() {
-			store.default.rescan(true);
+			store.rescan(true);
 		}
   },
 
@@ -215,19 +214,31 @@ export default {
 		});
 		
 		eventBus.$on("scanInfoShow", ({ header, details }) => {
-			this.scanInfo.header = header;
-			this.scanInfo.details = details;
-			this.scanInfo.show = true;
+			this.scanInfo = {
+				header,
+				details,
+				show: true
+			}
+			
+			// this.scanInfo.header = header;
+			// this.scanInfo.details = details;
+			// this.scanInfo.show = true;
 		});
 
 		eventBus.$on("scanInfoOff", () => {
 			this.scanInfo.show = false;
 		});
+
+		// eventBus.scanInfoShow('KILLME', 'Asterix und das Geheimnis des Zaubertranks ~ Astérix - Le secret de la potion magique (De)(BD)[2018][Adventure, Animation, Comedy][6.9 @ 3074][tt8001346].mkv');
 	}
 };
 </script>
 <style>
 h1 {
   margin-bottom: 16px;
+}
+
+.noshrink {
+	flex-shrink: 0!important
 }
 </style>

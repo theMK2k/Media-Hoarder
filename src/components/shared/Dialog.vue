@@ -6,9 +6,13 @@
       </v-card-title>
 
       <v-card-text>
-				{{ question }}
-	      <v-text-field v-if="enterTextValue" v-bind:label="textValueCaption" v-model="textValueLocal"></v-text-field>
-			</v-card-text>
+        {{ question }}
+        <v-text-field
+          v-if="enterTextValue"
+          v-bind:label="textValueCaption"
+          v-model="textValueLocal"
+        ></v-text-field>
+      </v-card-text>
 
       <v-card-actions>
         <!-- <v-row> -->
@@ -57,11 +61,11 @@
 </template>
 
 <script>
-import Vue from "vue";
-import router from "@/router"; // workaround in order to access router.app.$t
+// import Vue from "vue";
+// import router from "@/router"; // workaround in order to access router.app.$t
 const logger = require("loglevel");
 
-import { eventBus } from "@/main";
+// import { eventBus } from "@/main";
 
 export default {
   props: [
@@ -86,7 +90,7 @@ export default {
   data() {
     return {
       dontAskAgainValue: false,
-      textValueLocal: null,
+      textValueLocal: null
     };
   },
 
@@ -97,7 +101,10 @@ export default {
     },
 
     onButtonClick(eventName) {
-      this.$emit(eventName, { dontAskAgain: this.dontAskAgainValue, textValue: this.textValueLocal });
+      this.$emit(eventName, {
+        dontAskAgain: this.dontAskAgainValue,
+        textValue: this.textValueLocal
+      });
 
       this.resetData();
     }

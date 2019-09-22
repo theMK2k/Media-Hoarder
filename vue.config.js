@@ -2,8 +2,8 @@ module.exports = {
   pluginOptions: {
     electronBuilder: {
       builderOptions: {
-        extraResources: ['data/mediabox.db_initial']
+        extraResources: ['data/mediabox.db_initial', 'data/mediainfo/**/*']
       }
     }
-  }
+	}
 }

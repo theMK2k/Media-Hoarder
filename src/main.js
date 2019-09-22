@@ -3,7 +3,7 @@ import App from '@/App.vue'
 import Vuetify from 'vuetify'
 import '@mdi/font/css/materialdesignicons.css'
 
-// const logger		= require('loglevel');
+const logger		= require('loglevel');
 
 import 'vuetify/dist/vuetify.min.css'
 
@@ -23,6 +23,7 @@ export const eventBus = new Vue({
 		},
 
 		scanInfoShow(header, details) {
+			// logger.log('scanInfoShow:', {header, details});
 			this.$emit('scanInfoShow', {header, details});
 		},
 

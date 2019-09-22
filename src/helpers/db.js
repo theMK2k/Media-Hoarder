@@ -6,89 +6,100 @@ import * as helpers from '@/helpers/helpers';
 
 let _db;
 
-export default {
-    getDb: () => {
-        assert.ok(_db, "Db has not been initialized. Please call init first.");
-        return _db;
-    },
+function getDb() {
+	if (!_db) {
+		logger.error('Db has not been initialized. Please call init first.');
+	}
+	
+	return _db;
+}
 
-    // ### Callback-based DB-Functions ###
-    initDbCB: (callback) => {
-        if (_db) {
-            console.warn('Trying to init DB again!');
-            return callback(null, _db);
-        }
+function initDbCB(callback) {
+	if (_db) {
+			logger.warn('Trying to init DB again!');
+			return callback(null, _db);
+	}
+	
+	initSQLite(callback);
+}
 
-        initSQLite(callback);
-    },
+function fireProcedureCB(query, vars, callback) {
+	sqliteFireProcedureCB(query, vars, callback);
+}
 
-    fireProcedureCB: (query, vars, callback) => {
-        sqliteFireProcedureCB(query, vars, callback);
-    },
+function fireProcedureReturnScalarCB(query, vars, callback) {
+	sqlitefireProcedureReturnScalarCB(query, vars, callback);
+}
 
-    fireProcedureReturnScalarCB: (query, vars, callback) => {
-        sqlitefireProcedureReturnScalarCB(query, vars, callback);
-    },
+function fireProcedureReturnAllCB(query, vars, callback) {
+	sqlitefireProcedureReturnAllCB(query, vars, callback);
+}
 
-    fireProcedureReturnAllCB: (query, vars, callback) => {
-        sqlitefireProcedureReturnAllCB(query, vars, callback);
-    },
+function fireProcedure(query, vars) {
+	return new Promise((resolve, reject) => {
+			sqliteFireProcedureCB(query, vars, (err, result) => {
+					if (err) {
+							return reject(err);
+					}
 
-    // ### Promise-based DB-Functions
-    fireProcedure: (query, vars) => {
-        return new Promise((resolve, reject) => {
-            sqliteFireProcedureCB(query, vars, (err, result) => {
-                if (err) {
-                    return reject(err);
-                }
+					return resolve(result);
+			});
+	})
+}
 
-                return resolve(result);
-            });
-        })
-    },
+function fireProcedureReturnScalar(query, vars) {
+	return new Promise((resolve, reject) => {
+			sqlitefireProcedureReturnScalarCB(query, vars, (err, result) => {
+					if (err) {
+							return reject(err);
+					}
 
-    fireProcedureReturnScalar: (query, vars) => {
-        return new Promise((resolve, reject) => {
-            sqlitefireProcedureReturnScalarCB(query, vars, (err, result) => {
-                if (err) {
-                    return reject(err);
-                }
+					return resolve(result);
+			});
+	})
+}
 
-                return resolve(result);
-            });
-        })
-    },
+function fireProcedureReturnAll(query, vars) {
+	return new Promise((resolve, reject) => {
+			sqlitefireProcedureReturnAllCB(query, vars, (err, result) => {
+					if (err) {
+							return reject(err);
+					}
 
-    fireProcedureReturnAll: (query, vars) => {
-        return new Promise((resolve, reject) => {
-            sqlitefireProcedureReturnAllCB(query, vars, (err, result) => {
-                if (err) {
-                    return reject(err);
-                }
+					return resolve(result);
+			});
+	})
+}
 
-                return resolve(result);
-            });
-        })
-    },
+
+export {
+    getDb,
+    initDbCB,
+    fireProcedureCB,
+    fireProcedureReturnScalarCB,
+    fireProcedureReturnAllCB,
+    fireProcedure,
+    fireProcedureReturnScalar,
+    fireProcedureReturnAll
 }
 
 function initSQLite(callback) {
     logger.debug('Initializing SQLite');
 
-    if (!fs.existsSync(helpers.default.getPath('data/mediabox.db'))) {
-        fs.copyFileSync(helpers.default.getPath('data/mediabox.db_initial'), helpers.default.getPath('data/mediabox.db'));
+    if (!fs.existsSync(helpers.getPath('data/mediabox.db'))) {
+        fs.copyFileSync(helpers.getPath('data/mediabox.db_initial'), helpers.getPath('data/mediabox.db'));
     }
 
-    _db = new sqlite3.Database(helpers.default.getPath('data/mediabox.db'), (err) => {
+    _db = new sqlite3.Database(helpers.getPath('data/mediabox.db'), (err) => {
         callback(err, _db);
     });
-};
+}
 
 function sqliteFireProcedureCB(query, vars, callback) {
     _db.run(query, vars, (err) => {
         return callback(err);
     });
-};
+}
 
 function sqlitefireProcedureReturnScalarCB(query, vars, callback) {
     _db.get(query, vars, (err, row) => {
@@ -102,10 +113,10 @@ function sqlitefireProcedureReturnScalarCB(query, vars, callback) {
         }
         return callback(err, result);
     });
-};
+}
 
 function sqlitefireProcedureReturnAllCB(query, vars, callback) {
     _db.all(query, vars, (err, all) => {
         return callback(err, all);
     })
-};
+}

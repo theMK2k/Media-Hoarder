@@ -62,6 +62,8 @@
 
 <script>
 const { dialog, BrowserWindow } = require("electron").remote;
+const logger = require("loglevel");
+
 import { eventBus } from "@/main";
 import * as store from "@/store";
 import SourcePath from "@/components/shared/SourcePath";
@@ -155,9 +157,9 @@ export default {
     fetchSourcePaths() {
       (async () => {
         try {
-          const paths = await store.default.fetchSourcePaths();
+          const paths = await store.fetchSourcePaths();
           this.sourcePaths = paths;
-          console.log(this.sourcePaths);
+          logger.log(this.sourcePaths);
         } catch (err) {
           eventBus.showSnackbar("error", 6000, err);
         }
@@ -192,14 +194,14 @@ export default {
         try {
 					this.sourcePathRemoveDialog.show = false;
 					
-					await store.default.db.default.fireProcedure(
+					await store.db.fireProcedure(
             `DELETE FROM tbl_SourcePaths WHERE id_SourcePaths = $id_SourcePaths`,
             {
               $id_SourcePaths: this.sourcePathRemoveDialog.id_SourcePaths
             }
           );
 
-					await store.default.db.default.fireProcedure(
+					await store.db.fireProcedure(
             `DELETE FROM tbl_Movies WHERE id_SourcePaths NOT IN (SELECT id_SourcePaths FROM tbl_SourcePaths)`, []
           );
 
@@ -229,7 +231,7 @@ export default {
     saveSourcePathDescriptionEdit(dialogResult) {
       (async () => {
         try {
-          await store.default.db.default.fireProcedure(
+          await store.db.fireProcedure(
             `UPDATE tbl_SourcePaths SET Description = $Description WHERE id_SourcePaths = $id_SourcePaths`,
             {
               $id_SourcePaths: this.sourcePathDescriptionDialog.id_SourcePaths,
@@ -249,7 +251,7 @@ export default {
     saveNewSourcePath(dialogResult) {
       (async () => {
         try {
-          await store.default.db.default.fireProcedure(
+          await store.db.fireProcedure(
             `INSERT INTO tbl_SourcePaths (MediaType, Path, Description, created_at) VALUES ($MediaType, $Path, $Description, DATETIME('now'))`,
             {
               $MediaType: this.sourcePathDescriptionDialog.MediaType,

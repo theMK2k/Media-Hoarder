@@ -5,7 +5,7 @@ import Home from '@/components/Home'
 import MediaList from '@/components/MediaList'
 import Settings from '@/components/Settings'
 
-const logger = require('loglevel')
+// const logger = require('loglevel')
 
 Vue.use(Router)
 

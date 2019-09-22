@@ -11,56 +11,58 @@ const dryRun = false;	// if true, don't actually run sqlStatements
 let templateDb = null;
 let workingDb = null;
 
-export default {
-	runSync: (templateDBPath, workingDBPath, { doCreateTables, doCreateColumns, doCopyContent }, callback) => {
-		logger.debug('Syncing DB...');
+function runSync(templateDBPath, workingDBPath, { doCreateTables, doCreateColumns, doCopyContent }, callback) {
+	logger.debug('Syncing DB...');
 
-		logger.debug('Template DB Path:', templateDBPath);
-		logger.debug('Working DB Path :', workingDBPath);
+	logger.debug('Template DB Path:', templateDBPath);
+	logger.debug('Working DB Path :', workingDBPath);
 
-		if (!fs.existsSync(templateDBPath)) {
-			return callback(definedError.default.create('templateDBPath not found: ' + templateDBPath, null, 'SYNCERR', null));
+	if (!fs.existsSync(templateDBPath)) {
+		return callback(definedError.create('templateDBPath not found: ' + templateDBPath, null, 'SYNCERR', null));
+	}
+	if (!fs.existsSync(workingDBPath)) {
+		return callback(definedError.create('workingDBPath not found: ' + workingDBPath, null, 'SYNCWARN', null));
+	}
+
+	templateDb = new sqlite3.Database(templateDBPath, (err) => {
+		if (err) {
+			return callback(err);
 		}
-		if (!fs.existsSync(workingDBPath)) {
-			return callback(definedError.default.create('workingDBPath not found: ' + workingDBPath, null, 'SYNCWARN', null));
-		}
 
-		templateDb = new sqlite3.Database(templateDBPath, (err) => {
-			if (err) {
+		workingDb = new sqlite3.Database(workingDBPath, (err2) => {
+			if (err2) {
 				return callback(err);
 			}
 
-			workingDb = new sqlite3.Database(workingDBPath, (err2) => {
-				if (err2) {
+			syncTables(doCreateTables, (err) => {
+				logger.log('syncTables done');
+				
+				if (err) {
+					logger.log(err);
 					return callback(err);
 				}
 
-				syncTables(doCreateTables, (err) => {
-					logger.log('syncTables done');
-					
+				syncColumns(doCreateColumns, (err) => {
 					if (err) {
 						logger.log(err);
 						return callback(err);
 					}
 
-					syncColumns(doCreateColumns, (err) => {
+					syncContent(doCopyContent, (err) => {
 						if (err) {
 							logger.log(err);
-							return callback(err);
 						}
 
-						syncContent(doCopyContent, (err) => {
-							if (err) {
-								logger.log(err);
-							}
-
-							return callback(err);
-						});
+						return callback(err);
 					});
 				});
 			});
 		});
-	}
+	});
+}
+
+export {
+	runSync
 }
 
 function runQuery({ db, query, params }, callback) {
@@ -99,7 +101,7 @@ function syncTables(doCreateTables, callback) {
 		logger.debug('  got result');
 
 		if (err) {
-			logger.log(definedError.default.create('error in query', {err}));
+			logger.log(definedError.create('error in query', {err}));
 			return callback(err);
 		}
 
