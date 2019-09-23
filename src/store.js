@@ -391,26 +391,144 @@ async function applyIMDBdata(movie, onlyNonDone) {
 		return;
 	}
 
+	let IMDBdata = {};
+	
 	try {
+		const mainPageData = await getIMDBmainPageData(movie);
+		IMDBdata = Object.assign(IMDBdata, mainPageData);	
+
 		const releaseinfo = await getIMDBreleaseinfo(movie);
+		IMDBdata = Object.assign(IMDBdata, releaseinfo);
+
+		const technicalData = await getIMDBtechnicalData(movie);
+		IMDBdata = Object.assign(IMDBdata, technicalData);
+		
+		logger.log('IMDBdata:', IMDBdata);
 	} catch(err) {
 		logger.log(err);
 		return;
 	}
 }
 
+async function getIMDBmainPageData(movie) {
+	const url = `https://www.imdb.com/title/${movie.IMDB_tconst}`;
+	// logger.log('getIMDBmainPageData url:', url);
+	const response = await requestGetAsync(url);
+	const html = response.body;
+
+	// TODO
+	let titleType = 'movie';
+	/*
+	short			-- tt0000006 -> "/search/title?genres=short"
+	tvMovie 		-- tt9915546 -> ">TV Movie" 
+	tvEpisode		-- tt8709982 -> ">Episode"
+	tvShort			-- tt9901788 -> ">TV Short"
+	tvMiniSeries	-- tt8916384 -> ">TV Mini-Series"
+	tvSpecial		-- tt8019378 -> ">TV Special"
+	video			-- tt8650100 -> ">Video"
+	videoGame		-- tt8848200 -> ">Video game"
+	*/
+	if (/\/search\/title\?genres=short/.test(html)) titleType = '';
+	if (/>TV Movie/.test(html)) titleType = 'tvMovie';
+	if (/>Episode/.test(html)) titleType = 'tvEpisode';
+	if (/>TV Short/.test(html)) titleType = 'tvShort';
+	if (/>TV Mini-Series/.test(html)) titleType = 'tvMiniSeries';
+	if (/>TV Special/.test(html)) titleType = 'tvSpecial';
+	if (/>Video\s/.test(html)) titleType = 'video';
+	if (/>Video game/.test(html)) titleType = 'videoGame';
+
+	const genres = [];
+
+	const rxGenres = /genres=(.*?)&/g;
+	let match = null;
+	while (match = rxGenres.exec(html)) {
+		const genre = match[1];
+		if (!genres.find(genreFind => genreFind == genre)) {
+			genres.push(genre);
+		}
+	}
+
+	let rating = null;
+	let numVotes = null;
+
+	const rxRating = /<span itemprop=\"ratingValue\">(.*?)<\/span>/
+	if (rxRating.test(html)) {
+		const strRating = html.match(rxRating)[1].replace(',', '.');
+		rating = parseFloat(strRating);
+
+		const strVotes = html.match(/itemprop=\"ratingCount\">(.*?)<\/span>/)[1].replace('.', '');
+		numVotes = parseInt(strVotes);
+	}
+
+	return {
+		titleType,
+		genres,
+		rating,
+		numVotes
+	}
+}
+
 async function getIMDBreleaseinfo(movie) {
-	const imdbReleaseinfoReponse = await requestGetAsync(`https://www.imdb.com/title/${movie.IMDB_tconst}/releaseinfo`)
-	const imdbReleaseinfoHTML = imdbReleaseinfoReponse.body;
+	const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/releaseinfo`;
+	logger.log('getIMDBreleaseinfo url:', url);
+	const response = await requestGetAsync(url);
+	const html = response.body;
 	// logger.log('imdbReleaseinfoHTML', imdbReleaseinfoHTML);
 
+	let originalTitle = null;
 	const rxOriginalTitle = /td class="aka-item__name"> \(original title\)<\/td>[\s\S]*?<td class="aka-item__title">(.*?)<\/td>/;
-	const originalTitle = null
-	if (rxOriginalTitle.test(imdbReleaseinfoHTML)) {
-		logger.log('is match!');
-		logger.log(imdbReleaseinfoHTML.match(rxOriginalTitle));
-	} else {
-		logger.log('no match :(');
+	if (rxOriginalTitle.test(html)) originalTitle = html.match(rxOriginalTitle)[1];
+
+	let germanTitle = null;
+	const rxGermanTitle = /td class="aka-item__name">Germany<\/td>[\s\S]*?<td class="aka-item__title">(.*?)<\/td>/;
+	if (rxGermanTitle.test(html)) germanTitle = html.match(rxGermanTitle)[1];
+
+	let primaryTitle = null;
+	let startYear = null;
+	let endYear = null;
+	const rxPrimaryTitleYear = /ref_=ttrel_rel_tt"[\s\S]itemprop='url'>(.*?)<\/a>\s*?<span class="nobr">[\s\S]*?\((\d\d\d\d.*?)\)/;
+	if (rxPrimaryTitleYear.test(html)) {
+		primaryTitle = html.match(rxPrimaryTitleYear)[1];
+		const yearRange = html.match(rxPrimaryTitleYear)[2];
+
+		logger.log('yearRange:', yearRange);
+		startYear = yearRange.match(/(\d\d\d\d)/)[1];
+		if (/\d\d\d\d-\d\d\d\d/.test(yearRange)) {
+			endYear = yearRange.match(/\d\d\d\d-(\d\d\d\d)/)
+		}
+	}
+
+	return {
+		originalTitle,
+		germanTitle,
+		primaryTitle,
+		startYear,
+		endYear
+	}
+}
+
+async function getIMDBtechnicalData(movie) {
+	const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/technical`;
+	logger.log('getIMDBtechnicalData url:', url);
+	const response = await requestGetAsync(url);
+	const html = response.body;
+
+	let runtimeMinutes = null;
+	const rxRuntimeValue = /<td class="label"> Runtime <\/td>[\s\S]*?<td>([\s\S]*?)<\/td>/;
+
+	if (rxRuntimeValue.test(html)) {
+		const rxRuntimeMinutesTotal = /\((\d*?) min\)/;
+		const rxRuntimeMinutes = /\s(\d*?) min/;
+		
+		if (rxRuntimeMinutesTotal.test(html)) {
+			runtimeMinutes = html.match(rxRuntimeMinutesTotal)[1];
+		} else if (rxRuntimeMinutes.test(html)) {
+			runtimeMinutes = html.match(rxRuntimeMinutes)[1];
+		}
+	} 
+
+	return {
+		runtimeMinutes
 	}
 }
 
