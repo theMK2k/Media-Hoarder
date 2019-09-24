@@ -7,6 +7,7 @@ const xml2js = require('xml2js');
 const request = require('request');
 
 const readdirAsync = util.promisify(fs.readdir);
+const readFileAsync = util.promisify(fs.readFile);
 // const lstatAsync = util.promisify(fs.lstat);
 const execAsync = util.promisify(child_process.exec);
 const requestGetAsync = util.promisify(request.get);
@@ -253,7 +254,7 @@ async function rescanMoviesMetaData(onlyNonDone) {
 		const movie = movies[i];
 
 		// KILLME
-		if (i > 10) break;
+		if (i > 2) break;
 
 		// eventBus.scanInfoOff();
 		eventBus.scanInfoShow('Rescanning Movies', `${movie.Name || movie.Filename}`);
@@ -523,13 +524,13 @@ async function getIMDBmainPageData(movie) {
 		$IMDB_genres,
 		$IMDB_rating,
 		$IMDB_numVotes,
-		$IMDB_metacriticScore
+		$IMDB_metacriticScore,
+		$IMDB_posterSmall_URL,
+		$IMDB_posterLarge_URL
 	}
 }
 
 async function getIMDBposterURLs(posterMediaViewerURL) {
-	logger.log('getting Poster URLs from', posterMediaViewerURL);
-
 	let $IMDB_posterSmall_URL = null;
 	let $IMDB_posterLarge_URL = null;
 
@@ -537,17 +538,15 @@ async function getIMDBposterURLs(posterMediaViewerURL) {
 	const response = await requestGetAsync(url);
 	const html = response.body;
 
-	const rxID = /(rm\d*)ref/;
+	const rxID = /(rm\d*)\?ref/;
 	if (rxID.test(html)) {
 		const ID = html.match(rxID)[1];
 
-		logger.log('ID:', ID);
-
-		const rxString = `"id":"${ID}","h":\\d*,"msrc":"(.*?)","src":".*?"`;
-		logger.log('rxString:', rxString);
+		const rxString = `"id":"${ID}","h":\\d*,"msrc":"(.*?)","src":"(.*?)"`;
 		const rxURLs = new RegExp(rxString);
 
-		logger.log('URL Match:', html.match(rxURLs));
+		$IMDB_posterSmall_URL = html.match(rxURLs)[1];
+		$IMDB_posterLarge_URL = html.match(rxURLs)[2];
 	}
 
 	return {
@@ -656,8 +655,30 @@ async function saveIMDBData(movie, IMDBdata, genres) {
 	await db.fireProcedure(sql, Object.assign(IMDBdata, { $id_Movies: movie.id_Movies }));
 }
 
+async function fetchCache(url, targetPath) {
+	logger.log('fetchCache start');
+	
+	const fullPath = helpers.getPath(targetPath);
+	
+	try {
+		logger.log('  trying load from file', fullPath);
+		const data = await readFileAsync(fullPath);
+		return new Buffer(data).toString('base64');
+	} catch (err) {
+		logger.log('  -> failed')
+	}
+
+	logger.log('  trying fetch from web');
+	const response = await requestGetAsync(url);
+	const data = response.body;
+	
+	// logger.log('fetchCache data:', data);
+	return new Buffer(data).toString('base64');
+}
+
 export {
 	db,
 	fetchSourcePaths,
 	rescan,
+	fetchCache
 }
