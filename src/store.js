@@ -8,6 +8,7 @@ const request = require('request');
 
 const readdirAsync = util.promisify(fs.readdir);
 const readFileAsync = util.promisify(fs.readFile);
+const writeFile = util.promisify(fs.writeFile);
 // const lstatAsync = util.promisify(fs.lstat);
 const execAsync = util.promisify(child_process.exec);
 const requestGetAsync = util.promisify(request.get);
@@ -20,6 +21,7 @@ import * as db from '@/helpers/db';
 import * as dbsyncSQLite from '@/helpers/dbsync-sqlite';
 import * as helpers from '@/helpers/helpers';
 import { languages } from '@/languages';
+import { writeFileSync } from 'fs';
 
 const isBuild = process.env.NODE_ENV === 'production';
 
@@ -515,8 +517,16 @@ async function getIMDBmainPageData(movie) {
 	const rxPosterMediaViewerURL = /<div class="poster">[\s\S]*?<a href="(.*?)"[\s\S]*?>/;	// "/title/tt0130827/mediaviewer/rm215942400"
 	if (rxPosterMediaViewerURL.test(html)) {
 		const posterURLs = await getIMDBposterURLs(html.match(rxPosterMediaViewerURL)[1]);
-		$IMDB_posterSmall_URL = posterURLs.$IMDB_posterSmall_URL;
-		$IMDB_posterLarge_URL = posterURLs.$IMDB_posterLarge_URL;
+
+		const posterSmallSuccess = await downloadFile(posterURLs.$IMDB_posterSmall_URL, `extras/${movie.IMDB_tconst}_posterSmall.jpg`);
+		if (posterSmallSuccess) {
+			$IMDB_posterSmall_URL = `extras/${movie.IMDB_tconst}_posterSmall.jpg`;
+		}
+
+		const posterLargeSuccess = await downloadFile(posterURLs.$IMDB_posterLarge_URL, `extras/${movie.IMDB_tconst}_posterLarge.jpg`);
+		if (posterLargeSuccess) {
+			$IMDB_posterLarge_URL = `extras/${movie.IMDB_tconst}_posterLarge.jpg`;
+		}
 	}
 
 	return {
@@ -675,6 +685,25 @@ async function fetchCache(url, targetPath) {
 	// logger.log('fetchCache data:', data);
 	return new Buffer(data).toString('base64');
 }
+
+async function downloadFile(url, targetPath) {
+	try {
+		logger.log('downloadFile start');
+		
+		const fullPath = helpers.getPath(targetPath);
+		
+		logger.log('  fetching from web');
+		const response = await requestGetAsync(url);
+		const data = response.body;
+		
+		await writeFileSync(fullPath, data);
+		return true;
+	} catch(err) {
+		return false;
+	}
+
+}
+
 
 export {
 	db,
