@@ -6,8 +6,6 @@ const child_process = require('child_process');
 const xml2js = require('xml2js');
 const request = require('request');
 
-
-
 const readdirAsync = util.promisify(fs.readdir);
 // const lstatAsync = util.promisify(fs.lstat);
 const execAsync = util.promisify(child_process.exec);
@@ -52,10 +50,47 @@ dbsync.runSync(helpers.getPath('data/mediabox.db_initial'), helpers.getPath('dat
 
 	db.initDbCB((err) => {
 		if (err) {
-			logger.error(err);
+			return logger.error(err);
 		}
+
+		createIndexes(db);
 	})
 });
+
+function generateIndexQuery(tableName, ColumnName, isUnique) {
+	return `CREATE ${isUnique ? 'UNIQUE ' : ''} INDEX IF NOT EXISTS main.IDX_${tableName}_${ColumnName} ON ${tableName} (${ColumnName})`
+}
+
+async function createIndexes(db) {
+	logger.log('creating indexes...');	
+	
+	const queries = [
+		generateIndexQuery('tbl_Genres', 'GenreID', true),
+		generateIndexQuery('tbl_Movies', 'id_SourcePaths', false),
+		generateIndexQuery('tbl_Movies', 'MI_Duration_Seconds', false),
+		generateIndexQuery('tbl_Movies', 'MI_Quality', false),
+		generateIndexQuery('tbl_Movies', 'MI_Aspect_Ratio', false),
+		generateIndexQuery('tbl_Movies', 'IMDB_tconst', false),
+		generateIndexQuery('tbl_Movies', 'IMDB_releaseType', false),
+		generateIndexQuery('tbl_Movies', 'IMDB_startYear', false),
+		generateIndexQuery('tbl_Movies', 'IMDB_runtimeMinutes', false),
+		generateIndexQuery('tbl_Movies', 'IMDB_rating', false),
+		generateIndexQuery('tbl_Movies', 'IMDB_numVotes', false),
+		generateIndexQuery('tbl_Movies', 'IMDB_metacriticScore', false),
+		generateIndexQuery('tbl_Movies_Genres', 'id_Movies', false),
+		generateIndexQuery('tbl_Movies_Genres', 'id_Genres', false),
+		generateIndexQuery('tbl_Settings', 'Key', true),
+		generateIndexQuery('tbl_SourcePaths', 'MediaType', false),
+		generateIndexQuery('tbl_SourcePaths', 'Description', false),
+	]
+
+	for (let i = 0; i < queries.length; i++) {
+		logger.log('.');
+		await db.fireProcedure(queries[i]);
+	}
+
+	logger.log('index creation done');
+}
 
 async function fetchSourcePaths() {
 	const result = await db.fireProcedureReturnAll(`
@@ -225,7 +260,7 @@ async function rescanMoviesMetaData(onlyNonDone) {
 
 		await applyMediaInfo(movie, onlyNonDone);
 		await findIMDBtconst(movie, onlyNonDone);
-		await applyIMDBdata(movie, onlyNonDone);
+		await applyIMDBdata(movie, false);	// KILLME: onlyNonDone
 	}
 
 	eventBus.scanInfoOff();
@@ -408,7 +443,7 @@ async function applyIMDBdata(movie, onlyNonDone) {
 		const genres = await db.fireProcedureReturnAll('SELECT id_Genres, GenreID, Name FROM tbl_Genres', []);
 		await saveIMDBData(movie, IMDBdata, genres);
 	} catch (err) {
-		logger.log(err);
+		logger.error(err);
 		return;
 	}
 }
@@ -467,11 +502,53 @@ async function getIMDBmainPageData(movie) {
 		$IMDB_numVotes = parseInt(strVotes);
 	}
 
+	let $IMDB_metacriticScore = null;
+	
+	const rxMetacriticScore = /<div class="metacriticScore score_favorable titleReviewBarSubItem">[\s\S]*?<span>(\d*)<\/span>/;
+	if (rxMetacriticScore.test(html)) {
+		$IMDB_metacriticScore = parseInt(html.match(rxMetacriticScore)[1]);
+	}
+
+	let $IMDB_posterSmall_URL = null;
+	let $IMDB_posterLarge_URL = null;
+	const rxPosterMediaViewerURL = /<div class="poster">[\s\S]*?<a href="(.*?)\?ref.*">/;	// "/title/tt0130827/mediaviewer/rm215942400"
+	if (rxPosterMediaViewerURL.test(html)) {
+		const posterURLs = await getIMDBposterURLs(html.match(rxPosterMediaViewerURL)[1]);
+		$IMDB_posterSmall_URL = posterURLs.$IMDB_posterSmall_URL;
+		$IMDB_posterLarge_URL = posterURLs.$IMDB_posterLarge_URL;
+	}
+
 	return {
 		$IMDB_releaseType,
 		$IMDB_genres,
 		$IMDB_rating,
-		$IMDB_numVotes
+		$IMDB_numVotes,
+		$IMDB_metacriticScore
+	}
+}
+
+async function getIMDBposterURLs(posterMediaViewerURL) {
+	let $IMDB_posterSmall_URL = null;
+	let $IMDB_posterLarge_URL = null;
+
+	const url = `https://www.imdb.com${posterMediaViewerURL}`;
+	const response = await requestGetAsync(url);
+	const html = response.body;
+
+	const rxID = /(rm\d*)$/;
+	if (rxID.test(html)) {
+		const ID = html.match(rxID)[1];
+
+		const rxString = `"id":"${ID}","h":\\d*,"msrc":"(.*?)","src":".*?"`;
+		logger.log('rxString:', rxString);
+		const rxURLs = new RegExp(rxString);
+
+		logger.log('URL Match:', html.match(rxURLs));
+	}
+
+	return {
+		$IMDB_posterSmall_URL,
+		$IMDB_posterLarge_URL
 	}
 }
 
@@ -543,20 +620,20 @@ async function saveIMDBData(movie, IMDBdata, genres) {
 	const IMDB_genres = IMDBdata.$IMDB_genres;
 	delete IMDBdata.$IMDB_genres;
 
-	let sql = '';
+	let sql = 'IMDB_Done = 1';
 	Object.keys(IMDBdata).forEach(key => {
-		sql += `${(sql ? ', ' : '')}[${key.replace('$', '')}] = ${key}`
+		sql += `, [${key.replace('$', '')}] = ${key}`
 	})
 	sql = `UPDATE tbl_Movies SET ${sql} WHERE id_Movies = $id_Movies`;
 
-	const movieGenres = await db.fireProcedureReturnAll('SELECT MG.id_Genres, G.GenreID, G.Name FROM tbl_Movie_Genres MG INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres WHERE MG.id_Movies = $id_Movies', {$id_Movies: movie.id_Movies});
+	const movieGenres = await db.fireProcedureReturnAll('SELECT MG.id_Genres, G.GenreID, G.Name FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres WHERE MG.id_Movies = $id_Movies', {$id_Movies: movie.id_Movies});
 	
 	for (let i = 0; i < IMDB_genres.length; i++) {
 		const genre = IMDB_genres[i];
 
 		if (!movieGenres.find(mg => mg.GenreID === genre)) {
 			// genre needs to be added for the movie
-			if (!genres.find(g => g.GenreID === g)) {
+			if (!genres.find(g => g.GenreID === genre)) {
 				// genre needs to be added to main list of genres (we need id_Genres later)
 				await db.fireProcedure('INSERT INTO tbl_Genres (GenreID, Name) VALUES ($GenreID, $Name)', { $GenreID: genre, $Name: genre });
 				const id_Genres = await db.fireProcedureReturnScalar('SELECT id_Genres FROM tbl_Genres WHERE GenreID = $GenreID', { $GenreID: genre });
@@ -567,7 +644,8 @@ async function saveIMDBData(movie, IMDBdata, genres) {
 				});
 			}
 
-			// TODO: add to tbl_Movies_Genres
+			const id_Genres = genres.find(g => g.GenreID === genre).id_Genres;
+			await db.fireProcedure('INSERT INTO tbl_Movies_Genres (id_Movies, id_Genres) VALUES ($id_Movies, $id_Genres)', { $id_Movies: movie.id_Movies, $id_Genres: id_Genres });
 		}
 	}
 
