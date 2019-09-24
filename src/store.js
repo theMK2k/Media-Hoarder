@@ -511,7 +511,7 @@ async function getIMDBmainPageData(movie) {
 
 	let $IMDB_posterSmall_URL = null;
 	let $IMDB_posterLarge_URL = null;
-	const rxPosterMediaViewerURL = /<div class="poster">[\s\S]*?<a href="(.*?)\?ref.*">/;	// "/title/tt0130827/mediaviewer/rm215942400"
+	const rxPosterMediaViewerURL = /<div class="poster">[\s\S]*?<a href="(.*?)"[\s\S]*?>/;	// "/title/tt0130827/mediaviewer/rm215942400"
 	if (rxPosterMediaViewerURL.test(html)) {
 		const posterURLs = await getIMDBposterURLs(html.match(rxPosterMediaViewerURL)[1]);
 		$IMDB_posterSmall_URL = posterURLs.$IMDB_posterSmall_URL;
@@ -528,6 +528,8 @@ async function getIMDBmainPageData(movie) {
 }
 
 async function getIMDBposterURLs(posterMediaViewerURL) {
+	logger.log('getting Poster URLs from', posterMediaViewerURL);
+
 	let $IMDB_posterSmall_URL = null;
 	let $IMDB_posterLarge_URL = null;
 
@@ -535,9 +537,11 @@ async function getIMDBposterURLs(posterMediaViewerURL) {
 	const response = await requestGetAsync(url);
 	const html = response.body;
 
-	const rxID = /(rm\d*)$/;
+	const rxID = /(rm\d*)ref/;
 	if (rxID.test(html)) {
 		const ID = html.match(rxID)[1];
+
+		logger.log('ID:', ID);
 
 		const rxString = `"id":"${ID}","h":\\d*,"msrc":"(.*?)","src":".*?"`;
 		logger.log('rxString:', rxString);
