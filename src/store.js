@@ -8,7 +8,7 @@ const request = require('request');
 
 const readdirAsync = util.promisify(fs.readdir);
 const readFileAsync = util.promisify(fs.readFile);
-const writeFile = util.promisify(fs.writeFile);
+const writeFileAsync = util.promisify(fs.writeFile);
 // const lstatAsync = util.promisify(fs.lstat);
 const execAsync = util.promisify(child_process.exec);
 const requestGetAsync = util.promisify(request.get);
@@ -256,7 +256,7 @@ async function rescanMoviesMetaData(onlyNonDone) {
 		const movie = movies[i];
 
 		// KILLME
-		if (i > 2) break;
+		if (i > 1) break;
 
 		// eventBus.scanInfoOff();
 		eventBus.scanInfoShow('Rescanning Movies', `${movie.Name || movie.Filename}`);
@@ -518,14 +518,16 @@ async function getIMDBmainPageData(movie) {
 	if (rxPosterMediaViewerURL.test(html)) {
 		const posterURLs = await getIMDBposterURLs(html.match(rxPosterMediaViewerURL)[1]);
 
-		const posterSmallSuccess = await downloadFile(posterURLs.$IMDB_posterSmall_URL, `extras/${movie.IMDB_tconst}_posterSmall.jpg`);
+		const posterSmallPath = `data/extras/${movie.IMDB_tconst}_posterSmall.jpg`;
+		const posterSmallSuccess = await downloadFile(posterURLs.$IMDB_posterSmall_URL, posterSmallPath);
 		if (posterSmallSuccess) {
-			$IMDB_posterSmall_URL = `extras/${movie.IMDB_tconst}_posterSmall.jpg`;
+			$IMDB_posterSmall_URL = posterSmallPath;
 		}
 
-		const posterLargeSuccess = await downloadFile(posterURLs.$IMDB_posterLarge_URL, `extras/${movie.IMDB_tconst}_posterLarge.jpg`);
+		const posterLargePath = `data/extras/${movie.IMDB_tconst}_posterLarge.jpg`;
+		const posterLargeSuccess = await downloadFile(posterURLs.$IMDB_posterLarge_URL, posterLargePath);
 		if (posterLargeSuccess) {
-			$IMDB_posterLarge_URL = `extras/${movie.IMDB_tconst}_posterLarge.jpg`;
+			$IMDB_posterLarge_URL = posterLargePath;
 		}
 	}
 
@@ -688,17 +690,19 @@ async function fetchCache(url, targetPath) {
 
 async function downloadFile(url, targetPath) {
 	try {
-		logger.log('downloadFile start');
+		logger.log('downloadFile url:', url);
 		
 		const fullPath = helpers.getPath(targetPath);
 		
 		logger.log('  fetching from web');
-		const response = await requestGetAsync(url);
+		const response = await requestGetAsync({ url, encoding: null });
 		const data = response.body;
 		
-		await writeFileSync(fullPath, data);
+		await writeFileAsync(fullPath, data, 'binary');
+		
 		return true;
 	} catch(err) {
+		logger.error(err);
 		return false;
 	}
 
