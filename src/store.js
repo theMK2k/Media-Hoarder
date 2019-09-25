@@ -667,27 +667,6 @@ async function saveIMDBData(movie, IMDBdata, genres) {
 	await db.fireProcedure(sql, Object.assign(IMDBdata, { $id_Movies: movie.id_Movies }));
 }
 
-async function fetchCache(url, targetPath) {
-	logger.log('fetchCache start');
-	
-	const fullPath = helpers.getPath(targetPath);
-	
-	try {
-		logger.log('  trying load from file', fullPath);
-		const data = await readFileAsync(fullPath);
-		return new Buffer(data).toString('base64');
-	} catch (err) {
-		logger.log('  -> failed')
-	}
-
-	logger.log('  trying fetch from web');
-	const response = await requestGetAsync(url);
-	const data = response.body;
-	
-	// logger.log('fetchCache data:', data);
-	return new Buffer(data).toString('base64');
-}
-
 async function downloadFile(url, targetPath) {
 	try {
 		logger.log('downloadFile url:', url);
@@ -705,13 +684,27 @@ async function downloadFile(url, targetPath) {
 		logger.error(err);
 		return false;
 	}
-
 }
 
+async function fetchMedia($MediaType) {
+	try {
+		return await db.fireProcedureReturnAll(`
+			SELECT
+				MOV.FileName
+				, MOV.IMDB_posterSmall_URL
+				, MOV.IMDB_posterLarge_URL
+			FROM tbl_Movies MOV
+			WHERE id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths WHERE MediaType = $MediaType)
+			AND MOV.IMDB_posterSmall_URL IS NOT NULL	-- KILLME
+		`, { $MediaType })
+	} catch(err) {
+		return;
+	}
+}
 
 export {
 	db,
 	fetchSourcePaths,
 	rescan,
-	fetchCache
+	fetchMedia
 }

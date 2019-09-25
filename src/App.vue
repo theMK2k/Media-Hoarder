@@ -88,13 +88,6 @@
     </v-app-bar>
 
     <v-content>
-      <!-- <v-container class="fill-height">
-        <v-row justify="center" align="center">
-          <v-col class="shrink">
-            <router-view></router-view>
-          </v-col>
-        </v-row>
-      </v-container>-->
       <v-container style="max-width: 100%!important">
         <router-view></router-view>
       </v-container>
