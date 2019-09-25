@@ -256,7 +256,7 @@ async function rescanMoviesMetaData(onlyNonDone) {
 		const movie = movies[i];
 
 		// KILLME
-		if (i > 1) break;
+		// if (i > 1) break;
 
 		// eventBus.scanInfoOff();
 		eventBus.scanInfoShow('Rescanning Movies', `${movie.Name || movie.Filename}`);
