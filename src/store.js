@@ -7,7 +7,6 @@ const xml2js = require('xml2js');
 const request = require('request');
 
 const readdirAsync = util.promisify(fs.readdir);
-const readFileAsync = util.promisify(fs.readFile);
 const writeFileAsync = util.promisify(fs.writeFile);
 const existsAsync = util.promisify(fs.exists);
 // const lstatAsync = util.promisify(fs.lstat);
@@ -22,7 +21,6 @@ import * as db from '@/helpers/db';
 import * as dbsyncSQLite from '@/helpers/dbsync-sqlite';
 import * as helpers from '@/helpers/helpers';
 import { languages } from '@/languages';
-import { writeFileSync } from 'fs';
 
 const isBuild = process.env.NODE_ENV === 'production';
 
@@ -111,13 +109,10 @@ async function fetchSourcePaths() {
 }
 
 async function rescan(onlyNew) {
-	await applyIMDBMetaData();
-
-	/*
 	await filescanMovies(onlyNew);
 	await rescanMoviesMetaData(true);
+	await applyIMDBMetaData();	// TODO: add functionality to fetchIMDBData
 	// await rescanTV();
-	*/
 }
 
 async function filescanMovies(onlyNew) {
@@ -244,6 +239,9 @@ async function listPath(scanPath) {
 }
 
 async function applyIMDBMetaData() {
+	// create Name, Name2 etc. from IMDBData for each movie
+	// TODO: add this to fetchIMDBData
+
 	logger.log('applying IMDB Metadata...');
 	
 	const movies = await db.fireProcedureReturnAll(`
@@ -281,7 +279,7 @@ async function applyIMDBMetaData() {
 		}
 
 		if (!Name) {
-			Name = movie.Filename.split('~')[0].split('(')[0].replace(/\_/g, ' ').replace(/\./g, ' ');
+			Name = movie.Filename.split('~')[0].split('(')[0].replace(/_/g, ' ').replace(/\./g, ' ');
 		}
 
 		const startYear = movie.IMDB_startYear;
@@ -318,7 +316,7 @@ async function rescanMoviesMetaData(onlyNew) {
 
 		await applyMediaInfo(movie, onlyNew);
 		await findIMDBtconst(movie, onlyNew);
-		await applyIMDBdata(movie, false);	// KILLME: onlyNew
+		await fetchIMDBMetaData(movie, false);	// KILLME: onlyNew
 	}
 
 	eventBus.scanInfoOff();
@@ -473,7 +471,7 @@ async function findIMDBtconst(movie, onlyNew) {
 	}
 }
 
-async function applyIMDBdata(movie, onlyNew) {
+async function fetchIMDBMetaData(movie, onlyNew) {
 	// TODO:	fetch IMDB data from imdb.com (incl. images)
 	//				save IMDB data to db
 	if (onlyNew && movie.IMDB_Done) {
@@ -537,6 +535,8 @@ async function getIMDBmainPageData(movie) {
 
 	const rxGenres = /genres=(.*?)&/g;
 	let match = null;
+
+	// eslint-disable-next-line no-cond-assign
 	while (match = rxGenres.exec(html)) {
 		const genre = match[1];
 		if (!$IMDB_genres.find(genreFind => genreFind == genre)) {
