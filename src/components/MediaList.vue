@@ -6,20 +6,38 @@
       </v-btn>
       {{ mediatype.toUpperCase() }}
       <v-container class="pa-2" fluid>
-        <v-row>
-          <v-col v-for="(item, i) in items" :key="i">
-            {{item.FileName}}
-            <v-card dark>
+        <v-row v-for="(item, i) in items" :key="i">
+          <v-col>
+            <v-card dark flat hover>
               <v-list-item three-line>
-                <v-list-item-content class="align-self-start">
-                  <v-list-item-title class="headline mb-2" v-text="'TODO... Headline'"></v-list-item-title>
-
-                  <v-list-item-subtitle v-text="'TODO... Subtitle'"></v-list-item-subtitle>
-                </v-list-item-content>
-
                 <v-list-item-avatar size="125" tile>
-                  <v-img v-bind:src="getPath(item.IMDB_posterSmall_URL)"></v-img>
+                  <v-img v-bind:src="item.IMDB_posterSmall_URL"></v-img>
                 </v-list-item-avatar>
+
+                <v-list-item-content class="align-self-start">
+                  <v-row>
+                    <div style="margin-left: 16px">
+                      <v-list-item-title
+                        class="headline mb-2"
+                      >{{ item.Name }} {{ item.yearDisplay }}</v-list-item-title>
+
+                      <v-list-item-subtitle>{{ item.Name2 }}</v-list-item-subtitle>
+                    </div>
+                    <div class="flex-grow-1"></div>
+                    <div>
+                      <div class="headline mb-2" style="margin-right: 16px; margin-left: 16px; margin-bottom: 0px!important">
+                        <v-icon small color="amber" style="padding-bottom: 4px">mdi-star</v-icon>
+                        {{item.IMDB_ratingDisplay}}
+                      </div>
+                      <v-row>
+                        <div class="flex-grow-1"></div>
+                        <div style="margin-right: 26px; padding: 0px!important">
+                          <v-icon small v-for="i in 5" v-bind:key="i" v-bind:color="(item.Rating > (i - 1) ? 'amber' : (item.Rating > 0 ? 'white' : 'grey'))" v-on:click="changeRating(item, i)">mdi-star</v-icon>
+                        </div>
+                      </v-row>
+                    </div>
+                  </v-row>
+                </v-list-item-content>
               </v-list-item>
             </v-card>
           </v-col>
@@ -32,7 +50,7 @@
 <script>
 import * as store from "@/store";
 import { eventBus } from "@/main";
-import * as helpers from '@/helpers/helpers';
+import * as helpers from "@/helpers/helpers";
 
 const logger = require("loglevel");
 
@@ -45,11 +63,16 @@ export default {
   props: ["mediatype"],
 
   methods: {
-    getPath(relativePath) {
-      if (!relativePath) {
-        return null;
-      }
-      return helpers.getPath(relativePath);
+    changeRating(movie, i) {
+      (async () => {
+        if (movie.Rating == i) {
+          await store.clearRating(movie.id_Movies);
+          movie.Rating = null;
+        } else {
+          await store.setRating(movie.id_Movies, i);
+          movie.Rating = i;
+        }
+      })();
     }
   },
 

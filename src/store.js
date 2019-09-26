@@ -9,6 +9,7 @@ const request = require('request');
 const readdirAsync = util.promisify(fs.readdir);
 const readFileAsync = util.promisify(fs.readFile);
 const writeFileAsync = util.promisify(fs.writeFile);
+const existsAsync = util.promisify(fs.exists);
 // const lstatAsync = util.promisify(fs.lstat);
 const execAsync = util.promisify(child_process.exec);
 const requestGetAsync = util.promisify(request.get);
@@ -110,9 +111,13 @@ async function fetchSourcePaths() {
 }
 
 async function rescan(onlyNew) {
+	await applyIMDBMetaData();
+
+	/*
 	await filescanMovies(onlyNew);
 	await rescanMoviesMetaData(true);
 	// await rescanTV();
+	*/
 }
 
 async function filescanMovies(onlyNew) {
@@ -238,7 +243,57 @@ async function listPath(scanPath) {
 	return arrResult;
 }
 
-async function rescanMoviesMetaData(onlyNonDone) {
+async function applyIMDBMetaData() {
+	logger.log('applying IMDB Metadata...');
+	
+	const movies = await db.fireProcedureReturnAll(`
+			SELECT
+				id_Movies
+				, Filename
+				, IFNULL(IMDB_localTitle, '') AS IMDB_localTitle
+				, IFNULL(IMDB_originalTitle, '') AS IMDB_originalTitle
+				, IFNULL(IMDB_primaryTitle, '') AS IMDB_primaryTitle
+				, IMDB_startYear
+				, IMDB_endYear
+			FROM tbl_Movies`,
+		[]);
+
+	for (let i = 0; i < movies.length; i++) {
+		const movie = movies[i];
+
+		let Name = movie.IMDB_localTitle;
+		let Name2 = null;
+		
+		if (movie.IMDB_originalTitle && !movie.IMDB_localTitle.toLowerCase().includes(movie.IMDB_originalTitle.toLowerCase())) {
+			if (Name) {
+				Name2 = movie.IMDB_originalTitle;
+			} else {
+				Name = movie.IMDB_originalTitle;
+			}
+		}
+
+		if (movie.IMDB_primaryTitle && !movie.IMDB_localTitle && !movie.IMDB_originalTitle.toLowerCase().includes(movie.IMDB_primaryTitle.toLowerCase())) {
+			if (Name) {
+				Name2 = movie.IMDB_originalTitle;
+			} else {
+				Name = movie.IMDB_originalTitle;
+			}
+		}
+
+		if (!Name) {
+			Name = movie.Filename.split('~')[0].split('(')[0].replace(/\_/g, ' ').replace(/\./g, ' ');
+		}
+
+		const startYear = movie.IMDB_startYear;
+		const endYear = movie.IMDB_endYear;
+
+		await db.fireProcedure(`UPDATE tbl_Movies Set Name = $Name, Name2 = $Name2, startYear = $startYear, endYear = $endYear WHERE id_Movies = $id_Movies`, { $Name: Name, $Name2: Name2, $id_Movies: movie.id_Movies, $startYear: startYear, $endYear: endYear });
+	}
+
+	logger.log('applying IMDB Titles DONE');
+}
+
+async function rescanMoviesMetaData(onlyNew) {
 	const movies = await db.fireProcedureReturnAll(`
 			SELECT
 				id_Movies
@@ -261,18 +316,18 @@ async function rescanMoviesMetaData(onlyNonDone) {
 		// eventBus.scanInfoOff();
 		eventBus.scanInfoShow('Rescanning Movies', `${movie.Name || movie.Filename}`);
 
-		await applyMediaInfo(movie, onlyNonDone);
-		await findIMDBtconst(movie, onlyNonDone);
-		await applyIMDBdata(movie, false);	// KILLME: onlyNonDone
+		await applyMediaInfo(movie, onlyNew);
+		await findIMDBtconst(movie, onlyNew);
+		await applyIMDBdata(movie, false);	// KILLME: onlyNew
 	}
 
 	eventBus.scanInfoOff();
 }
 
-async function applyMediaInfo(movie, onlyNonDone) {
+async function applyMediaInfo(movie, onlyNew) {
 	// TODO:	run mediainfo on movie file
 	//				parse mediainfo result and save to db
-	if (onlyNonDone && movie.MI_Done) {
+	if (onlyNew && movie.MI_Done) {
 		return;
 	}
 
@@ -393,10 +448,10 @@ async function applyMediaInfo(movie, onlyNonDone) {
 
 }
 
-async function findIMDBtconst(movie, onlyNonDone) {
+async function findIMDBtconst(movie, onlyNew) {
 	// TODO:	find IMDB tconst (currently just from filename)
 	//				save IMDB_tconst to db
-	if (onlyNonDone && movie.IMDB_Done) {
+	if (onlyNew && movie.IMDB_Done) {
 		return;
 	}
 
@@ -418,10 +473,10 @@ async function findIMDBtconst(movie, onlyNonDone) {
 	}
 }
 
-async function applyIMDBdata(movie, onlyNonDone) {
+async function applyIMDBdata(movie, onlyNew) {
 	// TODO:	fetch IMDB data from imdb.com (incl. images)
 	//				save IMDB data to db
-	if (onlyNonDone && movie.IMDB_Done) {
+	if (onlyNew && movie.IMDB_Done) {
 		return;
 	}
 
@@ -519,13 +574,13 @@ async function getIMDBmainPageData(movie) {
 		const posterURLs = await getIMDBposterURLs(html.match(rxPosterMediaViewerURL)[1]);
 
 		const posterSmallPath = `data/extras/${movie.IMDB_tconst}_posterSmall.jpg`;
-		const posterSmallSuccess = await downloadFile(posterURLs.$IMDB_posterSmall_URL, posterSmallPath);
+		const posterSmallSuccess = await downloadFile(posterURLs.$IMDB_posterSmall_URL, posterSmallPath, false);
 		if (posterSmallSuccess) {
 			$IMDB_posterSmall_URL = posterSmallPath;
 		}
 
 		const posterLargePath = `data/extras/${movie.IMDB_tconst}_posterLarge.jpg`;
-		const posterLargeSuccess = await downloadFile(posterURLs.$IMDB_posterLarge_URL, posterLargePath);
+		const posterLargeSuccess = await downloadFile(posterURLs.$IMDB_posterLarge_URL, posterLargePath, false);
 		if (posterLargeSuccess) {
 			$IMDB_posterLarge_URL = posterLargePath;
 		}
@@ -667,12 +722,20 @@ async function saveIMDBData(movie, IMDBdata, genres) {
 	await db.fireProcedure(sql, Object.assign(IMDBdata, { $id_Movies: movie.id_Movies }));
 }
 
-async function downloadFile(url, targetPath) {
+async function downloadFile(url, targetPath, redownload) {
 	try {
 		logger.log('downloadFile url:', url);
-		
+
 		const fullPath = helpers.getPath(targetPath);
 		
+		if (!redownload) {
+			const exists = await existsAsync(targetPath);
+			if (exists) {
+				logger.log('  target file already exists, abort');
+				return;
+			}
+		}
+
 		logger.log('  fetching from web');
 		const response = await requestGetAsync({ url, encoding: null });
 		const data = response.body;
@@ -688,23 +751,52 @@ async function downloadFile(url, targetPath) {
 
 async function fetchMedia($MediaType) {
 	try {
-		return await db.fireProcedureReturnAll(`
+		const result = await db.fireProcedureReturnAll(`
 			SELECT
 				MOV.FileName
+				, MOV.Name
+				, MOV.Name2
+				, MOV.startYear
+				, MOV.endYear
+				, IFNULL(MOV.Rating, 0) AS Rating
 				, MOV.IMDB_posterSmall_URL
 				, MOV.IMDB_posterLarge_URL
+				, MOV.IMDB_rating
+				, MOV.IMDB_numVotes
+				, MOV.IMDB_metacriticScore
 			FROM tbl_Movies MOV
 			WHERE id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths WHERE MediaType = $MediaType)
 			AND MOV.IMDB_posterSmall_URL IS NOT NULL	-- KILLME
-		`, { $MediaType })
+			LIMIT 20									-- KILLME
+		`, { $MediaType });
+
+		result.forEach(item => {
+			item.IMDB_posterSmall_URL = item.IMDB_posterSmall_URL ? helpers.getPath(item.IMDB_posterSmall_URL) : item.IMDB_posterSmall_URL;
+			item.IMDB_posterLarge_URL = item.IMDB_posterLarge_URL ? helpers.getPath(item.IMDB_posterLarge_URL) : item.IMDB_posterLarge_URL;
+			item.yearDisplay = (item.startYear ? '(' + item.startYear + (item.endYear ? `-${item.endYear}` : '') + ')' : '');
+			item.IMDB_ratingDisplay = (item.IMDB_rating ? `${item.IMDB_rating.toLocaleString()} (${item.IMDB_numVotes.toLocaleString()})` : '');
+		})
+
+		return result;
 	} catch(err) {
+		logger.error(err);
 		return;
 	}
+}
+
+async function clearRating($id_Movies) {
+	await db.fireProcedure(`UPDATE tbl_Movies SET Rating = NULL WHERE id_Movies = $id_Movies`, { $id_Movies });
+}
+
+async function setRating($id_Movies, $Rating) {
+	await db.fireProcedure(`UPDATE tbl_Movies SET Rating = $Rating WHERE id_Movies = $id_Movies`, { $id_Movies, $Rating});
 }
 
 export {
 	db,
 	fetchSourcePaths,
 	rescan,
-	fetchMedia
+	fetchMedia,
+	clearRating,
+	setRating
 }
