@@ -753,7 +753,8 @@ async function fetchMedia($MediaType) {
 	try {
 		const result = await db.fireProcedureReturnAll(`
 			SELECT
-				MOV.FileName
+				MOV.id_Movies
+				, MOV.FileName
 				, MOV.Name
 				, MOV.Name2
 				, MOV.startYear
@@ -767,7 +768,7 @@ async function fetchMedia($MediaType) {
 			FROM tbl_Movies MOV
 			WHERE id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths WHERE MediaType = $MediaType)
 			AND MOV.IMDB_posterSmall_URL IS NOT NULL	-- KILLME
-			LIMIT 20									-- KILLME
+			LIMIT 100									-- KILLME
 		`, { $MediaType });
 
 		result.forEach(item => {
@@ -789,7 +790,13 @@ async function clearRating($id_Movies) {
 }
 
 async function setRating($id_Movies, $Rating) {
-	await db.fireProcedure(`UPDATE tbl_Movies SET Rating = $Rating WHERE id_Movies = $id_Movies`, { $id_Movies, $Rating});
+	logger.log('setRating id_Movies:', $id_Movies, 'Rating:', $Rating);
+	try {
+		await db.fireProcedure(`UPDATE tbl_Movies SET Rating = $Rating WHERE id_Movies = $id_Movies`, { $id_Movies, $Rating});
+		return true;
+	} catch(err) {
+		return false;
+	}
 }
 
 export {
