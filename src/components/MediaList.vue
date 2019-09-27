@@ -8,12 +8,18 @@
       <v-container class="pa-2" fluid>
         <v-row v-for="(item, i) in items" :key="i">
           <v-col>
-            <v-card dark flat hover v-on:click="selectItem(item)">
+            <v-card dark flat hover v-bind:ripple="false" v-on:click="selectItem(item)">
               <v-list-item three-line style="padding-left: 0px">
-                <v-list-item-avatar tile style="margin: 6px; height: 150px; width: 120px" v-on:click.stop="launch(item)">
-                  <v-img contain gradient v-bind:src="item.IMDB_posterSmall_URL"></v-img>
-                  <!-- TODO: implement lazy-src -->
-                </v-list-item-avatar>
+                <div>
+                  <v-list-item-avatar
+                    tile
+                    style="margin: 6px; height: 150px; width: 120px"
+                    v-on:click.stop="launch(item)"
+                  >
+                    <v-img contain v-bind:src="item.IMDB_posterSmall_URL"></v-img>
+                    <!-- TODO: implement lazy-src -->
+                  </v-list-item-avatar>
+                </div>
                 <v-list-item-content
                   class="align-self-start"
                   style="padding-top: 6px; padding-bottom: 6px"
@@ -22,9 +28,15 @@
                     <div style="margin-left: 16px">
                       <v-list-item-title
                         class="headline mb-2"
+                        style="margin-bottom: 0px!important"
                       >{{ item.Name }} {{ item.yearDisplay }}</v-list-item-title>
 
-                      <v-list-item-subtitle>{{ item.Name2 }}</v-list-item-subtitle>
+                      <v-list-item-subtitle
+                        v-if="item.Name2"
+                        style="margin-bottom: 4px"
+                      >{{ item.Name2 }}</v-list-item-subtitle>
+
+                      <div style="font-size: .875rem; font-weight: normal">HD | FSK 16 | {{ item.Genres }}</div>
                     </div>
                     <div class="flex-grow-1"></div>
                     <div>
@@ -49,8 +61,15 @@
                       </v-row>
                     </div>
                   </v-row>
-                  <v-row v-if="item.selected" style="margin-left: 4px; margin-right: 6px">
+
+                  <!-- <v-row style="margin-left: 4px; margin-right: 6px">
                     <div style="font-size: .875rem; font-weight: normal"
+                    >{{ item.Genres }}</div>
+                  </v-row>-->
+
+                  <v-row v-if="item.selected" style="margin-left: 4px; margin-right: 6px">
+                    <div
+                      style="font-size: .875rem; font-weight: normal"
                     >After the devastating events of Avengers: Infinity War (2018), the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe.</div>
                   </v-row>
                 </v-list-item-content>
@@ -114,7 +133,8 @@ export default {
 
   created() {
     (async () => {
-      this.items = await store.fetchMedia(this.mediatype);
+			await store.fetchSourcePathFilter(this.mediatype);
+			this.items = await store.fetchMedia(this.mediatype);
       logger.log("items:", this.items);
     })();
   }

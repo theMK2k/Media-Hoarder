@@ -302,7 +302,8 @@ async function rescanMoviesMetaData(onlyNew) {
 				, MI_Done
 				, IMDB_Done
 				, IMDB_tconst
-			FROM tbl_Movies`,
+			FROM tbl_Movies
+			WHERE id_SourcePaths = 5 -- KILLME`,
 		[]);
 
 	for (let i = 0; i < movies.length; i++) {
@@ -732,7 +733,7 @@ async function downloadFile(url, targetPath, redownload) {
 			const exists = await existsAsync(targetPath);
 			if (exists) {
 				logger.log('  target file already exists, abort');
-				return;
+				return true;
 			}
 		}
 
@@ -766,10 +767,11 @@ async function fetchMedia($MediaType) {
 				, MOV.IMDB_rating
 				, MOV.IMDB_numVotes
 				, MOV.IMDB_metacriticScore
+				, (SELECT GROUP_CONCAT(G.Name, ', ') FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres AND MG.id_Movies = MOV.id_Movies) AS Genres
 			FROM tbl_Movies MOV
 			WHERE id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths WHERE MediaType = $MediaType)
-			AND MOV.IMDB_posterSmall_URL IS NOT NULL	-- KILLME
-			LIMIT 100									-- KILLME
+			-- AND MOV.IMDB_posterSmall_URL IS NOT NULL	-- KILLME
+			AND MOV.id_SourcePaths = 5								-- KILLME
 		`, { $MediaType });
 
 		result.forEach(item => {
@@ -844,6 +846,22 @@ async function launchMovie(movie) {
 	logger.log('end launching:', task);
 }
 
+const filters = {
+	sourcePaths: []
+}
+
+async function fetchSourcePathFilter($MediaType) {
+	logger.log('fetchSourcePathFilter MediaType:', $MediaType);
+	const result = await db.fireProcedureReturnAll(`
+			SELECT DISTINCT
+			1 AS Selected
+			, Description
+		FROM tbl_SourcePaths WHERE MediaType = $MediaType`,
+		{ $MediaType });
+
+	filters.sourcePaths = result;
+}
+
 export {
 	db,
 	fetchSourcePaths,
@@ -853,5 +871,8 @@ export {
 	setRating,
 	getSetting,
 	setSetting,
-	launchMovie
+	launchMovie,
+	
+	filters,
+	fetchSourcePathFilter
 }

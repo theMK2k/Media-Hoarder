@@ -11,7 +11,18 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-subheader class="mt-4 grey--text text--darken-1">FILTERS (TODO)</v-subheader>
+        <v-subheader class="mt-4 lightgrey--text">FILTERS</v-subheader>
+        <v-expansion-panels accordion multiple>
+          <v-expansion-panel  style="padding: 0px!important">
+            <v-expansion-panel-header style="color: lightgrey; padding: 8px!important">Source Paths</v-expansion-panel-header>
+            <v-expansion-panel-content>
+							<v-checkbox label="local asd asdasd asdasd asd " style="margin: 0px"></v-checkbox>
+							<v-checkbox label="server" style="margin: 0px"></v-checkbox>
+
+							<v-checkbox v-for="sourcePath in filterSourcePaths" v-bind:key="sourcePath.Description" v-bind:label="sourcePath.Description" v-model="sourcePath.Selected"></v-checkbox>
+						</v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
 
         <!--
         <v-subheader class="mt-4 grey--text text--darken-1">SUBSCRIPTIONS</v-subheader>
@@ -44,9 +55,9 @@
         -->
         <v-list-item @click="openSettings">
           <v-list-item-action>
-            <v-icon color="grey darken-1">mdi-settings</v-icon>
+            <v-icon style="color: lightgrey">mdi-settings</v-icon>
           </v-list-item-action>
-          <v-list-item-title class="grey--text text--darken-1">Settings</v-list-item-title>
+          <v-list-item-title style="color: lightgrey">Settings</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -57,14 +68,12 @@
         <span class="title">MediaBox</span>
       </v-toolbar-title>
       <div class="flex-grow-1"></div>
-      <v-row
-        align-content="end"
-        justify="end"
-        style="text-align: right!important"
-      >
+      <v-row align-content="end" justify="end" style="text-align: right!important">
         <div v-if="scanInfo.show">
           <p style="margin: 0px!important">{{scanInfo.header}}</p>
-          <p style="margin: 0px!important; font-size: 12px;text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">{{scanInfo.details}}</p>
+          <p
+            style="margin: 0px!important; font-size: 12px;text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"
+          >{{scanInfo.details}}</p>
         </div>
 
         <v-tooltip bottom v-if="!scanInfo.show">
@@ -141,6 +150,12 @@ export default {
     }
   }),
 
+	computed: {
+		filterSourcePaths() {
+			return store.filters.sourcePaths;
+		},
+	},
+
   methods: {
     goto(itemid) {
       if (!itemid) {
@@ -157,11 +172,11 @@ export default {
     },
     openSettings() {
       return this.$router.push("/settings");
-		},
-		
-		rescan() {
-			store.rescan(true);
-		}
+    },
+
+    rescan() {
+      store.rescan(true);
+    }
   },
 
   // ### LifeCycleHooks ###
@@ -204,26 +219,26 @@ export default {
       }
 
       this.snackbar.show = true;
-		});
-		
-		eventBus.$on("scanInfoShow", ({ header, details }) => {
-			this.scanInfo = {
-				header,
-				details,
-				show: true
-			}
-			
-			// this.scanInfo.header = header;
-			// this.scanInfo.details = details;
-			// this.scanInfo.show = true;
-		});
+    });
 
-		eventBus.$on("scanInfoOff", () => {
-			this.scanInfo.show = false;
-		});
+    eventBus.$on("scanInfoShow", ({ header, details }) => {
+      this.scanInfo = {
+        header,
+        details,
+        show: true
+      };
 
-		// eventBus.scanInfoShow('KILLME', 'Asterix und das Geheimnis des Zaubertranks ~ Astérix - Le secret de la potion magique (De)(BD)[2018][Adventure, Animation, Comedy][6.9 @ 3074][tt8001346].mkv');
-	}
+      // this.scanInfo.header = header;
+      // this.scanInfo.details = details;
+      // this.scanInfo.show = true;
+    });
+
+    eventBus.$on("scanInfoOff", () => {
+      this.scanInfo.show = false;
+    });
+
+    // eventBus.scanInfoShow('KILLME', 'Asterix und das Geheimnis des Zaubertranks ~ Astérix - Le secret de la potion magique (De)(BD)[2018][Adventure, Animation, Comedy][6.9 @ 3074][tt8001346].mkv');
+  }
 };
 </script>
 <style>
@@ -232,6 +247,6 @@ h1 {
 }
 
 .noshrink {
-	flex-shrink: 0!important
+  flex-shrink: 0 !important;
 }
 </style>
