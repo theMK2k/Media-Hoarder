@@ -64,8 +64,8 @@ function generateIndexQuery(tableName, ColumnName, isUnique) {
 }
 
 async function createIndexes(db) {
-	logger.log('creating indexes...');	
-	
+	logger.log('creating indexes...');
+
 	const queries = [
 		generateIndexQuery('tbl_Genres', 'GenreID', true),
 		generateIndexQuery('tbl_Movies', 'id_SourcePaths', false),
@@ -243,7 +243,7 @@ async function applyIMDBMetaData() {
 	// TODO: add this to fetchIMDBData
 
 	logger.log('applying IMDB Metadata...');
-	
+
 	const movies = await db.fireProcedureReturnAll(`
 			SELECT
 				id_Movies
@@ -261,7 +261,7 @@ async function applyIMDBMetaData() {
 
 		let Name = movie.IMDB_localTitle;
 		let Name2 = null;
-		
+
 		if (movie.IMDB_originalTitle && !movie.IMDB_localTitle.toLowerCase().includes(movie.IMDB_originalTitle.toLowerCase())) {
 			if (Name) {
 				Name2 = movie.IMDB_originalTitle;
@@ -561,7 +561,7 @@ async function getIMDBmainPageData(movie) {
 	}
 
 	let $IMDB_metacriticScore = null;
-	
+
 	const rxMetacriticScore = /<div class="metacriticScore score_favorable titleReviewBarSubItem">[\s\S]*?<span>(\d*)<\/span>/;
 	if (rxMetacriticScore.test(html)) {
 		$IMDB_metacriticScore = parseInt(html.match(rxMetacriticScore)[1]);
@@ -696,8 +696,8 @@ async function saveIMDBData(movie, IMDBdata, genres) {
 	})
 	sql = `UPDATE tbl_Movies SET ${sql} WHERE id_Movies = $id_Movies`;
 
-	const movieGenres = await db.fireProcedureReturnAll('SELECT MG.id_Genres, G.GenreID, G.Name FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres WHERE MG.id_Movies = $id_Movies', {$id_Movies: movie.id_Movies});
-	
+	const movieGenres = await db.fireProcedureReturnAll('SELECT MG.id_Genres, G.GenreID, G.Name FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres WHERE MG.id_Movies = $id_Movies', { $id_Movies: movie.id_Movies });
+
 	for (let i = 0; i < IMDB_genres.length; i++) {
 		const genre = IMDB_genres[i];
 
@@ -727,7 +727,7 @@ async function downloadFile(url, targetPath, redownload) {
 		logger.log('downloadFile url:', url);
 
 		const fullPath = helpers.getPath(targetPath);
-		
+
 		if (!redownload) {
 			const exists = await existsAsync(targetPath);
 			if (exists) {
@@ -739,11 +739,11 @@ async function downloadFile(url, targetPath, redownload) {
 		logger.log('  fetching from web');
 		const response = await requestGetAsync({ url, encoding: null });
 		const data = response.body;
-		
+
 		await writeFileAsync(fullPath, data, 'binary');
-		
+
 		return true;
-	} catch(err) {
+	} catch (err) {
 		logger.error(err);
 		return false;
 	}
@@ -754,6 +754,7 @@ async function fetchMedia($MediaType) {
 		const result = await db.fireProcedureReturnAll(`
 			SELECT
 				MOV.id_Movies
+				, MOV.Path
 				, MOV.FileName
 				, MOV.Name
 				, MOV.Name2
@@ -779,7 +780,7 @@ async function fetchMedia($MediaType) {
 		})
 
 		return result;
-	} catch(err) {
+	} catch (err) {
 		logger.error(err);
 		return;
 	}
@@ -792,11 +793,55 @@ async function clearRating($id_Movies) {
 async function setRating($id_Movies, $Rating) {
 	logger.log('setRating id_Movies:', $id_Movies, 'Rating:', $Rating);
 	try {
-		await db.fireProcedure(`UPDATE tbl_Movies SET Rating = $Rating WHERE id_Movies = $id_Movies`, { $id_Movies, $Rating});
+		await db.fireProcedure(`UPDATE tbl_Movies SET Rating = $Rating WHERE id_Movies = $id_Movies`, { $id_Movies, $Rating });
 		return true;
-	} catch(err) {
+	} catch (err) {
 		return false;
 	}
+}
+
+async function getSetting($Key) {
+	try {
+		return await db.fireProcedureReturnScalar(`SELECT Value FROM tbl_Settings WHERE Key = $Key`, { $Key });
+	} catch (err) {
+		logger.error(err);
+		return null;
+	}
+}
+
+async function setSetting($Key, $Value) {
+	try {
+		const mustUpdate = await db.fireProcedureReturnScalar(`SELECT COUNT(1) FROM tbl_Settings WHERE Key = $Key`, { $Key });
+
+		if (mustUpdate) {
+			await db.fireProcedure(`UPDATE tbl_Settings SET Value = $Value WHERE Key = $Key`, { $Value, $Key });
+		} else {
+			await db.fireProcedure(`INSERT INTO tbl_Settings (Key, Value) VALUES ($Key, $Value)`, { $Value, $Key });
+		}
+		return true;
+	} catch (err) {
+		logger.error(err);
+		return false;
+	}
+}
+
+async function launchMovie(movie) {
+	// TODO:
+	// - measure time elapsed during launch
+	// - add measured time to (TODO) watchedSeconds
+	// - watchedSeconds to runtime
+	// - if watchedSeconds > runtime set (TODO) watched to true and show snack bar
+	
+	const VLCPath = await getSetting('VLCPath');
+
+	if (!VLCPath) {
+		eventBus.showSnackBar('error', 6000, 'Unable to launch: VLC path is not set');
+	}
+
+	const task = `${VLCPath} "${movie.Path}"`;
+	logger.log('launching:', task);
+	await execAsync(task);
+	logger.log('end launching:', task);
 }
 
 export {
@@ -805,5 +850,8 @@ export {
 	rescan,
 	fetchMedia,
 	clearRating,
-	setRating
+	setRating,
+	getSetting,
+	setSetting,
+	launchMovie
 }

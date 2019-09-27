@@ -6,6 +6,11 @@
       </v-btn>Settings
     </h1>
 
+    <v-row style="margin: 0px">
+      <v-text-field readonly label="VLC Path" v-model="VLCPath"></v-text-field>
+      <v-btn v-on:click="browseVLCPath()" text small color="primary" style="margin-top: 16px">Browse</v-btn>
+    </v-row>
+
     <h3>Movies - Source Paths</h3>
     <div v-if="moviesSourcePaths.length == 0">no paths defined</div>
 
@@ -77,6 +82,8 @@ export default {
   },
 
   data: () => ({
+    VLCPath: null,
+
     sourcePaths: [],
 
     sourcePathDescriptionDialog: {
@@ -113,6 +120,27 @@ export default {
   },
 
   methods: {
+    browseVLCPath() {
+      dialog.showOpenDialog(
+        {
+          properties: ["openFile"],
+          filters: [
+            { name: "Executables", extensions: ["exe"] },
+            { name: "All Files", extensions: ["*"] }
+          ]
+        },
+        path => {
+          if (!path || path.length === 0) {
+            return;
+          }
+
+          this.VLCPath = path[0];
+
+          store.setSetting('VLCPath', this.VLCPath);
+        }
+      );
+    },
+
     addSource(MediaType) {
       dialog.showOpenDialog(
         {
@@ -136,7 +164,11 @@ export default {
           });
 
           if (isAlreadyInUse) {
-            return eventBus.showSnackbar("error", 6000, `The chosen path is already in use.`);
+            return eventBus.showSnackbar(
+              "error",
+              6000,
+              `The chosen path is already in use.`
+            );
           }
 
           this.sourcePathDescriptionDialog.id_SourcePaths = null;
@@ -154,16 +186,16 @@ export default {
       BrowserWindow.getFocusedWindow().webContents.openDevTools();
     },
 
-    fetchSourcePaths() {
-      (async () => {
-        try {
-          const paths = await store.fetchSourcePaths();
-          this.sourcePaths = paths;
-          logger.log(this.sourcePaths);
-        } catch (err) {
-          eventBus.showSnackbar("error", 6000, err);
-        }
-      })();
+    async fetchSourcePaths() {
+      // (async () => {
+      try {
+        const paths = await store.fetchSourcePaths();
+        this.sourcePaths = paths;
+        logger.log(this.sourcePaths);
+      } catch (err) {
+        eventBus.showSnackbar("error", 6000, err);
+      }
+      // })();
     },
 
     onSourcePathEditDescription(sourcePathItem) {
@@ -192,20 +224,21 @@ export default {
     onSourcePathRemoveDialogOK() {
       (async () => {
         try {
-					this.sourcePathRemoveDialog.show = false;
-					
-					await store.db.fireProcedure(
+          this.sourcePathRemoveDialog.show = false;
+
+          await store.db.fireProcedure(
             `DELETE FROM tbl_SourcePaths WHERE id_SourcePaths = $id_SourcePaths`,
             {
               $id_SourcePaths: this.sourcePathRemoveDialog.id_SourcePaths
             }
           );
 
-					await store.db.fireProcedure(
-            `DELETE FROM tbl_Movies WHERE id_SourcePaths NOT IN (SELECT id_SourcePaths FROM tbl_SourcePaths)`, []
+          await store.db.fireProcedure(
+            `DELETE FROM tbl_Movies WHERE id_SourcePaths NOT IN (SELECT id_SourcePaths FROM tbl_SourcePaths)`,
+            []
           );
 
-          this.fetchSourcePaths();
+          await this.fetchSourcePaths();
 
           eventBus.showSnackbar("success", 6000, `Source path removed.`);
         } catch (err) {
@@ -239,7 +272,7 @@ export default {
             }
           );
 
-          this.fetchSourcePaths();
+          await this.fetchSourcePaths();
 
           eventBus.showSnackbar("success", 6000, `Description updated.`);
         } catch (err) {
@@ -260,14 +293,12 @@ export default {
             }
           );
 
-          this.fetchSourcePaths();
+          await this.fetchSourcePaths();
 
           eventBus.showSnackbar(
             "success",
             6000,
-            `${this.sourcePathDescriptionDialog.Path} added to ${
-              this.sourcePathDescriptionDialog.MediaTypeUpper
-            } source directories`
+            `${this.sourcePathDescriptionDialog.Path} added to ${this.sourcePathDescriptionDialog.MediaTypeUpper} source directories`
           );
         } catch (err) {
           eventBus.showSnackbar("error", 6000, err);
@@ -277,8 +308,9 @@ export default {
   },
 
   // ### LifeCycle Hooks ###
-  created() {
-    this.fetchSourcePaths();
+  async created() {
+    await this.fetchSourcePaths();
+    this.VLCPath = await store.getSetting("VLCPath");
   }
 };
 </script>

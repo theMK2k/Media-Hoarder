@@ -10,7 +10,7 @@
           <v-col>
             <v-card dark flat hover v-on:click="selectItem(item)">
               <v-list-item three-line style="padding-left: 0px">
-                <v-list-item-avatar tile style="margin: 6px; height: 150px; width: 120px">
+                <v-list-item-avatar tile style="margin: 6px; height: 150px; width: 120px" v-on:click.stop="launch(item)">
                   <v-img contain gradient v-bind:src="item.IMDB_posterSmall_URL"></v-img>
                   <!-- TODO: implement lazy-src -->
                 </v-list-item-avatar>
@@ -105,6 +105,10 @@ export default {
       const items = this.items;
       this.items = [];
       this.items = items;
+    },
+
+    async launch(movie) {
+      await store.launchMovie(movie);
     }
   },
 
