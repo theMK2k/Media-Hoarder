@@ -36,7 +36,13 @@
                         style="margin-bottom: 4px"
                       >{{ item.Name2 }}</v-list-item-subtitle>
 
-                      <div style="font-size: .875rem; font-weight: normal">HD | FSK 16 | {{ item.Genres }}</div>
+                      <div style="font-size: .875rem; font-weight: normal">
+                        <span v-if="item.MI_Quality">{{ item.MI_Quality }} | </span>
+                        <span v-if="item.AgeRating">{{ item.AgeRating }} | </span>
+                        <span v-if="item.Genres">{{ item.Genres }} | </span>
+                        <span v-if="item.AudioLanguages"><v-icon small>mdi-comment-outline</v-icon> {{ item.AudioLanguages }} | </span>
+                        <span v-if="item.SubtitleLanguages"><v-icon small>mdi-subtitles-outline</v-icon> {{ item.SubtitleLanguages }} | </span>
+                      </div>
                     </div>
                     <div class="flex-grow-1"></div>
                     <div>
@@ -67,10 +73,8 @@
                     >{{ item.Genres }}</div>
                   </v-row>-->
 
-                  <v-row v-if="item.selected" style="margin-left: 4px; margin-right: 6px">
-                    <div
-                      style="font-size: .875rem; font-weight: normal"
-                    >After the devastating events of Avengers: Infinity War (2018), the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe.</div>
+                  <v-row v-if="item.IMDB_plotSummary" style="margin-left: 4px; margin-right: 6px">
+                    <div style="font-size: .875rem; font-weight: normal">{{ item.IMDB_plotSummary }}</div>
                   </v-row>
                 </v-list-item-content>
               </v-list-item>
@@ -133,8 +137,8 @@ export default {
 
   created() {
     (async () => {
-			await store.fetchSourcePathFilter(this.mediatype);
-			this.items = await store.fetchMedia(this.mediatype);
+      await store.fetchSourcePathFilter(this.mediatype);
+      this.items = await store.fetchMedia(this.mediatype);
       logger.log("items:", this.items);
     })();
   }

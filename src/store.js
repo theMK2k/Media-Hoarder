@@ -5,6 +5,7 @@ const logger = require('loglevel');
 const child_process = require('child_process');
 const xml2js = require('xml2js');
 const request = require('request');
+const textVersion = require("textversionjs");
 
 const readdirAsync = util.promisify(fs.readdir);
 const writeFileAsync = util.promisify(fs.writeFile);
@@ -310,7 +311,7 @@ async function rescanMoviesMetaData(onlyNew) {
 		const movie = movies[i];
 
 		// KILLME
-		// if (i > 1) break;
+		if (i > 1) break;
 
 		// eventBus.scanInfoOff();
 		eventBus.scanInfoShow('Rescanning Movies', `${movie.Name || movie.Filename}`);
@@ -587,6 +588,12 @@ async function getIMDBmainPageData(movie) {
 		}
 	}
 
+	let $IMDB_plotSummary = null;
+	const rxPlotSummary = /<div class="summary_text">([\s\S]*?)<\/div>/;
+	if (rxPlotSummary.test(html)) {
+		$IMDB_plotSummary = textVersion(html.match(rxPlotSummary)[1]).trim().replace(/(?:\r\n|\r|\n)/g, '');
+	}
+
 	return {
 		$IMDB_releaseType,
 		$IMDB_genres,
@@ -594,7 +601,8 @@ async function getIMDBmainPageData(movie) {
 		$IMDB_numVotes,
 		$IMDB_metacriticScore,
 		$IMDB_posterSmall_URL,
-		$IMDB_posterLarge_URL
+		$IMDB_posterLarge_URL,
+		$IMDB_plotSummary
 	}
 }
 
@@ -761,12 +769,18 @@ async function fetchMedia($MediaType) {
 				, MOV.Name2
 				, MOV.startYear
 				, MOV.endYear
+				, MOV.AgeRating
+				, MOV.MI_Duration
+				, MOV.MI_Quality
+				, MOV.MI_Audio_Languages
+				, MOV.MI_Subtitle_Languages
 				, IFNULL(MOV.Rating, 0) AS Rating
 				, MOV.IMDB_posterSmall_URL
 				, MOV.IMDB_posterLarge_URL
 				, MOV.IMDB_rating
 				, MOV.IMDB_numVotes
 				, MOV.IMDB_metacriticScore
+				, MOV.IMDB_plotSummary
 				, (SELECT GROUP_CONCAT(G.Name, ', ') FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres AND MG.id_Movies = MOV.id_Movies) AS Genres
 			FROM tbl_Movies MOV
 			WHERE id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths WHERE MediaType = $MediaType)
@@ -779,6 +793,8 @@ async function fetchMedia($MediaType) {
 			item.IMDB_posterLarge_URL = item.IMDB_posterLarge_URL ? helpers.getPath(item.IMDB_posterLarge_URL) : item.IMDB_posterLarge_URL;
 			item.yearDisplay = (item.startYear ? '(' + item.startYear + (item.endYear ? `-${item.endYear}` : '') + ')' : '');
 			item.IMDB_ratingDisplay = (item.IMDB_rating ? `${item.IMDB_rating.toLocaleString()} (${item.IMDB_numVotes.toLocaleString()})` : '');
+			item.AudioLanguages = generateLanguageString(item.MI_Audio_Languages, ['De', 'En']); // TODO: transform with "preferred languages"
+			item.SubtitleLanguages = generateLanguageString(item.MI_Subtitle_Languages, ['De', 'En']); // TODO: transform with "preferred languages"
 		})
 
 		return result;
@@ -786,6 +802,46 @@ async function fetchMedia($MediaType) {
 		logger.error(err);
 		return;
 	}
+}
+
+function generateLanguageString(languages, preferredLanguages) {
+	const maxLangDisplay = 2;
+	const languagesSplit = languages.split(',');
+	const preferredLanguagesJoinLower = preferredLanguages.join(', ').toLowerCase();
+
+	let result = [];
+
+	preferredLanguages.forEach(lang => {
+		if (languages.toLowerCase().includes(lang.toLowerCase())) {
+			if (result.length < maxLangDisplay) {
+				result.push(lang.toUpperCase());
+			}
+		}
+	});
+
+	languagesSplit.forEach(lang => {
+		const langTrimLower = lang.trim().toLowerCase();
+		if (!preferredLanguagesJoinLower.includes(langTrimLower)) {
+			if (result.length < maxLangDisplay) {
+				result.push(langTrimLower.toUpperCase());
+			}
+		}
+	});
+
+	if (result.length < languagesSplit.length) {
+		logger.log('overshot languagesSplit:', languagesSplit);
+		result.push('+' + (languagesSplit.length - result.length));
+	}
+
+
+	if (!result) {
+		result = languages;
+	}
+
+	// TODO: provide non-preferred Languages (max. 2) if result's entries are lower than 2
+	// TODO: implement +x info (e.g. De, En, +21)
+
+	return result.join(', ');
 }
 
 async function clearRating($id_Movies) {
