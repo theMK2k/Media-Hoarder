@@ -13,14 +13,17 @@
 
         <v-subheader class="mt-4 lightgrey--text">FILTERS</v-subheader>
         <v-expansion-panels accordion multiple>
-          <v-expansion-panel  style="padding: 0px!important">
+          <v-expansion-panel style="padding: 0px!important">
             <v-expansion-panel-header style="color: lightgrey; padding: 8px!important">Source Paths</v-expansion-panel-header>
             <v-expansion-panel-content>
-							<v-checkbox label="local asd asdasd asdasd asd " style="margin: 0px"></v-checkbox>
-							<v-checkbox label="server" style="margin: 0px"></v-checkbox>
-
-							<v-checkbox v-for="sourcePath in filterSourcePaths" v-bind:key="sourcePath.Description" v-bind:label="sourcePath.Description" v-model="sourcePath.Selected"></v-checkbox>
-						</v-expansion-panel-content>
+              <v-checkbox
+                v-for="sourcePath in filterSourcePaths"
+                v-bind:key="sourcePath.Description"
+                v-bind:label="sourcePath.Description"
+                v-model="sourcePath.Selected"
+                style="margin: 0px"
+              ></v-checkbox>
+            </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
 
@@ -150,11 +153,18 @@ export default {
     }
   }),
 
-	computed: {
-		filterSourcePaths() {
-			return store.filters.sourcePaths;
-		},
-	},
+  computed: {
+    filterSourcePaths() {
+      return store.filters.sourcePaths;
+      // return [{
+      // 	Description: 'Local',
+      // 	Selected: 1
+      // }, {
+      // 	Description: 'Server',
+      // 	Selected: 1
+      // }]
+    }
+  },
 
   methods: {
     goto(itemid) {

@@ -859,6 +859,8 @@ async function fetchSourcePathFilter($MediaType) {
 		FROM tbl_SourcePaths WHERE MediaType = $MediaType`,
 		{ $MediaType });
 
+	logger.log('fetchSourcePathFilter result:', result);
+
 	filters.sourcePaths = result;
 }
 
