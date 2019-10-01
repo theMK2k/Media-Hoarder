@@ -789,6 +789,7 @@ async function fetchMedia($MediaType) {
 		`, { $MediaType });
 
 		result.forEach(item => {
+			logger.log(item.Name);
 			item.IMDB_posterSmall_URL = item.IMDB_posterSmall_URL ? helpers.getPath(item.IMDB_posterSmall_URL) : item.IMDB_posterSmall_URL;
 			item.IMDB_posterLarge_URL = item.IMDB_posterLarge_URL ? helpers.getPath(item.IMDB_posterLarge_URL) : item.IMDB_posterLarge_URL;
 			item.yearDisplay = (item.startYear ? '(' + item.startYear + (item.endYear ? `-${item.endYear}` : '') + ')' : '');
@@ -809,9 +810,18 @@ function generateLanguageString(languages, preferredLanguages) {
 	const languagesSplit = languages.split(',');
 	const preferredLanguagesJoinLower = preferredLanguages.join(', ').toLowerCase();
 
+	const languagesFiltered = [];
+	languagesSplit.forEach(lang => {
+		lang = lang.trim();
+		if (!languagesFiltered.find(l => lang === l)) {
+			languagesFiltered.push(lang);
+		}
+	});
+
 	let result = [];
 
 	preferredLanguages.forEach(lang => {
+		lang = lang.trim();
 		if (languages.toLowerCase().includes(lang.toLowerCase())) {
 			if (result.length < maxLangDisplay) {
 				result.push(lang.toUpperCase());
@@ -819,20 +829,30 @@ function generateLanguageString(languages, preferredLanguages) {
 		}
 	});
 
-	languagesSplit.forEach(lang => {
+	let lastOvershotLanguage = null;
+	languagesFiltered.forEach(lang => {
+		lang = lang.trim();
 		const langTrimLower = lang.trim().toLowerCase();
 		if (!preferredLanguagesJoinLower.includes(langTrimLower)) {
 			if (result.length < maxLangDisplay) {
 				result.push(langTrimLower.toUpperCase());
+			} else {
+				lastOvershotLanguage = langTrimLower.toUpperCase();
 			}
 		}
 	});
 
-	if (result.length < languagesSplit.length) {
-		logger.log('overshot languagesSplit:', languagesSplit);
-		result.push('+' + (languagesSplit.length - result.length));
-	}
+	if (languages && result.length < languagesFiltered.length) {
+		logger.log('overshot languagesFiltered:', languagesFiltered);
 
+		if ((languagesFiltered.length - result.length) < 2) {
+			result.push(lastOvershotLanguage);
+		} else {
+			result.push('+' + (languagesFiltered.length - result.length));
+		}
+
+		logger.log('result:', result);
+	}
 
 	if (!result) {
 		result = languages;

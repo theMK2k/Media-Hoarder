@@ -24,6 +24,7 @@
                   class="align-self-start"
                   style="padding-top: 6px; padding-bottom: 6px"
                 >
+                  <v-col style="padding: 0px!important">
                   <v-row>
                     <div style="margin-left: 16px">
                       <v-list-item-title
@@ -76,6 +77,7 @@
                   <v-row v-if="item.IMDB_plotSummary" style="margin-left: 4px; margin-right: 6px">
                     <div style="font-size: .875rem; font-weight: normal">{{ item.IMDB_plotSummary }}</div>
                   </v-row>
+                  </v-col>
                 </v-list-item-content>
               </v-list-item>
             </v-card>
