@@ -117,8 +117,8 @@ async function rescan(onlyNew) {
 	isScanning = true;
 	eventBus.rescanStarted();
 	
-	// await filescanMovies(onlyNew);	// KILLME
-	await rescanMoviesMetaData(true);	// KILLME -> onlyNew
+	await filescanMovies(onlyNew);	// KILLME
+	await rescanMoviesMetaData(onlyNew);	// KILLME -> onlyNew
 	await applyIMDBMetaData();
 	// await rescanTV();
 
@@ -319,7 +319,7 @@ async function rescanMoviesMetaData(onlyNew) {
 				, IMDB_Done
 				, IMDB_tconst
 			FROM tbl_Movies
-			WHERE id_SourcePaths = 5 -- KILLME`,
+			WHERE id_SourcePaths IN (5, 10) -- KILLME`,
 		[]);
 
 	for (let i = 0; i < movies.length; i++) {
@@ -330,14 +330,14 @@ async function rescanMoviesMetaData(onlyNew) {
 		const movie = movies[i];
 
 		// KILLME
-		if (i > 5) break;
+		// if (i > 5) break;
 
 		// eventBus.scanInfoOff();
 		eventBus.scanInfoShow('Rescanning Movies', `${movie.Name || movie.Filename}`);
 
 		await applyMediaInfo(movie, onlyNew);
 		await findIMDBtconst(movie, onlyNew);
-		await fetchIMDBMetaData(movie, false);	// KILLME: onlyNew
+		await fetchIMDBMetaData(movie, onlyNew);	// KILLME: onlyNew
 	}
 
 	eventBus.scanInfoOff();
@@ -910,7 +910,7 @@ async function fetchMedia($MediaType) {
 			LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 			WHERE id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths WHERE MediaType = $MediaType)
 			-- AND MOV.IMDB_posterSmall_URL IS NOT NULL	-- KILLME
-			AND MOV.id_SourcePaths = 5								-- KILLME
+			AND MOV.id_SourcePaths IN (5, 10)								-- KILLME
 		`, { $MediaType });
 
 		result.forEach(item => {
