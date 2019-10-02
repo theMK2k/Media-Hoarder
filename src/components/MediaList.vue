@@ -6,7 +6,7 @@
       </v-btn>
       {{ mediatype.toUpperCase() }}
       <v-container class="pa-2" fluid>
-        <v-row v-for="(item, i) in items" :key="i">
+        <v-row v-for="(item, i) in itemsFiltered" :key="i">
           <v-col>
             <v-card dark flat hover v-bind:ripple="false" v-on:click="selectItem(item)">
               <v-list-item three-line style="padding-left: 0px">
@@ -98,10 +98,26 @@ const logger = require("loglevel");
 export default {
   data: () => ({
     smallPosterImgSrc: null,
-    items: []
+    items: [],
+    searchText: null
   }),
 
   props: ["mediatype"],
+
+  computed: {
+    itemsFiltered() {
+      return this.items.filter(item => {
+        let isGood = true;
+
+        if (this.searchText) {
+          const searchTextLower = this.searchText.toLowerCase();
+          isGood = item.SearchSpace.includes(searchTextLower);
+        }
+
+        return isGood;
+      });
+    }
+  },
 
   methods: {
     changeRating(movie, i) {
@@ -145,6 +161,10 @@ export default {
       this.items = await store.fetchMedia(this.mediatype);
       logger.log("items:", this.items);
     })();
+
+    eventBus.$on("searchTextChanged", ({ searchText }) => {
+      this.searchText = searchText;
+    });
   }
 };
 </script>

@@ -929,6 +929,8 @@ async function fetchMedia($MediaType) {
 					item.AgeRating = `${item.IMDB_MinAge}${((item.IMDB_MaxAge && item.IMDB_MaxAge > item.IMDB_MinAge) ? '-' + item.IMDB_MaxAge : '')}+`;
 				}
 			}
+
+			item.SearchSpace = (item.Name || '').toLowerCase() + ' ' + (item.Name2 || '').toLowerCase() + ' ' + (item.IMDB_plotSummary || '').toLowerCase() + ' ' + (item.Genres.toLowerCase());
 		})
 
 		return result;

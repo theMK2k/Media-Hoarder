@@ -34,6 +34,10 @@ export const eventBus = new Vue({
 		
 		rescanStopped() {
 			this.$emit('rescanStopped');
+		},
+
+		searchTextChanged(searchText) {
+			this.$emit('searchTextChanged', { searchText });
 		}
 	}
 });

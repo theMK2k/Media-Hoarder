@@ -14,7 +14,6 @@
           </v-list-item-content>
         </v-list-item>
 
-
         <v-list-item v-for="item in items" :key="item.text" @click="goto(item.id)">
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
@@ -64,6 +63,7 @@
           append-icon="mdi-magnify"
           color="white"
           hide-details
+          v-model="searchText"
         ></v-text-field>
       </v-row>
     </v-app-bar>
@@ -89,7 +89,12 @@
     </v-snackbar>
 
     <!-- BOTTOM BAR -->
-    <v-bottom-navigation fixed dark v-bind:input-value="scanInfo.show" style="height: auto; padding: 4px 8px 4px 20px ">
+    <v-bottom-navigation
+      fixed
+      dark
+      v-bind:input-value="scanInfo.show"
+      style="height: auto; padding: 4px 8px 4px 20px "
+    >
       <!-- v-model="bottomNav" -->
       <v-row align-content="start" justify="start">
         <!--  style="text-align: right!important" -->
@@ -109,6 +114,7 @@
 </template>
 
 <script>
+import * as _ from "lodash";
 // eslint-disable-next-line no-unused-var
 import * as store from "@/store";
 import { eventBus } from "@/main";
@@ -124,6 +130,8 @@ export default {
       { icon: "mdi-movie", text: "Movies", id: "movies" },
       { icon: "mdi-television", text: "TV", id: "tv" }
     ],
+
+    searchText: null,
 
     isScanning: false,
 
@@ -141,6 +149,18 @@ export default {
       details: []
     }
   }),
+
+  watch: {
+    // LEARNING: there is a difference with "this" in name: function(){} and name: () => {}
+    searchText: function(newValue, oldValue) {
+      logger.log("searchText old:", oldValue, "new:", newValue);
+      // TODO: debounce the function call below!
+      // _.debounce(() => {
+      //   eventBus.searchTextChanged(newValue);
+      // }, 250)();
+      this.debouncedEventBusSearchTextChanged(newValue);
+    }
+  },
 
   computed: {
     filterSourcePaths() {
@@ -181,7 +201,11 @@ export default {
     },
     cancelRescan() {
       store.abortRescan();
-    }
+    },
+
+    eventBusSearchTextChanged: function(searchText) {
+      eventBus.searchTextChanged(searchText);
+    },
   },
 
   // ### LifeCycleHooks ###
@@ -237,7 +261,7 @@ export default {
     eventBus.$on("rescanStarted", () => {
       this.isScanning = true;
     });
-    
+
     eventBus.$on("rescanStopped", () => {
       this.isScanning = false;
     });
@@ -247,6 +271,9 @@ export default {
     });
 
     // eventBus.scanInfoShow('KILLME', 'Asterix und das Geheimnis des Zaubertranks ~ Astérix - Le secret de la potion magique (De)(BD)[2018][Adventure, Animation, Comedy][6.9 @ 3074][tt8001346].mkv');
+
+    // lodash debounced functions
+    this.debouncedEventBusSearchTextChanged = _.debounce(this.eventBusSearchTextChanged, 250);
   }
 };
 </script>
