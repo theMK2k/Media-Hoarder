@@ -1,7 +1,20 @@
 <template>
   <v-app id="inspire">
+    <!-- SIDEBAR -->
     <v-navigation-drawer v-model="drawer" app clipped>
       <v-list dense>
+        <v-list-item v-on:click="toggleRescan">
+          <v-list-item-action>
+            <v-icon v-show="!isScanning">mdi-reload</v-icon>
+            <v-icon v-show="isScanning">mdi-cancel</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title v-show="!isScanning">Rescan all media</v-list-item-title>
+            <v-list-item-title v-show="isScanning">Cancel Rescan</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+
         <v-list-item v-for="item in items" :key="item.text" @click="goto(item.id)">
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
@@ -27,35 +40,6 @@
           </v-expansion-panel>
         </v-expansion-panels>
 
-        <!--
-        <v-subheader class="mt-4 grey--text text--darken-1">SUBSCRIPTIONS</v-subheader>
-        <v-list>
-          <v-list-item
-            v-for="item in items2"
-            :key="item.text"
-            @click=""
-          >
-            <v-list-item-avatar>
-              <img
-                :src="`https://randomuser.me/api/portraits/men/${item.picture}.jpg`"
-                alt=""
-              >
-            </v-list-item-avatar>
-            <v-list-item-title v-text="item.text"></v-list-item-title>
-          </v-list-item>
-        </v-list>
-        -->
-        <!--
-				<v-list-item
-          class="mt-4"
-          @click=""
-        >
-          <v-list-item-action>
-            <v-icon color="grey darken-1">mdi-plus-circle-outline</v-icon>
-          </v-list-item-action>
-          <v-list-item-title class="grey--text text--darken-1">Browse Channels</v-list-item-title>
-        </v-list-item>
-        -->
         <v-list-item @click="openSettings">
           <v-list-item-action>
             <v-icon style="color: lightgrey">mdi-settings</v-icon>
@@ -65,6 +49,7 @@
       </v-list>
     </v-navigation-drawer>
 
+    <!-- TOP BAR -->
     <v-app-bar app clipped-left color="red" dense>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title class="mr-12 align-center noshrink">
@@ -72,30 +57,14 @@
       </v-toolbar-title>
       <div class="flex-grow-1"></div>
       <v-row align-content="end" justify="end" style="text-align: right!important">
-        <div v-if="scanInfo.show">
-          <p style="margin: 0px!important">{{scanInfo.header}}</p>
-          <p
-            style="margin: 0px!important; font-size: 12px;text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"
-          >{{scanInfo.details}}</p>
-        </div>
-
-        <v-tooltip bottom v-if="!scanInfo.show">
-          <template v-slot:activator="{ on }">
-            <v-btn text v-on:click="rescan">
-              <v-icon>mdi-reload</v-icon>
-            </v-btn>
-          </template>
-          <span>Tooltip</span>
-        </v-tooltip>
-
-        <!-- <v-text-field
+        <v-text-field
           :append-icon-cb="() => {}"
           placeholder="Search..."
           single-line
           append-icon="mdi-magnify"
           color="white"
           hide-details
-        ></v-text-field>-->
+        ></v-text-field>
       </v-row>
     </v-app-bar>
 
@@ -118,6 +87,24 @@
       <v-spacer />
       <v-btn dark text @click="snackbar.show = false">Close</v-btn>
     </v-snackbar>
+
+    <!-- BOTTOM BAR -->
+    <v-bottom-navigation fixed dark v-bind:input-value="scanInfo.show" style="height: auto; padding: 4px 8px 4px 20px ">
+      <!-- v-model="bottomNav" -->
+      <v-row align-content="start" justify="start">
+        <!--  style="text-align: right!important" -->
+        <div v-if="scanInfo.show">
+          <p style="margin: 0px!important">{{scanInfo.header}}</p>
+          <p
+            style="margin: 0px!important; font-size: 12px;text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"
+          >{{scanInfo.details}}</p>
+        </div>
+        <div class="flex-grow-1"></div>
+        <v-btn text v-on:click="cancelRescan">
+          <v-icon>mdi-cancel</v-icon>
+        </v-btn>
+      </v-row>
+    </v-bottom-navigation>
   </v-app>
 </template>
 
@@ -137,6 +124,8 @@ export default {
       { icon: "mdi-movie", text: "Movies", id: "movies" },
       { icon: "mdi-television", text: "TV", id: "tv" }
     ],
+
+    isScanning: false,
 
     scanInfo: {
       show: false,
@@ -183,9 +172,15 @@ export default {
     openSettings() {
       return this.$router.push("/settings");
     },
-
-    rescan() {
-      store.rescan(true);
+    toggleRescan() {
+      if (!store.isScanning) {
+        store.rescan(true);
+      } else {
+        store.abortRescan();
+      }
+    },
+    cancelRescan() {
+      store.abortRescan();
     }
   },
 
@@ -237,10 +232,14 @@ export default {
         details,
         show: true
       };
+    });
 
-      // this.scanInfo.header = header;
-      // this.scanInfo.details = details;
-      // this.scanInfo.show = true;
+    eventBus.$on("rescanStarted", () => {
+      this.isScanning = true;
+    });
+    
+    eventBus.$on("rescanStopped", () => {
+      this.isScanning = false;
     });
 
     eventBus.$on("scanInfoOff", () => {

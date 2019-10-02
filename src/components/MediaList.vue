@@ -90,7 +90,7 @@
 
 <script>
 import * as store from "@/store";
-// import { eventBus } from "@/main";
+import { eventBus } from "@/main";
 // import * as helpers from "@/helpers/helpers";
 
 const logger = require("loglevel");
@@ -117,6 +117,8 @@ export default {
     },
 
     selectItem(movie) {
+      // eventBus.showSnackbar('error', 6000, 'KILLME');
+      
       if (movie.selected) {
         movie.selected = false;
       } else {

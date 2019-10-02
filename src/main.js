@@ -26,6 +26,14 @@ export const eventBus = new Vue({
 
 		showSnackbar(color, timeout, textOrErrorObject) {
 			this.$emit('showSnackbar', { color, timeout, textOrErrorObject });
+		},
+
+		rescanStarted() {
+			this.$emit('rescanStarted');
+		},
+		
+		rescanStopped() {
+			this.$emit('rescanStopped');
 		}
 	}
 });

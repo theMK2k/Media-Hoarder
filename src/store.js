@@ -5,7 +5,8 @@ const logger = require('loglevel');
 const child_process = require('child_process');
 const xml2js = require('xml2js');
 const request = require('request');
-const textVersion = require("textversionjs");
+// const textVersion = require("textversionjs");
+const htmlToText = require('html-to-text');
 
 const readdirAsync = util.promisify(fs.readdir);
 const writeFileAsync = util.promisify(fs.writeFile);
@@ -31,6 +32,9 @@ if (!isBuild) {
 
 // eslint-disable-next-line no-console
 console.log('logLevel:', logger.getLevel());
+
+let isScanning = false;
+let doAbortRescan = false;
 
 let currentScanInfoHeader = '';
 
@@ -110,10 +114,17 @@ async function fetchSourcePaths() {
 }
 
 async function rescan(onlyNew) {
-	await filescanMovies(onlyNew);
-	await rescanMoviesMetaData(true);
-	await applyIMDBMetaData();	// TODO: add functionality to fetchIMDBData
+	isScanning = true;
+	eventBus.rescanStarted();
+	
+	// await filescanMovies(onlyNew);	// KILLME
+	await rescanMoviesMetaData(true);	// KILLME -> onlyNew
+	await applyIMDBMetaData();
 	// await rescanTV();
+
+	isScanning = false;
+	doAbortRescan = false;
+	eventBus.rescanStopped();
 }
 
 async function filescanMovies(onlyNew) {
@@ -258,6 +269,10 @@ async function applyIMDBMetaData() {
 		[]);
 
 	for (let i = 0; i < movies.length; i++) {
+		if (doAbortRescan) {
+			break;
+		}
+		
 		const movie = movies[i];
 
 		let Name = movie.IMDB_localTitle;
@@ -308,10 +323,14 @@ async function rescanMoviesMetaData(onlyNew) {
 		[]);
 
 	for (let i = 0; i < movies.length; i++) {
+		if (doAbortRescan) {
+			break;
+		}
+		
 		const movie = movies[i];
 
 		// KILLME
-		if (i > 1) break;
+		if (i > 5) break;
 
 		// eventBus.scanInfoOff();
 		eventBus.scanInfoShow('Rescanning Movies', `${movie.Name || movie.Filename}`);
@@ -496,6 +515,9 @@ async function fetchIMDBMetaData(movie, onlyNew) {
 		const technicalData = await getIMDBtechnicalData(movie);
 		IMDBdata = Object.assign(IMDBdata, technicalData);
 
+		const parentalguideData = await getIMDBParentalGuideData(movie);
+		IMDBdata = Object.assign(IMDBdata, parentalguideData);
+
 		logger.log('IMDBdata:', IMDBdata);
 
 		const genres = await db.fireProcedureReturnAll('SELECT id_Genres, GenreID, Name FROM tbl_Genres', []);
@@ -591,7 +613,7 @@ async function getIMDBmainPageData(movie) {
 	let $IMDB_plotSummary = null;
 	const rxPlotSummary = /<div class="summary_text">([\s\S]*?)<\/div>/;
 	if (rxPlotSummary.test(html)) {
-		$IMDB_plotSummary = textVersion(html.match(rxPlotSummary)[1]).trim().replace(/(?:\r\n|\r|\n)/g, '');
+		$IMDB_plotSummary = unescape(htmlToText.fromString(html.match(rxPlotSummary)[1], { wordwrap: null, ignoreImage: true, ignoreHref: true }).trim());
 	}
 
 	return {
@@ -695,6 +717,106 @@ async function getIMDBtechnicalData(movie) {
 	}
 }
 
+let cacheAgeRatings = null;
+let ageRatingChosenCountry = 'none';
+
+async function getIMDBParentalGuideData(movie) {
+	if (!cacheAgeRatings) {
+		cacheAgeRatings = await db.fireProcedureReturnAll(`SELECT id_AgeRating, Country, Code, Age FROM tbl_AgeRating`);
+		logger.log('cacheAgeRatings:', cacheAgeRatings);
+	}
+
+	if (ageRatingChosenCountry === 'none') {
+		ageRatingChosenCountry = await getSetting('AgeRatingChosenCountry');
+		logger.log('AgeRating chosen country:', ageRatingChosenCountry);
+	}
+
+	const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/parentalguide`;
+	logger.log('getIMDBParentalGuideData url:', url);
+	const response = await requestGetAsync(url);
+	const html = response.body;
+
+	logger.log('parentalguide html:', { html });
+
+	const rxAgeRating = /a href="\/search\/title\?certificates=(.*?):(.*?)"/g;
+
+	let matchAgeRating = null;
+
+	const ageRatings = [];
+
+	// eslint-disable-next-line no-cond-assign
+	while (matchAgeRating = rxAgeRating.exec(html)) {
+		const Country = matchAgeRating[1];
+		const Code = unescape(matchAgeRating[2]);
+
+		logger.log('rating found:', Country, Code);
+
+		const cachedRating = cacheAgeRatings.find(cache => (cache.Country === Country && cache.Code === Code));
+
+		let Age = null;
+		if (cachedRating) {
+			Age = cachedRating.Age;
+			logger.log('Age (cached):', Age);
+		} else {
+			if (/\d+/.test(Code)) {
+				Age = parseInt(Code.match(/\d+/)[0]);
+				logger.log('Age (parsed):', Age);
+			}
+		}
+
+		ageRatings.push({ Country, Code, Age });
+		logger.log('ageRatings:', ageRatings);
+	}
+
+	let $IMDB_MinAge = null;
+	let $IMDB_MaxAge = null;
+	let $IMDB_id_AgeRating_Chosen_Country = null;
+
+	for (let i = 0; i < ageRatings.length; i++) {
+		const rating = ageRatings[i];
+		const cachedRating = cacheAgeRatings.find(cache => (cache.Country === rating.Country && cache.Code === rating.Code));
+
+		if (!cachedRating) {
+			await db.fireProcedure(`INSERT INTO tbl_AgeRating (Country, Code, Age) VALUES ($Country, $Code, $Age)`, { $Country: rating.Country, $Code: rating.Code, $Age: rating.Age });
+			rating.id_AgeRating = await db.fireProcedureReturnScalar(`SELECT id_AgeRating FROM tbl_AgeRating WHERE Country = $Country AND Code = $Code`, { $Country: rating.Country, $Code: rating.Code });
+
+			cacheAgeRatings.push({ id_AgeRating: rating.id_AgeRating, Country: rating.Country, Code: rating.Code, Age: rating.Age });
+		} else {
+			rating.id_AgeRating = cachedRating.id_AgeRating;
+		}
+
+		if (rating.id_AgeRating && rating.Country === ageRatingChosenCountry) {
+			// logger.log('rating for chosen country found:', rating);
+			$IMDB_id_AgeRating_Chosen_Country = rating.id_AgeRating;
+		}
+
+		if (rating.Age || rating.Age === 0) {
+			if (!$IMDB_MinAge) {
+				$IMDB_MinAge = rating.Age;
+			}
+
+			if (!$IMDB_MaxAge) {
+				$IMDB_MaxAge = rating.Age;
+			}
+
+			if ($IMDB_MinAge > rating.Age) {
+				$IMDB_MinAge = rating.Age;
+			}
+			if ($IMDB_MaxAge < rating.Age) {
+				$IMDB_MaxAge = rating.Age;
+			}
+		}
+	}
+
+	logger.log('found age ratings:', ageRatings);
+
+	return {
+		$IMDB_MinAge,
+		$IMDB_MaxAge,
+		$IMDB_id_AgeRating_Chosen_Country
+	}
+}
+
 async function saveIMDBData(movie, IMDBdata, genres) {
 	const IMDB_genres = IMDBdata.$IMDB_genres;
 	delete IMDBdata.$IMDB_genres;
@@ -769,7 +891,6 @@ async function fetchMedia($MediaType) {
 				, MOV.Name2
 				, MOV.startYear
 				, MOV.endYear
-				, MOV.AgeRating
 				, MOV.MI_Duration
 				, MOV.MI_Quality
 				, MOV.MI_Audio_Languages
@@ -782,7 +903,11 @@ async function fetchMedia($MediaType) {
 				, MOV.IMDB_metacriticScore
 				, MOV.IMDB_plotSummary
 				, (SELECT GROUP_CONCAT(G.Name, ', ') FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres AND MG.id_Movies = MOV.id_Movies) AS Genres
+				, MOV.IMDB_MinAge
+				, MOV.IMDB_MaxAge
+				, AR.Age
 			FROM tbl_Movies MOV
+			LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 			WHERE id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths WHERE MediaType = $MediaType)
 			-- AND MOV.IMDB_posterSmall_URL IS NOT NULL	-- KILLME
 			AND MOV.id_SourcePaths = 5								-- KILLME
@@ -794,8 +919,16 @@ async function fetchMedia($MediaType) {
 			item.IMDB_posterLarge_URL = item.IMDB_posterLarge_URL ? helpers.getPath(item.IMDB_posterLarge_URL) : item.IMDB_posterLarge_URL;
 			item.yearDisplay = (item.startYear ? '(' + item.startYear + (item.endYear ? `-${item.endYear}` : '') + ')' : '');
 			item.IMDB_ratingDisplay = (item.IMDB_rating ? `${item.IMDB_rating.toLocaleString()} (${item.IMDB_numVotes.toLocaleString()})` : '');
-			item.AudioLanguages = generateLanguageString(item.MI_Audio_Languages, ['De', 'En']); // TODO: transform with "preferred languages"
-			item.SubtitleLanguages = generateLanguageString(item.MI_Subtitle_Languages, ['De', 'En']); // TODO: transform with "preferred languages"
+			item.AudioLanguages = generateLanguageString(item.MI_Audio_Languages, ['De', 'En']);
+			item.SubtitleLanguages = generateLanguageString(item.MI_Subtitle_Languages, ['De', 'En']);
+
+			if (item.Age) {
+				item.AgeRating = item.Age + '+';
+			} else {
+				if (item.IMDB_MinAge || item.IMDB_MinAge === 0) {
+					item.AgeRating = `${item.IMDB_MinAge}${((item.IMDB_MaxAge && item.IMDB_MaxAge > item.IMDB_MinAge) ? '-' + item.IMDB_MaxAge : '')}+`;
+				}
+			}
 		})
 
 		return result;
@@ -909,7 +1042,7 @@ async function launchMovie(movie) {
 	// - add measured time to (TODO) watchedSeconds
 	// - watchedSeconds to runtime
 	// - if watchedSeconds > runtime set (TODO) watched to true and show snack bar
-	
+
 	const VLCPath = await getSetting('VLCPath');
 
 	if (!VLCPath) {
@@ -940,6 +1073,10 @@ async function fetchSourcePathFilter($MediaType) {
 	filters.sourcePaths = result;
 }
 
+function abortRescan() {
+	doAbortRescan = true;
+}
+
 export {
 	db,
 	fetchSourcePaths,
@@ -950,7 +1087,9 @@ export {
 	getSetting,
 	setSetting,
 	launchMovie,
-	
+
 	filters,
-	fetchSourcePathFilter
+	fetchSourcePathFilter,
+	isScanning,
+	abortRescan
 }
