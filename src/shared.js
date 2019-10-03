@@ -3,7 +3,8 @@ import Vue from 'vue'
 const shared = new Vue({
 	data: {
 		message: 'my global message',
-		filterSourcePaths: []
+		filterSourcePaths: [],
+		filterGenres: [],
 	}
 });
 

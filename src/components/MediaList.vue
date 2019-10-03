@@ -157,7 +157,9 @@ export default {
 
   created() {
     (async () => {
-      await store.fetchSourcePathFilter(this.mediatype);
+			await store.fetchSourcePathFilter(this.mediatype);
+			await store.fetchGenresFilter();
+
       this.items = await store.fetchMedia(this.mediatype);
       logger.log("items:", this.items);
     })();

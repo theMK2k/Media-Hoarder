@@ -41,6 +41,27 @@
               ></v-checkbox>
             </v-expansion-panel-content>
           </v-expansion-panel>
+
+          <v-expansion-panel
+            v-show="$shared.filterGenres && $shared.filterGenres.length > 0"
+            style="padding: 0px!important"
+          >
+            <v-expansion-panel-header style="color: lightgrey; padding: 8px!important">Genres</v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-row>
+								<v-btn text v-on:click="setAllGenres(false)">NONE</v-btn>
+								<v-btn text v-on:click="setAllGenres(true)">ALL</v-btn>
+              </v-row>
+							<v-checkbox
+                v-for="genre in $shared.filterGenres"
+                v-bind:key="genre.id_Genres"
+                v-bind:label="genre.Name"
+                v-model="genre.Selected"
+								v-on:click.native="filtersChanged"
+                style="margin: 0px"
+              ></v-checkbox>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
         </v-expansion-panels>
 
         <v-list-item @click="openSettings">
@@ -163,7 +184,7 @@ export default {
     searchText: function(newValue, oldValue) {
       logger.log("searchText old:", oldValue, "new:", newValue);
       this.debouncedEventBusSearchTextChanged(newValue);
-    }
+		},
   },
 
   computed: {
@@ -211,6 +232,16 @@ export default {
 		filtersChanged: function() {
 			logger.log('filters changed this.$shared:', this.$shared);
 			this.debouncedEventBusRefetchMedia();
+		},
+
+		setAllGenres: function(value) {
+			this.$shared.filterGenres.forEach(genre => {
+				genre.Selected = value
+			});
+
+			logger.log('setAllGenres this.$shared.filterGenres:', this.$shared.filterGenres);
+
+			this.filtersChanged();
 		}
   },
 
