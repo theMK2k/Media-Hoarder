@@ -25,14 +25,18 @@
 
         <v-subheader class="mt-4 lightgrey--text">FILTERS</v-subheader>
         <v-expansion-panels accordion multiple>
-          <v-expansion-panel style="padding: 0px!important">
+          <v-expansion-panel
+            v-show="$shared.filterSourcePaths && $shared.filterSourcePaths.length > 0"
+            style="padding: 0px!important"
+          >
             <v-expansion-panel-header style="color: lightgrey; padding: 8px!important">Source Paths</v-expansion-panel-header>
             <v-expansion-panel-content>
               <v-checkbox
-                v-for="sourcePath in filterSourcePaths"
+                v-for="sourcePath in $shared.filterSourcePaths"
                 v-bind:key="sourcePath.Description"
                 v-bind:label="sourcePath.Description"
                 v-model="sourcePath.Selected"
+								v-on:click.native="filtersChanged"
                 style="margin: 0px"
               ></v-checkbox>
             </v-expansion-panel-content>
@@ -68,12 +72,14 @@
       </v-row>
     </v-app-bar>
 
+    <!-- CONTENT -->
     <v-content>
       <v-container style="max-width: 100%!important">
         <router-view></router-view>
       </v-container>
     </v-content>
 
+    <!-- SMACK BAR -->
     <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
       <div>
         <strong v-if="snackbar.details && snackbar.details.length > 0">{{ snackbar.text }}</strong>
@@ -92,7 +98,7 @@
     <v-bottom-navigation
       fixed
       dark
-      v-bind:input-value="scanInfo.show"
+      v-show="scanInfo.show"
       style="height: auto; padding: 4px 8px 4px 20px "
     >
       <!-- v-model="bottomNav" -->
@@ -117,6 +123,7 @@
 import * as _ from "lodash";
 // eslint-disable-next-line no-unused-var
 import * as store from "@/store";
+import { shared } from "@/shared";
 import { eventBus } from "@/main";
 const logger = require("loglevel");
 
@@ -125,6 +132,7 @@ export default {
     source: String
   },
   data: () => ({
+    shared,
     drawer: null,
     items: [
       { icon: "mdi-movie", text: "Movies", id: "movies" },
@@ -154,24 +162,13 @@ export default {
     // LEARNING: there is a difference with "this" in name: function(){} and name: () => {}
     searchText: function(newValue, oldValue) {
       logger.log("searchText old:", oldValue, "new:", newValue);
-      // TODO: debounce the function call below!
-      // _.debounce(() => {
-      //   eventBus.searchTextChanged(newValue);
-      // }, 250)();
       this.debouncedEventBusSearchTextChanged(newValue);
     }
   },
 
   computed: {
     filterSourcePaths() {
-      return store.filters.sourcePaths;
-      // return [{
-      // 	Description: 'Local',
-      // 	Selected: 1
-      // }, {
-      // 	Description: 'Server',
-      // 	Selected: 1
-      // }]
+      return this.$shared.filterSourcePaths;
     }
   },
 
@@ -205,11 +202,22 @@ export default {
 
     eventBusSearchTextChanged: function(searchText) {
       eventBus.searchTextChanged(searchText);
-    },
+		},
+		
+    eventBusRefetchMedia: function() {
+			eventBus.refetchMedia();
+		},
+		
+		filtersChanged: function() {
+			logger.log('filters changed this.$shared:', this.$shared);
+			this.debouncedEventBusRefetchMedia();
+		}
   },
 
   // ### LifeCycleHooks ###
   created() {
+    logger.log("shared:", this.shared);
+
     this.$vuetify.theme.dark = true;
 
     eventBus.$on("showSnackbar", ({ color, timeout, textOrErrorObject }) => {
@@ -273,7 +281,15 @@ export default {
     // eventBus.scanInfoShow('KILLME', 'Asterix und das Geheimnis des Zaubertranks ~ Astérix - Le secret de la potion magique (De)(BD)[2018][Adventure, Animation, Comedy][6.9 @ 3074][tt8001346].mkv');
 
     // lodash debounced functions
-    this.debouncedEventBusSearchTextChanged = _.debounce(this.eventBusSearchTextChanged, 250);
+    this.debouncedEventBusSearchTextChanged = _.debounce(
+      this.eventBusSearchTextChanged,
+      250
+		);
+		
+    this.debouncedEventBusRefetchMedia = _.debounce(
+      this.eventBusRefetchMedia,
+      1000
+    );
   }
 };
 </script>

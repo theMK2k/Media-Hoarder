@@ -23,6 +23,7 @@ import * as db from '@/helpers/db';
 import * as dbsyncSQLite from '@/helpers/dbsync-sqlite';
 import * as helpers from '@/helpers/helpers';
 import { languages } from '@/languages';
+import { shared } from '@/shared';
 
 const isBuild = process.env.NODE_ENV === 'production';
 
@@ -116,9 +117,9 @@ async function fetchSourcePaths() {
 async function rescan(onlyNew) {
 	isScanning = true;
 	eventBus.rescanStarted();
-	
-	await filescanMovies(onlyNew);	// KILLME
-	await rescanMoviesMetaData(onlyNew);	// KILLME -> onlyNew
+
+	await filescanMovies(onlyNew);
+	await rescanMoviesMetaData(onlyNew);
 	await applyIMDBMetaData();
 	// await rescanTV();
 
@@ -272,7 +273,7 @@ async function applyIMDBMetaData() {
 		if (doAbortRescan) {
 			break;
 		}
-		
+
 		const movie = movies[i];
 
 		let Name = movie.IMDB_localTitle;
@@ -319,14 +320,14 @@ async function rescanMoviesMetaData(onlyNew) {
 				, IMDB_Done
 				, IMDB_tconst
 			FROM tbl_Movies
-			WHERE id_SourcePaths IN (5, 10) -- KILLME`,
+			-- WHERE id_SourcePaths IN (5, 10) -- KILLME`,
 		[]);
 
 	for (let i = 0; i < movies.length; i++) {
 		if (doAbortRescan) {
 			break;
 		}
-		
+
 		const movie = movies[i];
 
 		// KILLME
@@ -337,7 +338,7 @@ async function rescanMoviesMetaData(onlyNew) {
 
 		await applyMediaInfo(movie, onlyNew);
 		await findIMDBtconst(movie, onlyNew);
-		await fetchIMDBMetaData(movie, onlyNew);	// KILLME: onlyNew
+		await fetchIMDBMetaData(movie, onlyNew);
 	}
 
 	eventBus.scanInfoOff();
@@ -882,43 +883,83 @@ async function downloadFile(url, targetPath, redownload) {
 
 async function fetchMedia($MediaType) {
 	try {
-		const result = await db.fireProcedureReturnAll(`
-			SELECT
-				MOV.id_Movies
-				, MOV.Path
-				, MOV.FileName
-				, MOV.Name
-				, MOV.Name2
-				, MOV.startYear
-				, MOV.endYear
-				, MOV.MI_Duration
-				, MOV.MI_Quality
-				, MOV.MI_Audio_Languages
-				, MOV.MI_Subtitle_Languages
-				, IFNULL(MOV.Rating, 0) AS Rating
-				, MOV.IMDB_posterSmall_URL
-				, MOV.IMDB_posterLarge_URL
-				, MOV.IMDB_rating
-				, MOV.IMDB_numVotes
-				, MOV.IMDB_metacriticScore
-				, MOV.IMDB_plotSummary
-				, (SELECT GROUP_CONCAT(G.Name, ', ') FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres AND MG.id_Movies = MOV.id_Movies) AS Genres
-				, MOV.IMDB_MinAge
-				, MOV.IMDB_MaxAge
-				, AR.Age
-			FROM tbl_Movies MOV
-			LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
-			WHERE id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths WHERE MediaType = $MediaType)
-			-- AND MOV.IMDB_posterSmall_URL IS NOT NULL	-- KILLME
-			AND MOV.id_SourcePaths IN (5, 10)								-- KILLME
-		`, { $MediaType });
+
+		let filterSourcePaths = '';
+		logger.log('shared.filterSourcePaths:', shared.filterSourcePaths);
+		if (shared.filterSourcePaths && shared.filterSourcePaths.find(filter => !filter.Selected)) {
+			filterSourcePaths = `
+			AND MOV.id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths WHERE Description IN (`;
+			
+			const filtered = shared.filterSourcePaths.filter(filter => filter.Selected);
+			logger.log('filtered:', filtered);
+
+			const mapped = filtered.map(filter => filter.Description);
+			logger.log('mapped:', mapped);
+
+			// mapped.forEach(value => {
+			// 	filterSourcePaths += value;
+			// });
+			
+			const reduced = filtered.reduce((prev, current) => {
+				return prev + (prev ? ', ' : '') + "'" + current + "'";
+			}, '');
+			logger.log('reduced:', reduced);
+
+			filterSourcePaths += shared.filterSourcePaths.filter(filter => filter.Selected).map(filter => filter.Description).reduce((prev, current) => {
+				return prev + (prev ? ', ' : '') + `'${current}'`;
+			}, '');
+
+			filterSourcePaths += '))'
+		}
+
+		logger.log('fetchMedia filterSourcePaths:', filterSourcePaths);
+
+		const query = `
+		SELECT
+			MOV.id_Movies
+			, MOV.Path
+			, MOV.FileName
+			, MOV.Name
+			, MOV.Name2
+			, MOV.startYear
+			, MOV.endYear
+			, MOV.MI_Duration
+			, MOV.MI_Quality
+			, MOV.MI_Audio_Languages
+			, MOV.MI_Subtitle_Languages
+			, IFNULL(MOV.Rating, 0) AS Rating
+			, MOV.IMDB_posterSmall_URL
+			, MOV.IMDB_posterLarge_URL
+			, MOV.IMDB_rating
+			, MOV.IMDB_numVotes
+			, MOV.IMDB_metacriticScore
+			, MOV.IMDB_plotSummary
+			, (SELECT GROUP_CONCAT(G.Name, ', ') FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres AND MG.id_Movies = MOV.id_Movies) AS Genres
+			, MOV.IMDB_MinAge
+			, MOV.IMDB_MaxAge
+			, AR.Age
+		FROM tbl_Movies MOV
+		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
+		WHERE id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths WHERE MediaType = $MediaType)
+		-- AND MOV.IMDB_posterSmall_URL IS NOT NULL	-- KILLME
+		AND MOV.id_SourcePaths IN (5, 10)								-- KILLME
+		${filterSourcePaths}
+	`;
+
+		const result = await db.fireProcedureReturnAll(query, { $MediaType });
+
+		logger.log('fetchMedia query:', query);
+
+		if (result && result.length > 0) {
+			saveFilterValues($MediaType);
+		}
 
 		result.forEach(item => {
 			logger.log(item.Name);
 			item.IMDB_posterSmall_URL = item.IMDB_posterSmall_URL ? helpers.getPath(item.IMDB_posterSmall_URL) : item.IMDB_posterSmall_URL;
 			item.IMDB_posterLarge_URL = item.IMDB_posterLarge_URL ? helpers.getPath(item.IMDB_posterLarge_URL) : item.IMDB_posterLarge_URL;
 			item.yearDisplay = (item.startYear ? '(' + item.startYear + (item.endYear ? `-${item.endYear}` : '') + ')' : '');
-			item.IMDB_ratingDisplay = (item.IMDB_rating ? `${item.IMDB_rating.toLocaleString()} (${item.IMDB_numVotes.toLocaleString()})` : '');
+			item.IMDB_ratingDisplay = (item.IMDB_rating ? `${item.IMDB_rating.toLocaleString(undefined, { minimumFractionDigits: 1 })} (${item.IMDB_numVotes.toLocaleString()})` : '');
 			item.AudioLanguages = generateLanguageString(item.MI_Audio_Languages, ['De', 'En']);
 			item.SubtitleLanguages = generateLanguageString(item.MI_Subtitle_Languages, ['De', 'En']);
 
@@ -930,7 +971,7 @@ async function fetchMedia($MediaType) {
 				}
 			}
 
-			item.SearchSpace = (item.Name || '').toLowerCase() + ' ' + (item.Name2 || '').toLowerCase() + ' ' + (item.IMDB_plotSummary || '').toLowerCase() + ' ' + (item.Genres.toLowerCase());
+			item.SearchSpace = (item.Name || '').toLowerCase() + ' ' + (item.Name2 || '').toLowerCase() + ' ' + (item.IMDB_plotSummary || '').toLowerCase() + ' ' + (item.Genres || '').toLowerCase();
 		})
 
 		return result;
@@ -941,6 +982,10 @@ async function fetchMedia($MediaType) {
 }
 
 function generateLanguageString(languages, preferredLanguages) {
+	if (!languages) {
+		return null;
+	}
+
 	const maxLangDisplay = 2;
 	const languagesSplit = languages.split(',');
 	const preferredLanguagesJoinLower = preferredLanguages.join(', ').toLowerCase();
@@ -1057,26 +1102,58 @@ async function launchMovie(movie) {
 	logger.log('end launching:', task);
 }
 
-const filters = {
-	sourcePaths: []
+async function fetchFilterValues($MediaType) {
+	const result = await getSetting(`filtersMediaType${$MediaType}`);
+	if (!result) {
+		return null;
+	}
+
+	return JSON.parse(result);
 }
 
 async function fetchSourcePathFilter($MediaType) {
 	logger.log('fetchSourcePathFilter MediaType:', $MediaType);
-	const result = await db.fireProcedureReturnAll(`
+
+	const filterValues = await fetchFilterValues($MediaType);
+
+	logger.log('fetchSourcePathFilter filterValues:', filterValues);
+
+	const results = await db.fireProcedureReturnAll(`
 			SELECT DISTINCT
 			1 AS Selected
 			, Description
 		FROM tbl_SourcePaths WHERE MediaType = $MediaType`,
 		{ $MediaType });
 
-	logger.log('fetchSourcePathFilter result:', result);
+	if (filterValues && filterValues.filterSourcePaths) {
+		results.forEach(result => {
+			const filterValue = filterValues.filterSourcePaths.find(value => value.Description === result.Description);
+			
+			if (filterValue) {
+				result.Selected = filterValue.Selected;
+			}
+		})
+	}
 
-	filters.sourcePaths = result;
+	logger.log('fetchSourcePathFilter result:', results);
+
+	shared.filterSourcePaths = results;
 }
 
 function abortRescan() {
 	doAbortRescan = true;
+}
+
+function saveFilterValues($MediaType) {
+	const filterValues = {
+		filterSourcePaths: shared.filterSourcePaths	//.filter(filter => !filter.Selected).map(filter => filter.Description)
+	}
+
+	const filterValuesString = JSON.stringify(filterValues);
+
+	logger.log('saveFilterValues:', filterValuesString);
+
+	setSetting(`filtersMediaType${$MediaType}`, JSON.stringify(filterValues));
 }
 
 export {
@@ -1090,7 +1167,6 @@ export {
 	setSetting,
 	launchMovie,
 
-	filters,
 	fetchSourcePathFilter,
 	isScanning,
 	abortRescan

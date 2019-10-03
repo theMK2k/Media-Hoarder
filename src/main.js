@@ -7,9 +7,11 @@ import '@mdi/font/css/materialdesignicons.css'
 
 import 'vuetify/dist/vuetify.min.css'
 
-import router from './router'
+import router from '@/router'
+import { shared } from '@/shared'
 
 Vue.use(Vuetify)
+Vue.use(shared);
 
 Vue.config.productionTip = false
 
@@ -38,6 +40,10 @@ export const eventBus = new Vue({
 
 		searchTextChanged(searchText) {
 			this.$emit('searchTextChanged', { searchText });
+		},
+
+		refetchMedia() {
+			this.$emit('refetchMedia');
 		}
 	}
 });

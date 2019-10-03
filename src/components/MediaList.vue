@@ -4,7 +4,7 @@
       <v-btn text v-on:click="$router.go(-1)">
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
-      {{ mediatype.toUpperCase() }}
+      {{ mediatype.toUpperCase() }} ({{ itemsFiltered.length }})
       <v-container class="pa-2" fluid>
         <v-row v-for="(item, i) in itemsFiltered" :key="i">
           <v-col>
@@ -164,7 +164,14 @@ export default {
 
     eventBus.$on("searchTextChanged", ({ searchText }) => {
       this.searchText = searchText;
-    });
+		});
+		
+		eventBus.$on("refetchMedia", () => {
+			logger.log('refetching media');
+			(async () => {
+				this.items = await store.fetchMedia(this.mediatype);
+			})();
+		})
   }
 };
 </script>
