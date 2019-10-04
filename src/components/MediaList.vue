@@ -101,17 +101,15 @@
                     </div>
                   </v-row>
 
-                  <!-- <v-row style="margin-left: 4px; margin-right: 6px">
-                    <div style="font-size: .875rem; font-weight: normal"
-                    >{{ item.Genres }}</div>
-                  </v-row>-->
-
                   <v-row v-if="item.IMDB_plotSummary" style="margin-left: 4px; margin-right: 6px">
                     <div style="font-size: .875rem; font-weight: normal">{{ item.IMDB_plotSummary }}</div>
                   </v-row>
                 </v-col>
               </v-list-item-content>
             </v-list-item>
+            <v-col v-if="item.selected" style="min-width: 100%">
+              <v-btn text v-on:click.stop="copyInfo(item)">Copy Info</v-btn>
+            </v-col>
           </v-card>
         </v-col>
       </v-row>
@@ -195,7 +193,7 @@ export default {
             typeof a[this.sort] === "string" ||
             a[this.sort] instanceof String
           ) {
-            if (a[this.sort] > b[this.sort]) {
+            if (a[this.sort].toLowerCase() > b[this.sort].toLowerCase()) {
               return 1;
             }
 
@@ -204,10 +202,9 @@ export default {
             if (a[this.sort] > b[this.sort]) {
               return -1;
             }
-  
+
             return 0;
           }
-
         });
     }
   },
@@ -258,14 +255,60 @@ export default {
       }
 
       return cssClasses;
+    },
+
+    copyInfo(movie) {
+      const el = document.createElement("textarea");
+
+      let info = "";
+
+      if (movie.Rating) {
+        for (let i = 0; i < movie.Rating; i++) {
+          info += "★";
+        }
+
+        for (let i = 5; i > movie.Rating; i--) {
+          info += "☆";
+        }
+
+        info += " ";
+      }
+
+			info += movie.Name;
+			
+			if (movie.startYear) {
+				info += ` (${movie.startYear}`;
+
+				if (movie.endYear) {
+					info += `-${movie.endYear}`;
+				}
+
+				info += ')';
+			}
+
+			if (movie.IMDB_tconst) {
+				info += `\nhttps://www.imdb.com/title/${movie.IMDB_tconst}`;
+			}
+
+      el.value = info;
+      el.setAttribute("readonly", "");
+      el.style = { position: "absolute", left: "-9999px" };
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand("copy");
+      document.body.removeChild(el);
+
+      eventBus.showSnackbar("info", 6000, "Info copied to clipboard");
     }
   },
 
+  // ### LifeCycle Hooks ###
   created() {
     (async () => {
       await store.fetchFilterSourcePaths(this.mediatype);
       await store.fetchFilterGenres(this.mediatype);
-      await store.fetchFilterAgeRatings(this.mediatype);
+			await store.fetchFilterAgeRatings(this.mediatype);
+			await store.fetchFilterRatings(this.mediatype);
 
       this.items = await store.fetchMedia(this.mediatype);
       logger.log("items:", this.items);

@@ -57,6 +57,7 @@
                   v-model="sourcePath.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
+									color="dark-grey"
                 ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -81,6 +82,7 @@
                   v-model="genre.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
+									color="dark-grey"
                 ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -105,10 +107,42 @@
                   v-model="ageRating.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
+									color="dark-grey"
                 ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
 
+            <!-- FILTER (USER) RATINGS -->
+            <v-expansion-panel
+              v-show="$shared.filterRatings && $shared.filterRatings.length > 0"
+              style="padding: 0px!important"
+            >
+              <v-expansion-panel-header
+                style="padding: 8px!important"
+              >My Rating {{filterRatingsTitle}}</v-expansion-panel-header> <!--  {{ filterRatingsTitle }} -->
+              <v-expansion-panel-content>
+                <v-row>
+                  <v-btn text v-on:click="setAllRatings(false)">NONE</v-btn>
+                  <v-btn text v-on:click="setAllRatings(true)">ALL</v-btn>
+                </v-row>
+                <v-checkbox
+                  v-for="rating in $shared.filterRatings"
+                  v-bind:key="rating.Rating"
+                  v-bind:label="getFilterRatingLabel(rating.Rating, rating.NumMovies)"
+                  v-model="rating.Selected"
+                  v-on:click.native="filtersChanged"
+                  style="margin: 0px"
+									color="dark-grey"
+                >
+                  <v-icon
+                    small
+                    v-for="i in 5"
+                    v-bind:key="i"
+                    v-bind:color="(rating.Rating > (i - 1) ? 'amber' : (rating.Rating > 0 ? 'white' : 'grey'))"
+                  >mdi-star</v-icon>
+                </v-checkbox>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
           </v-expansion-panels>
         </div>
       </v-list>
@@ -282,8 +316,26 @@ export default {
         this.$shared.filterAgeRatings.length +
         ")"
       );
-    }
+		},
+		
+    filterRatingsTitle() {
+      if (!this.$shared.filterRatings.find(filter => !filter.Selected)) {
+        return "(ALL)";
+      }
 
+      if (!this.$shared.filterRatings.find(filter => filter.Selected)) {
+        return "(NONE)";
+      }
+
+      return (
+        "(" +
+        this.$shared.filterRatings.filter(filter => filter.Selected)
+          .length +
+        "/" +
+        this.$shared.filterRatings.length +
+        ")"
+      );
+    },
   },
 
   methods: {
@@ -341,7 +393,35 @@ export default {
       });
 
       this.filtersChanged();
-    }
+		},
+		
+    setAllRatings: function(value) {
+      this.$shared.filterRatings.forEach(rating => {
+        rating.Selected = value;
+      });
+
+      this.filtersChanged();
+		},
+
+		getFilterRatingLabel(rating, numMovies) {
+      let label = "";
+
+      if (rating) {
+        for (let i = 0; i < rating; i++) {
+          label += "★";
+        }
+
+        for (let i = 5; i > rating; i--) {
+          label += "☆";
+        }
+			} else {
+				label += "not yet rated"
+			}
+			
+			label += ' (' + numMovies + ')';
+
+			return label;
+		}
   },
 
   // ### LifeCycleHooks ###
@@ -432,27 +512,23 @@ h1 {
   flex-shrink: 0 !important;
 }
 
-.scrollcontainer
-{
-	overflow-y: auto;
+.scrollcontainer {
+  overflow-y: auto;
   overflow-x: hidden;
 }
 
-.scrollcontainer::-webkit-scrollbar-track
-{
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-	background-color: #F5F5F5;
+.scrollcontainer::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #f5f5f5;
 }
 
-.scrollcontainer::-webkit-scrollbar
-{
-	width: 5px;
-	background-color: #F5F5F5;
+.scrollcontainer::-webkit-scrollbar {
+  width: 5px;
+  background-color: #f5f5f5;
 }
 
-.scrollcontainer::-webkit-scrollbar-thumb
-{
-	background-color: #000000;
-	border: 1px solid #555555;
+.scrollcontainer::-webkit-scrollbar-thumb {
+  background-color: #000000;
+  border: 1px solid #555555;
 }
 </style>

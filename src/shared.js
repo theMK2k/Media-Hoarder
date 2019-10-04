@@ -6,6 +6,7 @@ const shared = new Vue({
 		filterSourcePaths: [],
 		filterGenres: [],
 		filterAgeRatings: [],
+		filterRatings: [],
 	}
 });
 

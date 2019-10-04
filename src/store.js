@@ -918,9 +918,30 @@ async function fetchMedia($MediaType) {
 			filterAgeRatings += ')'
 		}
 
+		let filterRatings = '';
+		logger.log('shared.filterRatings:', shared.filterRatings);
+		if (shared.filterRatings && shared.filterRatings.find(filter => !filter.Selected)) {
+			if (shared.filterRatings.find(filter => (filter.Selected && !filter.Rating))) {
+				filterRatings = 'AND (MOV.Rating IS NULL OR MOV.Rating = 0 ';
+			} else {
+				filterRatings = 'AND (0=1 '
+			}
+
+			if (shared.filterRatings.find(filter => (filter.Selected && filter.Rating))) {
+				filterRatings += 'OR MOV.Rating IN (' + shared.filterRatings.filter(filter => (filter.Selected && filter.Rating)).map(filter => filter.Rating).reduce((prev, current) => {
+					return prev + (prev ? ', ' : '') + current;
+				}, '');
+
+				filterRatings += ')';
+			}
+
+			filterRatings += ')';
+		}			
+			
 		logger.log('fetchMedia filterSourcePaths:', filterSourcePaths);
 		logger.log('fetchMedia filterGenres:', filterGenres);
 		logger.log('fetchMedia filterAgeRatings:', filterAgeRatings);
+		logger.log('fetchMedia filterRatings:', filterRatings);
 
 		const query = `
 		SELECT
@@ -936,6 +957,7 @@ async function fetchMedia($MediaType) {
 			, MOV.MI_Audio_Languages
 			, MOV.MI_Subtitle_Languages
 			, IFNULL(MOV.Rating, 0) AS Rating
+			, MOV.IMDB_tconst
 			, MOV.IMDB_posterSmall_URL
 			, MOV.IMDB_posterLarge_URL
 			, MOV.IMDB_rating
@@ -954,6 +976,7 @@ async function fetchMedia($MediaType) {
 		${filterSourcePaths}
 		${filterGenres}
 		${filterAgeRatings}
+		${filterRatings}
 	`;
 
 		logger.log('fetchMedia query:', query);
@@ -1144,6 +1167,8 @@ async function fetchFilterSourcePaths($MediaType) {
 			if (filterValue) {
 				result.Selected = filterValue.Selected;
 			}
+
+			result.NumMovies = result.NumMovies.toLocaleString();
 		})
 	}
 
@@ -1185,6 +1210,8 @@ async function fetchFilterGenres($MediaType) {
 			if (filterValue) {
 				result.Selected = filterValue.Selected;
 			}
+
+			result.NumMovies = result.NumMovies.toLocaleString();
 		})
 	}
 
@@ -1229,12 +1256,101 @@ async function fetchFilterAgeRatings($MediaType) {
 			if (filterValue) {
 				result.Selected = filterValue.Selected;
 			}
+
+			result.NumMovies = result.NumMovies.toLocaleString();
 		})
 	}
 
 	logger.log('fetchFilterAgeRatings resultsFiltered:', resultsFiltered);
 
 	shared.filterAgeRatings = resultsFiltered;
+}
+
+async function fetchFilterRatings($MediaType) {
+	logger.log('fetchFilterRatings MediaType:', $MediaType);
+
+	const filterValues = await fetchFilterValues($MediaType);
+
+	logger.log('fetchFilterRatings filterValues:', filterValues);
+
+	const results = await db.fireProcedureReturnAll(`
+			SELECT
+				0 AS Rating
+				, 1 AS Selected
+				, (
+					SELECT COUNT(1)
+					FROM tbl_Movies MOV
+					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+					WHERE MOV.Rating IS NULL OR MOV.Rating = 0
+				) AS NumMovies
+			UNION
+			SELECT
+				1 AS Rating
+				, 1 AS Selected
+				, (
+					SELECT COUNT(1)
+					FROM tbl_Movies MOV
+					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+					WHERE MOV.Rating = 1
+				) AS NumMovies
+			UNION
+			SELECT
+				2 AS Rating
+				, 1 AS Selected
+				, (
+					SELECT COUNT(1)
+					FROM tbl_Movies MOV
+					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+					WHERE MOV.Rating = 2
+				) AS NumMovies
+			UNION
+			SELECT
+				3 AS Rating
+				, 1 AS Selected
+				, (
+					SELECT COUNT(1)
+					FROM tbl_Movies MOV
+					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+					WHERE MOV.Rating = 3
+				) AS NumMovies
+			UNION
+			SELECT
+				4 AS Rating
+				, 1 AS Selected
+				, (
+					SELECT COUNT(1)
+					FROM tbl_Movies MOV
+					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+					WHERE MOV.Rating = 4
+				) AS NumMovies
+			UNION
+			SELECT
+				5 AS Rating
+				, 1 AS Selected
+				, (
+					SELECT COUNT(1)
+					FROM tbl_Movies MOV
+					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+					WHERE MOV.Rating = 5
+				) AS NumMovies
+				`,
+		{ $MediaType });
+
+	if (filterValues && filterValues.filterRatings) {
+		results.forEach(result => {
+			const filterValue = filterValues.filterRatings.find(value => value.Rating === result.Rating);
+
+			if (filterValue) {
+				result.Selected = filterValue.Selected;
+			}
+
+			result.NumMovies = result.NumMovies.toLocaleString();
+		})
+	}
+
+	logger.log('fetchFilterRatings results:', results);
+
+	shared.filterRatings = results;
 }
 
 function abortRescan() {
@@ -1269,6 +1385,7 @@ export {
 	fetchFilterSourcePaths,
 	fetchFilterGenres,
 	fetchFilterAgeRatings,
+	fetchFilterRatings,
 	isScanning,
 	abortRescan
 }
