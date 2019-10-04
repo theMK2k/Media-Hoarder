@@ -3,6 +3,13 @@
     <!-- SIDEBAR -->
     <v-navigation-drawer v-model="drawer" app clipped>
       <v-list dense>
+        <v-list-item @click="openSettings">
+          <v-list-item-action>
+            <v-icon style="color: lightgrey">mdi-settings</v-icon>
+          </v-list-item-action>
+          <v-list-item-title style="color: lightgrey">Settings</v-list-item-title>
+        </v-list-item>
+
         <v-list-item v-on:click="toggleRescan">
           <v-list-item-action>
             <v-icon v-show="!isScanning">mdi-reload</v-icon>
@@ -14,6 +21,8 @@
           </v-list-item-content>
         </v-list-item>
 
+        <v-divider></v-divider>
+
         <v-list-item v-for="item in items" :key="item.text" @click="goto(item.id)">
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
@@ -23,53 +32,58 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-subheader class="mt-4 lightgrey--text">FILTERS</v-subheader>
-        <v-expansion-panels accordion multiple>
-          <v-expansion-panel
-            v-show="$shared.filterSourcePaths && $shared.filterSourcePaths.length > 0"
-            style="padding: 0px!important"
-          >
-            <v-expansion-panel-header style="color: lightgrey; padding: 8px!important">Source Paths</v-expansion-panel-header>
-            <v-expansion-panel-content>
-              <v-checkbox
-                v-for="sourcePath in $shared.filterSourcePaths"
-                v-bind:key="sourcePath.Description"
-                v-bind:label="sourcePath.Description"
-                v-model="sourcePath.Selected"
-								v-on:click.native="filtersChanged"
-                style="margin: 0px"
-              ></v-checkbox>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
+        <!-- Filters -->
+        <div
+          v-if="($shared.filterSourcePaths && $shared.filterSourcePaths.length > 0) || ($shared.filterGenres && $shared.filterGenres.length > 0)"
+        >
+          <v-divider></v-divider>
 
-          <v-expansion-panel
-            v-show="$shared.filterGenres && $shared.filterGenres.length > 0"
-            style="padding: 0px!important"
-          >
-            <v-expansion-panel-header style="color: lightgrey; padding: 8px!important">Genres</v-expansion-panel-header>
-            <v-expansion-panel-content>
-              <v-row>
-								<v-btn text v-on:click="setAllGenres(false)">NONE</v-btn>
-								<v-btn text v-on:click="setAllGenres(true)">ALL</v-btn>
-              </v-row>
-							<v-checkbox
-                v-for="genre in $shared.filterGenres"
-                v-bind:key="genre.id_Genres"
-                v-bind:label="genre.Name"
-                v-model="genre.Selected"
-								v-on:click.native="filtersChanged"
-                style="margin: 0px"
-              ></v-checkbox>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-expansion-panels>
+          <v-subheader class="mt-4" style="margin: 0px!important">FILTERS</v-subheader>
 
-        <v-list-item @click="openSettings">
-          <v-list-item-action>
-            <v-icon style="color: lightgrey">mdi-settings</v-icon>
-          </v-list-item-action>
-          <v-list-item-title style="color: lightgrey">Settings</v-list-item-title>
-        </v-list-item>
+          <v-expansion-panels accordion multiple>
+            <v-expansion-panel
+              v-show="$shared.filterSourcePaths && $shared.filterSourcePaths.length > 0"
+              style="padding: 0px!important"
+            >
+              <v-expansion-panel-header
+                style="padding: 8px!important"
+              >Source Paths {{filterSourcePathsTitle}}</v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-checkbox
+                  v-for="sourcePath in $shared.filterSourcePaths"
+                  v-bind:key="sourcePath.Description"
+                  v-bind:label="sourcePath.Description"
+                  v-model="sourcePath.Selected"
+                  v-on:click.native="filtersChanged"
+                  style="margin: 0px"
+                ></v-checkbox>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
+            <v-expansion-panel
+              v-show="$shared.filterGenres && $shared.filterGenres.length > 0"
+              style="padding: 0px!important"
+            >
+              <v-expansion-panel-header
+                style="padding: 8px!important"
+              >Genres {{ filterGenresTitle }}</v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-row>
+                  <v-btn text v-on:click="setAllGenres(false)">NONE</v-btn>
+                  <v-btn text v-on:click="setAllGenres(true)">ALL</v-btn>
+                </v-row>
+                <v-checkbox
+                  v-for="genre in $shared.filterGenres"
+                  v-bind:key="genre.id_Genres"
+                  v-bind:label="genre.Name"
+                  v-model="genre.Selected"
+                  v-on:click.native="filtersChanged"
+                  style="margin: 0px"
+                ></v-checkbox>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+        </div>
       </v-list>
     </v-navigation-drawer>
 
@@ -95,12 +109,12 @@
 
     <!-- CONTENT -->
     <v-content>
-      <v-container style="max-width: 100%!important">
+      <v-container style="display: flex; max-width: 100%!important; padding: 0px!important">
         <router-view></router-view>
       </v-container>
     </v-content>
 
-    <!-- SMACK BAR -->
+    <!-- SNACK BAR -->
     <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
       <div>
         <strong v-if="snackbar.details && snackbar.details.length > 0">{{ snackbar.text }}</strong>
@@ -184,12 +198,45 @@ export default {
     searchText: function(newValue, oldValue) {
       logger.log("searchText old:", oldValue, "new:", newValue);
       this.debouncedEventBusSearchTextChanged(newValue);
-		},
+    }
   },
 
   computed: {
-    filterSourcePaths() {
-      return this.$shared.filterSourcePaths;
+    filterSourcePathsTitle() {
+      if (!this.$shared.filterSourcePaths.find(filter => !filter.Selected)) {
+        return "(ALL)";
+      }
+
+      if (!this.$shared.filterSourcePaths.find(filter => filter.Selected)) {
+        return "(NONE)";
+      }
+
+      return (
+        "(" +
+        this.$shared.filterSourcePaths.filter(filter => filter.Selected)
+          .length +
+        "/" +
+        this.$shared.filterSourcePaths.length +
+        ")"
+      );
+    },
+
+    filterGenresTitle() {
+      if (!this.$shared.filterGenres.find(filter => !filter.Selected)) {
+        return "(ALL)";
+      }
+
+      if (!this.$shared.filterGenres.find(filter => filter.Selected)) {
+        return "(NONE)";
+      }
+
+      return (
+        "(" +
+        this.$shared.filterGenres.filter(filter => filter.Selected).length +
+        "/" +
+        this.$shared.filterGenres.length +
+        ")"
+      );
     }
   },
 
@@ -223,26 +270,29 @@ export default {
 
     eventBusSearchTextChanged: function(searchText) {
       eventBus.searchTextChanged(searchText);
-		},
-		
+    },
+
     eventBusRefetchMedia: function() {
-			eventBus.refetchMedia();
-		},
-		
-		filtersChanged: function() {
-			logger.log('filters changed this.$shared:', this.$shared);
-			this.debouncedEventBusRefetchMedia();
-		},
+      eventBus.refetchMedia();
+    },
 
-		setAllGenres: function(value) {
-			this.$shared.filterGenres.forEach(genre => {
-				genre.Selected = value
-			});
+    filtersChanged: function() {
+      logger.log("filters changed this.$shared:", this.$shared);
+      this.debouncedEventBusRefetchMedia();
+    },
 
-			logger.log('setAllGenres this.$shared.filterGenres:', this.$shared.filterGenres);
+    setAllGenres: function(value) {
+      this.$shared.filterGenres.forEach(genre => {
+        genre.Selected = value;
+      });
 
-			this.filtersChanged();
-		}
+      logger.log(
+        "setAllGenres this.$shared.filterGenres:",
+        this.$shared.filterGenres
+      );
+
+      this.filtersChanged();
+    }
   },
 
   // ### LifeCycleHooks ###
@@ -315,8 +365,8 @@ export default {
     this.debouncedEventBusSearchTextChanged = _.debounce(
       this.eventBusSearchTextChanged,
       250
-		);
-		
+    );
+
     this.debouncedEventBusRefetchMedia = _.debounce(
       this.eventBusRefetchMedia,
       1000
@@ -331,5 +381,29 @@ h1 {
 
 .noshrink {
   flex-shrink: 0 !important;
+}
+
+.scrollcontainer
+{
+	overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.scrollcontainer::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: #F5F5F5;
+}
+
+.scrollcontainer::-webkit-scrollbar
+{
+	width: 5px;
+	background-color: #F5F5F5;
+}
+
+.scrollcontainer::-webkit-scrollbar-thumb
+{
+	background-color: #000000;
+	border: 1px solid #555555;
 }
 </style>

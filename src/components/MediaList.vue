@@ -1,30 +1,32 @@
 <template>
-  <div>
-    <h1>
+  <div style="display: flex; flex-direction: column">
+    <h1 style="margin-bottom: 0px; flex 0 1 auto">
       <v-btn text v-on:click="$router.go(-1)">
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
       {{ mediatype.toUpperCase() }} ({{ itemsFiltered.length }})
-      <v-container class="pa-2" fluid>
-        <v-row v-for="(item, i) in itemsFiltered" :key="i">
-          <v-col>
-            <v-card dark flat hover v-bind:ripple="false" v-on:click="selectItem(item)">
-              <v-list-item three-line style="padding-left: 0px">
-                <div>
-                  <v-list-item-avatar
-                    tile
-                    style="margin: 6px; height: 150px; width: 120px"
-                    v-on:click.stop="launch(item)"
-                  >
-                    <v-img contain v-bind:src="item.IMDB_posterSmall_URL"></v-img>
-                    <!-- TODO: implement lazy-src -->
-                  </v-list-item-avatar>
-                </div>
-                <v-list-item-content
-                  class="align-self-start"
-                  style="padding-top: 6px; padding-bottom: 6px"
+    </h1>
+
+    <v-container class="scrollcontainer pa-2" style="max-width: 100%!important">
+      <v-row v-for="(item, i) in itemsFiltered" :key="i">
+        <v-col>
+          <v-card dark flat hover v-bind:ripple="false" v-on:click="selectItem(item)">
+            <v-list-item three-line style="padding-left: 0px">
+              <div>
+                <v-list-item-avatar
+                  tile
+                  style="margin: 6px; height: 150px; width: 120px"
+                  v-on:click.stop="launch(item)"
                 >
-                  <v-col style="padding: 0px!important">
+                  <v-img contain v-bind:src="item.IMDB_posterSmall_URL"></v-img>
+                  <!-- TODO: implement lazy-src -->
+                </v-list-item-avatar>
+              </div>
+              <v-list-item-content
+                class="align-self-start"
+                style="padding-top: 6px; padding-bottom: 6px"
+              >
+                <v-col style="padding: 0px!important">
                   <v-row>
                     <div style="margin-left: 16px">
                       <v-list-item-title
@@ -38,11 +40,17 @@
                       >{{ item.Name2 }}</v-list-item-subtitle>
 
                       <div style="font-size: .875rem; font-weight: normal">
-                        <span v-if="item.MI_Quality">{{ item.MI_Quality }} | </span>
-                        <span v-if="item.AgeRating">{{ item.AgeRating }} | </span>
-                        <span v-if="item.Genres">{{ item.Genres }} | </span>
-                        <span v-if="item.AudioLanguages"><v-icon small>mdi-comment-outline</v-icon> {{ item.AudioLanguages }} | </span>
-                        <span v-if="item.SubtitleLanguages"><v-icon small>mdi-subtitles-outline</v-icon> {{ item.SubtitleLanguages }} | </span>
+                        <span v-if="item.MI_Quality">{{ item.MI_Quality }} |</span>
+                        <span v-if="item.AgeRating">{{ item.AgeRating }} |</span>
+                        <span v-if="item.Genres">{{ item.Genres }} |</span>
+                        <span v-if="item.AudioLanguages">
+                          <v-icon small>mdi-comment-outline</v-icon>
+                          {{ item.AudioLanguages }} |
+                        </span>
+                        <span v-if="item.SubtitleLanguages">
+                          <v-icon small>mdi-subtitles-outline</v-icon>
+                          {{ item.SubtitleLanguages }} |
+                        </span>
                       </div>
                     </div>
                     <div class="flex-grow-1"></div>
@@ -77,14 +85,13 @@
                   <v-row v-if="item.IMDB_plotSummary" style="margin-left: 4px; margin-right: 6px">
                     <div style="font-size: .875rem; font-weight: normal">{{ item.IMDB_plotSummary }}</div>
                   </v-row>
-                  </v-col>
-                </v-list-item-content>
-              </v-list-item>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
-    </h1>
+                </v-col>
+              </v-list-item-content>
+            </v-list-item>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
@@ -134,7 +141,7 @@ export default {
 
     selectItem(movie) {
       // eventBus.showSnackbar('error', 6000, 'KILLME');
-      
+
       if (movie.selected) {
         movie.selected = false;
       } else {
@@ -157,8 +164,8 @@ export default {
 
   created() {
     (async () => {
-			await store.fetchSourcePathFilter(this.mediatype);
-			await store.fetchGenresFilter();
+      await store.fetchSourcePathFilter(this.mediatype);
+      await store.fetchGenresFilter();
 
       this.items = await store.fetchMedia(this.mediatype);
       logger.log("items:", this.items);
@@ -166,14 +173,14 @@ export default {
 
     eventBus.$on("searchTextChanged", ({ searchText }) => {
       this.searchText = searchText;
-		});
-		
-		eventBus.$on("refetchMedia", () => {
-			logger.log('refetching media');
-			(async () => {
-				this.items = await store.fetchMedia(this.mediatype);
-			})();
-		})
+    });
+
+    eventBus.$on("refetchMedia", () => {
+      logger.log("refetching media");
+      (async () => {
+        this.items = await store.fetchMedia(this.mediatype);
+      })();
+    });
   }
 };
 </script>
