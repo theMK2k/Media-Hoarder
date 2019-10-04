@@ -34,13 +34,14 @@
 
         <!-- Filters -->
         <div
-          v-if="($shared.filterSourcePaths && $shared.filterSourcePaths.length > 0) || ($shared.filterGenres && $shared.filterGenres.length > 0)"
+          v-if="($shared.filterSourcePaths && $shared.filterSourcePaths.length > 0) || ($shared.filterGenres && $shared.filterGenres.length > 0) || ($shared.filterAgeRatings && $shared.filterAgeRatings.length > 0)"
         >
           <v-divider></v-divider>
 
           <v-subheader class="mt-4" style="margin: 0px!important">FILTERS</v-subheader>
 
           <v-expansion-panels accordion multiple>
+            <!-- FILTER SOURCE PATHS -->
             <v-expansion-panel
               v-show="$shared.filterSourcePaths && $shared.filterSourcePaths.length > 0"
               style="padding: 0px!important"
@@ -52,7 +53,7 @@
                 <v-checkbox
                   v-for="sourcePath in $shared.filterSourcePaths"
                   v-bind:key="sourcePath.Description"
-                  v-bind:label="sourcePath.Description"
+                  v-bind:label="sourcePath.Description + ' (' + sourcePath.NumMovies + ')'"
                   v-model="sourcePath.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
@@ -60,6 +61,7 @@
               </v-expansion-panel-content>
             </v-expansion-panel>
 
+            <!-- FILTER GENRES -->
             <v-expansion-panel
               v-show="$shared.filterGenres && $shared.filterGenres.length > 0"
               style="padding: 0px!important"
@@ -75,13 +77,38 @@
                 <v-checkbox
                   v-for="genre in $shared.filterGenres"
                   v-bind:key="genre.id_Genres"
-                  v-bind:label="genre.Name"
+                  v-bind:label="genre.Name + ' (' + genre.NumMovies + ')'"
                   v-model="genre.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
                 ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
+
+            <!-- FILTER AGE RATINGS -->
+            <v-expansion-panel
+              v-show="$shared.filterAgeRatings && $shared.filterAgeRatings.length > 0"
+              style="padding: 0px!important"
+            >
+              <v-expansion-panel-header
+                style="padding: 8px!important"
+              >Age {{ filterAgeRatingsTitle }}</v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-row>
+                  <v-btn text v-on:click="setAllAgeRatings(false)">NONE</v-btn>
+                  <v-btn text v-on:click="setAllAgeRatings(true)">ALL</v-btn>
+                </v-row>
+                <v-checkbox
+                  v-for="ageRating in $shared.filterAgeRatings"
+                  v-bind:key="ageRating.Age"
+                  v-bind:label="(ageRating.Age === -1 ? 'undetermined' : ageRating.Age) + ' (' + ageRating.NumMovies + ')'"
+                  v-model="ageRating.Selected"
+                  v-on:click.native="filtersChanged"
+                  style="margin: 0px"
+                ></v-checkbox>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
           </v-expansion-panels>
         </div>
       </v-list>
@@ -237,7 +264,26 @@ export default {
         this.$shared.filterGenres.length +
         ")"
       );
+    },
+
+    filterAgeRatingsTitle() {
+      if (!this.$shared.filterAgeRatings.find(filter => !filter.Selected)) {
+        return "(ALL)";
+      }
+
+      if (!this.$shared.filterAgeRatings.find(filter => filter.Selected)) {
+        return "(NONE)";
+      }
+
+      return (
+        "(" +
+        this.$shared.filterAgeRatings.filter(filter => filter.Selected).length +
+        "/" +
+        this.$shared.filterAgeRatings.length +
+        ")"
+      );
     }
+
   },
 
   methods: {
@@ -286,10 +332,13 @@ export default {
         genre.Selected = value;
       });
 
-      logger.log(
-        "setAllGenres this.$shared.filterGenres:",
-        this.$shared.filterGenres
-      );
+      this.filtersChanged();
+    },
+
+    setAllAgeRatings: function(value) {
+      this.$shared.filterAgeRatings.forEach(ar => {
+        ar.Selected = value;
+      });
 
       this.filtersChanged();
     }

@@ -888,7 +888,7 @@ async function fetchMedia($MediaType) {
 		logger.log('shared.filterSourcePaths:', shared.filterSourcePaths);
 		if (shared.filterSourcePaths && shared.filterSourcePaths.find(filter => !filter.Selected)) {
 			filterSourcePaths = 'AND MOV.id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths WHERE Description IN (';
-			
+
 			filterSourcePaths += shared.filterSourcePaths.filter(filter => filter.Selected).map(filter => filter.Description).reduce((prev, current) => {
 				return prev + (prev ? ', ' : '') + `'${current}'`;
 			}, '');
@@ -899,7 +899,7 @@ async function fetchMedia($MediaType) {
 		let filterGenres = '';
 		if (shared.filterGenres && shared.filterGenres.find(filter => !filter.Selected)) {
 			filterGenres = 'AND MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_Genres WHERE id_Genres IN (';
-			
+
 			filterGenres += shared.filterGenres.filter(filter => filter.Selected).map(filter => filter.id_Genres).reduce((prev, current) => {
 				return prev + (prev ? ', ' : '') + current;
 			}, '');
@@ -907,8 +907,20 @@ async function fetchMedia($MediaType) {
 			filterGenres += '))'
 		}
 
+		let filterAgeRatings = '';
+		if (shared.filterAgeRatings && shared.filterAgeRatings.find(filter => !filter.Selected)) {
+			filterAgeRatings = 'AND AR.Age IN (';
+
+			filterAgeRatings += shared.filterAgeRatings.filter(filter => filter.Selected).map(filter => filter.Age).reduce((prev, current) => {
+				return prev + (prev ? ', ' : '') + current;
+			}, '');
+
+			filterAgeRatings += ')'
+		}
+
 		logger.log('fetchMedia filterSourcePaths:', filterSourcePaths);
 		logger.log('fetchMedia filterGenres:', filterGenres);
+		logger.log('fetchMedia filterAgeRatings:', filterAgeRatings);
 
 		const query = `
 		SELECT
@@ -934,16 +946,20 @@ async function fetchMedia($MediaType) {
 			, MOV.IMDB_MinAge
 			, MOV.IMDB_MaxAge
 			, AR.Age
+			, MOV.created_at
+			, MOV.last_access_at
 		FROM tbl_Movies MOV
 		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 		WHERE id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths WHERE MediaType = $MediaType)
 		${filterSourcePaths}
 		${filterGenres}
+		${filterAgeRatings}
 	`;
+
+		logger.log('fetchMedia query:', query);
 
 		const result = await db.fireProcedureReturnAll(query, { $MediaType });
 
-		logger.log('fetchMedia query:', query);
 
 		if (result && result.length > 0) {
 			saveFilterValues($MediaType);
@@ -958,7 +974,7 @@ async function fetchMedia($MediaType) {
 			item.AudioLanguages = generateLanguageString(item.MI_Audio_Languages, ['De', 'En']);
 			item.SubtitleLanguages = generateLanguageString(item.MI_Subtitle_Languages, ['De', 'En']);
 
-			if (item.Age) {
+			if (item.Age || item.Age === 0) {
 				item.AgeRating = item.Age + '+';
 			} else {
 				if (item.IMDB_MinAge || item.IMDB_MinAge === 0) {
@@ -1106,41 +1122,42 @@ async function fetchFilterValues($MediaType) {
 	return JSON.parse(result);
 }
 
-async function fetchSourcePathFilter($MediaType) {
-	logger.log('fetchSourcePathFilter MediaType:', $MediaType);
+async function fetchFilterSourcePaths($MediaType) {
+	logger.log('fetchFilterSourcePaths MediaType:', $MediaType);
 
 	const filterValues = await fetchFilterValues($MediaType);
 
-	logger.log('fetchSourcePathFilter filterValues:', filterValues);
+	logger.log('fetchFilterSourcePaths filterValues:', filterValues);
 
 	const results = await db.fireProcedureReturnAll(`
 			SELECT DISTINCT
 			1 AS Selected
-			, Description
-		FROM tbl_SourcePaths WHERE MediaType = $MediaType`,
+			, SP.Description
+			, (SELECT COUNT(1) FROM tbl_Movies WHERE id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths SP2 WHERE SP2.Description = SP.Description)) AS NumMovies
+		FROM tbl_SourcePaths SP WHERE MediaType = $MediaType`,
 		{ $MediaType });
 
 	if (filterValues && filterValues.filterSourcePaths) {
 		results.forEach(result => {
 			const filterValue = filterValues.filterSourcePaths.find(value => value.Description === result.Description);
-			
+
 			if (filterValue) {
 				result.Selected = filterValue.Selected;
 			}
 		})
 	}
 
-	logger.log('fetchSourcePathFilter result:', results);
+	logger.log('fetchFilterSourcePaths result:', results);
 
 	shared.filterSourcePaths = results;
 }
 
-async function fetchGenresFilter($MediaType) {
-	logger.log('fetchGenresFilter MediaType:', $MediaType);
+async function fetchFilterGenres($MediaType) {
+	logger.log('fetchFilterGenres MediaType:', $MediaType);
 
 	const filterValues = await fetchFilterValues($MediaType);
 
-	logger.log('fetchGenresFilter filterValues:', filterValues);
+	logger.log('fetchFilterGenres filterValues:', filterValues);
 
 	const results = await db.fireProcedureReturnAll(`
 			SELECT
@@ -1148,23 +1165,76 @@ async function fetchGenresFilter($MediaType) {
 			, GenreID
 			, Name
 			, 1 AS Selected
-		FROM tbl_Genres
+			, (
+				SELECT COUNT(1)
+				FROM tbl_Movies_Genres MG
+				INNER JOIN tbl_Movies M ON MG.id_Movies = M.id_Movies
+				INNER JOIN tbl_SourcePaths SP ON M.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+				WHERE MG.id_Genres = G.id_Genres
+			) AS NumMovies
+		FROM tbl_Genres G
 		ORDER BY Name`,
 		{ $MediaType });
 
+	const resultsFiltered = results.filter(result => result.NumMovies > 0);
+
 	if (filterValues && filterValues.filterGenres) {
-		results.forEach(result => {
+		resultsFiltered.forEach(result => {
 			const filterValue = filterValues.filterGenres.find(value => value.GenreID === result.GenreID);
-			
+
 			if (filterValue) {
 				result.Selected = filterValue.Selected;
 			}
 		})
 	}
 
-	logger.log('fetchGenresFilter result:', results);
+	logger.log('fetchFilterGenres resultsFiltered:', resultsFiltered);
 
-	shared.filterGenres = results;
+	shared.filterGenres = resultsFiltered;
+}
+
+async function fetchFilterAgeRatings($MediaType) {
+	logger.log('fetchFilterAgeRatings MediaType:', $MediaType);
+
+	const filterValues = await fetchFilterValues($MediaType);
+
+	logger.log('fetchFilterAgeRatings filterValues:', filterValues);
+
+	const results = await db.fireProcedureReturnAll(`
+		SELECT
+			-1 AS Age
+			, (SELECT COUNT(1) FROM tbl_Movies MOV INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType WHERE MOV.IMDB_id_AgeRating_Chosen_Country IS NULL) AS NumMovies
+			, 1 AS Selected
+		UNION
+		SELECT
+			Age
+			, COUNT(1) AS NumMovies
+			, 1 AS Selected
+		FROM (
+			SELECT
+				AR.Age
+			FROM tbl_Movies MOV
+			INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
+			INNER JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating AND AR.Age IS NOT NULL
+		)
+		GROUP BY (Age)`,
+		{ $MediaType });
+
+	const resultsFiltered = results.filter(result => result.NumMovies > 0);
+
+	if (filterValues && filterValues.filterAgeRatings) {
+		resultsFiltered.forEach(result => {
+			const filterValue = filterValues.filterAgeRatings.find(value => value.Age === result.Age);
+
+			if (filterValue) {
+				result.Selected = filterValue.Selected;
+			}
+		})
+	}
+
+	logger.log('fetchFilterAgeRatings resultsFiltered:', resultsFiltered);
+
+	shared.filterAgeRatings = resultsFiltered;
 }
 
 function abortRescan() {
@@ -1173,7 +1243,9 @@ function abortRescan() {
 
 function saveFilterValues($MediaType) {
 	const filterValues = {
-		filterSourcePaths: shared.filterSourcePaths	//.filter(filter => !filter.Selected).map(filter => filter.Description)
+		filterSourcePaths: shared.filterSourcePaths,
+		filterGenres: shared.filterGenres,
+		filterAgeRatings: shared.filterAgeRatings
 	}
 
 	const filterValuesString = JSON.stringify(filterValues);
@@ -1194,8 +1266,9 @@ export {
 	setSetting,
 	launchMovie,
 
-	fetchSourcePathFilter,
-	fetchGenresFilter,
+	fetchFilterSourcePaths,
+	fetchFilterGenres,
+	fetchFilterAgeRatings,
 	isScanning,
 	abortRescan
 }

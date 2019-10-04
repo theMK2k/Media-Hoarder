@@ -1,10 +1,29 @@
 <template>
   <div style="display: flex; flex-direction: column">
-    <h1 style="margin-bottom: 0px; flex 0 1 auto">
-      <v-btn text v-on:click="$router.go(-1)">
-        <v-icon>mdi-arrow-left</v-icon>
-      </v-btn>
-      {{ mediatype.toUpperCase() }} ({{ itemsFiltered.length }})
+    <h1 style="margin-bottom: 0px; margin-top: 8px; flex 0 1 auto">
+      <v-row>
+        <v-btn text v-on:click="$router.go(-1)" style="margin-top: 6px; margin-left: 8px">
+          <v-icon>mdi-arrow-left</v-icon>
+        </v-btn>
+        {{ mediatype.toUpperCase() }} ({{ itemsFiltered.length }})
+        <v-select
+          solo
+          clearable
+          dense
+          v-bind:items="sortAbles"
+          item-text="Description"
+          item-value="Field"
+          v-model="sort"
+          label="Sort"
+          style="margin-left: 8px; max-width: 260px"
+        >
+          <template v-slot:selection="{ item, index }">
+            <span class="grey--text caption" style="margin-right: 8px">Sort by</span>
+            <span>{{ item.Description }}</span>
+          </template>
+        </v-select>
+        <v-spacer></v-spacer>
+      </v-row>
     </h1>
 
     <v-container class="scrollcontainer pa-2" style="max-width: 100%!important">
@@ -40,16 +59,16 @@
                       >{{ item.Name2 }}</v-list-item-subtitle>
 
                       <div style="font-size: .875rem; font-weight: normal">
-                        <span v-if="item.MI_Quality">{{ item.MI_Quality }} |</span>
-                        <span v-if="item.AgeRating">{{ item.AgeRating }} |</span>
-                        <span v-if="item.Genres">{{ item.Genres }} |</span>
+                        <span v-if="item.MI_Quality">{{ item.MI_Quality + ' | ' }}</span>
+                        <span v-if="item.AgeRating">{{ item.AgeRating + ' | ' }}</span>
+                        <span v-if="item.Genres">{{ item.Genres + ' | ' }}</span>
                         <span v-if="item.AudioLanguages">
                           <v-icon small>mdi-comment-outline</v-icon>
-                          {{ item.AudioLanguages }} |
+                          {{ item.AudioLanguages + ' | ' }}
                         </span>
                         <span v-if="item.SubtitleLanguages">
                           <v-icon small>mdi-subtitles-outline</v-icon>
-                          {{ item.SubtitleLanguages }} |
+                          {{ item.SubtitleLanguages + ' | ' }}
                         </span>
                       </div>
                     </div>
@@ -61,6 +80,11 @@
                       >
                         <v-icon small color="amber" style="padding-bottom: 4px">mdi-star</v-icon>
                         {{item.IMDB_ratingDisplay}}
+                        <span
+                          v-if="item.IMDB_metacriticScore"
+                          v-bind:class="getMetaCriticClass(item.IMDB_metacriticScore)"
+                          style="padding: 4px"
+                        >{{item.IMDB_metacriticScore}}</span>
                       </div>
                       <v-row>
                         <div class="flex-grow-1"></div>
@@ -106,23 +130,85 @@ export default {
   data: () => ({
     smallPosterImgSrc: null,
     items: [],
-    searchText: null
+    searchText: null,
+    sortAbles: [
+      {
+        Field: "Name",
+        Description: "Name"
+      },
+      {
+        Field: "IMDB_rating",
+        Description: "IMDB Rating"
+      },
+      {
+        Field: "IMDB_metacriticScore",
+        Description: "Metascore"
+      },
+      {
+        Field: "Rating",
+        Description: "My Rating"
+      },
+      {
+        Field: "Rating",
+        Description: "My Rating"
+      },
+      {
+        Field: "created_at",
+        Description: "Imported at"
+      },
+      {
+        Field: "last_access_at",
+        Description: "Last Access at"
+      }
+    ],
+
+    sort: null
   }),
+
+  watch: {
+    sort: function() {
+      logger.log("sort changed to:", this.sort);
+    }
+  },
 
   props: ["mediatype"],
 
   computed: {
     itemsFiltered() {
-      return this.items.filter(item => {
-        let isGood = true;
+      return this.items
+        .filter(item => {
+          let isGood = true;
 
-        if (this.searchText) {
-          const searchTextLower = this.searchText.toLowerCase();
-          isGood = item.SearchSpace.includes(searchTextLower);
-        }
+          if (this.searchText) {
+            const searchTextLower = this.searchText.toLowerCase();
+            isGood = item.SearchSpace.includes(searchTextLower);
+          }
 
-        return isGood;
-      });
+          return isGood;
+        })
+        .sort((a, b) => {
+          if (!this.sort) {
+            return 0;
+          }
+
+          if (
+            typeof a[this.sort] === "string" ||
+            a[this.sort] instanceof String
+          ) {
+            if (a[this.sort] > b[this.sort]) {
+              return 1;
+            }
+
+            return -1;
+          } else {
+            if (a[this.sort] > b[this.sort]) {
+              return -1;
+            }
+  
+            return 0;
+          }
+
+        });
     }
   },
 
@@ -159,13 +245,27 @@ export default {
 
     async launch(movie) {
       await store.launchMovie(movie);
+    },
+
+    getMetaCriticClass(IMDB_metacriticScore) {
+      const cssClasses = {};
+      if (IMDB_metacriticScore <= 30) {
+        cssClasses.MetaCriticRed = true;
+      } else if (IMDB_metacriticScore <= 50) {
+        cssClasses.MetaCriticYellow = true;
+      } else {
+        cssClasses.MetaCriticGreen = true;
+      }
+
+      return cssClasses;
     }
   },
 
   created() {
     (async () => {
-      await store.fetchSourcePathFilter(this.mediatype);
-      await store.fetchGenresFilter();
+      await store.fetchFilterSourcePaths(this.mediatype);
+      await store.fetchFilterGenres(this.mediatype);
+      await store.fetchFilterAgeRatings(this.mediatype);
 
       this.items = await store.fetchMedia(this.mediatype);
       logger.log("items:", this.items);
@@ -187,4 +287,13 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.MetaCriticRed {
+  background-color: red;
+}
+.MetaCriticYellow {
+  background-color: yellow;
+}
+.MetaCriticGreen {
+  background-color: green;
+}
 </style>

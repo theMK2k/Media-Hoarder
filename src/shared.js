@@ -5,6 +5,7 @@ const shared = new Vue({
 		message: 'my global message',
 		filterSourcePaths: [],
 		filterGenres: [],
+		filterAgeRatings: [],
 	}
 });
 

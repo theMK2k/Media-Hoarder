@@ -1,16 +1,27 @@
 # Other
+- fix duplication check in filescan, e.g. "Audition ~ Ôdishon (De)(Sub De)(HD)[1999][Drama, Horror, Mystery][7.2 @ 65149][tt0235198].mkv"
 - correctly implement scrollcontainer class (e.g. Medialist)
+- min/maxAge is false when 0 is in place
 
 # Features
+
+## Last Seen (last_access_at)
+- in movie details
+- as sortable
+
+## Completed
+- in movie details
+- as filter
 
 ## IMDB MetaData
 - Parental Guidance (Sex/Nudity, Gore etc. scores)
 - 
 
 ## Filters
-- Age Rating
+- Age
 - Own Rating
 - IMDB Rating
+- MetaCritic
 - Number of Votes
 - Metacritic Score
 - Company (Search-filter)
