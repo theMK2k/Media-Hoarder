@@ -944,20 +944,22 @@ async function fetchMedia($MediaType) {
 		if (shared.filterLists && shared.filterLists.find(filter => !filter.Selected)) {
 			
 			if (shared.filterLists.find(filter => (filter.Selected && !filter.id_Lists))) {
-				filterLists = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Lists_Movies) `
+				filterLists = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Lists_Movies) `;
 			} else {
-				filterLists = `AND (1=0 `
+				filterLists = `AND (1=0 `;
 			}
 			
 			if (shared.filterLists.find(filter => (filter.Selected && filter.id_Lists))) {
-				filterLists += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Lists_Movies WHERE id_Lists IN (`
-			}
-			
-			filterLists += shared.filterLists.filter(filter => filter.Selected).map(filter => filter.id_Lists).reduce((prev, current) => {
-				return prev + (prev ? ', ' : '') + current;
-			}, '');
+				filterLists += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Lists_Movies WHERE id_Lists IN (`;
 
-			filterLists += '))'
+				filterLists += shared.filterLists.filter(filter => filter.Selected).map(filter => filter.id_Lists).reduce((prev, current) => {
+					return prev + (prev ? ', ' : '') + current;
+				}, '');
+
+				filterLists += '))';
+			}
+
+			filterLists += ')';
 		}
 
 		logger.log('fetchMedia filterSourcePaths:', filterSourcePaths);
@@ -1477,6 +1479,14 @@ async function fetchFilterLists($MediaType) {
 	shared.filterLists = results;
 }
 
+async function getMovieDetails($id_Movies) {
+	const lists = await db.fireProcedureReturnAll(`SELECT id_Lists, Name FROM tbl_Lists WHERE id_Lists IN (SELECT id_Lists FROM tbl_Lists_Movies WHERE id_Movies = $id_Movies) ORDER BY Name`, {$id_Movies});
+
+	return {
+		lists
+	}
+}
+
 export {
 	db,
 	fetchSourcePaths,
@@ -1497,5 +1507,6 @@ export {
 	abortRescan,
 	createList,
 	addToList,
-	fetchLists
+	fetchLists,
+	getMovieDetails
 }

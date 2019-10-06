@@ -110,7 +110,7 @@
             <v-col v-if="item.selected" style="min-width: 100%">
               <v-btn text v-on:click.stop="copyInfo(item)">Copy Info</v-btn>
               <v-btn text v-on:click.stop="addToList(item)">Add to List</v-btn>
-              <v-btn text v-on:click.stop="addToList(item)">Remove from List</v-btn>
+              <v-btn v-if="itemDetails.lists && itemDetails.lists.length > 0" text v-on:click.stop="removeFromList(item)">Remove from List</v-btn>
             </v-col>
           </v-card>
         </v-col>
@@ -122,6 +122,8 @@
       v-bind:title="listDialog.title"
       v-bind:movie="listDialog.movie"
 			v-bind:lists="listDialog.lists"
+			v-bind:allowUseExistingList="listDialog.allowUseExistingList"
+			v-bind:allowCreateList="listDialog.allowCreateList"
       v-on:ok="onListDialogOK"
       v-on:cancel="onListDialogCancel"
     ></mk-list-dialog>
@@ -183,7 +185,13 @@ export default {
 			title: '',
 			show: false,
 			movie: null,
-			lists: []
+			lists: [],
+			allowUseExistingList: false,
+			allowCreateNewList: false
+		},
+
+		itemDetails: {
+			lists: [],
 		}
   }),
 
@@ -247,21 +255,27 @@ export default {
     },
 
     selectItem(movie) {
-      // eventBus.showSnackbar('error', 6000, 'KILLME');
+      (async () => {
 
-      if (movie.selected) {
-        movie.selected = false;
-      } else {
-        this.items.forEach(item => {
-          item.selected = false;
-        });
-        movie.selected = true;
-      }
+				if (movie.selected) {
+					movie.selected = false;
+				} else {
+					this.items.forEach(item => {
+						item.selected = false;
+					});
+					
+					this.itemDetails = await store.getMovieDetails(movie.id_Movies);
 
-      // TODO: currently needed for changedetection of item.selected (interesting)
-      const items = this.items;
-      this.items = [];
-      this.items = items;
+					logger.log('itemDetails:', this.itemDetails);
+	
+					movie.selected = true;
+				}
+	
+				// TODO: currently needed for changedetection of item.selected (interesting)
+				const items = this.items;
+				this.items = [];
+				this.items = items;
+			})();
     },
 
     async launch(movie) {
@@ -329,6 +343,16 @@ export default {
 			(async () => {
 				this.listDialog.lists = await store.fetchLists();
 				this.listDialog.title = "Add to List";
+				this.listDialog.movie = item;
+				this.listDialog.show = true;
+			})();
+
+		},
+
+		removeFromList(item) {
+			(async () => {
+				this.listDialog.lists = this.itemDetails.lists;
+				this.listDialog.title = "Remove from List";
 				this.listDialog.movie = item;
 				this.listDialog.show = true;
 			})();

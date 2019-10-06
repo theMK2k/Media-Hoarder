@@ -63,11 +63,13 @@ const logger = require("loglevel");
 // import { eventBus } from "@/main";
 
 export default {
-  props: ["show", "title", "movie", "lists"],
+  props: ["show", "title", "movie", "lists", "allowUseExistingList", "allowCreateNewList"],
 
   data() {
     return {
-      useExistingList: false,
+			allowUseExistingList: true,
+			useExistingList: false,
+			allowCreateNewList: true,
       createNewList: false,
       chosen_id_Lists: null,
       newListName: null
@@ -91,7 +93,15 @@ export default {
   },
 
   methods: {
-    resetData() {
+		setCreateNewList(value) {
+			this.createNewList = value;
+		},
+
+		setUseExistingList(value) {
+			this.useExistingList = value;
+		},
+
+		resetData() {
       this.useExistingList = false;
       this.createNewList = false;
       this.chosen_id_Lists = null;
