@@ -7,6 +7,7 @@ const shared = new Vue({
 		filterGenres: [],
 		filterAgeRatings: [],
 		filterRatings: [],
+		filterLists: []
 	}
 });
 

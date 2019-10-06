@@ -1,5 +1,5 @@
 <template>
-  <div style="display: flex; flex-direction: column">
+  <div style="display: flex; flex-direction: column; min-width: 100%">
     <h1 style="margin-bottom: 0px; margin-top: 8px; flex 0 1 auto">
       <v-row>
         <v-btn text v-on:click="$router.go(-1)" style="margin-top: 6px; margin-left: 8px">
@@ -109,22 +109,39 @@
             </v-list-item>
             <v-col v-if="item.selected" style="min-width: 100%">
               <v-btn text v-on:click.stop="copyInfo(item)">Copy Info</v-btn>
+              <v-btn text v-on:click.stop="addToList(item)">Add to List</v-btn>
+              <v-btn text v-on:click.stop="addToList(item)">Remove from List</v-btn>
             </v-col>
           </v-card>
         </v-col>
       </v-row>
     </v-container>
+
+    <mk-list-dialog
+      v-bind:show="listDialog.show"
+      v-bind:title="listDialog.title"
+      v-bind:movie="listDialog.movie"
+			v-bind:lists="listDialog.lists"
+      v-on:ok="onListDialogOK"
+      v-on:cancel="onListDialogCancel"
+    ></mk-list-dialog>
   </div>
 </template>
 
 <script>
 import * as store from "@/store";
 import { eventBus } from "@/main";
+import ListDialog from "@/components/shared/ListDialog.vue";
+
 // import * as helpers from "@/helpers/helpers";
 
 const logger = require("loglevel");
 
 export default {
+	components: {
+    "mk-list-dialog": ListDialog,
+	},
+
   data: () => ({
     smallPosterImgSrc: null,
     items: [],
@@ -160,7 +177,14 @@ export default {
       }
     ],
 
-    sort: null
+		sort: null,
+		
+		listDialog: {
+			title: '',
+			show: false,
+			movie: null,
+			lists: []
+		}
   }),
 
   watch: {
@@ -299,7 +323,40 @@ export default {
       document.body.removeChild(el);
 
       eventBus.showSnackbar("info", 6000, "Info copied to clipboard");
-    }
+		},
+		
+		addToList(item) {
+			(async () => {
+				this.listDialog.lists = await store.fetchLists();
+				this.listDialog.title = "Add to List";
+				this.listDialog.movie = item;
+				this.listDialog.show = true;
+			})();
+
+		},
+
+		onListDialogOK(data) {
+			this.listDialog.show = false;
+
+			(async () => {
+				try {
+					if (data.createNewList) {
+						data.chosen_id_Lists = await store.createList(data.newListName);
+					}
+	
+					await store.addToList(data.chosen_id_Lists, this.listDialog.movie.id_Movies);
+	
+					eventBus.showSnackbar("success", 6000, "Movie added to list");
+				} catch (err) {
+					eventBus.showSnackbar("error", 6000, err);
+				}
+				
+			})();
+		},
+
+		onListDialogCancel() {
+			this.listDialog.show = false;
+		}
   },
 
   // ### LifeCycle Hooks ###
@@ -309,6 +366,7 @@ export default {
       await store.fetchFilterGenres(this.mediatype);
 			await store.fetchFilterAgeRatings(this.mediatype);
 			await store.fetchFilterRatings(this.mediatype);
+			await store.fetchFilterLists(this.mediatype);
 
       this.items = await store.fetchMedia(this.mediatype);
       logger.log("items:", this.items);

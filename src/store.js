@@ -25,6 +25,8 @@ import * as helpers from '@/helpers/helpers';
 import { languages } from '@/languages';
 import { shared } from '@/shared';
 
+const definedError = require('@/helpers/defined-error');
+
 const isBuild = process.env.NODE_ENV === 'production';
 
 if (!isBuild) {
@@ -936,12 +938,33 @@ async function fetchMedia($MediaType) {
 			}
 
 			filterRatings += ')';
-		}			
+		}
+
+		let filterLists = '';
+		if (shared.filterLists && shared.filterLists.find(filter => !filter.Selected)) {
 			
+			if (shared.filterLists.find(filter => (filter.Selected && !filter.id_Lists))) {
+				filterLists = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Lists_Movies) `
+			} else {
+				filterLists = `AND (1=0 `
+			}
+			
+			if (shared.filterLists.find(filter => (filter.Selected && filter.id_Lists))) {
+				filterLists += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Lists_Movies WHERE id_Lists IN (`
+			}
+			
+			filterLists += shared.filterLists.filter(filter => filter.Selected).map(filter => filter.id_Lists).reduce((prev, current) => {
+				return prev + (prev ? ', ' : '') + current;
+			}, '');
+
+			filterLists += '))'
+		}
+
 		logger.log('fetchMedia filterSourcePaths:', filterSourcePaths);
 		logger.log('fetchMedia filterGenres:', filterGenres);
 		logger.log('fetchMedia filterAgeRatings:', filterAgeRatings);
 		logger.log('fetchMedia filterRatings:', filterRatings);
+		logger.log('fetchMedia filterLists:', filterLists);
 
 		const query = `
 		SELECT
@@ -977,6 +1000,7 @@ async function fetchMedia($MediaType) {
 		${filterGenres}
 		${filterAgeRatings}
 		${filterRatings}
+		${filterLists}
 	`;
 
 		logger.log('fetchMedia query:', query);
@@ -1122,12 +1146,18 @@ async function launchMovie(movie) {
 	// - measure time elapsed during launch
 	// - add measured time to (TODO) watchedSeconds
 	// - watchedSeconds to runtime
-	// - if watchedSeconds > runtime set (TODO) watched to true and show snack bar
 
 	const VLCPath = await getSetting('VLCPath');
 
 	if (!VLCPath) {
-		eventBus.showSnackBar('error', 6000, 'Unable to launch: VLC path is not set');
+		eventBus.showSnackbar('error', 6000, 'Unable to launch: VLC path is not set');
+	}
+
+	const fileExists = await existsAsync(movie.Path);
+
+	if (!fileExists) {
+		eventBus.showSnackbar('error', 6000, `Cannot access ${movie.Path}`);
+		return;
 	}
 
 	const task = `${VLCPath} "${movie.Path}"`;
@@ -1371,6 +1401,82 @@ function saveFilterValues($MediaType) {
 	setSetting(`filtersMediaType${$MediaType}`, JSON.stringify(filterValues));
 }
 
+async function createList($Name) {
+	const id_Lists = await db.fireProcedureReturnScalar(`SELECT id_Lists FROM tbl_Lists WHERE Name = $Name`, { $Name });
+	if (id_Lists) {
+		throw definedError.create('a list with the same name already exists', null, null, null)
+	}
+
+	await db.fireProcedure(`INSERT INTO tbl_Lists (Name, created_at) VALUES ($Name, DATETIME('now'))`, { $Name });
+	return await db.fireProcedureReturnScalar(`SELECT id_Lists FROM tbl_Lists WHERE Name = $Name`, { $Name });
+}
+
+async function addToList($id_Lists, $id_Movies) {
+	const id_Lists = await db.fireProcedureReturnScalar(`SELECT id_Lists_Movies FROM tbl_Lists_Movies WHERE id_Lists = $id_Lists AND id_Movies = $id_Movies`, { $id_Lists, $id_Movies });
+	if (id_Lists) {
+		throw definedError.create('the item is already part of the list', null, null, null)
+	}
+
+	await db.fireProcedure(`INSERT INTO tbl_Lists_Movies (id_Lists, id_Movies, created_at) VALUES ($id_Lists, $id_Movies, DATETIME('now'))`, { $id_Lists, $id_Movies });
+}
+
+async function fetchLists() {
+	return await db.fireProcedureReturnAll(`
+			SELECT
+				id_Lists
+				, Name
+			FROM tbl_Lists LISTS
+			ORDER BY Name
+	`);
+}
+
+async function fetchFilterLists($MediaType) {
+	const filterValues = await fetchFilterValues($MediaType);
+
+	const results = await db.fireProcedureReturnAll(`
+		SELECT
+			0 AS id_Lists
+			, '<not in any list>' AS Name
+			, 1 AS Selected
+			, (
+				SELECT COUNT(1)
+				FROM tbl_Movies MOV
+				INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+				WHERE MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Lists_Movies)
+			) AS NumMovies
+		UNION
+		SELECT
+			id_Lists
+			, Name
+			, 1 AS Selected
+			, (
+				SELECT COUNT(1)
+				FROM tbl_Lists_Movies LM
+				INNER JOIN tbl_Movies MOV ON LM.id_Movies = MOV.id_Movies
+				INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+				WHERE LM.id_Lists = LISTS.id_Lists
+			) AS NumMovies
+		FROM tbl_Lists LISTS
+		ORDER BY Name
+	`, { $MediaType });
+
+	if (filterValues && filterValues.filterLists) {
+		results.forEach(result => {
+			const filterValue = filterValues.filterLists.find(value => value.Description === result.Description);
+
+			if (filterValue) {
+				result.Selected = filterValue.Selected;
+			}
+
+			result.NumMovies = result.NumMovies.toLocaleString();
+		})
+	}
+
+	logger.log('fetchFilterLists result:', results);
+
+	shared.filterLists = results;
+}
+
 export {
 	db,
 	fetchSourcePaths,
@@ -1386,6 +1492,10 @@ export {
 	fetchFilterGenres,
 	fetchFilterAgeRatings,
 	fetchFilterRatings,
+	fetchFilterLists,
 	isScanning,
-	abortRescan
+	abortRescan,
+	createList,
+	addToList,
+	fetchLists
 }

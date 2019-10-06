@@ -1,13 +1,17 @@
 # Other
 - fix duplication check in filescan, e.g. "Audition ~ Ôdishon (De)(Sub De)(HD)[1999][Drama, Horror, Mystery][7.2 @ 65149][tt0235198].mkv"
 - correctly implement scrollcontainer class (e.g. Medialist)
-- min/maxAge is false when 0 is in place
 
 # Features
+
+## Watchlist
+- add as filter
+- implement "add to watchlist button"
 
 ## Last Seen (last_access_at)
 - in movie details
 - as sortable
+- write before launching
 
 ## Completed
 - in movie details
@@ -54,3 +58,7 @@
 
 # QA
 - check how fetchMedia/MediaList works if only filescan has been performed (no MI/IMDB data)
+
+
+# DONE
+- min/maxAge is false when 0 is in place

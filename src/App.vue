@@ -34,7 +34,7 @@
 
         <!-- Filters -->
         <div
-          v-if="($shared.filterSourcePaths && $shared.filterSourcePaths.length > 0) || ($shared.filterGenres && $shared.filterGenres.length > 0) || ($shared.filterAgeRatings && $shared.filterAgeRatings.length > 0)"
+          v-if="($shared.filterSourcePaths && $shared.filterSourcePaths.length > 0) || ($shared.filterGenres && $shared.filterGenres.length > 0) || ($shared.filterAgeRatings && $shared.filterAgeRatings.length > 0) || ($shared.filterLists && $shared.filterLists.length > 0)"
         >
           <v-divider></v-divider>
 
@@ -50,6 +50,10 @@
                 style="padding: 8px!important"
               >Source Paths {{filterSourcePathsTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
+                <v-row>
+                  <v-btn text v-on:click="setAllSourcePaths(false)">NONE</v-btn>
+                  <v-btn text v-on:click="setAllSourcePaths(true)">ALL</v-btn>
+                </v-row>
                 <v-checkbox
                   v-for="sourcePath in $shared.filterSourcePaths"
                   v-bind:key="sourcePath.Description"
@@ -57,7 +61,7 @@
                   v-model="sourcePath.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
-									color="dark-grey"
+                  color="dark-grey"
                 ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -82,7 +86,7 @@
                   v-model="genre.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
-									color="dark-grey"
+                  color="dark-grey"
                 ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -94,7 +98,7 @@
             >
               <v-expansion-panel-header
                 style="padding: 8px!important"
-              >Age {{ filterAgeRatingsTitle }}</v-expansion-panel-header>
+              >Ages {{ filterAgeRatingsTitle }}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
                   <v-btn text v-on:click="setAllAgeRatings(false)">NONE</v-btn>
@@ -107,7 +111,7 @@
                   v-model="ageRating.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
-									color="dark-grey"
+                  color="dark-grey"
                 ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -119,7 +123,8 @@
             >
               <v-expansion-panel-header
                 style="padding: 8px!important"
-              >My Rating {{filterRatingsTitle}}</v-expansion-panel-header> <!--  {{ filterRatingsTitle }} -->
+              >My Ratings {{filterRatingsTitle}}</v-expansion-panel-header>
+              <!--  {{ filterRatingsTitle }} -->
               <v-expansion-panel-content>
                 <v-row>
                   <v-btn text v-on:click="setAllRatings(false)">NONE</v-btn>
@@ -132,7 +137,7 @@
                   v-model="rating.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
-									color="dark-grey"
+                  color="dark-grey"
                 >
                   <v-icon
                     small
@@ -141,6 +146,31 @@
                     v-bind:color="(rating.Rating > (i - 1) ? 'amber' : (rating.Rating > 0 ? 'white' : 'grey'))"
                   >mdi-star</v-icon>
                 </v-checkbox>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
+            <!-- FILTER LISTS -->
+            <v-expansion-panel
+              v-show="$shared.filterLists && $shared.filterLists.length > 0"
+              style="padding: 0px!important"
+            >
+              <v-expansion-panel-header
+                style="padding: 8px!important"
+              >My Lists {{filterListsTitle}}</v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-row>
+                  <v-btn text v-on:click="setAllLists(false)">NONE</v-btn>
+                  <v-btn text v-on:click="setAllLists(true)">ALL</v-btn>
+                </v-row>
+                <v-checkbox
+                  v-for="list in $shared.filterLists"
+                  v-bind:key="list.id_Lists"
+                  v-bind:label="list.Name + ' (' + list.NumMovies + ')'"
+                  v-model="list.Selected"
+                  v-on:click.native="filtersChanged"
+                  style="margin: 0px"
+                  color="dark-grey"
+                ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
           </v-expansion-panels>
@@ -316,8 +346,8 @@ export default {
         this.$shared.filterAgeRatings.length +
         ")"
       );
-		},
-		
+    },
+
     filterRatingsTitle() {
       if (!this.$shared.filterRatings.find(filter => !filter.Selected)) {
         return "(ALL)";
@@ -329,13 +359,30 @@ export default {
 
       return (
         "(" +
-        this.$shared.filterRatings.filter(filter => filter.Selected)
-          .length +
+        this.$shared.filterRatings.filter(filter => filter.Selected).length +
         "/" +
         this.$shared.filterRatings.length +
         ")"
       );
     },
+
+    filterListsTitle() {
+      if (!this.$shared.filterLists.find(filter => !filter.Selected)) {
+        return "(ALL)";
+      }
+
+      if (!this.$shared.filterLists.find(filter => filter.Selected)) {
+        return "(NONE)";
+      }
+
+      return (
+        "(" +
+        this.$shared.filterLists.filter(filter => filter.Selected).length +
+        "/" +
+        this.$shared.filterLists.length +
+        ")"
+      );
+    }
   },
 
   methods: {
@@ -379,6 +426,14 @@ export default {
       this.debouncedEventBusRefetchMedia();
     },
 
+    setAllSourcePaths: function(value) {
+      this.$shared.filterSourcePaths.forEach(sp => {
+        sp.Selected = value;
+      });
+
+      this.filtersChanged();
+    },
+
     setAllGenres: function(value) {
       this.$shared.filterGenres.forEach(genre => {
         genre.Selected = value;
@@ -393,17 +448,25 @@ export default {
       });
 
       this.filtersChanged();
-		},
-		
+    },
+
     setAllRatings: function(value) {
       this.$shared.filterRatings.forEach(rating => {
         rating.Selected = value;
       });
 
       this.filtersChanged();
-		},
+    },
 
-		getFilterRatingLabel(rating, numMovies) {
+    setAllLists: function(value) {
+      this.$shared.filterLists.forEach(list => {
+        list.Selected = value;
+      });
+
+      this.filtersChanged();
+    },
+
+    getFilterRatingLabel(rating, numMovies) {
       let label = "";
 
       if (rating) {
@@ -414,14 +477,14 @@ export default {
         for (let i = 5; i > rating; i--) {
           label += "☆";
         }
-			} else {
-				label += "not yet rated"
-			}
-			
-			label += ' (' + numMovies + ')';
+      } else {
+        label += "<not yet rated>";
+      }
 
-			return label;
-		}
+      label += " (" + numMovies + ")";
+
+      return label;
+    }
   },
 
   // ### LifeCycleHooks ###
