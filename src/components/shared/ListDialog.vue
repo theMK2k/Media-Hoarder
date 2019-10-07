@@ -6,8 +6,8 @@
       </v-card-title>
 
       <div style="margin-left: 24px">
+        {{ createNewList }}
         <div class="subtitle">{{ movieName }}</div>
-
         combobox: {{ allowUseExistingList }} textinput: {{ allowCreateNewList }}
         <!-- LISTS COMBOBOX -->
         <v-row v-if="allowUseExistingList">
@@ -115,13 +115,29 @@ export default {
         this.useExistingList = false;
         this.createNewList = true;
       }
+    },
+
+    allowCreateNewList(newValue, oldValue) {
+      if (newValue === oldValue) {
+        return;
+      }
+
+      if (newValue) {
+        if (!this.allowUseExistingList) {
+          this.useExistingList = false;
+          this.createNewList = true;
+        }
+      } else {
+        this.useExistingList = true;
+        this.createNewList = false;
+      }
     }
   },
 
   methods: {
     resetData() {
       this.useExistingList = false;
-      this.createNewList = false;
+      this.createNewList = true;
       this.chosen_id_Lists = null;
       this.newListName = null;
     },
