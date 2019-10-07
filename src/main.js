@@ -48,6 +48,10 @@ export const eventBus = new Vue({
 
 		refetchFilters() {
 			this.$emit('refetchFilters');
+		},
+
+		initListDialog() {
+			this.$emit('initListDialog');
 		}
 	}
 });

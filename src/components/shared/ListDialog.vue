@@ -65,7 +65,7 @@
 // import router from "@/router"; // workaround in order to access router.app.$t
 const logger = require("loglevel");
 
-// import { eventBus } from "@/main";
+import { eventBus } from "@/main";
 
 export default {
   props: [
@@ -73,16 +73,14 @@ export default {
     "title",
     "movie",
     "lists",
-    "allowUseExistingList",
-    "allowCreateNewList"
+		"allowUseExistingList",
+		"useExistingList",
+		"allowCreateNewList",
+		"createNewList"
   ],
 
   data() {
     return {
-      allowUseExistingList: true,
-      useExistingList: false,
-      allowCreateNewList: true,
-      createNewList: false,
       chosen_id_Lists: null,
       newListName: null
     };
@@ -95,57 +93,16 @@ export default {
   },
 
   watch: {
-    useExistingList() {
-      this.createNewList = !this.useExistingList;
-    },
-
-    createNewList() {
-      this.useExistingList = !this.createNewList;
-    },
-
-    allowUseExistingList(newValue, oldValue) {
-      if (newValue === oldValue) {
-        return;
-      }
-
-      if (newValue) {
-        this.useExistingList = true;
-        this.createNewList = false;
-      } else {
-        this.useExistingList = false;
-        this.createNewList = true;
-      }
-    },
-
-    allowCreateNewList(newValue, oldValue) {
-      if (newValue === oldValue) {
-        return;
-      }
-
-      if (newValue) {
-        if (!this.allowUseExistingList) {
-          this.useExistingList = false;
-          this.createNewList = true;
-        }
-      } else {
-        this.useExistingList = true;
-        this.createNewList = false;
-      }
-    }
   },
 
   methods: {
     resetData() {
-      this.useExistingList = false;
-      this.createNewList = true;
       this.chosen_id_Lists = null;
       this.newListName = null;
     },
 
     onButtonClick(eventName) {
       this.$emit(eventName, {
-        useExistingList: this.useExistingList,
-        createNewList: this.createNewList,
         chosen_id_Lists: this.chosen_id_Lists,
         newListName: this.newListName
       });
@@ -154,7 +111,8 @@ export default {
   },
 
   // ### Lifecycle Hooks ###
-  created() {}
+  created() {
+	}
 };
 </script>
 

@@ -37,7 +37,7 @@
                   style="margin: 6px; height: 150px; width: 120px"
                   v-on:click.stop="launch(item)"
                 >
-                  <!-- v-img contain v-bind:src="item.IMDB_posterSmall_URL"></v-img> -->
+                  <v-img contain v-bind:src="item.IMDB_posterSmall_URL"></v-img>
                   <!-- TODO: implement lazy-src -->
                 </v-list-item-avatar>
               </div>
@@ -127,6 +127,8 @@
       v-bind:movie="listDialog.movie"
       v-bind:lists="listDialog.lists"
       v-bind:allowUseExistingList="listDialog.allowUseExistingList"
+			v-bind:useExistingLists="listDialog.useExistingLists"
+			v-bind:createNewList="listDialog.createNewList"
       v-bind:allowCreateNewList="listDialog.allowCreateNewList"
       v-on:ok="onListDialogOK"
       v-on:cancel="onListDialogCancel"
@@ -191,7 +193,9 @@ export default {
       movie: null,
       lists: [],
       allowUseExistingList: false,
-      allowCreateNewList: false
+			useExistingLists: false,
+      allowCreateNewList: false,
+			createNewList: false,
     },
 
     itemDetails: {
@@ -362,6 +366,8 @@ export default {
         this.listDialog.title = "Add to List";
         this.listDialog.movie = item;
         this.listDialog.show = true;
+
+        eventBus.initListDialog();
       })();
     },
 
@@ -375,6 +381,8 @@ export default {
         this.listDialog.show = true;
         // ListDialog.setUseExistingList(true);
         // ListDialog.setCreateNewList(false);
+
+        eventBus.initListDialog();
       })();
     },
 
