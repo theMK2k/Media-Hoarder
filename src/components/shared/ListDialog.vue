@@ -7,7 +7,10 @@
 
       <div style="margin-left: 24px">
         <div class="subtitle">{{ movieName }}</div>
-        <v-row>
+
+        combobox: {{ allowUseExistingList }} textinput: {{ allowCreateNewList }}
+        <!-- LISTS COMBOBOX -->
+        <v-row v-if="allowUseExistingList">
           <!-- v-if="lists && lists.length > 0" style="width: 100%" -->
           <v-checkbox
             v-model="useExistingList"
@@ -25,7 +28,9 @@
             v-model="chosen_id_Lists"
           ></v-select>
         </v-row>
-        <v-row>
+
+        <!-- NEW LIST TEXT INPUT -->
+        <v-row v-if="allowCreateNewList">
           <v-checkbox
             v-model="createNewList"
             label="New List:"
@@ -63,13 +68,20 @@ const logger = require("loglevel");
 // import { eventBus } from "@/main";
 
 export default {
-  props: ["show", "title", "movie", "lists", "allowUseExistingList", "allowCreateNewList"],
+  props: [
+    "show",
+    "title",
+    "movie",
+    "lists",
+    "allowUseExistingList",
+    "allowCreateNewList"
+  ],
 
   data() {
     return {
-			allowUseExistingList: true,
-			useExistingList: false,
-			allowCreateNewList: true,
+      allowUseExistingList: true,
+      useExistingList: false,
+      allowCreateNewList: true,
       createNewList: false,
       chosen_id_Lists: null,
       newListName: null
@@ -89,19 +101,25 @@ export default {
 
     createNewList() {
       this.useExistingList = !this.createNewList;
+    },
+
+    allowUseExistingList(newValue, oldValue) {
+      if (newValue === oldValue) {
+        return;
+      }
+
+      if (newValue) {
+        this.useExistingList = true;
+        this.createNewList = false;
+      } else {
+        this.useExistingList = false;
+        this.createNewList = true;
+      }
     }
   },
 
   methods: {
-		setCreateNewList(value) {
-			this.createNewList = value;
-		},
-
-		setUseExistingList(value) {
-			this.useExistingList = value;
-		},
-
-		resetData() {
+    resetData() {
       this.useExistingList = false;
       this.createNewList = false;
       this.chosen_id_Lists = null;
@@ -110,11 +128,11 @@ export default {
 
     onButtonClick(eventName) {
       this.$emit(eventName, {
-				useExistingList: this.useExistingList,
-				createNewList: this.createNewList,
-				chosen_id_Lists: this.chosen_id_Lists,
-				newListName: this.newListName
-			});
+        useExistingList: this.useExistingList,
+        createNewList: this.createNewList,
+        chosen_id_Lists: this.chosen_id_Lists,
+        newListName: this.newListName
+      });
       this.resetData();
     }
   },

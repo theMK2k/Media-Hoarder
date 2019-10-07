@@ -154,23 +154,27 @@
               v-show="$shared.filterLists && $shared.filterLists.length > 0"
               style="padding: 0px!important"
             >
-              <v-expansion-panel-header
-                style="padding: 8px!important"
-              >My Lists {{filterListsTitle}}</v-expansion-panel-header>
+              <v-expansion-panel-header style="padding: 8px!important">My Lists {{filterListsTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
                   <v-btn text v-on:click="setAllLists(false)">NONE</v-btn>
                   <v-btn text v-on:click="setAllLists(true)">ALL</v-btn>
                 </v-row>
-                <v-checkbox
-                  v-for="list in $shared.filterLists"
-                  v-bind:key="list.id_Lists"
-                  v-bind:label="list.Name + ' (' + list.NumMovies + ')'"
-                  v-model="list.Selected"
-                  v-on:click.native="filtersChanged"
-                  style="margin: 0px"
-                  color="dark-grey"
-                ></v-checkbox>
+                <v-row v-for="list in $shared.filterLists" v-bind:key="list.id_Lists">
+                  <v-checkbox
+                    v-bind:label="list.Name + ' (' + list.NumMovies + ')'"
+                    v-model="list.Selected"
+                    v-on:click.native="filtersChanged"
+                    style="margin: 0px"
+                    color="dark-grey"
+                  ></v-checkbox>
+                  <v-spacer></v-spacer>
+                  <v-icon
+                    v-if="list.id_Lists"
+                    style="align-items: flex-start; padding-top: 4px; cursor: pointer"
+                    v-on:click="deleteList(list)"
+                  >mdi-delete</v-icon>
+                </v-row>
               </v-expansion-panel-content>
             </v-expansion-panel>
           </v-expansion-panels>
@@ -202,6 +206,18 @@
     <v-content>
       <v-container style="display: flex; max-width: 100%!important; padding: 0px!important">
         <router-view></router-view>
+
+        <mk-delete-list-dialog
+          v-bind:show="deleteListDialog.show"
+          title="Delete List"
+          v-bind:question="`Do you really want to delete the list '${deleteListDialog.Name}'?`"
+          yes="YES, Delete"
+          cancel="Cancel"
+          yesColor="error"
+          cancelColor="secondary"
+          v-on:yes="onDeleteListDialogOK"
+          v-on:cancel="onDeleteListDialogCancel"
+        ></mk-delete-list-dialog>
       </v-container>
     </v-content>
 
@@ -253,8 +269,14 @@ import { shared } from "@/shared";
 import { eventBus } from "@/main";
 const logger = require("loglevel");
 
+import Dialog from "@/components/shared/Dialog.vue";
+
 export default {
-  props: {
+  components: {
+    "mk-delete-list-dialog": Dialog,
+  },
+
+props: {
     source: String
   },
   data: () => ({
@@ -281,6 +303,12 @@ export default {
       timeout: 6000,
       text: "",
       details: []
+    },
+
+    deleteListDialog: {
+      show: false,
+      id_Lists: null,
+      Name: null
     }
   }),
 
@@ -484,6 +512,50 @@ export default {
       label += " (" + numMovies + ")";
 
       return label;
+    },
+
+    deleteList(list) {
+      this.deleteListDialog.id_Lists = list.id_Lists;
+      this.deleteListDialog.Name = list.Name;
+      this.deleteListDialog.show = true;
+    },
+
+    onDeleteListDialogOK() {
+      (async () => {
+        try {
+          this.deleteListDialog.show = false;
+
+          logger.log('DELETE LIST');
+          
+          await store.db.fireProcedure(
+            `DELETE FROM tbl_Lists WHERE id_Lists = $id_Lists`,
+            {
+              $id_Lists: this.deleteListDialog.id_Lists
+            }
+          );
+
+          logger.log('DELETE LISTS MOVIES');
+
+          await store.db.fireProcedure(
+            `DELETE FROM tbl_Lists_Movies WHERE id_Lists NOT IN (SELECT id_Lists FROM tbl_Lists)`,
+            []
+          );
+
+          eventBus.refetchFilters();
+
+          eventBus.showSnackbar(
+            "success",
+            6000,
+            `List '${this.deleteListDialog.Name}' removed.`
+          );
+        } catch (err) {
+          eventBus.showSnackbar("error", 6000, err);
+        }
+      })();
+    },
+
+    onDeleteListDialogCancel() {
+      this.deleteListDialog.show = false;
     }
   },
 

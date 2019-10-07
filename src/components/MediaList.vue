@@ -37,7 +37,7 @@
                   style="margin: 6px; height: 150px; width: 120px"
                   v-on:click.stop="launch(item)"
                 >
-                  <v-img contain v-bind:src="item.IMDB_posterSmall_URL"></v-img>
+                  <!-- v-img contain v-bind:src="item.IMDB_posterSmall_URL"></v-img> -->
                   <!-- TODO: implement lazy-src -->
                 </v-list-item-avatar>
               </div>
@@ -123,7 +123,7 @@
       v-bind:movie="listDialog.movie"
 			v-bind:lists="listDialog.lists"
 			v-bind:allowUseExistingList="listDialog.allowUseExistingList"
-			v-bind:allowCreateList="listDialog.allowCreateList"
+			v-bind:allowCreateNewList="listDialog.allowCreateNewList"
       v-on:ok="onListDialogOK"
       v-on:cancel="onListDialogCancel"
     ></mk-list-dialog>
@@ -341,7 +341,16 @@ export default {
 		
 		addToList(item) {
 			(async () => {
-				this.listDialog.lists = await store.fetchLists();
+        this.listDialog.lists = await store.fetchLists();
+        
+        if (this.listDialog.lists && this.listDialog.lists.length > 0) {
+ 				  this.listDialog.allowUseExistingList = true;
+        } else {
+          this.listDialog.allowUseExistingList = false;
+        }
+
+        this.listDialog.allowCreateNewList = true;
+
 				this.listDialog.title = "Add to List";
 				this.listDialog.movie = item;
 				this.listDialog.show = true;
@@ -351,12 +360,15 @@ export default {
 
 		removeFromList(item) {
 			(async () => {
-				this.listDialog.lists = this.itemDetails.lists;
+				this.listDialog.allowCreateNewList = false;
+        this.listDialog.allowUseExistingList = true;
+        this.listDialog.lists = this.itemDetails.lists;
 				this.listDialog.title = "Remove from List";
 				this.listDialog.movie = item;
 				this.listDialog.show = true;
+        // ListDialog.setUseExistingList(true);
+        // ListDialog.setCreateNewList(false);
 			})();
-
 		},
 
 		onListDialogOK(data) {
@@ -369,7 +381,9 @@ export default {
 					}
 	
 					await store.addToList(data.chosen_id_Lists, this.listDialog.movie.id_Movies);
-	
+  
+          await this.fetchFilters();
+
 					eventBus.showSnackbar("success", 6000, "Movie added to list");
 				} catch (err) {
 					eventBus.showSnackbar("error", 6000, err);
@@ -380,17 +394,21 @@ export default {
 
 		onListDialogCancel() {
 			this.listDialog.show = false;
-		}
-  },
-
-  // ### LifeCycle Hooks ###
-  created() {
-    (async () => {
+    },
+    
+    async fetchFilters() {
       await store.fetchFilterSourcePaths(this.mediatype);
       await store.fetchFilterGenres(this.mediatype);
 			await store.fetchFilterAgeRatings(this.mediatype);
 			await store.fetchFilterRatings(this.mediatype);
 			await store.fetchFilterLists(this.mediatype);
+    }
+  },
+
+  // ### LifeCycle Hooks ###
+  created() {
+    (async () => {
+      await this.fetchFilters();
 
       this.items = await store.fetchMedia(this.mediatype);
       logger.log("items:", this.items);
@@ -406,6 +424,10 @@ export default {
         this.items = await store.fetchMedia(this.mediatype);
       })();
     });
+
+    eventBus.$on('refetchFilters', () => {
+      this.fetchFilters();
+    })
   }
 };
 </script>

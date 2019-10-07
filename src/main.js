@@ -44,6 +44,10 @@ export const eventBus = new Vue({
 
 		refetchMedia() {
 			this.$emit('refetchMedia');
+		},
+
+		refetchFilters() {
+			this.$emit('refetchFilters');
 		}
 	}
 });
