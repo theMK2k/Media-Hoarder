@@ -52,7 +52,19 @@ export const eventBus = new Vue({
 
 		initListDialog() {
 			this.$emit('initListDialog');
-		}
+		},
+
+		listDialogSetChosenMethod(value) {
+			this.$emit('listDialogSetChosenMethod', value);
+		},
+
+		listDialogSetCreateNewList(value) {
+			this.$emit('listDialogSetCreateNewList', value);
+		},
+
+		listDialogSetChosenList(id_Lists) {
+			this.$emit('listDialogSetChosenList', id_Lists);
+		},
 	}
 });
 

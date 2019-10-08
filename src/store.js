@@ -1015,7 +1015,7 @@ async function fetchMedia($MediaType) {
 		}
 
 		result.forEach(item => {
-			logger.log(item.Name);
+			// logger.log(item.Name);
 			item.IMDB_posterSmall_URL = item.IMDB_posterSmall_URL ? helpers.getPath(item.IMDB_posterSmall_URL) : item.IMDB_posterSmall_URL;
 			item.IMDB_posterLarge_URL = item.IMDB_posterLarge_URL ? helpers.getPath(item.IMDB_posterLarge_URL) : item.IMDB_posterLarge_URL;
 			item.yearDisplay = (item.startYear ? '(' + item.startYear + (item.endYear ? `-${item.endYear}` : '') + ')' : '');
@@ -1032,7 +1032,7 @@ async function fetchMedia($MediaType) {
 			}
 
 			item.SearchSpace = (item.Name || '').toLowerCase() + ' ' + (item.Name2 || '').toLowerCase() + ' ' + (item.IMDB_plotSummary || '').toLowerCase() + ' ' + (item.Genres || '').toLowerCase();
-		})
+		});
 
 		return result;
 	} catch (err) {
@@ -1422,6 +1422,10 @@ async function addToList($id_Lists, $id_Movies) {
 	await db.fireProcedure(`INSERT INTO tbl_Lists_Movies (id_Lists, id_Movies, created_at) VALUES ($id_Lists, $id_Movies, DATETIME('now'))`, { $id_Lists, $id_Movies });
 }
 
+async function removeFromList($id_Lists, $id_Movies) {
+	return await db.fireProcedureReturnScalar(`DELETE FROM tbl_Lists_Movies WHERE id_Lists = $id_Lists AND id_Movies = $id_Movies`, { $id_Lists, $id_Movies });
+}
+
 async function fetchLists() {
 	return await db.fireProcedureReturnAll(`
 			SELECT
@@ -1507,6 +1511,7 @@ export {
 	abortRescan,
 	createList,
 	addToList,
+	removeFromList,
 	fetchLists,
 	getMovieDetails
 }
