@@ -120,8 +120,8 @@ async function rescan(onlyNew) {
 	isScanning = true;
 	eventBus.rescanStarted();
 
-	await filescanMovies(onlyNew);
-	await rescanMoviesMetaData(onlyNew);
+	//await filescanMovies(onlyNew);		// KILLME
+	await rescanMoviesMetaData(false);	// KILLME
 	await applyIMDBMetaData();
 	// await rescanTV();
 
@@ -322,7 +322,8 @@ async function rescanMoviesMetaData(onlyNew) {
 				, IMDB_Done
 				, IMDB_tconst
 			FROM tbl_Movies
-			-- WHERE id_SourcePaths IN (5, 10) -- KILLME`,
+			-- WHERE id_SourcePaths IN (5, 10) -- KILLME
+			WHERE id_Movies = 14 -- KILLME`,
 		[]);
 
 	for (let i = 0; i < movies.length; i++) {
@@ -338,7 +339,7 @@ async function rescanMoviesMetaData(onlyNew) {
 		// eventBus.scanInfoOff();
 		eventBus.scanInfoShow('Rescanning Movies', `${movie.Name || movie.Filename}`);
 
-		await applyMediaInfo(movie, onlyNew);
+		// await applyMediaInfo(movie, onlyNew); // KILLME
 		await findIMDBtconst(movie, onlyNew);
 		await fetchIMDBMetaData(movie, onlyNew);
 	}
@@ -813,10 +814,100 @@ async function getIMDBParentalGuideData(movie) {
 
 	logger.log('found age ratings:', ageRatings);
 
+	const rx_Parental_Advisory_Nudity = /<section id="advisory-nudity">[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>(.*?)<\/span>/;
+	let $IMDB_Parental_Advisory_Nudity = null;
+
+	if (rx_Parental_Advisory_Nudity.test(html)) {
+		const severity = html.match(rx_Parental_Advisory_Nudity)[1].trim().toLowerCase();
+
+		if (severity == 'none') {
+			$IMDB_Parental_Advisory_Nudity = 0;
+		} else if (severity == 'mild') {
+			$IMDB_Parental_Advisory_Nudity = 1;
+		} else if (severity == 'moderate') {
+			$IMDB_Parental_Advisory_Nudity = 2;
+		} else if (severity == 'severe') {
+			$IMDB_Parental_Advisory_Nudity = 3;
+		}
+	}
+
+	const rx_Parental_Advisory_Violence = /<section id="advisory-violence">[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>(.*?)<\/span>/;
+	let $IMDB_Parental_Advisory_Violence = null;
+
+	if (rx_Parental_Advisory_Violence.test(html)) {
+		const severity = html.match(rx_Parental_Advisory_Violence)[1].trim().toLowerCase();
+
+		if (severity == 'none') {
+			$IMDB_Parental_Advisory_Violence = 0;
+		} else if (severity == 'mild') {
+			$IMDB_Parental_Advisory_Violence = 1;
+		} else if (severity == 'moderate') {
+			$IMDB_Parental_Advisory_Violence = 2;
+		} else if (severity == 'severe') {
+			$IMDB_Parental_Advisory_Violence = 3;
+		}
+	}
+
+	const rx_Parental_Advisory_Profanity = /<section id="advisory-profanity">[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>(.*?)<\/span>/;
+	let $IMDB_Parental_Advisory_Profanity = null;
+
+	if (rx_Parental_Advisory_Profanity.test(html)) {
+		const severity = html.match(rx_Parental_Advisory_Profanity)[1].trim().toLowerCase();
+
+		if (severity == 'none') {
+			$IMDB_Parental_Advisory_Profanity = 0;
+		} else if (severity == 'mild') {
+			$IMDB_Parental_Advisory_Profanity = 1;
+		} else if (severity == 'moderate') {
+			$IMDB_Parental_Advisory_Profanity = 2;
+		} else if (severity == 'severe') {
+			$IMDB_Parental_Advisory_Profanity = 3;
+		}
+	}
+
+	const rx_Parental_Advisory_Alcohol = /<section id="advisory-alcohol">[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>(.*?)<\/span>/;
+	let $IMDB_Parental_Advisory_Alcohol = null;
+
+	if (rx_Parental_Advisory_Alcohol.test(html)) {
+		const severity = html.match(rx_Parental_Advisory_Alcohol)[1].trim().toLowerCase();
+
+		if (severity == 'none') {
+			$IMDB_Parental_Advisory_Alcohol = 0;
+		} else if (severity == 'mild') {
+			$IMDB_Parental_Advisory_Alcohol = 1;
+		} else if (severity == 'moderate') {
+			$IMDB_Parental_Advisory_Alcohol = 2;
+		} else if (severity == 'severe') {
+			$IMDB_Parental_Advisory_Alcohol = 3;
+		}
+	}
+
+	const rx_Parental_Advisory_Frightening = /<section id="advisory-frightening">[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>(.*?)<\/span>/;
+	let $IMDB_Parental_Advisory_Frightening = null;
+
+	if (rx_Parental_Advisory_Frightening.test(html)) {
+		const severity = html.match(rx_Parental_Advisory_Frightening)[1].trim().toLowerCase();
+
+		if (severity == 'none') {
+			$IMDB_Parental_Advisory_Frightening = 0;
+		} else if (severity == 'mild') {
+			$IMDB_Parental_Advisory_Frightening = 1;
+		} else if (severity == 'moderate') {
+			$IMDB_Parental_Advisory_Frightening = 2;
+		} else if (severity == 'severe') {
+			$IMDB_Parental_Advisory_Frightening = 3;
+		}
+	}
+	
 	return {
 		$IMDB_MinAge,
 		$IMDB_MaxAge,
-		$IMDB_id_AgeRating_Chosen_Country
+		$IMDB_id_AgeRating_Chosen_Country,
+		$IMDB_Parental_Advisory_Nudity,
+		$IMDB_Parental_Advisory_Violence,
+		$IMDB_Parental_Advisory_Profanity,
+		$IMDB_Parental_Advisory_Alcohol,
+		$IMDB_Parental_Advisory_Frightening
 	}
 }
 
@@ -992,6 +1083,11 @@ async function fetchMedia($MediaType) {
 			, (SELECT GROUP_CONCAT(G.Name, ', ') FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres AND MG.id_Movies = MOV.id_Movies) AS Genres
 			, MOV.IMDB_MinAge
 			, MOV.IMDB_MaxAge
+			, MOV.IMDB_Parental_Advisory_Nudity
+			, MOV.IMDB_Parental_Advisory_Violence
+			, MOV.IMDB_Parental_Advisory_Profanity
+			, MOV.IMDB_Parental_Advisory_Alcohol
+			, MOV.IMDB_Parental_Advisory_Frightening
 			, AR.Age
 			, MOV.created_at
 			, MOV.last_access_at
