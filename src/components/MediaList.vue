@@ -37,7 +37,7 @@
                   style="margin: 6px; height: 150px; width: 120px"
                   v-on:click.stop="launch(item)"
                 >
-                  <!-- <v-img contain v-bind:src="item.IMDB_posterSmall_URL"></v-img> -->
+                  <v-img contain v-bind:src="item.IMDB_posterSmall_URL"></v-img>
                   <!-- TODO: implement lazy-src -->
                 </v-list-item-avatar>
               </div>
@@ -428,7 +428,8 @@ export default {
       await store.fetchFilterGenres(this.mediatype);
       await store.fetchFilterAgeRatings(this.mediatype);
       await store.fetchFilterRatings(this.mediatype);
-      await store.fetchFilterLists(this.mediatype);
+			await store.fetchFilterLists(this.mediatype);
+			await store.fetchFilterParentalAdvisory(this.mediatype);
     }
   },
 

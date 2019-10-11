@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from '@/App.vue'
 import Vuetify from 'vuetify'
 import '@mdi/font/css/materialdesignicons.css'
+import VueVirtualScroller from 'vue-virtual-scroller'
 
 // const logger = require('loglevel');
 
@@ -12,6 +13,7 @@ import { shared } from '@/shared'
 
 Vue.use(Vuetify)
 Vue.use(shared);
+Vue.use(VueVirtualScroller);
 
 Vue.config.productionTip = false
 

@@ -322,8 +322,9 @@ async function rescanMoviesMetaData(onlyNew) {
 				, IMDB_Done
 				, IMDB_tconst
 			FROM tbl_Movies
-			-- WHERE id_SourcePaths IN (5, 10) -- KILLME
-			WHERE id_Movies = 14 -- KILLME`,
+			WHERE id_SourcePaths IN (5, 10) -- KILLME: only on laptop
+			-- WHERE id_Movies = 14 -- KILLME: only Blade Runner
+			`,
 		[]);
 
 	for (let i = 0; i < movies.length; i++) {
@@ -334,7 +335,7 @@ async function rescanMoviesMetaData(onlyNew) {
 		const movie = movies[i];
 
 		// KILLME
-		if (i > 0) break;
+		// if (i > 0) break;
 
 		// eventBus.scanInfoOff();
 		eventBus.scanInfoShow('Rescanning Movies', `${movie.Name || movie.Filename}`);
@@ -1053,11 +1054,43 @@ async function fetchMedia($MediaType) {
 			filterLists += ')';
 		}
 
+		let filterParentalAdvisory = '';
+		Object.keys(shared.filterParentalAdvisory).forEach(category => {
+			let filterPACategory = '';
+			
+			if (shared.filterParentalAdvisory[category] && shared.filterParentalAdvisory[category].find(filter => !filter.Selected)) {
+			
+				if (shared.filterParentalAdvisory[category].find(filter => (filter.Selected && filter.Severity == -1))) {
+					filterPACategory = `AND (MOV.IMDB_Parental_Advisory_${category} IS NULL `;
+				} else {
+					filterPACategory = `AND (1=0 `;
+				}
+				
+				if (shared.filterParentalAdvisory[category].find(filter => (filter.Selected && filter.Severity >= 0))) {
+					filterPACategory += `OR MOV.IMDB_Parental_Advisory_${category} IN (`;
+	
+					filterPACategory += shared.filterParentalAdvisory[category].filter(filter => filter.Selected).map(filter => filter.Severity).reduce((prev, current) => {
+						return prev + (prev ? ', ' : '') + current;
+					}, '');
+	
+					filterPACategory += ')';
+				}
+	
+				filterPACategory += ')';
+			}
+
+			if (filterPACategory) {
+				filterParentalAdvisory += `${filterPACategory}
+				`;
+			}
+		})
+
 		logger.log('fetchMedia filterSourcePaths:', filterSourcePaths);
 		logger.log('fetchMedia filterGenres:', filterGenres);
 		logger.log('fetchMedia filterAgeRatings:', filterAgeRatings);
 		logger.log('fetchMedia filterRatings:', filterRatings);
 		logger.log('fetchMedia filterLists:', filterLists);
+		logger.log('fetchMedia filterParentalAdvisory:', filterParentalAdvisory);
 
 		const query = `
 		SELECT
@@ -1099,6 +1132,7 @@ async function fetchMedia($MediaType) {
 		${filterAgeRatings}
 		${filterRatings}
 		${filterLists}
+		${filterParentalAdvisory}
 	`;
 
 		logger.log('fetchMedia query:', query);
@@ -1481,6 +1515,104 @@ async function fetchFilterRatings($MediaType) {
 	shared.filterRatings = results;
 }
 
+async function fetchFilterParentalAdvisory($MediaType) {
+	const Nudity = await fetchFilterParentalAdvisoryCategory($MediaType, 'Nudity');
+	const Violence = await fetchFilterParentalAdvisoryCategory($MediaType, 'Violence');
+	const Profanity = await fetchFilterParentalAdvisoryCategory($MediaType, 'Profanity');
+	const Alcohol = await fetchFilterParentalAdvisoryCategory($MediaType, 'Alcohol');
+	const Frightening = await fetchFilterParentalAdvisoryCategory($MediaType, 'Frightening');
+
+	shared.filterParentalAdvisory = {
+		Nudity,
+		Violence,
+		Profanity,
+		Alcohol,
+		Frightening
+	}
+}
+
+async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category) {
+	logger.log(`fetchFilterParentalAdvisory${PA_Category} MediaType:`, $MediaType);
+
+	const filterValues = await fetchFilterValues($MediaType);
+
+	logger.log(`fetchFilterParentalAdvisory${PA_Category} filterValues:`, filterValues);
+
+	const results = await db.fireProcedureReturnAll(`
+			SELECT
+				-1 AS Severity
+				, '<not available>' AS DisplayText
+				, 1 AS Selected
+				, (
+					SELECT COUNT(1)
+					FROM tbl_Movies MOV
+					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+					WHERE MOV.IMDB_Parental_Advisory_${PA_Category} IS NULL
+				) AS NumMovies
+			UNION
+			SELECT
+				0 AS Severity
+				, 'None' AS DisplayText
+				, 1 AS Selected
+				, (
+					SELECT COUNT(1)
+					FROM tbl_Movies MOV
+					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+					WHERE MOV.IMDB_Parental_Advisory_${PA_Category} = 0
+				) AS NumMovies
+			UNION
+			SELECT
+				1 AS Severity
+				, 'Mild' AS DisplayText
+				, 1 AS Selected
+				, (
+					SELECT COUNT(1)
+					FROM tbl_Movies MOV
+					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+					WHERE MOV.IMDB_Parental_Advisory_${PA_Category} = 1
+				) AS NumMovies
+			UNION
+			SELECT
+				2 AS Severity
+				, 'Moderate' AS DisplayText
+				, 1 AS Selected
+				, (
+					SELECT COUNT(1)
+					FROM tbl_Movies MOV
+					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+					WHERE MOV.IMDB_Parental_Advisory_${PA_Category} = 2
+				) AS NumMovies
+			UNION
+			SELECT
+				3 AS Severity
+				, 'Severe' AS DisplayText
+				, 1 AS Selected
+				, (
+					SELECT COUNT(1)
+					FROM tbl_Movies MOV
+					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+					WHERE MOV.IMDB_Parental_Advisory_${PA_Category} = 3
+				) AS NumMovies
+				`,
+		{ $MediaType });
+
+	if (filterValues && filterValues.filterParentalAdvisory && filterValues.filterParentalAdvisory[PA_Category]) {
+		results.forEach(result => {
+			const filterValue = filterValues.filterParentalAdvisory[PA_Category].find(value => value.Rating === result.Rating);
+
+			if (filterValue) {
+				result.Selected = filterValue.Selected;
+			}
+
+			result.NumMovies = result.NumMovies.toLocaleString();
+		})
+	}
+
+	logger.log(`fetchFilterParentalAdvisory${PA_Category} results:`, results);
+
+	return results;
+}
+
 function abortRescan() {
 	doAbortRescan = true;
 }
@@ -1603,6 +1735,7 @@ export {
 	fetchFilterAgeRatings,
 	fetchFilterRatings,
 	fetchFilterLists,
+	fetchFilterParentalAdvisory,
 	isScanning,
 	abortRescan,
 	createList,

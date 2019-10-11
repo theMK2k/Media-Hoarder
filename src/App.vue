@@ -177,6 +177,44 @@
                 </v-row>
               </v-expansion-panel-content>
             </v-expansion-panel>
+
+            <!-- FILTER GROUP: PARENTAL ADVISORY -->
+            <v-expansion-panel
+              v-show="($shared.filterParentalAdvisory.Nudity && $shared.filterParentalAdvisory.Nudity.length > 0) || ($shared.filterParentalAdvisory.Violence && $shared.filterParentalAdvisory.Violence.length > 0) || ($shared.filterParentalAdvisory.Profanity && $shared.filterParentalAdvisory.Profanity.length > 0) || ($shared.filterParentalAdvisory.Alcohol && $shared.filterParentalAdvisory.Alcohol.length > 0) || ($shared.filterParentalAdvisory.Frightening && $shared.filterParentalAdvisory.Frightening.length > 0)"
+              style="padding: 0px!important"
+            >
+              <v-expansion-panel-header style="padding: 8px!important">Content Advisory</v-expansion-panel-header>
+
+              <v-expansion-panel-content>
+                <v-expansion-panels accordion multiple>
+                  <v-expansion-panel
+                    v-for="category in filterParentalAdvisoryCategories"
+                    v-bind:key="category.Name"
+                    v-show="$shared.filterParentalAdvisory[category.Name] && $shared.filterParentalAdvisory[category.Name].length > 0"
+                    style="padding: 0px!important"
+                  >
+                    <v-expansion-panel-header
+                      style="padding: 8px!important"
+                    >{{category.DisplayText}} {{filterParentalAdvisoryCategoryTitle(category)}}</v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                      <v-row>
+                        <v-btn text v-on:click="setAllParentalAdvisory(category, false)">NONE</v-btn>
+                        <v-btn text v-on:click="setAllParentalAdvisory(category, true)">ALL</v-btn>
+                      </v-row>
+                      <v-row v-for="paItem in $shared.filterParentalAdvisory[category.Name]" v-bind:key="paItem.Severity">
+                        <v-checkbox
+                          v-bind:label="paItem.DisplayText + ' (' + paItem.NumMovies + ')'"
+                          v-model="paItem.Selected"
+                          v-on:click.native="filtersChanged"
+                          style="margin: 0px"
+                          color="dark-grey"
+                        ></v-checkbox>
+                      </v-row>
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
+                </v-expansion-panels>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
           </v-expansion-panels>
         </div>
       </v-list>
@@ -273,10 +311,10 @@ import Dialog from "@/components/shared/Dialog.vue";
 
 export default {
   components: {
-    "mk-delete-list-dialog": Dialog,
+    "mk-delete-list-dialog": Dialog
   },
 
-props: {
+  props: {
     source: String
   },
   data: () => ({
@@ -309,7 +347,30 @@ props: {
       show: false,
       id_Lists: null,
       Name: null
-    }
+    },
+
+    filterParentalAdvisoryCategories: [
+      {
+        Name: "Nudity",
+        DisplayText: "Sex & Nudity"
+      },
+      {
+        Name: "Violence",
+        DisplayText: "Violence & Gore"
+      },
+      {
+        Name: "Profanity",
+        DisplayText: "Profanity"
+      },
+      {
+        Name: "Alcohol",
+        DisplayText: "Alcohol, Drugs & Smoking"
+      },
+      {
+        Name: "Frightening",
+        DisplayText: "Frightening & Intense Scenes"
+      }
+    ]
   }),
 
   watch: {
@@ -410,7 +471,7 @@ props: {
         this.$shared.filterLists.length +
         ")"
       );
-    }
+		},
   },
 
   methods: {
@@ -492,7 +553,13 @@ props: {
       });
 
       this.filtersChanged();
-    },
+		},
+		
+		setAllParentalAdvisory: function(category, value) {
+			this.$shared.filterParentalAdvisory[category.Name].forEach(paItem => {
+				paItem.Selected = value;
+			})
+		},
 
     getFilterRatingLabel(rating, numMovies) {
       let label = "";
@@ -525,8 +592,8 @@ props: {
         try {
           this.deleteListDialog.show = false;
 
-          logger.log('DELETE LIST');
-          
+          logger.log("DELETE LIST");
+
           await store.db.fireProcedure(
             `DELETE FROM tbl_Lists WHERE id_Lists = $id_Lists`,
             {
@@ -534,7 +601,7 @@ props: {
             }
           );
 
-          logger.log('DELETE LISTS MOVIES');
+          logger.log("DELETE LISTS MOVIES");
 
           await store.db.fireProcedure(
             `DELETE FROM tbl_Lists_Movies WHERE id_Lists NOT IN (SELECT id_Lists FROM tbl_Lists)`,
@@ -556,7 +623,25 @@ props: {
 
     onDeleteListDialogCancel() {
       this.deleteListDialog.show = false;
-    }
+		},
+		
+		filterParentalAdvisoryCategoryTitle(category) {
+      if (!this.$shared.filterParentalAdvisory[category.Name].find(filter => !filter.Selected)) {
+        return "(ALL)";
+      }
+
+      if (!this.$shared.filterParentalAdvisory[category.Name].find(filter => filter.Selected)) {
+        return "(NONE)";
+      }
+
+      return (
+        "(" +
+        this.$shared.filterParentalAdvisory[category.Name].filter(filter => filter.Selected).length +
+        "/" +
+        this.$shared.filterParentalAdvisory[category.Name].length +
+        ")"
+      );
+		}
   },
 
   // ### LifeCycleHooks ###

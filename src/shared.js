@@ -7,7 +7,14 @@ const shared = new Vue({
 		filterGenres: [],
 		filterAgeRatings: [],
 		filterRatings: [],
-		filterLists: []
+		filterLists: [],
+		filterParentalAdvisory: {
+			Nudity: [],
+			Violence: [],
+			Profanity: [],
+			Alcohol: [],
+			Frightening: [],
+		}
 	}
 });
 
