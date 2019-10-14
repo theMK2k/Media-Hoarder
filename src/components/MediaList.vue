@@ -45,7 +45,7 @@
                   v-on:click.stop="launch(item)"
                 >
                   <!-- <v-img v-if="item.domVisible" contain v-bind:src="item.IMDB_posterSmall_URL"></v-img> -->
-                  <v-img v-if="!item.domVisible" style="background-color: rgba(255,255,255,0.2)"></v-img>
+                  <v-img v-if="!item.domVisible" class="breathe-bg"></v-img>
                   <!-- TODO: implement lazy-src -->
                 </v-list-item-avatar>
               </div>
@@ -596,5 +596,38 @@ export default {
 
 .CreditClickable:hover {
   color: #2196f3 !important;
+}
+
+.breathe-bg {
+  background-color: rgba(255,255,255,0.2);
+  border-radius: 
+}
+
+.breathe-bg::after {
+  background-color: rgba(255,255,255,0.2);
+  content: '';
+  opacity: 0;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;
+  animation: breathe;
+  animation-duration: 0.5s;
+  animation-timing-function: ease-out;
+  /*animation-iteration-count:infinite;*/
+  /*animation-fill-mode:forwards;*/
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+}
+
+@keyframes breathe{
+  0%{
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
+ }
 }
 </style>
