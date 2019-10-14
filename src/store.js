@@ -67,33 +67,41 @@ dbsync.runSync(helpers.getPath('data/mediabox.db_initial'), helpers.getPath('dat
 	})
 });
 
-function generateIndexQuery(tableName, ColumnName, isUnique) {
-	return `CREATE ${isUnique ? 'UNIQUE ' : ''} INDEX IF NOT EXISTS main.IDX_${tableName}_${ColumnName} ON ${tableName} (${ColumnName})`
+function generateIndexQuery(tableName, ColumnNames, isUnique) {
+	const columnNamesString = ColumnNames.reduce((prev, current) => {
+		return prev + (prev ? ', ' : '') + `${current}`;
+	}, '');
+	
+	return `CREATE ${isUnique ? 'UNIQUE ' : ''} INDEX IF NOT EXISTS main.IDX_${tableName}_${columnNamesString.replace(/, /g, '_')} ON ${tableName} (${columnNamesString})`
 }
 
 async function createIndexes(db) {
 	logger.log('creating indexes...');
 
 	const queries = [
-		generateIndexQuery('tbl_Genres', 'GenreID', true),
-		generateIndexQuery('tbl_Movies', 'id_SourcePaths', false),
-		generateIndexQuery('tbl_Movies', 'MI_Duration_Seconds', false),
-		generateIndexQuery('tbl_Movies', 'MI_Quality', false),
-		generateIndexQuery('tbl_Movies', 'MI_Aspect_Ratio', false),
-		generateIndexQuery('tbl_Movies', 'IMDB_tconst', false),
-		generateIndexQuery('tbl_Movies', 'IMDB_releaseType', false),
-		generateIndexQuery('tbl_Movies', 'IMDB_startYear', false),
-		generateIndexQuery('tbl_Movies', 'IMDB_runtimeMinutes', false),
-		generateIndexQuery('tbl_Movies', 'IMDB_rating', false),
-		generateIndexQuery('tbl_Movies', 'IMDB_numVotes', false),
-		generateIndexQuery('tbl_Movies', 'IMDB_metacriticScore', false),
-		generateIndexQuery('tbl_Movies_Genres', 'id_Movies', false),
-		generateIndexQuery('tbl_Movies_Genres', 'id_Genres', false),
-		generateIndexQuery('tbl_Settings', 'Key', true),
-		generateIndexQuery('tbl_SourcePaths', 'MediaType', false),
-		generateIndexQuery('tbl_SourcePaths', 'Description', false),
+		generateIndexQuery('tbl_Genres', ['GenreID'], true),
+		generateIndexQuery('tbl_Movies', ['id_SourcePaths'], false),
+		generateIndexQuery('tbl_Movies', ['MI_Duration_Seconds'], false),
+		generateIndexQuery('tbl_Movies', ['MI_Quality'], false),
+		generateIndexQuery('tbl_Movies', ['MI_Aspect_Ratio'], false),
+		generateIndexQuery('tbl_Movies', ['IMDB_tconst'], false),
+		generateIndexQuery('tbl_Movies', ['IMDB_releaseType'], false),
+		generateIndexQuery('tbl_Movies', ['IMDB_startYear'], false),
+		generateIndexQuery('tbl_Movies', ['IMDB_runtimeMinutes'], false),
+		generateIndexQuery('tbl_Movies', ['IMDB_rating'], false),
+		generateIndexQuery('tbl_Movies', ['IMDB_numVotes'], false),
+		generateIndexQuery('tbl_Movies', ['IMDB_metacriticScore'], false),
+		generateIndexQuery('tbl_Movies_Genres', ['id_Movies'], false),
+		generateIndexQuery('tbl_Movies_Genres', ['id_Genres'], false),
+		generateIndexQuery('tbl_Settings', ['Key'], true),
+		generateIndexQuery('tbl_SourcePaths', ['MediaType'], false),
+		generateIndexQuery('tbl_SourcePaths', ['Description'], false),
+		generateIndexQuery('tbl_Movies_IMDB_Credits', ['id_Movies'], false),
+		generateIndexQuery('tbl_Movies_IMDB_Credits', ['id_Movies', 'Category', 'IMDB_Person_ID'], true),
 	]
 
+	logger.log('queries:', queries);
+	
 	for (let i = 0; i < queries.length; i++) {
 		logger.log('.');
 		await db.fireProcedure(queries[i]);
@@ -526,8 +534,8 @@ async function fetchIMDBMetaData(movie, onlyNew) {
 		const parentalguideData = await getIMDBParentalGuideData(movie);
 		IMDBdata = Object.assign(IMDBdata, parentalguideData);
 
-		const { top3credits, credits } = await getIMDBFullCreditsData(movie);
-		IMDBdata = Object.assign(IMDBdata, top3credits);
+		const { topCredits, credits } = await getIMDBFullCreditsData(movie);
+		IMDBdata = Object.assign(IMDBdata, topCredits);
 
 		logger.log('IMDBdata:', IMDBdata);
 
@@ -924,10 +932,12 @@ async function getIMDBFullCreditsData(movie) {
 	const response = await requestGetAsync(url);
 	const html = response.body;
 
-	const top3cast = [];
-	const top3director = [];
-	const top3producer = [];
-	const top3writer = [];
+	const topMax = 5;
+
+	const topCast = [];
+	const topDirector = [];
+	const topProducer = [];
+	const topWriter = [];
 
 	const credits = [];
 
@@ -951,8 +961,8 @@ async function getIMDBFullCreditsData(movie) {
 			}
 
 			credits.push(entry);
-			if (top3cast.length < 3) {
-				top3cast.push(entry);
+			if (topCast.length < topMax) {
+				topCast.push(entry);
 			}
 		}
 	}
@@ -970,22 +980,22 @@ async function getIMDBFullCreditsData(movie) {
 
 		if (creditsCategory === 'Directed by') {
 			result.forEach(entry => {
-				if (top3director.length < 3) {
-					top3director.push(entry);
+				if (topDirector.length < topMax) {
+					topDirector.push(entry);
 				}
 			})
 		}
 		if (creditsCategory === 'Produced by') {
 			result.forEach(entry => {
-				if (top3producer.length < 3) {
-					top3producer.push(entry);
+				if (topProducer.length < topMax) {
+					topProducer.push(entry);
 				}
 			})
 		}
 		if (creditsCategory === 'Writing Credits') {
 			result.forEach(entry => {
-				if (top3writer.length < 3) {
-					top3writer.push(entry);
+				if (topWriter.length < topMax) {
+					topWriter.push(entry);
 				}
 			})
 		}
@@ -993,17 +1003,17 @@ async function getIMDBFullCreditsData(movie) {
 
 	logger.log('credits:', credits);
 
-	let $IMDB_Top_3_Cast = top3cast.length > 0 ? JSON.stringify(top3cast) : null;
-	let $IMDB_Top_3_Writers = top3writer.length > 0 ? JSON.stringify(top3writer) : null;
-	let $IMDB_Top_3_Directors = top3director.length > 0 ? JSON.stringify(top3director) : null;
-	let $IMDB_Top_3_Producers = top3producer.length > 0 ? JSON.stringify(top3producer) : null;
+	let $IMDB_Top_Cast = topCast.length > 0 ? JSON.stringify(topCast) : null;
+	let $IMDB_Top_Writers = topWriter.length > 0 ? JSON.stringify(topWriter) : null;
+	let $IMDB_Top_Directors = topDirector.length > 0 ? JSON.stringify(topDirector) : null;
+	let $IMDB_Top_Producers = topProducer.length > 0 ? JSON.stringify(topProducer) : null;
 
 	return {
-		top3credits: {
-			$IMDB_Top_3_Directors,
-			$IMDB_Top_3_Writers,
-			$IMDB_Top_3_Producers,
-			$IMDB_Top_3_Cast
+		topCredits: {
+			$IMDB_Top_Directors,
+			$IMDB_Top_Writers,
+			$IMDB_Top_Producers,
+			$IMDB_Top_Cast
 		},
 		credits
 	}
@@ -1075,13 +1085,24 @@ async function saveIMDBData(movie, IMDBdata, genres, credits) {
 
 	for (let i = 0; i < credits.length; i++) {
 		const credit = credits[i];
-		const id_Movies_IMDB_Credits = await db.fireProcedureReturnScalar(`SELECT id_Movies_IMDB_Credits FROM tbl_Movies_IMDB_Credits WHERE id_Movies = $id_Movies AND Category = $Category AND IMDB_Person_ID = $IMDB_Person_ID`, { $id_Movies: movie.id_Movies, $Category: credit.category, $IMDB_Person_ID: credit.id });
 
-		if (id_Movies_IMDB_Credits) {
-			continue;
-		}
-
-		await db.fireProcedure(`INSERT INTO tbl_Movies_IMDB_Credits (id_Movies, Category, IMDB_Person_ID, Person_Name, Credit) VALUES ($id_Movies, $Category, $IMDB_Person_ID, $Person_Name, $Credit)`, {$id_Movies: movie.id_Movies, $Category: credit.category, $IMDB_Person_ID: credit.id, $Person_Name: credit.name, $Credit: credit.credit});
+		await db.fireProcedure(`
+			INSERT INTO tbl_Movies_IMDB_Credits (
+				id_Movies
+				, Category
+				, IMDB_Person_ID
+				, Person_Name
+				, Credit
+			) VALUES (
+				$id_Movies
+				, $Category
+				, $IMDB_Person_ID
+				, $Person_Name
+				, $Credit
+			) ON CONFLICT(id_Movies, Category, IMDB_Person_ID)
+			DO UPDATE SET
+				Person_Name = excluded.Person_Name
+				, Credit = excluded.Credit`, {$id_Movies: movie.id_Movies, $Category: credit.category, $IMDB_Person_ID: credit.id, $Person_Name: credit.name, $Credit: credit.credit});
 	}
 }
 
@@ -1258,10 +1279,10 @@ async function fetchMedia($MediaType) {
 			, MOV.IMDB_Parental_Advisory_Profanity
 			, MOV.IMDB_Parental_Advisory_Alcohol
 			, MOV.IMDB_Parental_Advisory_Frightening
-			, MOV.IMDB_Top_3_Directors
-			, MOV.IMDB_Top_3_Writers
-			, MOV.IMDB_Top_3_Producers
-			, MOV.IMDB_Top_3_Cast
+			, MOV.IMDB_Top_Directors
+			, MOV.IMDB_Top_Writers
+			, MOV.IMDB_Top_Producers
+			, MOV.IMDB_Top_Cast
 			, AR.Age
 			, MOV.created_at
 			, MOV.last_access_at
@@ -1304,10 +1325,10 @@ async function fetchMedia($MediaType) {
 
 			item.SearchSpace = (item.Name || '').toLowerCase() + ' ' + (item.Name2 || '').toLowerCase() + ' ' + (item.IMDB_plotSummary || '').toLowerCase() + ' ' + (item.Genres || '').toLowerCase();
 
-			item.IMDB_Top_3_Directors = item.IMDB_Top_3_Directors ? JSON.parse(item.IMDB_Top_3_Directors) : null;
-			item.IMDB_Top_3_Writers = item.IMDB_Top_3_Writers ? JSON.parse(item.IMDB_Top_3_Writers) : null;
-			item.IMDB_Top_3_Producers = item.IMDB_Top_3_Producers ? JSON.parse(item.IMDB_Top_3_Producers) : null;
-			item.IMDB_Top_3_Cast = item.IMDB_Top_3_Cast ? JSON.parse(item.IMDB_Top_3_Cast) : null;
+			item.IMDB_Top_Directors = item.IMDB_Top_Directors ? JSON.parse(item.IMDB_Top_Directors) : null;
+			item.IMDB_Top_Writers = item.IMDB_Top_Writers ? JSON.parse(item.IMDB_Top_Writers) : null;
+			item.IMDB_Top_Producers = item.IMDB_Top_Producers ? JSON.parse(item.IMDB_Top_Producers) : null;
+			item.IMDB_Top_Cast = item.IMDB_Top_Cast ? JSON.parse(item.IMDB_Top_Cast) : null;
 		});
 
 		return result;
