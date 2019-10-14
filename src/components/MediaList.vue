@@ -101,8 +101,48 @@
                     </div>
                   </v-row>
 
-                  <v-row v-if="item.IMDB_plotSummary" style="margin-left: 4px; margin-right: 6px">
+                  <v-row v-if="item.IMDB_plotSummary" style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px">
                     <div style="font-size: .875rem; font-weight: normal">{{ item.IMDB_plotSummary }}</div>
+                  </v-row>
+
+                  <v-row v-if="item.IMDB_Top_3_Directors" style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px">
+                    <div style="font-size: .875rem; font-weight: normal">
+											<strong class="CreditCategory">Directed by:</strong>
+											<span v-for="(credit, i) in item.IMDB_Top_3_Directors" v-bind:key="credit.IMDB_Person_ID">
+												<span v-if="i > 0">, </span>
+												<a class="CreditClickable" v-on:click.stop="CreditClicked(credit)">{{ credit.name }}</a>
+											</span>
+										</div>
+                  </v-row>
+
+                  <v-row v-if="item.IMDB_Top_3_Writers" style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px">
+                    <div style="font-size: .875rem; font-weight: normal">
+											<strong class="CreditCategory">Written by:</strong>
+											<span v-for="(credit, i) in item.IMDB_Top_3_Writers" v-bind:key="credit.IMDB_Person_ID">
+												<span v-if="i > 0">, </span>
+												<a class="CreditClickable">{{ credit.name }}</a>
+											</span>
+										</div>
+                  </v-row>
+
+                  <v-row v-if="item.IMDB_Top_3_Producers" style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px">
+                    <div style="font-size: .875rem; font-weight: normal">
+											<strong class="CreditCategory">Produced by:</strong>
+											<span v-for="(credit, i) in item.IMDB_Top_3_Producers" v-bind:key="credit.IMDB_Person_ID">
+												<span v-if="i > 0">, </span>
+												<a class="CreditClickable">{{ credit.name }}</a>
+											</span>
+										</div>
+                  </v-row>
+
+                  <v-row v-if="item.IMDB_Top_3_Cast" style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px">
+                    <div style="font-size: .875rem; font-weight: normal">
+											<strong class="CreditCategory">Cast:</strong>
+											<span v-for="(credit, i) in item.IMDB_Top_3_Cast" v-bind:key="credit.IMDB_Person_ID">
+												<span v-if="i > 0">, </span>
+												<a class="CreditClickable">{{ credit.name }}</a>
+											</span>
+										</div>
                   </v-row>
                 </v-col>
               </v-list-item-content>
@@ -430,7 +470,12 @@ export default {
       await store.fetchFilterRatings(this.mediatype);
 			await store.fetchFilterLists(this.mediatype);
 			await store.fetchFilterParentalAdvisory(this.mediatype);
-    }
+		},
+		
+		CreditClicked(credit) {
+			// TODO!
+			return;
+		}
   },
 
   // ### LifeCycle Hooks ###
@@ -480,5 +525,21 @@ export default {
 }
 .MetaCriticGreen {
   background-color: green;
+}
+
+.CreditCategory {
+	display: block;
+	float: left;
+	width: 100px;
+}
+
+.CreditClickable {
+	font-size: .875rem;
+	font-weight: normal;
+	color: #fff!important;
+}
+
+.CreditClickable:hover {
+	color: #2196f3!important;
 }
 </style>

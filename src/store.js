@@ -122,8 +122,9 @@ async function rescan(onlyNew) {
 
 	//await filescanMovies(onlyNew);		// KILLME
 	await rescanMoviesMetaData(false);	// KILLME
-	await applyIMDBMetaData();
-	// await rescanTV();
+	// await applyIMDBMetaData();				// KILLME
+
+	// await rescanTV();								// TODO
 
 	isScanning = false;
 	doAbortRescan = false;
@@ -322,8 +323,10 @@ async function rescanMoviesMetaData(onlyNew) {
 				, IMDB_Done
 				, IMDB_tconst
 			FROM tbl_Movies
-			WHERE id_SourcePaths IN (5, 10) -- KILLME: only on laptop
-			-- WHERE id_Movies = 14 -- KILLME: only Blade Runner
+			WHERE 
+			1=1
+			-- AND id_SourcePaths IN (5, 10) -- KILLME: only on laptop
+			-- AND id_Movies = 277 -- KILLME: only Blade Runner
 			`,
 		[]);
 
@@ -335,7 +338,7 @@ async function rescanMoviesMetaData(onlyNew) {
 		const movie = movies[i];
 
 		// KILLME
-		// if (i > 0) break;
+		// if (i > 10) break;
 
 		// eventBus.scanInfoOff();
 		eventBus.scanInfoShow('Rescanning Movies', `${movie.Name || movie.Filename}`);
@@ -523,10 +526,13 @@ async function fetchIMDBMetaData(movie, onlyNew) {
 		const parentalguideData = await getIMDBParentalGuideData(movie);
 		IMDBdata = Object.assign(IMDBdata, parentalguideData);
 
+		const { top3credits, credits } = await getIMDBFullCreditsData(movie);
+		IMDBdata = Object.assign(IMDBdata, top3credits);
+
 		logger.log('IMDBdata:', IMDBdata);
 
 		const genres = await db.fireProcedureReturnAll('SELECT id_Genres, GenreID, Name FROM tbl_Genres', []);
-		await saveIMDBData(movie, IMDBdata, genres);
+		await saveIMDBData(movie, IMDBdata, genres, credits);
 	} catch (err) {
 		logger.error(err);
 		return;
@@ -899,7 +905,7 @@ async function getIMDBParentalGuideData(movie) {
 			$IMDB_Parental_Advisory_Frightening = 3;
 		}
 	}
-	
+
 	return {
 		$IMDB_MinAge,
 		$IMDB_MaxAge,
@@ -912,7 +918,127 @@ async function getIMDBParentalGuideData(movie) {
 	}
 }
 
-async function saveIMDBData(movie, IMDBdata, genres) {
+async function getIMDBFullCreditsData(movie) {
+	const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/fullcredits`;
+	logger.log('getIMDBFullCreditsData url:', url);
+	const response = await requestGetAsync(url);
+	const html = response.body;
+
+	const top3cast = [];
+	const top3director = [];
+	const top3producer = [];
+	const top3writer = [];
+
+	const credits = [];
+
+	const rx_castTable = /<h4 name="cast"[\s\S]*?<\/table>/;
+
+	if (rx_castTable.test(html)) {
+		const castTable = html.match(rx_castTable)[0];
+
+		const rx_castEntry = /<tr class.*?>[\s\S]*?<a href="\/name\/(nm\d*)\/[\s\S]*?>\s([\s\S]*?)<\/a>[\s\S]*?<\/tr>/g;
+
+		let match = null;
+
+		// eslint-disable-next-line no-cond-assign
+		while (match = rx_castEntry.exec(castTable)) {
+			// const entry = { id: match[1], name: match[2].replace(/^\s*/, '').replace(/\s*$/, ''), character: null };
+			const entry = { category: 'Cast', id: match[1], name: unescape(htmlToText.fromString(match[2], { wordwrap: null, ignoreImage: true, ignoreHref: true }).trim()), credit: null };
+
+			const rx_character = /<td class="character">([\s\S]*?)<\/td>/;
+			if (rx_character.test(match[0])) {
+				entry.credit = unescape(htmlToText.fromString(match[0].match(rx_character)[1], { wordwrap: null, ignoreImage: true, ignoreHref: true }).trim());
+			}
+
+			credits.push(entry);
+			if (top3cast.length < 3) {
+				top3cast.push(entry);
+			}
+		}
+	}
+
+	const rx_creditsCategories = /<h4 class="dataHeaderWithBorder">([\s\S]*?)&nbsp/g;
+
+	let ccMatch = null;
+
+	// eslint-disable-next-line no-cond-assign
+	while (ccMatch = rx_creditsCategories.exec(html)) {
+		const creditsCategory = ccMatch[1].trim();
+		logger.log(creditsCategory);
+
+		const result = parseCreditsCategory(html, creditsCategory, credits);
+
+		if (creditsCategory === 'Directed by') {
+			result.forEach(entry => {
+				if (top3director.length < 3) {
+					top3director.push(entry);
+				}
+			})
+		}
+		if (creditsCategory === 'Produced by') {
+			result.forEach(entry => {
+				if (top3producer.length < 3) {
+					top3producer.push(entry);
+				}
+			})
+		}
+		if (creditsCategory === 'Writing Credits') {
+			result.forEach(entry => {
+				if (top3writer.length < 3) {
+					top3writer.push(entry);
+				}
+			})
+		}
+	}
+
+	logger.log('credits:', credits);
+
+	let $IMDB_Top_3_Cast = top3cast.length > 0 ? JSON.stringify(top3cast) : null;
+	let $IMDB_Top_3_Writers = top3writer.length > 0 ? JSON.stringify(top3writer) : null;
+	let $IMDB_Top_3_Directors = top3director.length > 0 ? JSON.stringify(top3director) : null;
+	let $IMDB_Top_3_Producers = top3producer.length > 0 ? JSON.stringify(top3producer) : null;
+
+	return {
+		top3credits: {
+			$IMDB_Top_3_Directors,
+			$IMDB_Top_3_Writers,
+			$IMDB_Top_3_Producers,
+			$IMDB_Top_3_Cast
+		},
+		credits
+	}
+}
+
+function parseCreditsCategory(html, tableHeader, credits) {
+	const rx_table = new RegExp(`<h4 class="dataHeaderWithBorder">${tableHeader}[\\s\\S]*?<\\/table>`);
+
+	const result = [];
+
+	if (rx_table.test(html)) {
+		const table = html.match(rx_table)[0];
+
+		const rx_entry = /<tr>[\s\S]*?<a href="\/name\/(nm\d*)\/[\s\S]*?>([\s\S]*?)<\/a>[\s\S]*?<\/tr>/g;
+
+		let match = null;
+
+		// eslint-disable-next-line no-cond-assign
+		while (match = rx_entry.exec(table)) {
+			const entry = { category: tableHeader, id: match[1], name: match[2].trim(), credit: null };
+
+			const rx_credit = /<td class="credit">([\s\S]*?)<\/td>/;
+			if (rx_credit.test(match[0])) {
+				entry.credit = match[0].match(rx_credit)[1].trim();
+			}
+
+			credits.push(entry);
+			result.push(entry);
+		}
+	}
+
+	return result;
+}
+
+async function saveIMDBData(movie, IMDBdata, genres, credits) {
 	const IMDB_genres = IMDBdata.$IMDB_genres;
 	delete IMDBdata.$IMDB_genres;
 
@@ -922,6 +1048,8 @@ async function saveIMDBData(movie, IMDBdata, genres) {
 	})
 	sql = `UPDATE tbl_Movies SET ${sql} WHERE id_Movies = $id_Movies`;
 
+	await db.fireProcedure(sql, Object.assign(IMDBdata, { $id_Movies: movie.id_Movies }));
+	
 	const movieGenres = await db.fireProcedureReturnAll('SELECT MG.id_Genres, G.GenreID, G.Name FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres WHERE MG.id_Movies = $id_Movies', { $id_Movies: movie.id_Movies });
 
 	for (let i = 0; i < IMDB_genres.length; i++) {
@@ -945,7 +1073,16 @@ async function saveIMDBData(movie, IMDBdata, genres) {
 		}
 	}
 
-	await db.fireProcedure(sql, Object.assign(IMDBdata, { $id_Movies: movie.id_Movies }));
+	for (let i = 0; i < credits.length; i++) {
+		const credit = credits[i];
+		const id_Movies_IMDB_Credits = await db.fireProcedureReturnScalar(`SELECT id_Movies_IMDB_Credits FROM tbl_Movies_IMDB_Credits WHERE id_Movies = $id_Movies AND Category = $Category AND IMDB_Person_ID = $IMDB_Person_ID`, { $id_Movies: movie.id_Movies, $Category: credit.category, $IMDB_Person_ID: credit.id });
+
+		if (id_Movies_IMDB_Credits) {
+			continue;
+		}
+
+		await db.fireProcedure(`INSERT INTO tbl_Movies_IMDB_Credits (id_Movies, Category, IMDB_Person_ID, Person_Name, Credit) VALUES ($id_Movies, $Category, $IMDB_Person_ID, $Person_Name, $Credit)`, {$id_Movies: movie.id_Movies, $Category: credit.category, $IMDB_Person_ID: credit.id, $Person_Name: credit.name, $Credit: credit.credit});
+	}
 }
 
 async function downloadFile(url, targetPath, redownload) {
@@ -1034,13 +1171,13 @@ async function fetchMedia($MediaType) {
 
 		let filterLists = '';
 		if (shared.filterLists && shared.filterLists.find(filter => !filter.Selected)) {
-			
+
 			if (shared.filterLists.find(filter => (filter.Selected && !filter.id_Lists))) {
 				filterLists = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Lists_Movies) `;
 			} else {
 				filterLists = `AND (1=0 `;
 			}
-			
+
 			if (shared.filterLists.find(filter => (filter.Selected && filter.id_Lists))) {
 				filterLists += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Lists_Movies WHERE id_Lists IN (`;
 
@@ -1057,25 +1194,25 @@ async function fetchMedia($MediaType) {
 		let filterParentalAdvisory = '';
 		Object.keys(shared.filterParentalAdvisory).forEach(category => {
 			let filterPACategory = '';
-			
+
 			if (shared.filterParentalAdvisory[category] && shared.filterParentalAdvisory[category].find(filter => !filter.Selected)) {
-			
+
 				if (shared.filterParentalAdvisory[category].find(filter => (filter.Selected && filter.Severity == -1))) {
 					filterPACategory = `AND (MOV.IMDB_Parental_Advisory_${category} IS NULL `;
 				} else {
 					filterPACategory = `AND (1=0 `;
 				}
-				
+
 				if (shared.filterParentalAdvisory[category].find(filter => (filter.Selected && filter.Severity >= 0))) {
 					filterPACategory += `OR MOV.IMDB_Parental_Advisory_${category} IN (`;
-	
+
 					filterPACategory += shared.filterParentalAdvisory[category].filter(filter => filter.Selected).map(filter => filter.Severity).reduce((prev, current) => {
 						return prev + (prev ? ', ' : '') + current;
 					}, '');
-	
+
 					filterPACategory += ')';
 				}
-	
+
 				filterPACategory += ')';
 			}
 
@@ -1121,6 +1258,10 @@ async function fetchMedia($MediaType) {
 			, MOV.IMDB_Parental_Advisory_Profanity
 			, MOV.IMDB_Parental_Advisory_Alcohol
 			, MOV.IMDB_Parental_Advisory_Frightening
+			, MOV.IMDB_Top_3_Directors
+			, MOV.IMDB_Top_3_Writers
+			, MOV.IMDB_Top_3_Producers
+			, MOV.IMDB_Top_3_Cast
 			, AR.Age
 			, MOV.created_at
 			, MOV.last_access_at
@@ -1162,6 +1303,11 @@ async function fetchMedia($MediaType) {
 			}
 
 			item.SearchSpace = (item.Name || '').toLowerCase() + ' ' + (item.Name2 || '').toLowerCase() + ' ' + (item.IMDB_plotSummary || '').toLowerCase() + ' ' + (item.Genres || '').toLowerCase();
+
+			item.IMDB_Top_3_Directors = item.IMDB_Top_3_Directors ? JSON.parse(item.IMDB_Top_3_Directors) : null;
+			item.IMDB_Top_3_Writers = item.IMDB_Top_3_Writers ? JSON.parse(item.IMDB_Top_3_Writers) : null;
+			item.IMDB_Top_3_Producers = item.IMDB_Top_3_Producers ? JSON.parse(item.IMDB_Top_3_Producers) : null;
+			item.IMDB_Top_3_Cast = item.IMDB_Top_3_Cast ? JSON.parse(item.IMDB_Top_3_Cast) : null;
 		});
 
 		return result;
@@ -1712,7 +1858,7 @@ async function fetchFilterLists($MediaType) {
 }
 
 async function getMovieDetails($id_Movies) {
-	const lists = await db.fireProcedureReturnAll(`SELECT id_Lists, Name FROM tbl_Lists WHERE id_Lists IN (SELECT id_Lists FROM tbl_Lists_Movies WHERE id_Movies = $id_Movies) ORDER BY Name`, {$id_Movies});
+	const lists = await db.fireProcedureReturnAll(`SELECT id_Lists, Name FROM tbl_Lists WHERE id_Lists IN (SELECT id_Lists FROM tbl_Lists_Movies WHERE id_Movies = $id_Movies) ORDER BY Name`, { $id_Movies });
 
 	return {
 		lists

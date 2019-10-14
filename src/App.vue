@@ -307,6 +307,9 @@ import { shared } from "@/shared";
 import { eventBus } from "@/main";
 const logger = require("loglevel");
 
+// KILLME
+logger.setLevel(logger.levels.WARN);
+
 import Dialog from "@/components/shared/Dialog.vue";
 
 export default {
