@@ -44,7 +44,7 @@
                   style="margin: 6px; height: 150px; width: 120px"
                   v-on:click.stop="launch(item)"
                 >
-                  <!-- <v-img v-if="item.domVisible" contain v-bind:src="item.IMDB_posterSmall_URL"></v-img> -->
+                  <v-img v-if="item.domVisible" contain v-bind:src="item.IMDB_posterSmall_URL" style="border-radius: 6px;"></v-img>
                   <v-img v-if="!item.domVisible" class="breathe-bg"></v-img>
                   <!-- TODO: implement lazy-src -->
                 </v-list-item-avatar>
@@ -522,7 +522,6 @@ export default {
 
     itemVisibilityChanged(isVisible, entry, item) {
       if (isVisible) {
-        logger.log('visibility changed:', {isVisible, entry, item});
         this.$set(item, 'domVisible', isVisible);
       }
     }
@@ -600,7 +599,7 @@ export default {
 
 .breathe-bg {
   background-color: rgba(255,255,255,0.2);
-  border-radius: 
+  border-radius: 6px;
 }
 
 .breathe-bg::after {
