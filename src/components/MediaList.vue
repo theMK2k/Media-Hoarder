@@ -29,7 +29,14 @@
     <v-container class="scrollcontainer pa-2" style="max-width: 100%!important">
       <v-row v-for="(item, i) in itemsFiltered" :key="i">
         <v-col>
-          <v-card dark flat hover v-bind:ripple="false" v-on:click="selectItem(item)">
+          <v-card
+            dark
+            flat
+            hover
+            v-bind:ripple="false"
+            v-on:click="selectItem(item)"
+            v-observe-visibility="{ callback: (isVisible, entry) => itemVisibilityChanged(isVisible, entry, item) }"
+          > <!-- v-observe-visibility="{ callback: (isVisible, entry, item) => itemVisibilityChanged(isVisible, entry, item), once: true, throttle: 300 }" -->
             <v-list-item three-line style="padding-left: 0px">
               <div>
                 <v-list-item-avatar
@@ -37,7 +44,8 @@
                   style="margin: 6px; height: 150px; width: 120px"
                   v-on:click.stop="launch(item)"
                 >
-                  <v-img contain v-bind:src="item.IMDB_posterSmall_URL"></v-img>
+                  <!-- <v-img v-if="item.domVisible" contain v-bind:src="item.IMDB_posterSmall_URL"></v-img> -->
+                  <v-img v-if="!item.domVisible" style="background-color: rgba(255,255,255,0.2)"></v-img>
                   <!-- TODO: implement lazy-src -->
                 </v-list-item-avatar>
               </div>
@@ -101,48 +109,78 @@
                     </div>
                   </v-row>
 
-                  <v-row v-if="item.IMDB_plotSummary" style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px">
+                  <v-row
+                    v-if="item.IMDB_plotSummary"
+                    style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
+                  >
                     <div style="font-size: .875rem; font-weight: normal">{{ item.IMDB_plotSummary }}</div>
                   </v-row>
 
-                  <v-row v-if="item.IMDB_Top_3_Directors" style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px">
+                  <v-row
+                    v-if="item.IMDB_Top_Directors"
+                    style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
+                  >
                     <div style="font-size: .875rem; font-weight: normal">
-											<strong class="CreditCategory">Directed by:</strong>
-											<span v-for="(credit, i) in item.IMDB_Top_3_Directors" v-bind:key="credit.IMDB_Person_ID">
-												<span v-if="i > 0">, </span>
-												<a class="CreditClickable" v-on:click.stop="CreditClicked(credit)">{{ credit.name }}</a>
-											</span>
-										</div>
+                      <strong class="CreditCategory">Directed by:</strong>
+                      <span
+                        v-for="(credit, i) in item.IMDB_Top_Directors"
+                        v-bind:key="credit.IMDB_Person_ID"
+                      >
+                        <span v-if="i > 0">,&nbsp;</span>
+                        <a
+                          class="CreditClickable"
+                          v-on:click.stop="CreditClicked(credit)"
+                        >{{ credit.name }}</a>
+                      </span>
+                    </div>
                   </v-row>
 
-                  <v-row v-if="item.IMDB_Top_3_Writers" style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px">
+                  <v-row
+                    v-if="item.IMDB_Top_Writers"
+                    style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
+                  >
                     <div style="font-size: .875rem; font-weight: normal">
-											<strong class="CreditCategory">Written by:</strong>
-											<span v-for="(credit, i) in item.IMDB_Top_3_Writers" v-bind:key="credit.IMDB_Person_ID">
-												<span v-if="i > 0">, </span>
-												<a class="CreditClickable">{{ credit.name }}</a>
-											</span>
-										</div>
+                      <strong class="CreditCategory">Written by:</strong>
+                      <span
+                        v-for="(credit, i) in item.IMDB_Top_Writers"
+                        v-bind:key="credit.IMDB_Person_ID"
+                      >
+                        <span v-if="i > 0">,&nbsp;</span>
+                        <a class="CreditClickable">{{ credit.name }}</a>
+                      </span>
+                    </div>
                   </v-row>
 
-                  <v-row v-if="item.IMDB_Top_3_Producers" style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px">
+                  <!-- <v-row
+                    v-if="item.IMDB_Top_Producers"
+                    style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
+                  >
                     <div style="font-size: .875rem; font-weight: normal">
-											<strong class="CreditCategory">Produced by:</strong>
-											<span v-for="(credit, i) in item.IMDB_Top_3_Producers" v-bind:key="credit.IMDB_Person_ID">
-												<span v-if="i > 0">, </span>
-												<a class="CreditClickable">{{ credit.name }}</a>
-											</span>
-										</div>
-                  </v-row>
+                      <strong class="CreditCategory">Produced by:</strong>
+                      <span
+                        v-for="(credit, i) in item.IMDB_Top_Producers"
+                        v-bind:key="credit.IMDB_Person_ID"
+                      >
+                        <span v-if="i > 0">,&nbsp;</span>
+                        <a class="CreditClickable">{{ credit.name }}</a>
+                      </span>
+                    </div>
+                  </v-row> -->
 
-                  <v-row v-if="item.IMDB_Top_3_Cast" style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px">
+                  <v-row
+                    v-if="item.IMDB_Top_Cast"
+                    style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
+                  >
                     <div style="font-size: .875rem; font-weight: normal">
-											<strong class="CreditCategory">Cast:</strong>
-											<span v-for="(credit, i) in item.IMDB_Top_3_Cast" v-bind:key="credit.IMDB_Person_ID">
-												<span v-if="i > 0">, </span>
-												<a class="CreditClickable">{{ credit.name }}</a>
-											</span>
-										</div>
+                      <strong class="CreditCategory">Cast:</strong>
+                      <span
+                        v-for="(credit, i) in item.IMDB_Top_Cast"
+                        v-bind:key="credit.IMDB_Person_ID"
+                      >
+                        <span v-if="i > 0">,&nbsp;</span>
+                        <a class="CreditClickable">{{ credit.name }}</a>
+                      </span>
+                    </div>
                   </v-row>
                 </v-col>
               </v-list-item-content>
@@ -227,8 +265,8 @@ export default {
     sort: null,
 
     listDialog: {
-      mode: 'add',
-      title: '',
+      mode: "add",
+      title: "",
       show: false,
       movie: null,
       lists: [],
@@ -306,20 +344,22 @@ export default {
           movie.selected = false;
         } else {
           this.items.forEach(item => {
-            item.selected = false;
+            // item.selected = false;
+            this.$set(item, 'selected', false);
           });
 
           this.itemDetails = await store.getMovieDetails(movie.id_Movies);
 
           logger.log("itemDetails:", this.itemDetails);
 
-          movie.selected = true;
+          this.$set(movie, 'selected', true);
+          // movie.selected = true;
         }
 
         // TODO: currently needed for changedetection of item.selected (interesting)
-        const items = this.items;
-        this.items = [];
-        this.items = items;
+        // const items = this.items;
+        // this.items = [];
+        // this.items = items;
       })();
     },
 
@@ -386,7 +426,7 @@ export default {
 
     addToList(item) {
       (async () => {
-        this.listDialog.mode = 'add';
+        this.listDialog.mode = "add";
         this.listDialog.lists = await store.fetchLists();
 
         this.listDialog.allowCreateNewList = false;
@@ -414,7 +454,7 @@ export default {
 
     removeFromList(item) {
       (async () => {
-        this.listDialog.mode = 'remove';
+        this.listDialog.mode = "remove";
         this.listDialog.allowCreateNewList = false;
         this.listDialog.allowUseExistingLists = true;
         this.listDialog.lists = this.itemDetails.lists;
@@ -433,23 +473,26 @@ export default {
       (async () => {
         try {
           // Add to list
-          if (this.listDialog.mode == 'add') {
-            if (this.listDialog.chosenMethod == 'createNewList') {
+          if (this.listDialog.mode == "add") {
+            if (this.listDialog.chosenMethod == "createNewList") {
               data.chosen_id_Lists = await store.createList(data.newListName);
             }
-  
+
             await store.addToList(
               data.chosen_id_Lists,
               this.listDialog.movie.id_Movies
             );
-  
+
             await this.fetchFilters();
-  
+
             eventBus.showSnackbar("success", 6000, "Movie added to list");
           }
 
-          if (this.listDialog.mode == 'remove') {
-            await store.removeFromList(data.chosen_id_Lists, this.listDialog.movie.id_Movies);
+          if (this.listDialog.mode == "remove") {
+            await store.removeFromList(
+              data.chosen_id_Lists,
+              this.listDialog.movie.id_Movies
+            );
 
             eventBus.showSnackbar("success", 6000, "Movie removed from list");
           }
@@ -468,14 +511,21 @@ export default {
       await store.fetchFilterGenres(this.mediatype);
       await store.fetchFilterAgeRatings(this.mediatype);
       await store.fetchFilterRatings(this.mediatype);
-			await store.fetchFilterLists(this.mediatype);
-			await store.fetchFilterParentalAdvisory(this.mediatype);
-		},
-		
-		CreditClicked(credit) {
-			// TODO!
-			return;
-		}
+      await store.fetchFilterLists(this.mediatype);
+      await store.fetchFilterParentalAdvisory(this.mediatype);
+    },
+
+    CreditClicked(credit) {
+      // TODO!
+      return;
+    },
+
+    itemVisibilityChanged(isVisible, entry, item) {
+      if (isVisible) {
+        logger.log('visibility changed:', {isVisible, entry, item});
+        this.$set(item, 'domVisible', isVisible);
+      }
+    }
   },
 
   // ### LifeCycle Hooks ###
@@ -484,6 +534,11 @@ export default {
       await this.fetchFilters();
 
       this.items = await store.fetchMedia(this.mediatype);
+      
+      this.items.forEach(item => {
+        this.$set(item, 'domVisible', false);
+      })
+
       logger.log("items:", this.items);
     })();
 
@@ -528,18 +583,18 @@ export default {
 }
 
 .CreditCategory {
-	display: block;
-	float: left;
-	width: 100px;
+  display: block;
+  float: left;
+  width: 100px;
 }
 
 .CreditClickable {
-	font-size: .875rem;
-	font-weight: normal;
-	color: #fff!important;
+  font-size: 0.875rem;
+  font-weight: normal;
+  color: #fff !important;
 }
 
 .CreditClickable:hover {
-	color: #2196f3!important;
+  color: #2196f3 !important;
 }
 </style>
