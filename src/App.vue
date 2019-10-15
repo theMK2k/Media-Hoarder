@@ -1,7 +1,7 @@
 <template>
   <v-app id="inspire">
     <!-- SIDEBAR -->
-    <v-navigation-drawer v-model="drawer" app clipped>
+    <v-navigation-drawer v-model="drawer" app clipped style="z-index: 20">
       <v-list dense>
         <v-list-item @click="openSettings">
           <v-list-item-action>

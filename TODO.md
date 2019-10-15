@@ -15,7 +15,7 @@
 - as filter
 
 ## IMDB MetaData
-- Parental Guidance (Sex/Nudity, Gore etc. scores)
+OK - Parental Guidance (Sex/Nudity, Gore etc. scores)
 - 
 
 ## Filters

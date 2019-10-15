@@ -1,6 +1,8 @@
 <template>
   <div style="display: flex; flex-direction: column; min-width: 100%">
-    <h1 style="margin-bottom: 0px; margin-top: 8px; flex 0 1 auto">
+    <h1
+      style="margin-bottom: 0px; margin-top: 0px; padding-bottom: 8px; padding-top: 8px; flex 0 1 auto; position: fixed; width: 100%!important; z-index: 10; background: rgb(48, 48, 48);"
+    >
       <v-row>
         <v-btn text v-on:click="$router.go(-1)" style="margin-top: 6px; margin-left: 8px">
           <v-icon>mdi-arrow-left</v-icon>
@@ -15,19 +17,22 @@
           item-value="Field"
           v-model="sort"
           label="Sort"
-          style="margin-left: 8px; max-width: 260px"
+          style="margin-left: 8px; max-width: 260px; height: 40px"
         >
           <template v-slot:selection="{ item, index }">
             <span class="grey--text caption" style="margin-right: 8px">Sort by</span>
             <span>{{ item.Description }}</span>
           </template>
         </v-select>
+        <div v-if="numPages">
+          <v-pagination v-bind:length="numPages" v-model="currentPage" total-visible="7"></v-pagination>
+        </div>
         <v-spacer></v-spacer>
       </v-row>
     </h1>
 
-    <v-container class="scrollcontainer pa-2" style="max-width: 100%!important">
-      <v-row v-for="(item, i) in itemsFiltered" :key="i">
+    <v-container class="scrollcontainer pa-2" style="max-width: 100%!important; margin-top: 48px;">
+      <v-row v-for="(item, i) in itemsFilteredPaginated" :key="i">
         <v-col>
           <v-card
             dark
@@ -35,8 +40,7 @@
             hover
             v-bind:ripple="false"
             v-on:click="selectItem(item)"
-            v-observe-visibility="{ callback: (isVisible, entry) => itemVisibilityChanged(isVisible, entry, item) }"
-          > <!-- v-observe-visibility="{ callback: (isVisible, entry, item) => itemVisibilityChanged(isVisible, entry, item), once: true, throttle: 300 }" -->
+          >
             <v-list-item three-line style="padding-left: 0px">
               <div>
                 <v-list-item-avatar
@@ -44,9 +48,11 @@
                   style="margin: 6px; height: 150px; width: 120px"
                   v-on:click.stop="launch(item)"
                 >
-                  <v-img v-if="item.domVisible" contain v-bind:src="item.IMDB_posterSmall_URL" style="border-radius: 6px;"></v-img>
-                  <v-img v-if="!item.domVisible" class="breathe-bg"></v-img>
-                  <!-- TODO: implement lazy-src -->
+                  <v-img
+                    contain
+                    v-bind:src="item.IMDB_posterSmall_URL"
+                    style="border-radius: 6px;"
+                  ></v-img>
                 </v-list-item-avatar>
               </div>
               <v-list-item-content
@@ -165,7 +171,7 @@
                         <a class="CreditClickable">{{ credit.name }}</a>
                       </span>
                     </div>
-                  </v-row> -->
+                  </v-row>-->
 
                   <v-row
                     v-if="item.IMDB_Top_Cast"
@@ -276,7 +282,10 @@ export default {
 
     itemDetails: {
       lists: []
-    }
+    },
+
+    itemsPerPage: 20,
+    currentPage: 1
   }),
 
   watch: {
@@ -288,6 +297,18 @@ export default {
   props: ["mediatype"],
 
   computed: {
+    numPages() {
+      return Math.ceil(this.itemsFiltered.length / this.itemsPerPage);
+    },
+
+    visiblePages() {
+      return Math.min(this.numPages, 7);
+    },
+    
+    itemsFilteredPaginated() {
+      return this.itemsFiltered.slice((this.currentPage - 1) * this.itemsPerPage, this.currentPage * this.itemsPerPage);
+    },
+    
     itemsFiltered() {
       return this.items
         .filter(item => {
@@ -345,14 +366,14 @@ export default {
         } else {
           this.items.forEach(item => {
             // item.selected = false;
-            this.$set(item, 'selected', false);
+            this.$set(item, "selected", false);
           });
 
           this.itemDetails = await store.getMovieDetails(movie.id_Movies);
 
           logger.log("itemDetails:", this.itemDetails);
 
-          this.$set(movie, 'selected', true);
+          this.$set(movie, "selected", true);
           // movie.selected = true;
         }
 
@@ -519,12 +540,6 @@ export default {
       // TODO!
       return;
     },
-
-    itemVisibilityChanged(isVisible, entry, item) {
-      if (isVisible) {
-        this.$set(item, 'domVisible', isVisible);
-      }
-    }
   },
 
   // ### LifeCycle Hooks ###
@@ -533,22 +548,21 @@ export default {
       await this.fetchFilters();
 
       this.items = await store.fetchMedia(this.mediatype);
-      
-      this.items.forEach(item => {
-        this.$set(item, 'domVisible', false);
-      })
+      this.currentPage = 1;
 
       logger.log("items:", this.items);
     })();
 
     eventBus.$on("searchTextChanged", ({ searchText }) => {
       this.searchText = searchText;
+      this.currentPage = 1;
     });
 
     eventBus.$on("refetchMedia", () => {
       logger.log("refetching media");
       (async () => {
         this.items = await store.fetchMedia(this.mediatype);
+        this.currentPage = 1;
       })();
     });
 
@@ -598,13 +612,13 @@ export default {
 }
 
 .breathe-bg {
-  background-color: rgba(255,255,255,0.2);
+  background-color: rgba(255, 255, 255, 0.2);
   border-radius: 6px;
 }
 
 .breathe-bg::after {
-  background-color: rgba(255,255,255,0.2);
-  content: '';
+  background-color: rgba(255, 255, 255, 0.2);
+  content: "";
   opacity: 0;
   top: 0;
   left: 0;
@@ -621,12 +635,12 @@ export default {
   animation-iteration-count: infinite;
 }
 
-@keyframes breathe{
-  0%{
+@keyframes breathe {
+  0% {
     opacity: 0;
   }
-  100%{
+  100% {
     opacity: 1;
- }
+  }
 }
 </style>

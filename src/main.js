@@ -2,7 +2,6 @@ import Vue from 'vue';
 import App from '@/App.vue';
 import Vuetify from 'vuetify';
 import '@mdi/font/css/materialdesignicons.css';
-import VueObserveVisibility from 'vue-observe-visibility';
 
 // const logger = require('loglevel');
 
@@ -12,7 +11,6 @@ import router from '@/router'
 import { shared } from '@/shared'
 
 Vue.use(Vuetify)
-Vue.use(VueObserveVisibility)
 
 Vue.use(shared);
 
