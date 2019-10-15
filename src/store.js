@@ -129,7 +129,7 @@ async function rescan(onlyNew) {
 	eventBus.rescanStarted();
 
 	//await filescanMovies(onlyNew);		// KILLME
-	await rescanMoviesMetaData(onlyNew);	// KILLME
+	await rescanMoviesMetaData(false);	// KILLME
 	// await applyIMDBMetaData();				// KILLME
 
 	// await rescanTV();								// TODO
@@ -346,7 +346,7 @@ async function rescanMoviesMetaData(onlyNew) {
 		const movie = movies[i];
 
 		// KILLME
-		if (i > 0) break;
+		// if (i > 0) break;
 
 		// eventBus.scanInfoOff();
 		eventBus.scanInfoShow('Rescanning Movies', `${movie.Name || movie.Filename}`);

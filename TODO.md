@@ -4,9 +4,6 @@
 
 # Features
 
-## Watchlist
-- add as filter
-- implement "add to watchlist button"
 
 ## Last Seen (last_access_at)
 - in movie details
@@ -22,16 +19,17 @@
 - 
 
 ## Filters
-- Age
-- Own Rating
-- IMDB Rating
-- MetaCritic
-- Number of Votes
-- Metacritic Score
+OK - Age
+OK - Own Rating
+OK - IMDB Rating
+OK - MetaCritic
+NAH - Number of Votes
+OK - Metacritic Score
 - Company (Search-filter)
 - Persons (Search-filter)
 
 ## MediaList - Sort
+-> implement as chips (multiple sort, e.g. Year -> Name or Year -> Metacritic Score)
 - Sort by:
     - Name
     - Own Rating
@@ -62,3 +60,8 @@
 
 # DONE
 - min/maxAge is false when 0 is in place
+
+## Watchlist
+- add as filter
+- implement "add to watchlist button"
+-> Implemented as arbitrary lists
