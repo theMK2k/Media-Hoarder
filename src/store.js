@@ -7,6 +7,7 @@ const xml2js = require('xml2js');
 const request = require('request');
 // const textVersion = require("textversionjs");
 const htmlToText = require('html-to-text');
+const moment = require('moment');
 
 const readdirAsync = util.promisify(fs.readdir);
 const writeFileAsync = util.promisify(fs.writeFile);
@@ -1886,6 +1887,14 @@ async function getMovieDetails($id_Movies) {
 	}
 }
 
+async function setLastAccess($id_Movies) {
+	return await db.fireProcedure(`UPDATE tbl_Movies SET last_access_at = DATETIME('now') WHERE id_Movies = $id_Movies`, { $id_Movies });
+}
+
+async function getCurrentTime() {
+	return await db.fireProcedureReturnScalar(`SELECT DATETIME('now')`);
+}
+
 export {
 	db,
 	fetchSourcePaths,
@@ -1909,5 +1918,7 @@ export {
 	addToList,
 	removeFromList,
 	fetchLists,
-	getMovieDetails
+	getMovieDetails,
+	setLastAccess,
+	getCurrentTime
 }

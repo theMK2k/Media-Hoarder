@@ -1,6 +1,7 @@
 # Other
 - fix duplication check in filescan, e.g. "Audition ~ Ôdishon (De)(Sub De)(HD)[1999][Drama, Horror, Mystery][7.2 @ 65149][tt0235198].mkv"
 - correctly implement scrollcontainer class (e.g. Medialist)
+- fix moment's missing local time (see MediaList.lastAccessDisplayText)
 
 # Features
 

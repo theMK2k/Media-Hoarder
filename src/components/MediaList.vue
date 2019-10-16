@@ -34,13 +34,7 @@
     <v-container class="scrollcontainer pa-2" style="max-width: 100%!important; margin-top: 48px;">
       <v-row v-for="(item, i) in itemsFilteredPaginated" :key="i">
         <v-col>
-          <v-card
-            dark
-            flat
-            hover
-            v-bind:ripple="false"
-            v-on:click="selectItem(item)"
-          >
+          <v-card dark flat hover v-bind:ripple="false" v-on:click="selectItem(item)">
             <v-list-item three-line style="padding-left: 0px">
               <div>
                 <v-list-item-avatar
@@ -48,11 +42,7 @@
                   style="margin: 6px; height: 150px; width: 120px"
                   v-on:click.stop="launch(item)"
                 >
-                  <v-img
-                    contain
-                    v-bind:src="item.IMDB_posterSmall_URL"
-                    style="border-radius: 6px;"
-                  ></v-img>
+                  <v-img contain v-bind:src="item.IMDB_posterSmall_URL" style="border-radius: 6px;"></v-img>
                 </v-list-item-avatar>
               </div>
               <v-list-item-content
@@ -192,13 +182,42 @@
               </v-list-item-content>
             </v-list-item>
             <v-col v-if="item.selected" style="min-width: 100%">
-              <v-btn text v-on:click.stop="copyInfo(item)">Copy Info</v-btn>
-              <v-btn text v-on:click.stop="addToList(item)">Add to List</v-btn>
-              <v-btn
-                v-if="itemDetails.lists && itemDetails.lists.length > 0"
-                text
-                v-on:click.stop="removeFromList(item)"
-              >Remove from List</v-btn>
+              <v-row>
+                <v-col class="detailLabel">Full Path:</v-col>
+                <v-col class="detailContent">{{ item.Path }}</v-col>
+              </v-row>
+              <v-row>
+                <v-col class="detailLabel">Imported:</v-col>
+                <v-col class="detailContent">
+                  <v-tooltip right>
+                    <template v-slot:activator="{ on }">
+                      <span v-on="on">{{ createdHumanized(item) }}</span>
+                    </template>
+                    <span>{{ createdDisplayText(item) }}</span>
+                  </v-tooltip>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col class="detailLabel">Last Access:</v-col>
+                <v-col class="detailContent">
+                  <v-tooltip right>
+                    <template v-slot:activator="{ on }">
+                      <span v-on="on">{{ lastAccessHumanized(item) }}</span>
+                    </template>
+                    <span>{{ lastAccessDisplayText(item) }}</span>
+                  </v-tooltip>
+                </v-col>
+              </v-row>
+
+              <v-row style="margin-top: 8px">
+                <v-btn text v-on:click.stop="copyInfo(item)">Copy Info</v-btn>
+                <v-btn text v-on:click.stop="addToList(item)">Add to List</v-btn>
+                <v-btn
+                  v-if="itemDetails.lists && itemDetails.lists.length > 0"
+                  text
+                  v-on:click.stop="removeFromList(item)"
+                >Remove from List</v-btn>
+              </v-row>
             </v-col>
           </v-card>
         </v-col>
@@ -223,6 +242,8 @@
 import * as store from "@/store";
 import { eventBus } from "@/main";
 import ListDialog from "@/components/shared/ListDialog.vue";
+
+const moment = require("moment");
 
 // import * as helpers from "@/helpers/helpers";
 
@@ -285,7 +306,9 @@ export default {
     },
 
     itemsPerPage: 20,
-    currentPage: 1
+    currentPage: 1,
+
+    currentTime: moment()
   }),
 
   watch: {
@@ -304,11 +327,14 @@ export default {
     visiblePages() {
       return Math.min(this.numPages, 7);
     },
-    
+
     itemsFilteredPaginated() {
-      return this.itemsFiltered.slice((this.currentPage - 1) * this.itemsPerPage, this.currentPage * this.itemsPerPage);
+      return this.itemsFiltered.slice(
+        (this.currentPage - 1) * this.itemsPerPage,
+        this.currentPage * this.itemsPerPage
+      );
     },
-    
+
     itemsFiltered() {
       return this.items
         .filter(item => {
@@ -330,6 +356,13 @@ export default {
             typeof a[this.sort] === "string" ||
             a[this.sort] instanceof String
           ) {
+            if (this.sort === 'created_at' || this.sort === 'last_access_at') {
+              // we sort dates in reverse order (earliest first)
+              if (a[this.sort].toLowerCase() < b[this.sort].toLowerCase()) {
+                return 1;
+              }
+            }
+            
             if (a[this.sort].toLowerCase() > b[this.sort].toLowerCase()) {
               return 1;
             }
@@ -385,7 +418,20 @@ export default {
     },
 
     async launch(movie) {
+      const start = moment();
       await store.launchMovie(movie);
+
+      const end = moment();
+
+      logger.log("start:", start, "end:", end);
+
+      logger.log("diff:", end.diff(start, "seconds"));
+
+      await store.setLastAccess(movie.id_Movies);
+      await this.updateCurrentTime();
+
+      this.$set(movie, "lastAccessMoment", this.currentTime.clone());
+      this.$set(movie, "last_access_at", this.currentTime.toISOString());
     },
 
     getMetaCriticClass(IMDB_metacriticScore) {
@@ -540,6 +586,70 @@ export default {
       // TODO!
       return;
     },
+
+    lastAccessHumanized(movie) {
+      if (!movie.last_access_at) {
+        return "none";
+      }
+
+      if (!movie.lastAccessMoment) {
+        movie.lastAccessMoment = moment(movie.last_access_at);
+      }
+
+      return (
+        moment
+          .duration(movie.lastAccessMoment.diff(this.currentTime))
+          .humanize() + " ago"
+      );
+    },
+
+    createdHumanized(movie) {
+      if (!movie.created_at) {
+        return "none";
+      }
+
+      if (!movie.createdMoment) {
+        movie.createdMoment = moment(movie.created_at);
+      }
+
+      return (
+        moment
+          .duration(movie.createdMoment.diff(this.currentTime))
+          .humanize() + " ago"
+      );
+    },
+
+    lastAccessDisplayText(movie) {
+      if (!movie.last_access_at) {
+        return "";
+      }
+
+      if (!movie.lastAccessMoment) {
+        movie.lastAccessMoment = moment(movie.last_access_at);
+      }
+
+      return moment.utc(movie.lastAccessMoment).local().format('YYYY-MM-DD HH:mm:ss');
+    },
+
+    async updateCurrentTime() {
+      this.currentTime = moment(await store.getCurrentTime());
+    },
+
+    createdDisplayText(movie) {
+      if (!movie.created_at) {
+        return "";
+      }
+
+      if (!movie.createdMoment) {
+        movie.createdMoment = moment(movie.created_at);
+      }
+
+      return moment.utc(movie.createdMoment).local().format('YYYY-MM-DD HH:mm:ss');
+    },
+
+    async updateCurrentTime() {
+      this.currentTime = moment(await store.getCurrentTime());
+    }
   },
 
   // ### LifeCycle Hooks ###
@@ -579,6 +689,12 @@ export default {
       this.listDialog.createNewList = value;
       this.listDialog.useExistingLists = !value;
     });
+
+    this.updateCurrentTime();
+
+    setInterval(() => {
+      this.updateCurrentTime();
+    }, 10000);
   }
 };
 </script>
@@ -642,5 +758,23 @@ export default {
   100% {
     opacity: 1;
   }
+}
+
+.detailLabel {
+  padding-left: 16px;
+  padding-right: 0px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  width: 140px !important;
+  max-width: 140px !important;
+  min-width: 140px !important;
+}
+
+.detailContent {
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  width: 100% !important;
 }
 </style>
