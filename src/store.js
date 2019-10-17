@@ -72,7 +72,7 @@ function generateIndexQuery(tableName, ColumnNames, isUnique) {
 	const columnNamesString = ColumnNames.reduce((prev, current) => {
 		return prev + (prev ? ', ' : '') + `${current}`;
 	}, '');
-	
+
 	return `CREATE ${isUnique ? 'UNIQUE ' : ''} INDEX IF NOT EXISTS main.IDX_${tableName}_${columnNamesString.replace(/, /g, '_')} ON ${tableName} (${columnNamesString})`
 }
 
@@ -102,7 +102,7 @@ async function createIndexes(db) {
 	]
 
 	logger.log('queries:', queries);
-	
+
 	for (let i = 0; i < queries.length; i++) {
 		logger.log('.');
 		await db.fireProcedure(queries[i]);
@@ -1060,7 +1060,7 @@ async function saveIMDBData(movie, IMDBdata, genres, credits) {
 	sql = `UPDATE tbl_Movies SET ${sql} WHERE id_Movies = $id_Movies`;
 
 	await db.fireProcedure(sql, Object.assign(IMDBdata, { $id_Movies: movie.id_Movies }));
-	
+
 	const movieGenres = await db.fireProcedureReturnAll('SELECT MG.id_Genres, G.GenreID, G.Name FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres WHERE MG.id_Movies = $id_Movies', { $id_Movies: movie.id_Movies });
 
 	for (let i = 0; i < IMDB_genres.length; i++) {
@@ -1103,7 +1103,7 @@ async function saveIMDBData(movie, IMDBdata, genres, credits) {
 			) ON CONFLICT(id_Movies, Category, IMDB_Person_ID)
 			DO UPDATE SET
 				Person_Name = excluded.Person_Name
-				, Credit = excluded.Credit`, {$id_Movies: movie.id_Movies, $Category: credit.category, $IMDB_Person_ID: credit.id, $Person_Name: credit.name, $Credit: credit.credit});
+				, Credit = excluded.Credit`, { $id_Movies: movie.id_Movies, $Category: credit.category, $IMDB_Person_ID: credit.id, $Person_Name: credit.name, $Credit: credit.credit });
 	}
 }
 
@@ -1895,6 +1895,33 @@ async function getCurrentTime() {
 	return await db.fireProcedureReturnScalar(`SELECT DATETIME('now')`);
 }
 
+async function fetchMovieCredits($id_Movies) {
+	const credits = await db.fireProcedureReturnAll(`
+	SELECT
+		id_Movies_IMDB_Credits
+		, id_Movies
+		, Category			AS category
+		, IMDB_Person_ID	AS id
+		, Person_Name		AS name
+		, Credit			AS credit
+	FROM tbl_Movies_IMDB_Credits WHERE id_Movies = $id_Movies`, { $id_Movies });
+
+	const creditsCategorized = [];
+
+	credits.forEach(credit => {
+		if (!creditsCategorized.find(cc => cc.category === credit.category)) {
+			creditsCategorized.push({
+				category: credit.category,
+				items: []
+			})
+		}
+
+		creditsCategorized.find(cc => cc.category === credit.category).items.push(credit);
+	})
+
+	return creditsCategorized;
+}
+
 export {
 	db,
 	fetchSourcePaths,
@@ -1920,5 +1947,6 @@ export {
 	fetchLists,
 	getMovieDetails,
 	setLastAccess,
-	getCurrentTime
+	getCurrentTime,
+	fetchMovieCredits
 }

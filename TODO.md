@@ -3,6 +3,9 @@
 - correctly implement scrollcontainer class (e.g. Medialist)
 - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 
+# Settings
+- minimumWaitForSetAccess (update Access datetime after ... seconds)
+
 # Features
 
 

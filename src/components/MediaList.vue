@@ -125,7 +125,7 @@
                         <span v-if="i > 0">,&nbsp;</span>
                         <a
                           class="CreditClickable"
-                          v-on:click.stop="CreditClicked(credit)"
+                          v-on:click.stop="onCreditClicked(credit)"
                         >{{ credit.name }}</a>
                       </span>
                     </div>
@@ -142,7 +142,10 @@
                         v-bind:key="credit.IMDB_Person_ID"
                       >
                         <span v-if="i > 0">,&nbsp;</span>
-                        <a class="CreditClickable">{{ credit.name }}</a>
+                        <a
+                          class="CreditClickable"
+                          v-on:click.stop="onCreditClicked(credit)"
+                        >{{ credit.name }}</a>
                       </span>
                     </div>
                   </v-row>
@@ -158,7 +161,10 @@
                         v-bind:key="credit.IMDB_Person_ID"
                       >
                         <span v-if="i > 0">,&nbsp;</span>
-                        <a class="CreditClickable">{{ credit.name }}</a>
+                        <a
+                          class="CreditClickable"
+                          v-on:click.stop="onCreditClicked(credit)"
+                        >{{ credit.name }}</a>
                       </span>
                     </div>
                   </v-row>-->
@@ -174,7 +180,10 @@
                         v-bind:key="credit.IMDB_Person_ID"
                       >
                         <span v-if="i > 0">,&nbsp;</span>
-                        <a class="CreditClickable">{{ credit.name }}</a>
+                        <a
+                          class="CreditClickable"
+                          v-on:click.stop="onCreditClicked(credit)"
+                        >{{ credit.name }}</a>
                       </span>
                     </div>
                   </v-row>
@@ -209,7 +218,46 @@
                 </v-col>
               </v-row>
 
+              <!-- FULL CREDITS -->
+              <v-row
+                style="padding-left: 16px; padding-top: 4px; align-items: flex-end;"
+                class="CreditClickable"
+                v-on:click.stop="showCredits(item, !item.showCredits)"
+              >
+                <span style="font-size: 20px">Credits&nbsp;</span>
+              </v-row>
+
+              <div v-if="item.showCredits" v-on:click.stop="showCredits(item, false)">
+                <div
+                  v-for="creditCategory in item.credits"
+                  v-bind:key="creditCategory.Category"
+                  style="margin-left: 16px"
+                >
+                  <v-row>
+                    <strong>{{ creditCategory.category }}</strong>
+                  </v-row>
+                  <v-row
+                    v-for="credit in creditCategory.items"
+                    v-bind:key="credit.id_Movies_IMDB_Credits"
+                  >
+                    <v-col sm="2" class="creditsLabel">
+                      <a
+                        class="CreditClickable"
+                        v-on:click.stop="onCreditClicked(credit)"
+                      >{{ credit.name }}</a>
+                    </v-col>
+                    <v-col sm="1" class="creditsContent">
+                      <span v-if="credit.credit">...</span>
+                    </v-col>
+                    <v-col class="creditsContent">
+                      {{ credit.credit }}
+                    </v-col>
+                  </v-row>
+                </div>
+              </div>
+
               <v-row style="margin-top: 8px">
+                <v-btn text v-on:click.stop="openIMDB(item)">Open IMDB</v-btn>
                 <v-btn text v-on:click.stop="copyInfo(item)">Copy Info</v-btn>
                 <v-btn text v-on:click.stop="addToList(item)">Add to List</v-btn>
                 <v-btn
@@ -235,6 +283,15 @@
       v-on:ok="onListDialogOK"
       v-on:cancel="onListDialogCancel"
     ></mk-list-dialog>
+
+    <mk-person-dialog
+      ref="personDialog"
+      v-bind:show="personDialog.show"
+      v-bind:IMDB_Person_ID="personDialog.IMDB_Person_ID"
+      v-bind:Person_Name="personDialog.Person_Name"
+      v-on:close="onPersonDialogClose"
+      v-on:filter="onPersonDialogFilter"
+    ></mk-person-dialog>
   </div>
 </template>
 
@@ -242,6 +299,8 @@
 import * as store from "@/store";
 import { eventBus } from "@/main";
 import ListDialog from "@/components/shared/ListDialog.vue";
+import PersonDialog from "@/components/shared/PersonDialog.vue";
+const { shell } = require("electron").remote;
 
 const moment = require("moment");
 
@@ -251,7 +310,8 @@ const logger = require("loglevel");
 
 export default {
   components: {
-    "mk-list-dialog": ListDialog
+    "mk-list-dialog": ListDialog,
+    "mk-person-dialog": PersonDialog
   },
 
   data: () => ({
@@ -299,6 +359,11 @@ export default {
       lists: [],
       allowUseExistingLists: false,
       allowCreateNewList: false
+    },
+
+    personDialog: {
+      show: false,
+      IMDB_Person_ID: null
     },
 
     itemDetails: {
@@ -356,13 +421,13 @@ export default {
             typeof a[this.sort] === "string" ||
             a[this.sort] instanceof String
           ) {
-            if (this.sort === 'created_at' || this.sort === 'last_access_at') {
+            if (this.sort === "created_at" || this.sort === "last_access_at") {
               // we sort dates in reverse order (earliest first)
               if (a[this.sort].toLowerCase() < b[this.sort].toLowerCase()) {
                 return 1;
               }
             }
-            
+
             if (a[this.sort].toLowerCase() > b[this.sort].toLowerCase()) {
               return 1;
             }
@@ -426,6 +491,23 @@ export default {
       logger.log("start:", start, "end:", end);
 
       logger.log("diff:", end.diff(start, "seconds"));
+
+      let minimumWaitForSetAccess = await store.getSetting(
+        "minimumWaitForSetAccess"
+      );
+
+      if (minimumWaitForSetAccess) {
+        minimumWaitForSetAccess = parseInt(minimumWaitForSetAccess);
+      } else {
+        minimumWaitForSetAccess = 0;
+      }
+
+      if (end.diff(start, "seconds") < minimumWaitForSetAccess) {
+        logger.log("RUNTIME TOO SHORT");
+        return;
+      }
+
+      logger.log("RUNTIME LONG ENOUGH");
 
       await store.setLastAccess(movie.id_Movies);
       await this.updateCurrentTime();
@@ -582,8 +664,14 @@ export default {
       await store.fetchFilterParentalAdvisory(this.mediatype);
     },
 
-    CreditClicked(credit) {
+    onCreditClicked(credit) {
       // TODO!
+      logger.log("credit clicked:", credit);
+
+      this.personDialog.show = true;
+      this.personDialog.IMDB_Person_ID = credit.id;
+      this.personDialog.Person_Name = credit.name;
+
       return;
     },
 
@@ -613,9 +701,8 @@ export default {
       }
 
       return (
-        moment
-          .duration(movie.createdMoment.diff(this.currentTime))
-          .humanize() + " ago"
+        moment.duration(movie.createdMoment.diff(this.currentTime)).humanize() +
+        " ago"
       );
     },
 
@@ -628,7 +715,10 @@ export default {
         movie.lastAccessMoment = moment(movie.last_access_at);
       }
 
-      return moment.utc(movie.lastAccessMoment).local().format('YYYY-MM-DD HH:mm:ss');
+      return moment
+        .utc(movie.lastAccessMoment)
+        .local()
+        .format("YYYY-MM-DD HH:mm:ss");
     },
 
     async updateCurrentTime() {
@@ -644,11 +734,44 @@ export default {
         movie.createdMoment = moment(movie.created_at);
       }
 
-      return moment.utc(movie.createdMoment).local().format('YYYY-MM-DD HH:mm:ss');
+      return moment
+        .utc(movie.createdMoment)
+        .local()
+        .format("YYYY-MM-DD HH:mm:ss");
     },
 
     async updateCurrentTime() {
       this.currentTime = moment(await store.getCurrentTime());
+    },
+
+    openIMDB(movie) {
+      shell.openExternal(`https://www.imdb.com/title/${movie.IMDB_tconst}/`);
+    },
+
+    async showCredits(movie, show) {
+      if (!show) {
+        this.$set(movie, "showCredits", false);
+        return;
+      }
+
+      if (!movie.credits) {
+        // TODO: load credits from store and assign to movie.credits
+        const credits = await store.fetchMovieCredits(movie.id_Movies);
+
+        logger.log(credits);
+
+        this.$set(movie, "credits", credits);
+      }
+
+      this.$set(movie, "showCredits", true);
+    },
+
+    onPersonDialogClose() {
+      this.personDialog.show = false;
+    },
+
+    onPersonDialogFilter() {
+      this.personDialog.show = false;
     }
   },
 
@@ -776,5 +899,19 @@ export default {
   padding-top: 0px;
   padding-bottom: 0px;
   width: 100% !important;
+}
+
+.creditsLabel {
+  padding-left: 16px;
+  padding-right: 0px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+.creditsContent {
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 0px;
+  padding-bottom: 0px;
 }
 </style>
