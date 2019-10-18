@@ -66,6 +66,10 @@ export const eventBus = new Vue({
 		listDialogSetChosenList(id_Lists) {
 			this.$emit('listDialogSetChosenList', id_Lists);
 		},
+
+		filtersChanged() {
+			this.$emit('filtersChanged');
+		}
 	}
 });
 

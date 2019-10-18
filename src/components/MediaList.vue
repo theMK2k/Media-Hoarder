@@ -290,7 +290,6 @@
       v-bind:IMDB_Person_ID="personDialog.IMDB_Person_ID"
       v-bind:Person_Name="personDialog.Person_Name"
       v-on:close="onPersonDialogClose"
-      v-on:filter="onPersonDialogFilter"
     ></mk-person-dialog>
   </div>
 </template>
@@ -661,7 +660,8 @@ export default {
       await store.fetchFilterAgeRatings(this.mediatype);
       await store.fetchFilterRatings(this.mediatype);
       await store.fetchFilterLists(this.mediatype);
-      await store.fetchFilterParentalAdvisory(this.mediatype);
+			await store.fetchFilterParentalAdvisory(this.mediatype);
+			await store.fetchFilterPersons(this.mediatype);
     },
 
     onCreditClicked(credit) {
@@ -766,10 +766,6 @@ export default {
     onPersonDialogClose() {
       this.personDialog.show = false;
     },
-
-    onPersonDialogFilter() {
-      this.personDialog.show = false;
-    }
   },
 
   // ### LifeCycle Hooks ###

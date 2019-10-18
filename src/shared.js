@@ -14,7 +14,8 @@ const shared = new Vue({
 			Profanity: [],
 			Alcohol: [],
 			Frightening: [],
-		}
+		},
+		filterPersons: [],
 	}
 });
 

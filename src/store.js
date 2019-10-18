@@ -98,6 +98,7 @@ async function createIndexes(db) {
 		generateIndexQuery('tbl_SourcePaths', ['MediaType'], false),
 		generateIndexQuery('tbl_SourcePaths', ['Description'], false),
 		generateIndexQuery('tbl_Movies_IMDB_Credits', ['id_Movies'], false),
+		generateIndexQuery('tbl_Movies_IMDB_Credits', ['IMDB_Person_ID'], false),
 		generateIndexQuery('tbl_Movies_IMDB_Credits', ['id_Movies', 'Category', 'IMDB_Person_ID'], true),
 		generateIndexQuery('tbl_IMDB_Persons', ['IMDB_Person_ID'], true),
 	]
@@ -1246,12 +1247,22 @@ async function fetchMedia($MediaType) {
 			}
 		})
 
+		let filterPersons = '';
+		if (shared.filterPersons && shared.filterPersons.find(filter => filter.Selected)) {
+			filterPersons = `AND MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_IMDB_Credits WHERE IMDB_Person_ID IN (`;
+			filterPersons += shared.filterPersons.filter(filter => filter.Selected).map(filter => filter.IMDB_Person_ID).reduce((prev, current) => {
+				return prev + (prev ? ', ' : '') + `'${current}'`;
+			}, '');
+			filterPersons += '))';
+		}
+
 		logger.log('fetchMedia filterSourcePaths:', filterSourcePaths);
 		logger.log('fetchMedia filterGenres:', filterGenres);
 		logger.log('fetchMedia filterAgeRatings:', filterAgeRatings);
 		logger.log('fetchMedia filterRatings:', filterRatings);
 		logger.log('fetchMedia filterLists:', filterLists);
 		logger.log('fetchMedia filterParentalAdvisory:', filterParentalAdvisory);
+		logger.log('fetchMedia filterPersons:', filterPersons);
 
 		const query = `
 		SELECT
@@ -1298,6 +1309,7 @@ async function fetchMedia($MediaType) {
 		${filterRatings}
 		${filterLists}
 		${filterParentalAdvisory}
+		${filterPersons}
 	`;
 
 		logger.log('fetchMedia query:', query);
@@ -1778,6 +1790,21 @@ async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category) {
 	return results;
 }
 
+async function fetchFilterPersons($MediaType) {
+	logger.log('fetchFilterPersons MediaType:', $MediaType);
+
+	const filterValues = await fetchFilterValues($MediaType);
+
+	logger.log('fetchFilterPersons filterValues:', filterValues);
+
+	if (filterValues && filterValues.filterPersons) {
+		shared.filterPersons = filterValues.filterPersons;
+	}
+
+	return;	
+}
+
+
 function abortRescan() {
 	doAbortRescan = true;
 }
@@ -1786,7 +1813,11 @@ function saveFilterValues($MediaType) {
 	const filterValues = {
 		filterSourcePaths: shared.filterSourcePaths,
 		filterGenres: shared.filterGenres,
-		filterAgeRatings: shared.filterAgeRatings
+		filterAgeRatings: shared.filterAgeRatings,
+		filterRatings: shared.filterRatings,
+		filterLists: shared.filterLists,
+		filterParentalAdvisory: shared.filterParentalAdvisory,
+		filterPersons: shared.filterPersons
 	}
 
 	const filterValuesString = JSON.stringify(filterValues);
@@ -2011,6 +2042,14 @@ async function saveIMDBPersonData(data) {
 		`, data);
 }
 
+async function fetchNumMoviesForPerson($IMDB_Person_ID) {
+	return await db.fireProcedureReturnScalar(`
+		SELECT COUNT(1) FROM (
+			SELECT DISTINCT id_Movies FROM tbl_Movies_IMDB_Credits WHERE IMDB_Person_ID = $IMDB_Person_ID
+		)
+	`, { $IMDB_Person_ID });
+}
+
 export {
 	db,
 	fetchSourcePaths,
@@ -2028,6 +2067,7 @@ export {
 	fetchFilterRatings,
 	fetchFilterLists,
 	fetchFilterParentalAdvisory,
+	fetchFilterPersons,
 	isScanning,
 	abortRescan,
 	createList,
@@ -2039,5 +2079,6 @@ export {
 	getCurrentTime,
 	fetchMovieCredits,
 	fetchIMDBPerson,
-	scrapeIMDBPersonData
+	scrapeIMDBPersonData,
+	fetchNumMoviesForPerson
 }

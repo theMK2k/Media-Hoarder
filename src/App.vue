@@ -215,6 +215,34 @@
                 </v-expansion-panels>
               </v-expansion-panel-content>
             </v-expansion-panel>
+
+            <!-- FILTER Persons -->
+            <v-expansion-panel
+              style="padding: 0px!important"
+            >
+              <v-expansion-panel-header style="padding: 8px!important">Persons {{filterPersonsTitle}}</v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-row>
+									<!-- TODO: add text-field search -->
+                </v-row>
+                <v-row v-for="person in $shared.filterPersons" v-bind:key="person.IMDB_Person_ID">
+									<v-checkbox
+                    v-bind:label="person.Person_Name + ' (' + person.NumMovies + ')'"
+                    v-model="person.Selected"
+                    v-on:click.native="filtersChanged"
+                    style="margin: 0px"
+                    color="dark-grey"
+                  ></v-checkbox>
+									<v-spacer></v-spacer>
+                  <v-icon
+                    style="align-items: flex-start; padding-top: 4px; cursor: pointer"
+                    v-on:click="deletePerson(person)"
+                  >mdi-delete</v-icon>
+                </v-row>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
+
           </v-expansion-panels>
         </div>
       </v-list>
@@ -472,6 +500,16 @@ export default {
         ")"
       );
 		},
+
+		filterPersonsTitle() {
+      return (
+        "(" +
+        this.$shared.filterPersons.filter(filter => filter.Selected).length +
+        "/" +
+        this.$shared.filterPersons.length +
+        ")"
+      );
+		}
   },
 
   methods: {
@@ -619,7 +657,12 @@ export default {
           eventBus.showSnackbar("error", 6000, err);
         }
       })();
-    },
+		},
+		
+    deletePerson(person) {
+			this.$shared.filterPersons = this.$shared.filterPersons.filter(p => p !== person);
+			this.filtersChanged();
+		},
 
     onDeleteListDialogCancel() {
       this.deleteListDialog.show = false;
@@ -706,7 +749,11 @@ export default {
 
     eventBus.$on("scanInfoOff", () => {
       this.scanInfo.show = false;
-    });
+		});
+		
+		eventBus.$on("filtersChanged", () => {
+			this.filtersChanged();
+		})
 
     // eventBus.scanInfoShow('KILLME', 'Asterix und das Geheimnis des Zaubertranks ~ Astérix - Le secret de la potion magique (De)(BD)[2018][Adventure, Animation, Comedy][6.9 @ 3074][tt8001346].mkv');
 

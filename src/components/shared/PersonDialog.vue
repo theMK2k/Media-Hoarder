@@ -173,8 +173,26 @@ export default {
       this.$emit("close");
     },
 
-    onFilterClick() {
-      this.$emit("filter");
+    async onFilterClick() {
+			if (this.$shared.filterPersons.find(person => person.IMDB_Person_ID === this.IMDB_Person_ID)) {
+				eventBus.showSnackbar("info", 6000, "filter already set for this person");
+				return;
+			}
+
+			const NumMovies = await store.fetchNumMoviesForPerson(this.IMDB_Person_ID);
+
+			logger.log('PERSON NumMovies:', NumMovies);
+
+			this.$shared.filterPersons.push({
+				IMDB_Person_ID: this.IMDB_Person_ID,
+				Person_Name: this.Person_Name,
+				Selected: true,
+				NumMovies
+			});
+			
+			eventBus.filtersChanged();
+			
+			this.$emit("close");
     },
 
     openIMDB() {
