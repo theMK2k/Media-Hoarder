@@ -671,7 +671,7 @@ export default {
       this.personDialog.show = true;
       this.personDialog.IMDB_Person_ID = credit.id;
       this.personDialog.Person_Name = credit.name;
-      this.$refs.personDialog.init();
+      // this.$refs.personDialog.init();
 
       return;
     },
@@ -739,10 +739,6 @@ export default {
         .utc(movie.createdMoment)
         .local()
         .format("YYYY-MM-DD HH:mm:ss");
-    },
-
-    async updateCurrentTime() {
-      this.currentTime = moment(await store.getCurrentTime());
     },
 
     openIMDB(movie) {

@@ -1101,7 +1101,8 @@ async function saveIMDBData(movie, IMDBdata, genres, credits) {
 				, $IMDB_Person_ID
 				, $Person_Name
 				, $Credit
-			) ON CONFLICT(id_Movies, Category, IMDB_Person_ID)
+			)
+			ON CONFLICT(id_Movies, Category, IMDB_Person_ID)
 			DO UPDATE SET
 				Person_Name = excluded.Person_Name
 				, Credit = excluded.Credit`, { $id_Movies: movie.id_Movies, $Category: credit.category, $IMDB_Person_ID: credit.id, $Person_Name: credit.name, $Credit: credit.credit });
@@ -1443,11 +1444,6 @@ async function setSetting($Key, $Value) {
 }
 
 async function launchMovie(movie) {
-	// TODO:
-	// - measure time elapsed during launch
-	// - add measured time to (TODO) watchedSeconds
-	// - watchedSeconds to runtime
-
 	const VLCPath = await getSetting('VLCPath');
 
 	if (!VLCPath) {
@@ -1987,6 +1983,10 @@ async function scrapeIMDBPersonData($IMDB_Person_ID) {
 }
 
 async function saveIMDBPersonData(data) {
+	logger.log('saveIMDBPersonData data:', data);
+	
+	// return;
+
 	return await db.fireProcedure(`INSERT INTO tbl_IMDB_Persons (
 		IMDB_Person_ID
 		, Photo_URL
@@ -2001,13 +2001,14 @@ async function saveIMDBPersonData(data) {
 		, $LongBio
 		, DATETIME('now')
 		, DATETIME('now')
-	) ON CONFLICT(IMDB_Person_ID)
+	)
+	ON CONFLICT(IMDB_Person_ID)
 	DO UPDATE SET
 		Photo_URL = excluded.Photo_URL
 		, ShortBio = excluded.ShortBio
 		, LongBio = excluded.LongBio
 		, updated_at = DATETIME('now')
-		`, { data });
+		`, data);
 }
 
 export {

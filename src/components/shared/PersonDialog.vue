@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="show" persistent max-width="1000px">
-    <v-card dark flat hover v-bind:ripple="false">
+    <v-card dark flat v-bind:ripple="false">
       <v-list-item three-line style="padding-left: 0px">
         <div>
           <!-- <v-skeleton-loader
@@ -88,7 +88,13 @@ export default {
       personData: {},
       showLongBio: false
     };
-  },
+	},
+	
+	watch: {
+		IMDB_Person_ID: function(newVal) {
+			this.init(newVal);
+		}
+	},
 
   methods: {
     onButtonClick(eventName) {
@@ -136,18 +142,31 @@ export default {
       this.isScraping = false;
     },
 
-    async init() {
+    async init(IMDB_Person_ID) {
       // TODO: fetch data for this person from DB
       // TODO: if no data available, try to scrape it
       logger.log("PersonDialog INIT!");
       this.personData = {};
       this.showLongBio = false;
 
-      const personData = await store.fetchIMDBPerson(this.IMDB_Person_ID);
+			let personData = await store.fetchIMDBPerson(IMDB_Person_ID);
+
+			logger.log('fetched personData:', personData);
 
       if (!personData || personData.length === 0) {
-        this.scrapeData();
-      }
+				await this.scrapeData();
+				return;
+			}
+			
+			personData = personData[0];
+
+			personData.Photo_URL = personData.Photo_URL
+            ? helpers.getPath(personData.Photo_URL)
+            : personData.Photo_URL;
+
+			this.personData = personData;
+
+			logger.log('this.personData:', this.personData);
     },
 
     onCloseClick() {

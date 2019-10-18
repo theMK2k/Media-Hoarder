@@ -756,6 +756,7 @@ h1 {
   font-size: 0.875rem;
   font-weight: normal;
   color: #fff !important;
+	cursor: pointer;
 }
 
 .CreditClickable:hover {
