@@ -3,21 +3,43 @@
     <v-card dark flat hover v-bind:ripple="false">
       <v-list-item three-line style="padding-left: 0px">
         <div>
+          <!-- <v-skeleton-loader
+            v-if="isScraping"
+            ref="skeleton"
+            type="avatar"
+            tile
+            class="mx-auto"
+            style="margin: 6px; height: 150px; width: 120px"
+          ></v-skeleton-loader>-->
+
           <v-list-item-avatar tile style="margin: 6px; height: 150px; width: 120px">
-            <v-img v-if="false" contain v-bind:src="null" style="border-radius: 6px;"></v-img>
+            <!-- v-if="!isScraping" -->
+            <v-img
+              v-if="personData.Photo_URL"
+              contain
+              v-bind:src="personData.Photo_URL"
+              style="border-radius: 6px;"
+            ></v-img>
           </v-list-item-avatar>
         </div>
         <v-list-item-content class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
           <v-col style="padding: 0px!important" sm="12">
             <v-row>
               <div style="margin-left: 16px">
-                <v-list-item-title
-                  class="headline mb-2"
-                  style="margin-bottom: 0px!important"
-                >{{ Person_Name }}</v-list-item-title>
+                <v-list-item-title class="headline mb-2" style="margin-bottom: 0px!important">
+                  {{ Person_Name }}
+                  <span v-if="isScraping">(loading, please wait...)</span>
+                </v-list-item-title>
               </div>
+            </v-row>
 
-              <v-list-item-subtitle style="margin-left: 16px; margin-bottom: 4px">some subtitle</v-list-item-subtitle>
+            <v-row style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px">
+              <div v-if="!showLongBio" style="font-size: .875rem; font-weight: normal" class="CreditClickable" v-on:click.stop="showLongBio = true">
+                {{ personData.ShortBio }}
+              </div>
+              <div v-if="showLongBio" style="font-size: .875rem; font-weight: normal" class="CreditClickable" v-on:click.stop="showLongBio = false">
+                <p v-for="(line, index) in personData.LongBio.split('\n')" v-bind:key="index">{{line}}</p>
+              </div>
             </v-row>
           </v-col>
         </v-list-item-content>
@@ -33,6 +55,12 @@
           <v-btn
             class="xs-fullwidth"
             color="primary"
+            v-on:click.stop="openIMDB()"
+            style="margin-left: 8px;"
+          >Open IMDB</v-btn>
+          <v-btn
+            class="xs-fullwidth"
+            color="primary"
             v-on:click.native="onFilterClick"
             style="margin-left: 8px;"
           >Filter by this person</v-btn>
@@ -43,27 +71,26 @@
 </template>
 
 <script>
-// import Vue from "vue";
-// import router from "@/router"; // workaround in order to access router.app.$t
+import * as store from "@/store";
+import * as helpers from "@/helpers/helpers";
 const logger = require("loglevel");
 
-// import { eventBus } from "@/main";
+const { shell } = require("electron").remote;
+
+import { eventBus } from "@/main";
 
 export default {
   props: ["show", "IMDB_Person_ID", "Person_Name"],
 
   data() {
     return {
-      isScraping: false
+      isScraping: false,
+      personData: {},
+      showLongBio: false
     };
   },
 
   methods: {
-    resetData() {
-      this.dontAskAgainValue = false;
-      this.textValueLocal = null;
-    },
-
     onButtonClick(eventName) {
       this.$emit(eventName, {
         dontAskAgain: this.dontAskAgainValue,
@@ -75,14 +102,52 @@ export default {
 
     async scrapeData() {
       // TODO: scrape from IMDB.com
+      logger.log("PersonDialog SCRAPE!");
       this.isScraping = true;
+
+      try {
+        const personData = await store.scrapeIMDBPersonData(
+          this.IMDB_Person_ID
+        );
+
+        logger.log("scraped personData:", personData);
+
+        this.personData = {
+          IMDB_Person_ID: personData.$IMDB_Person_ID,
+          Photo_URL: personData.$Photo_URL
+            ? helpers.getPath(personData.$Photo_URL)
+            : personData.$Photo_URL,
+          ShortBio: personData.$ShortBio,
+          LongBio: personData.$LongBio
+        };
+
+        logger.log("this.personData:", this.personData);
+
+        // TODO: save to tbl_IMDB_Persons
+      } catch (err) {
+        logger.log(err);
+        eventBus.showSnackbar(
+          "error",
+          6000,
+          "an error occured while fetching data from the web"
+        );
+      }
 
       this.isScraping = false;
     },
 
-    init() {
+    async init() {
       // TODO: fetch data for this person from DB
       // TODO: if no data available, try to scrape it
+      logger.log("PersonDialog INIT!");
+      this.personData = {};
+      this.showLongBio = false;
+
+      const personData = await store.fetchIMDBPerson(this.IMDB_Person_ID);
+
+      if (!personData || personData.length === 0) {
+        this.scrapeData();
+      }
     },
 
     onCloseClick() {
@@ -91,6 +156,10 @@ export default {
 
     onFilterClick() {
       this.$emit("filter");
+    },
+
+    openIMDB() {
+      shell.openExternal(`https://www.imdb.com/name/${this.IMDB_Person_ID}/`);
     }
   },
 

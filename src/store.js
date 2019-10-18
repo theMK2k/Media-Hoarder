@@ -99,6 +99,7 @@ async function createIndexes(db) {
 		generateIndexQuery('tbl_SourcePaths', ['Description'], false),
 		generateIndexQuery('tbl_Movies_IMDB_Credits', ['id_Movies'], false),
 		generateIndexQuery('tbl_Movies_IMDB_Credits', ['id_Movies', 'Category', 'IMDB_Person_ID'], true),
+		generateIndexQuery('tbl_IMDB_Persons', ['IMDB_Person_ID'], true),
 	]
 
 	logger.log('queries:', queries);
@@ -523,19 +524,19 @@ async function fetchIMDBMetaData(movie, onlyNew) {
 	let IMDBdata = {};
 
 	try {
-		const mainPageData = await getIMDBmainPageData(movie);
+		const mainPageData = await scrapeIMDBmainPageData(movie);
 		IMDBdata = Object.assign(IMDBdata, mainPageData);
 
-		const releaseinfo = await getIMDBreleaseinfo(movie);
+		const releaseinfo = await scrapeIMDBreleaseinfo(movie);
 		IMDBdata = Object.assign(IMDBdata, releaseinfo);
 
-		const technicalData = await getIMDBtechnicalData(movie);
+		const technicalData = await scrapeIMDBtechnicalData(movie);
 		IMDBdata = Object.assign(IMDBdata, technicalData);
 
-		const parentalguideData = await getIMDBParentalGuideData(movie);
+		const parentalguideData = await scrapeIMDBParentalGuideData(movie);
 		IMDBdata = Object.assign(IMDBdata, parentalguideData);
 
-		const { topCredits, credits } = await getIMDBFullCreditsData(movie);
+		const { topCredits, credits } = await scrapeIMDBFullCreditsData(movie);
 		IMDBdata = Object.assign(IMDBdata, topCredits);
 
 		logger.log('IMDBdata:', IMDBdata);
@@ -548,9 +549,9 @@ async function fetchIMDBMetaData(movie, onlyNew) {
 	}
 }
 
-async function getIMDBmainPageData(movie) {
+async function scrapeIMDBmainPageData(movie) {
 	const url = `https://www.imdb.com/title/${movie.IMDB_tconst}`;
-	// logger.log('getIMDBmainPageData url:', url);
+	// logger.log('scrapeIMDBmainPageData url:', url);
 	const response = await requestGetAsync(url);
 	const html = response.body;
 
@@ -615,7 +616,7 @@ async function getIMDBmainPageData(movie) {
 	let $IMDB_posterLarge_URL = null;
 	const rxPosterMediaViewerURL = /<div class="poster">[\s\S]*?<a href="(.*?)"[\s\S]*?>/;	// "/title/tt0130827/mediaviewer/rm215942400"
 	if (rxPosterMediaViewerURL.test(html)) {
-		const posterURLs = await getIMDBposterURLs(html.match(rxPosterMediaViewerURL)[1]);
+		const posterURLs = await scrapeIMDBposterURLs(html.match(rxPosterMediaViewerURL)[1]);
 
 		const posterSmallPath = `data/extras/${movie.IMDB_tconst}_posterSmall.jpg`;
 		const posterSmallSuccess = await downloadFile(posterURLs.$IMDB_posterSmall_URL, posterSmallPath, false);
@@ -648,7 +649,7 @@ async function getIMDBmainPageData(movie) {
 	}
 }
 
-async function getIMDBposterURLs(posterMediaViewerURL) {
+async function scrapeIMDBposterURLs(posterMediaViewerURL) {
 	let $IMDB_posterSmall_URL = null;
 	let $IMDB_posterLarge_URL = null;
 
@@ -673,9 +674,9 @@ async function getIMDBposterURLs(posterMediaViewerURL) {
 	}
 }
 
-async function getIMDBreleaseinfo(movie) {
+async function scrapeIMDBreleaseinfo(movie) {
 	const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/releaseinfo`;
-	logger.log('getIMDBreleaseinfo url:', url);
+	logger.log('scrapeIMDBreleaseinfo url:', url);
 	const response = await requestGetAsync(url);
 	const html = response.body;
 	// logger.log('imdbReleaseinfoHTML', imdbReleaseinfoHTML);
@@ -712,9 +713,9 @@ async function getIMDBreleaseinfo(movie) {
 	}
 }
 
-async function getIMDBtechnicalData(movie) {
+async function scrapeIMDBtechnicalData(movie) {
 	const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/technical`;
-	logger.log('getIMDBtechnicalData url:', url);
+	logger.log('scrapeIMDBtechnicalData url:', url);
 	const response = await requestGetAsync(url);
 	const html = response.body;
 
@@ -740,7 +741,7 @@ async function getIMDBtechnicalData(movie) {
 let cacheAgeRatings = null;
 let ageRatingChosenCountry = 'none';
 
-async function getIMDBParentalGuideData(movie) {
+async function scrapeIMDBParentalGuideData(movie) {
 	if (!cacheAgeRatings) {
 		cacheAgeRatings = await db.fireProcedureReturnAll(`SELECT id_AgeRating, Country, Code, Age FROM tbl_AgeRating`);
 		logger.log('cacheAgeRatings:', cacheAgeRatings);
@@ -752,7 +753,7 @@ async function getIMDBParentalGuideData(movie) {
 	}
 
 	const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/parentalguide`;
-	logger.log('getIMDBParentalGuideData url:', url);
+	logger.log('scrapeIMDBParentalGuideData url:', url);
 	const response = await requestGetAsync(url);
 	const html = response.body;
 
@@ -927,9 +928,9 @@ async function getIMDBParentalGuideData(movie) {
 	}
 }
 
-async function getIMDBFullCreditsData(movie) {
+async function scrapeIMDBFullCreditsData(movie) {
 	const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/fullcredits`;
-	logger.log('getIMDBFullCreditsData url:', url);
+	logger.log('scrapeIMDBFullCreditsData url:', url);
 	const response = await requestGetAsync(url);
 	const html = response.body;
 
@@ -1922,6 +1923,93 @@ async function fetchMovieCredits($id_Movies) {
 	return creditsCategorized;
 }
 
+async function fetchIMDBPerson($IMDB_Person_ID) {
+	return await db.fireProcedureReturnAll(`
+	SELECT
+		id_IMDB_Persons
+		, IMDB_Person_ID
+		, Photo_URL
+		, ShortBio
+		, LongBio
+	FROM tbl_IMDB_Persons
+	WHERE IMDB_Person_ID = $IMDB_Person_ID`, { $IMDB_Person_ID });
+}
+
+async function scrapeIMDBPersonData($IMDB_Person_ID) {
+	const url = `https://www.imdb.com/name/${$IMDB_Person_ID}`;
+	const response = await requestGetAsync(url);
+	const html = response.body;
+
+	logger.log('scraping:', url);
+
+	const result = {
+		$IMDB_Person_ID,
+		$Photo_URL: null,
+		$ShortBio: null,
+		$LongBio: null
+	};
+
+	const rxShortBio = /<div class="name-trivia-bio-text">([\s\S]*?)<\/div>/;
+
+	if (rxShortBio.test(html)) {
+		logger.log('bio found');
+		result.$ShortBio = unescape(htmlToText.fromString(html.match(rxShortBio)[1], { wordwrap: null, ignoreImage: true, ignoreHref: true }).replace('See full bio', '').trim());
+	} else {
+		logger.log('bio NOT found');
+	}
+
+	const rxPhotoURL = /<img id="name-poster"[\s\S]*?src="(.*?)"/;
+
+	if (rxPhotoURL.test(html)) {
+		const url = html.match(rxPhotoURL)[1];
+		const photoPath = `data/extras/${$IMDB_Person_ID}_poster.jpg`;
+		const success = await downloadFile(url, photoPath, false);
+
+		if (success) {
+			result.$Photo_URL = photoPath;
+		}
+	}
+
+	const urlBio = `https://www.imdb.com/name/${$IMDB_Person_ID}/bio`;
+	const responseBio = await requestGetAsync(urlBio);
+	const htmlBio = responseBio.body;
+
+	const rxLongBio = /<h4 class="li_group">Mini Bio[\s\S]*?(<div[\s\S]*?)<\/div>/
+
+	if (rxLongBio.test(htmlBio)) {
+		logger.log('LONG BIO FOUND!:', { longbio: htmlBio.match(rxLongBio)[1]});
+		result.$LongBio = unescape(htmlToText.fromString(htmlBio.match(rxLongBio)[1], { wordwrap: null, ignoreImage: true, ignoreHref: true }).trim());
+	}
+
+	await saveIMDBPersonData(result);
+
+	return result;
+}
+
+async function saveIMDBPersonData(data) {
+	return await db.fireProcedure(`INSERT INTO tbl_IMDB_Persons (
+		IMDB_Person_ID
+		, Photo_URL
+		, ShortBio
+		, LongBio
+		, created_at
+		, updated_at
+	) VALUES (
+		$IMDB_Person_ID
+		, $Photo_URL
+		, $ShortBio
+		, $LongBio
+		, DATETIME('now')
+		, DATETIME('now')
+	) ON CONFLICT(IMDB_Person_ID)
+	DO UPDATE SET
+		Photo_URL = excluded.Photo_URL
+		, ShortBio = excluded.ShortBio
+		, LongBio = excluded.LongBio
+		, updated_at = DATETIME('now')
+		`, { data });
+}
+
 export {
 	db,
 	fetchSourcePaths,
@@ -1948,5 +2036,7 @@ export {
 	getMovieDetails,
 	setLastAccess,
 	getCurrentTime,
-	fetchMovieCredits
+	fetchMovieCredits,
+	fetchIMDBPerson,
+	scrapeIMDBPersonData
 }

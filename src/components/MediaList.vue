@@ -31,7 +31,7 @@
       </v-row>
     </h1>
 
-    <v-container class="scrollcontainer pa-2" style="max-width: 100%!important; margin-top: 48px;">
+    <v-container class="scrollcontainer pa-2" style="max-width: 100%!important; margin-top: 56px;">
       <v-row v-for="(item, i) in itemsFilteredPaginated" :key="i">
         <v-col>
           <v-card dark flat hover v-bind:ripple="false" v-on:click="selectItem(item)">
@@ -671,6 +671,7 @@ export default {
       this.personDialog.show = true;
       this.personDialog.IMDB_Person_ID = credit.id;
       this.personDialog.Person_Name = credit.name;
+      this.$refs.personDialog.init();
 
       return;
     },
@@ -838,16 +839,6 @@ export default {
   display: block;
   float: left;
   width: 100px;
-}
-
-.CreditClickable {
-  font-size: 0.875rem;
-  font-weight: normal;
-  color: #fff !important;
-}
-
-.CreditClickable:hover {
-  color: #2196f3 !important;
 }
 
 .breathe-bg {

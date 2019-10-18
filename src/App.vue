@@ -751,4 +751,14 @@ h1 {
   background-color: #000000;
   border: 1px solid #555555;
 }
+
+.CreditClickable {
+  font-size: 0.875rem;
+  font-weight: normal;
+  color: #fff !important;
+}
+
+.CreditClickable:hover {
+  color: #2196f3 !important;
+}
 </style>
