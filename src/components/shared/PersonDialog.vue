@@ -175,22 +175,25 @@ export default {
 
     async onFilterClick() {
 			if (this.$shared.filterPersons.find(person => person.IMDB_Person_ID === this.IMDB_Person_ID)) {
-				eventBus.showSnackbar("info", 6000, "filter already set for this person");
+				eventBus.showSnackbar("info", 6000, "filter already exists for this person");
 				return;
 			}
 
-			const NumMovies = await store.fetchNumMoviesForPerson(this.IMDB_Person_ID);
+			// const NumMovies = await store.fetchNumMoviesForPerson(this.IMDB_Person_ID);
 
-			logger.log('PERSON NumMovies:', NumMovies);
+			// logger.log('PERSON NumMovies:', NumMovies);
 
-			this.$shared.filterPersons.push({
-				IMDB_Person_ID: this.IMDB_Person_ID,
-				Person_Name: this.Person_Name,
-				Selected: true,
-				NumMovies
-			});
+			// this.$shared.filterPersons.push({
+			// 	IMDB_Person_ID: this.IMDB_Person_ID,
+			// 	Person_Name: this.Person_Name,
+			// 	Selected: true,
+			// 	NumMovies
+			// });
+
+			store.addFilterPerson(this.IMDB_Person_ID, this.Person_Name)
 			
-			eventBus.filtersChanged();
+			eventBus.refetchFilters();
+			// await this.fetchFilters();
 			
 			this.$emit("close");
     },

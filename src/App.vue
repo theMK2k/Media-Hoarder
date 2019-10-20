@@ -225,6 +225,10 @@
                 <v-row>
 									<!-- TODO: add text-field search -->
                 </v-row>
+                <v-row>
+                  <v-btn text v-on:click="setAllPersons(false)">NONE</v-btn>
+                  <v-btn text v-on:click="setAllPersons(true)">ALL</v-btn>
+                </v-row>
                 <v-row v-for="person in $shared.filterPersons" v-bind:key="person.IMDB_Person_ID">
 									<v-checkbox
                     v-bind:label="person.Person_Name + ' (' + person.NumMovies + ')'"
@@ -236,7 +240,8 @@
 									<v-spacer></v-spacer>
                   <v-icon
                     style="align-items: flex-start; padding-top: 4px; cursor: pointer"
-                    v-on:click="deletePerson(person)"
+                    v-if="person.id_Filter_Persons"
+										v-on:click="deletePerson(person)"
                   >mdi-delete</v-icon>
                 </v-row>
               </v-expansion-panel-content>
@@ -502,6 +507,14 @@ export default {
 		},
 
 		filterPersonsTitle() {
+      if (!this.$shared.filterPersons.find(filter => !filter.Selected)) {
+        return "(ALL)";
+      }
+
+      if (!this.$shared.filterPersons.find(filter => filter.Selected)) {
+        return "(NONE)";
+      }
+
       return (
         "(" +
         this.$shared.filterPersons.filter(filter => filter.Selected).length +
@@ -559,7 +572,7 @@ export default {
       });
 
       this.filtersChanged();
-    },
+		},
 
     setAllGenres: function(value) {
       this.$shared.filterGenres.forEach(genre => {
@@ -599,7 +612,15 @@ export default {
 			})
 		},
 
-    getFilterRatingLabel(rating, numMovies) {
+		setAllPersons: function(value) {
+      this.$shared.filterPersons.forEach(sp => {
+        sp.Selected = value;
+      });
+
+      this.filtersChanged();
+		},
+
+		getFilterRatingLabel(rating, numMovies) {
       let label = "";
 
       if (rating) {
@@ -660,8 +681,8 @@ export default {
 		},
 		
     deletePerson(person) {
-			this.$shared.filterPersons = this.$shared.filterPersons.filter(p => p !== person);
-			this.filtersChanged();
+			store.deleteFiterPerson(person.id_Filter_Persons);
+			eventBus.refetchFilters();
 		},
 
     onDeleteListDialogCancel() {

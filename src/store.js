@@ -1248,13 +1248,27 @@ async function fetchMedia($MediaType) {
 		})
 
 		let filterPersons = '';
-		if (shared.filterPersons && shared.filterPersons.find(filter => filter.Selected)) {
-			filterPersons = `AND MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_IMDB_Credits WHERE IMDB_Person_ID IN (`;
-			filterPersons += shared.filterPersons.filter(filter => filter.Selected).map(filter => filter.IMDB_Person_ID).reduce((prev, current) => {
-				return prev + (prev ? ', ' : '') + `'${current}'`;
-			}, '');
-			filterPersons += '))';
+		if (shared.filterPersons && shared.filterPersons.find(filter => !filter.Selected)) {
+
+			if (shared.filterPersons.find(filter => (filter.Selected && !filter.id_Filter_Persons))) {
+				filterPersons = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies_IMDB_Credits WHERE IMDB_Person_ID IN (SELECT IMDB_Person_ID FROM tbl_Filter_Persons)) `;
+			} else {
+				filterPersons = `AND (1=0 `;
+			}
+
+			if (shared.filterPersons.find(filter => (filter.Selected && filter.id_Filter_Persons))) {
+				filterPersons += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_IMDB_Credits WHERE IMDB_Person_ID IN (`;
+
+				filterPersons += shared.filterPersons.filter(filter => filter.Selected).map(filter => filter.IMDB_Person_ID).reduce((prev, current) => {
+					return prev + (prev ? ', ' : '') + `'${current}'`;
+				}, '');
+
+				filterPersons += '))';
+			}
+
+			filterPersons += ')';
 		}
+
 
 		logger.log('fetchMedia filterSourcePaths:', filterSourcePaths);
 		logger.log('fetchMedia filterGenres:', filterGenres);
@@ -1395,7 +1409,7 @@ function generateLanguageString(languages, preferredLanguages) {
 	});
 
 	if (languages && result.length < languagesFiltered.length) {
-		logger.log('overshot languagesFiltered:', languagesFiltered);
+		// logger.log('overshot languagesFiltered:', languagesFiltered);
 
 		if ((languagesFiltered.length - result.length) < 2) {
 			result.push(lastOvershotLanguage);
@@ -1403,7 +1417,7 @@ function generateLanguageString(languages, preferredLanguages) {
 			result.push('+' + (languagesFiltered.length - result.length));
 		}
 
-		logger.log('result:', result);
+		// logger.log('result:', result);
 	}
 
 	if (!result) {
@@ -1790,7 +1804,7 @@ async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category) {
 	return results;
 }
 
-async function fetchFilterPersons($MediaType) {
+async function fetchFilterPersons_old($MediaType) {
 	logger.log('fetchFilterPersons MediaType:', $MediaType);
 
 	const filterValues = await fetchFilterValues($MediaType);
@@ -1804,6 +1818,64 @@ async function fetchFilterPersons($MediaType) {
 	return;	
 }
 
+async function fetchFilterPersons($MediaType) {
+	const filterValues = await fetchFilterValues($MediaType);
+
+	const results = await db.fireProcedureReturnAll(`
+		SELECT
+			0 AS id_Filter_Persons
+			, NULL AS IMDB_Person_ID
+			, '<any other person>' AS Person_Name
+			, 1 AS Selected
+			, (
+					SELECT COUNT(1)
+					FROM tbl_Movies MOV
+					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+					WHERE MOV.id_Movies NOT IN (
+						SELECT DISTINCT MC.id_Movies
+						FROM tbl_Movies_IMDB_Credits MC
+						INNER JOIN tbl_Movies MOV2 ON MC.id_Movies = MOV2.id_Movies
+						INNER JOIN tbl_SourcePaths SP2 ON MOV2.id_SourcePaths = SP2.id_SourcePaths AND SP2.MediaType = $MediaType
+						WHERE MC.IMDB_Person_ID IN (SELECT IMDB_Person_ID FROM tbl_Filter_Persons)
+					)
+				)
+			AS NumMovies
+		UNION
+		SELECT
+			id_Filter_Persons
+			, IMDB_Person_ID
+			, Person_Name
+			, 1 AS Selected
+			, (
+					SELECT COUNT(1) FROM (
+						SELECT DISTINCT MC.id_Movies
+						FROM tbl_Movies_IMDB_Credits MC
+						INNER JOIN tbl_Movies MOV ON MC.id_Movies = MOV.id_Movies
+						INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+						WHERE MC.IMDB_Person_ID = FILTERPERSON.IMDB_Person_ID
+					)
+			) AS NumMovies
+		FROM tbl_Filter_Persons FILTERPERSON
+	`, { $MediaType });
+
+	// logger.log('fetchFilterPersons QUERY:', )
+
+	if (filterValues && filterValues.filterLists) {
+		results.forEach(result => {
+			const filterValue = filterValues.filterLists.find(value => value.id_Filter_Persons === result.id_Filter_Persons);
+
+			if (filterValue) {
+				result.Selected = filterValue.Selected;
+			}
+
+			result.NumMovies = result.NumMovies.toLocaleString();
+		})
+	}
+
+	logger.log('fetchFilterPersons result:', results);
+
+	shared.filterPersons = results;
+}
 
 function abortRescan() {
 	doAbortRescan = true;
@@ -2050,6 +2122,20 @@ async function fetchNumMoviesForPerson($IMDB_Person_ID) {
 	`, { $IMDB_Person_ID });
 }
 
+async function addFilterPerson($IMDB_Person_ID, $Person_Name) {
+	const id_Filter_Persons = await db.fireProcedureReturnScalar(`SELECT id_Filter_Persons FROM tbl_Filter_Persons WHERE IMDB_Person_ID = $IMDB_Person_ID`, { $IMDB_Person_ID });
+	if (id_Filter_Persons) {
+		return;
+	}
+
+	await db.fireProcedure(`INSERT INTO tbl_Filter_persons (IMDB_Person_ID, Person_Name, created_at) VALUES ($IMDB_Person_ID, $Person_Name, DATETIME('now'))`, { $IMDB_Person_ID, $Person_Name });
+}
+
+async function deleteFiterPerson($id_Filter_Persons) {
+	return await db.fireProcedureReturnScalar(`DELETE FROM tbl_Filter_Persons WHERE id_Filter_Persons = $id_Filter_Persons`, { $id_Filter_Persons });
+}
+
+
 export {
 	db,
 	fetchSourcePaths,
@@ -2080,5 +2166,7 @@ export {
 	fetchMovieCredits,
 	fetchIMDBPerson,
 	scrapeIMDBPersonData,
-	fetchNumMoviesForPerson
+	fetchNumMoviesForPerson,
+	addFilterPerson,
+	deleteFiterPerson
 }
