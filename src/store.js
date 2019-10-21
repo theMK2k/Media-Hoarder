@@ -1789,7 +1789,7 @@ async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category) {
 
 	if (filterValues && filterValues.filterParentalAdvisory && filterValues.filterParentalAdvisory[PA_Category]) {
 		results.forEach(result => {
-			const filterValue = filterValues.filterParentalAdvisory[PA_Category].find(value => value.Rating === result.Rating);
+			const filterValue = filterValues.filterParentalAdvisory[PA_Category].find(value => value.Severity === result.Severity);
 
 			if (filterValue) {
 				result.Selected = filterValue.Selected;
@@ -1919,6 +1919,7 @@ async function addToList($id_Lists, $id_Movies) {
 }
 
 async function removeFromList($id_Lists, $id_Movies) {
+	logger.log('removeFromList $id_Lists:', $id_Lists, '$id_Movies:', $id_Movies);
 	return await db.fireProcedureReturnScalar(`DELETE FROM tbl_Lists_Movies WHERE id_Lists = $id_Lists AND id_Movies = $id_Movies`, { $id_Lists, $id_Movies });
 }
 

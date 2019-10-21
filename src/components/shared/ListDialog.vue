@@ -8,9 +8,6 @@
       <div style="margin-left: 24px">
         <div class="subtitle">{{ movieName }}</div>
 
-        allowUseExistingLists: {{ allowUseExistingLists }}
-        allowCreateNewList: {{ allowCreateNewList }}
-
         <v-radio-group v-model="chosenMethod">
           <!-- LISTS COMBOBOX -->
           <v-row v-if="allowUseExistingLists">
@@ -39,7 +36,12 @@
               color="dark-grey"
               style="margin-left: 8px; width: 140px; margin-top: -16px;"
             ></v-radio>
-            <v-text-field v-model="newListName" v-bind:disabled="chosenMethod != 'createNewList'" style="margin-top: -12px"></v-text-field>
+            <v-text-field
+              v-model="newListName"
+              v-bind:disabled="chosenMethod != 'createNewList'"
+              v-on:keydown.enter="onListNameEnter"
+              style="margin-top: -12px"
+            ></v-text-field>
           </v-row>
         </v-radio-group>
       </div>
@@ -77,14 +79,14 @@ export default {
     "movie",
     "lists",
     "allowUseExistingLists",
-    "allowCreateNewList",
+    "allowCreateNewList"
   ],
 
   data() {
     return {
-      chosenMethod: 'useExistingLists',
+      chosenMethod: "useExistingLists",
       chosen_id_Lists: null,
-      newListName: null,
+      newListName: null
     };
   },
 
@@ -94,8 +96,7 @@ export default {
     }
   },
 
-  watch: {
-  },
+  watch: {},
 
   methods: {
     resetData() {
@@ -103,8 +104,17 @@ export default {
       this.newListName = null;
     },
 
+    onListNameEnter() {
+      if (!this.newListName) {
+        return;
+      }
+
+      this.onButtonClick('ok');
+    },
+    
     onButtonClick(eventName) {
       this.$emit(eventName, {
+        chosenMethod: this.chosenMethod,
         chosen_id_Lists: this.chosen_id_Lists,
         newListName: this.newListName
       });
@@ -114,11 +124,11 @@ export default {
 
   // ### Lifecycle Hooks ###
   created() {
-    eventBus.$on('listDialogSetChosenMethod', (value) => {
+    eventBus.$on("listDialogSetChosenMethod", value => {
       this.chosenMethod = value;
     });
-    eventBus.$on('listDialogSetChosenList', (id_Lists) => {
-      logger.log('set chosen id_Lists:', id_Lists);
+    eventBus.$on("listDialogSetChosenList", id_Lists => {
+      logger.log("set chosen id_Lists:", id_Lists);
       this.chosen_id_Lists = id_Lists;
     });
   }

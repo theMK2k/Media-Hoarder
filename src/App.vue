@@ -329,6 +329,17 @@
         </v-btn>
       </v-row>
     </v-bottom-navigation>
+
+    <!-- LOADING OVERLAY -->
+    <v-overlay v-bind:value="showLoadingOverlay">
+      <!-- <v-btn
+        icon
+        @click="overlay = false"
+      >
+        <v-icon>mdi-close</v-icon>
+      </v-btn> -->
+      loading...
+    </v-overlay>
   </v-app>
 </template>
 
@@ -351,6 +362,7 @@ export default {
     source: String
   },
   data: () => ({
+    showLoadingOverlay: false,
     shared,
     drawer: null,
     items: [
@@ -557,8 +569,8 @@ export default {
       eventBus.searchTextChanged(searchText);
     },
 
-    eventBusRefetchMedia: function() {
-      eventBus.refetchMedia();
+    eventBusRefetchMedia: function(setPage) {
+      eventBus.refetchMedia(setPage);
     },
 
     filtersChanged: function() {
@@ -609,7 +621,9 @@ export default {
 		setAllParentalAdvisory: function(category, value) {
 			this.$shared.filterParentalAdvisory[category.Name].forEach(paItem => {
 				paItem.Selected = value;
-			})
+      });
+      
+      this.filtersChanged();
 		},
 
 		setAllPersons: function(value) {
@@ -774,7 +788,11 @@ export default {
 		
 		eventBus.$on("filtersChanged", () => {
 			this.filtersChanged();
-		})
+    })
+    
+    eventBus.$on("showLoadingOverlay", (value) => {
+      this.showLoadingOverlay = value;
+    })
 
     // eventBus.scanInfoShow('KILLME', 'Asterix und das Geheimnis des Zaubertranks ~ Astérix - Le secret de la potion magique (De)(BD)[2018][Adventure, Animation, Comedy][6.9 @ 3074][tt8001346].mkv');
 

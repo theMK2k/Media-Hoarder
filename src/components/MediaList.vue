@@ -42,7 +42,12 @@
                   style="margin: 6px; height: 150px; width: 120px"
                   v-on:click.stop="launch(item)"
                 >
-                  <v-img contain v-bind:src="item.IMDB_posterSmall_URL" style="border-radius: 6px;"></v-img>
+                  <v-img
+                    contain
+                    v-if="item.IMDB_posterSmall_URL"
+                    v-bind:src="item.IMDB_posterSmall_URL"
+                    style="border-radius: 6px;"
+                  ></v-img>
                 </v-list-item-avatar>
               </div>
               <v-list-item-content
@@ -81,6 +86,7 @@
                       <div
                         class="headline mb-2"
                         style="margin-right: 16px; margin-left: 16px; margin-bottom: 0px!important"
+                        v-if="item.IMDB_ratingDisplay"
                       >
                         <v-icon small color="amber" style="padding-bottom: 4px">mdi-star</v-icon>
                         {{item.IMDB_ratingDisplay}}
@@ -218,6 +224,21 @@
                 </v-col>
               </v-row>
 
+              <v-row>
+                <v-col class="detailLabel">In Lists:</v-col>
+                <v-col class="detailContent">
+                  <span v-if="itemDetails.lists && itemDetails.lists.length > 0">
+                    <span v-for="(list, index) in itemDetails.lists" v-bind:key="index">
+                      <span v-if="index > 0">,&nbsp;</span>
+                      <span>{{list.Name}}</span>
+                    </span>
+                  </span>
+                  <span
+                    v-if="!itemDetails.lists || itemDetails.lists.length === 0"
+                  >&lt;not in any list&gt;</span>
+                </v-col>
+              </v-row>
+
               <!-- FULL CREDITS -->
               <v-row
                 style="padding-left: 16px; padding-top: 4px; align-items: flex-end;"
@@ -249,9 +270,7 @@
                     <v-col sm="1" class="creditsContent">
                       <span v-if="credit.credit">...</span>
                     </v-col>
-                    <v-col class="creditsContent">
-                      {{ credit.credit }}
-                    </v-col>
+                    <v-col class="creditsContent">{{ credit.credit }}</v-col>
                   </v-row>
                 </div>
               </div>
@@ -618,11 +637,18 @@ export default {
     onListDialogOK(data) {
       this.listDialog.show = false;
 
+      logger.log("onListDialogOK data:", data);
+
       (async () => {
         try {
+          if (!data.chosen_id_Lists && !data.newListName) {
+            eventBus.showSnackbar("error", 6000, "list is missing");
+            return;
+          }
+
           // Add to list
-          if (this.listDialog.mode == "add") {
-            if (this.listDialog.chosenMethod == "createNewList") {
+          if (this.listDialog.mode === "add") {
+            if (data.chosenMethod === "createNewList") {
               data.chosen_id_Lists = await store.createList(data.newListName);
             }
 
@@ -633,16 +659,30 @@ export default {
 
             await this.fetchFilters();
 
-            eventBus.showSnackbar("success", 6000, "Movie added to list");
+            this.itemDetails = await store.getMovieDetails(
+              this.listDialog.movie.id_Movies
+            );
+
+            eventBus.showSnackbar("success", 6000, "item added to list");
           }
 
+          // Remove from list
           if (this.listDialog.mode == "remove") {
+            if (!data.chosen_id_Lists) {
+              eventBus.showSnackbar("error", 6000, "list is missing");
+              return;
+            }
+
             await store.removeFromList(
               data.chosen_id_Lists,
               this.listDialog.movie.id_Movies
             );
 
-            eventBus.showSnackbar("success", 6000, "Movie removed from list");
+            await this.fetchFilters();
+
+            eventBus.refetchMedia(this.currentPage);
+
+            eventBus.showSnackbar("success", 6000, "item removed from list");
           }
         } catch (err) {
           eventBus.showSnackbar("error", 6000, err);
@@ -660,8 +700,8 @@ export default {
       await store.fetchFilterAgeRatings(this.mediatype);
       await store.fetchFilterRatings(this.mediatype);
       await store.fetchFilterLists(this.mediatype);
-			await store.fetchFilterParentalAdvisory(this.mediatype);
-			await store.fetchFilterPersons(this.mediatype);
+      await store.fetchFilterParentalAdvisory(this.mediatype);
+      await store.fetchFilterPersons(this.mediatype);
     },
 
     onCreditClicked(credit) {
@@ -765,7 +805,7 @@ export default {
 
     onPersonDialogClose() {
       this.personDialog.show = false;
-    },
+    }
   },
 
   // ### LifeCycle Hooks ###
@@ -773,7 +813,8 @@ export default {
     (async () => {
       await this.fetchFilters();
 
-      this.items = await store.fetchMedia(this.mediatype);
+      eventBus.refetchMedia();
+
       this.currentPage = 1;
 
       logger.log("items:", this.items);
@@ -784,11 +825,16 @@ export default {
       this.currentPage = 1;
     });
 
-    eventBus.$on("refetchMedia", () => {
+    eventBus.$on("refetchMedia", setPage => {
       logger.log("refetching media");
       (async () => {
+        eventBus.showLoadingOverlay(true);
+
         this.items = await store.fetchMedia(this.mediatype);
-        this.currentPage = 1;
+
+        eventBus.showLoadingOverlay(false);
+
+        this.currentPage = setPage && setPage <= this.numPages ? setPage : 1;
       })();
     });
 

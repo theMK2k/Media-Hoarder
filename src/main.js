@@ -43,8 +43,8 @@ export const eventBus = new Vue({
 			this.$emit('searchTextChanged', { searchText });
 		},
 
-		refetchMedia() {
-			this.$emit('refetchMedia');
+		refetchMedia(setPage) {
+			this.$emit('refetchMedia', setPage);
 		},
 
 		refetchFilters() {
@@ -69,6 +69,10 @@ export const eventBus = new Vue({
 
 		filtersChanged() {
 			this.$emit('filtersChanged');
+		},
+
+		showLoadingOverlay(value) {
+			this.$emit('showLoadingOverlay', value);
 		}
 	}
 });
