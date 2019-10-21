@@ -331,14 +331,16 @@
     </v-bottom-navigation>
 
     <!-- LOADING OVERLAY -->
-    <v-overlay v-bind:value="showLoadingOverlay">
+    <v-overlay style="z-index: 1000;" v-bind:value="showLoadingOverlay">
       <!-- <v-btn
         icon
         @click="overlay = false"
       >
         <v-icon>mdi-close</v-icon>
       </v-btn> -->
-      loading...
+      <span style="text-shadow: 0 0 4px #FFFFFF;">
+			loading
+			</span>
     </v-overlay>
   </v-app>
 </template>
