@@ -1,3 +1,6 @@
+# Progress - Movies sorted by Name
+- page: 23
+
 # Other
 - fix Age Rating filter (undetermined yields no results -> see filterParentalAdvisory)
 - fix duplication check in filescan, e.g. "Audition ~ Ôdishon (De)(Sub De)(HD)[1999][Drama, Horror, Mystery][7.2 @ 65149][tt0235198].mkv"

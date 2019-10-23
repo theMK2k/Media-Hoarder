@@ -42,14 +42,12 @@
                   style="margin: 6px; height: 150px; width: 120px"
                   v-on:click.stop="launch(item)"
                 >
-                  <!--
                   <v-img
                     contain
                     v-if="item.IMDB_posterSmall_URL"
                     v-bind:src="item.IMDB_posterSmall_URL"
                     style="border-radius: 6px;"
                   ></v-img>
-                  -->
                 </v-list-item-avatar>
               </div>
               <v-list-item-content
@@ -482,10 +480,9 @@ export default {
         if (movie.selected) {
           movie.selected = false;
         } else {
-          this.items.forEach(item => {
-            // item.selected = false;
-            this.$set(item, "selected", false);
-          });
+          // this.items.forEach(item => {
+          //   this.$set(item, "selected", false);
+          // });
 
           this.itemDetails = await store.getMovieDetails(movie.id_Movies);
 
