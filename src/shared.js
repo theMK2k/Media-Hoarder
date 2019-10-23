@@ -16,6 +16,8 @@ const shared = new Vue({
 			Frightening: [],
 		},
 		filterPersons: [],
+		filterYears: [],
+		filterQualities: [],
 	}
 });
 

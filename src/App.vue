@@ -66,6 +66,94 @@
               </v-expansion-panel-content>
             </v-expansion-panel>
 
+            <!-- FILTER QUALITIES -->
+            <v-expansion-panel
+              v-show="$shared.filterQualities && $shared.filterQualities.length > 0"
+              style="padding: 0px!important"
+            >
+              <v-expansion-panel-header
+                style="padding: 8px!important"
+              >Video Quality {{filterQualitiesTitle}}</v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-row>
+                  <v-btn text v-on:click="setAllQualities(false)">NONE</v-btn>
+                  <v-btn text v-on:click="setAllQualities(true)">ALL</v-btn>
+                </v-row>
+                <v-checkbox
+                  v-for="quality in $shared.filterQualities"
+                  v-bind:key="quality.MI_Quality"
+                  v-bind:label="getFilterQualityLabel(quality.MI_Quality, quality.NumMovies)"
+                  v-model="quality.Selected"
+                  v-on:click.native="filtersChanged"
+                  style="margin: 0px"
+                  color="dark-grey"
+                >
+                </v-checkbox>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
+            <!-- FILTER LISTS -->
+            <v-expansion-panel
+              v-show="$shared.filterLists && $shared.filterLists.length > 0"
+              style="padding: 0px!important"
+            >
+              <v-expansion-panel-header style="padding: 8px!important">My Lists {{filterListsTitle}}</v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-row>
+                  <v-btn text v-on:click="setAllLists(false)">NONE</v-btn>
+                  <v-btn text v-on:click="setAllLists(true)">ALL</v-btn>
+                </v-row>
+                <v-row v-for="list in $shared.filterLists" v-bind:key="list.id_Lists">
+                  <v-checkbox
+                    v-bind:label="list.Name + ' (' + list.NumMovies + ')'"
+                    v-model="list.Selected"
+                    v-on:click.native="filtersChanged"
+                    style="margin: 0px"
+                    color="dark-grey"
+                  ></v-checkbox>
+                  <v-spacer></v-spacer>
+                  <v-icon
+                    v-if="list.id_Lists"
+                    style="align-items: flex-start; padding-top: 4px; cursor: pointer"
+                    v-on:click="deleteList(list)"
+                  >mdi-delete</v-icon>
+                </v-row>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
+            <!-- FILTER (USER) RATINGS -->
+            <v-expansion-panel
+              v-show="$shared.filterRatings && $shared.filterRatings.length > 0"
+              style="padding: 0px!important"
+            >
+              <v-expansion-panel-header
+                style="padding: 8px!important"
+              >My Ratings {{filterRatingsTitle}}</v-expansion-panel-header>
+              <!--  {{ filterRatingsTitle }} -->
+              <v-expansion-panel-content>
+                <v-row>
+                  <v-btn text v-on:click="setAllRatings(false)">NONE</v-btn>
+                  <v-btn text v-on:click="setAllRatings(true)">ALL</v-btn>
+                </v-row>
+                <v-checkbox
+                  v-for="rating in $shared.filterRatings"
+                  v-bind:key="rating.Rating"
+                  v-bind:label="getFilterRatingLabel(rating.Rating, rating.NumMovies)"
+                  v-model="rating.Selected"
+                  v-on:click.native="filtersChanged"
+                  style="margin: 0px"
+                  color="dark-grey"
+                >
+                  <v-icon
+                    small
+                    v-for="i in 5"
+                    v-bind:key="i"
+                    v-bind:color="(rating.Rating > (i - 1) ? 'amber' : (rating.Rating > 0 ? 'white' : 'grey'))"
+                  >mdi-star</v-icon>
+                </v-checkbox>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
             <!-- FILTER GENRES -->
             <v-expansion-panel
               v-show="$shared.filterGenres && $shared.filterGenres.length > 0"
@@ -113,68 +201,6 @@
                   style="margin: 0px"
                   color="dark-grey"
                 ></v-checkbox>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-
-            <!-- FILTER (USER) RATINGS -->
-            <v-expansion-panel
-              v-show="$shared.filterRatings && $shared.filterRatings.length > 0"
-              style="padding: 0px!important"
-            >
-              <v-expansion-panel-header
-                style="padding: 8px!important"
-              >My Ratings {{filterRatingsTitle}}</v-expansion-panel-header>
-              <!--  {{ filterRatingsTitle }} -->
-              <v-expansion-panel-content>
-                <v-row>
-                  <v-btn text v-on:click="setAllRatings(false)">NONE</v-btn>
-                  <v-btn text v-on:click="setAllRatings(true)">ALL</v-btn>
-                </v-row>
-                <v-checkbox
-                  v-for="rating in $shared.filterRatings"
-                  v-bind:key="rating.Rating"
-                  v-bind:label="getFilterRatingLabel(rating.Rating, rating.NumMovies)"
-                  v-model="rating.Selected"
-                  v-on:click.native="filtersChanged"
-                  style="margin: 0px"
-                  color="dark-grey"
-                >
-                  <v-icon
-                    small
-                    v-for="i in 5"
-                    v-bind:key="i"
-                    v-bind:color="(rating.Rating > (i - 1) ? 'amber' : (rating.Rating > 0 ? 'white' : 'grey'))"
-                  >mdi-star</v-icon>
-                </v-checkbox>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-
-            <!-- FILTER LISTS -->
-            <v-expansion-panel
-              v-show="$shared.filterLists && $shared.filterLists.length > 0"
-              style="padding: 0px!important"
-            >
-              <v-expansion-panel-header style="padding: 8px!important">My Lists {{filterListsTitle}}</v-expansion-panel-header>
-              <v-expansion-panel-content>
-                <v-row>
-                  <v-btn text v-on:click="setAllLists(false)">NONE</v-btn>
-                  <v-btn text v-on:click="setAllLists(true)">ALL</v-btn>
-                </v-row>
-                <v-row v-for="list in $shared.filterLists" v-bind:key="list.id_Lists">
-                  <v-checkbox
-                    v-bind:label="list.Name + ' (' + list.NumMovies + ')'"
-                    v-model="list.Selected"
-                    v-on:click.native="filtersChanged"
-                    style="margin: 0px"
-                    color="dark-grey"
-                  ></v-checkbox>
-                  <v-spacer></v-spacer>
-                  <v-icon
-                    v-if="list.id_Lists"
-                    style="align-items: flex-start; padding-top: 4px; cursor: pointer"
-                    v-on:click="deleteList(list)"
-                  >mdi-delete</v-icon>
-                </v-row>
               </v-expansion-panel-content>
             </v-expansion-panel>
 
@@ -247,6 +273,31 @@
               </v-expansion-panel-content>
             </v-expansion-panel>
 
+            <!-- FILTER YEARS -->
+            <v-expansion-panel
+              v-show="$shared.filterYears && $shared.filterYears.length > 0"
+              style="padding: 0px!important"
+            >
+              <v-expansion-panel-header
+                style="padding: 8px!important"
+              >Years {{filterYearsTitle}}</v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-row>
+                  <v-btn text v-on:click="setAllYears(false)">NONE</v-btn>
+                  <v-btn text v-on:click="setAllYears(true)">ALL</v-btn>
+                </v-row>
+                <v-checkbox
+                  v-for="year in $shared.filterYears"
+                  v-bind:key="year.startYear"
+                  v-bind:label="getFilterYearLabel(year.startYear, year.NumMovies)"
+                  v-model="year.Selected"
+                  v-on:click.native="filtersChanged"
+                  style="margin: 0px"
+                  color="dark-grey"
+                >
+                </v-checkbox>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
 
           </v-expansion-panels>
         </div>
@@ -502,6 +553,42 @@ export default {
       );
     },
 
+    filterYearsTitle() {
+      if (!this.$shared.filterYears.find(filter => !filter.Selected)) {
+        return "(ALL)";
+      }
+
+      if (!this.$shared.filterYears.find(filter => filter.Selected)) {
+        return "(NONE)";
+      }
+
+      return (
+        "(" +
+        this.$shared.filterYears.filter(filter => filter.Selected).length +
+        "/" +
+        this.$shared.filterYears.length +
+        ")"
+      );
+    },
+
+    filterQualitiesTitle() {
+      if (!this.$shared.filterQualities.find(filter => !filter.Selected)) {
+        return "(ALL)";
+      }
+
+      if (!this.$shared.filterQualities.find(filter => filter.Selected)) {
+        return "(NONE)";
+      }
+
+      return (
+        "(" +
+        this.$shared.filterQualities.filter(filter => filter.Selected).length +
+        "/" +
+        this.$shared.filterQualities.length +
+        ")"
+      );
+    },
+
     filterListsTitle() {
       if (!this.$shared.filterLists.find(filter => !filter.Selected)) {
         return "(ALL)";
@@ -612,6 +699,14 @@ export default {
       this.filtersChanged();
     },
 
+    setAllYears: function(value) {
+      this.$shared.filterYears.forEach(year => {
+        year.Selected = value;
+      });
+
+      this.filtersChanged();
+    },
+
     setAllLists: function(value) {
       this.$shared.filterLists.forEach(list => {
         list.Selected = value;
@@ -636,7 +731,15 @@ export default {
       this.filtersChanged();
 		},
 
-		getFilterRatingLabel(rating, numMovies) {
+    setAllQualities: function(value) {
+      this.$shared.filterQualities.forEach(quality => {
+        quality.Selected = value;
+      });
+
+      this.filtersChanged();
+    },
+
+    getFilterRatingLabel(rating, numMovies) {
       let label = "";
 
       if (rating) {
@@ -654,6 +757,22 @@ export default {
       label += " (" + numMovies + ")";
 
       return label;
+    },
+
+    getFilterYearLabel(startYear, NumMovies) {
+      if (startYear < 0) {
+        return `<none provided> (${NumMovies})`;
+      }
+
+      return `${startYear} (${NumMovies})`;
+    },
+
+    getFilterQualityLabel(quality, NumMovies) {
+      if (!quality) {
+        return `<none provided> (${NumMovies})`;
+      }
+
+      return `${quality} (${NumMovies})`;
     },
 
     deleteList(list) {

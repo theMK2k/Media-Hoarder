@@ -1164,15 +1164,37 @@ async function fetchMedia($MediaType) {
 		}
 
 		let filterAgeRatings = '';
+		logger.log('shared.filterAgeRatings:', shared.filterAgeRatings);
 		if (shared.filterAgeRatings && shared.filterAgeRatings.find(filter => !filter.Selected)) {
-			filterAgeRatings = 'AND AR.Age IN (';
 
-			filterAgeRatings += shared.filterAgeRatings.filter(filter => filter.Selected).map(filter => filter.Age).reduce((prev, current) => {
-				return prev + (prev ? ', ' : '') + current;
-			}, '');
+			if (shared.filterAgeRatings.find(filter => (filter.Selected && filter.Age == -1))) {
+				filterAgeRatings = `AND (AR.Age IS NULL `;
+			} else {
+				filterAgeRatings = `AND (1=0 `;
+			}
 
-			filterAgeRatings += ')'
+			if (shared.filterAgeRatings.find(filter => (filter.Selected && filter.Age >= 0))) {
+				filterAgeRatings += `OR AR.Age IN (`;
+
+				filterAgeRatings += shared.filterAgeRatings.filter(filter => filter.Selected && filter.Age >= 0).map(filter => filter.Age).reduce((prev, current) => {
+					return prev + (prev ? ', ' : '') + current;
+				}, '');
+
+				filterAgeRatings += ')';
+			}
+
+			filterAgeRatings += ')';
 		}
+		
+		// if (shared.filterAgeRatings && shared.filterAgeRatings.find(filter => !filter.Selected)) {
+		// 	filterAgeRatings = 'AND AR.Age IN (';
+
+		// 	filterAgeRatings += shared.filterAgeRatings.filter(filter => filter.Selected).map(filter => filter.Age).reduce((prev, current) => {
+		// 		return prev + (prev ? ', ' : '') + current;
+		// 	}, '');
+
+		// 	filterAgeRatings += ')'
+		// }
 
 		let filterRatings = '';
 		logger.log('shared.filterRatings:', shared.filterRatings);
@@ -1269,6 +1291,51 @@ async function fetchMedia($MediaType) {
 			filterPersons += ')';
 		}
 
+		let filterYears = '';
+		logger.log('shared.filterYears:', shared.filterYears);
+		if (shared.filterYears && shared.filterYears.find(filter => !filter.Selected)) {
+
+			if (shared.filterYears.find(filter => (filter.Selected && filter.startYear == -1))) {
+				filterYears = `AND (MOV.startYear IS NULL `;
+			} else {
+				filterYears = `AND (1=0 `;
+			}
+
+			if (shared.filterYears.find(filter => (filter.Selected && filter.startYear >= 0))) {
+				filterYears += `OR MOV.startYear IN (`;
+
+				filterYears += shared.filterYears.filter(filter => filter.Selected).map(filter => filter.startYear).reduce((prev, current) => {
+					return prev + (prev ? ', ' : '') + current;
+				}, '');
+
+				filterYears += ')';
+			}
+
+			filterYears += ')';
+		}
+
+		let filterQualities = '';
+		logger.log('shared.filterQualities:', shared.filterQualities);
+		if (shared.filterQualities && shared.filterQualities.find(filter => !filter.Selected)) {
+
+			if (shared.filterQualities.find(filter => (filter.Selected && !filter.MI_Quality))) {
+				filterQualities = `AND (MOV.MI_Quality IS NULL `;
+			} else {
+				filterQualities = `AND (1=0 `;
+			}
+
+			if (shared.filterQualities.find(filter => (filter.Selected && filter.MI_Quality))) {
+				filterQualities += `OR MOV.MI_Quality IN (`;
+
+				filterQualities += shared.filterQualities.filter(filter => filter.Selected).map(filter => filter.MI_Quality).reduce((prev, current) => {
+					return prev + (prev ? ', ' : '') + `'${current}'`;
+				}, '');
+
+				filterQualities += ')';
+			}
+
+			filterQualities += ')';
+		}
 
 		logger.log('fetchMedia filterSourcePaths:', filterSourcePaths);
 		logger.log('fetchMedia filterGenres:', filterGenres);
@@ -1324,6 +1391,8 @@ async function fetchMedia($MediaType) {
 		${filterLists}
 		${filterParentalAdvisory}
 		${filterPersons}
+		${filterYears}
+		${filterQualities}
 	`;
 
 		logger.log('fetchMedia query:', query);
@@ -1804,20 +1873,6 @@ async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category) {
 	return results;
 }
 
-async function fetchFilterPersons_old($MediaType) {
-	logger.log('fetchFilterPersons MediaType:', $MediaType);
-
-	const filterValues = await fetchFilterValues($MediaType);
-
-	logger.log('fetchFilterPersons filterValues:', filterValues);
-
-	if (filterValues && filterValues.filterPersons) {
-		shared.filterPersons = filterValues.filterPersons;
-	}
-
-	return;	
-}
-
 async function fetchFilterPersons($MediaType) {
 	const filterValues = await fetchFilterValues($MediaType);
 
@@ -1877,6 +1932,92 @@ async function fetchFilterPersons($MediaType) {
 	shared.filterPersons = results;
 }
 
+async function fetchFilterYears($MediaType) {
+	logger.log('fetchFilterYears MediaType:', $MediaType);
+
+	const filterValues = await fetchFilterValues($MediaType);
+
+	logger.log('fetchFilterYears filterValues:', filterValues);
+
+	const results = await db.fireProcedureReturnAll(`
+		SELECT
+			'-1' AS startYear
+			, COUNT(1) AS NumMovies
+			, 1 AS Selected
+		FROM tbl_Movies MOV
+		INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
+		WHERE MOV.startYear IS NULL
+		UNION
+		SELECT
+			startYear
+			, COUNT(1) AS NumMovies
+			, 1 AS Selected
+		FROM tbl_Movies MOV
+		INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
+		WHERE MOV.startYear IS NOT NULL
+		GROUP BY (startYear)
+		ORDER BY startYear DESC`,
+		{ $MediaType });
+
+	const resultsFiltered = results.filter(result => result.NumMovies > 0);
+
+	results.forEach(result => {
+		result.startYear = parseInt(result.startYear);
+	})
+
+	if (filterValues && filterValues.filterYear) {
+		resultsFiltered.forEach(result => {
+			const filterValue = filterValues.filterYear.find(value => value.startYear == result.startYear);
+
+			if (filterValue) {
+				result.Selected = filterValue.Selected;
+			}
+
+			result.NumMovies = result.NumMovies.toLocaleString();
+		})
+	}
+
+	logger.log('fetchFilterYears resultsFiltered:', resultsFiltered);
+
+	shared.filterYears = resultsFiltered;
+}
+
+async function fetchFilterQualities($MediaType) {
+	logger.log('fetchFilterQualities MediaType:', $MediaType);
+
+	const filterValues = await fetchFilterValues($MediaType);
+
+	logger.log('fetchFilterQualities filterValues:', filterValues);
+
+	const results = await db.fireProcedureReturnAll(`
+		SELECT
+			MI_Quality
+			, COUNT(1) AS NumMovies
+			, 1 AS Selected
+		FROM tbl_Movies MOV
+		INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
+		GROUP BY (MI_Quality)`,
+		{ $MediaType });
+
+	const resultsFiltered = results.filter(result => result.NumMovies > 0);
+
+	if (filterValues && filterValues.filterQualities) {
+		resultsFiltered.forEach(result => {
+			const filterValue = filterValues.filterQualities.find(value => value.MI_Quality == result.MI_Quality);
+
+			if (filterValue) {
+				result.Selected = filterValue.Selected;
+			}
+
+			result.NumMovies = result.NumMovies.toLocaleString();
+		})
+	}
+
+	logger.log('fetchFilterQualities resultsFiltered:', resultsFiltered);
+
+	shared.filterQualities = resultsFiltered;
+}
+
 function abortRescan() {
 	doAbortRescan = true;
 }
@@ -1889,12 +2030,14 @@ function saveFilterValues($MediaType) {
 		filterRatings: shared.filterRatings,
 		filterLists: shared.filterLists,
 		filterParentalAdvisory: shared.filterParentalAdvisory,
-		filterPersons: shared.filterPersons
+		filterPersons: shared.filterPersons,
+		filterYears: shared.filterYears,
+		filterQualities: shared.filterQualities
 	}
 
 	const filterValuesString = JSON.stringify(filterValues);
 
-	logger.log('saveFilterValues:', filterValuesString);
+	// logger.log('saveFilterValues:', filterValuesString);
 
 	setSetting(`filtersMediaType${$MediaType}`, JSON.stringify(filterValues));
 }
@@ -2155,6 +2298,8 @@ export {
 	fetchFilterLists,
 	fetchFilterParentalAdvisory,
 	fetchFilterPersons,
+	fetchFilterYears,
+	fetchFilterQualities,
 	isScanning,
 	abortRescan,
 	createList,
