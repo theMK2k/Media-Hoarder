@@ -8,6 +8,7 @@
 - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 
 # Settings
+- sourcePath: check for removed files
 - minimumWaitForSetAccess (update Access datetime after ... seconds)
 
 # Features

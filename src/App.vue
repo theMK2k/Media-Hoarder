@@ -10,14 +10,25 @@
           <v-list-item-title style="color: lightgrey">Settings</v-list-item-title>
         </v-list-item>
 
-        <v-list-item v-on:click="toggleRescan">
+        <v-list-item v-on:click="toggleRescan(true)">
+          <v-list-item-action>
+            <v-icon v-show="!isScanning">mdi-reload</v-icon>
+            <v-icon v-show="isScanning">mdi-cancel</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title v-show="!isScanning">Scan for new media</v-list-item-title>
+            <v-list-item-title v-show="isScanning">Cancel Scan</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item v-on:click="toggleRescan(false)">
           <v-list-item-action>
             <v-icon v-show="!isScanning">mdi-reload</v-icon>
             <v-icon v-show="isScanning">mdi-cancel</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title v-show="!isScanning">Rescan all media</v-list-item-title>
-            <v-list-item-title v-show="isScanning">Cancel Rescan</v-list-item-title>
+            <v-list-item-title v-show="isScanning">Cancel Scan</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
@@ -643,14 +654,16 @@ export default {
     openSettings() {
       return this.$router.push("/settings");
     },
-    toggleRescan() {
+
+		toggleRescan(onlyNew) {
       if (!store.isScanning) {
-        store.rescan(true);
+        store.rescan(onlyNew);
       } else {
         store.abortRescan();
       }
     },
-    cancelRescan() {
+
+		cancelRescan() {
       store.abortRescan();
     },
 
