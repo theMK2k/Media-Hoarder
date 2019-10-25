@@ -26,6 +26,24 @@ import * as helpers from '@/helpers/helpers';
 import { languages } from '@/languages';
 import { shared } from '@/shared';
 
+const scanOptions = {
+	filescanMovies: false,												// default: true
+	rescanMoviesMetaData: true,											// default: true
+	rescanMoviesMetaData_id_SourcePaths_IN: '(5, 10)',					// ex: '(5, 10)', default: null
+	rescanMoviesMetaData_id_Movies: null,								// ex: 277, default: null
+	rescanMoviesMetaData_maxEntries: 10,								// ex: 10, default: null
+	rescanMoviesMetaData_applyMediaInfo: false,							// default: true
+	rescanMoviesMetaData_findIMDBtconst: false,							// default: true
+	rescanMoviesMetaData_fetchIMDBMetaData: true,						// default: true
+	rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,			// default: true
+	rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: false,			// default: true
+	rescanMoviesMetaData_fetchIMDBMetaData_technicalData: false,		// default: true
+	rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: false,	// default: true
+	rescanMoviesMetaData_fetchIMDBMetaData_creditsData: false,			// default: true
+
+	applyIMDBMetaData: false,		// default: true
+}
+
 const definedError = require('@/helpers/defined-error');
 
 const isBuild = process.env.NODE_ENV === 'production';
@@ -132,15 +150,14 @@ async function rescan(onlyNew) {
 	isScanning = true;
 	eventBus.rescanStarted();
 
-	// await filescanMovies(onlyNew);		// KILLME
-	await rescanMoviesMetaData(onlyNew);	// KILLME
-	// await applyIMDBMetaData(onlyNew);				// KILLME
+	if (scanOptions.filescanMovies) await filescanMovies(onlyNew);
+	if (scanOptions.rescanMoviesMetaData) await rescanMoviesMetaData(onlyNew);
+	if (scanOptions.applyIMDBMetaData) await applyIMDBMetaData(onlyNew);
 
 	// await rescanTV();								// TODO
 
 	// clear isNew flag from all entries
 	await db.fireProcedure(`UPDATE tbl_Movies SET isNew = 0`, []);
-
 
 	isScanning = false;
 	doAbortRescan = false;
@@ -370,8 +387,8 @@ async function rescanMoviesMetaData(onlyNew) {
 			WHERE 
 				(isRemoved IS NULL OR isRemoved = 0)
 				${onlyNew ? 'AND isNew = 1' : ''}
-				-- AND id_SourcePaths IN (5, 10) -- KILLME: only on laptop
-				AND id_Movies = 277 -- KILLME: only Blade Runner
+				${scanOptions.rescanMoviesMetaData_id_SourcePaths_IN ? 'AND id_SourcePaths IN ' + scanOptions.rescanMoviesMetaData_id_SourcePaths_IN : ''}
+				${scanOptions.rescanMoviesMetaData_id_Movies ? 'AND id_Movies = ' + scanOptions.rescanMoviesMetaData_id_Movies : ''}
 			`,
 		[]);
 
@@ -382,15 +399,15 @@ async function rescanMoviesMetaData(onlyNew) {
 
 		const movie = movies[i];
 
-		// KILLME
-		if (i > 0) break;
+		if (scanOptions.rescanMoviesMetaData_maxEntries && i > scanOptions.rescanMoviesMetaData_maxEntries) break;
 
 		// eventBus.scanInfoOff();
 		eventBus.scanInfoShow('Rescanning Movies', `${movie.Name || movie.Filename}`);
 
-		// await applyMediaInfo(movie, onlyNew); // KILLME
-		// await findIMDBtconst(movie, onlyNew); // KILLME
-		await fetchIMDBMetaData(movie, onlyNew);
+		if (scanOptions.rescanMoviesMetaData_applyMediaInfo) await applyMediaInfo(movie, onlyNew);
+		if (scanOptions.rescanMoviesMetaData_findIMDBtconst) await findIMDBtconst(movie, onlyNew);
+
+		if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData) await fetchIMDBMetaData(movie, onlyNew);
 	}
 
 	eventBus.scanInfoOff();
@@ -558,24 +575,37 @@ async function fetchIMDBMetaData(movie, onlyNew) {
 	let IMDBdata = {};
 
 	try {
-		const mainPageData = await scrapeIMDBmainPageData(movie);
-		IMDBdata = Object.assign(IMDBdata, mainPageData);
+		if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_mainPageData) {
+			const mainPageData = await scrapeIMDBmainPageData(movie);
+			IMDBdata = Object.assign(IMDBdata, mainPageData);
+		}
 
-		const releaseinfo = await scrapeIMDBreleaseinfo(movie);
-		IMDBdata = Object.assign(IMDBdata, releaseinfo);
+		if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo) {
+			const releaseinfo = await scrapeIMDBreleaseinfo(movie);
+			IMDBdata = Object.assign(IMDBdata, releaseinfo);
+		}
 
-		const technicalData = await scrapeIMDBtechnicalData(movie);
-		IMDBdata = Object.assign(IMDBdata, technicalData);
+		if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_technicalData) {
+			const technicalData = await scrapeIMDBtechnicalData(movie);
+			IMDBdata = Object.assign(IMDBdata, technicalData);
+		}
 
-		const parentalguideData = await scrapeIMDBParentalGuideData(movie);
-		IMDBdata = Object.assign(IMDBdata, parentalguideData);
+		if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData) {
+			const parentalguideData = await scrapeIMDBParentalGuideData(movie);
+			IMDBdata = Object.assign(IMDBdata, parentalguideData);
+		}
 
-		const { topCredits, credits } = await scrapeIMDBFullCreditsData(movie);
-		IMDBdata = Object.assign(IMDBdata, topCredits);
+		let credits = [];
+		if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_creditsData) {
+			const creditsData = await scrapeIMDBFullCreditsData(movie);
+			IMDBdata = Object.assign(IMDBdata, creditsData.topCredits);
+			credits = creditsData.credits;
+		}
 
 		logger.log('IMDBdata:', IMDBdata);
 
 		const genres = await db.fireProcedureReturnAll('SELECT id_Genres, GenreID, Name FROM tbl_Genres', []);
+
 		await saveIMDBData(movie, IMDBdata, genres, credits);
 	} catch (err) {
 		logger.error(err);
@@ -672,7 +702,7 @@ async function scrapeIMDBmainPageData(movie) {
 	}
 
 	let $IMDB_Trailer_URL = null;
-	const rxTrailerUrl = /<a href="(\/video\/imdb\/vi\d*)\?playlistId=tt4154796&ref_=tt_ov_vi"[\s\S][\s\S].*?alt="Trailer"/;
+	const rxTrailerUrl = /<a href="(\/video\/imdb\/vi\d*)\?playlistId=tt\d*&ref_=tt_ov_vi"[\s\S][\s\S].*?alt="Trailer"/;
 	if (rxTrailerUrl.test(html)) {
 		$IMDB_Trailer_URL = html.match(rxTrailerUrl)[1];
 	}
@@ -1227,7 +1257,7 @@ async function fetchMedia($MediaType) {
 
 			filterAgeRatings += ')';
 		}
-		
+
 		// if (shared.filterAgeRatings && shared.filterAgeRatings.find(filter => !filter.Selected)) {
 		// 	filterAgeRatings = 'AND AR.Age IN (';
 
@@ -2269,7 +2299,7 @@ async function scrapeIMDBPersonData($IMDB_Person_ID) {
 	const rxLongBio = /<h4 class="li_group">Mini Bio[\s\S]*?(<div[\s\S]*?)<\/div>/
 
 	if (rxLongBio.test(htmlBio)) {
-		logger.log('LONG BIO FOUND!:', { longbio: htmlBio.match(rxLongBio)[1]});
+		logger.log('LONG BIO FOUND!:', { longbio: htmlBio.match(rxLongBio)[1] });
 		result.$LongBio = unescape(htmlToText.fromString(htmlBio.match(rxLongBio)[1], { wordwrap: null, ignoreImage: true, ignoreHref: true }).trim());
 	}
 
@@ -2280,7 +2310,7 @@ async function scrapeIMDBPersonData($IMDB_Person_ID) {
 
 async function saveIMDBPersonData(data) {
 	logger.log('saveIMDBPersonData data:', data);
-	
+
 	// return;
 
 	return await db.fireProcedure(`INSERT INTO tbl_IMDB_Persons (
