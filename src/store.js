@@ -132,9 +132,9 @@ async function rescan(onlyNew) {
 	isScanning = true;
 	eventBus.rescanStarted();
 
-	await filescanMovies(onlyNew);		// KILLME
+	// await filescanMovies(onlyNew);		// KILLME
 	await rescanMoviesMetaData(onlyNew);	// KILLME
-	await applyIMDBMetaData(onlyNew);				// KILLME
+	// await applyIMDBMetaData(onlyNew);				// KILLME
 
 	// await rescanTV();								// TODO
 
@@ -368,10 +368,10 @@ async function rescanMoviesMetaData(onlyNew) {
 				, IMDB_tconst
 			FROM tbl_Movies
 			WHERE 
-						(isRemoved IS NULL OR isRemoved = 0)
-			${onlyNew ? 'AND isNew = 1' : ''}
-			-- AND id_SourcePaths IN (5, 10) -- KILLME: only on laptop
-			-- AND id_Movies = 277 -- KILLME: only Blade Runner
+				(isRemoved IS NULL OR isRemoved = 0)
+				${onlyNew ? 'AND isNew = 1' : ''}
+				-- AND id_SourcePaths IN (5, 10) -- KILLME: only on laptop
+				AND id_Movies = 277 -- KILLME: only Blade Runner
 			`,
 		[]);
 
@@ -383,13 +383,13 @@ async function rescanMoviesMetaData(onlyNew) {
 		const movie = movies[i];
 
 		// KILLME
-		// if (i > 0) break;
+		if (i > 0) break;
 
 		// eventBus.scanInfoOff();
 		eventBus.scanInfoShow('Rescanning Movies', `${movie.Name || movie.Filename}`);
 
-		await applyMediaInfo(movie, onlyNew); // KILLME
-		await findIMDBtconst(movie, onlyNew);
+		// await applyMediaInfo(movie, onlyNew); // KILLME
+		// await findIMDBtconst(movie, onlyNew); // KILLME
 		await fetchIMDBMetaData(movie, onlyNew);
 	}
 
@@ -671,6 +671,14 @@ async function scrapeIMDBmainPageData(movie) {
 		$IMDB_plotSummary = unescape(htmlToText.fromString(html.match(rxPlotSummary)[1], { wordwrap: null, ignoreImage: true, ignoreHref: true }).trim());
 	}
 
+	let $IMDB_Trailer_URL = null;
+	const rxTrailerUrl = /<a href="(\/video\/imdb\/vi\d*)\?playlistId=tt4154796&ref_=tt_ov_vi"[\s\S][\s\S].*?alt="Trailer"/;
+	if (rxTrailerUrl.test(html)) {
+		$IMDB_Trailer_URL = html.match(rxTrailerUrl)[1];
+	}
+
+	logger.log('$IMDB_Trailer_URL:', $IMDB_Trailer_URL);
+
 	return {
 		$IMDB_releaseType,
 		$IMDB_genres,
@@ -679,7 +687,8 @@ async function scrapeIMDBmainPageData(movie) {
 		$IMDB_metacriticScore,
 		$IMDB_posterSmall_URL,
 		$IMDB_posterLarge_URL,
-		$IMDB_plotSummary
+		$IMDB_plotSummary,
+		$IMDB_Trailer_URL
 	}
 }
 
@@ -1411,6 +1420,7 @@ async function fetchMedia($MediaType) {
 			, MOV.IMDB_Top_Writers
 			, MOV.IMDB_Top_Producers
 			, MOV.IMDB_Top_Cast
+			, MOV.IMDB_Trailer_URL
 			, AR.Age
 			, MOV.created_at
 			, MOV.last_access_at

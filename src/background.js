@@ -19,7 +19,8 @@ function createWindow() {
 	win = new BrowserWindow({
 		width: 1280, height: 800, webPreferences: {
 			nodeIntegration: true,
-			webSecurity: false
+			webSecurity: false,
+			webviewTag: true
 		}
 	});
 

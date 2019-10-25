@@ -286,6 +286,7 @@
                   text
                   v-on:click.stop="removeFromList(item)"
                 >Remove from List</v-btn>
+                <v-btn v-if="item.IMDB_Trailer_URL" text v-on:click.stop="showTrailer(item)">Trailer</v-btn>
               </v-row>
             </v-col>
           </v-card>
@@ -312,6 +313,12 @@
       v-bind:Person_Name="personDialog.Person_Name"
       v-on:close="onPersonDialogClose"
     ></mk-person-dialog>
+
+    <mk-video-player-dialog
+      v-bind:show="videoPlayerDialog.show"
+      v-bind:src="videoPlayerDialog.videoURL"
+      v-on:close="onVideoPlayerDialogClose"
+    ></mk-video-player-dialog>
   </div>
 </template>
 
@@ -320,6 +327,7 @@ import * as store from "@/store";
 import { eventBus } from "@/main";
 import ListDialog from "@/components/shared/ListDialog.vue";
 import PersonDialog from "@/components/shared/PersonDialog.vue";
+import VideoPlayerDialog from "@/components/shared/VideoPlayerDialog.vue";
 const { shell } = require("electron").remote;
 
 const moment = require("moment");
@@ -331,7 +339,8 @@ const logger = require("loglevel");
 export default {
   components: {
     "mk-list-dialog": ListDialog,
-    "mk-person-dialog": PersonDialog
+    "mk-person-dialog": PersonDialog,
+    "mk-video-player-dialog": VideoPlayerDialog
   },
 
   data: () => ({
@@ -384,6 +393,11 @@ export default {
     personDialog: {
       show: false,
       IMDB_Person_ID: null
+    },
+
+    videoPlayerDialog: {
+      show: false,
+      videoURL: null
     },
 
     itemDetails: {
@@ -620,6 +634,12 @@ export default {
       })();
     },
 
+    showTrailer(item) {
+      this.videoPlayerDialog.videoURL = `https://www.imdb.com${item.IMDB_Trailer_URL}`;
+      logger.log('this.videoPlayerDialog.videoURL:', this.videoPlayerDialog.videoURL);
+      this.videoPlayerDialog.show = true;
+    },
+
     removeFromList(item) {
       (async () => {
         this.listDialog.mode = "remove";
@@ -808,6 +828,10 @@ export default {
 
     onPersonDialogClose() {
       this.personDialog.show = false;
+    },
+
+    onVideoPlayerDialogClose() {
+      this.videoPlayerDialog.show = false;
     }
   },
 
