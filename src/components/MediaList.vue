@@ -1,37 +1,37 @@
 <template>
-  <div style="display: flex; flex-direction: column; min-width: 100%">
-    <h1
-      style="margin-bottom: 0px; margin-top: 0px; padding-bottom: 8px; padding-top: 8px; flex 0 1 auto; position: fixed; width: 100%!important; z-index: 10; background: rgb(48, 48, 48);"
-    >
-      <v-row>
-        <v-btn text v-on:click="$router.go(-1)" style="margin-top: 6px; margin-left: 8px">
-          <v-icon>mdi-arrow-left</v-icon>
-        </v-btn>
-        {{ mediatype.toUpperCase() }} ({{ itemsFiltered.length }})
-        <v-select
-          solo
-          clearable
-          dense
-          v-bind:items="sortAbles"
-          item-text="Description"
-          item-value="Field"
-          v-model="sort"
-          label="Sort"
-          style="margin-left: 8px; max-width: 260px; height: 40px"
-        >
-          <template v-slot:selection="{ item, index }">
-            <span class="grey--text caption" style="margin-right: 8px">Sort by</span>
-            <span>{{ item.Description }}</span>
-          </template>
-        </v-select>
-        <div v-if="numPages">
-          <v-pagination v-bind:length="numPages" v-model="currentPage" total-visible="7"></v-pagination>
-        </div>
-        <v-spacer></v-spacer>
-      </v-row>
-    </h1>
+  <div style="display: flex; flex-direction: column; width: 100%">
+		<v-row style="margin-bottom: 0px; margin-top: 0px; padding-bottom: 8px; padding-top: 8px; position: fixed; width: 100%!important; z-index: 10; background: rgb(48, 48, 48);">
+	    <v-btn text v-on:click="$router.go(-1)" style="margin-top: 6px; margin-left: 8px">
+        <v-icon>mdi-arrow-left</v-icon>
+      </v-btn>
+			<h1 style="margin-bottom: 0px; margin-top: 0px;">
+					{{ mediatype.toUpperCase() }} ({{ itemsFiltered.length }})
+			</h1>
+			<v-select
+				solo
+				clearable
+				dense
+				v-bind:items="sortAbles"
+				item-text="Description"
+				item-value="Field"
+				v-model="sort"
+				label="Sort"
+				style="margin-left: 8px; max-width: 260px; height: 40px"
+			>
+				<template v-slot:selection="{ item, index }">
+					<span class="grey--text caption" style="margin-right: 8px">Sort by</span>
+					<span>{{ item.Description }}</span>
+				</template>
+			</v-select>
 
-    <v-container class="scrollcontainer pa-2" style="max-width: 100%!important; margin-top: 56px;">
+			<v-spacer></v-spacer>
+
+			<div v-if="numPages">
+				<v-pagination v-bind:length="numPages" v-model="currentPage" total-visible="7"></v-pagination>
+			</div>
+		</v-row>
+
+    <v-container class="scrollcontainer pa-2" style="max-width: 100%!important; margin-top: 48px;">
       <v-row v-for="(item, i) in itemsFilteredPaginated" :key="i">
         <v-col>
           <v-card dark flat hover v-bind:ripple="false" v-on:click="selectItem(item)">
@@ -42,14 +42,12 @@
                   style="margin: 6px; height: 150px; width: 120px"
                   v-on:click.stop="launch(item)"
                 >
-                  <!--
                   <v-img
                     contain
                     v-if="item.IMDB_posterSmall_URL"
                     v-bind:src="item.IMDB_posterSmall_URL"
                     style="border-radius: 6px;"
                   ></v-img>
-                  -->
                 </v-list-item-avatar>
               </div>
               <v-list-item-content
@@ -291,6 +289,13 @@
             </v-col>
           </v-card>
         </v-col>
+      </v-row>
+
+      <v-row>
+        <v-spacer></v-spacer>
+        <div v-if="numPages">
+          <v-pagination v-bind:length="numPages" v-model="currentPage" total-visible="7"></v-pagination>
+        </div>
       </v-row>
     </v-container>
 
@@ -636,7 +641,10 @@ export default {
 
     showTrailer(item) {
       this.videoPlayerDialog.videoURL = `https://www.imdb.com${item.IMDB_Trailer_URL}`;
-      logger.log('this.videoPlayerDialog.videoURL:', this.videoPlayerDialog.videoURL);
+      logger.log(
+        "this.videoPlayerDialog.videoURL:",
+        this.videoPlayerDialog.videoURL
+      );
       this.videoPlayerDialog.show = true;
     },
 

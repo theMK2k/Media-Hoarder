@@ -1,10 +1,17 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, session } from 'electron'
 import {
 	createProtocol,
 	installVueDevtools
 } from 'vue-cli-plugin-electron-builder/lib'
+
+const fs = require('fs');
+
+import * as helpers from './helpers/helpers';
+
+import { ElectronBlocker, Request } from '@cliqz/adblocker-electron';
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -20,9 +27,33 @@ function createWindow() {
 		width: 1280, height: 800, webPreferences: {
 			nodeIntegration: true,
 			webSecurity: false,
-			webviewTag: true
+			webviewTag: true,
+			fullscreenable: false
 		}
 	});
+
+	// adBocker stuff
+	const adBlocker = ElectronBlocker.parse(fs.readFileSync(helpers.getPath('data/easylist.txt'), 'utf-8'));
+	adBlocker.enableBlockingInSession(session.defaultSession);
+	adBlocker.on('request-blocked', (request) => {
+    console.log('blocked', request.tabId, request.url);
+	});
+	adBlocker.on('request-redirected', (request) => {
+    console.log('redirected', request.tabId, request.url);
+	});
+	adBlocker.on('request-whitelisted', (request) => {
+    console.log('whitelisted', request.tabId, request.url);
+	});
+	adBlocker.on('csp-injected', (request) => {
+    console.log('csp', request.url);
+	});
+	adBlocker.on('script-injected', (script, url) => {
+    console.log('script', script.length, url);
+	});
+	adBlocker.on('style-injected', (style, url) => {
+    console.log('style', style.length, url);
+	});
+	
 
 	win.maximize();
 	win.setMenu(null);

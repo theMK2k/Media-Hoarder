@@ -98,8 +98,7 @@
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
                   color="dark-grey"
-                >
-                </v-checkbox>
+                ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
 
@@ -238,7 +237,10 @@
                         <v-btn text v-on:click="setAllParentalAdvisory(category, false)">NONE</v-btn>
                         <v-btn text v-on:click="setAllParentalAdvisory(category, true)">ALL</v-btn>
                       </v-row>
-                      <v-row v-for="paItem in $shared.filterParentalAdvisory[category.Name]" v-bind:key="paItem.Severity">
+                      <v-row
+                        v-for="paItem in $shared.filterParentalAdvisory[category.Name]"
+                        v-bind:key="paItem.Severity"
+                      >
                         <v-checkbox
                           v-bind:label="paItem.DisplayText + ' (' + paItem.NumMovies + ')'"
                           v-model="paItem.Selected"
@@ -254,31 +256,31 @@
             </v-expansion-panel>
 
             <!-- FILTER Persons -->
-            <v-expansion-panel
-              style="padding: 0px!important"
-            >
-              <v-expansion-panel-header style="padding: 8px!important">Persons {{filterPersonsTitle}}</v-expansion-panel-header>
+            <v-expansion-panel style="padding: 0px!important">
+              <v-expansion-panel-header
+                style="padding: 8px!important"
+              >Persons {{filterPersonsTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-									<!-- TODO: add text-field search -->
+                  <!-- TODO: add text-field search -->
                 </v-row>
                 <v-row>
                   <v-btn text v-on:click="setAllPersons(false)">NONE</v-btn>
                   <v-btn text v-on:click="setAllPersons(true)">ALL</v-btn>
                 </v-row>
                 <v-row v-for="person in $shared.filterPersons" v-bind:key="person.IMDB_Person_ID">
-									<v-checkbox
+                  <v-checkbox
                     v-bind:label="person.Person_Name + ' (' + person.NumMovies + ')'"
                     v-model="person.Selected"
                     v-on:click.native="filtersChanged"
                     style="margin: 0px"
                     color="dark-grey"
                   ></v-checkbox>
-									<v-spacer></v-spacer>
+                  <v-spacer></v-spacer>
                   <v-icon
                     style="align-items: flex-start; padding-top: 4px; cursor: pointer"
                     v-if="person.id_Filter_Persons"
-										v-on:click="deletePerson(person)"
+                    v-on:click="deletePerson(person)"
                   >mdi-delete</v-icon>
                 </v-row>
               </v-expansion-panel-content>
@@ -289,9 +291,7 @@
               v-show="$shared.filterYears && $shared.filterYears.length > 0"
               style="padding: 0px!important"
             >
-              <v-expansion-panel-header
-                style="padding: 8px!important"
-              >Years {{filterYearsTitle}}</v-expansion-panel-header>
+              <v-expansion-panel-header style="padding: 8px!important">Years {{filterYearsTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
                   <v-btn text v-on:click="setAllYears(false)">NONE</v-btn>
@@ -305,13 +305,20 @@
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
                   color="dark-grey"
-                >
-                </v-checkbox>
+                ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
-
           </v-expansion-panels>
         </div>
+
+        <v-divider style="margin-top: 4px"></v-divider>
+
+        <v-list-item @click="quit">
+          <v-list-item-action>
+            <v-icon style="color: lightgrey">mdi-power</v-icon>
+          </v-list-item-action>
+          <v-list-item-title style="color: lightgrey">Quit</v-list-item-title>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
@@ -399,16 +406,17 @@
         @click="overlay = false"
       >
         <v-icon>mdi-close</v-icon>
-      </v-btn> -->
-      <span style="text-shadow: 0 0 4px #FFFFFF;">
-			loading
-			</span>
+      </v-btn>-->
+      <span style="text-shadow: 0 0 4px #FFFFFF;">loading</span>
     </v-overlay>
   </v-app>
 </template>
 
 <script>
 import * as _ from "lodash";
+
+const remote = require("electron").remote;
+
 // eslint-disable-next-line no-unused-var
 import * as store from "@/store";
 import { shared } from "@/shared";
@@ -616,9 +624,9 @@ export default {
         this.$shared.filterLists.length +
         ")"
       );
-		},
+    },
 
-		filterPersonsTitle() {
+    filterPersonsTitle() {
       if (!this.$shared.filterPersons.find(filter => !filter.Selected)) {
         return "(ALL)";
       }
@@ -634,7 +642,7 @@ export default {
         this.$shared.filterPersons.length +
         ")"
       );
-		}
+    }
   },
 
   methods: {
@@ -655,7 +663,7 @@ export default {
       return this.$router.push("/settings");
     },
 
-		toggleRescan(onlyNew) {
+    toggleRescan(onlyNew) {
       if (!store.isScanning) {
         store.rescan(onlyNew);
       } else {
@@ -663,7 +671,7 @@ export default {
       }
     },
 
-		cancelRescan() {
+    cancelRescan() {
       store.abortRescan();
     },
 
@@ -686,7 +694,7 @@ export default {
       });
 
       this.filtersChanged();
-		},
+    },
 
     setAllGenres: function(value) {
       this.$shared.filterGenres.forEach(genre => {
@@ -726,23 +734,23 @@ export default {
       });
 
       this.filtersChanged();
-		},
-		
-		setAllParentalAdvisory: function(category, value) {
-			this.$shared.filterParentalAdvisory[category.Name].forEach(paItem => {
-				paItem.Selected = value;
-      });
-      
-      this.filtersChanged();
-		},
+    },
 
-		setAllPersons: function(value) {
+    setAllParentalAdvisory: function(category, value) {
+      this.$shared.filterParentalAdvisory[category.Name].forEach(paItem => {
+        paItem.Selected = value;
+      });
+
+      this.filtersChanged();
+    },
+
+    setAllPersons: function(value) {
       this.$shared.filterPersons.forEach(sp => {
         sp.Selected = value;
       });
 
       this.filtersChanged();
-		},
+    },
 
     setAllQualities: function(value) {
       this.$shared.filterQualities.forEach(quality => {
@@ -826,34 +834,48 @@ export default {
           eventBus.showSnackbar("error", 6000, err);
         }
       })();
-		},
-		
+    },
+
     deletePerson(person) {
-			store.deleteFiterPerson(person.id_Filter_Persons);
-			eventBus.refetchFilters();
-		},
+      store.deleteFiterPerson(person.id_Filter_Persons);
+      eventBus.refetchFilters();
+    },
 
     onDeleteListDialogCancel() {
       this.deleteListDialog.show = false;
-		},
-		
-		filterParentalAdvisoryCategoryTitle(category) {
-      if (!this.$shared.filterParentalAdvisory[category.Name].find(filter => !filter.Selected)) {
+    },
+
+    filterParentalAdvisoryCategoryTitle(category) {
+      if (
+        !this.$shared.filterParentalAdvisory[category.Name].find(
+          filter => !filter.Selected
+        )
+      ) {
         return "(ALL)";
       }
 
-      if (!this.$shared.filterParentalAdvisory[category.Name].find(filter => filter.Selected)) {
+      if (
+        !this.$shared.filterParentalAdvisory[category.Name].find(
+          filter => filter.Selected
+        )
+      ) {
         return "(NONE)";
       }
 
       return (
         "(" +
-        this.$shared.filterParentalAdvisory[category.Name].filter(filter => filter.Selected).length +
+        this.$shared.filterParentalAdvisory[category.Name].filter(
+          filter => filter.Selected
+        ).length +
         "/" +
         this.$shared.filterParentalAdvisory[category.Name].length +
         ")"
       );
-		}
+    },
+
+    quit() {
+      remote.getCurrentWindow().close();
+    }
   },
 
   // ### LifeCycleHooks ###
@@ -918,15 +940,15 @@ export default {
 
     eventBus.$on("scanInfoOff", () => {
       this.scanInfo.show = false;
-		});
-		
-		eventBus.$on("filtersChanged", () => {
-			this.filtersChanged();
-    })
-    
-    eventBus.$on("showLoadingOverlay", (value) => {
+    });
+
+    eventBus.$on("filtersChanged", () => {
+      this.filtersChanged();
+    });
+
+    eventBus.$on("showLoadingOverlay", value => {
       this.showLoadingOverlay = value;
-    })
+    });
 
     // eventBus.scanInfoShow('KILLME', 'Asterix und das Geheimnis des Zaubertranks ~ Astérix - Le secret de la potion magique (De)(BD)[2018][Adventure, Animation, Comedy][6.9 @ 3074][tt8001346].mkv');
 
@@ -976,7 +998,7 @@ h1 {
   font-size: 0.875rem;
   font-weight: normal;
   color: #fff !important;
-	cursor: pointer;
+  cursor: pointer;
 }
 
 .CreditClickable:hover {

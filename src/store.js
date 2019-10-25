@@ -29,9 +29,9 @@ import { shared } from '@/shared';
 const scanOptions = {
 	filescanMovies: false,												// default: true
 	rescanMoviesMetaData: true,											// default: true
-	rescanMoviesMetaData_id_SourcePaths_IN: '(5, 10)',					// ex: '(5, 10)', default: null
+	// rescanMoviesMetaData_id_SourcePaths_IN: '(5, 10)',					// ex: '(5, 10)', default: null
 	rescanMoviesMetaData_id_Movies: null,								// ex: 277, default: null
-	rescanMoviesMetaData_maxEntries: 10,								// ex: 10, default: null
+	// rescanMoviesMetaData_maxEntries: 10,								// ex: 10, default: null
 	rescanMoviesMetaData_applyMediaInfo: false,							// default: true
 	rescanMoviesMetaData_findIMDBtconst: false,							// default: true
 	rescanMoviesMetaData_fetchIMDBMetaData: true,						// default: true
