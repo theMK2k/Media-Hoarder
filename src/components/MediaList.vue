@@ -1,7 +1,7 @@
 <template>
   <div style="display: flex; flex-direction: column; width: 100%">
-		<v-row style="margin-bottom: 0px; margin-top: 0px; padding-bottom: 8px; padding-top: 8px; position: fixed; width: 100%!important; z-index: 10; background: rgb(48, 48, 48);">
-	    <v-btn text v-on:click="$router.go(-1)" style="margin-top: 6px; margin-left: 8px">
+		<v-row style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; margin-left: 0px; padding-bottom: 8px; padding-top: 8px; position: fixed; width: 100%!important; z-index: 10; background: rgb(48, 48, 48);">
+	    <v-btn text v-on:click="$router.go(-1)" style="margin-top: 6px; margin-left: 0px">
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
 			<h1 style="margin-bottom: 0px; margin-top: 0px;">
