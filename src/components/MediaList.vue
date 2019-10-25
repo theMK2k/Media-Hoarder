@@ -42,12 +42,14 @@
                   style="margin: 6px; height: 150px; width: 120px"
                   v-on:click.stop="launch(item)"
                 >
+                  <!--
                   <v-img
                     contain
                     v-if="item.IMDB_posterSmall_URL"
                     v-bind:src="item.IMDB_posterSmall_URL"
                     style="border-radius: 6px;"
                   ></v-img>
+                  -->
                 </v-list-item-avatar>
               </div>
               <v-list-item-content
@@ -441,8 +443,8 @@ export default {
           ) {
             if (this.sort === "created_at" || this.sort === "last_access_at") {
               // we sort dates in reverse order (earliest first)
-              if (a[this.sort].toLowerCase() < b[this.sort].toLowerCase()) {
-                return 1;
+              if (a[this.sort].toLowerCase() > b[this.sort].toLowerCase()) {
+                return -1;
               }
             }
 

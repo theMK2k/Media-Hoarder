@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="width: 100%; margin-left: 8px">
     <h1>
       <v-btn text v-on:click="$router.go(-1)">
         <v-icon>mdi-arrow-left</v-icon>
@@ -14,7 +14,7 @@
     <h3>Movies - Source Paths</h3>
     <div v-if="moviesSourcePaths.length == 0">no paths defined</div>
 
-    <div v-for="sourcePath in moviesSourcePaths" v-bind:key="sourcePath.id_SourcePaths">
+    <div v-for="sourcePath in moviesSourcePaths" v-bind:key="sourcePath.id_SourcePaths" style="margin: 8px">
       <mk-sourcepath
         v-bind:value="sourcePath"
         v-on:edit-description="onSourcePathEditDescription"
@@ -27,7 +27,7 @@
     <h3>TV - Sourcepaths</h3>
     <div v-if="tvSourcePaths.length == 0">no paths defined</div>
 
-    <div v-for="sourcePath in tvSourcePaths" v-bind:key="sourcePath.id_SourcePaths">
+    <div v-for="sourcePath in tvSourcePaths" v-bind:key="sourcePath.id_SourcePaths" style="margin: 8px">
       <mk-sourcepath
         v-bind:value="sourcePath"
         v-on:edit-description="onSourcePathEditDescription"

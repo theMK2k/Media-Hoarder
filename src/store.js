@@ -121,6 +121,7 @@ async function fetchSourcePaths() {
 			, Path
 			, Description
 			, created_at
+			, checkRemovedFiles
 		FROM tbl_SourcePaths`,
 		[]);
 

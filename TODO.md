@@ -13,6 +13,8 @@
 
 # Features
 
+## Edit Movie
+- 
 
 ## Last Seen (last_access_at)
 - in movie details
@@ -20,6 +22,7 @@
 - write before launching
 
 ## Completed
+-> not necessary: we just use 
 - in movie details
 - as filter
 
