@@ -1,35 +1,39 @@
 <template>
   <div style="display: flex; flex-direction: column; width: 100%">
-		<v-row style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; margin-left: 0px; padding-bottom: 8px; padding-top: 8px; position: fixed; width: 100%!important; z-index: 10; background: rgb(48, 48, 48);">
-	    <v-btn text v-on:click="$router.go(-1)" style="margin-top: 6px; margin-left: 0px">
+    <v-row
+      style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; margin-left: 0px; padding-bottom: 8px; padding-top: 8px; position: fixed; width: 100%!important; z-index: 10; background: rgb(48, 48, 48);"
+    >
+      <v-btn text v-on:click="$router.go(-1)" style="margin-top: 6px; margin-left: 0px">
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
-			<h1 style="margin-bottom: 0px; margin-top: 0px;">
-					{{ mediatype.toUpperCase() }} ({{ itemsFiltered.length }})
-			</h1>
-			<v-select
-				solo
-				clearable
-				dense
-				v-bind:items="sortAbles"
-				item-text="Description"
-				item-value="Field"
-				v-model="sort"
-				label="Sort"
-				style="margin-left: 8px; max-width: 260px; height: 40px"
-			>
-				<template v-slot:selection="{ item, index }">
-					<span class="grey--text caption" style="margin-right: 8px">Sort by</span>
-					<span>{{ item.Description }}</span>
-				</template>
-			</v-select>
+      <h1
+        style="margin-bottom: 0px; margin-top: 0px;"
+      >{{ mediatype.toUpperCase() }} ({{ itemsFiltered.length }})</h1>
+      <v-select
+        solo
+        clearable
+        dense
+        v-bind:items="sortAbles"
+        item-text="Description"
+        item-value="Field"
+        v-model="sort"
+        label="Sort"
+        style="margin-left: 8px; max-width: 260px; height: 40px"
+      >
+        <template v-slot:selection="{ item, index }">
+          <span class="grey--text caption" style="margin-right: 8px">Sort by</span>
+          <span>{{ item.Description }}</span>
+        </template>
+      </v-select>
 
-			<v-spacer></v-spacer>
+      <v-spacer></v-spacer>
 
-			<div v-if="numPages">
-				<v-pagination v-bind:length="numPages" v-model="currentPage" total-visible="7"></v-pagination>
-			</div>
-		</v-row>
+      <div v-if="numPages">
+        <v-pagination v-bind:length="numPages" v-model="currentPage" total-visible="7"></v-pagination>
+      </div>
+
+      <v-spacer></v-spacer>
+    </v-row>
 
     <v-container class="scrollcontainer pa-2" style="max-width: 100%!important; margin-top: 48px;">
       <v-row v-for="(item, i) in itemsFilteredPaginated" :key="i">
@@ -60,12 +64,30 @@
                       <v-list-item-title
                         class="headline mb-2"
                         style="margin-bottom: 0px!important"
-                      >{{ item.Name }} {{ item.yearDisplay }}</v-list-item-title>
+                        v-on:mouseover="setItemHovered(item, 'name', true)"
+                        v-on:mouseleave="setItemHovered(item, 'name', false)"
+                      >
+                        {{ item.Name }} {{ item.yearDisplay }}
+                        <v-icon
+                          v-show="item.nameHovered"
+                          style="cursor: pointer"
+                          v-on:click.stop="onEditItem(item, 'Name', 'Title')"
+                        >mdi-pencil</v-icon>
+                      </v-list-item-title>
 
                       <v-list-item-subtitle
                         v-if="item.Name2"
                         style="margin-bottom: 4px"
-                      >{{ item.Name2 }}</v-list-item-subtitle>
+                        v-on:mouseover="setItemHovered(item, 'name2', true)"
+                        v-on:mouseleave="setItemHovered(item, 'name2', false)"
+                      >{{ item.Name2 }}
+                        <v-icon
+                          v-show="item.name2Hovered"
+                          small
+													style="cursor: pointer"
+                          v-on:click.stop="onEditItem(item, 'Name2', 'Subtitle')"
+                        >mdi-pencil</v-icon>
+											</v-list-item-subtitle>
 
                       <div style="font-size: .875rem; font-weight: normal">
                         <span v-if="item.MI_Quality">{{ item.MI_Quality + ' | ' }}</span>
@@ -324,12 +346,25 @@
       v-bind:src="videoPlayerDialog.videoURL"
       v-on:close="onVideoPlayerDialogClose"
     ></mk-video-player-dialog>
+
+    <mk-edit-item-dialog
+      ref="editItemNameDialog"
+      v-bind:show="editItemDialog.show"
+      v-bind:title="editItemDialog.title"
+      enterTextValue="true"
+      ok="OK"
+      cancel="Cancel"
+      cancelColor="secondary"
+      v-on:ok="onEditItemDialogOK"
+      v-on:cancel="onEditItemDialogCancel"
+    ></mk-edit-item-dialog>
   </div>
 </template>
 
 <script>
 import * as store from "@/store";
 import { eventBus } from "@/main";
+import Dialog from "@/components/shared/Dialog.vue";
 import ListDialog from "@/components/shared/ListDialog.vue";
 import PersonDialog from "@/components/shared/PersonDialog.vue";
 import VideoPlayerDialog from "@/components/shared/VideoPlayerDialog.vue";
@@ -345,7 +380,8 @@ export default {
   components: {
     "mk-list-dialog": ListDialog,
     "mk-person-dialog": PersonDialog,
-    "mk-video-player-dialog": VideoPlayerDialog
+    "mk-video-player-dialog": VideoPlayerDialog,
+    "mk-edit-item-dialog": Dialog
   },
 
   data: () => ({
@@ -403,6 +439,14 @@ export default {
     videoPlayerDialog: {
       show: false,
       videoURL: null
+    },
+
+    editItemDialog: {
+			show: false,
+			title: null,
+			item: {},
+			attributeName: null,
+			attributeDisplayText: null,
     },
 
     itemDetails: {
@@ -840,6 +884,34 @@ export default {
 
     onVideoPlayerDialogClose() {
       this.videoPlayerDialog.show = false;
+    },
+
+    setItemHovered(item, section, value) {
+      this.$set(item, `${section}Hovered`, value);
+    },
+
+    onEditItem(item, attributeName, attributeDisplayText) {
+			this.editItemDialog.item = item;
+			this.editItemDialog.attributeName = attributeName;
+			this.editItemDialog.attributeDisplayText = attributeDisplayText;
+			this.editItemDialog.title = `Edit ${attributeDisplayText}`;
+      this.$refs.editItemNameDialog.initTextValue(item[attributeName]);
+      this.editItemDialog.show = true;
+    },
+
+    async onEditItemDialogOK(result) {
+      logger.log("EDIT NAME DIALOG OK result:", result);
+			this.editItemDialog.show = false;
+			
+			await store.db.fireProcedure(`UPDATE tbl_Movies SET ${this.editItemDialog.attributeName} = $value WHERE id_Movies = $id_Movies`, { $value: result.textValue, $id_Movies: this.editItemDialog.item.id_Movies });
+
+			this.editItemDialog.item[this.editItemDialog.attributeName] = result.textValue;
+
+			eventBus.showSnackbar("success", 6000, `${this.editItemDialog.attributeDisplayText} successfully changed.`);
+    },
+
+    onEditItemDialogCancel() {
+      this.editItemDialog.show = false;
     }
   },
 

@@ -83,7 +83,6 @@ export default {
     "dontAskAgain",
     "enterTextValue",
     "textValueCaption",
-    "textValue",
     "textValueEmptyAllowed"
   ],
 
@@ -107,7 +106,12 @@ export default {
       });
 
       this.resetData();
-    }
+		},
+		
+		initTextValue(value) {
+			logger.log('initTextValueLocal value:', value);
+			this.textValueLocal = value;
+		}
   },
 
   // ### Lifecycle Hooks ###

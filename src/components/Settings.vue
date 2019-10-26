@@ -40,11 +40,11 @@
     <v-btn text small color="primary" v-on:click="openDevTools">Open DevTools</v-btn>
 
     <mk-sourcepath-description-dialog
-      v-bind:show="sourcePathDescriptionDialog.show"
+      ref="sourcePathDescriptionDialog"
+			v-bind:show="sourcePathDescriptionDialog.show"
       title="Edit Description"
       v-bind:question="`Please provide a description for the source path ${sourcePathDescriptionDialog.Path} (${sourcePathDescriptionDialog.MediaTypeUpper})`"
       enterTextValue="true"
-      v-bind:textValue="sourcePathDescriptionDialog.Description"
       ok="OK"
       cancel="Cancel"
       cancelColor="secondary"
@@ -203,7 +203,9 @@ export default {
         sourcePathItem.id_SourcePaths;
       this.sourcePathDescriptionDialog.Path = sourcePathItem.Path;
       this.sourcePathDescriptionDialog.MediaTypeUpper = sourcePathItem.MediaType.toUpperCase();
-      this.sourcePathDescriptionDialog.Description = sourcePathItem.Description;
+			this.sourcePathDescriptionDialog.Description = sourcePathItem.Description;
+			
+			this.$refs.sourcePathDescriptionDialog.initTextValue(sourcePathItem.Description);
 
       this.sourcePathDescriptionDialog.show = true;
     },
