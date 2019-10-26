@@ -1495,7 +1495,7 @@ async function fetchMedia($MediaType) {
 				}
 			}
 
-			item.SearchSpace = (item.Name || '').toLowerCase() + ' ' + (item.Name2 || '').toLowerCase() + ' ' + (item.IMDB_plotSummary || '').toLowerCase() + ' ' + (item.Genres || '').toLowerCase();
+			item.SearchSpace = (item.Name || '').toLowerCase() + ' ' + (item.Name2 || '').toLowerCase() + ' ' + (item.IMDB_plotSummary || '').toLowerCase() + ' ' + (item.Path || '').toLowerCase();
 
 			item.IMDB_Top_Directors = item.IMDB_Top_Directors ? JSON.parse(item.IMDB_Top_Directors) : null;
 			item.IMDB_Top_Writers = item.IMDB_Top_Writers ? JSON.parse(item.IMDB_Top_Writers) : null;

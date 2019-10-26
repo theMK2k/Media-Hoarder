@@ -86,3 +86,7 @@ OK - Metacritic Score
 - add as filter
 - implement "add to watchlist button"
 -> Implemented as arbitrary lists
+
+## Play "Button" as masked image
+- see data/maskPlay.pdn/png
+- embedded as base64 with https://www.base64-image.de/
