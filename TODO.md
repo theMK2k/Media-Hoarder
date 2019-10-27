@@ -2,8 +2,15 @@
 - page: 42
 
 # Other
-OK - exit menuitem
+- add "isExtraOf" relation for tbl_Movies
+	-> don't count Extras (e.g. in filters)
+	-> don't show Extras in main list
+	-> show Extras in expanded item
+	-> implement extra detection in rescan (determine to which movie the extra must be assigned to, e.g. multiple releases of the same movie, maybe work with IMDB id but also with parts of the Name)
+
 - join multi-part files (1_2, 2_2, ...)
+
+OK - exit menuitem
 
 
 - youtube (incl. subscription importer -> https://www.youtube.com/subscription_manager?action_takeout=1)
