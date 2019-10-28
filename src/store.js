@@ -8,6 +8,7 @@ const request = require('request');
 // const textVersion = require("textversionjs");
 const htmlToText = require('html-to-text');
 const moment = require('moment');
+const levenshtein = require('fast-levenshtein');
 
 const readdirAsync = util.promisify(fs.readdir);
 const writeFileAsync = util.promisify(fs.writeFile);
@@ -27,21 +28,24 @@ import { languages } from '@/languages';
 import { shared } from '@/shared';
 
 const scanOptions = {
-	filescanMovies: true,
-	rescanMoviesMetaData: true,											// default: true
-	// rescanMoviesMetaData_id_SourcePaths_IN: '(5, 10)',					// ex: '(5, 10)', default: null
-	// rescanMoviesMetaData_id_Movies: null,								// ex: 277, default: null
-	// rescanMoviesMetaData_maxEntries: 10,								// ex: 10, default: null
-	rescanMoviesMetaData_applyMediaInfo: true,							// default: true
-	rescanMoviesMetaData_findIMDBtconst: true,							// default: true
-	rescanMoviesMetaData_fetchIMDBMetaData: true,						// default: true
-	rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,			// default: true
-	rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,			// default: true
-	rescanMoviesMetaData_fetchIMDBMetaData_technicalData: true,		// default: true
-	rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: true,	// default: true
-	rescanMoviesMetaData_fetchIMDBMetaData_creditsData: true,			// default: true
+	// filescanMovies: true,
 
-	applyIMDBMetaData: true,		// default: true
+	// rescanMoviesMetaData: true,
+	// rescanMoviesMetaData_id_SourcePaths_IN: '(5, 10)',
+	// rescanMoviesMetaData_id_Movies: 277,
+	// rescanMoviesMetaData_maxEntries: 10,
+	// rescanMoviesMetaData_applyMediaInfo: true,
+	// rescanMoviesMetaData_findIMDBtconst: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData_technicalData: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData_creditsData: true,
+	
+	// applyIMDBMetaData: true,
+
+	mergeExtras: true,
 }
 
 const definedError = require('@/helpers/defined-error');
@@ -110,6 +114,7 @@ async function createIndexes(db) {
 		generateIndexQuery('tbl_Movies', ['IMDB_rating'], false),
 		generateIndexQuery('tbl_Movies', ['IMDB_numVotes'], false),
 		generateIndexQuery('tbl_Movies', ['IMDB_metacriticScore'], false),
+		generateIndexQuery('tbl_Movies', ['Extra_id_Movies_Owner'], false),
 		generateIndexQuery('tbl_Movies_Genres', ['id_Movies'], false),
 		generateIndexQuery('tbl_Movies_Genres', ['id_Genres'], false),
 		generateIndexQuery('tbl_Settings', ['Key'], true),
@@ -156,12 +161,116 @@ async function rescan(onlyNew) {
 
 	// await rescanTV();								// TODO
 
+	await mergeExtras(onlyNew);
+
 	// clear isNew flag from all entries
 	await db.fireProcedure(`UPDATE tbl_Movies SET isNew = 0`, []);
 
 	isScanning = false;
 	doAbortRescan = false;
 	eventBus.rescanStopped();
+}
+
+async function mergeExtras(onlyNew) {
+	if (!scanOptions.mergeExtras) {
+		return;
+	}
+
+	const children = await db.fireProcedureReturnAll(`
+	SELECT
+		id_Movies
+		, Path
+		, Directory
+		, Filename
+		, Name
+		, Name2
+		, IMDB_tconst
+	FROM tbl_Movies MOV
+	WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+		AND Filename LIKE '% - extra%'
+		AND Extra_id_Movies_Owner IS NULL
+		${onlyNew ? 'AND MOV.isNew = 1' : ''}
+	`);
+
+	logger.log('Extra children:', children);
+
+	for (let i = 0; i < children.length; i++) {
+		const child = children[i];
+		await mergeExtra(child);
+	}
+}
+
+async function mergeExtra(movie) {
+	logger.log('merging Extra:', movie);
+	
+	const rxMovieName = /(^.*?) - extra/i;
+	if (!rxMovieName.test(movie.Filename)) {
+		logger.log('Extra name not identifyable in:', movie.Filename);
+		return;
+	}
+
+	const $movieName = movie.Filename.match(rxMovieName)[1].trim();
+
+	logger.log('identified $movieName:', $movieName);
+
+	let possibleParents = await db.fireProcedureReturnAll(`
+		SELECT
+			id_Movies
+			, Path
+			, Directory
+			, Filename
+			, Name
+			, Name2
+			, IMDB_tconst
+		FROM tbl_Movies MOV
+		WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+			AND Filename NOT LIKE '% - extra%'
+			AND Filename LIKE '${$movieName.replace('\'', '_')}%'
+	`);
+
+	logger.log('possibleParents:', possibleParents);
+
+	if (possibleParents.length == 0) {
+		logger.log('no possible parent found :(');
+		return;
+	}
+
+	if (possibleParents.length == 1) {
+		logger.log('single parent found');
+		await assignExtra(possibleParents[0], movie);
+		return;
+	}
+
+	possibleParents.forEach(parent => {
+		parent.distance = levenshtein.get(movie.Path, parent.Path);
+		logger.log('parent distance:', parent.distance, parent.Path);
+	});
+
+	const bestDistance = possibleParents.sort((a, b) => a.distance - b.distance)[0].distance;
+
+	possibleParents = possibleParents.filter(parent => parent.distance === bestDistance);
+
+	if (possibleParents.length == 1) {
+		logger.log('best parent by string distance found:', possibleParents[0]);
+		await assignExtra(possibleParents[0], movie);
+		return;
+	}
+
+	const possibleParentsMultipartFirst = possibleParents.filter(movie => /1_\d/.test(movie.Filename));
+
+	logger.log('possibleParentsMultipartFirst:', possibleParentsMultipartFirst);
+
+	if (possibleParentsMultipartFirst.length == 1) {
+		logger.log('multipart start single parent found');
+		await assignExtra(possibleParentsMultipartFirst[0], movie);
+		return;
+	}
+}
+
+async function assignExtra(parent, child) {
+	logger.log('assigning', child.Filename, 'as extra to', parent.Filename);
+	await db.fireProcedure(`UPDATE tbl_Movies SET Extra_id_Movies_Owner = $Extra_id_Movies_Owner WHERE id_Movies = $id_Movies`, { $Extra_id_Movies_Owner: parent.id_Movies, $id_Movies: child.id_Movies });
+	return;
 }
 
 async function filescanMovies(onlyNew) {
@@ -328,7 +437,7 @@ async function applyIMDBMetaData(onlyNew) {
 				, MOV.IMDB_startYear
 				, MOV.IMDB_endYear
 			FROM tbl_Movies MOV
-			WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+			WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
 			${onlyNew ? 'AND MOV.isNew = 1' : ''}
 			`,
 		[]);
@@ -1456,7 +1565,7 @@ async function fetchMedia($MediaType) {
 			, MOV.last_access_at
 		FROM tbl_Movies MOV
 		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
-		WHERE	(MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+		WHERE	(MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
 					AND id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths WHERE MediaType = $MediaType)
 		${filterSourcePaths}
 		${filterGenres}
@@ -1652,7 +1761,7 @@ async function fetchFilterSourcePaths($MediaType) {
 			SELECT DISTINCT
 			1 AS Selected
 			, SP.Description
-			, (SELECT COUNT(1) FROM tbl_Movies MOV WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths SP2 WHERE SP2.Description = SP.Description)) AS NumMovies
+			, (SELECT COUNT(1) FROM tbl_Movies MOV WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL AND id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths SP2 WHERE SP2.Description = SP.Description)) AS NumMovies
 		FROM tbl_SourcePaths SP WHERE MediaType = $MediaType`,
 		{ $MediaType });
 
@@ -1689,7 +1798,7 @@ async function fetchFilterGenres($MediaType) {
 			, (
 				SELECT COUNT(1)
 				FROM tbl_Movies_Genres MG
-				INNER JOIN tbl_Movies MOV ON MG.id_Movies = MOV.id_Movies AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+				INNER JOIN tbl_Movies MOV ON MG.id_Movies = MOV.id_Movies AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
 				INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
 				WHERE MG.id_Genres = G.id_Genres
 			) AS NumMovies
@@ -1726,7 +1835,7 @@ async function fetchFilterAgeRatings($MediaType) {
 	const results = await db.fireProcedureReturnAll(`
 		SELECT
 			-1 AS Age
-			, (SELECT COUNT(1) FROM tbl_Movies MOV INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.IMDB_id_AgeRating_Chosen_Country IS NULL) AS NumMovies
+			, (SELECT COUNT(1) FROM tbl_Movies MOV INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL AND MOV.IMDB_id_AgeRating_Chosen_Country IS NULL) AS NumMovies
 			, 1 AS Selected
 		UNION
 		SELECT
@@ -1739,7 +1848,7 @@ async function fetchFilterAgeRatings($MediaType) {
 			FROM tbl_Movies MOV
 			INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
 			INNER JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating AND AR.Age IS NOT NULL
-			WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+			WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
 		)
 		GROUP BY (Age)`,
 		{ $MediaType });
@@ -1778,7 +1887,7 @@ async function fetchFilterRatings($MediaType) {
 					SELECT COUNT(1)
 					FROM tbl_Movies MOV
 					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
-					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
 								AND (MOV.Rating IS NULL OR MOV.Rating = 0)
 				) AS NumMovies
 			UNION
@@ -1789,7 +1898,7 @@ async function fetchFilterRatings($MediaType) {
 					SELECT COUNT(1)
 					FROM tbl_Movies MOV
 					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
-					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Rating = 1
+					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL AND MOV.Rating = 1
 				) AS NumMovies
 			UNION
 			SELECT
@@ -1799,7 +1908,7 @@ async function fetchFilterRatings($MediaType) {
 					SELECT COUNT(1)
 					FROM tbl_Movies MOV
 					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
-					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Rating = 2
+					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL AND MOV.Rating = 2
 				) AS NumMovies
 			UNION
 			SELECT
@@ -1809,7 +1918,7 @@ async function fetchFilterRatings($MediaType) {
 					SELECT COUNT(1)
 					FROM tbl_Movies MOV
 					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
-					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Rating = 3
+					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL AND MOV.Rating = 3
 				) AS NumMovies
 			UNION
 			SELECT
@@ -1819,7 +1928,7 @@ async function fetchFilterRatings($MediaType) {
 					SELECT COUNT(1)
 					FROM tbl_Movies MOV
 					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
-					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Rating = 4
+					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL AND MOV.Rating = 4
 				) AS NumMovies
 			UNION
 			SELECT
@@ -1829,7 +1938,7 @@ async function fetchFilterRatings($MediaType) {
 					SELECT COUNT(1)
 					FROM tbl_Movies MOV
 					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
-					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Rating = 5
+					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL AND MOV.Rating = 5
 				) AS NumMovies
 				`,
 		{ $MediaType });
@@ -1883,7 +1992,7 @@ async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category) {
 					SELECT COUNT(1)
 					FROM tbl_Movies MOV
 					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
-					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.IMDB_Parental_Advisory_${PA_Category} IS NULL
+					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL AND MOV.IMDB_Parental_Advisory_${PA_Category} IS NULL
 				) AS NumMovies
 			UNION
 			SELECT
@@ -1894,7 +2003,7 @@ async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category) {
 					SELECT COUNT(1)
 					FROM tbl_Movies MOV
 					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
-					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.IMDB_Parental_Advisory_${PA_Category} = 0
+					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL AND MOV.IMDB_Parental_Advisory_${PA_Category} = 0
 				) AS NumMovies
 			UNION
 			SELECT
@@ -1905,7 +2014,7 @@ async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category) {
 					SELECT COUNT(1)
 					FROM tbl_Movies MOV
 					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
-					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.IMDB_Parental_Advisory_${PA_Category} = 1
+					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL AND MOV.IMDB_Parental_Advisory_${PA_Category} = 1
 				) AS NumMovies
 			UNION
 			SELECT
@@ -1916,7 +2025,7 @@ async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category) {
 					SELECT COUNT(1)
 					FROM tbl_Movies MOV
 					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
-					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.IMDB_Parental_Advisory_${PA_Category} = 2
+					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL AND MOV.IMDB_Parental_Advisory_${PA_Category} = 2
 				) AS NumMovies
 			UNION
 			SELECT
@@ -1927,7 +2036,7 @@ async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category) {
 					SELECT COUNT(1)
 					FROM tbl_Movies MOV
 					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
-					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.IMDB_Parental_Advisory_${PA_Category} = 3
+					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL AND MOV.IMDB_Parental_Advisory_${PA_Category} = 3
 				) AS NumMovies
 				`,
 		{ $MediaType });
@@ -1963,7 +2072,7 @@ async function fetchFilterPersons($MediaType) {
 					FROM tbl_Movies MOV
 					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
 					WHERE
-						(MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+						(MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
 						AND MOV.id_Movies NOT IN (
 						SELECT DISTINCT MC.id_Movies
 						FROM tbl_Movies_IMDB_Credits MC
@@ -1983,7 +2092,7 @@ async function fetchFilterPersons($MediaType) {
 					SELECT COUNT(1) FROM (
 						SELECT DISTINCT MC.id_Movies
 						FROM tbl_Movies_IMDB_Credits MC
-						INNER JOIN tbl_Movies MOV ON MC.id_Movies = MOV.id_Movies AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+						INNER JOIN tbl_Movies MOV ON MC.id_Movies = MOV.id_Movies AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
 						INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
 						WHERE MC.IMDB_Person_ID = FILTERPERSON.IMDB_Person_ID
 					)
@@ -2024,7 +2133,7 @@ async function fetchFilterYears($MediaType) {
 			, 1 AS Selected
 		FROM tbl_Movies MOV
 		INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
-		WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.startYear IS NULL
+		WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL AND MOV.startYear IS NULL
 		UNION
 		SELECT
 			startYear
@@ -2032,7 +2141,7 @@ async function fetchFilterYears($MediaType) {
 			, 1 AS Selected
 		FROM tbl_Movies MOV
 		INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
-		WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.startYear IS NOT NULL
+		WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL AND MOV.startYear IS NOT NULL
 		GROUP BY (startYear)
 		ORDER BY startYear DESC`,
 		{ $MediaType });
@@ -2074,7 +2183,7 @@ async function fetchFilterQualities($MediaType) {
 			, 1 AS Selected
 		FROM tbl_Movies MOV
 		INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
-		WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+		WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
 		GROUP BY (MI_Quality)`,
 		{ $MediaType });
 
@@ -2167,7 +2276,7 @@ async function fetchFilterLists($MediaType) {
 				SELECT COUNT(1)
 				FROM tbl_Movies MOV
 				INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
-				WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Lists_Movies)
+				WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL AND MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Lists_Movies)
 			) AS NumMovies
 		UNION
 		SELECT
@@ -2177,7 +2286,7 @@ async function fetchFilterLists($MediaType) {
 			, (
 				SELECT COUNT(1)
 				FROM tbl_Lists_Movies LM
-				INNER JOIN tbl_Movies MOV ON LM.id_Movies = MOV.id_Movies AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+				INNER JOIN tbl_Movies MOV ON LM.id_Movies = MOV.id_Movies AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
 				INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
 				WHERE LM.id_Lists = LISTS.id_Lists
 			) AS NumMovies
