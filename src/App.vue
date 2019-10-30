@@ -994,14 +994,14 @@ h1 {
   border: 1px solid #555555;
 }
 
-.CreditClickable {
+.Clickable {
   font-size: 0.875rem;
   font-weight: normal;
   color: #fff !important;
   cursor: pointer;
 }
 
-.CreditClickable:hover {
+.Clickable:hover {
   color: #2196f3 !important;
 }
 </style>

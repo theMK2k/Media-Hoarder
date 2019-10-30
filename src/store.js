@@ -28,22 +28,22 @@ import { languages } from '@/languages';
 import { shared } from '@/shared';
 
 const scanOptions = {
-	// filescanMovies: true,
+	filescanMovies: true,
 
-	// rescanMoviesMetaData: true,
+	rescanMoviesMetaData: true,
 	// rescanMoviesMetaData_id_SourcePaths_IN: '(5, 10)',
 	// rescanMoviesMetaData_id_Movies: 277,
 	// rescanMoviesMetaData_maxEntries: 10,
-	// rescanMoviesMetaData_applyMediaInfo: true,
-	// rescanMoviesMetaData_findIMDBtconst: true,
-	// rescanMoviesMetaData_fetchIMDBMetaData: true,
-	// rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
-	// rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
-	// rescanMoviesMetaData_fetchIMDBMetaData_technicalData: true,
-	// rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: true,
-	// rescanMoviesMetaData_fetchIMDBMetaData_creditsData: true,
+	rescanMoviesMetaData_applyMediaInfo: true,
+	rescanMoviesMetaData_findIMDBtconst: true,
+	rescanMoviesMetaData_fetchIMDBMetaData: true,
+	rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
+	rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
+	rescanMoviesMetaData_fetchIMDBMetaData_technicalData: true,
+	rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: true,
+	rescanMoviesMetaData_fetchIMDBMetaData_creditsData: true,
 	
-	// applyIMDBMetaData: true,
+	applyIMDBMetaData: true,
 
 	mergeExtras: true,
 }
@@ -1563,6 +1563,7 @@ async function fetchMedia($MediaType) {
 			, AR.Age
 			, MOV.created_at
 			, MOV.last_access_at
+			, (SELECT COUNT(1) FROM tbl_Movies MOVEXTRAS WHERE MOVEXTRAS.Extra_id_Movies_Owner = MOV.id_Movies) AS NumExtras
 		FROM tbl_Movies MOV
 		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 		WHERE	(MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
@@ -2314,8 +2315,11 @@ async function fetchFilterLists($MediaType) {
 async function getMovieDetails($id_Movies) {
 	const lists = await db.fireProcedureReturnAll(`SELECT id_Lists, Name FROM tbl_Lists WHERE id_Lists IN (SELECT id_Lists FROM tbl_Lists_Movies WHERE id_Movies = $id_Movies) ORDER BY Name`, { $id_Movies });
 
+	const extras = await db.fireProcedureReturnAll(`SELECT id_Movies, Path, Filename, Name FROM tbl_Movies WHERE Extra_id_Movies_Owner = $id_Movies`, { $id_Movies });
+
 	return {
-		lists
+		lists,
+		extras
 	}
 }
 

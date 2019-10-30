@@ -34,10 +34,10 @@
             </v-row>
 
             <v-row style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px">
-              <div v-if="!showLongBio" style="font-size: .875rem; font-weight: normal" class="CreditClickable" v-on:click.stop="showLongBio = true">
+              <div v-if="!showLongBio" style="font-size: .875rem; font-weight: normal" class="Clickable" v-on:click.stop="showLongBio = true">
                 {{ personData.ShortBio }}
               </div>
-              <div v-if="showLongBio" style="font-size: .875rem; font-weight: normal" class="CreditClickable" v-on:click.stop="showLongBio = false">
+              <div v-if="showLongBio" style="font-size: .875rem; font-weight: normal" class="Clickable" v-on:click.stop="showLongBio = false">
                 <p v-for="(line, index) in personData.LongBio.split('\n')" v-bind:key="index">{{line}}</p>
               </div>
             </v-row>
