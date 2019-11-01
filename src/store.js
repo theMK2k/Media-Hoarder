@@ -28,24 +28,26 @@ import { languages } from '@/languages';
 import { shared } from '@/shared';
 
 const scanOptions = {
-	filescanMovies: true,
+	//filescanMovies: true,
 
 	rescanMoviesMetaData: true,
 	// rescanMoviesMetaData_id_SourcePaths_IN: '(5, 10)',
-	// rescanMoviesMetaData_id_Movies: 277,
+	rescanMoviesMetaData_id_Movies: 277,
 	// rescanMoviesMetaData_maxEntries: 10,
-	rescanMoviesMetaData_applyMediaInfo: true,
-	rescanMoviesMetaData_findIMDBtconst: true,
+	//rescanMoviesMetaData_applyMediaInfo: true,
+	//rescanMoviesMetaData_findIMDBtconst: true,
 	rescanMoviesMetaData_fetchIMDBMetaData: true,
-	rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
-	rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
-	rescanMoviesMetaData_fetchIMDBMetaData_technicalData: true,
-	rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: true,
-	rescanMoviesMetaData_fetchIMDBMetaData_creditsData: true,
+	//rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
+	//rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
+	//rescanMoviesMetaData_fetchIMDBMetaData_technicalData: true,
+	//rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: true,
+	//rescanMoviesMetaData_fetchIMDBMetaData_creditsData: true,
+	rescanMoviesMetaData_fetchIMDBMetaData_companiesData: true,
+	//rescanMoviesMetaData_saveIMDBData: true,
 	
-	applyIMDBMetaData: true,
+	//applyIMDBMetaData: true,
 
-	mergeExtras: true,
+	//mergeExtras: true,
 }
 
 const definedError = require('@/helpers/defined-error');
@@ -472,6 +474,12 @@ async function applyIMDBMetaData(onlyNew) {
 			Name = movie.Filename.split('~')[0].split('(')[0].replace(/_/g, ' ').replace(/\./g, ' ');
 		}
 
+		const rxMultiPart = /(\d)\_(\d)/;
+		if (rxMultiPart.test(movie.Filename)) {
+			const multiPartMatches = movie.Filename.match(rxMultiPart);
+			Name += ` (${multiPartMatches[1]}/${multiPartMatches[2]})`;
+		}
+
 		const startYear = movie.IMDB_startYear;
 		const endYear = movie.IMDB_endYear;
 
@@ -671,8 +679,10 @@ async function findIMDBtconst(movie, onlyNew) {
 }
 
 async function fetchIMDBMetaData(movie, onlyNew) {
-	// TODO:	fetch IMDB data from imdb.com (incl. images)
-	//				save IMDB data to db
+	logger.log('fetchIMDBdata movie:', movie);
+	
+	// fetch IMDB data from imdb.com (incl. images)
+	// save IMDB data to db
 	if (onlyNew && movie.IMDB_Done) {
 		return;
 	}
@@ -711,11 +721,20 @@ async function fetchIMDBMetaData(movie, onlyNew) {
 			credits = creditsData.credits;
 		}
 
+		let companies = [];
+		if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_companiesData) {
+			const companiesData = await scrapeIMDBCompaniesData(movie);
+			IMDBdata = Object.assign(IMDBdata, companiesData.topCompanies);
+			companies = companiesData.companies;
+		}
+
 		logger.log('IMDBdata:', IMDBdata);
 
 		const genres = await db.fireProcedureReturnAll('SELECT id_Genres, GenreID, Name FROM tbl_Genres', []);
 
-		await saveIMDBData(movie, IMDBdata, genres, credits);
+		if (scanOptions.rescanMoviesMetaData_saveIMDBData) {
+			await saveIMDBData(movie, IMDBdata, genres, credits);
+		}
 	} catch (err) {
 		logger.error(err);
 		return;
@@ -1147,6 +1166,93 @@ async function scrapeIMDBFullCreditsData(movie) {
 			credits.push(entry);
 			if (topCast.length < topMax) {
 				topCast.push(entry);
+			}
+		}
+	}
+
+	const rx_creditsCategories = /<h4 class="dataHeaderWithBorder">([\s\S]*?)&nbsp/g;
+
+	let ccMatch = null;
+
+	// eslint-disable-next-line no-cond-assign
+	while (ccMatch = rx_creditsCategories.exec(html)) {
+		const creditsCategory = ccMatch[1].trim();
+		logger.log(creditsCategory);
+
+		const result = parseCreditsCategory(html, creditsCategory, credits);
+
+		if (creditsCategory === 'Directed by') {
+			result.forEach(entry => {
+				if (topDirector.length < topMax) {
+					topDirector.push(entry);
+				}
+			})
+		}
+		if (creditsCategory === 'Produced by') {
+			result.forEach(entry => {
+				if (topProducer.length < topMax) {
+					topProducer.push(entry);
+				}
+			})
+		}
+		if (creditsCategory === 'Writing Credits') {
+			result.forEach(entry => {
+				if (topWriter.length < topMax) {
+					topWriter.push(entry);
+				}
+			})
+		}
+	}
+
+	logger.log('credits:', credits);
+
+	let $IMDB_Top_Cast = topCast.length > 0 ? JSON.stringify(topCast) : null;
+	let $IMDB_Top_Writers = topWriter.length > 0 ? JSON.stringify(topWriter) : null;
+	let $IMDB_Top_Directors = topDirector.length > 0 ? JSON.stringify(topDirector) : null;
+	let $IMDB_Top_Producers = topProducer.length > 0 ? JSON.stringify(topProducer) : null;
+
+	return {
+		topCredits: {
+			$IMDB_Top_Directors,
+			$IMDB_Top_Writers,
+			$IMDB_Top_Producers,
+			$IMDB_Top_Cast
+		},
+		credits
+	}
+}
+
+async function scrapeIMDBCompaniesData(movie) {
+	const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/companycredits`;
+	logger.log('scrapeIMDBCompaniesData url:', url);
+	const response = await requestGetAsync(url);
+	const html = response.body;
+
+	const topMax = 5;
+
+	const topCompanies = [];
+
+	const companies = [];
+
+	const rx_ProductionCompanies = /<h4 class="dataHeaderWithBorder" id="production"[\s\S]*?<\/ul>/;
+
+	if (rx_ProductionCompanies.test(html)) {
+		logger.log('is match1');
+		const productionCompanies = html.match(rx_ProductionCompanies)[0];
+
+		const rx_ProductionCompany = /<li>[\s\S]*?<a href="\/company\/(co\d*)[\s\S]*?>([\s\S]*?)<\/a>([\s\S]*?)<\/li>/g;
+
+		let match = null;
+
+		// eslint-disable-next-line no-cond-assign
+		while (match = rx_ProductionCompany.exec(productionCompanies)) {
+			// const entry = { id: match[1], name: match[2].replace(/^\s*/, '').replace(/\s*$/, ''), character: null };
+			const entry = { category: 'Production', id: match[1], name: unescape(htmlToText.fromString(match[2], { wordwrap: null, ignoreImage: true, ignoreHref: true }).trim()), role: unescape(htmlToText.fromString(match[3], { wordwrap: null, ignoreImage: true, ignoreHref: true }).trim()) };
+
+			logger.log('production company found:', entry);
+
+			if (topCompanies.length < topMax) {
+				topCompanies.push(entry);
 			}
 		}
 	}
@@ -2228,7 +2334,7 @@ function saveFilterValues($MediaType) {
 
 	// logger.log('saveFilterValues:', filterValuesString);
 
-	setSetting(`filtersMediaType${$MediaType}`, JSON.stringify(filterValues));
+	setSetting(`filtersMediaType${$MediaType}`, filterValuesString);
 }
 
 async function createList($Name) {
