@@ -37,14 +37,14 @@ const scanOptions = {
 	//rescanMoviesMetaData_applyMediaInfo: true,
 	//rescanMoviesMetaData_findIMDBtconst: true,
 	rescanMoviesMetaData_fetchIMDBMetaData: true,
-	//rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
+	rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
 	//rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
 	//rescanMoviesMetaData_fetchIMDBMetaData_technicalData: true,
 	//rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: true,
 	//rescanMoviesMetaData_fetchIMDBMetaData_creditsData: true,
 	rescanMoviesMetaData_fetchIMDBMetaData_companiesData: true,
-	//rescanMoviesMetaData_saveIMDBData: true,
-	
+	rescanMoviesMetaData_saveIMDBData: true,
+
 	//applyIMDBMetaData: true,
 
 	//mergeExtras: true,
@@ -125,6 +125,9 @@ async function createIndexes(db) {
 		generateIndexQuery('tbl_Movies_IMDB_Credits', ['id_Movies'], false),
 		generateIndexQuery('tbl_Movies_IMDB_Credits', ['IMDB_Person_ID'], false),
 		generateIndexQuery('tbl_Movies_IMDB_Credits', ['id_Movies', 'Category', 'IMDB_Person_ID'], true),
+		generateIndexQuery('tbl_Movies_IMDB_Companies', ['id_Movies'], false),
+		generateIndexQuery('tbl_Movies_IMDB_Companies', ['IMDB_Company_ID'], false),
+		generateIndexQuery('tbl_Movies_IMDB_Companies', ['id_Movies', 'Category', 'IMDB_Company_ID'], true),
 		generateIndexQuery('tbl_IMDB_Persons', ['IMDB_Person_ID'], true),
 	]
 
@@ -204,7 +207,7 @@ async function mergeExtras(onlyNew) {
 
 async function mergeExtra(movie) {
 	logger.log('merging Extra:', movie);
-	
+
 	const rxMovieName = /(^.*?) - extra/i;
 	if (!rxMovieName.test(movie.Filename)) {
 		logger.log('Extra name not identifyable in:', movie.Filename);
@@ -680,7 +683,7 @@ async function findIMDBtconst(movie, onlyNew) {
 
 async function fetchIMDBMetaData(movie, onlyNew) {
 	logger.log('fetchIMDBdata movie:', movie);
-	
+
 	// fetch IMDB data from imdb.com (incl. images)
 	// save IMDB data to db
 	if (onlyNew && movie.IMDB_Done) {
@@ -724,7 +727,7 @@ async function fetchIMDBMetaData(movie, onlyNew) {
 		let companies = [];
 		if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_companiesData) {
 			const companiesData = await scrapeIMDBCompaniesData(movie);
-			IMDBdata = Object.assign(IMDBdata, companiesData.topCompanies);
+			IMDBdata = Object.assign(IMDBdata, companiesData.topProductionCompanies);
 			companies = companiesData.companies;
 		}
 
@@ -733,7 +736,7 @@ async function fetchIMDBMetaData(movie, onlyNew) {
 		const genres = await db.fireProcedureReturnAll('SELECT id_Genres, GenreID, Name FROM tbl_Genres', []);
 
 		if (scanOptions.rescanMoviesMetaData_saveIMDBData) {
-			await saveIMDBData(movie, IMDBdata, genres, credits);
+			await saveIMDBData(movie, IMDBdata, genres, credits, companies);
 		}
 	} catch (err) {
 		logger.error(err);
@@ -1230,83 +1233,63 @@ async function scrapeIMDBCompaniesData(movie) {
 
 	const topMax = 5;
 
-	const topCompanies = [];
+	const topProductionCompanies = [];
 
 	const companies = [];
 
-	const rx_ProductionCompanies = /<h4 class="dataHeaderWithBorder" id="production"[\s\S]*?<\/ul>/;
-
-	if (rx_ProductionCompanies.test(html)) {
-		logger.log('is match1');
-		const productionCompanies = html.match(rx_ProductionCompanies)[0];
-
-		const rx_ProductionCompany = /<li>[\s\S]*?<a href="\/company\/(co\d*)[\s\S]*?>([\s\S]*?)<\/a>([\s\S]*?)<\/li>/g;
-
-		let match = null;
-
-		// eslint-disable-next-line no-cond-assign
-		while (match = rx_ProductionCompany.exec(productionCompanies)) {
-			// const entry = { id: match[1], name: match[2].replace(/^\s*/, '').replace(/\s*$/, ''), character: null };
-			const entry = { category: 'Production', id: match[1], name: unescape(htmlToText.fromString(match[2], { wordwrap: null, ignoreImage: true, ignoreHref: true }).trim()), role: unescape(htmlToText.fromString(match[3], { wordwrap: null, ignoreImage: true, ignoreHref: true }).trim()) };
-
-			logger.log('production company found:', entry);
-
-			if (topCompanies.length < topMax) {
-				topCompanies.push(entry);
-			}
-		}
-	}
-
-	const rx_creditsCategories = /<h4 class="dataHeaderWithBorder">([\s\S]*?)&nbsp/g;
+	const rx_companiesCategories = /<h4 class="dataHeaderWithBorder" id="(.*?)" name="(.*?)">(.*?)<\/h4>[\s\S]*?<\/ul>/g;
 
 	let ccMatch = null;
 
 	// eslint-disable-next-line no-cond-assign
-	while (ccMatch = rx_creditsCategories.exec(html)) {
-		const creditsCategory = ccMatch[1].trim();
-		logger.log(creditsCategory);
+	while (ccMatch = rx_companiesCategories.exec(html)) {
+		const companiesCategoryID = ccMatch[1].trim();
+		const companiesCategoryName = ccMatch[3].replace('Companies', '').trim();
 
-		const result = parseCreditsCategory(html, creditsCategory, credits);
+		logger.log(companiesCategoryID, companiesCategoryName);
 
-		if (creditsCategory === 'Directed by') {
+		const result = parseCompaniesCategory(companiesCategoryName, ccMatch[0], companies);
+
+		if (companiesCategoryName === 'Production') {
 			result.forEach(entry => {
-				if (topDirector.length < topMax) {
-					topDirector.push(entry);
-				}
-			})
-		}
-		if (creditsCategory === 'Produced by') {
-			result.forEach(entry => {
-				if (topProducer.length < topMax) {
-					topProducer.push(entry);
-				}
-			})
-		}
-		if (creditsCategory === 'Writing Credits') {
-			result.forEach(entry => {
-				if (topWriter.length < topMax) {
-					topWriter.push(entry);
+				if (topProductionCompanies.length < topMax) {
+					topProductionCompanies.push(entry);
 				}
 			})
 		}
 	}
 
-	logger.log('credits:', credits);
-
-	let $IMDB_Top_Cast = topCast.length > 0 ? JSON.stringify(topCast) : null;
-	let $IMDB_Top_Writers = topWriter.length > 0 ? JSON.stringify(topWriter) : null;
-	let $IMDB_Top_Directors = topDirector.length > 0 ? JSON.stringify(topDirector) : null;
-	let $IMDB_Top_Producers = topProducer.length > 0 ? JSON.stringify(topProducer) : null;
+	logger.log('companies:', companies);
+	logger.log('topProductionCompanies:', topProductionCompanies);
 
 	return {
-		topCredits: {
-			$IMDB_Top_Directors,
-			$IMDB_Top_Writers,
-			$IMDB_Top_Producers,
-			$IMDB_Top_Cast
+		topProductionCompanies: {
+			$IMDB_Top_Production_Companies: (topProductionCompanies.length > 0 ? JSON.stringify(topProductionCompanies) : null)
 		},
-		credits
+		companies
 	}
+}
+
+function parseCompaniesCategory(category, matchedhtml, companies) {
+	const result = [];
+
+	// <li>
+	// <a href="/company/co0046718?ref_=ttco_co_1"
+	// >New Line Cinema</a>            (presents)
+  //      </li>
+	const rx_entry = /<li>[\s\S]*?<a href="\/company\/(co\d*)[\s\S]*?>([\s\S]*?)<\/a>([\s\S]*?)<\/li>/g;
+
+	let match = null;
+
+	// eslint-disable-next-line no-cond-assign
+	while (match = rx_entry.exec(matchedhtml)) {
+		const entry = { category, id: match[1], name: match[2].trim(), role: match[3].trim() };
+
+		companies.push(entry);
+		result.push(entry);
+	}
+
+	return result;
 }
 
 function parseCreditsCategory(html, tableHeader, credits) {
@@ -1338,7 +1321,7 @@ function parseCreditsCategory(html, tableHeader, credits) {
 	return result;
 }
 
-async function saveIMDBData(movie, IMDBdata, genres, credits) {
+async function saveIMDBData(movie, IMDBdata, genres, credits, companies) {
 	const IMDB_genres = IMDBdata.$IMDB_genres;
 	delete IMDBdata.$IMDB_genres;
 
@@ -1394,6 +1377,29 @@ async function saveIMDBData(movie, IMDBdata, genres, credits) {
 			DO UPDATE SET
 				Person_Name = excluded.Person_Name
 				, Credit = excluded.Credit`, { $id_Movies: movie.id_Movies, $Category: credit.category, $IMDB_Person_ID: credit.id, $Person_Name: credit.name, $Credit: credit.credit });
+	}
+
+	for (let i = 0; i < companies.length; i++) {
+		const company = companies[i];
+
+		await db.fireProcedure(`
+			INSERT INTO tbl_Movies_IMDB_Companies (
+				id_Movies
+				, Category
+				, IMDB_Company_ID
+				, Company_Name
+				, Role
+			) VALUES (
+				$id_Movies
+				, $Category
+				, $IMDB_Company_ID
+				, $Company_Name
+				, $Role
+			)
+			ON CONFLICT(id_Movies, Category, IMDB_Company_ID)
+			DO UPDATE SET
+				Company_Name = excluded.Company_Name
+				, Role = excluded.Role`, { $id_Movies: movie.id_Movies, $Category: company.category, $IMDB_Company_ID: company.id, $Company_Name: company.name, $Role: company.role });
 	}
 }
 
@@ -1665,6 +1671,7 @@ async function fetchMedia($MediaType) {
 			, MOV.IMDB_Top_Writers
 			, MOV.IMDB_Top_Producers
 			, MOV.IMDB_Top_Cast
+			, MOV.IMDB_Top_Production_Companies
 			, MOV.IMDB_Trailer_URL
 			, AR.Age
 			, MOV.created_at
@@ -1717,6 +1724,7 @@ async function fetchMedia($MediaType) {
 			item.IMDB_Top_Writers = item.IMDB_Top_Writers ? JSON.parse(item.IMDB_Top_Writers) : null;
 			item.IMDB_Top_Producers = item.IMDB_Top_Producers ? JSON.parse(item.IMDB_Top_Producers) : null;
 			item.IMDB_Top_Cast = item.IMDB_Top_Cast ? JSON.parse(item.IMDB_Top_Cast) : null;
+			item.IMDB_Top_Production_Companies = item.IMDB_Top_Production_Companies ? JSON.parse(item.IMDB_Top_Production_Companies) : null;
 		});
 
 		return result;
