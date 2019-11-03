@@ -607,7 +607,11 @@ export default {
             a[this.sort] instanceof String
           ) {
             if (this.sort === "created_at" || this.sort === "last_access_at") {
-              // we sort dates in reverse order (earliest first)
+							if (!a[this.sort] || !b[this.sort]) {
+								return -1;
+							}
+							
+							// we sort dates in reverse order (earliest first)
               if (a[this.sort].toLowerCase() > b[this.sort].toLowerCase()) {
                 return -1;
               }
@@ -670,7 +674,8 @@ export default {
 
     async launch(movie) {
       const start = moment();
-      await store.launchMovie(movie);
+
+			await store.launchMovie(movie);
 
       const end = moment();
 
@@ -680,7 +685,9 @@ export default {
 
       let minimumWaitForSetAccess = await store.getSetting(
         "minimumWaitForSetAccess"
-      );
+			);
+			
+			logger.log('minimumWaitForSetAccess:', minimumWaitForSetAccess);
 
       if (minimumWaitForSetAccess) {
         minimumWaitForSetAccess = parseInt(minimumWaitForSetAccess);
@@ -871,8 +878,9 @@ export default {
       this.listDialog.show = false;
     },
 
-    async fetchFilters() {
-      await store.fetchFilterSourcePaths(this.mediatype);
+    async fetchFilters(setFilter) {
+			eventBus.showLoadingOverlay(true);
+			await store.fetchFilterSourcePaths(this.mediatype);
       await store.fetchFilterGenres(this.mediatype);
       await store.fetchFilterAgeRatings(this.mediatype);
       await store.fetchFilterRatings(this.mediatype);
@@ -881,7 +889,12 @@ export default {
       await store.fetchFilterPersons(this.mediatype);
       await store.fetchFilterCompanies(this.mediatype);
       await store.fetchFilterYears(this.mediatype);
-      await store.fetchFilterQualities(this.mediatype);
+			await store.fetchFilterQualities(this.mediatype);
+			
+			if (setFilter) {
+				eventBus.setFilter(setFilter);
+			}
+			eventBus.showLoadingOverlay(false);
     },
 
     onCreditClicked(credit) {
@@ -1096,8 +1109,8 @@ export default {
       })();
     });
 
-    eventBus.$on("refetchFilters", () => {
-      this.fetchFilters();
+    eventBus.$on("refetchFilters", (setFilter) => {
+      this.fetchFilters(setFilter);
     });
 
     eventBus.$on("listDialogSetUseExistingLists", value => {
