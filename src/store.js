@@ -28,26 +28,26 @@ import { languages } from '@/languages';
 import { shared } from '@/shared';
 
 const scanOptions = {
-	//filescanMovies: true,
+	filescanMovies: true,
 
 	rescanMoviesMetaData: true,
 	// rescanMoviesMetaData_id_SourcePaths_IN: '(5, 10)',
 	// rescanMoviesMetaData_id_Movies: 277,
 	// rescanMoviesMetaData_maxEntries: 10,
-	//rescanMoviesMetaData_applyMediaInfo: true,
-	//rescanMoviesMetaData_findIMDBtconst: true,
+	rescanMoviesMetaData_applyMediaInfo: true,
+	rescanMoviesMetaData_findIMDBtconst: true,
 	rescanMoviesMetaData_fetchIMDBMetaData: true,
 	rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
-	//rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
-	//rescanMoviesMetaData_fetchIMDBMetaData_technicalData: true,
-	//rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: true,
-	//rescanMoviesMetaData_fetchIMDBMetaData_creditsData: true,
+	rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
+	rescanMoviesMetaData_fetchIMDBMetaData_technicalData: true,
+	rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: true,
+	rescanMoviesMetaData_fetchIMDBMetaData_creditsData: true,
 	rescanMoviesMetaData_fetchIMDBMetaData_companiesData: true,
 	rescanMoviesMetaData_saveIMDBData: true,
 
-	//applyIMDBMetaData: true,
+	applyIMDBMetaData: true,
 
-	//mergeExtras: true,
+	mergeExtras: true,
 }
 
 const definedError = require('@/helpers/defined-error');

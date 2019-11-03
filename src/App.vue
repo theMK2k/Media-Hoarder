@@ -299,7 +299,10 @@
                   <v-btn text v-on:click="setAllCompanies(false)">NONE</v-btn>
                   <v-btn text v-on:click="setAllCompanies(true)">ALL</v-btn>
                 </v-row>
-                <v-row v-for="company in $shared.filterCompanies" v-bind:key="company.IMDB_Company_ID">
+                <v-row
+                  v-for="company in $shared.filterCompanies"
+                  v-bind:key="company.IMDB_Company_ID"
+                >
                   <v-checkbox
                     v-bind:label="company.Company_Name + ' (' + company.NumMovies + ')'"
                     v-model="company.Selected"
@@ -389,6 +392,29 @@
           v-on:yes="onDeleteListDialogOK"
           v-on:cancel="onDeleteListDialogCancel"
         ></mk-delete-list-dialog>
+
+        <!-- BOTTOM BAR -->
+        <v-bottom-navigation
+          fixed
+          dark
+          v-show="scanInfo.show"
+          style="height: auto; padding: 4px 8px 4px 20px "
+        >
+          <!-- v-model="bottomNav" -->
+          <v-row align-content="start" justify="start">
+            <!--  style="text-align: right!important" -->
+            <div v-if="scanInfo.show">
+              <p style="margin: 0px!important">{{scanInfo.header}}</p>
+              <p
+                style="margin: 0px!important; font-size: 12px;text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"
+              >{{scanInfo.details}}</p>
+            </div>
+            <div class="flex-grow-1"></div>
+            <v-btn text v-on:click="cancelRescan">
+              <v-icon>mdi-cancel</v-icon>
+            </v-btn>
+          </v-row>
+        </v-bottom-navigation>
       </v-container>
     </v-content>
 
@@ -406,29 +432,6 @@
       <v-spacer />
       <v-btn dark text @click="snackbar.show = false">Close</v-btn>
     </v-snackbar>
-
-    <!-- BOTTOM BAR -->
-    <v-bottom-navigation
-      fixed
-      dark
-      v-show="scanInfo.show"
-      style="height: auto; padding: 4px 8px 4px 20px "
-    >
-      <!-- v-model="bottomNav" -->
-      <v-row align-content="start" justify="start">
-        <!--  style="text-align: right!important" -->
-        <div v-if="scanInfo.show">
-          <p style="margin: 0px!important">{{scanInfo.header}}</p>
-          <p
-            style="margin: 0px!important; font-size: 12px;text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"
-          >{{scanInfo.details}}</p>
-        </div>
-        <div class="flex-grow-1"></div>
-        <v-btn text v-on:click="cancelRescan">
-          <v-icon>mdi-cancel</v-icon>
-        </v-btn>
-      </v-row>
-    </v-bottom-navigation>
 
     <!-- LOADING OVERLAY -->
     <v-overlay style="z-index: 1000;" v-bind:value="showLoadingOverlay">
@@ -673,8 +676,8 @@ export default {
         this.$shared.filterPersons.length +
         ")"
       );
-		},
-		
+    },
+
     filterCompaniesTitle() {
       if (!this.$shared.filterCompanies.find(filter => !filter.Selected)) {
         return "(ALL)";
@@ -691,8 +694,7 @@ export default {
         this.$shared.filterCompanies.length +
         ")"
       );
-    },
-
+    }
   },
 
   methods: {
@@ -794,16 +796,34 @@ export default {
       this.filtersChanged();
     },
 
-    setAllPersons: function(value) {
+    setAllPersons: function(value, exclusionList) {
       this.$shared.filterPersons.forEach(sp => {
+        if (
+          exclusionList &&
+          exclusionList.find(val => sp.IMDB_Person_ID === val)
+        ) {
+          sp.Selected = !value;
+          return;
+        }
+
         sp.Selected = value;
       });
 
       this.filtersChanged();
     },
 
-    setAllCompanies: function(value) {
+    setAllCompanies: function(value, exclusionList) {
+      logger.log("setAllCompanies:", { value, exclusionList });
+
       this.$shared.filterCompanies.forEach(sp => {
+        if (
+          exclusionList &&
+          exclusionList.find(val => sp.IMDB_Company_ID === val)
+        ) {
+          sp.Selected = !value;
+          return;
+        }
+
         sp.Selected = value;
       });
 
@@ -899,7 +919,7 @@ export default {
       eventBus.refetchFilters();
     },
 
-		deleteCompany(company) {
+    deleteCompany(company) {
       store.deleteFilterCompany(company.id_Filter_Companies);
       eventBus.refetchFilters();
     },
@@ -1011,6 +1031,20 @@ export default {
 
     eventBus.$on("showLoadingOverlay", value => {
       this.showLoadingOverlay = value;
+    });
+
+    eventBus.$on("setFilter", setFilter => {
+      if (!setFilter) {
+        return;
+      }
+
+      if (setFilter.filterCompanies) {
+        this.setAllCompanies(false, setFilter.filterCompanies);
+      }
+
+      if (setFilter.filterPersons) {
+        this.setAllPersons(false, setFilter.filterPersons);
+      }
     });
 
     // eventBus.scanInfoShow('KILLME', 'Asterix und das Geheimnis des Zaubertranks ~ Astérix - Le secret de la potion magique (De)(BD)[2018][Adventure, Animation, Comedy][6.9 @ 3074][tt8001346].mkv');

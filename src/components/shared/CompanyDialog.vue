@@ -164,26 +164,15 @@ export default {
     },
 
     async onFilterClick() {
-			if (this.$shared.filterCompanies.find(company => company.IMDB_Company_ID === this.IMDB_Company_ID)) {
-				eventBus.showSnackbar("info", 6000, "filter already exists for this company");
-				return;
-			}
+			await store.addFilterCompany(this.IMDB_Company_ID, this.Company_Name);
 
-			// const NumMovies = await store.fetchNumMoviesForPerson(this.IMDB_Person_ID);
+			const setFilter = {
+				filterCompanies: [
+					this.IMDB_Company_ID
+				]
+			};
 
-			// logger.log('PERSON NumMovies:', NumMovies);
-
-			// this.$shared.filterPersons.push({
-			// 	IMDB_Person_ID: this.IMDB_Person_ID,
-			// 	Person_Name: this.Person_Name,
-			// 	Selected: true,
-			// 	NumMovies
-			// });
-
-			store.addFilterCompany(this.IMDB_Company_ID, this.Company_Name)
-			
-			eventBus.refetchFilters();
-			// await this.fetchFilters();
+			eventBus.refetchFilters(setFilter);
 			
 			this.$emit("close");
     },

@@ -47,8 +47,8 @@ export const eventBus = new Vue({
 			this.$emit('refetchMedia', setPage);
 		},
 
-		refetchFilters() {
-			this.$emit('refetchFilters');
+		refetchFilters(setFilter) {
+			this.$emit('refetchFilters', setFilter);
 		},
 
 		initListDialog() {
@@ -73,7 +73,11 @@ export const eventBus = new Vue({
 
 		showLoadingOverlay(value) {
 			this.$emit('showLoadingOverlay', value);
-		}
+		},
+
+		setFilter(setFilter) {
+			this.$emit('setFilter', setFilter);
+		},
 	}
 });
 
