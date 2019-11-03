@@ -286,6 +286,37 @@
               </v-expansion-panel-content>
             </v-expansion-panel>
 
+            <!-- FILTER Companies -->
+            <v-expansion-panel style="padding: 0px!important">
+              <v-expansion-panel-header
+                style="padding: 8px!important"
+              >Companies {{filterCompaniesTitle}}</v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-row>
+                  <!-- TODO: add text-field search -->
+                </v-row>
+                <v-row>
+                  <v-btn text v-on:click="setAllCompanies(false)">NONE</v-btn>
+                  <v-btn text v-on:click="setAllCompanies(true)">ALL</v-btn>
+                </v-row>
+                <v-row v-for="company in $shared.filterCompanies" v-bind:key="company.IMDB_Company_ID">
+                  <v-checkbox
+                    v-bind:label="company.Company_Name + ' (' + company.NumMovies + ')'"
+                    v-model="company.Selected"
+                    v-on:click.native="filtersChanged"
+                    style="margin: 0px"
+                    color="dark-grey"
+                  ></v-checkbox>
+                  <v-spacer></v-spacer>
+                  <v-icon
+                    style="align-items: flex-start; padding-top: 4px; cursor: pointer"
+                    v-if="company.id_Filter_Companies"
+                    v-on:click="deleteCompany(company)"
+                  >mdi-delete</v-icon>
+                </v-row>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
             <!-- FILTER YEARS -->
             <v-expansion-panel
               v-show="$shared.filterYears && $shared.filterYears.length > 0"
@@ -642,7 +673,26 @@ export default {
         this.$shared.filterPersons.length +
         ")"
       );
-    }
+		},
+		
+    filterCompaniesTitle() {
+      if (!this.$shared.filterCompanies.find(filter => !filter.Selected)) {
+        return "(ALL)";
+      }
+
+      if (!this.$shared.filterCompanies.find(filter => filter.Selected)) {
+        return "(NONE)";
+      }
+
+      return (
+        "(" +
+        this.$shared.filterCompanies.filter(filter => filter.Selected).length +
+        "/" +
+        this.$shared.filterCompanies.length +
+        ")"
+      );
+    },
+
   },
 
   methods: {
@@ -752,6 +802,14 @@ export default {
       this.filtersChanged();
     },
 
+    setAllCompanies: function(value) {
+      this.$shared.filterCompanies.forEach(sp => {
+        sp.Selected = value;
+      });
+
+      this.filtersChanged();
+    },
+
     setAllQualities: function(value) {
       this.$shared.filterQualities.forEach(quality => {
         quality.Selected = value;
@@ -837,7 +895,12 @@ export default {
     },
 
     deletePerson(person) {
-      store.deleteFiterPerson(person.id_Filter_Persons);
+      store.deleteFilterPerson(person.id_Filter_Persons);
+      eventBus.refetchFilters();
+    },
+
+		deleteCompany(company) {
+      store.deleteFilterCompany(company.id_Filter_Companies);
       eventBus.refetchFilters();
     },
 

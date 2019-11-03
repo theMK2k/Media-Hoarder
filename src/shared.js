@@ -18,6 +18,7 @@ const shared = new Vue({
 		filterPersons: [],
 		filterYears: [],
 		filterQualities: [],
+		filterCompanies: [],
 	}
 });
 

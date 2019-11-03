@@ -241,8 +241,8 @@
                         <span v-if="i > 0">,&nbsp;</span>
                         <a
                           class="Clickable"
-                          
-                        >{{ company.name }}</a> <!-- v-on:click.stop="onCreditClicked(credit)" -->
+                          v-on:click.stop="onCompanyClicked(company)"
+                        >{{ company.name }}</a> 
                       </span>
                     </div>
                   </v-row>
@@ -332,7 +332,7 @@
                     v-for="credit in creditCategory.items"
                     v-bind:key="credit.id_Movies_IMDB_Credits"
                   >
-                    <v-col sm="2" class="creditsLabel">
+                    <v-col sm="4" class="creditsLabel">
                       <a
                         class="Clickable"
                         v-on:click.stop="onCreditClicked(credit)"
@@ -342,6 +342,42 @@
                       <span v-if="credit.credit">...</span>
                     </v-col>
                     <v-col class="creditsContent">{{ credit.credit }}</v-col>
+                  </v-row>
+                </div>
+              </div>
+
+              <!-- COMPANIES -->
+              <v-row
+                style="padding-left: 16px; padding-top: 4px; align-items: flex-end;"
+                class="Clickable"
+                v-on:click.stop="showCompanies(item, !item.showCompanies)"
+              >
+                <span style="font-size: 20px">Companies&nbsp;</span>
+              </v-row>
+
+              <div v-if="item.showCompanies" v-on:click.stop="showCompanies(item, false)">
+                <div
+                  v-for="companyCategory in item.companies"
+                  v-bind:key="companyCategory.Category"
+                  style="margin-left: 24px"
+                >
+                  <v-row>
+                    <strong>{{ companyCategory.category }}</strong>
+                  </v-row>
+                  <v-row
+                    v-for="company in companyCategory.items"
+                    v-bind:key="company.id_Movies_IMDB_Credits"
+                  >
+                    <v-col sm="4" class="creditsLabel">
+                      <a
+                        class="Clickable"
+                        v-on:click.stop="onCompanyClicked(company)"
+                      >{{ company.name }}</a>
+                    </v-col>
+                    <v-col sm="1" class="creditsContent">
+                      <!-- <span v-if="company.role">...</span> -->
+                    </v-col>
+                    <v-col class="creditsContent">{{ company.role }}</v-col>
                   </v-row>
                 </div>
               </div>
@@ -390,6 +426,14 @@
       v-on:close="onPersonDialogClose"
     ></mk-person-dialog>
 
+    <mk-company-dialog
+      ref="companyDialog"
+      v-bind:show="companyDialog.show"
+      v-bind:IMDB_Company_ID="companyDialog.IMDB_Company_ID"
+      v-bind:Company_Name="companyDialog.Company_Name"
+      v-on:close="onCompanyDialogClose"
+    ></mk-company-dialog>
+
     <mk-video-player-dialog
       v-bind:show="videoPlayerDialog.show"
       v-bind:src="videoPlayerDialog.videoURL"
@@ -416,6 +460,7 @@ import { eventBus } from "@/main";
 import Dialog from "@/components/shared/Dialog.vue";
 import ListDialog from "@/components/shared/ListDialog.vue";
 import PersonDialog from "@/components/shared/PersonDialog.vue";
+import CompanyDialog from "@/components/shared/CompanyDialog.vue";
 import VideoPlayerDialog from "@/components/shared/VideoPlayerDialog.vue";
 const { shell } = require("electron").remote;
 
@@ -429,6 +474,7 @@ export default {
   components: {
     "mk-list-dialog": ListDialog,
     "mk-person-dialog": PersonDialog,
+    "mk-company-dialog": CompanyDialog,
     "mk-video-player-dialog": VideoPlayerDialog,
     "mk-edit-item-dialog": Dialog
   },
@@ -482,7 +528,14 @@ export default {
 
     personDialog: {
       show: false,
-      IMDB_Person_ID: null
+			IMDB_Person_ID: null,
+			Person_Name: null,
+    },
+
+		companyDialog: {
+      show: false,
+			IMDB_Company_ID: null,
+			Company_Name: null,
     },
 
     videoPlayerDialog: {
@@ -826,6 +879,7 @@ export default {
       await store.fetchFilterLists(this.mediatype);
       await store.fetchFilterParentalAdvisory(this.mediatype);
       await store.fetchFilterPersons(this.mediatype);
+      await store.fetchFilterCompanies(this.mediatype);
       await store.fetchFilterYears(this.mediatype);
       await store.fetchFilterQualities(this.mediatype);
     },
@@ -842,7 +896,20 @@ export default {
       return;
     },
 
-    lastAccessHumanized(movie) {
+    onCompanyClicked(company) {
+      // TODO!
+      logger.log("company clicked:", company);
+
+      this.companyDialog.show = true;
+      this.companyDialog.IMDB_Company_ID = company.id;
+      this.companyDialog.Company_Name = company.name;
+      // this.$refs.personDialog.init();
+
+      return;
+    },
+
+
+		lastAccessHumanized(movie) {
       if (!movie.last_access_at) {
         return "none";
       }
@@ -929,11 +996,33 @@ export default {
       this.$set(movie, "showCredits", true);
     },
 
-    onPersonDialogClose() {
+    async showCompanies(movie, show) {
+      if (!show) {
+        this.$set(movie, "showCompanies", false);
+        return;
+      }
+
+      if (!movie.companies) {
+        // TODO: load companies from store and assign to movie.companies
+        const companies = await store.fetchMovieCompanies(movie.id_Movies);
+
+        logger.log(companies);
+
+        this.$set(movie, "companies", companies);
+      }
+
+      this.$set(movie, "showCompanies", true);
+    },
+
+		onPersonDialogClose() {
       this.personDialog.show = false;
     },
 
-    onVideoPlayerDialogClose() {
+		onCompanyDialogClose() {
+      this.companyDialog.show = false;
+    },
+
+		onVideoPlayerDialogClose() {
       this.videoPlayerDialog.show = false;
     },
 

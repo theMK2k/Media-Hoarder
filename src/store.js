@@ -32,7 +32,7 @@ const scanOptions = {
 
 	rescanMoviesMetaData: true,
 	// rescanMoviesMetaData_id_SourcePaths_IN: '(5, 10)',
-	rescanMoviesMetaData_id_Movies: 277,
+	// rescanMoviesMetaData_id_Movies: 277,
 	// rescanMoviesMetaData_maxEntries: 10,
 	//rescanMoviesMetaData_applyMediaInfo: true,
 	//rescanMoviesMetaData_findIMDBtconst: true,
@@ -1584,6 +1584,28 @@ async function fetchMedia($MediaType) {
 			filterPersons += ')';
 		}
 
+		let filterCompanies = '';
+		if (shared.filterCompanies && shared.filterCompanies.find(filter => !filter.Selected)) {
+
+			if (shared.filterCompanies.find(filter => (filter.Selected && !filter.id_Filter_Companies))) {
+				filterCompanies = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies_IMDB_Companies WHERE IMDB_Company_ID IN (SELECT IMDB_Company_ID FROM tbl_Filter_Companies)) `;
+			} else {
+				filterCompanies = `AND (1=0 `;
+			}
+
+			if (shared.filterCompanies.find(filter => (filter.Selected && filter.id_Filter_Companies))) {
+				filterCompanies += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_IMDB_Companies WHERE IMDB_Company_ID IN (`;
+
+				filterCompanies += shared.filterCompanies.filter(filter => filter.Selected).map(filter => filter.IMDB_Company_ID).reduce((prev, current) => {
+					return prev + (prev ? ', ' : '') + `'${current}'`;
+				}, '');
+
+				filterCompanies += '))';
+			}
+
+			filterCompanies += ')';
+		}
+
 		let filterYears = '';
 		logger.log('shared.filterYears:', shared.filterYears);
 		if (shared.filterYears && shared.filterYears.find(filter => !filter.Selected)) {
@@ -1637,6 +1659,7 @@ async function fetchMedia($MediaType) {
 		logger.log('fetchMedia filterLists:', filterLists);
 		logger.log('fetchMedia filterParentalAdvisory:', filterParentalAdvisory);
 		logger.log('fetchMedia filterPersons:', filterPersons);
+		logger.log('fetchMedia filterCompanies:', filterCompanies);
 
 		const query = `
 		SELECT
@@ -1690,6 +1713,7 @@ async function fetchMedia($MediaType) {
 		${filterPersons}
 		${filterYears}
 		${filterQualities}
+		${filterCompanies}
 	`;
 
 		logger.log('fetchMedia query:', query);
@@ -2234,6 +2258,67 @@ async function fetchFilterPersons($MediaType) {
 	shared.filterPersons = results;
 }
 
+async function fetchFilterCompanies($MediaType) {
+	const filterValues = await fetchFilterValues($MediaType);
+
+	const results = await db.fireProcedureReturnAll(`
+		SELECT
+			0 AS id_Filter_Companies
+			, NULL AS IMDB_Company_ID
+			, '<any other company>' AS Company_Name
+			, 1 AS Selected
+			, (
+					SELECT COUNT(1)
+					FROM tbl_Movies MOV
+					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+					WHERE
+						(MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+						AND MOV.id_Movies NOT IN (
+						SELECT DISTINCT MC.id_Movies
+						FROM tbl_Movies_IMDB_Companies MC
+						INNER JOIN tbl_Movies MOV2 ON MC.id_Movies = MOV2.id_Movies
+						INNER JOIN tbl_SourcePaths SP2 ON MOV2.id_SourcePaths = SP2.id_SourcePaths AND SP2.MediaType = $MediaType
+						WHERE MC.IMDB_Company_ID IN (SELECT IMDB_Company_ID FROM tbl_Filter_Companies)
+					)
+				)
+			AS NumMovies
+		UNION
+		SELECT
+			id_Filter_Companies
+			, IMDB_Company_ID
+			, Company_Name
+			, 1 AS Selected
+			, (
+					SELECT COUNT(1) FROM (
+						SELECT DISTINCT MC.id_Movies
+						FROM tbl_Movies_IMDB_Companies MC
+						INNER JOIN tbl_Movies MOV ON MC.id_Movies = MOV.id_Movies AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+						INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+						WHERE MC.IMDB_Company_ID = FILTERCOMPANY.IMDB_Company_ID
+					)
+			) AS NumMovies
+		FROM tbl_Filter_Companies FILTERCOMPANY
+	`, { $MediaType });
+
+	// logger.log('fetchFilterCompanies QUERY:', )
+
+	if (filterValues && filterValues.filterLists) {
+		results.forEach(result => {
+			const filterValue = filterValues.filterLists.find(value => value.id_Filter_Companies === result.id_Filter_Companies);
+
+			if (filterValue) {
+				result.Selected = filterValue.Selected;
+			}
+
+			result.NumMovies = result.NumMovies.toLocaleString();
+		})
+	}
+
+	logger.log('fetchFilterCompanies result:', results);
+
+	shared.filterCompanies = results;
+}
+
 async function fetchFilterYears($MediaType) {
 	logger.log('fetchFilterYears MediaType:', $MediaType);
 
@@ -2335,7 +2420,8 @@ function saveFilterValues($MediaType) {
 		filterParentalAdvisory: shared.filterParentalAdvisory,
 		filterPersons: shared.filterPersons,
 		filterYears: shared.filterYears,
-		filterQualities: shared.filterQualities
+		filterQualities: shared.filterQualities,
+		filterCompanies: shared.filterCompanies,
 	}
 
 	const filterValuesString = JSON.stringify(filterValues);
@@ -2472,6 +2558,33 @@ async function fetchMovieCredits($id_Movies) {
 	return creditsCategorized;
 }
 
+async function fetchMovieCompanies($id_Movies) {
+	const companies = await db.fireProcedureReturnAll(`
+	SELECT
+		id_Movies_IMDB_Companies
+		, id_Movies
+		, Category			AS category
+		, IMDB_Company_ID	AS id
+		, Company_Name		AS name
+		, Role			AS role
+	FROM tbl_Movies_IMDB_Companies WHERE id_Movies = $id_Movies`, { $id_Movies });
+
+	const companiesCategorized = [];
+
+	companies.forEach(company => {
+		if (!companiesCategorized.find(cc => cc.category === company.category)) {
+			companiesCategorized.push({
+				category: company.category,
+				items: []
+			})
+		}
+
+		companiesCategorized.find(cc => cc.category === company.category).items.push(company);
+	})
+
+	return companiesCategorized;
+}
+
 async function fetchIMDBPerson($IMDB_Person_ID) {
 	return await db.fireProcedureReturnAll(`
 	SELECT
@@ -2581,10 +2694,22 @@ async function addFilterPerson($IMDB_Person_ID, $Person_Name) {
 	await db.fireProcedure(`INSERT INTO tbl_Filter_persons (IMDB_Person_ID, Person_Name, created_at) VALUES ($IMDB_Person_ID, $Person_Name, DATETIME('now'))`, { $IMDB_Person_ID, $Person_Name });
 }
 
-async function deleteFiterPerson($id_Filter_Persons) {
+async function deleteFilterPerson($id_Filter_Persons) {
 	return await db.fireProcedureReturnScalar(`DELETE FROM tbl_Filter_Persons WHERE id_Filter_Persons = $id_Filter_Persons`, { $id_Filter_Persons });
 }
 
+async function addFilterCompany($IMDB_Company_ID, $Company_Name) {
+	const id_Filter_Companies = await db.fireProcedureReturnScalar(`SELECT id_Filter_Companies FROM tbl_Filter_Companies WHERE IMDB_Company_ID = $IMDB_Company_ID`, { $IMDB_Company_ID });
+	if (id_Filter_Companies) {
+		return;
+	}
+
+	await db.fireProcedure(`INSERT INTO tbl_Filter_Companies (IMDB_Company_ID, Company_Name, created_at) VALUES ($IMDB_Company_ID, $Company_Name, DATETIME('now'))`, { $IMDB_Company_ID, $Company_Name });
+}
+
+async function deleteFilterCompany($id_Filter_Companies) {
+	return await db.fireProcedureReturnScalar(`DELETE FROM tbl_Filter_Companies WHERE id_Filter_Companies = $id_Filter_Companies`, { $id_Filter_Companies });
+}
 
 export {
 	db,
@@ -2606,6 +2731,7 @@ export {
 	fetchFilterPersons,
 	fetchFilterYears,
 	fetchFilterQualities,
+	fetchFilterCompanies,
 	isScanning,
 	abortRescan,
 	createList,
@@ -2616,9 +2742,12 @@ export {
 	setLastAccess,
 	getCurrentTime,
 	fetchMovieCredits,
+	fetchMovieCompanies,
 	fetchIMDBPerson,
 	scrapeIMDBPersonData,
 	fetchNumMoviesForPerson,
 	addFilterPerson,
-	deleteFiterPerson
+	deleteFilterPerson,
+	addFilterCompany,
+	deleteFilterCompany
 }

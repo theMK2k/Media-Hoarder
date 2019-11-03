@@ -2,6 +2,7 @@
 - page: 42
 
 ## Other
+- filter by Person or Company: this should deselect all Persons and only select the one Person chosen (same with companies)
 - correctly implement scrollcontainer class (e.g. Medialist)
 OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 
@@ -28,10 +29,6 @@ OK - sourcePath: check for removed files
 - allow to re-assign new IMDB entry
     - perform rescan after re-assign (only this movie)
 - 
-
-## TV
-- have a 2- or 3-
-
 
 
 # QA
