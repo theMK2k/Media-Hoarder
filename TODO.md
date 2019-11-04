@@ -2,7 +2,7 @@
 - page: 42
 
 ## Other
-- filter by Person or Company: this should deselect all Persons and only select the one Person chosen (same with companies)
+- bottom bar should adjust to sidenav
 - correctly implement scrollcontainer class (e.g. Medialist)
 OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 
@@ -45,6 +45,7 @@ OK - sourcePath: check for removed files
 - min/maxAge is false when 0 is in place
 
 ## Other
+OK - filter by Person or Company: this should deselect all Persons and only select the one Person chosen (same with companies)
 OK - MultiPart: interpret "1_2" as "(1/2)"
 OK - exit menuitem
 OK - fix Age Rating filter (undetermined yields no results -> see filterParentalAdvisory)

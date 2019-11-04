@@ -398,7 +398,7 @@
           fixed
           dark
           v-show="scanInfo.show"
-          style="height: auto; padding: 4px 8px 4px 20px "
+          style="height: auto; padding: 4px 8px 4px 20px; z-index: 100"
         >
           <!-- v-model="bottomNav" -->
           <v-row align-content="start" justify="start">
@@ -481,9 +481,9 @@ export default {
     isScanning: false,
 
     scanInfo: {
-      show: false,
-      header: "",
-      details: ""
+      show: true,
+      header: "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z",
+      details: "some nice details"
     },
 
     snackbar: {
