@@ -6,40 +6,27 @@
 OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 
 ## Settings
-- minimumWaitForSetAccess (update Access datetime after ... seconds)
 
 ## Company
-- scrape from IMDB
-- find out a way to display the "top 5" companies involved
 
 ## Filters
 - Company (Search-filter)
 
-
 ## MediaList - Movie (non-selected)
-- MetaCritic Score
 
 ## MediaList - Selected Movie
-- show more information
-- 
 
 ## Edit Movie
 - allow to re-assign new IMDB entry
     - perform rescan after re-assign (only this movie)
 - 
 
-
-# QA
+## QA
 - check how fetchMedia/MediaList works if only filescan has been performed (no MI/IMDB data)
 
 - youtube (incl. subscription importer -> https://www.youtube.com/subscription_manager?action_takeout=1)
 
-
-
-
-
-
-# DONE
+## DONE
 - min/maxAge is false when 0 is in place
 
 ## Other
@@ -94,3 +81,14 @@ OK    - Metacritic Score
 
 ## Settings
 OK - sourcePath: check for removed files
+OK - minimumWaitForSetAccess (update Access datetime after ... seconds)
+
+## Company
+OK - scrape from IMDB
+OK - find out a way to display the "top 5" companies involved
+
+## MediaList - Movie (non-selected)
+OK - MetaCritic Score
+
+## MediaList - Selected Movie
+OK - show more information
