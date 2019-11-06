@@ -2,12 +2,10 @@
 - page: 42
 
 ## Other
-- bottom bar should adjust to sidenav
 - correctly implement scrollcontainer class (e.g. Medialist)
 OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 
 ## Settings
-OK - sourcePath: check for removed files
 - minimumWaitForSetAccess (update Access datetime after ... seconds)
 
 ## Company
@@ -45,6 +43,7 @@ OK - sourcePath: check for removed files
 - min/maxAge is false when 0 is in place
 
 ## Other
+OK - bottom bar should adjust to sidenav (we have its z-index at 100 now)
 OK - filter by Person or Company: this should deselect all Persons and only select the one Person chosen (same with companies)
 OK - MultiPart: interpret "1_2" as "(1/2)"
 OK - exit menuitem
@@ -92,3 +91,6 @@ OK    - Name
 OK    - Own Rating
 OK    - IMDB Rating
 OK    - Metacritic Score
+
+## Settings
+OK - sourcePath: check for removed files

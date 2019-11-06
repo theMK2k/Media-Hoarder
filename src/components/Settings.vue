@@ -11,10 +11,22 @@
       <v-btn v-on:click="browseVLCPath()" text small color="primary" style="margin-top: 16px">Browse</v-btn>
     </v-row>
 
+    <v-row style="margin: 0px">
+      <v-text-field
+        type="number"
+        label="Number of seconds a medium should run until 'last access' is updated"
+        v-model="minimumWaitForSetAccess"
+      ></v-text-field>
+    </v-row>
+
     <h3>Movies - Source Paths</h3>
     <div v-if="moviesSourcePaths.length == 0">no paths defined</div>
 
-    <div v-for="sourcePath in moviesSourcePaths" v-bind:key="sourcePath.id_SourcePaths" style="margin: 8px">
+    <div
+      v-for="sourcePath in moviesSourcePaths"
+      v-bind:key="sourcePath.id_SourcePaths"
+      style="margin: 8px"
+    >
       <mk-sourcepath
         v-bind:value="sourcePath"
         v-on:edit-description="onSourcePathEditDescription"
@@ -27,7 +39,11 @@
     <h3>TV - Sourcepaths</h3>
     <div v-if="tvSourcePaths.length == 0">no paths defined</div>
 
-    <div v-for="sourcePath in tvSourcePaths" v-bind:key="sourcePath.id_SourcePaths" style="margin: 8px">
+    <div
+      v-for="sourcePath in tvSourcePaths"
+      v-bind:key="sourcePath.id_SourcePaths"
+      style="margin: 8px"
+    >
       <mk-sourcepath
         v-bind:value="sourcePath"
         v-on:edit-description="onSourcePathEditDescription"
@@ -41,7 +57,7 @@
 
     <mk-sourcepath-description-dialog
       ref="sourcePathDescriptionDialog"
-			v-bind:show="sourcePathDescriptionDialog.show"
+      v-bind:show="sourcePathDescriptionDialog.show"
       title="Edit Description"
       v-bind:question="`Please provide a description for the source path ${sourcePathDescriptionDialog.Path} (${sourcePathDescriptionDialog.MediaTypeUpper})`"
       enterTextValue="true"
@@ -68,6 +84,7 @@
 <script>
 const { dialog, BrowserWindow } = require("electron").remote;
 const logger = require("loglevel");
+import * as _ from "lodash";
 
 import { eventBus } from "@/main";
 import * as store from "@/store";
@@ -83,6 +100,7 @@ export default {
 
   data: () => ({
     VLCPath: null,
+    minimumWaitForSetAccess: 5,
 
     sourcePaths: [],
 
@@ -105,6 +123,14 @@ export default {
 
     tmpPath: ""
   }),
+
+  watch: {
+    minimumWaitForSetAccess: function(newValue, oldValue) {
+      if (this.debouncedUpdateMinimumWaitForSetAccess) {
+        this.debouncedUpdateMinimumWaitForSetAccess();
+      }
+    }
+  },
 
   computed: {
     tvSourcePaths() {
@@ -136,7 +162,7 @@ export default {
 
           this.VLCPath = path[0];
 
-          store.setSetting('VLCPath', this.VLCPath);
+          store.setSetting("VLCPath", this.VLCPath);
         }
       );
     },
@@ -203,9 +229,11 @@ export default {
         sourcePathItem.id_SourcePaths;
       this.sourcePathDescriptionDialog.Path = sourcePathItem.Path;
       this.sourcePathDescriptionDialog.MediaTypeUpper = sourcePathItem.MediaType.toUpperCase();
-			this.sourcePathDescriptionDialog.Description = sourcePathItem.Description;
-			
-			this.$refs.sourcePathDescriptionDialog.initTextValue(sourcePathItem.Description);
+      this.sourcePathDescriptionDialog.Description = sourcePathItem.Description;
+
+      this.$refs.sourcePathDescriptionDialog.initTextValue(
+        sourcePathItem.Description
+      );
 
       this.sourcePathDescriptionDialog.show = true;
     },
@@ -306,13 +334,27 @@ export default {
           eventBus.showSnackbar("error", 6000, err);
         }
       })();
-    }
+    },
+
+    updateMinimumWaitForSetAccess: function() {
+      logger.log('updating minimumWaitForSetAccess setting:', this.minimumWaitForSetAccess);
+      store.setSetting('minimumWaitForSetAccess', this.minimumWaitForSetAccess);
+    },
   },
 
   // ### LifeCycle Hooks ###
   async created() {
     await this.fetchSourcePaths();
     this.VLCPath = await store.getSetting("VLCPath");
+    this.minimumWaitForSetAccess = await store.getSetting(
+      "minimumWaitForSetAccess"
+    );
+
+    // lodash debounced functions
+    this.debouncedUpdateMinimumWaitForSetAccess = _.debounce(
+      this.updateMinimumWaitForSetAccess,
+      500
+    );
   }
 };
 </script>
