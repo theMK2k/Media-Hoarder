@@ -2,6 +2,9 @@
 - page: 42
 
 ## Other
+- implement Company filter by Company Name instead of ID
+-> call companyDialog via eventBus when company is clicked in searchDialog
+
 - correctly implement scrollcontainer class (e.g. Medialist)
 OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 
