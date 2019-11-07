@@ -267,7 +267,7 @@
                 <v-row>
                   <v-btn text v-on:click="setAllPersons(false)">NONE</v-btn>
                   <v-btn text v-on:click="setAllPersons(true)">ALL</v-btn>
-                  <v-btn text v-on:click="addPerson()">ADD</v-btn>
+                  <v-btn text v-on:click="addPerson()">FIND</v-btn>
                 </v-row>
                 <v-row v-for="person in $shared.filterPersons" v-bind:key="person.IMDB_Person_ID">
                   <v-checkbox
@@ -299,7 +299,7 @@
                 <v-row>
                   <v-btn text v-on:click="setAllCompanies(false)">NONE</v-btn>
                   <v-btn text v-on:click="setAllCompanies(true)">ALL</v-btn>
-                  <v-btn text v-on:click="addCompany()">ADD</v-btn>
+                  <v-btn text v-on:click="addCompany()">FIND</v-btn>
                 </v-row>
                 <v-row
                   v-for="company in $shared.filterCompanies"
@@ -398,7 +398,8 @@
         <mk-search-companies-dialog
           ref="searchCompaniesDialog"
           v-bind:show="searchCompaniesDialog.show"
-          title="Search Company"
+          title="Find Company"
+					searchMode="companies"
           v-on:ok="onSearchCompaniesDialogOK"
           v-on:cancel="onSearchCompaniesDialogCancel"
         ></mk-search-companies-dialog>
@@ -406,7 +407,8 @@
         <mk-search-persons-dialog
           ref="searchPersonsDialog"
           v-bind:show="searchPersonsDialog.show"
-          title="Search Person"
+          title="Find Person"
+					searchMode="persons"
           v-on:ok="onSearchPersonsDialogOK"
           v-on:cancel="onSearchPersonsDialogCancel"
         ></mk-search-persons-dialog>
@@ -990,6 +992,29 @@ export default {
       this.$refs.searchPersonsDialog.init();
     },
 
+		onSearchPersonsDialogOK(chosenItem) {
+			// TODO: actually add the company as filter
+			this.searchPersonsDialog.show = false;
+		},
+
+		onSearchPersonsDialogCancel() {
+			this.searchPersonsDialog.show = false;
+		},
+
+    addCompany() {
+      this.searchCompaniesDialog.show = true;
+      this.$refs.searchCompaniesDialog.init();
+    },
+
+		onSearchCompaniesDialogOK(chosenItem) {
+			// TODO: actually add the company as filter
+			this.searchCompaniesDialog.show = false;
+		},
+
+		onSearchCompaniesDialogCancel() {
+			this.searchCompaniesDialog.show = false;
+		},
+
     quit() {
       remote.getCurrentWindow().close();
     }
@@ -1086,7 +1111,7 @@ export default {
     // lodash debounced functions
     this.debouncedEventBusSearchTextChanged = _.debounce(
       this.eventBusSearchTextChanged,
-      250
+      500
     );
 
     this.debouncedEventBusRefetchMedia = _.debounce(

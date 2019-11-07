@@ -78,6 +78,18 @@ export const eventBus = new Vue({
 		setFilter(setFilter) {
 			this.$emit('setFilter', setFilter);
 		},
+
+		showPersonDialog(credit) {
+			this.$emit('showPersonDialog', credit);
+		},
+
+		showCompanyDialog(company) {
+			this.$emit('showCompanyDialog', company);
+		},
+
+		personDialogConfirm(result) {
+			this.$emit('personDialogConfirm', result);
+		}
 	}
 });
 
