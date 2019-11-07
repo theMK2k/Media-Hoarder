@@ -478,7 +478,7 @@ export default {
     "mk-person-dialog": PersonDialog,
     "mk-company-dialog": CompanyDialog,
     "mk-video-player-dialog": VideoPlayerDialog,
-    "mk-edit-item-dialog": Dialog
+    "mk-edit-item-dialog": Dialog,
   },
 
   data: () => ({

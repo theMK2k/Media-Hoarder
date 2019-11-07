@@ -128,6 +128,7 @@ async function createIndexes(db) {
 		generateIndexQuery('tbl_Movies_IMDB_Companies', ['id_Movies'], false),
 		generateIndexQuery('tbl_Movies_IMDB_Companies', ['IMDB_Company_ID'], false),
 		generateIndexQuery('tbl_Movies_IMDB_Companies', ['id_Movies', 'Category', 'IMDB_Company_ID'], true),
+		generateIndexQuery('tbl_Movies_IMDB_Companies', ['Company_Name'], false),
 		generateIndexQuery('tbl_IMDB_Persons', ['IMDB_Person_ID'], true),
 	]
 

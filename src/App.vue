@@ -267,6 +267,7 @@
                 <v-row>
                   <v-btn text v-on:click="setAllPersons(false)">NONE</v-btn>
                   <v-btn text v-on:click="setAllPersons(true)">ALL</v-btn>
+                  <v-btn text v-on:click="addPerson()">ADD</v-btn>
                 </v-row>
                 <v-row v-for="person in $shared.filterPersons" v-bind:key="person.IMDB_Person_ID">
                   <v-checkbox
@@ -298,6 +299,7 @@
                 <v-row>
                   <v-btn text v-on:click="setAllCompanies(false)">NONE</v-btn>
                   <v-btn text v-on:click="setAllCompanies(true)">ALL</v-btn>
+                  <v-btn text v-on:click="addCompany()">ADD</v-btn>
                 </v-row>
                 <v-row
                   v-for="company in $shared.filterCompanies"
@@ -393,6 +395,22 @@
           v-on:cancel="onDeleteListDialogCancel"
         ></mk-delete-list-dialog>
 
+        <mk-search-companies-dialog
+          ref="searchCompaniesDialog"
+          v-bind:show="searchCompaniesDialog.show"
+          title="Search Company"
+          v-on:ok="onSearchCompaniesDialogOK"
+          v-on:cancel="onSearchCompaniesDialogCancel"
+        ></mk-search-companies-dialog>
+
+        <mk-search-persons-dialog
+          ref="searchPersonsDialog"
+          v-bind:show="searchPersonsDialog.show"
+          title="Search Person"
+          v-on:ok="onSearchPersonsDialogOK"
+          v-on:cancel="onSearchPersonsDialogCancel"
+        ></mk-search-persons-dialog>
+
         <!-- BOTTOM BAR -->
         <v-bottom-navigation
           fixed
@@ -458,10 +476,13 @@ import { eventBus } from "@/main";
 const logger = require("loglevel");
 
 import Dialog from "@/components/shared/Dialog.vue";
+import SearchDataDialog from "@/components/shared/SearchDataDialog.vue";
 
 export default {
   components: {
-    "mk-delete-list-dialog": Dialog
+    "mk-delete-list-dialog": Dialog,
+    "mk-search-companies-dialog": SearchDataDialog,
+    "mk-search-persons-dialog": SearchDataDialog
   },
 
   props: {
@@ -521,7 +542,15 @@ export default {
         Name: "Frightening",
         DisplayText: "Frightening & Intense Scenes"
       }
-    ]
+    ],
+
+    searchCompaniesDialog: {
+      show: false
+    },
+
+    searchPersonsDialog: {
+      show: false
+    },
   }),
 
   watch: {
@@ -954,6 +983,11 @@ export default {
         this.$shared.filterParentalAdvisory[category.Name].length +
         ")"
       );
+    },
+
+    addPerson() {
+      this.searchPersonsDialog.show = true;
+      this.$refs.searchPersonsDialog.init();
     },
 
     quit() {

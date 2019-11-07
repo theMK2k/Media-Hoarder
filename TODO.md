@@ -11,6 +11,7 @@ OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 
 ## Filters
 - Company (Search-filter)
+- Person (Search-filter)
 
 ## MediaList - Movie (non-selected)
 
