@@ -1590,15 +1590,15 @@ async function fetchMedia($MediaType) {
 		if (shared.filterCompanies && shared.filterCompanies.find(filter => !filter.Selected)) {
 
 			if (shared.filterCompanies.find(filter => (filter.Selected && !filter.id_Filter_Companies))) {
-				filterCompanies = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies_IMDB_Companies WHERE IMDB_Company_ID IN (SELECT IMDB_Company_ID FROM tbl_Filter_Companies)) `;
+				filterCompanies = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies_IMDB_Companies WHERE Company_Name IN (SELECT Company_Name FROM tbl_Filter_Companies)) `;
 			} else {
 				filterCompanies = `AND (1=0 `;
 			}
 
 			if (shared.filterCompanies.find(filter => (filter.Selected && filter.id_Filter_Companies))) {
-				filterCompanies += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_IMDB_Companies WHERE IMDB_Company_ID IN (`;
+				filterCompanies += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_IMDB_Companies WHERE Company_Name IN (`;
 
-				filterCompanies += shared.filterCompanies.filter(filter => filter.Selected).map(filter => filter.IMDB_Company_ID).reduce((prev, current) => {
+				filterCompanies += shared.filterCompanies.filter(filter => filter.Selected).map(filter => filter.Company_Name).reduce((prev, current) => {
 					return prev + (prev ? ', ' : '') + `'${current}'`;
 				}, '');
 
@@ -2266,7 +2266,6 @@ async function fetchFilterCompanies($MediaType) {
 	const results = await db.fireProcedureReturnAll(`
 		SELECT
 			0 AS id_Filter_Companies
-			, NULL AS IMDB_Company_ID
 			, '<any other company>' AS Company_Name
 			, 1 AS Selected
 			, (
@@ -2280,14 +2279,13 @@ async function fetchFilterCompanies($MediaType) {
 						FROM tbl_Movies_IMDB_Companies MC
 						INNER JOIN tbl_Movies MOV2 ON MC.id_Movies = MOV2.id_Movies
 						INNER JOIN tbl_SourcePaths SP2 ON MOV2.id_SourcePaths = SP2.id_SourcePaths AND SP2.MediaType = $MediaType
-						WHERE MC.IMDB_Company_ID IN (SELECT IMDB_Company_ID FROM tbl_Filter_Companies)
+						WHERE MC.Company_Name IN (SELECT Company_Name FROM tbl_Filter_Companies)
 					)
 				)
 			AS NumMovies
 		UNION
 		SELECT
 			id_Filter_Companies
-			, IMDB_Company_ID
 			, Company_Name
 			, 1 AS Selected
 			, (
@@ -2296,7 +2294,7 @@ async function fetchFilterCompanies($MediaType) {
 						FROM tbl_Movies_IMDB_Companies MC
 						INNER JOIN tbl_Movies MOV ON MC.id_Movies = MOV.id_Movies AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
 						INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
-						WHERE MC.IMDB_Company_ID = FILTERCOMPANY.IMDB_Company_ID
+						WHERE MC.Company_Name = FILTERCOMPANY.Company_Name
 					)
 			) AS NumMovies
 		FROM tbl_Filter_Companies FILTERCOMPANY
@@ -2700,13 +2698,13 @@ async function deleteFilterPerson($id_Filter_Persons) {
 	return await db.fireProcedureReturnScalar(`DELETE FROM tbl_Filter_Persons WHERE id_Filter_Persons = $id_Filter_Persons`, { $id_Filter_Persons });
 }
 
-async function addFilterCompany($IMDB_Company_ID, $Company_Name) {
-	const id_Filter_Companies = await db.fireProcedureReturnScalar(`SELECT id_Filter_Companies FROM tbl_Filter_Companies WHERE IMDB_Company_ID = $IMDB_Company_ID`, { $IMDB_Company_ID });
+async function addFilterCompany($Company_Name) {
+	const id_Filter_Companies = await db.fireProcedureReturnScalar(`SELECT id_Filter_Companies FROM tbl_Filter_Companies WHERE Company_Name = $Company_Name`, { $Company_Name });
 	if (id_Filter_Companies) {
 		return;
 	}
 
-	await db.fireProcedure(`INSERT INTO tbl_Filter_Companies (IMDB_Company_ID, Company_Name, created_at) VALUES ($IMDB_Company_ID, $Company_Name, DATETIME('now'))`, { $IMDB_Company_ID, $Company_Name });
+	await db.fireProcedure(`INSERT INTO tbl_Filter_Companies (Company_Name, created_at) VALUES ($Company_Name, DATETIME('now'))`, { $Company_Name });
 }
 
 async function deleteFilterCompany($id_Filter_Companies) {

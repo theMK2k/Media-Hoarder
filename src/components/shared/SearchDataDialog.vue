@@ -78,21 +78,33 @@ export default {
 
       let sql = "";
       if (this.searchMode === "companies") {
-        sql = `
+				// todo filter: (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+				sql = `
 				SELECT
 							Company_Name AS name
-							, (SELECT COUNT(1) FROM (SELECT DISTINCT id_Movies FROM tbl_Movies_IMDB_Companies MC2 WHERE MC2.Company_Name = MC.Company_Name)) AS NumMovies
+							, (SELECT COUNT(1) FROM (
+									SELECT DISTINCT
+										id_Movies
+									FROM tbl_Movies_IMDB_Companies MC2
+									WHERE MC2.Company_Name = MC.Company_Name
+								)) AS NumMovies
 					FROM tbl_Movies_IMDB_Companies MC
 					WHERE Company_Name LIKE '${searchText}%'
 					GROUP BY Company_Name`;
       }
 
       if (this.searchMode === "persons") {
-        sql = `
+				// todo filter: (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+				sql = `
 				SELECT
 							Person_Name AS name
 							, IMDB_Person_ID AS id
-							, (SELECT COUNT(1) FROM (SELECT DISTINCT id_Movies FROM tbl_Movies_IMDB_Credits MC2 WHERE MC2.Person_Name = MC.Person_Name)) AS NumMovies
+							, (SELECT COUNT(1) FROM (
+									SELECT DISTINCT
+										id_Movies
+									FROM tbl_Movies_IMDB_Credits MC2
+									WHERE MC2.Person_Name = MC.Person_Name
+								)) AS NumMovies
 					FROM tbl_Movies_IMDB_Credits MC
 					WHERE Person_Name LIKE '${searchText}%'
 					GROUP BY Person_Name`;

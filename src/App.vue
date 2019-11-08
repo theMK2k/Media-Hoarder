@@ -303,7 +303,7 @@
                 </v-row>
                 <v-row
                   v-for="company in $shared.filterCompanies"
-                  v-bind:key="company.IMDB_Company_ID"
+                  v-bind:key="company.Company_Name"
                 >
                   <v-checkbox
                     v-bind:label="company.Company_Name + ' (' + company.NumMovies + ')'"
@@ -849,7 +849,7 @@ export default {
       this.$shared.filterCompanies.forEach(sp => {
         if (
           exclusionList &&
-          exclusionList.find(val => sp.IMDB_Company_ID === val)
+          exclusionList.find(val => sp.Company_Name === val)
         ) {
           sp.Selected = !value;
           return;

@@ -164,11 +164,11 @@ export default {
     },
 
     async onFilterClick() {
-			await store.addFilterCompany(this.IMDB_Company_ID, this.Company_Name);
+			await store.addFilterCompany(this.Company_Name);
 
 			const setFilter = {
 				filterCompanies: [
-					this.IMDB_Company_ID
+					this.Company_Name
 				]
 			};
 
