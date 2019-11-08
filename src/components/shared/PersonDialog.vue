@@ -107,7 +107,6 @@ export default {
     },
 
     async scrapeData() {
-      // TODO: scrape from IMDB.com
       logger.log("PersonDialog SCRAPE!");
       this.isScraping = true;
 
@@ -128,8 +127,6 @@ export default {
         };
 
         logger.log("this.personData:", this.personData);
-
-        // TODO: save to tbl_IMDB_Persons
       } catch (err) {
         logger.log(err);
         eventBus.showSnackbar(
@@ -143,8 +140,6 @@ export default {
     },
 
     async init(IMDB_Person_ID) {
-      // TODO: fetch data for this person from DB
-      // TODO: if no data available, try to scrape it
       logger.log("PersonDialog INIT!");
       this.personData = {};
       this.showLongBio = false;

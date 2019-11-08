@@ -262,9 +262,6 @@
               >Persons {{filterPersonsTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <!-- TODO: add text-field search -->
-                </v-row>
-                <v-row>
                   <v-btn text v-on:click="setAllPersons(false)">NONE</v-btn>
                   <v-btn text v-on:click="setAllPersons(true)">ALL</v-btn>
                   <v-btn text v-on:click="addPerson()">FIND</v-btn>
@@ -293,9 +290,6 @@
                 style="padding: 8px!important"
               >Companies {{filterCompaniesTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
-                <v-row>
-                  <!-- TODO: add text-field search -->
-                </v-row>
                 <v-row>
                   <v-btn text v-on:click="setAllCompanies(false)">NONE</v-btn>
                   <v-btn text v-on:click="setAllCompanies(true)">ALL</v-btn>
@@ -400,7 +394,6 @@
           v-bind:show="searchCompaniesDialog.show"
           title="Find Company"
 					searchMode="companies"
-          v-on:ok="onSearchCompaniesDialogOK"
           v-on:cancel="onSearchCompaniesDialogCancel"
         ></mk-search-companies-dialog>
 
@@ -409,7 +402,6 @@
           v-bind:show="searchPersonsDialog.show"
           title="Find Person"
 					searchMode="persons"
-          v-on:ok="onSearchPersonsDialogOK"
           v-on:cancel="onSearchPersonsDialogCancel"
         ></mk-search-persons-dialog>
 
@@ -992,11 +984,6 @@ export default {
       this.$refs.searchPersonsDialog.init();
     },
 
-		onSearchPersonsDialogOK(chosenItem) {
-			// TODO: actually add the company as filter
-			this.searchPersonsDialog.show = false;
-		},
-
 		onSearchPersonsDialogCancel() {
 			this.searchPersonsDialog.show = false;
 		},
@@ -1005,11 +992,6 @@ export default {
       this.searchCompaniesDialog.show = true;
       this.$refs.searchCompaniesDialog.init();
     },
-
-		onSearchCompaniesDialogOK(chosenItem) {
-			// TODO: actually add the company as filter
-			this.searchCompaniesDialog.show = false;
-		},
 
 		onSearchCompaniesDialogCancel() {
 			this.searchCompaniesDialog.show = false;

@@ -97,29 +97,10 @@ export default {
     },
 
     async scrapeData() {
-      // TODO: scrape from IMDB.com
-      logger.log("PersonDialog SCRAPE!");
+      logger.log("CompanyDialog SCRAPE!");
       this.isScraping = true;
 
       try {
-        // const personData = await store.scrapeIMDBPersonData(
-        //   this.IMDB_Person_ID
-        // );
-
-        // logger.log("scraped personData:", personData);
-
-        // this.personData = {
-        //   IMDB_Person_ID: personData.$IMDB_Person_ID,
-        //   Photo_URL: personData.$Photo_URL
-        //     ? helpers.getPath(personData.$Photo_URL)
-        //     : personData.$Photo_URL,
-        //   ShortBio: personData.$ShortBio,
-        //   LongBio: personData.$LongBio
-        // };
-
-        // logger.log("this.personData:", this.personData);
-
-        // TODO: save to tbl_IMDB_Persons
       } catch (err) {
         logger.log(err);
         eventBus.showSnackbar(
@@ -133,26 +114,9 @@ export default {
     },
 
     async init(IMDB_Person_ID) {
-      // TODO: fetch data for this person from DB
-      // TODO: if no data available, try to scrape it
       logger.log("CompanyDialog INIT!");
       this.personData = {};
       this.showLongBio = false;
-
-			// let personData = await store.fetchIMDBPerson(IMDB_Person_ID);
-
-			// logger.log('fetched personData:', personData);
-
-      // if (!personData || personData.length === 0) {
-			// 	await this.scrapeData();
-			// 	return;
-			// }
-			
-			// personData = personData[0];
-
-			// personData.Photo_URL = personData.Photo_URL
-      //       ? helpers.getPath(personData.Photo_URL)
-      //       : personData.Photo_URL;
 
 			this.personData = personData;
 

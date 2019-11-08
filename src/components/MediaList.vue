@@ -665,11 +665,6 @@ export default {
           this.$set(movie, "selected", true);
           // movie.selected = true;
         }
-
-        // TODO: currently needed for changedetection of item.selected (interesting)
-        // const items = this.items;
-        // this.items = [];
-        // this.items = items;
       })();
     },
 
@@ -998,7 +993,6 @@ export default {
       }
 
       if (!movie.credits) {
-        // TODO: load credits from store and assign to movie.credits
         const credits = await store.fetchMovieCredits(movie.id_Movies);
 
         logger.log(credits);
@@ -1016,7 +1010,6 @@ export default {
       }
 
       if (!movie.companies) {
-        // TODO: load companies from store and assign to movie.companies
         const companies = await store.fetchMovieCompanies(movie.id_Movies);
 
         logger.log(companies);

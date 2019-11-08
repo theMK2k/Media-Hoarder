@@ -430,8 +430,6 @@ async function listPath(scanPath) {
 
 async function applyIMDBMetaData(onlyNew) {
 	// create Name, Name2 etc. from IMDBData for each movie
-	// TODO: add this to fetchIMDBData
-
 	logger.log('applying IMDB Metadata...');
 
 	const movies = await db.fireProcedureReturnAll(`
@@ -536,8 +534,8 @@ async function rescanMoviesMetaData(onlyNew) {
 }
 
 async function applyMediaInfo(movie, onlyNew) {
-	// TODO:	run mediainfo on movie file
-	//				parse mediainfo result and save to db
+	// run mediainfo on movie file
+	//parse mediainfo result and save to db
 	if (onlyNew && movie.MI_Done) {
 		return;
 	}
@@ -660,13 +658,13 @@ async function applyMediaInfo(movie, onlyNew) {
 }
 
 async function findIMDBtconst(movie, onlyNew) {
-	// TODO:	find IMDB tconst (currently just from filename)
-	//				save IMDB_tconst to db
+	// find IMDB tconst (currently just from filename)
+	// save IMDB_tconst to db
 	if (onlyNew && movie.IMDB_Done) {
 		return;
 	}
 
-	// TODO: currently we just use the tconst contained in the filename
+	// TODO: currently we just use the tconst contained in the filename - a more sophisticated way should be implemented (esp. when tconst is not part of the filename)
 	if (/\[tt\d*?\]/.test(movie.Filename)) {
 		movie.IMDB_tconst = movie.Filename.match(/\[(tt\d*?)\]/)[1];
 
