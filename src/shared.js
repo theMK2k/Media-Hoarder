@@ -19,6 +19,29 @@ const shared = new Vue({
 		filterYears: [],
 		filterQualities: [],
 		filterCompanies: [],
+
+		contentAdvisoryCategories: [
+      {
+        Name: "Nudity",
+        DisplayText: "Sex & Nudity"
+      },
+      {
+        Name: "Violence",
+        DisplayText: "Violence & Gore"
+      },
+      {
+        Name: "Profanity",
+        DisplayText: "Profanity"
+      },
+      {
+        Name: "Alcohol",
+        DisplayText: "Alcohol, Drugs & Smoking"
+      },
+      {
+        Name: "Frightening",
+        DisplayText: "Frightening & Intense Scenes"
+      }
+    ],
 	}
 });
 

@@ -2,9 +2,8 @@
 - page: 42
 
 ## Other
-- filescan new fields:
-	- size (display humanized e.g. 13.5 GB, 760 MB)
-	- creation date
+- Rescan: when a movie was moved (same filename just deleted at location X and added on location Y)
+	-> copy over userdefined data (e.g. rating etc. also member of lists)
 
 OK - implement Company filter by Company Name instead of ID
 OK -> call companyDialog via eventBus when company is clicked in searchDialog
@@ -39,6 +38,10 @@ OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 - min/maxAge is false when 0 is in place
 
 ## Other
+OK - filescan new fields:
+OK	- size (display humanized e.g. 13.5 GB, 760 MB)
+OK	- creation date
+
 OK - bottom bar should adjust to sidenav (we have its z-index at 100 now)
 OK - filter by Person or Company: this should deselect all Persons and only select the one Person chosen (same with companies)
 OK - MultiPart: interpret "1_2" as "(1/2)"
@@ -101,3 +104,4 @@ OK - MetaCritic Score
 
 ## MediaList - Selected Movie
 OK - show more information
+OK - add Content Advisory (Sex & Nudity, Gore etc.)

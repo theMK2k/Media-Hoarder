@@ -29,7 +29,7 @@ import { shared } from '@/shared';
 
 const scanOptions = {
 	filescanMovies: true,																								// enable file scan
-	filescanMovies_id_SourcePaths_IN: '(5, 10)',													// only scan certain SourcePaths
+	// filescanMovies_id_SourcePaths_IN: '(5, 10)',											// only scan certain SourcePaths
 
 	// rescanMoviesMetaData: true,
 

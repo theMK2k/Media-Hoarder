@@ -283,7 +283,10 @@
               </v-row>
               <v-row>
                 <v-col class="detailLabel">File Created at:</v-col>
-                <v-col v-if="item.file_created_at" class="detailContent">{{ moment().utc(parseInt(item.file_created_at)).local().format("YYYY-MM-DD HH:mm:ss") }}</v-col>
+                <v-col
+                  v-if="item.file_created_at"
+                  class="detailContent"
+                >{{ moment().utc(parseInt(item.file_created_at)).local().format("YYYY-MM-DD HH:mm:ss") }}</v-col>
               </v-row>
 
               <v-row>
@@ -386,6 +389,34 @@
                     <v-col class="creditsContent">{{ company.role }}</v-col>
                   </v-row>
                 </div>
+              </div>
+
+              <!-- CONTENT ADVISORY -->
+              <v-row
+                style="padding-left: 16px; padding-top: 4px; align-items: flex-end;"
+                class="Clickable"
+                v-on:click.stop="showContentAdvisory(item, !item.showContentAdvisory)"
+              >
+                <span style="font-size: 20px">Content Advisory&nbsp;</span>
+              </v-row>
+
+              <div
+                style="margin-left: 24px;"
+                v-if="item.showContentAdvisory"
+                v-on:click.stop="showContentAdvisory(item, false)"
+              >
+                <v-row
+                  v-for="category in $shared.contentAdvisoryCategories"
+                  v-bind:key="category.Name"
+                >
+                  <v-col sm="4" class="creditsLabel">{{ category.DisplayText }}</v-col>
+                  <v-col sm="1" class="creditsContent">
+                    <!-- <span v-if="company.role">...</span> -->
+                  </v-col>
+                  <v-col
+                    class="creditsContent"
+                  >{{ contentAdvisorySeverityDisplayText(item[`IMDB_Parental_Advisory_${category.Name}`]) }}</v-col>
+                </v-row>
               </div>
 
               <v-row style="margin-top: 8px">
@@ -642,13 +673,13 @@ export default {
   },
 
   methods: {
-		moment() {
-			return moment;
-		},
-		
-		Humanize() {
-			return Humanize;
-		},
+    moment() {
+      return moment;
+    },
+
+    Humanize() {
+      return Humanize;
+    },
 
     changeRating(movie, i) {
       (async () => {
@@ -1083,6 +1114,24 @@ export default {
 
     onEditItemDialogCancel() {
       this.editItemDialog.show = false;
+    },
+
+    contentAdvisorySeverityDisplayText(severity) {
+      if (severity == 0) {
+        return "None";
+      } else if (severity == 1) {
+        return "Mild";
+      } else if (severity == 2) {
+        return "Moderate";
+      } else if (severity == 3) {
+        return "Severe";
+      }
+
+      return "<not available>";
+    },
+
+    showContentAdvisory(movie, show) {
+      this.$set(movie, "showContentAdvisory", show);
     }
   },
 
