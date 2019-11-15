@@ -13,7 +13,7 @@ const levenshtein = require('fast-levenshtein');
 const readdirAsync = util.promisify(fs.readdir);
 const writeFileAsync = util.promisify(fs.writeFile);
 const existsAsync = util.promisify(fs.exists);
-// const lstatAsync = util.promisify(fs.lstat);
+const statAsync = util.promisify(fs.stat);
 const execAsync = util.promisify(child_process.exec);
 const requestGetAsync = util.promisify(request.get);
 
@@ -28,26 +28,29 @@ import { languages } from '@/languages';
 import { shared } from '@/shared';
 
 const scanOptions = {
-	filescanMovies: true,
+	filescanMovies: true,																								// enable file scan
+	filescanMovies_id_SourcePaths_IN: '(5, 10)',													// only scan certain SourcePaths
 
-	rescanMoviesMetaData: true,
-	// rescanMoviesMetaData_id_SourcePaths_IN: '(5, 10)',
+	// rescanMoviesMetaData: true,
+
+	// rescanMoviesMetaData_id_SourcePaths_IN: '(5, 10)',								// only rescan metadata in certain SourcePaths
 	// rescanMoviesMetaData_id_Movies: 277,
 	// rescanMoviesMetaData_maxEntries: 10,
-	rescanMoviesMetaData_applyMediaInfo: true,
-	rescanMoviesMetaData_findIMDBtconst: true,
-	rescanMoviesMetaData_fetchIMDBMetaData: true,
-	rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
-	rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
-	rescanMoviesMetaData_fetchIMDBMetaData_technicalData: true,
-	rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: true,
-	rescanMoviesMetaData_fetchIMDBMetaData_creditsData: true,
-	rescanMoviesMetaData_fetchIMDBMetaData_companiesData: true,
-	rescanMoviesMetaData_saveIMDBData: true,
 
-	applyIMDBMetaData: true,
+	// rescanMoviesMetaData_applyMediaInfo: true,
+	// rescanMoviesMetaData_findIMDBtconst: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData_technicalData: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData_creditsData: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData_companiesData: true,
+	// rescanMoviesMetaData_saveIMDBData: true,
 
-	mergeExtras: true,
+	// applyIMDBMetaData: true,
+
+	// mergeExtras: true,
 }
 
 const definedError = require('@/helpers/defined-error');
@@ -168,7 +171,7 @@ async function rescan(onlyNew) {
 
 	// await rescanTV();								// TODO
 
-	await mergeExtras(onlyNew);
+	if (scanOptions.mergeExtras) await mergeExtras(onlyNew);
 
 	// clear isNew flag from all entries
 	await db.fireProcedure(`UPDATE tbl_Movies SET isNew = 0`, []);
@@ -306,7 +309,9 @@ async function filescanMovies(onlyNew) {
 				, Path
 				, Description
 				, checkRemovedFiles
-			FROM tbl_SourcePaths WHERE MediaType = 'movies'
+			FROM tbl_SourcePaths
+			WHERE MediaType = 'movies'
+			${scanOptions.filescanMovies_id_SourcePaths_IN ? 'AND id_SourcePaths IN ' + scanOptions.filescanMovies_id_SourcePaths_IN : ''}
 		`);
 
 		for (let i = 0; i < moviesSourcePaths.length; i++) {
@@ -348,7 +353,7 @@ async function filescanMoviesPath(onlyNew, moviesHave, id_SourcePaths, scanPath)
 
 				if (movieHave) {
 					logger.log('HAVE:', pathLower, 'movieHave:', movieHave);
-					await db.fireProcedure(`UPDATE tbl_Movies SET isRemoved = 0 WHERE id_Movies = $id_Movies`, { $id_Movies: movieHave.id_Movies });
+					await db.fireProcedure(`UPDATE tbl_Movies SET isRemoved = 0, Size = $Size, file_created_at = $file_created_at WHERE id_Movies = $id_Movies`, { $id_Movies: movieHave.id_Movies, $Size: pathItem.Size, $file_created_at: pathItem.file_created_at });
 					continue;
 				}
 
@@ -385,6 +390,8 @@ async function addMovie(id_SourcePaths, pathItem) {
 			, Path
 			, Directory
 			, Filename
+			, Size
+			, file_created_at
 			, created_at
 			, isNew
 		) VALUES (
@@ -392,6 +399,8 @@ async function addMovie(id_SourcePaths, pathItem) {
 			, $Path
 			, $Directory
 			, $Filename
+			, $Size
+			, $created_at
 			, DATETIME('now')
 			, 1
 		)`,
@@ -399,7 +408,9 @@ async function addMovie(id_SourcePaths, pathItem) {
 			$id_SourcePaths: id_SourcePaths,
 			$Path: pathItem.Path,
 			$Directory: pathItem.Directory,
-			$Filename: pathItem.Name
+			$Filename: pathItem.Name,
+			$Size: pathItem.Size,
+			$file_created_at: pathItem.$file_created_at
 		}
 	);
 }
@@ -414,17 +425,25 @@ async function listPath(scanPath) {
 	for (let i = 0; i < readdirResult.length; i++) {
 		const dirent = readdirResult[i];
 
+		const fullPath = path.join(scanPath, dirent.name);
+
+		const stats = await statAsync(fullPath);
+
 		arrResult.push({
-			Path: path.join(scanPath, dirent.name),
+			Path: fullPath,
 			Name: dirent.name,
 			Directory: scanPath,
 			ExtensionLower: path.extname(dirent.name).toLowerCase(),
 			isFile: dirent.isFile(),
-			isDirectory: dirent.isDirectory()
+			isDirectory: dirent.isDirectory(),
+			Size: stats.size,
+			file_created_at: stats.mtime,
+			stats
 		})
 	}
 
 	logger.log('listPath arrResult:', arrResult);
+
 	return arrResult;
 }
 
@@ -1666,6 +1685,8 @@ async function fetchMedia($MediaType) {
 			MOV.id_Movies
 			, MOV.Path
 			, MOV.FileName
+			, MOV.Size
+			, MOV.file_created_at
 			, MOV.Name
 			, MOV.Name2
 			, MOV.startYear

@@ -243,11 +243,10 @@
                         <a
                           class="Clickable"
                           v-on:click.stop="onCompanyClicked(company)"
-                        >{{ company.name }}</a> 
+                        >{{ company.name }}</a>
                       </span>
                     </div>
                   </v-row>
-
                 </v-col>
               </v-list-item-content>
             </v-list-item>
@@ -278,6 +277,14 @@
                   </v-tooltip>
                 </v-col>
               </v-row>
+              <v-row>
+                <v-col class="detailLabel">Size:</v-col>
+                <v-col v-if="item.Size" class="detailContent">{{ Humanize().fileSize(item.Size) }}</v-col>
+              </v-row>
+              <v-row>
+                <v-col class="detailLabel">File Created at:</v-col>
+                <v-col v-if="item.file_created_at" class="detailContent">{{ moment().utc(parseInt(item.file_created_at)).local().format("YYYY-MM-DD HH:mm:ss") }}</v-col>
+              </v-row>
 
               <v-row>
                 <v-col class="detailLabel">In Lists:</v-col>
@@ -306,9 +313,7 @@
                   class="Clickable"
                   style="padding-left: 24px; padding-top: 4px; align-items: flex-end;"
                   v-on:click.stop="launch(extra)"
-                >
-                  {{ extra.Name }}
-                </v-row>
+                >{{ extra.Name }}</v-row>
               </div>
 
               <!-- FULL CREDITS -->
@@ -456,6 +461,8 @@
 </template>
 
 <script>
+import * as Humanize from "humanize-plus";
+
 import * as store from "@/store";
 import { eventBus } from "@/main";
 import Dialog from "@/components/shared/Dialog.vue";
@@ -477,7 +484,7 @@ export default {
     "mk-person-dialog": PersonDialog,
     "mk-company-dialog": CompanyDialog,
     "mk-video-player-dialog": VideoPlayerDialog,
-    "mk-edit-item-dialog": Dialog,
+    "mk-edit-item-dialog": Dialog
   },
 
   data: () => ({
@@ -529,14 +536,14 @@ export default {
 
     personDialog: {
       show: false,
-			IMDB_Person_ID: null,
-			Person_Name: null,
+      IMDB_Person_ID: null,
+      Person_Name: null
     },
 
-		companyDialog: {
+    companyDialog: {
       show: false,
-			IMDB_Company_ID: null,
-			Company_Name: null,
+      IMDB_Company_ID: null,
+      Company_Name: null
     },
 
     videoPlayerDialog: {
@@ -608,11 +615,11 @@ export default {
             a[this.sort] instanceof String
           ) {
             if (this.sort === "created_at" || this.sort === "last_access_at") {
-							if (!a[this.sort] || !b[this.sort]) {
-								return -1;
-							}
-							
-							// we sort dates in reverse order (earliest first)
+              if (!a[this.sort] || !b[this.sort]) {
+                return -1;
+              }
+
+              // we sort dates in reverse order (earliest first)
               if (a[this.sort].toLowerCase() > b[this.sort].toLowerCase()) {
                 return -1;
               }
@@ -635,6 +642,14 @@ export default {
   },
 
   methods: {
+		moment() {
+			return moment;
+		},
+		
+		Humanize() {
+			return Humanize;
+		},
+
     changeRating(movie, i) {
       (async () => {
         if (movie.Rating == i) {
@@ -671,7 +686,7 @@ export default {
     async launch(movie) {
       const start = moment();
 
-			await store.launchMovie(movie);
+      await store.launchMovie(movie);
 
       const end = moment();
 
@@ -681,9 +696,9 @@ export default {
 
       let minimumWaitForSetAccess = await store.getSetting(
         "minimumWaitForSetAccess"
-			);
-			
-			logger.log('minimumWaitForSetAccess:', minimumWaitForSetAccess);
+      );
+
+      logger.log("minimumWaitForSetAccess:", minimumWaitForSetAccess);
 
       if (minimumWaitForSetAccess) {
         minimumWaitForSetAccess = parseInt(minimumWaitForSetAccess);
@@ -875,8 +890,8 @@ export default {
     },
 
     async fetchFilters(setFilter) {
-			eventBus.showLoadingOverlay(true);
-			await store.fetchFilterSourcePaths(this.mediatype);
+      eventBus.showLoadingOverlay(true);
+      await store.fetchFilterSourcePaths(this.mediatype);
       await store.fetchFilterGenres(this.mediatype);
       await store.fetchFilterAgeRatings(this.mediatype);
       await store.fetchFilterRatings(this.mediatype);
@@ -885,12 +900,12 @@ export default {
       await store.fetchFilterPersons(this.mediatype);
       await store.fetchFilterCompanies(this.mediatype);
       await store.fetchFilterYears(this.mediatype);
-			await store.fetchFilterQualities(this.mediatype);
-			
-			if (setFilter) {
-				eventBus.setFilter(setFilter);
-			}
-			eventBus.showLoadingOverlay(false);
+      await store.fetchFilterQualities(this.mediatype);
+
+      if (setFilter) {
+        eventBus.setFilter(setFilter);
+      }
+      eventBus.showLoadingOverlay(false);
     },
 
     onCreditClicked(credit) {
@@ -916,8 +931,7 @@ export default {
       return;
     },
 
-
-		lastAccessHumanized(movie) {
+    lastAccessHumanized(movie) {
       if (!movie.last_access_at) {
         return "none";
       }
@@ -1020,15 +1034,15 @@ export default {
       this.$set(movie, "showCompanies", true);
     },
 
-		onPersonDialogClose() {
+    onPersonDialogClose() {
       this.personDialog.show = false;
     },
 
-		onCompanyDialogClose() {
+    onCompanyDialogClose() {
       this.companyDialog.show = false;
     },
 
-		onVideoPlayerDialogClose() {
+    onVideoPlayerDialogClose() {
       this.videoPlayerDialog.show = false;
     },
 
@@ -1102,7 +1116,7 @@ export default {
       })();
     });
 
-    eventBus.$on("refetchFilters", (setFilter) => {
+    eventBus.$on("refetchFilters", setFilter => {
       this.fetchFilters(setFilter);
     });
 
@@ -1114,15 +1128,15 @@ export default {
     eventBus.$on("listDialogSetCreateNewList", value => {
       this.listDialog.createNewList = value;
       this.listDialog.useExistingLists = !value;
-		});
-		
-		eventBus.$on("showPersonDialog", value => {
-			this.onCreditClicked(value);
-		});
+    });
 
-		eventBus.$on("showCompanyDialog", value => {
-			this.onCompanyClicked(value);
-		});
+    eventBus.$on("showPersonDialog", value => {
+      this.onCreditClicked(value);
+    });
+
+    eventBus.$on("showCompanyDialog", value => {
+      this.onCompanyClicked(value);
+    });
 
     this.updateCurrentTime();
 

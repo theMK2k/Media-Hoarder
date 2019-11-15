@@ -2,8 +2,13 @@
 - page: 42
 
 ## Other
-- implement Company filter by Company Name instead of ID
--> call companyDialog via eventBus when company is clicked in searchDialog
+- filescan new fields:
+	- size (display humanized e.g. 13.5 GB, 760 MB)
+	- creation date
+
+OK - implement Company filter by Company Name instead of ID
+OK -> call companyDialog via eventBus when company is clicked in searchDialog
+	-> some numbers mismatch (filter and main list)
 
 - correctly implement scrollcontainer class (e.g. Medialist)
 OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
