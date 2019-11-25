@@ -301,6 +301,12 @@
                   <span
                     v-if="!itemDetails.lists || itemDetails.lists.length === 0"
                   >&lt;not in any list&gt;</span>
+                  <v-btn text small color="primary" v-on:click.stop="addToList(item)">Add</v-btn>
+                  <v-btn
+                    v-if="itemDetails.lists && itemDetails.lists.length > 0"
+                    text small color="primary"
+                    v-on:click.stop="removeFromList(item)"
+                  >Remove</v-btn>
                 </v-col>
               </v-row>
 
@@ -420,15 +426,9 @@
               </div>
 
               <v-row style="margin-top: 8px">
-                <v-btn text v-on:click.stop="openIMDB(item)">Open IMDB</v-btn>
-                <v-btn text v-on:click.stop="copyInfo(item)">Copy Info</v-btn>
-                <v-btn text v-on:click.stop="addToList(item)">Add to List</v-btn>
-                <v-btn
-                  v-if="itemDetails.lists && itemDetails.lists.length > 0"
-                  text
-                  v-on:click.stop="removeFromList(item)"
-                >Remove from List</v-btn>
-                <v-btn v-if="item.IMDB_Trailer_URL" text v-on:click.stop="showTrailer(item)">Trailer</v-btn>
+                <v-btn text  color="primary" v-on:click.stop="copyInfo(item)">Copy Info</v-btn>
+                <v-btn v-if="item.IMDB_Trailer_URL" text color="primary" v-on:click.stop="showTrailer(item)">Trailer</v-btn>
+                <v-btn text color="primary" v-on:click.stop="openIMDB(item)">Open IMDB</v-btn>
               </v-row>
             </v-col>
           </v-card>
