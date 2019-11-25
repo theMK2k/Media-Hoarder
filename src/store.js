@@ -2516,7 +2516,7 @@ async function fetchFilterLists($MediaType) {
 
 	if (filterValues && filterValues.filterLists) {
 		results.forEach(result => {
-			const filterValue = filterValues.filterLists.find(value => value.Description === result.Description);
+			const filterValue = filterValues.filterLists.find(value => value.Name === result.Name);
 
 			if (filterValue) {
 				result.Selected = filterValue.Selected;

@@ -2,6 +2,7 @@
 - page: 56 (God bless America)
 
 ## Other
+- Remove movie from list -> Reload -> List is unchecked (why?)
 - Rescan: when a movie was moved (same filename just deleted at location X and added on location Y)
 	-> copy over userdefined data (e.g. rating etc. also member of lists)
 
