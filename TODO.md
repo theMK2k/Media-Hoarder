@@ -2,7 +2,6 @@
 - page: 56 (God bless America)
 
 ## Other
-- Remove movie from list -> Reload -> List is unchecked (why?)
 - Rescan: when a movie was moved (same filename just deleted at location X and added on location Y)
 	-> copy over userdefined data (e.g. rating etc. also member of lists)
 
@@ -27,7 +26,8 @@ OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 
 ## Edit Movie
 - allow to re-assign new IMDB entry
-    - perform rescan after re-assign (only this movie)
+    -> opens IMDB search (store/scrapeIMDBSearch)
+	- perform rescan after re-assign (only this movie)
 - 
 
 ## QA
@@ -35,10 +35,11 @@ OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 
 - youtube (incl. subscription importer -> https://www.youtube.com/subscription_manager?action_takeout=1)
 
-## DONE
+# DONE
 - min/maxAge is false when 0 is in place
 
 ## Other
+OK - Remove movie from list -> Reload -> List is unchecked (why?)
 OK - filescan new fields:
 OK	- size (display humanized e.g. 13.5 GB, 760 MB)
 OK	- creation date

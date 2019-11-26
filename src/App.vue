@@ -476,7 +476,7 @@ export default {
   components: {
     "mk-delete-list-dialog": Dialog,
     "mk-search-companies-dialog": SearchDataDialog,
-    "mk-search-persons-dialog": SearchDataDialog
+    "mk-search-persons-dialog": SearchDataDialog,
   },
 
   props: {
@@ -544,7 +544,7 @@ export default {
 
     searchPersonsDialog: {
       show: false
-    },
+    }
   }),
 
   watch: {

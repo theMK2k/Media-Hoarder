@@ -9,6 +9,7 @@ const request = require('request');
 const htmlToText = require('html-to-text');
 const moment = require('moment');
 const levenshtein = require('fast-levenshtein');
+const cheerio = require('cheerio');
 
 const readdirAsync = util.promisify(fs.readdir);
 const writeFileAsync = util.promisify(fs.writeFile);
@@ -2730,6 +2731,83 @@ async function deleteFilterCompany($id_Filter_Companies) {
 	return await db.fireProcedureReturnScalar(`DELETE FROM tbl_Filter_Companies WHERE id_Filter_Companies = $id_Filter_Companies`, { $id_Filter_Companies });
 }
 
+async function scrapeIMDBSearch(title, titleTypes) {
+	// https://www.imdb.com/search/title/?title=Gnothi Seauton&view=advanced
+	// optional: &title_type=feature,tv_movie,tv_series,tv_episode,tv_special,tv_miniseries,documentary,short,video,tv_short
+	// 
+	const url = `https://www.imdb.com/search/title/?title=${title}` + (titleTypes.find(titleType => !titleType.checked) ? '&title_type=' + titleTypes.filter(titleType => titleType.checked).map(titleType => titleType.id).reduce((prev, current) => prev + (prev ? ',' : '') + current) : '');
+
+	logger.log('scrapeIMDBSearch url:', url);
+
+	const response = await requestGetAsync(url);
+	const html = response.body;
+	const $ = cheerio.load(html);
+
+	const items = $('.lister-item.mode-advanced')
+
+	// logger.log('items:', items);
+
+	const results = [];
+
+	items.each((index, item) => {
+		// logger.log('item:', $(this).html());
+		const imageURL = $($(item).find('.lister-item-image > a > img')).attr('loadlate');
+		
+		let title = $($(item).find('h3.lister-item-header')).text();
+		title = title.replace(/[\s\n]/g, ' ');
+		while (/\s\s/g.test(title)) {
+			title = title.replace(/\s\s/g, '');
+		}
+
+		const ageRating = $($(item).find('span.certificate')).text();
+		const runtime = $($(item).find('span.runtime')).text();
+		const genres = $($(item).find('span.genre')).text().trim();
+		// const imdbRating = $($(item).find('div.ratings-imdb-rating')).text().trim();
+		// const numVotes = $($(item).find('span[name=nv]')).text().trim();
+		
+		let detailInfo = '';
+		if (ageRating) {
+			detailInfo += ageRating;
+		}
+		if (runtime) {
+			detailInfo += (detailInfo ? ' | ' : '') + runtime;
+		}
+		if (genres) {
+			detailInfo += (detailInfo ? ' | ' : '') + genres;
+		}
+
+		results.push({
+			title,
+			imageURL,
+			ageRating,
+			runtime,
+			genres,
+			detailInfo
+		})
+	})
+
+
+/*
+	const rxItems = /<div class="lister-item-content">([\s\S]*?)sort-num_votes-visible/g;
+	let match = null;
+
+
+	// eslint-disable-next-line no-cond-assign
+	while (match = rxItems.exec(html)) {
+		logger.log('found match');
+		
+		const item = match[1];
+
+		result.push({
+			KILLME: item
+		})
+	}
+*/
+	logger.log('results:', results);
+
+	return results;
+}
+
 export {
 	db,
 	fetchSourcePaths,
@@ -2768,5 +2846,6 @@ export {
 	addFilterPerson,
 	deleteFilterPerson,
 	addFilterCompany,
-	deleteFilterCompany
+	deleteFilterCompany,
+	scrapeIMDBSearch
 }

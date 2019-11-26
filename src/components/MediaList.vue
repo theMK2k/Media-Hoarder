@@ -87,6 +87,11 @@
                           style="cursor: pointer"
                           v-on:click.stop="onEditItem(item, 'Name', 'Title')"
                         >mdi-pencil</v-icon>
+                        <v-icon
+                          v-show="item.nameHovered"
+                          style="cursor: pointer"
+                          v-on:click.stop="searchIMDBDialog.show = true"
+                        >mdi-link</v-icon>
                       </v-list-item-title>
 
                       <v-list-item-subtitle
@@ -490,6 +495,12 @@
       v-on:ok="onEditItemDialogOK"
       v-on:cancel="onEditItemDialogCancel"
     ></mk-edit-item-dialog>
+
+    <mk-search-imdb-dialog
+      ref="searchIMDBDialog"
+      v-bind:show="searchIMDBDialog.show"
+      v-on:close="onSearchIMDBDialogClose"
+    ></mk-search-imdb-dialog>
   </div>
 </template>
 
@@ -503,6 +514,8 @@ import ListDialog from "@/components/shared/ListDialog.vue";
 import PersonDialog from "@/components/shared/PersonDialog.vue";
 import CompanyDialog from "@/components/shared/CompanyDialog.vue";
 import VideoPlayerDialog from "@/components/shared/VideoPlayerDialog.vue";
+import SearchIMDBDialog from "@/components/shared/SearchIMDBDialog.vue";
+
 const { shell } = require("electron").remote;
 
 const moment = require("moment");
@@ -517,7 +530,8 @@ export default {
     "mk-person-dialog": PersonDialog,
     "mk-company-dialog": CompanyDialog,
     "mk-video-player-dialog": VideoPlayerDialog,
-    "mk-edit-item-dialog": Dialog
+    "mk-edit-item-dialog": Dialog,
+    "mk-search-imdb-dialog": SearchIMDBDialog
   },
 
   data: () => ({
@@ -590,6 +604,10 @@ export default {
       item: {},
       attributeName: null,
       attributeDisplayText: null
+    },
+
+    searchIMDBDialog: {
+      show: false
     },
 
     itemDetails: {
@@ -1077,6 +1095,10 @@ export default {
 
     onVideoPlayerDialogClose() {
       this.videoPlayerDialog.show = false;
+    },
+
+    onSearchIMDBDialogClose() {
+      this.searchIMDBDialog.show = false;
     },
 
     setItemHovered(item, section, value) {
