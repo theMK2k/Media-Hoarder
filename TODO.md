@@ -28,11 +28,7 @@ OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 ## MediaList - Selected Movie
 
 ## Edit Movie
-- allow to re-assign new IMDB entry
-    OK -> opens IMDB search (store/scrapeIMDBSearch)
-	- perform rescan after re-assign (only this movie)
-		-> refactor rescanMoviesMetaData (we need to differentiate mediainfo metadata and imdb metadata, we don't need findIMDBtconst when id_Movies is provided)
-- 
+
 
 ## QA
 - check how fetchMedia/MediaList works if only filescan has been performed (no MI/IMDB data)
@@ -111,3 +107,9 @@ OK - MetaCritic Score
 ## MediaList - Selected Movie
 OK - show more information
 OK - add Content Advisory (Sex & Nudity, Gore etc.)
+
+## Edit Movie
+OK - allow to re-assign new IMDB entry
+    OK -> opens IMDB search (store/scrapeIMDBSearch)
+		OK - perform rescan after re-assign (only this movie)
+		OK	-> refactor rescanMoviesMetaData (we need to differentiate mediainfo metadata and imdb metadata, we don't need findIMDBtconst when id_Movies is provided)
