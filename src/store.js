@@ -546,8 +546,8 @@ async function rescanMoviesMetaData(onlyNew, id_Movies) {
 		// eventBus.scanInfoOff();
 		eventBus.scanInfoShow('Rescanning Movies', `${movie.Name || movie.Filename}`);
 
-		if (scanOptions.rescanMoviesMetaData_applyMediaInfo) await applyMediaInfo(movie, onlyNew);
-		if (scanOptions.rescanMoviesMetaData_findIMDBtconst) await findIMDBtconst(movie, onlyNew);
+		if (!id_Movies && scanOptions.rescanMoviesMetaData_applyMediaInfo) await applyMediaInfo(movie, onlyNew);
+		if (!id_Movies && scanOptions.rescanMoviesMetaData_findIMDBtconst) await findIMDBtconst(movie, onlyNew);
 
 		if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData) await fetchIMDBMetaData(movie, onlyNew);
 	}
@@ -2806,8 +2806,8 @@ async function assignIMDB($id_Movies, $IMDB_tconst) {
 	// rescan IMDB Metadata
 	eventBus.rescanStarted();
 
-	rescanMoviesMetaData(false, $id_Movies);
-	applyIMDBMetaData(false, $id_Movies);
+	await rescanMoviesMetaData(false, $id_Movies);
+	await applyIMDBMetaData(false, $id_Movies);
 
 	eventBus.rescanStopped();
 }

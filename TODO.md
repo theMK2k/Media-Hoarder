@@ -2,6 +2,9 @@
 - page: 56 (God bless America)
 
 ## Other
+- remember "sort by" setting (same as remembering the filters)
+- remember last page (same as remembering filters)
+
 - Rescan: when a movie was moved (same filename just deleted at location X and added on location Y)
 	-> copy over userdefined data (e.g. rating etc. also member of lists)
 

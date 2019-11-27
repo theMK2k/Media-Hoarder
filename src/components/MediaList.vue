@@ -1120,7 +1120,8 @@ export default {
     },
 
     onOpenSearchIMDBDialog(item) {
-      this.searchIMDBDialog.show = true;
+			this.$refs.searchIMDBDialog.init();
+			this.searchIMDBDialog.show = true;
       this.searchIMDBDialog.item = item;
     },
 
@@ -1133,7 +1134,7 @@ export default {
       try {
         await store.assignIMDB(this.searchIMDBDialog.item.id_Movies, tconst);
 
-        // TODO: reload
+        eventBus.refetchMedia(this.currentPage);
         
         eventBus.showSnackbar("success", 6000, "entry linked successfully");
         

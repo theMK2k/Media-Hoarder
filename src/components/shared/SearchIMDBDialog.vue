@@ -86,6 +86,7 @@
                         v-show="item.itemHovered"
                         text
                         color="primary"
+												v-bind:loading="isLinking"
                         v-on:click.stop="onSelectClick(item)"
                       >Select for linking</v-btn>
                     </v-row>
@@ -121,7 +122,8 @@ export default {
       items: [],
       searchText: "",
       showTitleTypes: false,
-      isLoading: false,
+			isLoading: false,
+			isLinking: false,
 
       titleTypes: [
         {
@@ -185,7 +187,9 @@ export default {
       this.items = [];
       this.searchText = "";
       this.showTitleTypes = false;
-      this.searchResults = [];
+			this.searchResults = [];
+			this.isLoading = false;
+			this.isLinking = false;
     },
 
     setAllTitleTypes(value) {
@@ -240,7 +244,11 @@ export default {
 
       if (!item.tconst) {
         return eventBus.showSnackbar("error", 6000, "identifier missing");
-      }
+			}
+
+			this.searchResults = [item];
+			
+			this.isLinking = true;
 
       this.$emit("selected", item.tconst);
     },
