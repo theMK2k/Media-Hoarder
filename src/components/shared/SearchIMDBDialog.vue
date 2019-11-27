@@ -2,7 +2,7 @@
   <v-dialog v-model="show" persistent max-width="1000px">
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
-        <div class="headline" style="width: 100%; font-size: 1.17em">Search IMDB</div>
+        <div class="headline" style="width: 100%; font-size: 1.17em">Link with IMDB entry</div>
       </v-card-title>
       <v-card-text>
         <v-row style="padding-left: 16px; margin-bottom: 8px">
@@ -36,7 +36,7 @@
         </v-expansion-panels>
 
         <v-row>
-          <v-btn text v-on:click.native="onSearchClick()">Search</v-btn>
+          <v-btn text v-bind:loading="isLoading" v-on:click.native="onSearchClick()">Search</v-btn>
         </v-row>
 
         <v-row v-for="(item, i) in searchResults" :key="i">
@@ -67,9 +67,11 @@
                     <v-list-item-subtitle
                       v-if="item.detailInfo"
                       style="margin-bottom: 4px"
-                    >
-                      {{ item.detailInfo }}
-                    </v-list-item-subtitle>
+                    >{{ item.detailInfo }}</v-list-item-subtitle>
+
+                    <v-row style="margin-top: 8px">
+                      <v-btn text color="primary" v-on:click.stop="onSelectClick(item)">Select for linking</v-btn>
+                    </v-row>
                   </v-col>
                 </v-list-item-content>
               </v-list-item>
@@ -102,6 +104,7 @@ export default {
       items: [],
       searchText: "flanders",
       showTitleTypes: false,
+      isLoading: false,
 
       titleTypes: [
         {
@@ -189,15 +192,23 @@ export default {
     async onSearchClick() {
       logger.log("onSearchClick");
 
+      this.isLoading = true;
+
       if (!this.searchText) {
         eventBus.showSnackbar("error", 6000, "title is missing");
+        this.isLoading = false;
         return;
       }
 
-      this.searchResults = await store.scrapeIMDBSearch(
-        this.searchText,
-        this.titleTypes
-      );
+      try {
+        this.searchResults = await store.scrapeIMDBSearch(
+          this.searchText,
+          this.titleTypes
+        );
+      } catch(err) {
+        this.isLoading = false;
+        eventBus.showSnackbar("error", 6000, err);
+      }
     }
   },
 

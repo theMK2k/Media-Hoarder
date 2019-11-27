@@ -34,11 +34,22 @@
             </v-row>
 
             <v-row style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px">
-              <div v-if="!showLongBio" style="font-size: .875rem; font-weight: normal" class="Clickable" v-on:click.stop="showLongBio = true">
-                {{ personData.ShortBio }}
-              </div>
-              <div v-if="showLongBio" style="font-size: .875rem; font-weight: normal" class="Clickable" v-on:click.stop="showLongBio = false">
-                <p v-for="(line, index) in personData.LongBio.split('\n')" v-bind:key="index">{{line}}</p>
+              <div
+                v-if="!showLongBio"
+                style="font-size: .875rem; font-weight: normal"
+                class="Clickable"
+                v-on:click.stop="showLongBio = true"
+              >{{ personData.ShortBio }}</div>
+              <div
+                v-if="showLongBio"
+                style="font-size: .875rem; font-weight: normal"
+                class="Clickable"
+                v-on:click.stop="showLongBio = false"
+              >
+                <p
+                  v-for="(line, index) in personData.LongBio.split('\n')"
+                  v-bind:key="index"
+                >{{line}}</p>
               </div>
             </v-row>
           </v-col>
@@ -88,13 +99,13 @@ export default {
       personData: {},
       showLongBio: false
     };
-	},
-	
-	watch: {
-		IMDB_Person_ID: function(newVal) {
-			this.init(newVal);
-		}
-	},
+  },
+
+  watch: {
+    IMDB_Person_ID: function(newVal) {
+      this.init(newVal);
+    }
+  },
 
   methods: {
     onButtonClick(eventName) {
@@ -129,11 +140,7 @@ export default {
         logger.log("this.personData:", this.personData);
       } catch (err) {
         logger.log(err);
-        eventBus.showSnackbar(
-          "error",
-          6000,
-          "an error occured while fetching data from the web"
-        );
+        eventBus.showSnackbar("error", 6000, err);
       }
 
       this.isScraping = false;
@@ -144,24 +151,24 @@ export default {
       this.personData = {};
       this.showLongBio = false;
 
-			let personData = await store.fetchIMDBPerson(IMDB_Person_ID);
+      let personData = await store.fetchIMDBPerson(IMDB_Person_ID);
 
-			logger.log('fetched personData:', personData);
+      logger.log("fetched personData:", personData);
 
       if (!personData || personData.length === 0) {
-				await this.scrapeData();
-				return;
-			}
-			
-			personData = personData[0];
+        await this.scrapeData();
+        return;
+      }
 
-			personData.Photo_URL = personData.Photo_URL
-            ? helpers.getPath(personData.Photo_URL)
-            : personData.Photo_URL;
+      personData = personData[0];
 
-			this.personData = personData;
+      personData.Photo_URL = personData.Photo_URL
+        ? helpers.getPath(personData.Photo_URL)
+        : personData.Photo_URL;
 
-			logger.log('this.personData:', this.personData);
+      this.personData = personData;
+
+      logger.log("this.personData:", this.personData);
     },
 
     onCloseClick() {
@@ -169,19 +176,17 @@ export default {
     },
 
     async onFilterClick() {
-			await store.addFilterPerson(this.IMDB_Person_ID, this.Person_Name)
+      await store.addFilterPerson(this.IMDB_Person_ID, this.Person_Name);
 
-			eventBus.personDialogConfirm(setFilter);
+      eventBus.personDialogConfirm(setFilter);
 
-			const setFilter = {
-				filterPersons: [
-					this.IMDB_Person_ID
-				]
-			};
+      const setFilter = {
+        filterPersons: [this.IMDB_Person_ID]
+      };
 
-			eventBus.refetchFilters(setFilter);
-			
-			this.$emit("close");
+      eventBus.refetchFilters(setFilter);
+
+      this.$emit("close");
     },
 
     openIMDB() {

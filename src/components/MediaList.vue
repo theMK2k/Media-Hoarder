@@ -82,16 +82,38 @@
                         <span
                           v-show="item.NumExtras"
                         >+{{ item.NumExtras }}</span>
-                        <v-icon
-                          v-show="item.nameHovered"
-                          style="cursor: pointer"
-                          v-on:click.stop="onEditItem(item, 'Name', 'Title')"
-                        >mdi-pencil</v-icon>
-                        <v-icon
-                          v-show="item.nameHovered"
-                          style="cursor: pointer"
-                          v-on:click.stop="searchIMDBDialog.show = true"
-                        >mdi-link</v-icon>
+
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{ on }">
+                            <span v-on="on">
+                              <v-icon
+                                v-show="item.nameHovered"
+                                style="cursor: pointer"
+                                v-on:click.stop="onEditItem(item, 'Name', 'Title')"
+                              >mdi-pencil</v-icon>
+                            </span>
+                          </template>
+                          <span>
+                            Edit Title
+                          </span>
+                        </v-tooltip>
+
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{ on }">
+                            <span v-on="on">
+                              <v-icon
+                                v-show="item.nameHovered"
+                                style="cursor: pointer"
+                                v-on:click.stop="searchIMDBDialog.show = true"
+                              >mdi-link</v-icon>
+                            </span>
+                          </template>
+                          <span>
+                            Link with IMDB entry
+                          </span>
+                        </v-tooltip>
+
+
                       </v-list-item-title>
 
                       <v-list-item-subtitle
