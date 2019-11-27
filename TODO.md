@@ -26,8 +26,9 @@ OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 
 ## Edit Movie
 - allow to re-assign new IMDB entry
-    -> opens IMDB search (store/scrapeIMDBSearch)
+    OK -> opens IMDB search (store/scrapeIMDBSearch)
 	- perform rescan after re-assign (only this movie)
+		-> refactor rescanMoviesMetaData (we need to differentiate mediainfo metadata and imdb metadata, we don't need findIMDBtconst when id_Movies is provided)
 - 
 
 ## QA

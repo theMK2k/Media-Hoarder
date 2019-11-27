@@ -1022,6 +1022,9 @@ export default {
       } else if (textOrErrorObject.syscall && textOrErrorObject.code) {
           // fetch error
             this.snackbar.text = textOrErrorObject.syscall + ' ' + textOrErrorObject.code + (textOrErrorObject.address ? ' ' + textOrErrorObject.address : '') + (textOrErrorObject.port ? ':' + textOrErrorObject.port : '');
+      } else if (textOrErrorObject.errno && textOrErrorObject.code) {
+          // SQLite error
+          this.snackbar.text = `SQLite error: ${textOrErrorObject.code} (${textOrErrorObject.errno})`;
       } else if (textOrErrorObject.error) {
         // our self-defined error object with message and optional details
         this.snackbar.text = textOrErrorObject.error.message;

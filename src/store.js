@@ -448,7 +448,7 @@ async function listPath(scanPath) {
 	return arrResult;
 }
 
-async function applyIMDBMetaData(onlyNew) {
+async function applyIMDBMetaData(onlyNew, id_Movies) {
 	// create Name, Name2 etc. from IMDBData for each movie
 	logger.log('applying IMDB Metadata...');
 
@@ -464,6 +464,7 @@ async function applyIMDBMetaData(onlyNew) {
 			FROM tbl_Movies MOV
 			WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
 			${onlyNew ? 'AND MOV.isNew = 1' : ''}
+			${id_Movies ? 'AND MOV.id_Movies = ' + id_Movies : ''}
 			`,
 		[]);
 
@@ -512,7 +513,7 @@ async function applyIMDBMetaData(onlyNew) {
 	logger.log('applying IMDB Titles DONE');
 }
 
-async function rescanMoviesMetaData(onlyNew) {
+async function rescanMoviesMetaData(onlyNew, id_Movies) {
 	const movies = await db.fireProcedureReturnAll(`
 			SELECT
 				id_Movies
@@ -529,6 +530,7 @@ async function rescanMoviesMetaData(onlyNew) {
 				${onlyNew ? 'AND isNew = 1' : ''}
 				${scanOptions.rescanMoviesMetaData_id_SourcePaths_IN ? 'AND id_SourcePaths IN ' + scanOptions.rescanMoviesMetaData_id_SourcePaths_IN : ''}
 				${scanOptions.rescanMoviesMetaData_id_Movies ? 'AND id_Movies = ' + scanOptions.rescanMoviesMetaData_id_Movies : ''}
+				${id_Movies ? 'AND id_Movies = ' + id_Movies : ''}
 			`,
 		[]);
 
@@ -2750,6 +2752,12 @@ async function scrapeIMDBSearch(title, titleTypes) {
 	const results = [];
 
 	items.each((index, item) => {
+		let tconst = $($(item).find('h3.lister-item-header > a')).attr('href');
+
+		if (tconst) {
+			tconst = tconst.match(/tt\d*/)[0];
+		}
+		
 		// logger.log('item:', $(this).html());
 		const imageURL = $($(item).find('.lister-item-image > a > img')).attr('loadlate');
 		
@@ -2762,8 +2770,6 @@ async function scrapeIMDBSearch(title, titleTypes) {
 		const ageRating = $($(item).find('span.certificate')).text();
 		const runtime = $($(item).find('span.runtime')).text();
 		const genres = $($(item).find('span.genre')).text().trim();
-		// const imdbRating = $($(item).find('div.ratings-imdb-rating')).text().trim();
-		// const numVotes = $($(item).find('span[name=nv]')).text().trim();
 		
 		let detailInfo = '';
 		if (ageRating) {
@@ -2777,6 +2783,7 @@ async function scrapeIMDBSearch(title, titleTypes) {
 		}
 
 		results.push({
+			tconst,
 			title,
 			imageURL,
 			ageRating,
@@ -2786,26 +2793,23 @@ async function scrapeIMDBSearch(title, titleTypes) {
 		})
 	})
 
-
-/*
-	const rxItems = /<div class="lister-item-content">([\s\S]*?)sort-num_votes-visible/g;
-	let match = null;
-
-
-	// eslint-disable-next-line no-cond-assign
-	while (match = rxItems.exec(html)) {
-		logger.log('found match');
-		
-		const item = match[1];
-
-		result.push({
-			KILLME: item
-		})
-	}
-*/
 	logger.log('results:', results);
 
 	return results;
+}
+
+async function assignIMDB($id_Movies, $IMDB_tconst) {
+	logger.log('assignIMDB $id_Movies:', $id_Movies, '$IMDB_tconst:', $IMDB_tconst);
+
+	await db.fireProcedure(`UPDATE tbl_Movies SET IMDB_tconst = $IMDB_tconst WHERE id_Movies = $id_Movies`,  { $id_Movies, $IMDB_tconst });
+
+	// rescan IMDB Metadata
+	eventBus.rescanStarted();
+
+	rescanMoviesMetaData(false, $id_Movies);
+	applyIMDBMetaData(false, $id_Movies);
+
+	eventBus.rescanStopped();
 }
 
 export {
@@ -2847,5 +2851,6 @@ export {
 	deleteFilterPerson,
 	addFilterCompany,
 	deleteFilterCompany,
-	scrapeIMDBSearch
+	scrapeIMDBSearch,
+	assignIMDB
 }

@@ -14,6 +14,7 @@
             color="white"
             hide-details
             v-model="searchText"
+            v-on:keydown.enter="onSearchClick"
           ></v-text-field>
         </v-row>
 
@@ -23,6 +24,10 @@
               style="padding: 8px!important"
             >Media Types {{titleTypesTitle()}}</v-expansion-panel-header>
             <v-expansion-panel-content>
+              <v-row>
+                <v-btn text v-on:click="setAllTitleTypes(false)">NONE</v-btn>
+                <v-btn text v-on:click="setAllTitleTypes(true)">ALL</v-btn>
+              </v-row>
               <v-checkbox
                 v-for="titleType in titleTypes"
                 v-bind:key="titleType.id"
@@ -36,12 +41,19 @@
         </v-expansion-panels>
 
         <v-row>
-          <v-btn text v-bind:loading="isLoading" v-on:click.native="onSearchClick()">Search</v-btn>
+          <v-btn text v-bind:loading="isLoading" v-on:click.native="onSearchClick">Search</v-btn>
         </v-row>
 
         <v-row v-for="(item, i) in searchResults" :key="i">
           <v-col style="padding: 2px; margin-left: 16px">
-            <v-card dark flat hover v-bind:ripple="false" v-on:click="onItemClick(item)">
+            <v-card
+              dark
+              flat
+              hover
+              v-bind:ripple="false"
+              v-on:mouseover="setItemHovered(item, 'item', true)"
+              v-on:mouseleave="setItemHovered(item, 'item', false)"
+            >
               <v-list-item three-line style="padding-left: 0px">
                 <div>
                   <v-list-item-avatar tile style="margin: 6px; height: 100px; width: 80px">
@@ -70,7 +82,12 @@
                     >{{ item.detailInfo }}</v-list-item-subtitle>
 
                     <v-row style="margin-top: 8px">
-                      <v-btn text color="primary" v-on:click.stop="onSelectClick(item)">Select for linking</v-btn>
+                      <v-btn
+                        v-show="item.itemHovered"
+                        text
+                        color="primary"
+                        v-on:click.stop="onSelectClick(item)"
+                      >Select for linking</v-btn>
                     </v-row>
                   </v-col>
                 </v-list-item-content>
@@ -102,7 +119,7 @@ export default {
   data() {
     return {
       items: [],
-      searchText: "flanders",
+      searchText: "",
       showTitleTypes: false,
       isLoading: false,
 
@@ -166,9 +183,15 @@ export default {
   methods: {
     async init() {
       this.items = [];
-      this.searchText = "flanders";
+      this.searchText = "";
       this.showTitleTypes = false;
       this.searchResults = [];
+    },
+
+    setAllTitleTypes(value) {
+      this.titleTypes.forEach(titleType => {
+        titleType.checked = value;
+      });
     },
 
     onCancelClick() {
@@ -205,10 +228,25 @@ export default {
           this.searchText,
           this.titleTypes
         );
-      } catch(err) {
-        this.isLoading = false;
+      } catch (err) {
         eventBus.showSnackbar("error", 6000, err);
+      } finally {
+        this.isLoading = false;
       }
+    },
+
+    onSelectClick(item) {
+      logger.log("onSelectClick item:", item);
+
+      if (!item.tconst) {
+        return eventBus.showSnackbar("error", 6000, "identifier missing");
+      }
+
+      this.$emit("selected", item.tconst);
+    },
+
+    setItemHovered(item, section, value) {
+      this.$set(item, `${section}Hovered`, value);
     }
   },
 
