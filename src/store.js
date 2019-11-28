@@ -1747,6 +1747,7 @@ async function fetchMedia($MediaType) {
 
 		if (result && result.length > 0) {
 			saveFilterValues($MediaType);
+			saveSortValues($MediaType);
 		}
 
 		result.forEach(item => {
@@ -1911,6 +1912,18 @@ async function fetchFilterValues($MediaType) {
 	}
 
 	return JSON.parse(result);
+}
+
+async function fetchSortValues($MediaType) {
+	const result = await getSetting(`sortMediaType${$MediaType}`);
+	if (!result) {
+		return null;
+	}
+
+	shared.sortField = result.sortField;
+	
+	return JSON.parse(result);
+
 }
 
 async function fetchFilterSourcePaths($MediaType) {
@@ -2453,6 +2466,16 @@ function saveFilterValues($MediaType) {
 	setSetting(`filtersMediaType${$MediaType}`, filterValuesString);
 }
 
+function saveSortValues($MediaType) {
+	const sortValues = {
+		sortField: shared.sortField
+	}
+
+	const sortValuesString = JSON.stringify(sortValues);
+
+	setSetting(`sortMediaType${$MediaType}`, sortValuesString);
+}
+
 async function createList($Name) {
 	const id_Lists = await db.fireProcedureReturnScalar(`SELECT id_Lists FROM tbl_Lists WHERE Name = $Name`, { $Name });
 	if (id_Lists) {
@@ -2852,5 +2875,6 @@ export {
 	addFilterCompany,
 	deleteFilterCompany,
 	scrapeIMDBSearch,
-	assignIMDB
+	assignIMDB,
+	fetchSortValues
 }

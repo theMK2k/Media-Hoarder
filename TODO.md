@@ -20,8 +20,6 @@ OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 ## Company
 
 ## Filters
-- Company (Search-filter)
-- Person (Search-filter)
 
 ## MediaList - Movie (non-selected)
 
@@ -76,6 +74,8 @@ OK	-> implement extra detection in rescan (determine to which movie the extra mu
 OK - Parental Guidance (Sex/Nudity, Gore etc. scores)
 
 ## Filters
+OK - Company (Search-filter)
+OK - Person (Search-filter)
 OK - Year
 OK - Quality
 WIP - Persons (Search-filter)

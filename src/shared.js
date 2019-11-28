@@ -1,56 +1,58 @@
 import Vue from 'vue'
 
 const shared = new Vue({
-	data: {
-		message: 'my global message',
-		filterSourcePaths: [],
-		filterGenres: [],
-		filterAgeRatings: [],
-		filterRatings: [],
-		filterLists: [],
-		filterParentalAdvisory: {
-			Nudity: [],
-			Violence: [],
-			Profanity: [],
-			Alcohol: [],
-			Frightening: [],
-		},
-		filterPersons: [],
-		filterYears: [],
-		filterQualities: [],
-		filterCompanies: [],
+  data: {
+    message: 'my global message',
+    filterSourcePaths: [],
+    filterGenres: [],
+    filterAgeRatings: [],
+    filterRatings: [],
+    filterLists: [],
+    filterParentalAdvisory: {
+      Nudity: [],
+      Violence: [],
+      Profanity: [],
+      Alcohol: [],
+      Frightening: []
+    },
+    filterPersons: [],
+    filterYears: [],
+    filterQualities: [],
+    filterCompanies: [],
 
-		contentAdvisoryCategories: [
+    contentAdvisoryCategories: [
       {
-        Name: "Nudity",
-        DisplayText: "Sex & Nudity"
+        Name: 'Nudity',
+        DisplayText: 'Sex & Nudity'
       },
       {
-        Name: "Violence",
-        DisplayText: "Violence & Gore"
+        Name: 'Violence',
+        DisplayText: 'Violence & Gore'
       },
       {
-        Name: "Profanity",
-        DisplayText: "Profanity"
+        Name: 'Profanity',
+        DisplayText: 'Profanity'
       },
       {
-        Name: "Alcohol",
-        DisplayText: "Alcohol, Drugs & Smoking"
+        Name: 'Alcohol',
+        DisplayText: 'Alcohol, Drugs & Smoking'
       },
       {
-        Name: "Frightening",
-        DisplayText: "Frightening & Intense Scenes"
+        Name: 'Frightening',
+        DisplayText: 'Frightening & Intense Scenes'
       }
     ],
-	}
-});
+
+    sortField: null
+  }
+})
 
 shared.install = function () {
-	Object.defineProperty(Vue.prototype, '$shared', {
-		get() { return shared }
-	})
-};
-
-export {
-	shared
+  Object.defineProperty(Vue.prototype, '$shared', {
+    get () {
+      return shared
+    }
+  })
 }
+
+export { shared }
