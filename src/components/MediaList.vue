@@ -16,7 +16,7 @@
         v-bind:items="sortAbles"
         item-text="Description"
         item-value="Field"
-        v-model="sort"
+        v-model="$shared.sortField"
         label="Sort"
         style="margin-left: 8px; max-width: 260px; height: 40px"
       >
@@ -590,8 +590,6 @@ export default {
       }
     ],
 
-    sort: null,
-
     listDialog: {
       mode: "add",
       title: "",
@@ -643,9 +641,6 @@ export default {
   }),
 
   watch: {
-    sort: function() {
-      logger.log("sort changed to:", this.sort);
-    }
   },
 
   props: ["mediatype"],
@@ -679,32 +674,32 @@ export default {
           return isGood;
         })
         .sort((a, b) => {
-          if (!this.sort) {
+          if (!this.$shared.sortField) {
             return 0;
           }
 
           if (
-            typeof a[this.sort] === "string" ||
-            a[this.sort] instanceof String
+            typeof a[this.$shared.sortField] === "string" ||
+            a[this.$shared.sortField] instanceof String
           ) {
-            if (this.sort === "created_at" || this.sort === "last_access_at") {
-              if (!a[this.sort] || !b[this.sort]) {
+            if (this.$shared.sortField === "created_at" || this.$shared.sortField === "last_access_at") {
+              if (!a[this.$shared.sortField] || !b[this.$shared.sortField]) {
                 return -1;
               }
 
               // we sort dates in reverse order (earliest first)
-              if (a[this.sort].toLowerCase() > b[this.sort].toLowerCase()) {
+              if (a[this.$shared.sortField].toLowerCase() > b[this.$shared.sortField].toLowerCase()) {
                 return -1;
               }
             }
 
-            if (a[this.sort].toLowerCase() > b[this.sort].toLowerCase()) {
+            if (a[this.$shared.sortField].toLowerCase() > b[this.$shared.sortField].toLowerCase()) {
               return 1;
             }
 
             return -1;
           } else {
-            if (a[this.sort] > b[this.sort]) {
+            if (a[this.$shared.sortField] > b[this.$shared.sortField]) {
               return -1;
             }
 
