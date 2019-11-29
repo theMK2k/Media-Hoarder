@@ -2,11 +2,6 @@
 - page: 56 (God bless America)
 
 ## Other
-- remember "sort by" setting (same as remembering the filters)
--> "sort by" is destroyed upon reload after adding/removing entry to a list
-
-- remember last page (same as remembering filters)
-
 - Rescan: when a movie was moved (same filename just deleted at location X and added on location Y)
 	-> copy over userdefined data (e.g. rating etc. also member of lists)
 
@@ -39,6 +34,11 @@ OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 - min/maxAge is false when 0 is in place
 
 ## Other
+OK - remember "sort by" setting (same as remembering the filters)
+OK	-> "sort by" is destroyed upon reload after adding/removing entry to a list
+
+OK - remember last page (same as remembering filters)
+
 OK - Remove movie from list -> Reload -> List is unchecked (why?)
 OK - filescan new fields:
 OK	- size (display humanized e.g. 13.5 GB, 760 MB)
