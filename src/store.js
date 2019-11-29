@@ -1915,15 +1915,18 @@ async function fetchFilterValues($MediaType) {
 }
 
 async function fetchSortValues($MediaType) {
+	logger.log('fetchSortValues');
+	
 	const result = await getSetting(`sortMediaType${$MediaType}`);
 	if (!result) {
 		return null;
 	}
 
-	shared.sortField = result.sortField;
+	shared.sortField = JSON.parse(result).sortField;
+
+	logger.log('shared.sortField:', shared.sortField);
 	
 	return JSON.parse(result);
-
 }
 
 async function fetchFilterSourcePaths($MediaType) {
@@ -2466,14 +2469,14 @@ function saveFilterValues($MediaType) {
 	setSetting(`filtersMediaType${$MediaType}`, filterValuesString);
 }
 
-function saveSortValues($MediaType) {
+async function saveSortValues($MediaType) {
 	const sortValues = {
 		sortField: shared.sortField
 	}
 
 	const sortValuesString = JSON.stringify(sortValues);
 
-	setSetting(`sortMediaType${$MediaType}`, sortValuesString);
+	await setSetting(`sortMediaType${$MediaType}`, sortValuesString);
 }
 
 async function createList($Name) {
@@ -2835,6 +2838,22 @@ async function assignIMDB($id_Movies, $IMDB_tconst) {
 	eventBus.rescanStopped();
 }
 
+async function saveCurrentPage($MediaType) {
+	logger.log('saveCurrentPage');
+	
+	logger.log('saveCurrentPage shared.currentPage:', shared.currentPage);
+	await setSetting(`currentPageMediatype${$MediaType}`, shared.currentPage);
+}
+
+async function fetchCurrentPage($MediaType) {
+	logger.log('fetchCurrentPage');
+	
+	const currentPage = await getSetting(`currentPageMediatype${$MediaType}`);
+	shared.currentPage = parseInt(currentPage || 1);
+
+	logger.log('fetchCurrentPage shared.currentPage:', shared.currentPage);
+}
+
 export {
 	db,
 	fetchSourcePaths,
@@ -2876,5 +2895,8 @@ export {
 	deleteFilterCompany,
 	scrapeIMDBSearch,
 	assignIMDB,
-	fetchSortValues
+	fetchSortValues,
+	saveSortValues,
+	saveCurrentPage,
+	fetchCurrentPage
 }

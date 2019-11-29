@@ -43,7 +43,9 @@ const shared = new Vue({
       }
     ],
 
-    sortField: null
+    sortField: null,
+
+	currentPage: 1,
   }
 })
 

@@ -3,6 +3,8 @@
 
 ## Other
 - remember "sort by" setting (same as remembering the filters)
+-> "sort by" is destroyed upon reload after adding/removing entry to a list
+
 - remember last page (same as remembering filters)
 
 - Rescan: when a movie was moved (same filename just deleted at location X and added on location Y)
