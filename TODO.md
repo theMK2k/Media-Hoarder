@@ -1,6 +1,10 @@
 ## Progress - Movies sorted by Name
 - page: 56 (God bless America)
 
+## Languages Filter
+- MediaInfo Scan: add to tbl_Movies_Languages (Audio, Subtitle)
+- 
+
 ## Other
 - Rescan: when a movie was moved (same filename just deleted at location X and added on location Y)
 	-> copy over userdefined data (e.g. rating etc. also member of lists)
