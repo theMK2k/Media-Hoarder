@@ -981,7 +981,9 @@ export default {
       await store.fetchFilterPersons(this.mediatype);
       await store.fetchFilterCompanies(this.mediatype);
       await store.fetchFilterYears(this.mediatype);
-      await store.fetchFilterQualities(this.mediatype);
+			await store.fetchFilterQualities(this.mediatype);
+			await store.fetchFilterLanguages(this.mediatype, 'audio');
+			await store.fetchFilterLanguages(this.mediatype, 'subtitle');
 
       await store.fetchSortValues(this.mediatype);
 

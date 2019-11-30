@@ -49,6 +49,47 @@ const languages = {
 	Malay: "Ms"
 }
 
+const languageKeys = {
+	De: "German",
+	En: "English",
+	Ja: "Japanese",
+	Pl: "Polish",
+	Hu: "Hungarian",
+	Es: "Spanish",
+	Ru: "Russian",
+	Cz: "Czech",
+	Ar: "Arabic",
+	Fr: "French",
+	Pt: "Portuguese",
+	It: "Italian",
+	Sk: "Slovak",
+	Ko: "Korean",
+	Hi: "Hindi",
+	Sv: "Swedish",
+	Ro: "Romanian",
+	Tr: "Turkish",
+	Zh: "Chinese",
+	Gr: "Greek",
+	In: "Indonesian",
+	No: "Norwegian",
+	He: "Hebrew",
+	Ua: "Ukrainian",
+	Et: "Estonian",
+	Lv: "Latvian",
+	Nl: "Dutch",
+	Da: "Danish",
+	Fi: "Finnish",
+	Th: "Thai",
+	Bg: "Bulgarian",
+	Hr: "Croatian",
+	Is: "Islandic",
+	Sr: "Serbian",
+	Sl: "Slovenian",
+	Vi: "Vietnamese",
+	Ms: "Malay"
+}
+
 export {
-	languages
+	languages,
+	languageKeys
 }

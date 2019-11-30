@@ -45,7 +45,7 @@
 
         <!-- Filters -->
         <div
-          v-if="($shared.filterSourcePaths && $shared.filterSourcePaths.length > 0) || ($shared.filterGenres && $shared.filterGenres.length > 0) || ($shared.filterAgeRatings && $shared.filterAgeRatings.length > 0) || ($shared.filterLists && $shared.filterLists.length > 0)"
+          v-if="($shared.filterSourcePaths && $shared.filterSourcePaths.length > 0) || ($shared.filterGenres && $shared.filterGenres.length > 0) || ($shared.filterAgeRatings && $shared.filterAgeRatings.length > 0) || ($shared.filterLists && $shared.filterLists.length > 0) || ($shared.filterAudioLanguages && $shared.filterAudioLanguages.length > 0) || ($shared.filterSubtitleLanguages && $shared.filterSubtitleLanguages.length > 0)"
         >
           <v-divider></v-divider>
 
@@ -95,6 +95,56 @@
                   v-bind:key="quality.MI_Quality"
                   v-bind:label="getFilterQualityLabel(quality.MI_Quality, quality.NumMovies)"
                   v-model="quality.Selected"
+                  v-on:click.native="filtersChanged"
+                  style="margin: 0px"
+                  color="dark-grey"
+                ></v-checkbox>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
+            <!-- FILTER AUDIO LANGUAGES -->
+            <v-expansion-panel
+              v-show="$shared.filterAudioLanguages && $shared.filterAudioLanguages.length > 0"
+              style="padding: 0px!important"
+            >
+              <v-expansion-panel-header
+                style="padding: 8px!important"
+              >Audio Languages {{ filterAudioLanguagesTitle }}</v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-row>
+                  <v-btn text v-on:click="setAllAudioLanguages(false)">NONE</v-btn>
+                  <v-btn text v-on:click="setAllAudioLanguages(true)">ALL</v-btn>
+                </v-row>
+                <v-checkbox
+                  v-for="audioLanguage in $shared.filterAudioLanguages"
+                  v-bind:key="audioLanguage.Language"
+                  v-bind:label="audioLanguage.DisplayText + ' (' + audioLanguage.NumMovies + ')'"
+                  v-model="audioLanguage.Selected"
+                  v-on:click.native="filtersChanged"
+                  style="margin: 0px"
+                  color="dark-grey"
+                ></v-checkbox>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
+            <!-- FILTER SUBTITLE LANGUAGES -->
+            <v-expansion-panel
+              v-show="$shared.filterSubtitleLanguages && $shared.filterSubtitleLanguages.length > 0"
+              style="padding: 0px!important"
+            >
+              <v-expansion-panel-header
+                style="padding: 8px!important"
+              >Subtitle Languages {{ filterSubtitleLanguagesTitle }}</v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-row>
+                  <v-btn text v-on:click="setAllSubtitleLanguages(false)">NONE</v-btn>
+                  <v-btn text v-on:click="setAllSubtitleLanguages(true)">ALL</v-btn>
+                </v-row>
+                <v-checkbox
+                  v-for="subtitleLanguage in $shared.filterSubtitleLanguages"
+                  v-bind:key="subtitleLanguage.Language"
+                  v-bind:label="subtitleLanguage.DisplayText + ' (' + subtitleLanguage.NumMovies + ')'"
+                  v-model="subtitleLanguage.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
                   color="dark-grey"
@@ -295,10 +345,7 @@
                   <v-btn text v-on:click="setAllCompanies(true)">ALL</v-btn>
                   <v-btn text v-on:click="addCompany()">FIND</v-btn>
                 </v-row>
-                <v-row
-                  v-for="company in $shared.filterCompanies"
-                  v-bind:key="company.Company_Name"
-                >
+                <v-row v-for="company in $shared.filterCompanies" v-bind:key="company.Company_Name">
                   <v-checkbox
                     v-bind:label="company.Company_Name + ' (' + company.NumMovies + ')'"
                     v-model="company.Selected"
@@ -393,7 +440,7 @@
           ref="searchCompaniesDialog"
           v-bind:show="searchCompaniesDialog.show"
           title="Find Company"
-					searchMode="companies"
+          searchMode="companies"
           v-on:cancel="onSearchCompaniesDialogCancel"
         ></mk-search-companies-dialog>
 
@@ -401,7 +448,7 @@
           ref="searchPersonsDialog"
           v-bind:show="searchPersonsDialog.show"
           title="Find Person"
-					searchMode="persons"
+          searchMode="persons"
           v-on:cancel="onSearchPersonsDialogCancel"
         ></mk-search-persons-dialog>
 
@@ -476,7 +523,7 @@ export default {
   components: {
     "mk-delete-list-dialog": Dialog,
     "mk-search-companies-dialog": SearchDataDialog,
-    "mk-search-persons-dialog": SearchDataDialog,
+    "mk-search-persons-dialog": SearchDataDialog
   },
 
   props: {
@@ -717,8 +764,44 @@ export default {
         this.$shared.filterCompanies.length +
         ")"
       );
-    }
-  },
+    },
+
+    filterAudioLanguagesTitle() {
+      if (!this.$shared.filterAudioLanguages.find(filter => !filter.Selected)) {
+        return "(ALL)";
+      }
+
+      if (!this.$shared.filterAudioLanguages.find(filter => filter.Selected)) {
+        return "(NONE)";
+      }
+
+      return (
+        "(" +
+        this.$shared.filterAudioLanguages.filter(filter => filter.Selected).length +
+        "/" +
+        this.$shared.filterAudioLanguages.length +
+        ")"
+      );
+    },
+
+    filterSubtitleLanguagesTitle() {
+      if (!this.$shared.filterSubtitleLanguages.find(filter => !filter.Selected)) {
+        return "(ALL)";
+      }
+
+      if (!this.$shared.filterSubtitleLanguages.find(filter => filter.Selected)) {
+        return "(NONE)";
+      }
+
+      return (
+        "(" +
+        this.$shared.filterSubtitleLanguages.filter(filter => filter.Selected).length +
+        "/" +
+        this.$shared.filterSubtitleLanguages.length +
+        ")"
+      );
+    },
+	},
 
   methods: {
     goto(itemid) {
@@ -861,6 +944,22 @@ export default {
       this.filtersChanged();
     },
 
+    setAllAudioLanguages: function(value) {
+      this.$shared.filterAudioLanguages.forEach(lang => {
+        lang.Selected = value;
+      });
+
+      this.filtersChanged();
+    },
+
+    setAllSubtitleLanguages: function(value) {
+      this.$shared.filterSubtitleLanguages.forEach(lang => {
+        lang.Selected = value;
+      });
+
+      this.filtersChanged();
+    },
+
     getFilterRatingLabel(rating, numMovies) {
       let label = "";
 
@@ -984,18 +1083,18 @@ export default {
       this.$refs.searchPersonsDialog.init();
     },
 
-		onSearchPersonsDialogCancel() {
-			this.searchPersonsDialog.show = false;
-		},
+    onSearchPersonsDialogCancel() {
+      this.searchPersonsDialog.show = false;
+    },
 
     addCompany() {
       this.searchCompaniesDialog.show = true;
       this.$refs.searchCompaniesDialog.init();
     },
 
-		onSearchCompaniesDialogCancel() {
-			this.searchCompaniesDialog.show = false;
-		},
+    onSearchCompaniesDialogCancel() {
+      this.searchCompaniesDialog.show = false;
+    },
 
     quit() {
       remote.getCurrentWindow().close();
@@ -1020,11 +1119,16 @@ export default {
       ) {
         this.snackbar.text = textOrErrorObject;
       } else if (textOrErrorObject.syscall && textOrErrorObject.code) {
-          // fetch error
-            this.snackbar.text = textOrErrorObject.syscall + ' ' + textOrErrorObject.code + (textOrErrorObject.address ? ' ' + textOrErrorObject.address : '') + (textOrErrorObject.port ? ':' + textOrErrorObject.port : '');
+        // fetch error
+        this.snackbar.text =
+          textOrErrorObject.syscall +
+          " " +
+          textOrErrorObject.code +
+          (textOrErrorObject.address ? " " + textOrErrorObject.address : "") +
+          (textOrErrorObject.port ? ":" + textOrErrorObject.port : "");
       } else if (textOrErrorObject.errno && textOrErrorObject.code) {
-          // SQLite error
-          this.snackbar.text = `SQLite error: ${textOrErrorObject.code} (${textOrErrorObject.errno})`;
+        // SQLite error
+        this.snackbar.text = `SQLite error: ${textOrErrorObject.code} (${textOrErrorObject.errno})`;
       } else if (textOrErrorObject.error) {
         // our self-defined error object with message and optional details
         this.snackbar.text = textOrErrorObject.error.message;

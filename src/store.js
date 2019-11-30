@@ -25,31 +25,31 @@ import { eventBus } from "@/main";
 import * as db from '@/helpers/db';
 import * as dbsyncSQLite from '@/helpers/dbsync-sqlite';
 import * as helpers from '@/helpers/helpers';
-import { languages } from '@/languages';
+import { languages, languageKeys } from '@/languages';
 import { shared } from '@/shared';
 
 const scanOptions = {
-	filescanMovies: true,																								// enable file scan
+	// filescanMovies: true,																								// enable file scan
 	// filescanMovies_id_SourcePaths_IN: '(5, 10)',											// only scan certain SourcePaths
 
 	rescanMoviesMetaData: true,
 
 	// rescanMoviesMetaData_id_SourcePaths_IN: '(5, 10)',								// only rescan metadata in certain SourcePaths
-	// rescanMoviesMetaData_id_Movies: 277,
+	// rescanMoviesMetaData_id_Movies: 23,																	// only rescan a certain movie
 	// rescanMoviesMetaData_maxEntries: 10,
 
 	rescanMoviesMetaData_applyMediaInfo: true,
-	rescanMoviesMetaData_findIMDBtconst: true,
-	rescanMoviesMetaData_fetchIMDBMetaData: true,
-	rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
-	rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
-	rescanMoviesMetaData_fetchIMDBMetaData_technicalData: true,
-	rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: true,
-	rescanMoviesMetaData_fetchIMDBMetaData_creditsData: true,
-	rescanMoviesMetaData_fetchIMDBMetaData_companiesData: true,
-	rescanMoviesMetaData_saveIMDBData: true,
+	// rescanMoviesMetaData_findIMDBtconst: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData_technicalData: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData_creditsData: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData_companiesData: true,
+	// rescanMoviesMetaData_saveIMDBData: true,
 
-	applyIMDBMetaData: true,
+	// applyIMDBMetaData: true,
 
 	mergeExtras: true,
 }
@@ -59,7 +59,7 @@ const definedError = require('@/helpers/defined-error');
 const isBuild = process.env.NODE_ENV === 'production';
 
 if (!isBuild) {
-	logger.setLevel(0);
+	logger.setLevel(2);	// KILLME
 }
 
 // eslint-disable-next-line no-console
@@ -135,6 +135,10 @@ async function createIndexes(db) {
 		generateIndexQuery('tbl_Movies_IMDB_Companies', ['id_Movies', 'Category', 'IMDB_Company_ID'], true),
 		generateIndexQuery('tbl_Movies_IMDB_Companies', ['Company_Name'], false),
 		generateIndexQuery('tbl_IMDB_Persons', ['IMDB_Person_ID'], true),
+		generateIndexQuery('tbl_Movies_Languages', ['Type'], false),
+		generateIndexQuery('tbl_Movies_Languages', ['Language'], false),
+		generateIndexQuery('tbl_Movies_Languages', ['id_Movies'], false),
+		generateIndexQuery('tbl_Movies_Languages', ['id_Movies', 'Type', 'Language'], true),
 	]
 
 	logger.log('queries:', queries);
@@ -557,13 +561,16 @@ async function rescanMoviesMetaData(onlyNew, id_Movies) {
 
 async function applyMediaInfo(movie, onlyNew) {
 	// run mediainfo on movie file
-	//parse mediainfo result and save to db
+	// parse mediainfo result and save to db
 	if (onlyNew && movie.MI_Done) {
 		return;
 	}
 
 	const mi_task = `${helpers.getPath('data/mediainfo/win/mediainfo-rar.exe')} --Output=XML "${movie.Path}"`;
 	logger.log('running mediainfo:', mi_task);
+
+	const audioLanguages = [];
+	const subtitleLanguages = [];
 
 	try {
 		const { stdout, stderr } = await execAsync(mi_task);
@@ -641,7 +648,12 @@ async function applyMediaInfo(movie, onlyNew) {
 				if (track.Language && track.Language.length > 0) {
 					const lang = track.Language[0];
 					if (languages[lang]) {
-						MI.$MI_Audio_Languages += (MI.$MI_Audio_Languages ? ', ' : '') + languages[lang];
+						if (!audioLanguages.find(al => al === languages[lang])) {
+							audioLanguages.push(languages[lang]);
+						}
+
+						// MI.$MI_Audio_Languages += (MI.$MI_Audio_Languages ? ', ' : '') + languages[lang];
+						// TODO: use audioLanguages array to generate MI.$MI_Audio_Languages
 					}
 				}
 			}
@@ -650,11 +662,25 @@ async function applyMediaInfo(movie, onlyNew) {
 				if (track.Language && track.Language.length > 0) {
 					const lang = track.Language[0];
 					if (languages[lang]) {
+						if (!subtitleLanguages.find(al => al === languages[lang])) {
+							subtitleLanguages.push(languages[lang]);
+						}
+
 						MI.$MI_Subtitle_Languages += (MI.$MI_Subtitle_Languages ? ', ' : '') + languages[lang];
+						// TODO: use subtitleLanguages array to generate MI.$MI_Subtitle_Languages
 					}
 				}
 			}
+
 		})
+		
+		if (audioLanguages.length > 0) {
+			MI.$MI_Audio_Languages = audioLanguages.reduce((prev, current) => prev + (prev ? ', ' : '') + current);
+		}
+
+		if (subtitleLanguages.length > 0) {
+			MI.$MI_Subtitle_Languages = subtitleLanguages.reduce((prev, current) => prev + (prev ? ', ' : '') + current);
+		}
 
 		logger.log('MI:', MI);
 
@@ -673,6 +699,23 @@ async function applyMediaInfo(movie, onlyNew) {
 			`,
 			MI
 		);
+
+		for (let i = 0; i < audioLanguages.length; i++) {
+			await db.fireProcedure(
+				`INSERT OR IGNORE INTO tbl_Movies_Languages (id_Movies, Type, Language)
+					VALUES ($id_Movies, 'audio', $Language)
+				`, { $id_Movies: movie.id_Movies, $Language: audioLanguages[i] }
+			)
+		}
+
+		for (let i = 0; i < subtitleLanguages.length; i++) {
+			await db.fireProcedure(
+				`INSERT OR IGNORE INTO tbl_Movies_Languages (id_Movies, Type, Language)
+					VALUES ($id_Movies, 'subtitle', $Language)
+				`, { $id_Movies: movie.id_Movies, $Language: subtitleLanguages[i] }
+			)
+		}
+
 	} catch (err) {
 		logger.error(err);
 	}
@@ -1674,6 +1717,50 @@ async function fetchMedia($MediaType) {
 			filterQualities += ')';
 		}
 
+		let filterAudioLanguages = '';
+		if (shared.filterAudioLanguages && shared.filterAudioLanguages.find(filter => !filter.Selected)) {
+
+			if (shared.filterAudioLanguages.find(filter => (filter.Selected && filter.Language == '<not available>'))) {
+				filterAudioLanguages = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies_Languages WHERE Type = 'audio') `;
+			} else {
+				filterAudioLanguages = `AND (1=0 `;
+			}
+
+			if (shared.filterAudioLanguages.find(filter => (filter.Selected && filter.Language !== '<not available>'))) {
+				filterAudioLanguages += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_Languages WHERE Type = 'audio' AND Language IN (`;
+
+				filterAudioLanguages += shared.filterAudioLanguages.filter(filter => filter.Selected).map(filter => filter.Language).reduce((prev, current) => {
+					return prev + (prev ? ', ' : '') + `'${current}'`;
+				}, '');
+
+				filterAudioLanguages += '))';
+			}
+
+			filterAudioLanguages += ')';
+		}
+
+		let filterSubtitleLanguages = '';
+		if (shared.filterSubtitleLanguages && shared.filterSubtitleLanguages.find(filter => !filter.Selected)) {
+
+			if (shared.filterSubtitleLanguages.find(filter => (filter.Selected && filter.Language == '<not available>'))) {
+				filterSubtitleLanguages = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies_Languages WHERE Type = 'subtitle') `;
+			} else {
+				filterSubtitleLanguages = `AND (1=0 `;
+			}
+
+			if (shared.filterSubtitleLanguages.find(filter => (filter.Selected && filter.Language !== '<not available>'))) {
+				filterSubtitleLanguages += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_Languages WHERE Type = 'subtitle' AND Language IN (`;
+
+				filterSubtitleLanguages += shared.filterSubtitleLanguages.filter(filter => filter.Selected).map(filter => filter.Language).reduce((prev, current) => {
+					return prev + (prev ? ', ' : '') + `'${current}'`;
+				}, '');
+
+				filterSubtitleLanguages += '))';
+			}
+
+			filterSubtitleLanguages += ')';
+		}
+
 		logger.log('fetchMedia filterSourcePaths:', filterSourcePaths);
 		logger.log('fetchMedia filterGenres:', filterGenres);
 		logger.log('fetchMedia filterAgeRatings:', filterAgeRatings);
@@ -1682,6 +1769,7 @@ async function fetchMedia($MediaType) {
 		logger.log('fetchMedia filterParentalAdvisory:', filterParentalAdvisory);
 		logger.log('fetchMedia filterPersons:', filterPersons);
 		logger.log('fetchMedia filterCompanies:', filterCompanies);
+		logger.log('fetchMedia filterAudioLanguages:', filterAudioLanguages);
 
 		const query = `
 		SELECT
@@ -1738,6 +1826,8 @@ async function fetchMedia($MediaType) {
 		${filterYears}
 		${filterQualities}
 		${filterCompanies}
+		${filterAudioLanguages}
+		${filterSubtitleLanguages}
 	`;
 
 		logger.log('fetchMedia query:', query);
@@ -2560,6 +2650,93 @@ async function fetchFilterLists($MediaType) {
 	shared.filterLists = results;
 }
 
+async function fetchFilterLanguages($MediaType, $LanguageType) {
+	logger.log('fetchFilterLanguages MediaType:', $MediaType);
+
+	const filterValues = await fetchFilterValues($MediaType);
+
+	logger.log('fetchFilterLanguages filterValues:', filterValues);
+
+	const results = await db.fireProcedureReturnAll(`
+		SELECT 
+			'<not available>' AS Language
+			, '<not available>' AS DisplayText
+			, 1 AS Selected
+			, (
+					SELECT COUNT(1) FROM tbl_Movies MOV
+					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+					AND MOV.id_Movies NOT IN (
+						SELECT id_Movies
+						FROM	tbl_Movies_Languages ML
+						WHERE ML.Type = $LanguageType
+					)
+				) AS NumMovies
+		UNION
+		SELECT
+			Language
+			, '' AS DisplayText
+			, 1 AS Selected
+			, (
+					SELECT COUNT(1) FROM tbl_Movies_Languages ML2
+					INNER JOIN tbl_Movies MOV2 ON ML2.id_Movies = MOV2.id_Movies
+					INNER JOIN tbl_SourcePaths SP2 ON MOV2.id_SourcePaths = SP2.id_SourcePaths AND SP2.MediaType = $MediaType
+					WHERE	ML.Language = ML2.Language
+							AND ML2.Type = $LanguageType
+							AND (MOV2.isRemoved IS NULL OR MOV2.isRemoved = 0)
+							AND MOV2.Extra_id_Movies_Owner IS NULL
+				) AS NumMovies
+		FROM tbl_Movies_Languages ML
+		WHERE ML.Type = $LanguageType
+		AND id_Movies IN (
+			SELECT id_Movies
+			FROM tbl_Movies MOV
+			INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+			WHERE	(MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+					AND MOV.Extra_id_Movies_Owner IS NULL
+		)
+		GROUP BY Language
+		ORDER BY NumMovies DESC`,
+		{ $MediaType, $LanguageType });
+
+	const resultsFiltered = results.filter(result => result.NumMovies > 0);
+
+	let filterValuesLanguages = null;
+	if (filterValues) {
+		if ($LanguageType === 'audio') {
+			filterValuesLanguages = filterValues.filterAudioLanguages;
+		} else {
+			filterValuesLanguages = filterValues.filterSubtitleLanguages;
+		}
+	}
+
+	resultsFiltered.forEach(result => {
+		if (filterValuesLanguages) {
+			const filterValue = filterValuesLanguages.find(value => value.Language === result.Language);
+
+			if (filterValue) {
+				result.Selected = filterValue.Selected;
+			}
+		}
+
+		result.NumMovies = result.NumMovies.toLocaleString();
+		
+		result.DisplayText = result.Language;
+		if (languageKeys[result.Language]) {
+			result.DisplayText = `${result.Language} - ${languageKeys[result.Language]}`
+		}
+	})
+
+	logger.log('fetchFilterLanguages resultsFiltered:', resultsFiltered);
+
+	if ($LanguageType === 'audio') {
+		shared.filterAudioLanguages = resultsFiltered;
+	} else {
+		shared.filterSubtitleLanguages = resultsFiltered;
+	}
+	
+}
+
 async function getMovieDetails($id_Movies) {
 	const lists = await db.fireProcedureReturnAll(`SELECT id_Lists, Name FROM tbl_Lists WHERE id_Lists IN (SELECT id_Lists FROM tbl_Lists_Movies WHERE id_Movies = $id_Movies) ORDER BY Name`, { $id_Movies });
 
@@ -2875,6 +3052,7 @@ export {
 	fetchFilterYears,
 	fetchFilterQualities,
 	fetchFilterCompanies,
+	fetchFilterLanguages,
 	isScanning,
 	abortRescan,
 	createList,
