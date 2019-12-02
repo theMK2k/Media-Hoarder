@@ -673,7 +673,7 @@ async function applyMediaInfo(movie, onlyNew) {
 			}
 
 		})
-		
+
 		if (audioLanguages.length > 0) {
 			MI.$MI_Audio_Languages = audioLanguages.reduce((prev, current) => prev + (prev ? ', ' : '') + current);
 		}
@@ -1341,7 +1341,7 @@ function parseCompaniesCategory(category, matchedhtml, companies) {
 	// <li>
 	// <a href="/company/co0046718?ref_=ttco_co_1"
 	// >New Line Cinema</a>            (presents)
-  //      </li>
+	//      </li>
 	const rx_entry = /<li>[\s\S]*?<a href="\/company\/(co\d*)[\s\S]*?>([\s\S]*?)<\/a>([\s\S]*?)<\/li>/g;
 
 	let match = null;
@@ -2006,7 +2006,7 @@ async function fetchFilterValues($MediaType) {
 
 async function fetchSortValues($MediaType) {
 	logger.log('fetchSortValues');
-	
+
 	const result = await getSetting(`sortMediaType${$MediaType}`);
 	if (!result) {
 		return null;
@@ -2015,7 +2015,7 @@ async function fetchSortValues($MediaType) {
 	shared.sortField = JSON.parse(result).sortField;
 
 	logger.log('shared.sortField:', shared.sortField);
-	
+
 	return JSON.parse(result);
 }
 
@@ -2720,7 +2720,7 @@ async function fetchFilterLanguages($MediaType, $LanguageType) {
 		}
 
 		result.NumMovies = result.NumMovies.toLocaleString();
-		
+
 		result.DisplayText = result.Language;
 		if (languageKeys[result.Language]) {
 			result.DisplayText = `${result.Language} - ${languageKeys[result.Language]}`
@@ -2734,7 +2734,7 @@ async function fetchFilterLanguages($MediaType, $LanguageType) {
 	} else {
 		shared.filterSubtitleLanguages = resultsFiltered;
 	}
-	
+
 }
 
 async function getMovieDetails($id_Movies) {
@@ -2960,10 +2960,10 @@ async function scrapeIMDBSearch(title, titleTypes) {
 		if (tconst) {
 			tconst = tconst.match(/tt\d*/)[0];
 		}
-		
+
 		// logger.log('item:', $(this).html());
 		const imageURL = $($(item).find('.lister-item-image > a > img')).attr('loadlate');
-		
+
 		let title = $($(item).find('h3.lister-item-header')).text();
 		title = title.replace(/[\s\n]/g, ' ');
 		while (/\s\s/g.test(title)) {
@@ -2973,7 +2973,7 @@ async function scrapeIMDBSearch(title, titleTypes) {
 		const ageRating = $($(item).find('span.certificate')).text();
 		const runtime = $($(item).find('span.runtime')).text();
 		const genres = $($(item).find('span.genre')).text().trim();
-		
+
 		let detailInfo = '';
 		if (ageRating) {
 			detailInfo += ageRating;
@@ -3004,7 +3004,7 @@ async function scrapeIMDBSearch(title, titleTypes) {
 async function assignIMDB($id_Movies, $IMDB_tconst) {
 	logger.log('assignIMDB $id_Movies:', $id_Movies, '$IMDB_tconst:', $IMDB_tconst);
 
-	await db.fireProcedure(`UPDATE tbl_Movies SET IMDB_tconst = $IMDB_tconst WHERE id_Movies = $id_Movies`,  { $id_Movies, $IMDB_tconst });
+	await db.fireProcedure(`UPDATE tbl_Movies SET IMDB_tconst = $IMDB_tconst WHERE id_Movies = $id_Movies`, { $id_Movies, $IMDB_tconst });
 
 	// rescan IMDB Metadata
 	eventBus.rescanStarted();
@@ -3017,14 +3017,14 @@ async function assignIMDB($id_Movies, $IMDB_tconst) {
 
 async function saveCurrentPage($MediaType) {
 	logger.log('saveCurrentPage');
-	
+
 	logger.log('saveCurrentPage shared.currentPage:', shared.currentPage);
 	await setSetting(`currentPageMediatype${$MediaType}`, shared.currentPage);
 }
 
 async function fetchCurrentPage($MediaType) {
 	logger.log('fetchCurrentPage');
-	
+
 	const currentPage = await getSetting(`currentPageMediatype${$MediaType}`);
 	shared.currentPage = parseInt(currentPage || 1);
 
@@ -3038,26 +3038,64 @@ async function scrapeIMDBTrailerMediaURLs(trailerURL) {
 
 	logger.log('tarilerURL:', trailerURL);
 
-	const response = await requestGetAsync(trailerURL.replace("/video/imdb/", "/videoplayer/"));
+	const response = await requestGetAsync({
+		uri: trailerURL, headers: {
+			'user-agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36'
+		}
+	});
+
 	const html = response.body;
 
-	logger.log('trailerURLs html:', html);
+	// logger.log('trailerURLs html:', html);
 
 	// "definition":"auto","mimeType":"application\u002Fx-mpegURL","videoUrl":"https:\u002F\u002Fimdb-video.media-imdb.com\u002Fvi1499136537\u002Fhls-1563882933870-master.m3u8?Expires=1575383713&Signature=PXs6zzGNbbxUR5SKWcNIWg~iA2TYAgfao8VNfaelya7rlNgxYz9yeh3kLJdUYqHQOK57Tbk5abPzx2lMLZea3lLRmR9T17~MN4M4RAaYUZR5w69wnQKu2wzGv5n7qgm3IaXyVdO61L37fuecTvzz-tigaVaWDnViTr5tkpf7Pu4isE-qF9hd1xX~oXDk5A~z2TdGzII16faXnxIY~xs~7rbKMgKfTJUxGtUmjSGTKXqEIh-VqPG0p4gYaXOCB-HCu42hqxeb8ll2XFPiBTCogyoBj-r0CRYZhx9GQ7FbfCkE0t9bgJ16dhy8eb9tVwsaZ6wjMjoQxu-CiaLDelciqg__&Key-Pair-Id=APKAIFLZBVQZ24NQH3KA"
-	const rxMediaURL = /"definition":"(.*?)","mimeType":".*?","videoUrl":"(.*?)"/g;
+	const rxMediaURL = /"definition":"(.*?)","mimeType":"(.*?)","videoUrl":"(.*?)"/g;
 
 	let match = null;
 
 	// eslint-disable-next-line no-cond-assign
 	while (match = rxMediaURL.exec(html)) {
 		const definition = match[1];
-		const mediaURL = match[2];
-		
+		const mimeType = match[2].replace(/\\u002F/g, '/');
+		const mediaURL = match[3].replace(/\\u002F/g, '/');
+
 		result.push({
 			definition,
+			mimeType,
 			mediaURL
 		})
 	}
+
+	return result;
+}
+
+function selectBestQualityMediaURL(mediaURLs) {
+	const bestQualities = ['HD', '1080p', '720p', '480p', 'auto', 'SD'];
+
+	let bestURL = null;
+	
+	bestQualities.forEach(quality => {
+		mediaURLs.forEach(mediaURL => {
+			if (mediaURL.definition == quality) {
+				if (bestURL) return;
+
+				bestURL = mediaURL;
+			}
+		})
+	})
+
+	return bestURL;
+
+	// for (let quality = 0; quality < bestQualities.length; quality++) {
+	// 	for (let mediaURL = 0; mediaURL < mediaURLs.legnth; mediaURL++) {
+	// 		if (mediaURLs[mediaURL].definition == bestQualities[quality]) {
+	// 			logger.log('found best URL:', mediaURLs[mediaURL]);
+	// 			return mediaURLs[mediaURL];
+	// 		}
+	// 	}
+	// }
+
+	// return null;
 }
 
 export {
@@ -3106,5 +3144,6 @@ export {
 	saveSortValues,
 	saveCurrentPage,
 	fetchCurrentPage,
-	scrapeIMDBTrailerMediaURLs
+	scrapeIMDBTrailerMediaURLs,
+	selectBestQualityMediaURL
 }

@@ -899,7 +899,11 @@ export default {
     async showTrailerLocal(item) {
       const trailerMediaURLs = await store.scrapeIMDBTrailerMediaURLs(`https://www.imdb.com${item.IMDB_Trailer_URL}`);
 
-      logger.log('trailerMediaURLs:', trailerMediaURLs);
+			logger.log('trailerMediaURLs:', trailerMediaURLs);
+			
+			const trailerMediaURL = store.selectBestQualityMediaURL(trailerMediaURLs);
+
+			logger.log('selected best quality trailerMediaURL:', trailerMediaURL);
     },
 
     removeFromList(item) {
