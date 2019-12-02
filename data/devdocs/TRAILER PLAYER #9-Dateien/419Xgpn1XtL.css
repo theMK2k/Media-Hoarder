@@ -1,0 +1,519 @@
+/* stylelint-disable-next-line max-line-length */
+/* stylelint-disable-next-line max-line-length */
+/* Creates CSS3 Variables and adds them to root
+ * @params
+ *  $map - expects a map that contains 'core', 'on', 'text', and 'state' maps
+ * @output
+ *  --{key}-rgb: {val} - rgb value of the key
+ *  --{key}-color: rgb(var(--{key}-rgb)) - variable meant for css:color use
+ *  --{key}-bg: var(--{key}-color) - bg color meant for css:background use
+ */
+._7slaS0NikSNpkLVY3A1sk {
+  background: #1f1f1f;
+  background: var(--ipt-baseAlt-shade1-bg); }
+  @media screen and (min-width: 768px) {
+    ._7slaS0NikSNpkLVY3A1sk {
+      border-radius: var(--ipt-cornerRadius); } }
+
+/* stylelint-disable-next-line max-line-length */
+/* stylelint-disable-next-line max-line-length */
+/* Creates CSS3 Variables and adds them to root
+ * @params
+ *  $map - expects a map that contains 'core', 'on', 'text', and 'state' maps
+ * @output
+ *  --{key}-rgb: {val} - rgb value of the key
+ *  --{key}-color: rgb(var(--{key}-rgb)) - variable meant for css:color use
+ *  --{key}-bg: var(--{key}-color) - bg color meant for css:background use
+ */
+._3CzPBqlWRmSAoWxtvQQ5Eo {
+  border-color: rgba(255, 255, 255, 0.25);
+  border-color: rgba(var(--ipt-on-baseAlt-rgb), 0.25); }
+  ._3CzPBqlWRmSAoWxtvQQ5Eo:hover {
+    background: rgba(255, 255, 255, 0.08);
+    background: rgba(var(--ipt-on-baseAlt-rgb), var(--ipt-baseAlt-hover-opacity)); }
+  ._3CzPBqlWRmSAoWxtvQQ5Eo:active {
+    background: rgba(255, 255, 255, 0.32);
+    background: rgba(var(--ipt-on-baseAlt-rgb), var(--ipt-baseAlt-pressed-opacity)); }
+
+.-Ua5c7m52ju7WmdBtOEnf {
+  background: rgba(255, 255, 255, 0.08);
+  background: rgba(var(--ipt-on-baseAlt-rgb), var(--ipt-baseAlt-hover-opacity)); }
+
+._3Y2Rsr5ce7gB9vCd5oZ8Rg,
+._26kHO_8bFBduUIYADnVHFY {
+  color: white;
+  color: var(--ipt-on-baseAlt-textPrimary-color); }
+
+._26kHO_8bFBduUIYADnVHFY {
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-family: var(--ipt-font-family);
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0.03125em;
+  text-decoration: inherit;
+  text-transform: inherit;
+  -webkit-font-smoothing: auto;
+  /* stylelint-disable */
+  font-smooth: auto;
+  /* stylelint-enable */ }
+
+._3Y2Rsr5ce7gB9vCd5oZ8Rg {
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-family: var(--ipt-font-family);
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 400;
+  letter-spacing: 0.01786em;
+  text-decoration: inherit;
+  text-transform: inherit;
+  -webkit-font-smoothing: auto;
+  /* stylelint-disable */
+  font-smooth: auto;
+  /* stylelint-enable */ }
+
+._1DoAqrviL4URifsx8tYz_V {
+  color: rgba(255, 255, 255, 0.7);
+  color: var(--ipt-on-baseAlt-textSecondary-color);
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-family: var(--ipt-font-family);
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 400;
+  letter-spacing: 0.01786em;
+  text-decoration: inherit;
+  text-transform: inherit;
+  -webkit-font-smoothing: auto;
+  /* stylelint-disable */
+  font-smooth: auto;
+  /* stylelint-enable */ }
+
+._2TpQYyMxf6Rm95JztEm_yk, .caC6sT2C83IhLkzYA6kMB {
+  color: #5799ef;
+  color: var(--ipt-on-baseAlt-accent2-color);
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-family: var(--ipt-font-family);
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 400;
+  letter-spacing: 0.01786em;
+  text-decoration: inherit;
+  text-transform: inherit;
+  -webkit-font-smoothing: auto;
+  /* stylelint-disable */
+  font-smooth: auto;
+  /* stylelint-enable */ }
+
+._2xcsB5_XEiRCOYGbWQ05C9,
+._2VTfSadvr91wa2jULYtbX2 {
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-family: var(--ipt-font-family);
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0.03125em;
+  text-decoration: inherit;
+  text-transform: inherit;
+  -webkit-font-smoothing: auto;
+  /* stylelint-disable */
+  font-smooth: auto;
+  /* stylelint-enable */ }
+
+/* stylelint-disable-next-line max-line-length */
+/* stylelint-disable-next-line max-line-length */
+/* Creates CSS3 Variables and adds them to root
+ * @params
+ *  $map - expects a map that contains 'core', 'on', 'text', and 'state' maps
+ * @output
+ *  --{key}-rgb: {val} - rgb value of the key
+ *  --{key}-color: rgb(var(--{key}-rgb)) - variable meant for css:color use
+ *  --{key}-bg: var(--{key}-color) - bg color meant for css:background use
+ */
+._19kygDgP4Og4wL_TIXtDmm {
+  background-color: #1f1f1f;
+  background-color: var(--ipt-baseAlt-shade1-color); }
+  @media screen and (min-width: 768px) {
+    ._19kygDgP4Og4wL_TIXtDmm {
+      border-radius: var(--ipt-cornerRadius); }
+      ._19kygDgP4Og4wL_TIXtDmm.q2gp5sSzXI30d2n_razRe,
+      ._19kygDgP4Og4wL_TIXtDmm.q2gp5sSzXI30d2n_razRe .P7UFTypc7bsdHDd2RHdil {
+        border-color: white;
+        border-color: var(--ipt-on-baseAlt-color); }
+      ._19kygDgP4Og4wL_TIXtDmm.q2gp5sSzXI30d2n_razRe ._1-XI3_I8iwubPnQ1mmvW97 {
+        color: white;
+        color: var(--ipt-on-baseAlt-color); } }
+
+.P7UFTypc7bsdHDd2RHdil {
+  /* empty */ }
+
+._3gDVKsXm3b_VAMhhSw1haV {
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-family: var(--ipt-font-family);
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0.03125em;
+  text-decoration: inherit;
+  text-transform: inherit;
+  -webkit-font-smoothing: auto;
+  /* stylelint-disable */
+  font-smooth: auto;
+  /* stylelint-enable */
+  color: white;
+  color: var(--ipt-on-baseAlt-color);
+  caret-color: white;
+  caret-color: var(--ipt-on-baseAlt-color); }
+  ._3gDVKsXm3b_VAMhhSw1haV:placeholder {
+    color: var(--ipt-baseAlt-textHint-color); }
+  @media screen and (min-width: 768px) {
+    ._3gDVKsXm3b_VAMhhSw1haV {
+      font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+      font-family: var(--ipt-font-family);
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-font-smoothing: antialiased;
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+      font-weight: 400;
+      letter-spacing: 0.01786em;
+      text-decoration: inherit;
+      text-transform: inherit;
+      -webkit-font-smoothing: auto;
+      /* stylelint-disable */
+      font-smooth: auto;
+      /* stylelint-enable */ } }
+
+._1-XI3_I8iwubPnQ1mmvW97 {
+  background-color: #1f1f1f;
+  background-color: var(--ipt-baseAlt-shade1-color);
+  color: rgba(255, 255, 255, 0.7);
+  color: var(--ipt-on-baseAlt-textSecondary-color);
+  border-radius: var(--ipt-cornerRadius); }
+
+/* stylelint-disable-next-line max-line-length */
+/* stylelint-disable-next-line max-line-length */
+/* Creates CSS3 Variables and adds them to root
+ * @params
+ *  $map - expects a map that contains 'core', 'on', 'text', and 'state' maps
+ * @output
+ *  --{key}-rgb: {val} - rgb value of the key
+ *  --{key}-color: rgb(var(--{key}-rgb)) - variable meant for css:color use
+ *  --{key}-bg: var(--{key}-color) - bg color meant for css:background use
+ */
+._2crW0ewf49BFHCKEEUJ_9o ._1L5qcXA4wOKR8LeHJgsqja {
+  transition: color 0.15s;
+  cursor: pointer; }
+  ._2crW0ewf49BFHCKEEUJ_9o ._1L5qcXA4wOKR8LeHJgsqja ._2re8nTkPmRXI_TBcLnh1u8 {
+    margin-right: 0.75rem;
+    opacity: 0.5;
+    transition: opacity 0.2s; }
+  ._2crW0ewf49BFHCKEEUJ_9o ._1L5qcXA4wOKR8LeHJgsqja:hover ._2re8nTkPmRXI_TBcLnh1u8, ._2crW0ewf49BFHCKEEUJ_9o ._1L5qcXA4wOKR8LeHJgsqja:focus ._2re8nTkPmRXI_TBcLnh1u8, ._2crW0ewf49BFHCKEEUJ_9o ._1L5qcXA4wOKR8LeHJgsqja._3lrXaniHRqyCb5hUFHbcds ._2re8nTkPmRXI_TBcLnh1u8 {
+    opacity: 1; }
+  ._2crW0ewf49BFHCKEEUJ_9o ._1L5qcXA4wOKR8LeHJgsqja._3lrXaniHRqyCb5hUFHbcds {
+    color: #f5ff18;
+    color: var(--ipt-on-base-accent1-color); }
+
+/* stylelint-disable-next-line max-line-length */
+/* stylelint-disable-next-line max-line-length */
+/* Creates CSS3 Variables and adds them to root
+ * @params
+ *  $map - expects a map that contains 'core', 'on', 'text', and 'state' maps
+ * @output
+ *  --{key}-rgb: {val} - rgb value of the key
+ *  --{key}-color: rgb(var(--{key}-rgb)) - variable meant for css:color use
+ *  --{key}-bg: var(--{key}-color) - bg color meant for css:background use
+ */
+._2cVsg1cgtNxl8NEGDHTPH6 {
+  /* empty */ }
+
+.EL4bTiUhQdfIvyX_PMRVv:checked ~ ._2-sWuOY7_FrMCR557-z9H_ {
+  background-color: black;
+  background-color: var(--ipt-baseAlt-color); }
+
+button._3l1hVHEUIoeLbpxYHxio-j {
+  min-height: 2rem;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right-width: .2rem;
+  border-right-style: solid;
+  border-color: black;
+  border-color: var(--ipt-baseAlt-color); }
+
+/* stylelint-disable-next-line max-line-length */
+/* stylelint-disable-next-line max-line-length */
+/* Creates CSS3 Variables and adds them to root
+ * @params
+ *  $map - expects a map that contains 'core', 'on', 'text', and 'state' maps
+ * @output
+ *  --{key}-rgb: {val} - rgb value of the key
+ *  --{key}-color: rgb(var(--{key}-rgb)) - variable meant for css:color use
+ *  --{key}-bg: var(--{key}-color) - bg color meant for css:background use
+ */
+.iRO9SK-8q3D8_287dhn28 {
+  background: #1f1f1f;
+  background: var(--ipt-baseAlt-shade1-bg); }
+
+._1iCYg55DI6ds7d3KVrdYBX {
+  background: #1f1f1f;
+  background: var(--ipt-baseAlt-shade1-bg); }
+
+._3rHHDKyPLOjL8tGKHWMRza {
+  background: var(--ipt-baseAlt-stripes-bg); }
+
+.Bh8XO_Pd8J6PRkh7ZT-a {
+  overflow: hidden;
+  position: relative; }
+
+.WNY8DBPCS1ZbiSd7NoqdP {
+  display: none; }
+
+._14--k36qjjvLW3hUWHDPb_ {
+  /* empty */ }
+
+._146x-LuQBSfM9yosRvjSGF {
+  /* empty */ }
+
+._2RzUkzyrsjx_BPIQ5uoj5s {
+  /* empty */ }
+
+._3bRJYEaOz1BKUQYqW6yb29 {
+  /* empty */ }
+
+/* stylelint-disable-next-line max-line-length */
+/* stylelint-disable-next-line max-line-length */
+/* Creates CSS3 Variables and adds them to root
+ * @params
+ *  $map - expects a map that contains 'core', 'on', 'text', and 'state' maps
+ * @output
+ *  --{key}-rgb: {val} - rgb value of the key
+ *  --{key}-color: rgb(var(--{key}-rgb)) - variable meant for css:color use
+ *  --{key}-bg: var(--{key}-color) - bg color meant for css:background use
+ */
+._2BpsDlqEMlo9unX-C84Nji {
+  /* empty */ }
+
+._1tLXJMH37mh4UmvfVF8swF {
+  /* empty */ }
+
+._2aunAih-uMfbdgTUIjnQMd {
+  /* empty */ }
+
+._2BeDp2pKthfMnxArm4lS0T {
+  /* empty */ }
+
+._1IQgIe3JwGh2arzItRgYN3 {
+  /* empty */ }
+
+._1gB7giE3RrFWXvlzwjWk-q {
+  /* empty */ }
+
+._2Q0QZxgQqVpU0nQBqv1xlY {
+  /* empty */ }
+
+._1S9IOoNAVMPB2VikET3Lr2 {
+  height: 0;
+  visibility: hidden; }
+
+.s6lVaL5MYgQM-fYJ9KWp7:checked ~ ._2Q0QZxgQqVpU0nQBqv1xlY ._2vjThdvAXrHx6CofJjm03w {
+  border-color: rgba(255, 255, 255, 0.2);
+  border-color: var(--ipt-baseAlt-border-color); }
+
+.s6lVaL5MYgQM-fYJ9KWp7:checked ~ ._2Q0QZxgQqVpU0nQBqv1xlY ._1S9IOoNAVMPB2VikET3Lr2 {
+  border-color: rgba(255, 255, 255, 0.2);
+  border-color: var(--ipt-baseAlt-border-color);
+  height: auto;
+  visibility: inherit; }
+
+.s6lVaL5MYgQM-fYJ9KWp7:checked ~ ._2Q0QZxgQqVpU0nQBqv1xlY ._2vjThdvAXrHx6CofJjm03w ._1tLXJMH37mh4UmvfVF8swF,
+.s6lVaL5MYgQM-fYJ9KWp7:checked ~ ._2Q0QZxgQqVpU0nQBqv1xlY ._2vjThdvAXrHx6CofJjm03w ._2aunAih-uMfbdgTUIjnQMd {
+  color: #f5c518;
+  color: var(--ipt-on-baseAlt-accent1-color); }
+
+._2vjThdvAXrHx6CofJjm03w {
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-family: var(--ipt-font-family);
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0.03125em;
+  text-decoration: inherit;
+  text-transform: inherit;
+  -webkit-font-smoothing: auto;
+  /* stylelint-disable */
+  font-smooth: auto;
+  /* stylelint-enable */ }
+  ._2vjThdvAXrHx6CofJjm03w:hover {
+    background: rgba(255, 255, 255, 0.08);
+    background: var(--ipt-baseAlt-hover-bg); }
+
+@media screen and (min-width: 1024px) {
+  ._2aunAih-uMfbdgTUIjnQMd {
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-family: var(--ipt-font-family);
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 400;
+    letter-spacing: normal;
+    text-decoration: inherit;
+    text-transform: inherit;
+    font-weight: 600;
+    line-height: 1.5rem;
+    -webkit-font-smoothing: auto;
+    /* stylelint-disable */
+    font-smooth: auto;
+    /* stylelint-enable */ } }
+
+/* stylelint-disable-next-line max-line-length */
+/* stylelint-disable-next-line max-line-length */
+/* Creates CSS3 Variables and adds them to root
+ * @params
+ *  $map - expects a map that contains 'core', 'on', 'text', and 'state' maps
+ * @output
+ *  --{key}-rgb: {val} - rgb value of the key
+ *  --{key}-color: rgb(var(--{key}-rgb)) - variable meant for css:color use
+ *  --{key}-bg: var(--{key}-color) - bg color meant for css:background use
+ */
+._3wpok4xkiX-9E61ruFL_RA {
+  /* Empty */ }
+
+._1BC0pBnjYqz3wST1u3CwmG {
+  /* Empty */ }
+
+._1cBEhLbHn9YeCkfPvo9USU {
+  /* Empty */ }
+
+._3xW8qYlqcCPv5fOHeXBer5 {
+  /* Empty */ }
+
+._3xW8qYlqcCPv5fOHeXBer5:hover,
+._1BC0pBnjYqz3wST1u3CwmG:hover {
+  background: rgba(255, 255, 255, 0.08);
+  background: var(--ipt-baseAlt-hover-bg); }
+
+._33PK8nBHiT1fGjnfXwum3v {
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-family: var(--ipt-font-family);
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 400;
+  letter-spacing: 0.01786em;
+  text-decoration: inherit;
+  text-transform: inherit;
+  -webkit-font-smoothing: auto;
+  /* stylelint-disable */
+  font-smooth: auto;
+  /* stylelint-enable */ }
+
+/* stylelint-disable-next-line max-line-length */
+/* stylelint-disable-next-line max-line-length */
+/* Creates CSS3 Variables and adds them to root
+ * @params
+ *  $map - expects a map that contains 'core', 'on', 'text', and 'state' maps
+ * @output
+ *  --{key}-rgb: {val} - rgb value of the key
+ *  --{key}-color: rgb(var(--{key}-rgb)) - variable meant for css:color use
+ *  --{key}-bg: var(--{key}-color) - bg color meant for css:background use
+ */
+._1nYZd2B7IreG41Pj-RCDnb {
+  /* empty */ }
+
+.jOOJQ0waXoTX6ZSthGtum {
+  /* empty */ }
+
+._3agvn42aJpmi-lId674ZVe {
+  /* empty */ }
+
+._32i38MKalFVUkNAqPm88ln {
+  /* empty */ }
+
+/* stylelint-disable-next-line max-line-length */
+/* stylelint-disable-next-line max-line-length */
+/* Creates CSS3 Variables and adds them to root
+ * @params
+ *  $map - expects a map that contains 'core', 'on', 'text', and 'state' maps
+ * @output
+ *  --{key}-rgb: {val} - rgb value of the key
+ *  --{key}-color: rgb(var(--{key}-rgb)) - variable meant for css:color use
+ *  --{key}-bg: var(--{key}-color) - bg color meant for css:background use
+ */
+._3x17Igk9XRXcaKrcG3_MXQ .ipc-list__item.navbar__user-menu__username {
+  color: #f5c518;
+  color: var(--ipt-on-baseAlt-accent1-color);
+  opacity: 1;
+  pointer-events: none; }
+
+/* stylelint-disable-next-line max-line-length */
+/* stylelint-disable-next-line max-line-length */
+/* Creates CSS3 Variables and adds them to root
+ * @params
+ *  $map - expects a map that contains 'core', 'on', 'text', and 'state' maps
+ * @output
+ *  --{key}-rgb: {val} - rgb value of the key
+ *  --{key}-color: rgb(var(--{key}-rgb)) - variable meant for css:color use
+ *  --{key}-bg: var(--{key}-color) - bg color meant for css:background use
+ */
+.ffzGRstkt4lGcy9yWXz7a {
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-family: var(--ipt-font-family);
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  font-weight: 400;
+  letter-spacing: 0.03333em;
+  text-decoration: inherit;
+  text-transform: inherit;
+  -webkit-font-smoothing: auto;
+  /* stylelint-disable */
+  font-smooth: auto;
+  /* stylelint-enable */ }
+
+/* stylelint-disable-next-line max-line-length */
+/* stylelint-disable-next-line max-line-length */
+/* Creates CSS3 Variables and adds them to root
+ * @params
+ *  $map - expects a map that contains 'core', 'on', 'text', and 'state' maps
+ * @output
+ *  --{key}-rgb: {val} - rgb value of the key
+ *  --{key}-color: rgb(var(--{key}-rgb)) - variable meant for css:color use
+ *  --{key}-bg: var(--{key}-color) - bg color meant for css:background use
+ */
+.FHCtKBINjbqzCITNiccU0 {
+  background: #121212;
+  background: var(--ipt-baseAlt-shade3-bg);
+  color: white;
+  color: var(--ipt-on-baseAlt-textPrimary-color);
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-family: var(--ipt-font-family);
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0.03125em;
+  text-decoration: inherit;
+  text-transform: inherit;
+  -webkit-font-smoothing: auto;
+  /* stylelint-disable */
+  font-smooth: auto;
+  /* stylelint-enable */ }
+
+
+/*# sourceMappingURL=main.fb41aa372b3a09154209.css.map*/

@@ -59,7 +59,7 @@ const definedError = require('@/helpers/defined-error');
 const isBuild = process.env.NODE_ENV === 'production';
 
 if (!isBuild) {
-	logger.setLevel(2);	// KILLME
+	logger.setLevel(0);	// KILLME
 }
 
 // eslint-disable-next-line no-console
@@ -3031,6 +3031,35 @@ async function fetchCurrentPage($MediaType) {
 	logger.log('fetchCurrentPage shared.currentPage:', shared.currentPage);
 }
 
+async function scrapeIMDBTrailerMediaURLs(trailerURL) {
+	const result = [];
+
+	trailerURL = trailerURL.replace("/video/imdb/", "/videoplayer/");
+
+	logger.log('tarilerURL:', trailerURL);
+
+	const response = await requestGetAsync(trailerURL.replace("/video/imdb/", "/videoplayer/"));
+	const html = response.body;
+
+	logger.log('trailerURLs html:', html);
+
+	// "definition":"auto","mimeType":"application\u002Fx-mpegURL","videoUrl":"https:\u002F\u002Fimdb-video.media-imdb.com\u002Fvi1499136537\u002Fhls-1563882933870-master.m3u8?Expires=1575383713&Signature=PXs6zzGNbbxUR5SKWcNIWg~iA2TYAgfao8VNfaelya7rlNgxYz9yeh3kLJdUYqHQOK57Tbk5abPzx2lMLZea3lLRmR9T17~MN4M4RAaYUZR5w69wnQKu2wzGv5n7qgm3IaXyVdO61L37fuecTvzz-tigaVaWDnViTr5tkpf7Pu4isE-qF9hd1xX~oXDk5A~z2TdGzII16faXnxIY~xs~7rbKMgKfTJUxGtUmjSGTKXqEIh-VqPG0p4gYaXOCB-HCu42hqxeb8ll2XFPiBTCogyoBj-r0CRYZhx9GQ7FbfCkE0t9bgJ16dhy8eb9tVwsaZ6wjMjoQxu-CiaLDelciqg__&Key-Pair-Id=APKAIFLZBVQZ24NQH3KA"
+	const rxMediaURL = /"definition":"(.*?)","mimeType":".*?","videoUrl":"(.*?)"/g;
+
+	let match = null;
+
+	// eslint-disable-next-line no-cond-assign
+	while (match = rxMediaURL.exec(html)) {
+		const definition = match[1];
+		const mediaURL = match[2];
+		
+		result.push({
+			definition,
+			mediaURL
+		})
+	}
+}
+
 export {
 	db,
 	fetchSourcePaths,
@@ -3076,5 +3105,6 @@ export {
 	fetchSortValues,
 	saveSortValues,
 	saveCurrentPage,
-	fetchCurrentPage
+	fetchCurrentPage,
+	scrapeIMDBTrailerMediaURLs
 }

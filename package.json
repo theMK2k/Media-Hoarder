@@ -2,6 +2,8 @@
   "name": "mediabox",
   "version": "0.1.0",
   "private": true,
+  "description": "mediabox - a thorough frontend for your movies and tv shows",
+  "author": "mk2k | https://mk2k.net",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",

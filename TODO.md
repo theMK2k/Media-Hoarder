@@ -1,11 +1,10 @@
 ## Progress - Movies sorted by Name
 - page: 56 (God bless America)
 
-## Languages Filter
-- MediaInfo Scan: add to tbl_Movies_Languages (Audio, Subtitle)
-- 
-
 ## Other
+- Trailer Player with Video.js (extract video source from imdb trailer page)
+	-> MediaList showTrailerLocal
+
 - Rescan: when a movie was moved (same filename just deleted at location X and added on location Y)
 	-> copy over userdefined data (e.g. rating etc. also member of lists)
 
@@ -54,6 +53,10 @@ OK - MultiPart: interpret "1_2" as "(1/2)"
 OK - exit menuitem
 OK - fix Age Rating filter (undetermined yields no results -> see filterParentalAdvisory)
 OK - fix duplication check in filescan, e.g. "Audition ~ Ôdishon (De)(Sub De)(HD)[1999][Drama, Horror, Mystery][7.2 @ 65149][tt0235198].mkv"
+
+## Languages Filter
+OK - MediaInfo Scan: add to tbl_Movies_Languages (Audio, Subtitle)
+OK - add Audio- and Subtitle Filters in App.vue
 
 ## Watchlist
 - add as filter
