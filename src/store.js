@@ -1979,13 +1979,13 @@ async function launchMovie(movie) {
 	const VLCPath = await getSetting('VLCPath');
 
 	if (!VLCPath) {
-		eventBus.showSnackbar('error', 6000, 'Unable to launch: VLC path is not set');
+		eventBus.showSnackbar('error', 'Unable to launch: VLC path is not set');
 	}
 
 	const fileExists = await existsAsync(movie.Path);
 
 	if (!fileExists) {
-		eventBus.showSnackbar('error', 6000, `Cannot access ${movie.Path}`);
+		eventBus.showSnackbar('error', `Cannot access ${movie.Path}`);
 		return;
 	}
 
@@ -3036,7 +3036,7 @@ async function scrapeIMDBTrailerMediaURLs(trailerURL) {
 
 	trailerURL = trailerURL.replace("/video/imdb/", "/videoplayer/");
 
-	logger.log('tarilerURL:', trailerURL);
+	logger.log('trailerURL:', trailerURL);
 
 	const response = await requestGetAsync({
 		uri: trailerURL, headers: {
@@ -3066,15 +3066,26 @@ async function scrapeIMDBTrailerMediaURLs(trailerURL) {
 		})
 	}
 
-	return result;
+	const rxSlate = /"slate":.*?"url":"(.*?)"/;
+
+	let slateURL = null;
+	if (rxSlate.test(html)) {
+		slateURL = html.match(rxSlate)[1].replace(/\\u002F/g, '/');
+	}
+
+	return {
+		mediaURLs: result,
+		slateURL
+	};
 }
 
 function selectBestQualityMediaURL(mediaURLs) {
 	const bestQualities = ['HD', '1080p', '720p', '480p', 'auto', 'SD'];
 
 	let bestURL = null;
-	
+
 	bestQualities.forEach(quality => {
+		if (bestURL) return;
 		mediaURLs.forEach(mediaURL => {
 			if (mediaURL.definition == quality) {
 				if (bestURL) return;
@@ -3085,17 +3096,6 @@ function selectBestQualityMediaURL(mediaURLs) {
 	})
 
 	return bestURL;
-
-	// for (let quality = 0; quality < bestQualities.length; quality++) {
-	// 	for (let mediaURL = 0; mediaURL < mediaURLs.legnth; mediaURL++) {
-	// 		if (mediaURLs[mediaURL].definition == bestQualities[quality]) {
-	// 			logger.log('found best URL:', mediaURLs[mediaURL]);
-	// 			return mediaURLs[mediaURL];
-	// 		}
-	// 	}
-	// }
-
-	// return null;
 }
 
 export {

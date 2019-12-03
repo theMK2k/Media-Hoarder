@@ -140,7 +140,7 @@ export default {
         logger.log("this.personData:", this.personData);
       } catch (err) {
         logger.log(err);
-        eventBus.showSnackbar("error", 6000, err);
+        eventBus.showSnackbar("error", err);
       }
 
       this.isScraping = false;

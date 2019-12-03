@@ -192,7 +192,6 @@ export default {
           if (isAlreadyInUse) {
             return eventBus.showSnackbar(
               "error",
-              6000,
               `The chosen path is already in use.`
             );
           }
@@ -219,7 +218,7 @@ export default {
         this.sourcePaths = paths;
         logger.log(this.sourcePaths);
       } catch (err) {
-        eventBus.showSnackbar("error", 6000, err);
+        eventBus.showSnackbar("error", err);
       }
       // })();
     },
@@ -270,9 +269,9 @@ export default {
 
           await this.fetchSourcePaths();
 
-          eventBus.showSnackbar("success", 6000, `Source path removed.`);
+          eventBus.showSnackbar("success", `Source path removed.`);
         } catch (err) {
-          eventBus.showSnackbar("error", 6000, err);
+          eventBus.showSnackbar("error", err);
         }
       })();
     },
@@ -304,9 +303,9 @@ export default {
 
           await this.fetchSourcePaths();
 
-          eventBus.showSnackbar("success", 6000, `Description updated.`);
+          eventBus.showSnackbar("success", `Description updated.`);
         } catch (err) {
-          eventBus.showSnackbar("error", 6000, err);
+          eventBus.showSnackbar("error", err);
         }
       })();
     },
@@ -327,11 +326,10 @@ export default {
 
           eventBus.showSnackbar(
             "success",
-            6000,
             `${this.sourcePathDescriptionDialog.Path} added to ${this.sourcePathDescriptionDialog.MediaTypeUpper} source directories`
           );
         } catch (err) {
-          eventBus.showSnackbar("error", 6000, err);
+          eventBus.showSnackbar("error", err);
         }
       })();
     },

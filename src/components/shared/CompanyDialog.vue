@@ -105,7 +105,6 @@ export default {
         logger.log(err);
         eventBus.showSnackbar(
           "error",
-          6000,
           "an error occured while fetching data from the web"
         );
       }

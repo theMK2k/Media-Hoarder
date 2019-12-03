@@ -61,7 +61,7 @@
                     v-if="item.IMDB_posterSmall_URL"
                     v-bind:src="item.IMDB_posterSmall_URL"
                     style="border-radius: 6px;"
-                  ></v-img> -->
+                  ></v-img>-->
                 </v-list-item-avatar>
               </div>
               <v-list-item-content
@@ -92,9 +92,7 @@
                               >mdi-pencil</v-icon>
                             </span>
                           </template>
-                          <span>
-                            Edit Title
-                          </span>
+                          <span>Edit Title</span>
                         </v-tooltip>
 
                         <v-tooltip bottom>
@@ -107,12 +105,8 @@
                               >mdi-link</v-icon>
                             </span>
                           </template>
-                          <span>
-                            Link with IMDB entry
-                          </span>
+                          <span>Link with IMDB entry</span>
                         </v-tooltip>
-
-
                       </v-list-item-title>
 
                       <v-list-item-subtitle
@@ -332,7 +326,9 @@
                   <v-btn text small color="primary" v-on:click.stop="addToList(item)">Add</v-btn>
                   <v-btn
                     v-if="itemDetails.lists && itemDetails.lists.length > 0"
-                    text small color="primary"
+                    text
+                    small
+                    color="primary"
                     v-on:click.stop="removeFromList(item)"
                   >Remove</v-btn>
                 </v-col>
@@ -454,9 +450,20 @@
               </div>
 
               <v-row style="margin-top: 8px">
-                <v-btn text  color="primary" v-on:click.stop="copyInfo(item)">Copy Info</v-btn>
-                <v-btn v-if="item.IMDB_Trailer_URL" text color="primary" v-on:click.stop="showTrailer(item)">Trailer</v-btn>
-                <v-btn v-if="item.IMDB_Trailer_URL" text color="primary" v-on:click.stop="showTrailerLocal(item)">Trailer Local</v-btn>
+                <v-btn text color="primary" v-on:click.stop="copyInfo(item)">Copy Info</v-btn>
+                <!-- Old Trailer implementation with "iFrame" -->
+                <!-- <v-btn
+                  v-if="item.IMDB_Trailer_URL"
+                  text
+                  color="primary"
+                  v-on:click.stop="showTrailer(item)"
+                >Trailer</v-btn>-->
+                <v-btn
+                  v-if="item.IMDB_Trailer_URL"
+                  text
+                  color="primary"
+                  v-on:click.stop="showTrailerLocal(item)"
+                >Trailer</v-btn>
                 <v-btn text color="primary" v-on:click.stop="openIMDB(item)">Open IMDB</v-btn>
               </v-row>
             </v-col>
@@ -506,6 +513,15 @@
       v-on:close="onVideoPlayerDialogClose"
     ></mk-video-player-dialog>
 
+    <mk-local-video-player-dialog
+      v-if="localVideoPlayerDialog.instantiated"
+      v-bind:show="localVideoPlayerDialog.show"
+      v-bind:videoURL="localVideoPlayerDialog.videoURL"
+      v-bind:slateURL="localVideoPlayerDialog.slate"
+      v-bind:mimeType="localVideoPlayerDialog.mimeType"
+      v-on:close="onLocalVideoPlayerDialogClose"
+    ></mk-local-video-player-dialog>
+
     <mk-edit-item-dialog
       ref="editItemNameDialog"
       v-bind:show="editItemDialog.show"
@@ -537,6 +553,7 @@ import ListDialog from "@/components/shared/ListDialog.vue";
 import PersonDialog from "@/components/shared/PersonDialog.vue";
 import CompanyDialog from "@/components/shared/CompanyDialog.vue";
 import VideoPlayerDialog from "@/components/shared/VideoPlayerDialog.vue";
+import LocalVideoPlayerDialog from "@/components/shared/LocalVideoPlayerDialog.vue";
 import SearchIMDBDialog from "@/components/shared/SearchIMDBDialog.vue";
 
 const { shell } = require("electron").remote;
@@ -553,6 +570,7 @@ export default {
     "mk-person-dialog": PersonDialog,
     "mk-company-dialog": CompanyDialog,
     "mk-video-player-dialog": VideoPlayerDialog,
+    "mk-local-video-player-dialog": LocalVideoPlayerDialog,
     "mk-edit-item-dialog": Dialog,
     "mk-search-imdb-dialog": SearchIMDBDialog
   },
@@ -619,6 +637,14 @@ export default {
       videoURL: null
     },
 
+    localVideoPlayerDialog: {
+      instantiated: false,
+      show: false,
+      videoURL: null,
+      slateURL: null,
+      mimeType: null
+    },
+
     editItemDialog: {
       show: false,
       title: null,
@@ -642,9 +668,14 @@ export default {
   }),
 
   watch: {
-    currentPage (newValue, oldValue) {
-      logger.log('watch currentPage: newValue:', newValue, 'oldValue:', oldValue);
-      
+    currentPage(newValue, oldValue) {
+      logger.log(
+        "watch currentPage: newValue:",
+        newValue,
+        "oldValue:",
+        oldValue
+      );
+
       if (!newValue) {
         this.$shared.currentPage = oldValue || 1;
         return;
@@ -696,18 +727,27 @@ export default {
             typeof a[this.$shared.sortField] === "string" ||
             a[this.$shared.sortField] instanceof String
           ) {
-            if (this.$shared.sortField === "created_at" || this.$shared.sortField === "last_access_at") {
+            if (
+              this.$shared.sortField === "created_at" ||
+              this.$shared.sortField === "last_access_at"
+            ) {
               if (!a[this.$shared.sortField] || !b[this.$shared.sortField]) {
                 return -1;
               }
 
               // we sort dates in reverse order (earliest first)
-              if (a[this.$shared.sortField].toLowerCase() > b[this.$shared.sortField].toLowerCase()) {
+              if (
+                a[this.$shared.sortField].toLowerCase() >
+                b[this.$shared.sortField].toLowerCase()
+              ) {
                 return -1;
               }
             }
 
-            if (a[this.$shared.sortField].toLowerCase() > b[this.$shared.sortField].toLowerCase()) {
+            if (
+              a[this.$shared.sortField].toLowerCase() >
+              b[this.$shared.sortField].toLowerCase()
+            ) {
               return 1;
             }
 
@@ -856,7 +896,7 @@ export default {
       document.execCommand("copy");
       document.body.removeChild(el);
 
-      eventBus.showSnackbar("info", 6000, "Info copied to clipboard");
+      eventBus.showSnackbar("info", "Info copied to clipboard");
     },
 
     addToList(item) {
@@ -897,13 +937,35 @@ export default {
     },
 
     async showTrailerLocal(item) {
-      const trailerMediaURLs = await store.scrapeIMDBTrailerMediaURLs(`https://www.imdb.com${item.IMDB_Trailer_URL}`);
+      try {
+        const trailerMediaURLs = await store.scrapeIMDBTrailerMediaURLs(
+          `https://www.imdb.com${item.IMDB_Trailer_URL}`
+        );
 
-			logger.log('trailerMediaURLs:', trailerMediaURLs);
-			
-			const trailerMediaURL = store.selectBestQualityMediaURL(trailerMediaURLs);
+        logger.log("trailerMediaURLs:", trailerMediaURLs);
 
-			logger.log('selected best quality trailerMediaURL:', trailerMediaURL);
+        if (
+          !trailerMediaURLs ||
+          !trailerMediaURLs.mediaURLs ||
+          trailerMediaURLs.mediaURLs.length == 0
+        ) {
+          eventBus.showSnackbar("error", "no trailer sources found");
+        }
+
+        const trailerMediaURL = store.selectBestQualityMediaURL(
+          trailerMediaURLs.mediaURLs
+        );
+
+        logger.log("selected best quality trailerMediaURL:", trailerMediaURL);
+
+        this.localVideoPlayerDialog.videoURL = trailerMediaURL.mediaURL;
+        this.localVideoPlayerDialog.mimeType = trailerMediaURL.mimeType;
+        this.localVideoPlayerDialog.slateURL = trailerMediaURLs.slateURL;
+        this.localVideoPlayerDialog.instantiated = true;
+        this.localVideoPlayerDialog.show = true;
+      } catch (err) {
+        eventBus.showSnackbar("error", err);
+      }
     },
 
     removeFromList(item) {
@@ -929,7 +991,7 @@ export default {
       (async () => {
         try {
           if (!data.chosen_id_Lists && !data.newListName) {
-            eventBus.showSnackbar("error", 6000, "list is missing");
+            eventBus.showSnackbar("error", "list is missing");
             return;
           }
 
@@ -950,13 +1012,13 @@ export default {
               this.listDialog.movie.id_Movies
             );
 
-            eventBus.showSnackbar("success", 6000, "item added to list");
+            eventBus.showSnackbar("success", "item added to list");
           }
 
           // Remove from list
           if (this.listDialog.mode == "remove") {
             if (!data.chosen_id_Lists) {
-              eventBus.showSnackbar("error", 6000, "list is missing");
+              eventBus.showSnackbar("error", "list is missing");
               return;
             }
 
@@ -969,10 +1031,10 @@ export default {
 
             eventBus.refetchMedia(this.$shared.currentPage);
 
-            eventBus.showSnackbar("success", 6000, "item removed from list");
+            eventBus.showSnackbar("success", "item removed from list");
           }
         } catch (err) {
-          eventBus.showSnackbar("error", 6000, err);
+          eventBus.showSnackbar("error", err);
         }
       })();
     },
@@ -992,9 +1054,9 @@ export default {
       await store.fetchFilterPersons(this.mediatype);
       await store.fetchFilterCompanies(this.mediatype);
       await store.fetchFilterYears(this.mediatype);
-			await store.fetchFilterQualities(this.mediatype);
-			await store.fetchFilterLanguages(this.mediatype, 'audio');
-			await store.fetchFilterLanguages(this.mediatype, 'subtitle');
+      await store.fetchFilterQualities(this.mediatype);
+      await store.fetchFilterLanguages(this.mediatype, "audio");
+      await store.fetchFilterLanguages(this.mediatype, "subtitle");
 
       await store.fetchSortValues(this.mediatype);
 
@@ -1144,9 +1206,16 @@ export default {
       this.videoPlayerDialog.show = false;
     },
 
+    onLocalVideoPlayerDialogClose() {
+      this.localVideoPlayerDialog.show = false;
+      setTimeout(() => {
+        this.localVideoPlayerDialog.instantiated = false;
+      }, 250);
+    },
+
     onOpenSearchIMDBDialog(item) {
-			this.$refs.searchIMDBDialog.init();
-			this.searchIMDBDialog.show = true;
+      this.$refs.searchIMDBDialog.init();
+      this.searchIMDBDialog.show = true;
       this.searchIMDBDialog.item = item;
     },
 
@@ -1160,13 +1229,13 @@ export default {
         await store.assignIMDB(this.searchIMDBDialog.item.id_Movies, tconst);
 
         eventBus.refetchMedia(this.$shared.currentPage);
-        
-        eventBus.showSnackbar("success", 6000, "entry linked successfully");
-        
+
+        eventBus.showSnackbar("success", "entry linked successfully");
+
         this.onSearchIMDBDialogClose();
       } catch (err) {
-        logger.log('error:', JSON.stringify(err));
-        eventBus.showSnackbar("error", 6000, err);
+        logger.log("error:", JSON.stringify(err));
+        eventBus.showSnackbar("error", err);
       }
     },
 
@@ -1200,7 +1269,6 @@ export default {
 
       eventBus.showSnackbar(
         "success",
-        6000,
         `${this.editItemDialog.attributeDisplayText} successfully changed.`
       );
     },
@@ -1259,7 +1327,8 @@ export default {
 
         eventBus.showLoadingOverlay(false);
 
-        this.$shared.currentPage = setPage && setPage <= this.numPages ? setPage : 1;
+        this.$shared.currentPage =
+          setPage && setPage <= this.numPages ? setPage : 1;
         store.saveCurrentPage(this.mediatype);
       })();
     });

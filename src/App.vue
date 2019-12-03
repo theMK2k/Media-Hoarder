@@ -1027,11 +1027,10 @@ export default {
 
           eventBus.showSnackbar(
             "success",
-            6000,
             `List '${this.deleteListDialog.Name}' removed.`
           );
         } catch (err) {
-          eventBus.showSnackbar("error", 6000, err);
+          eventBus.showSnackbar("error", err);
         }
       })();
     },
@@ -1107,7 +1106,7 @@ export default {
 
     this.$vuetify.theme.dark = true;
 
-    eventBus.$on("showSnackbar", ({ color, timeout, textOrErrorObject }) => {
+    eventBus.$on("showSnackbar", ({ color, textOrErrorObject, timeout }) => {
       logger.debug("snackbar called:", textOrErrorObject);
       this.snackbar.details = [];
       this.snackbar.color = color;

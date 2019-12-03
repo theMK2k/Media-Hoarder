@@ -222,7 +222,7 @@ export default {
       this.isLoading = true;
 
       if (!this.searchText) {
-        eventBus.showSnackbar("error", 6000, "title is missing");
+        eventBus.showSnackbar("error", "title is missing");
         this.isLoading = false;
         return;
       }
@@ -233,7 +233,7 @@ export default {
           this.titleTypes
         );
       } catch (err) {
-        eventBus.showSnackbar("error", 6000, err);
+        eventBus.showSnackbar("error", err);
       } finally {
         this.isLoading = false;
       }
@@ -243,7 +243,7 @@ export default {
       logger.log("onSelectClick item:", item);
 
       if (!item.tconst) {
-        return eventBus.showSnackbar("error", 6000, "identifier missing");
+        return eventBus.showSnackbar("error", "identifier missing");
 			}
 
 			this.searchResults = [item];

@@ -66,13 +66,11 @@ export default {
 		if (this.value.checkRemovedFiles) {
 			eventBus.showSnackbar(
             "success",
-            6000,
             `OK, during (re-)scan, any missing file in the source path will lead to removal of the entry`
           );
 		} else {
 			eventBus.showSnackbar(
             "success",
-            6000,
             `OK, during (re-)scan, no entry removal is performed - regardless if the file is available or not`
           );
 		}
