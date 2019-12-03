@@ -10,18 +10,18 @@
           <v-list-item-title style="color: lightgrey">Settings</v-list-item-title>
         </v-list-item>
 
-        <v-list-item v-on:click="toggleRescan(true)">
+        <v-list-item v-on:click="onRescan">
           <v-list-item-action>
             <v-icon v-show="!isScanning">mdi-reload</v-icon>
             <v-icon v-show="isScanning">mdi-cancel</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title v-show="!isScanning">Scan for new media</v-list-item-title>
+            <v-list-item-title v-show="!isScanning">Scan Media</v-list-item-title>
             <v-list-item-title v-show="isScanning">Cancel Scan</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item v-on:click="toggleRescan(false)">
+        <!-- <v-list-item v-on:click="toggleRescan(false)">
           <v-list-item-action>
             <v-icon v-show="!isScanning">mdi-reload</v-icon>
             <v-icon v-show="isScanning">mdi-cancel</v-icon>
@@ -30,7 +30,7 @@
             <v-list-item-title v-show="!isScanning">Rescan all media</v-list-item-title>
             <v-list-item-title v-show="isScanning">Cancel Scan</v-list-item-title>
           </v-list-item-content>
-        </v-list-item>
+        </v-list-item> -->
 
         <v-divider></v-divider>
 
@@ -452,6 +452,13 @@
           v-on:cancel="onSearchPersonsDialogCancel"
         ></mk-search-persons-dialog>
 
+        <mk-scan-options-dialog
+          ref="scanOptionsDialog"
+          v-bind:show="scanOptionsDialog.show"
+          v-on:cancel="onScanOptionsDialogCancel"
+          v-on:ok="onScanOptionsDialogOK"
+        ></mk-scan-options-dialog>
+
         <!-- BOTTOM BAR -->
         <v-bottom-navigation
           fixed
@@ -518,12 +525,14 @@ const logger = require("loglevel");
 
 import Dialog from "@/components/shared/Dialog.vue";
 import SearchDataDialog from "@/components/shared/SearchDataDialog.vue";
+import ScanOptionsDialog from "@/components/shared/ScanOptionsDialog.vue";
 
 export default {
   components: {
     "mk-delete-list-dialog": Dialog,
     "mk-search-companies-dialog": SearchDataDialog,
-    "mk-search-persons-dialog": SearchDataDialog
+    "mk-search-persons-dialog": SearchDataDialog,
+    "mk-scan-options-dialog": ScanOptionsDialog
   },
 
   props: {
@@ -591,7 +600,11 @@ export default {
 
     searchPersonsDialog: {
       show: false
-    }
+    },
+
+    scanOptionsDialog: {
+      show: false
+    },
   }),
 
   watch: {
@@ -1048,6 +1061,31 @@ export default {
     onDeleteListDialogCancel() {
       this.deleteListDialog.show = false;
     },
+
+    onRescan() {
+      if (store.isScanning) {
+        store.abortRescan();
+        return;
+      }
+      
+      this.scanOptionsDialog.show = true;
+    },
+    
+    onScanOptionsDialogCancel() {
+      this.scanOptionsDialog.show = false;
+    },
+
+    onScanOptionsDialogOK(chosenMethod) {
+      const onlyNew = (chosenMethod === 1);
+      
+      // TODO: run scan
+      logger.log('chosen Scan Option:', chosenMethod, 'onlyNew:', onlyNew);
+
+      store.rescan(onlyNew);
+      
+      this.scanOptionsDialog.show = false;
+    },
+
 
     filterParentalAdvisoryCategoryTitle(category) {
       if (

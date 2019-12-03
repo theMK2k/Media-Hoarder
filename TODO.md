@@ -2,8 +2,7 @@
 - page: 56 (God bless America)
 
 ## Other
-- Trailer Player with Video.js (extract video source from imdb trailer page)
-	-> MediaList showTrailerLocal
+- Rescan: only 1 button on sidenav, show dialog to choose "only new" or "compete" rescan
 
 - Rescan: when a movie was moved (same filename just deleted at location X and added on location Y)
 	-> copy over userdefined data (e.g. rating etc. also member of lists)
@@ -37,6 +36,9 @@ OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 - min/maxAge is false when 0 is in place
 
 ## Other
+OK - Trailer Player with Video.js (extract video source from imdb trailer page)
+OK	-> MediaList showTrailerLocal
+
 OK - remember "sort by" setting (same as remembering the filters)
 OK	-> "sort by" is destroyed upon reload after adding/removing entry to a list
 
