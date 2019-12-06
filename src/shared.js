@@ -21,8 +21,14 @@ const shared = new Vue({
 		filterCompanies: [],
 		filterAudioLanguages: [],
 		filterSubtitleLanguages: [],
+		
+    filterMetacriticScore: [0, 100],
+		filterMetacriticScoreNone: true,
 
-    contentAdvisoryCategories: [
+		filterIMDBRating: [0, 10],
+		filterIMDBRatingNone: true,
+
+		contentAdvisoryCategories: [
       {
         Name: 'Nudity',
         DisplayText: 'Sex & Nudity'

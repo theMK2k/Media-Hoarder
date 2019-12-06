@@ -1,11 +1,14 @@
 ## Progress - Movies sorted by Name
 - page: 56 (God bless America)
 
-## Other
-- Rescan: only 1 button on sidenav, show dialog to choose "only new" or "compete" rescan
-
-- Rescan: when a movie was moved (same filename just deleted at location X and added on location Y)
+## Twins
+- a twin is the same file in another location (e.g. local copy vs. )
+- Rescan: when a movie was moved (same filename+size just deleted at location X and added on location Y)
 	-> copy over userdefined data (e.g. rating etc. also member of lists)
+	=> do we really want this? what are the scenarios?: a "twin" may already exist and should be updated whenever a change happens - in this case we have id_Movies from the "source file" and should all other movies with same filename and size
+
+## Other
+- implement fetchFilter IMDB/Metacritic Score
 
 OK - implement Company filter by Company Name instead of ID
 OK -> call companyDialog via eventBus when company is clicked in searchDialog
@@ -36,6 +39,8 @@ OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 - min/maxAge is false when 0 is in place
 
 ## Other
+OK - Rescan: only 1 button on sidenav, show dialog to choose "only new" or "compete" rescan
+
 OK - Trailer Player with Video.js (extract video source from imdb trailer page)
 OK	-> MediaList showTrailerLocal
 

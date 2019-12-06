@@ -30,7 +30,7 @@
             <v-list-item-title v-show="!isScanning">Rescan all media</v-list-item-title>
             <v-list-item-title v-show="isScanning">Cancel Scan</v-list-item-title>
           </v-list-item-content>
-        </v-list-item> -->
+        </v-list-item>-->
 
         <v-divider></v-divider>
 
@@ -210,6 +210,62 @@
                     v-bind:key="i"
                     v-bind:color="(rating.Rating > (i - 1) ? 'amber' : (rating.Rating > 0 ? 'white' : 'grey'))"
                   >mdi-star</v-icon>
+                </v-checkbox>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
+            <!-- FILTER Metacritic Score -->
+            <v-expansion-panel style="padding: 0px!important">
+              <v-expansion-panel-header
+                style="padding: 8px!important"
+              >Metacritic Score {{filterMetacriticScoreTitle}}</v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-range-slider
+                  v-model="$shared.filterMetacriticScore"
+                  :max="100"
+                  :min="0"
+                  hide-details
+                  class="align-center"
+									v-on:change="filtersChanged"
+                >
+                  <template v-slot:prepend>{{$shared.filterMetacriticScore[0]}}</template>
+                  <template v-slot:append>{{$shared.filterMetacriticScore[1]}}</template>
+                </v-range-slider>
+                <v-checkbox
+                  label="include entries with no metacritic score"
+                  v-model="$shared.filterMetacriticScoreNone"
+                  v-on:click.native="filtersChanged"
+                  style="margin: 0px"
+                  color="dark-grey"
+                >
+                </v-checkbox>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
+            <!-- FILTER IMDB Rating -->
+            <v-expansion-panel style="padding: 0px!important">
+              <v-expansion-panel-header
+                style="padding: 8px!important"
+              >IMDB Rating {{filterIMDBRatingTitle}}</v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-range-slider
+                  v-model="$shared.filterIMDBRating"
+                  :max="10"
+                  :min="0"
+                  hide-details
+                  class="align-center"
+									v-on:change="filtersChanged"
+                >
+                  <template v-slot:prepend>{{$shared.filterIMDBRating[0]}}</template>
+                  <template v-slot:append>{{$shared.filterIMDBRating[1]}}</template>
+                </v-range-slider>
+                <v-checkbox
+                  label="include entries with no IMDB rating"
+                  v-model="$shared.filterIMDBRatingNone"
+                  v-on:click.native="filtersChanged"
+                  style="margin: 0px"
+                  color="dark-grey"
+                >
                 </v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -604,7 +660,7 @@ export default {
 
     scanOptionsDialog: {
       show: false
-    },
+    }
   }),
 
   watch: {
@@ -790,7 +846,8 @@ export default {
 
       return (
         "(" +
-        this.$shared.filterAudioLanguages.filter(filter => filter.Selected).length +
+        this.$shared.filterAudioLanguages.filter(filter => filter.Selected)
+          .length +
         "/" +
         this.$shared.filterAudioLanguages.length +
         ")"
@@ -798,23 +855,54 @@ export default {
     },
 
     filterSubtitleLanguagesTitle() {
-      if (!this.$shared.filterSubtitleLanguages.find(filter => !filter.Selected)) {
+      if (
+        !this.$shared.filterSubtitleLanguages.find(filter => !filter.Selected)
+      ) {
         return "(ALL)";
       }
 
-      if (!this.$shared.filterSubtitleLanguages.find(filter => filter.Selected)) {
+      if (
+        !this.$shared.filterSubtitleLanguages.find(filter => filter.Selected)
+      ) {
         return "(NONE)";
       }
 
       return (
         "(" +
-        this.$shared.filterSubtitleLanguages.filter(filter => filter.Selected).length +
+        this.$shared.filterSubtitleLanguages.filter(filter => filter.Selected)
+          .length +
         "/" +
         this.$shared.filterSubtitleLanguages.length +
         ")"
       );
     },
-	},
+
+    filterMetacriticScoreTitle() {
+      if (
+        this.$shared.filterMetacriticScore[0] == 0 &&
+        this.$shared.filterMetacriticScore[1] == 100
+      ) {
+        return `(ALL${this.$shared.filterMetacriticScoreNone ? '' : '*'})`;
+      }
+
+      return `(${this.$shared.filterMetacriticScore[0]} - ${
+        this.$shared.filterMetacriticScore[1]
+      }${this.$shared.filterMetacriticScoreNone ? '' : '*'})`;
+		},
+		
+    filterIMDBRatingTitle() {
+      if (
+        this.$shared.filterIMDBRating[0] == 0 &&
+        this.$shared.filterIMDBRating[1] == 10
+      ) {
+        return `(ALL${this.$shared.filterIMDBRatingNone ? '' : '*'})`;
+      }
+
+      return `(${this.$shared.filterIMDBRating[0]} - ${
+        this.$shared.filterIMDBRating[1]
+      }${this.$shared.filterIMDBRatingNone ? '' : '*'})`;
+    }
+  },
 
   methods: {
     goto(itemid) {
@@ -1067,25 +1155,24 @@ export default {
         store.abortRescan();
         return;
       }
-      
+
       this.scanOptionsDialog.show = true;
     },
-    
+
     onScanOptionsDialogCancel() {
       this.scanOptionsDialog.show = false;
     },
 
     onScanOptionsDialogOK(chosenMethod) {
-      const onlyNew = (chosenMethod === 1);
-      
+      const onlyNew = chosenMethod === 1;
+
       // TODO: run scan
-      logger.log('chosen Scan Option:', chosenMethod, 'onlyNew:', onlyNew);
+      logger.log("chosen Scan Option:", chosenMethod, "onlyNew:", onlyNew);
 
       store.rescan(onlyNew);
-      
+
       this.scanOptionsDialog.show = false;
     },
-
 
     filterParentalAdvisoryCategoryTitle(category) {
       if (

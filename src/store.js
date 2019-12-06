@@ -29,7 +29,7 @@ import { languages, languageKeys } from '@/languages';
 import { shared } from '@/shared';
 
 const scanOptions = {
-	// filescanMovies: true,																								// enable file scan
+	filescanMovies: true,																								// enable file scan
 	// filescanMovies_id_SourcePaths_IN: '(5, 10)',											// only scan certain SourcePaths
 
 	rescanMoviesMetaData: true,
@@ -39,17 +39,17 @@ const scanOptions = {
 	// rescanMoviesMetaData_maxEntries: 10,
 
 	rescanMoviesMetaData_applyMediaInfo: true,
-	// rescanMoviesMetaData_findIMDBtconst: true,
-	// rescanMoviesMetaData_fetchIMDBMetaData: true,
-	// rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
-	// rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
-	// rescanMoviesMetaData_fetchIMDBMetaData_technicalData: true,
-	// rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: true,
-	// rescanMoviesMetaData_fetchIMDBMetaData_creditsData: true,
-	// rescanMoviesMetaData_fetchIMDBMetaData_companiesData: true,
-	// rescanMoviesMetaData_saveIMDBData: true,
+	rescanMoviesMetaData_findIMDBtconst: true,
+	rescanMoviesMetaData_fetchIMDBMetaData: true,
+	rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
+	rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
+	rescanMoviesMetaData_fetchIMDBMetaData_technicalData: true,
+	rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: true,
+	rescanMoviesMetaData_fetchIMDBMetaData_creditsData: true,
+	rescanMoviesMetaData_fetchIMDBMetaData_companiesData: true,
+	rescanMoviesMetaData_saveIMDBData: true,
 
-	// applyIMDBMetaData: true,
+	applyIMDBMetaData: true,
 
 	mergeExtras: true,
 }
@@ -173,6 +173,10 @@ async function rescan(onlyNew) {
 	if (scanOptions.filescanMovies) await filescanMovies(onlyNew);
 	if (scanOptions.rescanMoviesMetaData) await rescanMoviesMetaData(onlyNew);
 	if (scanOptions.applyIMDBMetaData) await applyIMDBMetaData(onlyNew);
+
+	// TODO: implement checkMovedFiles
+	// -> newly created movie has isNew = 1
+	// -> removed movie has isRemoved = 1 and same file name as well as same size
 
 	// await rescanTV();								// TODO
 
@@ -1761,6 +1765,41 @@ async function fetchMedia($MediaType) {
 			filterSubtitleLanguages += ')';
 		}
 
+		let filterMetacriticScore = '';
+		if (!(shared.filterMetacriticScore[0] == 0 && shared.filterMetacriticScore[1] == 100 && shared.filterMetacriticScoreNone == true)) {
+			if (!shared.filterMetacriticScoreNone) {
+				filterMetacriticScore = 'AND (MOV.IMDB_metacriticScore IS NOT NULL OR '
+			} else {
+				filterMetacriticScore = 'AND (1 = 0 OR '
+			}
+
+			if (shared.filterMetacriticScore[0] > 0 || shared.filterMetacriticScore[1] < 100) {
+				filterMetacriticScore += `(MOV.IMDB_metacriticScore >= ${shared.filterMetacriticScore[0]} AND MOV.IMDB_metacriticScore <= ${shared.filterMetacriticScore[1]})`;
+			} else {
+				filterMetacriticScore += '1 = 0'
+			}
+
+			filterMetacriticScore += ')';
+		}
+		
+		let filterIMDBRating = '';
+		if (!(shared.filterIMDBRating[0] == 0 && shared.filterIMDBRating[1] == 10 && shared.filterIMDBRatingNone == true)) {
+			if (!shared.filterIMDBRatingNone) {
+				filterIMDBRating = 'AND (MOV.IMDB_rating IS NOT NULL OR '
+			} else {
+				filterIMDBRating = 'AND (1 = 0 OR '
+			}
+
+			if (shared.filterIMDBRating[0] > 0 || shared.filterIMDBRating[1] < 10) {
+				filterIMDBRating += `(MOV.IMDB_rating >= ${shared.filterIMDBRating[0]} AND MOV.IMDB_rating <= ${shared.filterIMDBRating[1]})`;
+			} else {
+				filterIMDBRating += '1 = 0'
+			}
+
+			filterIMDBRating += ')';
+		}
+		
+
 		logger.log('fetchMedia filterSourcePaths:', filterSourcePaths);
 		logger.log('fetchMedia filterGenres:', filterGenres);
 		logger.log('fetchMedia filterAgeRatings:', filterAgeRatings);
@@ -1828,6 +1867,8 @@ async function fetchMedia($MediaType) {
 		${filterCompanies}
 		${filterAudioLanguages}
 		${filterSubtitleLanguages}
+		${filterMetacriticScore}
+		${filterIMDBRating}
 	`;
 
 		logger.log('fetchMedia query:', query);
@@ -2550,6 +2591,10 @@ function saveFilterValues($MediaType) {
 		filterYears: shared.filterYears,
 		filterQualities: shared.filterQualities,
 		filterCompanies: shared.filterCompanies,
+		filterIMDBRating: shared.filterIMDBRating,
+		filterIMDBRatingNone: shared.filterIMDBRatingNone,
+		filterMetacriticScore: shared.filterMetacriticScore,
+		filterMetacriticScoreNone: shared.filterMetacriticScoreNone
 	}
 
 	const filterValuesString = JSON.stringify(filterValues);
@@ -2734,7 +2779,30 @@ async function fetchFilterLanguages($MediaType, $LanguageType) {
 	} else {
 		shared.filterSubtitleLanguages = resultsFiltered;
 	}
+}
 
+async function fetchFilterIMDBRating($MediaType) {
+	const filterValues = await fetchFilterValues($MediaType);
+
+	if (filterValues && filterValues.filterIMDBRating && filterValues.filterIMDBRating.length > 0) {
+		shared.filterIMDBRating = filterValues.filterIMDBRating;
+	}
+
+	if (filterValues && filterValues.filterIMDBRatingNone != null && filterValues.filterIMDBRatingNone != undefined) {
+		shared.filterIMDBRatingNone = filterValues.filterIMDBRatingNone;
+	}
+}
+
+async function fetchFilterMetacriticScore($MediaType) {
+	const filterValues = await fetchFilterValues($MediaType);
+
+	if (filterValues && filterValues.filterMetacriticScore && filterValues.filterMetacriticScore.length > 0) {
+		shared.filterMetacriticScore = filterValues.filterMetacriticScore;
+	}
+
+	if (filterValues && filterValues.filterMetacriticScoreNone != null && filterValues.filterMetacriticScoreNone != undefined) {
+		shared.filterMetacriticScoreNone = filterValues.filterMetacriticScoreNone;
+	}
 }
 
 async function getMovieDetails($id_Movies) {
@@ -3120,6 +3188,8 @@ export {
 	fetchFilterQualities,
 	fetchFilterCompanies,
 	fetchFilterLanguages,
+	fetchFilterIMDBRating,
+	fetchFilterMetacriticScore,
 	isScanning,
 	abortRescan,
 	createList,
