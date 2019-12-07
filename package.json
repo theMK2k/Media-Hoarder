@@ -2,7 +2,7 @@
   "name": "mediabox",
   "version": "0.1.0",
   "private": true,
-  "description": "mediabox - a thorough frontend for your movies and tv shows",
+  "description": "mediabox - THE media frontend for data hoarders",
   "author": "mk2k | https://mk2k.net",
   "scripts": {
     "serve": "vue-cli-service serve",
