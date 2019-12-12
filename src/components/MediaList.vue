@@ -111,7 +111,7 @@
 
                       <v-list-item-subtitle
                         v-if="item.Name2"
-                        style="margin-bottom: 4px"
+                        style="margin-bottom: 4px; min-height: 18px"
                         v-on:mouseover="setItemHovered(item, 'name2', true)"
                         v-on:mouseleave="setItemHovered(item, 'name2', false)"
                       >

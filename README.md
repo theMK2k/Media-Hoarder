@@ -50,6 +50,11 @@ MediaBox is THE frontend for your movie and tv series collection if you love met
 ### Install nodejs
 Visit https://nodejs.org and download/install it for your OS. MediaBox is developed with node v10 but should be also compatible with newer versions.
 
+### Install vue-cli
+```
+npm install -g @vue/cli
+```
+
 ### Clone the repository
 ```
 git clone https://github.com/theMK2k/MediaBox.git
