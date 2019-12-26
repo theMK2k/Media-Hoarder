@@ -1,6 +1,12 @@
 ## Progress - Movies sorted by Name
 - page: 56 (God bless America)
 
+## Road to Release (Win/Linux/Mac)
+- "Browse" VLC path -> depending on OS type provide default path / default extension
+- provide mediainfo-rar or similar for Linux/Mac - or better yet let the user provide a path?
+- provide Language Settings (which is the primary language of the user)
+- provide Language Mapping (German -> De etc. should be extendable by the user, too)
+
 ## Twins
 - a twin is the same file in another location (e.g. local copy vs. )
 - Rescan: when a movie was moved (same filename+size just deleted at location X and added on location Y)

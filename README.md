@@ -52,7 +52,7 @@ Visit https://nodejs.org and download/install it for your OS. MediaBox is develo
 
 ### Install vue-cli
 ```
-npm install -g @vue/cli
+[sudo] npm install -g @vue/cli
 ```
 
 ### Clone the repository
