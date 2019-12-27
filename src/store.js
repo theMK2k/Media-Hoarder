@@ -2017,10 +2017,10 @@ async function setSetting($Key, $Value) {
 }
 
 async function launchMovie(movie) {
-	const VLCPath = await getSetting('VLCPath');
+	const MediaplayerPath = await getSetting('MediaplayerPath');
 
-	if (!VLCPath) {
-		eventBus.showSnackbar('error', 'Unable to launch: VLC path is not set');
+	if (!MediaplayerPath) {
+		eventBus.showSnackbar('error', 'Unable to launch: Mediaplayer Path is not set. Please go to Settings and provide one.');
 	}
 
 	const fileExists = await existsAsync(movie.Path);
@@ -2030,7 +2030,7 @@ async function launchMovie(movie) {
 		return;
 	}
 
-	const task = `${VLCPath} "${movie.Path}"`;
+	const task = `${MediaplayerPath} "${movie.Path}"`;
 	logger.log('launching:', task);
 	await execAsync(task);
 	logger.log('end launching:', task);

@@ -7,8 +7,13 @@
     </h1>
 
     <v-row style="margin: 0px">
-      <v-text-field readonly label="VLC Path" v-model="VLCPath"></v-text-field>
-      <v-btn v-on:click="browseVLCPath()" text small color="primary" style="margin-top: 16px">Browse</v-btn>
+      <v-text-field readonly label="Media Player Path (e.g. path to VLC executable)" v-model="MediaplayerPath"></v-text-field>
+      <v-btn v-on:click="browseMediaplayerPath()" text small color="primary" style="margin-top: 16px">Browse</v-btn>
+    </v-row>
+
+    <v-row style="margin: 0px">
+      <v-text-field readonly label="Mediainfo Path (i.e. path to mediainfo executable - get it from mediaarea.net)" v-model="MediainfoPath"></v-text-field>
+      <v-btn v-on:click="browseMediainfoPath()" text small color="primary" style="margin-top: 16px">Browse</v-btn>
     </v-row>
 
     <v-row style="margin: 0px">
@@ -90,6 +95,7 @@ import { eventBus } from "@/main";
 import * as store from "@/store";
 import SourcePath from "@/components/shared/SourcePath";
 import Dialog from "./shared/Dialog.vue";
+import * as helpers from "@/helpers/helpers";
 
 export default {
   components: {
@@ -99,7 +105,8 @@ export default {
   },
 
   data: () => ({
-    VLCPath: null,
+    MediaplayerPath: null,
+    MediainfoPath: null,
     minimumWaitForSetAccess: 5,
 
     sourcePaths: [],
@@ -146,23 +153,56 @@ export default {
   },
 
   methods: {
-    browseVLCPath() {
-      dialog.showOpenDialog(
-        {
-          properties: ["openFile"],
-          filters: [
+    browseMediaplayerPath() {
+      const filters = helpers.isWindows ? [
             { name: "Executables", extensions: ["exe"] },
             { name: "All Files", extensions: ["*"] }
-          ]
+          ] : [
+            { name: "All Files", extensions: ["*"] }
+          ];
+      
+      dialog.showOpenDialog(
+        {
+          title: "Path to your media player (e.g. VLC)",
+          properties: ["openFile"],
+          filters,
+          defaultPath: this.MediaplayerPath | '',
         },
         path => {
           if (!path || path.length === 0) {
             return;
           }
 
-          this.VLCPath = path[0];
+          this.MediaplayerPath = path[0];
 
-          store.setSetting("VLCPath", this.VLCPath);
+          store.setSetting("MediaplayerPath", this.MediaplayerPath);
+        }
+      );
+    },
+
+    browseMediainfoPath() {
+      const filters = helpers.isWindows ? [
+            { name: "Executables", extensions: ["exe"] },
+            { name: "All Files", extensions: ["*"] }
+          ] : [
+            { name: "All Files", extensions: ["*"] }
+          ];
+      
+      dialog.showOpenDialog(
+        {
+          title: "Path to mediainfo (get it from mediaarea.net)",
+          properties: ["openFile"],
+          filters,
+          defaultPath: this.MediainfoPath || '',
+        },
+        path => {
+          if (!path || path.length === 0) {
+            return;
+          }
+
+          this.MediainfoPath = path[0];
+
+          store.setSetting("MediainfoPath", this.MediainfoPath);
         }
       );
     },
@@ -343,7 +383,8 @@ export default {
   // ### LifeCycle Hooks ###
   async created() {
     await this.fetchSourcePaths();
-    this.VLCPath = await store.getSetting("VLCPath");
+    this.MediaplayerPath = await store.getSetting("MediaplayerPath");
+    this.MediainfoPath = await store.getSetting("MediainfoPath");
     this.minimumWaitForSetAccess = await store.getSetting(
       "minimumWaitForSetAccess"
     );

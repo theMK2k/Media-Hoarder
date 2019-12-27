@@ -11,6 +11,8 @@
 - provide mediainfo-rar or similar for Linux/Mac - or better yet let the user provide a path?
 - provide Language Settings (which is the primary language of the user)
 - provide Language Mapping (German -> De etc. should be extendable by the user, too)
+- IMDB detection
+- add TV suppor
 
 ## Twins
 

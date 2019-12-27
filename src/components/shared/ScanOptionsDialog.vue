@@ -5,6 +5,15 @@
         <div class="headline" style="width: 100%; font-size: 1.17em">Scan Media</div>
       </v-card-title>
       <v-card-text>
+        <v-alert
+          type="warning"
+          colored-border
+          border="left"
+          v-if="showMediaInfoWarning"
+        >
+          Warning: Mediainfo Path is not set. Please go to Settings and provide one. You can get Mediainfo from www.mediaarea.net
+        </v-alert>
+
         <v-radio-group v-model="radioGroup">
           <v-radio label="Scan for new media" v-bind:value="1" color="dark-grey"></v-radio>
           <v-radio label="Rescan all media" v-bind:value="2" color="dark-grey"></v-radio>
@@ -57,7 +66,7 @@ const logger = require("loglevel");
 import { eventBus } from "@/main";
 
 export default {
-  props: ["show"],
+  props: ["show", "showMediaInfoWarning"],
 
   data() {
     return {

@@ -511,6 +511,7 @@
         <mk-scan-options-dialog
           ref="scanOptionsDialog"
           v-bind:show="scanOptionsDialog.show"
+          v-bind:showMediaInfoWarning = "scanOptionsDialog.showMediaInfoWarning"
           v-on:cancel="onScanOptionsDialogCancel"
           v-on:ok="onScanOptionsDialogOK"
         ></mk-scan-options-dialog>
@@ -659,7 +660,8 @@ export default {
     },
 
     scanOptionsDialog: {
-      show: false
+      show: false,
+      showMediaInfoWarning: false
     }
   }),
 
@@ -1150,11 +1152,13 @@ export default {
       this.deleteListDialog.show = false;
     },
 
-    onRescan() {
+    async onRescan() {
       if (store.isScanning) {
         store.abortRescan();
         return;
       }
+
+      this.scanOptionsDialog.showMediaInfoWarning = await store.getSetting("MediainfoPath") ? false : true;
 
       this.scanOptionsDialog.show = true;
     },
@@ -1354,6 +1358,7 @@ h1 {
 
 .scrollcontainer::-webkit-scrollbar-track {
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   background-color: #f5f5f5;
 }
 

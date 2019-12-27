@@ -8,9 +8,8 @@
             ]
         }
     },
-    "exclude": ["node_modules"]
-},
-"path-intellisense.mappings": {
-    "@": "${workspaceRoot}/src"
-},
+    "exclude": ["node_modules"],
+    "path-intellisense.mappings": {
+        "@": "${workspaceRoot}/src"
+    }
 }

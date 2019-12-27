@@ -1,6 +1,7 @@
 import path from 'path'
 
 const isBuild = process.env.NODE_ENV === 'production';
+const isWindows = process.platform === 'win32';
 
 function getPath(relativePath) {
 	/* eslint-disable no-undef */
@@ -30,6 +31,7 @@ function getTimeString(runtimeSeconds) {
 }
 
 export {
+	isWindows,
 	getPath,
 	getTimeString
 }
