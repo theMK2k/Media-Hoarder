@@ -7,12 +7,13 @@
 - as soon as a tbl_Movies entry is written, also write Name
 
 ## Road to Release (Win/Linux/Mac)
-- "Browse" VLC path -> depending on OS type provide default path / default extension
-- provide mediainfo-rar or similar for Linux/Mac - or better yet let the user provide a path?
-- provide Language Settings (which is the primary language of the user)
+OK - "Browse" VLC path -> depending on OS type provide default path / default extension
+OK - provide mediainfo-rar or similar for Linux/Mac - or better yet let the user provide a path?
+    ->  user must provide
+- provide Language Settings (which is the primary language of the user?)
 - provide Language Mapping (German -> De etc. should be extendable by the user, too)
 - IMDB detection
-- add TV suppor
+- add TV support
 
 ## Twins
 

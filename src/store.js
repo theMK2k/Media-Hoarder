@@ -570,7 +570,15 @@ async function applyMediaInfo(movie, onlyNew) {
 		return;
 	}
 
-	const mi_task = `${helpers.getPath('data/mediainfo/win/mediainfo-rar.exe')} --Output=XML "${movie.Path}"`;
+	const mediainfo = await getSetting("MediainfoPath");
+
+	if (!mediainfo) {
+		logger.log('mediainfo not set, aborting');
+		return;
+	}
+
+	// const mi_task = `${helpers.getPath('data/mediainfo/win/mediainfo-rar.exe')} --Output=XML "${movie.Path}"`;
+	const mi_task = `${mediainfo} --Output=XML "${movie.Path}"`
 	logger.log('running mediainfo:', mi_task);
 
 	const audioLanguages = [];
@@ -599,7 +607,19 @@ async function applyMediaInfo(movie, onlyNew) {
 
 		logger.log('miObj:', miObj);
 
-		miObj.File.track.forEach(track => {
+		let tracks = [];
+
+		if (miObj.File && miObj.File.track) {
+			tracks = miObj.File.tracks;
+		} else if (miObj.MediaInfo && miObj.MediaInfo.media) {
+			miObj.MediaInfo.media.forEach(media => {
+				media.track.forEach(track => {
+					tracks.push(track);
+				})
+			})
+		}
+
+		tracks.forEach(track => {
 			if (track.$.type === 'Video') {
 				if (track.Duration && track.Duration.length > 0) {
 					MI.$MI_Duration = track.Duration[0];
