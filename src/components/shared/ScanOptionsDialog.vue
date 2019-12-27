@@ -11,7 +11,7 @@
           border="left"
           v-if="showMediaInfoWarning"
         >
-          Warning: Mediainfo Path is not set. Please go to Settings and provide one. You can get Mediainfo from www.mediaarea.net
+          Warning: Mediainfo CLI Path is not set. Please go to Settings and provide one. You can get Mediainfo CLI from www.mediaarea.net
         </v-alert>
 
         <v-radio-group v-model="radioGroup">
