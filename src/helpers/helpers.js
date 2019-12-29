@@ -1,5 +1,7 @@
 import path from 'path'
 
+const logger = require('loglevel');
+
 const isBuild = process.env.NODE_ENV === 'production';
 const isWindows = process.platform === 'win32';
 
@@ -30,8 +32,30 @@ function getTimeString(runtimeSeconds) {
 	return result;
 }
 
+function uppercaseEachWord(input) {
+	logger.log('uppercaseEachWord:', input);
+
+	let isNewBeginning = true;
+	let text = input;
+
+	for (let i = 0; i < text.length; i++) {
+		if (/[\s\-\,\.\:\"\'\!\§\$\%\&\/\(\)\=\?\*\+\~\#\;\_]/.test(text[i])) {
+			isNewBeginning = true;
+		} else {
+			if (isNewBeginning) {
+				text = text.substr(0, i) + text[i].toUpperCase() + text.substr(i+1);
+				isNewBeginning = false;
+			}
+		}
+	}
+
+	logger.log('uppercaseEachWord result:', text);
+	return text;
+}
+
 export {
 	isWindows,
 	getPath,
-	getTimeString
+	getTimeString,
+	uppercaseEachWord
 }

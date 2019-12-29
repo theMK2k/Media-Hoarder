@@ -670,28 +670,32 @@ async function applyMediaInfo(movie, onlyNew) {
 
 			if (track.$.type === 'Audio') {
 				if (track.Language && track.Language.length > 0) {
-					const lang = track.Language[0];
-					if (languages[lang]) {
-						if (!audioLanguages.find(al => al === languages[lang])) {
-							audioLanguages.push(languages[lang]);
-						}
+					
+					let lang = track.Language[0];
 
-						// MI.$MI_Audio_Languages += (MI.$MI_Audio_Languages ? ', ' : '') + languages[lang];
-						// TODO: use audioLanguages array to generate MI.$MI_Audio_Languages
+					if (languages[lang]) {
+						lang = languages[lang];
+					} else {
+						lang = helpers.uppercaseEachWord(lang)
+					}
+
+					if (!audioLanguages.find(al => al === lang)) {
+						audioLanguages.push(lang);
 					}
 				}
 			}
 
 			if (track.$.type === 'Text') {
 				if (track.Language && track.Language.length > 0) {
-					const lang = track.Language[0];
+					let lang = track.Language[0];
 					if (languages[lang]) {
-						if (!subtitleLanguages.find(al => al === languages[lang])) {
-							subtitleLanguages.push(languages[lang]);
-						}
+						lang = languages[lang];
+					} else {
+						lang = helpers.uppercaseEachWord(lang)
+					}
 
-						MI.$MI_Subtitle_Languages += (MI.$MI_Subtitle_Languages ? ', ' : '') + languages[lang];
-						// TODO: use subtitleLanguages array to generate MI.$MI_Subtitle_Languages
+					if (!subtitleLanguages.find(al => al === lang)) {
+						subtitleLanguages.push(lang);
 					}
 				}
 			}
@@ -1431,12 +1435,12 @@ async function saveIMDBData(movie, IMDBdata, genres, credits, companies) {
 			// genre needs to be added for the movie
 			if (!genres.find(g => g.GenreID === genre)) {
 				// genre needs to be added to main list of genres (we need id_Genres later)
-				await db.fireProcedure('INSERT INTO tbl_Genres (GenreID, Name) VALUES ($GenreID, $Name)', { $GenreID: genre, $Name: genre });
+				await db.fireProcedure('INSERT INTO tbl_Genres (GenreID, Name) VALUES ($GenreID, $Name)', { $GenreID: genre, $Name: helpers.uppercaseEachWord(genre) });
 				const id_Genres = await db.fireProcedureReturnScalar('SELECT id_Genres FROM tbl_Genres WHERE GenreID = $GenreID', { $GenreID: genre });
 				genres.push({
 					id_Genres: id_Genres,
 					GenreID: genre,
-					Name: genre
+					Name: helpers.uppercaseEachWord(genre)
 				});
 			}
 
@@ -1903,8 +1907,8 @@ async function fetchMedia($MediaType) {
 
 		result.forEach(item => {
 			// logger.log(item.Name);
-			item.IMDB_posterSmall_URL = item.IMDB_posterSmall_URL ? helpers.getPath(item.IMDB_posterSmall_URL) : item.IMDB_posterSmall_URL;
-			item.IMDB_posterLarge_URL = item.IMDB_posterLarge_URL ? helpers.getPath(item.IMDB_posterLarge_URL) : item.IMDB_posterLarge_URL;
+			item.IMDB_posterSmall_URL = item.IMDB_posterSmall_URL ? 'file://' + helpers.getPath(item.IMDB_posterSmall_URL) : item.IMDB_posterSmall_URL;
+			item.IMDB_posterLarge_URL = item.IMDB_posterLarge_URL ? 'file://' + helpers.getPath(item.IMDB_posterLarge_URL) : item.IMDB_posterLarge_URL;
 			item.yearDisplay = (item.startYear ? '(' + item.startYear + (item.endYear ? `-${item.endYear}` : '') + ')' : '');
 			item.IMDB_ratingDisplay = (item.IMDB_rating ? `${item.IMDB_rating.toLocaleString(undefined, { minimumFractionDigits: 1 })} (${item.IMDB_numVotes.toLocaleString()})` : '');
 			item.AudioLanguages = generateLanguageString(item.MI_Audio_Languages, ['De', 'En']);
