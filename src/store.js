@@ -558,6 +558,7 @@ async function rescanMoviesMetaData(onlyNew, id_Movies) {
 		eventBus.scanInfoShow('Rescanning Movies', `${movie.Name || movie.Filename}`);
 
 		if (!id_Movies && scanOptions.rescanMoviesMetaData_applyMediaInfo) await applyMediaInfo(movie, onlyNew);
+
 		if (!id_Movies && scanOptions.rescanMoviesMetaData_findIMDBtconst) await findIMDBtconst(movie, onlyNew);
 
 		if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData) await fetchIMDBMetaData(movie, onlyNew);
@@ -675,7 +676,7 @@ async function applyMediaInfo(movie, onlyNew) {
 
 			if (track.$.type === 'Audio') {
 				if (track.Language && track.Language.length > 0) {
-					
+
 					let lang = track.Language[0];
 
 					if (languages[lang]) {
@@ -762,9 +763,18 @@ async function findIMDBtconst(movie, onlyNew) {
 		return;
 	}
 
-	// TODO: currently we just use the tconst contained in the filename - a more sophisticated way should be implemented (esp. when tconst is not part of the filename)
-	if (/\[tt\d*?\]/.test(movie.Filename)) {
-		movie.IMDB_tconst = movie.Filename.match(/\[(tt\d*?)\]/)[1];
+	let tconst = '';
+
+	tconst = await findIMDBtconstIncluded(movie);
+
+	if (!tconst) {
+		// tconst is not included in the filename, try to find it by searching imdb
+		tconst = await findIMDBtconstByFilename(movie);
+	}
+
+
+	if (tconst) {
+		movie.IMDB_tconst = tconst;
 
 		await db.fireProcedure(`
 			UPDATE tbl_Movies
@@ -777,6 +787,48 @@ async function findIMDBtconst(movie, onlyNew) {
 			}
 		);
 	}
+}
+
+async function findIMDBtconstIncluded(movie) {
+	// tconst is actually included in the filename, e.g. A Movie (2009)[tt123456789]
+	if (/\[tt\d*?\]/.test(movie.Filename)) {
+		const tconst = movie.Filename.match(/\[(tt\d*?)\]/)[1];
+
+		if (tconst.length > 8) {
+			return tconst;
+		}
+	}
+
+	return '';
+}
+
+async function findIMDBtconstByFilename(movie) {
+	const name = helpers.getMovieNameFromFileName(movie.Filename);
+
+	logger.log('findIMDBtconstByFilename:', name);
+
+	const arrName = name.split(' ');
+
+	for(let i = arrName.length; i > 0; i--) {
+		const searchTerm = arrName.slice(0, i).join(' ');
+
+		logger.log('findIMDBtconstByFilename trying:', searchTerm);
+
+		const results = await scrapeIMDBSearch(searchTerm);
+
+		if (results.length === 1) {
+			// definitely found our optimum!
+			logger.log('findIMDBtconstByFilename OPTIMUM found!', results);
+			return results[0].tconst;
+		}
+
+		if (results.length > 0) {
+			logger.log('findIMDBtconstByFilename multiple results found, using the first one!', results);
+			return results[0].tconst;
+		}
+	}
+
+	return '';
 }
 
 async function fetchIMDBMetaData(movie, onlyNew) {
@@ -1810,7 +1862,7 @@ async function fetchMedia($MediaType) {
 
 			filterMetacriticScore += ')';
 		}
-		
+
 		let filterIMDBRating = '';
 		if (!(shared.filterIMDBRating[0] == 0 && shared.filterIMDBRating[1] == 10 && shared.filterIMDBRatingNone == true)) {
 			if (!shared.filterIMDBRatingNone) {
@@ -1827,7 +1879,7 @@ async function fetchMedia($MediaType) {
 
 			filterIMDBRating += ')';
 		}
-		
+
 
 		logger.log('fetchMedia filterSourcePaths:', filterSourcePaths);
 		logger.log('fetchMedia filterGenres:', filterGenres);
@@ -3033,13 +3085,13 @@ async function deleteFilterCompany($id_Filter_Companies) {
 	return await db.fireProcedureReturnScalar(`DELETE FROM tbl_Filter_Companies WHERE id_Filter_Companies = $id_Filter_Companies`, { $id_Filter_Companies });
 }
 
-async function scrapeIMDBSearch(title, titleTypes) {
+async function scrapeIMDBAdvancedTitleSearch(title, titleTypes) {
 	// https://www.imdb.com/search/title/?title=Gnothi Seauton&view=advanced
 	// optional: &title_type=feature,tv_movie,tv_series,tv_episode,tv_special,tv_miniseries,documentary,short,video,tv_short
 	// 
 	const url = `https://www.imdb.com/search/title/?title=${title}` + (titleTypes.find(titleType => !titleType.checked) ? '&title_type=' + titleTypes.filter(titleType => titleType.checked).map(titleType => titleType.id).reduce((prev, current) => prev + (prev ? ',' : '') + current) : '');
 
-	logger.log('scrapeIMDBSearch url:', url);
+	logger.log('scrapeIMDBAdvancedTitleSearch url:', url);
 
 	const response = await requestGetAsync(url);
 	const html = response.body;
@@ -3094,6 +3146,39 @@ async function scrapeIMDBSearch(title, titleTypes) {
 	})
 
 	logger.log('results:', results);
+
+	return results;
+}
+
+async function scrapeIMDBSearch(searchTerm) {
+	// https://v2.sg.media-imdb.com/suggestion/d/Das%20Phantom%20Kommando%20(1985).json
+	const url = `https://v2.sg.media-imdb.com/suggestion/${searchTerm[0].toLowerCase()}/${encodeURI(searchTerm)}.json`;
+
+	logger.log('scrapeIMDBSearch url:', url);
+
+	const response = await requestGetAsync(url);
+
+	let objResponse = null;
+
+	try {
+		objResponse = JSON.parse(response.body);
+	} catch (err) {
+		logger.error('failed parsing response body:', response.body);
+	}
+
+	const results = [];
+
+	if (objResponse && objResponse.d && objResponse.d.length > 0) {
+		objResponse.d.forEach(item => {
+			results.push({
+				tconst: item.id,
+				title: item.l,
+				titleType: item.q,
+				year: item.y,
+				imageURL: item.i ? item.i.imageUrl : null
+			})
+		})
+	}
 
 	return results;
 }
@@ -3237,6 +3322,7 @@ export {
 	deleteFilterPerson,
 	addFilterCompany,
 	deleteFilterCompany,
+	scrapeIMDBAdvancedTitleSearch,
 	scrapeIMDBSearch,
 	assignIMDB,
 	fetchSortValues,

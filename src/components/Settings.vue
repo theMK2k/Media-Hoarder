@@ -12,7 +12,7 @@
     </v-row>
 
     <v-row style="margin: 0px">
-      <v-text-field readonly label="Mediainfo CLI Path (i.e. path to Mediainfo CLI executable - get it from mediaarea.net)" v-model="MediainfoPath"></v-text-field>
+      <v-text-field readonly label="Mediainfo CLI Path (i.e. path to Mediainfo CLI executable from mediaarea.net or mediainfo-rar from lundman.net)" v-model="MediainfoPath"></v-text-field>
       <v-btn v-on:click="browseMediainfoPath()" text small color="primary" style="margin-top: 16px">Browse</v-btn>
     </v-row>
 

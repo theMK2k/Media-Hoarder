@@ -158,6 +158,6 @@ OK - add Content Advisory (Sex & Nudity, Gore etc.)
 ## Edit Movie
 
 OK - allow to re-assign new IMDB entry
-  OK -> opens IMDB search (store/scrapeIMDBSearch)
+  OK -> opens IMDB search (store/scrapeIMDBAdvancedTitleSearch)
     OK - perform rescan after re-assign (only this movie)
       OK -> refactor rescanMoviesMetaData (we need to differentiate mediainfo metadata and imdb metadata, we don't need findIMDBtconst when id_Movies is provided)

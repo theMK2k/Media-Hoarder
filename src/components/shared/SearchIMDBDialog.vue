@@ -228,7 +228,7 @@ export default {
       }
 
       try {
-        this.searchResults = await store.scrapeIMDBSearch(
+        this.searchResults = await store.scrapeIMDBAdvancedTitleSearch(
           this.searchText,
           this.titleTypes
         );
