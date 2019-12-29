@@ -172,7 +172,7 @@ async function rescan(onlyNew) {
 
 	if (scanOptions.filescanMovies) await filescanMovies(onlyNew);
 	if (scanOptions.rescanMoviesMetaData) await rescanMoviesMetaData(onlyNew);
-	if (scanOptions.applyIMDBMetaData) await applyIMDBMetaData(onlyNew);
+	//if (scanOptions.applyIMDBMetaData) await applyIMDBMetaData(onlyNew);	// not necessary anymore, rescanMoviesMetaData takes care of that
 
 	// TODO: implement checkMovedFiles
 	// -> newly created movie has isNew = 1
@@ -396,6 +396,7 @@ async function addMovie(id_SourcePaths, pathItem) {
 
 	await db.fireProcedure(`INSERT INTO tbl_Movies (
 			id_SourcePaths
+			, Name
 			, Path
 			, Directory
 			, Filename
@@ -405,6 +406,7 @@ async function addMovie(id_SourcePaths, pathItem) {
 			, isNew
 		) VALUES (
 			$id_SourcePaths
+			, $Name
 			, $Path
 			, $Directory
 			, $Filename
@@ -415,6 +417,7 @@ async function addMovie(id_SourcePaths, pathItem) {
 		)`,
 		{
 			$id_SourcePaths: id_SourcePaths,
+			$Name: helpers.getMovieNameFromFileName(pathItem.Name),
 			$Path: pathItem.Path,
 			$Directory: pathItem.Directory,
 			$Filename: pathItem.Name,
@@ -503,7 +506,7 @@ async function applyIMDBMetaData(onlyNew, id_Movies) {
 		}
 
 		if (!Name) {
-			Name = movie.Filename.split('~')[0].split('(')[0].replace(/_/g, ' ').replace(/\./g, ' ');
+			Name = helpers.getMovieNameFromFileName(movie.Filename);
 		}
 
 		const rxMultiPart = /(\d)\_(\d)/;
@@ -558,6 +561,8 @@ async function rescanMoviesMetaData(onlyNew, id_Movies) {
 		if (!id_Movies && scanOptions.rescanMoviesMetaData_findIMDBtconst) await findIMDBtconst(movie, onlyNew);
 
 		if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData) await fetchIMDBMetaData(movie, onlyNew);
+
+		if (scanOptions.applyIMDBMetaData) await applyIMDBMetaData(false, movie.id_Movies);
 	}
 
 	eventBus.scanInfoOff();

@@ -53,9 +53,22 @@ function uppercaseEachWord(input) {
 	return text;
 }
 
+function getMovieNameFromFileName(filename) {
+	let filenameFiltered = filename;
+
+	if (filenameFiltered.includes('.')) {
+		filenameFiltered = filenameFiltered.split('.').slice(0, -1).join('.')
+	}
+
+	filenameFiltered = filenameFiltered.replace(/\.\,\_/g, ' ');
+
+	return filenameFiltered;
+}
+
 export {
 	isWindows,
 	getPath,
 	getTimeString,
-	uppercaseEachWord
+	uppercaseEachWord,
+	getMovieNameFromFileName
 }
