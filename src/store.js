@@ -29,7 +29,7 @@ import { languages, languageKeys } from '@/languages';
 import { shared } from '@/shared';
 
 const scanOptions = {
-	filescanMovies: true,																								// enable file scan
+	filescanMovies: true,
 	// filescanMovies_id_SourcePaths_IN: '(5, 10)',											// only scan certain SourcePaths
 
 	rescanMoviesMetaData: true,
@@ -38,16 +38,18 @@ const scanOptions = {
 	// rescanMoviesMetaData_id_Movies: 23,																	// only rescan a certain movie
 	// rescanMoviesMetaData_maxEntries: 10,
 
-	rescanMoviesMetaData_applyMediaInfo: true,
+	// rescanMoviesMetaData_applyMediaInfo: true,
 	rescanMoviesMetaData_findIMDBtconst: true,
-	rescanMoviesMetaData_fetchIMDBMetaData: true,
-	rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
-	rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
-	rescanMoviesMetaData_fetchIMDBMetaData_technicalData: true,
-	rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: true,
-	rescanMoviesMetaData_fetchIMDBMetaData_creditsData: true,
-	rescanMoviesMetaData_fetchIMDBMetaData_companiesData: true,
-	rescanMoviesMetaData_saveIMDBData: true,
+	rescanMoviesMetaData_findIMDBtconst_ignore_tconst_in_filename: true,				// ignore tconst contained in filename, instead perform IMDB search (and match against tconst contained in filename)
+	
+	// rescanMoviesMetaData_fetchIMDBMetaData: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData_technicalData: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData_creditsData: true,
+	// rescanMoviesMetaData_fetchIMDBMetaData_companiesData: true,
+	// rescanMoviesMetaData_saveIMDBData: true,
 
 	applyIMDBMetaData: true,
 
@@ -763,13 +765,28 @@ async function findIMDBtconst(movie, onlyNew) {
 		return;
 	}
 
+	let tconstIncluded = '';
 	let tconst = '';
 
-	tconst = await findIMDBtconstIncluded(movie);
+	tconstIncluded = await findIMDBtconstIncluded(movie);
+	if (!scanOptions.rescanMoviesMetaData_findIMDBtconst_ignore_tconst_in_filename) {
+		tconst = tconstIncluded;
+	}
 
 	if (!tconst) {
 		// tconst is not included in the filename, try to find it by searching imdb
 		tconst = await findIMDBtconstByFilename(movie);
+
+		if (scanOptions.rescanMoviesMetaData_findIMDBtconst_ignore_tconst_in_filename) {
+			// compare tconst from IMDB search with included tconst
+			if (tconstIncluded && tconst) {
+				if (tconstIncluded !== tconst) {
+					logger.log(`tconst compare;mismatch;${tconst};${tconstIncluded};${movie.Filename}`);
+				} else {
+					logger.log(`tconst compare;match;${tconst};${tconstIncluded};${movie.Filename}`);
+				}
+			}
+		}
 	}
 
 
@@ -803,16 +820,21 @@ async function findIMDBtconstIncluded(movie) {
 }
 
 async function findIMDBtconstByFilename(movie) {
-	const name = helpers.getMovieNameFromFileName(movie.Filename);
+	const arrYears = helpers.getYearsFromFileName(movie.Filename, false);
+	
+	// const name = helpers.getMovieNameFromFileName(movie.Filename).replace(/[()[]]/g, ' ');
+	const name = helpers.getMovieNameFromFileName(movie.Filename).replace(/\([^)]*?\)/g, '').replace(/\[[^\]]*?\]/g, '').trim();
 
 	logger.log('findIMDBtconstByFilename:', name);
 
+	logger.log('findIMDBtconstByFilename years:', arrYears);
+
 	const arrName = name.split(' ');
 
-	for(let i = arrName.length; i > 0; i--) {
+	for (let i = arrName.length; i > 0; i--) {
 		const searchTerm = arrName.slice(0, i).join(' ');
 
-		logger.log('findIMDBtconstByFilename trying:', searchTerm);
+		logger.log(`findIMDBtconstByFilename trying: ${searchTerm}`);
 
 		const results = await scrapeIMDBSearch(searchTerm);
 
@@ -823,7 +845,19 @@ async function findIMDBtconstByFilename(movie) {
 		}
 
 		if (results.length > 0) {
-			logger.log('findIMDBtconstByFilename multiple results found, using the first one!', results);
+			// check for year match
+			for (let y = 0; y < arrYears.length; y++) {
+				for (let r = 0; r < results.length; r++) {
+					if (results[r].year) {
+						const year = parseInt(results[r].year);
+						if (arrYears[y] - year >= -1 && arrYears[y] - year <= 1) {
+							return results[r].tconst;
+						}
+					}
+				}
+			}
+
+			// just use the first mentioned
 			return results[0].tconst;
 		}
 	}

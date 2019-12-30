@@ -573,12 +573,13 @@
 import * as _ from "lodash";
 
 const remote = require("electron").remote;
+const logger = require("loglevel");
 
 // eslint-disable-next-line no-unused-var
 import * as store from "@/store";
 import { shared } from "@/shared";
 import { eventBus } from "@/main";
-const logger = require("loglevel");
+import * as helpers from "@/helpers/helpers";
 
 import Dialog from "@/components/shared/Dialog.vue";
 import SearchDataDialog from "@/components/shared/SearchDataDialog.vue";

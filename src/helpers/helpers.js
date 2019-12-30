@@ -65,10 +65,44 @@ function getMovieNameFromFileName(filename) {
 	return filenameFiltered;
 }
 
+function getYearsFromFileName(filename, includeEmptyString) {
+	const maxYear = new Date().getFullYear() + 2;
+
+	const arrYears = [];
+
+	const rxYears = /[^\d](\d\d\d\d)[^\d]/g;
+
+	let match = null;
+
+	// eslint-disable-next-line no-cond-assign
+	while (match = rxYears.exec(filename)) {
+		const year = match[1];
+
+		if (parseInt(year) < 1850) {
+			continue;
+		}
+
+		if (parseInt(year) > maxYear) {
+			continue;
+		}
+
+		if (!arrYears.find(y => y == year)) {
+			arrYears.push(year)
+		}
+	}
+
+	if (includeEmptyString) {
+		arrYears.push('');
+	}
+
+	return arrYears;
+}
+
 export {
 	isWindows,
 	getPath,
 	getTimeString,
 	uppercaseEachWord,
-	getMovieNameFromFileName
+	getMovieNameFromFileName,
+	getYearsFromFileName
 }
