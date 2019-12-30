@@ -8,7 +8,7 @@
 
 ## Road to Release (Win/Linux/Mac)
 - IMDB detection
--> improve by utilizing year
+OK -> improve by utilizing year (162 of 170 matched, 2553 of 2648 matched)
 
 OK - "Browse" VLC path -> depending on OS type provide default path / default extension
 OK - provide mediainfo-rar or similar for Linux/Mac - or better yet let the user provide a path?
