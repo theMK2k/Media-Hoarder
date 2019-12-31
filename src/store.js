@@ -38,18 +38,18 @@ const scanOptions = {
 	// rescanMoviesMetaData_id_Movies: 23,																	// only rescan a certain movie
 	// rescanMoviesMetaData_maxEntries: 10,
 
-	// rescanMoviesMetaData_applyMediaInfo: true,
+	rescanMoviesMetaData_applyMediaInfo: true,
 	rescanMoviesMetaData_findIMDBtconst: true,
-	rescanMoviesMetaData_findIMDBtconst_ignore_tconst_in_filename: true,				// ignore tconst contained in filename, instead perform IMDB search (and match against tconst contained in filename)
+	// rescanMoviesMetaData_findIMDBtconst_ignore_tconst_in_filename: true,				// ignore tconst contained in filename, instead perform IMDB search (and match against tconst contained in filename)
 	
-	// rescanMoviesMetaData_fetchIMDBMetaData: true,
-	// rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
-	// rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
-	// rescanMoviesMetaData_fetchIMDBMetaData_technicalData: true,
-	// rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: true,
-	// rescanMoviesMetaData_fetchIMDBMetaData_creditsData: true,
-	// rescanMoviesMetaData_fetchIMDBMetaData_companiesData: true,
-	// rescanMoviesMetaData_saveIMDBData: true,
+	rescanMoviesMetaData_fetchIMDBMetaData: true,
+	rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
+	rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
+	rescanMoviesMetaData_fetchIMDBMetaData_technicalData: true,
+	rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: true,
+	rescanMoviesMetaData_fetchIMDBMetaData_creditsData: true,
+	rescanMoviesMetaData_fetchIMDBMetaData_companiesData: true,
+	rescanMoviesMetaData_saveIMDBData: true,
 
 	applyIMDBMetaData: true,
 
