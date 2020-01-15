@@ -26,7 +26,8 @@ OK - provide mediainfo-rar or similar for Linux/Mac - or better yet let the user
   => do we really want this? what are the scenarios?: a "twin" may already exist and should be updated whenever a change happens - in this case we have id_Movies from the "source file" and should all other movies with same filename and size
 
 ## Other
-
+- make navigation in MediaList sticky so that it doesn't disappear, remove bottom navigation then
+- MediaList: when changing a page, autoscroll up?
 - implement fetchFilter IMDB/Metacritic Score
 
 OK - implement Company filter by Company Name instead of ID
