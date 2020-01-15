@@ -15,6 +15,7 @@ OK - provide mediainfo-rar or similar for Linux/Mac - or better yet let the user
     ->  user must provide
 - provide Language Settings (which is the primary language of the user?)
 - provide Language Mapping (German -> De etc. should be extendable by the user, too)
+
 - add TV support
 
 ## Twins
@@ -26,15 +27,9 @@ OK - provide mediainfo-rar or similar for Linux/Mac - or better yet let the user
   => do we really want this? what are the scenarios?: a "twin" may already exist and should be updated whenever a change happens - in this case we have id_Movies from the "source file" and should all other movies with same filename and size
 
 ## Other
-- make navigation in MediaList sticky so that it doesn't disappear, remove bottom navigation then
-- MediaList: when changing a page, autoscroll up?
-- implement fetchFilter IMDB/Metacritic Score
-
-OK - implement Company filter by Company Name instead of ID
-OK -> call companyDialog via eventBus when company is clicked in searchDialog
-  -> some numbers mismatch (filter and main list)
 
 - correctly implement scrollcontainer class (e.g. Medialist)
+
 OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 
 ## Settings
@@ -60,6 +55,13 @@ OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 - min/maxAge is false when 0 is in place
 
 ## Other
+OK - implement fetchFilter IMDB/Metacritic Score
+
+OK - implement Company filter by Company Name instead of ID
+OK -> call companyDialog via eventBus when company is clicked in searchDialog
+  -> some numbers mismatch (filter and main list)
+
+OK - MediaList: when changing a page, autoscroll up?
 
 OK - Rescan: only 1 button on sidenav, show dialog to choose "only new" or "compete" rescan
 
