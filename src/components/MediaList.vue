@@ -1,5 +1,5 @@
 <template>
-  <div style="display: flex; flex-direction: column; width: 100%">
+  <div style="display: flex; flex-direction: column; width: 100%" ref="mainContainer">
     <v-row
       style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; margin-left: 0px; padding-bottom: 8px; padding-top: 8px; position: fixed; width: 100%!important; z-index: 10; background: rgb(48, 48, 48);"
     >
@@ -698,6 +698,8 @@ export default {
         return;
       }
       store.saveCurrentPage(this.mediatype);
+
+      window.scrollTo(0,0);
     }
   },
 
