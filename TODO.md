@@ -1,5 +1,9 @@
 # TODO
 
+# @Mike
+
+Analyze the call App.vue -> store.rescan(onlyNew); -> node functionality without IPC or whatever
+
 ## Progress - Movies sorted by Name
 - page: 56 (God bless America)
 
