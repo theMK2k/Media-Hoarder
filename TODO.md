@@ -1,8 +1,20 @@
 # TODO
 
-# @Mike
+## Restructure Settings
 
-Analyze the call App.vue -> store.rescan(onlyNew); -> node functionality without IPC or whatever
+- Tabbed view (either sidebar or horizontal tabs)
+  1. General
+  - Media Player Path
+  - MediaInfo Path
+  - Last Access retention (seconds)
+  - [X] Update on Twins by filename + filesize
+  - [X] Update on Twins by IMDB ID
+
+  2. Cinema
+  - Source Paths
+
+  3. Series
+  - Source Paths
 
 ## Progress - Movies sorted by Name
 - page: 56 (God bless America)
@@ -24,7 +36,8 @@ OK - provide mediainfo-rar or similar for Linux/Mac - or better yet let the user
 
 ## Twins
 
-- a twin is the same file in another location (e.g. local copy vs. )
+- a twin is the same file in another location (e.g. local copy vs. on server)
+- a twin for certain metadata (e.g. user rating) has the same IMDB ID
 - Rescan: when a movie was moved (same filename+size just deleted at location X and added on location Y)
 
   -> copy over userdefined data (e.g. rating etc. also member of lists)
@@ -57,6 +70,10 @@ OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 # DONE
 
 - min/maxAge is false when 0 is in place
+
+## @Mike
+
+Analyze the call App.vue -> store.rescan(onlyNew); -> node functionality without IPC or whatever
 
 ## Other
 OK - implement fetchFilter IMDB/Metacritic Score
