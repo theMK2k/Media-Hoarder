@@ -19,9 +19,6 @@
 ## Progress - Movies sorted by Name
 - page: 56 (God bless America)
 
-## Media Scan
-- as soon as a tbl_Movies entry is written, also write Name
-
 ## Road to Release (Win/Linux/Mac)
 - IMDB detection
 OK -> improve by utilizing year (162 of 170 matched, 2553 of 2648 matched)
@@ -68,6 +65,9 @@ OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 - youtube (incl. subscription importer -> <https://www.youtube.com/subscription_manager?action_takeout=1)>
 
 # DONE
+
+## Media Scan
+OK - as soon as a tbl_Movies entry is written, also write Name
 
 - min/maxAge is false when 0 is in place
 

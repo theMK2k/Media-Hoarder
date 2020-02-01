@@ -18,17 +18,17 @@ const shared = new Vue({
     filterPersons: [],
     filterYears: [],
     filterQualities: [],
-		filterCompanies: [],
-		filterAudioLanguages: [],
-		filterSubtitleLanguages: [],
-		
+    filterCompanies: [],
+    filterAudioLanguages: [],
+    filterSubtitleLanguages: [],
+
     filterMetacriticScore: [0, 100],
-		filterMetacriticScoreNone: true,
+    filterMetacriticScoreNone: true,
 
-		filterIMDBRating: [0, 10],
-		filterIMDBRatingNone: true,
+    filterIMDBRating: [0, 10],
+    filterIMDBRatingNone: true,
 
-		contentAdvisoryCategories: [
+    contentAdvisoryCategories: [
       {
         Name: 'Nudity',
         DisplayText: 'Sex & Nudity'
@@ -53,13 +53,27 @@ const shared = new Vue({
 
     sortField: null,
 
-	currentPage: 1,
+    currentPage: 1,
+
+    duplicatesHandling: {
+      actualDuplicate: {
+        relinkIMDB: true,
+        addToList: true,
+        updateTitle: true,
+        updateSubTitle: true,
+        updateRating: true,
+        updateLastAccess: true
+      }, metaDuplicate: {
+        addToList: true,
+        updateRating: true
+      }
+    }
   }
 })
 
 shared.install = function () {
   Object.defineProperty(Vue.prototype, '$shared', {
-    get () {
+    get() {
       return shared
     }
   })

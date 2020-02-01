@@ -1,6 +1,6 @@
 <template>
   <div v-on:mouseover="isHovered = true" v-on:mouseleave="isHovered = false">
-    <v-row>
+    <v-row style="margin: 0px">
       <v-card style="width: 100%">
         <v-list-item two-line>
           <v-list-item-content>

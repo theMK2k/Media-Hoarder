@@ -6,59 +6,174 @@
       </v-btn>Settings
     </h1>
 
-    <v-row style="margin: 0px">
-      <v-text-field readonly label="Media Player Path (e.g. path to VLC executable)" v-model="MediaplayerPath"></v-text-field>
-      <v-btn v-on:click="browseMediaplayerPath()" text small color="primary" style="margin-top: 16px">Browse</v-btn>
-    </v-row>
+    <v-tabs>
+      <v-tab>General</v-tab>
+      <v-tab>Movies</v-tab>
+      <v-tab>Series</v-tab>
+      <v-tab>Duplicates</v-tab>
 
-    <v-row style="margin: 0px">
-      <v-text-field readonly label="Mediainfo CLI Path (i.e. path to Mediainfo CLI executable from mediaarea.net or mediainfo-rar from lundman.net)" v-model="MediainfoPath"></v-text-field>
-      <v-btn v-on:click="browseMediainfoPath()" text small color="primary" style="margin-top: 16px">Browse</v-btn>
-    </v-row>
+      <v-tab-item style="padding: 8px">
+        <v-row style="margin: 0px">
+          <v-text-field
+            readonly
+            label="Media Player Path (e.g. path to VLC executable)"
+            v-model="MediaplayerPath"
+          ></v-text-field>
+          <v-btn
+            v-on:click="browseMediaplayerPath()"
+            text
+            small
+            color="primary"
+            style="margin-top: 16px"
+          >Browse</v-btn>
+        </v-row>
 
-    <v-row style="margin: 0px">
-      <v-text-field
-        type="number"
-        label="Number of seconds a medium should run until 'last access' is updated"
-        v-model="minimumWaitForSetAccess"
-      ></v-text-field>
-    </v-row>
+        <v-row style="margin: 0px">
+          <v-text-field
+            readonly
+            label="Mediainfo CLI Path (i.e. path to Mediainfo CLI executable from mediaarea.net or mediainfo-rar from lundman.net)"
+            v-model="MediainfoPath"
+          ></v-text-field>
+          <v-btn
+            v-on:click="browseMediainfoPath()"
+            text
+            small
+            color="primary"
+            style="margin-top: 16px"
+          >Browse</v-btn>
+        </v-row>
 
-    <h3>Movies - Source Paths</h3>
-    <div v-if="moviesSourcePaths.length == 0">no paths defined</div>
+        <v-row style="margin: 0px">
+          <v-text-field
+            type="number"
+            label="Number of seconds a medium should run until 'last access' is updated"
+            v-model="minimumWaitForSetAccess"
+          ></v-text-field>
+        </v-row>
 
-    <div
-      v-for="sourcePath in moviesSourcePaths"
-      v-bind:key="sourcePath.id_SourcePaths"
-      style="margin: 8px"
-    >
-      <mk-sourcepath
-        v-bind:value="sourcePath"
-        v-on:edit-description="onSourcePathEditDescription"
-        v-on:delete="onSourcePathDelete"
-      ></mk-sourcepath>
-    </div>
+        <v-btn text small color="primary" v-on:click="openDevTools">Open DevTools</v-btn>
+      </v-tab-item>
 
-    <v-btn text small color="primary" v-on:click="addSource('movies')">Add Source Path</v-btn>
+      <v-tab-item style="padding: 8px">
+        <h3>Movies - Source Paths</h3>
+        <div v-if="moviesSourcePaths.length == 0">no paths defined</div>
 
-    <h3>TV - Sourcepaths</h3>
-    <div v-if="tvSourcePaths.length == 0">no paths defined</div>
+        <div
+          v-for="sourcePath in moviesSourcePaths"
+          v-bind:key="sourcePath.id_SourcePaths"
+          style="margin: 8px"
+        >
+          <mk-sourcepath
+            v-bind:value="sourcePath"
+            v-on:edit-description="onSourcePathEditDescription"
+            v-on:delete="onSourcePathDelete"
+          ></mk-sourcepath>
+        </div>
 
-    <div
-      v-for="sourcePath in tvSourcePaths"
-      v-bind:key="sourcePath.id_SourcePaths"
-      style="margin: 8px"
-    >
-      <mk-sourcepath
-        v-bind:value="sourcePath"
-        v-on:edit-description="onSourcePathEditDescription"
-        v-on:delete="onSourcePathDelete"
-      ></mk-sourcepath>
-    </div>
+        <v-btn text small color="primary" v-on:click="addSource('movies')">Add Source Path</v-btn>
+      </v-tab-item>
 
-    <v-btn text small color="primary" v-on:click="addSource('tv')">Add Source Path</v-btn>
+      <v-tab-item style="padding: 8px">
+        <h3>Series - Sourcepaths</h3>
+        <div v-if="tvSourcePaths.length == 0">no paths defined</div>
 
-    <v-btn text small color="primary" v-on:click="openDevTools">Open DevTools</v-btn>
+        <div
+          v-for="sourcePath in tvSourcePaths"
+          v-bind:key="sourcePath.id_SourcePaths"
+          style="margin: 8px"
+        >
+          <mk-sourcepath
+            v-bind:value="sourcePath"
+            v-on:edit-description="onSourcePathEditDescription"
+            v-on:delete="onSourcePathDelete"
+          ></mk-sourcepath>
+        </div>
+
+        <v-btn text small color="primary" v-on:click="addSource('tv')">Add Source Path</v-btn>
+      </v-tab-item>
+
+      <v-tab-item style="padding: 8px">
+        <p>These settings describe how MediaBox should handle duplicates.</p>
+
+        <v-card style="width: 100%; margin-top:8px">
+          <h3>Actual Duplicates</h3>
+          <p>An actual duplicate is identified by the same filename and filesize.</p>
+          <p>With actual duplicates, MediaBox should also ...</p>
+
+          <v-checkbox
+            label="relink IMDB"
+            style="margin: 0px"
+            color="dark-grey"
+            dense
+            v-model="$shared.duplicatesHandling.actualDuplicate.relinkIMDB"
+            v-on:click.native="duplicatesHandlingChanged"
+          ></v-checkbox>
+          <v-checkbox
+            label="add to list"
+            style="margin: 0px"
+            color="dark-grey"
+            dense
+            v-model="$shared.duplicatesHandling.actualDuplicate.addToList"
+            v-on:click.native="duplicatesHandlingChanged"
+          ></v-checkbox>
+          <v-checkbox
+            label="update title"
+            style="margin: 0px"
+            color="dark-grey"
+            dense
+            v-model="$shared.duplicatesHandling.actualDuplicate.updateTitle"
+            v-on:click.native="duplicatesHandlingChanged"
+          ></v-checkbox>
+          <v-checkbox
+            label="update sub-title"
+            style="margin: 0px"
+            color="dark-grey"
+            dense
+            v-model="$shared.duplicatesHandling.actualDuplicate.updateSubTitle"
+            v-on:click.native="duplicatesHandlingChanged"
+          ></v-checkbox>
+          <v-checkbox
+            label="update rating"
+            style="margin: 0px"
+            color="dark-grey"
+            dense
+            v-model="$shared.duplicatesHandling.actualDuplicate.updateRating"
+            v-on:click.native="duplicatesHandlingChanged"
+          ></v-checkbox>
+          <v-checkbox
+            label="update last access"
+            style="margin: 0px"
+            color="dark-grey"
+            dense
+            v-model="$shared.duplicatesHandling.actualDuplicate.updateLastAccess"
+            v-on:click.native="duplicatesHandlingChanged"
+          ></v-checkbox>
+        </v-card>
+
+        <v-card style="width: 100%; margin-top:8px">
+          <h3>Actual Duplicates</h3>
+          <p>A meta duplicate is identified by having the same IMDB link. This can happen if you have the same movie with different format (HD vs. SD).</p>
+          <p>With meta duplicates, MediaBox should also ...</p>
+
+          <v-checkbox
+            label="add to list"
+            style="margin: 0px"
+            color="dark-grey"
+            dense
+            v-model="$shared.duplicatesHandling.metaDuplicate.addToList"
+            v-on:click.native="duplicatesHandlingChanged"
+          ></v-checkbox>
+          <v-checkbox
+            label="update rating"
+            style="margin: 0px"
+            color="dark-grey"
+            dense
+            v-model="$shared.duplicatesHandling.metaDuplicate.updateRating"
+            v-on:click.native="duplicatesHandlingChanged"
+          ></v-checkbox>
+        </v-card>
+      </v-tab-item>
+    </v-tabs>
 
     <mk-sourcepath-description-dialog
       ref="sourcePathDescriptionDialog"
@@ -154,19 +269,19 @@ export default {
 
   methods: {
     browseMediaplayerPath() {
-      const filters = helpers.isWindows ? [
+      const filters = helpers.isWindows
+        ? [
             { name: "Executables", extensions: ["exe"] },
             { name: "All Files", extensions: ["*"] }
-          ] : [
-            { name: "All Files", extensions: ["*"] }
-          ];
-      
+          ]
+        : [{ name: "All Files", extensions: ["*"] }];
+
       dialog.showOpenDialog(
         {
           title: "Path to your media player (e.g. VLC)",
           properties: ["openFile"],
           filters,
-          defaultPath: this.MediaplayerPath || '',
+          defaultPath: this.MediaplayerPath || ""
         },
         path => {
           if (!path || path.length === 0) {
@@ -181,19 +296,19 @@ export default {
     },
 
     browseMediainfoPath() {
-      const filters = helpers.isWindows ? [
+      const filters = helpers.isWindows
+        ? [
             { name: "Executables", extensions: ["exe"] },
             { name: "All Files", extensions: ["*"] }
-          ] : [
-            { name: "All Files", extensions: ["*"] }
-          ];
-      
+          ]
+        : [{ name: "All Files", extensions: ["*"] }];
+
       dialog.showOpenDialog(
         {
           title: "Path to mediainfo (get it from mediaarea.net)",
           properties: ["openFile"],
           filters,
-          defaultPath: this.MediainfoPath || '',
+          defaultPath: this.MediainfoPath || ""
         },
         path => {
           if (!path || path.length === 0) {
@@ -375,9 +490,17 @@ export default {
     },
 
     updateMinimumWaitForSetAccess: function() {
-      logger.log('updating minimumWaitForSetAccess setting:', this.minimumWaitForSetAccess);
-      store.setSetting('minimumWaitForSetAccess', this.minimumWaitForSetAccess);
+      logger.log(
+        "updating minimumWaitForSetAccess setting:",
+        this.minimumWaitForSetAccess
+      );
+      store.setSetting("minimumWaitForSetAccess", this.minimumWaitForSetAccess);
     },
+
+    duplicatesHandlingChanged() {
+      logger.log('$shared.duplicatesHandling:', this.$shared.duplicatesHandling);
+      store.setSetting('duplicatesHandling', JSON.stringify(this.$shared.duplicatesHandling));
+    }
   },
 
   // ### LifeCycle Hooks ###
@@ -400,4 +523,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.v-messages {
+  min-height: 0px !important;
+}
 </style>

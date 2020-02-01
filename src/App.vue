@@ -602,7 +602,7 @@ export default {
     drawer: null,
     items: [
       { icon: "mdi-movie", text: "Movies", id: "movies" },
-      { icon: "mdi-television", text: "TV", id: "tv" }
+      { icon: "mdi-television", text: "Series", id: "tv" }
     ],
 
     searchText: null,

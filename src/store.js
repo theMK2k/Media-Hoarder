@@ -41,7 +41,7 @@ const scanOptions = {
 	rescanMoviesMetaData_applyMediaInfo: true,
 	rescanMoviesMetaData_findIMDBtconst: true,
 	// rescanMoviesMetaData_findIMDBtconst_ignore_tconst_in_filename: true,				// ignore tconst contained in filename, instead perform IMDB search (and match against tconst contained in filename)
-	
+
 	rescanMoviesMetaData_fetchIMDBMetaData: true,
 	rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
 	rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
@@ -94,7 +94,11 @@ dbsync.runSync(helpers.getPath('data/mediabox.db_initial'), helpers.getPath('dat
 			return logger.error(err);
 		}
 
-		createIndexes(db);
+		(async () => {
+			await createIndexes(db);
+
+			await loadSettingDuplicatesHandling();
+		})();
 	})
 });
 
@@ -821,7 +825,7 @@ async function findIMDBtconstIncluded(movie) {
 
 async function findIMDBtconstByFilename(movie) {
 	const arrYears = helpers.getYearsFromFileName(movie.Filename, false);
-	
+
 	// const name = helpers.getMovieNameFromFileName(movie.Filename).replace(/[()[]]/g, ' ');
 	const name = helpers.getMovieNameFromFileName(movie.Filename).replace(/\([^)]*?\)/g, '').replace(/\[[^\]]*?\]/g, '').trim();
 
@@ -3312,6 +3316,38 @@ function selectBestQualityMediaURL(mediaURLs) {
 	})
 
 	return bestURL;
+}
+
+async function loadSettingDuplicatesHandling() {
+	try {
+		const loadedSetting = await getSetting(`duplicatesHandling`);
+
+		logger.log('loadedSetting:', loadedSetting);
+
+		if (!loadedSetting) {
+			return;
+		}
+
+		const objLoadedSetting = JSON.parse(loadedSetting);
+
+		if (objLoadedSetting.actualDuplicate) {
+			Object.keys(objLoadedSetting.actualDuplicate).forEach(key => {
+				if (shared.duplicatesHandling.actualDuplicate.hasOwnProperty(key)) {
+					shared.duplicatesHandling.actualDuplicate[key] = objLoadedSetting.actualDuplicate[key];
+				}
+			})
+		}
+
+		if (objLoadedSetting.metaDuplicate) {
+			Object.keys(objLoadedSetting.metaDuplicate).forEach(key => {
+				if (shared.duplicatesHandling.metaDuplicate.hasOwnProperty(key)) {
+					shared.duplicatesHandling.metaDuplicate[key] = objLoadedSetting.metaDuplicate[key];
+				}
+			})
+		}
+	} catch (e) {
+		//
+	}
 }
 
 export {
