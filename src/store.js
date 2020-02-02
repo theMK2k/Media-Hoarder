@@ -2097,10 +2097,12 @@ function generateLanguageString(languages, preferredLanguages) {
 }
 
 async function clearRating($id_Movies) {
+	// TODO: duplicates
 	await db.fireProcedure(`UPDATE tbl_Movies SET Rating = NULL WHERE id_Movies = $id_Movies`, { $id_Movies });
 }
 
 async function setRating($id_Movies, $Rating) {
+	// TODO: duplicates
 	logger.log('setRating id_Movies:', $id_Movies, 'Rating:', $Rating);
 	try {
 		await db.fireProcedure(`UPDATE tbl_Movies SET Rating = $Rating WHERE id_Movies = $id_Movies`, { $id_Movies, $Rating });
@@ -2744,6 +2746,8 @@ async function createList($Name) {
 }
 
 async function addToList($id_Lists, $id_Movies) {
+	// TODO: duplicates
+	
 	const id_Lists = await db.fireProcedureReturnScalar(`SELECT id_Lists_Movies FROM tbl_Lists_Movies WHERE id_Lists = $id_Lists AND id_Movies = $id_Movies`, { $id_Lists, $id_Movies });
 	if (id_Lists) {
 		throw definedError.create('the item is already part of the list', null, null, null)
@@ -2936,6 +2940,7 @@ async function getMovieDetails($id_Movies) {
 }
 
 async function setLastAccess($id_Movies) {
+	// TODO: duplicates
 	return await db.fireProcedure(`UPDATE tbl_Movies SET last_access_at = DATETIME('now') WHERE id_Movies = $id_Movies`, { $id_Movies });
 }
 
@@ -3224,13 +3229,15 @@ async function scrapeIMDBSearch(searchTerm) {
 async function assignIMDB($id_Movies, $IMDB_tconst) {
 	logger.log('assignIMDB $id_Movies:', $id_Movies, '$IMDB_tconst:', $IMDB_tconst);
 
+	// TODO: duplicates
+
 	await db.fireProcedure(`UPDATE tbl_Movies SET IMDB_tconst = $IMDB_tconst WHERE id_Movies = $id_Movies`, { $id_Movies, $IMDB_tconst });
 
 	// rescan IMDB Metadata
 	eventBus.rescanStarted();
 
-	await rescanMoviesMetaData(false, $id_Movies);
-	await applyIMDBMetaData(false, $id_Movies);
+	await rescanMoviesMetaData(false, $id_Movies); // TODO: duplicates
+	await applyIMDBMetaData(false, $id_Movies); // TODO: duplicates
 
 	eventBus.rescanStopped();
 }
@@ -3350,6 +3357,48 @@ async function loadSettingDuplicatesHandling() {
 	}
 }
 
+async function getMovieDuplicates($id_Movies) {
+	try {
+		const actualDuplicates = await db.fireProcedureReturnAll(`
+			SELECT
+				MOV.id_Movies
+			FROM tbl_Movies MOV
+			INNER JOIN tbl_Movies MOVSource ON
+				MOVSource.id_Movies = $id_Movies
+				AND MOV.id_Movies <> $id_Movies
+				AND MOV.Filename = MOVSource.Filename
+				AND MOV.Size = MOVSource.Size
+			`,
+			{ $id_Movies });
+
+		const metaDuplicates = await db.fireProcedureReturnAll(`
+			SELECT
+				MOV.id_Movies
+			FROM tbl_Movies MOV
+			INNER JOIN tbl_Movies MOVSource ON
+				MOVSource.id_Movies = $id_Movies
+				AND MOV.id_Movies <> $id_Movies
+				AND MOV.IMDB_tconst = MOVSource.IMDB_tconst
+				AND MOV.IMDB_tconst IS NOT NULL
+			`,
+			{ $id_Movies });
+		
+		return {
+			actualDuplicates,
+			metaDuplicates
+		}
+	} catch(e) {
+		return {}
+	}
+}
+
+async function ensureMovieDeleted() {
+	await db.fireProcedure('DELETE FROM tbl_Movies_Genres WHERE id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies)');
+	await db.fireProcedure('DELETE FROM tbl_Movies_IMDB_Companies WHERE id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies)');
+	await db.fireProcedure('DELETE FROM tbl_Movies_IMDB_Credits WHERE id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies)');
+	await db.fireProcedure('DELETE FROM tbl_Movies_Languages WHERE id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies)');
+}
+
 export {
 	db,
 	fetchSourcePaths,
@@ -3400,5 +3449,7 @@ export {
 	saveCurrentPage,
 	fetchCurrentPage,
 	scrapeIMDBTrailerMediaURLs,
-	selectBestQualityMediaURL
+	selectBestQualityMediaURL,
+	getMovieDuplicates,
+	ensureMovieDeleted
 }

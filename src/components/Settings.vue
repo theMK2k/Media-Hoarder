@@ -422,6 +422,8 @@ export default {
             []
           );
 
+          await store.ensureMovieDeleted();
+
           await this.fetchSourcePaths();
 
           eventBus.showSnackbar("success", `Source path removed.`);

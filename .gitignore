@@ -27,5 +27,4 @@ yarn-error.log*
 /data/extras
 
 #DB in use
-/data/mediabox.db
-/data/mediabox.db_bak
+/data/mediabox.db*

@@ -1287,13 +1287,28 @@ export default {
       logger.log("EDIT NAME DIALOG OK result:", result);
       this.editItemDialog.show = false;
 
-      await store.db.fireProcedure(
-        `UPDATE tbl_Movies SET ${this.editItemDialog.attributeName} = $value WHERE id_Movies = $id_Movies`,
-        {
-          $value: result.textValue,
-          $id_Movies: this.editItemDialog.item.id_Movies
+      // TODO: duplicates
+      const arr_id_Movies = [this.editItemDialog.item.id_Movies];
+
+      if ((this.$shared.duplicatesHandling.actualDuplicate.updateTitle && this.editItemDialog.attributeName == 'Name') || (this.$shared.duplicatesHandling.actualDuplicate.updateSubTitle && this.editItemDialog.attributeName == 'Name2')) {
+        const duplicates = await store.getMovieDuplicates(this.editItemDialog.item.id_Movies);
+
+        if (duplicates.actualDuplicates) {
+          
         }
-      );
+      }
+
+      for(let i = 0; i < arr_id_Movies.length; i++) {
+        await store.db.fireProcedure(
+          `UPDATE tbl_Movies SET ${this.editItemDialog.attributeName} = $value WHERE id_Movies = $id_Movies`,
+          {
+            $value: result.textValue,
+            $id_Movies: this.editItemDialog.item.id_Movies
+          }
+        );
+      }
+
+      // TODO: reload
 
       this.editItemDialog.item[this.editItemDialog.attributeName] =
         result.textValue;

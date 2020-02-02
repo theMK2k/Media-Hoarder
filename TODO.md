@@ -1,5 +1,8 @@
 # TODO
 
+## Settings
+- "loader" on SourcePath removal (it may take some time)
+
 ## Restructure Settings
 
 - Tabbed view (either sidebar or horizontal tabs)
