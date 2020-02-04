@@ -874,11 +874,15 @@ export default {
 
       logger.log("RUNTIME LONG ENOUGH");
 
-      await store.setLastAccess(movie.id_Movies);
+      const arr_id_Movies = await store.setLastAccess(movie.id_Movies);
       await this.updateCurrentTime();
 
-      this.$set(movie, "lastAccessMoment", this.currentTime.clone());
-      this.$set(movie, "last_access_at", this.currentTime.toISOString());
+      this.items.forEach(mov => {
+        if (arr_id_Movies.findIndex(id_Movies => mov.id_Movies === id_Movies) !== -1) {
+          this.$set(mov, "lastAccessMoment", this.currentTime.clone());
+          this.$set(mov, "last_access_at", this.currentTime.toISOString());
+        }
+      });
     },
 
     getMetaCriticClass(IMDB_metacriticScore) {

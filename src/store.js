@@ -114,10 +114,10 @@ function generateIndexQuery(tableName, ColumnNames, isUnique) {
 
   return `CREATE ${
     isUnique ? "UNIQUE " : ""
-  } INDEX IF NOT EXISTS main.IDX_${tableName}_${columnNamesString.replace(
-    /, /g,
-    "_"
-  )} ON ${tableName} (${columnNamesString})`;
+    } INDEX IF NOT EXISTS main.IDX_${tableName}_${columnNamesString.replace(
+      /, /g,
+      "_"
+    )} ON ${tableName} (${columnNamesString})`;
 }
 
 async function createIndexes(db) {
@@ -360,10 +360,10 @@ async function filescanMovies(onlyNew) {
 			FROM tbl_SourcePaths
 			WHERE MediaType = 'movies'
 			${
+      scanOptions.filescanMovies_id_SourcePaths_IN
+        ? "AND id_SourcePaths IN " +
         scanOptions.filescanMovies_id_SourcePaths_IN
-          ? "AND id_SourcePaths IN " +
-            scanOptions.filescanMovies_id_SourcePaths_IN
-          : ""
+        : ""
       }
 		`);
 
@@ -639,16 +639,16 @@ async function rescanMoviesMetaData(onlyNew, id_Movies) {
 				(isRemoved IS NULL OR isRemoved = 0)
 				${onlyNew ? "AND isNew = 1" : ""}
 				${
-          scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
-            ? "AND id_SourcePaths IN " +
-              scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
-            : ""
-        }
+    scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
+      ? "AND id_SourcePaths IN " +
+      scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
+      : ""
+    }
 				${
-          scanOptions.rescanMoviesMetaData_id_Movies
-            ? "AND id_Movies = " + scanOptions.rescanMoviesMetaData_id_Movies
-            : ""
-        }
+    scanOptions.rescanMoviesMetaData_id_Movies
+      ? "AND id_Movies = " + scanOptions.rescanMoviesMetaData_id_Movies
+      : ""
+    }
 				${id_Movies ? "AND id_Movies = " + id_Movies : ""}
 			`,
     []
@@ -2431,8 +2431,8 @@ async function fetchMedia($MediaType) {
         : "";
       item.IMDB_ratingDisplay = item.IMDB_rating
         ? `${item.IMDB_rating.toLocaleString(undefined, {
-            minimumFractionDigits: 1
-          })} (${item.IMDB_numVotes.toLocaleString()})`
+          minimumFractionDigits: 1
+        })} (${item.IMDB_numVotes.toLocaleString()})`
         : "";
       item.AudioLanguages = generateLanguageString(item.MI_Audio_Languages, [
         "De",
@@ -2451,7 +2451,7 @@ async function fetchMedia($MediaType) {
             item.IMDB_MaxAge && item.IMDB_MaxAge > item.IMDB_MinAge
               ? "-" + item.IMDB_MaxAge
               : ""
-          }+`;
+            }+`;
         }
       }
 
@@ -3513,7 +3513,7 @@ async function fetchFilterLanguages($MediaType, $LanguageType) {
     if (languageKeys[result.Language]) {
       result.DisplayText = `${result.Language} - ${
         languageKeys[result.Language]
-      }`;
+        }`;
     }
   });
 
@@ -3583,12 +3583,25 @@ async function getMovieDetails($id_Movies) {
   };
 }
 
-async function setLastAccess($id_Movies) {
-  // TODO: duplicates
-  return await db.fireProcedure(
+async function setLastAccess($id_Movies, isHandlingDuplicates) {
+  await db.fireProcedure(
     `UPDATE tbl_Movies SET last_access_at = DATETIME('now') WHERE id_Movies = $id_Movies`,
     { $id_Movies }
   );
+
+  if (!isHandlingDuplicates) {
+    const duplicates = await getMovieDuplicates(
+      $id_Movies,
+      shared.duplicatesHandling.actualDuplicate.updateLastAccess,
+      false
+    );
+
+    for (let i = 0; i < duplicates.length; i++) {
+      await setLastAccess(duplicates[i], true);
+    }
+
+    return duplicates.concat([$id_Movies]);
+  }
 }
 
 async function getCurrentTime() {
@@ -3837,10 +3850,10 @@ async function scrapeIMDBAdvancedTitleSearch(title, titleTypes) {
     `https://www.imdb.com/search/title/?title=${title}` +
     (titleTypes.find(titleType => !titleType.checked)
       ? "&title_type=" +
-        titleTypes
-          .filter(titleType => titleType.checked)
-          .map(titleType => titleType.id)
-          .reduce((prev, current) => prev + (prev ? "," : "") + current)
+      titleTypes
+        .filter(titleType => titleType.checked)
+        .map(titleType => titleType.id)
+        .reduce((prev, current) => prev + (prev ? "," : "") + current)
       : "");
 
   logger.log("scrapeIMDBAdvancedTitleSearch url:", url);

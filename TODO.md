@@ -52,9 +52,11 @@ Features:
   OK updateRating
   updateTitle
   updateSubTitle
-  updateLastAccess
+  OK updateLastAccess
 
 - Test actual duplicates
+
+- also implement rescan (actualDuplicates and metaDuplicates can be found there, too)
 
 ## Other
 
