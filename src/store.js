@@ -2588,7 +2588,7 @@ async function setRating($id_Movies, $Rating, isHandlingDuplicates) {
         shared.duplicatesHandling.actualDuplicate.updateRating,
         shared.duplicatesHandling.metaDuplicate.updateRating
       );
-  
+
       for (let i = 0; i < duplicates.length; i++) {
         await setRating(duplicates[i], $Rating, true);
       }
@@ -3941,15 +3941,13 @@ async function scrapeIMDBSearch(searchTerm) {
   return results;
 }
 
-async function assignIMDB($id_Movies, $IMDB_tconst) {
+async function assignIMDB($id_Movies, $IMDB_tconst, isHandlingDuplicates) {
   logger.log(
     "assignIMDB $id_Movies:",
     $id_Movies,
     "$IMDB_tconst:",
     $IMDB_tconst
   );
-
-  // TODO: duplicates
 
   await db.fireProcedure(
     `UPDATE tbl_Movies SET IMDB_tconst = $IMDB_tconst WHERE id_Movies = $id_Movies`,
@@ -3959,8 +3957,22 @@ async function assignIMDB($id_Movies, $IMDB_tconst) {
   // rescan IMDB Metadata
   eventBus.rescanStarted();
 
-  await rescanMoviesMetaData(false, $id_Movies); // TODO: duplicates
-  await applyIMDBMetaData(false, $id_Movies); // TODO: duplicates
+  await rescanMoviesMetaData(false, $id_Movies);
+  await applyIMDBMetaData(false, $id_Movies);
+
+  if (isHandlingDuplicates) {
+    return;
+  }
+
+  const duplicates = await getMovieDuplicates(
+    $id_Movies,
+    shared.duplicatesHandling.actualDuplicate.relinkIMDB,
+    false
+  );
+
+  for (let i = 0; i < duplicates.length; i++) {
+    await assignIMDB(duplicates[i], $IMDB_tconst, true);
+  }
 
   eventBus.rescanStopped();
 }
