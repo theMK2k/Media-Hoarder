@@ -6,7 +6,11 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <span v-on="on">
-            <v-btn text v-on:click="$router.go(-1)" style="padding: 0px; margin-top: 6px; margin-left: 0px">
+            <v-btn
+              text
+              v-on:click="$router.go(-1)"
+              style="padding: 0px; margin-top: 6px; margin-left: 0px"
+            >
               <v-icon>mdi-arrow-left</v-icon>
             </v-btn>
           </span>
@@ -16,7 +20,11 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <span v-on="on">
-            <v-btn text v-on:click="onReload" style="padding: 0px; margin-top: 6px; margin-left: 0px">
+            <v-btn
+              text
+              v-on:click="onReload"
+              style="padding: 0px; margin-top: 6px; margin-left: 0px"
+            >
               <v-icon>mdi-reload</v-icon>
             </v-btn>
           </span>
@@ -699,7 +707,7 @@ export default {
       }
       store.saveCurrentPage(this.mediatype);
 
-      window.scrollTo(0,0);
+      window.scrollTo(0, 0);
     }
   },
 
@@ -746,8 +754,8 @@ export default {
             typeof a[this.$shared.sortField] === "string" ||
             a[this.$shared.sortField] instanceof String
           ) {
-            const val_a = a[this.$shared.sortField] || '';
-            const val_b = b[this.$shared.sortField] || '';
+            const val_a = a[this.$shared.sortField] || "";
+            const val_b = b[this.$shared.sortField] || "";
 
             if (
               this.$shared.sortField === "created_at" ||
@@ -759,24 +767,16 @@ export default {
                 return -1;
               }
 
-              if (
-                val_a.toLowerCase() >
-                val_b.toLowerCase()
-              ) {
+              if (val_a.toLowerCase() > val_b.toLowerCase()) {
                 return -1;
               }
 
-              if (
-                val_a.toLowerCase() < val_b.toLowerCase()
-              ) {
+              if (val_a.toLowerCase() < val_b.toLowerCase()) {
                 return 1;
               }
             }
 
-            if (
-              val_a.toLowerCase() >
-              val_b.toLowerCase()
-            ) {
+            if (val_a.toLowerCase() > val_b.toLowerCase()) {
               return 1;
             }
 
@@ -804,11 +804,21 @@ export default {
     changeRating(movie, i) {
       (async () => {
         if (movie.Rating == i) {
-          await store.clearRating(movie.id_Movies);
-          movie.Rating = null;
+          const arr_id_Movies = await store.clearRating(movie.id_Movies);
+
+          this.items.forEach(movie => {
+            if (arr_id_Movies.findIndex(id_Movies => movie.id_Movies === id_Movies) !== -1) {
+              movie.Rating = null;
+            }
+          });
         } else {
-          await store.setRating(movie.id_Movies, i);
-          movie.Rating = i;
+          const arr_id_Movies = await store.setRating(movie.id_Movies, i);
+
+          this.items.forEach(movie => {
+            if (arr_id_Movies.findIndex(id_Movies => movie.id_Movies === id_Movies) !== -1) {
+              movie.Rating = i;
+            }
+          });
         }
       })();
     },
@@ -1032,7 +1042,8 @@ export default {
 
             await store.addToList(
               data.chosen_id_Lists,
-              this.listDialog.movie.id_Movies
+              this.listDialog.movie.id_Movies,
+              false
             );
 
             await this.fetchFilters();
@@ -1290,15 +1301,21 @@ export default {
       // TODO: duplicates
       const arr_id_Movies = [this.editItemDialog.item.id_Movies];
 
-      if ((this.$shared.duplicatesHandling.actualDuplicate.updateTitle && this.editItemDialog.attributeName == 'Name') || (this.$shared.duplicatesHandling.actualDuplicate.updateSubTitle && this.editItemDialog.attributeName == 'Name2')) {
-        const duplicates = await store.getMovieDuplicates(this.editItemDialog.item.id_Movies);
+      if (
+        (this.$shared.duplicatesHandling.actualDuplicate.updateTitle &&
+          this.editItemDialog.attributeName == "Name") ||
+        (this.$shared.duplicatesHandling.actualDuplicate.updateSubTitle &&
+          this.editItemDialog.attributeName == "Name2")
+      ) {
+        const duplicates = await store.getMovieDuplicates(
+          this.editItemDialog.item.id_Movies
+        );
 
         if (duplicates.actualDuplicates) {
-          
         }
       }
 
-      for(let i = 0; i < arr_id_Movies.length; i++) {
+      for (let i = 0; i < arr_id_Movies.length; i++) {
         await store.db.fireProcedure(
           `UPDATE tbl_Movies SET ${this.editItemDialog.attributeName} = $value WHERE id_Movies = $id_Movies`,
           {

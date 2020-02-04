@@ -1,15 +1,15 @@
-{
-    "include": ["./src/**/*"],
-    "compilerOptions": {
-        "baseUrl": "src",
-        "paths": {
-            "@/\\*": [
-                "./\\*"
-            ]
-        }
-    },
-    "exclude": ["node_modules"],
-    "path-intellisense.mappings": {
-        "@": "${workspaceRoot}/src"
-    }
-}
+// {
+//     "include": ["./src/**/*"],
+//     "compilerOptions": {
+//         "baseUrl": "src",
+//         "paths": {
+//             "@/\\*": [
+//                 "./\\*"
+//             ]
+//         }
+//     },
+//     "exclude": ["node_modules"],
+//     "path-intellisense.mappings": {
+//         "@": "${workspaceRoot}/src"
+//     }
+// }
