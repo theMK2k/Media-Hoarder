@@ -46,6 +46,14 @@ OK - provide mediainfo-rar or similar for Linux/Mac - or better yet let the user
 
 => see shared.duplicatesHandling to check which features allow duplicate handling
 
+Features:
+  OK relinkIMDB
+  OK addToList
+  OK updateRating
+  updateTitle
+  updateSubTitle
+  updateLastAccess
+
 - Test actual duplicates
 
 ## Other
