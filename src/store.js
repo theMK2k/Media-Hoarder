@@ -273,12 +273,8 @@ async function rescanHandleDuplicates() {
 
     // updateTitle is already handled by applyMetaData
     // updateSubTitle is already handled by applyMetaData
-
-
-    // TODO: updateRating is already handled by applyMetaData
-
-
-    // TODO: updateLastAccess is already handled by applyMetaData
+    // updateRating is already handled by applyMetaData
+    // updateLastAccess is already handled by applyMetaData
   }
 }
 
