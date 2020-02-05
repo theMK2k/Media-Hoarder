@@ -51,9 +51,11 @@ const scanOptions = {
   rescanMoviesMetaData_fetchIMDBMetaData_companiesData: true,
   rescanMoviesMetaData_saveIMDBData: true,
 
-  applyIMDBMetaData: true,
+  applyMetaData: true,
 
-  mergeExtras: true
+  mergeExtras: true,
+
+  handleDuplicates: true
 };
 
 const definedError = require("@/helpers/defined-error");
@@ -202,15 +204,12 @@ async function rescan(onlyNew) {
 
   if (scanOptions.filescanMovies) await filescanMovies(onlyNew);
   if (scanOptions.rescanMoviesMetaData) await rescanMoviesMetaData(onlyNew);
-  //if (scanOptions.applyIMDBMetaData) await applyIMDBMetaData(onlyNew);	// not necessary anymore, rescanMoviesMetaData takes care of that
-
-  // TODO: implement checkMovedFiles
-  // -> newly created movie has isNew = 1
-  // -> removed movie has isRemoved = 1 and same file name as well as same size
-
+  
   // await rescanTV();								// TODO
 
   if (scanOptions.mergeExtras) await mergeExtras(onlyNew);
+
+  if (scanOptions.handleDuplicates) await rescanHandleDuplicates();
 
   // clear isNew flag from all entries
   await db.fireProcedure(`UPDATE tbl_Movies SET isNew = 0`, []);
@@ -218,6 +217,69 @@ async function rescan(onlyNew) {
   isScanning = false;
   doAbortRescan = false;
   eventBus.rescanStopped();
+}
+
+async function rescanHandleDuplicates() {
+  // const KILLME = 1;
+  // if (KILLME === 1) return;
+  
+  logger.log('### rescanHandleDuplicates ###');
+  
+  const newMovies = await db.fireProcedureReturnAll('SELECT id_Movies FROM tbl_Movies WHERE isNew = 1 AND Extra_id_Movies_Owner IS NULL');
+
+  logger.log('newMovies:', newMovies);
+
+  const arrNewMovies = newMovies.map(movie => movie.id_Movies);
+  
+  logger.log('arrNewMovies:', arrNewMovies);
+
+  for (let i = 0; i < arrNewMovies.length; i++) {
+    const $id_Movies = arrNewMovies[i];
+
+    const currentMovie = (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', { $id_Movies }))[0];
+
+    logger.log('currentMovie:', currentMovie);
+
+    const actualDuplicates = await getMovieDuplicates($id_Movies, true, false, true);
+    const metaDuplicates = await getMovieDuplicates($id_Movies, false, true, true);
+
+    // even if there are multiple duplicates possible, we just take the first ones
+    const actualDuplicate = actualDuplicates.length > 0 ? (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', {$id_Movies: actualDuplicates[0]}))[0] : null;
+    const metaDuplicate = metaDuplicates.length > 0 ? (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', {$id_Movies: metaDuplicates[0]}))[0] : null;
+
+    // relink IMDB is alread handled by findIMDBtconst
+    // if (shared.duplicatesHandling.actualDuplicate.relinkIMDB && currentMovie.IMDB_tconst && actualDuplicate.IMDB_tconst && currentMovie.IMDB_tconst !== actualDuplicate.IMDB_tconst) {
+    //   await assignIMDB($id_Movies, actualDuplicate.IMDB_tconst, true, true);
+    // }
+
+    // addToList
+    if ((shared.duplicatesHandling.actualDuplicate.addToList && actualDuplicate) || (shared.duplicatesHandling.metaDuplicate.addToList)) {
+      logger.log('addToList by duplicate');
+      
+      const duplicate = (shared.duplicatesHandling.actualDuplicate.addToList && actualDuplicate) ? actualDuplicate : metaDuplicate;
+
+      logger.log('addToList duplicate:', duplicate);
+
+      const inLists = await db.fireProcedureReturnAll('SELECT id_Lists FROM tbl_Lists_Movies WHERE id_Movies = $id_Movies', { $id_Movies: duplicate.id_Movies });
+
+      logger.log('addToList inLists:', inLists);
+
+      for (let i = 0; i < inLists.length; i++) {
+        const id_Lists = inLists[i].id_Lists;
+
+        await addToList(id_Lists, $id_Movies, true);
+      }
+    }
+
+    // updateTitle is already handled by applyMetaData
+    // updateSubTitle is already handled by applyMetaData
+
+
+    // TODO: updateRating is already handled by applyMetaData
+
+
+    // TODO: updateLastAccess is already handled by applyMetaData
+  }
 }
 
 async function mergeExtras(onlyNew) {
@@ -535,9 +597,9 @@ async function listPath(scanPath) {
   return arrResult;
 }
 
-async function applyIMDBMetaData(onlyNew, id_Movies) {
-  // create Name, Name2 etc. from IMDBData for each movie
-  logger.log("applying IMDB Metadata...");
+async function applyMetaData(onlyNew, id_Movies) {
+  // create Name, Name2 etc. from IMDBData for each movie, also apply possible metadata from duplicates
+  logger.log("applying Metadata...");
 
   const movies = await db.fireProcedureReturnAll(
     `
@@ -607,14 +669,44 @@ async function applyIMDBMetaData(onlyNew, id_Movies) {
     const startYear = movie.IMDB_startYear;
     const endYear = movie.IMDB_endYear;
 
+    const duplicates = await getMovieDuplicates(movie.id_Movies, true, false, true);
+    const duplicate = duplicates.length > 0 ? (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', {$id_Movies: duplicates[0]}))[0] : null;
+    
+    // Overwrite by duplicate
+    if (duplicate && shared.duplicatesHandling.actualDuplicate.updateTitle) {
+      Name = duplicate.Name;
+    }
+    if (duplicate && shared.duplicatesHandling.actualDuplicate.updateSubTitle) {
+      Name2 = duplicate.Name2;
+    }
+
+    let $last_access_at = null;
+
+    if (duplicate && shared.duplicatesHandling.actualDuplicate.updateLastAccess) {
+      $last_access_at = duplicate.last_access_at;
+    }
+
+    let $Rating = null;
+    if (duplicate && shared.duplicatesHandling.actualDuplicate.updateRating) {
+      $Rating = duplicate.Rating;
+    } else if (shared.duplicatesHandling.metaDuplicate.updateRating) {
+      // TODO: fetch meta duplicate and set $Rating
+      const metaDuplicates = await getMovieDuplicates(movie.id_Movies, false, true, true);
+      const metaDuplicate = metaDuplicates.length > 0 ? (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', {$id_Movies: metaDuplicates[0]}))[0] : null;
+
+      $Rating = metaDuplicate.Rating;
+    }
+
     await db.fireProcedure(
-      `UPDATE tbl_Movies Set Name = $Name, Name2 = $Name2, startYear = $startYear, endYear = $endYear WHERE id_Movies = $id_Movies`,
+      `UPDATE tbl_Movies Set Name = $Name, Name2 = $Name2, startYear = $startYear, endYear = $endYear, last_access_at = $last_access_at, Rating = $Rating WHERE id_Movies = $id_Movies`,
       {
         $Name: Name,
         $Name2: Name2,
         $id_Movies: movie.id_Movies,
         $startYear: startYear,
-        $endYear: endYear
+        $endYear: endYear,
+        $last_access_at,
+        $Rating
       }
     );
   }
@@ -682,8 +774,8 @@ async function rescanMoviesMetaData(onlyNew, id_Movies) {
     if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData)
       await fetchIMDBMetaData(movie, onlyNew);
 
-    if (scanOptions.applyIMDBMetaData)
-      await applyIMDBMetaData(false, movie.id_Movies);
+    if (scanOptions.applyMetaData)
+      await applyMetaData(false, movie.id_Movies);
   }
 
   eventBus.scanInfoOff();
@@ -895,11 +987,24 @@ async function findIMDBtconst(movie, onlyNew) {
   let tconstIncluded = "";
   let tconst = "";
 
-  tconstIncluded = await findIMDBtconstIncluded(movie);
-  if (
-    !scanOptions.rescanMoviesMetaData_findIMDBtconst_ignore_tconst_in_filename
-  ) {
-    tconst = tconstIncluded;
+  // find tconst by duplicate
+  if (shared.duplicatesHandling.actualDuplicate.relinkIMDB) {
+    const actualDuplicates = await getMovieDuplicates(movie.id_Movies, true, false, true);
+    const actualDuplicate = actualDuplicates.length > 0 ? (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', {$id_Movies: actualDuplicates[0]}))[0] : null;
+
+    if (actualDuplicate && actualDuplicate.IMDB_tconst) {
+      tconst = actualDuplicate.IMDB_tconst;
+    }
+  }
+
+  if (!tconst) {
+    // tconst not found by duplicate
+    tconstIncluded = await findIMDBtconstIncluded(movie);
+    if (
+      !scanOptions.rescanMoviesMetaData_findIMDBtconst_ignore_tconst_in_filename
+    ) {
+      tconst = tconstIncluded;
+    }
   }
 
   if (!tconst) {
@@ -3954,7 +4059,7 @@ async function scrapeIMDBSearch(searchTerm) {
   return results;
 }
 
-async function assignIMDB($id_Movies, $IMDB_tconst, isHandlingDuplicates) {
+async function assignIMDB($id_Movies, $IMDB_tconst, isHandlingDuplicates, noEventBus) {
   logger.log(
     "assignIMDB $id_Movies:",
     $id_Movies,
@@ -3968,10 +4073,12 @@ async function assignIMDB($id_Movies, $IMDB_tconst, isHandlingDuplicates) {
   );
 
   // rescan IMDB Metadata
-  eventBus.rescanStarted();
+  if (!noEventBus) {
+    eventBus.rescanStarted();
+  }
 
   await rescanMoviesMetaData(false, $id_Movies);
-  await applyIMDBMetaData(false, $id_Movies);
+  await applyMetaData(false, $id_Movies);
 
   if (isHandlingDuplicates) {
     return;
@@ -3987,7 +4094,9 @@ async function assignIMDB($id_Movies, $IMDB_tconst, isHandlingDuplicates) {
     await assignIMDB(duplicates[i], $IMDB_tconst, true);
   }
 
-  eventBus.rescanStopped();
+  if (!noEventBus) {
+    eventBus.rescanStopped();
+  }
 }
 
 async function saveCurrentPage($MediaType) {
@@ -4112,11 +4221,13 @@ async function loadSettingDuplicatesHandling() {
 async function getMovieDuplicates(
   $id_Movies,
   useActualDuplicates,
-  useMetaDuplicates
+  useMetaDuplicates,
+  ignoreNew
 ) {
   const result = [];
 
   if (!useActualDuplicates && !useMetaDuplicates) {
+    logger.log('getMovieDuplicates bailing out');
     return [];
   }
 
@@ -4129,12 +4240,17 @@ async function getMovieDuplicates(
 				FROM tbl_Movies MOV
 				INNER JOIN tbl_Movies MOVSource ON
 					MOVSource.id_Movies = $id_Movies
-					AND MOV.id_Movies <> $id_Movies
-					AND MOV.Filename = MOVSource.Filename
-					AND MOV.Size = MOVSource.Size
-				`,
+					AND MOV.id_Movies <> $id_Movies                                   -- Exclude the Source
+					AND MOV.Filename = MOVSource.Filename                             -- Must have same Filename (actual duplicate)
+          AND MOV.Size = MOVSource.Size                                     -- Must have same Size (actual duplicate)
+          AND MOV.Extra_id_Movies_Owner IS NULL                             -- Exclude Extras
+          ${ignoreNew ? 'AND (MOV.isNew IS NULL OR MOV.isNew = 0)' : ''}    -- optional: only newly added movies (rescan)
+          `,
         { $id_Movies }
       );
+
+//           ${ignoreNew ? 'AND (MOV.isNew IS NULL OR MOV.isNew = 0)' : ''}    'optional: only newly added movies (rescan)
+
 
       for (let i = 0; i < actualDuplicates.length; i++) {
         //if (result.findIndex(actualDuplicates[i].id_Movies) === -1) {
@@ -4150,11 +4266,13 @@ async function getMovieDuplicates(
 				MOV.id_Movies
 			FROM tbl_Movies MOV
 			INNER JOIN tbl_Movies MOVSource ON
-				MOVSource.id_Movies = $id_Movies
-				AND MOV.id_Movies <> $id_Movies
-				AND MOV.IMDB_tconst = MOVSource.IMDB_tconst
-				AND MOV.IMDB_tconst IS NOT NULL
-			`,
+				MOVSource.id_Movies = $id_Movies                                    
+				AND MOV.id_Movies <> $id_Movies                                     -- Exclude the Source
+				AND MOV.IMDB_tconst = MOVSource.IMDB_tconst                         -- Same IMDB ID (meta Duplicate)
+        AND MOV.IMDB_tconst IS NOT NULL                                     -- IMDB ID should exist
+        AND MOV.Extra_id_Movies_Owner IS NULL                               -- Exclude Extras
+        ${ignoreNew ? 'AND (MOV.isNew IS NULL OR MOV.isNew = 0)' : ''}      -- optional: only newly added movies (rescan)
+        `,
         { $id_Movies }
       );
 
@@ -4167,6 +4285,7 @@ async function getMovieDuplicates(
 
     return result;
   } catch (e) {
+    logger.error(e);
     return [];
   }
 }
