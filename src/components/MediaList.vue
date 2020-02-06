@@ -476,13 +476,6 @@
 
               <v-row style="margin-top: 8px">
                 <v-btn text color="primary" v-on:click.stop="copyInfo(item)">Copy Info</v-btn>
-                <!-- Old Trailer implementation with "iFrame" -->
-                <!-- <v-btn
-                  v-if="item.IMDB_Trailer_URL"
-                  text
-                  color="primary"
-                  v-on:click.stop="showTrailer(item)"
-                >Trailer</v-btn>-->
                 <v-btn
                   v-if="item.IMDB_Trailer_URL"
                   text
@@ -992,7 +985,7 @@ export default {
           !trailerMediaURLs.mediaURLs ||
           trailerMediaURLs.mediaURLs.length == 0
         ) {
-          eventBus.showSnackbar("error", "no trailer sources found");
+          return this.showTrailer(item);  // Fallback to the more general player
         }
 
         const trailerMediaURL = store.selectBestQualityMediaURL(
