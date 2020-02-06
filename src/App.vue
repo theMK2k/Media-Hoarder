@@ -226,7 +226,7 @@
                   :min="0"
                   hide-details
                   class="align-center"
-									v-on:change="filtersChanged"
+                  v-on:change="filtersChanged"
                 >
                   <template v-slot:prepend>{{$shared.filterMetacriticScore[0]}}</template>
                   <template v-slot:append>{{$shared.filterMetacriticScore[1]}}</template>
@@ -237,8 +237,7 @@
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
                   color="dark-grey"
-                >
-                </v-checkbox>
+                ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
 
@@ -254,7 +253,7 @@
                   :min="0"
                   hide-details
                   class="align-center"
-									v-on:change="filtersChanged"
+                  v-on:change="filtersChanged"
                 >
                   <template v-slot:prepend>{{$shared.filterIMDBRating[0]}}</template>
                   <template v-slot:append>{{$shared.filterIMDBRating[1]}}</template>
@@ -265,8 +264,7 @@
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
                   color="dark-grey"
-                >
-                </v-checkbox>
+                ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
 
@@ -511,7 +509,7 @@
         <mk-scan-options-dialog
           ref="scanOptionsDialog"
           v-bind:show="scanOptionsDialog.show"
-          v-bind:showMediaInfoWarning = "scanOptionsDialog.showMediaInfoWarning"
+          v-bind:showMediaInfoWarning="scanOptionsDialog.showMediaInfoWarning"
           v-on:cancel="onScanOptionsDialogCancel"
           v-on:ok="onScanOptionsDialogOK"
         ></mk-scan-options-dialog>
@@ -558,13 +556,8 @@
 
     <!-- LOADING OVERLAY -->
     <v-overlay style="z-index: 1000;" v-bind:value="showLoadingOverlay">
-      <!-- <v-btn
-        icon
-        @click="overlay = false"
-      >
-        <v-icon>mdi-close</v-icon>
-      </v-btn>-->
       <span style="text-shadow: 0 0 4px #FFFFFF;">loading</span>
+      <v-progress-linear indeterminate color="white" class="mb-0" style="text-shadow: 0 0 4px #FFFFFF; width: 200px"></v-progress-linear>
     </v-overlay>
   </v-app>
 </template>
@@ -885,25 +878,25 @@ export default {
         this.$shared.filterMetacriticScore[0] == 0 &&
         this.$shared.filterMetacriticScore[1] == 100
       ) {
-        return `(ALL${this.$shared.filterMetacriticScoreNone ? '' : '*'})`;
+        return `(ALL${this.$shared.filterMetacriticScoreNone ? "" : "*"})`;
       }
 
       return `(${this.$shared.filterMetacriticScore[0]} - ${
         this.$shared.filterMetacriticScore[1]
-      }${this.$shared.filterMetacriticScoreNone ? '' : '*'})`;
-		},
-		
+      }${this.$shared.filterMetacriticScoreNone ? "" : "*"})`;
+    },
+
     filterIMDBRatingTitle() {
       if (
         this.$shared.filterIMDBRating[0] == 0 &&
         this.$shared.filterIMDBRating[1] == 10
       ) {
-        return `(ALL${this.$shared.filterIMDBRatingNone ? '' : '*'})`;
+        return `(ALL${this.$shared.filterIMDBRatingNone ? "" : "*"})`;
       }
 
       return `(${this.$shared.filterIMDBRating[0]} - ${
         this.$shared.filterIMDBRating[1]
-      }${this.$shared.filterIMDBRatingNone ? '' : '*'})`;
+      }${this.$shared.filterIMDBRatingNone ? "" : "*"})`;
     }
   },
 
@@ -1159,7 +1152,11 @@ export default {
         return;
       }
 
-      this.scanOptionsDialog.showMediaInfoWarning = await store.getSetting("MediainfoPath") ? false : true;
+      this.scanOptionsDialog.showMediaInfoWarning = (await store.getSetting(
+        "MediainfoPath"
+      ))
+        ? false
+        : true;
 
       this.scanOptionsDialog.show = true;
     },
