@@ -8,6 +8,7 @@
       <v-card-text>
         {{ question }}
         <v-text-field
+          autofocus
           v-if="enterTextValue"
           v-bind:label="textValueCaption"
           v-model="textValueLocal"
@@ -111,7 +112,7 @@ export default {
 		initTextValue(value) {
 			logger.log('initTextValueLocal value:', value);
 			this.textValueLocal = value;
-		}
+    }
   },
 
   // ### Lifecycle Hooks ###
