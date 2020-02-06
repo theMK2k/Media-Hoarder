@@ -98,11 +98,23 @@ function getYearsFromFileName(filename, includeEmptyString) {
 	return arrYears;
 }
 
+function getDirectoryName(pathString) {
+	const arrDirs = pathString.split(path.sep);
+	for (let i = arrDirs.length - 1; i >= 0; i--) {
+		if (arrDirs[i] !== '') {
+			return arrDirs[i];
+		}
+	}
+
+	return '';
+}
+
 export {
 	isWindows,
 	getPath,
 	getTimeString,
 	uppercaseEachWord,
 	getMovieNameFromFileName,
-	getYearsFromFileName
+	getYearsFromFileName,
+	getDirectoryName
 }
