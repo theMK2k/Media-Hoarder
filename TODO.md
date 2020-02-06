@@ -45,6 +45,7 @@ Features:
 - also implement rescan (actualDuplicates and metaDuplicates can be found there, too)
 
 ## Other
+- dont import "See full summary>>"
 
 - correctly implement scrollcontainer class (e.g. Medialist)
 
