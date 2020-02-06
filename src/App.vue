@@ -556,8 +556,10 @@
 
     <!-- LOADING OVERLAY -->
     <v-overlay style="z-index: 1000;" v-bind:value="showLoadingOverlay">
-      <span style="text-shadow: 0 0 4px #FFFFFF;">loading</span>
-      <v-progress-linear indeterminate color="white" class="mb-0" style="text-shadow: 0 0 4px #FFFFFF; width: 200px"></v-progress-linear>
+      <div style="text-align: center;">
+        <!-- <p style="text-shadow: 0 0 4px #FFFFFF; margin: 0px">loading</p> -->
+        <v-progress-circular indeterminate color="red" size="70" width="7"></v-progress-circular>
+      </div>
     </v-overlay>
   </v-app>
 </template>
