@@ -357,6 +357,10 @@ export default {
           this.sourcePathDescriptionDialog.Path = folderposition[0];
           this.sourcePathDescriptionDialog.Description = null;
 
+          this.$refs.sourcePathDescriptionDialog.initTextValue(
+            helpers.getDirectoryName(folderposition[0])
+          );
+
           this.sourcePathDescriptionDialog.show = true;
         }
       );
@@ -408,6 +412,8 @@ export default {
     onSourcePathRemoveDialogOK() {
       (async () => {
         try {
+          eventBus.showLoadingOverlay(true);
+          
           this.sourcePathRemoveDialog.show = false;
 
           await store.db.fireProcedure(
@@ -425,6 +431,8 @@ export default {
           await store.ensureMovieDeleted();
 
           await this.fetchSourcePaths();
+
+          eventBus.showLoadingOverlay(false);
 
           eventBus.showSnackbar("success", `Source path removed.`);
         } catch (err) {
@@ -471,7 +479,7 @@ export default {
       (async () => {
         try {
           await store.db.fireProcedure(
-            `INSERT INTO tbl_SourcePaths (MediaType, Path, Description, created_at) VALUES ($MediaType, $Path, $Description, DATETIME('now'))`,
+            `INSERT INTO tbl_SourcePaths (MediaType, Path, Description, checkRemovedFiles, created_at) VALUES ($MediaType, $Path, $Description, 1, DATETIME('now'))`,
             {
               $MediaType: this.sourcePathDescriptionDialog.MediaType,
               $Path: this.sourcePathDescriptionDialog.Path,
