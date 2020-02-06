@@ -6,7 +6,7 @@
       </v-btn>Settings
     </h1>
 
-    <v-tabs>
+    <v-tabs color="white">
       <v-tab>General</v-tab>
       <v-tab>Movies</v-tab>
       <v-tab>Series</v-tab>
@@ -94,6 +94,11 @@
 
       <v-tab-item style="padding: 8px">
         <p>These settings describe how MediaBox should handle duplicates.</p>
+        <p>You may have duplicates in the following scenarios:</p>
+        <ul>
+          <li>same file on a remote server and the local machine</li>
+          <li>same movie but in different formats (e.g. SD, HD and 4k)</li>
+        </ul>
 
         <v-card style="width: 100%; margin-top:8px">
           <h3>Actual Duplicates</h3>
@@ -151,8 +156,8 @@
         </v-card>
 
         <v-card style="width: 100%; margin-top:8px">
-          <h3>Actual Duplicates</h3>
-          <p>A meta duplicate is identified by having the same IMDB link. This can happen if you have the same movie with different format (HD vs. SD).</p>
+          <h3>Meta Duplicates</h3>
+          <p>A meta duplicate is identified by having the same IMDB link. This can happen if you have the same movie in different formats (e.g. SD, HD, 4k).</p>
           <p>With meta duplicates, MediaBox should also ...</p>
 
           <v-checkbox
