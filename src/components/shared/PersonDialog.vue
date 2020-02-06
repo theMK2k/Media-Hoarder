@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px">
+  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onEscapePressed">
     <v-card dark flat v-bind:ripple="false">
       <v-list-item three-line style="padding-left: 0px">
         <div>
@@ -131,7 +131,7 @@ export default {
         this.personData = {
           IMDB_Person_ID: personData.$IMDB_Person_ID,
           Photo_URL: personData.$Photo_URL
-            ? 'file://' + helpers.getPath(personData.$Photo_URL)
+            ? "file://" + helpers.getPath(personData.$Photo_URL)
             : personData.$Photo_URL,
           ShortBio: personData.$ShortBio,
           LongBio: personData.$LongBio
@@ -163,7 +163,7 @@ export default {
       personData = personData[0];
 
       personData.Photo_URL = personData.Photo_URL
-        ? 'file://' + helpers.getPath(personData.Photo_URL)
+        ? "file://" + helpers.getPath(personData.Photo_URL)
         : personData.Photo_URL;
 
       this.personData = personData;
@@ -191,6 +191,10 @@ export default {
 
     openIMDB() {
       shell.openExternal(`https://www.imdb.com/name/${this.IMDB_Person_ID}/`);
+    },
+
+    onEscapePressed() {
+      this.onCloseClick();
     }
   },
 

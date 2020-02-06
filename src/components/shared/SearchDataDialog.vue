@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px">
+  <v-dialog
+    v-model="show"
+    persistent
+    max-width="1000px"
+    v-on:keydown.escape="onCancelClick"
+  >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">{{ title }}</div>
@@ -17,10 +22,10 @@
 
         <v-row
           class="item Clickable"
-					style="width: 100%"
+          style="width: 100%"
           v-for="item in items"
           v-bind:key="item.name"
-					v-on:click.stop="onItemClicked(item)"
+          v-on:click.stop="onItemClicked(item)"
         >{{ item.name }} ({{item.NumMovies}})</v-row>
       </v-card-text>
 
@@ -78,8 +83,8 @@ export default {
 
       let sql = "";
       if (this.searchMode === "companies") {
-				// todo filter: (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
-				sql = `
+        // todo filter: (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+        sql = `
 				SELECT
 							Company_Name AS name
 							, (SELECT COUNT(1) FROM (
@@ -94,8 +99,8 @@ export default {
       }
 
       if (this.searchMode === "persons") {
-				// todo filter: (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
-				sql = `
+        // todo filter: (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+        sql = `
 				SELECT
 							Person_Name AS name
 							, IMDB_Person_ID AS id
@@ -113,27 +118,27 @@ export default {
       logger.log("search query:", sql);
 
       this.items = await store.db.fireProcedureReturnAll(sql, []);
-		},
-		
-		onItemClicked(item) {
-			if (this.searchMode === 'companies') {
-				eventBus.showCompanyDialog(item);
-			}
+    },
 
-			if (this.searchMode === 'persons') {
-				eventBus.showPersonDialog(item);
-			}
-		}
+    onItemClicked(item) {
+      if (this.searchMode === "companies") {
+        eventBus.showCompanyDialog(item);
+      }
+
+      if (this.searchMode === "persons") {
+        eventBus.showPersonDialog(item);
+      }
+    }
   },
 
   created() {
     // lodash debounced functions
     this.debouncedSearchTextChanged = _.debounce(this.searchTextChanged, 500);
-	
-		eventBus.$on('personDialogConfirm', () => {
-			this.onCancelClick();
-		})
-	}
+
+    eventBus.$on("personDialogConfirm", () => {
+      this.onCancelClick();
+    });
+  }
 };
 </script>
 

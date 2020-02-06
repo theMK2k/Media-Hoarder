@@ -1170,7 +1170,6 @@ export default {
     onScanOptionsDialogOK(chosenMethod) {
       const onlyNew = chosenMethod === 1;
 
-      // TODO: run scan
       logger.log("chosen Scan Option:", chosenMethod, "onlyNew:", onlyNew);
 
       store.rescan(onlyNew);

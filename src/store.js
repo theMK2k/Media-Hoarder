@@ -686,7 +686,6 @@ async function applyMetaData(onlyNew, id_Movies) {
     if (duplicate && shared.duplicatesHandling.actualDuplicate.updateRating) {
       $Rating = duplicate.Rating;
     } else if (shared.duplicatesHandling.metaDuplicate.updateRating) {
-      // TODO: fetch meta duplicate and set $Rating
       const metaDuplicates = await getMovieDuplicates(movie.id_Movies, false, true, true);
       const metaDuplicate = metaDuplicates.length > 0 ? (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', {$id_Movies: metaDuplicates[0]}))[0] : null;
 
@@ -1339,6 +1338,7 @@ async function scrapeIMDBreleaseinfo(movie) {
   if (rxOriginalTitle.test(html))
     $IMDB_originalTitle = html.match(rxOriginalTitle)[1];
 
+  // TODO: Regions
   let $IMDB_localTitle = null;
   const rxGermanTitle = /td class="aka-item__name">Germany<\/td>[\s\S]*?<td class="aka-item__title">(.*?)<\/td>/;
   if (rxGermanTitle.test(html)) $IMDB_localTitle = html.match(rxGermanTitle)[1];

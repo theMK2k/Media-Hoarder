@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px">
+  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onEscapePressed">
     <v-card dark flat v-bind:ripple="false">
       <v-list-item three-line style="padding-left: 0px">
         <div>
@@ -9,7 +9,7 @@
               contain
               v-bind:src="personData.Photo_URL"
               style="border-radius: 6px;"
-            ></v-img> -->
+            ></v-img>-->
           </v-list-item-avatar>
         </div>
         <v-list-item-content class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
@@ -30,7 +30,7 @@
               <div v-if="showLongBio" style="font-size: .875rem; font-weight: normal" class="Clickable" v-on:click.stop="showLongBio = false">
                 <p v-for="(line, index) in personData.LongBio.split('\n')" v-bind:key="index">{{line}}</p>
               </div>
-            </v-row> -->
+            </v-row>-->
           </v-col>
         </v-list-item-content>
       </v-list-item>
@@ -78,13 +78,13 @@ export default {
       personData: {},
       showLongBio: false
     };
-	},
-	
-	watch: {
-		IMDB_Person_ID: function(newVal) {
-			this.init(newVal);
-		}
-	},
+  },
+
+  watch: {
+    IMDB_Person_ID: function(newVal) {
+      this.init(newVal);
+    }
+  },
 
   methods: {
     onButtonClick(eventName) {
@@ -117,9 +117,9 @@ export default {
       this.personData = {};
       this.showLongBio = false;
 
-			this.personData = personData;
+      this.personData = personData;
 
-			logger.log('this.personData:', this.personData);
+      logger.log("this.personData:", this.personData);
     },
 
     onCloseClick() {
@@ -127,21 +127,25 @@ export default {
     },
 
     async onFilterClick() {
-			await store.addFilterCompany(this.Company_Name);
+      await store.addFilterCompany(this.Company_Name);
 
-			const setFilter = {
-				filterCompanies: [
-					this.Company_Name
-				]
-			};
+      const setFilter = {
+        filterCompanies: [this.Company_Name]
+      };
 
-			eventBus.refetchFilters(setFilter);
-			
-			this.$emit("close");
+      eventBus.refetchFilters(setFilter);
+
+      this.$emit("close");
     },
 
     openIMDB() {
-      shell.openExternal(`https://www.imdb.com/company/${this.IMDB_Company_ID}`);
+      shell.openExternal(
+        `https://www.imdb.com/company/${this.IMDB_Company_ID}`
+      );
+    },
+
+    onEscapePressed() {
+      this.onCloseClick();
     }
   },
 

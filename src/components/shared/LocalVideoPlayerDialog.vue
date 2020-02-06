@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="100%">
+  <v-dialog v-model="show" persistent max-width="100%" v-on:keydown.escape="onEscapePressed">
     <!--  style="min-height: 600px!important" -->
     <v-card dark flat v-bind:ripple="false">
       <!--
@@ -65,6 +65,10 @@ export default {
           });
         }
       );
+    },
+    
+    onEscapePressed() {
+      this.onCloseClick();
     }
   },
 

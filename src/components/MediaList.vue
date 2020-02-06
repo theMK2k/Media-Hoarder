@@ -117,7 +117,7 @@
                               >mdi-pencil</v-icon>
                             </span>
                           </template>
-                          <span>Edit Title</span>
+                          <span>Edit Primary Title</span>
                         </v-tooltip>
 
                         <v-tooltip bottom>
@@ -126,7 +126,7 @@
                               <v-icon
                                 v-show="item.nameHovered"
                                 style="cursor: pointer"
-                                v-on:click.stop="onOpenSearchIMDBDialog(item)"
+                                v-on:click.stop="onOpenLinkIMDBDialog(item)"
                               >mdi-link</v-icon>
                             </span>
                           </template>
@@ -141,12 +141,27 @@
                         v-on:mouseleave="setItemHovered(item, 'name2', false)"
                       >
                         {{ item.Name2 }}
-                        <v-icon
+
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{ on }">
+                            <span v-on="on">
+                              <v-icon
+                                v-show="item.name2Hovered"
+                                small
+                                style="cursor: pointer"
+                                v-on:click.stop="onEditItem(item, 'Name2', 'Secondary Title')"
+                              >mdi-pencil</v-icon>
+                            </span>
+                          </template>
+                          <span>Edit Secondary Title</span>
+                        </v-tooltip>
+
+                        <!-- <v-icon
                           v-show="item.name2Hovered"
                           small
                           style="cursor: pointer"
-                          v-on:click.stop="onEditItem(item, 'Name2', 'Subtitle')"
-                        >mdi-pencil</v-icon>
+                          v-on:click.stop="onEditItem(item, 'Name2', 'Secondary Title')"
+                        >mdi-pencil</v-icon> -->
                       </v-list-item-subtitle>
 
                       <div style="font-size: .875rem; font-weight: normal">
@@ -553,10 +568,10 @@
     ></mk-edit-item-dialog>
 
     <mk-search-imdb-dialog
-      ref="searchIMDBDialog"
-      v-bind:show="searchIMDBDialog.show"
-      v-on:close="onSearchIMDBDialogClose"
-      v-on:selected="onSearchIMDBDialogSelected"
+      ref="linkIMDBDialog"
+      v-bind:show="linkIMDBDialog.show"
+      v-on:close="onLinkIMDBDialogClose"
+      v-on:selected="onLinkIMDBDialogSelected"
     ></mk-search-imdb-dialog>
   </div>
 </template>
@@ -572,7 +587,7 @@ import PersonDialog from "@/components/shared/PersonDialog.vue";
 import CompanyDialog from "@/components/shared/CompanyDialog.vue";
 import VideoPlayerDialog from "@/components/shared/VideoPlayerDialog.vue";
 import LocalVideoPlayerDialog from "@/components/shared/LocalVideoPlayerDialog.vue";
-import SearchIMDBDialog from "@/components/shared/SearchIMDBDialog.vue";
+import LinkIMDBDialog from "@/components/shared/LinkIMDBDialog.vue";
 
 const { shell } = require("electron").remote;
 
@@ -590,7 +605,7 @@ export default {
     "mk-video-player-dialog": VideoPlayerDialog,
     "mk-local-video-player-dialog": LocalVideoPlayerDialog,
     "mk-edit-item-dialog": Dialog,
-    "mk-search-imdb-dialog": SearchIMDBDialog
+    "mk-search-imdb-dialog": LinkIMDBDialog
   },
 
   data: () => ({
@@ -671,7 +686,7 @@ export default {
       attributeDisplayText: null
     },
 
-    searchIMDBDialog: {
+    linkIMDBDialog: {
       show: false,
       item: {}
     },
@@ -1252,26 +1267,26 @@ export default {
       }, 250);
     },
 
-    onOpenSearchIMDBDialog(item) {
-      this.$refs.searchIMDBDialog.init();
-      this.searchIMDBDialog.show = true;
-      this.searchIMDBDialog.item = item;
+    onOpenLinkIMDBDialog(item) {
+      this.$refs.linkIMDBDialog.init();
+      this.linkIMDBDialog.show = true;
+      this.linkIMDBDialog.item = item;
     },
 
-    onSearchIMDBDialogClose() {
-      this.searchIMDBDialog.show = false;
-      this.searchIMDBDialog.item = {};
+    onLinkIMDBDialogClose() {
+      this.linkIMDBDialog.show = false;
+      this.linkIMDBDialog.item = {};
     },
 
-    async onSearchIMDBDialogSelected(tconst) {
+    async onLinkIMDBDialogSelected(tconst) {
       try {
-        await store.assignIMDB(this.searchIMDBDialog.item.id_Movies, tconst);
+        await store.assignIMDB(this.linkIMDBDialog.item.id_Movies, tconst);
 
         eventBus.refetchMedia(this.$shared.currentPage);
 
         eventBus.showSnackbar("success", "entry linked successfully");
 
-        this.onSearchIMDBDialogClose();
+        this.onLinkIMDBDialogClose();
       } catch (err) {
         logger.log("error:", JSON.stringify(err));
         eventBus.showSnackbar("error", err);

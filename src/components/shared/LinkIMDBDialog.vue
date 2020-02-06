@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px">
+  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onCancelClick">
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">Link with IMDB entry</div>
@@ -86,7 +86,7 @@
                         v-show="item.itemHovered"
                         text
                         color="primary"
-												v-bind:loading="isLinking"
+                        v-bind:loading="isLinking"
                         v-on:click.stop="onSelectClick(item)"
                       >Select for linking</v-btn>
                     </v-row>
@@ -122,8 +122,8 @@ export default {
       items: [],
       searchText: "",
       showTitleTypes: false,
-			isLoading: false,
-			isLinking: false,
+      isLoading: false,
+      isLinking: false,
 
       titleTypes: [
         {
@@ -187,9 +187,9 @@ export default {
       this.items = [];
       this.searchText = "";
       this.showTitleTypes = false;
-			this.searchResults = [];
-			this.isLoading = false;
-			this.isLinking = false;
+      this.searchResults = [];
+      this.isLoading = false;
+      this.isLinking = false;
     },
 
     setAllTitleTypes(value) {
@@ -244,11 +244,11 @@ export default {
 
       if (!item.tconst) {
         return eventBus.showSnackbar("error", "identifier missing");
-			}
+      }
 
-			this.searchResults = [item];
-			
-			this.isLinking = true;
+      this.searchResults = [item];
+
+      this.isLinking = true;
 
       this.$emit("selected", item.tconst);
     },

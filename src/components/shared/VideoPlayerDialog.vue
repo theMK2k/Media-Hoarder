@@ -1,7 +1,14 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="100%"> <!--  style="min-height: 600px!important" -->
-    <v-card dark flat v-bind:ripple="false"> <!--  style="min-height: 600px!important" -->
-      <webview v-if="show" v-bind:src="src" nodeintegration style="width: 100%; min-height: 600px!important"></webview>
+  <v-dialog v-model="show" persistent max-width="100%" v-on:keydown.escape="onCloseClick">
+    <!--  style="min-height: 600px!important" -->
+    <v-card dark flat v-bind:ripple="false">
+      <!--  style="min-height: 600px!important" -->
+      <webview
+        v-if="show"
+        v-bind:src="src"
+        nodeintegration
+        style="width: 100%; min-height: 600px!important"
+      ></webview>
       <v-col sm="12">
         <v-row style="margin-top: 8px">
           <v-btn

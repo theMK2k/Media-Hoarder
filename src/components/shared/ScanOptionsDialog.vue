@@ -1,5 +1,11 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="100%">
+  <v-dialog
+    v-model="show"
+    persistent
+    max-width="100%"
+    v-on:keydown.escape="onCloseClick"
+    v-on:keydown.enter="onOKClick"
+  >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">Scan Media</div>
@@ -10,9 +16,7 @@
           colored-border
           border="left"
           v-if="showMediaInfoWarning"
-        >
-          Warning: Mediainfo CLI Path is not set. Please go to Settings and provide one. You can get Mediainfo CLI from www.mediaarea.net
-        </v-alert>
+        >Warning: Mediainfo CLI Path is not set. Please go to Settings and provide one. You can get Mediainfo CLI from www.mediaarea.net</v-alert>
 
         <v-radio-group v-model="radioGroup">
           <v-radio label="Scan for new media" v-bind:value="1" color="dark-grey"></v-radio>
@@ -81,7 +85,7 @@ export default {
 
     onOKClick() {
       this.$emit("ok", this.radioGroup);
-    }
+    },
   },
 
   // ### Lifecycle Hooks ###

@@ -11,6 +11,7 @@
       <v-tab>Movies</v-tab>
       <v-tab>Series</v-tab>
       <v-tab>Duplicates</v-tab>
+      <v-tab>Regions</v-tab>
 
       <v-tab-item style="padding: 8px">
         <v-row style="margin: 0px">
@@ -130,7 +131,7 @@
             v-on:click.native="duplicatesHandlingChanged"
           ></v-checkbox>
           <v-checkbox
-            label="update sub-title"
+            label="update secondary title"
             style="margin: 0px"
             color="dark-grey"
             dense
@@ -178,6 +179,12 @@
           ></v-checkbox>
         </v-card>
       </v-tab-item>
+
+      <v-tab-item style="padding: 8px">
+        <p>Define the Regions which should be used for the title of the movies.</p>
+        <p>If a particular movie does not have a title for one of these regions, the Original Title of the movie is used. Else, the Original Title will be used as Secondary Title.</p>
+        <v-btn text small color="primary" v-on:click="openAddRegionsDialog">Add Regions</v-btn>
+      </v-tab-item>      
     </v-tabs>
 
     <mk-sourcepath-description-dialog
@@ -203,6 +210,11 @@
       v-on:yes="onSourcePathRemoveDialogOK"
       v-on:cancel="onSourcePathRemoveDialogCancel"
     ></mk-sourcepath-remove-dialog>
+    <mk-add-regions-dialog
+      ref="addRegionsDialog"
+      v-bind:show="addRegionsDialog.show"
+      v-on:cancel="onAddRegionsDialogCancel"
+    ></mk-add-regions-dialog>
   </div>
 </template>
 
@@ -214,14 +226,16 @@ import * as _ from "lodash";
 import { eventBus } from "@/main";
 import * as store from "@/store";
 import SourcePath from "@/components/shared/SourcePath";
-import Dialog from "./shared/Dialog.vue";
+import Dialog from "@/components/shared/Dialog.vue";
+import AddRegionsDialog from "@/components/shared/AddRegionsDialog.vue";
 import * as helpers from "@/helpers/helpers";
 
 export default {
   components: {
     "mk-sourcepath": SourcePath,
     "mk-sourcepath-description-dialog": Dialog,
-    "mk-sourcepath-remove-dialog": Dialog
+    "mk-sourcepath-remove-dialog": Dialog,
+    "mk-add-regions-dialog": AddRegionsDialog
   },
 
   data: () => ({
@@ -246,6 +260,10 @@ export default {
       MediaType: null,
       MediaTypeUpper: null,
       Path: null
+    },
+
+    addRegionsDialog: {
+      show: false
     },
 
     tmpPath: ""
@@ -515,6 +533,16 @@ export default {
     duplicatesHandlingChanged() {
       logger.log('$shared.duplicatesHandling:', this.$shared.duplicatesHandling);
       store.setSetting('duplicatesHandling', JSON.stringify(this.$shared.duplicatesHandling));
+    },
+
+    openAddRegionsDialog() {
+      this.addRegionsDialog.show = true;
+
+      this.$refs.addRegionsDialog.init();
+    },
+
+    onAddRegionsDialogCancel() {
+      this.addRegionsDialog.show = false;
     }
   },
 

@@ -1,5 +1,11 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px">
+  <v-dialog
+    v-model="show"
+    persistent
+    max-width="1000px"
+    v-on:keydown.escape="onEscapePressed"
+    v-on:keydown.enter="onEnterPressed"
+  >
     <v-card>
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">{{ title }}</div>
@@ -53,7 +59,7 @@
           v-on:click.native="onButtonClick('cancel')"
         >CANCEL</v-btn>
         <v-btn
-          v-bind:disabled="!((chosenMethod == 'useExistingLists' && chosen_id_Lists > 0) || (chosenMethod == 'createNewList' && newListName && newListName.trim().length > 0))"
+          v-bind:disabled="!canConfirm"
           class="xs-fullwidth"
           color="primary"
           v-on:click.native="onButtonClick('ok')"
@@ -93,6 +99,10 @@ export default {
   computed: {
     movieName() {
       return this.movie ? this.movie.Name : "<none>";
+    },
+
+    canConfirm() {
+      return ((this.chosenMethod == 'useExistingLists' && this.chosen_id_Lists > 0) || (this.chosenMethod == 'createNewList' && this.newListName && this.newListName.trim().length > 0));
     }
   },
 
@@ -109,9 +119,9 @@ export default {
         return;
       }
 
-      this.onButtonClick('ok');
+      this.onButtonClick("ok");
     },
-    
+
     onButtonClick(eventName) {
       this.$emit(eventName, {
         chosenMethod: this.chosenMethod,
@@ -119,6 +129,18 @@ export default {
         newListName: this.newListName
       });
       this.resetData();
+    },
+
+    onEnterPressed() {
+      if (!this.canConfirm) {
+        return;
+      }
+
+      this.onButtonClick('ok');
+    },
+
+    onEscapePressed() {
+      this.onButtonClick('cancel');
     }
   },
 
