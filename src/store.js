@@ -253,7 +253,7 @@ async function rescanHandleDuplicates() {
     // }
 
     // addToList
-    if ((shared.duplicatesHandling.actualDuplicate.addToList && actualDuplicate) || (shared.duplicatesHandling.metaDuplicate.addToList)) {
+    if ((shared.duplicatesHandling.actualDuplicate.addToList && actualDuplicate) || (shared.duplicatesHandling.metaDuplicate.addToList && metaDuplicate)) {
       logger.log('addToList by duplicate');
       
       const duplicate = (shared.duplicatesHandling.actualDuplicate.addToList && actualDuplicate) ? actualDuplicate : metaDuplicate;
@@ -690,7 +690,9 @@ async function applyMetaData(onlyNew, id_Movies) {
       const metaDuplicates = await getMovieDuplicates(movie.id_Movies, false, true, true);
       const metaDuplicate = metaDuplicates.length > 0 ? (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', {$id_Movies: metaDuplicates[0]}))[0] : null;
 
-      $Rating = metaDuplicate.Rating;
+      if (metaDuplicate) {
+        $Rating = metaDuplicate.Rating;
+      }
     }
 
     await db.fireProcedure(
