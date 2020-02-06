@@ -1,5 +1,11 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px">
+  <v-dialog
+    v-model="show"
+    persistent
+    max-width="1000px"
+    v-on:keydown.escape="onEscapePressed"
+    v-on:keydown.enter="onEnterPressed"
+  >
     <v-card>
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">{{ title }}</div>
@@ -107,11 +113,36 @@ export default {
       });
 
       this.resetData();
-		},
-		
-		initTextValue(value) {
-			logger.log('initTextValueLocal value:', value);
-			this.textValueLocal = value;
+    },
+
+    initTextValue(value) {
+      logger.log("initTextValueLocal value:", value);
+      this.textValueLocal = value;
+    },
+
+    onEnterPressed() {
+      
+      if (this.enterTextValue && !this.textValueEmptyAllowed && !this.textValueLocal) {
+        return;
+      }
+
+      if (this.ok) {
+        this.onButtonClick("ok");
+      }
+
+      if (this.yes) {
+        this.onButtonClick("yes");
+      }
+    },
+
+    onEscapePressed() {
+      if (this.cancel) {
+        return this.onButtonClick("cancel");
+      }
+
+      if (this.no) {
+        return this.onButtonClick("no");
+      }
     }
   },
 
