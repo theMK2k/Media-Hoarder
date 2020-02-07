@@ -109,7 +109,7 @@ dbsync.runSync(
         shared.currentLocale = await osLocale();
 
         const fallbackRegion = await getSetting('fallbackRegion');
-        if(fallbackRegion) {
+        if (fallbackRegion) {
           const fallbackRegionObj = JSON.parse(fallbackRegion);
 
           if (fallbackRegionObj.locale === shared.currentLocale) {
@@ -133,10 +133,10 @@ function generateIndexQuery(tableName, ColumnNames, isUnique) {
 
   return `CREATE ${
     isUnique ? "UNIQUE " : ""
-  } INDEX IF NOT EXISTS main.IDX_${tableName}_${columnNamesString.replace(
-    /, /g,
-    "_"
-  )} ON ${tableName} (${columnNamesString})`;
+    } INDEX IF NOT EXISTS main.IDX_${tableName}_${columnNamesString.replace(
+      /, /g,
+      "_"
+    )} ON ${tableName} (${columnNamesString})`;
 }
 
 async function createIndexes(db) {
@@ -221,7 +221,7 @@ async function rescan(onlyNew) {
 
   if (scanOptions.filescanMovies) await filescanMovies(onlyNew);
   if (scanOptions.rescanMoviesMetaData) await rescanMoviesMetaData(onlyNew);
-  
+
   // await rescanTV();								// TODO
 
   if (scanOptions.mergeExtras) await mergeExtras(onlyNew);
@@ -239,15 +239,15 @@ async function rescan(onlyNew) {
 async function rescanHandleDuplicates() {
   // const KILLME = 1;
   // if (KILLME === 1) return;
-  
+
   logger.log('### rescanHandleDuplicates ###');
-  
+
   const newMovies = await db.fireProcedureReturnAll('SELECT id_Movies FROM tbl_Movies WHERE isNew = 1 AND Extra_id_Movies_Owner IS NULL');
 
   logger.log('newMovies:', newMovies);
 
   const arrNewMovies = newMovies.map(movie => movie.id_Movies);
-  
+
   logger.log('arrNewMovies:', arrNewMovies);
 
   for (let i = 0; i < arrNewMovies.length; i++) {
@@ -261,8 +261,8 @@ async function rescanHandleDuplicates() {
     const metaDuplicates = await getMovieDuplicates($id_Movies, false, true, true);
 
     // even if there are multiple duplicates possible, we just take the first ones
-    const actualDuplicate = actualDuplicates.length > 0 ? (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', {$id_Movies: actualDuplicates[0]}))[0] : null;
-    const metaDuplicate = metaDuplicates.length > 0 ? (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', {$id_Movies: metaDuplicates[0]}))[0] : null;
+    const actualDuplicate = actualDuplicates.length > 0 ? (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', { $id_Movies: actualDuplicates[0] }))[0] : null;
+    const metaDuplicate = metaDuplicates.length > 0 ? (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', { $id_Movies: metaDuplicates[0] }))[0] : null;
 
     // relink IMDB is alread handled by findIMDBtconst
     // if (shared.duplicatesHandling.actualDuplicate.relinkIMDB && currentMovie.IMDB_tconst && actualDuplicate.IMDB_tconst && currentMovie.IMDB_tconst !== actualDuplicate.IMDB_tconst) {
@@ -272,7 +272,7 @@ async function rescanHandleDuplicates() {
     // addToList
     if ((shared.duplicatesHandling.actualDuplicate.addToList && actualDuplicate) || (shared.duplicatesHandling.metaDuplicate.addToList && metaDuplicate)) {
       logger.log('addToList by duplicate');
-      
+
       const duplicate = (shared.duplicatesHandling.actualDuplicate.addToList && actualDuplicate) ? actualDuplicate : metaDuplicate;
 
       logger.log('addToList duplicate:', duplicate);
@@ -435,10 +435,10 @@ async function filescanMovies(onlyNew) {
 			FROM tbl_SourcePaths
 			WHERE MediaType = 'movies'
 			${
+      scanOptions.filescanMovies_id_SourcePaths_IN
+        ? "AND id_SourcePaths IN " +
         scanOptions.filescanMovies_id_SourcePaths_IN
-          ? "AND id_SourcePaths IN " +
-            scanOptions.filescanMovies_id_SourcePaths_IN
-          : ""
+        : ""
       }
 		`);
 
@@ -683,8 +683,8 @@ async function applyMetaData(onlyNew, id_Movies) {
     const endYear = movie.IMDB_endYear;
 
     const duplicates = await getMovieDuplicates(movie.id_Movies, true, false, true);
-    const duplicate = duplicates.length > 0 ? (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', {$id_Movies: duplicates[0]}))[0] : null;
-    
+    const duplicate = duplicates.length > 0 ? (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', { $id_Movies: duplicates[0] }))[0] : null;
+
     // Overwrite by duplicate
     if (duplicate && shared.duplicatesHandling.actualDuplicate.updateTitle) {
       Name = duplicate.Name;
@@ -704,7 +704,7 @@ async function applyMetaData(onlyNew, id_Movies) {
       $Rating = duplicate.Rating;
     } else if (shared.duplicatesHandling.metaDuplicate.updateRating) {
       const metaDuplicates = await getMovieDuplicates(movie.id_Movies, false, true, true);
-      const metaDuplicate = metaDuplicates.length > 0 ? (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', {$id_Movies: metaDuplicates[0]}))[0] : null;
+      const metaDuplicate = metaDuplicates.length > 0 ? (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', { $id_Movies: metaDuplicates[0] }))[0] : null;
 
       if (metaDuplicate) {
         $Rating = metaDuplicate.Rating;
@@ -745,16 +745,16 @@ async function rescanMoviesMetaData(onlyNew, id_Movies) {
 				(isRemoved IS NULL OR isRemoved = 0)
 				${onlyNew ? "AND isNew = 1" : ""}
 				${
-          scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
-            ? "AND id_SourcePaths IN " +
-              scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
-            : ""
-        }
+    scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
+      ? "AND id_SourcePaths IN " +
+      scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
+      : ""
+    }
 				${
-          scanOptions.rescanMoviesMetaData_id_Movies
-            ? "AND id_Movies = " + scanOptions.rescanMoviesMetaData_id_Movies
-            : ""
-        }
+    scanOptions.rescanMoviesMetaData_id_Movies
+      ? "AND id_Movies = " + scanOptions.rescanMoviesMetaData_id_Movies
+      : ""
+    }
 				${id_Movies ? "AND id_Movies = " + id_Movies : ""}
 			`,
     []
@@ -1004,7 +1004,7 @@ async function findIMDBtconst(movie, onlyNew) {
   // find tconst by duplicate
   if (shared.duplicatesHandling.actualDuplicate.relinkIMDB) {
     const actualDuplicates = await getMovieDuplicates(movie.id_Movies, true, false, true);
-    const actualDuplicate = actualDuplicates.length > 0 ? (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', {$id_Movies: actualDuplicates[0]}))[0] : null;
+    const actualDuplicate = actualDuplicates.length > 0 ? (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', { $id_Movies: actualDuplicates[0] }))[0] : null;
 
     if (actualDuplicate && actualDuplicate.IMDB_tconst) {
       tconst = actualDuplicate.IMDB_tconst;
@@ -1355,10 +1355,35 @@ async function scrapeIMDBreleaseinfo(movie) {
   if (rxOriginalTitle.test(html))
     $IMDB_originalTitle = html.match(rxOriginalTitle)[1];
 
-  // TODO: Regions
+  // find local title by preferred or system-defined regions
+  const regions = await getRegions();
+
+  logger.log('regions used:', regions);
+
   let $IMDB_localTitle = null;
-  const rxGermanTitle = /td class="aka-item__name">Germany<\/td>[\s\S]*?<td class="aka-item__title">(.*?)<\/td>/;
-  if (rxGermanTitle.test(html)) $IMDB_localTitle = html.match(rxGermanTitle)[1];
+  if (regions) {
+    for (let i = 0; i < regions.length; i++) {
+      const region = regions[i].name;
+
+      logger.log('regions trying:', region);
+
+      const rxLocalTitle = new RegExp(`td class="aka-item__name">${region}</td>[\\s\\S]*?<td class="aka-item__title">(.*?)</td>`);
+      if (rxLocalTitle.test(html)) {
+        $IMDB_localTitle = html.match(rxLocalTitle)[1];
+      }
+
+      if (!$IMDB_localTitle) {
+        const rxLocalTitleFuzzy = new RegExp(`td class="aka-item__name">${region}.*?</td>[\\s\\S]*?<td class="aka-item__title">(.*?)</td>`);
+        if (rxLocalTitleFuzzy.test(html)) {
+          $IMDB_localTitle = html.match(rxLocalTitleFuzzy)[1];
+        }
+      }
+
+      if ($IMDB_localTitle) {
+        break;
+      }
+    }
+  }
 
   let $IMDB_primaryTitle = null;
   let $IMDB_startYear = null;
@@ -2551,8 +2576,8 @@ async function fetchMedia($MediaType) {
         : "";
       item.IMDB_ratingDisplay = item.IMDB_rating
         ? `${item.IMDB_rating.toLocaleString(undefined, {
-            minimumFractionDigits: 1
-          })} (${item.IMDB_numVotes.toLocaleString()})`
+          minimumFractionDigits: 1
+        })} (${item.IMDB_numVotes.toLocaleString()})`
         : "";
       item.AudioLanguages = generateLanguageString(item.MI_Audio_Languages, [
         "De",
@@ -2571,7 +2596,7 @@ async function fetchMedia($MediaType) {
             item.IMDB_MaxAge && item.IMDB_MaxAge > item.IMDB_MinAge
               ? "-" + item.IMDB_MaxAge
               : ""
-          }+`;
+            }+`;
         }
       }
 
@@ -3633,7 +3658,7 @@ async function fetchFilterLanguages($MediaType, $LanguageType) {
     if (languageKeys[result.Language]) {
       result.DisplayText = `${result.Language} - ${
         languageKeys[result.Language]
-      }`;
+        }`;
     }
   });
 
@@ -3970,10 +3995,10 @@ async function scrapeIMDBAdvancedTitleSearch(title, titleTypes) {
     `https://www.imdb.com/search/title/?title=${title}` +
     (titleTypes.find(titleType => !titleType.checked)
       ? "&title_type=" +
-        titleTypes
-          .filter(titleType => titleType.checked)
-          .map(titleType => titleType.id)
-          .reduce((prev, current) => prev + (prev ? "," : "") + current)
+      titleTypes
+        .filter(titleType => titleType.checked)
+        .map(titleType => titleType.id)
+        .reduce((prev, current) => prev + (prev ? "," : "") + current)
       : "");
 
   logger.log("scrapeIMDBAdvancedTitleSearch url:", url);
@@ -4264,7 +4289,7 @@ async function getMovieDuplicates(
         { $id_Movies }
       );
 
-//           ${ignoreNew ? 'AND (MOV.isNew IS NULL OR MOV.isNew = 0)' : ''}    'optional: only newly added movies (rescan)
+      //           ${ignoreNew ? 'AND (MOV.isNew IS NULL OR MOV.isNew = 0)' : ''}    'optional: only newly added movies (rescan)
 
 
       for (let i = 0; i < actualDuplicates.length; i++) {
@@ -4380,7 +4405,7 @@ async function scrapeIMDBCountries() {
   while ((match = rxCountry.exec(countries))) {
     const code = match[1];
     const name = match[2];
-    
+
     arrCountries.push({
       code,
       name,
@@ -4407,7 +4432,7 @@ async function scrapeFallbackRegion() {
   }
 
   const currentRegionCode = splitCurrentLocale[1].toLowerCase();
-  
+
   const regions = await scrapeIMDBCountries();
 
   if (regions.length === 0) {
@@ -4425,6 +4450,31 @@ async function scrapeFallbackRegion() {
   if (shared.fallbackRegion) {
     await setSetting('fallbackRegion', JSON.stringify(shared.fallbackRegion));
   }
+}
+
+async function ensureRegions() {
+  if (shared.regions && shared.regions.length > 0) {
+    return;
+  }
+
+  const regions = await getSetting('regions');
+  if (regions) {
+    shared.regions = JSON.parse(regions);
+  }
+}
+
+async function getRegions() {
+  await ensureRegions();
+
+  if (shared.regions && shared.regions.length > 0) {
+    return shared.regions;
+  }
+
+  if (shared.fallbackRegion) {
+    return [shared.fallbackRegion];
+  }
+
+  return null;
 }
 
 export {

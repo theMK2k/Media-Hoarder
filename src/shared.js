@@ -70,7 +70,8 @@ const shared = new Vue({
     },
 
     currentLocale: null,
-    fallbackRegion: null
+    fallbackRegion: null,
+    regions: []
   }
 })
 

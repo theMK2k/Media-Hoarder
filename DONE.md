@@ -1,5 +1,19 @@
 # DONE
 
+## Road to Release (Win/Linux/Mac)
+OK - IMDB detection
+OK -> improve by utilizing year (162 of 170 matched, 2553 of 2648 matched)
+
+OK - "Browse" VLC path -> depending on OS type provide default path / default extension
+OK - provide mediainfo-rar or similar for Linux/Mac - or better yet let the user provide a path?
+    ->  user must provide
+
+OK - preferred Regions
+OK  - let user define preferred (local) Regions to identify the primary title
+OK  -> fetch Countries from https://www.imdb.com/search/title/ and provide as list
+OK  -> Auto set region by user's localization setting?
+
+
 ## Restructure Settings
 
 - Tabbed view (either sidebar or horizontal tabs)

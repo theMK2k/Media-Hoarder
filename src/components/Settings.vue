@@ -197,18 +197,18 @@
       <!-- REGIONS -->
       <v-tab-item style="padding: 8px">
         <p>Define the Regions which should be used for the title of the movies.</p>
-        <p>If a particular movie does not have a title for one of these regions, the Original Title of the movie is used. Else, the Original Title will be used as Secondary Title.</p>
+        <p>If a particular movie does not have a title for one of these regions, the Original Title of the movie is used. Else, the Original Title will be used as Secondary Title if it is different.</p>
 
-        <v-alert type="warning" colored-border border="left" v-if="regions.length === 0">
+        <v-alert type="warning" colored-border border="left" v-if="$shared.regions.length === 0">
           <span
-            v-if="regions.length === 0 && $shared.fallbackRegion"
+            v-if="$shared.regions.length === 0 && $shared.fallbackRegion"
           >You currently don't have a region set up. MediaBox will fall back to your system's locale: {{ $shared.fallbackRegion.name }}.</span>
           <span
-            v-if="regions.length === 0 && !$shared.fallbackRegion"
+            v-if="$shared.regions.length === 0 && !$shared.fallbackRegion"
           >You currently don't have a region set up. MediaBox will fall back to the original title.</span>
         </v-alert>
 
-        <div v-for="region in regions" v-bind:key="region.code">
+        <div v-for="region in $shared.regions" v-bind:key="region.code">
           <v-row style="margin: 8px">
             <v-card style="width: 100%">
               <v-list-item two-line>
@@ -263,7 +263,6 @@
     <mk-add-regions-dialog
       ref="addRegionsDialog"
       v-bind:show="addRegionsDialog.show"
-      v-bind:usedRegions="regions"
       v-on:cancel="onAddRegionsDialogCancel"
       v-on:ok="onAddRegionsDialogOK"
     ></mk-add-regions-dialog>
@@ -296,8 +295,6 @@ export default {
     minimumWaitForSetAccess: 5,
 
     sourcePaths: [],
-
-    regions: [],
 
     sourcePathDescriptionDialog: {
       show: false,
@@ -610,48 +607,48 @@ export default {
 
       let maxSort = 0;
 
-      this.regions.forEach(region => maxSort = Math.max(maxSort, region.sort));
+      this.$shared.regions.forEach(region => maxSort = Math.max(maxSort, region.sort));
 
       maxSort++;
 
-      result.forEach(region => this.regions.push(Object.assign(region, { sort: maxSort++ })));
+      result.forEach(region => this.$shared.regions.push(Object.assign(region, { sort: maxSort++ })));
 
-      await store.setSetting('regions', JSON.stringify(this.regions));
+      await store.setSetting('regions', JSON.stringify(this.$shared.regions));
 
       this.addRegionsDialog.show = false;
     },
 
     isTopRegion(region) {
-      return (this.regions.findIndex(region2 => region2.sort < region.sort) === -1);
+      return (this.$shared.regions.findIndex(region2 => region2.sort < region.sort) === -1);
     },
 
     isBottomRegion(region) {
-      return (this.regions.findIndex(region2 => region2.sort > region.sort) === -1);
+      return (this.$shared.regions.findIndex(region2 => region2.sort > region.sort) === -1);
     },
 
     async onRegionMoveUp(region) {
-      for (let i = 0; i < this.regions.length; i++) {
-        if (this.regions[i].sort === region.sort - 1) {
-          this.regions[i].sort++;
+      for (let i = 0; i < this.$shared.regions.length; i++) {
+        if (this.$shared.regions[i].sort === region.sort - 1) {
+          this.$shared.regions[i].sort++;
           region.sort--;
-          logger.log(this.regions);
+          logger.log(this.$shared.regions);
                     
-          this.regions.sort((a, b) => a.sort - b.sort);
-          await store.setSetting('regions', JSON.stringify(this.regions));
+          this.$shared.regions.sort((a, b) => a.sort - b.sort);
+          await store.setSetting('regions', JSON.stringify(this.$shared.regions));
           return;
         }
       }
     },
 
     async onRegionMoveDown(region) {
-      for (let i = 0; i < this.regions.length; i++) {
-        if (this.regions[i].sort === region.sort + 1) {
-          this.regions[i].sort--;
+      for (let i = 0; i < this.$shared.regions.length; i++) {
+        if (this.$shared.regions[i].sort === region.sort + 1) {
+          this.$shared.regions[i].sort--;
           region.sort++;
-          logger.log(this.regions);
+          logger.log(this.$shared.regions);
 
-          this.regions.sort((a, b) => a.sort - b.sort);
-          await store.setSetting('regions', JSON.stringify(this.regions));
+          this.$shared.regions.sort((a, b) => a.sort - b.sort);
+          await store.setSetting('regions', JSON.stringify(this.$shared.regions));
           return;
         }
       }
@@ -659,9 +656,9 @@ export default {
 
     async onDeleteRegion(region) {
       const sort = region.sort;
-      this.regions.splice(this.regions.findIndex(region2 => region2 === region), 1);
-      this.regions.forEach(region => region.sort = (region.sort > sort) ? region.sort -1 : region.sort);
-      await store.setSetting('regions', JSON.stringify(this.regions));
+      this.$shared.regions.splice(this.$shared.regions.findIndex(region2 => region2 === region), 1);
+      this.$shared.regions.forEach(region => region.sort = (region.sort > sort) ? region.sort -1 : region.sort);
+      await store.setSetting('regions', JSON.stringify(this.$shared.regions));
     }
   },
 
@@ -671,7 +668,7 @@ export default {
 
     const regions = await store.getSetting('regions');
     if (regions) {
-      this.regions = JSON.parse(regions);
+      this.$shared.regions = JSON.parse(regions);
     }
 
     this.MediaplayerPath = await store.getSetting("MediaplayerPath");

@@ -48,7 +48,7 @@ const logger = require("loglevel");
 import { eventBus } from "@/main";
 
 export default {
-  props: ["show", "usedRegions"],
+  props: ["show"],
 
   data() {
     return {
@@ -66,9 +66,8 @@ export default {
 
   computed: {
     filteredItems() {
-      logger.log('this.usedRegions:', this.usedRegions);
       return this.items.filter(item => {
-        if (this.usedRegions.findIndex(used => used.code === item.code) !== -1) {
+        if (this.$shared.regions.findIndex(used => used.code === item.code) !== -1) {
           return false;
         }
         
