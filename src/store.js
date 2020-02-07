@@ -10,6 +10,7 @@ const htmlToText = require("html-to-text");
 // const moment = require("moment");
 const levenshtein = require("fast-levenshtein");
 const cheerio = require("cheerio");
+const osLocale = require('os-locale');
 
 const readdirAsync = util.promisify(fs.readdir);
 const writeFileAsync = util.promisify(fs.writeFile);
@@ -104,6 +105,22 @@ dbsync.runSync(
         await createIndexes(db);
 
         await loadSettingDuplicatesHandling();
+
+        shared.currentLocale = await osLocale();
+
+        const fallbackRegion = await getSetting('fallbackRegion');
+        if(fallbackRegion) {
+          const fallbackRegionObj = JSON.parse(fallbackRegion);
+
+          if (fallbackRegionObj.locale === shared.currentLocale) {
+            shared.fallbackRegion = fallbackRegionObj;
+            logger.log('Fallback Region (from db):', shared.fallbackRegion);
+          }
+        }
+
+        if (!shared.fallbackRegion) {
+          await scrapeFallbackRegion();
+        }
       })();
     });
   }
@@ -4376,6 +4393,38 @@ async function scrapeIMDBCountries() {
 
 async function addRegions(items) {
   logger.log('TODO: store.addRegions', items);
+}
+
+async function scrapeFallbackRegion() {
+  if (!shared.currentLocale) {
+    return;
+  }
+
+  const splitCurrentLocale = shared.currentLocale.split('-');
+
+  if (splitCurrentLocale.length !== 2) {
+    return;
+  }
+
+  const currentRegionCode = splitCurrentLocale[1].toLowerCase();
+  
+  const regions = await scrapeIMDBCountries();
+
+  if (regions.length === 0) {
+    logger.warn('Fallback Region: cannot scrape regions');
+    return;
+  }
+
+  regions.forEach(region => {
+    if (region.code === currentRegionCode) {
+      shared.fallbackRegion = Object.assign(region, { locale: shared.currentLocale });
+      logger.log('Fallback Region: set to', region);
+    }
+  });
+
+  if (shared.fallbackRegion) {
+    await setSetting('fallbackRegion', JSON.stringify(shared.fallbackRegion));
+  }
 }
 
 export {

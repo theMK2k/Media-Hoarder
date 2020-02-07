@@ -67,7 +67,10 @@ const shared = new Vue({
         addToList: true,
         updateRating: true
       }
-    }
+    },
+
+    currentLocale: null,
+    fallbackRegion: null
   }
 })
 

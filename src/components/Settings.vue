@@ -59,7 +59,12 @@
       <!-- MOVIES -->
       <v-tab-item style="padding: 8px">
         <h3>Movies - Source Paths</h3>
-        <div v-if="moviesSourcePaths.length == 0">no paths defined</div>
+        <v-alert
+          type="warning"
+          colored-border
+          border="left"
+          v-if="moviesSourcePaths.length == 0"
+        >no paths defined</v-alert>
 
         <div
           v-for="sourcePath in moviesSourcePaths"
@@ -79,7 +84,12 @@
       <!-- SERIES -->
       <v-tab-item style="padding: 8px">
         <h3>Series - Sourcepaths</h3>
-        <div v-if="tvSourcePaths.length == 0">no paths defined</div>
+        <v-alert
+          type="warning"
+          colored-border
+          border="left"
+          v-if="tvSourcePaths.length == 0"
+        >no paths defined</v-alert>
 
         <div
           v-for="sourcePath in tvSourcePaths"
@@ -189,8 +199,17 @@
         <p>Define the Regions which should be used for the title of the movies.</p>
         <p>If a particular movie does not have a title for one of these regions, the Original Title of the movie is used. Else, the Original Title will be used as Secondary Title.</p>
 
+        <v-alert type="warning" colored-border border="left" v-if="regions.length === 0">
+          <span
+            v-if="regions.length === 0 && $shared.fallbackRegion"
+          >You currently don't have a region set up. MediaBox will fall back to your system's locale: {{ $shared.fallbackRegion.name }}.</span>
+          <span
+            v-if="regions.length === 0 && !$shared.fallbackRegion"
+          >You currently don't have a region set up. MediaBox will fall back to the original title.</span>
+        </v-alert>
+
         <div v-for="region in regions" v-bind:key="region.code">
-          <v-row style="margin: 0px">
+          <v-row style="margin: 8px">
             <v-card style="width: 100%">
               <v-list-item two-line>
                 <v-list-item-content>
@@ -201,11 +220,9 @@
                       style="cursor: pointer"
                       v-on:click="onDeleteRegion(region)"
                     >mdi-delete</v-icon>
+                    <v-icon v-if="!isTopRegion(region)" style="cursor: pointer" v-on:click="onRegionMoveUp(region)">mdi-arrow-up</v-icon>
                     <v-icon
-                      style="cursor: pointer"
-                      v-on:click="onRegionMoveUp(region)"
-                    >mdi-arrow-up</v-icon>
-                    <v-icon
+                      v-if="!isBottomRegion(region)"
                       style="cursor: pointer"
                       v-on:click="onRegionMoveDown(region)"
                     >mdi-arrow-down</v-icon>
@@ -280,13 +297,7 @@ export default {
 
     sourcePaths: [],
 
-    regions: [
-      {
-        code: "de",
-        name: "Germany",
-        sort: 1
-      }
-    ],
+    regions: [],
 
     sourcePathDescriptionDialog: {
       show: false,
@@ -595,15 +606,74 @@ export default {
     },
 
     async onAddRegionsDialogOK(result) {
-      await store.addRegions(result.items);
+      logger.log('result:', result);
+
+      let maxSort = 0;
+
+      this.regions.forEach(region => maxSort = Math.max(maxSort, region.sort));
+
+      maxSort++;
+
+      result.forEach(region => this.regions.push(Object.assign(region, { sort: maxSort++ })));
+
+      await store.setSetting('regions', JSON.stringify(this.regions));
 
       this.addRegionsDialog.show = false;
+    },
+
+    isTopRegion(region) {
+      return (this.regions.findIndex(region2 => region2.sort < region.sort) === -1);
+    },
+
+    isBottomRegion(region) {
+      return (this.regions.findIndex(region2 => region2.sort > region.sort) === -1);
+    },
+
+    async onRegionMoveUp(region) {
+      for (let i = 0; i < this.regions.length; i++) {
+        if (this.regions[i].sort === region.sort - 1) {
+          this.regions[i].sort++;
+          region.sort--;
+          logger.log(this.regions);
+                    
+          this.regions.sort((a, b) => a.sort - b.sort);
+          await store.setSetting('regions', JSON.stringify(this.regions));
+          return;
+        }
+      }
+    },
+
+    async onRegionMoveDown(region) {
+      for (let i = 0; i < this.regions.length; i++) {
+        if (this.regions[i].sort === region.sort + 1) {
+          this.regions[i].sort--;
+          region.sort++;
+          logger.log(this.regions);
+
+          this.regions.sort((a, b) => a.sort - b.sort);
+          await store.setSetting('regions', JSON.stringify(this.regions));
+          return;
+        }
+      }
+    },
+
+    async onDeleteRegion(region) {
+      const sort = region.sort;
+      this.regions.splice(this.regions.findIndex(region2 => region2 === region), 1);
+      this.regions.forEach(region => region.sort = (region.sort > sort) ? region.sort -1 : region.sort);
+      await store.setSetting('regions', JSON.stringify(this.regions));
     }
   },
 
   // ### LifeCycle Hooks ###
   async created() {
     await this.fetchSourcePaths();
+
+    const regions = await store.getSetting('regions');
+    if (regions) {
+      this.regions = JSON.parse(regions);
+    }
+
     this.MediaplayerPath = await store.getSetting("MediaplayerPath");
     this.MediainfoPath = await store.getSetting("MediainfoPath");
     this.minimumWaitForSetAccess = await store.getSetting(

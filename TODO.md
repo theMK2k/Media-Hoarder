@@ -14,6 +14,7 @@ OK - provide mediainfo-rar or similar for Linux/Mac - or better yet let the user
 - preferred Regions
   - let user define preferred (local) Regions to identify the primary title
   -> fetch Countries from https://www.imdb.com/search/title/ and provide as list
+  -> Auto set region by user's localization setting?
 
 - provide Language Settings (which is the primary language of the user?)
 - provide Language Mapping (German -> De etc. should be extendable by the user, too)

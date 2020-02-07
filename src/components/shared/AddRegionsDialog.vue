@@ -91,7 +91,8 @@ export default {
     },
 
     onOKClick() {
-      this.$emit("ok", { items: this.items.filter(item => item.selected) });
+      logger.log('this.items.filter(item => item.selected):', this.items.filter(item => item.selected));
+      this.$emit("ok", this.items.filter(item => item.selected));
     },
 
     async searchTextChanged(searchText) {
