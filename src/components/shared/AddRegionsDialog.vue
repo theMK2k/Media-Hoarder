@@ -1,10 +1,5 @@
 <template>
-  <v-dialog
-    v-model="show"
-    persistent
-    max-width="1000px"
-    v-on:keydown.escape="onCancelClick"
-  >
+  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onCancelClick">
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">Add Regions</div>
@@ -20,17 +15,24 @@
           v-model="searchText"
         ></v-text-field>
 
-        <v-row
-          class="item Clickable"
-          style="width: 100%"
-          v-for="item in items"
-          v-bind:key="item.name"
-          v-on:click.stop="onItemClicked(item)"
-        >{{ item.name }}</v-row>
+        <v-checkbox
+          v-for="item in filteredItems"
+          v-bind:key="item.code"
+          v-bind:label="item.name"
+          v-model="item.selected"
+          style="margin: 0px"
+          color="dark-grey"
+        ></v-checkbox>
       </v-card-text>
 
       <v-card-actions>
         <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCancelClick()">Cancel</v-btn>
+        <v-btn
+          v-bind:disabled="!canConfirm"
+          class="xs-fullwidth"
+          color="primary"
+          v-on:click.native="onOKClick()"
+        >OK</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -40,53 +42,77 @@
 import * as _ from "lodash";
 
 import * as store from "@/store";
-import * as helpers from "@/helpers/helpers";
+// import * as helpers from "@/helpers/helpers";
 const logger = require("loglevel");
 
 import { eventBus } from "@/main";
 
 export default {
-  props: ["show"],
+  props: ["show", "usedRegions"],
 
   data() {
     return {
       items: [],
-      searchText: ""
+      searchText: "",
+      filter: ""
     };
   },
 
   watch: {
-    searchText: function(newValue, oldValue) {
+    searchText: function(newValue) {
       this.debouncedSearchTextChanged(newValue);
     }
   },
 
+  computed: {
+    filteredItems() {
+      logger.log('this.usedRegions:', this.usedRegions);
+      return this.items.filter(item => {
+        if (this.usedRegions.findIndex(used => used.code === item.code) !== -1) {
+          return false;
+        }
+        
+        if (!this.filter) {
+          return true;
+        }
+
+        return item.name.toLowerCase().includes(this.filter.toLowerCase());
+      });
+    },
+
+    canConfirm() {
+      return (this.items.findIndex(item => item.selected) !== -1);
+    }
+  },
+
   methods: {
-    async init() {
-      this.items = [];
-      this.searchText = "";
-    },
-
-    onOKClick() {
-      this.$emit("ok", items);
-    },
-
     onCancelClick() {
       this.$emit("cancel");
     },
 
-    async searchTextChanged(searchText) {
-      
+    onOKClick() {
+      this.$emit("ok", { items: this.items.filter(item => item.selected) });
     },
 
-    onItemClicked(item) {
-
+    async searchTextChanged(searchText) {
+      this.filter = searchText;
     },
 
     async init() {
-        if (this.items.length < 0) {
-          logger.log('TODO: fetch Countries from https://www.imdb.com/search/title/');
+      this.items = [];
+      this.searchText = "";
+
+      if (this.items.length === 0) {
+        // logger.log('TODO: fetch Countries from https://www.imdb.com/search/title/');
+        try {
+          this.items = await store.scrapeIMDBCountries();
+          logger.log("countries this.items:", this.items);
+        } catch (e) {
+          eventBus.showSnackbar("error", e);
         }
+      }
+
+      logger.log;
 
       this.items.forEach(item => {
         item.selected = false;
@@ -102,8 +128,7 @@ export default {
 </script>
 
 <style scoped>
-.item {
-  margin-left: 0px;
-  margin-top: 4px;
+.v-messages {
+  min-height: 0px !important;
 }
 </style>

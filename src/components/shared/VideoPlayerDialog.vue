@@ -24,9 +24,9 @@
 </template>
 
 <script>
-const logger = require("loglevel");
+// const logger = require("loglevel");
 
-import { eventBus } from "@/main";
+// import { eventBus } from "@/main";
 
 export default {
   props: ["show", "src"],

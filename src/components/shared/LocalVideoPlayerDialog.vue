@@ -35,10 +35,10 @@
 </template>
 
 <script>
-const logger = require("loglevel");
+// const logger = require("loglevel");
 const videojs = require("video.js");
 
-import { eventBus } from "@/main";
+// import { eventBus } from "@/main";
 
 export default {
   props: ["show", "videoURL", "mimeType", "slateURL"],
@@ -50,7 +50,7 @@ export default {
 
     init() {
       const options = {};
-      const player = videojs(
+      videojs(
         "mk-video-player",
         options,
         function onPlayerReady() {

@@ -4,12 +4,6 @@
       <v-list-item three-line style="padding-left: 0px">
         <div>
           <v-list-item-avatar tile style="margin: 6px; height: 150px; width: 120px">
-            <!-- <v-img
-              v-if="personData.Photo_URL"
-              contain
-              v-bind:src="personData.Photo_URL"
-              style="border-radius: 6px;"
-            ></v-img>-->
           </v-list-item-avatar>
         </div>
         <v-list-item-content class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
@@ -23,14 +17,6 @@
               </div>
             </v-row>
 
-            <!-- <v-row style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px">
-              <div v-if="!showLongBio" style="font-size: .875rem; font-weight: normal" class="Clickable" v-on:click.stop="showLongBio = true">
-                {{ personData.ShortBio }}
-              </div>
-              <div v-if="showLongBio" style="font-size: .875rem; font-weight: normal" class="Clickable" v-on:click.stop="showLongBio = false">
-                <p v-for="(line, index) in personData.LongBio.split('\n')" v-bind:key="index">{{line}}</p>
-              </div>
-            </v-row>-->
           </v-col>
         </v-list-item-content>
       </v-list-item>
@@ -62,7 +48,7 @@
 
 <script>
 import * as store from "@/store";
-import * as helpers from "@/helpers/helpers";
+// import * as helpers from "@/helpers/helpers";
 const logger = require("loglevel");
 
 const { shell } = require("electron").remote;
@@ -75,8 +61,6 @@ export default {
   data() {
     return {
       isScraping: false,
-      personData: {},
-      showLongBio: false
     };
   },
 
@@ -100,26 +84,17 @@ export default {
       logger.log("CompanyDialog SCRAPE!");
       this.isScraping = true;
 
-      try {
-      } catch (err) {
-        logger.log(err);
-        eventBus.showSnackbar(
-          "error",
-          "an error occured while fetching data from the web"
-        );
-      }
+      // try {
+
+      // } catch (err) {
+      //   logger.log(err);
+      //   eventBus.showSnackbar(
+      //     "error",
+      //     "an error occured while fetching data from the web"
+      //   );
+      // }
 
       this.isScraping = false;
-    },
-
-    async init(IMDB_Person_ID) {
-      logger.log("CompanyDialog INIT!");
-      this.personData = {};
-      this.showLongBio = false;
-
-      this.personData = personData;
-
-      logger.log("this.personData:", this.personData);
     },
 
     onCloseClick() {

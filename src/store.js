@@ -7,7 +7,7 @@ const xml2js = require("xml2js");
 const request = require("request");
 // const textVersion = require("textversionjs");
 const htmlToText = require("html-to-text");
-const moment = require("moment");
+// const moment = require("moment");
 const levenshtein = require("fast-levenshtein");
 const cheerio = require("cheerio");
 
@@ -656,7 +656,7 @@ async function applyMetaData(onlyNew, id_Movies) {
       Name = helpers.getMovieNameFromFileName(movie.Filename);
     }
 
-    const rxMultiPart = /(\d)\_(\d)/;
+    const rxMultiPart = /(\d)_(\d)/;
     if (rxMultiPart.test(movie.Filename)) {
       const multiPartMatches = movie.Filename.match(rxMultiPart);
       Name += ` (${multiPartMatches[1]}/${multiPartMatches[2]})`;
@@ -4334,6 +4334,50 @@ async function updateMovieAttribute(
   }
 }
 
+async function scrapeIMDBCountries() {
+  const url = `https://www.imdb.com/search/title/`;
+  // logger.log('scrapeIMDBCountries url:', url);
+  const response = await requestGetAsync(url);
+  const html = response.body;
+
+  const rxCountries = /<select multiple="" name="countries" class="countries"[\s\S]*?<\/select>/;
+
+  if (!rxCountries.test(html)) {
+    throw definedError.create(
+      "unable to fetch countries",
+      null,
+      null,
+      null
+    );
+  }
+
+  const countries = html.match(rxCountries)[0];
+
+  const rxCountry = /<option value="(.*?)">(.*?)<\/option>/g;
+
+  let match = null;
+
+  const arrCountries = [];
+
+  // eslint-disable-next-line no-cond-assign
+  while ((match = rxCountry.exec(countries))) {
+    const code = match[1];
+    const name = match[2];
+    
+    arrCountries.push({
+      code,
+      name,
+      selected: false
+    })
+  }
+
+  return arrCountries;
+}
+
+async function addRegions(items) {
+  logger.log('TODO: store.addRegions', items);
+}
+
 export {
   db,
   fetchSourcePaths,
@@ -4386,5 +4430,7 @@ export {
   selectBestQualityMediaURL,
   getMovieDuplicates,
   ensureMovieDeleted,
-  updateMovieAttribute
+  updateMovieAttribute,
+  scrapeIMDBCountries,
+  addRegions
 };

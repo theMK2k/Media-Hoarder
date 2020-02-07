@@ -39,7 +39,7 @@ function uppercaseEachWord(input) {
 	let text = input;
 
 	for (let i = 0; i < text.length; i++) {
-		if (/[\s\-\,\.\:\"\'\!\§\$\%\&\/\(\)\=\?\*\+\~\#\;\_]/.test(text[i])) {
+		if (/[\s\-,.:"'!§$%&/()=?*+~#;_]/.test(text[i])) {
 			isNewBeginning = true;
 		} else {
 			if (isNewBeginning) {
@@ -60,7 +60,7 @@ function getMovieNameFromFileName(filename) {
 		filenameFiltered = filenameFiltered.split('.').slice(0, -1).join('.')
 	}
 
-	filenameFiltered = filenameFiltered.replace(/\.\,\_/g, ' ');
+	filenameFiltered = filenameFiltered.replace(/\.,_/g, ' ');
 
 	return filenameFiltered;
 }

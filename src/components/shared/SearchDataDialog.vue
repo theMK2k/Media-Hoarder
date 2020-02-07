@@ -40,7 +40,7 @@
 import * as _ from "lodash";
 
 import * as store from "@/store";
-import * as helpers from "@/helpers/helpers";
+// import * as helpers from "@/helpers/helpers";
 const logger = require("loglevel");
 
 import { eventBus } from "@/main";
@@ -56,7 +56,7 @@ export default {
   },
 
   watch: {
-    searchText: function(newValue, oldValue) {
+    searchText: function(newValue) {
       this.debouncedSearchTextChanged(newValue);
     }
   },

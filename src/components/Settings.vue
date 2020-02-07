@@ -13,6 +13,7 @@
       <v-tab>Duplicates</v-tab>
       <v-tab>Regions</v-tab>
 
+      <!-- GENERAL -->
       <v-tab-item style="padding: 8px">
         <v-row style="margin: 0px">
           <v-text-field
@@ -55,6 +56,7 @@
         <v-btn text small color="primary" v-on:click="openDevTools">Open DevTools</v-btn>
       </v-tab-item>
 
+      <!-- MOVIES -->
       <v-tab-item style="padding: 8px">
         <h3>Movies - Source Paths</h3>
         <div v-if="moviesSourcePaths.length == 0">no paths defined</div>
@@ -74,6 +76,7 @@
         <v-btn text small color="primary" v-on:click="addSource('movies')">Add Source Path</v-btn>
       </v-tab-item>
 
+      <!-- SERIES -->
       <v-tab-item style="padding: 8px">
         <h3>Series - Sourcepaths</h3>
         <div v-if="tvSourcePaths.length == 0">no paths defined</div>
@@ -93,6 +96,7 @@
         <v-btn text small color="primary" v-on:click="addSource('tv')">Add Source Path</v-btn>
       </v-tab-item>
 
+      <!-- DUPLICATES -->
       <v-tab-item style="padding: 8px">
         <p>These settings describe how MediaBox should handle duplicates.</p>
         <p>You may have duplicates in the following scenarios:</p>
@@ -180,11 +184,40 @@
         </v-card>
       </v-tab-item>
 
+      <!-- REGIONS -->
       <v-tab-item style="padding: 8px">
         <p>Define the Regions which should be used for the title of the movies.</p>
         <p>If a particular movie does not have a title for one of these regions, the Original Title of the movie is used. Else, the Original Title will be used as Secondary Title.</p>
+
+        <div v-for="region in regions" v-bind:key="region.code">
+          <v-row style="margin: 0px">
+            <v-card style="width: 100%">
+              <v-list-item two-line>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    {{ region.name }}
+                    <v-icon
+                      color="red"
+                      style="cursor: pointer"
+                      v-on:click="onDeleteRegion(region)"
+                    >mdi-delete</v-icon>
+                    <v-icon
+                      style="cursor: pointer"
+                      v-on:click="onRegionMoveUp(region)"
+                    >mdi-arrow-up</v-icon>
+                    <v-icon
+                      style="cursor: pointer"
+                      v-on:click="onRegionMoveDown(region)"
+                    >mdi-arrow-down</v-icon>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-card>
+          </v-row>
+        </div>
+
         <v-btn text small color="primary" v-on:click="openAddRegionsDialog">Add Regions</v-btn>
-      </v-tab-item>      
+      </v-tab-item>
     </v-tabs>
 
     <mk-sourcepath-description-dialog
@@ -213,7 +246,9 @@
     <mk-add-regions-dialog
       ref="addRegionsDialog"
       v-bind:show="addRegionsDialog.show"
+      v-bind:usedRegions="regions"
       v-on:cancel="onAddRegionsDialogCancel"
+      v-on:ok="onAddRegionsDialogOK"
     ></mk-add-regions-dialog>
   </div>
 </template>
@@ -245,6 +280,14 @@ export default {
 
     sourcePaths: [],
 
+    regions: [
+      {
+        code: "de",
+        name: "Germany",
+        sort: 1
+      }
+    ],
+
     sourcePathDescriptionDialog: {
       show: false,
       id_SourcePaths: null,
@@ -270,7 +313,7 @@ export default {
   }),
 
   watch: {
-    minimumWaitForSetAccess: function(newValue, oldValue) {
+    minimumWaitForSetAccess: function() {
       if (this.debouncedUpdateMinimumWaitForSetAccess) {
         this.debouncedUpdateMinimumWaitForSetAccess();
       }
@@ -436,7 +479,7 @@ export default {
       (async () => {
         try {
           eventBus.showLoadingOverlay(true);
-          
+
           this.sourcePathRemoveDialog.show = false;
 
           await store.db.fireProcedure(
@@ -531,8 +574,14 @@ export default {
     },
 
     duplicatesHandlingChanged() {
-      logger.log('$shared.duplicatesHandling:', this.$shared.duplicatesHandling);
-      store.setSetting('duplicatesHandling', JSON.stringify(this.$shared.duplicatesHandling));
+      logger.log(
+        "$shared.duplicatesHandling:",
+        this.$shared.duplicatesHandling
+      );
+      store.setSetting(
+        "duplicatesHandling",
+        JSON.stringify(this.$shared.duplicatesHandling)
+      );
     },
 
     openAddRegionsDialog() {
@@ -542,6 +591,12 @@ export default {
     },
 
     onAddRegionsDialogCancel() {
+      this.addRegionsDialog.show = false;
+    },
+
+    async onAddRegionsDialogOK(result) {
+      await store.addRegions(result.items);
+
       this.addRegionsDialog.show = false;
     }
   },
@@ -568,5 +623,6 @@ export default {
 <style scoped>
 .v-messages {
   min-height: 0px !important;
+  visibility: hidden;
 }
 </style>
