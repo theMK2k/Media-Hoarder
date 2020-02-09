@@ -1369,14 +1369,33 @@ async function scrapeIMDBreleaseinfo(movie) {
 
       const rxLocalTitle = new RegExp(`td class="aka-item__name">${region}</td>[\\s\\S]*?<td class="aka-item__title">(.*?)</td>`);
       if (rxLocalTitle.test(html)) {
+        logger.log('regions: exact match!');
         $IMDB_localTitle = html.match(rxLocalTitle)[1];
       }
 
       if (!$IMDB_localTitle) {
-        const rxLocalTitleFuzzy = new RegExp(`td class="aka-item__name">${region}.*?</td>[\\s\\S]*?<td class="aka-item__title">(.*?)</td>`);
-        if (rxLocalTitleFuzzy.test(html)) {
-          $IMDB_localTitle = html.match(rxLocalTitleFuzzy)[1];
-        }
+        const rxLocalTitleFuzzy = new RegExp(`td class="aka-item__name">${region}.*?</td>[\\s\\S]*?<td class="aka-item__title">(.*?)</td>`, 'g');
+        // if (rxLocalTitleFuzzy.test(html)) {
+          logger.log('regions: trying fuzzy matching');
+
+          let match = null;
+          
+          while ((match = rxLocalTitleFuzzy.exec(html))) {
+            logger.log('regions: fuzzy match found');
+
+            const matched = match[0];
+            const title = match[1];
+
+            if (matched.includes("(working title)")) {
+              logger.log('regions: skipping: (working title)');
+              continue;
+            }
+
+            $IMDB_localTitle = title;
+            break;
+          }
+
+        // }
       }
 
       if ($IMDB_localTitle) {

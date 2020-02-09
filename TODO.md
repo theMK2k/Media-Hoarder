@@ -3,6 +3,12 @@
 ## Progress - Movies sorted by Name
 - page: 56 (God bless America)
 
+## IMDB title
+- provide pre-filled blacklist of title types (e.g. "working title", "short title"...)
+OR
+- provide pre-filled whitelist of title types
+-> check title types from MovieManager's mm.db
+
 ## Road to Release (Win/Linux/Mac)
 - add SERIES support
 
