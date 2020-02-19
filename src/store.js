@@ -4496,6 +4496,22 @@ async function getRegions() {
   return null;
 }
 
+async function fetchIMDBTitleTypes() {
+  return await db.fireProcedureReturnAll(`
+    SELECT
+      TitleType
+      , Count
+      , Example_Primary_Title
+      , Example_Secondary_Label
+      , Example_Secondary_Title
+      , Example_Tertiary_Label
+      , Example_Tertiary_Title
+      , Link
+    FROM tbl_IMDB_Title_Types
+    ORDER BY Count DESC
+  `)
+}
+
 export {
   db,
   fetchSourcePaths,
@@ -4550,5 +4566,6 @@ export {
   ensureMovieDeleted,
   updateMovieAttribute,
   scrapeIMDBCountries,
-  addRegions
+  addRegions,
+  fetchIMDBTitleTypes
 };

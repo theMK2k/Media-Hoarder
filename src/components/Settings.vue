@@ -12,6 +12,7 @@
       <v-tab>Series</v-tab>
       <v-tab>Duplicates</v-tab>
       <v-tab>Regions</v-tab>
+      <v-tab>Title Types</v-tab>
 
       <!-- GENERAL -->
       <v-tab-item style="padding: 8px">
@@ -220,7 +221,11 @@
                       style="cursor: pointer"
                       v-on:click="onDeleteRegion(region)"
                     >mdi-delete</v-icon>
-                    <v-icon v-if="!isTopRegion(region)" style="cursor: pointer" v-on:click="onRegionMoveUp(region)">mdi-arrow-up</v-icon>
+                    <v-icon
+                      v-if="!isTopRegion(region)"
+                      style="cursor: pointer"
+                      v-on:click="onRegionMoveUp(region)"
+                    >mdi-arrow-up</v-icon>
                     <v-icon
                       v-if="!isBottomRegion(region)"
                       style="cursor: pointer"
@@ -234,6 +239,27 @@
         </div>
 
         <v-btn text small color="primary" v-on:click="openAddRegionsDialog">Add Regions</v-btn>
+      </v-tab-item>
+
+      <!-- TITLE TYPES -->
+      <v-tab-item style="padding: 8px">
+        <p>In "Regions" you provided the regions to be used for the Primary Title. However, many titles in IMDB have a special title type. MediaBox skips all special title types by default. You can add title types here, so that they are actually used instead of being skipped.</p>
+
+        <v-alert
+          colored-border
+          border="left"
+          v-if="$shared.imdbTitleTypesWhitelist.length === 0"
+        >No title types added, this is fine.</v-alert>
+
+        <mk-title-type
+          v-for="item in $shared.imdbTitleTypesWhitelist"
+          v-bind:key="item.TitleType"
+          v-bind:value="item"
+          v-bind:showRemove="true"
+          v-on:removeTitleType="onRemoveTitleType"
+        ></mk-title-type>
+
+        <v-btn text small color="primary" v-on:click="openAddTitleTypeDialog">Add Title Type</v-btn>
       </v-tab-item>
     </v-tabs>
 
@@ -266,6 +292,12 @@
       v-on:cancel="onAddRegionsDialogCancel"
       v-on:ok="onAddRegionsDialogOK"
     ></mk-add-regions-dialog>
+    <mk-add-title-type-dialog
+      ref="addTitleTypeDialog"
+      v-bind:show="addTitleTypeDialog.show"
+      v-on:close="onAddTitleTypeDialogClose"
+      v-on:addTitleType="onAddTitleType"
+    ></mk-add-title-type-dialog>
   </div>
 </template>
 
@@ -279,6 +311,8 @@ import * as store from "@/store";
 import SourcePath from "@/components/shared/SourcePath";
 import Dialog from "@/components/shared/Dialog.vue";
 import AddRegionsDialog from "@/components/shared/AddRegionsDialog.vue";
+import AddTitleTypeDialog from "@/components/shared/AddTitleTypeDialog.vue";
+import TitleType from "@/components/shared/TitleType.vue";
 import * as helpers from "@/helpers/helpers";
 
 export default {
@@ -286,7 +320,9 @@ export default {
     "mk-sourcepath": SourcePath,
     "mk-sourcepath-description-dialog": Dialog,
     "mk-sourcepath-remove-dialog": Dialog,
-    "mk-add-regions-dialog": AddRegionsDialog
+    "mk-add-regions-dialog": AddRegionsDialog,
+    "mk-add-title-type-dialog": AddTitleTypeDialog,
+    "mk-title-type": TitleType
   },
 
   data: () => ({
@@ -314,6 +350,10 @@ export default {
     },
 
     addRegionsDialog: {
+      show: false
+    },
+
+    addTitleTypeDialog: {
       show: false
     },
 
@@ -603,27 +643,39 @@ export default {
     },
 
     async onAddRegionsDialogOK(result) {
-      logger.log('result:', result);
+      logger.log("result:", result);
 
       let maxSort = 0;
 
-      this.$shared.regions.forEach(region => maxSort = Math.max(maxSort, region.sort));
+      this.$shared.regions.forEach(
+        region => (maxSort = Math.max(maxSort, region.sort))
+      );
 
       maxSort++;
 
-      result.forEach(region => this.$shared.regions.push(Object.assign(region, { sort: maxSort++ })));
+      result.forEach(region =>
+        this.$shared.regions.push(Object.assign(region, { sort: maxSort++ }))
+      );
 
-      await store.setSetting('regions', JSON.stringify(this.$shared.regions));
+      await store.setSetting("regions", JSON.stringify(this.$shared.regions));
 
       this.addRegionsDialog.show = false;
     },
 
     isTopRegion(region) {
-      return (this.$shared.regions.findIndex(region2 => region2.sort < region.sort) === -1);
+      return (
+        this.$shared.regions.findIndex(
+          region2 => region2.sort < region.sort
+        ) === -1
+      );
     },
 
     isBottomRegion(region) {
-      return (this.$shared.regions.findIndex(region2 => region2.sort > region.sort) === -1);
+      return (
+        this.$shared.regions.findIndex(
+          region2 => region2.sort > region.sort
+        ) === -1
+      );
     },
 
     async onRegionMoveUp(region) {
@@ -632,9 +684,12 @@ export default {
           this.$shared.regions[i].sort++;
           region.sort--;
           logger.log(this.$shared.regions);
-                    
+
           this.$shared.regions.sort((a, b) => a.sort - b.sort);
-          await store.setSetting('regions', JSON.stringify(this.$shared.regions));
+          await store.setSetting(
+            "regions",
+            JSON.stringify(this.$shared.regions)
+          );
           return;
         }
       }
@@ -648,7 +703,10 @@ export default {
           logger.log(this.$shared.regions);
 
           this.$shared.regions.sort((a, b) => a.sort - b.sort);
-          await store.setSetting('regions', JSON.stringify(this.$shared.regions));
+          await store.setSetting(
+            "regions",
+            JSON.stringify(this.$shared.regions)
+          );
           return;
         }
       }
@@ -656,9 +714,59 @@ export default {
 
     async onDeleteRegion(region) {
       const sort = region.sort;
-      this.$shared.regions.splice(this.$shared.regions.findIndex(region2 => region2 === region), 1);
-      this.$shared.regions.forEach(region => region.sort = (region.sort > sort) ? region.sort -1 : region.sort);
-      await store.setSetting('regions', JSON.stringify(this.$shared.regions));
+      this.$shared.regions.splice(
+        this.$shared.regions.findIndex(region2 => region2 === region),
+        1
+      );
+      this.$shared.regions.forEach(
+        region =>
+          (region.sort = region.sort > sort ? region.sort - 1 : region.sort)
+      );
+      await store.setSetting("regions", JSON.stringify(this.$shared.regions));
+    },
+
+    openAddTitleTypeDialog() {
+      this.addTitleTypeDialog.show = true;
+
+      this.$refs.addTitleTypeDialog.init();
+    },
+
+    onAddTitleTypeDialogClose() {
+      this.addTitleTypeDialog.show = false;
+    },
+
+    async onAddTitleType(titleType) {
+      this.$shared.imdbTitleTypesWhitelist.push(titleType);
+      this.addTitleTypeDialog.show = false;
+
+      await store.setSetting(
+        "IMDBTitleTypeWhitelist",
+        JSON.stringify(this.$shared.imdbTitleTypesWhitelist)
+      );
+
+      eventBus.showSnackbar(
+        "success",
+        `title type "${titleType.TitleType}" added`
+      );
+    },
+
+    async onRemoveTitleType(titleType) {
+      this.$shared.imdbTitleTypesWhitelist.splice(
+        this.$shared.imdbTitleTypesWhitelist.findIndex(
+          item => item.TitleType === titleType.TitleType
+        ),
+        1
+      );
+
+      await store.setSetting(
+        "IMDBTitleTypeWhitelist",
+        JSON.stringify(this.$shared.imdbTitleTypesWhitelist)
+      );
+
+      eventBus.showSnackbar(
+        "success",
+        `title type "${titleType.TitleType}" removed`
+      );
     }
   },
 
@@ -666,9 +774,18 @@ export default {
   async created() {
     await this.fetchSourcePaths();
 
-    const regions = await store.getSetting('regions');
+    const regions = await store.getSetting("regions");
     if (regions) {
       this.$shared.regions = JSON.parse(regions);
+    }
+
+    const imdbTitleTypesWhitelist = await store.getSetting(
+      "IMDBTitleTypeWhitelist"
+    );
+    if (imdbTitleTypesWhitelist) {
+      this.$shared.imdbTitleTypesWhitelist = JSON.parse(
+        imdbTitleTypesWhitelist
+      );
     }
 
     this.MediaplayerPath = await store.getSetting("MediaplayerPath");

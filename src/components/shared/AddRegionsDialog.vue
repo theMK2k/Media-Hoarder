@@ -99,7 +99,6 @@ export default {
     },
 
     async init() {
-      this.items = [];
       this.searchText = "";
 
       if (this.items.length === 0) {
@@ -111,8 +110,6 @@ export default {
           eventBus.showSnackbar("error", e);
         }
       }
-
-      logger.log;
 
       this.items.forEach(item => {
         item.selected = false;
