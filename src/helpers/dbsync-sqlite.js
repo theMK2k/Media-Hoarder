@@ -354,8 +354,10 @@ function syncContentTable(tableName, callback) {
 function syncContentTableRow(content, callback) {
 	// logger.debug('syncing content table row:', content);
 
-	const query = `SELECT COUNT(1) AS count FROM [${content._tableName}] WHERE ${content._pkColumnName} = ${content[content._pkColumnName]}`
-	workingDb.get(query, [], (err, row) => {
+	const query = `SELECT COUNT(1) AS count FROM [${content._tableName}] WHERE ${content._pkColumnName} = $${content._pkColumnName}`
+	const selectParams = {};
+	selectParams[`$${content._pkColumnName}`] = content[content._pkColumnName];
+	workingDb.get(query, selectParams, (err, row) => {
 		if (err) {
 			return callback(err);
 		}
