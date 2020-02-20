@@ -3,11 +3,29 @@
 ## Progress - Movies sorted by Name
 - page: 56 (God bless America)
 
+## IMDB Scraping Interface Watchdog
+- implement a watchdog which performs once a day
+  - scrape different IMDB pages
+  - compare with expected result (json suffices)
+  - generate an email which informs me of broken IMDB scraper
+  - generate a light-weight status page which informs users of broken IMDB scraper
+
 ## IMDB title
-- provide pre-filled blacklist of title types (e.g. "working title", "short title"...)
-OR
-- provide pre-filled whitelist of title types
--> check title types from MovieManager's mm.db
+
+- provide languages management (based on regions)
+-> create tbl_IMDB_Languages
+-> create tbl_IMDB_Regions
+-> Create tbl_IMDB_Regions_Languages (mapping)
+-> "your chosen regions provide the following language options, please select the ones you prefer as Primary Title"
+
+OK - provide whitelist management of title types
+  OK -> check title types from MovieManager's mm.db
+  -> 
+
+on Rescan:
+- tokenize and find out if the tokens are either special title types or just language types
+-> if user has appropriate language type setting (i.e. the preferred language types accomply with the chosen regions) then filter the language types, i.e. Token = "($LANGUAGE_FULL title)"
+-> if the user has preferred title types then filter by them, else discard the title completely
 
 ## Road to Release (Win/Linux/Mac)
 - add SERIES support
