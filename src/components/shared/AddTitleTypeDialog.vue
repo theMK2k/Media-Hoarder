@@ -5,7 +5,7 @@
         <div class="headline" style="width: 100%; font-size: 1.17em">Add Title Type</div>
         </v-card-title>
 
-        <mk-title-type v-for="item in items" v-bind:key="item.TitleType" v-bind:value="item" v-bind:showAdd="true" v-on:addTitleType="onAddTitleType"></mk-title-type>
+        <mk-title-type v-for="item in filteredItems" v-bind:key="item.TitleType" v-bind:value="item" v-bind:showAdd="true" v-on:addTitleType="onAddTitleType"></mk-title-type>
 
       <v-card-actions>
         <v-btn class="xs-fullwidth" color="secondary" small v-on:click.native="onCloseClick()">Close</v-btn>
