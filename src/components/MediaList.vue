@@ -1134,7 +1134,6 @@ export default {
     },
 
     onCompanyClicked(company) {
-      // TODO!
       logger.log("company clicked:", company);
 
       this.companyDialog.show = true;

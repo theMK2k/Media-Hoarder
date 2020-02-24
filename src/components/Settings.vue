@@ -12,6 +12,7 @@
       <v-tab>Series</v-tab>
       <v-tab>Duplicates</v-tab>
       <v-tab>Regions</v-tab>
+      <v-tab>Languages</v-tab>
       <v-tab>Title Types</v-tab>
 
       <!-- GENERAL -->
@@ -240,6 +241,28 @@
 
         <v-btn text small color="primary" v-on:click="openAddRegionsDialog">Add Regions</v-btn>
       </v-tab-item>
+
+      <!-- LANGUAGES -->
+      <v-tab-item style="padding: 8px">
+        <p>TODO!</p>
+
+        <!-- <v-alert
+          colored-border
+          border="left"
+          v-if="$shared.imdbTitleTypesWhitelist.length === 0"
+        >No title types added, this is fine.</v-alert>
+
+        <mk-title-type
+          v-for="item in $shared.imdbTitleTypesWhitelist"
+          v-bind:key="item.TitleType"
+          v-bind:value="item"
+          v-bind:showRemove="true"
+          v-on:removeTitleType="onRemoveTitleType"
+        ></mk-title-type>
+
+        <v-btn text small color="primary" v-on:click="openAddTitleTypeDialog">Add Title Type</v-btn> -->
+      </v-tab-item>
+
 
       <!-- TITLE TYPES -->
       <v-tab-item style="padding: 8px">

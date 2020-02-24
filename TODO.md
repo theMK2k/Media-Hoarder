@@ -12,11 +12,15 @@
 
 ## IMDB title
 
-- provide languages management (based on regions)
+- provide languages management (also based on regions!)
+-> we need them for the "preferred Languages" from MediaInfo
+-> we need them for the Primary Title
+
 -> create tbl_IMDB_Languages
 -> create tbl_IMDB_Regions
 -> Create tbl_IMDB_Regions_Languages (mapping)
 -> "your chosen regions provide the following language options, please select the ones you prefer as Primary Title"
+
 
 OK - provide whitelist management of title types
   OK -> check title types from MovieManager's mm.db

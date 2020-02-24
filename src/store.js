@@ -64,7 +64,7 @@ const definedError = require("@/helpers/defined-error");
 const isBuild = process.env.NODE_ENV === "production";
 
 if (!isBuild) {
-  logger.setLevel(0); // KILLME
+  logger.setLevel(0);
 }
 
 // eslint-disable-next-line no-console
@@ -1195,7 +1195,6 @@ async function scrapeIMDBmainPageData(movie) {
   const response = await requestGetAsync(url);
   const html = response.body;
 
-  // TODO
   let $IMDB_releaseType = "movie";
   /*
 	short			-- tt0000006 -> "/search/title?genres=short"

@@ -64,10 +64,9 @@ function createWindow() {
 			win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
 		}, 0);
 		
-		// KILLME
-		// if (!process.env.IS_TEST) {
+		if (!process.env.IS_TEST) {
 			win.webContents.openDevTools();
-		// }
+		}
 	} else {
 		createProtocol('app')
 		// Load the index.html when not in development
