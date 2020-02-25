@@ -108,6 +108,8 @@ dbsync.runSync(
 
         shared.currentLocale = await osLocale();
 
+        logger.log('shared.currentLocale:', shared.currentLocale);
+
         const fallbackRegion = await getSetting('fallbackRegion');
         if (fallbackRegion) {
           const fallbackRegionObj = JSON.parse(fallbackRegion);
@@ -121,6 +123,13 @@ dbsync.runSync(
         if (!shared.fallbackRegion) {
           await scrapeFallbackRegion();
         }
+
+        if (!shared.fallbackLanguage) {
+          await getFallbackLanguage();
+        }
+
+        logger.log('shared.fallbackRegion:', shared.fallbackRegion);
+        logger.log('shared.fallbackLanguage:', shared.fallbackLanguage);
       })();
     });
   }
@@ -4443,13 +4452,13 @@ async function scrapeFallbackRegion() {
     return;
   }
 
-  const splitCurrentLocale = shared.currentLocale.split('-');
+  const splitCurrentLocale = shared.currentLocale.split(/[_-]/);
 
   if (splitCurrentLocale.length !== 2) {
     return;
   }
 
-  const currentRegionCode = splitCurrentLocale[1].toLowerCase();
+  const currentRegionCode = splitCurrentLocale[0].toLowerCase();
 
   const regions = await scrapeIMDBCountries();
 
@@ -4467,6 +4476,37 @@ async function scrapeFallbackRegion() {
 
   if (shared.fallbackRegion) {
     await setSetting('fallbackRegion', JSON.stringify(shared.fallbackRegion));
+  }
+}
+
+async function getFallbackLanguage() {
+  if (!shared.currentLocale) {
+    return;
+  }
+
+  const splitCurrentLocale = shared.currentLocale.split(/[_-]/);
+
+  if (splitCurrentLocale.length !== 2) {
+    return;
+  }
+
+  const currentLanguageCode = splitCurrentLocale[1].toLowerCase();
+
+  const languages = await getLanguages();
+
+  if (!languages) {
+    logger.warn('unable to fetch languages, abort');
+    return;
+  }
+
+  logger.log('languages:', languages);
+
+  shared.fallbackLanguage = languages.find(lang => lang.code === currentLanguageCode);
+
+  if (shared.fallbackLanguage) {
+    shared.fallbackLanguage = Object.assign(region, { locale: shared.currentLocale });
+    logger.log('Fallback Language: set to', shared.fallbackLanguage);
+    await setSetting('fallbackLanguage', JSON.stringify(shared.fallbacklanguage));
   }
 }
 
@@ -4525,11 +4565,11 @@ async function fetchIMDBTitleTypes() {
 }
 
 async function getLanguages(regionCodes) {
-  if (!regionCodes || regionCodes.length === 0) {
-    return null;
-  }
+  // if (!regionCodes || regionCodes.length === 0) {
+  //   return null;
+  // }
 
-  const filterRegions = regionCodes
+  const filterRegions = !regionCodes ? null : regionCodes
   .reduce((prev, current) => {
     return prev + (prev ? ", " : "") + `'${current}'`;
   }, "");
@@ -4541,7 +4581,7 @@ async function getLanguages(regionCodes) {
       , 0 AS Use
     FROM tbl_IMDB_Regions_Languages RL
     INNER JOIN tbl_IMDB_Languages L ON RL.LanguageCode = L.Code
-    WHERE RL.RegionCode IN (${regionCodes})
+    ${(regionCodes && regionCodes.length === 0) ? '' : `WHERE RL.RegionCode IN (${regionCodes})`}
   `);
 
   const languageSettingsString = await getSetting('languages');
@@ -4619,6 +4659,7 @@ export {
   scrapeIMDBCountries,
   addRegions,
   fetchIMDBTitleTypes,
-  getLanguages as fetchLanguages,
-  ensureLanguages
+  getLanguages,
+  ensureLanguages,
+  getFallbackLanguage
 };

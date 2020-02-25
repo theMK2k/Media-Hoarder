@@ -244,13 +244,14 @@
 
       <!-- LANGUAGES -->
       <v-tab-item style="padding: 8px">
-        <p>TODO!</p>
+        <h3>Language of the Primary Title</h3>
 
-        <!-- <v-alert
+        <v-alert
+          type="warning"
           colored-border
           border="left"
           v-if="$shared.imdbTitleTypesWhitelist.length === 0"
-        >No title types added, this is fine.</v-alert>
+        >Please provide at least one language to use for the Primary Title.</v-alert>
 
         <mk-title-type
           v-for="item in $shared.imdbTitleTypesWhitelist"
