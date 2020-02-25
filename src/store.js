@@ -121,7 +121,7 @@ dbsync.runSync(
         }
 
         if (!shared.fallbackRegion) {
-          await scrapeFallbackRegion();
+          await getFallbackRegion();
         }
 
         if (!shared.fallbackLanguage) {
@@ -4403,51 +4403,27 @@ async function updateMovieAttribute(
   }
 }
 
-async function scrapeIMDBCountries() {
-  const url = `https://www.imdb.com/search/title/`;
-  // logger.log('scrapeIMDBCountries url:', url);
-  const response = await requestGetAsync(url);
-  const html = response.body;
+async function getIMDBRegions() {
+  const regions = await db.fireProcedureReturnAll(`
+    SELECT
+      Code AS code
+      , Name AS name
+      , 0 AS selected
+    FROM tbl_IMDB_Regions
+  `);
 
-  const rxCountries = /<select multiple="" name="countries" class="countries"[\s\S]*?<\/select>/;
+  regions.forEach(region => {
+    region.selected = !!region.selected
+  })
 
-  if (!rxCountries.test(html)) {
-    throw definedError.create(
-      "unable to fetch countries",
-      null,
-      null,
-      null
-    );
-  }
-
-  const countries = html.match(rxCountries)[0];
-
-  const rxCountry = /<option value="(.*?)">(.*?)<\/option>/g;
-
-  let match = null;
-
-  const arrCountries = [];
-
-  // eslint-disable-next-line no-cond-assign
-  while ((match = rxCountry.exec(countries))) {
-    const code = match[1];
-    const name = match[2];
-
-    arrCountries.push({
-      code,
-      name,
-      selected: false
-    })
-  }
-
-  return arrCountries;
+  return regions;
 }
 
 async function addRegions(items) {
   logger.log('TODO: store.addRegions', items);
 }
 
-async function scrapeFallbackRegion() {
+async function getFallbackRegion() {
   // TODO: fetch from DB, no need to scrape anymore!
   
   if (!shared.currentLocale) {
@@ -4462,7 +4438,7 @@ async function scrapeFallbackRegion() {
 
   const currentRegionCode = splitCurrentLocale[1].toLowerCase();
 
-  const regions = await scrapeIMDBCountries();
+  const regions = await getIMDBRegions();
 
   if (regions.length === 0) {
     logger.warn('Fallback Region: cannot scrape regions');
@@ -4653,7 +4629,8 @@ export {
   getMovieDuplicates,
   ensureMovieDeleted,
   updateMovieAttribute,
-  scrapeIMDBCountries,
+  // getIMDBRegions,
+  getIMDBRegions,
   addRegions,
   fetchIMDBTitleTypes,
   getLanguages,

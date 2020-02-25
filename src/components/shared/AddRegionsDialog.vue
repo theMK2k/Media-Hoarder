@@ -104,7 +104,7 @@ export default {
       if (this.items.length === 0) {
         // logger.log('TODO: fetch Countries from https://www.imdb.com/search/title/');
         try {
-          this.items = await store.scrapeIMDBCountries();
+          this.items = await store.getIMDBRegions();
           logger.log("countries this.items:", this.items);
         } catch (e) {
           eventBus.showSnackbar("error", e);
