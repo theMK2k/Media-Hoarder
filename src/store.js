@@ -4448,6 +4448,8 @@ async function addRegions(items) {
 }
 
 async function scrapeFallbackRegion() {
+  // TODO: fetch from DB, no need to scrape anymore!
+  
   if (!shared.currentLocale) {
     return;
   }
@@ -4458,7 +4460,7 @@ async function scrapeFallbackRegion() {
     return;
   }
 
-  const currentRegionCode = splitCurrentLocale[0].toLowerCase();
+  const currentRegionCode = splitCurrentLocale[1].toLowerCase();
 
   const regions = await scrapeIMDBCountries();
 
@@ -4490,7 +4492,7 @@ async function getFallbackLanguage() {
     return;
   }
 
-  const currentLanguageCode = splitCurrentLocale[1].toLowerCase();
+  const currentLanguageCode = splitCurrentLocale[0].toLowerCase();
 
   const languages = await getLanguages();
 
@@ -4501,10 +4503,10 @@ async function getFallbackLanguage() {
 
   logger.log('languages:', languages);
 
-  shared.fallbackLanguage = languages.find(lang => lang.code === currentLanguageCode);
+  let fallbackLanguage = languages.find(lang => lang.code === currentLanguageCode);
 
-  if (shared.fallbackLanguage) {
-    shared.fallbackLanguage = Object.assign(region, { locale: shared.currentLocale });
+  if (fallbackLanguage) {
+    shared.fallbackLanguage = Object.assign(fallbackLanguage, { locale: shared.currentLocale });
     logger.log('Fallback Language: set to', shared.fallbackLanguage);
     await setSetting('fallbackLanguage', JSON.stringify(shared.fallbacklanguage));
   }
@@ -4565,10 +4567,6 @@ async function fetchIMDBTitleTypes() {
 }
 
 async function getLanguages(regionCodes) {
-  // if (!regionCodes || regionCodes.length === 0) {
-  //   return null;
-  // }
-
   const filterRegions = !regionCodes ? null : regionCodes
   .reduce((prev, current) => {
     return prev + (prev ? ", " : "") + `'${current}'`;
@@ -4576,12 +4574,11 @@ async function getLanguages(regionCodes) {
 
   const languages = db.fireProcedureReturnAll(`
     SELECT DISTINCT
-      L.Code
-      , L.Name
-      , 0 AS Use
+      L.Code AS code
+      , L.Name AS name
     FROM tbl_IMDB_Regions_Languages RL
     INNER JOIN tbl_IMDB_Languages L ON RL.LanguageCode = L.Code
-    ${(regionCodes && regionCodes.length === 0) ? '' : `WHERE RL.RegionCode IN (${regionCodes})`}
+    ${filterRegions ? `WHERE RL.RegionCode IN (${filterRegions})` : ''}
   `);
 
   const languageSettingsString = await getSetting('languages');

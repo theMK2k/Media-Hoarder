@@ -73,6 +73,7 @@ const shared = new Vue({
     fallbackRegion: null,
     regions: [],
     imdbTitleTypesWhitelist: [],
+    fallbackLanguage: null,
     languages: [],
   }
 })
