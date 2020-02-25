@@ -779,6 +779,8 @@ export default {
       this.$shared.regions = JSON.parse(regions);
     }
 
+    logger.log('this.$shared.regions:', this.$shared.regions);
+
     const imdbTitleTypesWhitelist = await store.getSetting(
       "IMDBTitleTypeWhitelist"
     );

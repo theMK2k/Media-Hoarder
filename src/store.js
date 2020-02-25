@@ -4482,6 +4482,19 @@ async function ensureRegions() {
   }
 }
 
+async function ensureLanguages() {
+  if (shared.languages && shared.languages.length > 0) {
+    return;
+  }
+  
+  await ensureRegions();
+
+  const languages = await getLanguages(shared.regions.map(region => region.Code));
+  if (languages) {
+    shared.languages = JSON.parse(languages);
+  }
+}
+
 async function getRegions() {
   await ensureRegions();
 
@@ -4510,6 +4523,45 @@ async function fetchIMDBTitleTypes() {
     FROM tbl_IMDB_Title_Types
     ORDER BY Count DESC
   `)
+}
+
+async function getLanguages(regionCodes) {
+  if (!regionCodes || regionCodes.length === 0) {
+    return null;
+  }
+
+  const filterRegions = regionCodes
+  .reduce((prev, current) => {
+    return prev + (prev ? ", " : "") + `'${current}'`;
+  }, "");
+
+  const languages = db.fireProcedureReturnAll(`
+    SELECT DISTINCT
+      L.Code
+      , L.Name
+      , 0 AS Use
+    FROM tbl_IMDB_Regions_Languages RL
+    INNER JOIN tbl_IMDB_Languages L ON RL.LanguageCode = L.Code
+    WHERE RL.RegionCode IN (${regionCodes})
+  `);
+
+  const languageSettingsString = await getSetting('languages');
+
+  if (!languageSettings) {
+    return languages;
+  }
+
+  const languageSettings = JSON.parse(languageSettingsString);
+
+  languageSettings.forEach(languageSetting => {
+    languages.forEach(language => {
+      if (language.Code === languageSetting.Code) {
+        language.Use = languageSetting.Use;
+      }
+    });
+  });
+
+  return languages;
 }
 
 export {
@@ -4567,5 +4619,7 @@ export {
   updateMovieAttribute,
   scrapeIMDBCountries,
   addRegions,
-  fetchIMDBTitleTypes
+  fetchIMDBTitleTypes,
+  getLanguages as fetchLanguages,
+  ensureLanguages
 };
