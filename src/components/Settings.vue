@@ -244,26 +244,42 @@
 
       <!-- LANGUAGES -->
       <v-tab-item style="padding: 8px">
-        <h3>Language of the Primary Title</h3>
+        <h3>Language/s of the Primary Title</h3>
 
         <v-alert
           type="warning"
           colored-border
           border="left"
-          v-if="$shared.imdbTitleTypesWhitelist.length === 0"
-        >Please provide at least one language to use for the Primary Title.</v-alert>
+          v-if="!$shared.languagesPrimaryTitle || $shared.languagesPrimaryTitle.length === 0"
+        >
+          <span
+            v-if="$shared.fallbackLanguage"
+          >You currently don't have a language for the Primary Title set up. MediaBox will fall back to your system's locale: {{ $shared.fallbackLanguage.name }}.</span>
+          <span
+            v-if="!$shared.fallbackLanguage"
+          >You currently don't have a language for the Primary Title set up. MediaBox will fall back to the original title.</span>
+        </v-alert>
 
-        <mk-title-type
-          v-for="item in $shared.imdbTitleTypesWhitelist"
-          v-bind:key="item.TitleType"
-          v-bind:value="item"
-          v-bind:showRemove="true"
-          v-on:removeTitleType="onRemoveTitleType"
-        ></mk-title-type>
+        <v-btn text small color="primary" v-on:click="openAddLanguageDialog('primaryTitle')">Add Language</v-btn>
 
-        <v-btn text small color="primary" v-on:click="openAddTitleTypeDialog">Add Title Type</v-btn> -->
+        <h3>Language/s for Audio and Subtitles</h3>
+
+        <v-alert
+          type="warning"
+          colored-border
+          border="left"
+          v-if="!$shared.languagesAudioSubtitles || $shared.languagesAudioSubtitles.length === 0"
+        >
+          <span
+            v-if="$shared.fallbackLanguage"
+          >You currently don't have a language for Audio and Subtitles set up. MediaBox will fall back to your system's locale: {{ $shared.fallbackLanguage.name }}.</span>
+          <span
+            v-if="!$shared.fallbackLanguage"
+          >You currently don't have a language for Audio and Subtitles set up. MediaBox will fall back to the original title.</span>
+        </v-alert>
+
+        <v-btn text small color="primary" v-on:click="openAddLanguageDialog('audioSubtitles')">Add Language</v-btn>
       </v-tab-item>
-
 
       <!-- TITLE TYPES -->
       <v-tab-item style="padding: 8px">
@@ -803,7 +819,7 @@ export default {
       this.$shared.regions = JSON.parse(regions);
     }
 
-    logger.log('this.$shared.regions:', this.$shared.regions);
+    logger.log("this.$shared.regions:", this.$shared.regions);
 
     const imdbTitleTypesWhitelist = await store.getSetting(
       "IMDBTitleTypeWhitelist"

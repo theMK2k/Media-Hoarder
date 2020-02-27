@@ -3,6 +3,9 @@
 ## Progress - Movies sorted by Name
 - page: 56 (God bless America)
 
+## Release Attributes
+- EXTENDED, Director's Cut, UNRATED etc.
+
 ## IMDB Scraping Interface Watchdog
 - implement a watchdog which performs once a day
   - scrape different IMDB pages
