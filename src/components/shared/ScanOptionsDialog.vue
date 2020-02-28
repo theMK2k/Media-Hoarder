@@ -19,8 +19,8 @@
         >Warning: Mediainfo CLI Path is not set. Please go to Settings and provide one. You can get Mediainfo CLI from www.mediaarea.net</v-alert>
 
         <v-radio-group v-model="radioGroup">
-          <v-radio label="Scan for new media" v-bind:value="1" color="dark-grey"></v-radio>
-          <v-radio label="Rescan all media" v-bind:value="2" color="dark-grey"></v-radio>
+          <v-radio label="Quick Scan" v-bind:value="1" color="dark-grey"></v-radio>
+          <v-radio label="Complete Rescan" v-bind:value="2" color="dark-grey"></v-radio>
         </v-radio-group>
 
         <div v-if="radioGroup == 1">

@@ -1,4 +1,4 @@
-const languages = {
+const languageNameCodeMapping = {
 	English: "En",
 	German: "De",
 	Deutsch: "De",
@@ -49,7 +49,7 @@ const languages = {
 	Malay: "Ms"
 }
 
-const languageKeys = {
+const languageCodeNameMapping = {
 	De: "German",
 	En: "English",
 	Ja: "Japanese",
@@ -71,6 +71,7 @@ const languageKeys = {
 	Zh: "Chinese",
 	Gr: "Greek",
 	In: "Indonesian",
+	Is: "Icelandic",
 	No: "Norwegian",
 	He: "Hebrew",
 	Ua: "Ukrainian",
@@ -82,7 +83,6 @@ const languageKeys = {
 	Th: "Thai",
 	Bg: "Bulgarian",
 	Hr: "Croatian",
-	Is: "Islandic",
 	Sr: "Serbian",
 	Sl: "Slovenian",
 	Vi: "Vietnamese",
@@ -90,6 +90,6 @@ const languageKeys = {
 }
 
 export {
-	languages,
-	languageKeys
+	languageNameCodeMapping,
+	languageCodeNameMapping
 }

@@ -26,7 +26,7 @@ import { eventBus } from "@/main";
 import * as db from "@/helpers/db";
 import * as dbsyncSQLite from "@/helpers/dbsync-sqlite";
 import * as helpers from "@/helpers/helpers";
-import { languages, languageKeys } from "@/languages";
+import { languageNameCodeMapping, languageCodeNameMapping, isLanguageMappingEnsured } from "@/languages";
 import { shared } from "@/shared";
 
 const scanOptions = {
@@ -127,6 +127,10 @@ dbsync.runSync(
         if (!shared.fallbackLanguage) {
           await getFallbackLanguage();
         }
+
+        await ensureLanguageMapping();
+
+        await fetchLanguageSettings();
 
         logger.log('shared.fallbackRegion:', shared.fallbackRegion);
         logger.log('shared.fallbackLanguage:', shared.fallbackLanguage);
@@ -231,7 +235,7 @@ async function rescan(onlyNew) {
   if (scanOptions.filescanMovies) await filescanMovies(onlyNew);
   if (scanOptions.rescanMoviesMetaData) await rescanMoviesMetaData(onlyNew);
 
-  // await rescanTV();								// TODO
+  // await rescanTV();								// TODO: TV/Series support
 
   if (scanOptions.mergeExtras) await mergeExtras(onlyNew);
 
@@ -920,8 +924,8 @@ async function applyMediaInfo(movie, onlyNew) {
         if (track.Language && track.Language.length > 0) {
           let lang = track.Language[0];
 
-          if (languages[lang]) {
-            lang = languages[lang];
+          if (languageNameCodeMapping[lang]) {
+            lang = languageNameCodeMapping[lang];
           } else {
             lang = helpers.uppercaseEachWord(lang);
           }
@@ -935,8 +939,8 @@ async function applyMediaInfo(movie, onlyNew) {
       if (track.$.type === "Text") {
         if (track.Language && track.Language.length > 0) {
           let lang = track.Language[0];
-          if (languages[lang]) {
-            lang = languages[lang];
+          if (languageNameCodeMapping[lang]) {
+            lang = languageNameCodeMapping[lang];
           } else {
             lang = helpers.uppercaseEachWord(lang);
           }
@@ -1384,24 +1388,24 @@ async function scrapeIMDBreleaseinfo(movie) {
       if (!$IMDB_localTitle) {
         const rxLocalTitleFuzzy = new RegExp(`td class="aka-item__name">${region}.*?</td>[\\s\\S]*?<td class="aka-item__title">(.*?)</td>`, 'g');
         // if (rxLocalTitleFuzzy.test(html)) {
-          logger.log('regions: trying fuzzy matching');
+        logger.log('regions: trying fuzzy matching');
 
-          let match = null;
-          
-          while ((match = rxLocalTitleFuzzy.exec(html))) {
-            logger.log('regions: fuzzy match found');
+        let match = null;
 
-            const matched = match[0];
-            const title = match[1];
+        while ((match = rxLocalTitleFuzzy.exec(html))) {
+          logger.log('regions: fuzzy match found');
 
-            if (matched.includes("(working title)")) {
-              logger.log('regions: skipping: (working title)');
-              continue;
-            }
+          const matched = match[0];
+          const title = match[1];
 
-            $IMDB_localTitle = title;
-            break;
+          if (matched.includes("(working title)")) {
+            logger.log('regions: skipping: (working title)');
+            continue;
           }
+
+          $IMDB_localTitle = title;
+          break;
+        }
 
         // }
       }
@@ -2059,6 +2063,18 @@ async function downloadFile(url, targetPath, redownload) {
 
 async function fetchMedia($MediaType) {
   try {
+    logger.log('shared.languagesAudioSubtitles:', shared.languagesAudioSubtitles);
+
+    const preferredLanguages = [];
+
+    if (shared.languagesAudioSubtitles && shared.languagesAudioSubtitles.length > 0) {
+      shared.languagesAudioSubtitles.forEach(lang => {
+        preferredLanguages.push(lang.code);
+      })
+    } else if (shared.fallbackLanguage) {
+      preferredLanguages.push(shared.fallbackLanguage.code);
+    }
+
     let filterSourcePaths = "";
     logger.log("shared.filterSourcePaths:", shared.filterSourcePaths);
     if (
@@ -2606,13 +2622,13 @@ async function fetchMedia($MediaType) {
           minimumFractionDigits: 1
         })} (${item.IMDB_numVotes.toLocaleString()})`
         : "";
-      item.AudioLanguages = generateLanguageString(item.MI_Audio_Languages, [
-        "De",
-        "En"
-      ]);
+
+      // TODO (LANG): fetch preferred languages
+      item.AudioLanguages = generateLanguageString(item.MI_Audio_Languages, preferredLanguages);
+
       item.SubtitleLanguages = generateLanguageString(
         item.MI_Subtitle_Languages,
-        ["De", "En"]
+        preferredLanguages
       );
 
       if (item.Age || item.Age === 0) {
@@ -2719,8 +2735,8 @@ function generateLanguageString(languages, preferredLanguages) {
     result = languages;
   }
 
-  // TODO: provide non-preferred Languages (max. 2) if result's entries are lower than 2
-  // TODO: implement +x info (e.g. De, En, +21)
+  // TODO (LANG): provide non-preferred Languages (max. 2) if result's entries are lower than 2
+  // TODO (LANG): implement +x info (e.g. De, En, +21)
 
   return result.join(", ");
 }
@@ -3682,9 +3698,9 @@ async function fetchFilterLanguages($MediaType, $LanguageType) {
     result.NumMovies = result.NumMovies.toLocaleString();
 
     result.DisplayText = result.Language;
-    if (languageKeys[result.Language]) {
+    if (languageCodeNameMapping[result.Language]) {
       result.DisplayText = `${result.Language} - ${
-        languageKeys[result.Language]
+        languageCodeNameMapping[result.Language]
         }`;
     }
   });
@@ -4424,8 +4440,8 @@ async function addRegions(items) {
 }
 
 async function getFallbackRegion() {
-  // TODO: fetch from DB, no need to scrape anymore!
-  
+  // TODO (REGION): fetch from DB, no need to scrape anymore!
+
   if (!shared.currentLocale) {
     return;
   }
@@ -4498,10 +4514,6 @@ async function ensureRegions() {
   }
 }
 
-async function ensureLanguages() {
-  // TODO!
-}
-
 async function getRegions() {
   await ensureRegions();
 
@@ -4534,9 +4546,9 @@ async function fetchIMDBTitleTypes() {
 
 async function getIMDBLanguages(regionCodes) {
   const filterRegions = !regionCodes ? null : regionCodes
-  .reduce((prev, current) => {
-    return prev + (prev ? ", " : "") + `'${current}'`;
-  }, "");
+    .reduce((prev, current) => {
+      return prev + (prev ? ", " : "") + `'${current}'`;
+    }, "");
 
   const sSQL = `
   SELECT DISTINCT
@@ -4557,6 +4569,53 @@ async function getIMDBLanguages(regionCodes) {
   logger.log('getIMDBLanguages:', languages);
 
   return languages;
+}
+
+async function ensureLanguageMapping() {
+  if (isLanguageMappingEnsured) {
+    return;
+  }
+
+  const languages = await db.fireProcedureReturnAll(`
+    SELECT Code, Name FROM tbl_IMDB_Languages
+  `);
+
+  languages.forEach(language => {
+    if (languageCodeNameMapping[language.Code] && languageCodeNameMapping[language.Code] !== language.Name) {
+      logger.log('ensureLanguageMapping Code-Name mismatch:', language);
+    }
+    if (!languageCodeNameMapping[language.Code]) {
+      languageCodeNameMapping[language.Code] = language.Name;
+    }
+
+    if (languageNameCodeMapping[language.Name] && languageNameCodeMapping[language.Name] !== language.Code) {
+      logger.log('ensureLanguageMapping Name-Code mismatch:', language);
+    }
+    if (!languageNameCodeMapping[language.Name]) {
+      languageNameCodeMapping[language.Name] = language.Code;
+    }
+  })
+
+  logger.log('ensureLanguageMapping languageNameCodeMapping:', languageCodeNameMapping);
+  logger.log('ensureLanguageMapping languageNameCodeMapping:', languageNameCodeMapping);
+}
+
+async function fetchLanguageSettings() {
+  const languagesPrimaryTitle = await getSetting(
+    "languagesPrimaryTitle"
+  );
+  if (languagesPrimaryTitle) {
+    shared.languagesPrimaryTitle = JSON.parse(languagesPrimaryTitle);
+  }
+
+  const languagesAudioSubtitles = await getSetting(
+    "languagesAudioSubtitles"
+  );
+  if (languagesAudioSubtitles) {
+    shared.languagesAudioSubtitles = JSON.parse(
+      languagesAudioSubtitles
+    );
+  }
 }
 
 export {
@@ -4616,5 +4675,6 @@ export {
   getIMDBLanguages,
   addRegions,
   fetchIMDBTitleTypes,
-  getFallbackLanguage
+  getFallbackLanguage,
+  fetchLanguageSettings
 };

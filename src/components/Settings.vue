@@ -1037,21 +1037,7 @@ export default {
       this.$shared.regions = JSON.parse(regions);
     }
 
-    const languagesPrimaryTitle = await store.getSetting(
-      "languagesPrimaryTitle"
-    );
-    if (languagesPrimaryTitle) {
-      this.$shared.languagesPrimaryTitle = JSON.parse(languagesPrimaryTitle);
-    }
-
-    const languagesAudioSubtitles = await store.getSetting(
-      "languagesAudioSubtitles"
-    );
-    if (languagesAudioSubtitles) {
-      this.$shared.languagesAudioSubtitles = JSON.parse(
-        languagesAudioSubtitles
-      );
-    }
+    // await store.fetchLanguageSettings();
 
     logger.log("this.$shared.regions:", this.$shared.regions);
 

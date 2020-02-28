@@ -1,4 +1,11 @@
-# TODO
+# TO-DOs
+
+## Mediainfo Languages
+- we get languages like "German" from Mediainfo and map them to e.g. "De" using languages.js and store.js' ensureLanguageMapping
+- however, we can't be sure that we know all possible Mediainfo provided languages
+- how do we cope with that???
+  - local logging?
+  - webservice?
 
 ## Progress - Movies sorted by Name
 - page: 56 (God bless America)
