@@ -87,6 +87,10 @@
                     v-bind:src="item.IMDB_posterSmall_URL"
                     style="border-radius: 6px;"
                   ></v-img>
+
+                  <div class="duration-overlay-container" v-if="item.Duration">
+                    <span class="duration-overlay">{{ item.Duration }}</span>
+                  </div>
                 </v-list-item-avatar>
               </div>
               <v-list-item-content
@@ -141,7 +145,6 @@
                         v-on:mouseleave="setItemHovered(item, 'name2', false)"
                       >
                         {{ item.Name2 }}
-
                         <v-tooltip bottom>
                           <template v-slot:activator="{ on }">
                             <span v-on="on">
@@ -161,7 +164,7 @@
                           small
                           style="cursor: pointer"
                           v-on:click.stop="onEditItem(item, 'Name2', 'Secondary Title')"
-                        >mdi-pencil</v-icon> -->
+                        >mdi-pencil</v-icon>-->
                       </v-list-item-subtitle>
 
                       <div style="font-size: .875rem; font-weight: normal">
@@ -175,6 +178,10 @@
                         <span v-if="item.SubtitleLanguages">
                           <v-icon small>mdi-subtitles-outline</v-icon>
                           {{ item.SubtitleLanguages + ' | ' }}
+                        </span>
+                        <span v-if="item.Duration">
+                          <v-icon small>mdi-subtitles-outline</v-icon>
+                          {{ item.Duration }}
                         </span>
                       </div>
                     </div>
@@ -815,7 +822,11 @@ export default {
           const arr_id_Movies = await store.clearRating(movie.id_Movies);
 
           this.items.forEach(movie => {
-            if (arr_id_Movies.findIndex(id_Movies => movie.id_Movies === id_Movies) !== -1) {
+            if (
+              arr_id_Movies.findIndex(
+                id_Movies => movie.id_Movies === id_Movies
+              ) !== -1
+            ) {
               movie.Rating = null;
             }
           });
@@ -823,7 +834,11 @@ export default {
           const arr_id_Movies = await store.setRating(movie.id_Movies, i);
 
           this.items.forEach(movie => {
-            if (arr_id_Movies.findIndex(id_Movies => movie.id_Movies === id_Movies) !== -1) {
+            if (
+              arr_id_Movies.findIndex(
+                id_Movies => movie.id_Movies === id_Movies
+              ) !== -1
+            ) {
               movie.Rating = i;
             }
           });
@@ -886,7 +901,10 @@ export default {
       await this.updateCurrentTime();
 
       this.items.forEach(mov => {
-        if (arr_id_Movies.findIndex(id_Movies => mov.id_Movies === id_Movies) !== -1) {
+        if (
+          arr_id_Movies.findIndex(id_Movies => mov.id_Movies === id_Movies) !==
+          -1
+        ) {
           this.$set(mov, "lastAccessMoment", this.currentTime.clone());
           this.$set(mov, "last_access_at", this.currentTime.toISOString());
         }
@@ -1000,7 +1018,7 @@ export default {
           !trailerMediaURLs.mediaURLs ||
           trailerMediaURLs.mediaURLs.length == 0
         ) {
-          return this.showTrailer(item);  // Fallback to the more general player
+          return this.showTrailer(item); // Fallback to the more general player
         }
 
         const trailerMediaURL = store.selectBestQualityMediaURL(
@@ -1309,12 +1327,25 @@ export default {
       logger.log("EDIT NAME DIALOG OK result:", result);
       this.editItemDialog.show = false;
 
-      const useActualDuplicates = (this.editItemDialog.attributeName == "Name" && this.$shared.duplicatesHandling.actualDuplicate.updateTitle) || (this.editItemDialog.attributeName == "Name2" && this.$shared.duplicatesHandling.actualDuplicate.updateSubTitle);
-      
-      const arr_id_Movies = await store.updateMovieAttribute(this.editItemDialog.item.id_Movies, this.editItemDialog.attributeName, result.textValue, useActualDuplicates, false)
+      const useActualDuplicates =
+        (this.editItemDialog.attributeName == "Name" &&
+          this.$shared.duplicatesHandling.actualDuplicate.updateTitle) ||
+        (this.editItemDialog.attributeName == "Name2" &&
+          this.$shared.duplicatesHandling.actualDuplicate.updateSubTitle);
+
+      const arr_id_Movies = await store.updateMovieAttribute(
+        this.editItemDialog.item.id_Movies,
+        this.editItemDialog.attributeName,
+        result.textValue,
+        useActualDuplicates,
+        false
+      );
 
       this.items.forEach(mov => {
-        if (arr_id_Movies.findIndex(id_Movies => mov.id_Movies === id_Movies) !== -1) {
+        if (
+          arr_id_Movies.findIndex(id_Movies => mov.id_Movies === id_Movies) !==
+          -1
+        ) {
           this.$set(mov, this.editItemDialog.attributeName, result.textValue);
         }
       });
@@ -1507,5 +1538,79 @@ export default {
   background-color: rgba(0, 0, 0, 0.5);
   /* mask-image: url("data:image/png;base64,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"); */
   mask-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAACWCAIAAACaSNt3AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAARuSURBVHhe7dpdTBxVFMBxXDawWZaPtzaxiVVrQ5GStAlNILWpTcGPpA8+0LSkaDH6gBGtD0aJJJpICtaPvqCiPhShFlMTbYwfaYva1BeqFVuKgBYTmlSlgbaz7Ee3sKDH3MlmLakJ292ZO7P/Hzd3ZueSDZzcPXPO7uYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADADXLNo60erH0gHI7Ij/kYmfDWvjf/vr5wLRjd0/ysN9drXkXaqUCrcW5waGP1RnPBXTzm0T4zMzMyHz121DCM8nvLv//uZO+BnuXLlqtVpM3uhsdkL184P6E2dTw6J/PVS1dclkns39E3yM3NlT1eUlKy/439P/846JpMol2gRVFRkczRaNRNmUTHQCt+v1/m+fn5XfW7RodGnJ5J9A204ppMYn+gY7GYzB7PTf8SV2YSG2zetFnKjL8u/Kmqjv8fzq1JdE8dN3BuJnFYoIVDM4nzAq0k1yTnR3578fkXNM8kTg20ojJJIBBob2s/Nzi0dctWc0E/9gfaMAyZ8/Ly1MOlUpkkEomUlpYe//pYX++hFbevUEv4j5V3rJRCIjhlJEqLlMdcZFbm0OUZ/TOJDdIYaBmJ5xk9O6JVJnF2jl5M20zitkArBQUFMsfj8R3bd4wOjeiQSdwZaMXr9TqlJrGCL98nKXX+Wlzl1kyM8JWQOsn2miQRkYwOe2uS28yjreT/N88yTDKJuluOjY01P/dM/7f96roF3JyjF7OxJsmuHZ1sbm7O4/GUr1s79uuYeSmTsmtHJ1tYWJBYh8MWfT1Ki0BPTEyYZ5aQ1CFzfn7+kc+PqCsWyK4dHQwGZZZ25szZM/fXbNnZUH/xj4tqKdOyJdDRaFRyRXFx8fT0dNPTTZVVG06cPGGuWSIrAh2Lxfx+vwS6853Oe8pWd33wXnw+bq5ZxeWBDoVCMvt8vv5v+teur5Da2Qj++/a39bQItPrGQXpJbyJzYWHh+Pj4tke21Txca00ZdzNaBHry0qR5libxeFx6E8MwWlpbZCN/8dWX5oJ93JY65KYns9fr7e7pXlNR1vH6a7Hr6X+5pMA9gVa5Qm56A6cGqu6rbnzy8bS/UG6FGwItdzypKCRXTE5ONuxuqNpUPfDDgLmmDccHWtpouePNzs627W2T0u1g30fmAhb77PCn6i3jJY3Q5Rl18smhw6vuXmU+l6602NFLrW1VOg4EAsO/DNc8VFtXv33893G1pC2HpQ4pKhKlW/Oe5nWV66188/5WOCnQqpOWk673u+5cfVfnu29b30mnzBmBTu6kZRc3NT9lVyedMt0DndxJ1+2sk056eGRYLWHJ2l/dm6glkkfic+vWlpd8+T7zt5GyV1pfTo6vjMjVsDrpPdDjjm9iaJc6Ep306Z9OSyfd0PioZR+CZJRGgZ6amkp00o1PNFZWb9Cwk06ZRoFWnXTHvo41FWXdvR+aV5FGKkd/fLBP/04aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAyLScnH8AoYbYBz4q4FQAAAAASUVORK5CYII=");
+}
+
+.duration-overlay-container {
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+  bottom: 0px;
+  color: rgb(255, 255, 255);
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  font-family: Roboto, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  line-height: 12px;
+  margin-bottom: 2px;
+  margin-left: 4px;
+  margin-right: 8px;
+  margin-top: 4px;
+  padding-bottom: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-top: 2px;
+  position: absolute;
+  right: 0px;
+}
+
+.duration-overlay {
+  background-attachment: scroll;
+  background-clip: border-box;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: none;
+  background-origin: padding-box;
+  background-position: 0% 0%;
+  background-position-x: 0%;
+  background-position-y: 0%;
+  background-repeat: repeat;
+  background-size: auto;
+  border-bottom-color: rgb(255, 255, 255);
+  border-bottom-style: none;
+  border-bottom-width: 0px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-image-slice: 100%;
+  border-image-source: none;
+  border-image-width: 1;
+  border-left-color: rgb(255, 255, 255);
+  border-left-style: none;
+  border-left-width: 0px;
+  border-right-color: rgb(255, 255, 255);
+  border-right-style: none;
+  border-right-width: 0px;
+  border-top-color: rgb(255, 255, 255);
+  border-top-style: none;
+  border-top-width: 0px;
+  color: rgb(255, 255, 255);
+  cursor: pointer;
+  font-family: Roboto, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  line-height: 12px;
+  margin-bottom: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 0px;
 }
 </style>

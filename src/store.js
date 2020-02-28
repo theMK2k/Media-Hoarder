@@ -2576,7 +2576,9 @@ async function fetchMedia($MediaType) {
 			, AR.Age
 			, MOV.created_at
 			, MOV.last_access_at
-			, (SELECT COUNT(1) FROM tbl_Movies MOVEXTRAS WHERE MOVEXTRAS.Extra_id_Movies_Owner = MOV.id_Movies) AS NumExtras
+      , (SELECT COUNT(1) FROM tbl_Movies MOVEXTRAS WHERE MOVEXTRAS.Extra_id_Movies_Owner = MOV.id_Movies) AS NumExtras
+      , MI_Duration_Formatted
+      , IMDB_runtimeMinutes
 		FROM tbl_Movies MOV
 		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 		WHERE	(MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
@@ -2667,6 +2669,12 @@ async function fetchMedia($MediaType) {
       item.IMDB_Top_Production_Companies = item.IMDB_Top_Production_Companies
         ? JSON.parse(item.IMDB_Top_Production_Companies)
         : null;
+
+      if (item.MI_Duration_Formatted) {
+        item.Duration = item.MI_Duration_Formatted;
+      } else if (item.IMDB_runtimeMinutes) {
+        item.Duration = helpers.getTimeString(item.IMDB_runtimeMinutes * 60);
+      }
     });
 
     return result;
