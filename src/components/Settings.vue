@@ -110,16 +110,20 @@
 
       <!-- DUPLICATES -->
       <v-tab-item style="padding: 8px">
-        <p>These settings describe how MediaBox should handle duplicates.</p>
-        <p>You may have duplicates in the following scenarios:</p>
-        <ul>
-          <li>same file on a remote server and the local machine</li>
-          <li>same movie but in different formats (e.g. SD, HD and 4k)</li>
-        </ul>
+        <i>
+          <p>These settings describe how MediaBox should handle duplicates.</p>
+          <p>You may have duplicates in the following scenarios:</p>
+          <ul>
+            <li>same file on a remote server and the local machine</li>
+            <li>same movie but in different formats (e.g. SD, HD and 4k)</li>
+          </ul>
+        </i>
 
         <v-card style="width: 100%; margin-top:8px">
           <h3>Actual Duplicates</h3>
-          <p>An actual duplicate is identified by the same filename and filesize.</p>
+          <i>
+            <p>An actual duplicate is identified by the same filename and filesize.</p>
+          </i>
           <p>With actual duplicates, MediaBox should also ...</p>
 
           <v-checkbox
@@ -174,7 +178,9 @@
 
         <v-card style="width: 100%; margin-top:8px">
           <h3>Meta Duplicates</h3>
-          <p>A meta duplicate is identified by having the same IMDB link. This can happen if you have the same movie in different formats (e.g. SD, HD, 4k).</p>
+          <i>
+            <p>A meta duplicate is identified by having the same IMDB link. This can happen if you have the same movie in different formats (e.g. SD, HD, 4k).</p>
+          </i>
           <p>With meta duplicates, MediaBox should also ...</p>
 
           <v-checkbox
@@ -198,8 +204,10 @@
 
       <!-- REGIONS -->
       <v-tab-item style="padding: 8px">
-        <p>Define the Regions which should be used for the title of the movies.</p>
-        <p>If a particular movie does not have a title for one of these regions, the Original Title of the movie is used. Else, the Original Title will be used as Secondary Title if it is different.</p>
+        <i>
+          <p>The regions and their sequence defined here will be used for the Primary Title of the movies.</p>
+          <p>If a particular movie does not have a title for one of these regions, the Original Title of the movie is used. Else, the Original Title will be used as Secondary Title if it is different.</p>
+        </i>
 
         <v-alert type="warning" colored-border border="left" v-if="$shared.regions.length === 0">
           <span
@@ -210,33 +218,35 @@
           >You currently don't have a region set up. MediaBox will fall back to the original title.</span>
         </v-alert>
 
-        <div v-for="region in $shared.regions" v-bind:key="region.code">
-          <v-row style="margin: 8px">
-            <v-card style="width: 100%">
-              <v-list-item two-line>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    {{ region.name }}
-                    <v-icon
-                      color="red"
-                      style="cursor: pointer"
-                      v-on:click="onDeleteRegion(region)"
-                    >mdi-delete</v-icon>
-                    <v-icon
-                      v-if="!isTopRegion(region)"
-                      style="cursor: pointer"
-                      v-on:click="onRegionMoveUp(region)"
-                    >mdi-arrow-up</v-icon>
-                    <v-icon
-                      v-if="!isBottomRegion(region)"
-                      style="cursor: pointer"
-                      v-on:click="onRegionMoveDown(region)"
-                    >mdi-arrow-down</v-icon>
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-card>
-          </v-row>
+        <div>
+          <div v-for="region in $shared.regions" v-bind:key="region.code">
+            <v-row style="margin: 8px">
+              <v-card style="width: 100%">
+                <v-list-item two-line>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      {{ region.name }}
+                      <v-icon
+                        color="red"
+                        style="cursor: pointer"
+                        v-on:click="onDeleteRegion(region)"
+                      >mdi-delete</v-icon>
+                      <v-icon
+                        v-if="!isTopRegion(region)"
+                        style="cursor: pointer"
+                        v-on:click="onRegionMoveUp(region)"
+                      >mdi-arrow-up</v-icon>
+                      <v-icon
+                        v-if="!isBottomRegion(region)"
+                        style="cursor: pointer"
+                        v-on:click="onRegionMoveDown(region)"
+                      >mdi-arrow-down</v-icon>
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-card>
+            </v-row>
+          </div>
         </div>
 
         <v-btn text small color="primary" v-on:click="openAddRegionsDialog">Add Regions</v-btn>
@@ -244,7 +254,11 @@
 
       <!-- LANGUAGES -->
       <v-tab-item style="padding: 8px">
-        <h3>Language/s of the Primary Title</h3>
+        <h3>Languages of the Primary Title</h3>
+
+        <i>
+          <p>The languages and their sequence defined here will be used for the Primary Title of the movies.</p>
+        </i>
 
         <v-alert
           type="warning"
@@ -254,15 +268,55 @@
         >
           <span
             v-if="$shared.fallbackLanguage"
-          >You currently don't have a language for the Primary Title set up. MediaBox will fall back to your system's locale: {{ $shared.fallbackLanguage.name }}.</span>
+          >You currently don't have a language for the Primary Title set up. MediaBox will fall back to your system's locale: {{ $shared.fallbackLanguage.DisplayText }}.</span>
           <span
             v-if="!$shared.fallbackLanguage"
           >You currently don't have a language for the Primary Title set up. MediaBox will fall back to the original title.</span>
         </v-alert>
 
-        <v-btn text small color="primary" v-on:click="openAddLanguageDialog('primaryTitle')">Add Language</v-btn>
+        <div>
+          <div v-for="language in $shared.languagesPrimaryTitle" v-bind:key="language.code">
+            <v-row style="margin: 8px">
+              <v-card style="width: 100%">
+                <v-list-item two-line>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      {{ language.DisplayText }}
+                      <v-icon
+                        color="red"
+                        style="cursor: pointer"
+                        v-on:click="onDeleteLanguage(language, 'languagesPrimaryTitle')"
+                      >mdi-delete</v-icon>
+                      <v-icon
+                        v-if="!isTopLanguage(language, 'languagesPrimaryTitle')"
+                        style="cursor: pointer"
+                        v-on:click="onLanguageMoveUp(language, 'languagesPrimaryTitle')"
+                      >mdi-arrow-up</v-icon>
+                      <v-icon
+                        v-if="!isBottomLanguage(language, 'languagesPrimaryTitle')"
+                        style="cursor: pointer"
+                        v-on:click="onLanguageMoveDown(language, 'languagesPrimaryTitle')"
+                      >mdi-arrow-down</v-icon>
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-card>
+            </v-row>
+          </div>
+        </div>
 
-        <h3>Language/s for Audio and Subtitles</h3>
+        <v-btn
+          text
+          small
+          color="primary"
+          v-on:click="openAddLanguagesDialog('languagesPrimaryTitle')"
+        >Add Language</v-btn>
+
+        <h3>Languages for Audio and Subtitles</h3>
+
+        <i>
+          <p>The languages and their sequence defined here will be used to show which audio and subtitle languages your movies contain.</p>
+        </i>
 
         <v-alert
           type="warning"
@@ -272,13 +326,49 @@
         >
           <span
             v-if="$shared.fallbackLanguage"
-          >You currently don't have a language for Audio and Subtitles set up. MediaBox will fall back to your system's locale: {{ $shared.fallbackLanguage.name }}.</span>
+          >You currently don't have a language for Audio and Subtitles set up. MediaBox will fall back to your system's locale: {{ $shared.fallbackLanguage.DisplayText }}.</span>
           <span
             v-if="!$shared.fallbackLanguage"
           >You currently don't have a language for Audio and Subtitles set up. MediaBox will fall back to the original title.</span>
         </v-alert>
 
-        <v-btn text small color="primary" v-on:click="openAddLanguageDialog('audioSubtitles')">Add Language</v-btn>
+        <div>
+          <div v-for="language in $shared.languagesAudioSubtitles" v-bind:key="language.code">
+            <v-row style="margin: 8px">
+              <v-card style="width: 100%">
+                <v-list-item two-line>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      {{ language.DisplayText }}
+                      <v-icon
+                        color="red"
+                        style="cursor: pointer"
+                        v-on:click="onDeleteLanguage(language, 'languagesAudioSubtitles')"
+                      >mdi-delete</v-icon>
+                      <v-icon
+                        v-if="!isTopLanguage(language, 'languagesAudioSubtitles')"
+                        style="cursor: pointer"
+                        v-on:click="onLanguageMoveUp(language, 'languagesAudioSubtitles')"
+                      >mdi-arrow-up</v-icon>
+                      <v-icon
+                        v-if="!isBottomLanguage(language, 'languagesAudioSubtitles')"
+                        style="cursor: pointer"
+                        v-on:click="onLanguageMoveDown(language, 'languagesAudioSubtitles')"
+                      >mdi-arrow-down</v-icon>
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-card>
+            </v-row>
+          </div>
+        </div>
+
+        <v-btn
+          text
+          small
+          color="primary"
+          v-on:click="openAddLanguagesDialog('languagesAudioSubtitles')"
+        >Add Language</v-btn>
       </v-tab-item>
 
       <!-- TITLE TYPES -->
@@ -332,6 +422,13 @@
       v-on:cancel="onAddRegionsDialogCancel"
       v-on:ok="onAddRegionsDialogOK"
     ></mk-add-regions-dialog>
+    <mk-add-languages-dialog
+      ref="addLanguagesDialog"
+      v-bind:show="addLanguagesDialog.show"
+      v-bind:languageType="addLanguagesDialog.languageType"
+      v-on:cancel="onAddLanguagesDialogCancel"
+      v-on:ok="onAddLanguagesDialogOK"
+    ></mk-add-languages-dialog>
     <mk-add-title-type-dialog
       ref="addTitleTypeDialog"
       v-bind:show="addTitleTypeDialog.show"
@@ -351,6 +448,7 @@ import * as store from "@/store";
 import SourcePath from "@/components/shared/SourcePath";
 import Dialog from "@/components/shared/Dialog.vue";
 import AddRegionsDialog from "@/components/shared/AddRegionsDialog.vue";
+import AddLanguagesDialog from "@/components/shared/AddLanguagesDialog.vue";
 import AddTitleTypeDialog from "@/components/shared/AddTitleTypeDialog.vue";
 import TitleType from "@/components/shared/TitleType.vue";
 import * as helpers from "@/helpers/helpers";
@@ -361,6 +459,7 @@ export default {
     "mk-sourcepath-description-dialog": Dialog,
     "mk-sourcepath-remove-dialog": Dialog,
     "mk-add-regions-dialog": AddRegionsDialog,
+    "mk-add-languages-dialog": AddLanguagesDialog,
     "mk-add-title-type-dialog": AddTitleTypeDialog,
     "mk-title-type": TitleType
   },
@@ -391,6 +490,11 @@ export default {
 
     addRegionsDialog: {
       show: false
+    },
+
+    addLanguagesDialog: {
+      show: false,
+      languageType: null
     },
 
     addTitleTypeDialog: {
@@ -678,8 +782,19 @@ export default {
       this.$refs.addRegionsDialog.init();
     },
 
+    openAddLanguagesDialog(languageType) {
+      this.addLanguagesDialog.languageType = languageType;
+      this.addLanguagesDialog.show = true;
+
+      this.$refs.addLanguagesDialog.init();
+    },
+
     onAddRegionsDialogCancel() {
       this.addRegionsDialog.show = false;
+    },
+
+    onAddLanguagesDialogCancel() {
+      this.addLanguagesDialog.show = false;
     },
 
     async onAddRegionsDialogOK(result) {
@@ -702,6 +817,31 @@ export default {
       this.addRegionsDialog.show = false;
     },
 
+    async onAddLanguagesDialogOK(result) {
+      logger.log("result:", result);
+
+      const languages =
+        this.addLanguagesDialog.languageType === "languagesPrimaryTitle"
+          ? this.$shared.languagesPrimaryTitle
+          : this.$shared.languagesAudioSubtitles;
+      
+      let maxSort = 0;
+      
+      languages.forEach(
+        language => (maxSort = Math.max(maxSort, language.sort))
+      );
+
+      maxSort++;
+
+      result.forEach(language =>
+        languages.push(Object.assign(language, { sort: maxSort++ }))
+      );
+
+      await store.setSetting(this.addLanguagesDialog.languageType, JSON.stringify(languages));
+
+      this.addLanguagesDialog.show = false;
+    },
+
     isTopRegion(region) {
       return (
         this.$shared.regions.findIndex(
@@ -710,11 +850,31 @@ export default {
       );
     },
 
+    isTopLanguage(language, languageType) {
+      const languages =
+        languageType === "languagesPrimaryTitle"
+          ? this.$shared.languagesPrimaryTitle
+          : this.$shared.languagesAudioSubtitles;
+      return (
+        languages.findIndex(language2 => language2.sort < language.sort) === -1
+      );
+    },
+
     isBottomRegion(region) {
       return (
         this.$shared.regions.findIndex(
           region2 => region2.sort > region.sort
         ) === -1
+      );
+    },
+
+    isBottomLanguage(language, languageType) {
+      const languages =
+        languageType === "languagesPrimaryTitle"
+          ? this.$shared.languagesPrimaryTitle
+          : this.$shared.languagesAudioSubtitles;
+      return (
+        languages.findIndex(language2 => language2.sort > language.sort) === -1
       );
     },
 
@@ -730,6 +890,25 @@ export default {
             "regions",
             JSON.stringify(this.$shared.regions)
           );
+          return;
+        }
+      }
+    },
+
+    async onLanguageMoveUp(language, languageType) {
+      const languages =
+        languageType === "languagesPrimaryTitle"
+          ? this.$shared.languagesPrimaryTitle
+          : this.$shared.languagesAudioSubtitles;
+
+      for (let i = 0; i < languages.length; i++) {
+        if (languages[i].sort === language.sort - 1) {
+          languages[i].sort++;
+          language.sort--;
+          logger.log(languages);
+
+          languages.sort((a, b) => a.sort - b.sort);
+          await store.setSetting(languageType, JSON.stringify(languages));
           return;
         }
       }
@@ -752,6 +931,25 @@ export default {
       }
     },
 
+    async onLanguageMoveDown(language, languageType) {
+      const languages =
+        languageType === "languagesPrimaryTitle"
+          ? this.$shared.languagesPrimaryTitle
+          : this.$shared.languagesAudioSubtitles;
+
+      for (let i = 0; i < languages.length; i++) {
+        if (languages[i].sort === language.sort + 1) {
+          languages[i].sort--;
+          language.sort++;
+          logger.log(languages);
+
+          languages.sort((a, b) => a.sort - b.sort);
+          await store.setSetting(languageType, JSON.stringify(languages));
+          return;
+        }
+      }
+    },
+
     async onDeleteRegion(region) {
       const sort = region.sort;
       this.$shared.regions.splice(
@@ -763,6 +961,26 @@ export default {
           (region.sort = region.sort > sort ? region.sort - 1 : region.sort)
       );
       await store.setSetting("regions", JSON.stringify(this.$shared.regions));
+    },
+
+    async onDeleteLanguage(language, languageType) {
+      const languages =
+        languageType === "languagesPrimaryTitle"
+          ? this.$shared.languagesPrimaryTitle
+          : this.$shared.languagesAudioSubtitles;
+
+      const sort = language.sort;
+
+      languages.splice(
+        languages.findIndex(language2 => language2 === language),
+        1
+      );
+      languages.forEach(
+        language =>
+          (language.sort =
+            language.sort > sort ? language.sort - 1 : language.sort)
+      );
+      await store.setSetting(languageType, JSON.stringify(languages));
     },
 
     openAddTitleTypeDialog() {
@@ -817,6 +1035,22 @@ export default {
     const regions = await store.getSetting("regions");
     if (regions) {
       this.$shared.regions = JSON.parse(regions);
+    }
+
+    const languagesPrimaryTitle = await store.getSetting(
+      "languagesPrimaryTitle"
+    );
+    if (languagesPrimaryTitle) {
+      this.$shared.languagesPrimaryTitle = JSON.parse(languagesPrimaryTitle);
+    }
+
+    const languagesAudioSubtitles = await store.getSetting(
+      "languagesAudioSubtitles"
+    );
+    if (languagesAudioSubtitles) {
+      this.$shared.languagesAudioSubtitles = JSON.parse(
+        languagesAudioSubtitles
+      );
     }
 
     logger.log("this.$shared.regions:", this.$shared.regions);

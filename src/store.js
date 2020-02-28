@@ -4468,9 +4468,9 @@ async function getFallbackLanguage() {
     return;
   }
 
-  const currentLanguageCode = splitCurrentLocale[0].toLowerCase();
+  const currentLanguageCode = splitCurrentLocale[0].toUpperCase().charAt(0) + splitCurrentLocale[0].toLowerCase().slice(1);
 
-  const languages = await getLanguages();
+  const languages = await getIMDBLanguages();
 
   if (!languages) {
     logger.warn('unable to fetch languages, abort');
@@ -4484,7 +4484,6 @@ async function getFallbackLanguage() {
   if (fallbackLanguage) {
     shared.fallbackLanguage = Object.assign(fallbackLanguage, { locale: shared.currentLocale });
     logger.log('Fallback Language: set to', shared.fallbackLanguage);
-    await setSetting('fallbackLanguage', JSON.stringify(shared.fallbacklanguage));
   }
 }
 
@@ -4500,16 +4499,7 @@ async function ensureRegions() {
 }
 
 async function ensureLanguages() {
-  if (shared.languages && shared.languages.length > 0) {
-    return;
-  }
-  
-  await ensureRegions();
-
-  const languages = await getLanguages(shared.regions.map(region => region.Code));
-  if (languages) {
-    shared.languages = JSON.parse(languages);
-  }
+  // TODO!
 }
 
 async function getRegions() {
@@ -4542,36 +4532,29 @@ async function fetchIMDBTitleTypes() {
   `)
 }
 
-async function getLanguages(regionCodes) {
+async function getIMDBLanguages(regionCodes) {
   const filterRegions = !regionCodes ? null : regionCodes
   .reduce((prev, current) => {
     return prev + (prev ? ", " : "") + `'${current}'`;
   }, "");
 
-  const languages = db.fireProcedureReturnAll(`
-    SELECT DISTINCT
-      L.Code AS code
-      , L.Name AS name
-    FROM tbl_IMDB_Regions_Languages RL
-    INNER JOIN tbl_IMDB_Languages L ON RL.LanguageCode = L.Code
-    ${filterRegions ? `WHERE RL.RegionCode IN (${filterRegions})` : ''}
-  `);
+  const sSQL = `
+  SELECT DISTINCT
+    L.Code AS code
+    , L.Name AS name
+    , L.Name || ' (' || L.Code || ')' AS DisplayText
+    , 0 AS selected
+  FROM tbl_IMDB_Regions_Languages RL
+  INNER JOIN tbl_IMDB_Languages L ON RL.LanguageCode = L.Code
+  ${filterRegions ? `WHERE RL.RegionCode IN (${filterRegions})` : ''}
+  ORDER BY L.Name
+`;
 
-  const languageSettingsString = await getSetting('languages');
+  logger.log('getIMDBLanguages sSQL: ', sSQL);
 
-  if (!languageSettings) {
-    return languages;
-  }
+  const languages = await db.fireProcedureReturnAll(sSQL);
 
-  const languageSettings = JSON.parse(languageSettingsString);
-
-  languageSettings.forEach(languageSetting => {
-    languages.forEach(language => {
-      if (language.Code === languageSetting.Code) {
-        language.Use = languageSetting.Use;
-      }
-    });
-  });
+  logger.log('getIMDBLanguages:', languages);
 
   return languages;
 }
@@ -4629,11 +4612,9 @@ export {
   getMovieDuplicates,
   ensureMovieDeleted,
   updateMovieAttribute,
-  // getIMDBRegions,
   getIMDBRegions,
+  getIMDBLanguages,
   addRegions,
   fetchIMDBTitleTypes,
-  getLanguages,
-  ensureLanguages,
   getFallbackLanguage
 };

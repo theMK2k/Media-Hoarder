@@ -74,7 +74,8 @@ const shared = new Vue({
     regions: [],
     imdbTitleTypesWhitelist: [],
     fallbackLanguage: null,
-    languages: [],
+    languagesPrimaryTitle: [],
+    languagesAudioSubtitles: [],
   }
 })
 
