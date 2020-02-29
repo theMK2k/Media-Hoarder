@@ -1372,6 +1372,7 @@ async function scrapeIMDBreleaseinfo(movie) {
 
   logger.log('regions used:', regions);
 
+  // TODO (LANG): also take share.languagesPrimaryTitle into account, as well as special title types
   let $IMDB_localTitle = null;
   if (regions) {
     for (let i = 0; i < regions.length; i++) {
@@ -2625,7 +2626,6 @@ async function fetchMedia($MediaType) {
         })} (${item.IMDB_numVotes.toLocaleString()})`
         : "";
 
-      // TODO (LANG): fetch preferred languages
       item.AudioLanguages = generateLanguageString(item.MI_Audio_Languages, preferredLanguages);
 
       item.SubtitleLanguages = generateLanguageString(
@@ -2742,9 +2742,6 @@ function generateLanguageString(languages, preferredLanguages) {
   if (!result) {
     result = languages;
   }
-
-  // TODO (LANG): provide non-preferred Languages (max. 2) if result's entries are lower than 2
-  // TODO (LANG): implement +x info (e.g. De, En, +21)
 
   return result.join(", ");
 }
@@ -4448,8 +4445,6 @@ async function addRegions(items) {
 }
 
 async function getFallbackRegion() {
-  // TODO (REGION): fetch from DB, no need to scrape anymore!
-
   if (!shared.currentLocale) {
     return;
   }
@@ -4465,7 +4460,6 @@ async function getFallbackRegion() {
   const regions = await getIMDBRegions();
 
   if (regions.length === 0) {
-    logger.warn('Fallback Region: cannot scrape regions');
     return;
   }
 

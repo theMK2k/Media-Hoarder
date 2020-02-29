@@ -173,15 +173,11 @@
                         <span v-if="item.Genres">{{ item.Genres + ' | ' }}</span>
                         <span v-if="item.AudioLanguages">
                           <v-icon small>mdi-comment-outline</v-icon>
-                          {{ item.AudioLanguages + ' | ' }}
+                          {{ item.AudioLanguages + (item.SubtitleLanguages ? ' | ' : '') }}
                         </span>
                         <span v-if="item.SubtitleLanguages">
                           <v-icon small>mdi-subtitles-outline</v-icon>
-                          {{ item.SubtitleLanguages + ' | ' }}
-                        </span>
-                        <span v-if="item.Duration">
-                          <v-icon small>mdi-subtitles-outline</v-icon>
-                          {{ item.Duration }}
+                          {{ item.SubtitleLanguages }}
                         </span>
                       </div>
                     </div>
@@ -1542,7 +1538,7 @@ export default {
 
 .duration-overlay-container {
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.6);
   border-bottom-left-radius: 2px;
   border-bottom-right-radius: 2px;
   border-top-left-radius: 2px;

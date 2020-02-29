@@ -1,6 +1,7 @@
 # TO-DOs
 
-## Update Adblocker (preload.js errors)
+## Pagination
+- implement better pagination control (move left, move right, middle: current page / total pages -> dropdown)
 
 ## Mediainfo Languages
 - we get languages like "German" from Mediainfo and map them to e.g. "De" using languages.js and store.js' ensureLanguageMapping
