@@ -84,6 +84,7 @@
 <script>
 import * as store from "@/store";
 import * as helpers from "@/helpers/helpers";
+import { scrapeIMDBPersonData } from "@/imdb-scraper"
 const logger = require("loglevel");
 
 const { shell } = require("electron").remote;
@@ -122,7 +123,7 @@ export default {
       this.isScraping = true;
 
       try {
-        const personData = await store.scrapeIMDBPersonData(
+        const personData = await scrapeIMDBPersonData(
           this.IMDB_Person_ID
         );
 

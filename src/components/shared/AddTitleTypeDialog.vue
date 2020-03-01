@@ -15,11 +15,9 @@
 </template>
 
 <script>
-import * as _ from "lodash";
-
 import * as store from "@/store";
 // import * as helpers from "@/helpers/helpers";
-const logger = require("loglevel");
+// const logger = require("loglevel");
 
 import { eventBus } from "@/main";
 

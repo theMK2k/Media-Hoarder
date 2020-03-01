@@ -584,6 +584,7 @@ import * as Humanize from "humanize-plus";
 
 import * as store from "@/store";
 import { eventBus } from "@/main";
+import { scrapeIMDBTrailerMediaURLs } from "@/imdb-scraper"
 import Dialog from "@/components/shared/Dialog.vue";
 import ListDialog from "@/components/shared/ListDialog.vue";
 import PersonDialog from "@/components/shared/PersonDialog.vue";
@@ -1003,7 +1004,7 @@ export default {
 
     async showTrailerLocal(item) {
       try {
-        const trailerMediaURLs = await store.scrapeIMDBTrailerMediaURLs(
+        const trailerMediaURLs = await scrapeIMDBTrailerMediaURLs(
           `https://www.imdb.com${item.IMDB_Trailer_URL}`
         );
 

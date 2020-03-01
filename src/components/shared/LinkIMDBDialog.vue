@@ -106,7 +106,9 @@
 </template>
 
 <script>
-import * as store from "@/store";
+// import * as store from "@/store";
+import { scrapeIMDBAdvancedTitleSearch } from "@/imdb-scraper"
+
 // import * as helpers from "@/helpers/helpers";
 const logger = require("loglevel");
 
@@ -226,7 +228,7 @@ export default {
       }
 
       try {
-        this.searchResults = await store.scrapeIMDBAdvancedTitleSearch(
+        this.searchResults = await scrapeIMDBAdvancedTitleSearch(
           this.searchText,
           this.titleTypes
         );
