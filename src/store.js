@@ -14,16 +14,29 @@ const existsAsync = util.promisify(fs.exists);
 const statAsync = util.promisify(fs.stat);
 const execAsync = util.promisify(child_process.exec);
 
-import path from "path";
+const path = require('path');
+// import path from "path";
 
-import { eventBus } from "@/main";
+const { eventBus } = require('./main');
+// import { eventBus } from "@/main";
 
-import * as db from "@/helpers/db";
-import * as dbsyncSQLite from "@/helpers/dbsync-sqlite";
-import * as helpers from "@/helpers/helpers";
-import { languageNameCodeMapping, languageCodeNameMapping } from "@/languages";
-import { shared } from "@/shared";
-import {
+
+const db = require('./helpers/db');
+// import * as db from "@/helpers/db";
+
+const dbsyncSQLite = require('./helpers/dbsync-sqlite');
+// import * as dbsyncSQLite from "@/helpers/dbsync-sqlite";
+
+const helpers = require('./helpers/helpers');
+// import * as helpers from "@/helpers/helpers";
+
+const { languageNameCodeMapping, languageCodeNameMapping } = require('./languages');
+// import { languageNameCodeMapping, languageCodeNameMapping } from "@/languages";
+
+const { shared } = require('./shared');
+// import { shared } from "@/shared";
+
+const {
   scrapeIMDBmainPageData,
   scrapeIMDBCompaniesData,
   scrapeIMDBFullCreditsData,
@@ -31,7 +44,19 @@ import {
   scrapeIMDBreleaseinfo,
   scrapeIMDBtechnicalData,
   scrapeIMDBSearch,
-} from "@/imdb-scraper"
+} = require('./imdb-scraper');
+// import {
+//   scrapeIMDBmainPageData,
+//   scrapeIMDBCompaniesData,
+//   scrapeIMDBFullCreditsData,
+//   scrapeIMDBParentalGuideData,
+//   scrapeIMDBreleaseinfo,
+//   scrapeIMDBtechnicalData,
+//   scrapeIMDBSearch,
+// } from "@/imdb-scraper"
+
+
+
 
 const scanOptions = {
   filescanMovies: true,
@@ -1162,7 +1187,9 @@ async function fetchIMDBMetaData(movie, onlyNew) {
     }
 
     if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo) {
-      const releaseinfo = await scrapeIMDBreleaseinfo(movie);
+      const regions = await getRegions();
+
+      const releaseinfo = await scrapeIMDBreleaseinfo(movie, regions);
       IMDBdata = Object.assign(IMDBdata, releaseinfo);
     }
 
@@ -3586,6 +3613,31 @@ async function fetchLanguageSettings() {
       languagesAudioSubtitles
     );
   }
+}
+
+async function ensureRegions() {
+  if (shared.regions && shared.regions.length > 0) {
+    return;
+  }
+
+  const regions = await getSetting('regions');
+  if (regions) {
+    shared.regions = JSON.parse(regions);
+  }
+}
+
+async function getRegions() {
+  await ensureRegions();
+
+  if (shared.regions && shared.regions.length > 0) {
+    return shared.regions;
+  }
+
+  if (shared.fallbackRegion) {
+    return [shared.fallbackRegion];
+  }
+
+  return null;
 }
 
 export {

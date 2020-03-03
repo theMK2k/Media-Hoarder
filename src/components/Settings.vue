@@ -205,7 +205,7 @@
       <!-- REGIONS -->
       <v-tab-item style="padding: 8px">
         <i>
-          <p>The regions and their sequence defined here will be used for the Primary Title of the movies.</p>
+          <p>The regions and their sequence defined here will be used for the Primary Title of the movies as well as the age rating.</p>
           <p>If a particular movie does not have a title for one of these regions, the Original Title of the movie is used. Else, the Original Title will be used as Secondary Title if it is different.</p>
         </i>
 

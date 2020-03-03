@@ -1,4 +1,6 @@
-import path from 'path'
+const path = require('path');
+
+// import path from 'path'
 
 const logger = require('loglevel');
 

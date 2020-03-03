@@ -5,10 +5,13 @@ const logger = require("loglevel");
 const cheerio = require("cheerio");
 const htmlToText = require("html-to-text");
 
-import * as helpers from "@/helpers/helpers";
-import { shared } from "@/shared";  // TODO (SCRAPER): get rid of this
-import * as db from "@/helpers/db"; // TODO (SCRAPER): get rid of this
-import { getSetting } from "@/store"; // TODO (SCRAPER): get rid of this
+const helpers = require('./helpers/helpers');
+const db = require('./helpers/db');
+const { getSetting } = require('./store');
+
+// import * as helpers from "./helpers/helpers";
+// import * as db from "./helpers/db"; // TODO (SCRAPER): get rid of this
+// import { getSetting } from "./store"; // TODO (SCRAPER): get rid of this
 
 const requestGetAsync = util.promisify(request.get);
 const writeFileAsync = util.promisify(fs.writeFile);
@@ -195,7 +198,7 @@ async function downloadFile(url, targetPath, redownload) {
     }
 }
 
-async function scrapeIMDBreleaseinfo(movie) {
+async function scrapeIMDBreleaseinfo(movie, regions) {
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/releaseinfo`;
     logger.log("scrapeIMDBreleaseinfo url:", url);
     const response = await requestGetAsync(url);
@@ -206,9 +209,6 @@ async function scrapeIMDBreleaseinfo(movie) {
     const rxOriginalTitle = /td class="aka-item__name"> \(original title\)<\/td>[\s\S]*?<td class="aka-item__title">(.*?)<\/td>/;
     if (rxOriginalTitle.test(html))
         $IMDB_originalTitle = html.match(rxOriginalTitle)[1];
-
-    // find local title by preferred or system-defined regions
-    const regions = await getRegions();
 
     logger.log('regions used:', regions);
 
@@ -307,7 +307,8 @@ async function scrapeIMDBtechnicalData(movie) {
 }
 
 let cacheAgeRatings = null;
-let ageRatingChosenCountry = "none";
+
+let ageRatingChosenCountry = "none";    // TODO (REGIONS): what is this? use user-defined regions for this
 
 async function scrapeIMDBParentalGuideData(movie) {
     if (!cacheAgeRatings) {
@@ -759,33 +760,6 @@ function parseCreditsCategory(html, tableHeader, credits) {
     }
 
     return result;
-}
-
-// TODO (SCRAPER): get rid of this
-async function ensureRegions() {
-    if (shared.regions && shared.regions.length > 0) {
-        return;
-    }
-
-    const regions = await getSetting('regions');
-    if (regions) {
-        shared.regions = JSON.parse(regions);
-    }
-}
-
-// TODO (SCRAPER): get rid of this
-async function getRegions() {
-    await ensureRegions();
-
-    if (shared.regions && shared.regions.length > 0) {
-        return shared.regions;
-    }
-
-    if (shared.fallbackRegion) {
-        return [shared.fallbackRegion];
-    }
-
-    return null;
 }
 
 async function scrapeIMDBPersonData($IMDB_Person_ID) {

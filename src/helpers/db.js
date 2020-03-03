@@ -2,7 +2,9 @@ const logger = require('loglevel');
 const fs = require('fs');
 const sqlite3 = require('sqlite3').verbose();
 
-import * as helpers from '@/helpers/helpers';
+const helpers = require('./helpers');
+
+// import * as helpers from '@/helpers/helpers';
 
 let _db;
 
