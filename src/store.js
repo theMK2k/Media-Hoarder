@@ -17,9 +17,7 @@ const execAsync = util.promisify(child_process.exec);
 const path = require('path');
 // import path from "path";
 
-const { eventBus } = require('./main');
-// import { eventBus } from "@/main";
-
+import { eventBus } from "@/main";
 
 const db = require('./helpers/db');
 // import * as db from "@/helpers/db";
@@ -925,18 +923,21 @@ async function applyMediaInfo(movie, onlyNew) {
           const width = track.Width[0].replace(/\s/g, "");
           const iWidth = parseInt(width);
 
+          let height = 0;
+          if (track.Height && track.Height.length > 0) {
+            height = track.Height[0].replace(/\s/g, "");
+          }
+          const iHeight = parseInt(height);
+
           MI.$MI_Quality = "SD";
 
-          if (iWidth > 1200) {
+          if (iWidth > 1200 || iHeight >= 720) {
             MI.$MI_Quality = "720p";
           }
-          if (iWidth > 1900) {
+          if (iWidth > 1900 || iHeight >= 1080) {
             MI.$MI_Quality = "HD";
           }
-          if (iWidth > 3000) {
-            MI.$MI_Quality = "2k";
-          }
-          if (iWidth > 3800) {
+          if (iWidth > 3800 || iHeight >= 2000) {
             MI.$MI_Quality = "UHD";
           }
         }
@@ -1188,8 +1189,9 @@ async function fetchIMDBMetaData(movie, onlyNew) {
 
     if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo) {
       const regions = await getRegions();
+      const allowedTitleTypes = await getAllowedTitleTypes();
 
-      const releaseinfo = await scrapeIMDBreleaseinfo(movie, regions);
+      const releaseinfo = await scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes);
       IMDBdata = Object.assign(IMDBdata, releaseinfo);
     }
 
@@ -3638,6 +3640,31 @@ async function getRegions() {
   }
 
   return null;
+}
+
+async function getAllowedTitleTypes() {
+  const titleTypeWhitelist = await getSetting('IMDBTitleTypeWhitelist');
+  const languagesPrimaryTitle = await getSetting('languagesPrimaryTitle');
+
+  const result = [];
+
+  if (titleTypeWhitelist) {
+    JSON.parse(titleTypeWhitelist).forEach(titleType => {
+      if (titleType.TitleType) {
+        result.push(titleType.TitleType)
+      }
+    })
+  }
+
+  if (languagesPrimaryTitle) {
+    JSON.parse(languagesPrimaryTitle).forEach(lang => {
+      if (lang.name) {
+        result.push(`${lang.name} title`)
+      }
+    })
+  }
+
+  return result;
 }
 
 export {

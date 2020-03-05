@@ -198,9 +198,9 @@ async function downloadFile(url, targetPath, redownload) {
     }
 }
 
-async function scrapeIMDBreleaseinfo(movie, regions) {
+async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/releaseinfo`;
-    logger.log("scrapeIMDBreleaseinfo url:", url);
+    logger.log("scrapeIMDBreleaseinfo url:", url, 'allowedTitleTypes:', allowedTitleTypes);
     const response = await requestGetAsync(url);
     const html = response.body;
     // logger.log('imdbReleaseinfoHTML', imdbReleaseinfoHTML);
@@ -220,14 +220,14 @@ async function scrapeIMDBreleaseinfo(movie, regions) {
 
             logger.log('regions trying:', region);
 
-            const rxLocalTitle = new RegExp(`td class="aka-item__name">${region}</td>[\\s\\S]*?<td class="aka-item__title">(.*?)</td>`);
-            if (rxLocalTitle.test(html)) {
-                logger.log('regions: exact match!');
-                $IMDB_localTitle = html.match(rxLocalTitle)[1];
-            }
+            // const rxLocalTitle = new RegExp(`td class="aka-item__name">${region}</td>[\\s\\S]*?<td class="aka-item__title">(.*?)</td>`);
+            // if (rxLocalTitle.test(html)) {
+            //     logger.log('regions: exact match!');
+            //     $IMDB_localTitle = html.match(rxLocalTitle)[1];
+            // }
 
             if (!$IMDB_localTitle) {
-                const rxLocalTitleFuzzy = new RegExp(`td class="aka-item__name">${region}.*?</td>[\\s\\S]*?<td class="aka-item__title">(.*?)</td>`, 'g');
+                const rxLocalTitleFuzzy = new RegExp(`td class="aka-item__name">${region}(.*?)</td>[\\s\\S]*?<td class="aka-item__title">(.*?)</td>`, 'g');
                 // if (rxLocalTitleFuzzy.test(html)) {
                 logger.log('regions: trying fuzzy matching');
 
@@ -236,12 +236,43 @@ async function scrapeIMDBreleaseinfo(movie, regions) {
                 while ((match = rxLocalTitleFuzzy.exec(html))) {
                     logger.log('regions: fuzzy match found');
 
-                    const matched = match[0];
-                    const title = match[1];
+                    const titleTypes = match[1];
+                    const title = match[2];
 
-                    if (matched.includes("(working title)")) {
-                        logger.log('regions: skipping: (working title)');
-                        continue;
+                    // if (matched.includes("(working title)")) {
+                    //     logger.log('regions: skipping: (working title)');
+                    //     continue;
+                    // }
+
+                    // TODO: filter types and regions
+                    if (titleTypes.trim()) {
+                        const arrTitleTypes = [];
+                        titleTypes.split('(').forEach(titleTypes => {
+                            const cleanTitleType = titleTypes.replace(/[()]/g, '').trim();
+
+                            if (cleanTitleType) {
+                                arrTitleTypes.push(cleanTitleType);
+                            }
+                        })
+
+                        console.log('local title match:', { title, arrTitleTypes });
+
+                        // TODO: splice the array's elements if they are allowed
+                        // then check if array is not empty -> don't set the title then (break)
+
+                        let allowed = 0;
+                        for (let i = 0; i < arrTitleTypes.length; i++) {
+                            const titleType = arrTitleTypes[i];
+
+                            if (allowedTitleTypes.find(allowed => allowed === titleType)) {
+                                allowed++;
+                            }
+                        }
+
+                        if (allowed !== arrTitleTypes.length) {
+                            logger.log('skipped local title, some title types are not allowed');
+                            break;
+                        }
                     }
 
                     $IMDB_localTitle = title;

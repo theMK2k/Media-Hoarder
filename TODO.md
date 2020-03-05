@@ -1,14 +1,15 @@
 # TO-DOs
 
+
+## 720p, SD, HD Detection
+OK? - fix resolution Detection, e.g. 4:3 HD is oftentimes detected as 720p
+
 ## IMDB Scraper Watchdog
 - put all IMDB scraping functions from store.js into imdb-scraper.js
 - create a watchdog CLI which tests imdb-scraper.js
   - creates an error report
   - sends an email on error
   - saves status on web location (client can then check the status)
-
-## 720p, SD, HD Detection
-- fix resolution Detection, e.g. 4:3 HD is oftentimes detected as 720p
 
 ## Pagination
 - implement better pagination control (move left, move right, middle: current page / total pages -> dropdown)
