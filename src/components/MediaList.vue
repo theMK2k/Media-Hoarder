@@ -56,6 +56,8 @@
 
       <div v-if="numPages">
         <v-pagination v-bind:length="numPages" v-model="$shared.currentPage" total-visible="7"></v-pagination>
+
+        <mk-pagination v-bind:length="numPages" v-model="$shared.currentPage"></mk-pagination>
       </div>
 
       <v-spacer></v-spacer>
@@ -115,7 +117,7 @@
                           <template v-slot:activator="{ on }">
                             <span v-on="on">
                               <v-icon
-                                v-show="item.nameHovered"
+                                v-show="item.nameHovered || item.selected"
                                 style="cursor: pointer"
                                 v-on:click.stop="onEditItem(item, 'Name', 'Title')"
                               >mdi-pencil</v-icon>
@@ -128,7 +130,7 @@
                           <template v-slot:activator="{ on }">
                             <span v-on="on">
                               <v-icon
-                                v-show="item.nameHovered"
+                                v-show="item.nameHovered || item.selected"
                                 style="cursor: pointer"
                                 v-on:click.stop="onOpenLinkIMDBDialog(item)"
                               >mdi-link</v-icon>
@@ -149,7 +151,7 @@
                           <template v-slot:activator="{ on }">
                             <span v-on="on">
                               <v-icon
-                                v-show="item.name2Hovered"
+                                v-show="item.name2Hovered || item.selected"
                                 small
                                 style="cursor: pointer"
                                 v-on:click.stop="onEditItem(item, 'Name2', 'Secondary Title')"
@@ -215,7 +217,8 @@
                     v-if="item.IMDB_plotSummary"
                     style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
                   >
-                    <div style="font-size: .875rem; font-weight: normal">{{ item.IMDB_plotSummary }}</div>
+                    <div v-show="!item.selected" style="font-size: .875rem; font-weight: normal">{{ item.IMDB_plotSummary }}</div>
+                    <div v-show="item.selected" style="font-size: .875rem; font-weight: normal">{{ item.IMDB_plotSummaryFull || item.IMDB_plotSummary }}</div>
                   </v-row>
 
                   <v-row
@@ -592,6 +595,7 @@ import CompanyDialog from "@/components/shared/CompanyDialog.vue";
 import VideoPlayerDialog from "@/components/shared/VideoPlayerDialog.vue";
 import LocalVideoPlayerDialog from "@/components/shared/LocalVideoPlayerDialog.vue";
 import LinkIMDBDialog from "@/components/shared/LinkIMDBDialog.vue";
+import Pagination from "@/components/shared/Pagination.vue"
 
 const { shell } = require("electron").remote;
 
@@ -609,7 +613,8 @@ export default {
     "mk-video-player-dialog": VideoPlayerDialog,
     "mk-local-video-player-dialog": LocalVideoPlayerDialog,
     "mk-edit-item-dialog": Dialog,
-    "mk-search-imdb-dialog": LinkIMDBDialog
+    "mk-search-imdb-dialog": LinkIMDBDialog,
+    "mk-pagination": Pagination
   },
 
   data: () => ({

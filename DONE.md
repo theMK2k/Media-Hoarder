@@ -13,6 +13,9 @@ OK  - let user define preferred (local) Regions to identify the primary title
 OK  -> fetch Countries from https://www.imdb.com/search/title/ and provide as list
 OK  -> Auto set region by user's localization setting?
 
+## Full Plot Summary
+- scrape full plot summary from /plotsummary (find the correct one using the summary text from main page)
+- show full plot summary when item is selected
 
 ## Restructure Settings
 

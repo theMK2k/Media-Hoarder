@@ -36,6 +36,7 @@ const { shared } = require('./shared');
 
 const {
   scrapeIMDBmainPageData,
+  scrapeIMDBplotSummary,
   scrapeIMDBCompaniesData,
   scrapeIMDBFullCreditsData,
   scrapeIMDBParentalGuideData,
@@ -43,18 +44,6 @@ const {
   scrapeIMDBtechnicalData,
   scrapeIMDBSearch,
 } = require('./imdb-scraper');
-// import {
-//   scrapeIMDBmainPageData,
-//   scrapeIMDBCompaniesData,
-//   scrapeIMDBFullCreditsData,
-//   scrapeIMDBParentalGuideData,
-//   scrapeIMDBreleaseinfo,
-//   scrapeIMDBtechnicalData,
-//   scrapeIMDBSearch,
-// } from "@/imdb-scraper"
-
-
-
 
 const scanOptions = {
   filescanMovies: true,
@@ -72,6 +61,7 @@ const scanOptions = {
 
   rescanMoviesMetaData_fetchIMDBMetaData: true,
   rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
+  rescanMoviesMetaData_fetchIMDBMetaData_plotSummary: true,
   rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
   rescanMoviesMetaData_fetchIMDBMetaData_technicalData: true,
   rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: true,
@@ -1187,6 +1177,11 @@ async function fetchIMDBMetaData(movie, onlyNew) {
       IMDBdata = Object.assign(IMDBdata, mainPageData);
     }
 
+    if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_plotSummary) {
+      const plotSummaryFull = await scrapeIMDBplotSummary(movie, IMDBdata.$IMDB_plotSummary);
+      IMDBdata = Object.assign(IMDBdata, plotSummaryFull);
+    }
+
     if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo) {
       const regions = await getRegions();
       const allowedTitleTypes = await getAllowedTitleTypes();
@@ -1847,7 +1842,8 @@ async function fetchMedia($MediaType) {
 			, MOV.IMDB_rating
 			, MOV.IMDB_numVotes
 			, MOV.IMDB_metacriticScore
-			, MOV.IMDB_plotSummary
+      , MOV.IMDB_plotSummary
+      , MOV.IMDB_plotSummaryFull
 			, (SELECT GROUP_CONCAT(G.Name, ', ') FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres AND MG.id_Movies = MOV.id_Movies) AS Genres
 			, MOV.IMDB_MinAge
 			, MOV.IMDB_MaxAge

@@ -1,6 +1,5 @@
 # TO-DOs
 
-
 ## 720p, SD, HD Detection
 OK? - fix resolution Detection, e.g. 4:3 HD is oftentimes detected as 720p
 
