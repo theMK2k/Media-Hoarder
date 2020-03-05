@@ -83,7 +83,7 @@
 
                     <v-row style="margin-top: 8px">
                       <v-btn
-                        v-show="item.itemHovered"
+                        v-show="item.itemHovered || isLinking"
                         text
                         color="primary"
                         v-bind:loading="isLinking"
