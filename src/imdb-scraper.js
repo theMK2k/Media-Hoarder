@@ -286,7 +286,7 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
               }
             });
 
-            console.log("local title match:", { title, arrTitleTypes });
+            logger.log("local title match:", { title, arrTitleTypes });
 
             // TODO: splice the array's elements if they are allowed
             // then check if array is not empty -> don't set the title then (break)

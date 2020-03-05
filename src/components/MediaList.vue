@@ -55,12 +55,10 @@
       <v-spacer></v-spacer>
 
       <div v-if="numPages">
-        <v-pagination v-bind:length="numPages" v-model="$shared.currentPage" total-visible="7"></v-pagination>
+        <!-- <v-pagination v-bind:length="numPages" v-model="$shared.currentPage" total-visible="7"></v-pagination> -->
 
         <mk-pagination v-bind:length="numPages" v-model="$shared.currentPage"></mk-pagination>
       </div>
-
-      <v-spacer></v-spacer>
     </v-row>
 
     <v-container class="scrollcontainer pa-2" style="max-width: 100%!important; margin-top: 48px;">
@@ -513,7 +511,8 @@
       <v-row>
         <v-spacer></v-spacer>
         <div v-if="numPages">
-          <v-pagination v-bind:length="numPages" v-model="$shared.currentPage" total-visible="7"></v-pagination>
+          <!-- <v-pagination v-bind:length="numPages" v-model="$shared.currentPage" total-visible="7"></v-pagination> -->
+          <mk-pagination v-bind:length="numPages" v-model="$shared.currentPage"></mk-pagination>
         </div>
       </v-row>
     </v-container>
