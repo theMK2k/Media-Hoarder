@@ -7,6 +7,18 @@
           class="v-pagination__navigation"
           v-bind:class="prevClass"
           v-bind:disabled="$shared.currentPage == 1"
+          v-on:click="$shared.currentPage = 1"
+          style="height: 48px!important; width: 48px!important; margin: 8px 8px 0px 0px!important"
+        >
+          <i aria-hidden="true" class="v-icon notranslate mdi mdi-chevron-double-left theme--dark"></i>
+        </button>
+      </li>
+      <li>
+        <button
+          type="button"
+          class="v-pagination__navigation"
+          v-bind:class="prevClass"
+          v-bind:disabled="$shared.currentPage == 1"
           v-on:click="onPrevClicked"
           style="height: 48px!important; width: 48px!important; margin: 8px 8px 0px 0px!important"
         >
@@ -38,6 +50,18 @@
           style="height: 48px!important; width: 48px!important; margin: 8px 8px 0px 8px!important"
         >
           <i aria-hidden="true" class="v-icon notranslate mdi mdi-chevron-right theme--dark"></i>
+        </button>
+      </li>
+      <li>
+        <button
+          type="button"
+          class="v-pagination__navigation"
+          v-bind:class="nextClass"
+          v-bind:disabled="$shared.currentPage >= length"
+          v-on:click="$shared.currentPage = length"
+          style="height: 48px!important; width: 48px!important; margin: 8px 8px 0px 0px!important"
+        >
+          <i aria-hidden="true" class="v-icon notranslate mdi mdi-chevron-double-right theme--dark"></i>
         </button>
       </li>
     </ul>

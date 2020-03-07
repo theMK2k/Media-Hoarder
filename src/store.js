@@ -3868,17 +3868,6 @@ async function getAllowedTitleTypes() {
   return result;
 }
 
-async function getAllIMDBPlotKeywords() {
-  return await db.fireProcedureReturnAll(`
-    SELECT
-      PK.id_IMDB_Plot_Keywords
-      , Keyword
-      , (SELECT COUNT(1) FROM tbl_Movies_IMDB_Plot_Keywords MPK WHERE PK.id_IMDB_Plot_Keywords = MPK.id_IMDB_Plot_Keywords) AS NumMovies
-    FROM tbl_IMDB_Plot_Keywords PK
-    ORDER BY NumMovies DESC, Keyword ASC
-  `)
-}
-
 export {
   db,
   fetchSourcePaths,
@@ -3937,6 +3926,5 @@ export {
   fetchIMDBTitleTypes,
   getFallbackLanguage,
   fetchLanguageSettings,
-  fetchMoviePlotKeywords,
-  getAllIMDBPlotKeywords
+  fetchMoviePlotKeywords
 };

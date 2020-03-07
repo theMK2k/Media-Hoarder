@@ -1,10 +1,5 @@
 <template>
-  <v-dialog
-    v-model="show"
-    persistent
-    max-width="1000px"
-    v-on:keydown.escape="onCancelClick"
-  >
+  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onCancelClick">
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">{{ title }}</div>
@@ -12,13 +7,21 @@
       <v-card-text>
         <v-text-field
           :append-icon-cb="() => {}"
-          placeholder="Search..."
+          placeholder="Search... (use '%' to list all)"
           single-line
           append-icon="mdi-magnify"
           color="white"
           hide-details
           v-model="searchText"
         ></v-text-field>
+
+        <v-checkbox
+          v-model="sortByNumMovies"
+          v-bind:label="'Sort by number of movies'"
+          style="margin: 0px"
+          color="dark-grey"
+
+        ></v-checkbox>
 
         <v-row
           class="item Clickable"
@@ -51,13 +54,18 @@ export default {
   data() {
     return {
       items: [],
-      searchText: ""
+      searchText: "",
+      sortByNumMovies: false
     };
   },
 
   watch: {
     searchText: function(newValue) {
       this.debouncedSearchTextChanged(newValue);
+    },
+
+    sortByNumMovies: function() {
+      this.searchTextChanged(this.searchText);
     }
   },
 
@@ -95,7 +103,9 @@ export default {
 								)) AS NumMovies
 					FROM tbl_Movies_IMDB_Companies MC
 					WHERE Company_Name LIKE '${searchText}%'
-					GROUP BY Company_Name`;
+          GROUP BY Company_Name
+          ${this.sortByNumMovies ? 'ORDER BY NumMovies DESC' : 'ORDER BY name ASC'}
+          `;
       }
 
       if (this.searchMode === "persons") {
@@ -112,7 +122,23 @@ export default {
 								)) AS NumMovies
 					FROM tbl_Movies_IMDB_Credits MC
 					WHERE Person_Name LIKE '${searchText}%'
-					GROUP BY Person_Name`;
+          GROUP BY Person_Name
+          ${this.sortByNumMovies ? 'ORDER BY NumMovies DESC' : 'ORDER BY name ASC'}
+          `;
+      }
+
+      if (this.searchMode === "plot-keywords") {
+        // todo filter: (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+        sql = `
+          SELECT
+            PK.id_IMDB_Plot_Keywords AS id
+            , Keyword AS name
+            , (SELECT COUNT(1) FROM tbl_Movies_IMDB_Plot_Keywords MPK WHERE PK.id_IMDB_Plot_Keywords = MPK.id_IMDB_Plot_Keywords) AS NumMovies
+          FROM tbl_IMDB_Plot_Keywords PK
+          WHERE PK.Keyword LIKE '%${searchText}%'
+          ORDER BY Keyword ASC
+          ${this.sortByNumMovies ? 'ORDER BY NumMovies DESC' : 'ORDER BY name ASC'}
+          `;
       }
 
       logger.log("search query:", sql);
@@ -127,6 +153,13 @@ export default {
 
       if (this.searchMode === "persons") {
         eventBus.showPersonDialog(item);
+      }
+
+      if (this.searchMode === "plot-keywords") {
+        eventBus.showPlotKeywordDialog({
+          id_IMDB_Plot_Keywords: item.id,
+          Keyword: item.name
+        });
       }
     }
   },

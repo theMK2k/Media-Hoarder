@@ -1,5 +1,8 @@
 # TO-DOs
 
+## Search...Dialog
+- allow Sort by NumMovies
+
 ## CompanyDialog, PersonDialog, Plot Keyword Dialog
 include statistical infos (how many movies)
 

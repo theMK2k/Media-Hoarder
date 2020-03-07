@@ -1518,6 +1518,10 @@ export default {
       this.onCreditClicked(value);
     });
 
+    eventBus.$on("showPlotKeywordDialog", value => {
+      this.onIMDBPlotKeywordClicked(value);
+    })
+
     eventBus.$on("showCompanyDialog", value => {
       this.onCompanyClicked(value);
     });

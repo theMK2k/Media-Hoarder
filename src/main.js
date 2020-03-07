@@ -88,6 +88,10 @@ export const eventBus = new Vue({
 			this.$emit('showCompanyDialog', company);
 		},
 
+		showPlotKeywordDialog(plotKeyword) {
+			this.$emit('showPlotKeywordDialog', plotKeyword);
+		},
+
 		personDialogConfirm(result) {
 			this.$emit('personDialogConfirm', result);
 		}

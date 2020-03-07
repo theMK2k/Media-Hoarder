@@ -527,6 +527,15 @@
           v-on:cancel="onSearchCompaniesDialogCancel"
         ></mk-search-companies-dialog>
 
+        <!-- mk-search-plot-keywords-dialog -->
+        <mk-search-plot-keywords-dialog
+          ref="searchPlotKeywordsDialog"
+          v-bind:show="searchPlotKeywordsDialog.show"
+          title="Find Plot Keywords"
+          searchMode="plot-keywords"
+          v-on:cancel="onSearchPlotKeywordsDialogCancel"
+        ></mk-search-plot-keywords-dialog>
+
         <mk-search-persons-dialog
           ref="searchPersonsDialog"
           v-bind:show="searchPersonsDialog.show"
@@ -614,6 +623,7 @@ export default {
     "mk-delete-list-dialog": Dialog,
     "mk-search-companies-dialog": SearchDataDialog,
     "mk-search-persons-dialog": SearchDataDialog,
+    "mk-search-plot-keywords-dialog": SearchDataDialog,
     "mk-scan-options-dialog": ScanOptionsDialog
   },
 
@@ -681,6 +691,10 @@ export default {
     },
 
     searchPersonsDialog: {
+      show: false
+    },
+
+    searchPlotKeywordsDialog: {
       show: false
     },
 
@@ -1278,10 +1292,6 @@ export default {
       this.$refs.searchPersonsDialog.init();
     },
 
-    addIMDBPlotKeyword() {
-      // TODO: implement searchIMDBPlotKeywordsDialog
-    },
-
     onSearchPersonsDialogCancel() {
       this.searchPersonsDialog.show = false;
     },
@@ -1293,6 +1303,15 @@ export default {
 
     onSearchCompaniesDialogCancel() {
       this.searchCompaniesDialog.show = false;
+    },
+
+    addIMDBPlotKeyword() {
+      this.searchPlotKeywordsDialog.show = true;
+      this.$refs.searchPlotKeywordsDialog.init();
+    },
+
+    onSearchPlotKeywordsDialogCancel() {
+      this.searchPlotKeywordsDialog.show = false;
     },
 
     quit() {
