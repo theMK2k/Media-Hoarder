@@ -11,7 +11,7 @@
             <v-row>
               <div style="margin-left: 16px">
                 <v-list-item-title class="headline mb-2" style="margin-bottom: 0px!important">
-                  Company: {{ Company_Name }}
+                  Plot Keyword: {{ Keyword }}
                   <span v-if="isScraping">(loading, please wait...)</span>
                 </v-list-item-title>
               </div>
@@ -31,15 +31,9 @@
           <v-btn
             class="xs-fullwidth"
             color="primary"
-            v-on:click.stop="openIMDB()"
-            style="margin-left: 8px;"
-          >Open IMDB</v-btn>
-          <v-btn
-            class="xs-fullwidth"
-            color="primary"
             v-on:click.native="onFilterClick"
             style="margin-left: 8px;"
-          >Filter by this company</v-btn>
+          >Filter by this plot keyword</v-btn>
         </v-row>
       </v-col>
     </v-card>
@@ -56,7 +50,7 @@ const { shell } = require("electron").remote;
 import { eventBus } from "@/main";
 
 export default {
-  props: ["show", "IMDB_Company_ID", "Company_Name"],
+  props: ["show", "id_IMDB_Plot_Keywords", "Keyword"],
 
   data() {
     return {
@@ -80,43 +74,20 @@ export default {
       this.resetData();
     },
 
-    async scrapeData() {
-      logger.log("CompanyDialog SCRAPE!");
-      this.isScraping = true;
-
-      // try {
-
-      // } catch (err) {
-      //   logger.log(err);
-      //   eventBus.showSnackbar(
-      //     "error",
-      //     "an error occured while fetching data from the web"
-      //   );
-      // }
-
-      this.isScraping = false;
-    },
-
     onCloseClick() {
       this.$emit("close");
     },
 
     async onFilterClick() {
-      await store.addFilterCompany(this.Company_Name);
+      await store.addFilterIMDBPlotKeyword(this.id_IMDB_Plot_Keywords, this.Keyword);
 
       const setFilter = {
-        filterCompanies: [this.Company_Name]
+        filterIMDBPlotKeywords: [this.id_IMDB_Plot_Keywords]
       };
 
       eventBus.refetchFilters(setFilter);
 
       this.$emit("close");
-    },
-
-    openIMDB() {
-      shell.openExternal(
-        `https://www.imdb.com/company/${this.IMDB_Company_ID}`
-      );
     },
 
     onEscapePressed() {

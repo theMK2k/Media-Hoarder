@@ -46,7 +46,7 @@
         style="margin-left: 8px; max-width: 260px; height: 40px"
         v-on:change="onSortChanged"
       >
-        <template v-slot:selection="{ item, index }">
+        <template v-slot:selection="{ item }">
           <span class="grey--text caption" style="margin-right: 8px">Sort by</span>
           <span>{{ item.Description }}</span>
         </template>
@@ -61,7 +61,8 @@
       </div>
     </v-row>
 
-    <v-container class="scrollcontainer pa-2" style="max-width: 100%!important; margin-top: 48px;">
+    <!-- scrollcontainer -->
+    <v-container class="pa-2" style="max-width: 100%!important; margin-top: 48px;">
       <v-row v-for="(item, i) in itemsFilteredPaginated" :key="i">
         <v-col>
           <v-card dark flat hover v-bind:ripple="false" v-on:click="selectItem(item)">
@@ -72,7 +73,7 @@
               >
                 <v-list-item-avatar
                   tile
-                  style="margin: 6px; height: 150px; width: 120px"
+                  style="margin: 6px; height: 180px; width: 120px"
                   v-on:click.stop="launch(item)"
                 >
                   <img
@@ -139,11 +140,11 @@
                       </v-list-item-title>
 
                       <v-list-item-subtitle
-                        v-if="item.Name2"
                         style="margin-bottom: 4px; min-height: 18px"
                         v-on:mouseover="setItemHovered(item, 'name2', true)"
                         v-on:mouseleave="setItemHovered(item, 'name2', false)"
                       >
+                        <!-- v-if="item.Name2 || item.selected" -->
                         {{ item.Name2 }}
                         <v-tooltip bottom>
                           <template v-slot:activator="{ on }">
@@ -215,8 +216,14 @@
                     v-if="item.IMDB_plotSummary"
                     style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
                   >
-                    <div v-show="!item.selected" style="font-size: .875rem; font-weight: normal">{{ item.IMDB_plotSummary }}</div>
-                    <div v-show="item.selected" style="font-size: .875rem; font-weight: normal">{{ item.IMDB_plotSummaryFull || item.IMDB_plotSummary }}</div>
+                    <div
+                      v-show="!item.selected"
+                      style="font-size: .875rem; font-weight: normal"
+                    >{{ item.IMDB_plotSummary }}</div>
+                    <div
+                      v-show="item.selected"
+                      style="font-size: .875rem; font-weight: normal"
+                    >{{ item.IMDB_plotSummaryFull || item.IMDB_plotSummary }}</div>
                   </v-row>
 
                   <v-row
@@ -358,18 +365,16 @@
               <v-row>
                 <v-col class="detailLabel">In Lists:</v-col>
                 <v-col class="detailContent">
-                  <span v-if="itemDetails.lists && itemDetails.lists.length > 0">
-                    <span v-for="(list, index) in itemDetails.lists" v-bind:key="index">
+                  <span v-if="item.lists && item.lists.length > 0">
+                    <span v-for="(list, index) in item.lists" v-bind:key="index">
                       <span v-if="index > 0">,&nbsp;</span>
                       <span>{{list.Name}}</span>
                     </span>
                   </span>
-                  <span
-                    v-if="!itemDetails.lists || itemDetails.lists.length === 0"
-                  >&lt;not in any list&gt;</span>
+                  <span v-if="!item.lists || item.lists.length === 0">&lt;not in any list&gt;</span>
                   <v-btn text small color="primary" v-on:click.stop="addToList(item)">Add</v-btn>
                   <v-btn
-                    v-if="itemDetails.lists && itemDetails.lists.length > 0"
+                    v-if="item.lists && item.lists.length > 0"
                     text
                     small
                     color="primary"
@@ -385,7 +390,7 @@
                 </v-row>
 
                 <v-row
-                  v-for="extra in itemDetails.extras"
+                  v-for="extra in item.extras"
                   v-bind:key="extra.Path"
                   class="Clickable"
                   style="padding-left: 24px; padding-top: 4px; align-items: flex-end;"
@@ -493,6 +498,33 @@
                 </v-row>
               </div>
 
+              <!-- PLOT KEYWORDS -->
+              <v-row
+                style="padding-left: 16px; padding-top: 4px; align-items: flex-end;"
+                class="Clickable"
+                v-on:click.stop="showPlotKeywords(item, !item.showPlotKeywords)"
+              >
+                <span style="font-size: 20px">Plot Keywords (Spoilers ahead!)&nbsp;</span>
+              </v-row>
+
+              <div
+                style="margin-left: 24px;"
+                v-if="item.showPlotKeywords"
+                v-on:click.stop="showPlotKeywords(item, false)"
+              >
+                <v-row v-for="plotKeyword in item.plotKeywords" v-bind:key="plotKeyword.Keyword">
+                  <a
+                    class="Clickable"
+                    v-on:click.stop="onIMDBPlotKeywordClicked(plotKeyword)"
+                  >{{ plotKeyword.Keyword }}</a>
+
+                  <!-- <v-col sm="4" class="creditsLabel">{{ plotKeyword.Keyword }}</v-col>
+                  <v-col
+                    class="creditsContent"
+                  >{{ `${plotKeyword.NumVotes ? plotKeyword.NumRelevant + ' of ' + plotKeyword.NumVotes : 'no votes'}` }}</v-col> -->
+                </v-row>
+              </div>
+
               <v-row style="margin-top: 8px">
                 <v-btn text color="primary" v-on:click.stop="copyInfo(item)">Copy Info</v-btn>
                 <v-btn
@@ -545,6 +577,14 @@
       v-on:close="onCompanyDialogClose"
     ></mk-company-dialog>
 
+    <mk-plot-keyword-dialog
+      ref="plotKeywordDialog"
+      v-bind:show="plotKeywordDialog.show"
+      v-bind:id_IMDB_Plot_Keywords="plotKeywordDialog.id_IMDB_Plot_Keywords"
+      v-bind:Keyword="plotKeywordDialog.Keyword"
+      v-on:close="onPlotKeywordDialogClose"
+    ></mk-plot-keyword-dialog>
+
     <mk-video-player-dialog
       v-bind:show="videoPlayerDialog.show"
       v-bind:src="videoPlayerDialog.videoURL"
@@ -586,15 +626,16 @@ import * as Humanize from "humanize-plus";
 
 import * as store from "@/store";
 import { eventBus } from "@/main";
-import { scrapeIMDBTrailerMediaURLs } from "@/imdb-scraper"
+import { scrapeIMDBTrailerMediaURLs } from "@/imdb-scraper";
 import Dialog from "@/components/shared/Dialog.vue";
 import ListDialog from "@/components/shared/ListDialog.vue";
 import PersonDialog from "@/components/shared/PersonDialog.vue";
 import CompanyDialog from "@/components/shared/CompanyDialog.vue";
+import PlotKeywordDialog from "@/components/shared/PlotKeywordDialog.vue";
 import VideoPlayerDialog from "@/components/shared/VideoPlayerDialog.vue";
 import LocalVideoPlayerDialog from "@/components/shared/LocalVideoPlayerDialog.vue";
 import LinkIMDBDialog from "@/components/shared/LinkIMDBDialog.vue";
-import Pagination from "@/components/shared/Pagination.vue"
+import Pagination from "@/components/shared/Pagination.vue";
 
 const { shell } = require("electron").remote;
 
@@ -609,6 +650,7 @@ export default {
     "mk-list-dialog": ListDialog,
     "mk-person-dialog": PersonDialog,
     "mk-company-dialog": CompanyDialog,
+    "mk-plot-keyword-dialog": PlotKeywordDialog,
     "mk-video-player-dialog": VideoPlayerDialog,
     "mk-local-video-player-dialog": LocalVideoPlayerDialog,
     "mk-edit-item-dialog": Dialog,
@@ -617,7 +659,6 @@ export default {
   },
 
   data: () => ({
-    smallPosterImgSrc: null,
     items: [],
     searchText: null,
     sortAbles: [
@@ -673,6 +714,12 @@ export default {
       Company_Name: null
     },
 
+    plotKeywordDialog: {
+      show: false,
+      id_IMDB_Plot_Keywords: null,
+      Keyword: null
+    },
+
     videoPlayerDialog: {
       show: false,
       videoURL: null
@@ -697,10 +744,6 @@ export default {
     linkIMDBDialog: {
       show: false,
       item: {}
-    },
-
-    itemDetails: {
-      lists: []
     },
 
     itemsPerPage: 20,
@@ -854,16 +897,16 @@ export default {
         if (movie.selected) {
           movie.selected = false;
         } else {
-          // this.items.forEach(item => {
-          //   this.$set(item, "selected", false);
-          // });
+          if (!movie.lists && !movie.extras) {
+            const { lists, extras } = await store.getMovieDetails(
+              movie.id_Movies
+            );
 
-          this.itemDetails = await store.getMovieDetails(movie.id_Movies);
-
-          logger.log("itemDetails:", this.itemDetails);
+            this.$set(movie, "lists", lists);
+            this.$set(movie, "extras", extras);
+          }
 
           this.$set(movie, "selected", true);
-          // movie.selected = true;
         }
       })();
     },
@@ -1043,7 +1086,7 @@ export default {
         this.listDialog.mode = "remove";
         this.listDialog.allowCreateNewList = false;
         this.listDialog.allowUseExistingLists = true;
-        this.listDialog.lists = this.itemDetails.lists;
+        this.listDialog.lists = item.lists;
         this.listDialog.title = "Remove from List";
         this.listDialog.movie = item;
         this.listDialog.show = true;
@@ -1079,9 +1122,11 @@ export default {
 
             await this.fetchFilters();
 
-            this.itemDetails = await store.getMovieDetails(
+            const { lists } = await store.getMovieDetails(
               this.listDialog.movie.id_Movies
             );
+
+            this.$set(this.listDialog.movie, "lists", lists);
 
             eventBus.showSnackbar("success", "item added to list");
           }
@@ -1124,6 +1169,7 @@ export default {
       await store.fetchFilterParentalAdvisory(this.mediatype);
       await store.fetchFilterPersons(this.mediatype);
       await store.fetchFilterCompanies(this.mediatype);
+      await store.fetchFilterIMDBPlotKeywords(this.mediatype);
       await store.fetchFilterYears(this.mediatype);
       await store.fetchFilterQualities(this.mediatype);
       await store.fetchFilterLanguages(this.mediatype, "audio");
@@ -1159,6 +1205,16 @@ export default {
       this.companyDialog.IMDB_Company_ID = company.id;
       this.companyDialog.Company_Name = company.name;
       // this.$refs.personDialog.init();
+
+      return;
+    },
+
+    onIMDBPlotKeywordClicked(plotKeyword) {
+      logger.log("plotKeyword clicked:", plotKeyword);
+
+      this.plotKeywordDialog.show = true;
+      this.plotKeywordDialog.id_IMDB_Plot_Keywords = plotKeyword.id_IMDB_Plot_Keywords;
+      this.plotKeywordDialog.Keyword = plotKeyword.Keyword;
 
       return;
     },
@@ -1274,6 +1330,10 @@ export default {
       this.companyDialog.show = false;
     },
 
+    onPlotKeywordDialogClose() {
+      this.plotKeywordDialog.show = false;
+    },
+
     onVideoPlayerDialogClose() {
       this.videoPlayerDialog.show = false;
     },
@@ -1377,6 +1437,25 @@ export default {
 
     showContentAdvisory(movie, show) {
       this.$set(movie, "showContentAdvisory", show);
+    },
+
+    async showPlotKeywords(movie, show) {
+      if (!show) {
+        this.$set(movie, "showPlotKeywords", false);
+        return;
+      }
+
+      if (!movie.plotKeywords) {
+        const plotKeywords = await store.fetchMoviePlotKeywords(
+          movie.id_Movies
+        );
+
+        logger.log("plotKeywords", plotKeywords);
+
+        this.$set(movie, "plotKeywords", plotKeywords);
+      }
+
+      this.$set(movie, "showPlotKeywords", true);
     },
 
     onSortChanged() {
@@ -1543,9 +1622,9 @@ export default {
 
 .duration-overlay-container {
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.4);
   border-bottom-left-radius: 2px;
-  border-bottom-right-radius: 2px;
+  border-bottom-right-radius: 4px;
   border-top-left-radius: 2px;
   border-top-right-radius: 2px;
   bottom: 0px;
@@ -1560,7 +1639,7 @@ export default {
   line-height: 12px;
   margin-bottom: 2px;
   margin-left: 4px;
-  margin-right: 8px;
+  margin-right: 1px;
   margin-top: 4px;
   padding-bottom: 2px;
   padding-left: 4px;
@@ -1568,6 +1647,8 @@ export default {
   padding-top: 2px;
   position: absolute;
   right: 0px;
+  text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px,
+    #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
 }
 
 .duration-overlay {

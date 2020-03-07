@@ -248,7 +248,6 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
 
   logger.log("regions used:", regions);
 
-  // TODO (LANG): also take share.languagesPrimaryTitle into account, as well as special title types
   let $IMDB_localTitle = null;
   if (regions) {
     for (let i = 0; i < regions.length; i++) {
@@ -270,12 +269,6 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
           const titleTypes = match[1];
           const title = match[2];
 
-          // if (matched.includes("(working title)")) {
-          //     logger.log('regions: skipping: (working title)');
-          //     continue;
-          // }
-
-          // TODO: filter types and regions
           if (titleTypes.trim()) {
             const arrTitleTypes = [];
             titleTypes.split("(").forEach(titleTypes => {
@@ -287,9 +280,6 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
             });
 
             logger.log("local title match:", { title, arrTitleTypes });
-
-            // TODO: splice the array's elements if they are allowed
-            // then check if array is not empty -> don't set the title then (break)
 
             let allowed = 0;
             for (let i = 0; i < arrTitleTypes.length; i++) {
@@ -311,8 +301,6 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
           $IMDB_localTitle = title;
           break;
         }
-
-        // }
       }
 
       if ($IMDB_localTitle) {
@@ -1087,6 +1075,43 @@ async function scrapeIMDBTrailerMediaURLs(trailerURL) {
   };
 }
 
+async function scrapeIMDBplotKeywords(movie) {
+  let plotKeywords = [];
+
+  const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/keywords`
+  logger.log("scrapeIMDBplotKeywords url:", url);
+
+  const response = await requestGetAsync(url);
+  const html = response.body;
+
+  const rxPlotKeywords = /<a href="\/search\/keyword\?[\s\S]*?>(.*?)<\/a>[\s\S]*?>(.*?relevant)/g;
+
+  let match = null;
+
+  while ((match = rxPlotKeywords.exec(html))) {
+    const Keyword = helpers.uppercaseEachWord(match[1].trim());
+    const relevanceString = match[2].trim();
+    let NumVotes = null;
+    let NumRelevant = null;
+
+    const rxRelevance = /(\d+) of (\d+)/;
+    if (rxRelevance.test(relevanceString)) {
+      NumRelevant = parseInt(relevanceString.match(rxRelevance)[1]);
+      NumVotes = parseInt(relevanceString.match(rxRelevance)[2]);
+    }
+
+    plotKeywords.push({
+      Keyword,
+      NumVotes,
+      NumRelevant
+    })
+  }
+
+  logger.log('plotKeywords:', plotKeywords)
+
+  return plotKeywords;
+}
+
 export {
   scrapeIMDBmainPageData,
   scrapeIMDBplotSummary,
@@ -1099,5 +1124,6 @@ export {
   scrapeIMDBPersonData,
   scrapeIMDBAdvancedTitleSearch,
   scrapeIMDBSearch,
-  scrapeIMDBTrailerMediaURLs
+  scrapeIMDBTrailerMediaURLs,
+  scrapeIMDBplotKeywords
 };

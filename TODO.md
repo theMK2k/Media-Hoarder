@@ -1,5 +1,17 @@
 # TO-DOs
 
+## CompanyDialog, PersonDialog, Plot Keyword Dialog
+include statistical infos (how many movies)
+
+## Plotkeywords
+OK - scrape plotkeywords
+OKish - show
+- filter
+
+## Complete Rescan
+- add plot items
+- we could use a complete rescan
+
 ## 720p, SD, HD Detection
 OK? - fix resolution Detection, e.g. 4:3 HD is oftentimes detected as 720p
 

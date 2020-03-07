@@ -43,6 +43,7 @@ const {
   scrapeIMDBreleaseinfo,
   scrapeIMDBtechnicalData,
   scrapeIMDBSearch,
+  scrapeIMDBplotKeywords
 } = require('./imdb-scraper');
 
 const scanOptions = {
@@ -62,6 +63,7 @@ const scanOptions = {
   rescanMoviesMetaData_fetchIMDBMetaData: true,
   rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
   rescanMoviesMetaData_fetchIMDBMetaData_plotSummary: true,
+  rescanMoviesMetaData_fetchIMDBMetaData_plotKeywords: true,
   rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
   rescanMoviesMetaData_fetchIMDBMetaData_technicalData: true,
   rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: true,
@@ -215,7 +217,27 @@ async function createIndexes(db) {
       "tbl_Movies_Languages",
       ["id_Movies", "Type", "Language"],
       true
-    )
+    ),
+    generateIndexQuery(
+      "tbl_IMDB_Plot_Keywords",
+      ["Keyword"],
+      true
+    ),
+    generateIndexQuery(
+      "tbl_Movies_IMDB_Plot_Keywords",
+      ["id_Movies"],
+      false
+    ),
+    generateIndexQuery(
+      "tbl_Movies_IMDB_Plot_Keywords",
+      ["id_IMDB_Plot_Keywords"],
+      false
+    ),
+    generateIndexQuery(
+      "tbl_Movies_IMDB_Plot_Keywords",
+      ["id_Movies", "id_IMDB_Plot_Keywords"],
+      true
+    ),
   ];
 
   logger.log("queries:", queries);
@@ -1182,6 +1204,11 @@ async function fetchIMDBMetaData(movie, onlyNew) {
       IMDBdata = Object.assign(IMDBdata, plotSummaryFull);
     }
 
+    let plotKeywords = [];
+    if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_plotKeywords) {
+      plotKeywords = await scrapeIMDBplotKeywords(movie);
+    }
+
     if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo) {
       const regions = await getRegions();
       const allowedTitleTypes = await getAllowedTitleTypes();
@@ -1222,7 +1249,7 @@ async function fetchIMDBMetaData(movie, onlyNew) {
     );
 
     if (scanOptions.rescanMoviesMetaData_saveIMDBData) {
-      await saveIMDBData(movie, IMDBdata, genres, credits, companies);
+      await saveIMDBData(movie, IMDBdata, genres, credits, companies, plotKeywords);
     }
   } catch (err) {
     logger.error(err);
@@ -1230,7 +1257,7 @@ async function fetchIMDBMetaData(movie, onlyNew) {
   }
 }
 
-async function saveIMDBData(movie, IMDBdata, genres, credits, companies) {
+async function saveIMDBData(movie, IMDBdata, genres, credits, companies, plotKeywords) {
   const IMDB_genres = IMDBdata.$IMDB_genres;
   delete IMDBdata.$IMDB_genres;
 
@@ -1340,6 +1367,46 @@ async function saveIMDBData(movie, IMDBdata, genres, credits, companies) {
         $IMDB_Company_ID: company.id,
         $Company_Name: company.name,
         $Role: company.role
+      }
+    );
+  }
+
+  for (let i = 0; i < plotKeywords.length; i++) {
+    let plotKeyword = plotKeywords[i];
+
+    let $id_IMDB_Plot_Keywords = await db.fireProcedureReturnScalar(`SELECT id_IMDB_Plot_Keywords FROM tbl_IMDB_Plot_Keywords WHERE Keyword = $Keyword`, { $Keyword: plotKeyword.Keyword });
+
+    if (!$id_IMDB_Plot_Keywords) {
+      await db.fireProcedure(`INSERT INTO tbl_IMDB_Plot_Keywords (Keyword) VALUES ($Keyword)`, { $Keyword: plotKeyword.Keyword });
+      $id_IMDB_Plot_Keywords = await db.fireProcedureReturnScalar(`SELECT id_IMDB_Plot_Keywords FROM tbl_IMDB_Plot_Keywords WHERE Keyword = $Keyword`, { $Keyword: plotKeyword.Keyword });
+    }
+
+    if (!$id_IMDB_Plot_Keywords) {
+      logger.error('unable to store plot keyword:', plotKeyword);
+    }
+
+    await db.fireProcedure(
+      `
+			INSERT INTO tbl_Movies_IMDB_Plot_Keywords (
+				id_Movies
+				, id_IMDB_Plot_Keywords
+				, NumVotes
+				, NumRelevant
+			) VALUES (
+				$id_Movies
+				, $id_IMDB_Plot_Keywords
+				, $NumVotes
+				, $NumRelevant
+			)
+			ON CONFLICT(id_Movies, id_IMDB_Plot_Keywords)
+			DO UPDATE SET
+				NumVotes = excluded.NumVotes
+				, NumRelevant = excluded.NumRelevant`,
+      {
+        $id_Movies: movie.id_Movies,
+        $id_IMDB_Plot_Keywords,
+        $NumVotes: plotKeyword.NumVotes,
+        $NumRelevant: plotKeyword.NumRelevant,
       }
     );
   }
@@ -1619,6 +1686,41 @@ async function fetchMedia($MediaType) {
       filterCompanies += ")";
     }
 
+    let filterIMDBPlotKeywords = "";
+    if (
+      shared.filterIMDBPlotKeywords &&
+      shared.filterIMDBPlotKeywords.find(filter => !filter.Selected)
+    ) {
+      if (
+        shared.filterIMDBPlotKeywords.find(
+          filter => filter.Selected && !filter.id_Filter_IMDB_Plot_Keywords
+        )
+      ) {
+        filterIMDBPlotKeywords = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies_IMDB_Plot_Keywords WHERE id_IMDB_Plot_Keywords IN (SELECT id_IMDB_Plot_Keywords FROM tbl_Filter_IMDB_Plot_Keywords)) `;
+      } else {
+        filterIMDBPlotKeywords = `AND (1=0 `;
+      }
+
+      if (
+        shared.filterIMDBPlotKeywords.find(
+          filter => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords
+        )
+      ) {
+        filterIMDBPlotKeywords += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_IMDB_Plot_Keywords WHERE id_IMDB_Plot_Keywords IN (`;
+
+        filterIMDBPlotKeywords += shared.filterIMDBPlotKeywords
+          .filter(filter => filter.Selected)
+          .map(filter => filter.id_IMDB_Plot_Keywords)
+          .reduce((prev, current) => {
+            return prev + (prev ? ", " : "") + `${current}`;
+          }, "");
+
+          filterIMDBPlotKeywords += "))";
+      }
+
+      filterIMDBPlotKeywords += ")";
+    }
+
     let filterYears = "";
     logger.log("shared.filterYears:", shared.filterYears);
     if (
@@ -1818,6 +1920,7 @@ async function fetchMedia($MediaType) {
     logger.log("fetchMedia filterParentalAdvisory:", filterParentalAdvisory);
     logger.log("fetchMedia filterPersons:", filterPersons);
     logger.log("fetchMedia filterCompanies:", filterCompanies);
+    logger.log("fetchMedia filterIMDBPlotKeywords:", filterIMDBPlotKeywords);
     logger.log("fetchMedia filterAudioLanguages:", filterAudioLanguages);
 
     const query = `
@@ -1877,7 +1980,8 @@ async function fetchMedia($MediaType) {
 		${filterPersons}
 		${filterYears}
 		${filterQualities}
-		${filterCompanies}
+    ${filterCompanies}
+    ${filterIMDBPlotKeywords}
 		${filterAudioLanguages}
 		${filterSubtitleLanguages}
 		${filterMetacriticScore}
@@ -2563,9 +2667,9 @@ async function fetchFilterPersons($MediaType) {
 
   // logger.log('fetchFilterPersons QUERY:', )
 
-  if (filterValues && filterValues.filterLists) {
+  if (filterValues && filterValues.filterPersons) {
     results.forEach(result => {
-      const filterValue = filterValues.filterLists.find(
+      const filterValue = filterValues.filterPersons.find(
         value => value.id_Filter_Persons === result.id_Filter_Persons
       );
 
@@ -2597,12 +2701,12 @@ async function fetchFilterCompanies($MediaType) {
 					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
 					WHERE
 						(MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
-						AND MOV.id_Movies NOT IN (
-						SELECT DISTINCT MC.id_Movies
-						FROM tbl_Movies_IMDB_Companies MC
-						INNER JOIN tbl_Movies MOV2 ON MC.id_Movies = MOV2.id_Movies
-						INNER JOIN tbl_SourcePaths SP2 ON MOV2.id_SourcePaths = SP2.id_SourcePaths AND SP2.MediaType = $MediaType
-						WHERE MC.Company_Name IN (SELECT Company_Name FROM tbl_Filter_Companies)
+              AND MOV.id_Movies NOT IN (
+              SELECT DISTINCT MC.id_Movies
+              FROM tbl_Movies_IMDB_Companies MC
+              INNER JOIN tbl_Movies MOV2 ON MC.id_Movies = MOV2.id_Movies
+              INNER JOIN tbl_SourcePaths SP2 ON MOV2.id_SourcePaths = SP2.id_SourcePaths AND SP2.MediaType = $MediaType
+              WHERE MC.Company_Name IN (SELECT Company_Name FROM tbl_Filter_Companies)
 					)
 				)
 			AS NumMovies
@@ -2627,9 +2731,9 @@ async function fetchFilterCompanies($MediaType) {
 
   // logger.log('fetchFilterCompanies QUERY:', )
 
-  if (filterValues && filterValues.filterLists) {
+  if (filterValues && filterValues.filterCompanies) {
     results.forEach(result => {
-      const filterValue = filterValues.filterLists.find(
+      const filterValue = filterValues.filterCompanies.find(
         value => value.id_Filter_Companies === result.id_Filter_Companies
       );
 
@@ -2644,6 +2748,72 @@ async function fetchFilterCompanies($MediaType) {
   logger.log("fetchFilterCompanies result:", results);
 
   shared.filterCompanies = results;
+}
+
+async function fetchFilterIMDBPlotKeywords($MediaType) {
+  const filterValues = await fetchFilterValues($MediaType);
+
+  const results = await db.fireProcedureReturnAll(
+    `
+		SELECT
+			0 AS id_Filter_IMDB_Plot_Keywords
+			, NULL AS id_IMDB_Plot_Keywords
+			, '<any other plot keyword>' AS Keyword
+			, 1 AS Selected
+			, (
+					SELECT COUNT(1)
+					FROM tbl_Movies MOV
+					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+					WHERE
+						(MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+						AND MOV.id_Movies NOT IN (
+              SELECT DISTINCT MPK.id_Movies
+              FROM tbl_Movies_IMDB_Plot_Keywords MPK
+              INNER JOIN tbl_Movies MOV2 ON MPK.id_Movies = MOV2.id_Movies
+              INNER JOIN tbl_SourcePaths SP2 ON MOV2.id_SourcePaths = SP2.id_SourcePaths AND SP2.MediaType = $MediaType
+              WHERE MPK.id_IMDB_Plot_Keywords IN (SELECT id_IMDB_Plot_Keywords FROM tbl_Filter_IMDB_Plot_Keywords)
+					)
+				)
+			AS NumMovies
+		UNION
+		SELECT
+    id_Filter_IMDB_Plot_Keywords
+			, id_IMDB_Plot_Keywords
+			, Keyword
+			, 1 AS Selected
+			, (
+					SELECT COUNT(1) FROM (
+            SELECT DISTINCT MPK.id_Movies
+            FROM tbl_Movies_IMDB_Plot_Keywords MPK
+            INNER JOIN tbl_Movies MOV2 ON MPK.id_Movies = MOV2.id_Movies
+            INNER JOIN tbl_SourcePaths SP2 ON MOV2.id_SourcePaths = SP2.id_SourcePaths AND SP2.MediaType = $MediaType
+            WHERE MPK.id_IMDB_Plot_Keywords IN (SELECT id_IMDB_Plot_Keywords FROM tbl_Filter_IMDB_Plot_Keywords WHERE id_IMDB_Plot_Keywords = FILTERPLOTKEYWORDS.id_IMDB_Plot_Keywords)
+        )
+			) AS NumMovies
+		FROM tbl_Filter_IMDB_Plot_Keywords FILTERPLOTKEYWORDS
+	`,
+    { $MediaType }
+  );
+
+  // logger.log('fetchFilterIMDBPlotKeywords QUERY:', )
+
+  if (filterValues && filterValues.filterIMDBPlotKeywords) {
+    results.forEach(result => {
+      const filterValue = filterValues.filterIMDBPlotKeywords.find(
+        value => value.id_Filter_IMDB_Plot_Keywords === result.id_Filter_IMDB_Plot_Keywords
+      );
+
+      if (filterValue) {
+        result.Selected = filterValue.Selected;
+      }
+
+      result.NumMovies = result.NumMovies.toLocaleString();
+    });
+  }
+
+  logger.log("fetchFilterIMDBPlotKeywords result:", results);
+
+  shared.filterIMDBPlotKeywords = results;
 }
 
 async function fetchFilterYears($MediaType) {
@@ -3149,6 +3319,19 @@ async function fetchMovieCompanies($id_Movies) {
   return companiesCategorized;
 }
 
+async function fetchMoviePlotKeywords($id_Movies) {
+  return await db.fireProcedureReturnAll(`
+    SELECT
+      PK.id_IMDB_Plot_Keywords
+      , PK.Keyword
+      , MPK.NumVotes
+      , MPK.NumRelevant
+    FROM tbl_Movies_IMDB_Plot_Keywords MPK
+    INNER JOIN tbl_IMDB_Plot_Keywords PK ON MPK.id_IMDB_Plot_Keywords = PK.id_IMDB_Plot_Keywords
+    WHERE MPK.id_Movies = $id_Movies
+  `, { $id_Movies });
+}
+
 async function fetchIMDBPerson($IMDB_Person_ID) {
   return await db.fireProcedureReturnAll(
     `
@@ -3194,6 +3377,28 @@ async function deleteFilterPerson($id_Filter_Persons) {
   return await db.fireProcedureReturnScalar(
     `DELETE FROM tbl_Filter_Persons WHERE id_Filter_Persons = $id_Filter_Persons`,
     { $id_Filter_Persons }
+  );
+}
+
+async function addFilterIMDBPlotKeyword($id_IMDB_Plot_Keywords, $Keyword) {
+  const id_Filter_IMDB_Plot_Keywords = await db.fireProcedureReturnScalar(
+    `SELECT id_Filter_IMDB_Plot_Keywords FROM tbl_Filter_IMDB_Plot_Keywords WHERE id_IMDB_Plot_Keywords = $id_IMDB_Plot_Keywords`,
+    { $id_IMDB_Plot_Keywords }
+  );
+  if (id_Filter_IMDB_Plot_Keywords) {
+    return;
+  }
+
+  await db.fireProcedure(
+    `INSERT INTO tbl_Filter_IMDB_Plot_Keywords (id_IMDB_Plot_Keywords, Keyword, created_at) VALUES ($id_IMDB_Plot_Keywords, $Keyword, DATETIME('now'))`,
+    { $id_IMDB_Plot_Keywords, $Keyword }
+  );
+}
+
+async function deleteFilterIMDBPlotKeyword($id_Filter_IMDB_Plot_Keywords) {
+  return await db.fireProcedureReturnScalar(
+    `DELETE FROM tbl_Filter_IMDB_Plot_Keywords WHERE id_Filter_IMDB_Plot_Keywords = $id_Filter_IMDB_Plot_Keywords`,
+    { $id_Filter_IMDB_Plot_Keywords }
   );
 }
 
@@ -3663,6 +3868,17 @@ async function getAllowedTitleTypes() {
   return result;
 }
 
+async function getAllIMDBPlotKeywords() {
+  return await db.fireProcedureReturnAll(`
+    SELECT
+      PK.id_IMDB_Plot_Keywords
+      , Keyword
+      , (SELECT COUNT(1) FROM tbl_Movies_IMDB_Plot_Keywords MPK WHERE PK.id_IMDB_Plot_Keywords = MPK.id_IMDB_Plot_Keywords) AS NumMovies
+    FROM tbl_IMDB_Plot_Keywords PK
+    ORDER BY NumMovies DESC, Keyword ASC
+  `)
+}
+
 export {
   db,
   fetchSourcePaths,
@@ -3680,6 +3896,7 @@ export {
   fetchFilterLists,
   fetchFilterParentalAdvisory,
   fetchFilterPersons,
+  fetchFilterIMDBPlotKeywords,
   fetchFilterYears,
   fetchFilterQualities,
   fetchFilterCompanies,
@@ -3703,6 +3920,8 @@ export {
   deleteFilterPerson,
   addFilterCompany,
   deleteFilterCompany,
+  addFilterIMDBPlotKeyword,
+  deleteFilterIMDBPlotKeyword,
   assignIMDB,
   fetchSortValues,
   saveSortValues,
@@ -3717,5 +3936,7 @@ export {
   addRegions,
   fetchIMDBTitleTypes,
   getFallbackLanguage,
-  fetchLanguageSettings
+  fetchLanguageSettings,
+  fetchMoviePlotKeywords,
+  getAllIMDBPlotKeywords
 };

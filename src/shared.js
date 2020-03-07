@@ -28,6 +28,8 @@ const shared = new Vue({
     filterIMDBRating: [0, 10],
     filterIMDBRatingNone: true,
 
+    filterIMDBPlotKeywords: [],
+
     contentAdvisoryCategories: [
       {
         Name: 'Nudity',

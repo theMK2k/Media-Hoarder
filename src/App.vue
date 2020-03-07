@@ -439,6 +439,35 @@
                 ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
+
+            <!-- FILTER IMDB Plot Keywords -->
+            <v-expansion-panel style="padding: 0px!important">
+              <v-expansion-panel-header
+                style="padding: 8px!important"
+              >Plot Keywords {{ filterIMDBPlotKeywordsTitle }}</v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-row>
+                  <v-btn text v-on:click="setAllIMDBPlotKeywords(false)">NONE</v-btn>
+                  <v-btn text v-on:click="setAllIMDBPlotKeywords(true)">ALL</v-btn>
+                  <v-btn text v-on:click="addIMDBPlotKeyword()">FIND</v-btn>
+                </v-row>
+                <v-row v-for="plotKeyword in $shared.filterIMDBPlotKeywords" v-bind:key="plotKeyword.id_Filter_IMDB_Plot_Keywords">
+                  <v-checkbox
+                    v-bind:label="plotKeyword.Keyword + ' (' + plotKeyword.NumMovies + ')'"
+                    v-model="plotKeyword.Selected"
+                    v-on:click.native="filtersChanged"
+                    style="margin: 0px"
+                    color="dark-grey"
+                  ></v-checkbox>
+                  <v-spacer></v-spacer>
+                  <v-icon
+                    style="align-items: flex-start; padding-top: 4px; cursor: pointer"
+                    v-if="plotKeyword.id_Filter_IMDB_Plot_Keywords"
+                    v-on:click="deleteFilterIMDBPlotKeyword(plotKeyword)"
+                  >mdi-delete</v-icon>
+                </v-row>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
           </v-expansion-panels>
         </div>
 
@@ -833,6 +862,24 @@ export default {
       );
     },
 
+    filterIMDBPlotKeywordsTitle() {
+      if (!this.$shared.filterIMDBPlotKeywords.find(filter => !filter.Selected)) {
+        return "(ALL)";
+      }
+
+      if (!this.$shared.filterIMDBPlotKeywords.find(filter => filter.Selected)) {
+        return "(NONE)";
+      }
+
+      return (
+        "(" +
+        this.$shared.filterIMDBPlotKeywords.filter(filter => filter.Selected).length +
+        "/" +
+        this.$shared.filterIMDBPlotKeywords.length +
+        ")"
+      );
+    },
+
     filterAudioLanguagesTitle() {
       if (!this.$shared.filterAudioLanguages.find(filter => !filter.Selected)) {
         return "(ALL)";
@@ -1059,6 +1106,22 @@ export default {
       this.filtersChanged();
     },
 
+    setAllIMDBPlotKeywords: function(value, exclusionList) {
+      this.$shared.filterIMDBPlotKeywords.forEach(sp => {
+        if (
+          exclusionList &&
+          exclusionList.find(val => sp.id_IMDB_Plot_Keywords === val)
+        ) {
+          sp.Selected = !value;
+          return;
+        }
+
+        sp.Selected = value;
+      });
+
+      this.filtersChanged();
+    },
+
     getFilterRatingLabel(rating, numMovies) {
       let label = "";
 
@@ -1139,6 +1202,11 @@ export default {
       eventBus.refetchFilters();
     },
 
+    deleteFilterIMDBPlotKeyword(filterIMDBPlotKeyword) {
+      store.deleteFilterIMDBPlotKeyword(filterIMDBPlotKeyword.id_Filter_IMDB_Plot_Keywords);
+      eventBus.refetchFilters();
+    },
+
     deleteCompany(company) {
       store.deleteFilterCompany(company.id_Filter_Companies);
       eventBus.refetchFilters();
@@ -1208,6 +1276,10 @@ export default {
     addPerson() {
       this.searchPersonsDialog.show = true;
       this.$refs.searchPersonsDialog.init();
+    },
+
+    addIMDBPlotKeyword() {
+      // TODO: implement searchIMDBPlotKeywordsDialog
     },
 
     onSearchPersonsDialogCancel() {
@@ -1323,6 +1395,10 @@ export default {
 
       if (setFilter.filterPersons) {
         this.setAllPersons(false, setFilter.filterPersons);
+      }
+
+      if (setFilter.filterIMDBPlotKeywords) {
+        this.setAllIMDBPlotKeywords(false, setFilter.filterIMDBPlotKeywords);
       }
     });
 
