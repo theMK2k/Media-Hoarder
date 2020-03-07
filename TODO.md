@@ -1,19 +1,7 @@
 # TO-DOs
 
-## Search...Dialog
-- allow Sort by NumMovies
-
 ## CompanyDialog, PersonDialog, Plot Keyword Dialog
 include statistical infos (how many movies)
-
-## Plotkeywords
-OK - scrape plotkeywords
-OKish - show
-- filter
-
-## Complete Rescan
-- add plot items
-- we could use a complete rescan
 
 ## 720p, SD, HD Detection
 OK? - fix resolution Detection, e.g. 4:3 HD is oftentimes detected as 720p
@@ -24,9 +12,6 @@ OK? - fix resolution Detection, e.g. 4:3 HD is oftentimes detected as 720p
   - creates an error report
   - sends an email on error
   - saves status on web location (client can then check the status)
-
-## Pagination
-- implement better pagination control (move left, move right, middle: current page / total pages -> dropdown)
 
 ## Mediainfo Languages
 - we get languages like "German" from Mediainfo and map them to e.g. "De" using languages.js and store.js' ensureLanguageMapping
