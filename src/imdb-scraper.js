@@ -168,9 +168,9 @@ async function scrapeIMDBplotSummary(movie, shortSummary) {
   let match = null;
 
   while ((match = rxplotSummary.exec(html))) {
-      if (match[1].includes(shortSummaryClean)) {
-        $IMDB_plotSummaryFull = match[1];
-      }
+    if (match[1].includes(shortSummaryClean)) {
+      $IMDB_plotSummaryFull = match[1];
+    }
   }
 
   return { $IMDB_plotSummaryFull };
@@ -253,7 +253,7 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
     for (let i = 0; i < regions.length; i++) {
       const region = regions[i].name;
 
-      logger.log("regions trying:", region);
+      logger.log("regions trying:", `"${region}"`);
 
       if (!$IMDB_localTitle) {
         const rxLocalTitleFuzzy = new RegExp(
@@ -264,7 +264,7 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
         let match = null;
 
         while ((match = rxLocalTitleFuzzy.exec(html))) {
-          logger.log("regions: fuzzy match found");
+          logger.log("regions: fuzzy match found:", match);
 
           const titleTypes = match[1];
           const title = match[2];
@@ -279,7 +279,7 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
               }
             });
 
-            logger.log("local title match:", { title, arrTitleTypes });
+            logger.log("regions: local title match:", { title, arrTitleTypes });
 
             let allowed = 0;
             for (let i = 0; i < arrTitleTypes.length; i++) {
@@ -292,12 +292,13 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
 
             if (allowed !== arrTitleTypes.length) {
               logger.log(
-                "skipped local title, some title types are not allowed"
+                "regions: skipped local title, some title types are not allowed"
               );
-              break;
+              continue;
             }
           }
 
+          logger.log('regions: using local title:', title);
           $IMDB_localTitle = title;
           break;
         }
@@ -921,10 +922,10 @@ async function scrapeIMDBAdvancedTitleSearch(title, titleTypes) {
     `https://www.imdb.com/search/title/?title=${title}` +
     (titleTypes.find(titleType => !titleType.checked)
       ? "&title_type=" +
-        titleTypes
-          .filter(titleType => titleType.checked)
-          .map(titleType => titleType.id)
-          .reduce((prev, current) => prev + (prev ? "," : "") + current)
+      titleTypes
+        .filter(titleType => titleType.checked)
+        .map(titleType => titleType.id)
+        .reduce((prev, current) => prev + (prev ? "," : "") + current)
       : "");
 
   logger.log("scrapeIMDBAdvancedTitleSearch url:", url);
@@ -1112,6 +1113,107 @@ async function scrapeIMDBplotKeywords(movie) {
   return plotKeywords;
 }
 
+async function scrapeIMDBFilmingLocations(movie) {
+  let filmingLocations = [];
+
+  const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/locations`
+  logger.log("scrapeIMDBFilmingLocations url:", url);
+
+  const response = await requestGetAsync(url);
+  const html = response.body;
+
+  `
+  <a href="/search/title?locations=Atlanta,%20Georgia,%20USA&ref_=ttloc_loc_2"
+  itemprop='url'>Atlanta, Georgia, USA
+  </a>                        </dt>
+                          <dd>
+  (as Lagos)                        </dd>
+                          <div class="did-you-know-actions">
+  <a href="/title/tt3498820/locations?item=lc0924105"
+  class="interesting-count-text" > 103 of 111 found this interesting</a>
+  `
+
+  const rxFilmingLocations = /<a href="\/search\/title\?locations=[\s\S]*?>([\s\S]*?)<\/a>[\s\S]*?<dd>([\s\S]*?)<\/dd>[\s\S]*?class="interesting-count-text"\s*>(.*?)<\/a>/g;
+
+  let match = null;
+
+  while ((match = rxFilmingLocations.exec(html))) {
+    const Location = match[1].trim();
+    const Details = match[2].trim().replace('(', '').replace(')', '');
+
+    const interestingString = match[3];
+
+    let NumInteresting = null;
+    let NumVotes = null;
+
+    const rxInteresting = /(\d+) of (\d+)/;
+    if (rxInteresting.test(interestingString)) {
+      NumInteresting = parseInt(interestingString.match(rxInteresting)[1]);
+      NumVotes = parseInt(interestingString.match(rxInteresting)[2]);
+    }
+
+    filmingLocations.push({
+      Location,
+      Details,
+      NumInteresting,
+      NumVotes
+    })
+  }
+
+  logger.log('filmingLocations:', filmingLocations)
+
+  return filmingLocations;
+}
+
+async function scrapeIMDBRatingDemographics(movie) {
+  let ratingDemographics = {};
+
+  const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/ratings`
+  logger.log("scrapeIMDBRatingDemographics url:", url);
+
+  const response = await requestGetAsync(url);
+  const html = response.body;
+
+  /*
+    <td class="ratingTable" align="center">
+            <div class="bigcell">7,8</div>
+            <div class="smallcell">
+                <a href="/title/tt2207986/ratings?demo=females_aged_18_29">
+                    22
+                </a>
+            </div>
+    </td>
+  */
+  const rxRatingDemographics = /<td class="ratingTable[\s\S]*?<\/td>/g
+
+  let match = null;
+
+  while ((match = rxRatingDemographics.exec(html))) {
+    const ratingDemographicString = match[0];
+
+    const rxData = /<div class="bigcell">([\s\S]*?)<\/div>[\s\S]*?<div class="smallcell">[\s\S]*?\/ratings\?demo=(.*?)">([\s\S]*?)<\/a>/;
+
+    if (rxData.test(ratingDemographicString)) {
+      const ratingDemographicsMatch = ratingDemographicString.match(rxData);
+
+      const strRating = ratingDemographicsMatch[1].trim().replace(",", ".");
+      const demographic = ratingDemographicsMatch[2].trim();
+      const strNumVotes = ratingDemographicsMatch[3].trim().replace(/,/g, "");
+
+      ratingDemographics[`$IMDB_rating_${demographic}`] = parseFloat(strRating);
+      ratingDemographics[`$IMDB_numVotes_${demographic}`] = parseInt(strNumVotes);
+    }
+  }
+
+  // we already have the following data as IMDB_rating and IMDB_numVotes from the main page and thus delete it here
+  delete ratingDemographics[`$IMDB_rating_imdb_users`];
+  delete ratingDemographics[`$IMDB_numVotes_imdb_users`];
+
+  logger.log('ratingDemographics:', ratingDemographics)
+
+  return ratingDemographics;
+}
+
 export {
   scrapeIMDBmainPageData,
   scrapeIMDBplotSummary,
@@ -1125,5 +1227,7 @@ export {
   scrapeIMDBAdvancedTitleSearch,
   scrapeIMDBSearch,
   scrapeIMDBTrailerMediaURLs,
-  scrapeIMDBplotKeywords
+  scrapeIMDBplotKeywords,
+  scrapeIMDBFilmingLocations,
+  scrapeIMDBRatingDemographics
 };

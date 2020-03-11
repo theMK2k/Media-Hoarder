@@ -43,7 +43,9 @@ const {
   scrapeIMDBreleaseinfo,
   scrapeIMDBtechnicalData,
   scrapeIMDBSearch,
-  scrapeIMDBplotKeywords
+  scrapeIMDBplotKeywords,
+  scrapeIMDBFilmingLocations,
+  scrapeIMDBRatingDemographics
 } = require('./imdb-scraper');
 
 const scanOptions = {
@@ -62,6 +64,7 @@ const scanOptions = {
 
   rescanMoviesMetaData_fetchIMDBMetaData: true,
   rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
+  rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics: true,
   rescanMoviesMetaData_fetchIMDBMetaData_plotSummary: true,
   rescanMoviesMetaData_fetchIMDBMetaData_plotKeywords: true,
   rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
@@ -69,6 +72,7 @@ const scanOptions = {
   rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: true,
   rescanMoviesMetaData_fetchIMDBMetaData_creditsData: true,
   rescanMoviesMetaData_fetchIMDBMetaData_companiesData: true,
+  rescanMoviesMetaData_fetchIMDBMetaData_filmingLocations: true,
   rescanMoviesMetaData_saveIMDBData: true,
 
   applyMetaData: true,
@@ -236,6 +240,26 @@ async function createIndexes(db) {
     generateIndexQuery(
       "tbl_Movies_IMDB_Plot_Keywords",
       ["id_Movies", "id_IMDB_Plot_Keywords"],
+      true
+    ),
+    generateIndexQuery(
+      "tbl_IMDB_Filming_Locations",
+      ["Location"],
+      true
+    ),
+    generateIndexQuery(
+      "tbl_Movies_IMDB_Filming_Locations",
+      ["id_Movies"],
+      false
+    ),
+    generateIndexQuery(
+      "tbl_Movies_IMDB_Filming_Locations",
+      ["id_IMDB_Filming_Locations"],
+      false
+    ),
+    generateIndexQuery(
+      "tbl_Movies_IMDB_Filming_Locations",
+      ["id_Movies", "id_IMDB_Filming_Locations"],
       true
     ),
   ];
@@ -691,35 +715,83 @@ async function applyMetaData(onlyNew, id_Movies) {
 
     const movie = movies[i];
 
-    let Name = movie.IMDB_localTitle;
+    // let Name = movie.IMDB_localTitle;
+    // let Name2 = null;
+
+    let Name = null;
     let Name2 = null;
 
-    if (
-      movie.IMDB_originalTitle &&
-      !movie.IMDB_localTitle.toLowerCase().includes(
-        movie.IMDB_originalTitle.toLowerCase()
-      )
-    ) {
-      if (Name) {
-        Name2 = movie.IMDB_originalTitle;
-      } else {
-        Name = movie.IMDB_originalTitle;
-      }
+    const names = [];
+
+    logger.log('names:', {
+      IMDB_localTitle: movie.IMDB_localTitle,
+      IMDB_originalTitle: movie.IMDB_originalTitle,
+      IMDB_primaryTitle: movie.IMDB_primaryTitle
+    })
+
+    if (movie.IMDB_localTitle) {
+      names.push(movie.IMDB_localTitle);
     }
 
-    if (
-      movie.IMDB_primaryTitle &&
-      !movie.IMDB_localTitle &&
-      !movie.IMDB_originalTitle.toLowerCase().includes(
-        movie.IMDB_primaryTitle.toLowerCase()
+    if (movie.IMDB_originalTitle && (
+      name.length === 0 ||
+      (!name[0].toLowerCase().includes(movie.IMDB_originalTitle.toLowerCase()
+        &&
+        !movie.IMDB_originalTitle.toLowerCase().includes(name[0].toLowerCase())
       )
-    ) {
-      if (Name) {
-        Name2 = movie.IMDB_originalTitle;
-      } else {
-        Name = movie.IMDB_originalTitle;
-      }
+      ))) {
+      names.push(movie.IMDB_originalTitle);
     }
+
+    if (movie.IMDB_primaryTitle && name.length < 2 && (
+      name.length === 0 ||
+      (!name[0].toLowerCase().includes(movie.IMDB_primaryTitle.toLowerCase()
+        &&
+        !movie.IMDB_primaryTitle.toLowerCase().includes(name[0].toLowerCase())
+      )
+      ))) {
+      names.push(movie.IMDB_primaryTitle);
+    }
+
+    if (names.length > 0) {
+      Name = names[0];
+    }
+
+    if (names.length > 1) {
+      Name2 = names[1];
+    }
+
+    logger.log('names:', {
+      Name,
+      Name2
+    })
+
+    // if (
+    //   movie.IMDB_originalTitle &&
+    //   !movie.IMDB_localTitle.toLowerCase().includes(
+    //     movie.IMDB_originalTitle.toLowerCase()
+    //   )
+    // ) {
+    //   if (Name) {
+    //     Name2 = movie.IMDB_originalTitle;
+    //   } else {
+    //     Name = movie.IMDB_originalTitle;
+    //   }
+    // }
+    
+    // if (
+    //   movie.IMDB_primaryTitle &&
+    //   !movie.IMDB_localTitle &&
+    //   !movie.IMDB_originalTitle.toLowerCase().includes(
+    //     movie.IMDB_primaryTitle.toLowerCase()
+    //   )
+    // ) {
+    //   if (Name) {
+    //     Name2 = movie.IMDB_originalTitle;
+    //   } else {
+    //     Name = movie.IMDB_originalTitle;
+    //   }
+    // }
 
     if (!Name) {
       Name = helpers.getMovieNameFromFileName(movie.Filename);
@@ -910,16 +982,23 @@ async function applyMediaInfo(movie, onlyNew) {
 
           // eslint-disable-next-line no-unused-vars
           let durationSeconds = 0;
-          if (/(\d*)h/.test(MI.$MI_Duration)) {
-            durationSeconds +=
-              60 * 60 * parseInt(MI.$MI_Duration.match(/(\d*)h/)[1]);
+
+          if (MI.$MI_Duration.includes('h') || MI.$MI_Duration.includes('mn') || MI.$MI_Duration.includes('s')) {
+            if (/(\d*)h/.test(MI.$MI_Duration)) {
+              durationSeconds +=
+                60 * 60 * parseInt(MI.$MI_Duration.match(/(\d*)h/)[1]);
+            }
+            if (/(\d*)mn/.test(MI.$MI_Duration)) {
+              durationSeconds +=
+                60 * parseInt(MI.$MI_Duration.match(/(\d*)mn/)[1]);
+            }
+            if (/(\d*)s/.test(MI.$MI_Duration)) {
+              durationSeconds += parseInt(MI.$MI_Duration.match(/(\d*)s/)[1]);
+            }
           }
-          if (/(\d*)mn/.test(MI.$MI_Duration)) {
-            durationSeconds +=
-              60 * parseInt(MI.$MI_Duration.match(/(\d*)mn/)[1]);
-          }
-          if (/(\d*)s/.test(MI.$MI_Duration)) {
-            durationSeconds += parseInt(MI.$MI_Duration.match(/(\d*)s/)[1]);
+
+          if (/^\d+/.test(MI.$MI_Duration) && /\d+$/.test(MI.$MI_Duration)) {
+            durationSeconds = parseInt(MI.$MI_Duration);
           }
 
           if (durationSeconds > 0) {
@@ -959,6 +1038,13 @@ async function applyMediaInfo(movie, onlyNew) {
           track.Display_aspect_ratio.length > 0
         ) {
           MI.$MI_Aspect_Ratio = track.Display_aspect_ratio[0];
+        }
+
+        if (
+          track.DisplayAspectRatio &&
+          track.DisplayAspectRatio.length > 0
+        ) {
+          MI.$MI_Aspect_Ratio = track.DisplayAspectRatio[0];
         }
       }
 
@@ -1199,6 +1285,11 @@ async function fetchIMDBMetaData(movie, onlyNew) {
       IMDBdata = Object.assign(IMDBdata, mainPageData);
     }
 
+    if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics) {
+      const ratingDemographics = await scrapeIMDBRatingDemographics(movie);
+      IMDBdata = Object.assign(IMDBdata, ratingDemographics);
+    }
+
     if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_plotSummary) {
       const plotSummaryFull = await scrapeIMDBplotSummary(movie, IMDBdata.$IMDB_plotSummary);
       IMDBdata = Object.assign(IMDBdata, plotSummaryFull);
@@ -1241,6 +1332,11 @@ async function fetchIMDBMetaData(movie, onlyNew) {
       companies = companiesData.companies;
     }
 
+    let filmingLocations = [];
+    if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_filmingLocations) {
+      filmingLocations = await scrapeIMDBFilmingLocations(movie);
+    }
+
     logger.log("IMDBdata:", IMDBdata);
 
     const genres = await db.fireProcedureReturnAll(
@@ -1249,7 +1345,7 @@ async function fetchIMDBMetaData(movie, onlyNew) {
     );
 
     if (scanOptions.rescanMoviesMetaData_saveIMDBData) {
-      await saveIMDBData(movie, IMDBdata, genres, credits, companies, plotKeywords);
+      await saveIMDBData(movie, IMDBdata, genres, credits, companies, plotKeywords, filmingLocations);
     }
   } catch (err) {
     logger.error(err);
@@ -1257,7 +1353,7 @@ async function fetchIMDBMetaData(movie, onlyNew) {
   }
 }
 
-async function saveIMDBData(movie, IMDBdata, genres, credits, companies, plotKeywords) {
+async function saveIMDBData(movie, IMDBdata, genres, credits, companies, plotKeywords, filmingLocations) {
   const IMDB_genres = IMDBdata.$IMDB_genres;
   delete IMDBdata.$IMDB_genres;
 
@@ -1407,6 +1503,49 @@ async function saveIMDBData(movie, IMDBdata, genres, credits, companies, plotKey
         $id_IMDB_Plot_Keywords,
         $NumVotes: plotKeyword.NumVotes,
         $NumRelevant: plotKeyword.NumRelevant,
+      }
+    );
+  }
+
+  for (let i = 0; i < filmingLocations.length; i++) {
+    let filmingLocation = filmingLocations[i];
+
+    let $id_IMDB_Filming_Locations = await db.fireProcedureReturnScalar(`SELECT id_IMDB_Filming_Locations FROM tbl_IMDB_Filming_Locations WHERE Location = $Location`, { $Location: filmingLocation.Location });
+
+    if (!$id_IMDB_Filming_Locations) {
+      await db.fireProcedure(`INSERT INTO tbl_IMDB_Filming_Locations (Location) VALUES ($Location)`, { $Location: filmingLocation.Location });
+      $id_IMDB_Filming_Locations = await db.fireProcedureReturnScalar(`SELECT id_IMDB_Filming_Locations FROM tbl_IMDB_Filming_Locations WHERE Location = $Location`, { $Location: filmingLocation.Location });
+    }
+
+    if (!$id_IMDB_Filming_Locations) {
+      logger.error('unable to store filming location:', filmingLocation);
+    }
+
+    await db.fireProcedure(
+      `
+			INSERT INTO tbl_Movies_IMDB_Filming_Locations (
+				id_Movies
+				, id_IMDB_Filming_Locations
+        , Details
+        , NumVotes
+				, NumInteresting
+			) VALUES (
+				$id_Movies
+        , $id_IMDB_Filming_Locations
+        , $Details
+				, $NumVotes
+				, $NumInteresting
+			)
+			ON CONFLICT(id_Movies, id_IMDB_Filming_Locations)
+			DO UPDATE SET
+        Details = excluded.Details  
+        , NumVotes = excluded.NumVotes
+				, NumInteresting = excluded.NumInteresting`,
+      {
+        $id_Movies: movie.id_Movies,
+        $id_IMDB_Filming_Locations: $id_IMDB_Filming_Locations,
+        $NumVotes: filmingLocation.NumVotes,
+        $NumInteresting: filmingLocation.NumInteresting,
       }
     );
   }
@@ -1715,7 +1854,7 @@ async function fetchMedia($MediaType) {
             return prev + (prev ? ", " : "") + `${current}`;
           }, "");
 
-          filterIMDBPlotKeywords += "))";
+        filterIMDBPlotKeywords += "))";
       }
 
       filterIMDBPlotKeywords += ")";
