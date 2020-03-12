@@ -778,7 +778,7 @@ async function applyMetaData(onlyNew, id_Movies) {
     //     Name = movie.IMDB_originalTitle;
     //   }
     // }
-    
+
     // if (
     //   movie.IMDB_primaryTitle &&
     //   !movie.IMDB_localTitle &&
@@ -2147,10 +2147,13 @@ async function fetchMedia($MediaType) {
       item.yearDisplay = item.startYear
         ? "(" + item.startYear + (item.endYear ? `-${item.endYear}` : "") + ")"
         : "";
-      item.IMDB_ratingDisplay = item.IMDB_rating
+        item.IMDB_ratingFormatted = item.IMDB_rating
         ? `${item.IMDB_rating.toLocaleString(undefined, {
           minimumFractionDigits: 1
-        })} (${item.IMDB_numVotes.toLocaleString()})`
+        })}`
+        : "";
+      item.IMDB_ratingDisplay = item.IMDB_ratingFormatted
+        ? `${item.IMDB_ratingFormatted} (${item.IMDB_numVotes.toLocaleString()})`
         : "";
 
       item.AudioLanguages = generateLanguageString(item.MI_Audio_Languages, preferredLanguages);

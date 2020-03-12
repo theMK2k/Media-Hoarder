@@ -25,20 +25,17 @@
           <i aria-hidden="true" class="v-icon notranslate mdi mdi-chevron-left theme--dark"></i>
         </button>
       </li>
-      <!-- <li>
-        <button type="button" class="v-pagination__item">1</button>
-      </li>-->
       <li>
         <v-select
           solo
           dense
-          v-bind:items="items"
-          item-text="Description"
-          item-value="Field"
-          label="Sort"
-          style="max-width: 80px; height: 40px"
+          v-bind:items="pages"
+          item-text="displayText"
+          item-value="page"
+          label="Page"
+          style="max-width: 200px; height: 40px"
           v-model="$shared.currentPage"
-        ></v-select>  <!-- label="Solo field" -->
+        ></v-select>
       </li>
       <li>
         <button
@@ -70,7 +67,7 @@
 
 <script>
 export default {
-  props: ["length"],
+  props: ["length", "pages"],
 
   computed: {
     prevClass() {
@@ -88,7 +85,11 @@ export default {
     items() {
       const items = [];
       for (let i = 1; i <= this.length; i++) {
-        items.push(i);
+        // items.push(i);
+        items.push({
+          page: i,
+          displayText: `${i} / ${this.length}`
+        })
       }
 
       return items;

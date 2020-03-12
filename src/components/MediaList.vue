@@ -57,7 +57,11 @@
       <div v-if="numPages">
         <!-- <v-pagination v-bind:length="numPages" v-model="$shared.currentPage" total-visible="7"></v-pagination> -->
 
-        <mk-pagination v-bind:length="numPages" v-model="$shared.currentPage"></mk-pagination>
+        <mk-pagination
+          v-bind:length="numPages"
+          v-bind:pages="paginationItems"
+          v-model="$shared.currentPage"
+        ></mk-pagination>
       </div>
     </v-row>
 
@@ -521,7 +525,7 @@
                   <!-- <v-col sm="4" class="creditsLabel">{{ plotKeyword.Keyword }}</v-col>
                   <v-col
                     class="creditsContent"
-                  >{{ `${plotKeyword.NumVotes ? plotKeyword.NumRelevant + ' of ' + plotKeyword.NumVotes : 'no votes'}` }}</v-col> -->
+                  >{{ `${plotKeyword.NumVotes ? plotKeyword.NumRelevant + ' of ' + plotKeyword.NumVotes : 'no votes'}` }}</v-col>-->
                 </v-row>
               </div>
 
@@ -775,6 +779,59 @@ export default {
   computed: {
     numPages() {
       return Math.ceil(this.itemsFiltered.length / this.itemsPerPage);
+    },
+
+    paginationItems() {
+      const result = [];
+
+      let page = 1;
+
+      for (let i = 0; i < this.itemsFiltered.length; i += this.itemsPerPage) {
+        const currentItem = this.itemsFiltered[i];
+
+        let detailInfo = null;
+
+        switch (this.$shared.sortField) {
+          case "Name":
+            detailInfo = currentItem.Name.substring(0, 1);
+            break;
+          case "IMDB_rating":
+            detailInfo = currentItem.IMDB_ratingFormatted;
+            break;
+          case "IMDB_metacriticScore":
+            detailInfo = currentItem.IMDB_metacriticScore;
+            break;
+          case "Rating":
+            detailInfo = currentItem.Rating;
+            break;
+          case "startYear":
+            detailInfo = currentItem.startYear;
+            break;
+          case "created_at":
+            detailInfo = currentItem.created_at
+              ? currentItem.created_at.replace(/\d+:\d+:\d+/, "")
+              : "";
+            break;
+          case "last_access_at":
+            detailInfo = currentItem.last_access_at
+              ? currentItem.last_access_at.replace(/\d+:\d+:\d+/, "")
+              : "";
+            break;
+        }
+
+        result.push({
+          page,
+          displayText: `${page}${
+            detailInfo ? " | " + detailInfo : "" // ${page} / ${this.numPages}
+          }`
+        });
+
+        page++;
+      }
+
+      logger.log("paginationItems:", result);
+
+      return result;
     },
 
     visiblePages() {
@@ -1213,7 +1270,8 @@ export default {
       logger.log("plotKeyword clicked:", plotKeyword);
 
       this.plotKeywordDialog.show = true;
-      this.plotKeywordDialog.id_IMDB_Plot_Keywords = plotKeyword.id_IMDB_Plot_Keywords;
+      this.plotKeywordDialog.id_IMDB_Plot_Keywords =
+        plotKeyword.id_IMDB_Plot_Keywords;
       this.plotKeywordDialog.Keyword = plotKeyword.Keyword;
 
       return;
@@ -1520,7 +1578,7 @@ export default {
 
     eventBus.$on("showPlotKeywordDialog", value => {
       this.onIMDBPlotKeywordClicked(value);
-    })
+    });
 
     eventBus.$on("showCompanyDialog", value => {
       this.onCompanyClicked(value);
