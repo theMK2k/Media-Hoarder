@@ -33,9 +33,9 @@
           item-text="displayText"
           item-value="page"
           label="Page"
-          style="max-width: 200px; height: 40px"
+          v-bind:style="selectStyle"
           v-model="$shared.currentPage"
-        ></v-select>
+        ></v-select> <!-- style="max-width: 200px; height: 40px" -->
       </li>
       <li>
         <button
@@ -66,6 +66,8 @@
 </template>
 
 <script>
+const logger = require("loglevel");
+
 export default {
   props: ["length", "pages"],
 
@@ -93,6 +95,44 @@ export default {
       }
 
       return items;
+    },
+
+    selectStyle() {
+      let width = 40; // offset - no character
+      
+      width += 34 + Math.ceil(Math.log10(this.pages ? this.pages.length + 1 : 1)) * 20;  // "8 / 8", "88 / 88"
+
+      switch (this.$shared.sortField) {
+          case "Name":
+            width += 26;
+            break;
+          case "IMDB_rating":
+            width += 42;
+            break;
+          case "IMDB_metacriticScore":
+            width += 44;
+            break;
+          case "Rating":
+            width += 26;
+            break;
+          case "startYear":
+            width += 54;
+            break;
+          case "created_at":
+            width += 108;
+            break;
+          case "last_access_at":
+            width += 108;
+            break;
+          default:
+            logger.error(`Pagination.vue: unknown sort field "${this.$shared.sortField}"`);
+            break;
+      }
+
+      return {
+        'max-width': `${width}px`,
+        'height': '40px'
+      } 
     }
   },
 

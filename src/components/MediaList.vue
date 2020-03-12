@@ -548,7 +548,11 @@
         <v-spacer></v-spacer>
         <div v-if="numPages">
           <!-- <v-pagination v-bind:length="numPages" v-model="$shared.currentPage" total-visible="7"></v-pagination> -->
-          <mk-pagination v-bind:length="numPages" v-model="$shared.currentPage"></mk-pagination>
+          <mk-pagination
+            v-bind:length="numPages"
+            v-bind:pages="paginationItems"
+            v-model="$shared.currentPage"
+          ></mk-pagination>
         </div>
       </v-row>
     </v-container>
@@ -821,8 +825,8 @@ export default {
 
         result.push({
           page,
-          displayText: `${page}${
-            detailInfo ? " | " + detailInfo : "" // ${page} / ${this.numPages}
+          displayText: `${page} / ${this.numPages}${
+            detailInfo ? " | " + detailInfo : ""
           }`
         });
 

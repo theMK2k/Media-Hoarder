@@ -1476,4 +1476,11 @@ h1 {
 .Clickable:hover {
   color: #2196f3 !important;
 }
+
+/* ### Vuetify fixes ### */
+
+/* this is part of v-select and makes it unneccessarily high */
+.v-text-field__details {
+  display: none!important
+}
 </style>

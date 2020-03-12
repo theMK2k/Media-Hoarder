@@ -1,5 +1,9 @@
 # TO-DOs
 
+## Medialist
+
+- NAvigation line: fix when sidebar is visible
+
 ## Settings - Scraper / Scan Media Options
 - allow user to deselect things for the IMDB scraper (analog to store.scanOptions)
 
