@@ -55,6 +55,16 @@
           ></v-text-field>
         </v-row>
 
+        <v-row style="margin: 0px">
+          <v-select
+            label="IMDB Rating Demographic"
+            item-text="long"
+            item-value="code"
+            v-model="$shared.imdbRatingDemographic"
+            v-bind:items="$shared.imdbRatingDemographics"
+          ></v-select>
+        </v-row>
+
         <v-btn text small color="primary" v-on:click="openDevTools">Open DevTools</v-btn>
       </v-tab-item>
 
@@ -501,7 +511,7 @@ export default {
       show: false
     },
 
-    tmpPath: ""
+    tmpPath: "",
   }),
 
   watch: {
@@ -509,7 +519,11 @@ export default {
       if (this.debouncedUpdateMinimumWaitForSetAccess) {
         this.debouncedUpdateMinimumWaitForSetAccess();
       }
-    }
+    },
+
+    imdbRatingDemographic: function() {
+      store.setSetting('IMDBRatingDemographic', this.imdbRatingDemographic);
+    },
   },
 
   computed: {
@@ -522,6 +536,9 @@ export default {
       return this.sourcePaths.filter(sourcePath => {
         return sourcePath.MediaType === "movies";
       });
+    },
+    imdbRatingDemographic() {
+      return this.$shared.imdbRatingDemographic;
     }
   },
 
@@ -824,9 +841,9 @@ export default {
         this.addLanguagesDialog.languageType === "languagesPrimaryTitle"
           ? this.$shared.languagesPrimaryTitle
           : this.$shared.languagesAudioSubtitles;
-      
+
       let maxSort = 0;
-      
+
       languages.forEach(
         language => (maxSort = Math.max(maxSort, language.sort))
       );
@@ -837,7 +854,10 @@ export default {
         languages.push(Object.assign(language, { sort: maxSort++ }))
       );
 
-      await store.setSetting(this.addLanguagesDialog.languageType, JSON.stringify(languages));
+      await store.setSetting(
+        this.addLanguagesDialog.languageType,
+        JSON.stringify(languages)
+      );
 
       this.addLanguagesDialog.show = false;
     },

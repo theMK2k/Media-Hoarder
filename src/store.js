@@ -155,6 +155,8 @@ dbsync.runSync(
 
         await fetchLanguageSettings();
 
+        await fetchIMDBRatingDemographic();
+
         logger.log('shared.fallbackRegion:', shared.fallbackRegion);
         logger.log('shared.fallbackLanguage:', shared.fallbackLanguage);
       })();
@@ -2081,8 +2083,8 @@ async function fetchMedia($MediaType) {
 			, MOV.IMDB_tconst
 			, MOV.IMDB_posterSmall_URL
 			, MOV.IMDB_posterLarge_URL
-			, MOV.IMDB_rating
-			, MOV.IMDB_numVotes
+			, MOV.IMDB_rating${shared.imdbRatingDemographic ? '_' + shared.imdbRatingDemographic : ''} AS IMDB_rating_default
+			, MOV.IMDB_numVotes${shared.imdbRatingDemographic ? '_' + shared.imdbRatingDemographic : ''} AS IMDB_numVotes_default
 			, MOV.IMDB_metacriticScore
       , MOV.IMDB_plotSummary
       , MOV.IMDB_plotSummaryFull
@@ -2147,13 +2149,13 @@ async function fetchMedia($MediaType) {
       item.yearDisplay = item.startYear
         ? "(" + item.startYear + (item.endYear ? `-${item.endYear}` : "") + ")"
         : "";
-        item.IMDB_ratingFormatted = item.IMDB_rating
-        ? `${item.IMDB_rating.toLocaleString(undefined, {
+      item.IMDB_rating_defaultFormatted = item.IMDB_rating_default
+        ? `${item.IMDB_rating_default.toLocaleString(undefined, {
           minimumFractionDigits: 1
         })}`
         : "";
-      item.IMDB_ratingDisplay = item.IMDB_ratingFormatted
-        ? `${item.IMDB_ratingFormatted} (${item.IMDB_numVotes.toLocaleString()})`
+      item.IMDB_rating_defaultDisplay = item.IMDB_rating_defaultFormatted
+        ? `${item.IMDB_rating_defaultFormatted} (${item.IMDB_numVotes_default.toLocaleString()})`
         : "";
 
       item.AudioLanguages = generateLanguageString(item.MI_Audio_Languages, preferredLanguages);
@@ -4008,6 +4010,14 @@ async function getAllowedTitleTypes() {
   }
 
   return result;
+}
+
+async function fetchIMDBRatingDemographic() {
+  const imdbRatingDemographic = await getSetting('IMDBRatingDemographic');
+
+  if (imdbRatingDemographic) {
+    shared.imdbRatingDemographic = imdbRatingDemographic;
+  }
 }
 
 export {

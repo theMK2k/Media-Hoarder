@@ -1,15 +1,18 @@
 # TO-DOs
 
-## Medialist
+## View-Switchig multiple event handling bug
 
-- NAvigation line: fix when sidebar is visible
 
 ## Settings - Scraper / Scan Media Options
 - allow user to deselect things for the IMDB scraper (analog to store.scanOptions)
 
 ## Rating Demographics
-- scrape
-- allow the user to choose which demography to use as IMDB rating
+OK - scrape
+OK - allow the user to choose which demography to use as IMDB rating
+- show demographics matrix when clicking IMDB score for an item
+
+## Age Rating
+- use user-chosen regions (countries) as basis for the age rating shown in the main list
 
 ## Filming Locations
 - add as section in MediaLists

@@ -63,6 +63,12 @@
           v-model="$shared.currentPage"
         ></mk-pagination>
       </div>
+
+      <!-- workaround - else the mk-pagination would fuck off to the right when sidenav is shown -->
+      <div
+        v-if="$shared.sidenav"
+        v-bind:style="{ width: `${$shared.sidenav ? '256px!important' : '0px!important'}` }"
+      ></div>
     </v-row>
 
     <!-- scrollcontainer -->
@@ -191,14 +197,14 @@
                       <div
                         class="headline mb-2"
                         style="margin-right: 16px; margin-left: 16px; margin-bottom: 0px!important"
-                        v-if="item.IMDB_ratingDisplay"
+                        v-if="item.IMDB_rating_defaultDisplay"
                       >
                         <v-icon small color="amber" style="padding-bottom: 4px">mdi-star</v-icon>
-                        {{item.IMDB_ratingDisplay}}
+                        <a class="headline mb-2 Clickable">{{item.IMDB_rating_defaultDisplay}}</a>
                         <span
                           v-if="item.IMDB_metacriticScore"
                           v-bind:class="getMetaCriticClass(item.IMDB_metacriticScore)"
-                          style="padding: 4px"
+                          style="padding: 4px; margin-left: 4px"
                         >{{item.IMDB_metacriticScore}}</span>
                       </div>
                       <v-row>
@@ -552,6 +558,7 @@
             v-bind:length="numPages"
             v-bind:pages="paginationItems"
             v-model="$shared.currentPage"
+            style="margin-right: 4px"
           ></mk-pagination>
         </div>
       </v-row>
@@ -668,14 +675,13 @@ export default {
 
   data: () => ({
     items: [],
-    searchText: null,
     sortAbles: [
       {
         Field: "Name",
         Description: "Name"
       },
       {
-        Field: "IMDB_rating",
+        Field: "IMDB_rating_default",
         Description: "IMDB Rating"
       },
       {
@@ -781,6 +787,10 @@ export default {
   props: ["mediatype"],
 
   computed: {
+    searchText() {
+      return this.$shared.searchText;
+    },
+
     numPages() {
       return Math.ceil(this.itemsFiltered.length / this.itemsPerPage);
     },
@@ -799,8 +809,8 @@ export default {
           case "Name":
             detailInfo = currentItem.Name.substring(0, 1);
             break;
-          case "IMDB_rating":
-            detailInfo = currentItem.IMDB_ratingFormatted;
+          case "IMDB_rating_default":
+            detailInfo = currentItem.IMDB_rating_defaultFormatted;
             break;
           case "IMDB_metacriticScore":
             detailInfo = currentItem.IMDB_metacriticScore;
@@ -1542,7 +1552,6 @@ export default {
     })();
 
     eventBus.$on("searchTextChanged", ({ searchText }) => {
-      this.searchText = searchText;
       this.$shared.currentPage = 1;
       store.saveCurrentPage(this.mediatype);
     });

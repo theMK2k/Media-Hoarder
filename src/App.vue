@@ -1,7 +1,7 @@
 <template>
   <v-app id="inspire">
     <!-- SIDEBAR -->
-    <v-navigation-drawer v-model="drawer" app clipped style="z-index: 20">
+    <v-navigation-drawer v-model="$shared.sidenav" app clipped style="z-index: 20">
       <v-list dense>
         <v-list-item @click="openSettings">
           <v-list-item-action>
@@ -451,7 +451,10 @@
                   <v-btn text v-on:click="setAllIMDBPlotKeywords(true)">ALL</v-btn>
                   <v-btn text v-on:click="addIMDBPlotKeyword()">FIND</v-btn>
                 </v-row>
-                <v-row v-for="plotKeyword in $shared.filterIMDBPlotKeywords" v-bind:key="plotKeyword.id_Filter_IMDB_Plot_Keywords">
+                <v-row
+                  v-for="plotKeyword in $shared.filterIMDBPlotKeywords"
+                  v-bind:key="plotKeyword.id_Filter_IMDB_Plot_Keywords"
+                >
                   <v-checkbox
                     v-bind:label="plotKeyword.Keyword + ' (' + plotKeyword.NumMovies + ')'"
                     v-model="plotKeyword.Selected"
@@ -484,16 +487,22 @@
 
     <!-- TOP BAR -->
     <v-app-bar app clipped-left color="red" dense>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon @click.stop="$shared.sidenav = !$shared.sidenav"></v-app-bar-nav-icon>
       <v-toolbar-title class="mr-12 align-center noshrink">
         <span class="title">MediaBox</span>
       </v-toolbar-title>
-      <div class="flex-grow-1"></div>
-      <v-row align-content="end" justify="end" style="text-align: right!important">
+      <!-- <div class="flex-grow-1"></div> -->
+      <v-spacer></v-spacer>
+      <v-row
+        align-content="end"
+        justify="end"
+        style="text-align: right!important"
+      >
         <v-text-field
           :append-icon-cb="() => {}"
           placeholder="Search..."
           single-line
+          clearable
           append-icon="mdi-magnify"
           color="white"
           hide-details
@@ -633,13 +642,11 @@ export default {
   data: () => ({
     showLoadingOverlay: false,
     shared,
-    drawer: null,
+    searchText: null,
     items: [
       { icon: "mdi-movie", text: "Movies", id: "movies" },
       { icon: "mdi-television", text: "Series", id: "tv" }
     ],
-
-    searchText: null,
 
     isScanning: false,
 
@@ -877,17 +884,22 @@ export default {
     },
 
     filterIMDBPlotKeywordsTitle() {
-      if (!this.$shared.filterIMDBPlotKeywords.find(filter => !filter.Selected)) {
+      if (
+        !this.$shared.filterIMDBPlotKeywords.find(filter => !filter.Selected)
+      ) {
         return "(ALL)";
       }
 
-      if (!this.$shared.filterIMDBPlotKeywords.find(filter => filter.Selected)) {
+      if (
+        !this.$shared.filterIMDBPlotKeywords.find(filter => filter.Selected)
+      ) {
         return "(NONE)";
       }
 
       return (
         "(" +
-        this.$shared.filterIMDBPlotKeywords.filter(filter => filter.Selected).length +
+        this.$shared.filterIMDBPlotKeywords.filter(filter => filter.Selected)
+          .length +
         "/" +
         this.$shared.filterIMDBPlotKeywords.length +
         ")"
@@ -994,6 +1006,7 @@ export default {
     },
 
     eventBusSearchTextChanged: function(searchText) {
+      this.$shared.searchText = searchText;
       eventBus.searchTextChanged(searchText);
     },
 
@@ -1217,7 +1230,9 @@ export default {
     },
 
     deleteFilterIMDBPlotKeyword(filterIMDBPlotKeyword) {
-      store.deleteFilterIMDBPlotKeyword(filterIMDBPlotKeyword.id_Filter_IMDB_Plot_Keywords);
+      store.deleteFilterIMDBPlotKeyword(
+        filterIMDBPlotKeyword.id_Filter_IMDB_Plot_Keywords
+      );
       eventBus.refetchFilters();
     },
 
@@ -1481,6 +1496,6 @@ h1 {
 
 /* this is part of v-select and makes it unneccessarily high */
 .v-text-field__details {
-  display: none!important
+  display: none !important;
 }
 </style>

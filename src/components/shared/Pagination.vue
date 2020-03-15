@@ -74,13 +74,13 @@ export default {
   computed: {
     prevClass() {
       return {
-        "pagination__navigation--disabled": this.$shared.currentPage == 1
+        "v-pagination__navigation--disabled": this.$shared.currentPage == 1
       };
     },
 
     nextClass() {
       return {
-        "pagination__navigation--disabled": this.$shared.currentPage >= this.length
+        "v-pagination__navigation--disabled": this.$shared.currentPage >= this.length
       };
     },
 
@@ -106,7 +106,7 @@ export default {
           case "Name":
             width += 26;
             break;
-          case "IMDB_rating":
+          case "IMDB_rating_default":
             width += 42;
             break;
           case "IMDB_metacriticScore":
