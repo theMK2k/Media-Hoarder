@@ -1,7 +1,16 @@
 # TO-DOs
 
-## View-Switchig multiple event handling bug
+## Rescan dialog
+- show warning when a source path cannot be found but it is set to remove entries on re-scan
 
+## Backlog Popup
+- shown on startup
+- welcome message
+- latest introduced features
+- backlog (show more..)
+- info if this is the latest version (based on github releases page?)
+
+## View-Switchig multiple event handling bug
 
 ## Settings - Scraper / Scan Media Options
 - allow user to deselect things for the IMDB scraper (analog to store.scanOptions)
