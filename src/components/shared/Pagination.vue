@@ -33,9 +33,23 @@
           item-text="displayText"
           item-value="page"
           label="Page"
-          v-bind:style="selectStyle"
           v-model="$shared.currentPage"
-        ></v-select> <!-- style="max-width: 200px; height: 40px" -->
+          style="height: 40px"
+        > <!-- v-bind:style="selectStyle" -->
+          <template v-slot:item="{ item }">
+            <div>{{ item.page + ' / ' + item.numPages }}</div>
+            <div style="width: 16px"></div>
+            <div v-if="item.detailInfo" class="grey--text caption">{{ ' ' + item.detailInfo }}</div>
+            <!-- <span v-if="index === 1" class="grey--text caption">(+{{ value.length - 1 }} others)</span> -->
+          </template>
+          <template v-slot:selection="{ item }">
+            <div>{{ item.page + ' / ' + item.numPages }}</div>
+            <div style="width: 16px"></div>
+            <div v-if="item.detailInfo" class="grey--text caption">{{ ' ' + item.detailInfo }}</div>
+            <!-- <span v-if="index === 1" class="grey--text caption">(+{{ value.length - 1 }} others)</span> -->
+          </template>
+        </v-select>
+        <!-- style="max-width: 200px; height: 40px" -->
       </li>
       <li>
         <button
@@ -80,7 +94,8 @@ export default {
 
     nextClass() {
       return {
-        "v-pagination__navigation--disabled": this.$shared.currentPage >= this.length
+        "v-pagination__navigation--disabled":
+          this.$shared.currentPage >= this.length
       };
     },
 
@@ -91,49 +106,53 @@ export default {
         items.push({
           page: i,
           displayText: `${i} / ${this.length}`
-        })
+        });
       }
 
       return items;
     },
 
-    selectStyle() {
-      let width = 40; // offset - no character
-      
-      width += 34 + Math.ceil(Math.log10(this.pages ? this.pages.length + 1 : 1)) * 20;  // "8 / 8", "88 / 88"
+    // selectStyle() {
+    //   let width = 40; // offset - no character
 
-      switch (this.$shared.sortField) {
-          case "Name":
-            width += 26;
-            break;
-          case "IMDB_rating_default":
-            width += 42;
-            break;
-          case "IMDB_metacriticScore":
-            width += 44;
-            break;
-          case "Rating":
-            width += 26;
-            break;
-          case "startYear":
-            width += 54;
-            break;
-          case "created_at":
-            width += 108;
-            break;
-          case "last_access_at":
-            width += 108;
-            break;
-          default:
-            logger.error(`Pagination.vue: unknown sort field "${this.$shared.sortField}"`);
-            break;
-      }
+    //   width +=
+    //     34 + Math.ceil(Math.log10(this.pages ? this.pages.length + 1 : 1)) * 20; // "8 / 8", "88 / 88"
 
-      return {
-        'max-width': `${width}px`,
-        'height': '40px'
-      } 
-    }
+    //   switch (this.$shared.sortField) {
+    //     case "Name":
+    //       width += 26;
+    //       break;
+    //     case "IMDB_rating_default":
+    //       width += 42;
+    //       break;
+    //     case "IMDB_metacriticScore":
+    //       width += 44;
+    //       break;
+    //     case "Rating":
+    //       width += 26;
+    //       break;
+    //     case "startYear":
+    //       width += 54;
+    //       break;
+    //     case "created_at":
+    //       width += 108;
+    //       break;
+    //     case "last_access_at":
+    //       width += 108;
+    //       break;
+    //     default:
+    //       logger.error(
+    //         `Pagination.vue: unknown sort field "${this.$shared.sortField}"`
+    //       );
+    //       break;
+    //   }
+
+    //   // "max-width": `${width}px`,
+
+    //   return {
+    //     height: "40px"
+    //   };
+    // }
   },
 
   methods: {
@@ -153,7 +172,5 @@ export default {
 </script>
 
 <style scoped>
-  .v-input__slot {
-    margin: 0px!important
-  }
+
 </style>

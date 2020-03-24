@@ -837,7 +837,9 @@ export default {
           page,
           displayText: `${page} / ${this.numPages}${
             detailInfo ? " | " + detailInfo : ""
-          }`
+          }`,
+          numPages: this.numPages,
+          detailInfo
         });
 
         page++;

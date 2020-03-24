@@ -1498,4 +1498,12 @@ h1 {
 .v-text-field__details {
   display: none !important;
 }
+
+.v-input__slot {
+  margin: 0px !important;
+}
+
+.v-select__selections > input {
+  max-width: 0px!important
+}
 </style>
