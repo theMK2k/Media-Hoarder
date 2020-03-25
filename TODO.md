@@ -1,5 +1,9 @@
 # TO-DOs
 
+## Recalculation of Pagination Items on mouseover
+- when mouseover on items, pagination items get recalced
+- reason could be usage of this.$set
+
 ## Rescan dialog
 - show warning when a source path cannot be found but it is set to remove entries on re-scan
 
