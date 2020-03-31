@@ -7,7 +7,6 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "publish": "vue-cli-service electron:build -p always",
     "lint": "vue-cli-service lint",
     "electron:build": "vue-cli-service electron:build",
     "electron:buildremote": "vue-cli-service electron:build --win --linux --mac",
@@ -15,6 +14,7 @@
     "invokebuilder": "vue invoke electron-builder",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
+    "publish": "vue-cli-service electron:build -p always",
     "start": "vue invoke electron-builder && vue-cli-service electron:serve"
   },
   "main": "background.js",

@@ -323,7 +323,9 @@
               v-show="($shared.filterParentalAdvisory.Nudity && $shared.filterParentalAdvisory.Nudity.length > 0) || ($shared.filterParentalAdvisory.Violence && $shared.filterParentalAdvisory.Violence.length > 0) || ($shared.filterParentalAdvisory.Profanity && $shared.filterParentalAdvisory.Profanity.length > 0) || ($shared.filterParentalAdvisory.Alcohol && $shared.filterParentalAdvisory.Alcohol.length > 0) || ($shared.filterParentalAdvisory.Frightening && $shared.filterParentalAdvisory.Frightening.length > 0)"
               style="padding: 0px!important"
             >
-              <v-expansion-panel-header style="padding: 8px!important">Content Advisory</v-expansion-panel-header>
+              <v-expansion-panel-header
+                style="padding: 8px!important"
+              >Content Advisory {{ filterContentAdvisoryTitle }}</v-expansion-panel-header>
 
               <v-expansion-panel-content>
                 <v-expansion-panels accordion multiple>
@@ -493,11 +495,7 @@
       </v-toolbar-title>
       <!-- <div class="flex-grow-1"></div> -->
       <v-spacer></v-spacer>
-      <v-row
-        align-content="end"
-        justify="end"
-        style="text-align: right!important"
-      >
+      <v-row align-content="end" justify="end" style="text-align: right!important">
         <v-text-field
           :append-icon-cb="() => {}"
           placeholder="Search..."
@@ -972,6 +970,43 @@ export default {
       return `(${this.$shared.filterIMDBRating[0]} - ${
         this.$shared.filterIMDBRating[1]
       }${this.$shared.filterIMDBRatingNone ? "" : "*"})`;
+    },
+
+    filterContentAdvisoryTitle() {
+      if (
+        !Object.keys(this.$shared.filterParentalAdvisory).find(category =>
+          this.$shared.filterParentalAdvisory[category].find(
+            filter => !filter.Selected
+          )
+        )
+      ) {
+        return "(ALL)";
+      }
+
+      if (
+        !Object.keys(this.$shared.filterParentalAdvisory).find(category =>
+          this.$shared.filterParentalAdvisory[category].find(
+            filter => filter.Selected
+          )
+        )
+      ) {
+        return "(NONE)";
+      }
+
+      let numSelected = 0;
+      let numAll = 0;
+      Object.keys(this.$shared.filterParentalAdvisory).find(category =>
+        this.$shared.filterParentalAdvisory[category].forEach(
+          filter => {
+            numAll++;
+            if (filter.Selected) {
+              numSelected++;
+            }
+          }
+        )
+      );
+
+      return `(${numSelected}/${numAll})`;
     }
   },
 
@@ -1504,6 +1539,6 @@ h1 {
 }
 
 .v-select__selections > input {
-  max-width: 0px!important
+  max-width: 0px !important;
 }
 </style>
