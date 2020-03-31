@@ -5,6 +5,7 @@ import {
 	createProtocol,
 	installVueDevtools
 } from 'vue-cli-plugin-electron-builder/lib'
+import { autoUpdater } from "electron-updater"
 
 const fs = require('fs');
 
@@ -72,6 +73,7 @@ function createWindow() {
 		// Load the index.html when not in development
 		setTimeout(() => {
 			win.loadURL('app://./index.html');
+			autoUpdater.checkForUpdatesAndNotify();
 		}, 0);
 	}
 
