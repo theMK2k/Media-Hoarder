@@ -13,6 +13,8 @@ OK  - let user define preferred (local) Regions to identify the primary title
 OK  -> fetch Countries from https://www.imdb.com/search/title/ and provide as list
 OK  -> Auto set region by user's localization setting?
 
+## Show Indicator when filters apply
+
 ## Duplicates
 
 - an actual duplicate is the same file in another location (e.g. local copy vs. on server)

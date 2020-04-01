@@ -31,9 +31,20 @@
         </template>
         <span>Reload list</span>
       </v-tooltip>
-      <h1
-        style="margin-bottom: 0px; margin-top: 0px;"
-      >{{ mediatype.toUpperCase() }} ({{ itemsFiltered.length }})</h1>
+      <h1 style="margin-bottom: 0px; margin-top: 0px;">
+        {{ mediatype.toUpperCase() }} ({{ itemsFiltered.length }})
+        <v-tooltip bottom v-if="filtersList.length > 0">
+          <template v-slot:activator="{ on }">
+            <span v-on="on">*</span>
+          </template>
+          <span>
+            Applied Filters:
+            <ul>
+              <li v-for="filter in filtersList" v-bind:key="filter">{{filter}}</li>
+            </ul>
+          </span>
+        </v-tooltip>
+      </h1>
       <v-select
         solo
         clearable
@@ -762,7 +773,7 @@ export default {
 
     itemsPerPage: 20,
 
-    currentTime: moment()
+    currentTime: moment(),
   }),
 
   watch: {
@@ -863,6 +874,81 @@ export default {
         (this.$shared.currentPage - 1) * this.itemsPerPage,
         this.$shared.currentPage * this.itemsPerPage
       );
+    },
+
+    filtersList() {
+      // return "*" if at least one filter is set
+
+      const filtersList = [];
+
+      if (this.$shared.filterSourcePaths.find(filter => !filter.Selected)) {
+        filtersList.push('Source Paths')
+      }
+      if (this.$shared.filterGenres.find(filter => !filter.Selected)) {
+        filtersList.push('Genres')
+      }
+      if (this.$shared.filterAgeRatings.find(filter => !filter.Selected)) {
+        filtersList.push('Ages')
+      }
+      if (this.$shared.filterRatings.find(filter => !filter.Selected)) {
+        filtersList.push('My Ratings')
+      }
+      if (this.$shared.filterLists.find(filter => !filter.Selected)) {
+        filtersList.push('My Lists')
+      }
+
+      if (
+        this.$shared.filterParentalAdvisory.Nudity.find(
+          filter => !filter.Selected
+        ) || this.$shared.filterParentalAdvisory.Violence.find(
+          filter => !filter.Selected
+        ) || this.$shared.filterParentalAdvisory.Profanity.find(
+          filter => !filter.Selected
+        ) || this.$shared.filterParentalAdvisory.Alcohol.find(
+          filter => !filter.Selected
+        ) || this.$shared.filterParentalAdvisory.Frightening.find(
+          filter => !filter.Selected
+        )
+      ) {
+        filtersList.push('Content Advisory')
+      }
+
+      if (this.$shared.filterPersons.find(filter => !filter.Selected)) {
+        filtersList.push('Persons')
+      }
+      if (this.$shared.filterYears.find(filter => !filter.Selected)) {
+        filtersList.push('Years')
+      }
+      if (this.$shared.filterQualities.find(filter => !filter.Selected)) {
+        filtersList.push('Video Quality')
+      }
+      if (this.$shared.filterCompanies.find(filter => !filter.Selected)) {
+        filtersList.push('Companies')
+      }
+      if (this.$shared.filterAudioLanguages.find(filter => !filter.Selected)) {
+        filtersList.push('Audio Languages')
+      }
+      if (this.$shared.filterSubtitleLanguages.find(filter => !filter.Selected)) {
+        filtersList.push('Subtitle Languages')
+      }
+      if (this.$shared.filterIMDBPlotKeywords.find(filter => !filter.Selected)) {
+        filtersList.push('Plot Keywords')
+      }
+      if (this.$shared.filterMetacriticScore[0] !== 0 ||
+        this.$shared.filterMetacriticScore[1] !== 100 ||
+        !this.$shared.filterMetacriticScoreNone) {
+        filtersList.push('Metacritic Score')
+      }
+
+      if (this.$shared.filterIMDBRating[0] !== 0 ||
+        this.$shared.filterIMDBRating[1] !== 10 ||
+        !this.$shared.filterIMDBRatingNone) {
+        filtersList.push('IMDB Rating')
+      }
+
+      logger.log('filtersList:', filtersList);
+
+      return filtersList;
     },
 
     itemsFiltered() {

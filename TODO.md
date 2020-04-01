@@ -16,6 +16,9 @@
 
 ## View-Switchig multiple event handling bug
 
+## Investigate an "AND" filter
+- how would SQL queries look?
+
 ## Settings - Scraper / Scan Media Options
 - allow user to deselect things for the IMDB scraper (analog to store.scanOptions)
 
