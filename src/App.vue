@@ -1290,7 +1290,9 @@ export default {
         "MediainfoPath"
       ))
         ? false
-        : true;
+        : true; // TODO: move this to scanOptionsDialog's init()
+
+      this.$refs.scanOptionsDialog.init();
 
       this.scanOptionsDialog.show = true;
     },

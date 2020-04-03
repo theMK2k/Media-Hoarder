@@ -13,6 +13,13 @@ OK  - let user define preferred (local) Regions to identify the primary title
 OK  -> fetch Countries from https://www.imdb.com/search/title/ and provide as list
 OK  -> Auto set region by user's localization setting?
 
+## Rescan dialog
+- show warning when a source path cannot be found but it is set to remove entries on re-scan
+
+## BUG: Recalculation of Pagination Items on mouseover
+- when mouseover on items, pagination items get recalced
+- reason could be usage of this.$set (it was indeed)
+
 ## Show Indicator when filters apply
 
 ## Duplicates

@@ -40,6 +40,18 @@
             <li>This can take a while depending on your collection and internet connection</li>
           </ul>
         </div>
+
+        <v-alert
+          type="warning"
+          colored-border
+          border="left"
+          v-if="missingSourcePaths"
+        >
+          Warning: the following source path{{missingSourcePaths.length > 1 ? 's are ' : ' is '}}currently not available and all entries will be removed!
+          <ul>
+            <li v-for="msp in missingSourcePaths" v-bind:key="msp.id_SourcePaths">{{msp.Path}}</li>
+          </ul>
+        </v-alert>
       </v-card-text>
 
       <v-card-actions>
@@ -65,7 +77,9 @@
 </template>
 
 <script>
-// const logger = require("loglevel");
+const logger = require("loglevel");
+
+import * as store from "@/store";
 
 // import { eventBus } from "@/main";
 
@@ -74,7 +88,8 @@ export default {
 
   data() {
     return {
-      radioGroup: 1
+      radioGroup: 1,
+      missingSourcePaths: []
     };
   },
 
@@ -86,6 +101,18 @@ export default {
     onOKClick() {
       this.$emit("ok", this.radioGroup);
     },
+
+    async init() {
+      const missingSourcePaths = await store.findMissingSourcePaths();
+
+      logger.log('missingSourcePaths:', missingSourcePaths);
+
+      this.missingSourcePaths = missingSourcePaths.filter(
+        msp => msp.checkRemovedFiles
+      );
+
+      logger.log('this.missingSourcePaths:', this.missingSourcePaths);
+    }
   },
 
   // ### Lifecycle Hooks ###

@@ -4037,6 +4037,17 @@ async function fetchIMDBRatingDemographic() {
   }
 }
 
+async function findMissingSourcePaths() {
+  const sourcePaths = await db.fireProcedureReturnAll(`SELECT id_SourcePaths, MediaType, Path, Description, created_at, checkRemovedFiles FROM tbl_SourcePaths`);
+
+  for (let i = 0; i < sourcePaths.length; i++) {
+    const sourcePath = sourcePaths[i];
+    sourcePath.exists = await existsAsync(sourcePath.Path);
+  }
+
+  return sourcePaths.filter(sourcePath => !sourcePath.exists);
+}
+
 export {
   db,
   fetchSourcePaths,
@@ -4095,5 +4106,6 @@ export {
   fetchIMDBTitleTypes,
   getFallbackLanguage,
   fetchLanguageSettings,
-  fetchMoviePlotKeywords
+  fetchMoviePlotKeywords,
+  findMissingSourcePaths
 };
