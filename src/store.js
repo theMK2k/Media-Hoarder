@@ -2207,6 +2207,23 @@ async function fetchMedia($MediaType) {
       } else if (item.IMDB_runtimeMinutes) {
         item.Duration = helpers.getTimeString(item.IMDB_runtimeMinutes * 60);
       }
+
+      // additional fields (prevent Recalculation of Pagination Items on mouseover)
+      item.lists = [];
+      item.extras = [];
+      item.selected = false;
+      item.lastAccessMoment = null;
+      
+      item.showCredits = false;
+      item.credits = null;
+      item.showCompanies = false;
+      item.companies = null;
+      item.avatarHovered = false;
+      item.nameHovered = false;
+      item.name2Hovered = false;
+      item.showContentAdvisory = false;
+      item.showPlotKeywords = false;
+      item.plotKeywords = null;
     });
 
     return result;
