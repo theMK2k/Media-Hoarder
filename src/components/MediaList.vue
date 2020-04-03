@@ -881,6 +881,9 @@ export default {
 
       const filtersList = [];
 
+      if (this.$shared.searchText) {
+        filtersList.push('Search')
+      }
       if (this.$shared.filterSourcePaths.find(filter => !filter.Selected)) {
         filtersList.push('Source Paths')
       }
