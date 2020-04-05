@@ -1,13 +1,17 @@
 # TO-DOs
 
+## Memory Leak (multiple reloads of medialist)
+- more intelligent loading?
+- better garbage collection?
+
+## View-Switchig multiple event handling bug
+
 ## Backlog Popup
 - shown on startup
 - welcome message
 - latest introduced features
 - backlog (show more..)
 - info if this is the latest version (based on github releases page?)
-
-## View-Switchig multiple event handling bug
 
 ## Investigate an "AND" filter
 - how would SQL queries look?

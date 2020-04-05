@@ -1652,6 +1652,8 @@ export default {
       (async () => {
         eventBus.showLoadingOverlay(true);
 
+        logger.log('global.gc:', global.gc);
+
         this.items = await store.fetchMedia(this.mediatype);
 
         eventBus.showLoadingOverlay(false);
