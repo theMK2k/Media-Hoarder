@@ -1553,7 +1553,7 @@ async function saveIMDBData(movie, IMDBdata, genres, credits, companies, plotKey
   }
 }
 
-async function fetchMedia($MediaType) {
+async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
   try {
     logger.log('shared.languagesAudioSubtitles:', shared.languagesAudioSubtitles);
 
@@ -2053,6 +2053,13 @@ async function fetchMedia($MediaType) {
       filterIMDBRating += ")";
     }
 
+    let filter_id_Movies = "";
+    if (arr_id_Movies && arr_id_Movies.length) {
+      filter_id_Movies = "AND MOV.id_Movies IN ("
+      filter_id_Movies += arr_id_Movies.reduce((prev, current) => prev + (prev ? ', ' : '') + `${current}`);
+      filter_id_Movies += ')';
+    }
+
     logger.log("fetchMedia filterSourcePaths:", filterSourcePaths);
     logger.log("fetchMedia filterGenres:", filterGenres);
     logger.log("fetchMedia filterAgeRatings:", filterAgeRatings);
@@ -2063,51 +2070,91 @@ async function fetchMedia($MediaType) {
     logger.log("fetchMedia filterCompanies:", filterCompanies);
     logger.log("fetchMedia filterIMDBPlotKeywords:", filterIMDBPlotKeywords);
     logger.log("fetchMedia filterAudioLanguages:", filterAudioLanguages);
+    logger.log("fetchMedia filter_id_Movies:", filter_id_Movies);
 
     const query = `
 		SELECT
 			MOV.id_Movies
-			, MOV.Path
-			, MOV.FileName
-			, MOV.Size
-			, MOV.file_created_at
 			, MOV.Name
-			, MOV.Name2
-			, MOV.startYear
-			, MOV.endYear
-			, MOV.MI_Duration
-			, MOV.MI_Quality
-			, MOV.MI_Audio_Languages
-			, MOV.MI_Subtitle_Languages
-			, IFNULL(MOV.Rating, 0) AS Rating
-			, MOV.IMDB_tconst
-			, MOV.IMDB_posterSmall_URL
-			, MOV.IMDB_posterLarge_URL
 			, MOV.IMDB_rating${shared.imdbRatingDemographic ? '_' + shared.imdbRatingDemographic : ''} AS IMDB_rating_default
-			, MOV.IMDB_numVotes${shared.imdbRatingDemographic ? '_' + shared.imdbRatingDemographic : ''} AS IMDB_numVotes_default
 			, MOV.IMDB_metacriticScore
-      , MOV.IMDB_plotSummary
-      , MOV.IMDB_plotSummaryFull
-			, (SELECT GROUP_CONCAT(G.Name, ', ') FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres AND MG.id_Movies = MOV.id_Movies) AS Genres
-			, MOV.IMDB_MinAge
-			, MOV.IMDB_MaxAge
-			, MOV.IMDB_Parental_Advisory_Nudity
-			, MOV.IMDB_Parental_Advisory_Violence
-			, MOV.IMDB_Parental_Advisory_Profanity
-			, MOV.IMDB_Parental_Advisory_Alcohol
-			, MOV.IMDB_Parental_Advisory_Frightening
-			, MOV.IMDB_Top_Directors
-			, MOV.IMDB_Top_Writers
-			, MOV.IMDB_Top_Producers
-			, MOV.IMDB_Top_Cast
-			, MOV.IMDB_Top_Production_Companies
-			, MOV.IMDB_Trailer_URL
-			, AR.Age
+			, IFNULL(MOV.Rating, 0) AS Rating
+			, MOV.startYear
 			, MOV.created_at
 			, MOV.last_access_at
-      , (SELECT COUNT(1) FROM tbl_Movies MOVEXTRAS WHERE MOVEXTRAS.Extra_id_Movies_Owner = MOV.id_Movies) AS NumExtras
-      , MI_Duration_Formatted
-      , IMDB_runtimeMinutes
+      , MOV.IMDB_numVotes${shared.imdbRatingDemographic ? '_' + shared.imdbRatingDemographic : ''} AS IMDB_numVotes_default
+
+      ${minimumResultSet ? `
+        , 0 AS isCompletelyFetched
+        , NULL AS Path
+        , NULL AS FileName
+        , NULL AS Size
+        , NULL AS file_created_at
+        , NULL AS Name2
+        , NULL AS endYear
+        , NULL AS MI_Duration
+        , NULL AS MI_Quality
+        , NULL AS MI_Audio_Languages
+        , NULL AS MI_Subtitle_Languages
+        , NULL AS IMDB_tconst
+        , NULL AS IMDB_posterSmall_URL
+        , NULL AS IMDB_posterLarge_URL
+        , NULL AS IMDB_plotSummary
+        , NULL AS IMDB_plotSummaryFull
+        , NULL AS Genres
+        , NULL AS IMDB_MinAge
+        , NULL AS IMDB_MaxAge
+        , NULL AS IMDB_Parental_Advisory_Nudity
+        , NULL AS IMDB_Parental_Advisory_Violence
+        , NULL AS IMDB_Parental_Advisory_Profanity
+        , NULL AS IMDB_Parental_Advisory_Alcohol
+        , NULL AS IMDB_Parental_Advisory_Frightening
+        , NULL AS IMDB_Top_Directors
+        , NULL AS IMDB_Top_Writers
+        , NULL AS IMDB_Top_Producers
+        , NULL AS IMDB_Top_Cast
+        , NULL AS IMDB_Top_Production_Companies
+        , NULL AS IMDB_Trailer_URL
+        , NULL AS Age
+        , NULL AS NumExtras
+        , NULL AS MI_Duration_Formatted
+        , NULL AS IMDB_runtimeMinutes
+      ` : `
+        , 1 AS isCompletelyFetched
+        , MOV.Path
+        , MOV.FileName
+        , MOV.Size
+        , MOV.file_created_at
+        , MOV.Name2
+        , MOV.endYear
+        , MOV.MI_Duration
+        , MOV.MI_Quality
+        , MOV.MI_Audio_Languages
+        , MOV.MI_Subtitle_Languages
+        , MOV.IMDB_tconst
+        , MOV.IMDB_posterSmall_URL
+        , MOV.IMDB_posterLarge_URL
+        , MOV.IMDB_plotSummary
+        , MOV.IMDB_plotSummaryFull
+        , (SELECT GROUP_CONCAT(G.Name, ', ') FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres AND MG.id_Movies = MOV.id_Movies) AS Genres
+        , MOV.IMDB_MinAge
+        , MOV.IMDB_MaxAge
+        , MOV.IMDB_Parental_Advisory_Nudity
+        , MOV.IMDB_Parental_Advisory_Violence
+        , MOV.IMDB_Parental_Advisory_Profanity
+        , MOV.IMDB_Parental_Advisory_Alcohol
+        , MOV.IMDB_Parental_Advisory_Frightening
+        , MOV.IMDB_Top_Directors
+        , MOV.IMDB_Top_Writers
+        , MOV.IMDB_Top_Producers
+        , MOV.IMDB_Top_Cast
+        , MOV.IMDB_Top_Production_Companies
+        , MOV.IMDB_Trailer_URL
+        , AR.Age
+        , (SELECT COUNT(1) FROM tbl_Movies MOVEXTRAS WHERE MOVEXTRAS.Extra_id_Movies_Owner = MOV.id_Movies) AS NumExtras
+        , MI_Duration_Formatted
+        , IMDB_runtimeMinutes
+      `}
 		FROM tbl_Movies MOV
 		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 		WHERE	(MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
@@ -2126,7 +2173,8 @@ async function fetchMedia($MediaType) {
 		${filterAudioLanguages}
 		${filterSubtitleLanguages}
 		${filterMetacriticScore}
-		${filterIMDBRating}
+    ${filterIMDBRating}
+    ${filter_id_Movies}
 	`;
 
     logger.log("fetchMedia query:", query);

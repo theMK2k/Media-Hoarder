@@ -102,7 +102,12 @@ export default {
     },
 
     canConfirm() {
-      return ((this.chosenMethod == 'useExistingLists' && this.chosen_id_Lists > 0) || (this.chosenMethod == 'createNewList' && this.newListName && this.newListName.trim().length > 0));
+      return (
+        (this.chosenMethod == "useExistingLists" && this.chosen_id_Lists > 0) ||
+        (this.chosenMethod == "createNewList" &&
+          this.newListName &&
+          this.newListName.trim().length > 0)
+      );
     }
   },
 
@@ -136,11 +141,11 @@ export default {
         return;
       }
 
-      this.onButtonClick('ok');
+      this.onButtonClick("ok");
     },
 
     onEscapePressed() {
-      this.onButtonClick('cancel');
+      this.onButtonClick("cancel");
     }
   },
 
@@ -153,6 +158,11 @@ export default {
       logger.log("set chosen id_Lists:", id_Lists);
       this.chosen_id_Lists = id_Lists;
     });
+  },
+
+  beforeDestroy() {
+    eventBus.$off("listDialogSetChosenMethod");
+    eventBus.$off("listDialogSetChosenList");
   }
 };
 </script>

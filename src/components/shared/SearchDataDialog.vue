@@ -171,6 +171,10 @@ export default {
     eventBus.$on("personDialogConfirm", () => {
       this.onCancelClick();
     });
+  },
+
+  beforeDestroy() {
+    eventBus.$off("personDialogConfirm");
   }
 };
 </script>

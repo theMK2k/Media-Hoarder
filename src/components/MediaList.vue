@@ -791,6 +791,8 @@ export default {
       }
       store.saveCurrentPage(this.mediatype);
 
+      this.completelyFetchMedia();
+
       window.scrollTo(0, 0);
     }
   },
@@ -1627,6 +1629,38 @@ export default {
 
     onReload() {
       eventBus.refetchMedia();
+    },
+
+    async completelyFetchMedia() {
+      const arr_id_Movies = [];
+      
+      this.itemsFilteredPaginated.forEach(item => {
+        if (!item.isCompletelyFetched) {
+          arr_id_Movies.push(item.id_Movies);
+        }
+      })
+      
+      logger.log('completelyFetchMedia arr_id_Movies:', arr_id_Movies);
+
+      if (arr_id_Movies.length === 0) {
+        return;
+      }
+      
+      const result = await store.fetchMedia(this.mediatype, arr_id_Movies, false);
+
+      logger.log('completelyFetchMedia result:', result);
+
+      result.forEach(item => {
+        this.itemsFilteredPaginated.forEach(itemPaginated => {
+          if (item.id_Movies !== itemPaginated.id_Movies) {
+            return;
+          }
+
+          Object.keys(itemPaginated).forEach(key => {
+            itemPaginated[key] = item[key];
+          })
+        })
+      })
     }
   },
 
@@ -1642,7 +1676,7 @@ export default {
       logger.log("items:", this.items);
     })();
 
-    eventBus.$on("searchTextChanged", ({ searchText }) => {
+    eventBus.$on("searchTextChanged", () => {
       this.$shared.currentPage = 1;
       store.saveCurrentPage(this.mediatype);
     });
@@ -1652,11 +1686,9 @@ export default {
       (async () => {
         eventBus.showLoadingOverlay(true);
 
-        logger.log('global.gc:', global.gc);
-
         this.items = [];
         
-        this.items = await store.fetchMedia(this.mediatype);
+        this.items = await store.fetchMedia(this.mediatype, null, true);
 
         eventBus.showLoadingOverlay(false);
 
