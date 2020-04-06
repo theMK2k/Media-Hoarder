@@ -794,6 +794,10 @@ export default {
       this.completelyFetchMedia();
 
       window.scrollTo(0, 0);
+    },
+
+    sortField() {
+      this.completelyFetchMedia();
     }
   },
 
@@ -806,6 +810,10 @@ export default {
 
     numPages() {
       return Math.ceil(this.itemsFiltered.length / this.itemsPerPage);
+    },
+
+    sortField() {
+      return this.$shared.sortField;
     },
 
     paginationItems() {
@@ -1695,6 +1703,8 @@ export default {
         this.$shared.currentPage =
           setPage && setPage <= this.numPages ? setPage : 1;
         store.saveCurrentPage(this.mediatype);
+
+        this.completelyFetchMedia();
       })();
     });
 
