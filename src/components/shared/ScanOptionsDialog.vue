@@ -45,7 +45,7 @@
           type="warning"
           colored-border
           border="left"
-          v-if="missingSourcePaths"
+          v-if="missingSourcePaths && missingSourcePaths.length > 0"
         >
           Warning: the following source path{{missingSourcePaths.length > 1 ? 's are ' : ' is '}}currently not available and all entries will be removed!
           <ul>
