@@ -1654,6 +1654,8 @@ export default {
 
         logger.log('global.gc:', global.gc);
 
+        this.items = [];
+        
         this.items = await store.fetchMedia(this.mediatype);
 
         eventBus.showLoadingOverlay(false);
@@ -1695,6 +1697,19 @@ export default {
     setInterval(() => {
       this.updateCurrentTime();
     }, 10000);
+  },
+
+  beforeDestroy() {
+    logger.log('MediaList beforeDestroy START');
+    this.items = [];
+    eventBus.$off('searchTextChanged');
+    eventBus.$off('refetchMedia');
+    eventBus.$off('refetchFilters');
+    eventBus.$off('listDialogSetUseExistingLists');
+    eventBus.$off('listDialogSetCreateNewList');
+    eventBus.$off('showPersonDialog');
+    eventBus.$off('showPlotKeywordDialog');
+    eventBus.$off('showCompanyDialog');
   }
 };
 </script>

@@ -3,6 +3,7 @@
 ## Memory Leak (multiple reloads of medialist)
 - more intelligent loading?
 - better garbage collection?
+-> we have a memory leak using eventBus.$on -> implement eventBus.$off on beforeDestroy() lifecycle hook
 
 ## View-Switchig multiple event handling bug
 
