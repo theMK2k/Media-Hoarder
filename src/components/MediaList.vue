@@ -1687,6 +1687,7 @@ export default {
     eventBus.$on("searchTextChanged", () => {
       this.$shared.currentPage = 1;
       store.saveCurrentPage(this.mediatype);
+      this.completelyFetchMedia();
     });
 
     eventBus.$on("refetchMedia", setPage => {
