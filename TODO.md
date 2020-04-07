@@ -5,6 +5,10 @@
 - better garbage collection?
 OK -> we have a memory leak using eventBus.$on -> implement eventBus.$off on beforeDestroy() lifecycle hook
 -> we still have the memory leak: don't fetch all data at once (re-fetch for each page)
+-> check if memory leak is only in dev-mode (yes, it still persists even in prod-mode)
+
+## Implement Backend as express server
+- this way we can have front- and backend as independent apps
 
 ## View-Switchig multiple event handling bug
 

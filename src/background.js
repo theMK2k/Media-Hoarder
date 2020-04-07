@@ -34,26 +34,32 @@ function createWindow() {
 	});
 
 	// adBocker stuff
-	const adBlocker = ElectronBlocker.parse(fs.readFileSync(helpers.getPath('data/easylist.txt'), 'utf-8'));
-	adBlocker.enableBlockingInSession(session.defaultSession);
-	adBlocker.on('request-blocked', (request) => {
-    console.log('blocked', request.tabId, request.url);
-	});
-	adBlocker.on('request-redirected', (request) => {
-    console.log('redirected', request.tabId, request.url);
-	});
-	adBlocker.on('request-whitelisted', (request) => {
-    console.log('whitelisted', request.tabId, request.url);
-	});
-	adBlocker.on('csp-injected', (request) => {
-    console.log('csp', request.url);
-	});
-	adBlocker.on('script-injected', (script, url) => {
-    console.log('script', script.length, url);
-	});
-	adBlocker.on('style-injected', (style, url) => {
-    console.log('style', style.length, url);
-	});
+	try {
+		const easyListPath = helpers.getPath('data/easylist.txt');
+		console.log('instantiating adBlock with:', easyListPath);
+		const adBlocker = ElectronBlocker.parse(fs.readFileSync(easyListPath, 'utf-8'));
+		adBlocker.enableBlockingInSession(session.defaultSession);
+		adBlocker.on('request-blocked', (request) => {
+		console.log('blocked', request.tabId, request.url);
+		});
+		adBlocker.on('request-redirected', (request) => {
+		console.log('redirected', request.tabId, request.url);
+		});
+		adBlocker.on('request-whitelisted', (request) => {
+		console.log('whitelisted', request.tabId, request.url);
+		});
+		adBlocker.on('csp-injected', (request) => {
+		console.log('csp', request.url);
+		});
+		adBlocker.on('script-injected', (script, url) => {
+		console.log('script', script.length, url);
+		});
+		adBlocker.on('style-injected', (style, url) => {
+		console.log('style', style.length, url);
+		});
+	} catch (e) {
+		console.error(e);
+	}
 	
 
 	win.maximize();
