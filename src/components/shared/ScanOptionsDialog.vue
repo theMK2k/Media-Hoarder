@@ -47,7 +47,7 @@
           border="left"
           v-if="missingSourcePaths && missingSourcePaths.length > 0"
         >
-          Warning: the following source path{{missingSourcePaths.length > 1 ? 's are ' : ' is '}}currently not available and all entries will be removed!
+          Warning: the following source path{{missingSourcePaths.length > 1 ? 's are ' : ' is '}}currently not available and all entries will be removed! (check Settings)
           <ul>
             <li v-for="msp in missingSourcePaths" v-bind:key="msp.id_SourcePaths">{{msp.Path}}</li>
           </ul>
@@ -61,14 +61,16 @@
               class="xs-fullwidth"
               color="secondary"
               v-on:click.native="onCloseClick"
+              v-bind:loading="isLoading"
               style="margin-left: 8px;"
             >Cancel</v-btn>
             <v-btn
               class="xs-fullwidth"
-              color="primary"
+              v-bind:color="(missingSourcePaths && missingSourcePaths.length > 0) ? 'red' : 'primary'"
               v-on:click.native="onOKClick"
+              v-bind:loading="isLoading"
               style="margin-left: 8px;"
-            >OK</v-btn>
+            >OK <span v-if="missingSourcePaths && missingSourcePaths.length > 0">, I take the risk</span></v-btn>
           </v-row>
         </v-col>
       </v-card-actions>
@@ -88,6 +90,7 @@ export default {
 
   data() {
     return {
+      isLoading: true,
       radioGroup: 1,
       missingSourcePaths: []
     };
@@ -103,6 +106,8 @@ export default {
     },
 
     async init() {
+      this.isLoading = true;
+      
       const missingSourcePaths = await store.findMissingSourcePaths();
 
       logger.log('missingSourcePaths:', missingSourcePaths);
@@ -112,6 +117,8 @@ export default {
       );
 
       logger.log('this.missingSourcePaths:', this.missingSourcePaths);
+
+      this.isLoading = false;
     }
   },
 
