@@ -2083,10 +2083,11 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
 			, MOV.created_at
 			, MOV.last_access_at
       , MOV.IMDB_numVotes${shared.imdbRatingDemographic ? '_' + shared.imdbRatingDemographic : ''} AS IMDB_numVotes_default
+      , MOV.IMDB_plotSummary
+      , MOV.Path
 
       ${minimumResultSet ? `
         , 0 AS isCompletelyFetched
-        , NULL AS Path
         , NULL AS FileName
         , NULL AS Size
         , NULL AS file_created_at
@@ -2099,7 +2100,6 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
         , NULL AS IMDB_tconst
         , NULL AS IMDB_posterSmall_URL
         , NULL AS IMDB_posterLarge_URL
-        , NULL AS IMDB_plotSummary
         , NULL AS IMDB_plotSummaryFull
         , NULL AS Genres
         , NULL AS IMDB_MinAge
@@ -2121,7 +2121,6 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
         , NULL AS IMDB_runtimeMinutes
       ` : `
         , 1 AS isCompletelyFetched
-        , MOV.Path
         , MOV.FileName
         , MOV.Size
         , MOV.file_created_at
@@ -2134,7 +2133,6 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
         , MOV.IMDB_tconst
         , MOV.IMDB_posterSmall_URL
         , MOV.IMDB_posterLarge_URL
-        , MOV.IMDB_plotSummary
         , MOV.IMDB_plotSummaryFull
         , (SELECT GROUP_CONCAT(G.Name, ', ') FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres AND MG.id_Movies = MOV.id_Movies) AS Genres
         , MOV.IMDB_MinAge
