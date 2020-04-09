@@ -2085,6 +2085,8 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
       , MOV.IMDB_numVotes${shared.imdbRatingDemographic ? '_' + shared.imdbRatingDemographic : ''} AS IMDB_numVotes_default
       , MOV.IMDB_plotSummary
       , MOV.Path
+      , MI_Duration_Formatted
+      , IMDB_runtimeMinutes
 
       ${minimumResultSet ? `
         , 0 AS isCompletelyFetched
@@ -2117,8 +2119,6 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
         , NULL AS IMDB_Trailer_URL
         , NULL AS Age
         , NULL AS NumExtras
-        , NULL AS MI_Duration_Formatted
-        , NULL AS IMDB_runtimeMinutes
       ` : `
         , 1 AS isCompletelyFetched
         , MOV.FileName
@@ -2150,8 +2150,6 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
         , MOV.IMDB_Trailer_URL
         , AR.Age
         , (SELECT COUNT(1) FROM tbl_Movies MOVEXTRAS WHERE MOVEXTRAS.Extra_id_Movies_Owner = MOV.id_Movies) AS NumExtras
-        , MI_Duration_Formatted
-        , IMDB_runtimeMinutes
       `}
 		FROM tbl_Movies MOV
 		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
