@@ -136,8 +136,7 @@ export default {
             , (SELECT COUNT(1) FROM tbl_Movies_IMDB_Plot_Keywords MPK WHERE PK.id_IMDB_Plot_Keywords = MPK.id_IMDB_Plot_Keywords) AS NumMovies
           FROM tbl_IMDB_Plot_Keywords PK
           WHERE PK.Keyword LIKE '%${searchText}%'
-          ORDER BY Keyword ASC
-          ${this.sortByNumMovies ? 'ORDER BY NumMovies DESC' : 'ORDER BY name ASC'}
+          ${this.sortByNumMovies ? 'ORDER BY NumMovies DESC' : 'ORDER BY Keyword ASC'}
           `;
       }
 
