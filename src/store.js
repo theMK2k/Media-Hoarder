@@ -2087,6 +2087,9 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
       , MOV.Path
       , MI_Duration_Formatted
       , IMDB_runtimeMinutes
+      , AR.Age
+      , MOV.IMDB_MinAge
+      , MOV.IMDB_MaxAge
 
       ${minimumResultSet ? `
         , 0 AS isCompletelyFetched
@@ -2104,8 +2107,6 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
         , NULL AS IMDB_posterLarge_URL
         , NULL AS IMDB_plotSummaryFull
         , NULL AS Genres
-        , NULL AS IMDB_MinAge
-        , NULL AS IMDB_MaxAge
         , NULL AS IMDB_Parental_Advisory_Nudity
         , NULL AS IMDB_Parental_Advisory_Violence
         , NULL AS IMDB_Parental_Advisory_Profanity
@@ -2117,7 +2118,6 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
         , NULL AS IMDB_Top_Cast
         , NULL AS IMDB_Top_Production_Companies
         , NULL AS IMDB_Trailer_URL
-        , NULL AS Age
         , NULL AS NumExtras
       ` : `
         , 1 AS isCompletelyFetched
@@ -2135,8 +2135,6 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
         , MOV.IMDB_posterLarge_URL
         , MOV.IMDB_plotSummaryFull
         , (SELECT GROUP_CONCAT(G.Name, ', ') FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres AND MG.id_Movies = MOV.id_Movies) AS Genres
-        , MOV.IMDB_MinAge
-        , MOV.IMDB_MaxAge
         , MOV.IMDB_Parental_Advisory_Nudity
         , MOV.IMDB_Parental_Advisory_Violence
         , MOV.IMDB_Parental_Advisory_Profanity
@@ -2148,7 +2146,6 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
         , MOV.IMDB_Top_Cast
         , MOV.IMDB_Top_Production_Companies
         , MOV.IMDB_Trailer_URL
-        , AR.Age
         , (SELECT COUNT(1) FROM tbl_Movies MOVEXTRAS WHERE MOVEXTRAS.Extra_id_Movies_Owner = MOV.id_Movies) AS NumExtras
       `}
 		FROM tbl_Movies MOV
