@@ -1,8 +1,5 @@
 # TO-DOs
 
-## MediaList
-- Bug? Age (range) isn't shown anymore
-
 ## Memory Leak (multiple reloads of medialist)
 - more intelligent loading?
 - better garbage collection?

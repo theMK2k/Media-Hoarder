@@ -13,6 +13,9 @@ OK  - let user define preferred (local) Regions to identify the primary title
 OK  -> fetch Countries from https://www.imdb.com/search/title/ and provide as list
 OK  -> Auto set region by user's localization setting?
 
+## MediaList
+- Bug? Age (range) isn't shown anymore
+
 ## Rescan dialog
 - show warning when a source path cannot be found but it is set to remove entries on re-scan
 
