@@ -514,6 +514,10 @@
       <v-container style="display: flex; max-width: 100%!important; padding: 0px!important">
         <router-view></router-view>
 
+        <mk-version-dialog
+          v-bind:show="versionDialog.show"
+        ></mk-version-dialog>
+
         <mk-delete-list-dialog
           v-bind:show="deleteListDialog.show"
           title="Delete List"
@@ -624,6 +628,7 @@ import { eventBus } from "@/main";
 import Dialog from "@/components/shared/Dialog.vue";
 import SearchDataDialog from "@/components/shared/SearchDataDialog.vue";
 import ScanOptionsDialog from "@/components/shared/ScanOptionsDialog.vue";
+import VersionDialog from "@/components/shared/VersionDialog.vue";
 
 export default {
   components: {
@@ -631,7 +636,8 @@ export default {
     "mk-search-companies-dialog": SearchDataDialog,
     "mk-search-persons-dialog": SearchDataDialog,
     "mk-search-plot-keywords-dialog": SearchDataDialog,
-    "mk-scan-options-dialog": ScanOptionsDialog
+    "mk-scan-options-dialog": ScanOptionsDialog,
+    "mk-version-dialog": VersionDialog
   },
 
   props: {
@@ -706,6 +712,10 @@ export default {
     scanOptionsDialog: {
       show: false,
       showMediaInfoWarning: false
+    },
+
+    versionDialog: {
+      show: true
     }
   }),
 

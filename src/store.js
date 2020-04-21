@@ -13,6 +13,7 @@ const readdirAsync = util.promisify(fs.readdir);
 const existsAsync = util.promisify(fs.exists);
 const statAsync = util.promisify(fs.stat);
 const execAsync = util.promisify(child_process.exec);
+const readFileAsync = util.promisify(fs.readFile);
 
 const path = require('path');
 // import path from "path";
@@ -4089,6 +4090,24 @@ async function findMissingSourcePaths() {
   return sourcePaths.filter(sourcePath => !sourcePath.exists);
 }
 
+async function loadVersionInfo(fileName) {
+  try {
+    logger.log('loadVersionInfo fileName', fileName);
+    
+    const filePath = helpers.getPath(path.join('public/history', fileName));
+    
+    logger.log('loadVersionInfo path:', filePath);
+    
+    const versionInfo = await readFileAsync(filePath);
+  
+    logger.log('loadVersionInfo versionInfo:', versionInfo.toString());
+  
+    return versionInfo;
+  } catch (e) {
+    logger.error(e);
+  }
+}
+
 export {
   db,
   fetchSourcePaths,
@@ -4148,5 +4167,6 @@ export {
   getFallbackLanguage,
   fetchLanguageSettings,
   fetchMoviePlotKeywords,
-  findMissingSourcePaths
+  findMissingSourcePaths,
+  loadVersionInfo
 };

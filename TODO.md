@@ -5,19 +5,60 @@
 - better garbage collection?
 OK -> we have a memory leak using eventBus.$on -> implement eventBus.$off on beforeDestroy() lifecycle hook
 -> we still have the memory leak: don't fetch all data at once (re-fetch for each page)
--> check if memory leak is only in dev-mode (yes, it still persists even in prod-mode)
-
-## Implement Backend as express server
-- this way we can have front- and backend as independent apps
+OK -> check if memory leak is only in dev-mode (yes, it still persists even in prod-mode)
 
 ## View-Switchig multiple event handling bug
 
-## Backlog Popup
+## History/New Version Popup
 - shown on startup
 - welcome message
 - latest introduced features
-- backlog (show more..)
+- history (show more..)
 - info if this is the latest version (based on github releases page?)
+
+Content:
+
+[
+  {
+    version: "1.0",
+    features: [
+      {
+        shortDescription: "TV Series Support",
+        longDescription: "Added TV Series Support allows to scan TV Series (expected are directories for the full series and subdirectories for seasons)",
+        link: "https://link-to-further-explanations.com"
+      }
+    ],
+
+    fixes: [
+
+    ],
+
+    other: [
+
+    ]
+  }
+]
+- provide a full set as json
+- provide the latest version as json (this will be loaded from github by the client in order to inform the user of new version and it's features)
+
+OR
+
+Content:
+
+[
+  {
+    version: "1.0",
+    description: "version-1.0.html"
+  },
+  {
+    version: "0.5",
+    description: "version-0.5.html"
+  }
+]
+
+-> small backlog.json
+-> load version-xx.md from file or from github if not available
+-> render markdown with https://github.com/miaolz123/vue-markdown
 
 ## Investigate an "AND" filter
 - how would SQL queries look?
@@ -88,3 +129,6 @@ OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 ## QA
 
 - check how fetchMedia/MediaList works if only filescan has been performed (no MI/IMDB data)
+
+## Implement Backend as express server
+- this way we can have front- and backend as independent apps
