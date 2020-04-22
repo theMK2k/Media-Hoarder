@@ -4095,6 +4095,12 @@ async function loadLocalHistory(fileName) {
     logger.log('loadLocalHistory fileName', fileName);
     
     const filePath = helpers.getPath(path.join('public', 'history', fileName));
+
+    const fileExists = await existsAsync(filePath);
+
+    if (!fileExists) {
+      return null;
+    }
     
     logger.log('loadLocalHistory path:', filePath);
     
