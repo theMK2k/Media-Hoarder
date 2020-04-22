@@ -5,6 +5,17 @@
         <div class="headline" style="width: 100%; font-size: 1.17em">Welcome!</div>
       </v-card-title>
 
+      <div v-if="isLoadingHistory" style="margin-left: 24px; margin-right:24px; margin-bottom: 16px">
+        Loading your version info
+        <v-progress-linear color="red accent-0" indeterminate rounded height="6"></v-progress-linear>
+      </div>
+      
+      <div
+        v-if="!isLoadingHistory"
+      >
+
+      </div>
+
       <v-alert
         v-bind:type="showNewVersionInfo ? 'info' : 'success'"
         colored-border
@@ -54,13 +65,21 @@ export default {
   data() {
     return {
       versionInfo: "",
-      showNewVersionInfo: true
+      showNewVersionInfo: true,
+      isLoadingHistory: true
     };
   },
 
   methods: {
     openLink(link) {
       shell.openExternal(link);
+    },
+
+    checkVersion() {
+      // load local history.json
+      // fetch remote history.json
+      // compare them and set showNewVersionInfo accordingly
+      // if available use remote history.json for navigation
     }
   },
 

@@ -515,6 +515,7 @@
         <router-view></router-view>
 
         <mk-version-dialog
+          ref="versionDialog"
           v-bind:show="versionDialog.show"
         ></mk-version-dialog>
 
@@ -1378,6 +1379,10 @@ export default {
 
     quit() {
       remote.getCurrentWindow().close();
+    },
+
+    checkVersion() {
+      this.$refs.versionDialog.checkVersion();
     }
   },
 
