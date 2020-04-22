@@ -1,5 +1,9 @@
 [
     {
+        "version": "1.0",
+        "description": "version-1.0.html"
+    },
+    {
         "version": "0.9",
         "description": "version-0.9.html"
     }

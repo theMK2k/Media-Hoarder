@@ -2,17 +2,31 @@
   <v-dialog v-model="show" persistent max-width="1000px">
     <v-card>
       <v-card-title>
-        <div class="headline" style="width: 100%; font-size: 1.17em">Version Dialog</div>
+        <div class="headline" style="width: 100%; font-size: 1.17em">Welcome!</div>
       </v-card-title>
 
       <v-alert
-        type="warning"
+        v-bind:type="showNewVersionInfo ? 'info' : 'success'"
         colored-border
         border="left"
-        v-if="moviesSourcePaths.length == 0"
-      >A new version is available</v-alert>
+        style="margin-left: 24px"
+      >
+        Your current version is {{"v6.66"}} -
+        <span v-if="showNewVersionInfo">
+          A new version is available - get it at
+          <a
+            v-on:click.stop="openLink('https://github.com/theMK2k/MediaBox/releases')"
+          >https://github.com/theMK2k/MediaBox/releases</a>
+        </span>
+        <span v-if="!showNewVersionInfo">you are up to date</span>
+      </v-alert>
 
-      <v-card-actions>
+      <div style="margin-left: 24px">
+        Visit
+        <a>todo-website.net</a> for a better overview.
+      </div>
+
+      <v-card-actions style="margin-left: 16px">
         <v-btn class="xs-fullwidth" v-bind:color="cancelColor" style="margin-right: 8px">&lt;</v-btn>version 1.0
         <v-btn class="xs-fullwidth" v-bind:color="cancelColor">&gt;</v-btn>
       </v-card-actions>
@@ -28,6 +42,7 @@
 // import Vue from "vue";
 // import router from "@/router"; // workaround in order to access router.app.$t
 const logger = require("loglevel");
+const { shell } = require("electron").remote;
 
 import * as store from "@/store";
 
@@ -38,11 +53,16 @@ export default {
 
   data() {
     return {
-      versionInfo: ""
+      versionInfo: "",
+      showNewVersionInfo: true
     };
   },
 
-  methods: {},
+  methods: {
+    openLink(link) {
+      shell.openExternal(link);
+    }
+  },
 
   // ### Lifecycle Hooks ###
   created() {
