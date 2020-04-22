@@ -12,10 +12,11 @@
               <div style="margin-left: 16px">
                 <v-list-item-title class="headline mb-2" style="margin-bottom: 0px!important">
                   Plot Keyword: {{ Keyword }}
-                  <span v-if="isScraping">(loading, please wait...)</span>
                 </v-list-item-title>
               </div>
             </v-row>
+
+            <v-progress-linear v-if="isScraping" color="red accent-0" indeterminate rounded height="3"></v-progress-linear>
 
           </v-col>
         </v-list-item-content>
