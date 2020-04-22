@@ -517,6 +517,7 @@
         <mk-version-dialog
           ref="versionDialog"
           v-bind:show="versionDialog.show"
+          v-on:close="versionDialog.show = false"
         ></mk-version-dialog>
 
         <mk-delete-list-dialog
@@ -1382,7 +1383,10 @@ export default {
     },
 
     checkVersion() {
-      this.$refs.versionDialog.checkVersion();
+      logger.log('App checkVersion START')
+      setTimeout(() => {
+        this.$refs.versionDialog.checkVersion();
+      })
     }
   },
 
@@ -1391,6 +1395,8 @@ export default {
     logger.log("shared:", this.shared);
 
     this.$vuetify.theme.dark = true;
+
+    this.checkVersion();
 
     eventBus.$on("showSnackbar", ({ color, textOrErrorObject, timeout }) => {
       logger.debug("snackbar called:", textOrErrorObject);

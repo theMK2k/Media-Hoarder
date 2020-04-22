@@ -4090,19 +4090,19 @@ async function findMissingSourcePaths() {
   return sourcePaths.filter(sourcePath => !sourcePath.exists);
 }
 
-async function loadVersionInfo(fileName) {
+async function loadLocalHistory(fileName) {
   try {
-    logger.log('loadVersionInfo fileName', fileName);
+    logger.log('loadLocalHistory fileName', fileName);
     
-    const filePath = helpers.getPath(path.join('public/history', fileName));
+    const filePath = helpers.getPath(path.join('public', 'history', fileName));
     
-    logger.log('loadVersionInfo path:', filePath);
+    logger.log('loadLocalHistory path:', filePath);
     
-    const versionInfo = await readFileAsync(filePath);
+    const history = await readFileAsync(filePath);
   
-    logger.log('loadVersionInfo versionInfo:', versionInfo.toString());
+    logger.log('loadLocalHistory versionInfo:', history.toString());
   
-    return versionInfo;
+    return history;
   } catch (e) {
     logger.error(e);
   }
@@ -4168,5 +4168,5 @@ export {
   fetchLanguageSettings,
   fetchMoviePlotKeywords,
   findMissingSourcePaths,
-  loadVersionInfo
+  loadLocalHistory
 };
