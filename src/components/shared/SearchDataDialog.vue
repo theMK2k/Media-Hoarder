@@ -13,6 +13,7 @@
           color="white"
           hide-details
           v-model="searchText"
+          v-bind:loading="isLoading"
         ></v-text-field>
 
         <v-checkbox
@@ -27,7 +28,7 @@
           class="item Clickable"
           style="width: 100%"
           v-for="item in items"
-          v-bind:key="item.name"
+          v-bind:key="item.id"
           v-on:click.stop="onItemClicked(item)"
         >{{ item.name }} ({{item.NumMovies}})</v-row>
       </v-card-text>
@@ -55,7 +56,8 @@ export default {
     return {
       items: [],
       searchText: "",
-      sortByNumMovies: false
+      sortByNumMovies: false,
+      isLoading: false
     };
   },
 
@@ -89,12 +91,15 @@ export default {
         return;
       }
 
+      this.isLoading = true;
+
       let sql = "";
       if (this.searchMode === "companies") {
         // todo filter: (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
         sql = `
 				SELECT
-							Company_Name AS name
+              Company_Name AS id
+              , Company_Name AS name
 							, (SELECT COUNT(1) FROM (
 									SELECT DISTINCT
 										id_Movies
@@ -118,11 +123,11 @@ export default {
 									SELECT DISTINCT
 										id_Movies
 									FROM tbl_Movies_IMDB_Credits MC2
-									WHERE MC2.Person_Name = MC.Person_Name
+									WHERE MC2.IMDB_Person_ID = MC.IMDB_Person_ID
 								)) AS NumMovies
 					FROM tbl_Movies_IMDB_Credits MC
 					WHERE Person_Name LIKE '${searchText}%'
-          GROUP BY Person_Name
+          GROUP BY IMDB_Person_ID
           ${this.sortByNumMovies ? 'ORDER BY NumMovies DESC' : 'ORDER BY name ASC'}
           `;
       }
@@ -143,6 +148,8 @@ export default {
       logger.log("search query:", sql);
 
       this.items = await store.db.fireProcedureReturnAll(sql, []);
+
+      this.isLoading = false;
     },
 
     onItemClicked(item) {
