@@ -1,15 +1,12 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px">
-    <v-card>
+  <v-dialog v-model="show" persistent max-width="1000px" transition="fab-transition">
+    <v-card style="min-height: 500px">
       <v-card-title>
-        <v-row>
-          <div class="headline" style="width: 100%; font-size: 1.17em">
-            <div>
-              Welcome!
-            </div>
-            <v-spacer />
-            <v-btn v-on:click="$emit('close')">Close</v-btn>
-          </div>
+        <v-row class="headline" style="width: 100%; font-size: 1.17em">
+          MediaBox {{currentVersion}} made with ♥ by MK2k
+          <v-spacer></v-spacer>
+
+          <v-btn text v-on:click="$emit('close')">Close</v-btn>
         </v-row>
       </v-card-title>
 
@@ -17,7 +14,7 @@
         v-if="isLoadingHistory"
         style="margin-left: 24px; margin-right:24px; margin-bottom: 16px"
       >
-        Loading your version info
+        Checking for Updates
         <v-progress-linear color="red accent-0" indeterminate rounded height="6"></v-progress-linear>
       </div>
 
@@ -27,18 +24,18 @@
         colored-border
         border="left"
         style="margin-left: 24px"
+        dense
       >
-        Your current version is {{currentVersion}}
         <span v-if="isNewVersionAvailable">
-          - Version {{latestVersion}} is available - get it at
+          Version {{latestVersion}} is available - get it at
           <a
             v-on:click.stop="openLink('https://github.com/theMK2k/MediaBox/releases')"
           >https://github.com/theMK2k/MediaBox/releases</a>
         </span>
-        <span v-if="isUpToDate">- you are up to date</span>
+        <span v-if="isUpToDate">you are up to date</span>
         <span
           v-if="!isNewVersionAvailable && !isUpToDate"
-        >- unable to determine if you are up to date</span>
+        >unable to determine if you are up to date</span>
       </v-alert>
 
       <div style="margin-left: 24px">
@@ -47,6 +44,8 @@
       </div>
 
       <v-card-actions style="margin-left: 16px" v-if="history && history.length > 0">
+        Version History
+        
         <v-btn
           text
           class="xs-fullwidth"
@@ -54,7 +53,7 @@
           v-bind:disabled="infoPosition + 1 >= history.length"
           v-on:click="infoPosition++"
         >&lt;</v-btn>
-        version {{history[infoPosition].version}}
+        {{history[infoPosition].version}}
         <v-btn
           text
           class="xs-fullwidth"

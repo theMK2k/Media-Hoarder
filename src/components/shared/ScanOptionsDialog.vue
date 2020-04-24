@@ -16,6 +16,7 @@
           colored-border
           border="left"
           v-if="showMediaInfoWarning"
+          dense
         >Warning: Mediainfo CLI Path is not set. Please go to Settings and provide one. You can get Mediainfo CLI from www.mediaarea.net</v-alert>
 
         <v-radio-group v-model="radioGroup">
@@ -41,11 +42,14 @@
           </ul>
         </div>
 
+        <div style="height: 16px"></div>
+
         <v-alert
           type="warning"
           colored-border
           border="left"
           v-if="missingSourcePaths && missingSourcePaths.length > 0"
+          dense
         >
           Warning: the following source path{{missingSourcePaths.length > 1 ? 's are ' : ' is '}}currently not available and all entries will be removed! (check Settings)
           <ul>

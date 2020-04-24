@@ -1494,6 +1494,11 @@ export default {
       }
     });
 
+    eventBus.$on("openVersionDialog", () => {
+      this.$refs.versionDialog.checkVersion();
+      this.versionDialog.show = true;
+    })
+
     // eventBus.scanInfoShow('KILLME', 'Asterix und das Geheimnis des Zaubertranks ~ Astérix - Le secret de la potion magique (De)(BD)[2018][Adventure, Animation, Comedy][6.9 @ 3074][tt8001346].mkv');
 
     // lodash debounced functions

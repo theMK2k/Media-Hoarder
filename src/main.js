@@ -94,6 +94,10 @@ export const eventBus = new Vue({
 
 		personDialogConfirm(result) {
 			this.$emit('personDialogConfirm', result);
+		},
+
+		openVersionDialog() {
+			this.$emit('openVersionDialog');
 		}
 	}
 });

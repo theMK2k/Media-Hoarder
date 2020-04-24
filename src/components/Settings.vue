@@ -17,7 +17,7 @@
 
       <!-- GENERAL -->
       <v-tab-item style="padding: 8px">
-        <v-row style="margin: 0px">
+        <v-row class="settings-row">
           <v-text-field
             readonly
             label="Media Player Path (e.g. path to VLC executable)"
@@ -32,7 +32,7 @@
           >Browse</v-btn>
         </v-row>
 
-        <v-row style="margin: 0px">
+        <v-row class="settings-row">
           <v-text-field
             readonly
             label="Mediainfo CLI Path (i.e. path to Mediainfo CLI executable from mediaarea.net or mediainfo-rar from lundman.net)"
@@ -47,7 +47,7 @@
           >Browse</v-btn>
         </v-row>
 
-        <v-row style="margin: 0px">
+        <v-row class="settings-row">
           <v-text-field
             type="number"
             label="Number of seconds a medium should run until 'last access' is updated"
@@ -55,7 +55,7 @@
           ></v-text-field>
         </v-row>
 
-        <v-row style="margin: 0px">
+        <v-row class="settings-row">
           <v-select
             label="IMDB Rating Demographic"
             item-text="long"
@@ -65,6 +65,7 @@
           ></v-select>
         </v-row>
 
+        <v-btn text small color="primary" v-on:click="openVersionDialog">Show Version Info</v-btn>
         <v-btn text small color="primary" v-on:click="openDevTools">Open DevTools</v-btn>
       </v-tab-item>
 
@@ -646,7 +647,6 @@ export default {
     },
 
     async fetchSourcePaths() {
-      // (async () => {
       try {
         const paths = await store.fetchSourcePaths();
         this.sourcePaths = paths;
@@ -654,7 +654,6 @@ export default {
       } catch (err) {
         eventBus.showSnackbar("error", err);
       }
-      // })();
     },
 
     onSourcePathEditDescription(sourcePathItem) {
@@ -1045,6 +1044,10 @@ export default {
         "success",
         `title type "${titleType.TitleType}" removed`
       );
+    },
+
+    openVersionDialog() {
+      eventBus.openVersionDialog();
     }
   },
 
@@ -1090,5 +1093,9 @@ export default {
 .v-messages {
   min-height: 0px !important;
   visibility: hidden;
+}
+
+.settings-row {
+   margin: 0px 0px 16px 0px
 }
 </style>
