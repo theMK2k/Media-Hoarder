@@ -1,8 +1,5 @@
 # TO-DOs
 
-## Show Scan-Progress in Taskbar
-- see: https://www.electronjs.org/docs/tutorial/progress-bar
-
 ## Person Search
 - "David Lynch" should have multiple hits, unfortunately only one is shown
 

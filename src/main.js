@@ -3,9 +3,11 @@ import App from '@/App.vue';
 import Vuetify from 'vuetify';
 import '@mdi/font/css/materialdesignicons.css';
 
-// const logger = require('loglevel');
+const logger = require('loglevel');
 
 import 'vuetify/dist/vuetify.min.css'
+
+const remote = require("electron").remote;
 
 import router from '@/router'
 import { shared } from '@/shared'
@@ -98,6 +100,13 @@ export const eventBus = new Vue({
 
 		openVersionDialog() {
 			this.$emit('openVersionDialog');
+		},
+
+		setProgressBar(value) {
+			// value 0.00 - 1.00: absolute progress
+			// value > 1.00: marquee
+			// value < 0: off
+			remote.getCurrentWindow().setProgressBar(value);
 		}
 	}
 });

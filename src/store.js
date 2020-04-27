@@ -7,7 +7,7 @@ const xml2js = require("xml2js");
 // const textVersion = require("textversionjs");
 // const moment = require("moment");
 const levenshtein = require("fast-levenshtein");
-const osLocale = require('os-locale');
+const osLocale = require("os-locale");
 
 const readdirAsync = util.promisify(fs.readdir);
 const existsAsync = util.promisify(fs.exists);
@@ -15,24 +15,27 @@ const statAsync = util.promisify(fs.stat);
 const execAsync = util.promisify(child_process.exec);
 const readFileAsync = util.promisify(fs.readFile);
 
-const path = require('path');
+const path = require("path");
 // import path from "path";
 
 import { eventBus } from "@/main";
 
-const db = require('./helpers/db');
+const db = require("./helpers/db");
 // import * as db from "@/helpers/db";
 
-const dbsyncSQLite = require('./helpers/dbsync-sqlite');
+const dbsyncSQLite = require("./helpers/dbsync-sqlite");
 // import * as dbsyncSQLite from "@/helpers/dbsync-sqlite";
 
-const helpers = require('./helpers/helpers');
+const helpers = require("./helpers/helpers");
 // import * as helpers from "@/helpers/helpers";
 
-const { languageNameCodeMapping, languageCodeNameMapping } = require('./languages');
+const {
+  languageNameCodeMapping,
+  languageCodeNameMapping,
+} = require("./languages");
 // import { languageNameCodeMapping, languageCodeNameMapping } from "@/languages";
 
-const { shared } = require('./shared');
+const { shared } = require("./shared");
 // import { shared } from "@/shared";
 
 const {
@@ -46,8 +49,8 @@ const {
   scrapeIMDBSearch,
   scrapeIMDBplotKeywords,
   scrapeIMDBFilmingLocations,
-  scrapeIMDBRatingDemographics
-} = require('./imdb-scraper');
+  scrapeIMDBRatingDemographics,
+} = require("./imdb-scraper");
 
 const scanOptions = {
   filescanMovies: true,
@@ -80,7 +83,7 @@ const scanOptions = {
 
   mergeExtras: true,
 
-  handleDuplicates: true
+  handleDuplicates: true,
 };
 
 const definedError = require("@/helpers/defined-error");
@@ -105,13 +108,13 @@ dbsync.runSync(
   helpers.getPath("data/mediabox.db_initial"),
   helpers.getPath("data/mediabox.db"),
   { doCreateTables: true, doCreateColumns: true, doCopyContent: true },
-  err => {
+  (err) => {
     if (err) {
       if (err.error && err.error.errorCode == "SYNCERR") {
         dialog.showMessageBox(null, {
           type: "error",
           title: "MediaBox - DB Sync Error",
-          message: err.error.message
+          message: err.error.message,
         });
         logger.error("ERROR:", err);
         return;
@@ -120,7 +123,7 @@ dbsync.runSync(
       logger.log("WARN:", err);
     }
 
-    db.initDbCB(err => {
+    db.initDbCB((err) => {
       if (err) {
         return logger.error(err);
       }
@@ -132,15 +135,15 @@ dbsync.runSync(
 
         shared.currentLocale = await osLocale();
 
-        logger.log('shared.currentLocale:', shared.currentLocale);
+        logger.log("shared.currentLocale:", shared.currentLocale);
 
-        const fallbackRegion = await getSetting('fallbackRegion');
+        const fallbackRegion = await getSetting("fallbackRegion");
         if (fallbackRegion) {
           const fallbackRegionObj = JSON.parse(fallbackRegion);
 
           if (fallbackRegionObj.locale === shared.currentLocale) {
             shared.fallbackRegion = fallbackRegionObj;
-            logger.log('Fallback Region (from db):', shared.fallbackRegion);
+            logger.log("Fallback Region (from db):", shared.fallbackRegion);
           }
         }
 
@@ -158,8 +161,8 @@ dbsync.runSync(
 
         await fetchIMDBRatingDemographic();
 
-        logger.log('shared.fallbackRegion:', shared.fallbackRegion);
-        logger.log('shared.fallbackLanguage:', shared.fallbackLanguage);
+        logger.log("shared.fallbackRegion:", shared.fallbackRegion);
+        logger.log("shared.fallbackLanguage:", shared.fallbackLanguage);
       })();
     });
   }
@@ -172,10 +175,10 @@ function generateIndexQuery(tableName, ColumnNames, isUnique) {
 
   return `CREATE ${
     isUnique ? "UNIQUE " : ""
-    } INDEX IF NOT EXISTS main.IDX_${tableName}_${columnNamesString.replace(
-      /, /g,
-      "_"
-    )} ON ${tableName} (${columnNamesString})`;
+  } INDEX IF NOT EXISTS main.IDX_${tableName}_${columnNamesString.replace(
+    /, /g,
+    "_"
+  )} ON ${tableName} (${columnNamesString})`;
 }
 
 async function createIndexes(db) {
@@ -225,16 +228,8 @@ async function createIndexes(db) {
       ["id_Movies", "Type", "Language"],
       true
     ),
-    generateIndexQuery(
-      "tbl_IMDB_Plot_Keywords",
-      ["Keyword"],
-      true
-    ),
-    generateIndexQuery(
-      "tbl_Movies_IMDB_Plot_Keywords",
-      ["id_Movies"],
-      false
-    ),
+    generateIndexQuery("tbl_IMDB_Plot_Keywords", ["Keyword"], true),
+    generateIndexQuery("tbl_Movies_IMDB_Plot_Keywords", ["id_Movies"], false),
     generateIndexQuery(
       "tbl_Movies_IMDB_Plot_Keywords",
       ["id_IMDB_Plot_Keywords"],
@@ -245,11 +240,7 @@ async function createIndexes(db) {
       ["id_Movies", "id_IMDB_Plot_Keywords"],
       true
     ),
-    generateIndexQuery(
-      "tbl_IMDB_Filming_Locations",
-      ["Location"],
-      true
-    ),
+    generateIndexQuery("tbl_IMDB_Filming_Locations", ["Location"], true),
     generateIndexQuery(
       "tbl_Movies_IMDB_Filming_Locations",
       ["id_Movies"],
@@ -319,29 +310,58 @@ async function rescanHandleDuplicates() {
   // const KILLME = 1;
   // if (KILLME === 1) return;
 
-  logger.log('### rescanHandleDuplicates ###');
+  logger.log("### rescanHandleDuplicates ###");
 
-  const newMovies = await db.fireProcedureReturnAll('SELECT id_Movies FROM tbl_Movies WHERE isNew = 1 AND Extra_id_Movies_Owner IS NULL');
+  eventBus.setProgressBar(2); // marquee
 
-  logger.log('newMovies:', newMovies);
+  const newMovies = await db.fireProcedureReturnAll(
+    "SELECT id_Movies FROM tbl_Movies WHERE isNew = 1 AND Extra_id_Movies_Owner IS NULL"
+  );
 
-  const arrNewMovies = newMovies.map(movie => movie.id_Movies);
+  logger.log("newMovies:", newMovies);
 
-  logger.log('arrNewMovies:', arrNewMovies);
+  const arrNewMovies = newMovies.map((movie) => movie.id_Movies);
+
+  logger.log("arrNewMovies:", arrNewMovies);
 
   for (let i = 0; i < arrNewMovies.length; i++) {
     const $id_Movies = arrNewMovies[i];
 
-    const currentMovie = (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', { $id_Movies }))[0];
+    const currentMovie = (await db.fireProcedureReturnAll(
+      "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
+      { $id_Movies }
+    ))[0];
 
-    logger.log('currentMovie:', currentMovie);
+    logger.log("currentMovie:", currentMovie);
 
-    const actualDuplicates = await getMovieDuplicates($id_Movies, true, false, true);
-    const metaDuplicates = await getMovieDuplicates($id_Movies, false, true, true);
+    const actualDuplicates = await getMovieDuplicates(
+      $id_Movies,
+      true,
+      false,
+      true
+    );
+    const metaDuplicates = await getMovieDuplicates(
+      $id_Movies,
+      false,
+      true,
+      true
+    );
 
     // even if there are multiple duplicates possible, we just take the first ones
-    const actualDuplicate = actualDuplicates.length > 0 ? (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', { $id_Movies: actualDuplicates[0] }))[0] : null;
-    const metaDuplicate = metaDuplicates.length > 0 ? (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', { $id_Movies: metaDuplicates[0] }))[0] : null;
+    const actualDuplicate =
+      actualDuplicates.length > 0
+        ? (await db.fireProcedureReturnAll(
+            "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
+            { $id_Movies: actualDuplicates[0] }
+          ))[0]
+        : null;
+    const metaDuplicate =
+      metaDuplicates.length > 0
+        ? (await db.fireProcedureReturnAll(
+            "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
+            { $id_Movies: metaDuplicates[0] }
+          ))[0]
+        : null;
 
     // relink IMDB is alread handled by findIMDBtconst
     // if (shared.duplicatesHandling.actualDuplicate.relinkIMDB && currentMovie.IMDB_tconst && actualDuplicate.IMDB_tconst && currentMovie.IMDB_tconst !== actualDuplicate.IMDB_tconst) {
@@ -349,16 +369,26 @@ async function rescanHandleDuplicates() {
     // }
 
     // addToList
-    if ((shared.duplicatesHandling.actualDuplicate.addToList && actualDuplicate) || (shared.duplicatesHandling.metaDuplicate.addToList && metaDuplicate)) {
-      logger.log('addToList by duplicate');
+    if (
+      (shared.duplicatesHandling.actualDuplicate.addToList &&
+        actualDuplicate) ||
+      (shared.duplicatesHandling.metaDuplicate.addToList && metaDuplicate)
+    ) {
+      logger.log("addToList by duplicate");
 
-      const duplicate = (shared.duplicatesHandling.actualDuplicate.addToList && actualDuplicate) ? actualDuplicate : metaDuplicate;
+      const duplicate =
+        shared.duplicatesHandling.actualDuplicate.addToList && actualDuplicate
+          ? actualDuplicate
+          : metaDuplicate;
 
-      logger.log('addToList duplicate:', duplicate);
+      logger.log("addToList duplicate:", duplicate);
 
-      const inLists = await db.fireProcedureReturnAll('SELECT id_Lists FROM tbl_Lists_Movies WHERE id_Movies = $id_Movies', { $id_Movies: duplicate.id_Movies });
+      const inLists = await db.fireProcedureReturnAll(
+        "SELECT id_Lists FROM tbl_Lists_Movies WHERE id_Movies = $id_Movies",
+        { $id_Movies: duplicate.id_Movies }
+      );
 
-      logger.log('addToList inLists:', inLists);
+      logger.log("addToList inLists:", inLists);
 
       for (let i = 0; i < inLists.length; i++) {
         const id_Lists = inLists[i].id_Lists;
@@ -372,12 +402,16 @@ async function rescanHandleDuplicates() {
     // updateRating is already handled by applyMetaData
     // updateLastAccess is already handled by applyMetaData
   }
+
+  eventBus.setProgressBar(-1); // off
 }
 
 async function mergeExtras(onlyNew) {
   if (!scanOptions.mergeExtras) {
     return;
   }
+
+  eventBus.setProgressBar(2); // marquee
 
   const children = await db.fireProcedureReturnAll(`
 	SELECT
@@ -401,6 +435,8 @@ async function mergeExtras(onlyNew) {
     const child = children[i];
     await mergeExtra(child);
   }
+
+  eventBus.setProgressBar(-1); // off
 }
 
 async function mergeExtra(movie) {
@@ -444,7 +480,7 @@ async function mergeExtra(movie) {
     return;
   }
 
-  possibleParents.forEach(parent => {
+  possibleParents.forEach((parent) => {
     parent.distance = levenshtein.get(movie.Path, parent.Path);
     logger.log("parent distance:", parent.distance, parent.Path);
   });
@@ -454,7 +490,7 @@ async function mergeExtra(movie) {
   )[0].distance;
 
   possibleParents = possibleParents.filter(
-    parent => parent.distance === bestDistance
+    (parent) => parent.distance === bestDistance
   );
 
   if (possibleParents.length == 1) {
@@ -463,7 +499,7 @@ async function mergeExtra(movie) {
     return;
   }
 
-  const possibleParentsMultipartFirst = possibleParents.filter(movie =>
+  const possibleParentsMultipartFirst = possibleParents.filter((movie) =>
     /1_\d/.test(movie.Filename)
   );
 
@@ -490,6 +526,8 @@ async function filescanMovies(onlyNew) {
 
   eventBus.scanInfoShow("Rescanning Movies", "Rescan started");
 
+  eventBus.setProgressBar(2); // marquee
+
   try {
     const moviesHave = await db.fireProcedureReturnAll(`
 			SELECT
@@ -498,7 +536,7 @@ async function filescanMovies(onlyNew) {
 			FROM tbl_Movies
 		`);
 
-    moviesHave.forEach(movie => {
+    moviesHave.forEach((movie) => {
       movie.tmp_PathLower = movie.tmp_PathLower.toLowerCase();
     });
 
@@ -514,17 +552,19 @@ async function filescanMovies(onlyNew) {
 			FROM tbl_SourcePaths
 			WHERE MediaType = 'movies'
 			${
-      scanOptions.filescanMovies_id_SourcePaths_IN
-        ? "AND id_SourcePaths IN " +
         scanOptions.filescanMovies_id_SourcePaths_IN
-        : ""
+          ? "AND id_SourcePaths IN " +
+            scanOptions.filescanMovies_id_SourcePaths_IN
+          : ""
       }
 		`);
 
     for (let i = 0; i < moviesSourcePaths.length; i++) {
       const movieSourcePath = moviesSourcePaths[i];
       logger.log(
-        `  scanning Source Path ${movieSourcePath.Path} (${movieSourcePath.Description})`
+        `  scanning Source Path ${movieSourcePath.Path} (${
+          movieSourcePath.Description
+        })`
       );
 
       if (movieSourcePath.checkRemovedFiles) {
@@ -534,7 +574,9 @@ async function filescanMovies(onlyNew) {
         );
       }
 
-      currentScanInfoHeader = `Rescanning Movies - ${movieSourcePath.Description}`;
+      currentScanInfoHeader = `Rescanning Movies - ${
+        movieSourcePath.Description
+      }`;
 
       eventBus.scanInfoShow(currentScanInfoHeader, "");
 
@@ -551,6 +593,8 @@ async function filescanMovies(onlyNew) {
     logger.log("### filescanMovies END");
   } catch (err) {
     throw err;
+  } finally {
+    eventBus.setProgressBar(-1); // off
   }
 }
 
@@ -572,7 +616,7 @@ async function filescanMoviesPath(
 
       if (pathItem.isFile) {
         const movieHave = moviesHave.find(
-          have => have.tmp_PathLower === pathLower
+          (have) => have.tmp_PathLower === pathLower
         );
 
         if (movieHave) {
@@ -582,14 +626,14 @@ async function filescanMoviesPath(
             {
               $id_Movies: movieHave.id_Movies,
               $Size: pathItem.Size,
-              $file_created_at: pathItem.file_created_at
+              $file_created_at: pathItem.file_created_at,
             }
           );
           continue;
         }
 
         if (
-          ![".avi", ".mp4", ".mkv", ".m2ts"].find(ext => {
+          ![".avi", ".mp4", ".mkv", ".m2ts"].find((ext) => {
             return ext === pathItem.ExtensionLower;
           })
         ) {
@@ -652,7 +696,7 @@ async function addMovie(id_SourcePaths, pathItem) {
       $Directory: pathItem.Directory,
       $Filename: pathItem.Name,
       $Size: pathItem.Size,
-      $file_created_at: pathItem.$file_created_at
+      $file_created_at: pathItem.$file_created_at,
     }
   );
 }
@@ -680,7 +724,7 @@ async function listPath(scanPath) {
       isDirectory: dirent.isDirectory(),
       Size: stats.size,
       file_created_at: stats.mtime,
-      stats
+      stats,
     });
   }
 
@@ -726,33 +770,44 @@ async function applyMetaData(onlyNew, id_Movies) {
 
     const names = [];
 
-    logger.log('names:', {
+    logger.log("names:", {
       IMDB_localTitle: movie.IMDB_localTitle,
       IMDB_originalTitle: movie.IMDB_originalTitle,
-      IMDB_primaryTitle: movie.IMDB_primaryTitle
-    })
+      IMDB_primaryTitle: movie.IMDB_primaryTitle,
+    });
 
     if (movie.IMDB_localTitle) {
       names.push(movie.IMDB_localTitle);
     }
 
-    if (movie.IMDB_originalTitle && (
-      name.length === 0 ||
-      (!name[0].toLowerCase().includes(movie.IMDB_originalTitle.toLowerCase()
-        &&
-        !movie.IMDB_originalTitle.toLowerCase().includes(name[0].toLowerCase())
-      )
-      ))) {
+    if (
+      movie.IMDB_originalTitle &&
+      (name.length === 0 ||
+        !name[0]
+          .toLowerCase()
+          .includes(
+            movie.IMDB_originalTitle.toLowerCase() &&
+              !movie.IMDB_originalTitle.toLowerCase().includes(
+                name[0].toLowerCase()
+              )
+          ))
+    ) {
       names.push(movie.IMDB_originalTitle);
     }
 
-    if (movie.IMDB_primaryTitle && name.length < 2 && (
-      name.length === 0 ||
-      (!name[0].toLowerCase().includes(movie.IMDB_primaryTitle.toLowerCase()
-        &&
-        !movie.IMDB_primaryTitle.toLowerCase().includes(name[0].toLowerCase())
-      )
-      ))) {
+    if (
+      movie.IMDB_primaryTitle &&
+      name.length < 2 &&
+      (name.length === 0 ||
+        !name[0]
+          .toLowerCase()
+          .includes(
+            movie.IMDB_primaryTitle.toLowerCase() &&
+              !movie.IMDB_primaryTitle.toLowerCase().includes(
+                name[0].toLowerCase()
+              )
+          ))
+    ) {
       names.push(movie.IMDB_primaryTitle);
     }
 
@@ -764,10 +819,10 @@ async function applyMetaData(onlyNew, id_Movies) {
       Name2 = names[1];
     }
 
-    logger.log('names:', {
+    logger.log("names:", {
       Name,
-      Name2
-    })
+      Name2,
+    });
 
     // if (
     //   movie.IMDB_originalTitle &&
@@ -809,8 +864,19 @@ async function applyMetaData(onlyNew, id_Movies) {
     const startYear = movie.IMDB_startYear;
     const endYear = movie.IMDB_endYear;
 
-    const duplicates = await getMovieDuplicates(movie.id_Movies, true, false, true);
-    const duplicate = duplicates.length > 0 ? (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', { $id_Movies: duplicates[0] }))[0] : null;
+    const duplicates = await getMovieDuplicates(
+      movie.id_Movies,
+      true,
+      false,
+      true
+    );
+    const duplicate =
+      duplicates.length > 0
+        ? (await db.fireProcedureReturnAll(
+            "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
+            { $id_Movies: duplicates[0] }
+          ))[0]
+        : null;
 
     // Overwrite by duplicate
     if (duplicate && shared.duplicatesHandling.actualDuplicate.updateTitle) {
@@ -822,7 +888,10 @@ async function applyMetaData(onlyNew, id_Movies) {
 
     let $last_access_at = null;
 
-    if (duplicate && shared.duplicatesHandling.actualDuplicate.updateLastAccess) {
+    if (
+      duplicate &&
+      shared.duplicatesHandling.actualDuplicate.updateLastAccess
+    ) {
       $last_access_at = duplicate.last_access_at;
     }
 
@@ -830,8 +899,19 @@ async function applyMetaData(onlyNew, id_Movies) {
     if (duplicate && shared.duplicatesHandling.actualDuplicate.updateRating) {
       $Rating = duplicate.Rating;
     } else if (shared.duplicatesHandling.metaDuplicate.updateRating) {
-      const metaDuplicates = await getMovieDuplicates(movie.id_Movies, false, true, true);
-      const metaDuplicate = metaDuplicates.length > 0 ? (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', { $id_Movies: metaDuplicates[0] }))[0] : null;
+      const metaDuplicates = await getMovieDuplicates(
+        movie.id_Movies,
+        false,
+        true,
+        true
+      );
+      const metaDuplicate =
+        metaDuplicates.length > 0
+          ? (await db.fireProcedureReturnAll(
+              "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
+              { $id_Movies: metaDuplicates[0] }
+            ))[0]
+          : null;
 
       if (metaDuplicate) {
         $Rating = metaDuplicate.Rating;
@@ -847,7 +927,7 @@ async function applyMetaData(onlyNew, id_Movies) {
         $startYear: startYear,
         $endYear: endYear,
         $last_access_at,
-        $Rating
+        $Rating,
       }
     );
   }
@@ -872,16 +952,16 @@ async function rescanMoviesMetaData(onlyNew, id_Movies) {
 				(isRemoved IS NULL OR isRemoved = 0)
 				${onlyNew ? "AND isNew = 1" : ""}
 				${
-    scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
-      ? "AND id_SourcePaths IN " +
-      scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
-      : ""
-    }
+          scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
+            ? "AND id_SourcePaths IN " +
+              scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
+            : ""
+        }
 				${
-    scanOptions.rescanMoviesMetaData_id_Movies
-      ? "AND id_Movies = " + scanOptions.rescanMoviesMetaData_id_Movies
-      : ""
-    }
+          scanOptions.rescanMoviesMetaData_id_Movies
+            ? "AND id_Movies = " + scanOptions.rescanMoviesMetaData_id_Movies
+            : ""
+        }
 				${id_Movies ? "AND id_Movies = " + id_Movies : ""}
 			`,
     []
@@ -897,14 +977,17 @@ async function rescanMoviesMetaData(onlyNew, id_Movies) {
     if (
       scanOptions.rescanMoviesMetaData_maxEntries &&
       i > scanOptions.rescanMoviesMetaData_maxEntries
-    )
+    ) {
       break;
+    }
 
     // eventBus.scanInfoOff();
     eventBus.scanInfoShow(
       "Rescanning Movies",
       `${movie.Name || movie.Filename}`
     );
+
+    eventBus.setProgressBar((i+1) / movie.length); // absolute progress
 
     if (!id_Movies && scanOptions.rescanMoviesMetaData_applyMediaInfo)
       await applyMediaInfo(movie, onlyNew);
@@ -915,11 +998,11 @@ async function rescanMoviesMetaData(onlyNew, id_Movies) {
     if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData)
       await fetchIMDBMetaData(movie, onlyNew);
 
-    if (scanOptions.applyMetaData)
-      await applyMetaData(false, movie.id_Movies);
+    if (scanOptions.applyMetaData) await applyMetaData(false, movie.id_Movies);
   }
 
   eventBus.scanInfoOff();
+  eventBus.setProgressBar(-1); // off
 }
 
 async function applyMediaInfo(movie, onlyNew) {
@@ -959,7 +1042,7 @@ async function applyMediaInfo(movie, onlyNew) {
       $MI_Quality: null,
       $MI_Aspect_Ratio: null,
       $MI_Audio_Languages: "",
-      $MI_Subtitle_Languages: ""
+      $MI_Subtitle_Languages: "",
     };
 
     const miObj = await xml2js.parseStringPromise(stdout);
@@ -971,14 +1054,14 @@ async function applyMediaInfo(movie, onlyNew) {
     if (miObj.File && miObj.File.track) {
       tracks = miObj.File.tracks;
     } else if (miObj.MediaInfo && miObj.MediaInfo.media) {
-      miObj.MediaInfo.media.forEach(media => {
-        media.track.forEach(track => {
+      miObj.MediaInfo.media.forEach((media) => {
+        media.track.forEach((track) => {
           tracks.push(track);
         });
       });
     }
 
-    tracks.forEach(track => {
+    tracks.forEach((track) => {
       if (track.$.type === "Video") {
         if (track.Duration && track.Duration.length > 0) {
           MI.$MI_Duration = track.Duration[0];
@@ -986,7 +1069,11 @@ async function applyMediaInfo(movie, onlyNew) {
           // eslint-disable-next-line no-unused-vars
           let durationSeconds = 0;
 
-          if (MI.$MI_Duration.includes('h') || MI.$MI_Duration.includes('mn') || MI.$MI_Duration.includes('s')) {
+          if (
+            MI.$MI_Duration.includes("h") ||
+            MI.$MI_Duration.includes("mn") ||
+            MI.$MI_Duration.includes("s")
+          ) {
             if (/(\d*)h/.test(MI.$MI_Duration)) {
               durationSeconds +=
                 60 * 60 * parseInt(MI.$MI_Duration.match(/(\d*)h/)[1]);
@@ -1043,10 +1130,7 @@ async function applyMediaInfo(movie, onlyNew) {
           MI.$MI_Aspect_Ratio = track.Display_aspect_ratio[0];
         }
 
-        if (
-          track.DisplayAspectRatio &&
-          track.DisplayAspectRatio.length > 0
-        ) {
+        if (track.DisplayAspectRatio && track.DisplayAspectRatio.length > 0) {
           MI.$MI_Aspect_Ratio = track.DisplayAspectRatio[0];
         }
       }
@@ -1061,7 +1145,7 @@ async function applyMediaInfo(movie, onlyNew) {
             lang = helpers.uppercaseEachWord(lang);
           }
 
-          if (!audioLanguages.find(al => al === lang)) {
+          if (!audioLanguages.find((al) => al === lang)) {
             audioLanguages.push(lang);
           }
         }
@@ -1076,7 +1160,7 @@ async function applyMediaInfo(movie, onlyNew) {
             lang = helpers.uppercaseEachWord(lang);
           }
 
-          if (!subtitleLanguages.find(al => al === lang)) {
+          if (!subtitleLanguages.find((al) => al === lang)) {
             subtitleLanguages.push(lang);
           }
         }
@@ -1147,8 +1231,19 @@ async function findIMDBtconst(movie, onlyNew) {
 
   // find tconst by duplicate
   if (shared.duplicatesHandling.actualDuplicate.relinkIMDB) {
-    const actualDuplicates = await getMovieDuplicates(movie.id_Movies, true, false, true);
-    const actualDuplicate = actualDuplicates.length > 0 ? (await db.fireProcedureReturnAll('SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies', { $id_Movies: actualDuplicates[0] }))[0] : null;
+    const actualDuplicates = await getMovieDuplicates(
+      movie.id_Movies,
+      true,
+      false,
+      true
+    );
+    const actualDuplicate =
+      actualDuplicates.length > 0
+        ? (await db.fireProcedureReturnAll(
+            "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
+            { $id_Movies: actualDuplicates[0] }
+          ))[0]
+        : null;
 
     if (actualDuplicate && actualDuplicate.IMDB_tconst) {
       tconst = actualDuplicate.IMDB_tconst;
@@ -1176,7 +1271,9 @@ async function findIMDBtconst(movie, onlyNew) {
       if (tconstIncluded && tconst) {
         if (tconstIncluded !== tconst) {
           logger.log(
-            `tconst compare;mismatch;${tconst};${tconstIncluded};${movie.Filename}`
+            `tconst compare;mismatch;${tconst};${tconstIncluded};${
+              movie.Filename
+            }`
           );
         } else {
           logger.log(
@@ -1198,7 +1295,7 @@ async function findIMDBtconst(movie, onlyNew) {
 			`,
       {
         $id_Movies: movie.id_Movies,
-        $IMDB_tconst: movie.IMDB_tconst
+        $IMDB_tconst: movie.IMDB_tconst,
       }
     );
   }
@@ -1294,7 +1391,10 @@ async function fetchIMDBMetaData(movie, onlyNew) {
     }
 
     if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_plotSummary) {
-      const plotSummaryFull = await scrapeIMDBplotSummary(movie, IMDBdata.$IMDB_plotSummary);
+      const plotSummaryFull = await scrapeIMDBplotSummary(
+        movie,
+        IMDBdata.$IMDB_plotSummary
+      );
       IMDBdata = Object.assign(IMDBdata, plotSummaryFull);
     }
 
@@ -1307,7 +1407,11 @@ async function fetchIMDBMetaData(movie, onlyNew) {
       const regions = await getRegions();
       const allowedTitleTypes = await getAllowedTitleTypes();
 
-      const releaseinfo = await scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes);
+      const releaseinfo = await scrapeIMDBreleaseinfo(
+        movie,
+        regions,
+        allowedTitleTypes
+      );
       IMDBdata = Object.assign(IMDBdata, releaseinfo);
     }
 
@@ -1348,7 +1452,15 @@ async function fetchIMDBMetaData(movie, onlyNew) {
     );
 
     if (scanOptions.rescanMoviesMetaData_saveIMDBData) {
-      await saveIMDBData(movie, IMDBdata, genres, credits, companies, plotKeywords, filmingLocations);
+      await saveIMDBData(
+        movie,
+        IMDBdata,
+        genres,
+        credits,
+        companies,
+        plotKeywords,
+        filmingLocations
+      );
     }
   } catch (err) {
     logger.error(err);
@@ -1356,12 +1468,20 @@ async function fetchIMDBMetaData(movie, onlyNew) {
   }
 }
 
-async function saveIMDBData(movie, IMDBdata, genres, credits, companies, plotKeywords, filmingLocations) {
+async function saveIMDBData(
+  movie,
+  IMDBdata,
+  genres,
+  credits,
+  companies,
+  plotKeywords,
+  filmingLocations
+) {
   const IMDB_genres = IMDBdata.$IMDB_genres;
   delete IMDBdata.$IMDB_genres;
 
   let sql = "IMDB_Done = 1";
-  Object.keys(IMDBdata).forEach(key => {
+  Object.keys(IMDBdata).forEach((key) => {
     sql += `, [${key.replace("$", "")}] = ${key}`;
   });
   sql = `UPDATE tbl_Movies SET ${sql} WHERE id_Movies = $id_Movies`;
@@ -1379,9 +1499,9 @@ async function saveIMDBData(movie, IMDBdata, genres, credits, companies, plotKey
   for (let i = 0; i < IMDB_genres.length; i++) {
     const genre = IMDB_genres[i];
 
-    if (!movieGenres.find(mg => mg.GenreID === genre)) {
+    if (!movieGenres.find((mg) => mg.GenreID === genre)) {
       // genre needs to be added for the movie
-      if (!genres.find(g => g.GenreID === genre)) {
+      if (!genres.find((g) => g.GenreID === genre)) {
         // genre needs to be added to main list of genres (we need id_Genres later)
         await db.fireProcedure(
           "INSERT INTO tbl_Genres (GenreID, Name) VALUES ($GenreID, $Name)",
@@ -1394,11 +1514,11 @@ async function saveIMDBData(movie, IMDBdata, genres, credits, companies, plotKey
         genres.push({
           id_Genres: id_Genres,
           GenreID: genre,
-          Name: helpers.uppercaseEachWord(genre)
+          Name: helpers.uppercaseEachWord(genre),
         });
       }
 
-      const id_Genres = genres.find(g => g.GenreID === genre).id_Genres;
+      const id_Genres = genres.find((g) => g.GenreID === genre).id_Genres;
       await db.fireProcedure(
         "INSERT INTO tbl_Movies_Genres (id_Movies, id_Genres) VALUES ($id_Movies, $id_Genres)",
         { $id_Movies: movie.id_Movies, $id_Genres: id_Genres }
@@ -1433,7 +1553,7 @@ async function saveIMDBData(movie, IMDBdata, genres, credits, companies, plotKey
         $Category: credit.category,
         $IMDB_Person_ID: credit.id,
         $Person_Name: credit.name,
-        $Credit: credit.credit
+        $Credit: credit.credit,
       }
     );
   }
@@ -1465,7 +1585,7 @@ async function saveIMDBData(movie, IMDBdata, genres, credits, companies, plotKey
         $Category: company.category,
         $IMDB_Company_ID: company.id,
         $Company_Name: company.name,
-        $Role: company.role
+        $Role: company.role,
       }
     );
   }
@@ -1473,15 +1593,24 @@ async function saveIMDBData(movie, IMDBdata, genres, credits, companies, plotKey
   for (let i = 0; i < plotKeywords.length; i++) {
     let plotKeyword = plotKeywords[i];
 
-    let $id_IMDB_Plot_Keywords = await db.fireProcedureReturnScalar(`SELECT id_IMDB_Plot_Keywords FROM tbl_IMDB_Plot_Keywords WHERE Keyword = $Keyword`, { $Keyword: plotKeyword.Keyword });
+    let $id_IMDB_Plot_Keywords = await db.fireProcedureReturnScalar(
+      `SELECT id_IMDB_Plot_Keywords FROM tbl_IMDB_Plot_Keywords WHERE Keyword = $Keyword`,
+      { $Keyword: plotKeyword.Keyword }
+    );
 
     if (!$id_IMDB_Plot_Keywords) {
-      await db.fireProcedure(`INSERT INTO tbl_IMDB_Plot_Keywords (Keyword) VALUES ($Keyword)`, { $Keyword: plotKeyword.Keyword });
-      $id_IMDB_Plot_Keywords = await db.fireProcedureReturnScalar(`SELECT id_IMDB_Plot_Keywords FROM tbl_IMDB_Plot_Keywords WHERE Keyword = $Keyword`, { $Keyword: plotKeyword.Keyword });
+      await db.fireProcedure(
+        `INSERT INTO tbl_IMDB_Plot_Keywords (Keyword) VALUES ($Keyword)`,
+        { $Keyword: plotKeyword.Keyword }
+      );
+      $id_IMDB_Plot_Keywords = await db.fireProcedureReturnScalar(
+        `SELECT id_IMDB_Plot_Keywords FROM tbl_IMDB_Plot_Keywords WHERE Keyword = $Keyword`,
+        { $Keyword: plotKeyword.Keyword }
+      );
     }
 
     if (!$id_IMDB_Plot_Keywords) {
-      logger.error('unable to store plot keyword:', plotKeyword);
+      logger.error("unable to store plot keyword:", plotKeyword);
     }
 
     await db.fireProcedure(
@@ -1513,15 +1642,24 @@ async function saveIMDBData(movie, IMDBdata, genres, credits, companies, plotKey
   for (let i = 0; i < filmingLocations.length; i++) {
     let filmingLocation = filmingLocations[i];
 
-    let $id_IMDB_Filming_Locations = await db.fireProcedureReturnScalar(`SELECT id_IMDB_Filming_Locations FROM tbl_IMDB_Filming_Locations WHERE Location = $Location`, { $Location: filmingLocation.Location });
+    let $id_IMDB_Filming_Locations = await db.fireProcedureReturnScalar(
+      `SELECT id_IMDB_Filming_Locations FROM tbl_IMDB_Filming_Locations WHERE Location = $Location`,
+      { $Location: filmingLocation.Location }
+    );
 
     if (!$id_IMDB_Filming_Locations) {
-      await db.fireProcedure(`INSERT INTO tbl_IMDB_Filming_Locations (Location) VALUES ($Location)`, { $Location: filmingLocation.Location });
-      $id_IMDB_Filming_Locations = await db.fireProcedureReturnScalar(`SELECT id_IMDB_Filming_Locations FROM tbl_IMDB_Filming_Locations WHERE Location = $Location`, { $Location: filmingLocation.Location });
+      await db.fireProcedure(
+        `INSERT INTO tbl_IMDB_Filming_Locations (Location) VALUES ($Location)`,
+        { $Location: filmingLocation.Location }
+      );
+      $id_IMDB_Filming_Locations = await db.fireProcedureReturnScalar(
+        `SELECT id_IMDB_Filming_Locations FROM tbl_IMDB_Filming_Locations WHERE Location = $Location`,
+        { $Location: filmingLocation.Location }
+      );
     }
 
     if (!$id_IMDB_Filming_Locations) {
-      logger.error('unable to store filming location:', filmingLocation);
+      logger.error("unable to store filming location:", filmingLocation);
     }
 
     await db.fireProcedure(
@@ -1556,14 +1694,20 @@ async function saveIMDBData(movie, IMDBdata, genres, credits, companies, plotKey
 
 async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
   try {
-    logger.log('shared.languagesAudioSubtitles:', shared.languagesAudioSubtitles);
+    logger.log(
+      "shared.languagesAudioSubtitles:",
+      shared.languagesAudioSubtitles
+    );
 
     const preferredLanguages = [];
 
-    if (shared.languagesAudioSubtitles && shared.languagesAudioSubtitles.length > 0) {
-      shared.languagesAudioSubtitles.forEach(lang => {
+    if (
+      shared.languagesAudioSubtitles &&
+      shared.languagesAudioSubtitles.length > 0
+    ) {
+      shared.languagesAudioSubtitles.forEach((lang) => {
         preferredLanguages.push(lang.code);
-      })
+      });
     } else if (shared.fallbackLanguage) {
       preferredLanguages.push(shared.fallbackLanguage.code);
     }
@@ -1572,14 +1716,14 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
     logger.log("shared.filterSourcePaths:", shared.filterSourcePaths);
     if (
       shared.filterSourcePaths &&
-      shared.filterSourcePaths.find(filter => !filter.Selected)
+      shared.filterSourcePaths.find((filter) => !filter.Selected)
     ) {
       filterSourcePaths =
         "AND MOV.id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths WHERE Description IN (";
 
       filterSourcePaths += shared.filterSourcePaths
-        .filter(filter => filter.Selected)
-        .map(filter => filter.Description)
+        .filter((filter) => filter.Selected)
+        .map((filter) => filter.Description)
         .reduce((prev, current) => {
           return prev + (prev ? ", " : "") + `'${current}'`;
         }, "");
@@ -1590,14 +1734,14 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
     let filterGenres = "";
     if (
       shared.filterGenres &&
-      shared.filterGenres.find(filter => !filter.Selected)
+      shared.filterGenres.find((filter) => !filter.Selected)
     ) {
       filterGenres =
         "AND MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_Genres WHERE id_Genres IN (";
 
       filterGenres += shared.filterGenres
-        .filter(filter => filter.Selected)
-        .map(filter => filter.id_Genres)
+        .filter((filter) => filter.Selected)
+        .map((filter) => filter.id_Genres)
         .reduce((prev, current) => {
           return prev + (prev ? ", " : "") + current;
         }, "");
@@ -1609,11 +1753,11 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
     logger.log("shared.filterAgeRatings:", shared.filterAgeRatings);
     if (
       shared.filterAgeRatings &&
-      shared.filterAgeRatings.find(filter => !filter.Selected)
+      shared.filterAgeRatings.find((filter) => !filter.Selected)
     ) {
       if (
         shared.filterAgeRatings.find(
-          filter => filter.Selected && filter.Age == -1
+          (filter) => filter.Selected && filter.Age == -1
         )
       ) {
         filterAgeRatings = `AND (AR.Age IS NULL `;
@@ -1623,14 +1767,14 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
 
       if (
         shared.filterAgeRatings.find(
-          filter => filter.Selected && filter.Age >= 0
+          (filter) => filter.Selected && filter.Age >= 0
         )
       ) {
         filterAgeRatings += `OR AR.Age IN (`;
 
         filterAgeRatings += shared.filterAgeRatings
-          .filter(filter => filter.Selected && filter.Age >= 0)
-          .map(filter => filter.Age)
+          .filter((filter) => filter.Selected && filter.Age >= 0)
+          .map((filter) => filter.Age)
           .reduce((prev, current) => {
             return prev + (prev ? ", " : "") + current;
           }, "");
@@ -1655,10 +1799,10 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
     logger.log("shared.filterRatings:", shared.filterRatings);
     if (
       shared.filterRatings &&
-      shared.filterRatings.find(filter => !filter.Selected)
+      shared.filterRatings.find((filter) => !filter.Selected)
     ) {
       if (
-        shared.filterRatings.find(filter => filter.Selected && !filter.Rating)
+        shared.filterRatings.find((filter) => filter.Selected && !filter.Rating)
       ) {
         filterRatings = "AND (MOV.Rating IS NULL OR MOV.Rating = 0 ";
       } else {
@@ -1666,13 +1810,13 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
       }
 
       if (
-        shared.filterRatings.find(filter => filter.Selected && filter.Rating)
+        shared.filterRatings.find((filter) => filter.Selected && filter.Rating)
       ) {
         filterRatings +=
           "OR MOV.Rating IN (" +
           shared.filterRatings
-            .filter(filter => filter.Selected && filter.Rating)
-            .map(filter => filter.Rating)
+            .filter((filter) => filter.Selected && filter.Rating)
+            .map((filter) => filter.Rating)
             .reduce((prev, current) => {
               return prev + (prev ? ", " : "") + current;
             }, "");
@@ -1686,10 +1830,10 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
     let filterLists = "";
     if (
       shared.filterLists &&
-      shared.filterLists.find(filter => !filter.Selected)
+      shared.filterLists.find((filter) => !filter.Selected)
     ) {
       if (
-        shared.filterLists.find(filter => filter.Selected && !filter.id_Lists)
+        shared.filterLists.find((filter) => filter.Selected && !filter.id_Lists)
       ) {
         filterLists = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Lists_Movies) `;
       } else {
@@ -1697,13 +1841,13 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
       }
 
       if (
-        shared.filterLists.find(filter => filter.Selected && filter.id_Lists)
+        shared.filterLists.find((filter) => filter.Selected && filter.id_Lists)
       ) {
         filterLists += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Lists_Movies WHERE id_Lists IN (`;
 
         filterLists += shared.filterLists
-          .filter(filter => filter.Selected)
-          .map(filter => filter.id_Lists)
+          .filter((filter) => filter.Selected)
+          .map((filter) => filter.id_Lists)
           .reduce((prev, current) => {
             return prev + (prev ? ", " : "") + current;
           }, "");
@@ -1715,16 +1859,18 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
     }
 
     let filterParentalAdvisory = "";
-    Object.keys(shared.filterParentalAdvisory).forEach(category => {
+    Object.keys(shared.filterParentalAdvisory).forEach((category) => {
       let filterPACategory = "";
 
       if (
         shared.filterParentalAdvisory[category] &&
-        shared.filterParentalAdvisory[category].find(filter => !filter.Selected)
+        shared.filterParentalAdvisory[category].find(
+          (filter) => !filter.Selected
+        )
       ) {
         if (
           shared.filterParentalAdvisory[category].find(
-            filter => filter.Selected && filter.Severity == -1
+            (filter) => filter.Selected && filter.Severity == -1
           )
         ) {
           filterPACategory = `AND (MOV.IMDB_Parental_Advisory_${category} IS NULL `;
@@ -1734,14 +1880,14 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
 
         if (
           shared.filterParentalAdvisory[category].find(
-            filter => filter.Selected && filter.Severity >= 0
+            (filter) => filter.Selected && filter.Severity >= 0
           )
         ) {
           filterPACategory += `OR MOV.IMDB_Parental_Advisory_${category} IN (`;
 
           filterPACategory += shared.filterParentalAdvisory[category]
-            .filter(filter => filter.Selected)
-            .map(filter => filter.Severity)
+            .filter((filter) => filter.Selected)
+            .map((filter) => filter.Severity)
             .reduce((prev, current) => {
               return prev + (prev ? ", " : "") + current;
             }, "");
@@ -1761,11 +1907,11 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
     let filterPersons = "";
     if (
       shared.filterPersons &&
-      shared.filterPersons.find(filter => !filter.Selected)
+      shared.filterPersons.find((filter) => !filter.Selected)
     ) {
       if (
         shared.filterPersons.find(
-          filter => filter.Selected && !filter.id_Filter_Persons
+          (filter) => filter.Selected && !filter.id_Filter_Persons
         )
       ) {
         filterPersons = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies_IMDB_Credits WHERE IMDB_Person_ID IN (SELECT IMDB_Person_ID FROM tbl_Filter_Persons)) `;
@@ -1775,14 +1921,14 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
 
       if (
         shared.filterPersons.find(
-          filter => filter.Selected && filter.id_Filter_Persons
+          (filter) => filter.Selected && filter.id_Filter_Persons
         )
       ) {
         filterPersons += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_IMDB_Credits WHERE IMDB_Person_ID IN (`;
 
         filterPersons += shared.filterPersons
-          .filter(filter => filter.Selected)
-          .map(filter => filter.IMDB_Person_ID)
+          .filter((filter) => filter.Selected)
+          .map((filter) => filter.IMDB_Person_ID)
           .reduce((prev, current) => {
             return prev + (prev ? ", " : "") + `'${current}'`;
           }, "");
@@ -1796,11 +1942,11 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
     let filterCompanies = "";
     if (
       shared.filterCompanies &&
-      shared.filterCompanies.find(filter => !filter.Selected)
+      shared.filterCompanies.find((filter) => !filter.Selected)
     ) {
       if (
         shared.filterCompanies.find(
-          filter => filter.Selected && !filter.id_Filter_Companies
+          (filter) => filter.Selected && !filter.id_Filter_Companies
         )
       ) {
         filterCompanies = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies_IMDB_Companies WHERE Company_Name IN (SELECT Company_Name FROM tbl_Filter_Companies)) `;
@@ -1810,14 +1956,14 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
 
       if (
         shared.filterCompanies.find(
-          filter => filter.Selected && filter.id_Filter_Companies
+          (filter) => filter.Selected && filter.id_Filter_Companies
         )
       ) {
         filterCompanies += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_IMDB_Companies WHERE Company_Name IN (`;
 
         filterCompanies += shared.filterCompanies
-          .filter(filter => filter.Selected)
-          .map(filter => filter.Company_Name)
+          .filter((filter) => filter.Selected)
+          .map((filter) => filter.Company_Name)
           .reduce((prev, current) => {
             return prev + (prev ? ", " : "") + `'${current}'`;
           }, "");
@@ -1831,11 +1977,11 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
     let filterIMDBPlotKeywords = "";
     if (
       shared.filterIMDBPlotKeywords &&
-      shared.filterIMDBPlotKeywords.find(filter => !filter.Selected)
+      shared.filterIMDBPlotKeywords.find((filter) => !filter.Selected)
     ) {
       if (
         shared.filterIMDBPlotKeywords.find(
-          filter => filter.Selected && !filter.id_Filter_IMDB_Plot_Keywords
+          (filter) => filter.Selected && !filter.id_Filter_IMDB_Plot_Keywords
         )
       ) {
         filterIMDBPlotKeywords = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies_IMDB_Plot_Keywords WHERE id_IMDB_Plot_Keywords IN (SELECT id_IMDB_Plot_Keywords FROM tbl_Filter_IMDB_Plot_Keywords)) `;
@@ -1845,14 +1991,14 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
 
       if (
         shared.filterIMDBPlotKeywords.find(
-          filter => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords
+          (filter) => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords
         )
       ) {
         filterIMDBPlotKeywords += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_IMDB_Plot_Keywords WHERE id_IMDB_Plot_Keywords IN (`;
 
         filterIMDBPlotKeywords += shared.filterIMDBPlotKeywords
-          .filter(filter => filter.Selected)
-          .map(filter => filter.id_IMDB_Plot_Keywords)
+          .filter((filter) => filter.Selected)
+          .map((filter) => filter.id_IMDB_Plot_Keywords)
           .reduce((prev, current) => {
             return prev + (prev ? ", " : "") + `${current}`;
           }, "");
@@ -1867,11 +2013,11 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
     logger.log("shared.filterYears:", shared.filterYears);
     if (
       shared.filterYears &&
-      shared.filterYears.find(filter => !filter.Selected)
+      shared.filterYears.find((filter) => !filter.Selected)
     ) {
       if (
         shared.filterYears.find(
-          filter => filter.Selected && filter.startYear == -1
+          (filter) => filter.Selected && filter.startYear == -1
         )
       ) {
         filterYears = `AND (MOV.startYear IS NULL `;
@@ -1881,14 +2027,14 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
 
       if (
         shared.filterYears.find(
-          filter => filter.Selected && filter.startYear >= 0
+          (filter) => filter.Selected && filter.startYear >= 0
         )
       ) {
         filterYears += `OR MOV.startYear IN (`;
 
         filterYears += shared.filterYears
-          .filter(filter => filter.Selected)
-          .map(filter => filter.startYear)
+          .filter((filter) => filter.Selected)
+          .map((filter) => filter.startYear)
           .reduce((prev, current) => {
             return prev + (prev ? ", " : "") + current;
           }, "");
@@ -1903,11 +2049,11 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
     logger.log("shared.filterQualities:", shared.filterQualities);
     if (
       shared.filterQualities &&
-      shared.filterQualities.find(filter => !filter.Selected)
+      shared.filterQualities.find((filter) => !filter.Selected)
     ) {
       if (
         shared.filterQualities.find(
-          filter => filter.Selected && !filter.MI_Quality
+          (filter) => filter.Selected && !filter.MI_Quality
         )
       ) {
         filterQualities = `AND (MOV.MI_Quality IS NULL `;
@@ -1917,14 +2063,14 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
 
       if (
         shared.filterQualities.find(
-          filter => filter.Selected && filter.MI_Quality
+          (filter) => filter.Selected && filter.MI_Quality
         )
       ) {
         filterQualities += `OR MOV.MI_Quality IN (`;
 
         filterQualities += shared.filterQualities
-          .filter(filter => filter.Selected)
-          .map(filter => filter.MI_Quality)
+          .filter((filter) => filter.Selected)
+          .map((filter) => filter.MI_Quality)
           .reduce((prev, current) => {
             return prev + (prev ? ", " : "") + `'${current}'`;
           }, "");
@@ -1938,11 +2084,11 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
     let filterAudioLanguages = "";
     if (
       shared.filterAudioLanguages &&
-      shared.filterAudioLanguages.find(filter => !filter.Selected)
+      shared.filterAudioLanguages.find((filter) => !filter.Selected)
     ) {
       if (
         shared.filterAudioLanguages.find(
-          filter => filter.Selected && filter.Language == "<not available>"
+          (filter) => filter.Selected && filter.Language == "<not available>"
         )
       ) {
         filterAudioLanguages = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies_Languages WHERE Type = 'audio') `;
@@ -1952,14 +2098,14 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
 
       if (
         shared.filterAudioLanguages.find(
-          filter => filter.Selected && filter.Language !== "<not available>"
+          (filter) => filter.Selected && filter.Language !== "<not available>"
         )
       ) {
         filterAudioLanguages += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_Languages WHERE Type = 'audio' AND Language IN (`;
 
         filterAudioLanguages += shared.filterAudioLanguages
-          .filter(filter => filter.Selected)
-          .map(filter => filter.Language)
+          .filter((filter) => filter.Selected)
+          .map((filter) => filter.Language)
           .reduce((prev, current) => {
             return prev + (prev ? ", " : "") + `'${current}'`;
           }, "");
@@ -1973,11 +2119,11 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
     let filterSubtitleLanguages = "";
     if (
       shared.filterSubtitleLanguages &&
-      shared.filterSubtitleLanguages.find(filter => !filter.Selected)
+      shared.filterSubtitleLanguages.find((filter) => !filter.Selected)
     ) {
       if (
         shared.filterSubtitleLanguages.find(
-          filter => filter.Selected && filter.Language == "<not available>"
+          (filter) => filter.Selected && filter.Language == "<not available>"
         )
       ) {
         filterSubtitleLanguages = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies_Languages WHERE Type = 'subtitle') `;
@@ -1987,14 +2133,14 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
 
       if (
         shared.filterSubtitleLanguages.find(
-          filter => filter.Selected && filter.Language !== "<not available>"
+          (filter) => filter.Selected && filter.Language !== "<not available>"
         )
       ) {
         filterSubtitleLanguages += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_Languages WHERE Type = 'subtitle' AND Language IN (`;
 
         filterSubtitleLanguages += shared.filterSubtitleLanguages
-          .filter(filter => filter.Selected)
-          .map(filter => filter.Language)
+          .filter((filter) => filter.Selected)
+          .map((filter) => filter.Language)
           .reduce((prev, current) => {
             return prev + (prev ? ", " : "") + `'${current}'`;
           }, "");
@@ -2023,7 +2169,9 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
         shared.filterMetacriticScore[0] > 0 ||
         shared.filterMetacriticScore[1] < 100
       ) {
-        filterMetacriticScore += `(MOV.IMDB_metacriticScore >= ${shared.filterMetacriticScore[0]} AND MOV.IMDB_metacriticScore <= ${shared.filterMetacriticScore[1]})`;
+        filterMetacriticScore += `(MOV.IMDB_metacriticScore >= ${
+          shared.filterMetacriticScore[0]
+        } AND MOV.IMDB_metacriticScore <= ${shared.filterMetacriticScore[1]})`;
       } else {
         filterMetacriticScore += "1 = 0";
       }
@@ -2046,7 +2194,9 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
       }
 
       if (shared.filterIMDBRating[0] > 0 || shared.filterIMDBRating[1] < 10) {
-        filterIMDBRating += `(MOV.IMDB_rating >= ${shared.filterIMDBRating[0]} AND MOV.IMDB_rating <= ${shared.filterIMDBRating[1]})`;
+        filterIMDBRating += `(MOV.IMDB_rating >= ${
+          shared.filterIMDBRating[0]
+        } AND MOV.IMDB_rating <= ${shared.filterIMDBRating[1]})`;
       } else {
         filterIMDBRating += "1 = 0";
       }
@@ -2056,9 +2206,11 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
 
     let filter_id_Movies = "";
     if (arr_id_Movies && arr_id_Movies.length) {
-      filter_id_Movies = "AND MOV.id_Movies IN ("
-      filter_id_Movies += arr_id_Movies.reduce((prev, current) => prev + (prev ? ', ' : '') + `${current}`);
-      filter_id_Movies += ')';
+      filter_id_Movies = "AND MOV.id_Movies IN (";
+      filter_id_Movies += arr_id_Movies.reduce(
+        (prev, current) => prev + (prev ? ", " : "") + `${current}`
+      );
+      filter_id_Movies += ")";
     }
 
     logger.log("fetchMedia filterSourcePaths:", filterSourcePaths);
@@ -2077,13 +2229,17 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
 		SELECT
 			MOV.id_Movies
 			, MOV.Name
-			, MOV.IMDB_rating${shared.imdbRatingDemographic ? '_' + shared.imdbRatingDemographic : ''} AS IMDB_rating_default
+			, MOV.IMDB_rating${
+        shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""
+      } AS IMDB_rating_default
 			, MOV.IMDB_metacriticScore
 			, IFNULL(MOV.Rating, 0) AS Rating
 			, MOV.startYear
 			, MOV.created_at
 			, MOV.last_access_at
-      , MOV.IMDB_numVotes${shared.imdbRatingDemographic ? '_' + shared.imdbRatingDemographic : ''} AS IMDB_numVotes_default
+      , MOV.IMDB_numVotes${
+        shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""
+      } AS IMDB_numVotes_default
       , MOV.IMDB_plotSummary
       , MOV.Path
       , MI_Duration_Formatted
@@ -2092,7 +2248,9 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
       , MOV.IMDB_MinAge
       , MOV.IMDB_MaxAge
 
-      ${minimumResultSet ? `
+      ${
+        minimumResultSet
+          ? `
         , 0 AS isCompletelyFetched
         , NULL AS FileName
         , NULL AS Size
@@ -2120,7 +2278,8 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
         , NULL AS IMDB_Top_Production_Companies
         , NULL AS IMDB_Trailer_URL
         , NULL AS NumExtras
-      ` : `
+      `
+          : `
         , 1 AS isCompletelyFetched
         , MOV.FileName
         , MOV.Size
@@ -2148,7 +2307,8 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
         , MOV.IMDB_Top_Production_Companies
         , MOV.IMDB_Trailer_URL
         , (SELECT COUNT(1) FROM tbl_Movies MOVEXTRAS WHERE MOVEXTRAS.Extra_id_Movies_Owner = MOV.id_Movies) AS NumExtras
-      `}
+      `
+      }
 		FROM tbl_Movies MOV
 		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 		WHERE	(MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
@@ -2180,7 +2340,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
       saveSortValues($MediaType);
     }
 
-    result.forEach(item => {
+    result.forEach((item) => {
       // logger.log(item.Name);
       item.IMDB_posterSmall_URL = item.IMDB_posterSmall_URL
         ? "file://" + helpers.getPath(item.IMDB_posterSmall_URL)
@@ -2193,14 +2353,19 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
         : "";
       item.IMDB_rating_defaultFormatted = item.IMDB_rating_default
         ? `${item.IMDB_rating_default.toLocaleString(undefined, {
-          minimumFractionDigits: 1
-        })}`
+            minimumFractionDigits: 1,
+          })}`
         : "";
       item.IMDB_rating_defaultDisplay = item.IMDB_rating_defaultFormatted
-        ? `${item.IMDB_rating_defaultFormatted} (${item.IMDB_numVotes_default.toLocaleString()})`
+        ? `${
+            item.IMDB_rating_defaultFormatted
+          } (${item.IMDB_numVotes_default.toLocaleString()})`
         : "";
 
-      item.AudioLanguages = generateLanguageString(item.MI_Audio_Languages, preferredLanguages);
+      item.AudioLanguages = generateLanguageString(
+        item.MI_Audio_Languages,
+        preferredLanguages
+      );
 
       item.SubtitleLanguages = generateLanguageString(
         item.MI_Subtitle_Languages,
@@ -2215,7 +2380,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
             item.IMDB_MaxAge && item.IMDB_MaxAge > item.IMDB_MinAge
               ? "-" + item.IMDB_MaxAge
               : ""
-            }+`;
+          }+`;
         }
       }
 
@@ -2255,7 +2420,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
       item.extras = [];
       item.selected = false;
       item.lastAccessMoment = null;
-      
+
       item.showCredits = false;
       item.credits = null;
       item.showCompanies = false;
@@ -2287,16 +2452,16 @@ function generateLanguageString(languages, preferredLanguages) {
     .toLowerCase();
 
   const languagesFiltered = [];
-  languagesSplit.forEach(lang => {
+  languagesSplit.forEach((lang) => {
     lang = lang.trim();
-    if (!languagesFiltered.find(l => lang === l)) {
+    if (!languagesFiltered.find((l) => lang === l)) {
       languagesFiltered.push(lang);
     }
   });
 
   let result = [];
 
-  preferredLanguages.forEach(lang => {
+  preferredLanguages.forEach((lang) => {
     lang = lang.trim();
     if (languages.toLowerCase().includes(lang.toLowerCase())) {
       if (result.length < maxLangDisplay) {
@@ -2306,7 +2471,7 @@ function generateLanguageString(languages, preferredLanguages) {
   });
 
   let lastOvershotLanguage = null;
-  languagesFiltered.forEach(lang => {
+  languagesFiltered.forEach((lang) => {
     lang = lang.trim();
     const langTrimLower = lang.trim().toLowerCase();
     if (!preferredLanguagesJoinLower.includes(langTrimLower)) {
@@ -2488,9 +2653,9 @@ async function fetchFilterSourcePaths($MediaType) {
   );
 
   if (filterValues && filterValues.filterSourcePaths) {
-    results.forEach(result => {
+    results.forEach((result) => {
       const filterValue = filterValues.filterSourcePaths.find(
-        value => value.Description === result.Description
+        (value) => value.Description === result.Description
       );
 
       if (filterValue) {
@@ -2532,12 +2697,12 @@ async function fetchFilterGenres($MediaType) {
     { $MediaType }
   );
 
-  const resultsFiltered = results.filter(result => result.NumMovies > 0);
+  const resultsFiltered = results.filter((result) => result.NumMovies > 0);
 
   if (filterValues && filterValues.filterGenres) {
-    resultsFiltered.forEach(result => {
+    resultsFiltered.forEach((result) => {
       const filterValue = filterValues.filterGenres.find(
-        value => value.GenreID === result.GenreID
+        (value) => value.GenreID === result.GenreID
       );
 
       if (filterValue) {
@@ -2583,12 +2748,12 @@ async function fetchFilterAgeRatings($MediaType) {
     { $MediaType }
   );
 
-  const resultsFiltered = results.filter(result => result.NumMovies > 0);
+  const resultsFiltered = results.filter((result) => result.NumMovies > 0);
 
   if (filterValues && filterValues.filterAgeRatings) {
-    resultsFiltered.forEach(result => {
+    resultsFiltered.forEach((result) => {
       const filterValue = filterValues.filterAgeRatings.find(
-        value => value.Age === result.Age
+        (value) => value.Age === result.Age
       );
 
       if (filterValue) {
@@ -2678,9 +2843,9 @@ async function fetchFilterRatings($MediaType) {
   );
 
   if (filterValues && filterValues.filterRatings) {
-    results.forEach(result => {
+    results.forEach((result) => {
       const filterValue = filterValues.filterRatings.find(
-        value => value.Rating === result.Rating
+        (value) => value.Rating === result.Rating
       );
 
       if (filterValue) {
@@ -2723,7 +2888,7 @@ async function fetchFilterParentalAdvisory($MediaType) {
     Violence,
     Profanity,
     Alcohol,
-    Frightening
+    Frightening,
   };
 }
 
@@ -2805,9 +2970,9 @@ async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category) {
     filterValues.filterParentalAdvisory &&
     filterValues.filterParentalAdvisory[PA_Category]
   ) {
-    results.forEach(result => {
+    results.forEach((result) => {
       const filterValue = filterValues.filterParentalAdvisory[PA_Category].find(
-        value => value.Severity === result.Severity
+        (value) => value.Severity === result.Severity
       );
 
       if (filterValue) {
@@ -2871,9 +3036,9 @@ async function fetchFilterPersons($MediaType) {
   // logger.log('fetchFilterPersons QUERY:', )
 
   if (filterValues && filterValues.filterPersons) {
-    results.forEach(result => {
+    results.forEach((result) => {
       const filterValue = filterValues.filterPersons.find(
-        value => value.id_Filter_Persons === result.id_Filter_Persons
+        (value) => value.id_Filter_Persons === result.id_Filter_Persons
       );
 
       if (filterValue) {
@@ -2935,9 +3100,9 @@ async function fetchFilterCompanies($MediaType) {
   // logger.log('fetchFilterCompanies QUERY:', )
 
   if (filterValues && filterValues.filterCompanies) {
-    results.forEach(result => {
+    results.forEach((result) => {
       const filterValue = filterValues.filterCompanies.find(
-        value => value.id_Filter_Companies === result.id_Filter_Companies
+        (value) => value.id_Filter_Companies === result.id_Filter_Companies
       );
 
       if (filterValue) {
@@ -3001,9 +3166,11 @@ async function fetchFilterIMDBPlotKeywords($MediaType) {
   // logger.log('fetchFilterIMDBPlotKeywords QUERY:', )
 
   if (filterValues && filterValues.filterIMDBPlotKeywords) {
-    results.forEach(result => {
+    results.forEach((result) => {
       const filterValue = filterValues.filterIMDBPlotKeywords.find(
-        value => value.id_Filter_IMDB_Plot_Keywords === result.id_Filter_IMDB_Plot_Keywords
+        (value) =>
+          value.id_Filter_IMDB_Plot_Keywords ===
+          result.id_Filter_IMDB_Plot_Keywords
       );
 
       if (filterValue) {
@@ -3048,16 +3215,16 @@ async function fetchFilterYears($MediaType) {
     { $MediaType }
   );
 
-  const resultsFiltered = results.filter(result => result.NumMovies > 0);
+  const resultsFiltered = results.filter((result) => result.NumMovies > 0);
 
-  results.forEach(result => {
+  results.forEach((result) => {
     result.startYear = parseInt(result.startYear);
   });
 
   if (filterValues && filterValues.filterYear) {
-    resultsFiltered.forEach(result => {
+    resultsFiltered.forEach((result) => {
       const filterValue = filterValues.filterYear.find(
-        value => value.startYear == result.startYear
+        (value) => value.startYear == result.startYear
       );
 
       if (filterValue) {
@@ -3093,12 +3260,12 @@ async function fetchFilterQualities($MediaType) {
     { $MediaType }
   );
 
-  const resultsFiltered = results.filter(result => result.NumMovies > 0);
+  const resultsFiltered = results.filter((result) => result.NumMovies > 0);
 
   if (filterValues && filterValues.filterQualities) {
-    resultsFiltered.forEach(result => {
+    resultsFiltered.forEach((result) => {
       const filterValue = filterValues.filterQualities.find(
-        value => value.MI_Quality == result.MI_Quality
+        (value) => value.MI_Quality == result.MI_Quality
       );
 
       if (filterValue) {
@@ -3133,7 +3300,7 @@ function saveFilterValues($MediaType) {
     filterIMDBRating: shared.filterIMDBRating,
     filterIMDBRatingNone: shared.filterIMDBRatingNone,
     filterMetacriticScore: shared.filterMetacriticScore,
-    filterMetacriticScoreNone: shared.filterMetacriticScoreNone
+    filterMetacriticScoreNone: shared.filterMetacriticScoreNone,
   };
 
   const filterValuesString = JSON.stringify(filterValues);
@@ -3145,7 +3312,7 @@ function saveFilterValues($MediaType) {
 
 async function saveSortValues($MediaType) {
   const sortValues = {
-    sortField: shared.sortField
+    sortField: shared.sortField,
   };
 
   const sortValuesString = JSON.stringify(sortValues);
@@ -3266,9 +3433,9 @@ async function fetchFilterLists($MediaType) {
   );
 
   if (filterValues && filterValues.filterLists) {
-    results.forEach(result => {
+    results.forEach((result) => {
       const filterValue = filterValues.filterLists.find(
-        value => value.Name === result.Name
+        (value) => value.Name === result.Name
       );
 
       if (filterValue) {
@@ -3335,7 +3502,7 @@ async function fetchFilterLanguages($MediaType, $LanguageType) {
     { $MediaType, $LanguageType }
   );
 
-  const resultsFiltered = results.filter(result => result.NumMovies > 0);
+  const resultsFiltered = results.filter((result) => result.NumMovies > 0);
 
   let filterValuesLanguages = null;
   if (filterValues) {
@@ -3346,10 +3513,10 @@ async function fetchFilterLanguages($MediaType, $LanguageType) {
     }
   }
 
-  resultsFiltered.forEach(result => {
+  resultsFiltered.forEach((result) => {
     if (filterValuesLanguages) {
       const filterValue = filterValuesLanguages.find(
-        value => value.Language === result.Language
+        (value) => value.Language === result.Language
       );
 
       if (filterValue) {
@@ -3363,7 +3530,7 @@ async function fetchFilterLanguages($MediaType, $LanguageType) {
     if (languageCodeNameMapping[result.Language]) {
       result.DisplayText = `${result.Language} - ${
         languageCodeNameMapping[result.Language]
-        }`;
+      }`;
     }
   });
 
@@ -3429,7 +3596,7 @@ async function getMovieDetails($id_Movies) {
 
   return {
     lists,
-    extras
+    extras,
   };
 }
 
@@ -3474,16 +3641,16 @@ async function fetchMovieCredits($id_Movies) {
 
   const creditsCategorized = [];
 
-  credits.forEach(credit => {
-    if (!creditsCategorized.find(cc => cc.category === credit.category)) {
+  credits.forEach((credit) => {
+    if (!creditsCategorized.find((cc) => cc.category === credit.category)) {
       creditsCategorized.push({
         category: credit.category,
-        items: []
+        items: [],
       });
     }
 
     creditsCategorized
-      .find(cc => cc.category === credit.category)
+      .find((cc) => cc.category === credit.category)
       .items.push(credit);
   });
 
@@ -3506,16 +3673,16 @@ async function fetchMovieCompanies($id_Movies) {
 
   const companiesCategorized = [];
 
-  companies.forEach(company => {
-    if (!companiesCategorized.find(cc => cc.category === company.category)) {
+  companies.forEach((company) => {
+    if (!companiesCategorized.find((cc) => cc.category === company.category)) {
       companiesCategorized.push({
         category: company.category,
-        items: []
+        items: [],
       });
     }
 
     companiesCategorized
-      .find(cc => cc.category === company.category)
+      .find((cc) => cc.category === company.category)
       .items.push(company);
   });
 
@@ -3523,7 +3690,8 @@ async function fetchMovieCompanies($id_Movies) {
 }
 
 async function fetchMoviePlotKeywords($id_Movies) {
-  return await db.fireProcedureReturnAll(`
+  return await db.fireProcedureReturnAll(
+    `
     SELECT
       PK.id_IMDB_Plot_Keywords
       , PK.Keyword
@@ -3532,7 +3700,9 @@ async function fetchMoviePlotKeywords($id_Movies) {
     FROM tbl_Movies_IMDB_Plot_Keywords MPK
     INNER JOIN tbl_IMDB_Plot_Keywords PK ON MPK.id_IMDB_Plot_Keywords = PK.id_IMDB_Plot_Keywords
     WHERE MPK.id_Movies = $id_Movies
-  `, { $id_Movies });
+  `,
+    { $id_Movies }
+  );
 }
 
 async function fetchIMDBPerson($IMDB_Person_ID) {
@@ -3627,7 +3797,12 @@ async function deleteFilterCompany($id_Filter_Companies) {
   );
 }
 
-async function assignIMDB($id_Movies, $IMDB_tconst, isHandlingDuplicates, noEventBus) {
+async function assignIMDB(
+  $id_Movies,
+  $IMDB_tconst,
+  isHandlingDuplicates,
+  noEventBus
+) {
   logger.log(
     "assignIMDB $id_Movies:",
     $id_Movies,
@@ -3688,9 +3863,9 @@ function selectBestQualityMediaURL(mediaURLs) {
 
   let bestURL = null;
 
-  bestQualities.forEach(quality => {
+  bestQualities.forEach((quality) => {
     if (bestURL) return;
-    mediaURLs.forEach(mediaURL => {
+    mediaURLs.forEach((mediaURL) => {
       if (mediaURL.definition == quality) {
         if (bestURL) return;
 
@@ -3715,7 +3890,7 @@ async function loadSettingDuplicatesHandling() {
     const objLoadedSetting = JSON.parse(loadedSetting);
 
     if (objLoadedSetting.actualDuplicate) {
-      Object.keys(objLoadedSetting.actualDuplicate).forEach(key => {
+      Object.keys(objLoadedSetting.actualDuplicate).forEach((key) => {
         if (shared.duplicatesHandling.actualDuplicate.hasOwnProperty(key)) {
           shared.duplicatesHandling.actualDuplicate[key] =
             objLoadedSetting.actualDuplicate[key];
@@ -3724,7 +3899,7 @@ async function loadSettingDuplicatesHandling() {
     }
 
     if (objLoadedSetting.metaDuplicate) {
-      Object.keys(objLoadedSetting.metaDuplicate).forEach(key => {
+      Object.keys(objLoadedSetting.metaDuplicate).forEach((key) => {
         if (shared.duplicatesHandling.metaDuplicate.hasOwnProperty(key)) {
           shared.duplicatesHandling.metaDuplicate[key] =
             objLoadedSetting.metaDuplicate[key];
@@ -3745,7 +3920,7 @@ async function getMovieDuplicates(
   const result = [];
 
   if (!useActualDuplicates && !useMetaDuplicates) {
-    logger.log('getMovieDuplicates bailing out');
+    logger.log("getMovieDuplicates bailing out");
     return [];
   }
 
@@ -3762,13 +3937,14 @@ async function getMovieDuplicates(
 					AND MOV.Filename = MOVSource.Filename                             -- Must have same Filename (actual duplicate)
           AND MOV.Size = MOVSource.Size                                     -- Must have same Size (actual duplicate)
           AND MOV.Extra_id_Movies_Owner IS NULL                             -- Exclude Extras
-          ${ignoreNew ? 'AND (MOV.isNew IS NULL OR MOV.isNew = 0)' : ''}    -- optional: only newly added movies (rescan)
+          ${
+            ignoreNew ? "AND (MOV.isNew IS NULL OR MOV.isNew = 0)" : ""
+          }    -- optional: only newly added movies (rescan)
           `,
         { $id_Movies }
       );
 
       //           ${ignoreNew ? 'AND (MOV.isNew IS NULL OR MOV.isNew = 0)' : ''}    'optional: only newly added movies (rescan)
-
 
       for (let i = 0; i < actualDuplicates.length; i++) {
         //if (result.findIndex(actualDuplicates[i].id_Movies) === -1) {
@@ -3789,7 +3965,9 @@ async function getMovieDuplicates(
 				AND MOV.IMDB_tconst = MOVSource.IMDB_tconst                         -- Same IMDB ID (meta Duplicate)
         AND MOV.IMDB_tconst IS NOT NULL                                     -- IMDB ID should exist
         AND MOV.Extra_id_Movies_Owner IS NULL                               -- Exclude Extras
-        ${ignoreNew ? 'AND (MOV.isNew IS NULL OR MOV.isNew = 0)' : ''}      -- optional: only newly added movies (rescan)
+        ${
+          ignoreNew ? "AND (MOV.isNew IS NULL OR MOV.isNew = 0)" : ""
+        }      -- optional: only newly added movies (rescan)
         `,
         { $id_Movies }
       );
@@ -3835,7 +4013,7 @@ async function updateMovieAttribute(
     `UPDATE tbl_Movies SET ${attributeName} = $value WHERE id_Movies = $id_Movies`,
     {
       $value,
-      $id_Movies
+      $id_Movies,
     }
   );
 
@@ -3847,7 +4025,14 @@ async function updateMovieAttribute(
     );
 
     for (let i = 0; i < duplicates.length; i++) {
-      await updateMovieAttribute(duplicates[i], attributeName, $value, useActualDuplicates, useMetaDuplicates, true);
+      await updateMovieAttribute(
+        duplicates[i],
+        attributeName,
+        $value,
+        useActualDuplicates,
+        useMetaDuplicates,
+        true
+      );
     }
 
     return duplicates.concat([$id_Movies]);
@@ -3863,15 +4048,15 @@ async function getIMDBRegions() {
     FROM tbl_IMDB_Regions
   `);
 
-  regions.forEach(region => {
-    region.selected = !!region.selected
-  })
+  regions.forEach((region) => {
+    region.selected = !!region.selected;
+  });
 
   return regions;
 }
 
 async function addRegions(items) {
-  logger.log('TODO: store.addRegions', items);
+  logger.log("TODO: store.addRegions", items);
 }
 
 async function getFallbackRegion() {
@@ -3893,15 +4078,17 @@ async function getFallbackRegion() {
     return;
   }
 
-  regions.forEach(region => {
+  regions.forEach((region) => {
     if (region.code === currentRegionCode) {
-      shared.fallbackRegion = Object.assign(region, { locale: shared.currentLocale });
-      logger.log('Fallback Region: set to', region);
+      shared.fallbackRegion = Object.assign(region, {
+        locale: shared.currentLocale,
+      });
+      logger.log("Fallback Region: set to", region);
     }
   });
 
   if (shared.fallbackRegion) {
-    await setSetting('fallbackRegion', JSON.stringify(shared.fallbackRegion));
+    await setSetting("fallbackRegion", JSON.stringify(shared.fallbackRegion));
   }
 }
 
@@ -3916,22 +4103,28 @@ async function getFallbackLanguage() {
     return;
   }
 
-  const currentLanguageCode = splitCurrentLocale[0].toUpperCase().charAt(0) + splitCurrentLocale[0].toLowerCase().slice(1);
+  const currentLanguageCode =
+    splitCurrentLocale[0].toUpperCase().charAt(0) +
+    splitCurrentLocale[0].toLowerCase().slice(1);
 
   const languages = await getIMDBLanguages();
 
   if (!languages) {
-    logger.warn('unable to fetch languages, abort');
+    logger.warn("unable to fetch languages, abort");
     return;
   }
 
-  logger.log('languages:', languages);
+  logger.log("languages:", languages);
 
-  let fallbackLanguage = languages.find(lang => lang.code === currentLanguageCode);
+  let fallbackLanguage = languages.find(
+    (lang) => lang.code === currentLanguageCode
+  );
 
   if (fallbackLanguage) {
-    shared.fallbackLanguage = Object.assign(fallbackLanguage, { locale: shared.currentLocale });
-    logger.log('Fallback Language: set to', shared.fallbackLanguage);
+    shared.fallbackLanguage = Object.assign(fallbackLanguage, {
+      locale: shared.currentLocale,
+    });
+    logger.log("Fallback Language: set to", shared.fallbackLanguage);
   }
 }
 
@@ -3948,14 +4141,15 @@ async function fetchIMDBTitleTypes() {
       , Link
     FROM tbl_IMDB_Title_Types
     ORDER BY Count DESC
-  `)
+  `);
 }
 
 async function getIMDBLanguages(regionCodes) {
-  const filterRegions = !regionCodes ? null : regionCodes
-    .reduce((prev, current) => {
-      return prev + (prev ? ", " : "") + `'${current}'`;
-    }, "");
+  const filterRegions = !regionCodes
+    ? null
+    : regionCodes.reduce((prev, current) => {
+        return prev + (prev ? ", " : "") + `'${current}'`;
+      }, "");
 
   const sSQL = `
   SELECT DISTINCT
@@ -3965,15 +4159,15 @@ async function getIMDBLanguages(regionCodes) {
     , 0 AS selected
   FROM tbl_IMDB_Regions_Languages RL
   INNER JOIN tbl_IMDB_Languages L ON RL.LanguageCode = L.Code
-  ${filterRegions ? `WHERE RL.RegionCode IN (${filterRegions})` : ''}
+  ${filterRegions ? `WHERE RL.RegionCode IN (${filterRegions})` : ""}
   ORDER BY L.Name
 `;
 
-  logger.log('getIMDBLanguages sSQL: ', sSQL);
+  logger.log("getIMDBLanguages sSQL: ", sSQL);
 
   const languages = await db.fireProcedureReturnAll(sSQL);
 
-  logger.log('getIMDBLanguages:', languages);
+  logger.log("getIMDBLanguages:", languages);
 
   return languages;
 }
@@ -3983,41 +4177,47 @@ async function ensureLanguageMapping() {
     SELECT Code, Name FROM tbl_IMDB_Languages
   `);
 
-  languages.forEach(language => {
-    if (languageCodeNameMapping[language.Code] && languageCodeNameMapping[language.Code] !== language.Name) {
-      logger.log('ensureLanguageMapping Code-Name mismatch:', language);
+  languages.forEach((language) => {
+    if (
+      languageCodeNameMapping[language.Code] &&
+      languageCodeNameMapping[language.Code] !== language.Name
+    ) {
+      logger.log("ensureLanguageMapping Code-Name mismatch:", language);
     }
     if (!languageCodeNameMapping[language.Code]) {
       languageCodeNameMapping[language.Code] = language.Name;
     }
 
-    if (languageNameCodeMapping[language.Name] && languageNameCodeMapping[language.Name] !== language.Code) {
-      logger.log('ensureLanguageMapping Name-Code mismatch:', language);
+    if (
+      languageNameCodeMapping[language.Name] &&
+      languageNameCodeMapping[language.Name] !== language.Code
+    ) {
+      logger.log("ensureLanguageMapping Name-Code mismatch:", language);
     }
     if (!languageNameCodeMapping[language.Name]) {
       languageNameCodeMapping[language.Name] = language.Code;
     }
-  })
+  });
 
-  logger.log('ensureLanguageMapping languageNameCodeMapping:', languageCodeNameMapping);
-  logger.log('ensureLanguageMapping languageNameCodeMapping:', languageNameCodeMapping);
+  logger.log(
+    "ensureLanguageMapping languageNameCodeMapping:",
+    languageCodeNameMapping
+  );
+  logger.log(
+    "ensureLanguageMapping languageNameCodeMapping:",
+    languageNameCodeMapping
+  );
 }
 
 async function fetchLanguageSettings() {
-  const languagesPrimaryTitle = await getSetting(
-    "languagesPrimaryTitle"
-  );
+  const languagesPrimaryTitle = await getSetting("languagesPrimaryTitle");
   if (languagesPrimaryTitle) {
     shared.languagesPrimaryTitle = JSON.parse(languagesPrimaryTitle);
   }
 
-  const languagesAudioSubtitles = await getSetting(
-    "languagesAudioSubtitles"
-  );
+  const languagesAudioSubtitles = await getSetting("languagesAudioSubtitles");
   if (languagesAudioSubtitles) {
-    shared.languagesAudioSubtitles = JSON.parse(
-      languagesAudioSubtitles
-    );
+    shared.languagesAudioSubtitles = JSON.parse(languagesAudioSubtitles);
   }
 }
 
@@ -4026,7 +4226,7 @@ async function ensureRegions() {
     return;
   }
 
-  const regions = await getSetting('regions');
+  const regions = await getSetting("regions");
   if (regions) {
     shared.regions = JSON.parse(regions);
   }
@@ -4047,32 +4247,32 @@ async function getRegions() {
 }
 
 async function getAllowedTitleTypes() {
-  const titleTypeWhitelist = await getSetting('IMDBTitleTypeWhitelist');
-  const languagesPrimaryTitle = await getSetting('languagesPrimaryTitle');
+  const titleTypeWhitelist = await getSetting("IMDBTitleTypeWhitelist");
+  const languagesPrimaryTitle = await getSetting("languagesPrimaryTitle");
 
   const result = [];
 
   if (titleTypeWhitelist) {
-    JSON.parse(titleTypeWhitelist).forEach(titleType => {
+    JSON.parse(titleTypeWhitelist).forEach((titleType) => {
       if (titleType.TitleType) {
-        result.push(titleType.TitleType)
+        result.push(titleType.TitleType);
       }
-    })
+    });
   }
 
   if (languagesPrimaryTitle) {
-    JSON.parse(languagesPrimaryTitle).forEach(lang => {
+    JSON.parse(languagesPrimaryTitle).forEach((lang) => {
       if (lang.name) {
-        result.push(`${lang.name} title`)
+        result.push(`${lang.name} title`);
       }
-    })
+    });
   }
 
   return result;
 }
 
 async function fetchIMDBRatingDemographic() {
-  const imdbRatingDemographic = await getSetting('IMDBRatingDemographic');
+  const imdbRatingDemographic = await getSetting("IMDBRatingDemographic");
 
   if (imdbRatingDemographic) {
     shared.imdbRatingDemographic = imdbRatingDemographic;
@@ -4080,34 +4280,36 @@ async function fetchIMDBRatingDemographic() {
 }
 
 async function findMissingSourcePaths() {
-  const sourcePaths = await db.fireProcedureReturnAll(`SELECT id_SourcePaths, MediaType, Path, Description, created_at, checkRemovedFiles FROM tbl_SourcePaths`);
+  const sourcePaths = await db.fireProcedureReturnAll(
+    `SELECT id_SourcePaths, MediaType, Path, Description, created_at, checkRemovedFiles FROM tbl_SourcePaths`
+  );
 
   for (let i = 0; i < sourcePaths.length; i++) {
     const sourcePath = sourcePaths[i];
     sourcePath.exists = await existsAsync(sourcePath.Path);
   }
 
-  return sourcePaths.filter(sourcePath => !sourcePath.exists);
+  return sourcePaths.filter((sourcePath) => !sourcePath.exists);
 }
 
 async function loadLocalHistory(fileName) {
   try {
-    logger.log('loadLocalHistory fileName', fileName);
-    
-    const filePath = helpers.getPath(path.join('public', 'history', fileName));
+    logger.log("loadLocalHistory fileName", fileName);
+
+    const filePath = helpers.getPath(path.join("public", "history", fileName));
 
     const fileExists = await existsAsync(filePath);
 
     if (!fileExists) {
       return null;
     }
-    
-    logger.log('loadLocalHistory path:', filePath);
-    
+
+    logger.log("loadLocalHistory path:", filePath);
+
     const history = await readFileAsync(filePath);
-  
-    logger.log('loadLocalHistory versionInfo:', history.toString());
-  
+
+    logger.log("loadLocalHistory versionInfo:", history.toString());
+
     return history;
   } catch (e) {
     logger.error(e);
@@ -4174,5 +4376,5 @@ export {
   fetchLanguageSettings,
   fetchMoviePlotKeywords,
   findMissingSourcePaths,
-  loadLocalHistory
+  loadLocalHistory,
 };

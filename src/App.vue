@@ -1495,7 +1495,7 @@ export default {
     });
 
     eventBus.$on("openVersionDialog", () => {
-      this.$refs.versionDialog.checkVersion();
+      this.checkVersion();
       this.versionDialog.show = true;
     })
 
