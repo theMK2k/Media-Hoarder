@@ -65,7 +65,6 @@
               class="xs-fullwidth"
               color="secondary"
               v-on:click.native="onCloseClick"
-              v-bind:loading="isLoading"
               style="margin-left: 8px;"
             >Cancel</v-btn>
             <v-btn
