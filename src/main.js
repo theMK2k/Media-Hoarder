@@ -106,6 +106,12 @@ export const eventBus = new Vue({
 			// value 0.00 - 1.00: absolute progress
 			// value > 1.00: marquee
 			// value < 0: off
+			logger.log('setProgressBar value:', value);
+
+			if (!value && value !== 0) {
+				return;
+			}
+
 			remote.getCurrentWindow().setProgressBar(value);
 		}
 	}

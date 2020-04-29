@@ -987,7 +987,7 @@ async function rescanMoviesMetaData(onlyNew, id_Movies) {
       `${movie.Name || movie.Filename}`
     );
 
-    eventBus.setProgressBar((i+1) / movie.length); // absolute progress
+    eventBus.setProgressBar((i+1) / movies.length); // absolute progress
 
     if (!id_Movies && scanOptions.rescanMoviesMetaData_applyMediaInfo)
       await applyMediaInfo(movie, onlyNew);
