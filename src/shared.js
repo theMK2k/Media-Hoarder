@@ -6,6 +6,12 @@ const shared = new Vue({
     searchText: null,
     filterSourcePaths: [],
     filterGenres: [],
+    filterSettings: {
+      filterGenresAND: false,
+      filterPersonsAND: false,          // TODO: implement in fetchMedia
+      filterCompaniesAND: false,        // TODO: implement in fetchMedia
+      filterIMDBPlotKeywordsAND: false, // TODO: implement in fetchMedia
+    },
     filterAgeRatings: [],
     filterRatings: [],
     filterLists: [],

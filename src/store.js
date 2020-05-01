@@ -1736,17 +1736,29 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
       shared.filterGenres &&
       shared.filterGenres.find((filter) => !filter.Selected)
     ) {
-      filterGenres =
-        "AND MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_Genres WHERE id_Genres IN (";
+      const filterGenresList = shared.filterGenres
+      .filter((filter) => filter.Selected)
+      .map((filter) => filter.id_Genres);
 
-      filterGenres += shared.filterGenres
-        .filter((filter) => filter.Selected)
-        .map((filter) => filter.id_Genres)
-        .reduce((prev, current) => {
-          return prev + (prev ? ", " : "") + current;
-        }, "");
-
-      filterGenres += "))";
+      if (shared.filterSettings.filterGenresAND) {
+        filterGenres =
+          "AND MOV.id_Movies IN (";
+  
+        filterGenres += filterGenresList.reduce((prev, current) => {
+            return prev + (prev ? " INTERSECT " : "") + `SELECT id_Movies FROM tbl_Movies_Genres WHERE id_Genres = ${current}`;
+          }, "");
+  
+        filterGenres += ")";
+      } else {
+        filterGenres =
+          "AND MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_Genres WHERE id_Genres IN (";
+  
+        filterGenres += filterGenresList.reduce((prev, current) => {
+            return prev + (prev ? ", " : "") + current;
+          }, "");
+  
+        filterGenres += "))";
+      }
     }
 
     let filterAgeRatings = "";

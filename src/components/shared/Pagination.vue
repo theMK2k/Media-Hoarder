@@ -80,7 +80,7 @@
 </template>
 
 <script>
-const logger = require("loglevel");
+// const logger = require("loglevel");
 
 export default {
   props: ["length", "pages"],

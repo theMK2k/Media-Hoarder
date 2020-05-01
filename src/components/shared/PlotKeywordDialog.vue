@@ -44,9 +44,9 @@
 <script>
 import * as store from "@/store";
 // import * as helpers from "@/helpers/helpers";
-const logger = require("loglevel");
+// const logger = require("loglevel");
 
-const { shell } = require("electron").remote;
+// const { shell } = require("electron").remote;
 
 import { eventBus } from "@/main";
 

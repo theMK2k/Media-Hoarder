@@ -62,8 +62,8 @@
               >Source Paths {{filterSourcePathsTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllSourcePaths(false)">NONE</v-btn>
-                  <v-btn text v-on:click="setAllSourcePaths(true)">ALL</v-btn>
+                  <v-btn text v-on:click="setAllSourcePaths(false)">SET NONE</v-btn>
+                  <v-btn text v-on:click="setAllSourcePaths(true)">SET ALL</v-btn>
                 </v-row>
                 <v-checkbox
                   v-for="sourcePath in $shared.filterSourcePaths"
@@ -87,8 +87,8 @@
               >Video Quality {{filterQualitiesTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllQualities(false)">NONE</v-btn>
-                  <v-btn text v-on:click="setAllQualities(true)">ALL</v-btn>
+                  <v-btn text v-on:click="setAllQualities(false)">SET NONE</v-btn>
+                  <v-btn text v-on:click="setAllQualities(true)">SET ALL</v-btn>
                 </v-row>
                 <v-checkbox
                   v-for="quality in $shared.filterQualities"
@@ -112,8 +112,8 @@
               >Audio Languages {{ filterAudioLanguagesTitle }}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllAudioLanguages(false)">NONE</v-btn>
-                  <v-btn text v-on:click="setAllAudioLanguages(true)">ALL</v-btn>
+                  <v-btn text v-on:click="setAllAudioLanguages(false)">SET NONE</v-btn>
+                  <v-btn text v-on:click="setAllAudioLanguages(true)">SET ALL</v-btn>
                 </v-row>
                 <v-checkbox
                   v-for="audioLanguage in $shared.filterAudioLanguages"
@@ -137,8 +137,8 @@
               >Subtitle Languages {{ filterSubtitleLanguagesTitle }}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllSubtitleLanguages(false)">NONE</v-btn>
-                  <v-btn text v-on:click="setAllSubtitleLanguages(true)">ALL</v-btn>
+                  <v-btn text v-on:click="setAllSubtitleLanguages(false)">SET NONE</v-btn>
+                  <v-btn text v-on:click="setAllSubtitleLanguages(true)">SET ALL</v-btn>
                 </v-row>
                 <v-checkbox
                   v-for="subtitleLanguage in $shared.filterSubtitleLanguages"
@@ -160,8 +160,8 @@
               <v-expansion-panel-header style="padding: 8px!important">My Lists {{filterListsTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllLists(false)">NONE</v-btn>
-                  <v-btn text v-on:click="setAllLists(true)">ALL</v-btn>
+                  <v-btn text v-on:click="setAllLists(false)">SET NONE</v-btn>
+                  <v-btn text v-on:click="setAllLists(true)">SET ALL</v-btn>
                 </v-row>
                 <v-row v-for="list in $shared.filterLists" v-bind:key="list.id_Lists">
                   <v-checkbox
@@ -192,8 +192,8 @@
               <!--  {{ filterRatingsTitle }} -->
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllRatings(false)">NONE</v-btn>
-                  <v-btn text v-on:click="setAllRatings(true)">ALL</v-btn>
+                  <v-btn text v-on:click="setAllRatings(false)">SET NONE</v-btn>
+                  <v-btn text v-on:click="setAllRatings(true)">SET ALL</v-btn>
                 </v-row>
                 <v-checkbox
                   v-for="rating in $shared.filterRatings"
@@ -278,9 +278,15 @@
               >Genres {{ filterGenresTitle }}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllGenres(false)">NONE</v-btn>
-                  <v-btn text v-on:click="setAllGenres(true)">ALL</v-btn>
+                  <v-btn text v-on:click="setAllGenres(false)">SET NONE</v-btn>
+                  <v-btn text v-on:click="setAllGenres(true)">SET ALL</v-btn>
                 </v-row>
+                <v-switch
+                  v-bind:label="$shared.filterSettings.filterGenresAND ? 'all selected must apply' : 'one selected must apply'"
+                  color="red"
+                  v-model="$shared.filterSettings.filterGenresAND"
+                  v-on:click.native="filtersChanged"
+                ></v-switch>
                 <v-checkbox
                   v-for="genre in $shared.filterGenres"
                   v-bind:key="genre.id_Genres"
@@ -303,8 +309,8 @@
               >Ages {{ filterAgeRatingsTitle }}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllAgeRatings(false)">NONE</v-btn>
-                  <v-btn text v-on:click="setAllAgeRatings(true)">ALL</v-btn>
+                  <v-btn text v-on:click="setAllAgeRatings(false)">SET NONE</v-btn>
+                  <v-btn text v-on:click="setAllAgeRatings(true)">SET ALL</v-btn>
                 </v-row>
                 <v-checkbox
                   v-for="ageRating in $shared.filterAgeRatings"
@@ -340,8 +346,8 @@
                     >{{category.DisplayText}} {{filterParentalAdvisoryCategoryTitle(category)}}</v-expansion-panel-header>
                     <v-expansion-panel-content>
                       <v-row>
-                        <v-btn text v-on:click="setAllParentalAdvisory(category, false)">NONE</v-btn>
-                        <v-btn text v-on:click="setAllParentalAdvisory(category, true)">ALL</v-btn>
+                        <v-btn text v-on:click="setAllParentalAdvisory(category, false)">SET NONE</v-btn>
+                        <v-btn text v-on:click="setAllParentalAdvisory(category, true)">SET ALL</v-btn>
                       </v-row>
                       <v-row
                         v-for="paItem in $shared.filterParentalAdvisory[category.Name]"
@@ -368,10 +374,16 @@
               >Persons {{filterPersonsTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllPersons(false)">NONE</v-btn>
-                  <v-btn text v-on:click="setAllPersons(true)">ALL</v-btn>
-                  <v-btn text v-on:click="addPerson()">FIND</v-btn>
+                  <v-btn text v-on:click="setAllPersons(false)">SET NONE</v-btn>
+                  <v-btn text v-on:click="setAllPersons(true)">SET ALL</v-btn>
+                  <v-btn text v-on:click="addPerson()">FIND PERSON</v-btn>
                 </v-row>
+                <v-switch
+                  v-bind:label="$shared.filterSettings.filterPersonsAND ? 'all selected must apply' : 'one selected must apply'"
+                  color="red"
+                  v-model="$shared.filterSettings.filterPersonsAND"
+                  v-on:click.native="filtersChanged"
+                ></v-switch>
                 <v-row v-for="person in $shared.filterPersons" v-bind:key="person.IMDB_Person_ID">
                   <v-checkbox
                     v-bind:label="person.Person_Name + ' (' + person.NumMovies + ')'"
@@ -397,10 +409,16 @@
               >Companies {{filterCompaniesTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllCompanies(false)">NONE</v-btn>
-                  <v-btn text v-on:click="setAllCompanies(true)">ALL</v-btn>
-                  <v-btn text v-on:click="addCompany()">FIND</v-btn>
+                  <v-btn text v-on:click="setAllCompanies(false)">SET NONE</v-btn>
+                  <v-btn text v-on:click="setAllCompanies(true)">SET ALL</v-btn>
+                  <v-btn text v-on:click="addCompany()">FIND COMPANY</v-btn>
                 </v-row>
+                <v-switch
+                  v-bind:label="$shared.filterSettings.filterCompaniesAND ? 'all selected must apply' : 'one selected must apply'"
+                  color="red"
+                  v-model="$shared.filterSettings.filterCompaniesAND"
+                  v-on:click.native="filtersChanged"
+                ></v-switch>
                 <v-row v-for="company in $shared.filterCompanies" v-bind:key="company.Company_Name">
                   <v-checkbox
                     v-bind:label="company.Company_Name + ' (' + company.NumMovies + ')'"
@@ -427,8 +445,8 @@
               <v-expansion-panel-header style="padding: 8px!important">Years {{filterYearsTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllYears(false)">NONE</v-btn>
-                  <v-btn text v-on:click="setAllYears(true)">ALL</v-btn>
+                  <v-btn text v-on:click="setAllYears(false)">SET NONE</v-btn>
+                  <v-btn text v-on:click="setAllYears(true)">SET ALL</v-btn>
                 </v-row>
                 <v-checkbox
                   v-for="year in $shared.filterYears"
@@ -449,10 +467,16 @@
               >Plot Keywords {{ filterIMDBPlotKeywordsTitle }}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllIMDBPlotKeywords(false)">NONE</v-btn>
-                  <v-btn text v-on:click="setAllIMDBPlotKeywords(true)">ALL</v-btn>
+                  <v-btn text v-on:click="setAllIMDBPlotKeywords(false)">SET NONE</v-btn>
+                  <v-btn text v-on:click="setAllIMDBPlotKeywords(true)">SET ALL</v-btn>
                   <v-btn text v-on:click="addIMDBPlotKeyword()">FIND</v-btn>
                 </v-row>
+                <v-switch
+                  v-bind:label="$shared.filterSettings.filterIMDBPlotKeywordsAND ? 'all selected must apply' : 'one selected must apply'"
+                  color="red"
+                  v-model="$shared.filterSettings.filterIMDBPlotKeywordsAND"
+                  v-on:click.native="filtersChanged"
+                ></v-switch>
                 <v-row
                   v-for="plotKeyword in $shared.filterIMDBPlotKeywords"
                   v-bind:key="plotKeyword.id_Filter_IMDB_Plot_Keywords"
@@ -1008,14 +1032,12 @@ export default {
       let numSelected = 0;
       let numAll = 0;
       Object.keys(this.$shared.filterParentalAdvisory).find(category =>
-        this.$shared.filterParentalAdvisory[category].forEach(
-          filter => {
-            numAll++;
-            if (filter.Selected) {
-              numSelected++;
-            }
+        this.$shared.filterParentalAdvisory[category].forEach(filter => {
+          numAll++;
+          if (filter.Selected) {
+            numSelected++;
           }
-        )
+        })
       );
 
       return `(${numSelected}/${numAll})`;
@@ -1383,10 +1405,10 @@ export default {
     },
 
     checkVersion() {
-      logger.log('App checkVersion START')
+      logger.log("App checkVersion START");
       setTimeout(() => {
         this.$refs.versionDialog.checkVersion();
-      })
+      });
     }
   },
 
@@ -1497,7 +1519,7 @@ export default {
     eventBus.$on("openVersionDialog", () => {
       this.checkVersion();
       this.versionDialog.show = true;
-    })
+    });
 
     // eventBus.scanInfoShow('KILLME', 'Asterix und das Geheimnis des Zaubertranks ~ Astérix - Le secret de la potion magique (De)(BD)[2018][Adventure, Animation, Comedy][6.9 @ 3074][tt8001346].mkv');
 
