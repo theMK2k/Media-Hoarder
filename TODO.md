@@ -64,7 +64,8 @@ Content:
 -> render markdown with https://github.com/miaolz123/vue-markdown
 
 ## Investigate an "AND" filter
-- how would SQL queries look?
+OK - how would SQL queries look?
+-> save AND filter setting alongside the filters themselves
 
 ## Settings - Scraper / Scan Media Options
 - allow user to deselect things for the IMDB scraper (analog to store.scanOptions)
