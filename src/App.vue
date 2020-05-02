@@ -21,17 +21,6 @@
           </v-list-item-content>
         </v-list-item>
 
-        <!-- <v-list-item v-on:click="toggleRescan(false)">
-          <v-list-item-action>
-            <v-icon v-show="!isScanning">mdi-reload</v-icon>
-            <v-icon v-show="isScanning">mdi-cancel</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title v-show="!isScanning">Rescan all media</v-list-item-title>
-            <v-list-item-title v-show="isScanning">Cancel Scan</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>-->
-
         <v-divider></v-divider>
 
         <v-list-item v-for="item in items" :key="item.text" @click="goto(item.id)">
