@@ -937,11 +937,11 @@ export default {
       }
 
       if (
-        this.$shared.filterPersons.find(filter => !filter.Selected) &&
+        this.$shared.filterPersons &&
         ((!this.$shared.filterSettings.filterPersonsAND &&
           this.$shared.filterPersons.find(filter => !filter.Selected)) ||
           (this.$shared.filterSettings.filterPersonsAND &&
-            this.$shared.filterPersons.find(filter => filter.Selected)))
+            this.$shared.filterPersons.find(filter => filter.Selected && filter.IMDB_Person_ID)))
       ) {
         filtersList.push("Persons");
       }

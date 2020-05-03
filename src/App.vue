@@ -373,7 +373,7 @@
                   v-model="$shared.filterSettings.filterPersonsAND"
                   v-on:click.native="filtersChanged"
                 ></v-switch>
-                <v-row v-for="person in $shared.filterPersons" v-bind:key="person.IMDB_Person_ID">
+                <v-row v-for="person in filterPersons" v-bind:key="person.IMDB_Person_ID">
                   <v-checkbox
                     v-bind:label="person.Person_Name + ' (' + person.NumMovies + ')'"
                     v-model="person.Selected"
@@ -868,6 +868,10 @@ export default {
         this.$shared.filterLists.length +
         ")"
       );
+    },
+
+    filterPersons() {
+      return this.$shared.filterPersons.filter(fp => !this.$shared.filterSettings.filterPersonsAND || fp.IMDB_Person_ID)
     },
 
     filterPersonsTitle() {

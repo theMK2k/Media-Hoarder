@@ -1939,7 +1939,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
         ||
         (
           shared.filterSettings.filterPersonsAND &&
-          shared.filterPersons.find((filter) => filter.Selected)
+          shared.filterPersons.find((filter) => filter.Selected && filter.IMDB_Person_ID)
         )
       )
     ) {
