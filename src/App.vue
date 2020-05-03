@@ -264,7 +264,7 @@
             >
               <v-expansion-panel-header
                 style="padding: 8px!important"
-              >Genres {{ filterGenresTitle }}</v-expansion-panel-header>
+              >Genres {{$shared.filterSettings.filterGenresAND ? '߷' : ''}} {{ filterGenresTitle }}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
                   <v-btn text v-on:click="setAllGenres(false)">SET NONE</v-btn>
@@ -360,7 +360,7 @@
             <v-expansion-panel style="padding: 0px!important">
               <v-expansion-panel-header
                 style="padding: 8px!important"
-              >Persons {{filterPersonsTitle}}</v-expansion-panel-header>
+              >Persons {{$shared.filterSettings.filterPersonsAND ? '߷' : ''}} {{filterPersonsTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
                   <v-btn text v-on:click="setAllPersons(false)">SET NONE</v-btn>
@@ -395,7 +395,7 @@
             <v-expansion-panel style="padding: 0px!important">
               <v-expansion-panel-header
                 style="padding: 8px!important"
-              >Companies {{filterCompaniesTitle}}</v-expansion-panel-header>
+              >Companies {{$shared.filterSettings.filterCompaniesAND ? '߷' : ''}} {{filterCompaniesTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
                   <v-btn text v-on:click="setAllCompanies(false)">SET NONE</v-btn>
@@ -408,7 +408,7 @@
                   v-model="$shared.filterSettings.filterCompaniesAND"
                   v-on:click.native="filtersChanged"
                 ></v-switch>
-                <v-row v-for="company in $shared.filterCompanies" v-bind:key="company.Company_Name">
+                <v-row v-for="company in filterCompanies" v-bind:key="company.Company_Name">
                   <v-checkbox
                     v-bind:label="company.Company_Name + ' (' + company.NumMovies + ')'"
                     v-model="company.Selected"
@@ -871,45 +871,97 @@ export default {
     },
 
     filterPersons() {
-      return this.$shared.filterPersons.filter(fp => !this.$shared.filterSettings.filterPersonsAND || fp.IMDB_Person_ID)
+      return this.$shared.filterPersons.filter(
+        fp => !this.$shared.filterSettings.filterPersonsAND || fp.IMDB_Person_ID
+      );
     },
 
     filterPersonsTitle() {
-      if (!this.$shared.filterPersons.find(filter => !filter.Selected && (!this.$shared.filterSettings.filterPersonsAND || filter.IMDB_Person_ID))) {
+      if (
+        !this.$shared.filterPersons.find(
+          filter =>
+            !filter.Selected &&
+            (!this.$shared.filterSettings.filterPersonsAND ||
+              filter.IMDB_Person_ID)
+        )
+      ) {
         return "(ALL)";
       }
 
-      if (!this.$shared.filterPersons.find(filter => filter.Selected && (!this.$shared.filterSettings.filterPersonsAND || filter.IMDB_Person_ID))) {
+      if (
+        !this.$shared.filterPersons.find(
+          filter =>
+            filter.Selected &&
+            (!this.$shared.filterSettings.filterPersonsAND ||
+              filter.IMDB_Person_ID)
+        )
+      ) {
         return "(NONE)";
       }
 
       return (
         "(" +
-        this.$shared.filterPersons.filter(filter => filter.Selected && (!this.$shared.filterSettings.filterPersonsAND || filter.IMDB_Person_ID)).length +
+        this.$shared.filterPersons.filter(
+          filter =>
+            filter.Selected &&
+            (!this.$shared.filterSettings.filterPersonsAND ||
+              filter.IMDB_Person_ID)
+        ).length +
         "/" +
-        this.$shared.filterPersons.filter(filter => !this.$shared.filterSettings.filterPersonsAND || filter.IMDB_Person_ID).length +
+        this.$shared.filterPersons.filter(
+          filter =>
+            !this.$shared.filterSettings.filterPersonsAND ||
+            filter.IMDB_Person_ID
+        ).length +
         ")"
       );
     },
 
     filterCompanies() {
-      return this.$shared.filterCompanies.filter(fp => !this.$shared.filterSettings.filterCompaniesAND || fp.IMDB_Company_ID)
+      return this.$shared.filterCompanies.filter(
+        fp =>
+          !this.$shared.filterSettings.filterCompaniesAND ||
+          fp.id_Filter_Companies
+      );
     },
 
     filterCompaniesTitle() {
-      if (!this.$shared.filterCompanies.find(filter => !filter.Selected)) {
+      if (
+        !this.$shared.filterCompanies.find(
+          filter =>
+            !filter.Selected &&
+            (!this.$shared.filterSettings.filterCompaniesAND ||
+              filter.id_Filter_Companies)
+        )
+      ) {
         return "(ALL)";
       }
 
-      if (!this.$shared.filterCompanies.find(filter => filter.Selected)) {
+      if (
+        !this.$shared.filterCompanies.find(
+          filter =>
+            filter.Selected &&
+            (!this.$shared.filterSettings.filterCompaniesAND ||
+              filter.id_Filter_Companies)
+        )
+      ) {
         return "(NONE)";
       }
 
       return (
         "(" +
-        this.$shared.filterCompanies.filter(filter => filter.Selected).length +
+        this.$shared.filterCompanies.filter(
+          filter =>
+            filter.Selected &&
+            (!this.$shared.filterSettings.filterCompaniesAND ||
+              filter.id_Filter_Companies)
+        ).length +
         "/" +
-        this.$shared.filterCompanies.length +
+        this.$shared.filterCompanies.filter(
+          filter =>
+            !this.$shared.filterSettings.filterCompaniesAND ||
+            filter.id_Filter_Companies
+        ).length +
         ")"
       );
     },

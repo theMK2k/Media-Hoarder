@@ -904,7 +904,7 @@ export default {
           (this.$shared.filterSettings.filterGenresAND &&
             this.$shared.filterGenres.find(filter => filter.Selected)))
       ) {
-        filtersList.push("Genres");
+        filtersList.push(`Genres${this.$shared.filterSettings.filterGenresAND ? ' ߷' : ''}`);
       }
       if (this.$shared.filterAgeRatings.find(filter => !filter.Selected)) {
         filtersList.push("Ages");
@@ -943,7 +943,7 @@ export default {
           (this.$shared.filterSettings.filterPersonsAND &&
             this.$shared.filterPersons.find(filter => filter.Selected && filter.IMDB_Person_ID)))
       ) {
-        filtersList.push("Persons");
+        filtersList.push(`Persons${this.$shared.filterSettings.filterPersonsAND ? ' ߷' : ''}`);
       }
       if (this.$shared.filterYears.find(filter => !filter.Selected)) {
         filtersList.push("Years");
@@ -951,8 +951,14 @@ export default {
       if (this.$shared.filterQualities.find(filter => !filter.Selected)) {
         filtersList.push("Video Quality");
       }
-      if (this.$shared.filterCompanies.find(filter => !filter.Selected)) {
-        filtersList.push("Companies");
+      if (
+        this.$shared.filterCompanies &&
+        ((!this.$shared.filterSettings.filterCompaniesAND &&
+          this.$shared.filterCompanies.find(filter => !filter.Selected)) ||
+          (this.$shared.filterSettings.filterCompaniesAND &&
+            this.$shared.filterCompanies.find(filter => filter.Selected && filter.id_Filter_Companies)))
+      ) {
+        filtersList.push(`Companies${this.$shared.filterSettings.filterCompaniesAND ? ' ߷' : ''}`);
       }
       if (this.$shared.filterAudioLanguages.find(filter => !filter.Selected)) {
         filtersList.push("Audio Languages");

@@ -1988,43 +1988,68 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
 
         filterPersons += ")";
       }
-
-
     }
 
     let filterCompanies = "";
     if (
       shared.filterCompanies &&
-      shared.filterCompanies.find((filter) => !filter.Selected)
+      (
+        (
+          !shared.filterSettings.filterCompaniesAND &&
+          shared.filterCompanies.find((filter) => !filter.Selected)
+        )
+        ||
+        (
+          shared.filterSettings.filterCompaniesAND &&
+          shared.filterCompanies.find((filter) => filter.Selected && filter.id_Filter_Companies)
+        )
+      )
     ) {
-      if (
-        shared.filterCompanies.find(
-          (filter) => filter.Selected && !filter.id_Filter_Companies
-        )
-      ) {
-        filterCompanies = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies_IMDB_Companies WHERE Company_Name IN (SELECT Company_Name FROM tbl_Filter_Companies)) `;
-      } else {
-        filterCompanies = `AND (1=0 `;
-      }
+      const filterCompaniesList = shared.filterCompanies
+        .filter((filter) => filter.Selected && filter.id_Filter_Companies)
+        .map((filter) => filter.Company_Name);
 
-      if (
-        shared.filterCompanies.find(
-          (filter) => filter.Selected && filter.id_Filter_Companies
-        )
-      ) {
-        filterCompanies += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_IMDB_Companies WHERE Company_Name IN (`;
+      if (shared.filterSettings.filterCompaniesAND) {
+        // use INTERSECT for AND-filter
+        // note: we don't have to take "any other company" into account
+        filterCompanies = 'AND MOV.id_Movies IN ('
 
-        filterCompanies += shared.filterCompanies
-          .filter((filter) => filter.Selected)
-          .map((filter) => filter.Company_Name)
+        filterCompanies += filterCompaniesList
           .reduce((prev, current) => {
-            return prev + (prev ? ", " : "") + `'${current}'`;
+            return prev + (prev ? " INTERSECT " : "") + `SELECT id_Movies FROM tbl_Movies_IMDB_Companies WHERE Company_Name = '${current}'`;
           }, "");
 
-        filterCompanies += "))";
-      }
+        filterCompanies += ")";
 
-      filterCompanies += ")";
+      } else {
+        // OR-filter
+        if (
+          shared.filterCompanies.find(
+            (filter) => filter.Selected && !filter.id_Filter_Companies
+          )
+        ) {
+          filterCompanies = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies_IMDB_Companies WHERE Company_Name IN (SELECT Company_Name FROM tbl_Filter_Companies)) `;
+        } else {
+          filterCompanies = `AND (1=0 `;
+        }
+
+        if (
+          shared.filterCompanies.find(
+            (filter) => filter.Selected && filter.id_Filter_Companies
+          )
+        ) {
+          filterCompanies += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_IMDB_Companies WHERE Company_Name IN (`;
+
+          filterCompanies += filterCompaniesList
+            .reduce((prev, current) => {
+              return prev + (prev ? ", " : "") + `'${current}'`;
+            }, "");
+
+          filterCompanies += "))";
+        }
+
+        filterCompanies += ")";
+      }
     }
 
     let filterIMDBPlotKeywords = "";
