@@ -1385,6 +1385,8 @@ export default {
 
     async fetchFilters(setFilter) {
       eventBus.showLoadingOverlay(true);
+
+      await store.fetchFilterSettings(this.mediatype);
       await store.fetchFilterSourcePaths(this.mediatype);
       await store.fetchFilterGenres(this.mediatype);
       await store.fetchFilterAgeRatings(this.mediatype);

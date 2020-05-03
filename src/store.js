@@ -3392,6 +3392,7 @@ function abortRescan() {
 
 function saveFilterValues($MediaType) {
   const filterValues = {
+    filterSettings: shared.filterSettings,
     filterSourcePaths: shared.filterSourcePaths,
     filterGenres: shared.filterGenres,
     filterAgeRatings: shared.filterAgeRatings,
@@ -3410,7 +3411,7 @@ function saveFilterValues($MediaType) {
 
   const filterValuesString = JSON.stringify(filterValues);
 
-  // logger.log('saveFilterValues:', filterValuesString);
+  logger.log('saveFilterValues:', filterValuesString);
 
   setSetting(`filtersMediaType${$MediaType}`, filterValuesString);
 }
@@ -3685,6 +3686,20 @@ async function fetchFilterMetacriticScore($MediaType) {
     filterValues.filterMetacriticScoreNone != undefined
   ) {
     shared.filterMetacriticScoreNone = filterValues.filterMetacriticScoreNone;
+  }
+}
+
+async function fetchFilterSettings($MediaType) {
+  logger.log('fetchFilterSettings START')
+  
+  const filterValues = await fetchFilterValues($MediaType);
+
+  logger.log('fetchFilterSettings filterValues:', filterValues);
+
+  if (filterValues && filterValues.filterSettings) {
+    logger.log('fetchFilterSettings filterValues.filterSettings:', filterValues);
+
+    shared.filterSettings = filterValues.filterSettings;
   }
 }
 
@@ -4431,6 +4446,7 @@ export {
   getSetting,
   setSetting,
   launchMovie,
+  fetchFilterSettings,
   fetchFilterSourcePaths,
   fetchFilterGenres,
   fetchFilterAgeRatings,

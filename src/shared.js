@@ -8,9 +8,9 @@ const shared = new Vue({
     filterGenres: [],
     filterSettings: {
       filterGenresAND: false,
-      filterPersonsAND: false,          // TODO: implement in fetchMedia
-      filterCompaniesAND: false,        // TODO: implement in fetchMedia
-      filterIMDBPlotKeywordsAND: false, // TODO: implement in fetchMedia
+      filterPersonsAND: false,
+      filterCompaniesAND: false,
+      filterIMDBPlotKeywordsAND: false,
     },
     filterAgeRatings: [],
     filterRatings: [],
