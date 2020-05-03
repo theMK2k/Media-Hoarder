@@ -875,21 +875,25 @@ export default {
     },
 
     filterPersonsTitle() {
-      if (!this.$shared.filterPersons.find(filter => !filter.Selected)) {
+      if (!this.$shared.filterPersons.find(filter => !filter.Selected && (!this.$shared.filterSettings.filterPersonsAND || filter.IMDB_Person_ID))) {
         return "(ALL)";
       }
 
-      if (!this.$shared.filterPersons.find(filter => filter.Selected)) {
+      if (!this.$shared.filterPersons.find(filter => filter.Selected && (!this.$shared.filterSettings.filterPersonsAND || filter.IMDB_Person_ID))) {
         return "(NONE)";
       }
 
       return (
         "(" +
-        this.$shared.filterPersons.filter(filter => filter.Selected).length +
+        this.$shared.filterPersons.filter(filter => filter.Selected && (!this.$shared.filterSettings.filterPersonsAND || filter.IMDB_Person_ID)).length +
         "/" +
-        this.$shared.filterPersons.length +
+        this.$shared.filterPersons.filter(filter => !this.$shared.filterSettings.filterPersonsAND || filter.IMDB_Person_ID).length +
         ")"
       );
+    },
+
+    filterCompanies() {
+      return this.$shared.filterCompanies.filter(fp => !this.$shared.filterSettings.filterCompaniesAND || fp.IMDB_Company_ID)
     },
 
     filterCompaniesTitle() {
