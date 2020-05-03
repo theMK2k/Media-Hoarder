@@ -2055,36 +2055,63 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
     let filterIMDBPlotKeywords = "";
     if (
       shared.filterIMDBPlotKeywords &&
-      shared.filterIMDBPlotKeywords.find((filter) => !filter.Selected)
+      (
+        (
+          !shared.filterSettings.filterIMDBPlotKeywordsAND &&
+          shared.filterIMDBPlotKeywords.find((filter) => !filter.Selected)
+        )
+        ||
+        (
+          shared.filterSettings.filterIMDBPlotKeywordsAND &&
+          shared.filterIMDBPlotKeywords.find((filter) => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords)
+        )
+      )
     ) {
-      if (
-        shared.filterIMDBPlotKeywords.find(
-          (filter) => filter.Selected && !filter.id_Filter_IMDB_Plot_Keywords
-        )
-      ) {
-        filterIMDBPlotKeywords = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies_IMDB_Plot_Keywords WHERE id_IMDB_Plot_Keywords IN (SELECT id_IMDB_Plot_Keywords FROM tbl_Filter_IMDB_Plot_Keywords)) `;
-      } else {
-        filterIMDBPlotKeywords = `AND (1=0 `;
-      }
+      const filterIMDBPlotKeywordsList = shared.filterIMDBPlotKeywords
+        .filter((filter) => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords)
+        .map((filter) => filter.id_IMDB_Plot_Keywords);
 
-      if (
-        shared.filterIMDBPlotKeywords.find(
-          (filter) => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords
-        )
-      ) {
-        filterIMDBPlotKeywords += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_IMDB_Plot_Keywords WHERE id_IMDB_Plot_Keywords IN (`;
+      if (shared.filterSettings.filterIMDBPlotKeywordsAND) {
+        // use INTERSECT for AND-filter
+        // note: we don't have to take "any other plot keyword" into account
+        filterIMDBPlotKeywords = 'AND MOV.id_Movies IN ('
 
-        filterIMDBPlotKeywords += shared.filterIMDBPlotKeywords
-          .filter((filter) => filter.Selected)
-          .map((filter) => filter.id_IMDB_Plot_Keywords)
+        filterIMDBPlotKeywords += filterIMDBPlotKeywordsList
           .reduce((prev, current) => {
-            return prev + (prev ? ", " : "") + `${current}`;
+            return prev + (prev ? " INTERSECT " : "") + `SELECT id_Movies FROM tbl_Movies_IMDB_Plot_Keywords WHERE id_IMDB_Plot_Keywords = ${current}`;
           }, "");
 
-        filterIMDBPlotKeywords += "))";
-      }
+        filterIMDBPlotKeywords += ")";
 
-      filterIMDBPlotKeywords += ")";
+      } else {
+        // OR-filter
+        if (
+          shared.filterIMDBPlotKeywords.find(
+            (filter) => filter.Selected && !filter.id_Filter_IMDB_Plot_Keywords
+          )
+        ) {
+          filterIMDBPlotKeywords = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies_IMDB_Plot_Keywords WHERE id_IMDB_Plot_Keywords IN (SELECT id_IMDB_Plot_Keywords FROM tbl_Filter_IMDB_Plot_Keywords)) `;
+        } else {
+          filterIMDBPlotKeywords = `AND (1=0 `;
+        }
+
+        if (
+          shared.filterIMDBPlotKeywords.find(
+            (filter) => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords
+          )
+        ) {
+          filterIMDBPlotKeywords += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_IMDB_Plot_Keywords WHERE id_IMDB_Plot_Keywords IN (`;
+
+          filterIMDBPlotKeywords += filterIMDBPlotKeywordsList
+            .reduce((prev, current) => {
+              return prev + (prev ? ", " : "") + `${current}`;
+            }, "");
+
+          filterIMDBPlotKeywords += "))";
+        }
+
+        filterIMDBPlotKeywords += ")";
+      }
     }
 
     let filterYears = "";

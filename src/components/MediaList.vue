@@ -904,7 +904,9 @@ export default {
           (this.$shared.filterSettings.filterGenresAND &&
             this.$shared.filterGenres.find(filter => filter.Selected)))
       ) {
-        filtersList.push(`Genres${this.$shared.filterSettings.filterGenresAND ? ' ߷' : ''}`);
+        filtersList.push(
+          `Genres${this.$shared.filterSettings.filterGenresAND ? " ߷" : ""}`
+        );
       }
       if (this.$shared.filterAgeRatings.find(filter => !filter.Selected)) {
         filtersList.push("Ages");
@@ -941,9 +943,13 @@ export default {
         ((!this.$shared.filterSettings.filterPersonsAND &&
           this.$shared.filterPersons.find(filter => !filter.Selected)) ||
           (this.$shared.filterSettings.filterPersonsAND &&
-            this.$shared.filterPersons.find(filter => filter.Selected && filter.IMDB_Person_ID)))
+            this.$shared.filterPersons.find(
+              filter => filter.Selected && filter.IMDB_Person_ID
+            )))
       ) {
-        filtersList.push(`Persons${this.$shared.filterSettings.filterPersonsAND ? ' ߷' : ''}`);
+        filtersList.push(
+          `Persons${this.$shared.filterSettings.filterPersonsAND ? " ߷" : ""}`
+        );
       }
       if (this.$shared.filterYears.find(filter => !filter.Selected)) {
         filtersList.push("Years");
@@ -956,9 +962,15 @@ export default {
         ((!this.$shared.filterSettings.filterCompaniesAND &&
           this.$shared.filterCompanies.find(filter => !filter.Selected)) ||
           (this.$shared.filterSettings.filterCompaniesAND &&
-            this.$shared.filterCompanies.find(filter => filter.Selected && filter.id_Filter_Companies)))
+            this.$shared.filterCompanies.find(
+              filter => filter.Selected && filter.id_Filter_Companies
+            )))
       ) {
-        filtersList.push(`Companies${this.$shared.filterSettings.filterCompaniesAND ? ' ߷' : ''}`);
+        filtersList.push(
+          `Companies${
+            this.$shared.filterSettings.filterCompaniesAND ? " ߷" : ""
+          }`
+        );
       }
       if (this.$shared.filterAudioLanguages.find(filter => !filter.Selected)) {
         filtersList.push("Audio Languages");
@@ -969,9 +981,19 @@ export default {
         filtersList.push("Subtitle Languages");
       }
       if (
-        this.$shared.filterIMDBPlotKeywords.find(filter => !filter.Selected)
+        this.$shared.filterIMDBPlotKeywords &&
+        ((!this.$shared.filterSettings.filterIMDBPlotKeywordsAND &&
+          this.$shared.filterIMDBPlotKeywords.find(filter => !filter.Selected)) ||
+          (this.$shared.filterSettings.filterIMDBPlotKeywordsAND &&
+            this.$shared.filterIMDBPlotKeywords.find(
+              filter => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords
+            )))
       ) {
-        filtersList.push("Plot Keywords");
+        filtersList.push(
+          `Plot Keywords${
+            this.$shared.filterSettings.filterIMDBPlotKeywordsAND ? " ߷" : ""
+          }`
+        );
       }
       if (
         this.$shared.filterMetacriticScore[0] !== 0 ||

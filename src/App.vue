@@ -453,7 +453,7 @@
             <v-expansion-panel style="padding: 0px!important">
               <v-expansion-panel-header
                 style="padding: 8px!important"
-              >Plot Keywords {{ filterIMDBPlotKeywordsTitle }}</v-expansion-panel-header>
+              >Plot Keywords {{$shared.filterSettings.filterIMDBPlotKeywordsAND ? '߷' : ''}} {{ filterIMDBPlotKeywordsTitle }}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
                   <v-btn text v-on:click="setAllIMDBPlotKeywords(false)">SET NONE</v-btn>
@@ -467,7 +467,7 @@
                   v-on:click.native="filtersChanged"
                 ></v-switch>
                 <v-row
-                  v-for="plotKeyword in $shared.filterIMDBPlotKeywords"
+                  v-for="plotKeyword in filterIMDBPlotKeywords"
                   v-bind:key="plotKeyword.id_Filter_IMDB_Plot_Keywords"
                 >
                   <v-checkbox
@@ -966,25 +966,51 @@ export default {
       );
     },
 
+    filterIMDBPlotKeywords() {
+      return this.$shared.filterIMDBPlotKeywords.filter(
+        fp =>
+          !this.$shared.filterSettings.filterIMDBPlotKeywordsAND ||
+          fp.id_Filter_IMDB_Plot_Keywords
+      );
+    },
+
     filterIMDBPlotKeywordsTitle() {
       if (
-        !this.$shared.filterIMDBPlotKeywords.find(filter => !filter.Selected)
+        !this.$shared.filterIMDBPlotKeywords.find(
+          filter =>
+            !filter.Selected &&
+            (!this.$shared.filterSettings.filterIMDBPlotKeywordsAND ||
+              filter.id_Filter_IMDB_Plot_Keywords)
+        )
       ) {
         return "(ALL)";
       }
 
       if (
-        !this.$shared.filterIMDBPlotKeywords.find(filter => filter.Selected)
+        !this.$shared.filterIMDBPlotKeywords.find(
+          filter =>
+            filter.Selected &&
+            (!this.$shared.filterSettings.filterIMDBPlotKeywordsAND ||
+              filter.id_Filter_IMDB_Plot_Keywords)
+        )
       ) {
         return "(NONE)";
       }
 
       return (
         "(" +
-        this.$shared.filterIMDBPlotKeywords.filter(filter => filter.Selected)
-          .length +
+        this.$shared.filterIMDBPlotKeywords.filter(
+          filter =>
+            filter.Selected &&
+            (!this.$shared.filterSettings.filterIMDBPlotKeywordsAND ||
+              filter.id_Filter_IMDB_Plot_Keywords)
+        ).length +
         "/" +
-        this.$shared.filterIMDBPlotKeywords.length +
+        this.$shared.filterIMDBPlotKeywords.filter(
+          filter =>
+            !this.$shared.filterSettings.filterIMDBPlotKeywordsAND ||
+            filter.id_Filter_IMDB_Plot_Keywords
+        ).length +
         ")"
       );
     },
