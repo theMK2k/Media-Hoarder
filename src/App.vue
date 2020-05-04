@@ -12,7 +12,7 @@
 
         <v-list-item v-on:click="onRescan">
           <v-list-item-action>
-            <v-icon v-show="!isScanning">mdi-reload</v-icon>
+            <v-icon v-show="!isScanning">mdi-reload-alert</v-icon>
             <v-icon v-show="isScanning">mdi-cancel</v-icon>
           </v-list-item-action>
           <v-list-item-content>
