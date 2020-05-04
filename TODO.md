@@ -1,8 +1,5 @@
 # TO-DOs
 
-## Person Search
-- "David Lynch" should have multiple hits, unfortunately only one is shown
-
 ## Memory Leak (multiple reloads of medialist)
 - more intelligent loading?
 - better garbage collection?

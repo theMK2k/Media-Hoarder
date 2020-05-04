@@ -32,6 +32,9 @@ OK -> save AND filter setting alongside the filters themselves
 
 ## Show Indicator when filters apply
 
+## Person Search
+- "David Lynch" should have multiple hits, unfortunately only one is shown
+
 ## Duplicates
 
 - an actual duplicate is the same file in another location (e.g. local copy vs. on server)
