@@ -36,7 +36,6 @@ const {
 // import { languageNameCodeMapping, languageCodeNameMapping } from "@/languages";
 
 const { shared } = require("./shared");
-// import { shared } from "@/shared";
 
 const {
   scrapeIMDBmainPageData,
@@ -51,40 +50,6 @@ const {
   scrapeIMDBFilmingLocations,
   scrapeIMDBRatingDemographics,
 } = require("./imdb-scraper");
-
-const scanOptions = {
-  filescanMovies: true,
-  // filescanMovies_id_SourcePaths_IN: '(5, 10)',											// only scan certain SourcePaths
-
-  rescanMoviesMetaData: true,
-
-  // rescanMoviesMetaData_id_SourcePaths_IN: '(5, 10)',								// only rescan metadata in certain SourcePaths
-  // rescanMoviesMetaData_id_Movies: 23,																	// only rescan a certain movie
-  // rescanMoviesMetaData_maxEntries: 10,
-
-  rescanMoviesMetaData_applyMediaInfo: true,
-  rescanMoviesMetaData_findIMDBtconst: true,
-  // rescanMoviesMetaData_findIMDBtconst_ignore_tconst_in_filename: true,				// ignore tconst contained in filename, instead perform IMDB search (and match against tconst contained in filename)
-
-  rescanMoviesMetaData_fetchIMDBMetaData: true,
-  rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
-  rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics: true,
-  rescanMoviesMetaData_fetchIMDBMetaData_plotSummary: true,
-  rescanMoviesMetaData_fetchIMDBMetaData_plotKeywords: true,
-  rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
-  rescanMoviesMetaData_fetchIMDBMetaData_technicalData: true,
-  rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData: true,
-  rescanMoviesMetaData_fetchIMDBMetaData_creditsData: true,
-  rescanMoviesMetaData_fetchIMDBMetaData_companiesData: true,
-  rescanMoviesMetaData_fetchIMDBMetaData_filmingLocations: true,
-  rescanMoviesMetaData_saveIMDBData: true,
-
-  applyMetaData: true,
-
-  mergeExtras: true,
-
-  handleDuplicates: true,
-};
 
 const definedError = require("@/helpers/defined-error");
 
@@ -289,14 +254,14 @@ async function rescan(onlyNew) {
   isScanning = true;
   eventBus.rescanStarted();
 
-  if (scanOptions.filescanMovies) await filescanMovies(onlyNew);
-  if (scanOptions.rescanMoviesMetaData) await rescanMoviesMetaData(onlyNew);
+  if (shared.scanOptions.filescanMovies) await filescanMovies(onlyNew);
+  if (shared.scanOptions.rescanMoviesMetaData) await rescanMoviesMetaData(onlyNew);
 
   // await rescanTV();								// TODO: TV/Series support
 
-  if (scanOptions.mergeExtras) await mergeExtras(onlyNew);
+  if (shared.scanOptions.mergeExtras) await mergeExtras(onlyNew);
 
-  if (scanOptions.handleDuplicates) await rescanHandleDuplicates();
+  if (shared.scanOptions.handleDuplicates) await rescanHandleDuplicates();
 
   // clear isNew flag from all entries
   await db.fireProcedure(`UPDATE tbl_Movies SET isNew = 0`, []);
@@ -407,7 +372,7 @@ async function rescanHandleDuplicates() {
 }
 
 async function mergeExtras(onlyNew) {
-  if (!scanOptions.mergeExtras) {
+  if (!shared.scanOptions.mergeExtras) {
     return;
   }
 
@@ -552,9 +517,9 @@ async function filescanMovies(onlyNew) {
 			FROM tbl_SourcePaths
 			WHERE MediaType = 'movies'
 			${
-      scanOptions.filescanMovies_id_SourcePaths_IN
+      shared.scanOptions.filescanMovies_id_SourcePaths_IN
         ? "AND id_SourcePaths IN " +
-        scanOptions.filescanMovies_id_SourcePaths_IN
+        shared.scanOptions.filescanMovies_id_SourcePaths_IN
         : ""
       }
 		`);
@@ -952,14 +917,14 @@ async function rescanMoviesMetaData(onlyNew, id_Movies) {
 				(isRemoved IS NULL OR isRemoved = 0)
 				${onlyNew ? "AND isNew = 1" : ""}
 				${
-    scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
+    shared.scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
       ? "AND id_SourcePaths IN " +
-      scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
+      shared.scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
       : ""
     }
 				${
-    scanOptions.rescanMoviesMetaData_id_Movies
-      ? "AND id_Movies = " + scanOptions.rescanMoviesMetaData_id_Movies
+    shared.scanOptions.rescanMoviesMetaData_id_Movies
+      ? "AND id_Movies = " + shared.scanOptions.rescanMoviesMetaData_id_Movies
       : ""
     }
 				${id_Movies ? "AND id_Movies = " + id_Movies : ""}
@@ -975,8 +940,8 @@ async function rescanMoviesMetaData(onlyNew, id_Movies) {
     const movie = movies[i];
 
     if (
-      scanOptions.rescanMoviesMetaData_maxEntries &&
-      i > scanOptions.rescanMoviesMetaData_maxEntries
+      shared.scanOptions.rescanMoviesMetaData_maxEntries &&
+      i > shared.scanOptions.rescanMoviesMetaData_maxEntries
     ) {
       break;
     }
@@ -989,16 +954,16 @@ async function rescanMoviesMetaData(onlyNew, id_Movies) {
 
     eventBus.setProgressBar((i + 1) / movies.length); // absolute progress
 
-    if (!id_Movies && scanOptions.rescanMoviesMetaData_applyMediaInfo)
+    if (!id_Movies && shared.scanOptions.rescanMoviesMetaData_applyMediaInfo)
       await applyMediaInfo(movie, onlyNew);
 
-    if (!id_Movies && scanOptions.rescanMoviesMetaData_findIMDBtconst)
+    if (!id_Movies && shared.scanOptions.rescanMoviesMetaData_findIMDBtconst)
       await findIMDBtconst(movie, onlyNew);
 
-    if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData)
+    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData)
       await fetchIMDBMetaData(movie, onlyNew);
 
-    if (scanOptions.applyMetaData) await applyMetaData(false, movie.id_Movies);
+    if (shared.scanOptions.applyMetaData) await applyMetaData(false, movie.id_Movies);
   }
 
   eventBus.scanInfoOff();
@@ -1254,7 +1219,7 @@ async function findIMDBtconst(movie, onlyNew) {
     // tconst not found by duplicate
     tconstIncluded = await findIMDBtconstIncluded(movie);
     if (
-      !scanOptions.rescanMoviesMetaData_findIMDBtconst_ignore_tconst_in_filename
+      !shared.scanOptions.rescanMoviesMetaData_findIMDBtconst_ignore_tconst_in_filename
     ) {
       tconst = tconstIncluded;
     }
@@ -1265,7 +1230,7 @@ async function findIMDBtconst(movie, onlyNew) {
     tconst = await findIMDBtconstByFilename(movie);
 
     if (
-      scanOptions.rescanMoviesMetaData_findIMDBtconst_ignore_tconst_in_filename
+      shared.scanOptions.rescanMoviesMetaData_findIMDBtconst_ignore_tconst_in_filename
     ) {
       // compare tconst from IMDB search with included tconst
       if (tconstIncluded && tconst) {
@@ -1380,17 +1345,17 @@ async function fetchIMDBMetaData(movie, onlyNew) {
   let IMDBdata = {};
 
   try {
-    if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_mainPageData) {
+    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_mainPageData) {
       const mainPageData = await scrapeIMDBmainPageData(movie);
       IMDBdata = Object.assign(IMDBdata, mainPageData);
     }
 
-    if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics) {
+    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics) {
       const ratingDemographics = await scrapeIMDBRatingDemographics(movie);
       IMDBdata = Object.assign(IMDBdata, ratingDemographics);
     }
 
-    if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_plotSummary) {
+    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_plotSummary) {
       const plotSummaryFull = await scrapeIMDBplotSummary(
         movie,
         IMDBdata.$IMDB_plotSummary
@@ -1399,11 +1364,11 @@ async function fetchIMDBMetaData(movie, onlyNew) {
     }
 
     let plotKeywords = [];
-    if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_plotKeywords) {
+    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_plotKeywords) {
       plotKeywords = await scrapeIMDBplotKeywords(movie);
     }
 
-    if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo) {
+    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo) {
       const regions = await getRegions();
       const allowedTitleTypes = await getAllowedTitleTypes();
 
@@ -1415,32 +1380,32 @@ async function fetchIMDBMetaData(movie, onlyNew) {
       IMDBdata = Object.assign(IMDBdata, releaseinfo);
     }
 
-    if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_technicalData) {
+    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_technicalData) {
       const technicalData = await scrapeIMDBtechnicalData(movie);
       IMDBdata = Object.assign(IMDBdata, technicalData);
     }
 
-    if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData) {
+    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData) {
       const parentalguideData = await scrapeIMDBParentalGuideData(movie);
       IMDBdata = Object.assign(IMDBdata, parentalguideData);
     }
 
     let credits = [];
-    if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_creditsData) {
+    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_creditsData) {
       const creditsData = await scrapeIMDBFullCreditsData(movie);
       IMDBdata = Object.assign(IMDBdata, creditsData.topCredits);
       credits = creditsData.credits;
     }
 
     let companies = [];
-    if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_companiesData) {
+    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_companiesData) {
       const companiesData = await scrapeIMDBCompaniesData(movie);
       IMDBdata = Object.assign(IMDBdata, companiesData.topProductionCompanies);
       companies = companiesData.companies;
     }
 
     let filmingLocations = [];
-    if (scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_filmingLocations) {
+    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_filmingLocations) {
       filmingLocations = await scrapeIMDBFilmingLocations(movie);
     }
 
@@ -1451,7 +1416,7 @@ async function fetchIMDBMetaData(movie, onlyNew) {
       []
     );
 
-    if (scanOptions.rescanMoviesMetaData_saveIMDBData) {
+    if (shared.scanOptions.rescanMoviesMetaData_saveIMDBData) {
       await saveIMDBData(
         movie,
         IMDBdata,

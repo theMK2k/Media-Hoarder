@@ -42,6 +42,79 @@
           </ul>
         </div>
 
+        <v-expansion-panels accordion>
+          <v-expansion-panel style="padding: 0px!important">
+              <v-expansion-panel-header
+                style="padding: 8px!important"
+              >IMDB Scraper Options</v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-col>
+                  <v-checkbox
+                    v-model="$shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_mainPageData"
+                    label="Main Page (Genres, Rating/Votes, Metacritic Score, Poster, Plot Summary, Trailer URL)"
+                    color="dark-grey"
+                  >
+                  </v-checkbox>
+                  <v-checkbox
+                    v-model="$shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics"
+                    label="Ratings (Rating by Demographics, e.g. Ages, Male/Female, US/Non-US)"
+                    color="dark-grey"
+                  >
+                  </v-checkbox>
+                  <v-checkbox
+                    v-model="$shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_plotSummary"
+                    label="Full Plot Summary (Main Page only contains an extract of the full summary)"
+                    color="dark-grey"
+                  >
+                  </v-checkbox>
+                  <v-checkbox
+                    v-model="$shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_plotKeywords"
+                    label="Plot Keywords"
+                    color="dark-grey"
+                  >
+                  </v-checkbox>
+                  <v-checkbox
+                    v-model="$shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo"
+                    label="Release Info (Title, Localized Title, Original Title, Year)"
+                    color="dark-grey"
+                  >
+                  </v-checkbox>
+                  <v-checkbox
+                    v-model="$shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_technicalData"
+                    label="Technical Data (Runtime)"
+                    color="dark-grey"
+                  >
+                  </v-checkbox>
+                  <v-checkbox
+                    v-model="$shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData"
+                    label="Parental Guide (Age Rating, Levels of: Nudity, Violence, Profanity, Alcohol &amp; Drugs, Frightening Scenes)"
+                    color="dark-grey"
+                  >
+                  </v-checkbox>
+                  <v-checkbox
+                    v-model="$shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_creditsData"
+                    label="Credits"
+                    color="dark-grey"
+                  >
+                  </v-checkbox>
+                  <v-checkbox
+                    v-model="$shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_companiesData"
+                    label="Companies"
+                    color="dark-grey"
+                  >
+                  </v-checkbox>
+                  <v-checkbox
+                    v-model="$shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_filmingLocations"
+                    label="Filming Locations"
+                    color="dark-grey"
+                  >
+                  </v-checkbox>
+                </v-col>
+              </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+
+
         <div style="height: 16px"></div>
 
         <v-alert

@@ -13,6 +13,59 @@ OK  - let user define preferred (local) Regions to identify the primary title
 OK  -> fetch Countries from https://www.imdb.com/search/title/ and provide as list
 OK  -> Auto set region by user's localization setting?
 
+## View-Switchig multiple event handling bug
+
+## History/New Version Popup
+- shown on startup
+- welcome message
+- latest introduced features
+- history (show more..)
+- info if this is the latest version (based on github releases page?)
+
+Content:
+
+[
+  {
+    version: "1.0",
+    features: [
+      {
+        shortDescription: "TV Series Support",
+        longDescription: "Added TV Series Support allows to scan TV Series (expected are directories for the full series and subdirectories for seasons)",
+        link: "https://link-to-further-explanations.com"
+      }
+    ],
+
+    fixes: [
+
+    ],
+
+    other: [
+
+    ]
+  }
+]
+- provide a full set as json
+- provide the latest version as json (this will be loaded from github by the client in order to inform the user of new version and it's features)
+
+OR
+
+Content:
+
+[
+  {
+    version: "1.0",
+    description: "version-1.0.html"
+  },
+  {
+    version: "0.5",
+    description: "version-0.5.html"
+  }
+]
+
+-> small backlog.json
+-> load version-xx.html from file or from github if not available
+-> render within VersionDialog
+
 ## Investigate an "AND" filter
 OK - how would SQL queries look?
 OK -> save AND filter setting alongside the filters themselves
