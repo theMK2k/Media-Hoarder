@@ -1422,16 +1422,16 @@ export default {
 
     filterParentalAdvisoryCategoryTitle(category) {
       if (
-        !this.$shared.filterParentalAdvisory[category.Name].find(
-          filter => !filter.Selected
+        !this.$shared.userScanOptions.find(
+          filter => !filter.enabled
         )
       ) {
         return "(ALL)";
       }
 
       if (
-        !this.$shared.filterParentalAdvisory[category.Name].find(
-          filter => filter.Selected
+        !this.$shared.userScanOptions.find(
+          filter => filter.enabled
         )
       ) {
         return "(NONE)";
@@ -1439,11 +1439,11 @@ export default {
 
       return (
         "(" +
-        this.$shared.filterParentalAdvisory[category.Name].filter(
-          filter => filter.Selected
+        this.$shared.userScanOptions.filter(
+          filter => filter.enabled
         ).length +
         "/" +
-        this.$shared.filterParentalAdvisory[category.Name].length +
+        this.$shared.userScanOptions.length +
         ")"
       );
     },

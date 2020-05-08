@@ -211,7 +211,60 @@ const shared = new Vue({
       mergeExtras: true,
     
       handleDuplicates: true,
-    }
+    },
+
+    userScanOptions: [
+      {
+        key: 'rescanMoviesMetaData_fetchIMDBMetaData_mainPageData',
+        enabled: true,
+        description: 'Main Page (Genres, Rating/Votes, Metacritic Score, Poster, Plot Summary, Trailer URL)'
+      },
+      {
+        key: 'rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics',
+        enabled: true,
+        description: 'Ratings (Rating by Demographics, e.g. Ages, Male/Female, US/Non-US)'
+      },
+      {
+        key: 'rescanMoviesMetaData_fetchIMDBMetaData_plotSummary',
+        enabled: true,
+        description: 'Full Plot Summary (Main Page only contains an extract of the full summary)'
+      },
+      {
+        key: 'rescanMoviesMetaData_fetchIMDBMetaData_plotKeywords',
+        enabled: true,
+        description: 'Plot Keywords'
+      },
+      {
+        key: 'rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo',
+        enabled: true,
+        description: 'Release Info (Title, Localized Title, Original Title, Year)'
+      },
+      {
+        key: 'rescanMoviesMetaData_fetchIMDBMetaData_technicalData',
+        enabled: true,
+        description: 'Technical Data (Runtime)'
+      },
+      {
+        key: 'rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData',
+        enabled: true,
+        description: 'Parental Guide (Age Rating, Levels of: Nudity, Violence, Profanity, Alcohol & Drugs, Frightening Scenes)'
+      },
+      {
+        key: 'rescanMoviesMetaData_fetchIMDBMetaData_creditsData',
+        enabled: true,
+        description: 'Credits'
+      },
+      {
+        key: 'rescanMoviesMetaData_fetchIMDBMetaData_companiesData',
+        enabled: true,
+        description: 'Companies'
+      },
+      {
+        key: 'rescanMoviesMetaData_fetchIMDBMetaData_filmingLocations',
+        enabled: true,
+        description: 'Filming Locations'
+      }
+    ]
   }
 })
 

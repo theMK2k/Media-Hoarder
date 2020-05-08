@@ -15,9 +15,9 @@
           type="warning"
           colored-border
           border="left"
-          v-if="showMediaInfoWarning"
+          v-if="showMediaInfoWarning || true"
           dense
-        >Warning: Mediainfo CLI Path is not set. Please go to Settings and provide one. You can get Mediainfo CLI from www.mediaarea.net</v-alert>
+        >Warning: Mediainfo CLI Path is not set. Please go to <a v-on:click="openSettings">Settings</a> and provide one. You can get Mediainfo CLI from www.mediaarea.net</v-alert>
 
         <v-radio-group v-model="radioGroup">
           <v-radio label="Quick Scan" v-bind:value="1" color="dark-grey"></v-radio>
@@ -46,69 +46,13 @@
           <v-expansion-panel style="padding: 0px!important">
               <v-expansion-panel-header
                 style="padding: 8px!important"
-              >IMDB Scraper Options</v-expansion-panel-header>
+              >IMDB Scraper Options {{imdbOptionsTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-col>
-                  <v-checkbox
-                    v-model="$shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_mainPageData"
-                    label="Main Page (Genres, Rating/Votes, Metacritic Score, Poster, Plot Summary, Trailer URL)"
-                    color="dark-grey"
-                  >
-                  </v-checkbox>
-                  <v-checkbox
-                    v-model="$shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics"
-                    label="Ratings (Rating by Demographics, e.g. Ages, Male/Female, US/Non-US)"
-                    color="dark-grey"
-                  >
-                  </v-checkbox>
-                  <v-checkbox
-                    v-model="$shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_plotSummary"
-                    label="Full Plot Summary (Main Page only contains an extract of the full summary)"
-                    color="dark-grey"
-                  >
-                  </v-checkbox>
-                  <v-checkbox
-                    v-model="$shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_plotKeywords"
-                    label="Plot Keywords"
-                    color="dark-grey"
-                  >
-                  </v-checkbox>
-                  <v-checkbox
-                    v-model="$shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo"
-                    label="Release Info (Title, Localized Title, Original Title, Year)"
-                    color="dark-grey"
-                  >
-                  </v-checkbox>
-                  <v-checkbox
-                    v-model="$shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_technicalData"
-                    label="Technical Data (Runtime)"
-                    color="dark-grey"
-                  >
-                  </v-checkbox>
-                  <v-checkbox
-                    v-model="$shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData"
-                    label="Parental Guide (Age Rating, Levels of: Nudity, Violence, Profanity, Alcohol &amp; Drugs, Frightening Scenes)"
-                    color="dark-grey"
-                  >
-                  </v-checkbox>
-                  <v-checkbox
-                    v-model="$shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_creditsData"
-                    label="Credits"
-                    color="dark-grey"
-                  >
-                  </v-checkbox>
-                  <v-checkbox
-                    v-model="$shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_companiesData"
-                    label="Companies"
-                    color="dark-grey"
-                  >
-                  </v-checkbox>
-                  <v-checkbox
-                    v-model="$shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_filmingLocations"
-                    label="Filming Locations"
-                    color="dark-grey"
-                  >
-                  </v-checkbox>
+                  <v-checkbox v-for="userScanOption in $shared.userScanOptions" v-bind:key="userScanOption.key"
+                    v-model="userScanOption.enabled"
+                    v-bind:label="userScanOption.description"
+                  ></v-checkbox>
                 </v-col>
               </v-expansion-panel-content>
           </v-expansion-panel>
@@ -172,6 +116,38 @@ export default {
     };
   },
 
+  computed: {
+    imdbOptionsTitle() {
+      logger.log('imdbOptionsTitle START');
+      
+      if (
+        this.$shared.userScanOptions.findIndex(
+          scanOption => !scanOption.enabled
+        ) === -1
+      ) {
+        return "(ALL)";
+      }
+
+      if (
+        this.$shared.userScanOptions.findIndex(
+          scanOption => scanOption.enabled
+        ) === -1
+      ) {
+        return "(NONE)";
+      }
+
+      return (
+        "(" +
+        this.$shared.userScanOptions.filter(
+          scanOption => scanOption.enabled
+        ).length +
+        "/" +
+        this.$shared.userScanOptions.length +
+        ")"
+      );
+    }
+  },
+
   methods: {
     onCloseClick() {
       this.$emit("cancel");
@@ -195,6 +171,11 @@ export default {
       logger.log('this.missingSourcePaths:', this.missingSourcePaths);
 
       this.isLoading = false;
+    },
+
+    openSettings() {
+      this.$emit("cancel");
+      this.$router.push("/settings");
     }
   },
 
