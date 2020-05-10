@@ -1422,31 +1422,30 @@ export default {
 
     filterParentalAdvisoryCategoryTitle(category) {
       if (
-        !this.$shared.userScanOptions.find(
-          filter => !filter.enabled
+        !this.$shared.filterParentalAdvisory[category.Name].find(
+          filter => !filter.Selected
         )
       ) {
         return "(ALL)";
       }
-
       if (
-        !this.$shared.userScanOptions.find(
-          filter => filter.enabled
+        !this.$shared.filterParentalAdvisory[category.Name].find(
+          filter => filter.Selected
         )
       ) {
         return "(NONE)";
       }
-
       return (
         "(" +
-        this.$shared.userScanOptions.filter(
-          filter => filter.enabled
+        this.$shared.filterParentalAdvisory[category.Name].filter(
+          filter => filter.Selected
         ).length +
         "/" +
-        this.$shared.userScanOptions.length +
+        this.$shared.filterParentalAdvisory[category.Name].length +
         ")"
       );
     },
+
 
     addPerson() {
       this.searchPersonsDialog.show = true;
