@@ -1345,17 +1345,17 @@ async function fetchIMDBMetaData(movie, onlyNew) {
   let IMDBdata = {};
 
   try {
-    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_mainPageData) {
+    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_mainPageData && getUserScanOption('rescanMoviesMetaData_fetchIMDBMetaData_mainPageData').enabled) {
       const mainPageData = await scrapeIMDBmainPageData(movie);
       IMDBdata = Object.assign(IMDBdata, mainPageData);
     }
 
-    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics) {
+    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics && getUserScanOption('rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics').enabled) {
       const ratingDemographics = await scrapeIMDBRatingDemographics(movie);
       IMDBdata = Object.assign(IMDBdata, ratingDemographics);
     }
 
-    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_plotSummary) {
+    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_plotSummary && getUserScanOption('rescanMoviesMetaData_fetchIMDBMetaData_plotSummary').enabled) {
       const plotSummaryFull = await scrapeIMDBplotSummary(
         movie,
         IMDBdata.$IMDB_plotSummary
@@ -1364,11 +1364,11 @@ async function fetchIMDBMetaData(movie, onlyNew) {
     }
 
     let plotKeywords = [];
-    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_plotKeywords) {
+    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_plotKeywords && getUserScanOption('rescanMoviesMetaData_fetchIMDBMetaData_plotKeywords').enabled) {
       plotKeywords = await scrapeIMDBplotKeywords(movie);
     }
 
-    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo) {
+    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo && getUserScanOption('rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo').enabled) {
       const regions = await getRegions();
       const allowedTitleTypes = await getAllowedTitleTypes();
 
@@ -1380,32 +1380,32 @@ async function fetchIMDBMetaData(movie, onlyNew) {
       IMDBdata = Object.assign(IMDBdata, releaseinfo);
     }
 
-    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_technicalData) {
+    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_technicalData && getUserScanOption('rescanMoviesMetaData_fetchIMDBMetaData_technicalData').enabled) {
       const technicalData = await scrapeIMDBtechnicalData(movie);
       IMDBdata = Object.assign(IMDBdata, technicalData);
     }
 
-    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData) {
+    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData && getUserScanOption('rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData').enabled) {
       const parentalguideData = await scrapeIMDBParentalGuideData(movie);
       IMDBdata = Object.assign(IMDBdata, parentalguideData);
     }
 
     let credits = [];
-    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_creditsData) {
+    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_creditsData && getUserScanOption('rescanMoviesMetaData_fetchIMDBMetaData_creditsData').enabled) {
       const creditsData = await scrapeIMDBFullCreditsData(movie);
       IMDBdata = Object.assign(IMDBdata, creditsData.topCredits);
       credits = creditsData.credits;
     }
 
     let companies = [];
-    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_companiesData) {
+    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_companiesData && getUserScanOption('rescanMoviesMetaData_fetchIMDBMetaData_companiesData').enabled) {
       const companiesData = await scrapeIMDBCompaniesData(movie);
       IMDBdata = Object.assign(IMDBdata, companiesData.topProductionCompanies);
       companies = companiesData.companies;
     }
 
     let filmingLocations = [];
-    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_filmingLocations) {
+    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_filmingLocations && getUserScanOption('rescanMoviesMetaData_fetchIMDBMetaData_filmingLocations').enabled) {
       filmingLocations = await scrapeIMDBFilmingLocations(movie);
     }
 
@@ -4401,6 +4401,16 @@ async function loadLocalHistory(fileName) {
   }
 }
 
+function getUserScanOption(key) {
+  return shared.userScanOptions.find(userScanOption => userScanOption.key === key);
+}
+
+function resetUserScanOptions() {
+  shared.userScanOptions.forEach(userScanOption => {
+    userScanOption.enabled = true;
+  })
+}
+
 export {
   db,
   fetchSourcePaths,
@@ -4463,4 +4473,5 @@ export {
   fetchMoviePlotKeywords,
   findMissingSourcePaths,
   loadLocalHistory,
+  resetUserScanOptions,
 };
