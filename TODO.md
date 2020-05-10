@@ -7,13 +7,10 @@ OK -> we have a memory leak using eventBus.$on -> implement eventBus.$off on bef
 -> we still have the memory leak: don't fetch all data at once (re-fetch for each page)
 OK -> check if memory leak is only in dev-mode (yes, it still persists even in prod-mode)
 
-## Settings - Scraper / Scan Media Options
-- allow user to deselect things for the IMDB scraper (analog to store.scanOptions)
-
 ## Rating Demographics
 OK - scrape
 OK - allow the user to choose which demography to use as IMDB rating
-- show demographics matrix when clicking IMDB score for an item
+WIP - show demographics matrix when clicking IMDB score for an item
 
 ## Age Rating
 - use user-chosen regions (countries) as basis for the age rating shown in the main list

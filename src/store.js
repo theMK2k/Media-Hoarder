@@ -4411,6 +4411,56 @@ function resetUserScanOptions() {
   })
 }
 
+async function fetchRatingDemographics($id_Movies) {
+  const rows = await db.fireProcedureReturnAll(`
+  SELECT
+    IMDB_rating
+    , IMDB_numVotes
+    , IMDB_rating_males
+    , IMDB_numVotes_males
+    , IMDB_rating_females
+    , IMDB_numVotes_females
+    , IMDB_rating_aged_under_18
+    , IMDB_numVotes_aged_under_18
+    , IMDB_rating_males_aged_under_18
+    , IMDB_numVotes_males_aged_under_18
+    , IMDB_rating_females_aged_under_18
+    , IMDB_numVotes_females_aged_under_18
+    , IMDB_rating_aged_18_29
+    , IMDB_numVotes_aged_18_29
+    , IMDB_rating_males_aged_18_29
+    , IMDB_numVotes_males_aged_18_29
+    , IMDB_rating_females_aged_18_29
+    , IMDB_numVotes_females_aged_18_29
+    , IMDB_rating_aged_30_44
+    , IMDB_numVotes_aged_30_44
+    , IMDB_rating_males_aged_30_44
+    , IMDB_numVotes_males_aged_30_44
+    , IMDB_rating_females_aged_30_44
+    , IMDB_numVotes_females_aged_30_44
+    , IMDB_rating_aged_45_plus
+    , IMDB_numVotes_aged_45_plus
+    , IMDB_rating_males_aged_45_plus
+    , IMDB_numVotes_males_aged_45_plus
+    , IMDB_rating_females_aged_45_plus
+    , IMDB_numVotes_females_aged_45_plus
+    , IMDB_rating_top_1000_voters
+    , IMDB_numVotes_top_1000_voters
+    , IMDB_rating_us_users
+    , IMDB_numVotes_us_users
+    , IMDB_rating_non_us_users
+    , IMDB_numVotes_non_us_users
+  FROM tbl_Movies
+  WHERE id_Movies = $id_Movies
+    `, {$id_Movies});
+  
+  if (!rows || !rows.length === 1) {
+    return null;
+  }
+
+  return rows[0];
+}
+
 export {
   db,
   fetchSourcePaths,
@@ -4474,4 +4524,5 @@ export {
   findMissingSourcePaths,
   loadLocalHistory,
   resetUserScanOptions,
+  fetchRatingDemographics
 };

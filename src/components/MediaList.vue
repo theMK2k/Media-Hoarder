@@ -211,7 +211,7 @@
                         v-if="item.IMDB_rating_defaultDisplay"
                       >
                         <v-icon small color="amber" style="padding-bottom: 4px">mdi-star</v-icon>
-                        <a class="headline mb-2 Clickable">{{item.IMDB_rating_defaultDisplay}}</a>
+                        <a class="headline mb-2 Clickable" v-on:click.stop="onShowRatingDemographicsDialog(item)">{{item.IMDB_rating_defaultDisplay}}</a>
                         <span
                           v-if="item.IMDB_metacriticScore"
                           v-bind:class="getMetaCriticClass(item.IMDB_metacriticScore)"
@@ -644,6 +644,13 @@
       v-on:close="onLinkIMDBDialogClose"
       v-on:selected="onLinkIMDBDialogSelected"
     ></mk-search-imdb-dialog>
+
+    <mk-rating-demographics-dialog
+      ref="ratingDemographicsDialog"
+      v-bind:show="ratingDemographicsDialog.show"
+      v-bind:title="ratingDemographicsDialog.title"
+      v-on:close="ratingDemographicsDialog.show = false"
+    ></mk-rating-demographics-dialog>
   </div>
 </template>
 
@@ -662,6 +669,7 @@ import VideoPlayerDialog from "@/components/shared/VideoPlayerDialog.vue";
 import LocalVideoPlayerDialog from "@/components/shared/LocalVideoPlayerDialog.vue";
 import LinkIMDBDialog from "@/components/shared/LinkIMDBDialog.vue";
 import Pagination from "@/components/shared/Pagination.vue";
+import RatingDemographicsDialog from "@/components/shared/RatingDemographicsDialog"
 
 const { shell } = require("electron").remote;
 
@@ -681,7 +689,8 @@ export default {
     "mk-local-video-player-dialog": LocalVideoPlayerDialog,
     "mk-edit-item-dialog": Dialog,
     "mk-search-imdb-dialog": LinkIMDBDialog,
-    "mk-pagination": Pagination
+    "mk-pagination": Pagination,
+    "mk-rating-demographics-dialog": RatingDemographicsDialog
   },
 
   data: () => ({
@@ -769,6 +778,11 @@ export default {
     linkIMDBDialog: {
       show: false,
       item: {}
+    },
+
+    ratingDemographicsDialog: {
+      show: false,
+      title: null,
     },
 
     itemsPerPage: 20,
@@ -1729,6 +1743,14 @@ export default {
           });
         });
       });
+    },
+
+    onShowRatingDemographicsDialog(item) {
+      this.ratingDemographicsDialog.title = item.Name;
+
+      this.$refs.ratingDemographicsDialog.init(item.id_Movies);
+      
+      this.ratingDemographicsDialog.show = true;
     }
   },
 

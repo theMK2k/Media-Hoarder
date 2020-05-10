@@ -13,6 +13,9 @@ OK  - let user define preferred (local) Regions to identify the primary title
 OK  -> fetch Countries from https://www.imdb.com/search/title/ and provide as list
 OK  -> Auto set region by user's localization setting?
 
+## Settings - Scraper / Scan Media Options
+- allow user to deselect things for the IMDB scraper (analog to store.scanOptions)
+
 ## View-Switchig multiple event handling bug
 
 ## History/New Version Popup
