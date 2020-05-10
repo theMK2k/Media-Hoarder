@@ -15,7 +15,7 @@
           type="warning"
           colored-border
           border="left"
-          v-if="showMediaInfoWarning || true"
+          v-if="showMediaInfoWarning"
           dense
         >Warning: Mediainfo CLI Path is not set. Please go to <a v-on:click="openSettings">Settings</a> and provide one. You can get Mediainfo CLI from www.mediaarea.net</v-alert>
 
@@ -52,6 +52,8 @@
                   <v-checkbox v-for="userScanOption in $shared.userScanOptions" v-bind:key="userScanOption.key"
                     v-model="userScanOption.enabled"
                     v-bind:label="userScanOption.description"
+                    style="margin: 0px"
+                    color="dark-grey"
                   ></v-checkbox>
                 </v-col>
               </v-expansion-panel-content>
@@ -159,6 +161,8 @@ export default {
 
     async init() {
       this.isLoading = true;
+      
+      store.resetUserScanOptions();
       
       const missingSourcePaths = await store.findMissingSourcePaths();
 

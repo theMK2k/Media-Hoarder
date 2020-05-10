@@ -1137,14 +1137,6 @@ export default {
       return this.$router.push("/settings");
     },
 
-    toggleRescan(onlyNew) {
-      if (!store.isScanning) {
-        store.rescan(onlyNew);
-      } else {
-        store.abortRescan();
-      }
-    },
-
     cancelRescan() {
       store.abortRescan();
     },

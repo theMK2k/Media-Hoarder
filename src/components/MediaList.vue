@@ -1585,6 +1585,8 @@ export default {
 
     async onLinkIMDBDialogSelected(tconst) {
       try {
+        store.resetUserScanOptions();
+        
         await store.assignIMDB(this.linkIMDBDialog.item.id_Movies, tconst);
 
         eventBus.refetchMedia(this.$shared.currentPage);
