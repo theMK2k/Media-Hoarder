@@ -112,31 +112,6 @@ const shared = new Vue({
         long: 'Aged 45+'
       },
       {
-        code: 'males',
-        short: '♂',
-        long: 'Males'
-      },
-      {
-        code: 'males_aged_under_18',
-        short: '♂<18',
-        long: 'Males aged under 18'
-      },
-      {
-        code: 'males_aged_18_29',
-        short: '♂<30',
-        long: 'Males aged 18-29'
-      },
-      {
-        code: 'males_aged_30_44',
-        short: '♂<45',
-        long: 'Males aged 30-44'
-      },
-      {
-        code: 'males_aged_45_plus',
-        short: '♂45+',
-        long: 'Males aged 45+'
-      },
-      {
         code: 'females',
         short: '♀',
         long: 'Females'
@@ -162,19 +137,44 @@ const shared = new Vue({
         long: 'Females aged 45+'
       },
       {
+        code: 'males',
+        short: '♂',
+        long: 'Males'
+      },
+      {
+        code: 'males_aged_under_18',
+        short: '♂<18',
+        long: 'Males aged under 18'
+      },
+      {
+        code: 'males_aged_18_29',
+        short: '♂<30',
+        long: 'Males aged 18-29'
+      },
+      {
+        code: 'males_aged_30_44',
+        short: '♂<45',
+        long: 'Males aged 30-44'
+      },
+      {
+        code: 'males_aged_45_plus',
+        short: '♂45+',
+        long: 'Males aged 45+'
+      },
+      {
         code: 'top_1000_voters',
         short: '🎩',
         long: 'Top 1000 voters'
       },
       {
-        code: 'us_users',
-        short: 'US',
-        long: 'US users'
-      },
-      {
         code: 'non_us_users',
         short: 'non-US',
         long: 'Non-US users'
+      },
+      {
+        code: 'us_users',
+        short: 'US',
+        long: 'US users'
       },
     ],
     imdbRatingDemographic: '',

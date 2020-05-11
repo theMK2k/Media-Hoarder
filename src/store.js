@@ -4458,7 +4458,23 @@ async function fetchRatingDemographics($id_Movies) {
     return null;
   }
 
-  return rows[0];
+  const ratingDemographics = rows[0];
+
+  Object.keys(ratingDemographics).forEach(key => {
+    if (key.includes('rating')) {
+      ratingDemographics[key+'_formatted'] = ratingDemographics[key] ?
+        `${ratingDemographics[key].toLocaleString(undefined, {
+          minimumFractionDigits: 1,
+        })}`
+        : '';
+    }
+
+    if (key.includes('numVotes')) {
+      ratingDemographics[key+'_formatted'] = ratingDemographics[key] ? `${ratingDemographics[key].toLocaleString()}` : '';
+    }
+  })
+
+  return ratingDemographics;
 }
 
 export {
