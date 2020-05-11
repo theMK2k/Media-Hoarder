@@ -13,6 +13,11 @@ OK  - let user define preferred (local) Regions to identify the primary title
 OK  -> fetch Countries from https://www.imdb.com/search/title/ and provide as list
 OK  -> Auto set region by user's localization setting?
 
+## Rating Demographics
+OK - scrape
+OK - allow the user to choose which demography to use as IMDB rating
+OK - show demographics matrix when clicking IMDB score for an item
+
 ## Settings - Scraper / Scan Media Options
 - allow user to deselect things for the IMDB scraper (analog to store.scanOptions)
 
