@@ -7,11 +7,6 @@ const htmlToText = require("html-to-text");
 
 const helpers = require("./helpers/helpers");
 const db = require("./helpers/db");
-const { getSetting } = require("./store");
-
-// import * as helpers from "./helpers/helpers";
-// import * as db from "./helpers/db"; // TODO (SCRAPER): get rid of this
-// import { getSetting } from "./store"; // TODO (SCRAPER): get rid of this
 
 const requestGetAsync = util.promisify(request.get);
 const writeFileAsync = util.promisify(fs.writeFile);
@@ -361,9 +356,7 @@ async function scrapeIMDBtechnicalData(movie) {
 
 let cacheAgeRatings = null;
 
-let ageRatingChosenCountry = "none"; // TODO (REGIONS): what is this? use user-defined regions for this
-
-async function scrapeIMDBParentalGuideData(movie) {
+async function scrapeIMDBParentalGuideData(movie, regions) {
   if (!cacheAgeRatings) {
     cacheAgeRatings = await db.fireProcedureReturnAll(
       `SELECT id_AgeRating, Country, Code, Age FROM tbl_AgeRating`
@@ -371,10 +364,17 @@ async function scrapeIMDBParentalGuideData(movie) {
     logger.log("cacheAgeRatings:", cacheAgeRatings);
   }
 
-  if (ageRatingChosenCountry === "none") {
-    ageRatingChosenCountry = await getSetting("AgeRatingChosenCountry");
-    logger.log("AgeRating chosen country:", ageRatingChosenCountry);
+  let regionCodes = [];
+
+  try {
+    if (regions) {
+      regionCodes = regions.map(region => region.code ? region.code.toUpperCase() : '');
+    }
+  } catch (e) {
+    logger.error(e)
   }
+
+  logger.log("AgeRating regionCodes:", regionCodes);
 
   const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/parentalguide`;
   logger.log("scrapeIMDBParentalGuideData url:", url);
@@ -445,8 +445,8 @@ async function scrapeIMDBParentalGuideData(movie) {
       rating.id_AgeRating = cachedRating.id_AgeRating;
     }
 
-    if (rating.id_AgeRating && rating.Country === ageRatingChosenCountry) {
-      // logger.log('rating for chosen country found:', rating);
+    if (rating.id_AgeRating && regionCodes.find(regionCode => regionCode === rating.Country)) {
+      logger.log('AgeRating regions FOUND:', rating);
       $IMDB_id_AgeRating_Chosen_Country = rating.id_AgeRating;
     }
 

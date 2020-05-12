@@ -1386,7 +1386,8 @@ async function fetchIMDBMetaData(movie, onlyNew) {
     }
 
     if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData && getUserScanOption('rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData').enabled) {
-      const parentalguideData = await scrapeIMDBParentalGuideData(movie);
+      const regions = await getRegions();
+      const parentalguideData = await scrapeIMDBParentalGuideData(movie, regions);
       IMDBdata = Object.assign(IMDBdata, parentalguideData);
     }
 
