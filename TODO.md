@@ -7,11 +7,7 @@ OK -> we have a memory leak using eventBus.$on -> implement eventBus.$off on bef
 -> we still have the memory leak: don't fetch all data at once (re-fetch for each page)
 OK -> check if memory leak is only in dev-mode (yes, it still persists even in prod-mode)
 
-## Filming Locations
-- add as section in MediaLists
-- add filter
-
-## CompanyDialog, PersonDialog, Plot Keyword Dialog
+## CompanyDialog, PersonDialog, Plot Keyword Dialog, Filming Locations Dialog (Search Data Dialog)
 include statistical infos (how many movies)
 
 ## 720p, SD, HD Detection

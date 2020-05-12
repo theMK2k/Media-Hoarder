@@ -2080,6 +2080,68 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
       }
     }
 
+    let filterIMDBFilmingLocations = "";
+    if (
+      shared.filterIMDBFilmingLocations &&
+      (
+        (
+          !shared.filterSettings.filterIMDBFilmingLocationsAND &&
+          shared.filterIMDBFilmingLocations.find((filter) => !filter.Selected)
+        )
+        ||
+        (
+          shared.filterSettings.filterIMDBFilmingLocationsAND &&
+          shared.filterIMDBFilmingLocations.find((filter) => filter.Selected && filter.id_Filter_IMDB_Filming_Locations)
+        )
+      )
+    ) {
+      const filterIMDBFilmingLocationsList = shared.filterIMDBFilmingLocations
+        .filter((filter) => filter.Selected && filter.id_Filter_IMDB_Filming_Locations)
+        .map((filter) => filter.id_IMDB_Filming_Locations);
+
+      if (shared.filterSettings.filterIMDBFilmingLocationsAND) {
+        // use INTERSECT for AND-filter
+        // note: we don't have to take "any other filming location" into account
+        filterIMDBFilmingLocations = 'AND MOV.id_Movies IN ('
+
+        filterIMDBFilmingLocations += filterIMDBFilmingLocationsList
+          .reduce((prev, current) => {
+            return prev + (prev ? " INTERSECT " : "") + `SELECT id_Movies FROM tbl_Movies_IMDB_Filming_Locations WHERE id_IMDB_Filming_Locations = ${current}`;
+          }, "");
+
+        filterIMDBFilmingLocations += ")";
+
+      } else {
+        // OR-filter
+        if (
+          shared.filterIMDBFilmingLocations.find(
+            (filter) => filter.Selected && !filter.id_Filter_IMDB_Filming_Locations
+          )
+        ) {
+          filterIMDBFilmingLocations = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies_IMDB_Filming_Locations WHERE id_IMDB_Filming_Locations IN (SELECT id_IMDB_Filming_Locations FROM tbl_Filter_IMDB_Filming_Locations)) `;
+        } else {
+          filterIMDBFilmingLocations = `AND (1=0 `;
+        }
+
+        if (
+          shared.filterIMDBFilmingLocations.find(
+            (filter) => filter.Selected && filter.id_Filter_IMDB_Filming_Locations
+          )
+        ) {
+          filterIMDBFilmingLocations += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_IMDB_Filming_Locations WHERE id_IMDB_Filming_Locations IN (`;
+
+          filterIMDBFilmingLocations += filterIMDBFilmingLocationsList
+            .reduce((prev, current) => {
+              return prev + (prev ? ", " : "") + `${current}`;
+            }, "");
+
+          filterIMDBFilmingLocations += "))";
+        }
+
+        filterIMDBFilmingLocations += ")";
+      }
+    }
+
     let filterYears = "";
     logger.log("shared.filterYears:", shared.filterYears);
     if (
@@ -2293,6 +2355,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
     logger.log("fetchMedia filterPersons:", filterPersons);
     logger.log("fetchMedia filterCompanies:", filterCompanies);
     logger.log("fetchMedia filterIMDBPlotKeywords:", filterIMDBPlotKeywords);
+    logger.log("fetchMedia filterIMDBPlotKeywords:", filterIMDBFilmingLocations);
     logger.log("fetchMedia filterAudioLanguages:", filterAudioLanguages);
     logger.log("fetchMedia filter_id_Movies:", filter_id_Movies);
 
@@ -2395,6 +2458,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
 		${filterQualities}
     ${filterCompanies}
     ${filterIMDBPlotKeywords}
+    ${filterIMDBFilmingLocations}
 		${filterAudioLanguages}
 		${filterSubtitleLanguages}
 		${filterMetacriticScore}
@@ -2501,6 +2565,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet) {
       item.name2Hovered = false;
       item.showContentAdvisory = false;
       item.showPlotKeywords = false;
+      item.showFilmingLocations = false;
       item.plotKeywords = null;
     });
 
@@ -3257,6 +3322,72 @@ async function fetchFilterIMDBPlotKeywords($MediaType) {
   shared.filterIMDBPlotKeywords = results;
 }
 
+async function fetchFilterIMDBFilmingLocations($MediaType) {
+  const filterValues = await fetchFilterValues($MediaType);
+
+  const results = await db.fireProcedureReturnAll(
+    `
+		SELECT
+			0 AS id_Filter_IMDB_Filming_Locations
+			, NULL AS id_IMDB_Filming_Locations
+			, '<any other filming location>' AS Location
+			, 1 AS Selected
+			, (
+					SELECT COUNT(1)
+					FROM tbl_Movies MOV
+					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+					WHERE
+						(MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+						AND MOV.id_Movies NOT IN (
+              SELECT DISTINCT MFL.id_Movies
+              FROM tbl_Movies_IMDB_Filming_Locations MFL
+              INNER JOIN tbl_Movies MOV2 ON MFL.id_Movies = MOV2.id_Movies
+              INNER JOIN tbl_SourcePaths SP2 ON MOV2.id_SourcePaths = SP2.id_SourcePaths AND SP2.MediaType = $MediaType
+              WHERE MFL.id_IMDB_Filming_Locations IN (SELECT id_IMDB_Filming_Locations FROM tbl_Filter_IMDB_Filming_Locations)
+					)
+				)
+			AS NumMovies
+		UNION
+		SELECT
+    id_Filter_IMDB_Filming_Locations
+			, id_IMDB_Filming_Locations
+			, Location
+			, 1 AS Selected
+			, (
+					SELECT COUNT(1) FROM (
+            SELECT DISTINCT MFL.id_Movies
+            FROM tbl_Movies_IMDB_Filming_Locations MFL
+            INNER JOIN tbl_Movies MOV2 ON MFL.id_Movies = MOV2.id_Movies
+            INNER JOIN tbl_SourcePaths SP2 ON MOV2.id_SourcePaths = SP2.id_SourcePaths AND SP2.MediaType = $MediaType
+            WHERE MFL.id_IMDB_Filming_Locations IN (SELECT id_IMDB_Filming_Locations FROM tbl_Filter_IMDB_Filming_Locations WHERE id_IMDB_Filming_Locations = FILTERFILMINGLOCATIONS.id_IMDB_Filming_Locations)
+        )
+			) AS NumMovies
+		FROM tbl_Filter_IMDB_Filming_Locations FILTERFILMINGLOCATIONS
+	`,
+    { $MediaType }
+  );
+
+  if (filterValues && filterValues.filterIMDBFilmingLocations) {
+    results.forEach((result) => {
+      const filterValue = filterValues.filterIMDBFilmingLocations.find(
+        (value) =>
+          value.id_Filter_IMDB_Filming_Locations ===
+          result.id_Filter_IMDB_Filming_Locations
+      );
+
+      if (filterValue) {
+        result.Selected = filterValue.Selected;
+      }
+
+      result.NumMovies = result.NumMovies.toLocaleString();
+    });
+  }
+
+  logger.log("fetchFilterIMDBFilmingLocations result:", results);
+
+  shared.filterIMDBFilmingLocations = results;
+}
+
 async function fetchFilterYears($MediaType) {
   logger.log("fetchFilterYears MediaType:", $MediaType);
 
@@ -3791,6 +3922,22 @@ async function fetchMoviePlotKeywords($id_Movies) {
   );
 }
 
+async function fetchMovieFilmingLocations($id_Movies) {
+  return await db.fireProcedureReturnAll(
+    `
+    SELECT
+      MFL.id_IMDB_Filming_Locations
+      , FL.Location
+      , MFL.NumVotes
+      , MFL.NumInteresting
+    FROM tbl_Movies_IMDB_Filming_Locations MFL
+    INNER JOIN tbl_IMDB_Filming_Locations FL ON MFL.id_IMDB_Filming_Locations = FL.id_IMDB_Filming_Locations
+    WHERE MFL.id_Movies = $id_Movies
+  `,
+    { $id_Movies }
+  );
+}
+
 async function fetchIMDBPerson($IMDB_Person_ID) {
   return await db.fireProcedureReturnAll(
     `
@@ -3854,10 +4001,32 @@ async function addFilterIMDBPlotKeyword($id_IMDB_Plot_Keywords, $Keyword) {
   );
 }
 
+async function addFilterIMDBFilmingLocation($id_IMDB_Filming_Locations, $Location) {
+  const id_Filter_IMDB_Filming_Locations = await db.fireProcedureReturnScalar(
+    `SELECT id_Filter_IMDB_Filming_Locations FROM tbl_Filter_IMDB_Filming_Locations WHERE id_IMDB_Filming_Locations = $id_IMDB_Filming_Locations`,
+    { $id_IMDB_Filming_Locations }
+  );
+  if (id_Filter_IMDB_Filming_Locations) {
+    return;
+  }
+
+  await db.fireProcedure(
+    `INSERT INTO tbl_Filter_IMDB_Filming_Locations (id_IMDB_Filming_Locations, Location, created_at) VALUES ($id_IMDB_Filming_Locations, $Location, DATETIME('now'))`,
+    { $id_IMDB_Filming_Locations, $Location }
+  );
+}
+
 async function deleteFilterIMDBPlotKeyword($id_Filter_IMDB_Plot_Keywords) {
   return await db.fireProcedureReturnScalar(
     `DELETE FROM tbl_Filter_IMDB_Plot_Keywords WHERE id_Filter_IMDB_Plot_Keywords = $id_Filter_IMDB_Plot_Keywords`,
     { $id_Filter_IMDB_Plot_Keywords }
+  );
+}
+
+async function deleteFilterIMDBFilmingLocation($id_Filter_IMDB_Filming_Locations) {
+  return await db.fireProcedureReturnScalar(
+    `DELETE FROM tbl_Filter_IMDB_Filming_Locations WHERE id_Filter_IMDB_Filming_Locations = $id_Filter_IMDB_Filming_Locations`,
+    { $id_Filter_IMDB_Filming_Locations }
   );
 }
 
@@ -4497,6 +4666,7 @@ export {
   fetchFilterParentalAdvisory,
   fetchFilterPersons,
   fetchFilterIMDBPlotKeywords,
+  fetchFilterIMDBFilmingLocations,
   fetchFilterYears,
   fetchFilterQualities,
   fetchFilterCompanies,
@@ -4521,7 +4691,9 @@ export {
   addFilterCompany,
   deleteFilterCompany,
   addFilterIMDBPlotKeyword,
+  addFilterIMDBFilmingLocation,
   deleteFilterIMDBPlotKeyword,
+  deleteFilterIMDBFilmingLocation,
   assignIMDB,
   fetchSortValues,
   saveSortValues,
@@ -4538,6 +4710,7 @@ export {
   getFallbackLanguage,
   fetchLanguageSettings,
   fetchMoviePlotKeywords,
+  fetchMovieFilmingLocations,
   findMissingSourcePaths,
   loadLocalHistory,
   resetUserScanOptions,

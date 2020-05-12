@@ -13,6 +13,10 @@ OK  - let user define preferred (local) Regions to identify the primary title
 OK  -> fetch Countries from https://www.imdb.com/search/title/ and provide as list
 OK  -> Auto set region by user's localization setting?
 
+## Filming Locations
+OK - add as section in MediaLists
+OK - add filter
+
 ## Rating Demographics
 OK - scrape
 OK - allow the user to choose which demography to use as IMDB rating

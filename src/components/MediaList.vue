@@ -546,6 +546,28 @@
                 </v-row>
               </div>
 
+              <!-- FILMING LOCATIONS -->
+              <v-row
+                style="padding-left: 16px; padding-top: 4px; align-items: flex-end;"
+                class="Clickable"
+                v-on:click.stop="showFilmingLocations(item, !item.showFilmingLocations)"
+              >
+                <span style="font-size: 20px">Filming Locations&nbsp;</span>
+              </v-row>
+
+              <div
+                style="margin-left: 24px;"
+                v-if="item.showFilmingLocations"
+                v-on:click.stop="showFilmingLocations(item, false)"
+              >
+                <v-row v-for="filmingLocation in item.filmingLocations" v-bind:key="filmingLocation.id_IMDB_Filming_Locations">
+                  <a
+                    class="Clickable"
+                    v-on:click.stop="onIMDBFilmingLocationClicked(filmingLocation)"
+                  >{{ filmingLocation.Location }}</a>
+                </v-row>
+              </div>
+
               <v-row style="margin-top: 8px">
                 <v-btn text color="primary" v-on:click.stop="copyInfo(item)">Copy Info</v-btn>
                 <v-btn
@@ -611,6 +633,14 @@
       v-on:close="onPlotKeywordDialogClose"
     ></mk-plot-keyword-dialog>
 
+    <mk-filming-location-dialog
+      ref="filmingLocationDialog"
+      v-bind:show="filmingLocationDialog.show"
+      v-bind:id_IMDB_Filming_Locations="filmingLocationDialog.id_IMDB_Filming_Locations"
+      v-bind:Location="filmingLocationDialog.Location"
+      v-on:close="onFilmingLocationDialogClose"
+    ></mk-filming-location-dialog>
+
     <mk-video-player-dialog
       v-bind:show="videoPlayerDialog.show"
       v-bind:src="videoPlayerDialog.videoURL"
@@ -665,6 +695,7 @@ import ListDialog from "@/components/shared/ListDialog.vue";
 import PersonDialog from "@/components/shared/PersonDialog.vue";
 import CompanyDialog from "@/components/shared/CompanyDialog.vue";
 import PlotKeywordDialog from "@/components/shared/PlotKeywordDialog.vue";
+import FilmingLocationDialog from "@/components/shared/FilmingLocationDialog.vue";
 import VideoPlayerDialog from "@/components/shared/VideoPlayerDialog.vue";
 import LocalVideoPlayerDialog from "@/components/shared/LocalVideoPlayerDialog.vue";
 import LinkIMDBDialog from "@/components/shared/LinkIMDBDialog.vue";
@@ -685,6 +716,7 @@ export default {
     "mk-person-dialog": PersonDialog,
     "mk-company-dialog": CompanyDialog,
     "mk-plot-keyword-dialog": PlotKeywordDialog,
+    "mk-filming-location-dialog": FilmingLocationDialog,
     "mk-video-player-dialog": VideoPlayerDialog,
     "mk-local-video-player-dialog": LocalVideoPlayerDialog,
     "mk-edit-item-dialog": Dialog,
@@ -752,6 +784,12 @@ export default {
       show: false,
       id_IMDB_Plot_Keywords: null,
       Keyword: null
+    },
+
+    filmingLocationDialog: {
+      show: false,
+      id_IMDB_Filming_Locations: null,
+      Location: null
     },
 
     videoPlayerDialog: {
@@ -1006,6 +1044,21 @@ export default {
         filtersList.push(
           `Plot Keywords${
             this.$shared.filterSettings.filterIMDBPlotKeywordsAND ? " ߷" : ""
+          }`
+        );
+      }
+      if (
+        this.$shared.filterIMDBFilmingLocations &&
+        ((!this.$shared.filterSettings.filterIMDBFilmingLocationsAND &&
+          this.$shared.filterIMDBFilmingLocations.find(filter => !filter.Selected)) ||
+          (this.$shared.filterSettings.filterIMDBFilmingLocationsAND &&
+            this.$shared.filterIMDBFilmingLocations.find(
+              filter => filter.Selected && filter.id_Filter_IMDB_Filming_Locations
+            )))
+      ) {
+        filtersList.push(
+          `Filming Locations${
+            this.$shared.filterSettings.filterIMDBFilmingLocationsAND ? " ߷" : ""
           }`
         );
       }
@@ -1410,6 +1463,7 @@ export default {
       await store.fetchFilterPersons(this.mediatype);
       await store.fetchFilterCompanies(this.mediatype);
       await store.fetchFilterIMDBPlotKeywords(this.mediatype);
+      await store.fetchFilterIMDBFilmingLocations(this.mediatype);
       await store.fetchFilterYears(this.mediatype);
       await store.fetchFilterQualities(this.mediatype);
       await store.fetchFilterLanguages(this.mediatype, "audio");
@@ -1456,6 +1510,17 @@ export default {
       this.plotKeywordDialog.id_IMDB_Plot_Keywords =
         plotKeyword.id_IMDB_Plot_Keywords;
       this.plotKeywordDialog.Keyword = plotKeyword.Keyword;
+
+      return;
+    },
+
+    onIMDBFilmingLocationClicked(filmingLocation) {
+      logger.log("filmingLocation clicked:", filmingLocation);
+
+      this.filmingLocationDialog.show = true;
+      this.filmingLocationDialog.id_IMDB_Filming_Locations =
+        filmingLocation.id_IMDB_Filming_Locations;
+      this.filmingLocationDialog.Location = filmingLocation.Location;
 
       return;
     },
@@ -1573,6 +1638,10 @@ export default {
 
     onPlotKeywordDialogClose() {
       this.plotKeywordDialog.show = false;
+    },
+
+    onFilmingLocationDialogClose() {
+      this.filmingLocationDialog.show = false;
     },
 
     onVideoPlayerDialogClose() {
@@ -1701,6 +1770,25 @@ export default {
       this.$set(movie, "showPlotKeywords", true);
     },
 
+    async showFilmingLocations(movie, show) {
+      if (!show) {
+        this.$set(movie, "showFilmingLocations", false);
+        return;
+      }
+
+      if (!movie.filmingLocations) {
+        const filmingLocations = await store.fetchMovieFilmingLocations(
+          movie.id_Movies
+        );
+
+        logger.log("filmingLocations", filmingLocations);
+
+        this.$set(movie, "filmingLocations", filmingLocations);
+      }
+
+      this.$set(movie, "showFilmingLocations", true);
+    },
+
     onSortChanged() {
       store.saveSortValues(this.mediatype);
     },
@@ -1813,6 +1901,10 @@ export default {
       this.onIMDBPlotKeywordClicked(value);
     });
 
+    eventBus.$on("showFilmingLocationDialog", value => {
+      this.onIMDBFilmingLocationClicked(value);
+    });
+
     eventBus.$on("showCompanyDialog", value => {
       this.onCompanyClicked(value);
     });
@@ -1834,6 +1926,7 @@ export default {
     eventBus.$off("listDialogSetCreateNewList");
     eventBus.$off("showPersonDialog");
     eventBus.$off("showPlotKeywordDialog");
+    eventBus.$off("showFilmingLocationDialog");
     eventBus.$off("showCompanyDialog");
   }
 };

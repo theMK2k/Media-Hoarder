@@ -145,6 +145,19 @@ export default {
           `;
       }
 
+      if (this.searchMode === "filming-locations") {
+        // todo filter: (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+        sql = `
+          SELECT
+            FL.id_IMDB_Filming_Locations AS id
+            , Location AS name
+            , (SELECT COUNT(1) FROM tbl_Movies_IMDB_Filming_Locations MFL WHERE FL.id_IMDB_Filming_Locations = MFL.id_IMDB_Filming_Locations) AS NumMovies
+          FROM tbl_IMDB_Filming_Locations FL
+          WHERE FL.Location LIKE '%${searchText}%'
+          ${this.sortByNumMovies ? 'ORDER BY NumMovies DESC' : 'ORDER BY Location ASC'}
+          `;
+      }
+
       logger.log("search query:", sql);
 
       this.items = await store.db.fireProcedureReturnAll(sql, []);
@@ -165,6 +178,13 @@ export default {
         eventBus.showPlotKeywordDialog({
           id_IMDB_Plot_Keywords: item.id,
           Keyword: item.name
+        });
+      }
+
+      if (this.searchMode === "filming-locations") {
+        eventBus.showFilmingLocationDialog({
+          id_IMDB_Filming_Locations: item.id,
+          Location: item.name
         });
       }
     }

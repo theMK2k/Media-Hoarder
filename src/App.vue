@@ -486,6 +486,45 @@
                 </v-row>
               </v-expansion-panel-content>
             </v-expansion-panel>
+
+            <!-- FILTER IMDB Filming Locations -->
+            <v-expansion-panel style="padding: 0px!important">
+              <v-expansion-panel-header
+                style="padding: 8px!important"
+              >Filming Locations {{$shared.filterSettings.filterIMDBFilmingLocationsAND ? '߷' : ''}} {{ filterIMDBFilmingLocationsTitle }}</v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-row>
+                  <v-btn text v-on:click="setAllIMDBFilmingLocations(false)">SET NONE</v-btn>
+                  <v-btn text v-on:click="setAllIMDBFilmingLocations(true)">SET ALL</v-btn>
+                  <v-btn text v-on:click="addIMDBFilmingLocation()">FIND</v-btn>
+                </v-row>
+                <v-switch
+                  v-bind:label="$shared.filterSettings.filterIMDBFilmingLocationsAND ? 'all selected must apply' : 'one selected must apply'"
+                  color="red"
+                  v-model="$shared.filterSettings.filterIMDBFilmingLocationsAND"
+                  v-on:click.native="filtersChanged"
+                ></v-switch>
+                <v-row
+                  v-for="filmingLocation in filterIMDBFilmingLocations"
+                  v-bind:key="filmingLocation.id_Filter_IMDB_Filming_Locations"
+                >
+                  <v-checkbox
+                    v-bind:label="filmingLocation.Location + ' (' + filmingLocation.NumMovies + ')'"
+                    v-model="filmingLocation.Selected"
+                    v-on:click.native="filtersChanged"
+                    style="margin: 0px"
+                    color="dark-grey"
+                  ></v-checkbox>
+                  <v-spacer></v-spacer>
+                  <v-icon
+                    style="align-items: flex-start; padding-top: 4px; cursor: pointer"
+                    v-if="filmingLocation.id_Filter_IMDB_Filming_Locations"
+                    v-on:click="deleteFilterIMDBFilmingLocation(filmingLocation)"
+                  >mdi-delete</v-icon>
+                </v-row>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
           </v-expansion-panels>
         </div>
 
@@ -553,7 +592,6 @@
           v-on:cancel="onSearchCompaniesDialogCancel"
         ></mk-search-companies-dialog>
 
-        <!-- mk-search-plot-keywords-dialog -->
         <mk-search-plot-keywords-dialog
           ref="searchPlotKeywordsDialog"
           v-bind:show="searchPlotKeywordsDialog.show"
@@ -561,6 +599,14 @@
           searchMode="plot-keywords"
           v-on:cancel="onSearchPlotKeywordsDialogCancel"
         ></mk-search-plot-keywords-dialog>
+
+        <mk-search-filming-locations-dialog
+          ref="searchFilmingLocationsDialog"
+          v-bind:show="searchFilmingLocationsDialog.show"
+          title="Find Filming Locations"
+          searchMode="filming-locations"
+          v-on:cancel="onSearchFilmingLocationsDialogCancel"
+        ></mk-search-filming-locations-dialog>
 
         <mk-search-persons-dialog
           ref="searchPersonsDialog"
@@ -651,6 +697,7 @@ export default {
     "mk-search-companies-dialog": SearchDataDialog,
     "mk-search-persons-dialog": SearchDataDialog,
     "mk-search-plot-keywords-dialog": SearchDataDialog,
+    "mk-search-filming-locations-dialog": SearchDataDialog,
     "mk-scan-options-dialog": ScanOptionsDialog,
     "mk-version-dialog": VersionDialog
   },
@@ -721,6 +768,10 @@ export default {
     },
 
     searchPlotKeywordsDialog: {
+      show: false
+    },
+
+    searchFilmingLocationsDialog: {
       show: false
     },
 
@@ -974,6 +1025,14 @@ export default {
       );
     },
 
+    filterIMDBFilmingLocations() {
+      return this.$shared.filterIMDBFilmingLocations.filter(
+        fl =>
+          !this.$shared.filterSettings.filterIMDBFilmingLocationsAND ||
+          fl.id_Filter_IMDB_Filming_Locations
+      );
+    },
+
     filterIMDBPlotKeywordsTitle() {
       if (
         !this.$shared.filterIMDBPlotKeywords.find(
@@ -1010,6 +1069,47 @@ export default {
           filter =>
             !this.$shared.filterSettings.filterIMDBPlotKeywordsAND ||
             filter.id_Filter_IMDB_Plot_Keywords
+        ).length +
+        ")"
+      );
+    },
+
+    filterIMDBFilmingLocationsTitle() {
+      if (
+        !this.$shared.filterIMDBFilmingLocations.find(
+          filter =>
+            !filter.Selected &&
+            (!this.$shared.filterSettings.filterIMDBFilmingLocationsAND ||
+              filter.id_Filter_IMDB_Filming_Locations)
+        )
+      ) {
+        return "(ALL)";
+      }
+
+      if (
+        !this.$shared.filterIMDBFilmingLocations.find(
+          filter =>
+            filter.Selected &&
+            (!this.$shared.filterSettings.filterIMDBFilmingLocationsAND ||
+              filter.id_Filter_IMDB_Filming_Locations)
+        )
+      ) {
+        return "(NONE)";
+      }
+
+      return (
+        "(" +
+        this.$shared.filterIMDBFilmingLocations.filter(
+          filter =>
+            filter.Selected &&
+            (!this.$shared.filterSettings.filterIMDBFilmingLocationsAND ||
+              filter.id_Filter_IMDB_Filming_Locations)
+        ).length +
+        "/" +
+        this.$shared.filterIMDBFilmingLocations.filter(
+          filter =>
+            !this.$shared.filterSettings.filterIMDBFilmingLocationsAND ||
+            filter.id_Filter_IMDB_Filming_Locations
         ).length +
         ")"
       );
@@ -1270,16 +1370,32 @@ export default {
     },
 
     setAllIMDBPlotKeywords: function(value, exclusionList) {
-      this.$shared.filterIMDBPlotKeywords.forEach(sp => {
+      this.$shared.filterIMDBPlotKeywords.forEach(pk => {
         if (
           exclusionList &&
-          exclusionList.find(val => sp.id_IMDB_Plot_Keywords === val)
+          exclusionList.find(val => pk.id_IMDB_Plot_Keywords === val)
         ) {
-          sp.Selected = !value;
+          pk.Selected = !value;
           return;
         }
 
-        sp.Selected = value;
+        pk.Selected = value;
+      });
+
+      this.filtersChanged();
+    },
+
+    setAllIMDBFilmingLocations: function(value, exclusionList) {
+      this.$shared.filterIMDBFilmingLocations.forEach(fl => {
+        if (
+          exclusionList &&
+          exclusionList.find(val => fl.id_IMDB_Filming_Locations === val)
+        ) {
+          fl.Selected = !value;
+          return;
+        }
+
+        fl.Selected = value;
       });
 
       this.filtersChanged();
@@ -1368,6 +1484,13 @@ export default {
     deleteFilterIMDBPlotKeyword(filterIMDBPlotKeyword) {
       store.deleteFilterIMDBPlotKeyword(
         filterIMDBPlotKeyword.id_Filter_IMDB_Plot_Keywords
+      );
+      eventBus.refetchFilters();
+    },
+
+    deleteFilterIMDBFilmingLocation(filterIMDBFilmingLocation) {
+      store.deleteFilterIMDBFilmingLocation(
+        filterIMDBFilmingLocation.id_Filter_IMDB_Filming_Locations
       );
       eventBus.refetchFilters();
     },
@@ -1462,8 +1585,17 @@ export default {
       this.$refs.searchPlotKeywordsDialog.init();
     },
 
+    addIMDBFilmingLocation() {
+      this.searchFilmingLocationsDialog.show = true;
+      this.$refs.searchFilmingLocationsDialog.init();
+    },
+
     onSearchPlotKeywordsDialogCancel() {
       this.searchPlotKeywordsDialog.show = false;
+    },
+
+    onSearchFilmingLocationsDialogCancel() {
+      this.searchFilmingLocationsDialog.show = false;
     },
 
     quit() {
@@ -1579,6 +1711,10 @@ export default {
 
       if (setFilter.filterIMDBPlotKeywords) {
         this.setAllIMDBPlotKeywords(false, setFilter.filterIMDBPlotKeywords);
+      }
+
+      if (setFilter.filterIMDBFilmingLocations) {
+        this.setAllIMDBFilmingLocations(false, setFilter.filterIMDBFilmingLocations);
       }
     });
 

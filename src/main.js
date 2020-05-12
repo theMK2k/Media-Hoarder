@@ -94,6 +94,10 @@ export const eventBus = new Vue({
 			this.$emit('showPlotKeywordDialog', plotKeyword);
 		},
 
+		showFilmingLocationDialog(filmingLocation) {
+			this.$emit('showFilmingLocationDialog', filmingLocation);
+		},
+
 		personDialogConfirm(result) {
 			this.$emit('personDialogConfirm', result);
 		},
