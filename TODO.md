@@ -7,9 +7,6 @@ OK -> we have a memory leak using eventBus.$on -> implement eventBus.$off on bef
 -> we still have the memory leak: don't fetch all data at once (re-fetch for each page)
 OK -> check if memory leak is only in dev-mode (yes, it still persists even in prod-mode)
 
-## Age Rating
-- use user-chosen regions (countries) as basis for the age rating shown in the main list
-
 ## Filming Locations
 - add as section in MediaLists
 - add filter

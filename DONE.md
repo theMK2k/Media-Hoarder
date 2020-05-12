@@ -18,6 +18,9 @@ OK - scrape
 OK - allow the user to choose which demography to use as IMDB rating
 OK - show demographics matrix when clicking IMDB score for an item
 
+## Age Rating
+- use user-chosen regions (countries) as basis for the age rating shown in the main list
+
 ## Settings - Scraper / Scan Media Options
 - allow user to deselect things for the IMDB scraper (analog to store.scanOptions)
 
