@@ -1,18 +1,33 @@
-const fs = require("fs");
 const util = require("util");
 const request = require("request");
 const logger = require("loglevel");
 const cheerio = require("cheerio");
 const htmlToText = require("html-to-text");
 
-const helpers = require("./helpers/helpers");
-const db = require("./helpers/db");
-
 const requestGetAsync = util.promisify(request.get);
-const writeFileAsync = util.promisify(fs.writeFile);
-const existsAsync = util.promisify(fs.exists);
 
-async function scrapeIMDBmainPageData(movie) {
+function uppercaseEachWord(input) {
+  logger.log("uppercaseEachWord:", input);
+
+  let isNewBeginning = true;
+  let text = input;
+
+  for (let i = 0; i < text.length; i++) {
+    if (/[\s\-,.:"'!§$%&/()=?*+~#;_]/.test(text[i])) {
+      isNewBeginning = true;
+    } else {
+      if (isNewBeginning) {
+        text = text.substr(0, i) + text[i].toUpperCase() + text.substr(i + 1);
+        isNewBeginning = false;
+      }
+    }
+  }
+
+  logger.log("uppercaseEachWord result:", text);
+  return text;
+}
+
+async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
   const url = `https://www.imdb.com/title/${movie.IMDB_tconst}`;
   logger.log("scrapeIMDBmainPageData url:", url);
   const response = await requestGetAsync(url);
@@ -85,7 +100,7 @@ async function scrapeIMDBmainPageData(movie) {
     );
 
     const posterSmallPath = `data/extras/${movie.IMDB_tconst}_posterSmall.jpg`;
-    const posterSmallSuccess = await downloadFile(
+    const posterSmallSuccess = await downloadFileCallback(
       posterURLs.$IMDB_posterSmall_URL,
       posterSmallPath,
       false
@@ -95,7 +110,7 @@ async function scrapeIMDBmainPageData(movie) {
     }
 
     const posterLargePath = `data/extras/${movie.IMDB_tconst}_posterLarge.jpg`;
-    const posterLargeSuccess = await downloadFile(
+    const posterLargeSuccess = await downloadFileCallback(
       posterURLs.$IMDB_posterLarge_URL,
       posterLargePath,
       false
@@ -194,34 +209,6 @@ async function scrapeIMDBposterURLs(posterMediaViewerURL) {
     $IMDB_posterSmall_URL,
     $IMDB_posterLarge_URL
   };
-}
-
-// TODO (SCRAPER): move to helpers
-async function downloadFile(url, targetPath, redownload) {
-  try {
-    logger.log("downloadFile url:", url);
-
-    const fullPath = helpers.getPath(targetPath);
-
-    if (!redownload) {
-      const exists = await existsAsync(targetPath);
-      if (exists) {
-        logger.log("  target file already exists, abort");
-        return true;
-      }
-    }
-
-    logger.log("  fetching from web");
-    const response = await requestGetAsync({ url, encoding: null });
-    const data = response.body;
-
-    await writeFileAsync(fullPath, data, "binary");
-
-    return true;
-  } catch (err) {
-    logger.error(err);
-    return false;
-  }
 }
 
 async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
@@ -356,9 +343,9 @@ async function scrapeIMDBtechnicalData(movie) {
 
 let cacheAgeRatings = null;
 
-async function scrapeIMDBParentalGuideData(movie, regions) {
+async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturnAllCallback, dbFireProcedureCallback, dbFireProcedureReturnScalarCallback) {
   if (!cacheAgeRatings) {
-    cacheAgeRatings = await db.fireProcedureReturnAll(
+    cacheAgeRatings = await dbFireProcedureReturnAllCallback(
       `SELECT id_AgeRating, Country, Code, Age FROM tbl_AgeRating`
     );
     logger.log("cacheAgeRatings:", cacheAgeRatings);
@@ -426,11 +413,11 @@ async function scrapeIMDBParentalGuideData(movie, regions) {
     );
 
     if (!cachedRating) {
-      await db.fireProcedure(
+      await dbFireProcedureCallback(
         `INSERT INTO tbl_AgeRating (Country, Code, Age) VALUES ($Country, $Code, $Age)`,
         { $Country: rating.Country, $Code: rating.Code, $Age: rating.Age }
       );
-      rating.id_AgeRating = await db.fireProcedureReturnScalar(
+      rating.id_AgeRating = await dbFireProcedureReturnScalarCallback(
         `SELECT id_AgeRating FROM tbl_AgeRating WHERE Country = $Country AND Code = $Code`,
         { $Country: rating.Country, $Code: rating.Code }
       );
@@ -814,7 +801,7 @@ function parseCreditsCategory(html, tableHeader, credits) {
   return result;
 }
 
-async function scrapeIMDBPersonData($IMDB_Person_ID) {
+async function scrapeIMDBPersonData($IMDB_Person_ID, downloadFileCallback) {
   const url = `https://www.imdb.com/name/${$IMDB_Person_ID}`;
   const response = await requestGetAsync(url);
   const html = response.body;
@@ -851,7 +838,7 @@ async function scrapeIMDBPersonData($IMDB_Person_ID) {
   if (rxPhotoURL.test(html)) {
     const url = html.match(rxPhotoURL)[1];
     const photoPath = `data/extras/${$IMDB_Person_ID}_poster.jpg`;
-    const success = await downloadFile(url, photoPath, false);
+    const success = await downloadFileCallback(url, photoPath, false);
 
     if (success) {
       result.$Photo_URL = photoPath;
@@ -877,41 +864,7 @@ async function scrapeIMDBPersonData($IMDB_Person_ID) {
     );
   }
 
-  await saveIMDBPersonData(result);
-
   return result;
-}
-
-async function saveIMDBPersonData(data) {
-  logger.log("saveIMDBPersonData data:", data);
-
-  // return;
-
-  return await db.fireProcedure(
-    `INSERT INTO tbl_IMDB_Persons (
-          IMDB_Person_ID
-          , Photo_URL
-          , ShortBio
-          , LongBio
-          , created_at
-          , updated_at
-      ) VALUES (
-          $IMDB_Person_ID
-          , $Photo_URL
-          , $ShortBio
-          , $LongBio
-          , DATETIME('now')
-          , DATETIME('now')
-      )
-      ON CONFLICT(IMDB_Person_ID)
-      DO UPDATE SET
-          Photo_URL = excluded.Photo_URL
-          , ShortBio = excluded.ShortBio
-          , LongBio = excluded.LongBio
-          , updated_at = DATETIME('now')
-          `,
-    data
-  );
 }
 
 async function scrapeIMDBAdvancedTitleSearch(title, titleTypes) {
@@ -1090,7 +1043,7 @@ async function scrapeIMDBplotKeywords(movie) {
   let match = null;
 
   while ((match = rxPlotKeywords.exec(html))) {
-    const Keyword = helpers.uppercaseEachWord(match[1].trim());
+    const Keyword = uppercaseEachWord(match[1].trim());
     const relevanceString = match[2].trim();
     let NumVotes = null;
     let NumRelevant = null;

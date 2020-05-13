@@ -126,7 +126,10 @@ export default {
       try {
         const personData = await scrapeIMDBPersonData(
           this.IMDB_Person_ID
+          , helpers.downloadFile
         );
+
+        store.saveIMDBPersonData(personData);
 
         logger.log("scraped personData:", personData);
 

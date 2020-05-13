@@ -1346,7 +1346,7 @@ async function fetchIMDBMetaData(movie, onlyNew) {
 
   try {
     if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_mainPageData && getUserScanOption('rescanMoviesMetaData_fetchIMDBMetaData_mainPageData').enabled) {
-      const mainPageData = await scrapeIMDBmainPageData(movie);
+      const mainPageData = await scrapeIMDBmainPageData(movie, helpers.downloadFile);
       IMDBdata = Object.assign(IMDBdata, mainPageData);
     }
 
@@ -1387,7 +1387,7 @@ async function fetchIMDBMetaData(movie, onlyNew) {
 
     if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData && getUserScanOption('rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData').enabled) {
       const regions = await getRegions();
-      const parentalguideData = await scrapeIMDBParentalGuideData(movie, regions);
+      const parentalguideData = await scrapeIMDBParentalGuideData(movie, regions, db.fireProcedureReturnAll, db.fireProcedure, db.fireProcedureReturnScalar);
       IMDBdata = Object.assign(IMDBdata, parentalguideData);
     }
 
@@ -4647,6 +4647,38 @@ async function fetchRatingDemographics($id_Movies) {
   return ratingDemographics;
 }
 
+async function saveIMDBPersonData(data) {
+  logger.log("saveIMDBPersonData data:", data);
+
+  // return;
+
+  return await db.fireProcedure(
+    `INSERT INTO tbl_IMDB_Persons (
+          IMDB_Person_ID
+          , Photo_URL
+          , ShortBio
+          , LongBio
+          , created_at
+          , updated_at
+      ) VALUES (
+          $IMDB_Person_ID
+          , $Photo_URL
+          , $ShortBio
+          , $LongBio
+          , DATETIME('now')
+          , DATETIME('now')
+      )
+      ON CONFLICT(IMDB_Person_ID)
+      DO UPDATE SET
+          Photo_URL = excluded.Photo_URL
+          , ShortBio = excluded.ShortBio
+          , LongBio = excluded.LongBio
+          , updated_at = DATETIME('now')
+          `,
+    data
+  );
+}
+
 export {
   db,
   fetchSourcePaths,
@@ -4714,5 +4746,6 @@ export {
   findMissingSourcePaths,
   loadLocalHistory,
   resetUserScanOptions,
-  fetchRatingDemographics
+  fetchRatingDemographics,
+  saveIMDBPersonData
 };
