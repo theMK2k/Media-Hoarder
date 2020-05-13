@@ -1510,12 +1510,6 @@ export default {
         return;
       }
 
-      this.scanOptionsDialog.showMediaInfoWarning = (await store.getSetting(
-        "MediainfoPath"
-      ))
-        ? false
-        : true; // TODO: move this to scanOptionsDialog's init()
-
       this.$refs.scanOptionsDialog.init();
 
       this.scanOptionsDialog.show = true;

@@ -108,13 +108,14 @@ import * as store from "@/store";
 // import { eventBus } from "@/main";
 
 export default {
-  props: ["show", "showMediaInfoWarning"],
+  props: ["show"],
 
   data() {
     return {
       isLoading: true,
       radioGroup: 1,
-      missingSourcePaths: []
+      missingSourcePaths: [],
+      showMediaInfoWarning: false
     };
   },
 
@@ -173,6 +174,12 @@ export default {
       );
 
       logger.log('this.missingSourcePaths:', this.missingSourcePaths);
+
+      this.showMediaInfoWarning =  (await store.getSetting(
+        "MediainfoPath"
+      ))
+        ? false
+        : true;
 
       this.isLoading = false;
     },
