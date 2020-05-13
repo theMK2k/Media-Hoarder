@@ -184,6 +184,8 @@ OK - as soon as a tbl_Movies entry is written, also write Name
 Analyze the call App.vue -> store.rescan(onlyNew); -> node functionality without IPC or whatever
 
 ## Other
+OK - dont import "See full summary>>"
+
 OK - implement fetchFilter IMDB/Metacritic Score
 
 OK - implement Company filter by Company Name instead of ID

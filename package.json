@@ -11,11 +11,11 @@
     "electron:build": "vue-cli-service electron:build",
     "electron:buildremote": "vue-cli-service electron:build --win --linux --mac",
     "electron:serve": "vue-cli-service electron:serve",
+    "imdb-scraper-watchdog": "babel-node --presets es2015 src/mediabox-imdb-scraper-watchdog.js",
     "invokebuilder": "vue invoke electron-builder",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
     "publish": "vue-cli-service electron:build -p always",
-    "imdb-scraper-watchdog": "babel-node --presets es2015 src/mediabox-imdb-scraper-watchdog.js",
     "start": "vue invoke electron-builder && vue-cli-service electron:serve"
   },
   "main": "background.js",

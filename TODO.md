@@ -44,13 +44,9 @@ OK? - fix resolution Detection, e.g. 4:3 HD is oftentimes detected as 720p
   - generate a light-weight status page which informs users of broken IMDB scraper
 
 ## Road to Release (Win/Linux/Mac)
-- add SERIES support
-
-- figure out how to build a Mac version
+- support Movies in directories (also .nfo)
 
 ## Other
-- dont import "See full summary>>"
-
 - correctly implement scrollcontainer class (e.g. Medialist)
 
 OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
