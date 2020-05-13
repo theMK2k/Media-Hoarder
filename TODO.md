@@ -7,18 +7,21 @@ OK -> we have a memory leak using eventBus.$on -> implement eventBus.$off on bef
 -> we still have the memory leak: don't fetch all data at once (re-fetch for each page)
 OK -> check if memory leak is only in dev-mode (yes, it still persists even in prod-mode)
 
-## CompanyDialog, PersonDialog, Plot Keyword Dialog, Filming Locations Dialog (Search Data Dialog)
+## Walk the TODOs in Code
+
+## IMDB Scraper Watchdog
+OK - put all IMDB scraping functions from store.js into imdb-scraper.js
+WIP - create a watchdog CLI which tests imdb-scraper.js
+      - creates an error report
+      - sends an email on error
+      - saves status on web location (client can then check the status)
+    OK -> start with "npm run imdb-scraper-watchdog"
+
+## CompanyDialog, PersonDialog, Plot Keyword Dialog, Filming Locations Dialog
 include statistical infos (how many movies)
 
 ## 720p, SD, HD Detection
 OK? - fix resolution Detection, e.g. 4:3 HD is oftentimes detected as 720p
-
-## IMDB Scraper Watchdog
-- put all IMDB scraping functions from store.js into imdb-scraper.js
-- create a watchdog CLI which tests imdb-scraper.js
-  - creates an error report
-  - sends an email on error
-  - saves status on web location (client can then check the status)
 
 ## Mediainfo Languages
 - we get languages like "German" from Mediainfo and map them to e.g. "De" using languages.js and store.js' ensureLanguageMapping
