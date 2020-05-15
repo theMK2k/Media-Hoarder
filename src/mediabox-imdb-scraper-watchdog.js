@@ -4,10 +4,10 @@ const chalk = require("chalk");
 const imdbScraper = require("./imdb-scraper");
 
 const status = {
-    SUCCESS: 0,
-    WARNING: 1,
-    ERROR: 2
-}
+  SUCCESS: 0,
+  WARNING: 1,
+  ERROR: 2,
+};
 
 const log = [];
 
@@ -16,36 +16,40 @@ const log = [];
 })();
 
 function addLogEntry(testResult) {
-    const entry = `${chalk.white('[')}${testResult.status === status.SUCCESS ? chalk.green('OK') : testResult.status === status.WARNING ? chalk.yellow('WARN') : chalk.red('FAIL')}${chalk.white(']')} ${testResult.name}`;
+  const entry = `${chalk.white("[")}${
+    testResult.status === status.SUCCESS
+      ? chalk.green("OK")
+      : testResult.status === status.WARNING
+      ? chalk.yellow("WARN")
+      : chalk.red("FAIL")
+  }${chalk.white("]")} ${testResult.name}`;
 
-    log.push(entry);
-    
-    console.log(entry);
-    if (testResult.status !== status.SUCCESS) {
-        testResult.log.forEach(entry => {
-            console.log(entry);
-        })
-    }
+  log.push(entry);
+
+  console.log(entry);
+  if (testResult.status !== status.SUCCESS) {
+    testResult.log.forEach((entry) => {
+      console.log(entry);
+    });
+  }
 }
 
 function array2string() {
-    let result = ''
-    
-    for (let i = 0; i < arguments.length; i++) {
-        result += arguments[i].toString();
-    }
+  let result = "";
 
-    return result;
+  for (let i = 0; i < arguments.length; i++) {
+    result += arguments[i].toString();
+  }
+
+  return result;
 }
 
-function checkField(fieldName, condition, testResult, scrapeResult, expected, newStatus) {
-    if (!condition) {
-        if (testResult.status < newStatus) {
-            testResult.status = newStatus;
-        }
-        
-        testResult.log.push(array2string('       ', fieldName, ' mismatch got:', scrapeResult[fieldName], ' expected:', expected[fieldName]));
-    }
+function addSubLogEntry(testResult, message, newStatus) {
+  if (testResult.status < newStatus) {
+    testResult.status = newStatus;
+  }
+
+  testResult.log.push(message);
 }
 
 async function testIMDBmainPageData() {
@@ -79,21 +83,111 @@ async function testIMDBmainPageData() {
     }
   );
 
-  checkField('$IMDB_releaseType', scrapeResult.$IMDB_releaseType, testResult, scrapeResult, expected, status.ERROR);
-  checkField('$IMDB_releaseType', scrapeResult.$IMDB_releaseType === expected.$IMDB_releaseType, testResult, scrapeResult, expected, status.WARNING);
-  checkField('$IMDB_genres', array2string(scrapeResult.$IMDB_genres) === array2string(expected.$IMDB_genres), testResult, scrapeResult, expected, status.WARNING);
-  checkField('$IMDB_rating', scrapeResult.$IMDB_rating, testResult, scrapeResult, expected, status.ERROR);
-  checkField('$IMDB_rating', scrapeResult.$IMDB_rating > 7, testResult, scrapeResult, expected, status.WARNING);
-  checkField('$IMDB_numVotes', scrapeResult.$IMDB_numVotes, testResult, scrapeResult, expected, status.ERROR);
-  checkField('$IMDB_numVotes', scrapeResult.$IMDB_numVotes === expected.$IMDB_numVotes, testResult, scrapeResult, expected, status.WARNING);
-  checkField('$IMDB_metacriticScore', scrapeResult.$IMDB_metacriticScore, testResult, scrapeResult, expected, status.ERROR);
-  checkField('$IMDB_metacriticScore', scrapeResult.$IMDB_metacriticScore === expected.$IMDB_metacriticScore, testResult, scrapeResult, expected, status.WARNING);
-  checkField('$IMDB_posterSmall_URL', scrapeResult.$IMDB_posterSmall_URL, testResult, scrapeResult, expected, status.ERROR);
-  checkField('$IMDB_posterSmall_URL', scrapeResult.$IMDB_posterSmall_URL === expected.$IMDB_posterSmall_URL, testResult, scrapeResult, expected, status.WARNING);
-  checkField('$IMDB_posterSmall_URL', scrapeResult.$IMDB_posterLarge_URL, testResult, scrapeResult, expected, status.ERROR);
-  checkField('$IMDB_posterSmall_URL', scrapeResult.$IMDB_posterLarge_URL === expected.$IMDB_posterLarge_URL, testResult, scrapeResult, expected, status.WARNING);
-  checkField('$IMDB_plotSummary', scrapeResult.$IMDB_plotSummary, testResult, scrapeResult, expected, status.ERROR);
-  checkField('$IMDB_Trailer_URL', scrapeResult.$IMDB_Trailer_URL === expected.$IMDB_Trailer_URL, testResult, scrapeResult, expected, status.WARNING);
+  if (!scrapeResult) {
+    addSubLogEntry(testResult, "no response", status.ERROR);
+    return;
+  }
+
+  if (!scrapeResult.$IMDB_releaseType) {
+    addSubLogEntry(testResult, "$IMDB_releaseType missing", status.ERROR);
+  } else if (scrapeResult.$IMDB_releaseType !== expected.$IMDB_releaseType) {
+    addSubLogEntry(
+      testResult,
+      `$IMDB_releaseType mismatch
+got:      "${scrapeResult.$IMDB_releaseType}"
+expected: "${expected.$IMDB_releaseType}"`,
+      status.WARNING
+    );
+  }
+
+  if (!scrapeResult.$IMDB_genres) {
+    addSubLogEntry(testResult, "$IMDB_genres missing", status.ERROR);
+  } else if (scrapeResult.$IMDB_genres !== expected.$IMDB_genres) {
+    addSubLogEntry(
+      testResult,
+      `$IMDB_genres mismatch
+got:      "${scrapeResult.$IMDB_genres}"
+expected: "${expected.$IMDB_genres}"`,
+      status.WARNING
+    );
+  }
+
+  if (!scrapeResult.$IMDB_rating) {
+    addSubLogEntry(testResult, "$IMDB_rating missing", status.ERROR);
+  } else if (scrapeResult.$IMDB_rating < 7) {
+    addSubLogEntry(testResult, `$IMDB_rating unexpected value`, status.WARNING);
+  }
+
+  if (!scrapeResult.$IMDB_numVotes) {
+    addSubLogEntry(testResult, "$IMDB_numVotes missing", status.ERROR);
+  } else if (scrapeResult.$IMDB_numVotes !== expected.$IMDB_numVotes) {
+    addSubLogEntry(testResult, `$IMDB_numVotes unexpected value`, status.WARNING);
+  }
+
+  //   checkField(
+  //     "$IMDB_metacriticScore",
+  //     scrapeResult.$IMDB_metacriticScore,
+  //     testResult,
+  //     scrapeResult,
+  //     expected,
+  //     status.ERROR
+  //   );
+  //   checkField(
+  //     "$IMDB_metacriticScore",
+  //     scrapeResult.$IMDB_metacriticScore === expected.$IMDB_metacriticScore,
+  //     testResult,
+  //     scrapeResult,
+  //     expected,
+  //     status.WARNING
+  //   );
+  //   checkField(
+  //     "$IMDB_posterSmall_URL",
+  //     scrapeResult.$IMDB_posterSmall_URL,
+  //     testResult,
+  //     scrapeResult,
+  //     expected,
+  //     status.ERROR
+  //   );
+  //   checkField(
+  //     "$IMDB_posterSmall_URL",
+  //     scrapeResult.$IMDB_posterSmall_URL === expected.$IMDB_posterSmall_URL,
+  //     testResult,
+  //     scrapeResult,
+  //     expected,
+  //     status.WARNING
+  //   );
+  //   checkField(
+  //     "$IMDB_posterSmall_URL",
+  //     scrapeResult.$IMDB_posterLarge_URL,
+  //     testResult,
+  //     scrapeResult,
+  //     expected,
+  //     status.ERROR
+  //   );
+  //   checkField(
+  //     "$IMDB_posterSmall_URL",
+  //     scrapeResult.$IMDB_posterLarge_URL === expected.$IMDB_posterLarge_URL,
+  //     testResult,
+  //     scrapeResult,
+  //     expected,
+  //     status.WARNING
+  //   );
+  //   checkField(
+  //     "$IMDB_plotSummary",
+  //     scrapeResult.$IMDB_plotSummary,
+  //     testResult,
+  //     scrapeResult,
+  //     expected,
+  //     status.ERROR
+  //   );
+  //   checkField(
+  //     "$IMDB_Trailer_URL",
+  //     scrapeResult.$IMDB_Trailer_URL === expected.$IMDB_Trailer_URL,
+  //     testResult,
+  //     scrapeResult,
+  //     expected,
+  //     status.WARNING
+  //   );
 
   return testResult;
 }
