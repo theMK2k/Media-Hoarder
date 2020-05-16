@@ -178,8 +178,18 @@ async function scrapeIMDBplotSummary(movie, shortSummary) {
   let match = null;
 
   while ((match = rxplotSummary.exec(html))) {
-    if (match[1].includes(shortSummaryClean)) {
-      $IMDB_plotSummaryFull = match[1];
+    const plotSummaryFull = unescape(
+      htmlToText
+        .fromString(match[1], {
+          wordwrap: null,
+          ignoreImage: true,
+          ignoreHref: true
+        })
+        .trim()
+    );
+    
+    if (plotSummaryFull.includes(shortSummaryClean)) {
+      $IMDB_plotSummaryFull = plotSummaryFull;
     }
   }
 
@@ -246,7 +256,7 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
         let match = null;
 
         while ((match = rxLocalTitleFuzzy.exec(html))) {
-          logger.log("regions: fuzzy match found:", match);
+          logger.log("regions: fuzzy match found for", region)
 
           const titleTypes = match[1];
           const title = match[2];
@@ -302,8 +312,8 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
 
     logger.log("yearRange:", yearRange);
     $IMDB_startYear = yearRange.match(/(\d\d\d\d)/)[1];
-    if (/\d\d\d\d-\d\d\d\d/.test(yearRange)) {
-      $IMDB_endYear = yearRange.match(/\d\d\d\d-(\d\d\d\d)/);
+    if (/\d\d\d\d–\d\d\d\d/.test(yearRange)) {
+      $IMDB_endYear = yearRange.match(/\d\d\d\d–(\d\d\d\d)/)[1];
     }
   }
 
