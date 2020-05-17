@@ -16,6 +16,7 @@ WIP - create a watchdog CLI which tests imdb-scraper.js
       - sends an email on error
       - saves status on web location (client can then check the status)
     OK -> start with "npm run imdb-scraper-watchdog"
+- Implement test-framework callable in app and also in imdb-scraper-watchdog
 
 ## CompanyDialog, PersonDialog, Plot Keyword Dialog, Filming Locations Dialog
 include statistical infos (how many movies)
