@@ -24,7 +24,10 @@ const log = [];
   //   addLogEntry(await testIMDBCompaniesData());
   //   addLogEntry(await testIMDBPersonData());
   //   addLogEntry(await testIMDBTrailerMediaURLs());
-  addLogEntry(await testIMDBplotKeywords());
+  //   addLogEntry(await testIMDBplotKeywords());
+  //   addLogEntry(await testIMDBFilmingLocations());
+  //   addLogEntry(await testIMDBRatingDemographics());
+  addLogEntry(await testIMDBSearch());
 })();
 
 function addLogEntry(testResult) {
@@ -67,16 +70,16 @@ function addSubLogEntry(testResult, message, newStatus) {
 /*
  * Perform a default check: the item must be truthy and equal to the expected value
  */
-function performDefaultCheck(scrapeResult, expected, testResult, fieldName) {
+function performDefaultCheck(scrapeResult, expected, testResult, fieldName, msgPrefix) {
   if (!scrapeResult[fieldName]) {
-    addSubLogEntry(testResult, `${fieldName} missing`, status.ERROR);
+    addSubLogEntry(testResult, `${msgPrefix ? msgPrefix + ' ' : ''}${fieldName} missing`, status.ERROR);
   } else if (
     JSON.stringify(scrapeResult[fieldName]) !==
     JSON.stringify(expected[fieldName])
   ) {
     addSubLogEntry(
       testResult,
-      `${fieldName} mismatch
+      `${msgPrefix ? msgPrefix + ' ' : ''}${fieldName} mismatch
   got:      ${JSON.stringify(scrapeResult[fieldName])}"
   expected: ${JSON.stringify(expected[fieldName])}`,
       status.WARNING
@@ -660,7 +663,7 @@ async function testIMDBplotKeywords() {
         testResult,
         `keyword[0].NumVotes mismatch
       got:      ${JSON.stringify(scrapeResult[0].NumVotes)}
-      expected: value >= 20`,
+      expected: 20+`,
         status.WARNING
       );
     }
@@ -669,7 +672,7 @@ async function testIMDBplotKeywords() {
         testResult,
         `keyword[0].NumRelevant mismatch
       got:      ${JSON.stringify(scrapeResult[0].NumRelevant)}
-      expected: value >= 20`,
+      expected: 20+`,
         status.WARNING
       );
     }
@@ -679,17 +682,259 @@ async function testIMDBplotKeywords() {
 }
 
 async function testIMDBFilmingLocations() {
+  const testResult = {
+    name: "IMDB Filming Locations",
+    status: status.SUCCESS,
+    log: [],
+  };
 
+  const expected = {
+    locations0: {
+      Location: "Durham Cathedral, Durham DH1 3EH, UK",
+      Details: "Asgard.",
+      NumInteresting: 68,
+      NumVotes: 68,
+    },
+  };
+
+  const movie = {
+    IMDB_tconst: "tt4154796",
+  };
+
+  const scrapeResult = await imdbScraper.scrapeIMDBFilmingLocations(movie);
+
+  if (!scrapeResult) {
+    addSubLogEntry(testResult, "no response", status.ERROR);
+    return;
+  }
+
+  if (scrapeResult.length === 0) {
+    addSubLogEntry(testResult, "filming locations missing", status.ERROR);
+  } else {
+    if (scrapeResult.length < 11) {
+      addSubLogEntry(
+        testResult,
+        `filming locations count mismatch
+          got:      ${scrapeResult.length} entries
+          expected: 11+ entries`,
+        status.WARNING
+      );
+    }
+
+    if (scrapeResult[0].Location !== expected.locations0.Location) {
+      addSubLogEntry(
+        testResult,
+        `locations[0].Location mismatch
+          got:      ${JSON.stringify(scrapeResult[0].Location)}
+          expected: ${JSON.stringify(expected.locations0.Location)}`,
+        status.WARNING
+      );
+    }
+
+    if (scrapeResult[0].Details !== expected.locations0.Details) {
+      addSubLogEntry(
+        testResult,
+        `locations[0].Details mismatch
+            got:      ${JSON.stringify(scrapeResult[0].Details)}
+            expected: ${JSON.stringify(expected.locations0.Details)}`,
+        status.WARNING
+      );
+    }
+
+    if (scrapeResult[0].NumVotes < expected.locations0.NumVotes) {
+      addSubLogEntry(
+        testResult,
+        `keyword[0].NumVotes mismatch
+            got:      ${JSON.stringify(scrapeResult[0].NumVotes)}
+            expected: ${expected.locations0.NumVotes}+`,
+        status.WARNING
+      );
+    }
+
+    if (scrapeResult[0].NumInteresting < expected.locations0.NumInteresting) {
+      addSubLogEntry(
+        testResult,
+        `keyword[0].NumInteresting mismatch
+            got:      ${JSON.stringify(scrapeResult[0].NumInteresting)}
+            expected: ${expected.locations0.NumInteresting}+`,
+        status.WARNING
+      );
+    }
+  }
+
+  return testResult;
 }
 
 async function testIMDBRatingDemographics() {
+  const testResult = {
+    name: "IMDB Rating Demographics",
+    status: status.SUCCESS,
+    log: [],
+  };
 
-}
+  const expected = {
+    $IMDB_rating_aged_under_18: 8.8,
+    $IMDB_numVotes_aged_under_18: 3170,
+    $IMDB_rating_aged_18_29: 8.6,
+    $IMDB_numVotes_aged_18_29: 177683,
+    $IMDB_rating_aged_30_44: 8.3,
+    $IMDB_numVotes_aged_30_44: 188885,
+    $IMDB_rating_aged_45_plus: 8.1,
+    $IMDB_numVotes_aged_45_plus: 43187,
+    $IMDB_rating_males: 8.4,
+    $IMDB_numVotes_males: 386763,
+    $IMDB_rating_males_aged_under_18: 8.6,
+    $IMDB_numVotes_males_aged_under_18: 1882,
+    $IMDB_rating_males_aged_18_29: 8.5,
+    $IMDB_numVotes_males_aged_18_29: 137005,
+    $IMDB_rating_males_aged_30_44: 8.2,
+    $IMDB_numVotes_males_aged_30_44: 156999,
+    $IMDB_rating_males_aged_45_plus: 8.1,
+    $IMDB_numVotes_males_aged_45_plus: 35484,
+    $IMDB_rating_females: 8.5,
+    $IMDB_numVotes_females: 66576,
+    $IMDB_rating_females_aged_under_18: 8.7,
+    $IMDB_numVotes_females_aged_under_18: 364,
+    $IMDB_rating_females_aged_18_29: 8.6,
+    $IMDB_numVotes_females_aged_18_29: 26185,
+    $IMDB_rating_females_aged_30_44: 8.4,
+    $IMDB_numVotes_females_aged_30_44: 24921,
+    $IMDB_rating_females_aged_45_plus: 8.5,
+    $IMDB_numVotes_females_aged_45_plus: 6009,
+    $IMDB_rating_top_1000_voters: 7.8,
+    $IMDB_numVotes_top_1000_voters: 644,
+    $IMDB_rating_us_users: 8.5,
+    $IMDB_numVotes_us_users: 75541,
+    $IMDB_rating_non_us_users: 8.2,
+    $IMDB_numVotes_non_us_users: 220393,
+  };
 
-async function testIMDBAdvancedTitleSearch() {
+  const movie = {
+    IMDB_tconst: "tt4154796",
+  };
 
+  const scrapeResult = await imdbScraper.scrapeIMDBRatingDemographics(
+    movie,
+    async () => {
+      return true;
+    }
+  );
+
+  if (!scrapeResult) {
+    addSubLogEntry(testResult, "no response", status.ERROR);
+    return;
+  }
+
+  Object.keys(expected).forEach((key) => {
+    const scrapeValue = scrapeResult[key];
+    const expectedValue = expected[key];
+
+    if (!scrapeValue) {
+      addSubLogEntry(testResult, `${key} missing`, status.ERROR);
+    }
+
+    if (key.includes("$IMDB_numVotes")) {
+      if (scrapeValue < expectedValue) {
+        addSubLogEntry(
+          testResult,
+          `${key} mismatch
+              got:      ${scrapeValue}
+              expected: ${expectedValue}+`,
+          status.WARNING
+        );
+      }
+    }
+
+    if (key.includes("$IMDB_rating")) {
+      if (
+        scrapeValue < expectedValue - 0.5 ||
+        scrapeValue > expectedValue + 0.5
+      ) {
+        addSubLogEntry(
+          testResult,
+          `${key} mismatch
+              got:      ${scrapeValue}
+              expected: ${expectedValue - 0.5}-${expectedValue + 0.5}`,
+          status.WARNING
+        );
+      }
+    }
+  });
+
+  return testResult;
 }
 
 async function testIMDBSearch() {
+  const testResult = {
+    name: "IMDB Search",
+    status: status.SUCCESS,
+    log: [],
+  };
+
+  const expected = [
+    {
+      searchTerm: "forrest gump",
+      numResults: 7,
+      result0: {
+        tconst: 'tt0109830',
+        title: 'Forrest Gump',
+        titleType: 'feature',
+        year: 1994,
+        imageURL: 'https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_.jpg'
+      },
+    },
+    // {
+    //   searchTerm: "天気の子",
+    //   numResults: 666,
+    //   result0: {},
+    // },
+  ];
+
+  for (let i = 0; i < expected.length; i++) {
+    const expectedValue = expected[i];
+
+    const scrapeResult = await imdbScraper.scrapeIMDBSearch(
+      expectedValue.searchTerm
+    );
+
+    console.log(scrapeResult);
+
+    if (!scrapeResult) {
+      addSubLogEntry(
+        testResult,
+        `query '${expectedValue.searchTerm}' no response`,
+        status.ERROR
+      );
+      return;
+    }
+
+    if (scrapeResult.length === 0) {
+      addSubLogEntry(
+        testResult,
+        `query '${expectedValue.searchTerm}' results missing`,
+        status.ERROR
+      );
+      return;
+    }
     
+    if (scrapeResult.length < expectedValue.numResults) {
+      addSubLogEntry(
+        testResult,
+        `query '${expectedValue.searchTerm}' results count mismatch
+              got:      ${scrapeResult.length} entries
+              expected: ${expectedValue.numResults} entries`,
+        status.WARNING
+      );
+    }
+
+    performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, 'tconst', `query '${expectedValue.searchTerm}'`);
+    performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, 'title', `query '${expectedValue.searchTerm}'`);
+    performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, 'titleType', `query '${expectedValue.searchTerm}'`);
+    performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, 'year', `query '${expectedValue.searchTerm}'`);
+    performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, 'imageURL', `query '${expectedValue.searchTerm}'`);
+
+    return testResult;
+  }
 }
+
+async function testIMDBAdvancedTitleSearch() {}

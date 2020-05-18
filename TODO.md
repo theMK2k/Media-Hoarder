@@ -18,6 +18,10 @@ WIP - create a watchdog CLI which tests imdb-scraper.js
     OK -> start with "npm run imdb-scraper-watchdog"
 - Implement test-framework callable in app and also in imdb-scraper-watchdog
 
+## scrapeIMDBSearch - use alternative search method
+- currently we use the suggestion API which doesn't support non-latin names
+- maybe we should use https://www.imdb.com/find?q= (which is IMDB search incl. ENTER)?
+
 ## CompanyDialog, PersonDialog, Plot Keyword Dialog, Filming Locations Dialog
 include statistical infos (how many movies)
 
