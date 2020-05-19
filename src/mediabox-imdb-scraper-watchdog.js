@@ -10,7 +10,7 @@ const status = {
   ERROR: 2,
 };
 
-logger.setLevel(2); // set to 0 for log output of imdb-scraper, else 2
+logger.setLevel(0); // set to 0 for log output of imdb-scraper, else 2
 
 const log = [];
 
@@ -873,7 +873,7 @@ async function testIMDBSearch() {
 
   const expected = [
     {
-      searchTerm: "forrest gump",
+      searchTerm: "FoRReST GuMp",
       numResults: 7,
       result0: {
         tconst: 'tt0109830',
@@ -884,7 +884,7 @@ async function testIMDBSearch() {
       },
     },
     // {
-    //   searchTerm: "天気の子",
+    //   searchTerm: `天気の子`,
     //   numResults: 666,
     //   result0: {},
     // },
@@ -933,8 +933,9 @@ async function testIMDBSearch() {
     performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, 'year', `query '${expectedValue.searchTerm}'`);
     performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, 'imageURL', `query '${expectedValue.searchTerm}'`);
 
-    return testResult;
   }
+
+  return testResult;
 }
 
 async function testIMDBAdvancedTitleSearch() {}
