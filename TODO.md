@@ -17,6 +17,7 @@ WIP - create a watchdog CLI which tests imdb-scraper.js
       - saves status on web location (client can then check the status)
     OK -> start with "npm run imdb-scraper-watchdog"
 - Implement test-framework callable in app and also in imdb-scraper-watchdog
+- How should we handle ECONNRESET? maybe fetch-retry?
 
 ## scrapeIMDBSearch - use alternative search method
 - currently we use the suggestion API which doesn't support non-latin names

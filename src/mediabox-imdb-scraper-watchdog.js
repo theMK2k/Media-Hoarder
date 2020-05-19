@@ -10,24 +10,25 @@ const status = {
   ERROR: 2,
 };
 
-logger.setLevel(0); // set to 0 for log output of imdb-scraper, else 2
+logger.setLevel(2); // set to 0 for log output of imdb-scraper, else 2
 
 const log = [];
 
 (async () => {
-  //   addLogEntry(await testIMDBmainPageData());
-  //   addLogEntry(await testIMDBplotSummary());
-  //   addLogEntry(await testIMDBreleaseinfo());
-  //   addLogEntry(await testIMDBtechnicalData());
-  //   addLogEntry(await testIMDBParentalGuideData());
-  //   addLogEntry(await testIMDBFullCreditsData());
-  //   addLogEntry(await testIMDBCompaniesData());
-  //   addLogEntry(await testIMDBPersonData());
-  //   addLogEntry(await testIMDBTrailerMediaURLs());
-  //   addLogEntry(await testIMDBplotKeywords());
-  //   addLogEntry(await testIMDBFilmingLocations());
-  //   addLogEntry(await testIMDBRatingDemographics());
+  addLogEntry(await testIMDBmainPageData());
+  addLogEntry(await testIMDBplotSummary());
+  addLogEntry(await testIMDBreleaseinfo());
+  addLogEntry(await testIMDBtechnicalData());
+  addLogEntry(await testIMDBParentalGuideData());
+  addLogEntry(await testIMDBFullCreditsData());
+  addLogEntry(await testIMDBCompaniesData());
+  addLogEntry(await testIMDBPersonData());
+  addLogEntry(await testIMDBTrailerMediaURLs());
+  addLogEntry(await testIMDBplotKeywords());
+  addLogEntry(await testIMDBFilmingLocations());
+  addLogEntry(await testIMDBRatingDemographics());
   addLogEntry(await testIMDBSearch());
+  addLogEntry(await testIMDBAdvancedTitleSearch());
 })();
 
 function addLogEntry(testResult) {
@@ -70,16 +71,27 @@ function addSubLogEntry(testResult, message, newStatus) {
 /*
  * Perform a default check: the item must be truthy and equal to the expected value
  */
-function performDefaultCheck(scrapeResult, expected, testResult, fieldName, msgPrefix) {
-  if (!scrapeResult[fieldName]) {
-    addSubLogEntry(testResult, `${msgPrefix ? msgPrefix + ' ' : ''}${fieldName} missing`, status.ERROR);
+function performDefaultCheck(
+  scrapeResult,
+  expected,
+  testResult,
+  fieldName,
+  msgPrefix,
+  allowFalsy
+) {
+  if (!allowFalsy && !scrapeResult[fieldName]) {
+    addSubLogEntry(
+      testResult,
+      `${msgPrefix ? msgPrefix + " " : ""}${fieldName} missing`,
+      status.ERROR
+    );
   } else if (
     JSON.stringify(scrapeResult[fieldName]) !==
     JSON.stringify(expected[fieldName])
   ) {
     addSubLogEntry(
       testResult,
-      `${msgPrefix ? msgPrefix + ' ' : ''}${fieldName} mismatch
+      `${msgPrefix ? msgPrefix + " " : ""}${fieldName} mismatch
   got:      ${JSON.stringify(scrapeResult[fieldName])}"
   expected: ${JSON.stringify(expected[fieldName])}`,
       status.WARNING
@@ -430,12 +442,12 @@ async function testIMDBFullCreditsData() {
   if (!scrapeResult.credits) {
     addSubLogEntry(testResult, "credits missing", status.ERROR);
   } else {
-    if (scrapeResult.credits.length !== 3647) {
+    if (scrapeResult.credits.length < 3647) {
       addSubLogEntry(
         testResult,
         `credits count mismatch
   got:      ${scrapeResult.credits.length} entries
-  expected: 3647 entries`,
+  expected: 3647+ entries`,
         status.WARNING
       );
     }
@@ -569,7 +581,7 @@ async function testIMDBTrailerMediaURLs() {
   //       i.e. we can't find out the actual .mp4 video source
 
   const testResult = {
-    name: "IMDB Person Data",
+    name: "IMDB Trailer Media URLs",
     status: status.SUCCESS,
     log: [],
   };
@@ -774,39 +786,39 @@ async function testIMDBRatingDemographics() {
 
   const expected = {
     $IMDB_rating_aged_under_18: 8.8,
-    $IMDB_numVotes_aged_under_18: 3170,
+    $IMDB_numVotes_aged_under_18: 3000,
     $IMDB_rating_aged_18_29: 8.6,
-    $IMDB_numVotes_aged_18_29: 177683,
+    $IMDB_numVotes_aged_18_29: 170000,
     $IMDB_rating_aged_30_44: 8.3,
-    $IMDB_numVotes_aged_30_44: 188885,
+    $IMDB_numVotes_aged_30_44: 188000,
     $IMDB_rating_aged_45_plus: 8.1,
-    $IMDB_numVotes_aged_45_plus: 43187,
+    $IMDB_numVotes_aged_45_plus: 43000,
     $IMDB_rating_males: 8.4,
-    $IMDB_numVotes_males: 386763,
+    $IMDB_numVotes_males: 386000,
     $IMDB_rating_males_aged_under_18: 8.6,
-    $IMDB_numVotes_males_aged_under_18: 1882,
+    $IMDB_numVotes_males_aged_under_18: 1800,
     $IMDB_rating_males_aged_18_29: 8.5,
-    $IMDB_numVotes_males_aged_18_29: 137005,
+    $IMDB_numVotes_males_aged_18_29: 135000,
     $IMDB_rating_males_aged_30_44: 8.2,
-    $IMDB_numVotes_males_aged_30_44: 156999,
+    $IMDB_numVotes_males_aged_30_44: 150000,
     $IMDB_rating_males_aged_45_plus: 8.1,
-    $IMDB_numVotes_males_aged_45_plus: 35484,
+    $IMDB_numVotes_males_aged_45_plus: 35000,
     $IMDB_rating_females: 8.5,
-    $IMDB_numVotes_females: 66576,
+    $IMDB_numVotes_females: 66000,
     $IMDB_rating_females_aged_under_18: 8.7,
-    $IMDB_numVotes_females_aged_under_18: 364,
+    $IMDB_numVotes_females_aged_under_18: 300,
     $IMDB_rating_females_aged_18_29: 8.6,
-    $IMDB_numVotes_females_aged_18_29: 26185,
+    $IMDB_numVotes_females_aged_18_29: 25000,
     $IMDB_rating_females_aged_30_44: 8.4,
-    $IMDB_numVotes_females_aged_30_44: 24921,
+    $IMDB_numVotes_females_aged_30_44: 24000,
     $IMDB_rating_females_aged_45_plus: 8.5,
-    $IMDB_numVotes_females_aged_45_plus: 6009,
+    $IMDB_numVotes_females_aged_45_plus: 5000,
     $IMDB_rating_top_1000_voters: 7.8,
-    $IMDB_numVotes_top_1000_voters: 644,
+    $IMDB_numVotes_top_1000_voters: 600,
     $IMDB_rating_us_users: 8.5,
-    $IMDB_numVotes_us_users: 75541,
+    $IMDB_numVotes_us_users: 75000,
     $IMDB_rating_non_us_users: 8.2,
-    $IMDB_numVotes_non_us_users: 220393,
+    $IMDB_numVotes_non_us_users: 220000,
   };
 
   const movie = {
@@ -876,11 +888,12 @@ async function testIMDBSearch() {
       searchTerm: "FoRReST GuMp",
       numResults: 7,
       result0: {
-        tconst: 'tt0109830',
-        title: 'Forrest Gump',
-        titleType: 'feature',
+        tconst: "tt0109830",
+        title: "Forrest Gump",
+        titleType: "feature",
         year: 1994,
-        imageURL: 'https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_.jpg'
+        imageURL:
+          "https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_.jpg",
       },
     },
     // {
@@ -897,7 +910,7 @@ async function testIMDBSearch() {
       expectedValue.searchTerm
     );
 
-    console.log(scrapeResult);
+    // console.log(scrapeResult);
 
     if (!scrapeResult) {
       addSubLogEntry(
@@ -916,26 +929,182 @@ async function testIMDBSearch() {
       );
       return;
     }
-    
+
     if (scrapeResult.length < expectedValue.numResults) {
       addSubLogEntry(
         testResult,
         `query '${expectedValue.searchTerm}' results count mismatch
               got:      ${scrapeResult.length} entries
-              expected: ${expectedValue.numResults} entries`,
+              expected: ${expectedValue.numResults}+ entries`,
         status.WARNING
       );
     }
 
-    performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, 'tconst', `query '${expectedValue.searchTerm}'`);
-    performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, 'title', `query '${expectedValue.searchTerm}'`);
-    performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, 'titleType', `query '${expectedValue.searchTerm}'`);
-    performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, 'year', `query '${expectedValue.searchTerm}'`);
-    performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, 'imageURL', `query '${expectedValue.searchTerm}'`);
-
+    performDefaultCheck(
+      scrapeResult[0],
+      expectedValue.result0,
+      testResult,
+      "tconst",
+      `query '${expectedValue.searchTerm}'`
+    );
+    performDefaultCheck(
+      scrapeResult[0],
+      expectedValue.result0,
+      testResult,
+      "title",
+      `query '${expectedValue.searchTerm}'`
+    );
+    performDefaultCheck(
+      scrapeResult[0],
+      expectedValue.result0,
+      testResult,
+      "titleType",
+      `query '${expectedValue.searchTerm}'`
+    );
+    performDefaultCheck(
+      scrapeResult[0],
+      expectedValue.result0,
+      testResult,
+      "year",
+      `query '${expectedValue.searchTerm}'`
+    );
+    performDefaultCheck(
+      scrapeResult[0],
+      expectedValue.result0,
+      testResult,
+      "imageURL",
+      `query '${expectedValue.searchTerm}'`
+    );
   }
 
   return testResult;
 }
 
-async function testIMDBAdvancedTitleSearch() {}
+async function testIMDBAdvancedTitleSearch() {
+  const testResult = {
+    name: "IMDB Advanced Title Search",
+    status: status.SUCCESS,
+    log: [],
+  };
+
+  const expected = [
+    {
+      title: "FoRReST GuMp",
+      titleTypes: [],
+      numResults: 32,
+      result0: {
+        tconst: "tt0109830",
+        title: " 1.Forrest Gump (1994) ",
+        imageURL:
+          "https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_UY98_CR0,0,67,98_AL_.jpg",
+        ageRating: "12",
+        runtime: "142 min",
+        genres: "Drama, Romance",
+        detailInfo: "12 | 142 min | Drama, Romance",
+      },
+    },
+    // {
+    //   searchTerm: `天気の子`,
+    //   numResults: 666,
+    //   result0: {},
+    // },
+  ];
+
+  for (let i = 0; i < expected.length; i++) {
+    const expectedValue = expected[i];
+
+    const scrapeResult = await imdbScraper.scrapeIMDBAdvancedTitleSearch(
+      expectedValue.title,
+      expectedValue.titleTypes
+    );
+
+    // console.log(scrapeResult);
+
+    if (!scrapeResult) {
+      addSubLogEntry(
+        testResult,
+        `query '${expectedValue.title}' [${
+          expectedValue.titleTypes
+        }] no response`,
+        status.ERROR
+      );
+      return;
+    }
+
+    if (scrapeResult.length === 0) {
+      addSubLogEntry(
+        testResult,
+        `query '${expectedValue.title}' [${
+          expectedValue.titleTypes
+        }] results missing`,
+        status.ERROR
+      );
+      return;
+    }
+
+    if (scrapeResult.length < expectedValue.numResults) {
+      addSubLogEntry(
+        testResult,
+        `query '${expectedValue.title}' [${
+          expectedValue.titleTypes
+        }] results count mismatch
+                  got:      ${scrapeResult.length} entries
+                  expected: ${expectedValue.numResults}+ entries`,
+        status.WARNING
+      );
+    }
+
+    performDefaultCheck(
+      scrapeResult[0],
+      expectedValue.result0,
+      testResult,
+      "tconst",
+      `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
+    );
+    performDefaultCheck(
+      scrapeResult[0],
+      expectedValue.result0,
+      testResult,
+      "title",
+      `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
+    );
+    performDefaultCheck(
+      scrapeResult[0],
+      expectedValue.result0,
+      testResult,
+      "imageURL",
+      `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
+    );
+    performDefaultCheck(
+      scrapeResult[0],
+      expectedValue.result0,
+      testResult,
+      "ageRating",
+      `query '${expectedValue.title}' [${expectedValue.titleTypes}]`,
+      true
+    );
+    performDefaultCheck(
+      scrapeResult[0],
+      expectedValue.result0,
+      testResult,
+      "runtime",
+      `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
+    );
+    performDefaultCheck(
+      scrapeResult[0],
+      expectedValue.result0,
+      testResult,
+      "genres",
+      `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
+    );
+    performDefaultCheck(
+      scrapeResult[0],
+      expectedValue.result0,
+      testResult,
+      "detailInfo",
+      `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
+    );
+  }
+
+  return testResult;
+}
