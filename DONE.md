@@ -22,6 +22,12 @@ OK - scrape
 OK - allow the user to choose which demography to use as IMDB rating
 OK - show demographics matrix when clicking IMDB score for an item
 
+## CompanyDialog, PersonDialog, Plot Keyword Dialog, Filming Locations Dialog
+include statistical infos (how many movies)
+
+## 720p, SD, HD Detection
+OK - fix resolution Detection, e.g. 4:3 HD is oftentimes detected as 720p
+
 ## Age Rating
 - use user-chosen regions (countries) as basis for the age rating shown in the main list
 

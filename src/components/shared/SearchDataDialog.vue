@@ -103,8 +103,10 @@ export default {
 							, (SELECT COUNT(1) FROM (
 									SELECT DISTINCT
 										id_Movies
-									FROM tbl_Movies_IMDB_Companies MC2
+                  FROM tbl_Movies_IMDB_Companies MC2
+                  INNER JOIN tbl_Movies MOV ON MC2.id_Movies = MOV.id_Movies
 									WHERE MC2.Company_Name = MC.Company_Name
+                				AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
 								)) AS NumMovies
 					FROM tbl_Movies_IMDB_Companies MC
 					WHERE Company_Name LIKE '${searchText}%'
@@ -122,8 +124,10 @@ export default {
 							, (SELECT COUNT(1) FROM (
 									SELECT DISTINCT
 										id_Movies
-									FROM tbl_Movies_IMDB_Credits MC2
-									WHERE MC2.IMDB_Person_ID = MC.IMDB_Person_ID
+                  FROM tbl_Movies_IMDB_Credits MC2
+                  INNER JOIN tbl_Movies MOV ON MC2.id_Movies = MOV.id_Movies
+                  WHERE MC2.IMDB_Person_ID = MC.IMDB_Person_ID
+                				AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
 								)) AS NumMovies
 					FROM tbl_Movies_IMDB_Credits MC
 					WHERE Person_Name LIKE '${searchText}%'
@@ -138,7 +142,13 @@ export default {
           SELECT
             PK.id_IMDB_Plot_Keywords AS id
             , Keyword AS name
-            , (SELECT COUNT(1) FROM tbl_Movies_IMDB_Plot_Keywords MPK WHERE PK.id_IMDB_Plot_Keywords = MPK.id_IMDB_Plot_Keywords) AS NumMovies
+            , (
+                SELECT COUNT(1)
+                FROM tbl_Movies_IMDB_Plot_Keywords MPK
+                INNER JOIN tbl_Movies MOV ON MPK.id_Movies = MOV.id_Movies
+                WHERE PK.id_IMDB_Plot_Keywords = MPK.id_IMDB_Plot_Keywords
+               				AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+              ) AS NumMovies
           FROM tbl_IMDB_Plot_Keywords PK
           WHERE PK.Keyword LIKE '%${searchText}%'
           ${this.sortByNumMovies ? 'ORDER BY NumMovies DESC' : 'ORDER BY Keyword ASC'}
@@ -151,7 +161,13 @@ export default {
           SELECT
             FL.id_IMDB_Filming_Locations AS id
             , Location AS name
-            , (SELECT COUNT(1) FROM tbl_Movies_IMDB_Filming_Locations MFL WHERE FL.id_IMDB_Filming_Locations = MFL.id_IMDB_Filming_Locations) AS NumMovies
+            , (
+              SELECT COUNT(1)
+              FROM tbl_Movies_IMDB_Filming_Locations MFL
+              INNER JOIN tbl_Movies MOV ON FL.id_Movies = MOV.id_Movies
+              WHERE FL.id_IMDB_Filming_Locations = MFL.id_IMDB_Filming_Locations
+             				AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+            ) AS NumMovies
           FROM tbl_IMDB_Filming_Locations FL
           WHERE FL.Location LIKE '%${searchText}%'
           ${this.sortByNumMovies ? 'ORDER BY NumMovies DESC' : 'ORDER BY Location ASC'}

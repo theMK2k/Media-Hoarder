@@ -5,19 +5,28 @@
         <!-- <div>
           <v-list-item-avatar tile style="margin: 6px; height: 150px; width: 120px">
           </v-list-item-avatar>
-        </div> -->
-        <v-list-item-content class="align-self-start" style="padding-left: 8px; padding-bottom: 6px">
+        </div>-->
+        <v-list-item-content
+          class="align-self-start"
+          style="padding-left: 8px; padding-bottom: 6px"
+        >
           <v-col style="padding: 0px!important" sm="12">
             <v-row>
               <div style="margin-left: 16px">
-                <v-list-item-title class="headline mb-2" style="margin-bottom: 0px!important">
-                  Plot Keyword: {{ Keyword }}
-                </v-list-item-title>
+                <v-list-item-title
+                  class="headline mb-2"
+                  style="margin-bottom: 0px!important"
+                >Plot Keyword: {{ Keyword }}</v-list-item-title>
               </div>
             </v-row>
 
-            <v-progress-linear v-if="isScraping" color="red accent-0" indeterminate rounded height="3"></v-progress-linear>
-
+            <v-progress-linear
+              v-if="isScraping"
+              color="red accent-0"
+              indeterminate
+              rounded
+              height="3"
+            ></v-progress-linear>
           </v-col>
         </v-list-item-content>
       </v-list-item>
@@ -34,7 +43,10 @@
             color="primary"
             v-on:click.native="onFilterClick"
             style="margin-left: 8px;"
-          >Filter by this plot keyword</v-btn>
+          >
+            Filter by this plot keyword
+            <span v-if="numMovies">({{numMovies}})</span>
+          </v-btn>
         </v-row>
       </v-col>
     </v-card>
@@ -56,16 +68,34 @@ export default {
   data() {
     return {
       isScraping: false,
+      numMovies: null
     };
   },
 
   watch: {
-    IMDB_Person_ID: function(newVal) {
+    id_IMDB_Plot_Keywords: function(newVal) {
       this.init(newVal);
     }
   },
 
   methods: {
+    async init($id_IMDB_Plot_Keywords) {
+      this.numMovies = await store.db.fireProcedureReturnScalar(
+        `
+          SELECT COUNT(1) FROM
+          (
+            SELECT DISTINCT
+              MPK.id_Movies
+            FROM tbl_Movies_IMDB_Plot_Keywords MPK
+            INNER JOIN tbl_Movies MOV ON MPK.id_Movies = MOV.id_Movies
+            WHERE MPK.id_IMDB_Plot_Keywords = $id_IMDB_Plot_Keywords
+                  AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+          )
+      `,
+        { $id_IMDB_Plot_Keywords }
+      );
+    },
+
     onButtonClick(eventName) {
       this.$emit(eventName, {
         dontAskAgain: this.dontAskAgainValue,
@@ -80,7 +110,10 @@ export default {
     },
 
     async onFilterClick() {
-      await store.addFilterIMDBPlotKeyword(this.id_IMDB_Plot_Keywords, this.Keyword);
+      await store.addFilterIMDBPlotKeyword(
+        this.id_IMDB_Plot_Keywords,
+        this.Keyword
+      );
 
       const setFilter = {
         filterIMDBPlotKeywords: [this.id_IMDB_Plot_Keywords]

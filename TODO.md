@@ -23,11 +23,6 @@ WIP - create a watchdog CLI which tests imdb-scraper.js
 - currently we use the suggestion API which doesn't support non-latin names
 - maybe we should use https://www.imdb.com/find?q= (which is IMDB search incl. ENTER)?
 
-## CompanyDialog, PersonDialog, Plot Keyword Dialog, Filming Locations Dialog
-include statistical infos (how many movies)
-
-## 720p, SD, HD Detection
-OK? - fix resolution Detection, e.g. 4:3 HD is oftentimes detected as 720p
 
 ## Mediainfo Languages
 - we get languages like "German" from Mediainfo and map them to e.g. "De" using languages.js and store.js' ensureLanguageMapping

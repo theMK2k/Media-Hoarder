@@ -26,13 +26,20 @@
           <v-col style="padding: 0px!important" sm="12">
             <v-row>
               <div style="margin-left: 16px">
-                <v-list-item-title class="headline mb-2" style="margin-bottom: 0px!important">
-                  {{ Person_Name }}
-                </v-list-item-title>
+                <v-list-item-title
+                  class="headline mb-2"
+                  style="margin-bottom: 0px!important"
+                >{{ Person_Name }}</v-list-item-title>
               </div>
             </v-row>
 
-            <v-progress-linear v-if="isScraping" color="red accent-0" indeterminate rounded height="3"></v-progress-linear>
+            <v-progress-linear
+              v-if="isScraping"
+              color="red accent-0"
+              indeterminate
+              rounded
+              height="3"
+            ></v-progress-linear>
 
             <v-row style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px">
               <div
@@ -75,7 +82,10 @@
             color="primary"
             v-on:click.native="onFilterClick"
             style="margin-left: 8px;"
-          >Filter by this person</v-btn>
+          >
+            Filter by this person
+            <span v-if="numMovies">({{numMovies}})</span>
+          </v-btn>
         </v-row>
       </v-col>
     </v-card>
@@ -85,7 +95,7 @@
 <script>
 import * as store from "@/store";
 import * as helpers from "@/helpers/helpers";
-import { scrapeIMDBPersonData } from "@/imdb-scraper"
+import { scrapeIMDBPersonData } from "@/imdb-scraper";
 const logger = require("loglevel");
 
 const { shell } = require("electron").remote;
@@ -99,7 +109,8 @@ export default {
     return {
       isScraping: false,
       personData: {},
-      showLongBio: false
+      showLongBio: false,
+      numMovies: null
     };
   },
 
@@ -125,8 +136,8 @@ export default {
 
       try {
         const personData = await scrapeIMDBPersonData(
-          this.IMDB_Person_ID
-          , helpers.downloadFile
+          this.IMDB_Person_ID,
+          helpers.downloadFile
         );
 
         store.saveIMDBPersonData(personData);
@@ -151,12 +162,29 @@ export default {
       this.isScraping = false;
     },
 
-    async init(IMDB_Person_ID) {
+    async init($IMDB_Person_ID) {
       logger.log("PersonDialog INIT!");
+
+      this.numMovies = await store.db.fireProcedureReturnScalar(
+        `
+          SELECT COUNT(1) FROM
+          (
+            SELECT DISTINCT
+              MC.id_Movies
+            FROM tbl_Movies_IMDB_Credits MC
+            INNER JOIN tbl_Movies MOV ON MC.id_Movies = MOV.id_Movies
+            WHERE MC.IMDB_Person_ID = $IMDB_Person_ID
+                  AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+          )
+      `,
+        { $IMDB_Person_ID }
+      );
+
+
       this.personData = {};
       this.showLongBio = false;
 
-      let personData = await store.fetchIMDBPerson(IMDB_Person_ID);
+      let personData = await store.fetchIMDBPerson($IMDB_Person_ID);
 
       logger.log("fetched personData:", personData);
 
