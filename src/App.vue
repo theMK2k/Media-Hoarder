@@ -1610,6 +1610,10 @@ export default {
 
     this.$vuetify.theme.dark = true;
 
+    if (this.$route.path !== "/") {
+      this.$router.push("/");
+    }
+
     this.checkVersion();
 
     eventBus.$on("showSnackbar", ({ color, textOrErrorObject, timeout }) => {
