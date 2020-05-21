@@ -4535,9 +4535,11 @@ async function fetchIMDBRatingDemographic() {
 }
 
 async function findMissingSourcePaths() {
-  const sourcePaths = await db.fireProcedureReturnAll(
+  const sourcePathsDB = await db.fireProcedureReturnAll(
     `SELECT id_SourcePaths, MediaType, Path, Description, created_at, checkRemovedFiles FROM tbl_SourcePaths`
   );
+
+  const sourcePaths = sourcePathsDB.filter(sp => sp.checkRemovedFiles);
 
   for (let i = 0; i < sourcePaths.length; i++) {
     const sourcePath = sourcePaths[i];

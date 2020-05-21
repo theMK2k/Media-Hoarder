@@ -169,10 +169,6 @@ export default {
 
       logger.log('missingSourcePaths:', missingSourcePaths);
 
-      this.missingSourcePaths = missingSourcePaths.filter(
-        msp => msp.checkRemovedFiles
-      );
-
       logger.log('this.missingSourcePaths:', this.missingSourcePaths);
 
       this.showMediaInfoWarning =  (await store.getSetting(
