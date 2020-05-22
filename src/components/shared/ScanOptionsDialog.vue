@@ -165,9 +165,7 @@ export default {
       
       store.resetUserScanOptions();
       
-      const missingSourcePaths = await store.findMissingSourcePaths();
-
-      logger.log('missingSourcePaths:', missingSourcePaths);
+      this.missingSourcePaths = await store.findMissingSourcePaths();
 
       logger.log('this.missingSourcePaths:', this.missingSourcePaths);
 
