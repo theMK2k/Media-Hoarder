@@ -822,7 +822,7 @@ async function testIMDBRatingDemographics() {
     return testResult;
 }
 
-async function testIMDBSearch() {
+async function testIMDBSuggestion() {
     const testResult = {
         name: "IMDB Search",
         status: status.SUCCESS,
@@ -852,7 +852,7 @@ async function testIMDBSearch() {
     for (let i = 0; i < expected.length; i++) {
         const expectedValue = expected[i];
 
-        const scrapeResult = await imdbScraper.scrapeIMDBSearch(
+        const scrapeResult = await imdbScraper.scrapeIMDBSuggestion(
             expectedValue.searchTerm
         );
 
@@ -1055,6 +1055,105 @@ async function testIMDBAdvancedTitleSearch() {
     return testResult;
 }
 
+async function testIMDBFind() {
+    const testResult = {
+        name: "IMDB Advanced Title Search",
+        status: status.SUCCESS,
+        log: [],
+    };
+
+    const expected = [
+        {
+            searchTerm: "天気の子",
+            type: null,
+            numResults: 1,
+            result0: {
+                id: 'tt9426210',
+                type: 'title',
+                resultText: 'Weathering with You - Das Mädchen, das die Sonne berührte (2019) aka "天気の子"',
+                imageURL: 'https://m.media-amazon.com/images/M/MV5BNzE4ZDEzOGUtYWFjNC00ODczLTljOGQtZGNjNzhjNjdjNjgzXkEyXkFqcGdeQXVyNzE5ODMwNzI@._V1_UX32_CR0,0,32,44_AL_.jpg'
+            }
+        }
+    ];
+
+    for (let i = 0; i < expected.length; i++) {
+        const expectedValue = expected[i];
+
+        const scrapeResult = await imdbScraper.scrapeIMDBFind(
+            expectedValue.searchTerm,
+            expectedValue.type
+        );
+
+        console.log(scrapeResult);
+
+        if (!scrapeResult) {
+            addSubLogEntry(
+                testResult,
+                `query '${expectedValue.searchTerm}' [${
+                expectedValue.type
+                }] no response`,
+                status.ERROR
+            );
+            return;
+        }
+
+        if (scrapeResult.length === 0) {
+            addSubLogEntry(
+                testResult,
+                `query '${expectedValue.searchTerm}' [${
+                expectedValue.type
+                }] results missing`,
+                status.ERROR
+            );
+            return;
+        }
+
+        if (scrapeResult.length < expectedValue.numResults) {
+            addSubLogEntry(
+                testResult,
+                `query '${expectedValue.searchTerm}' [${
+                expectedValue.type
+                }] results count mismatch
+                    got:      ${scrapeResult.length} entries
+                    expected: ${expectedValue.numResults}+ entries`,
+                status.WARNING
+            );
+        }
+
+        
+        performDefaultCheck(
+            scrapeResult[0],
+            expectedValue.result0,
+            testResult,
+            "id",
+            `query '${expectedValue.searchTerm}' [${expectedValue.type}]`
+        );
+        performDefaultCheck(
+            scrapeResult[0],
+            expectedValue.result0,
+            testResult,
+            "type",
+            `query '${expectedValue.searchTerm}' [${expectedValue.type}]`
+        );
+        performDefaultCheck(
+            scrapeResult[0],
+            expectedValue.result0,
+            testResult,
+            "resultText",
+            `query '${expectedValue.searchTerm}' [${expectedValue.type}]`
+        );
+        performDefaultCheck(
+            scrapeResult[0],
+            expectedValue.result0,
+            testResult,
+            "imageURL",
+            `query '${expectedValue.searchTerm}' [${expectedValue.type}]`
+        );
+    }
+
+    return testResult;
+}
+
 export {
     testIMDBmainPageData,
     testIMDBplotSummary,
@@ -1068,6 +1167,7 @@ export {
     testIMDBplotKeywords,
     testIMDBFilmingLocations,
     testIMDBRatingDemographics,
-    testIMDBSearch,
+    testIMDBSuggestion,
     testIMDBAdvancedTitleSearch,
+    testIMDBFind,
 }

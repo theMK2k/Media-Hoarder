@@ -15,20 +15,21 @@ logger.setLevel(2); // set to 0 for log output of imdb-scraper, else 2
 const log = [];
 
 (async () => {
-  addLogEntry(await imdbScraperTests.testIMDBmainPageData());
-  addLogEntry(await imdbScraperTests.testIMDBplotSummary());
-  addLogEntry(await imdbScraperTests.testIMDBreleaseinfo());
-  addLogEntry(await imdbScraperTests.testIMDBtechnicalData());
-  addLogEntry(await imdbScraperTests.testIMDBParentalGuideData());
-  addLogEntry(await imdbScraperTests.testIMDBFullCreditsData());
-  addLogEntry(await imdbScraperTests.testIMDBCompaniesData());
-  addLogEntry(await imdbScraperTests.testIMDBPersonData());
-  addLogEntry(await imdbScraperTests.testIMDBTrailerMediaURLs());
-  addLogEntry(await imdbScraperTests.testIMDBplotKeywords());
-  addLogEntry(await imdbScraperTests.testIMDBFilmingLocations());
-  addLogEntry(await imdbScraperTests.testIMDBRatingDemographics());
-  addLogEntry(await imdbScraperTests.testIMDBSearch());
-  addLogEntry(await imdbScraperTests.testIMDBAdvancedTitleSearch());
+  // addLogEntry(await imdbScraperTests.testIMDBmainPageData());
+  // addLogEntry(await imdbScraperTests.testIMDBplotSummary());
+  // addLogEntry(await imdbScraperTests.testIMDBreleaseinfo());
+  // addLogEntry(await imdbScraperTests.testIMDBtechnicalData());
+  // addLogEntry(await imdbScraperTests.testIMDBParentalGuideData());
+  // addLogEntry(await imdbScraperTests.testIMDBFullCreditsData());
+  // addLogEntry(await imdbScraperTests.testIMDBCompaniesData());
+  // addLogEntry(await imdbScraperTests.testIMDBPersonData());
+  // addLogEntry(await imdbScraperTests.testIMDBTrailerMediaURLs());
+  // addLogEntry(await imdbScraperTests.testIMDBplotKeywords());
+  // addLogEntry(await imdbScraperTests.testIMDBFilmingLocations());
+  // addLogEntry(await imdbScraperTests.testIMDBRatingDemographics());
+  // addLogEntry(await imdbScraperTests.testIMDBSuggestion());
+  // addLogEntry(await imdbScraperTests.testIMDBAdvancedTitleSearch());
+  addLogEntry(await imdbScraperTests.testIMDBFind());
 })();
 
 function addLogEntry(testResult) {

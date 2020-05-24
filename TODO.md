@@ -8,8 +8,6 @@ OK -> we have a memory leak using eventBus.$on -> implement eventBus.$off on bef
 -> we still have the memory leak: don't fetch all data at once (re-fetch for each page)
 OK -> check if memory leak is only in dev-mode (yes, it still persists even in prod-mode)
 
-## Walk the TODOs in Code
-
 ## IMDB Scraper Watchdog
 
 OK - put all IMDB scraping functions from store.js into imdb-scraper.js
@@ -19,10 +17,10 @@ WIP - create a watchdog CLI which tests imdb-scraper.js
       - saves status on web location (client can then check the status)
     OK -> start with "npm run imdb-scraper-watchdog"
 
-- Implement test-framework callable in app and also in imdb-scraper-watchdog
-- How should we handle ECONNRESET? maybe fetch-retry?
+OK - Implement test-framework callable in app and also in imdb-scraper-watchdog
+- How should we handle ECONNRESET? maybe request-retry?
 
-## scrapeIMDBSearch - use alternative search method
+## scrapeIMDBSuggestion - use alternative search method
 
 - currently we use the suggestion API which doesn't support non-latin names
 - maybe we should use `https://www.imdb.com/find?q=` (which is IMDB search incl. ENTER)?
