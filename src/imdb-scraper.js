@@ -187,7 +187,7 @@ async function scrapeIMDBplotSummary(movie, shortSummary) {
         })
         .trim()
     );
-    
+
     if (plotSummaryFull.includes(shortSummaryClean)) {
       $IMDB_plotSummaryFull = plotSummaryFull;
     }
@@ -878,6 +878,7 @@ async function scrapeIMDBPersonData($IMDB_Person_ID, downloadFileCallback) {
 }
 
 async function scrapeIMDBAdvancedTitleSearch(title, titleTypes) {
+  // only supports latin characters!
   // https://www.imdb.com/search/title/?title=Gnothi Seauton&view=advanced
   // optional: &title_type=feature,tv_movie,tv_series,tv_episode,tv_special,tv_miniseries,documentary,short,video,tv_short
   //
@@ -954,13 +955,14 @@ async function scrapeIMDBAdvancedTitleSearch(title, titleTypes) {
   return results;
 }
 
-async function scrapeIMDBSearch(searchTerm) {
+async function scrapeIMDBSuggestion(searchTerm) {
+  // only supports latin characters!
   // https://v2.sg.media-imdb.com/suggestion/d/Das%20Phantom%20Kommando%20(1985).json
   const url = `https://v2.sg.media-imdb.com/suggestion/${searchTerm[0].toLowerCase()}/${encodeURI(
     searchTerm
   )}.json`;
 
-  logger.log("scrapeIMDBSearch url:", url);
+  logger.log("scrapeIMDBSuggestion url:", url);
 
   const response = await requestGetAsync(url);
 
@@ -985,6 +987,71 @@ async function scrapeIMDBSearch(searchTerm) {
       });
     });
   }
+
+  return results;
+}
+
+/**
+ * @param  {string} searchTerm
+ * @param  {string} [type]
+ */
+async function scrapeIMDBFind(searchTerm, type) {
+  // ALL:      https://www.imdb.com/find?q=天気の子
+  // Titles:   https://www.imdb.com/find?s=tt&q=天気の子
+  // Episodes: https://www.imdb.com/find?s=ep&q=start%26over
+  // People:   https://www.imdb.com/find?s=nm&q=laurence+fishburn
+  // Company:  https://www.imdb.com/find?s=co&q=universal
+  // Keyword:  https://www.imdb.com/find?s=kw&q=christmas
+  const url =
+    `https://www.imdb.com/find?q=${encodeURI(searchTerm)}${type ? '&s=' + type : ''}`;
+
+  logger.log("scrapeIMDBAdvancedTitleSearch url:", url);
+
+  const response = await requestGetAsync(url);
+  const html = response.body;
+  const $ = cheerio.load(html);
+
+  const items = $("tr.findResult");
+
+  const results = [];
+
+  items.each((index, item) => {
+    const result = {
+      id: null,
+      type: null,
+      resultText: null,
+      imageURL: null
+    }
+    
+    const idString = $($(item).find("td.primary_photo > a")).attr("href");
+
+    if ($($(item).find("img"))) {
+       result.imageURL = $($(item).find("img")).attr("src");
+    }
+
+    if (idString) {
+      if (/tt\d*/.test(idString)) {
+        result.id = idString.match(/tt\d*/)[0];
+        result.type = "title"
+      } else if (/nm\d*/.test(idString)) {
+        result.id = idString.match(/tt\d*/)[0];
+        result.type = "name"
+      }
+    }
+
+    if (!result.id) {
+      return;
+    }
+
+    result.resultText = $($(item).find("td.result_text")).text().trim();
+
+    // result.resultText = result.resultText.replace(/[\s\n]/g, " ");
+    while (/\s\s/g.test(result.resultText)) {
+      result.resultText = result.resultText.replace(/\s\s/g, "");
+    }
+
+    results.push(result);
+  })
 
   return results;
 }
@@ -1188,7 +1255,8 @@ export {
   scrapeIMDBtechnicalData,
   scrapeIMDBPersonData,
   scrapeIMDBAdvancedTitleSearch,
-  scrapeIMDBSearch,
+  scrapeIMDBSuggestion,
+  scrapeIMDBFind,
   scrapeIMDBTrailerMediaURLs,
   scrapeIMDBplotKeywords,
   scrapeIMDBFilmingLocations,

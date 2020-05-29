@@ -100,7 +100,7 @@ OK -> save AND filter setting alongside the filters themselves
 ## Rescan dialog
 - show warning when a source path cannot be found but it is set to remove entries on re-scan
 
-## BUG: Recalculation of Pagination Items on mouseover
+## Recalculation of Pagination Items on mouseover
 - when mouseover on items, pagination items get recalced
 - reason could be usage of this.$set (it was indeed)
 

@@ -45,7 +45,7 @@ const {
   scrapeIMDBParentalGuideData,
   scrapeIMDBreleaseinfo,
   scrapeIMDBtechnicalData,
-  scrapeIMDBSearch,
+  scrapeIMDBSuggestion,
   scrapeIMDBplotKeywords,
   scrapeIMDBFilmingLocations,
   scrapeIMDBRatingDemographics,
@@ -1300,7 +1300,7 @@ async function findIMDBtconstByFilename(movie) {
 
     logger.log(`findIMDBtconstByFilename trying: ${searchTerm}`);
 
-    const results = await scrapeIMDBSearch(searchTerm);
+    const results = await scrapeIMDBSuggestion(searchTerm);
 
     if (results.length === 1) {
       // definitely found our optimum!
