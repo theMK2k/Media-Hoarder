@@ -276,91 +276,151 @@ const shared = new Vue({
         key: 'rescanMoviesMetaData_fetchIMDBMetaData_mainPageData',
         description: 'Main Page (Genres, Rating/Votes, Metacritic Score, Poster, Plot Summary, Trailer URL)',
         enabled: true,
-        checkFunction: imdbScraperTests.testIMDBmainPageData
+        checkFunction: imdbScraperTests.testIMDBmainPageData,
+        icon: null,
+        color: null,
+        isRunning: false,
+        result: null
       },
       {
         key: 'rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics',
         description: 'Ratings (Rating by Demographics, e.g. Ages, Male/Female, US/Non-US)',
         enabled: true,
-        checkFunction: imdbScraperTests.testIMDBRatingDemographics
+        checkFunction: imdbScraperTests.testIMDBRatingDemographics,
+        icon: null,
+        color: null,
+        isRunning: false,
+        result: null
       },
       {
         key: 'rescanMoviesMetaData_fetchIMDBMetaData_plotSummary',
         description: 'Full Plot Summary (Main Page only contains an extract of the full summary)',
         enabled: true,
-        checkFunction: imdbScraperTests.testIMDBplotSummary
+        checkFunction: imdbScraperTests.testIMDBplotSummary,
+        icon: null,
+        color: null,
+        isRunning: false,
+        result: null
       },
       {
         key: 'rescanMoviesMetaData_fetchIMDBMetaData_plotKeywords',
         description: 'Plot Keywords',
         enabled: true,
-        checkFunction: imdbScraperTests.testIMDBplotKeywords
+        checkFunction: imdbScraperTests.testIMDBplotKeywords,
+        icon: null,
+        color: null,
+        isRunning: false,
+        result: null
       },
       {
         key: 'rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo',
         description: 'Release Info (Title, Localized Title, Original Title, Year)',
         enabled: true,
-        checkFunction: imdbScraperTests.testIMDBreleaseinfo
+        checkFunction: imdbScraperTests.testIMDBreleaseinfo,
+        icon: null,
+        color: null,
+        isRunning: false,
+        result: null
       },
       {
         key: 'rescanMoviesMetaData_fetchIMDBMetaData_technicalData',
         description: 'Technical Data (Runtime)',
         enabled: true,
-        checkFunction: imdbScraperTests.testIMDBtechnicalData
+        checkFunction: imdbScraperTests.testIMDBtechnicalData,
+        icon: null,
+        color: null,
+        isRunning: false,
+        result: null
       },
       {
         key: 'rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData',
         description: 'Parental Guide (Age Rating, Levels of: Nudity, Violence, Profanity, Alcohol & Drugs, Frightening Scenes)',
         enabled: true,
-        checkFunction: imdbScraperTests.testIMDBParentalGuideData
+        checkFunction: imdbScraperTests.testIMDBParentalGuideData,
+        icon: null,
+        color: null,
+        isRunning: false,
+        result: null
       },
       {
         key: 'rescanMoviesMetaData_fetchIMDBMetaData_creditsData',
         description: 'Credits',
         enabled: true,
-        checkFunction: imdbScraperTests.testIMDBFullCreditsData
+        checkFunction: imdbScraperTests.testIMDBFullCreditsData,
+        icon: null,
+        color: null,
+        isRunning: false,
+        result: null
       },
       {
         key: 'rescanMoviesMetaData_fetchIMDBMetaData_companiesData',
         description: 'Companies',
         enabled: true,
-        checkFunction: imdbScraperTests.testIMDBCompaniesData
+        checkFunction: imdbScraperTests.testIMDBCompaniesData,
+        icon: null,
+        color: null,
+        isRunning: false,
+        result: null
       },
       {
         key: 'rescanMoviesMetaData_fetchIMDBMetaData_filmingLocations',
         description: 'Filming Locations',
         enabled: true,
-        checkFunction: imdbScraperTests.testIMDBFilmingLocations
+        checkFunction: imdbScraperTests.testIMDBFilmingLocations,
+        icon: null,
+        color: null,
+        isRunning: false,
+        result: null
       },
       {
         key: 'adhoc_PersonData',
         description: 'Person Data (Ad-Hoc)',
         enabled: true,
-        checkFunction: imdbScraperTests.testIMDBPersonData
+        checkFunction: imdbScraperTests.testIMDBPersonData,
+        icon: null,
+        color: null,
+        isRunning: false,
+        result: null
       },
       {
         key: 'adhoc_TrailerMediaURLs',
         description: 'Trailer Media URLs (Ad-Hoc)',
         enabled: true,
-        checkFunction: imdbScraperTests.testIMDBTrailerMediaURLs
+        checkFunction: imdbScraperTests.testIMDBTrailerMediaURLs,
+        icon: null,
+        color: null,
+        isRunning: false,
+        result: null
       },
       {
         key: 'adhoc_Suggestion',
         description: 'Suggestion Search (Ad-Hoc)',
         enabled: true,
-        checkFunction: imdbScraperTests.testIMDBSuggestion
+        checkFunction: imdbScraperTests.testIMDBSuggestion,
+        icon: null,
+        color: null,
+        isRunning: false,
+        result: null
       },
       {
         key: 'adhoc_AdvancedTitleSearch',
         description: 'Advanced Title Search (Ad-Hoc)',
         enabled: true,
-        checkFunction: imdbScraperTests.testIMDBAdvancedTitleSearch
+        checkFunction: imdbScraperTests.testIMDBAdvancedTitleSearch,
+        icon: null,
+        color: null,
+        isRunning: false,
+        result: null
       },
       {
         key: 'adhoc_FindSearch',
         description: 'Find (Ad-Hoc)',
         enabled: true,
-        checkFunction: imdbScraperTests.testIMDBFind
+        checkFunction: imdbScraperTests.testIMDBFind,
+        icon: null,
+        color: null,
+        isRunning: false,
+        result: null
       },
     ]
   }

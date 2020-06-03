@@ -627,6 +627,7 @@
         <mk-check-imdb-scraper-dialog
           ref="checkIMDBScraperDialog"
           v-bind:show="checkIMDBScraperDialog.show"
+          v-on:close="onCheckIMDBScraperDialogClose"
         ></mk-check-imdb-scraper-dialog>
 
         <!-- BOTTOM BAR -->
@@ -1613,6 +1614,19 @@ export default {
       setTimeout(() => {
         this.$refs.versionDialog.checkVersion();
       });
+    },
+
+    showCheckIMDBScraperDialog(settings) {
+      setTimeout(() => {
+        if (this.$refs.checkIMDBScraperDialog) {
+          this.$refs.checkIMDBScraperDialog.init(settings);
+        }
+        this.checkIMDBScraperDialog.show = true;
+      });
+    },
+
+    onCheckIMDBScraperDialogClose() {
+      this.checkIMDBScraperDialog.show = false;
     }
   },
 
@@ -1734,8 +1748,7 @@ export default {
     });
 
     eventBus.$on("openCheckIMDBScraperDialog", (settings) => {
-      this.$refs.checkIMDBScraperDialog.init(settings);
-      this.checkIMDBScraperDialog.show = true;
+      this.showCheckIMDBScraperDialog(settings);
     });
 
     // eventBus.scanInfoShow('KILLME', 'Asterix und das Geheimnis des Zaubertranks ~ Astérix - Le secret de la potion magique (De)(BD)[2018][Adventure, Animation, Comedy][6.9 @ 3074][tt8001346].mkv');

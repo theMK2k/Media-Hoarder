@@ -1170,4 +1170,5 @@ export {
     testIMDBSuggestion,
     testIMDBAdvancedTitleSearch,
     testIMDBFind,
+    status
 }

@@ -6,14 +6,31 @@
           IMDB Scraper Check
           <v-spacer></v-spacer>
 
+          <v-btn text v-on:click="runChecks"
+            v-bind:loading="isRunning"
+            v-if="!settings"
+          >
+            Run Checks
+          </v-btn>
           <v-btn text v-on:click="$emit('close')">Close</v-btn>
         </v-row>
       </v-card-title>
 
       <v-card-text>
-        <v-row v-for="check in imdbScraperChecksFiltered" v-bind:key="check.key" class="Clickable" style="align-items: center">
-          <v-btn class="ma-2" text v-bind:loading="check.isRunning" icon v-bind:color="check.color || 'blue lighten-2'">
-            <v-icon>{{check.icon || 'mdi-thumb-up'}}</v-icon>
+        <v-row
+          v-for="check in imdbScraperChecksFiltered"
+          v-bind:key="check.key"
+          class="Clickable"
+          style="align-items: center"
+        >
+          <v-btn
+            class="ma-2"
+            text
+            v-bind:loading="check.isRunning"
+            icon
+            v-bind:color="check.color || 'blue lighten-2'"
+          >
+            <v-icon>{{check.icon}}</v-icon>
           </v-btn>
           {{check.description}}
         </v-row>
@@ -26,8 +43,10 @@
 // import Vue from "vue";
 // import router from "@/router"; // workaround in order to access router.app.$t
 
-// const logger = require("loglevel");
+const logger = require("loglevel");
 // const { shell } = require("electron").remote;
+
+const imdbScraperTests = require('@/imdb-scraper-tests');
 
 // import * as store from "@/store";
 
@@ -38,7 +57,8 @@ export default {
 
   data() {
     return {
-      settings: null
+      settings: null,
+      isRunning: false
     };
   },
 
@@ -51,10 +71,50 @@ export default {
   methods: {
     init(settings) {
       this.settings = settings;
+      this.isRunning = false;
 
-      this.$shared.imdbScraperChecks.forEach(check => (check.enabled = true));
+      this.$shared.imdbScraperChecks.forEach(check => {
+        check.enabled = true;
+        check.icon = null;
+        check.color = null;
+        check.isRunning = false;
+        check.result = null;
+      });
 
       // TODO: set enabled = false if settings are available
+    },
+
+    async runChecks() {
+      this.init(this.settings);
+      
+      this.isRunning = true;
+
+      for (let i = 0; i < this.imdbScraperChecksFiltered.length; i++) {
+        const check = this.imdbScraperChecksFiltered[i];
+        
+        check.isRunning = true;
+        
+        check.result = await check.checkFunction();
+
+        logger.log('check result:', check.result);
+
+        if (check.result.status === imdbScraperTests.status.SUCCESS) {
+          check.color = 'green';
+          check.icon = 'mdi-check-circle-outline';
+        }
+        if (check.result.status === imdbScraperTests.status.WARNING) {
+          check.color = 'yellow';
+          check.icon = 'mdi-alert-circle-outline';
+        }
+        if (check.result.status === imdbScraperTests.status.ERROR) {
+          check.color = 'red';
+          check.icon = 'mdi-close-circle-outline';
+        }
+
+        check.isRunning = false;
+      }
+
+      this.isRunning = false;
     }
   },
 
