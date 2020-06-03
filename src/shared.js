@@ -1,5 +1,7 @@
 import Vue from 'vue'
 
+const imdbScraperTests = require('./imdb-scraper-tests');
+
 const shared = new Vue({
   data: {
     sidenav: null,
@@ -267,6 +269,99 @@ const shared = new Vue({
         enabled: true,
         description: 'Filming Locations'
       }
+    ],
+
+    imdbScraperChecks: [
+      {
+        key: 'rescanMoviesMetaData_fetchIMDBMetaData_mainPageData',
+        description: 'Main Page (Genres, Rating/Votes, Metacritic Score, Poster, Plot Summary, Trailer URL)',
+        enabled: true,
+        checkFunction: imdbScraperTests.testIMDBmainPageData
+      },
+      {
+        key: 'rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics',
+        description: 'Ratings (Rating by Demographics, e.g. Ages, Male/Female, US/Non-US)',
+        enabled: true,
+        checkFunction: imdbScraperTests.testIMDBRatingDemographics
+      },
+      {
+        key: 'rescanMoviesMetaData_fetchIMDBMetaData_plotSummary',
+        description: 'Full Plot Summary (Main Page only contains an extract of the full summary)',
+        enabled: true,
+        checkFunction: imdbScraperTests.testIMDBplotSummary
+      },
+      {
+        key: 'rescanMoviesMetaData_fetchIMDBMetaData_plotKeywords',
+        description: 'Plot Keywords',
+        enabled: true,
+        checkFunction: imdbScraperTests.testIMDBplotKeywords
+      },
+      {
+        key: 'rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo',
+        description: 'Release Info (Title, Localized Title, Original Title, Year)',
+        enabled: true,
+        checkFunction: imdbScraperTests.testIMDBreleaseinfo
+      },
+      {
+        key: 'rescanMoviesMetaData_fetchIMDBMetaData_technicalData',
+        description: 'Technical Data (Runtime)',
+        enabled: true,
+        checkFunction: imdbScraperTests.testIMDBtechnicalData
+      },
+      {
+        key: 'rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData',
+        description: 'Parental Guide (Age Rating, Levels of: Nudity, Violence, Profanity, Alcohol & Drugs, Frightening Scenes)',
+        enabled: true,
+        checkFunction: imdbScraperTests.testIMDBParentalGuideData
+      },
+      {
+        key: 'rescanMoviesMetaData_fetchIMDBMetaData_creditsData',
+        description: 'Credits',
+        enabled: true,
+        checkFunction: imdbScraperTests.testIMDBFullCreditsData
+      },
+      {
+        key: 'rescanMoviesMetaData_fetchIMDBMetaData_companiesData',
+        description: 'Companies',
+        enabled: true,
+        checkFunction: imdbScraperTests.testIMDBCompaniesData
+      },
+      {
+        key: 'rescanMoviesMetaData_fetchIMDBMetaData_filmingLocations',
+        description: 'Filming Locations',
+        enabled: true,
+        checkFunction: imdbScraperTests.testIMDBFilmingLocations
+      },
+      {
+        key: 'adhoc_PersonData',
+        description: 'Person Data (Ad-Hoc)',
+        enabled: true,
+        checkFunction: imdbScraperTests.testIMDBPersonData
+      },
+      {
+        key: 'adhoc_TrailerMediaURLs',
+        description: 'Trailer Media URLs (Ad-Hoc)',
+        enabled: true,
+        checkFunction: imdbScraperTests.testIMDBTrailerMediaURLs
+      },
+      {
+        key: 'adhoc_Suggestion',
+        description: 'Suggestion Search (Ad-Hoc)',
+        enabled: true,
+        checkFunction: imdbScraperTests.testIMDBSuggestion
+      },
+      {
+        key: 'adhoc_AdvancedTitleSearch',
+        description: 'Advanced Title Search (Ad-Hoc)',
+        enabled: true,
+        checkFunction: imdbScraperTests.testIMDBAdvancedTitleSearch
+      },
+      {
+        key: 'adhoc_FindSearch',
+        description: 'Find (Ad-Hoc)',
+        enabled: true,
+        checkFunction: imdbScraperTests.testIMDBFind
+      },
     ]
   }
 })

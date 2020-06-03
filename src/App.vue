@@ -624,6 +624,11 @@
           v-on:ok="onScanOptionsDialogOK"
         ></mk-scan-options-dialog>
 
+        <mk-check-imdb-scraper-dialog
+          ref="checkIMDBScraperDialog"
+          v-bind:show="checkIMDBScraperDialog.show"
+        ></mk-check-imdb-scraper-dialog>
+
         <!-- BOTTOM BAR -->
         <v-bottom-navigation
           fixed
@@ -690,6 +695,7 @@ import Dialog from "@/components/shared/Dialog.vue";
 import SearchDataDialog from "@/components/shared/SearchDataDialog.vue";
 import ScanOptionsDialog from "@/components/shared/ScanOptionsDialog.vue";
 import VersionDialog from "@/components/shared/VersionDialog.vue";
+import CheckIMDBScraperDialog from "@/components/shared/CheckIMDBScraperDialog.vue";
 
 export default {
   components: {
@@ -699,7 +705,8 @@ export default {
     "mk-search-plot-keywords-dialog": SearchDataDialog,
     "mk-search-filming-locations-dialog": SearchDataDialog,
     "mk-scan-options-dialog": ScanOptionsDialog,
-    "mk-version-dialog": VersionDialog
+    "mk-version-dialog": VersionDialog,
+    "mk-check-imdb-scraper-dialog": CheckIMDBScraperDialog
   },
 
   props: {
@@ -782,6 +789,11 @@ export default {
 
     versionDialog: {
       show: true
+    },
+
+    checkIMDBScraperDialog: {
+      show: false,
+      settings: null
     }
   }),
 
@@ -1719,6 +1731,11 @@ export default {
     eventBus.$on("openVersionDialog", () => {
       this.checkVersion();
       this.versionDialog.show = true;
+    });
+
+    eventBus.$on("openCheckIMDBScraperDialog", (settings) => {
+      this.$refs.checkIMDBScraperDialog.init(settings);
+      this.checkIMDBScraperDialog.show = true;
     });
 
     // eventBus.scanInfoShow('KILLME', 'Asterix und das Geheimnis des Zaubertranks ~ Astérix - Le secret de la potion magique (De)(BD)[2018][Adventure, Animation, Comedy][6.9 @ 3074][tt8001346].mkv');

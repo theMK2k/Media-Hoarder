@@ -66,6 +66,7 @@
         </v-row>
 
         <v-btn text small color="primary" v-on:click="openVersionDialog">Show Version Info</v-btn>
+        <v-btn text small color="primary" v-on:click="openCheckIMDBScraperDialog">Check IMDB Scraper</v-btn>
         <v-btn text small color="primary" v-on:click="openDevTools">Open DevTools</v-btn>
       </v-tab-item>
 
@@ -1048,6 +1049,10 @@ export default {
 
     openVersionDialog() {
       eventBus.openVersionDialog();
+    },
+
+    openCheckIMDBScraperDialog() {
+      eventBus.openCheckIMDBScraperDialog();
     }
   },
 
