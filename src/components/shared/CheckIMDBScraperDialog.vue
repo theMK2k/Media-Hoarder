@@ -6,21 +6,21 @@
           IMDB Scraper Check
           <v-spacer></v-spacer>
 
-          <v-btn text v-on:click="runChecks"
+          <v-btn
+            text
+            v-on:click="onRunChecksPressed"
             v-bind:loading="isRunning"
             v-if="!settings"
-          >
-            Run Checks
-          </v-btn>
-          <v-btn text v-on:click="$emit('close')">Close</v-btn>
+          >Run Checks</v-btn>
+          <v-btn text v-if="!settings" v-bind:disabled="isRunning" v-on:click="$emit('close')">Close</v-btn>
         </v-row>
       </v-card-title>
 
       <v-card-text>
+        The imdb.com web scraper is tested using a test-set of example data. This way we can assure that the data from imdb.com will be correctly scraped.
         <v-row
           v-for="check in imdbScraperChecksFiltered"
           v-bind:key="check.key"
-          class="Clickable"
           style="align-items: center"
         >
           <v-btn
@@ -32,9 +32,42 @@
           >
             <v-icon>{{check.icon}}</v-icon>
           </v-btn>
-          {{check.description}}
+          <span style="color: white">{{check.description}}</span>
+          <div v-if="check.result && check.result.log">
+            <li
+              v-for="(logEntry, index) in check.result.log"
+              v-bind:key="index"
+              style="margin-left: 52px"
+            >{{logEntry}}</li>
+          </div>
         </v-row>
+
+        <div v-if="!isRunning" style="margin-left: -14px">
+          <v-alert
+            type="success"
+            colored-border
+            border="left"
+            v-if="checkResult === 0"
+          >All checks successful!</v-alert>
+          <v-alert
+            type="warning"
+            colored-border
+            border="left"
+            v-if="checkResult === 1"
+          >Checks with warning detected!</v-alert>
+          <v-alert
+            type="error"
+            colored-border
+            border="left"
+            v-if="checkResult === 2"
+          >Checks with error detected!</v-alert>
+        </div>
       </v-card-text>
+
+      <v-card-actions v-if="settings && !isRunning">
+        <v-btn text v-on:click="$emit('close')">Cancel</v-btn>
+        <v-btn text v-on:click="$emit('ok')">{{okButtonText}}</v-btn>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
@@ -46,7 +79,7 @@
 const logger = require("loglevel");
 // const { shell } = require("electron").remote;
 
-const imdbScraperTests = require('@/imdb-scraper-tests');
+const imdbScraperTests = require("@/imdb-scraper-tests");
 
 // import * as store from "@/store";
 
@@ -58,7 +91,9 @@ export default {
   data() {
     return {
       settings: null,
-      isRunning: false
+      isRunning: false,
+      okButtonText: "OK",
+      checkResult: null
     };
   },
 
@@ -72,43 +107,68 @@ export default {
     init(settings) {
       this.settings = settings;
       this.isRunning = false;
+      this.okButtonText = "OK";
+      this.checkResult = null;
 
       this.$shared.imdbScraperChecks.forEach(check => {
-        check.enabled = true;
+        check.enabled = this.settings
+          ? this.settings.userScanOptions.find(
+              userScanOption =>
+                userScanOption.key === check.key && userScanOption.enabled
+            )
+          : true;
         check.icon = null;
         check.color = null;
         check.isRunning = false;
         check.result = null;
       });
 
-      // TODO: set enabled = false if settings are available
+      if (this.settings && !this.isRunning) {
+        this.runChecks();
+      }
+    },
+
+    onRunChecksPressed() {
+      this.init(this.settings);
+      this.runChecks();
     },
 
     async runChecks() {
-      this.init(this.settings);
-      
       this.isRunning = true;
 
       for (let i = 0; i < this.imdbScraperChecksFiltered.length; i++) {
         const check = this.imdbScraperChecksFiltered[i];
-        
+
         check.isRunning = true;
-        
+
         check.result = await check.checkFunction();
 
-        logger.log('check result:', check.result);
+        logger.log("check result:", check.result);
 
         if (check.result.status === imdbScraperTests.status.SUCCESS) {
-          check.color = 'green';
-          check.icon = 'mdi-check-circle-outline';
+          check.color = "green";
+          check.icon = "mdi-check-circle-outline";
+
+          if (!this.checkResult) {
+            this.checkResult = imdbScraperTests.status.SUCCESS;
+            this.okButtonText = "OK - Scan Media Now";
+          }
         }
         if (check.result.status === imdbScraperTests.status.WARNING) {
-          check.color = 'yellow';
-          check.icon = 'mdi-alert-circle-outline';
+          check.color = "yellow";
+          check.icon = "mdi-alert-circle-outline";
+
+          if (this.checkResult !== imdbScraperTests.status.ERROR) {
+            this.checkResult = imdbScraperTests.status.WARNING;
+            this.okButtonText = "Ignore Warning - Scan Media Now";
+          }
         }
         if (check.result.status === imdbScraperTests.status.ERROR) {
-          check.color = 'red';
-          check.icon = 'mdi-close-circle-outline';
+          check.color = "red";
+          check.icon = "mdi-alert-circle-outline";
+
+          this.checkResult = imdbScraperTests.status.ERROR;
+          this.okButtonText = "Ignore Error - Scan Media Now";
         }
 
         check.isRunning = false;

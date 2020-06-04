@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Home</h1>
+    <h1 style="margin-left: 8px">Home</h1>
 
     <v-btn
       v-for="item in items"

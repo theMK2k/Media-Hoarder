@@ -11,13 +11,10 @@
         <div class="headline" style="width: 100%; font-size: 1.17em">Scan Media</div>
       </v-card-title>
       <v-card-text>
-        <v-alert
-          type="warning"
-          colored-border
-          border="left"
-          v-if="showMediaInfoWarning"
-          dense
-        >Warning: Mediainfo CLI Path is not set. Please go to <a v-on:click="openSettings">Settings</a> and provide one. You can get Mediainfo CLI from www.mediaarea.net</v-alert>
+        <v-alert type="warning" colored-border border="left" v-if="showMediaInfoWarning" dense>
+          Warning: Mediainfo CLI Path is not set. Please go to
+          <a v-on:click="openSettings">Settings</a> and provide one. You can get Mediainfo CLI from www.mediaarea.net
+        </v-alert>
 
         <v-radio-group v-model="radioGroup">
           <v-radio label="Quick Scan" v-bind:value="1" color="dark-grey"></v-radio>
@@ -42,24 +39,34 @@
           </ul>
         </div>
 
-        <v-expansion-panels accordion>
+        <v-expansion-panels accordion style="margin-top: 16px">
           <v-expansion-panel style="padding: 0px!important">
-              <v-expansion-panel-header
-                style="padding: 8px!important"
-              >IMDB Scraper Options {{imdbOptionsTitle}}</v-expansion-panel-header>
-              <v-expansion-panel-content>
-                <v-col>
-                  <v-checkbox v-for="userScanOption in $shared.userScanOptions" v-bind:key="userScanOption.key"
-                    v-model="userScanOption.enabled"
-                    v-bind:label="userScanOption.description"
-                    style="margin: 0px"
-                    color="dark-grey"
-                  ></v-checkbox>
-                </v-col>
-              </v-expansion-panel-content>
+            <v-expansion-panel-header
+              style="padding: 8px!important"
+            >IMDB Scraper Options {{imdbOptionsTitle}}</v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-col>
+                <v-checkbox
+                  v-for="userScanOption in $shared.userScanOptions"
+                  v-bind:key="userScanOption.key"
+                  v-model="userScanOption.enabled"
+                  v-bind:label="userScanOption.description"
+                  style="margin: 0px"
+                  color="dark-grey"
+                ></v-checkbox>
+              </v-col>
+            </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
 
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <span v-on="on">
+              <v-checkbox v-model="performCheck" label="Perform an IMDB Scraper Check before Scan" color="dark-grey"></v-checkbox>
+            </span>
+          </template>
+          <span>Mediabox scrapes imdb.com website data in order to build up the database. If imdb.com changes their website this process may fail in some aspects. This scraper check will identify potential problems.</span>
+        </v-tooltip>
 
         <div style="height: 16px"></div>
 
@@ -92,7 +99,10 @@
               v-on:click.native="onOKClick"
               v-bind:loading="isLoading"
               style="margin-left: 8px;"
-            >OK <span v-if="missingSourcePaths && missingSourcePaths.length > 0">, I take the risk</span></v-btn>
+            >
+              OK
+              <span v-if="missingSourcePaths && missingSourcePaths.length > 0">, I take the risk</span>
+            </v-btn>
           </v-row>
         </v-col>
       </v-card-actions>
@@ -115,14 +125,15 @@ export default {
       isLoading: true,
       radioGroup: 1,
       missingSourcePaths: [],
-      showMediaInfoWarning: false
+      showMediaInfoWarning: false,
+      performCheck: true
     };
   },
 
   computed: {
     imdbOptionsTitle() {
-      logger.log('imdbOptionsTitle START');
-      
+      logger.log("imdbOptionsTitle START");
+
       if (
         this.$shared.userScanOptions.findIndex(
           scanOption => !scanOption.enabled
@@ -141,9 +152,8 @@ export default {
 
       return (
         "(" +
-        this.$shared.userScanOptions.filter(
-          scanOption => scanOption.enabled
-        ).length +
+        this.$shared.userScanOptions.filter(scanOption => scanOption.enabled)
+          .length +
         "/" +
         this.$shared.userScanOptions.length +
         ")"
@@ -157,21 +167,19 @@ export default {
     },
 
     onOKClick() {
-      this.$emit("ok", this.radioGroup);
+      this.$emit("ok", { radioGroup: this.radioGroup, performCheck: this.performCheck });
     },
 
     async init() {
       this.isLoading = true;
-      
+
       store.resetUserScanOptions();
-      
+
       this.missingSourcePaths = await store.findMissingSourcePaths();
 
-      logger.log('this.missingSourcePaths:', this.missingSourcePaths);
+      logger.log("this.missingSourcePaths:", this.missingSourcePaths);
 
-      this.showMediaInfoWarning =  (await store.getSetting(
-        "MediainfoPath"
-      ))
+      this.showMediaInfoWarning = (await store.getSetting("MediainfoPath"))
         ? false
         : true;
 

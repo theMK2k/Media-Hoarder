@@ -524,7 +524,6 @@
                 </v-row>
               </v-expansion-panel-content>
             </v-expansion-panel>
-
           </v-expansion-panels>
         </div>
 
@@ -628,6 +627,7 @@
           ref="checkIMDBScraperDialog"
           v-bind:show="checkIMDBScraperDialog.show"
           v-on:close="onCheckIMDBScraperDialogClose"
+          v-on:ok="onCheckIMDBScraperDialogOK"
         ></mk-check-imdb-scraper-dialog>
 
         <!-- BOTTOM BAR -->
@@ -728,6 +728,10 @@ export default {
       show: false,
       header: "",
       details: ""
+    },
+
+    scanOptions: {
+      onlyNew: false
     },
 
     snackbar: {
@@ -1532,14 +1536,27 @@ export default {
       this.scanOptionsDialog.show = false;
     },
 
-    onScanOptionsDialogOK(chosenMethod) {
-      const onlyNew = chosenMethod === 1;
+    onScanOptionsDialogOK({ radioGroup, performCheck }) {
+      const onlyNew = radioGroup === 1; // radioGroup is the chosen method
 
-      logger.log("chosen Scan Option:", chosenMethod, "onlyNew:", onlyNew);
-
-      store.rescan(onlyNew);
+      logger.log("chosen Scan Option:", radioGroup, "onlyNew:", onlyNew);
 
       this.scanOptionsDialog.show = false;
+
+      if (!performCheck) {
+        // just rescan without IMDB Scraper Check
+        store.rescan(onlyNew);
+        return;
+      }
+
+      // perform IMDB Scraper Check before scan
+      const settings = {
+        userScanOptions: shared.userScanOptions
+      };
+
+      this.scanOptions.onlyNew = onlyNew;
+
+      this.showCheckIMDBScraperDialog(settings);
     },
 
     filterParentalAdvisoryCategoryTitle(category) {
@@ -1567,7 +1584,6 @@ export default {
         ")"
       );
     },
-
 
     addPerson() {
       this.searchPersonsDialog.show = true;
@@ -1627,6 +1643,12 @@ export default {
 
     onCheckIMDBScraperDialogClose() {
       this.checkIMDBScraperDialog.show = false;
+    },
+
+    onCheckIMDBScraperDialogOK() {
+      this.checkIMDBScraperDialog.show = false;
+      store.rescan(this.scanOptions.onlyNew);
+      return;
     }
   },
 
@@ -1738,7 +1760,10 @@ export default {
       }
 
       if (setFilter.filterIMDBFilmingLocations) {
-        this.setAllIMDBFilmingLocations(false, setFilter.filterIMDBFilmingLocations);
+        this.setAllIMDBFilmingLocations(
+          false,
+          setFilter.filterIMDBFilmingLocations
+        );
       }
     });
 
@@ -1747,7 +1772,7 @@ export default {
       this.versionDialog.show = true;
     });
 
-    eventBus.$on("openCheckIMDBScraperDialog", (settings) => {
+    eventBus.$on("openCheckIMDBScraperDialog", settings => {
       this.showCheckIMDBScraperDialog(settings);
     });
 
