@@ -13,6 +13,20 @@ OK  - let user define preferred (local) Regions to identify the primary title
 OK  -> fetch Countries from https://www.imdb.com/search/title/ and provide as list
 OK  -> Auto set region by user's localization setting?
 
+## IMDB Scraper Checks / Watchdog
+
+OK - put all IMDB scraping functions from store.js into imdb-scraper.js
+OK - create a watchdog CLI which tests imdb-scraper.js
+      - creates an error report
+      - sends an email on error
+      - saves status on web location (client can then check the status)
+    OK -> start with "npm run imdb-scraper-watchdog"
+OK - Implement test-framework callable in app and also in imdb-scraper-watchdog
+OK - Implement IMDB Scraper Checks Dialog, usable from
+OK    - Settings (via Button)
+OK    - after Scan Options Dialog and before actual Scan
+
+
 ## Filming Locations
 OK - add as section in MediaLists
 OK - add filter

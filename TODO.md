@@ -8,22 +8,25 @@ OK -> we have a memory leak using eventBus.$on -> implement eventBus.$off on bef
 -> we still have the memory leak: don't fetch all data at once (re-fetch for each page)
 OK -> check if memory leak is only in dev-mode (yes, it still persists even in prod-mode)
 
-## IMDB Scraper Watchdog
-
-OK - put all IMDB scraping functions from store.js into imdb-scraper.js
-WIP - create a watchdog CLI which tests imdb-scraper.js
-      - creates an error report
-      - sends an email on error
-      - saves status on web location (client can then check the status)
-    OK -> start with "npm run imdb-scraper-watchdog"
-
-OK - Implement test-framework callable in app and also in imdb-scraper-watchdog
+## Harden fetch from web
 - How should we handle ECONNRESET? maybe request-retry?
+- How can we test this?
 
 ## scrapeIMDBSuggestion - use alternative search method
 
 - currently we use the suggestion API which doesn't support non-latin names
 - maybe we should use `https://www.imdb.com/find?q=` (which is IMDB search incl. ENTER)?
+
+## I18N - Basic
+- implement vue-i18n
+- Add UI-Language Selection in Settings
+- support all languages supported by DeepL (API):
+    en, de, fr, es, it, nl, pl, ja, pt-PT, pt-BR, ru, zh
+
+## I18N - Advanced
+- Create AWS-based Service for automatic translation
+  - Integrate with DeepL API
+  - Integrate Payment API (sorry, but DeepL is great but also wants some cash)
 
 ## Mediainfo Languages
 

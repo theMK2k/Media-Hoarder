@@ -11,6 +11,7 @@ const remote = require("electron").remote;
 
 import router from '@/router'
 import { shared } from '@/shared'
+import i18n from './i18n'
 
 Vue.use(Vuetify)
 
@@ -19,7 +20,9 @@ Vue.use(shared);
 Vue.config.productionTip = false
 
 export const eventBus = new Vue({
-	methods: {
+    i18n,
+
+    methods: {
 		scanInfoOff() {
 			this.$emit('scanInfoOff');
 		},
