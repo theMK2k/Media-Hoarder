@@ -1,3 +1,66 @@
 {
-  "message": "hello i18n !!"
+  "general": {
+    "appName": "MediaBox",
+    "OK": "OK",
+    "Cancel": "Cancel"
+  },
+
+  "App": {
+    "Settings": "Settings",
+    "ScanMedia": "Scan Media",
+    "CancelScan": "Cancel Scan",
+    "Filters": "Filters",
+    "SourcePaths": "Source Paths",
+    "SETNONE": "SET NONE",
+    "SETALL": "SET ALL",
+    "VideoQuality": "Video Quality",
+    "AudioLanguages": "Audio Languages",
+    "SubtitleLanguages": "Subtitle Languages",
+    "MyLists": "My Lists",
+    "MyRatings": "My Ratings",
+    "MetacriticScores": "Metacritic Scores",
+    "IMDBRatings": "IMDB Ratings",
+    "Genres": "Genres",
+    "AgeRatings": "Age Ratings",
+    "ContentAdvisories": "Content Advisories",
+    "Persons": "Persons",
+    "allSelectedMustApply": "all selected must apply",
+    "oneSelectedMustApply": "one selected must apply",
+    "Companies": "Companies",
+    "ReleaseYears": "Release Years",
+    "PlotKeywords": "Plot Keywords",
+    "FIND": "FIND",
+    "FilmingLocations": "Filming Locations",
+    "DeleteList": "Delete List",
+    "doYouReallyWantToDeleteTheList": "Do you really want to delete the list",
+    "YESDelete": "YES, Delete",
+    "FindCompany": "Find Company",
+    "FindPlotKeyword": "Find Plot Keyword",
+    "FindFilmingLocation": "Find Filming Location",
+    "FindPerson": "Find Person",
+    "ParentalAdvisoryCategories": {
+      "Nudity": "Sex & Nudity",
+      "Violence": "Violence & Gore",
+      "Profanity": "Profanity",
+      "Alcohol": "Alcohol, Drugs & Smoking",
+      "Frightening": "Frightening & Intense Scenes"
+    },
+    "ParentalAdvisoryLevels": {
+      "<not available>": "<not available>",
+      "None": "None",
+      "Mild": "Mild",
+      "Moderate": "Moderate",
+      "Severe": "Severe"
+    },
+    "Quit": "Quit",
+    "SearchDotDotDot": "Search...",
+    "ALL": "ALL",
+    "NONE": "NONE",
+    "not yet rated": "not yet rated",
+    "include entries with no metacritic score": "include entries with no metacritic score",
+    "include entries with no IMDB rating": "include entries with no IMDB rating",
+    "none provided": "none provided",
+    "List {name} removed": "List {name} removed",
+    "unknown text": "unknown text"
+  }
 }

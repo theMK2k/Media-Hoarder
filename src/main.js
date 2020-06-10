@@ -129,6 +129,7 @@ export const eventBus = new Vue({
 });
 
 new Vue({
+	i18n,
 	router,
 	vuetify: new Vuetify({ iconfont: 'mdi' }),
 	render: h => h(App),
