@@ -3,24 +3,25 @@
     <h1>
       <v-btn text v-on:click="$router.go(-1)">
         <v-icon>mdi-arrow-left</v-icon>
-      </v-btn>Settings
+      </v-btn>
+      {{$t("general.Settings")}}
     </h1>
 
     <v-tabs color="white">
-      <v-tab>General</v-tab>
-      <v-tab>Movies</v-tab>
-      <v-tab>Series</v-tab>
-      <v-tab>Duplicates</v-tab>
-      <v-tab>Regions</v-tab>
-      <v-tab>Languages</v-tab>
-      <v-tab>Title Types</v-tab>
+      <v-tab>{{$t("Settings.General")}}</v-tab>
+      <v-tab>{{$t("general.Movies")}}</v-tab>
+      <v-tab>{{$t("general.Series")}}</v-tab>
+      <v-tab>{{$t("Settings.Duplicates")}}</v-tab>
+      <v-tab>{{$t("Settings.Regions")}}</v-tab>
+      <v-tab>{{$t("Settings.Languages")}}</v-tab>
+      <v-tab>{{$t("Settings.Title Types")}}</v-tab>
 
       <!-- GENERAL -->
       <v-tab-item style="padding: 8px">
         <v-row class="settings-row">
           <v-text-field
             readonly
-            label="Media Player Path (e.g. path to VLC executable)"
+            v-bind:label="$t('Settings.Media Player Path')"
             v-model="MediaplayerPath"
           ></v-text-field>
           <v-btn
@@ -29,13 +30,13 @@
             small
             color="primary"
             style="margin-top: 16px"
-          >Browse</v-btn>
+          >{{$t("Settings.Browse")}}</v-btn>
         </v-row>
 
         <v-row class="settings-row">
           <v-text-field
             readonly
-            label="Mediainfo CLI Path (i.e. path to Mediainfo CLI executable from mediaarea.net or mediainfo-rar from lundman.net)"
+            v-bind:label="$t('Settings.Mediainfo CLI Path')"
             v-model="MediainfoPath"
           ></v-text-field>
           <v-btn
@@ -44,20 +45,20 @@
             small
             color="primary"
             style="margin-top: 16px"
-          >Browse</v-btn>
+          >{{$t("Settings.Browse")}}</v-btn>
         </v-row>
 
         <v-row class="settings-row">
           <v-text-field
             type="number"
-            label="Number of seconds a medium should run until 'last access' is updated"
+            v-bind:label="$t('Settings.Number of seconds a medium should run until last access is updated')"
             v-model="minimumWaitForSetAccess"
           ></v-text-field>
         </v-row>
 
         <v-row class="settings-row">
           <v-select
-            label="IMDB Rating Demographic"
+            v-bind:label="$t('Settings.IMDB Rating Demographic')"
             item-text="long"
             item-value="code"
             v-model="$shared.imdbRatingDemographic"
@@ -65,20 +66,30 @@
           ></v-select>
         </v-row>
 
-        <v-btn text small color="primary" v-on:click="openVersionDialog">Show Version Info</v-btn>
-        <v-btn text small color="primary" v-on:click="openCheckIMDBScraperDialog">Check IMDB Scraper</v-btn>
-        <v-btn text small color="primary" v-on:click="openDevTools">Open DevTools</v-btn>
+        <v-btn
+          text
+          small
+          color="primary"
+          v-on:click="openVersionDialog"
+        >{{$t("Settings.Show Version Info")}}</v-btn>
+        <v-btn
+          text
+          small
+          color="primary"
+          v-on:click="openCheckIMDBScraperDialog"
+        >{{$t("Settings.Check IMDB Scraper")}}</v-btn>
+        <v-btn text small color="primary" v-on:click="openDevTools">{{$t("Settings.Open DevTools")}}</v-btn>
       </v-tab-item>
 
       <!-- MOVIES -->
       <v-tab-item style="padding: 8px">
-        <h3>Movies - Source Paths</h3>
+        <h3>{{$t("general.Movies")}} - {{$t("general.Source Paths")}}</h3>
         <v-alert
           type="warning"
           colored-border
           border="left"
           v-if="moviesSourcePaths.length == 0"
-        >no paths defined</v-alert>
+        >{{$t("Settings.no paths defined")}}</v-alert>
 
         <div
           v-for="sourcePath in moviesSourcePaths"
@@ -92,18 +103,23 @@
           ></mk-sourcepath>
         </div>
 
-        <v-btn text small color="primary" v-on:click="addSource('movies')">Add Source Path</v-btn>
+        <v-btn
+          text
+          small
+          color="primary"
+          v-on:click="addSource('movies')"
+        >{{$t("Settings.Add Source Path")}}</v-btn>
       </v-tab-item>
 
       <!-- SERIES -->
       <v-tab-item style="padding: 8px">
-        <h3>Series - Sourcepaths</h3>
+        <h3>{{$t("general.Series")}} - {{$t("general.Source Paths")}}</h3>
         <v-alert
           type="warning"
           colored-border
           border="left"
           v-if="tvSourcePaths.length == 0"
-        >no paths defined</v-alert>
+        >{{$t("Settings.no paths defined")}}</v-alert>
 
         <div
           v-for="sourcePath in tvSourcePaths"
@@ -117,29 +133,34 @@
           ></mk-sourcepath>
         </div>
 
-        <v-btn text small color="primary" v-on:click="addSource('tv')">Add Source Path</v-btn>
+        <v-btn
+          text
+          small
+          color="primary"
+          v-on:click="addSource('tv')"
+        >{{$t("Settings.Add Source Path")}}</v-btn>
       </v-tab-item>
 
       <!-- DUPLICATES -->
       <v-tab-item style="padding: 8px">
         <i>
-          <p>These settings describe how MediaBox should handle duplicates.</p>
-          <p>You may have duplicates in the following scenarios:</p>
+          <p>{{$t('Settings.These settings describe how {appName} should handle duplicates', {appName: $t('general.appName')})}}</p>
+          <p>{{$t('Settings.You may have duplicates in the following scenarios')}}</p>
           <ul>
-            <li>same file on a remote server and the local machine</li>
-            <li>same movie but in different formats (e.g. SD, HD and 4k)</li>
+            <li>{{$t('Settings.same file on a remote server and the local machine')}}</li>
+            <li>{{$t('Settings.same media but in different formats')}}</li>
           </ul>
         </i>
 
         <v-card style="width: 100%; margin-top:8px">
-          <h3>Actual Duplicates</h3>
+          <h3>{{$t('Settings.Actual Duplicates')}}</h3>
           <i>
-            <p>An actual duplicate is identified by the same filename and filesize.</p>
+            <p>{{$t('Settings.An actual duplicate is identified by the same filename and filesize')}}</p>
           </i>
-          <p>With actual duplicates, MediaBox should also ...</p>
+          <p>{{$t('Settings.With actual duplicates, {appName} should also', {appName: $t('general.appName')})}}</p>
 
           <v-checkbox
-            label="relink IMDB"
+            v-bind:label="$t('Settings.relink IMDB')"
             style="margin: 0px"
             color="dark-grey"
             dense
@@ -147,7 +168,7 @@
             v-on:click.native="duplicatesHandlingChanged"
           ></v-checkbox>
           <v-checkbox
-            label="add to list"
+            v-bind:label="$t('Settings.add to list')"
             style="margin: 0px"
             color="dark-grey"
             dense
@@ -155,7 +176,7 @@
             v-on:click.native="duplicatesHandlingChanged"
           ></v-checkbox>
           <v-checkbox
-            label="update title"
+            v-bind:label="$t('Settings.update primary title')"
             style="margin: 0px"
             color="dark-grey"
             dense
@@ -163,7 +184,7 @@
             v-on:click.native="duplicatesHandlingChanged"
           ></v-checkbox>
           <v-checkbox
-            label="update secondary title"
+            v-bind:label="$t('Settings.update secondary title')"
             style="margin: 0px"
             color="dark-grey"
             dense
@@ -171,7 +192,7 @@
             v-on:click.native="duplicatesHandlingChanged"
           ></v-checkbox>
           <v-checkbox
-            label="update rating"
+            v-bind:label="$t('Settings.update rating')"
             style="margin: 0px"
             color="dark-grey"
             dense
@@ -179,7 +200,7 @@
             v-on:click.native="duplicatesHandlingChanged"
           ></v-checkbox>
           <v-checkbox
-            label="update last access"
+            v-bind:label="$t('Settings.update last access')"
             style="margin: 0px"
             color="dark-grey"
             dense
@@ -189,14 +210,14 @@
         </v-card>
 
         <v-card style="width: 100%; margin-top:8px">
-          <h3>Meta Duplicates</h3>
+          <h3>{{$t('Settings.Meta Duplicates')}}</h3>
           <i>
-            <p>A meta duplicate is identified by having the same IMDB link. This can happen if you have the same movie in different formats (e.g. SD, HD, 4k).</p>
+            <p>{{$t('Settings.A meta duplicate is identified by having the same IMDB link_ This can happen if you have the same movie in different formats')}}</p>
           </i>
-          <p>With meta duplicates, MediaBox should also ...</p>
+          <p>{{$t('Settings.With meta duplicates, {appName} should also', {appName: $t('general.appName')})}}</p>
 
           <v-checkbox
-            label="add to list"
+            v-bind:label="$t('Settings.add to list')"
             style="margin: 0px"
             color="dark-grey"
             dense
@@ -204,7 +225,7 @@
             v-on:click.native="duplicatesHandlingChanged"
           ></v-checkbox>
           <v-checkbox
-            label="update rating"
+            v-bind:label="$t('Settings.update rating')"
             style="margin: 0px"
             color="dark-grey"
             dense
@@ -217,17 +238,17 @@
       <!-- REGIONS -->
       <v-tab-item style="padding: 8px">
         <i>
-          <p>The regions and their sequence defined here will be used for the Primary Title of the movies as well as the age rating.</p>
-          <p>If a particular movie does not have a title for one of these regions, the Original Title of the movie is used. Else, the Original Title will be used as Secondary Title if it is different.</p>
+          <p>{{$t('Settings.The regions and their sequence defined here will be used for the Primary Title of the media as well as the age rating')}}</p>
+          <p>{{$t('Settings.If a particular movie does not have a title for one of these regions, the Original Title of the movie is used Else, the Original Title will be used as Secondary Title if it is different')}}</p>
         </i>
 
         <v-alert type="warning" colored-border border="left" v-if="$shared.regions.length === 0">
           <span
             v-if="$shared.regions.length === 0 && $shared.fallbackRegion"
-          >You currently don't have a region set up. MediaBox will fall back to your system's locale: {{ $shared.fallbackRegion.name }}.</span>
+          >{{$t('Settings.You currently don_t have a region set up_ {appName} will fall back to your system_s locale_', {appName: $t('general.appName')})}} {{ $shared.fallbackRegion.name }}.</span>
           <span
             v-if="$shared.regions.length === 0 && !$shared.fallbackRegion"
-          >You currently don't have a region set up. MediaBox will fall back to the original title.</span>
+          >{{$t('Settings.You currently don_t have a region set up_ {appName} will fall back to the original title_', {appName: $t('general.appName')})}}</span>
         </v-alert>
 
         <div>
@@ -261,15 +282,15 @@
           </div>
         </div>
 
-        <v-btn text small color="primary" v-on:click="openAddRegionsDialog">Add Regions</v-btn>
+        <v-btn text small color="primary" v-on:click="openAddRegionsDialog">{{$t('Settings.Add Regions')}}</v-btn>
       </v-tab-item>
 
       <!-- LANGUAGES -->
       <v-tab-item style="padding: 8px">
-        <h3>Languages of the Primary Title</h3>
+        <h3>{{$t('Settings.Languages of the Primary Title')}}</h3>
 
         <i>
-          <p>The languages and their sequence defined here will be used for the Primary Title of the movies.</p>
+          <p>{{$t('Settings.The languages and their sequence defined here will be used for the Primary Title of the media_')}}</p>
         </i>
 
         <v-alert
@@ -280,10 +301,10 @@
         >
           <span
             v-if="$shared.fallbackLanguage"
-          >You currently don't have a language for the Primary Title set up. MediaBox will fall back to your system's locale: {{ $shared.fallbackLanguage.DisplayText }}.</span>
+          >{{$t('Settings.You currently don_t have a language for the Primary Title set up_ {appName} will fall back to your system_s locale_', {appName: $t('general.appName')})}} {{ $shared.fallbackLanguage.DisplayText }}.</span>
           <span
             v-if="!$shared.fallbackLanguage"
-          >You currently don't have a language for the Primary Title set up. MediaBox will fall back to the original title.</span>
+          >{{$t('Settings.You currently don_t have a language for the Primary Title set up_ {appName} will fall back to the original title_', {appName: $t('general.appName')})}}</span>
         </v-alert>
 
         <div>
@@ -322,12 +343,12 @@
           small
           color="primary"
           v-on:click="openAddLanguagesDialog('languagesPrimaryTitle')"
-        >Add Language</v-btn>
+        >{{$t('Settings.Add Languages')}}</v-btn>
 
-        <h3>Languages for Audio and Subtitles</h3>
+        <h3>{{$t('Settings.Languages for Audio and Subtitles')}}</h3>
 
         <i>
-          <p>The languages and their sequence defined here will be used to show which audio and subtitle languages your movies contain.</p>
+          <p>{{$t('Settings.The languages and their sequence defined here will be used to show which audio and subtitle languages your media contain_')}}</p>
         </i>
 
         <v-alert
@@ -338,10 +359,10 @@
         >
           <span
             v-if="$shared.fallbackLanguage"
-          >You currently don't have a language for Audio and Subtitles set up. MediaBox will fall back to your system's locale: {{ $shared.fallbackLanguage.DisplayText }}.</span>
+          >{{$t('Settings.You currently don_t have a language for Audio and Subtitles set up_ {appName} will fall back to your system_s locale_', {appName: $t('general.appName') })}} {{ $shared.fallbackLanguage.DisplayText }}.</span>
           <span
             v-if="!$shared.fallbackLanguage"
-          >You currently don't have a language for Audio and Subtitles set up. MediaBox will fall back to the original title.</span>
+          >{{$t('Settings.You currently don_t have a language for Audio and Subtitles set up. {appName} will fall back to the original title_', {appName: $t('general.appName')})}}</span>
         </v-alert>
 
         <div>
@@ -380,18 +401,18 @@
           small
           color="primary"
           v-on:click="openAddLanguagesDialog('languagesAudioSubtitles')"
-        >Add Language</v-btn>
+        >{{$t('Settings.Add Languages')}}</v-btn>
       </v-tab-item>
 
       <!-- TITLE TYPES -->
       <v-tab-item style="padding: 8px">
-        <p>In "Regions" you provided the regions to be used for the Primary Title. However, many titles in IMDB have a special title type. MediaBox skips all special title types by default. You can add title types here, so that they are actually used instead of being skipped.</p>
+        <p>{{$t('Settings.In _Regions_ you provided the regions to be used for the Primary Title_ However, many titles in IMDB have a special title type_ {appName} skips all special title types by default_ You can add title types here, so that they are actually used instead of being skipped_', {appName: $t('general.appName')})}}</p>
 
         <v-alert
           colored-border
           border="left"
           v-if="$shared.imdbTitleTypesWhitelist.length === 0"
-        >No title types added, this is fine.</v-alert>
+        >{{$t('Settings.No title types added, this is fine_')}}</v-alert>
 
         <mk-title-type
           v-for="item in $shared.imdbTitleTypesWhitelist"
@@ -401,28 +422,28 @@
           v-on:removeTitleType="onRemoveTitleType"
         ></mk-title-type>
 
-        <v-btn text small color="primary" v-on:click="openAddTitleTypeDialog">Add Title Type</v-btn>
+        <v-btn text small color="primary" v-on:click="openAddTitleTypeDialog">{{$t('Settings.Add Title Type')}}</v-btn>
       </v-tab-item>
     </v-tabs>
 
     <mk-sourcepath-description-dialog
       ref="sourcePathDescriptionDialog"
       v-bind:show="sourcePathDescriptionDialog.show"
-      title="Edit Description"
-      v-bind:question="`Please provide a description for the source path ${sourcePathDescriptionDialog.Path} (${sourcePathDescriptionDialog.MediaTypeUpper})`"
+      v-bind:title="$t('Settings.Edit Description')"
+      v-bind:question="$t('Settings.Please provide a description for the source path {Path} _{MediaTypeUpper}_', {Path: sourcePathDescriptionDialog.Path, MediaTypeUpper: sourcePathDescriptionDialog.MediaTypeUpper})"
       enterTextValue="true"
-      ok="OK"
-      cancel="Cancel"
+      v-bind:ok="$t('general.OK')"
+      v-bind:cancel="$t('general.Cancel')"
       cancelColor="secondary"
       v-on:ok="onSourcePathDescriptionDialogOK"
       v-on:cancel="onSourcePathDescriptionDialogCancel"
     ></mk-sourcepath-description-dialog>
     <mk-sourcepath-remove-dialog
       v-bind:show="sourcePathRemoveDialog.show"
-      title="Remove Source Path"
-      v-bind:question="`Do you really want to remove the source path ${sourcePathRemoveDialog.Path} (${sourcePathRemoveDialog.MediaTypeUpper}) including all associated media?`"
-      yes="YES, Remove"
-      cancel="Cancel"
+      v-bind:title="$t('Settings.Remove Source Path')"
+      v-bind:question="$t('Settings.Do you really want to remove the source path {Path} _{MediaTypeUpper}_ including all associated media_')"
+      v-bind:yes="$t('Settings.YES_ Remove')"
+      v-bind:cancel="$t('general.Cancel')"
       yesColor="error"
       cancelColor="secondary"
       v-on:yes="onSourcePathRemoveDialogOK"
@@ -513,7 +534,7 @@ export default {
       show: false
     },
 
-    tmpPath: "",
+    tmpPath: ""
   }),
 
   watch: {
@@ -524,8 +545,8 @@ export default {
     },
 
     imdbRatingDemographic: function() {
-      store.setSetting('IMDBRatingDemographic', this.imdbRatingDemographic);
-    },
+      store.setSetting("IMDBRatingDemographic", this.imdbRatingDemographic);
+    }
   },
 
   computed: {
@@ -548,14 +569,14 @@ export default {
     browseMediaplayerPath() {
       const filters = helpers.isWindows
         ? [
-            { name: "Executables", extensions: ["exe"] },
-            { name: "All Files", extensions: ["*"] }
+            { name: this.$t('Settings.Executables'), extensions: ["exe"] },
+            { name: this.$t('Settings.All Files'), extensions: ["*"] }
           ]
-        : [{ name: "All Files", extensions: ["*"] }];
+        : [{ name: this.$t('Settings.All Files'), extensions: ["*"] }];
 
       dialog.showOpenDialog(
         {
-          title: "Path to your media player (e.g. VLC)",
+          title: this.$t("Settings.Path to your media player _e_g_ VLC_"),
           properties: ["openFile"],
           filters,
           defaultPath: this.MediaplayerPath || ""
@@ -575,14 +596,14 @@ export default {
     browseMediainfoPath() {
       const filters = helpers.isWindows
         ? [
-            { name: "Executables", extensions: ["exe"] },
-            { name: "All Files", extensions: ["*"] }
+            { name: this.$t('Settings.Executables'), extensions: ["exe"] },
+            { name: this.$t('Settings.All Files'), extensions: ["*"] }
           ]
-        : [{ name: "All Files", extensions: ["*"] }];
+        : [{ name: this.$t('Settings.All Files'), extensions: ["*"] }];
 
       dialog.showOpenDialog(
         {
-          title: "Path to mediainfo (get it from mediaarea.net)",
+          title: this.$t("Settings.Path to mediainfo _get it from mediaarea_net_"),
           properties: ["openFile"],
           filters,
           defaultPath: this.MediainfoPath || ""
@@ -624,7 +645,7 @@ export default {
           if (isAlreadyInUse) {
             return eventBus.showSnackbar(
               "error",
-              `The chosen path is already in use.`
+              this.$t('Settings.The chosen path is already in use_')
             );
           }
 
@@ -709,7 +730,7 @@ export default {
 
           eventBus.showLoadingOverlay(false);
 
-          eventBus.showSnackbar("success", `Source path removed.`);
+          eventBus.showSnackbar("success", this.$t('Settings.Source path removed.'));
         } catch (err) {
           eventBus.showSnackbar("error", err);
         }
@@ -743,7 +764,7 @@ export default {
 
           await this.fetchSourcePaths();
 
-          eventBus.showSnackbar("success", `Description updated.`);
+          eventBus.showSnackbar("success", this.$t('Settings.Description updated_'));
         } catch (err) {
           eventBus.showSnackbar("error", err);
         }
@@ -766,7 +787,7 @@ export default {
 
           eventBus.showSnackbar(
             "success",
-            `${this.sourcePathDescriptionDialog.Path} added to ${this.sourcePathDescriptionDialog.MediaTypeUpper} source directories`
+            this.$t('Settings.{Path} added to ${MediaTypeUpper} source directories_', {Path: this.sourcePathDescriptionDialog.Path, MediaTypeUpper: this.sourcePathDescriptionDialog.MediaTypeUpper})
           );
         } catch (err) {
           eventBus.showSnackbar("error", err);
@@ -1024,7 +1045,7 @@ export default {
 
       eventBus.showSnackbar(
         "success",
-        `title type "${titleType.TitleType}" added`
+        this.$t('Settings.Title Type _{TitleType}_ added_', {TitleType: titleType.TitleType})
       );
     },
 
@@ -1043,7 +1064,7 @@ export default {
 
       eventBus.showSnackbar(
         "success",
-        `title type "${titleType.TitleType}" removed`
+        this.$t('Settings.Title Type _{TitleType}_ removed_', {TitleType: titleType.TitleType})
       );
     },
 
@@ -1101,6 +1122,6 @@ export default {
 }
 
 .settings-row {
-   margin: 0px 0px 16px 0px
+  margin: 0px 0px 16px 0px;
 }
 </style>

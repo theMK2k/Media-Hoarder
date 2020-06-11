@@ -7,7 +7,7 @@
           <v-list-item-action>
             <v-icon style="color: lightgrey">mdi-settings</v-icon>
           </v-list-item-action>
-          <v-list-item-title style="color: lightgrey">{{$t("App.Settings")}}</v-list-item-title>
+          <v-list-item-title style="color: lightgrey">{{$t("general.Settings")}}</v-list-item-title>
         </v-list-item>
 
         <v-list-item v-on:click="onRescan">
@@ -23,12 +23,13 @@
 
         <v-divider></v-divider>
 
-        <v-list-item v-for="item in items" :key="item.text" @click="goto(item.id)">
+        <!-- Movies, Series -->
+        <v-list-item v-for="appSection in appSections" :key="appSection.text" @click="goto(appSection.id)">
           <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
+            <v-icon>{{ appSection.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>{{ $t(`App.${item.text}`) }}</v-list-item-title>
+            <v-list-item-title>{{ $t(`general.${appSection.text}`) }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
@@ -48,7 +49,7 @@
             >
               <v-expansion-panel-header
                 style="padding: 8px!important"
-              >{{$t("App.Source Paths")}} {{filterSourcePathsTitle}}</v-expansion-panel-header>
+              >{{$t("general.Source Paths")}} {{filterSourcePathsTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
                   <v-btn text v-on:click="setAllSourcePaths(false)">{{$t("App.SET NONE")}}</v-btn>
@@ -717,7 +718,7 @@ export default {
     showLoadingOverlay: false,
     shared,
     searchText: null,
-    items: [
+    appSections: [
       { icon: "mdi-movie", text: "Movies", id: "movies" },
       { icon: "mdi-television", text: "Series", id: "tv" }
     ],
