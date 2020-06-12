@@ -8,7 +8,8 @@
     "Settings": "Einstellungen",
     "Movies": "Filme",
     "Series": "Serien",
-    "Source Paths": "Quellpfade"
+    "Source Paths": "Quellpfade",
+    "Home": "Übersicht"
   },
   "App": {
     "Scan Media": "Medien Einlesen",
@@ -137,5 +138,9 @@
     "remove missing entries on _re-_scan": "bei (Neu-)Einlesen fehlende Einträge entfernen",
     "OK, during _re-_scan, any missing file in the source path will lead to removal of the entry": "OK, während des (Neu-)Einlesens werden Einträge entfernt, wenn Dateien fehlen",
     "OK, during _re-_scan, no entry removal is performed - regardless if the file is available or not": "OK, während des (Neu-)Einlesens werden keine Einträge entfernt, unabhängig ob Dateien vorhanden sind oder nicht"
+  },
+
+  "MediaList": {
+    
   }
 }

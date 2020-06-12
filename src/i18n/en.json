@@ -7,8 +7,12 @@
     "No": "No",
     "Settings": "Settings",
     "Movies": "Movies",
+    "MOVIES": "MOVIES",
     "Series": "Series",
-    "Source Paths": "Source Paths"
+    "SERIES": "SERIES",
+    "Source Paths": "Source Paths",
+    "Home": "Home",
+    "Go Back": "Go Back"
   },
   "App": {
     "Scan Media": "Scan Media",
@@ -137,5 +141,23 @@
     "remove missing entries on _re-_scan": "remove missing entries on (re-)scan",
     "OK, during _re-_scan, any missing file in the source path will lead to removal of the entry": "OK, during (re-)scan, any missing file in the source path will lead to removal of the entry",
     "OK, during _re-_scan, no entry removal is performed - regardless if the file is available or not": "OK, during (re-)scan, no entry removal is performed - regardless if the file is available or not"
+  },
+
+  "MediaList": {
+    "Reload List": "Reload List",
+    "Applied Filters_": "Applied Filters:",
+    "Sort": "Sort",
+    "Edit Primary Title": "Edit Primary Title",
+    "Link with IMDB entry": "Link with IMDB entry",
+    "Edit Secondary Title": "Edit Secondary Title",
+    "Directed by_": "Directed by:",
+    "Written by_": "Written by:",
+    "Cast_": "Cast:",
+    "Production": "Production",
+    "Imported_": "Imported:",
+    "Last Access_": "Last Access:",
+    "Size_": "Size:",
+    "File Created at_": "File Created at:",
+    "In Lists_": "In Lists:"
   }
 }

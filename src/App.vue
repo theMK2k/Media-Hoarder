@@ -720,7 +720,7 @@ export default {
     searchText: null,
     appSections: [
       { icon: "mdi-movie", text: "Movies", id: "movies" },
-      { icon: "mdi-television", text: "Series", id: "tv" }
+      { icon: "mdi-television", text: "Series", id: "series" }
     ],
 
     isScanning: false,
@@ -1242,8 +1242,8 @@ export default {
         return this.$router.push("/medialist/movies");
       }
 
-      if (itemid == "tv") {
-        return this.$router.push("/medialist/tv");
+      if (itemid == "series") {
+        return this.$router.push("/medialist/series");
       }
     },
     openSettings() {

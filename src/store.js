@@ -257,7 +257,7 @@ async function rescan(onlyNew) {
   if (shared.scanOptions.filescanMovies) await filescanMovies(onlyNew);
   if (shared.scanOptions.rescanMoviesMetaData) await rescanMoviesMetaData(onlyNew);
 
-  // await rescanTV();								// TODO: TV/Series support
+  // await rescanSeries();								// TODO: Series support
 
   if (shared.scanOptions.mergeExtras) await mergeExtras(onlyNew);
 
