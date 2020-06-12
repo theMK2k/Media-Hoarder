@@ -137,7 +137,7 @@
           text
           small
           color="primary"
-          v-on:click="addSource('tv')"
+          v-on:click="addSource('series')"
         >{{$t("Settings.Add Source Path")}}</v-btn>
       </v-tab-item>
 
@@ -552,7 +552,7 @@ export default {
   computed: {
     tvSourcePaths() {
       return this.sourcePaths.filter(sourcePath => {
-        return sourcePath.MediaType === "tv";
+        return sourcePath.MediaType === "series";
       });
     },
     moviesSourcePaths() {

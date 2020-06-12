@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 style="margin-left: 8px">Home</h1>
+    <h1 style="margin-left: 8px">{{$t('general.Home')}}</h1>
 
     <v-btn
       v-for="item in items"
@@ -12,7 +12,7 @@
       color="primary"
     >
       <v-icon left>{{item.icon}}</v-icon>
-      {{item.text}}
+      {{$t(`general.${item.text}`)}}
     </v-btn>
   </div>
 </template>
@@ -22,7 +22,7 @@ export default {
   data: () => ({
     items: [
       { icon: "mdi-movie", text: "Movies", id: "movies" },
-      { icon: "mdi-television", text: "TV", id: "tv" },
+      { icon: "mdi-television", text: "Series", id: "series" },
       { icon: "mdi-settings", text: "Settings", id: "settings" }
     ]
   }),
@@ -37,8 +37,8 @@ export default {
         return this.$router.push("/medialist/movies");
       }
 
-      if (itemid == "tv") {
-        return this.$router.push("/medialist/tv");
+      if (itemid == "series") {
+        return this.$router.push("/medialist/series");
       }
 
       if (itemid == "settings") {

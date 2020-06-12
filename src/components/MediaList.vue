@@ -15,7 +15,7 @@
             </v-btn>
           </span>
         </template>
-        <span>Go back</span>
+        <span>{{$t('general.Go Back')}}</span>
       </v-tooltip>
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
@@ -29,7 +29,7 @@
             </v-btn>
           </span>
         </template>
-        <span>Reload list</span>
+        <span>{{$t('MediaList.Reload List')}}</span>
       </v-tooltip>
       <h1 style="margin-bottom: 0px; margin-top: 0px;">
         {{ mediatype.toUpperCase() }} ({{ itemsFiltered.length }})
@@ -38,7 +38,7 @@
             <span v-on="on">*</span>
           </template>
           <span>
-            Applied Filters:
+            {{$t('MediaList.Applied Filters_')}}
             <ul>
               <li v-for="filter in filtersList" v-bind:key="filter">{{filter}}</li>
             </ul>
@@ -53,7 +53,7 @@
         item-text="Description"
         item-value="Field"
         v-model="$shared.sortField"
-        label="Sort"
+        v-bind:label="$t('MediaList.Sort')"
         style="margin-left: 8px; max-width: 260px; height: 40px"
         v-on:change="onSortChanged"
       >
@@ -143,7 +143,7 @@
                               >mdi-pencil</v-icon>
                             </span>
                           </template>
-                          <span>Edit Primary Title</span>
+                          <span>{{$t('MediaList.Edit Primary Title')}}</span>
                         </v-tooltip>
 
                         <v-tooltip bottom>
@@ -156,7 +156,7 @@
                               >mdi-link</v-icon>
                             </span>
                           </template>
-                          <span>Link with IMDB entry</span>
+                          <span>{{$t('MediaList.Link with IMDB entry')}}</span>
                         </v-tooltip>
                       </v-list-item-title>
 
@@ -178,7 +178,7 @@
                               >mdi-pencil</v-icon>
                             </span>
                           </template>
-                          <span>Edit Secondary Title</span>
+                          <span>{{$t('MediaList.Edit Secondary Title')}}</span>
                         </v-tooltip>
 
                         <!-- <v-icon
@@ -252,7 +252,7 @@
                     style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
                   >
                     <div style="font-size: .875rem; font-weight: normal">
-                      <strong class="CreditCategory">Directed by:</strong>
+                      <strong class="CreditCategory">{{$t('MediaList.Directed by_')}}</strong>
                       <span
                         v-for="(credit, i) in item.IMDB_Top_Directors"
                         v-bind:key="credit.IMDB_Person_ID"
@@ -271,7 +271,7 @@
                     style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
                   >
                     <div style="font-size: .875rem; font-weight: normal">
-                      <strong class="CreditCategory">Written by:</strong>
+                      <strong class="CreditCategory">{{$t('MediaList.Written by_')}}</strong>
                       <span
                         v-for="(credit, i) in item.IMDB_Top_Writers"
                         v-bind:key="credit.IMDB_Person_ID"
@@ -309,7 +309,7 @@
                     style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
                   >
                     <div style="font-size: .875rem; font-weight: normal">
-                      <strong class="CreditCategory">Cast:</strong>
+                      <strong class="CreditCategory">{{$t('MediaList.Cast_')}}</strong>
                       <span
                         v-for="(credit, i) in item.IMDB_Top_Cast"
                         v-bind:key="credit.IMDB_Person_ID"
@@ -328,7 +328,7 @@
                     style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
                   >
                     <div style="font-size: .875rem; font-weight: normal">
-                      <strong class="CreditCategory">Production:</strong>
+                      <strong class="CreditCategory">{{$t('MediaList.Production_')}}</strong>
                       <span
                         v-for="(company, i) in item.IMDB_Top_Production_Companies"
                         v-bind:key="i"
@@ -350,7 +350,7 @@
                 <v-col class="detailContent">{{ item.Path }}</v-col>
               </v-row>
               <v-row>
-                <v-col class="detailLabel">Imported:</v-col>
+                <v-col class="detailLabel">{{$t('MediaList.Imported_')}}</v-col>
                 <v-col class="detailContent">
                   <v-tooltip right>
                     <template v-slot:activator="{ on }">
@@ -361,7 +361,7 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col class="detailLabel">Last Access:</v-col>
+                <v-col class="detailLabel">{{$t('MediaList.Last Access_')}}</v-col>
                 <v-col class="detailContent">
                   <v-tooltip right>
                     <template v-slot:activator="{ on }">
@@ -372,11 +372,11 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col class="detailLabel">Size:</v-col>
+                <v-col class="detailLabel">{{$t('MediaList.Size_')}}</v-col>
                 <v-col v-if="item.Size" class="detailContent">{{ Humanize().fileSize(item.Size) }}</v-col>
               </v-row>
               <v-row>
-                <v-col class="detailLabel">File Created at:</v-col>
+                <v-col class="detailLabel">{{$t('MediaList.File Created at_')}}</v-col>
                 <v-col
                   v-if="item.file_created_at"
                   class="detailContent"
@@ -384,7 +384,7 @@
               </v-row>
 
               <v-row>
-                <v-col class="detailLabel">In Lists:</v-col>
+                <v-col class="detailLabel">{{$t('MediaList.In Lists_')}}</v-col>
                 <v-col class="detailContent">
                   <span v-if="item.lists && item.lists.length > 0">
                     <span v-for="(list, index) in item.lists" v-bind:key="index">
@@ -576,7 +576,8 @@
                   color="primary"
                   v-on:click.stop="showTrailerLocal(item)"
                 >Trailer</v-btn>
-                <v-btn text color="primary" v-on:click.stop="openIMDB(item)">Open IMDB</v-btn>
+                <v-btn text v-bind:disabled="!item.IMDB_tconst" color="primary" v-on:click.stop="openIMDB(item)"><v-icon small>mdi-web</v-icon> IMDB</v-btn>
+                <v-btn text v-bind:disabled="!item.IMDB_tconst" color="primary" v-on:click.stop="openMovieChat(item)"><v-icon small>mdi-web</v-icon> MovieChat</v-btn>
               </v-row>
             </v-col>
           </v-card>
@@ -1592,6 +1593,10 @@ export default {
 
     openIMDB(movie) {
       shell.openExternal(`https://www.imdb.com/title/${movie.IMDB_tconst}/`);
+    },
+
+    openMovieChat(movie) {
+      shell.openExternal(`https://www.moviechat.org/${movie.IMDB_tconst}/`);
     },
 
     async showCredits(movie, show) {
