@@ -576,7 +576,8 @@
                   color="primary"
                   v-on:click.stop="showTrailerLocal(item)"
                 >Trailer</v-btn>
-                <v-btn text color="primary" v-on:click.stop="openIMDB(item)">Open IMDB</v-btn>
+                <v-btn text v-bind:disabled="!item.IMDB_tconst" color="primary" v-on:click.stop="openIMDB(item)"><v-icon small>mdi-web</v-icon> IMDB</v-btn>
+                <v-btn text v-bind:disabled="!item.IMDB_tconst" color="primary" v-on:click.stop="openMovieChat(item)"><v-icon small>mdi-web</v-icon> MovieChat</v-btn>
               </v-row>
             </v-col>
           </v-card>
@@ -1592,6 +1593,10 @@ export default {
 
     openIMDB(movie) {
       shell.openExternal(`https://www.imdb.com/title/${movie.IMDB_tconst}/`);
+    },
+
+    openMovieChat(movie) {
+      shell.openExternal(`https://www.moviechat.org/${movie.IMDB_tconst}/`);
     },
 
     async showCredits(movie, show) {
