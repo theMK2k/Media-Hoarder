@@ -1175,7 +1175,7 @@ export default {
         this.$shared.filterMetacriticScore[0] == 0 &&
         this.$shared.filterMetacriticScore[1] == 100
       ) {
-        return `(ALL${this.$shared.filterMetacriticScoreNone ? "" : "*"})`;
+        return `(${this.$t('App.ALL')}${this.$shared.filterMetacriticScoreNone ? "" : "*"})`;
       }
 
       return `(${this.$shared.filterMetacriticScore[0]} - ${
