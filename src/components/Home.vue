@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 style="margin-left: 8px">{{$t('general.Home')}}</h1>
+    <h1 style="margin-left: 8px">{{$t('Home')}}</h1>
 
     <v-btn
       v-for="item in items"
@@ -12,7 +12,7 @@
       color="primary"
     >
       <v-icon left>{{item.icon}}</v-icon>
-      {{$t(`general.${item.text}`)}}
+      {{$t(`${item.text}`)}}
     </v-btn>
   </div>
 </template>

@@ -29,7 +29,7 @@ OK -> check if memory leak is only in dev-mode (yes, it still persists even in p
     OK src\App.vue
     OK src\components\Settings.vue
     OK src\components\Home.vue
-    src\components\MediaList.vue
+    OK src\components\MediaList.vue
 
     src\components\shared\AddLanguagesDialog.vue
     src\components\shared\AddRegionsDialog.vue

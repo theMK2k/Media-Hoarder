@@ -7,7 +7,7 @@
           <v-list-item-action>
             <v-icon style="color: lightgrey">mdi-settings</v-icon>
           </v-list-item-action>
-          <v-list-item-title style="color: lightgrey">{{$t("general.Settings")}}</v-list-item-title>
+          <v-list-item-title style="color: lightgrey">{{$t("Settings")}}</v-list-item-title>
         </v-list-item>
 
         <v-list-item v-on:click="onRescan">
@@ -16,8 +16,8 @@
             <v-icon v-show="isScanning">mdi-cancel</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title v-show="!isScanning">{{$t("App.Scan Media")}}</v-list-item-title>
-            <v-list-item-title v-show="isScanning">{{$t("App.Cancel Scan")}}</v-list-item-title>
+            <v-list-item-title v-show="!isScanning">{{$t("Scan Media")}}</v-list-item-title>
+            <v-list-item-title v-show="isScanning">{{$t("Cancel Scan")}}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
@@ -29,7 +29,7 @@
             <v-icon>{{ appSection.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>{{ $t(`general.${appSection.text}`) }}</v-list-item-title>
+            <v-list-item-title>{{ $t(`${appSection.text}`) }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
@@ -39,7 +39,7 @@
         >
           <v-divider></v-divider>
 
-          <v-subheader class="mt-4" style="margin: 0px!important">{{$t("App.Filters")}}</v-subheader>
+          <v-subheader class="mt-4" style="margin: 0px!important">{{$t("Filters")}}</v-subheader>
 
           <v-expansion-panels accordion multiple>
             <!-- FILTER SOURCE PATHS -->
@@ -49,11 +49,11 @@
             >
               <v-expansion-panel-header
                 style="padding: 8px!important"
-              >{{$t("general.Source Paths")}} {{filterSourcePathsTitle}}</v-expansion-panel-header>
+              >{{$t("Source Paths")}} {{filterSourcePathsTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllSourcePaths(false)">{{$t("App.SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllSourcePaths(true)">{{$t("App.SET ALL")}}</v-btn>
+                  <v-btn text v-on:click="setAllSourcePaths(false)">{{$t("SET NONE")}}</v-btn>
+                  <v-btn text v-on:click="setAllSourcePaths(true)">{{$t("SET ALL")}}</v-btn>
                 </v-row>
                 <v-checkbox
                   v-for="sourcePath in $shared.filterSourcePaths"
@@ -74,11 +74,11 @@
             >
               <v-expansion-panel-header
                 style="padding: 8px!important"
-              >{{$t("App.Video Quality")}} {{filterQualitiesTitle}}</v-expansion-panel-header>
+              >{{$t("Video Quality")}} {{filterQualitiesTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllQualities(false)">{{$t("App.SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllQualities(true)">{{$t("App.SET ALL")}}</v-btn>
+                  <v-btn text v-on:click="setAllQualities(false)">{{$t("SET NONE")}}</v-btn>
+                  <v-btn text v-on:click="setAllQualities(true)">{{$t("SET ALL")}}</v-btn>
                 </v-row>
                 <v-checkbox
                   v-for="quality in $shared.filterQualities"
@@ -99,11 +99,11 @@
             >
               <v-expansion-panel-header
                 style="padding: 8px!important"
-              >{{$t("App.Audio Languages")}} {{ filterAudioLanguagesTitle }}</v-expansion-panel-header>
+              >{{$t("Audio Languages")}} {{ filterAudioLanguagesTitle }}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllAudioLanguages(false)">{{$t("App.SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllAudioLanguages(true)">{{$t("App.SET ALL")}}</v-btn>
+                  <v-btn text v-on:click="setAllAudioLanguages(false)">{{$t("SET NONE")}}</v-btn>
+                  <v-btn text v-on:click="setAllAudioLanguages(true)">{{$t("SET ALL")}}</v-btn>
                 </v-row>
                 <v-checkbox
                   v-for="audioLanguage in $shared.filterAudioLanguages"
@@ -124,11 +124,11 @@
             >
               <v-expansion-panel-header
                 style="padding: 8px!important"
-              >{{$t("App.Subtitle Languages")}} {{ filterSubtitleLanguagesTitle }}</v-expansion-panel-header>
+              >{{$t("Subtitle Languages")}} {{ filterSubtitleLanguagesTitle }}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllSubtitleLanguages(false)">{{$t("App.SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllSubtitleLanguages(true)">{{$t("App.SET ALL")}}</v-btn>
+                  <v-btn text v-on:click="setAllSubtitleLanguages(false)">{{$t("SET NONE")}}</v-btn>
+                  <v-btn text v-on:click="setAllSubtitleLanguages(true)">{{$t("SET ALL")}}</v-btn>
                 </v-row>
                 <v-checkbox
                   v-for="subtitleLanguage in $shared.filterSubtitleLanguages"
@@ -147,11 +147,11 @@
               v-show="$shared.filterLists && $shared.filterLists.length > 0"
               style="padding: 0px!important"
             >
-              <v-expansion-panel-header style="padding: 8px!important">{{$t("App.My Lists")}} {{filterListsTitle}}</v-expansion-panel-header>
+              <v-expansion-panel-header style="padding: 8px!important">{{$t("My Lists")}} {{filterListsTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllLists(false)">{{$t("App.SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllLists(true)">{{$t("App.SET ALL")}}</v-btn>
+                  <v-btn text v-on:click="setAllLists(false)">{{$t("SET NONE")}}</v-btn>
+                  <v-btn text v-on:click="setAllLists(true)">{{$t("SET ALL")}}</v-btn>
                 </v-row>
                 <v-row v-for="list in $shared.filterLists" v-bind:key="list.id_Lists">
                   <v-checkbox
@@ -178,12 +178,12 @@
             >
               <v-expansion-panel-header
                 style="padding: 8px!important"
-              >{{$t("App.My Ratings")}} {{filterRatingsTitle}}</v-expansion-panel-header>
+              >{{$t("My Ratings")}} {{filterRatingsTitle}}</v-expansion-panel-header>
               <!--  {{ filterRatingsTitle }} -->
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllRatings(false)">{{$t("App.SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllRatings(true)">{{$t("App.SET ALL")}}</v-btn>
+                  <v-btn text v-on:click="setAllRatings(false)">{{$t("SET NONE")}}</v-btn>
+                  <v-btn text v-on:click="setAllRatings(true)">{{$t("SET ALL")}}</v-btn>
                 </v-row>
                 <v-checkbox
                   v-for="rating in $shared.filterRatings"
@@ -208,7 +208,7 @@
             <v-expansion-panel style="padding: 0px!important">
               <v-expansion-panel-header
                 style="padding: 8px!important"
-              >{{$t("App.Metacritic Scores")}} {{filterMetacriticScoreTitle}}</v-expansion-panel-header>
+              >{{$t("Metacritic Scores")}} {{filterMetacriticScoreTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-range-slider
                   v-model="$shared.filterMetacriticScore"
@@ -222,7 +222,7 @@
                   <template v-slot:append>{{$shared.filterMetacriticScore[1]}}</template>
                 </v-range-slider>
                 <v-checkbox
-                  v-bind:label="$t('App.include entries with no MetaCritic score')"
+                  v-bind:label="$t('include entries with no Metacritic score')"
                   v-model="$shared.filterMetacriticScoreNone"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
@@ -235,7 +235,7 @@
             <v-expansion-panel style="padding: 0px!important">
               <v-expansion-panel-header
                 style="padding: 8px!important"
-              >{{$t("App.IMDB Ratings")}} {{filterIMDBRatingTitle}}</v-expansion-panel-header>
+              >{{$t("IMDB Ratings")}} {{filterIMDBRatingTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-range-slider
                   v-model="$shared.filterIMDBRating"
@@ -249,7 +249,7 @@
                   <template v-slot:append>{{$shared.filterIMDBRating[1]}}</template>
                 </v-range-slider>
                 <v-checkbox
-                  v-bind:label="$t('App.include entries with no IMDB rating')"
+                  v-bind:label="$t('include entries with no IMDB rating')"
                   v-model="$shared.filterIMDBRatingNone"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
@@ -265,14 +265,14 @@
             >
               <v-expansion-panel-header
                 style="padding: 8px!important"
-              >{{$t("App.Genres")}} {{$shared.filterSettings.filterGenresAND ? '߷' : ''}} {{ filterGenresTitle }}</v-expansion-panel-header>
+              >{{$t("Genres")}} {{$shared.filterSettings.filterGenresAND ? '߷' : ''}} {{ filterGenresTitle }}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllGenres(false)">{{$t("App.SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllGenres(true)">{{$t("App.SET ALL")}}</v-btn>
+                  <v-btn text v-on:click="setAllGenres(false)">{{$t("SET NONE")}}</v-btn>
+                  <v-btn text v-on:click="setAllGenres(true)">{{$t("SET ALL")}}</v-btn>
                 </v-row>
                 <v-switch
-                  v-bind:label="$shared.filterSettings.filterGenresAND ? $t('App.all selected must apply') : $t('App.one selected must apply')"
+                  v-bind:label="$shared.filterSettings.filterGenresAND ? $t('all selected must apply') : $t('one selected must apply')"
                   color="red"
                   v-model="$shared.filterSettings.filterGenresAND"
                   v-on:click.native="filtersChanged"
@@ -296,11 +296,11 @@
             >
               <v-expansion-panel-header
                 style="padding: 8px!important"
-              >{{$t("App.Age Ratings")}} {{ filterAgeRatingsTitle }}</v-expansion-panel-header>
+              >{{$t("Age Ratings")}} {{ filterAgeRatingsTitle }}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllAgeRatings(false)">{{$t("App.SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllAgeRatings(true)">{{$t("App.SET ALL")}}</v-btn>
+                  <v-btn text v-on:click="setAllAgeRatings(false)">{{$t("SET NONE")}}</v-btn>
+                  <v-btn text v-on:click="setAllAgeRatings(true)">{{$t("SET ALL")}}</v-btn>
                 </v-row>
                 <v-checkbox
                   v-for="ageRating in $shared.filterAgeRatings"
@@ -321,7 +321,7 @@
             >
               <v-expansion-panel-header
                 style="padding: 8px!important"
-              >{{$t("App.Content Advisories")}} {{ filterContentAdvisoryTitle }}</v-expansion-panel-header>
+              >{{$t("Content Advisories")}} {{ filterContentAdvisoryTitle }}</v-expansion-panel-header>
 
               <v-expansion-panel-content>
                 <v-expansion-panels accordion multiple>
@@ -333,18 +333,17 @@
                   >
                     <v-expansion-panel-header
                       style="padding: 8px!important"
-                    >{{$t(`App.ParentalAdvisoryCategories.${category.Name}`)}} {{filterParentalAdvisoryCategoryTitle(category)}}</v-expansion-panel-header>
+                    >{{$t(`ParentalAdvisoryCategories.${category.Name}`)}} {{filterParentalAdvisoryCategoryTitle(category)}}</v-expansion-panel-header>
                     <v-expansion-panel-content>
                       <v-row>
-                        <v-btn text v-on:click="setAllParentalAdvisory(category, false)">{{$t("App.SET NONE")}}</v-btn>
-                        <v-btn text v-on:click="setAllParentalAdvisory(category, true)">{{$t("App.SET ALL")}}</v-btn>
+                        <v-btn text v-on:click="setAllParentalAdvisory(category, false)">{{$t("SET NONE")}}</v-btn>
+                        <v-btn text v-on:click="setAllParentalAdvisory(category, true)">{{$t("SET ALL")}}</v-btn>
                       </v-row>
                       <v-row
                         v-for="paItem in $shared.filterParentalAdvisory[category.Name]"
                         v-bind:key="paItem.Severity"
                       >
                         <v-checkbox
-                          v-bind:label="$t(`App.ParentalAdvisoryLevels.${paItem.DisplayText}`) + ' (' + paItem.NumMovies + ')'"
                           v-model="paItem.Selected"
                           v-on:click.native="filtersChanged"
                           style="margin: 0px"
@@ -361,15 +360,15 @@
             <v-expansion-panel style="padding: 0px!important">
               <v-expansion-panel-header
                 style="padding: 8px!important"
-              >{{$t("App.Persons")}} {{$shared.filterSettings.filterPersonsAND ? '߷' : ''}} {{filterPersonsTitle}}</v-expansion-panel-header>
+              >{{$t("Persons")}} {{$shared.filterSettings.filterPersonsAND ? '߷' : ''}} {{filterPersonsTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllPersons(false)">{{$t("App.SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllPersons(true)">{{$t("App.SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="addPerson()">{{$t("App.FIND")}}</v-btn>
+                  <v-btn text v-on:click="setAllPersons(false)">{{$t("SET NONE")}}</v-btn>
+                  <v-btn text v-on:click="setAllPersons(true)">{{$t("SET NONE")}}</v-btn>
+                  <v-btn text v-on:click="addPerson()">{{$t("FIND")}}</v-btn>
                 </v-row>
                 <v-switch
-                  v-bind:label="$shared.filterSettings.filterPersonsAND ? $t('App.all selected must apply') : $t('App.one selected must apply')"
+                  v-bind:label="$shared.filterSettings.filterPersonsAND ? $t('all selected must apply') : $t('one selected must apply')"
                   color="red"
                   v-model="$shared.filterSettings.filterPersonsAND"
                   v-on:click.native="filtersChanged"
@@ -396,15 +395,15 @@
             <v-expansion-panel style="padding: 0px!important">
               <v-expansion-panel-header
                 style="padding: 8px!important"
-              >{{$t("App.Companies")}} {{$shared.filterSettings.filterCompaniesAND ? '߷' : ''}} {{filterCompaniesTitle}}</v-expansion-panel-header>
+              >{{$t("Companies")}} {{$shared.filterSettings.filterCompaniesAND ? '߷' : ''}} {{filterCompaniesTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllCompanies(false)">{{$t("App.SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllCompanies(true)">{{$t("App.SET ALL")}}</v-btn>
-                  <v-btn text v-on:click="addCompany()">{{$t("App.FIND")}}</v-btn>
+                  <v-btn text v-on:click="setAllCompanies(false)">{{$t("SET NONE")}}</v-btn>
+                  <v-btn text v-on:click="setAllCompanies(true)">{{$t("SET ALL")}}</v-btn>
+                  <v-btn text v-on:click="addCompany()">{{$t("FIND")}}</v-btn>
                 </v-row>
                 <v-switch
-                  v-bind:label="$shared.filterSettings.filterCompaniesAND ? $t('App.all selected must apply') : $t('App.one selected must apply')"
+                  v-bind:label="$shared.filterSettings.filterCompaniesAND ? $t('all selected must apply') : $t('one selected must apply')"
                   color="red"
                   v-model="$shared.filterSettings.filterCompaniesAND"
                   v-on:click.native="filtersChanged"
@@ -432,11 +431,11 @@
               v-show="$shared.filterYears && $shared.filterYears.length > 0"
               style="padding: 0px!important"
             >
-              <v-expansion-panel-header style="padding: 8px!important">{{$t("App.Release Years")}} {{filterYearsTitle}}</v-expansion-panel-header>
+              <v-expansion-panel-header style="padding: 8px!important">{{$t("Release Years")}} {{filterYearsTitle}}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllYears(false)">{{$t("App.SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllYears(true)">{{$t("App.SET ALL")}}</v-btn>
+                  <v-btn text v-on:click="setAllYears(false)">{{$t("SET NONE")}}</v-btn>
+                  <v-btn text v-on:click="setAllYears(true)">{{$t("SET ALL")}}</v-btn>
                 </v-row>
                 <v-checkbox
                   v-for="year in $shared.filterYears"
@@ -454,15 +453,15 @@
             <v-expansion-panel style="padding: 0px!important">
               <v-expansion-panel-header
                 style="padding: 8px!important"
-              >{{$t("App.Plot Keywords")}} {{$shared.filterSettings.filterIMDBPlotKeywordsAND ? '߷' : ''}} {{ filterIMDBPlotKeywordsTitle }}</v-expansion-panel-header>
+              >{{$t("Plot Keywords")}} {{$shared.filterSettings.filterIMDBPlotKeywordsAND ? '߷' : ''}} {{ filterIMDBPlotKeywordsTitle }}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllIMDBPlotKeywords(false)">{{$t("App.SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllIMDBPlotKeywords(true)">{{$t("App.SET ALL")}}</v-btn>
-                  <v-btn text v-on:click="addIMDBPlotKeyword()">{{$t("App.FIND")}}</v-btn>
+                  <v-btn text v-on:click="setAllIMDBPlotKeywords(false)">{{$t("SET NONE")}}</v-btn>
+                  <v-btn text v-on:click="setAllIMDBPlotKeywords(true)">{{$t("SET ALL")}}</v-btn>
+                  <v-btn text v-on:click="addIMDBPlotKeyword()">{{$t("FIND")}}</v-btn>
                 </v-row>
                 <v-switch
-                  v-bind:label="$shared.filterSettings.filterIMDBPlotKeywordsAND ? $t('App.all selected must apply') : $t('App.one selected must apply')"
+                  v-bind:label="$shared.filterSettings.filterIMDBPlotKeywordsAND ? $t('all selected must apply') : $t('one selected must apply')"
                   color="red"
                   v-model="$shared.filterSettings.filterIMDBPlotKeywordsAND"
                   v-on:click.native="filtersChanged"
@@ -492,15 +491,15 @@
             <v-expansion-panel style="padding: 0px!important">
               <v-expansion-panel-header
                 style="padding: 8px!important"
-              >{{$t("App.Filming Locations")}} {{$shared.filterSettings.filterIMDBFilmingLocationsAND ? '߷' : ''}} {{ filterIMDBFilmingLocationsTitle }}</v-expansion-panel-header>
+              >{{$t("Filming Locations")}} {{$shared.filterSettings.filterIMDBFilmingLocationsAND ? '߷' : ''}} {{ filterIMDBFilmingLocationsTitle }}</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllIMDBFilmingLocations(false)">{{$t("App.SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllIMDBFilmingLocations(true)">{{$t("App.SET ALL")}}</v-btn>
-                  <v-btn text v-on:click="addIMDBFilmingLocation()">{{$t("App.FIND")}}</v-btn>
+                  <v-btn text v-on:click="setAllIMDBFilmingLocations(false)">{{$t("SET NONE")}}</v-btn>
+                  <v-btn text v-on:click="setAllIMDBFilmingLocations(true)">{{$t("SET ALL")}}</v-btn>
+                  <v-btn text v-on:click="addIMDBFilmingLocation()">{{$t("FIND")}}</v-btn>
                 </v-row>
                 <v-switch
-                  v-bind:label="$shared.filterSettings.filterIMDBFilmingLocationsAND ? $t('App.all selected must apply') : $t('App.one selected must apply')"
+                  v-bind:label="$shared.filterSettings.filterIMDBFilmingLocationsAND ? $t('all selected must apply') : $t('one selected must apply')"
                   color="red"
                   v-model="$shared.filterSettings.filterIMDBFilmingLocationsAND"
                   v-on:click.native="filtersChanged"
@@ -534,7 +533,7 @@
           <v-list-item-action>
             <v-icon style="color: lightgrey">mdi-power</v-icon>
           </v-list-item-action>
-          <v-list-item-title style="color: lightgrey">{{$t("App.Quit")}}</v-list-item-title>
+          <v-list-item-title style="color: lightgrey">{{$t("Quit")}}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -543,14 +542,14 @@
     <v-app-bar app clipped-left color="red" dense>
       <v-app-bar-nav-icon @click.stop="$shared.sidenav = !$shared.sidenav"></v-app-bar-nav-icon>
       <v-toolbar-title class="mr-12 align-center noshrink">
-        <span class="title">{{$t("general.appName")}}</span>
+        <span class="title">{{$t("appName")}}</span>
       </v-toolbar-title>
       <!-- <div class="flex-grow-1"></div> -->
       <v-spacer></v-spacer>
       <v-row align-content="end" justify="end" style="text-align: right!important">
         <v-text-field
           :append-icon-cb="() => {}"
-          v-bind:placeholder="$t('App.Search') + '...'"
+          v-bind:placeholder="$t('Search') + '...'"
           single-line
           clearable
           append-icon="mdi-magnify"
@@ -574,10 +573,10 @@
 
         <mk-delete-list-dialog
           v-bind:show="deleteListDialog.show"
-          v-bind:title="$t('App.Delete List')"
-          v-bind:question="$t(`App.Do you really want to delete the list {name}?`, { name: deleteListDialog.Name })"
-          v-bind:yes="$t('App.YES DELETE')"
-          v-bind:no="$t('general.No')"
+          v-bind:title="$t('Delete List')"
+          v-bind:question="$t(`Do you really want to delete the list {name}?`, { name: deleteListDialog.Name })"
+          v-bind:yes="$t('YES DELETE')"
+          v-bind:no="$t('No')"
           yesColor="error"
           noColor="secondary"
           v-on:yes="onDeleteListDialogOK"
@@ -587,7 +586,7 @@
         <mk-search-companies-dialog
           ref="searchCompaniesDialog"
           v-bind:show="searchCompaniesDialog.show"
-          v-bind:title="$t('App.Find Company')"
+          v-bind:title="$t('Find Company')"
           searchMode="companies"
           v-on:cancel="onSearchCompaniesDialogCancel"
         ></mk-search-companies-dialog>
@@ -595,7 +594,7 @@
         <mk-search-plot-keywords-dialog
           ref="searchPlotKeywordsDialog"
           v-bind:show="searchPlotKeywordsDialog.show"
-          v-bind:title="$t('App.Find Plot Keyword')"
+          v-bind:title="$t('Find Plot Keyword')"
           searchMode="plot-keywords"
           v-on:cancel="onSearchPlotKeywordsDialogCancel"
         ></mk-search-plot-keywords-dialog>
@@ -603,7 +602,7 @@
         <mk-search-filming-locations-dialog
           ref="searchFilmingLocationsDialog"
           v-bind:show="searchFilmingLocationsDialog.show"
-          v-bind:title="$t('App.Find Filming Location')"
+          v-bind:title="$t('Find Filming Location')"
           searchMode="filming-locations"
           v-on:cancel="onSearchFilmingLocationsDialogCancel"
         ></mk-search-filming-locations-dialog>
@@ -611,7 +610,7 @@
         <mk-search-persons-dialog
           ref="searchPersonsDialog"
           v-bind:show="searchPersonsDialog.show"
-          v-bind:title="$t('App.Find Person')"
+          v-bind:title="$t('Find Person')"
           searchMode="persons"
           v-on:cancel="onSearchPersonsDialogCancel"
         ></mk-search-persons-dialog>
@@ -809,11 +808,11 @@ export default {
   computed: {
     filterSourcePathsTitle() {
       if (!this.$shared.filterSourcePaths.find(filter => !filter.Selected)) {
-        return `(${this.$t("App.ALL")})`;
+        return `(${this.$t("ALL")})`;
       }
 
       if (!this.$shared.filterSourcePaths.find(filter => filter.Selected)) {
-        return `(${this.$t("App.NONE")})`;
+        return `(${this.$t("NONE")})`;
       }
 
       return (
@@ -828,11 +827,11 @@ export default {
 
     filterGenresTitle() {
       if (!this.$shared.filterGenres.find(filter => !filter.Selected)) {
-        return `(${this.$t("App.ALL")})`;
+        return `(${this.$t("ALL")})`;
       }
 
       if (!this.$shared.filterGenres.find(filter => filter.Selected)) {
-        return `(${this.$t("App.NONE")})`;
+        return `(${this.$t("NONE")})`;
       }
 
       return (
@@ -846,11 +845,11 @@ export default {
 
     filterAgeRatingsTitle() {
       if (!this.$shared.filterAgeRatings.find(filter => !filter.Selected)) {
-        return `(${this.$t("App.ALL")})`;
+        return `(${this.$t("ALL")})`;
       }
 
       if (!this.$shared.filterAgeRatings.find(filter => filter.Selected)) {
-        return `(${this.$t("App.NONE")})`;
+        return `(${this.$t("NONE")})`;
       }
 
       return (
@@ -864,11 +863,11 @@ export default {
 
     filterRatingsTitle() {
       if (!this.$shared.filterRatings.find(filter => !filter.Selected)) {
-        return `(${this.$t("App.ALL")})`;
+        return `(${this.$t("ALL")})`;
       }
 
       if (!this.$shared.filterRatings.find(filter => filter.Selected)) {
-        return `(${this.$t("App.NONE")})`;
+        return `(${this.$t("NONE")})`;
       }
 
       return (
@@ -882,11 +881,11 @@ export default {
 
     filterYearsTitle() {
       if (!this.$shared.filterYears.find(filter => !filter.Selected)) {
-        return `(${this.$t("App.ALL")})`;
+        return `(${this.$t("ALL")})`;
       }
 
       if (!this.$shared.filterYears.find(filter => filter.Selected)) {
-        return `(${this.$t("App.NONE")})`;
+        return `(${this.$t("NONE")})`;
       }
 
       return (
@@ -900,11 +899,11 @@ export default {
 
     filterQualitiesTitle() {
       if (!this.$shared.filterQualities.find(filter => !filter.Selected)) {
-        return `(${this.$t("App.ALL")})`;
+        return `(${this.$t("ALL")})`;
       }
 
       if (!this.$shared.filterQualities.find(filter => filter.Selected)) {
-        return `(${this.$t("App.NONE")})`;
+        return `(${this.$t("NONE")})`;
       }
 
       return (
@@ -918,11 +917,11 @@ export default {
 
     filterListsTitle() {
       if (!this.$shared.filterLists.find(filter => !filter.Selected)) {
-        return `(${this.$t("App.ALL")})`;
+        return `(${this.$t("ALL")})`;
       }
 
       if (!this.$shared.filterLists.find(filter => filter.Selected)) {
-        return `(${this.$t("App.NONE")})`;
+        return `(${this.$t("NONE")})`;
       }
 
       return (
@@ -949,7 +948,7 @@ export default {
               filter.IMDB_Person_ID)
         )
       ) {
-        return `(${this.$t("App.ALL")})`;
+        return `(${this.$t("ALL")})`;
       }
 
       if (
@@ -960,7 +959,7 @@ export default {
               filter.IMDB_Person_ID)
         )
       ) {
-        return `(${this.$t("App.NONE")})`;
+        return `(${this.$t("NONE")})`;
       }
 
       return (
@@ -998,7 +997,7 @@ export default {
               filter.id_Filter_Companies)
         )
       ) {
-        return `(${this.$t("App.ALL")})`;
+        return `(${this.$t("ALL")})`;
       }
 
       if (
@@ -1009,7 +1008,7 @@ export default {
               filter.id_Filter_Companies)
         )
       ) {
-        return `(${this.$t("App.NONE")})`;
+        return `(${this.$t("NONE")})`;
       }
 
       return (
@@ -1055,7 +1054,7 @@ export default {
               filter.id_Filter_IMDB_Plot_Keywords)
         )
       ) {
-        return `(${this.$t("App.ALL")})`;
+        return `(${this.$t("ALL")})`;
       }
 
       if (
@@ -1066,7 +1065,7 @@ export default {
               filter.id_Filter_IMDB_Plot_Keywords)
         )
       ) {
-        return `(${this.$t("App.NONE")})`;
+        return `(${this.$t("NONE")})`;
       }
 
       return (
@@ -1096,7 +1095,7 @@ export default {
               filter.id_Filter_IMDB_Filming_Locations)
         )
       ) {
-        return `(${this.$t("App.ALL")})`;
+        return `(${this.$t("ALL")})`;
       }
 
       if (
@@ -1107,7 +1106,7 @@ export default {
               filter.id_Filter_IMDB_Filming_Locations)
         )
       ) {
-        return `(${this.$t("App.NONE")})`;
+        return `(${this.$t("NONE")})`;
       }
 
       return (
@@ -1130,11 +1129,11 @@ export default {
 
     filterAudioLanguagesTitle() {
       if (!this.$shared.filterAudioLanguages.find(filter => !filter.Selected)) {
-        return `(${this.$t("App.ALL")})`;
+        return `(${this.$t("ALL")})`;
       }
 
       if (!this.$shared.filterAudioLanguages.find(filter => filter.Selected)) {
-        return `(${this.$t("App.NONE")})`;
+        return `(${this.$t("NONE")})`;
       }
 
       return (
@@ -1151,13 +1150,13 @@ export default {
       if (
         !this.$shared.filterSubtitleLanguages.find(filter => !filter.Selected)
       ) {
-        return `(${this.$t("App.ALL")})`;
+        return `(${this.$t("ALL")})`;
       }
 
       if (
         !this.$shared.filterSubtitleLanguages.find(filter => filter.Selected)
       ) {
-        return `(${this.$t("App.NONE")})`;
+        return `(${this.$t("NONE")})`;
       }
 
       return (
@@ -1175,7 +1174,7 @@ export default {
         this.$shared.filterMetacriticScore[0] == 0 &&
         this.$shared.filterMetacriticScore[1] == 100
       ) {
-        return `(${this.$t('App.ALL')}${this.$shared.filterMetacriticScoreNone ? "" : "*"})`;
+        return `(${this.$t("ALL")}${this.$shared.filterMetacriticScoreNone ? "" : "*"})`;
       }
 
       return `(${this.$shared.filterMetacriticScore[0]} - ${
@@ -1188,7 +1187,7 @@ export default {
         this.$shared.filterIMDBRating[0] == 0 &&
         this.$shared.filterIMDBRating[1] == 10
       ) {
-        return `(${this.$t('App.ALL')}${this.$shared.filterIMDBRatingNone ? "" : "*"})`;
+        return `(${this.$t("ALL")}${this.$shared.filterIMDBRatingNone ? "" : "*"})`;
       }
 
       return `(${this.$shared.filterIMDBRating[0]} - ${
@@ -1204,7 +1203,7 @@ export default {
           )
         )
       ) {
-        return `(${this.$t("App.ALL")})`;
+        return `(${this.$t("ALL")})`;
       }
 
       if (
@@ -1214,7 +1213,7 @@ export default {
           )
         )
       ) {
-        return `(${this.$t("App.NONE")})`;
+        return `(${this.$t("NONE")})`;
       }
 
       let numSelected = 0;
@@ -1426,7 +1425,7 @@ export default {
           label += "☆";
         }
       } else {
-        label += `<${this.$t('App.not yet rated')}>`;
+        label += `<${this.$t("not yet rated")}>`;
       }
 
       label += " (" + numMovies + ")";
@@ -1436,7 +1435,7 @@ export default {
 
     getFilterYearLabel(startYear, NumMovies) {
       if (startYear < 0) {
-        return `<${this.$t('App.none provided')}> (${NumMovies})`;
+        return `<${this.$t("none provided")}> (${NumMovies})`;
       }
 
       return `${startYear} (${NumMovies})`;
@@ -1444,7 +1443,7 @@ export default {
 
     getFilterQualityLabel(quality, NumMovies) {
       if (!quality) {
-        return `<${this.$t('App.none provided')}> (${NumMovies})`;
+        return `<${this.$t("none provided")}> (${NumMovies})`;
       }
 
       return `${quality} (${NumMovies})`;
@@ -1481,7 +1480,7 @@ export default {
 
           eventBus.showSnackbar(
             "success",
-            `${this.$t('App.List {name} removed', { name: this.deleteListDialog.Name})}`
+            `${this.$t("List {name} removed", { name: this.deleteListDialog.Name})}`
           );
         } catch (err) {
           eventBus.showSnackbar("error", err);
@@ -1561,14 +1560,14 @@ export default {
           filter => !filter.Selected
         )
       ) {
-        return `(${this.$t("App.ALL")})`;
+        return `(${this.$t("ALL")})`;
       }
       if (
         !this.$shared.filterParentalAdvisory[category.Name].find(
           filter => filter.Selected
         )
       ) {
-        return `(${this.$t("App.NONE")})`;
+        return `(${this.$t("NONE")})`;
       }
       return (
         "(" +
@@ -1704,7 +1703,7 @@ export default {
           }
         }
       } else {
-        this.snackbar.text = `<${this.$t('App.unknown text')}>`;
+        this.snackbar.text = `<${this.$t("unknown text")}>`;
       }
 
       this.snackbar.show = true;

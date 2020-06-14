@@ -15,7 +15,7 @@
             </v-btn>
           </span>
         </template>
-        <span>{{$t('general.Go Back')}}</span>
+        <span>{{$t('Go Back')}}</span>
       </v-tooltip>
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
@@ -29,16 +29,16 @@
             </v-btn>
           </span>
         </template>
-        <span>{{$t('MediaList.Reload List')}}</span>
+        <span>{{$t('Reload List')}}</span>
       </v-tooltip>
       <h1 style="margin-bottom: 0px; margin-top: 0px;">
-        {{ mediatype.toUpperCase() }} ({{ itemsFiltered.length }})
+        {{ $t(mediatype.toUpperCase()) }} ({{ itemsFiltered.length }})
         <v-tooltip bottom v-if="filtersList.length > 0">
           <template v-slot:activator="{ on }">
             <span v-on="on">*</span>
           </template>
           <span>
-            {{$t('MediaList.Applied Filters_')}}
+            {{$t('Applied Filters_')}}
             <ul>
               <li v-for="filter in filtersList" v-bind:key="filter">{{filter}}</li>
             </ul>
@@ -53,7 +53,7 @@
         item-text="Description"
         item-value="Field"
         v-model="$shared.sortField"
-        v-bind:label="$t('MediaList.Sort')"
+        v-bind:label="$t('Sort')"
         style="margin-left: 8px; max-width: 260px; height: 40px"
         v-on:change="onSortChanged"
       >
@@ -143,7 +143,7 @@
                               >mdi-pencil</v-icon>
                             </span>
                           </template>
-                          <span>{{$t('MediaList.Edit Primary Title')}}</span>
+                          <span>{{$t('Edit Primary Title')}}</span>
                         </v-tooltip>
 
                         <v-tooltip bottom>
@@ -156,7 +156,7 @@
                               >mdi-link</v-icon>
                             </span>
                           </template>
-                          <span>{{$t('MediaList.Link with IMDB entry')}}</span>
+                          <span>{{$t('Link with IMDB entry')}}</span>
                         </v-tooltip>
                       </v-list-item-title>
 
@@ -178,7 +178,7 @@
                               >mdi-pencil</v-icon>
                             </span>
                           </template>
-                          <span>{{$t('MediaList.Edit Secondary Title')}}</span>
+                          <span>{{$t('Edit Secondary Title')}}</span>
                         </v-tooltip>
 
                         <!-- <v-icon
@@ -211,7 +211,10 @@
                         v-if="item.IMDB_rating_defaultDisplay"
                       >
                         <v-icon small color="amber" style="padding-bottom: 4px">mdi-star</v-icon>
-                        <a class="headline mb-2 Clickable" v-on:click.stop="onShowRatingDemographicsDialog(item)">{{item.IMDB_rating_defaultDisplay}}</a>
+                        <a
+                          class="headline mb-2 Clickable"
+                          v-on:click.stop="onShowRatingDemographicsDialog(item)"
+                        >{{item.IMDB_rating_defaultDisplay}}</a>
                         <span
                           v-if="item.IMDB_metacriticScore"
                           v-bind:class="getMetaCriticClass(item.IMDB_metacriticScore)"
@@ -252,7 +255,7 @@
                     style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
                   >
                     <div style="font-size: .875rem; font-weight: normal">
-                      <strong class="CreditCategory">{{$t('MediaList.Directed by_')}}</strong>
+                      <strong class="CreditCategory">{{$t('Directed by_')}}</strong>
                       <span
                         v-for="(credit, i) in item.IMDB_Top_Directors"
                         v-bind:key="credit.IMDB_Person_ID"
@@ -271,7 +274,7 @@
                     style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
                   >
                     <div style="font-size: .875rem; font-weight: normal">
-                      <strong class="CreditCategory">{{$t('MediaList.Written by_')}}</strong>
+                      <strong class="CreditCategory">{{$t('Written by_')}}</strong>
                       <span
                         v-for="(credit, i) in item.IMDB_Top_Writers"
                         v-bind:key="credit.IMDB_Person_ID"
@@ -309,7 +312,7 @@
                     style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
                   >
                     <div style="font-size: .875rem; font-weight: normal">
-                      <strong class="CreditCategory">{{$t('MediaList.Cast_')}}</strong>
+                      <strong class="CreditCategory">{{$t('Cast_')}}</strong>
                       <span
                         v-for="(credit, i) in item.IMDB_Top_Cast"
                         v-bind:key="credit.IMDB_Person_ID"
@@ -328,7 +331,7 @@
                     style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
                   >
                     <div style="font-size: .875rem; font-weight: normal">
-                      <strong class="CreditCategory">{{$t('MediaList.Production_')}}</strong>
+                      <strong class="CreditCategory">{{$t('Production_')}}</strong>
                       <span
                         v-for="(company, i) in item.IMDB_Top_Production_Companies"
                         v-bind:key="i"
@@ -346,11 +349,11 @@
             </v-list-item>
             <v-col v-if="item.selected" style="min-width: 100%">
               <v-row>
-                <v-col class="detailLabel">Full Path:</v-col>
+                <v-col class="detailLabel">{{$t("Full Path_")}}</v-col>
                 <v-col class="detailContent">{{ item.Path }}</v-col>
               </v-row>
               <v-row>
-                <v-col class="detailLabel">{{$t('MediaList.Imported_')}}</v-col>
+                <v-col class="detailLabel">{{$t('Imported_')}}</v-col>
                 <v-col class="detailContent">
                   <v-tooltip right>
                     <template v-slot:activator="{ on }">
@@ -361,7 +364,7 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col class="detailLabel">{{$t('MediaList.Last Access_')}}</v-col>
+                <v-col class="detailLabel">{{$t('Last Access_')}}</v-col>
                 <v-col class="detailContent">
                   <v-tooltip right>
                     <template v-slot:activator="{ on }">
@@ -372,11 +375,11 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col class="detailLabel">{{$t('MediaList.Size_')}}</v-col>
+                <v-col class="detailLabel">{{$t('Size_')}}</v-col>
                 <v-col v-if="item.Size" class="detailContent">{{ Humanize().fileSize(item.Size) }}</v-col>
               </v-row>
               <v-row>
-                <v-col class="detailLabel">{{$t('MediaList.File Created at_')}}</v-col>
+                <v-col class="detailLabel">{{$t('File Created at_')}}</v-col>
                 <v-col
                   v-if="item.file_created_at"
                   class="detailContent"
@@ -384,7 +387,7 @@
               </v-row>
 
               <v-row>
-                <v-col class="detailLabel">{{$t('MediaList.In Lists_')}}</v-col>
+                <v-col class="detailLabel">{{$t('In Lists_')}}</v-col>
                 <v-col class="detailContent">
                   <span v-if="item.lists && item.lists.length > 0">
                     <span v-for="(list, index) in item.lists" v-bind:key="index">
@@ -392,22 +395,24 @@
                       <span>{{list.Name}}</span>
                     </span>
                   </span>
-                  <span v-if="!item.lists || item.lists.length === 0">&lt;not in any list&gt;</span>
-                  <v-btn text small color="primary" v-on:click.stop="addToList(item)">Add</v-btn>
+                  <span
+                    v-if="!item.lists || item.lists.length === 0"
+                  >&lt;{{$t("not in any list")}}&gt;</span>
+                  <v-btn text small color="primary" v-on:click.stop="addToList(item)">{{$t("Add")}}</v-btn>
                   <v-btn
                     v-if="item.lists && item.lists.length > 0"
                     text
                     small
                     color="primary"
                     v-on:click.stop="removeFromList(item)"
-                  >Remove</v-btn>
+                  >{{$t("Remove")}}</v-btn>
                 </v-col>
               </v-row>
 
               <!-- Extras -->
               <div v-if="item.NumExtras">
                 <v-row style="padding-left: 16px; padding-top: 4px; align-items: flex-end;">
-                  <span style="font-size: 20px">Extras&nbsp;</span>
+                  <span style="font-size: 20px">{{$t("Extras")}}&nbsp;</span>
                 </v-row>
 
                 <v-row
@@ -425,7 +430,7 @@
                 class="Clickable"
                 v-on:click.stop="showCredits(item, !item.showCredits)"
               >
-                <span style="font-size: 20px">Credits&nbsp;</span>
+                <span style="font-size: 20px">{{$t("Credits")}}&nbsp;</span>
               </v-row>
 
               <div v-if="item.showCredits" v-on:click.stop="showCredits(item, false)">
@@ -461,7 +466,7 @@
                 class="Clickable"
                 v-on:click.stop="showCompanies(item, !item.showCompanies)"
               >
-                <span style="font-size: 20px">Companies&nbsp;</span>
+                <span style="font-size: 20px">{{$t('Companies')}}&nbsp;</span>
               </v-row>
 
               <div v-if="item.showCompanies" v-on:click.stop="showCompanies(item, false)">
@@ -497,7 +502,7 @@
                 class="Clickable"
                 v-on:click.stop="showContentAdvisory(item, !item.showContentAdvisory)"
               >
-                <span style="font-size: 20px">Content Advisory&nbsp;</span>
+                <span style="font-size: 20px">{{$t('Content Advisory')}}&nbsp;</span>
               </v-row>
 
               <div
@@ -525,7 +530,7 @@
                 class="Clickable"
                 v-on:click.stop="showPlotKeywords(item, !item.showPlotKeywords)"
               >
-                <span style="font-size: 20px">Plot Keywords (Spoilers ahead!)&nbsp;</span>
+                <span style="font-size: 20px">{{$t('Plot Keywords _Spoilers ahead!_')}}&nbsp;</span>
               </v-row>
 
               <div
@@ -552,7 +557,7 @@
                 class="Clickable"
                 v-on:click.stop="showFilmingLocations(item, !item.showFilmingLocations)"
               >
-                <span style="font-size: 20px">Filming Locations&nbsp;</span>
+                <span style="font-size: 20px">{{$t('Filming Locations')}}&nbsp;</span>
               </v-row>
 
               <div
@@ -560,7 +565,10 @@
                 v-if="item.showFilmingLocations"
                 v-on:click.stop="showFilmingLocations(item, false)"
               >
-                <v-row v-for="filmingLocation in item.filmingLocations" v-bind:key="filmingLocation.id_IMDB_Filming_Locations">
+                <v-row
+                  v-for="filmingLocation in item.filmingLocations"
+                  v-bind:key="filmingLocation.id_IMDB_Filming_Locations"
+                >
                   <a
                     class="Clickable"
                     v-on:click.stop="onIMDBFilmingLocationClicked(filmingLocation)"
@@ -569,15 +577,29 @@
               </div>
 
               <v-row style="margin-top: 8px">
-                <v-btn text color="primary" v-on:click.stop="copyInfo(item)">Copy Info</v-btn>
+                <v-btn text color="primary" v-on:click.stop="copyInfo(item)">{{$t("Copy Info")}}</v-btn>
                 <v-btn
                   v-if="item.IMDB_Trailer_URL"
                   text
                   color="primary"
                   v-on:click.stop="showTrailerLocal(item)"
-                >Trailer</v-btn>
-                <v-btn text v-bind:disabled="!item.IMDB_tconst" color="primary" v-on:click.stop="openIMDB(item)"><v-icon small>mdi-web</v-icon> IMDB</v-btn>
-                <v-btn text v-bind:disabled="!item.IMDB_tconst" color="primary" v-on:click.stop="openMovieChat(item)"><v-icon small>mdi-web</v-icon> MovieChat</v-btn>
+                >{{$t("Trailer")}}</v-btn>
+                <v-btn
+                  text
+                  v-bind:disabled="!item.IMDB_tconst"
+                  color="primary"
+                  v-on:click.stop="openIMDB(item)"
+                >
+                  <v-icon small>mdi-web</v-icon>IMDB
+                </v-btn>
+                <v-btn
+                  text
+                  v-bind:disabled="!item.IMDB_tconst"
+                  color="primary"
+                  v-on:click.stop="openMovieChat(item)"
+                >
+                  <v-icon small>mdi-web</v-icon>MovieChat
+                </v-btn>
               </v-row>
             </v-col>
           </v-card>
@@ -701,7 +723,7 @@ import VideoPlayerDialog from "@/components/shared/VideoPlayerDialog.vue";
 import LocalVideoPlayerDialog from "@/components/shared/LocalVideoPlayerDialog.vue";
 import LinkIMDBDialog from "@/components/shared/LinkIMDBDialog.vue";
 import Pagination from "@/components/shared/Pagination.vue";
-import RatingDemographicsDialog from "@/components/shared/RatingDemographicsDialog"
+import RatingDemographicsDialog from "@/components/shared/RatingDemographicsDialog";
 
 const { shell } = require("electron").remote;
 
@@ -739,7 +761,7 @@ export default {
       },
       {
         Field: "IMDB_metacriticScore",
-        Description: "Metascore"
+        Description: "Metacritic Score"
       },
       {
         Field: "Rating",
@@ -747,7 +769,7 @@ export default {
       },
       {
         Field: "startYear",
-        Description: "Year"
+        Description: "Release Year"
       },
       {
         Field: "created_at",
@@ -821,7 +843,7 @@ export default {
 
     ratingDemographicsDialog: {
       show: false,
-      title: null,
+      title: null
     },
 
     itemsPerPage: 20,
@@ -958,17 +980,19 @@ export default {
             this.$shared.filterGenres.find(filter => filter.Selected)))
       ) {
         filtersList.push(
-          `Genres${this.$shared.filterSettings.filterGenresAND ? " ߷" : ""}`
+          `${this.$t("Genres")}${
+            this.$shared.filterSettings.filterGenresAND ? " ߷" : ""
+          }`
         );
       }
       if (this.$shared.filterAgeRatings.find(filter => !filter.Selected)) {
-        filtersList.push("Ages");
+        filtersList.push(this.$t("Age Ratings"));
       }
       if (this.$shared.filterRatings.find(filter => !filter.Selected)) {
-        filtersList.push("My Ratings");
+        filtersList.push(this.$t("My Ratings"));
       }
       if (this.$shared.filterLists.find(filter => !filter.Selected)) {
-        filtersList.push("My Lists");
+        filtersList.push(this.$t("My Lists"));
       }
 
       if (
@@ -988,7 +1012,7 @@ export default {
           filter => !filter.Selected
         )
       ) {
-        filtersList.push("Content Advisory");
+        filtersList.push(this.$t("Content Advisories"));
       }
 
       if (
@@ -1001,14 +1025,16 @@ export default {
             )))
       ) {
         filtersList.push(
-          `Persons${this.$shared.filterSettings.filterPersonsAND ? " ߷" : ""}`
+          `${this.$t("Persons")}${
+            this.$shared.filterSettings.filterPersonsAND ? " ߷" : ""
+          }`
         );
       }
       if (this.$shared.filterYears.find(filter => !filter.Selected)) {
-        filtersList.push("Years");
+        filtersList.push(this.$t("Release Years"));
       }
       if (this.$shared.filterQualities.find(filter => !filter.Selected)) {
-        filtersList.push("Video Quality");
+        filtersList.push(this.$t("Video Qualities"));
       }
       if (
         this.$shared.filterCompanies &&
@@ -1020,30 +1046,32 @@ export default {
             )))
       ) {
         filtersList.push(
-          `Companies${
+          `${this.$t("Companies")}${
             this.$shared.filterSettings.filterCompaniesAND ? " ߷" : ""
           }`
         );
       }
       if (this.$shared.filterAudioLanguages.find(filter => !filter.Selected)) {
-        filtersList.push("Audio Languages");
+        filtersList.push(this.$t("Audio Languages"));
       }
       if (
         this.$shared.filterSubtitleLanguages.find(filter => !filter.Selected)
       ) {
-        filtersList.push("Subtitle Languages");
+        filtersList.push(this.$t("Subtitle Languages"));
       }
       if (
         this.$shared.filterIMDBPlotKeywords &&
         ((!this.$shared.filterSettings.filterIMDBPlotKeywordsAND &&
-          this.$shared.filterIMDBPlotKeywords.find(filter => !filter.Selected)) ||
+          this.$shared.filterIMDBPlotKeywords.find(
+            filter => !filter.Selected
+          )) ||
           (this.$shared.filterSettings.filterIMDBPlotKeywordsAND &&
             this.$shared.filterIMDBPlotKeywords.find(
               filter => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords
             )))
       ) {
         filtersList.push(
-          `Plot Keywords${
+          `${this.$t("Plot Keywords")}${
             this.$shared.filterSettings.filterIMDBPlotKeywordsAND ? " ߷" : ""
           }`
         );
@@ -1051,15 +1079,20 @@ export default {
       if (
         this.$shared.filterIMDBFilmingLocations &&
         ((!this.$shared.filterSettings.filterIMDBFilmingLocationsAND &&
-          this.$shared.filterIMDBFilmingLocations.find(filter => !filter.Selected)) ||
+          this.$shared.filterIMDBFilmingLocations.find(
+            filter => !filter.Selected
+          )) ||
           (this.$shared.filterSettings.filterIMDBFilmingLocationsAND &&
             this.$shared.filterIMDBFilmingLocations.find(
-              filter => filter.Selected && filter.id_Filter_IMDB_Filming_Locations
+              filter =>
+                filter.Selected && filter.id_Filter_IMDB_Filming_Locations
             )))
       ) {
         filtersList.push(
-          `Filming Locations${
-            this.$shared.filterSettings.filterIMDBFilmingLocationsAND ? " ߷" : ""
+          `${this.$t("Filming Locations")}${
+            this.$shared.filterSettings.filterIMDBFilmingLocationsAND
+              ? " ߷"
+              : ""
           }`
         );
       }
@@ -1068,7 +1101,7 @@ export default {
         this.$shared.filterMetacriticScore[1] !== 100 ||
         !this.$shared.filterMetacriticScoreNone
       ) {
-        filtersList.push("Metacritic Score");
+        filtersList.push(this.$t("Metacritic Score"));
       }
 
       if (
@@ -1076,7 +1109,7 @@ export default {
         this.$shared.filterIMDBRating[1] !== 10 ||
         !this.$shared.filterIMDBRatingNone
       ) {
-        filtersList.push("IMDB Rating");
+        filtersList.push(this.$t("IMDB Ratings"));
       }
 
       logger.log("filtersList:", filtersList);
@@ -1301,7 +1334,7 @@ export default {
       document.execCommand("copy");
       document.body.removeChild(el);
 
-      eventBus.showSnackbar("info", "Info copied to clipboard");
+      eventBus.showSnackbar("info", this.$t("Info copied to clipboard"));
     },
 
     addToList(item) {
@@ -1326,7 +1359,7 @@ export default {
 
         this.listDialog.allowCreateNewList = true;
 
-        this.listDialog.title = "Add to List";
+        this.listDialog.title = this.$t("Add to List");
         this.listDialog.movie = item;
         this.listDialog.show = true;
       })();
@@ -1379,7 +1412,7 @@ export default {
         this.listDialog.allowCreateNewList = false;
         this.listDialog.allowUseExistingLists = true;
         this.listDialog.lists = item.lists;
-        this.listDialog.title = "Remove from List";
+        this.listDialog.title = this.$t("Remove from List");
         this.listDialog.movie = item;
         this.listDialog.show = true;
 
@@ -1396,7 +1429,7 @@ export default {
       (async () => {
         try {
           if (!data.chosen_id_Lists && !data.newListName) {
-            eventBus.showSnackbar("error", "list is missing");
+            eventBus.showSnackbar("error", this.$t("list is missing"));
             return;
           }
 
@@ -1420,13 +1453,13 @@ export default {
 
             this.$set(this.listDialog.movie, "lists", lists);
 
-            eventBus.showSnackbar("success", "item added to list");
+            eventBus.showSnackbar("success", this.$t("item added to list"));
           }
 
           // Remove from list
           if (this.listDialog.mode == "remove") {
             if (!data.chosen_id_Lists) {
-              eventBus.showSnackbar("error", "list is missing");
+              eventBus.showSnackbar("error", this.$t("list is missing"));
               return;
             }
 
@@ -1439,7 +1472,7 @@ export default {
 
             eventBus.refetchMedia(this.$shared.currentPage);
 
-            eventBus.showSnackbar("success", "item removed from list");
+            eventBus.showSnackbar("success", this.$t("item removed from list"));
           }
         } catch (err) {
           eventBus.showSnackbar("error", err);
@@ -1535,11 +1568,11 @@ export default {
         movie.lastAccessMoment = moment(movie.last_access_at);
       }
 
-      return (
-        moment
+      return this.$t("{duration} ago", {
+        timespan: moment
           .duration(movie.lastAccessMoment.diff(this.currentTime))
-          .humanize() + " ago"
-      );
+          .humanize()
+      });
     },
 
     createdHumanized(movie) {
@@ -1551,10 +1584,10 @@ export default {
         movie.createdMoment = moment(movie.created_at);
       }
 
-      return (
-        moment.duration(movie.createdMoment.diff(this.currentTime)).humanize() +
-        " ago"
-      );
+      return this.$t("{duration} ago", {
+        timespan: moment.duration(movie.createdMoment.diff(this.currentTime)).humanize()
+      });
+      
     },
 
     lastAccessDisplayText(movie) {
@@ -1674,12 +1707,12 @@ export default {
     async onLinkIMDBDialogSelected(tconst) {
       try {
         store.resetUserScanOptions();
-        
+
         await store.assignIMDB(this.linkIMDBDialog.item.id_Movies, tconst);
 
         eventBus.refetchMedia(this.$shared.currentPage);
 
-        eventBus.showSnackbar("success", "entry linked successfully");
+        eventBus.showSnackbar("success", this.$t("entry linked successfully"));
 
         this.onLinkIMDBDialogClose();
       } catch (err) {
@@ -1696,7 +1729,7 @@ export default {
       this.editItemDialog.item = item;
       this.editItemDialog.attributeName = attributeName;
       this.editItemDialog.attributeDisplayText = attributeDisplayText;
-      this.editItemDialog.title = `Edit ${attributeDisplayText}`;
+      this.editItemDialog.title = this.$t("Edit {something}", {something: attributeDisplayText});
       this.$refs.editItemNameDialog.initTextValue(item[attributeName]);
       this.editItemDialog.show = true;
     },
@@ -1730,7 +1763,7 @@ export default {
 
       eventBus.showSnackbar(
         "success",
-        `${this.editItemDialog.attributeDisplayText} successfully changed.`
+        this.$t("{something} successfully changed_", {something: this.editItemDialog.attributeDisplayText})
       );
     },
 
@@ -1740,16 +1773,16 @@ export default {
 
     contentAdvisorySeverityDisplayText(severity) {
       if (severity == 0) {
-        return "None";
+        return this.$t("None");
       } else if (severity == 1) {
-        return "Mild";
+        return this.$t("Mild");
       } else if (severity == 2) {
-        return "Moderate";
+        return this.$t("Moderate");
       } else if (severity == 3) {
-        return "Severe";
+        return this.$t("Severe");
       }
 
-      return "<not available>";
+      return this.$t("<not available>");
     },
 
     showContentAdvisory(movie, show) {
@@ -1842,7 +1875,7 @@ export default {
       this.ratingDemographicsDialog.title = item.Name;
 
       this.$refs.ratingDemographicsDialog.init(item.id_Movies);
-      
+
       this.ratingDemographicsDialog.show = true;
     }
   },

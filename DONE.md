@@ -280,7 +280,7 @@ WIP - Persons (Search-filter)
 OK - Age
 OK - Own Rating
 OK - IMDB Rating
-OK - MetaCritic
+OK - Metacritic
 NAH - Number of Votes
 OK - Metacritic Score
 
@@ -306,7 +306,7 @@ OK - find out a way to display the "top 5" companies involved
 
 ## MediaList - Movie (non-selected)
 
-OK - MetaCritic Score
+OK - Metacritic Score
 
 ## MediaList - Selected Movie
 
