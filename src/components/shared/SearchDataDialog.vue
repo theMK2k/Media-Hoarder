@@ -7,7 +7,7 @@
       <v-card-text>
         <v-text-field
           :append-icon-cb="() => {}"
-          placeholder="Search... (use '%' to list all)"
+          v-bind:placeholder="$t('Search___ (use '%' to list all)')"
           single-line
           append-icon="mdi-magnify"
           color="white"
@@ -18,7 +18,7 @@
 
         <v-checkbox
           v-model="sortByNumMovies"
-          v-bind:label="'Sort by number of movies'"
+          v-bind:label="$t('Sort by number of movies')"
           style="margin: 0px"
           color="dark-grey"
 
@@ -34,7 +34,7 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCancelClick()">Close</v-btn>
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCancelClick()">{{$t('Close')}}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -102,7 +102,7 @@ export default {
               , Company_Name AS name
 							, (SELECT COUNT(1) FROM (
 									SELECT DISTINCT
-										id_Movies
+										MC2.id_Movies
                   FROM tbl_Movies_IMDB_Companies MC2
                   INNER JOIN tbl_Movies MOV ON MC2.id_Movies = MOV.id_Movies
 									WHERE MC2.Company_Name = MC.Company_Name
@@ -123,7 +123,7 @@ export default {
 							, IMDB_Person_ID AS id
 							, (SELECT COUNT(1) FROM (
 									SELECT DISTINCT
-										id_Movies
+										MC2.id_Movies
                   FROM tbl_Movies_IMDB_Credits MC2
                   INNER JOIN tbl_Movies MOV ON MC2.id_Movies = MOV.id_Movies
                   WHERE MC2.IMDB_Person_ID = MC.IMDB_Person_ID
@@ -164,7 +164,7 @@ export default {
             , (
               SELECT COUNT(1)
               FROM tbl_Movies_IMDB_Filming_Locations MFL
-              INNER JOIN tbl_Movies MOV ON FL.id_Movies = MOV.id_Movies
+              INNER JOIN tbl_Movies MOV ON MFL.id_Movies = MOV.id_Movies
               WHERE FL.id_IMDB_Filming_Locations = MFL.id_IMDB_Filming_Locations
              				AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
             ) AS NumMovies
@@ -211,6 +211,15 @@ export default {
     this.debouncedSearchTextChanged = _.debounce(this.searchTextChanged, 500);
 
     eventBus.$on("personDialogConfirm", () => {
+      this.onCancelClick();
+    });
+    eventBus.$on("companyDialogConfirm", () => {
+      this.onCancelClick();
+    });
+    eventBus.$on("plotKeywordDialogConfirm", () => {
+      this.onCancelClick();
+    });
+    eventBus.$on("filmingLocationDialogConfirm", () => {
       this.onCancelClick();
     });
   },

@@ -590,7 +590,6 @@
   "Top 1000 Voters": "Top 1000",
   "Non-US Users": "Nicht-Amerikanische Benutzer",
   "US Users": "Amerikanische Benutzer",
-
   "Warning: Mediainfo CLI Path is not set_ Please go to": "Warnung: Mediainfo CLI Pfad ist nicht eingestellt. Bitte unter",
   "and provide one_ You can get Mediainfo CLI from": "einstellen. Mediainfo CLI bekommt man von",
   "Alternatively you can use Mediainfo-RAR from": "Alternativ kann auch Mediainfo-RAR verwendet werden:",
@@ -605,6 +604,8 @@
   "IMDB Scraper Options": "IMDB Scraper Optionen",
   "{appName} scrapes imdb_com website data in order to build up the database_ If imdb_com changes their website this process may fail in some aspects_ This scraper check will identify potential problems_": "{appName} sammelt Daten von der imdb.com Website. Falls imdb.com eine Layoutänderung hat, kann dieser Prozess in einigen Belangen fehlschlagen. Diese Scraper Prüfung kann potentielle Probleme identifizieren.",
   "Warning: the following source paths are currently not available and all entries will be removed! (check Settings)": "Warnung: die folgenden Quellpfade sind aktuell nicht erreichbar - alle darin befindlichen Einträge werden entfernt! (siehe Einstellungen)",
-  "OK, I take the risk": "OK, ich kenne das Risiko"
+  "OK, I take the risk": "OK, ich kenne das Risiko",
 
+  "Search___ (use '%' to list all)": "Suche... (verwende '%' um alle Einträge abzurufen)",
+  "Sort by number of movies": "Sortiere nach Anzahl Filme"
 }

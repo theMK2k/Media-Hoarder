@@ -119,6 +119,8 @@ export default {
         filterIMDBFilmingLocations: [this.id_IMDB_Filming_Locations]
       };
 
+      eventBus.filmingLocationDialogConfirm(setFilter);
+
       eventBus.refetchFilters(setFilter);
 
       this.$emit("close");

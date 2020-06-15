@@ -105,6 +105,18 @@ export const eventBus = new Vue({
 			this.$emit('personDialogConfirm', result);
 		},
 
+		companyDialogConfirm(result) {
+			this.$emit('companyDialogConfirm', result);
+		},
+
+		plotKeywordDialogConfirm(result) {
+			this.$emit('plotKeywordDialogConfirm', result);
+		},
+
+		filmingLocationDialogConfirm(result) {
+			this.$emit('filmingLocationDialogConfirm', result);
+		},
+
 		openVersionDialog() {
 			this.$emit('openVersionDialog');
 		},

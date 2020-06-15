@@ -211,11 +211,11 @@ export default {
     async onFilterClick() {
       await store.addFilterPerson(this.IMDB_Person_ID, this.Person_Name);
 
-      eventBus.personDialogConfirm(setFilter);
-
       const setFilter = {
         filterPersons: [this.IMDB_Person_ID]
       };
+
+      eventBus.personDialogConfirm(setFilter);
 
       eventBus.refetchFilters(setFilter);
 

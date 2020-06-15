@@ -604,5 +604,8 @@
   "IMDB Scraper Options": "IMDB Scraper Options",
   "{appName} scrapes imdb_com website data in order to build up the database_ If imdb_com changes their website this process may fail in some aspects_ This scraper check will identify potential problems_": "{appName} scrapes imdb.com website data in order to build up the database. If imdb.com changes their website this process may fail in some aspects. This scraper check will identify potential problems.",
   "Warning: the following source paths are currently not available and all entries will be removed! (check Settings)": "Warning: the following source paths are currently not available and all entries will be removed! (check Settings)",
-  "OK, I take the risk": "OK, I take the risk"
+  "OK, I take the risk": "OK, I take the risk",
+
+  "Search___ (use '%' to list all)": "Search... (use '%' to list all)",
+  "Sort by number of movies": "Sort by number of movies"
 }

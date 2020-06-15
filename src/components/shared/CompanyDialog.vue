@@ -141,6 +141,8 @@ export default {
         filterCompanies: [this.Company_Name]
       };
 
+      eventBus.companyDialogConfirm(setFilter);
+
       eventBus.refetchFilters(setFilter);
 
       this.$emit("close");

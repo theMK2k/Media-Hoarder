@@ -119,6 +119,8 @@ export default {
         filterIMDBPlotKeywords: [this.id_IMDB_Plot_Keywords]
       };
 
+      eventBus.plotKeywordDialogConfirm(setFilter);
+
       eventBus.refetchFilters(setFilter);
 
       this.$emit("close");
