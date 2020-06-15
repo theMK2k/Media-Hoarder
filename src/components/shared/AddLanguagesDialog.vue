@@ -2,12 +2,12 @@
   <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onCancelClick">
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
-        <div class="headline" style="width: 100%; font-size: 1.17em">Add Languages</div>
+        <div class="headline" style="width: 100%; font-size: 1.17em">{{$t('Add Languages')}}</div>
       </v-card-title>
       <v-card-text>
         <v-text-field
           :append-icon-cb="() => {}"
-          placeholder="Search..."
+          v-bind:placeholder="$t('Search___')"
           single-line
           append-icon="mdi-magnify"
           color="white"
@@ -26,13 +26,13 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCancelClick()">Cancel</v-btn>
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCancelClick()">{{$t('Cancel')}}</v-btn>
         <v-btn
           v-bind:disabled="!canConfirm"
           class="xs-fullwidth"
           color="primary"
           v-on:click.native="onOKClick()"
-        >OK</v-btn>
+        >{{$t('OK')}}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -108,6 +108,14 @@ export default {
       if (this.items.length === 0) {
         try {
           this.items = await store.getIMDBLanguages();
+
+          this.items.forEach(item => {
+            item.nameTranslated = this.$t(`LanguageNames.${item.name.replace(/\./g, '_')}`);
+            item.DisplayText = `${item.nameTranslated} (${item.code})`;
+          })
+
+          this.items = this.items.sort((a, b) => (a.DisplayText > b.DisplayText) ? 0 : -1);
+
           logger.log("languages this.items:", this.items);
         } catch (e) {
           eventBus.showSnackbar("error", e);

@@ -2,12 +2,12 @@
   <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onCancelClick">
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
-        <div class="headline" style="width: 100%; font-size: 1.17em">Add Regions</div>
+        <div class="headline" style="width: 100%; font-size: 1.17em">{{$t('Add Regions')}}</div>
       </v-card-title>
       <v-card-text>
         <v-text-field
           :append-icon-cb="() => {}"
-          placeholder="Search..."
+          v-bind:placeholder="$t('Search___')"
           single-line
           append-icon="mdi-magnify"
           color="white"
@@ -18,7 +18,7 @@
         <v-checkbox
           v-for="item in filteredItems"
           v-bind:key="item.code"
-          v-bind:label="item.name"
+          v-bind:label="item.nameTranslated"
           v-model="item.selected"
           style="margin: 0px"
           color="dark-grey"
@@ -26,13 +26,13 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCancelClick()">Cancel</v-btn>
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCancelClick()">{{$t('Cancel')}}</v-btn>
         <v-btn
           v-bind:disabled="!canConfirm"
           class="xs-fullwidth"
           color="primary"
           v-on:click.native="onOKClick()"
-        >OK</v-btn>
+        >{{$t('OK')}}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -75,7 +75,7 @@ export default {
           return true;
         }
 
-        return item.name.toLowerCase().includes(this.filter.toLowerCase());
+        return item.nameTranslated.toLowerCase().includes(this.filter.toLowerCase());
       });
     },
 
@@ -105,6 +105,13 @@ export default {
         // logger.log('TODO: fetch Countries from https://www.imdb.com/search/title/');
         try {
           this.items = await store.getIMDBRegions();
+
+          this.items.forEach(item => {
+            item.nameTranslated = this.$t(`RegionNames.${item.name.replace(/\./g, '_')}`);
+          })
+
+          this.items = this.items.sort((a, b) => (a.nameTranslated > b.nameTranslated) ? 0 : -1);
+
           logger.log("countries this.items:", this.items);
         } catch (e) {
           eventBus.showSnackbar("error", e);

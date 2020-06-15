@@ -26,6 +26,8 @@ OK - Implement IMDB Scraper Checks Dialog, usable from
 OK    - Settings (via Button)
 OK    - after Scan Options Dialog and before actual Scan
 
+## Open moviechat.org button
+-> link https://moviechat.org/tt0054215
 
 ## Filming Locations
 OK - add as section in MediaLists

@@ -12,9 +12,6 @@ OK -> check if memory leak is only in dev-mode (yes, it still persists even in p
 - How should we handle ECONNRESET? maybe request-retry?
 - How can we test this?
 
-## Open moviechat.org button
--> link https://moviechat.org/tt0054215
-
 ## scrapeIMDBSuggestion - use alternative search method
 
 - currently we use the suggestion API which doesn't support non-latin names
@@ -31,8 +28,9 @@ OK -> check if memory leak is only in dev-mode (yes, it still persists even in p
     OK src\components\Home.vue
     OK src\components\MediaList.vue
 
-    src\components\shared\AddLanguagesDialog.vue
-    src\components\shared\AddRegionsDialog.vue
+    OK src\components\shared\AddLanguagesDialog.vue
+    OK src\components\shared\AddRegionsDialog.vue
+
     src\components\shared\AddTitleTypeDialog.vue
     src\components\shared\CheckIMDBScraperDialog.vue
     src\components\shared\CompanyDialog.vue
