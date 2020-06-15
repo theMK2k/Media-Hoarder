@@ -578,7 +578,6 @@
   "Filter by this person": "Filter by this person",
   "Plot Keyword": "Plot Keyword",
   "Filter by this plot keyword": "Filter by this plot keyword",
-
   "Rating Demographics for": "Rating Demographics for",
   "Hint": "Hint",
   "you can change your default rating demographic (shown in the main list) in the": "you can change your default rating demographic (shown in the main list) in the",
@@ -589,5 +588,21 @@
   "Males": "Males",
   "Top 1000 Voters": "Top 1000 Voters",
   "Non-US Users": "Non-US Users",
-  "US Users": "US Users"
+  "US Users": "US Users",
+
+  "Warning: Mediainfo CLI Path is not set_ Please go to": "Warning: Mediainfo CLI Path is not set. Please go to",
+  "and provide one_ You can get Mediainfo CLI from": "and provide one. You can get Mediainfo CLI from",
+  "Alternatively you can use Mediainfo-RAR from": "Alternatively you can use Mediainfo-RAR from",
+  "Quick Scan": "Quick Scan",
+  "Complete Rescan": "Complete Rescan",
+  "Filescan in every Source Path": "Filescan in every Source Path",
+  "If a file is missing, remove it from the collection": "If a file is missing, remove it from the collection",
+  "If a new file is found, gather IMDB and mediainfo metadata": "If a new file is found, gather IMDB and mediainfo metadata",
+  "If a file is already known, don't gather any metadata": "If a file is already known, don't gather any metadata",
+  "If a file is new or already known, gather IMDB and mediainfo metadata": "If a file is new or already known, gather IMDB and mediainfo metadata",
+  "This can take a while depending on your collection and internet connection": "This can take a while depending on your collection and internet connection",
+  "IMDB Scraper Options": "IMDB Scraper Options",
+  "{appName} scrapes imdb_com website data in order to build up the database_ If imdb_com changes their website this process may fail in some aspects_ This scraper check will identify potential problems_": "{appName} scrapes imdb.com website data in order to build up the database. If imdb.com changes their website this process may fail in some aspects. This scraper check will identify potential problems.",
+  "Warning: the following source paths are currently not available and all entries will be removed! (check Settings)": "Warning: the following source paths are currently not available and all entries will be removed! (check Settings)",
+  "OK, I take the risk": "OK, I take the risk"
 }

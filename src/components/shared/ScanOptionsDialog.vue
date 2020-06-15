@@ -8,34 +8,34 @@
   >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
-        <div class="headline" style="width: 100%; font-size: 1.17em">Scan Media</div>
+        <div class="headline" style="width: 100%; font-size: 1.17em">{{$t('Scan Media')}}</div>
       </v-card-title>
       <v-card-text>
         <v-alert type="warning" colored-border border="left" v-if="showMediaInfoWarning" dense>
-          Warning: Mediainfo CLI Path is not set. Please go to
-          <a v-on:click="openSettings">Settings</a> and provide one. You can get Mediainfo CLI from www.mediaarea.net
+          {{$t('Warning: Mediainfo CLI Path is not set_ Please go to')}}
+          <a v-on:click="openSettings">{{$t('Settings')}}</a> {{$t('and provide one_ You can get Mediainfo CLI from')}} <a v-on:click="openMediaArea">www.mediaarea.net</a>. {{$t('Alternatively you can use Mediainfo-RAR from')}} <a v-on:click="openLundman">http://lundman.net</a>.
         </v-alert>
 
         <v-radio-group v-model="radioGroup">
-          <v-radio label="Quick Scan" v-bind:value="1" color="dark-grey"></v-radio>
-          <v-radio label="Complete Rescan" v-bind:value="2" color="dark-grey"></v-radio>
+          <v-radio v-bind:label="$t('Quick Scan')" v-bind:value="1" color="dark-grey"></v-radio>
+          <v-radio v-bind:label="$t('Complete Rescan')" v-bind:value="2" color="dark-grey"></v-radio>
         </v-radio-group>
 
         <div v-if="radioGroup == 1">
           <ul>
-            <li>Filescan in every Source Path</li>
-            <li>If a file is missing, remove it from the collection</li>
-            <li>If a new file is found, gather IMDB and mediainfo metadata</li>
-            <li>If a file is already known, don't gather any metadata</li>
+            <li>{{$t('Filescan in every Source Path')}}</li>
+            <li>{{$t('If a file is missing, remove it from the collection')}}</li>
+            <li>{{$t('If a new file is found, gather IMDB and mediainfo metadata')}}</li>
+            <li>{{$t("If a file is already known, don't gather any metadata")}}</li>
           </ul>
         </div>
 
         <div v-if="radioGroup == 2">
           <ul>
-            <li>Filescan in every Source Path</li>
-            <li>If a file is missing, remove it from the collection</li>
-            <li>If a file is new or already known, gather IMDB and mediainfo metadata</li>
-            <li>This can take a while depending on your collection and internet connection</li>
+            <li>{{$t('Filescan in every Source Path')}}</li>
+            <li>{{$t('If a file is missing, remove it from the collection')}}</li>
+            <li>{{$t('If a file is new or already known, gather IMDB and mediainfo metadata')}}</li>
+            <li>{{$t('This can take a while depending on your collection and internet connection')}}</li>
           </ul>
         </div>
 
@@ -43,7 +43,7 @@
           <v-expansion-panel style="padding: 0px!important">
             <v-expansion-panel-header
               style="padding: 8px!important"
-            >IMDB Scraper Options {{imdbOptionsTitle}}</v-expansion-panel-header>
+            >{{$t('IMDB Scraper Options')}} {{imdbOptionsTitle}}</v-expansion-panel-header>
             <v-expansion-panel-content>
               <v-col>
                 <v-checkbox
@@ -62,10 +62,14 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <span v-on="on">
-              <v-checkbox v-model="performCheck" label="Perform an IMDB Scraper Check before Scan" color="dark-grey"></v-checkbox>
+              <v-checkbox
+                v-model="performCheck"
+                label="Perform an IMDB Scraper Check before Scan"
+                color="dark-grey"
+              ></v-checkbox>
             </span>
           </template>
-          <span>Mediabox scrapes imdb.com website data in order to build up the database. If imdb.com changes their website this process may fail in some aspects. This scraper check will identify potential problems.</span>
+          <span>{{$t('{appName} scrapes imdb_com website data in order to build up the database_ If imdb_com changes their website this process may fail in some aspects_ This scraper check will identify potential problems_', {appName: $t('appName')})}}</span>
         </v-tooltip>
 
         <div style="height: 16px"></div>
@@ -77,7 +81,7 @@
           v-if="missingSourcePaths && missingSourcePaths.length > 0"
           dense
         >
-          Warning: the following source path{{missingSourcePaths.length > 1 ? 's are ' : ' is '}}currently not available and all entries will be removed! (check Settings)
+          {{$t('Warning: the following source paths are currently not available and all entries will be removed! (check Settings)')}}:
           <ul>
             <li v-for="msp in missingSourcePaths" v-bind:key="msp.id_SourcePaths">{{msp.Path}}</li>
           </ul>
@@ -92,7 +96,7 @@
               color="secondary"
               v-on:click.native="onCloseClick"
               style="margin-left: 8px;"
-            >Cancel</v-btn>
+            >{{$t('Cancel')}}</v-btn>
             <v-btn
               class="xs-fullwidth"
               v-bind:color="(missingSourcePaths && missingSourcePaths.length > 0) ? 'red' : 'primary'"
@@ -100,8 +104,8 @@
               v-bind:loading="isLoading"
               style="margin-left: 8px;"
             >
-              OK
-              <span v-if="missingSourcePaths && missingSourcePaths.length > 0">, I take the risk</span>
+              <span v-if="!missingSourcePaths || missingSourcePaths.length == 0">{{$t('OK')}}</span>
+              <span v-if="missingSourcePaths && missingSourcePaths.length > 0">{{$t('OK, I take the risk')}}</span>
             </v-btn>
           </v-row>
         </v-col>
@@ -114,6 +118,8 @@
 const logger = require("loglevel");
 
 import * as store from "@/store";
+
+const { shell } = require("electron").remote;
 
 // import { eventBus } from "@/main";
 
@@ -139,7 +145,7 @@ export default {
           scanOption => !scanOption.enabled
         ) === -1
       ) {
-        return "(ALL)";
+        return `(${this.$t('ALL')})`;
       }
 
       if (
@@ -147,7 +153,7 @@ export default {
           scanOption => scanOption.enabled
         ) === -1
       ) {
-        return "(NONE)";
+        return `(${this.$t('NONE')})`;
       }
 
       return (
@@ -167,7 +173,10 @@ export default {
     },
 
     onOKClick() {
-      this.$emit("ok", { radioGroup: this.radioGroup, performCheck: this.performCheck });
+      this.$emit("ok", {
+        radioGroup: this.radioGroup,
+        performCheck: this.performCheck
+      });
     },
 
     async init() {
@@ -189,7 +198,16 @@ export default {
     openSettings() {
       this.$emit("cancel");
       this.$router.push("/settings");
+    },
+
+    openMediaArea() {
+      shell.openExternal(`https://mediaarea.net/en/MediaInfo`);
+    },
+
+    openLundman() {
+      shell.openExternal(`http://lundman.net/wiki/index.php/Mediainfo-rar`);
     }
+
   },
 
   // ### Lifecycle Hooks ###
