@@ -7,10 +7,10 @@
   >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
-        <div class="headline" style="width: 100%; font-size: 1.17em">Rating Demographics for {{title}}</div>
+        <div class="headline" style="width: 100%; font-size: 1.17em">{{$t("Rating Demographics for")}} {{title}}</div>
       </v-card-title>
       <v-card-text>
-        <strong>Hint:</strong> you can change your default rating demographic (shown in the main list) in the <a v-on:click="openSettings">Settings</a>.
+        <strong>{{$t("Hint")}}:</strong> {{$t("you can change your default rating demographic (shown in the main list) in the")}} <a v-on:click="openSettings">{{$t('Settings')}}</a>.
         
         <v-alert
           type="info"
@@ -18,19 +18,19 @@
           border="left"
           v-if="!isLoading && !ratingDemographics"
           dense
-        >No rating demographics found for {{title}}</v-alert>
+        >{{$t("No rating demographics found for")}} {{title}}</v-alert>
         <div v-if="ratingDemographics">
           <table>
             <tr>
               <td></td>
-              <td><div class="rating-demographics-header">All Ages</div></td>
+              <td><div class="rating-demographics-header">{{$t("All Ages")}}</div></td>
               <td><div class="rating-demographics-header">&lt;18</div></td>
               <td><div class="rating-demographics-header">18-29</div></td>
               <td><div class="rating-demographics-header">30-44</div></td>
               <td><div class="rating-demographics-header">45+</div></td>
             </tr>
             <tr>
-              <td><div class="rating-demographics-header">All</div></td>
+              <td><div class="rating-demographics-header">{{$t("All")}}</div></td>
               <td><div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating">{{ratingDemographics.IMDB_rating_formatted}}<br>{{ratingDemographics.IMDB_numVotes_formatted}}</div></td>
               <td><div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_aged_under_18">{{ratingDemographics.IMDB_rating_aged_under_18_formatted}}<br>{{ratingDemographics.IMDB_numVotes_aged_under_18_formatted}}</div></td>
               <td><div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_aged_18_29">{{ratingDemographics.IMDB_rating_aged_18_29_formatted}}<br>{{ratingDemographics.IMDB_numVotes_aged_18_29_formatted}}</div></td>
@@ -38,7 +38,7 @@
               <td><div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_aged_45_plus">{{ratingDemographics.IMDB_rating_aged_45_plus_formatted}}<br>{{ratingDemographics.IMDB_numVotes_aged_45_plus_formatted}}</div></td>
             </tr>
             <tr>
-              <td><div class="rating-demographics-header">Females</div></td>
+              <td><div class="rating-demographics-header">{{$t("Females")}}</div></td>
               <td><div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_females">{{ratingDemographics.IMDB_rating_females_formatted}}<br>{{ratingDemographics.IMDB_numVotes_females_formatted}}</div></td>
               <td><div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_females_aged_under_18">{{ratingDemographics.IMDB_rating_females_aged_under_18_formatted}}<br>{{ratingDemographics.IMDB_numVotes_females_aged_under_18_formatted}}</div></td>
               <td><div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_females_aged_18_29">{{ratingDemographics.IMDB_rating_females_aged_18_29_formatted}}<br>{{ratingDemographics.IMDB_numVotes_females_aged_18_29_formatted}}</div></td>
@@ -46,7 +46,7 @@
               <td><div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_females_aged_45_plus">{{ratingDemographics.IMDB_rating_females_aged_45_plus_formatted}}<br>{{ratingDemographics.IMDB_numVotes_females_aged_45_plus_formatted}}</div></td>
             </tr>
             <tr>
-              <td><div class="rating-demographics-header">Males</div></td>
+              <td><div class="rating-demographics-header">{{$t("Males")}}</div></td>
               <td><div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_males">{{ratingDemographics.IMDB_rating_males_formatted}}<br>{{ratingDemographics.IMDB_numVotes_males_formatted}}</div></td>
               <td><div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_males_aged_under_18">{{ratingDemographics.IMDB_rating_males_aged_under_18_formatted}}<br>{{ratingDemographics.IMDB_numVotes_males_aged_under_18_formatted}}</div></td>
               <td><div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_males_aged_18_29">{{ratingDemographics.IMDB_rating_males_aged_18_29_formatted}}<br>{{ratingDemographics.IMDB_numVotes_males_aged_18_29_formatted}}</div></td>
@@ -57,9 +57,9 @@
 
           <table>
             <tr>
-              <td><div class="rating-demographics-header three-columns">Top 1000 Voters</div></td>
-              <td><div class="rating-demographics-header three-columns">Non-US Users</div></td>
-              <td><div class="rating-demographics-header three-columns">US Users</div></td>
+              <td><div class="rating-demographics-header three-columns">{{$t("Top 1000 Voters")}}</div></td>
+              <td><div class="rating-demographics-header three-columns">{{$t("Non-US Users")}}</div></td>
+              <td><div class="rating-demographics-header three-columns">{{$t("US Users")}}</div></td>
             </tr>
             <tr>
               <td><div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_top_1000_voters">{{ratingDemographics.IMDB_rating_top_1000_voters_formatted}}<br>{{ratingDemographics.IMDB_numVotes_top_1000_voters_formatted}}</div></td>
@@ -78,7 +78,7 @@
               color="secondary"
               v-on:click.native="onCloseClick"
               style="margin-left: 8px;"
-            >Close</v-btn>
+            >{{$t("Close")}}</v-btn>
           </v-row>
         </v-col>
       </v-card-actions>

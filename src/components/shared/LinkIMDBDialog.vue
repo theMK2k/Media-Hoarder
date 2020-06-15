@@ -2,13 +2,13 @@
   <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onCancelClick">
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
-        <div class="headline" style="width: 100%; font-size: 1.17em">Link with IMDB entry</div>
+        <div class="headline" style="width: 100%; font-size: 1.17em">{{$t('Link with IMDB entry')}}</div>
       </v-card-title>
       <v-card-text>
         <v-row style="padding-left: 16px; margin-bottom: 8px">
           <v-text-field
             :append-icon-cb="() => {}"
-            placeholder="Enter a title..."
+            v-bind:placeholder="`${$t('Enter a title')}...`"
             single-line
             append-icon="mdi-magnify"
             color="white"
@@ -22,17 +22,17 @@
           <v-expansion-panel style="padding: 0px!important; margin-bottom: 8px">
             <v-expansion-panel-header
               style="padding: 8px!important"
-            >Media Types {{titleTypesTitle()}}</v-expansion-panel-header>
+            >{{$t('Media Types')}} {{titleTypesTitle()}}</v-expansion-panel-header>
             <v-expansion-panel-content>
               <v-row>
-                <v-btn text v-on:click="setAllTitleTypes(false)">NONE</v-btn>
-                <v-btn text v-on:click="setAllTitleTypes(true)">ALL</v-btn>
+                <v-btn text v-on:click="setAllTitleTypes(false)">{{$t('NONE')}}</v-btn>
+                <v-btn text v-on:click="setAllTitleTypes(true)">{{$t('ALL')}}</v-btn>
               </v-row>
               <v-checkbox
                 v-for="titleType in titleTypes"
                 v-bind:key="titleType.id"
                 v-model="titleType.checked"
-                v-bind:label="titleType.name"
+                v-bind:label="titleType.nameTranslated"
                 style="margin: 0px"
                 color="dark-grey"
               ></v-checkbox>
@@ -41,7 +41,7 @@
         </v-expansion-panels>
 
         <v-row>
-          <v-btn text v-bind:loading="isLoading" v-on:click.native="onSearchClick">Search</v-btn>
+          <v-btn text v-bind:loading="isLoading" v-on:click.native="onSearchClick">{{$t('Search')}}</v-btn>
         </v-row>
 
         <v-row v-for="(item, i) in searchResults" :key="i">
@@ -88,7 +88,7 @@
                         color="primary"
                         v-bind:loading="isLinking"
                         v-on:click.stop="onSelectClick(item)"
-                      >Select for linking</v-btn>
+                      >{{$t('Select for linking')}}</v-btn>
                     </v-row>
                   </v-col>
                 </v-list-item-content>
@@ -99,7 +99,11 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCancelClick()">Close</v-btn>
+        <v-btn
+          class="xs-fullwidth"
+          color="secondary"
+          v-on:click.native="onCancelClick()"
+        >{{$t('Close')}}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -107,7 +111,7 @@
 
 <script>
 // import * as store from "@/store";
-import { scrapeIMDBAdvancedTitleSearch } from "@/imdb-scraper"
+import { scrapeIMDBAdvancedTitleSearch } from "@/imdb-scraper";
 
 // import * as helpers from "@/helpers/helpers";
 const logger = require("loglevel");
@@ -190,6 +194,13 @@ export default {
       this.searchResults = [];
       this.isLoading = false;
       this.isLinking = false;
+
+      this.titleTypes.forEach(
+        titleType =>
+          (titleType.nameTranslated = this.$t(
+            `IMDBTitleTypes.${titleType.name}`
+          ))
+      );
     },
 
     setAllTitleTypes(value) {
@@ -204,11 +215,11 @@ export default {
 
     titleTypesTitle() {
       if (!this.titleTypes.find(titleType => titleType.checked)) {
-        return "(NONE)";
+        return `(${this.$t("NONE")})`;
       }
 
       if (!this.titleTypes.find(titleType => !titleType.checked)) {
-        return "(ALL)";
+        return `(${this.$t("ALL")})`;
       }
 
       return `(${
@@ -222,7 +233,7 @@ export default {
       this.isLoading = true;
 
       if (!this.searchText) {
-        eventBus.showSnackbar("error", "title is missing");
+        eventBus.showSnackbar("error", this.$t("title is missing"));
         this.isLoading = false;
         return;
       }
@@ -243,7 +254,7 @@ export default {
       logger.log("onSelectClick item:", item);
 
       if (!item.tconst) {
-        return eventBus.showSnackbar("error", "identifier missing");
+        return eventBus.showSnackbar("error", this.$t("identifier missing"));
       }
 
       this.searchResults = [item];

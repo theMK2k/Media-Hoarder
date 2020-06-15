@@ -27,7 +27,7 @@
             color="secondary"
             v-on:click.native="onCloseClick"
             style="margin-left: 8px;"
-          >Close</v-btn>
+          >{{$t('Close')}}</v-btn>
         </v-row>
       </v-col>
     </v-card>

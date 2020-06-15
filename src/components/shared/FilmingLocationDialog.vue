@@ -16,7 +16,7 @@
                 <v-list-item-title
                   class="headline mb-2"
                   style="margin-bottom: 0px!important"
-                >Filming Location: {{ Location }}</v-list-item-title>
+                >{{$t('Filming Location')}}: {{ Location }}</v-list-item-title>
               </div>
             </v-row>
 
@@ -37,14 +37,14 @@
             color="secondary"
             v-on:click.native="onCloseClick"
             style="margin-left: 8px;"
-          >Close</v-btn>
+          >{{$t('Close')}}</v-btn>
           <v-btn
             class="xs-fullwidth"
             color="primary"
             v-on:click.native="onFilterClick"
             style="margin-left: 8px;"
           >
-            Filter by this filming location
+            {{$t('Filter by this filming location')}}
             <span v-if="numMovies">({{numMovies}})</span>
           </v-btn>
         </v-row>

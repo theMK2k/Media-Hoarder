@@ -590,7 +590,7 @@
                   color="primary"
                   v-on:click.stop="openIMDB(item)"
                 >
-                  <v-icon small>mdi-web</v-icon>IMDB
+                  <v-icon small>mdi-web</v-icon>&nbsp;IMDB
                 </v-btn>
                 <v-btn
                   text
@@ -598,7 +598,7 @@
                   color="primary"
                   v-on:click.stop="openMovieChat(item)"
                 >
-                  <v-icon small>mdi-web</v-icon>MovieChat
+                  <v-icon small>mdi-web</v-icon>&nbsp;MovieChat
                 </v-btn>
               </v-row>
             </v-col>
@@ -1585,9 +1585,10 @@ export default {
       }
 
       return this.$t("{duration} ago", {
-        timespan: moment.duration(movie.createdMoment.diff(this.currentTime)).humanize()
+        timespan: moment
+          .duration(movie.createdMoment.diff(this.currentTime))
+          .humanize()
       });
-      
     },
 
     lastAccessDisplayText(movie) {
@@ -1729,7 +1730,9 @@ export default {
       this.editItemDialog.item = item;
       this.editItemDialog.attributeName = attributeName;
       this.editItemDialog.attributeDisplayText = attributeDisplayText;
-      this.editItemDialog.title = this.$t("Edit {something}", {something: attributeDisplayText});
+      this.editItemDialog.title = this.$t("Edit {something}", {
+        something: attributeDisplayText
+      });
       this.$refs.editItemNameDialog.initTextValue(item[attributeName]);
       this.editItemDialog.show = true;
     },
@@ -1763,7 +1766,9 @@ export default {
 
       eventBus.showSnackbar(
         "success",
-        this.$t("{something} successfully changed_", {something: this.editItemDialog.attributeDisplayText})
+        this.$t("{something} successfully changed_", {
+          something: this.editItemDialog.attributeDisplayText
+        })
       );
     },
 

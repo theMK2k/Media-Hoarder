@@ -30,19 +30,19 @@ OK -> check if memory leak is only in dev-mode (yes, it still persists even in p
 
     OK src\components\shared\AddLanguagesDialog.vue
     OK src\components\shared\AddRegionsDialog.vue
+    OK src\components\shared\AddTitleTypeDialog.vue
+    OK src\components\shared\CheckIMDBScraperDialog.vue
+    OK src\components\shared\CompanyDialog.vue
+    OK src\components\shared\Dialog.vue
+    OK src\components\shared\FilmingLocationDialog.vue
+    OK src\components\shared\LinkIMDBDialog.vue
+    OK src\components\shared\ListDialog.vue
+    OK src\components\shared\LocalVideoPlayerDialog.vue
+    OK src\components\shared\Pagination.vue
+    OK src\components\shared\PersonDialog.vue
+    OK src\components\shared\PlotKeywordDialog.vue
+    OK src\components\shared\RatingDemographicsDialog.vue
 
-    src\components\shared\AddTitleTypeDialog.vue
-    src\components\shared\CheckIMDBScraperDialog.vue
-    src\components\shared\CompanyDialog.vue
-    src\components\shared\Dialog.vue
-    src\components\shared\FilmingLocationDialog.vue
-    src\components\shared\LinkIMDBDialog.vue
-    src\components\shared\ListDialog.vue
-    src\components\shared\LocalVideoPlayerDialog.vue
-    src\components\shared\Pagination.vue
-    src\components\shared\PersonDialog.vue
-    src\components\shared\PlotKeywordDialog.vue
-    src\components\shared\RatingDemographicsDialog.vue
     src\components\shared\ScanOptionsDialog.vue
     src\components\shared\SearchDataDialog.vue
     src\components\shared\SourcePath.vue

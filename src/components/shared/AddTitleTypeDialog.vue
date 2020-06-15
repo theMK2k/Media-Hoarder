@@ -2,13 +2,13 @@
   <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onCloseClick">
     <v-card dark flat v-bind:ripple="false">
         <v-card-title>
-        <div class="headline" style="width: 100%; font-size: 1.17em">Add Title Type</div>
+        <div class="headline" style="width: 100%; font-size: 1.17em">{{$t('Add Title Type')}}</div>
         </v-card-title>
 
         <mk-title-type v-for="item in filteredItems" v-bind:key="item.TitleType" v-bind:value="item" v-bind:showAdd="true" v-on:addTitleType="onAddTitleType"></mk-title-type>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" small v-on:click.native="onCloseClick()">Close</v-btn>
+        <v-btn class="xs-fullwidth" color="secondary" small v-on:click.native="onCloseClick()">{{$t('Close')}}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

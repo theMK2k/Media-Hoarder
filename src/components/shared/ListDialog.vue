@@ -20,14 +20,14 @@
             <!-- v-if="lists && lists.length > 0" style="width: 100%" -->
             <v-radio
               value="useExistingLists"
-              label="Existing List:"
+              v-bind:label="`${$t('Existing List')}:`"
               color="dark-grey"
               style="margin-left: 8px; width: 140px; margin-top: -16px;"
             ></v-radio>
             <v-select
               solo
               v-bind:items="lists"
-              item-text="Name"
+              v-bind:item-text="$t('Name')"
               item-value="id_Lists"
               v-bind:disabled="chosenMethod != 'useExistingLists'"
               v-model="chosen_id_Lists"
@@ -38,7 +38,7 @@
           <v-row v-if="allowCreateNewList">
             <v-radio
               value="createNewList"
-              label="New List:"
+              v-bind:label="`${$t('New List')}:`"
               color="dark-grey"
               style="margin-left: 8px; width: 140px; margin-top: -16px;"
             ></v-radio>
@@ -57,13 +57,13 @@
           class="xs-fullwidth"
           color="secondary"
           v-on:click.native="onButtonClick('cancel')"
-        >CANCEL</v-btn>
+        >{{$t('Cancel')}}</v-btn>
         <v-btn
           v-bind:disabled="!canConfirm"
           class="xs-fullwidth"
           color="primary"
           v-on:click.native="onButtonClick('ok')"
-        >OK</v-btn>
+        >{{$t('OK')}}</v-btn>
         <!-- v-bind:disabled="enterTextValue && !textValueEmptyAllowed && !textValueLocal" -->
         <!-- </v-row> -->
       </v-card-actions>

@@ -364,7 +364,7 @@
               <v-expansion-panel-content>
                 <v-row>
                   <v-btn text v-on:click="setAllPersons(false)">{{$t("SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllPersons(true)">{{$t("SET NONE")}}</v-btn>
+                  <v-btn text v-on:click="setAllPersons(true)">{{$t("SET ALL")}}</v-btn>
                   <v-btn text v-on:click="addPerson()">{{$t("FIND")}}</v-btn>
                 </v-row>
                 <v-switch

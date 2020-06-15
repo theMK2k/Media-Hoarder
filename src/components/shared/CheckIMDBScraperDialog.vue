@@ -3,7 +3,7 @@
     <v-card style="min-height: 500px">
       <v-card-title>
         <v-row class="headline" style="width: 100%; font-size: 1.17em">
-          IMDB Scraper Check
+          {{$t('IMDB Scraper Check')}}
           <v-spacer></v-spacer>
 
           <v-btn
@@ -11,13 +11,13 @@
             v-on:click="onRunChecksPressed"
             v-bind:loading="isRunning"
             v-if="!settings"
-          >Run Checks</v-btn>
-          <v-btn text v-if="!settings" v-bind:disabled="isRunning" v-on:click="$emit('close')">Close</v-btn>
+          >{{$t('Run Checks')}}</v-btn>
+          <v-btn text v-if="!settings" v-bind:disabled="isRunning" v-on:click="$emit('close')">{{$t('Close')}}</v-btn>
         </v-row>
       </v-card-title>
 
       <v-card-text>
-        The imdb.com web scraper is tested using a test-set of example data. This way we can assure that the data from imdb.com will be correctly scraped.
+        {{$t('The imdb_com web scraper is tested using a test-set of example data_ This way we can assure that the data from imdb_com will be correctly scraped_')}}
         <v-row
           v-for="check in imdbScraperChecksFiltered"
           v-bind:key="check.key"
@@ -48,24 +48,24 @@
             colored-border
             border="left"
             v-if="checkResult === 0"
-          >All checks successful!</v-alert>
+          >{{$t('All checks successful!')}}</v-alert>
           <v-alert
             type="warning"
             colored-border
             border="left"
             v-if="checkResult === 1"
-          >Checks with warning detected!</v-alert>
+          >{{$t('Checks with warning detected!')}}</v-alert>
           <v-alert
             type="error"
             colored-border
             border="left"
             v-if="checkResult === 2"
-          >Checks with error detected!</v-alert>
+          >{{$t('Checks with error detected!')}}</v-alert>
         </div>
       </v-card-text>
 
       <v-card-actions v-if="settings && !isRunning">
-        <v-btn text v-on:click="$emit('close')">Cancel</v-btn>
+        <v-btn text v-on:click="$emit('close')">{{$t('Cancel')}}</v-btn>
         <v-btn text v-on:click="$emit('ok')">{{okButtonText}}</v-btn>
       </v-card-actions>
     </v-card>
@@ -92,7 +92,7 @@ export default {
     return {
       settings: null,
       isRunning: false,
-      okButtonText: "OK",
+      okButtonText: null,
       checkResult: null
     };
   },
@@ -107,7 +107,7 @@ export default {
     init(settings) {
       this.settings = settings;
       this.isRunning = false;
-      this.okButtonText = "OK";
+      this.okButtonText = this.$t('OK');
       this.checkResult = null;
 
       this.$shared.imdbScraperChecks.forEach(check => {
@@ -151,7 +151,7 @@ export default {
 
           if (!this.checkResult) {
             this.checkResult = imdbScraperTests.status.SUCCESS;
-            this.okButtonText = "OK - Scan Media Now";
+            this.okButtonText = this.$t('OK - Scan Media Now');
           }
         }
         if (check.result.status === imdbScraperTests.status.WARNING) {
@@ -160,7 +160,7 @@ export default {
 
           if (this.checkResult !== imdbScraperTests.status.ERROR) {
             this.checkResult = imdbScraperTests.status.WARNING;
-            this.okButtonText = "Ignore Warning - Scan Media Now";
+            this.okButtonText = this.$t('Ignore Warning - Scan Media Now');
           }
         }
         if (check.result.status === imdbScraperTests.status.ERROR) {
@@ -168,7 +168,7 @@ export default {
           check.icon = "mdi-alert-circle-outline";
 
           this.checkResult = imdbScraperTests.status.ERROR;
-          this.okButtonText = "Ignore Error - Scan Media Now";
+          this.okButtonText = this.$t('Ignore Error - Scan Media Now');
         }
 
         check.isRunning = false;

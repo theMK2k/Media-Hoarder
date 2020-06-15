@@ -16,7 +16,7 @@
                 <v-list-item-title
                   class="headline mb-2"
                   style="margin-bottom: 0px!important"
-                >Company: {{ Company_Name }}</v-list-item-title>
+                >{{$t('Company')}}: {{ Company_Name }}</v-list-item-title>
               </div>
             </v-row>
 
@@ -37,20 +37,22 @@
             color="secondary"
             v-on:click.native="onCloseClick"
             style="margin-left: 8px;"
-          >Close</v-btn>
+          >{{$t('Close')}}</v-btn>
           <v-btn
             class="xs-fullwidth"
             color="primary"
             v-on:click.stop="openIMDB()"
             style="margin-left: 8px;"
-          >Open IMDB</v-btn>
+          >
+            <v-icon small>mdi-web</v-icon>&nbsp;IMDB
+          </v-btn>
           <v-btn
             class="xs-fullwidth"
             color="primary"
             v-on:click.native="onFilterClick"
             style="margin-left: 8px;"
           >
-            Filter by this company
+            {{$t('Filter by this company')}}
             <span v-if="numMovies">({{numMovies}})</span>
           </v-btn>
         </v-row>
