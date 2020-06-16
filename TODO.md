@@ -21,6 +21,7 @@ OK -> check if memory leak is only in dev-mode (yes, it still persists even in p
 - maybe we should use `https://www.imdb.com/find?q=` (which is IMDB search incl. ENTER)?
 
 ## I18N - Basic
+- investigate loading i18n .json from ./data/i18n
 - implement vue-i18n
 - Add UI-Language Selection in Settings
 - support all languages supported by DeepL (API):
