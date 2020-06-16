@@ -5,21 +5,26 @@
         <div class="headline" style="width: 100%; font-size: 1.17em">{{ title }}</div>
       </v-card-title>
       <v-card-text>
-        <v-text-field
-          :append-icon-cb="() => {}"
-          v-bind:placeholder="$t('Search___ (use '%' to list all)')"
-          single-line
-          append-icon="mdi-magnify"
-          color="white"
-          hide-details
-          v-model="searchText"
-          v-bind:loading="isLoading"
-        ></v-text-field>
+        <v-row>
+          <v-text-field
+            :append-icon-cb="() => {}"
+            v-bind:placeholder="$t(`Search___ (use '%' to list all)`)"
+            single-line
+            append-icon="mdi-magnify"
+            color="white"
+            hide-details
+            v-model="searchText"
+            v-bind:loading="isLoading"
+            v-on:keydown.enter="runSearch"
+            style="padding-top: 0px; margin-left: 12px"
+          ></v-text-field>
+          <v-btn text v-on:click="runSearch">{{$t('Search')}}</v-btn>
+        </v-row>
 
         <v-checkbox
           v-model="sortByNumMovies"
           v-bind:label="$t('Sort by number of movies')"
-          style="margin: 0px"
+          style="margin: 0px; margin-top: 12px"
           color="dark-grey"
 
         ></v-checkbox>
@@ -62,12 +67,8 @@ export default {
   },
 
   watch: {
-    searchText: function(newValue) {
-      this.debouncedSearchTextChanged(newValue);
-    },
-
     sortByNumMovies: function() {
-      this.searchTextChanged(this.searchText);
+      this.runSearch();
     }
   },
 
@@ -85,8 +86,8 @@ export default {
       this.$emit("cancel");
     },
 
-    async searchTextChanged(searchText) {
-      if (!searchText) {
+    async runSearch() {
+      if (!this.searchText) {
         this.items = [];
         return;
       }
@@ -109,7 +110,7 @@ export default {
                 				AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
 								)) AS NumMovies
 					FROM tbl_Movies_IMDB_Companies MC
-					WHERE Company_Name LIKE '${searchText}%'
+					WHERE Company_Name LIKE '${this.searchText}%'
           GROUP BY Company_Name
           ${this.sortByNumMovies ? 'ORDER BY NumMovies DESC' : 'ORDER BY name ASC'}
           `;
@@ -130,7 +131,7 @@ export default {
                 				AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
 								)) AS NumMovies
 					FROM tbl_Movies_IMDB_Credits MC
-					WHERE Person_Name LIKE '${searchText}%'
+					WHERE Person_Name LIKE '${this.searchText}%'
           GROUP BY IMDB_Person_ID
           ${this.sortByNumMovies ? 'ORDER BY NumMovies DESC' : 'ORDER BY name ASC'}
           `;
@@ -150,7 +151,7 @@ export default {
                				AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
               ) AS NumMovies
           FROM tbl_IMDB_Plot_Keywords PK
-          WHERE PK.Keyword LIKE '%${searchText}%'
+          WHERE PK.Keyword LIKE '%${this.searchText}%'
           ${this.sortByNumMovies ? 'ORDER BY NumMovies DESC' : 'ORDER BY Keyword ASC'}
           `;
       }
@@ -169,7 +170,7 @@ export default {
              				AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
             ) AS NumMovies
           FROM tbl_IMDB_Filming_Locations FL
-          WHERE FL.Location LIKE '%${searchText}%'
+          WHERE FL.Location LIKE '%${this.searchText}%'
           ${this.sortByNumMovies ? 'ORDER BY NumMovies DESC' : 'ORDER BY Location ASC'}
           `;
       }
@@ -208,8 +209,6 @@ export default {
 
   created() {
     // lodash debounced functions
-    this.debouncedSearchTextChanged = _.debounce(this.searchTextChanged, 500);
-
     eventBus.$on("personDialogConfirm", () => {
       this.onCancelClick();
     });
