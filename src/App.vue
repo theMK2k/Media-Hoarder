@@ -305,7 +305,7 @@
                 <v-checkbox
                   v-for="ageRating in $shared.filterAgeRatings"
                   v-bind:key="ageRating.Age"
-                  v-bind:label="(ageRating.Age === -1 ? 'undetermined' : ageRating.Age) + ' (' + ageRating.NumMovies + ')'"
+                  v-bind:label="(ageRating.Age === -1 ? `<${$t('undetermined')}>` : ageRating.Age) + ' (' + ageRating.NumMovies + ')'"
                   v-model="ageRating.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
@@ -314,7 +314,7 @@
               </v-expansion-panel-content>
             </v-expansion-panel>
 
-            <!-- FILTER GROUP: PARENTAL ADVISORY -->
+            <!-- FILTER GROUP: CONTENT ADVISORY -->
             <v-expansion-panel
               v-show="($shared.filterParentalAdvisory.Nudity && $shared.filterParentalAdvisory.Nudity.length > 0) || ($shared.filterParentalAdvisory.Violence && $shared.filterParentalAdvisory.Violence.length > 0) || ($shared.filterParentalAdvisory.Profanity && $shared.filterParentalAdvisory.Profanity.length > 0) || ($shared.filterParentalAdvisory.Alcohol && $shared.filterParentalAdvisory.Alcohol.length > 0) || ($shared.filterParentalAdvisory.Frightening && $shared.filterParentalAdvisory.Frightening.length > 0)"
               style="padding: 0px!important"
@@ -344,6 +344,7 @@
                         v-bind:key="paItem.Severity"
                       >
                         <v-checkbox
+                          v-bind:label="$t(`${paItem.DisplayText}`) + ' (' + paItem.NumMovies + ')'"
                           v-model="paItem.Selected"
                           v-on:click.native="filtersChanged"
                           style="margin: 0px"

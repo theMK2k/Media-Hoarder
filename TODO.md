@@ -43,12 +43,11 @@ OK -> check if memory leak is only in dev-mode (yes, it still persists even in p
     OK src\components\shared\PlotKeywordDialog.vue
     OK src\components\shared\RatingDemographicsDialog.vue
     OK src\components\shared\ScanOptionsDialog.vue
-
-    src\components\shared\SearchDataDialog.vue
-    src\components\shared\SourcePath.vue
-    src\components\shared\TitleType.vue
-    src\components\shared\VersionDialog.vue
-    src\components\shared\VideoPlayerDialog.vue
+    OK src\components\shared\SearchDataDialog.vue
+    OK src\components\shared\SourcePath.vue
+    OK src\components\shared\TitleType.vue
+    OK src\components\shared\VersionDialog.vue
+    OK src\components\shared\VideoPlayerDialog.vue
 
     (other .js files?)
 

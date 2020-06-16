@@ -3,10 +3,10 @@
     <v-card style="min-height: 500px">
       <v-card-title>
         <v-row class="headline" style="width: 100%; font-size: 1.17em">
-          MediaBox {{currentVersion}} made with ♥ by MK2k
+          {{$t('appName')}} {{currentVersion}} made with ♥ by MK2k
           <v-spacer></v-spacer>
 
-          <v-btn text v-on:click="$emit('close')">Close</v-btn>
+          <v-btn text v-on:click="$emit('close')">{{$t('Close')}}</v-btn>
         </v-row>
       </v-card-title>
 
@@ -14,7 +14,7 @@
         v-if="isLoadingHistory"
         style="margin-left: 24px; margin-right:24px; margin-bottom: 16px"
       >
-        Checking for Updates
+        {{$t('Checking for Updates')}}
         <v-progress-linear color="red accent-0" indeterminate rounded height="6"></v-progress-linear>
       </div>
 
@@ -27,24 +27,24 @@
         dense
       >
         <span v-if="isNewVersionAvailable">
-          Version {{latestVersion}} is available - get it at
+          {{$t('Version {latestVersion} is available - get it at', {latestVersion: latestVersion})}}
           <a
             v-on:click.stop="openLink('https://github.com/theMK2k/MediaBox/releases')"
           >https://github.com/theMK2k/MediaBox/releases</a>
         </span>
-        <span v-if="isUpToDate">you are up to date</span>
+        <span v-if="isUpToDate">{{$t('you are up to date')}}</span>
         <span
           v-if="!isNewVersionAvailable && !isUpToDate"
-        >unable to determine if you are up to date</span>
+        >{{$t('unable to determine if you are up to date')}}</span>
       </v-alert>
 
       <div style="margin-left: 24px">
-        Visit
-        <a>todo-website.net</a> for a better overview.
+        {{$t('Visit')}}
+        <a>todo-website.net</a> {{$t('for a better features overview_')}}
       </div>
 
       <v-card-actions style="margin-left: 16px" v-if="history && history.length > 0">
-        Version History
+        {{$t('Version History')}}
         
         <v-btn
           text

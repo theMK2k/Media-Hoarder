@@ -2807,7 +2807,7 @@ async function fetchFilterSourcePaths($MediaType) {
   shared.filterSourcePaths = results;
 }
 
-async function fetchFilterGenres($MediaType) {
+async function fetchFilterGenres($MediaType, $t) {
   logger.log("fetchFilterGenres MediaType:", $MediaType);
 
   const filterValues = await fetchFilterValues($MediaType);
@@ -2848,6 +2848,15 @@ async function fetchFilterGenres($MediaType) {
       result.NumMovies = result.NumMovies.toLocaleString();
     });
   }
+
+  // Translate
+  resultsFiltered.forEach(resultFiltered => {
+    const genreNameTranslated = $t(`GenreNames.${resultFiltered.Name}`);
+
+    if (genreNameTranslated && !genreNameTranslated.includes(".")) {
+      resultFiltered.Name = genreNameTranslated;
+    }
+  })
 
   logger.log("fetchFilterGenres resultsFiltered:", resultsFiltered);
 
@@ -3124,7 +3133,7 @@ async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category) {
   return results;
 }
 
-async function fetchFilterPersons($MediaType) {
+async function fetchFilterPersons($MediaType, $t) {
   const filterValues = await fetchFilterValues($MediaType);
 
   const results = await db.fireProcedureReturnAll(
@@ -3132,7 +3141,7 @@ async function fetchFilterPersons($MediaType) {
 		SELECT
 			0 AS id_Filter_Persons
 			, NULL AS IMDB_Person_ID
-			, '<any other person>' AS Person_Name
+			, $any AS Person_Name
 			, 1 AS Selected
 			, (
 					SELECT COUNT(1)
@@ -3166,7 +3175,7 @@ async function fetchFilterPersons($MediaType) {
 			) AS NumMovies
 		FROM tbl_Filter_Persons FILTERPERSON
 	`,
-    { $MediaType }
+    { $MediaType, $any: $t('<any other person>') }
   );
 
   // logger.log('fetchFilterPersons QUERY:', )
@@ -3190,14 +3199,14 @@ async function fetchFilterPersons($MediaType) {
   shared.filterPersons = results;
 }
 
-async function fetchFilterCompanies($MediaType) {
+async function fetchFilterCompanies($MediaType, $t) {
   const filterValues = await fetchFilterValues($MediaType);
 
   const results = await db.fireProcedureReturnAll(
     `
 		SELECT
 			0 AS id_Filter_Companies
-			, '<any other company>' AS Company_Name
+			, $any AS Company_Name
 			, 1 AS Selected
 			, (
 					SELECT COUNT(1)
@@ -3230,7 +3239,7 @@ async function fetchFilterCompanies($MediaType) {
 			) AS NumMovies
 		FROM tbl_Filter_Companies FILTERCOMPANY
 	`,
-    { $MediaType }
+    { $MediaType, $any: $t('<any other company>') }
   );
 
   // logger.log('fetchFilterCompanies QUERY:', )
@@ -3254,7 +3263,7 @@ async function fetchFilterCompanies($MediaType) {
   shared.filterCompanies = results;
 }
 
-async function fetchFilterIMDBPlotKeywords($MediaType) {
+async function fetchFilterIMDBPlotKeywords($MediaType, $t) {
   const filterValues = await fetchFilterValues($MediaType);
 
   const results = await db.fireProcedureReturnAll(
@@ -3262,7 +3271,7 @@ async function fetchFilterIMDBPlotKeywords($MediaType) {
 		SELECT
 			0 AS id_Filter_IMDB_Plot_Keywords
 			, NULL AS id_IMDB_Plot_Keywords
-			, '<any other plot keyword>' AS Keyword
+			, $any AS Keyword
 			, 1 AS Selected
 			, (
 					SELECT COUNT(1)
@@ -3296,7 +3305,7 @@ async function fetchFilterIMDBPlotKeywords($MediaType) {
 			) AS NumMovies
 		FROM tbl_Filter_IMDB_Plot_Keywords FILTERPLOTKEYWORDS
 	`,
-    { $MediaType }
+    { $MediaType, $any: $t('<any other plot keyword>') }
   );
 
   // logger.log('fetchFilterIMDBPlotKeywords QUERY:', )
@@ -3322,7 +3331,7 @@ async function fetchFilterIMDBPlotKeywords($MediaType) {
   shared.filterIMDBPlotKeywords = results;
 }
 
-async function fetchFilterIMDBFilmingLocations($MediaType) {
+async function fetchFilterIMDBFilmingLocations($MediaType, $t) {
   const filterValues = await fetchFilterValues($MediaType);
 
   const results = await db.fireProcedureReturnAll(
@@ -3330,7 +3339,7 @@ async function fetchFilterIMDBFilmingLocations($MediaType) {
 		SELECT
 			0 AS id_Filter_IMDB_Filming_Locations
 			, NULL AS id_IMDB_Filming_Locations
-			, '<any other filming location>' AS Location
+			, $any AS Location
 			, 1 AS Selected
 			, (
 					SELECT COUNT(1)
@@ -3364,7 +3373,7 @@ async function fetchFilterIMDBFilmingLocations($MediaType) {
 			) AS NumMovies
 		FROM tbl_Filter_IMDB_Filming_Locations FILTERFILMINGLOCATIONS
 	`,
-    { $MediaType }
+    { $MediaType, $any: $t('<any other filming location>') }
   );
 
   if (filterValues && filterValues.filterIMDBFilmingLocations) {
@@ -3602,14 +3611,14 @@ async function fetchLists() {
 	`);
 }
 
-async function fetchFilterLists($MediaType) {
+async function fetchFilterLists($MediaType, $t) {
   const filterValues = await fetchFilterValues($MediaType);
 
   const results = await db.fireProcedureReturnAll(
     `
 		SELECT
 			0 AS id_Lists
-			, '<not in any list>' AS Name
+			, $any AS Name
 			, 1 AS Selected
 			, (
 				SELECT COUNT(1)
@@ -3632,7 +3641,7 @@ async function fetchFilterLists($MediaType) {
 		FROM tbl_Lists LISTS
 		ORDER BY Name
 	`,
-    { $MediaType }
+    { $MediaType, $any: $t('<not in any list>') }
   );
 
   if (filterValues && filterValues.filterLists) {
@@ -3654,7 +3663,7 @@ async function fetchFilterLists($MediaType) {
   shared.filterLists = results;
 }
 
-async function fetchFilterLanguages($MediaType, $LanguageType) {
+async function fetchFilterLanguages($MediaType, $LanguageType, $t) {
   logger.log("fetchFilterLanguages MediaType:", $MediaType);
 
   const filterValues = await fetchFilterValues($MediaType);
@@ -3734,10 +3743,24 @@ async function fetchFilterLanguages($MediaType, $LanguageType) {
       result.DisplayText = `${result.Language} - ${
         languageCodeNameMapping[result.Language]
         }`;
+      result.LanguageFull = languageCodeNameMapping[result.Language];
     }
   });
 
   logger.log("fetchFilterLanguages resultsFiltered:", resultsFiltered);
+
+  // Translate
+  resultsFiltered.forEach(language => {
+    if (!language.LanguageFull) {
+      return; 
+    }
+    
+    const LanguageFullTranslated = $t(`LanguageNames.${language.LanguageFull}`);
+
+    if (LanguageFullTranslated && !LanguageFullTranslated.includes('.')) {
+      language.DisplayText = `${language.Language} - ${LanguageFullTranslated}`
+    }
+  })
 
   if ($LanguageType === "audio") {
     shared.filterAudioLanguages = resultsFiltered;

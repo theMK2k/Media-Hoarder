@@ -440,7 +440,7 @@
                   style="margin-left: 24px"
                 >
                   <v-row>
-                    <strong>{{ creditCategory.category }}</strong>
+                    <strong>{{ $t(`CreditCatgegories.${creditCategory.category}`) }}</strong>
                   </v-row>
                   <v-row
                     v-for="credit in creditCategory.items"
@@ -476,7 +476,7 @@
                   style="margin-left: 24px"
                 >
                   <v-row>
-                    <strong>{{ companyCategory.category }}</strong>
+                    <strong>{{ $t(`CompanyCategories.${companyCategory.category}`) }}</strong>
                   </v-row>
                   <v-row
                     v-for="company in companyCategory.items"
@@ -514,7 +514,7 @@
                   v-for="category in $shared.contentAdvisoryCategories"
                   v-bind:key="category.Name"
                 >
-                  <v-col sm="4" class="creditsLabel">{{ category.DisplayText }}</v-col>
+                  <v-col sm="4" class="creditsLabel">{{ $t(`ParentalAdvisoryCategories.${category.Name}`) }}</v-col>
                   <v-col sm="1" class="creditsContent">
                     <!-- <span v-if="company.role">...</span> -->
                   </v-col>
@@ -1034,7 +1034,7 @@ export default {
         filtersList.push(this.$t("Release Years"));
       }
       if (this.$shared.filterQualities.find(filter => !filter.Selected)) {
-        filtersList.push(this.$t("Video Qualities"));
+        filtersList.push(this.$t("Video Quality"));
       }
       if (
         this.$shared.filterCompanies &&
@@ -1484,24 +1484,28 @@ export default {
       this.listDialog.show = false;
     },
 
+    $local_t(payload) {
+      return this.$t(payload);
+    },
+
     async fetchFilters(setFilter) {
       eventBus.showLoadingOverlay(true);
 
       await store.fetchFilterSettings(this.mediatype);
       await store.fetchFilterSourcePaths(this.mediatype);
-      await store.fetchFilterGenres(this.mediatype);
+      await store.fetchFilterGenres(this.mediatype, this.$local_t);
       await store.fetchFilterAgeRatings(this.mediatype);
       await store.fetchFilterRatings(this.mediatype);
-      await store.fetchFilterLists(this.mediatype);
+      await store.fetchFilterLists(this.mediatype, this.$local_t);
       await store.fetchFilterParentalAdvisory(this.mediatype);
-      await store.fetchFilterPersons(this.mediatype);
-      await store.fetchFilterCompanies(this.mediatype);
-      await store.fetchFilterIMDBPlotKeywords(this.mediatype);
-      await store.fetchFilterIMDBFilmingLocations(this.mediatype);
+      await store.fetchFilterPersons(this.mediatype, this.$local_t);
+      await store.fetchFilterCompanies(this.mediatype, this.$local_t);
+      await store.fetchFilterIMDBPlotKeywords(this.mediatype, this.$local_t);
+      await store.fetchFilterIMDBFilmingLocations(this.mediatype, this.$local_t);
       await store.fetchFilterYears(this.mediatype);
       await store.fetchFilterQualities(this.mediatype);
-      await store.fetchFilterLanguages(this.mediatype, "audio");
-      await store.fetchFilterLanguages(this.mediatype, "subtitle");
+      await store.fetchFilterLanguages(this.mediatype, "audio", this.$local_t);
+      await store.fetchFilterLanguages(this.mediatype, "subtitle", this.$local_t);
       await store.fetchFilterIMDBRating(this.mediatype);
       await store.fetchFilterMetacriticScore(this.mediatype);
 
