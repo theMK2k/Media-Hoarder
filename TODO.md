@@ -12,6 +12,9 @@ OK -> check if memory leak is only in dev-mode (yes, it still persists even in p
 - How should we handle ECONNRESET? maybe request-retry?
 - How can we test this?
 
+## Icons for Navbar?
+- would it be good to have (many) icons for the sections and filters in the navbar?
+
 ## scrapeIMDBSuggestion - use alternative search method
 
 - currently we use the suggestion API which doesn't support non-latin names
@@ -53,8 +56,8 @@ OK -> check if memory leak is only in dev-mode (yes, it still persists even in p
 
 ## I18N - Advanced
 - Create AWS-based Service for automatic translation
-  - Integrate with DeepL API
-  - Integrate Payment API (sorry, but DeepL is great but also wants some cash)
+  - Integrate with DeepL API or AWS
+  - Integrate Payment API (sorry, DeepL/AWS are great but also want some cash)
 
 ## Mediainfo Languages
 
