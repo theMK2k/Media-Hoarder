@@ -7,7 +7,7 @@
       <v-card-text>
         <v-text-field
           :append-icon-cb="() => {}"
-          v-bind:placeholder="$t('Search___')"
+          v-bind:placeholder="`${$t('Search')}...`"
           single-line
           append-icon="mdi-magnify"
           color="white"

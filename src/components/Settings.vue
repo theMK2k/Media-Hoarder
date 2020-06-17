@@ -145,7 +145,7 @@
       <v-tab-item style="padding: 8px">
         <i>
           <p>{{$t('These settings describe how {appName} should handle duplicates', {appName: $t('appName')})}}</p>
-          <p>{{$t('You may have duplicates in the following scenarios')}}</p>
+          <p>{{$t('You may have duplicates in the following scenarios')}}:</p>
           <ul>
             <li>{{$t('same file on a remote server and the local machine')}}</li>
             <li>{{$t('same media but in different formats')}}</li>
@@ -245,7 +245,7 @@
         <v-alert type="warning" colored-border border="left" v-if="$shared.regions.length === 0">
           <span
             v-if="$shared.regions.length === 0 && $shared.fallbackRegion"
-          >{{$t('You currently don_t have a region set up_ {appName} will fall back to your system_s locale_', {appName: $t('appName')})}} {{ $shared.fallbackRegion.name }}.</span>
+          >{{$t('You currently don_t have a region set up_ {appName} will fall back to your system_s locale', {appName: $t('appName')})}}: {{ $shared.fallbackRegion.name }}.</span>
           <span
             v-if="$shared.regions.length === 0 && !$shared.fallbackRegion"
           >{{$t('You currently don_t have a region set up_ {appName} will fall back to the original title_', {appName: $t('appName')})}}</span>
@@ -301,7 +301,7 @@
         >
           <span
             v-if="$shared.fallbackLanguage"
-          >{{$t('You currently don_t have a language for the Primary Title set up_ {appName} will fall back to your system_s locale_', {appName: $t('appName')})}} {{ $shared.fallbackLanguage.DisplayText }}.</span>
+          >{{$t('You currently don_t have a language for the Primary Title set up_ {appName} will fall back to your system_s locale', {appName: $t('appName')})}}: {{ $shared.fallbackLanguage.DisplayText }}.</span>
           <span
             v-if="!$shared.fallbackLanguage"
           >{{$t('You currently don_t have a language for the Primary Title set up_ {appName} will fall back to the original title_', {appName: $t('appName')})}}</span>
@@ -359,7 +359,7 @@
         >
           <span
             v-if="$shared.fallbackLanguage"
-          >{{$t('You currently don_t have a language for Audio and Subtitles set up_ {appName} will fall back to your system_s locale_', {appName: $t('appName') })}} {{ $shared.fallbackLanguage.DisplayText }}.</span>
+          >{{$t('You currently don_t have a language for Audio and Subtitles set up_ {appName} will fall back to your system_s locale', {appName: $t('appName') })}}: {{ $shared.fallbackLanguage.DisplayText }}.</span>
           <span
             v-if="!$shared.fallbackLanguage"
           >{{$t('You currently don_t have a language for Audio and Subtitles set up. {appName} will fall back to the original title_', {appName: $t('appName')})}}</span>

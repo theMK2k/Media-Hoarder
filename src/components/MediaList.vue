@@ -38,7 +38,7 @@
             <span v-on="on">*</span>
           </template>
           <span>
-            {{$t('Applied Filters_')}}
+            {{$t('Applied Filters')}}:
             <ul>
               <li v-for="filter in filtersList" v-bind:key="filter">{{filter}}</li>
             </ul>
@@ -50,16 +50,16 @@
         clearable
         dense
         v-bind:items="sortAbles"
-        item-text="Description"
+        item-text="DescriptionTranslated"
         item-value="Field"
         v-model="$shared.sortField"
         v-bind:label="$t('Sort')"
-        style="margin-left: 8px; max-width: 260px; height: 40px"
+        style="margin-left: 8px; max-width: 320px; height: 40px"
         v-on:change="onSortChanged"
       >
         <template v-slot:selection="{ item }">
-          <span class="grey--text caption" style="margin-right: 8px">Sort by</span>
-          <span>{{ item.Description }}</span>
+          <span class="grey--text caption" style="margin-right: 8px">{{$t('Sort by')}}</span>
+          <span>{{ $t(item.Description) }}</span>
         </template>
       </v-select>
 
@@ -255,7 +255,7 @@
                     style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
                   >
                     <div style="font-size: .875rem; font-weight: normal">
-                      <strong class="CreditCategory">{{$t('Directed by_')}}</strong>
+                      <strong class="CreditCategory">{{$t('Directed by')}}</strong>
                       <span
                         v-for="(credit, i) in item.IMDB_Top_Directors"
                         v-bind:key="credit.IMDB_Person_ID"
@@ -274,7 +274,7 @@
                     style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
                   >
                     <div style="font-size: .875rem; font-weight: normal">
-                      <strong class="CreditCategory">{{$t('Written by_')}}</strong>
+                      <strong class="CreditCategory">{{$t('Written by')}}:</strong>
                       <span
                         v-for="(credit, i) in item.IMDB_Top_Writers"
                         v-bind:key="credit.IMDB_Person_ID"
@@ -312,7 +312,7 @@
                     style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
                   >
                     <div style="font-size: .875rem; font-weight: normal">
-                      <strong class="CreditCategory">{{$t('Cast_')}}</strong>
+                      <strong class="CreditCategory">{{$t('Cast')}}:</strong>
                       <span
                         v-for="(credit, i) in item.IMDB_Top_Cast"
                         v-bind:key="credit.IMDB_Person_ID"
@@ -331,7 +331,7 @@
                     style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
                   >
                     <div style="font-size: .875rem; font-weight: normal">
-                      <strong class="CreditCategory">{{$t('Production_')}}</strong>
+                      <strong class="CreditCategory">{{$t('Production')}}:</strong>
                       <span
                         v-for="(company, i) in item.IMDB_Top_Production_Companies"
                         v-bind:key="i"
@@ -349,11 +349,11 @@
             </v-list-item>
             <v-col v-if="item.selected" style="min-width: 100%">
               <v-row>
-                <v-col class="detailLabel">{{$t("Full Path_")}}</v-col>
+                <v-col class="detailLabel">{{$t("Full Path")}}:</v-col>
                 <v-col class="detailContent">{{ item.Path }}</v-col>
               </v-row>
               <v-row>
-                <v-col class="detailLabel">{{$t('Imported_')}}</v-col>
+                <v-col class="detailLabel">{{$t('Imported')}}:</v-col>
                 <v-col class="detailContent">
                   <v-tooltip right>
                     <template v-slot:activator="{ on }">
@@ -364,7 +364,7 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col class="detailLabel">{{$t('Last Access_')}}</v-col>
+                <v-col class="detailLabel">{{$t('Last Access')}}:</v-col>
                 <v-col class="detailContent">
                   <v-tooltip right>
                     <template v-slot:activator="{ on }">
@@ -375,11 +375,11 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col class="detailLabel">{{$t('Size_')}}</v-col>
+                <v-col class="detailLabel">{{$t('Size')}}</v-col>
                 <v-col v-if="item.Size" class="detailContent">{{ Humanize().fileSize(item.Size) }}</v-col>
               </v-row>
               <v-row>
-                <v-col class="detailLabel">{{$t('File Created at_')}}</v-col>
+                <v-col class="detailLabel">{{$t('File Created at')}}:</v-col>
                 <v-col
                   v-if="item.file_created_at"
                   class="detailContent"
@@ -387,7 +387,7 @@
               </v-row>
 
               <v-row>
-                <v-col class="detailLabel">{{$t('In Lists_')}}</v-col>
+                <v-col class="detailLabel">{{$t('In Lists')}}:</v-col>
                 <v-col class="detailContent">
                   <span v-if="item.lists && item.lists.length > 0">
                     <span v-for="(list, index) in item.lists" v-bind:key="index">
@@ -1891,6 +1891,8 @@ export default {
 
   // ### LifeCycle Hooks ###
   created() {
+    logger.log('MediaList created');
+    
     (async () => {
       await this.fetchFilters();
 
@@ -1900,6 +1902,10 @@ export default {
 
       logger.log("items:", this.items);
     })();
+
+    this.sortAbles.forEach(sortAble => {
+      sortAble.DescriptionTranslated = this.$t(sortAble.Description);
+    })
 
     eventBus.$on("searchTextChanged", () => {
       this.$shared.currentPage = 1;
