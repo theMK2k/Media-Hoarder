@@ -22,6 +22,7 @@ OK -> check if memory leak is only in dev-mode (yes, it still persists even in p
 
 ## I18N - Basic
 - investigate loading i18n .json from ./data/i18n
+- moment.humanize should also be localized
 - implement vue-i18n
 - Add UI-Language Selection in Settings
 - support all languages supported by DeepL (API):
