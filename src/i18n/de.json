@@ -539,7 +539,7 @@
     "Zambia": "Sambia",
     "Zaire": "Zaire",
     "Zimbabwe": "Simbabwe",
-    "World-wide": "Weltweit"    
+    "World-wide": "Weltweit"
   },
 
   "Close": "Schließen",
@@ -725,5 +725,84 @@
     "Special Effects": "Spezialeffekte"
   },
 
-  "Sort by": "Sortiert nach"
+  "Sort by": "Sortiert nach",
+
+  "moment": {
+    "months": [
+      "Januar",
+      "Februar",
+      "März",
+      "April",
+      "Mai",
+      "Juni",
+      "Juli",
+      "August",
+      "September",
+      "Oktober",
+      "November",
+      "Dezember"
+    ],
+    "monthsShort": [
+      "Jan",
+      "Feb",
+      "Mär",
+      "Apr",
+      "Mai",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Okt",
+      "Nov",
+      "Dez"
+    ],
+    "monthsParseExact": true,
+    "weekdays": [
+      "Sonntag",
+      "Montag",
+      "Dienstag",
+      "Mittwoch",
+      "Donnerstag",
+      "Freitag",
+      "Samstag"
+    ],
+    "weekdaysShort": ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+    "weekdaysMin": ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+    "weekdaysParseExact": true,
+    "longDateFormat": {
+      "LT": "HH:mm",
+      "LTS": "HH:mm:ss",
+      "L": "DD.MM.YYYY",
+      "LL": "D MMMM YYYY",
+      "LLL": "D MMMM YYYY HH:mm",
+      "LLLL": "dddd D MMMM YYYY HH:mm"
+    },
+    "calendar": {
+      "sameDay": "[heute] LT",
+      "nextDay": "[morgen] LT",
+      "nextWeek": "[nächsten] dddd LT",
+      "lastDay": "[gestern] LT",
+      "lastWeek": "[vergangenen] dddd LT",
+      "sameElse": "L"
+    },
+    "relativeTime": {
+      "future": "in %s",
+      "past": "vor %s",
+      "s": "wenige Sekunden",
+      "m": "einer Minute",
+      "mm": "%d Minuten",
+      "h": "einer Stunde",
+      "hh": "%d Stunden",
+      "d": "einem Tag",
+      "dd": "%d Tagen",
+      "M": "einem Monat",
+      "MM": "%d Monaten",
+      "y": "einem Jahr",
+      "yy": "%d Jahren"
+    },
+    "week": {
+      "dow": 1,
+      "doy": 4
+    }
+  }
 }

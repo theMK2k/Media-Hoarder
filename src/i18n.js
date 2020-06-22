@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 
+const moment = require("moment");
+
 const logger = require('loglevel');
 
 Vue.use(VueI18n)
@@ -20,25 +22,14 @@ function loadLocaleMessages () {
 
 const messages = loadLocaleMessages();
 
-// Checking for duplicate entries which will be migrated to global
-// Object.keys(messages).forEach(lang => {
-//   logger.log('i18n checking language ' + lang);
+logger.log('locale messages:', messages);
 
-//   Object.keys(messages[lang]).forEach(category => {
-//     Object.keys(messages[lang][category]).forEach(message => {
-
-//       Object.keys(messages[lang]).forEach(categoryCompare => {
-//         Object.keys(messages[lang][categoryCompare]).forEach(messageCompare => {
-//           if (messages[lang][category][message] === messages[lang][categoryCompare][messageCompare]) {
-//             if (category !== categoryCompare) { //  && message !== messageCompare
-//               logger.warn('i18n duplicate found: "' + messages[lang][category][message] + '" in ' + lang + '.' + category + '.' + message + ' and '  + lang + '.' + categoryCompare + '.' + messageCompare)
-//             }
-//           }
-//         })
-//       })
-//     })
-//   })
-// })
+// Load Moment Locales
+Object.keys(messages).forEach(key => {
+  if (messages[key].moment) {
+    moment.locale(key, messages[key].moment);
+  }
+})
 
 export default new VueI18n({
   locale: process.env.VUE_APP_I18N_LOCALE || 'en',

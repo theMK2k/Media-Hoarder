@@ -543,7 +543,8 @@
     <v-app-bar app clipped-left color="red" dense>
       <v-app-bar-nav-icon @click.stop="$shared.sidenav = !$shared.sidenav"></v-app-bar-nav-icon>
       <v-toolbar-title class="mr-12 align-center noshrink">
-        <span class="title">{{$t("appName")}}</span>
+        <span class="title">{{$t("appName")}}     {{shared_currentLanguage}}
+</span>
       </v-toolbar-title>
       <!-- <div class="flex-grow-1"></div> -->
       <v-spacer></v-spacer>
@@ -686,6 +687,7 @@ import * as _ from "lodash";
 
 const remote = require("electron").remote;
 const logger = require("loglevel");
+const moment = require("moment");
 
 // eslint-disable-next-line no-unused-var
 import * as store from "@/store";
@@ -803,6 +805,19 @@ export default {
     searchText: function(newValue, oldValue) {
       logger.log("searchText old:", oldValue, "new:", newValue);
       this.debouncedEventBusSearchTextChanged(newValue);
+    },
+
+    shared_currentLanguage: function(newValue, oldValue) {
+      logger.log('shared_currentLanguage changed from', oldValue, 'to', newValue);
+      
+      this.$i18n.locale = newValue;
+      this.$root.$i18n.locale = newValue;
+
+      logger.log('this.$i18n.locale:', this.$i18n.locale);
+      logger.log('this.$root.$i18n.locale:', this.$root.$i18n.locale);
+
+      moment.locale(newValue);
+
     }
   },
 
@@ -1229,6 +1244,10 @@ export default {
       );
 
       return `(${numSelected}/${numAll})`;
+    },
+
+    shared_currentLanguage() {
+      return this.$shared.currentLanguage;
     }
   },
 
@@ -1650,8 +1669,6 @@ export default {
 
   // ### LifeCycleHooks ###
   created() {
-    logger.log("shared:", this.shared);
-
     this.$vuetify.theme.dark = true;
 
     if (this.$route.path !== "/") {

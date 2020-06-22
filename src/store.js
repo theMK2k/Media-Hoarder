@@ -126,8 +126,7 @@ dbsync.runSync(
 
         await fetchIMDBRatingDemographic();
 
-        logger.log("shared.fallbackRegion:", shared.fallbackRegion);
-        logger.log("shared.fallbackLanguage:", shared.fallbackLanguage);
+        shared.currentLanguage = await fetchCurrentLanguage();
       })();
     });
   }
@@ -4704,6 +4703,36 @@ async function saveIMDBPersonData(data) {
   );
 }
 
+async function fetchCurrentLanguage() {
+  logger.log('fetchCurrentLanguage START');
+  
+  let lang = await getSetting("currentLanguage");
+  let fallbackLanguage = null;
+  
+  if (shared.fallbackLanguage) {
+    fallbackLanguage = shared.fallbackLanguage.code.toLowerCase();
+  }
+
+  if (!lang) {
+    if (fallbackLanguage) {
+      logger.log(`fetchCurrentLanguage no locale defined, fallback to "${fallbackLanguage}"`);
+      lang = fallbackLanguage;
+    } else {
+      logger.log(`fetchCurrentLanguage no locale defined, default to "en"`);
+      lang = 'en';
+    }
+    
+  }
+
+  if (!shared.supportedLanguages.find(supportedLanguage => supportedLanguage.code === lang)) {
+    logger.log(`fetchCurrentLanguage locale "${lang}" is not supported, fallback to "en"`);
+    lang = 'en';
+  }
+
+  logger.log('fetchCurrentLanguage using');
+  return lang;
+}
+
 export {
   db,
   fetchSourcePaths,
@@ -4772,5 +4801,6 @@ export {
   loadLocalHistory,
   resetUserScanOptions,
   fetchRatingDemographics,
-  saveIMDBPersonData
+  saveIMDBPersonData,
+  fetchCurrentLanguage
 };
