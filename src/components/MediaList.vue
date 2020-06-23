@@ -207,7 +207,10 @@
                         <span v-if="item.Genres">
                           <span v-for="(genre, index) in item.Genres" v-bind:key="genre.name">
                             <span>{{ index > 0 ? ', ' : '' }}</span>
-                            <span class="Clickable">{{ genre.translated }}</span>
+                            <span
+                              class="Clickable"
+                              v-on:click.stop="onGenreClicked(genre)"
+                            >{{ genre.translated }}</span>
                           </span>
                           |
                         </span>
@@ -682,6 +685,13 @@
       v-on:close="onVideoQualityDialogClose"
     ></mk-video-quality-dialog>
 
+    <mk-genre-dialog
+      ref="genreDialog"
+      v-bind:show="genreDialog.show"
+      v-bind:Genre="genreDialog.Genre"
+      v-on:close="onGenreDialogClose"
+    ></mk-genre-dialog>
+
     <mk-age-rating-dialog
       ref="ageRatingDialog"
       v-bind:show="ageRatingDialog.show"
@@ -759,6 +769,7 @@ import ListDialog from "@/components/shared/ListDialog.vue";
 import PersonDialog from "@/components/shared/PersonDialog.vue";
 import CompanyDialog from "@/components/shared/CompanyDialog.vue";
 import VideoQualityDialog from "@/components/shared/VideoQualityDialog.vue";
+import GenreDialog from "@/components/shared/GenreDialog.vue";
 import AgeRatingDialog from "@/components/shared/AgeRatingDialog.vue";
 import PlotKeywordDialog from "@/components/shared/PlotKeywordDialog.vue";
 import FilmingLocationDialog from "@/components/shared/FilmingLocationDialog.vue";
@@ -782,6 +793,7 @@ export default {
     "mk-person-dialog": PersonDialog,
     "mk-company-dialog": CompanyDialog,
     "mk-video-quality-dialog": VideoQualityDialog,
+    "mk-genre-dialog": GenreDialog,
     "mk-age-rating-dialog": AgeRatingDialog,
     "mk-plot-keyword-dialog": PlotKeywordDialog,
     "mk-filming-location-dialog": FilmingLocationDialog,
@@ -849,6 +861,11 @@ export default {
     },
 
     videoQualityDialog: {
+      show: false,
+      Video_Quality: null
+    },
+
+    genreDialog: {
       show: false,
       Video_Quality: null
     },
@@ -1612,6 +1629,15 @@ export default {
       return;
     },
 
+    onGenreClicked(genre) {
+      logger.log("genre clicked:", genre);
+
+      this.genreDialog.show = true;
+      this.genreDialog.Genre = genre;
+
+      return;
+    },
+
     onAgeRatingClicked(ageRating) {
       logger.log("ageRating clicked:", ageRating);
 
@@ -1761,6 +1787,10 @@ export default {
 
     onVideoQualityDialogClose() {
       this.videoQualityDialog.show = false;
+    },
+
+    onGenreDialogClose() {
+      this.genreDialog.show = false;
     },
 
     onAgeRatingDialogClose() {

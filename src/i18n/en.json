@@ -737,5 +737,8 @@
   "Filter by this video quality": "Filter by this video quality",
 
   "Age Rating": "Age Rating",
-  "Filter by this age rating": "Filter by this age rating"
+  "Filter by this age rating": "Filter by this age rating",
+
+  "Genre": "Genre",
+  "Filter by this genre": "Filter by this genre"
 }

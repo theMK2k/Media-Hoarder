@@ -1365,8 +1365,12 @@ export default {
     },
 
     setAllGenres: function(value, exclusionList) {
+      logger.log('setAllGenres exclusionList:', exclusionList);
+      logger.log('setAllGenres this.$shared.filterGenres:', this.$shared.filterGenres);
+      
       this.$shared.filterGenres.forEach(genre => {
-        if (exclusionList && exclusionList.find(val => genre.Name === val)) {
+        // NEEDFIX: this doesn't work right now from genreDialog
+        if (exclusionList && exclusionList.find(val => genre.Name === val.name)) {
           genre.Selected = !value;
           return;
         }
