@@ -126,7 +126,7 @@ dbsync.runSync(
 
         await fetchIMDBRatingDemographic();
 
-        shared.currentLanguage = await fetchCurrentLanguage();
+        shared.uiLanguage = await fetchuiLanguage();
       })();
     });
   }
@@ -4380,7 +4380,7 @@ async function getFallbackLanguage() {
     return;
   }
 
-  const currentLanguageCode =
+  const uiLanguageCode =
     splitCurrentLocale[0].toUpperCase().charAt(0) +
     splitCurrentLocale[0].toLowerCase().slice(1);
 
@@ -4394,7 +4394,7 @@ async function getFallbackLanguage() {
   logger.log("languages:", languages);
 
   let fallbackLanguage = languages.find(
-    (lang) => lang.code === currentLanguageCode
+    (lang) => lang.code === uiLanguageCode
   );
 
   if (fallbackLanguage) {
@@ -4703,10 +4703,10 @@ async function saveIMDBPersonData(data) {
   );
 }
 
-async function fetchCurrentLanguage() {
-  logger.log('fetchCurrentLanguage START');
+async function fetchuiLanguage() {
+  logger.log('fetchuiLanguage START');
   
-  let lang = await getSetting("currentLanguage");
+  let lang = await getSetting("uiLanguage");
   let fallbackLanguage = null;
   
   if (shared.fallbackLanguage) {
@@ -4715,21 +4715,21 @@ async function fetchCurrentLanguage() {
 
   if (!lang) {
     if (fallbackLanguage) {
-      logger.log(`fetchCurrentLanguage no locale defined, fallback to "${fallbackLanguage}"`);
+      logger.log(`fetchuiLanguage no locale defined, fallback to "${fallbackLanguage}"`);
       lang = fallbackLanguage;
     } else {
-      logger.log(`fetchCurrentLanguage no locale defined, default to "en"`);
+      logger.log(`fetchuiLanguage no locale defined, default to "en"`);
       lang = 'en';
     }
     
   }
 
   if (!shared.supportedLanguages.find(supportedLanguage => supportedLanguage.code === lang)) {
-    logger.log(`fetchCurrentLanguage locale "${lang}" is not supported, fallback to "en"`);
+    logger.log(`fetchuiLanguage locale "${lang}" is not supported, fallback to "en"`);
     lang = 'en';
   }
 
-  logger.log('fetchCurrentLanguage using');
+  logger.log('fetchuiLanguage using');
   return lang;
 }
 
@@ -4802,5 +4802,5 @@ export {
   resetUserScanOptions,
   fetchRatingDemographics,
   saveIMDBPersonData,
-  fetchCurrentLanguage
+  fetchuiLanguage
 };

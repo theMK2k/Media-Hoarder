@@ -543,7 +543,7 @@
     <v-app-bar app clipped-left color="red" dense>
       <v-app-bar-nav-icon @click.stop="$shared.sidenav = !$shared.sidenav"></v-app-bar-nav-icon>
       <v-toolbar-title class="mr-12 align-center noshrink">
-        <span class="title">{{$t("appName")}}     {{shared_currentLanguage}}
+        <span class="title">{{$t("appName")}}     {{shared_uiLanguage}}
 </span>
       </v-toolbar-title>
       <!-- <div class="flex-grow-1"></div> -->
@@ -807,8 +807,8 @@ export default {
       this.debouncedEventBusSearchTextChanged(newValue);
     },
 
-    shared_currentLanguage: function(newValue, oldValue) {
-      logger.log('shared_currentLanguage changed from', oldValue, 'to', newValue);
+    shared_uiLanguage: function(newValue, oldValue) {
+      logger.log('shared_uiLanguage changed from', oldValue, 'to', newValue);
       
       this.$i18n.locale = newValue;
       this.$root.$i18n.locale = newValue;
@@ -1246,8 +1246,8 @@ export default {
       return `(${numSelected}/${numAll})`;
     },
 
-    shared_currentLanguage() {
-      return this.$shared.currentLanguage;
+    shared_uiLanguage() {
+      return this.$shared.uiLanguage;
     }
   },
 

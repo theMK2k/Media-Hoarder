@@ -448,7 +448,7 @@ const shared = new Vue({
       },
     ],
 
-    currentLanguage: 'en'
+    uiLanguage: 'en'
   },
 
   methods: {}
