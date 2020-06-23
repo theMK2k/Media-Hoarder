@@ -3,7 +3,7 @@
     <v-card style="min-height: 500px">
       <v-card-title>
         <v-row class="headline" style="width: 100%; font-size: 1.17em">
-          {{$t('appName')}} {{currentVersion}} made with ♥ by MK2k
+          {{$t('appName')}} {{currentVersion}}
           <v-spacer></v-spacer>
 
           <v-btn text v-on:click="$emit('close')">{{$t('Close')}}</v-btn>

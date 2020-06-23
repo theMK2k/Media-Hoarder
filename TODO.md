@@ -26,37 +26,6 @@ OK -> check if memory leak is only in dev-mode (yes, it still persists even in p
 ## I18N - Basic
 - support all languages supported by DeepL or AWS (API):
     en, de, fr, es, it, nl, pl, ja, pt-PT, pt-BR, ru, zh
-OK - moment.humanize should also be localized (see de.json!)
-OK - implement vue-i18n
-OK - Add UI-Language Selection in Settings
-- change static strings in components to $t('key')
-    OK src\App.vue
-    OK src\components\Settings.vue
-    OK src\components\Home.vue
-    OK src\components\MediaList.vue
-
-    OK src\components\shared\AddLanguagesDialog.vue
-    OK src\components\shared\AddRegionsDialog.vue
-    OK src\components\shared\AddTitleTypeDialog.vue
-    OK src\components\shared\CheckIMDBScraperDialog.vue
-    OK src\components\shared\CompanyDialog.vue
-    OK src\components\shared\Dialog.vue
-    OK src\components\shared\FilmingLocationDialog.vue
-    OK src\components\shared\LinkIMDBDialog.vue
-    OK src\components\shared\ListDialog.vue
-    OK src\components\shared\LocalVideoPlayerDialog.vue
-    OK src\components\shared\Pagination.vue
-    OK src\components\shared\PersonDialog.vue
-    OK src\components\shared\PlotKeywordDialog.vue
-    OK src\components\shared\RatingDemographicsDialog.vue
-    OK src\components\shared\ScanOptionsDialog.vue
-    OK src\components\shared\SearchDataDialog.vue
-    OK src\components\shared\SourcePath.vue
-    OK src\components\shared\TitleType.vue
-    OK src\components\shared\VersionDialog.vue
-    OK src\components\shared\VideoPlayerDialog.vue
-
-    (other .js files?)
 
 ## I18N - Advanced
 - Create AWS-based Service for automatic translation

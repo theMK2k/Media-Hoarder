@@ -1,13 +1,19 @@
 <template>
   <v-app id="inspire">
     <!-- SIDEBAR -->
-    <v-navigation-drawer v-model="$shared.sidenav" app clipped style="z-index: 20">
+    <v-navigation-drawer
+      v-model="$shared.sidenav"
+      app
+      clipped
+      style="z-index: 20"
+      v-bind:width="320"
+    >
       <v-list dense>
         <v-list-item @click="openSettings">
           <v-list-item-action>
-            <v-icon style="color: lightgrey">mdi-settings</v-icon>
+            <v-icon>mdi-settings</v-icon>
           </v-list-item-action>
-          <v-list-item-title style="color: lightgrey">{{$t("Settings")}}</v-list-item-title>
+          <v-list-item-title>{{$t("Settings")}}</v-list-item-title>
         </v-list-item>
 
         <v-list-item v-on:click="onRescan">
@@ -24,7 +30,11 @@
         <v-divider></v-divider>
 
         <!-- Movies, Series -->
-        <v-list-item v-for="appSection in appSections" :key="appSection.text" @click="goto(appSection.id)">
+        <v-list-item
+          v-for="appSection in appSections"
+          :key="appSection.text"
+          @click="goto(appSection.id)"
+        >
           <v-list-item-action>
             <v-icon>{{ appSection.icon }}</v-icon>
           </v-list-item-action>
@@ -39,7 +49,7 @@
         >
           <v-divider></v-divider>
 
-          <v-subheader class="mt-4" style="margin: 0px!important">{{$t("Filters")}}</v-subheader>
+          <v-subheader class="mt-4" style="margin: 0px!important; font-size: 16px">{{$t("Filters")}}</v-subheader>
 
           <v-expansion-panels accordion multiple>
             <!-- FILTER SOURCE PATHS -->
@@ -47,9 +57,12 @@
               v-show="$shared.filterSourcePaths && $shared.filterSourcePaths.length > 0"
               style="padding: 0px!important"
             >
-              <v-expansion-panel-header
-                style="padding: 8px!important"
-              >{{$t("Source Paths")}} {{filterSourcePathsTitle}}</v-expansion-panel-header>
+              <v-expansion-panel-header style="padding: 8px!important">
+                <div>
+                  <v-icon>mdi-folder-outline</v-icon>
+                  {{$t("Source Paths")}} {{filterSourcePathsTitle}}
+                </div>
+              </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
                   <v-btn text v-on:click="setAllSourcePaths(false)">{{$t("SET NONE")}}</v-btn>
@@ -72,9 +85,12 @@
               v-show="$shared.filterQualities && $shared.filterQualities.length > 0"
               style="padding: 0px!important"
             >
-              <v-expansion-panel-header
-                style="padding: 8px!important"
-              >{{$t("Video Quality")}} {{filterQualitiesTitle}}</v-expansion-panel-header>
+              <v-expansion-panel-header style="padding: 8px!important">
+                <div>
+                  <v-icon>mdi-video-outline</v-icon>
+                  {{$t("Video Quality")}} {{filterQualitiesTitle}}
+                </div>
+              </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
                   <v-btn text v-on:click="setAllQualities(false)">{{$t("SET NONE")}}</v-btn>
@@ -97,9 +113,12 @@
               v-show="$shared.filterAudioLanguages && $shared.filterAudioLanguages.length > 0"
               style="padding: 0px!important"
             >
-              <v-expansion-panel-header
-                style="padding: 8px!important"
-              >{{$t("Audio Languages")}} {{ filterAudioLanguagesTitle }}</v-expansion-panel-header>
+              <v-expansion-panel-header style="padding: 8px!important">
+                <div>
+                  <v-icon>mdi-comment-outline</v-icon>
+                  {{$t("Audio Languages")}} {{ filterAudioLanguagesTitle }}
+                </div>
+              </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
                   <v-btn text v-on:click="setAllAudioLanguages(false)">{{$t("SET NONE")}}</v-btn>
@@ -122,9 +141,12 @@
               v-show="$shared.filterSubtitleLanguages && $shared.filterSubtitleLanguages.length > 0"
               style="padding: 0px!important"
             >
-              <v-expansion-panel-header
-                style="padding: 8px!important"
-              >{{$t("Subtitle Languages")}} {{ filterSubtitleLanguagesTitle }}</v-expansion-panel-header>
+              <v-expansion-panel-header style="padding: 8px!important">
+                <div>
+                  <v-icon>mdi-subtitles-outline</v-icon>
+                  {{$t("Subtitle Languages")}} {{ filterSubtitleLanguagesTitle }}
+                </div>
+              </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
                   <v-btn text v-on:click="setAllSubtitleLanguages(false)">{{$t("SET NONE")}}</v-btn>
@@ -147,7 +169,12 @@
               v-show="$shared.filterLists && $shared.filterLists.length > 0"
               style="padding: 0px!important"
             >
-              <v-expansion-panel-header style="padding: 8px!important">{{$t("My Lists")}} {{filterListsTitle}}</v-expansion-panel-header>
+              <v-expansion-panel-header style="padding: 8px!important">
+                <div>
+                  <v-icon>mdi-clipboard-list-outline</v-icon>
+                  {{$t("My Lists")}} {{filterListsTitle}}
+                </div>
+              </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
                   <v-btn text v-on:click="setAllLists(false)">{{$t("SET NONE")}}</v-btn>
@@ -176,9 +203,12 @@
               v-show="$shared.filterRatings && $shared.filterRatings.length > 0"
               style="padding: 0px!important"
             >
-              <v-expansion-panel-header
-                style="padding: 8px!important"
-              >{{$t("My Ratings")}} {{filterRatingsTitle}}</v-expansion-panel-header>
+              <v-expansion-panel-header style="padding: 8px!important">
+                <div>
+                  <v-icon>mdi-star-outline</v-icon>
+                  {{$t("My Ratings")}} {{filterRatingsTitle}}
+                </div>
+              </v-expansion-panel-header>
               <!--  {{ filterRatingsTitle }} -->
               <v-expansion-panel-content>
                 <v-row>
@@ -206,9 +236,12 @@
 
             <!-- FILTER Metacritic Score -->
             <v-expansion-panel style="padding: 0px!important">
-              <v-expansion-panel-header
-                style="padding: 8px!important"
-              >{{$t("Metacritic Scores")}} {{filterMetacriticScoreTitle}}</v-expansion-panel-header>
+              <v-expansion-panel-header style="padding: 8px!important">
+                <div>
+                  <v-icon>mdi-numeric-10-box</v-icon>
+                  {{$t("Metacritic Scores")}} {{filterMetacriticScoreTitle}}
+                </div>
+              </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-range-slider
                   v-model="$shared.filterMetacriticScore"
@@ -233,9 +266,12 @@
 
             <!-- FILTER IMDB Rating -->
             <v-expansion-panel style="padding: 0px!important">
-              <v-expansion-panel-header
-                style="padding: 8px!important"
-              >{{$t("IMDB Ratings")}} {{filterIMDBRatingTitle}}</v-expansion-panel-header>
+              <v-expansion-panel-header style="padding: 8px!important">
+                <div>
+                  <v-icon>mdi-surround-sound-7-1</v-icon>
+                  {{$t("IMDB Ratings")}} {{filterIMDBRatingTitle}}
+                </div>
+              </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-range-slider
                   v-model="$shared.filterIMDBRating"
@@ -263,9 +299,12 @@
               v-show="$shared.filterGenres && $shared.filterGenres.length > 0"
               style="padding: 0px!important"
             >
-              <v-expansion-panel-header
-                style="padding: 8px!important"
-              >{{$t("Genres")}} {{$shared.filterSettings.filterGenresAND ? '߷' : ''}} {{ filterGenresTitle }}</v-expansion-panel-header>
+              <v-expansion-panel-header style="padding: 8px!important">
+                <div>
+                  <v-icon>mdi-drama-masks</v-icon>
+                  {{$t("Genres")}} {{$shared.filterSettings.filterGenresAND ? '߷' : ''}} {{ filterGenresTitle }}
+                </div>
+              </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
                   <v-btn text v-on:click="setAllGenres(false)">{{$t("SET NONE")}}</v-btn>
@@ -294,9 +333,12 @@
               v-show="$shared.filterAgeRatings && $shared.filterAgeRatings.length > 0"
               style="padding: 0px!important"
             >
-              <v-expansion-panel-header
-                style="padding: 8px!important"
-              >{{$t("Age Ratings")}} {{ filterAgeRatingsTitle }}</v-expansion-panel-header>
+              <v-expansion-panel-header style="padding: 8px!important">
+                <div>
+                  <v-icon>mdi-human-female-boy</v-icon>
+                  {{$t("Age Ratings")}} {{ filterAgeRatingsTitle }}
+                </div>
+              </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
                   <v-btn text v-on:click="setAllAgeRatings(false)">{{$t("SET NONE")}}</v-btn>
@@ -319,10 +361,12 @@
               v-show="($shared.filterParentalAdvisory.Nudity && $shared.filterParentalAdvisory.Nudity.length > 0) || ($shared.filterParentalAdvisory.Violence && $shared.filterParentalAdvisory.Violence.length > 0) || ($shared.filterParentalAdvisory.Profanity && $shared.filterParentalAdvisory.Profanity.length > 0) || ($shared.filterParentalAdvisory.Alcohol && $shared.filterParentalAdvisory.Alcohol.length > 0) || ($shared.filterParentalAdvisory.Frightening && $shared.filterParentalAdvisory.Frightening.length > 0)"
               style="padding: 0px!important"
             >
-              <v-expansion-panel-header
-                style="padding: 8px!important"
-              >{{$t("Content Advisories")}} {{ filterContentAdvisoryTitle }}</v-expansion-panel-header>
-
+              <v-expansion-panel-header style="padding: 8px!important">
+                <div>
+                  <v-icon>mdi-movie-filter-outline</v-icon>
+                  {{$t("Content Advisories")}} {{ filterContentAdvisoryTitle }}
+                </div>
+              </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-expansion-panels accordion multiple>
                   <v-expansion-panel
@@ -336,8 +380,14 @@
                     >{{$t(`ParentalAdvisoryCategories.${category.Name}`)}} {{filterParentalAdvisoryCategoryTitle(category)}}</v-expansion-panel-header>
                     <v-expansion-panel-content>
                       <v-row>
-                        <v-btn text v-on:click="setAllParentalAdvisory(category, false)">{{$t("SET NONE")}}</v-btn>
-                        <v-btn text v-on:click="setAllParentalAdvisory(category, true)">{{$t("SET ALL")}}</v-btn>
+                        <v-btn
+                          text
+                          v-on:click="setAllParentalAdvisory(category, false)"
+                        >{{$t("SET NONE")}}</v-btn>
+                        <v-btn
+                          text
+                          v-on:click="setAllParentalAdvisory(category, true)"
+                        >{{$t("SET ALL")}}</v-btn>
                       </v-row>
                       <v-row
                         v-for="paItem in $shared.filterParentalAdvisory[category.Name]"
@@ -359,9 +409,12 @@
 
             <!-- FILTER Persons -->
             <v-expansion-panel style="padding: 0px!important">
-              <v-expansion-panel-header
-                style="padding: 8px!important"
-              >{{$t("Persons")}} {{$shared.filterSettings.filterPersonsAND ? '߷' : ''}} {{filterPersonsTitle}}</v-expansion-panel-header>
+              <v-expansion-panel-header style="padding: 8px!important">
+                <div>
+                  <v-icon>mdi-human-male-male</v-icon>
+                  {{$t("People")}} {{$shared.filterSettings.filterPersonsAND ? '߷' : ''}} {{filterPersonsTitle}}
+                </div>
+              </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
                   <v-btn text v-on:click="setAllPersons(false)">{{$t("SET NONE")}}</v-btn>
@@ -394,9 +447,12 @@
 
             <!-- FILTER Companies -->
             <v-expansion-panel style="padding: 0px!important">
-              <v-expansion-panel-header
-                style="padding: 8px!important"
-              >{{$t("Companies")}} {{$shared.filterSettings.filterCompaniesAND ? '߷' : ''}} {{filterCompaniesTitle}}</v-expansion-panel-header>
+              <v-expansion-panel-header style="padding: 8px!important">
+                <div>
+                  <v-icon>mdi-factory</v-icon>
+                  {{$t("Companies")}} {{$shared.filterSettings.filterCompaniesAND ? '߷' : ''}} {{filterCompaniesTitle}}
+                </div>
+              </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
                   <v-btn text v-on:click="setAllCompanies(false)">{{$t("SET NONE")}}</v-btn>
@@ -432,7 +488,12 @@
               v-show="$shared.filterYears && $shared.filterYears.length > 0"
               style="padding: 0px!important"
             >
-              <v-expansion-panel-header style="padding: 8px!important">{{$t("Release Years")}} {{filterYearsTitle}}</v-expansion-panel-header>
+              <v-expansion-panel-header style="padding: 8px!important">
+                <div>
+                  <v-icon>mdi-calendar-month-outline</v-icon>
+                  {{$t("Release Years")}} {{filterYearsTitle}}
+                </div>
+              </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
                   <v-btn text v-on:click="setAllYears(false)">{{$t("SET NONE")}}</v-btn>
@@ -452,9 +513,12 @@
 
             <!-- FILTER IMDB Plot Keywords -->
             <v-expansion-panel style="padding: 0px!important">
-              <v-expansion-panel-header
-                style="padding: 8px!important"
-              >{{$t("Plot Keywords")}} {{$shared.filterSettings.filterIMDBPlotKeywordsAND ? '߷' : ''}} {{ filterIMDBPlotKeywordsTitle }}</v-expansion-panel-header>
+              <v-expansion-panel-header style="padding: 8px!important">
+                <div>
+                  <v-icon>mdi-book-open-outline</v-icon>
+                  {{$t("Plot Keywords")}} {{$shared.filterSettings.filterIMDBPlotKeywordsAND ? '߷' : ''}} {{ filterIMDBPlotKeywordsTitle }}
+                </div>
+              </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
                   <v-btn text v-on:click="setAllIMDBPlotKeywords(false)">{{$t("SET NONE")}}</v-btn>
@@ -490,9 +554,12 @@
 
             <!-- FILTER IMDB Filming Locations -->
             <v-expansion-panel style="padding: 0px!important">
-              <v-expansion-panel-header
-                style="padding: 8px!important"
-              >{{$t("Filming Locations")}} {{$shared.filterSettings.filterIMDBFilmingLocationsAND ? '߷' : ''}} {{ filterIMDBFilmingLocationsTitle }}</v-expansion-panel-header>
+              <v-expansion-panel-header style="padding: 8px!important">
+                <div>
+                  <v-icon>mdi-map-marker-outline</v-icon>
+                  {{$t("Filming Locations")}} {{$shared.filterSettings.filterIMDBFilmingLocationsAND ? '߷' : ''}} {{ filterIMDBFilmingLocationsTitle }}
+                </div>
+              </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
                   <v-btn text v-on:click="setAllIMDBFilmingLocations(false)">{{$t("SET NONE")}}</v-btn>
@@ -532,9 +599,9 @@
 
         <v-list-item @click="quit">
           <v-list-item-action>
-            <v-icon style="color: lightgrey">mdi-power</v-icon>
+            <v-icon>mdi-power</v-icon>
           </v-list-item-action>
-          <v-list-item-title style="color: lightgrey">{{$t("Quit")}}</v-list-item-title>
+          <v-list-item-title>{{$t("Quit")}}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -807,16 +874,15 @@ export default {
     },
 
     shared_uiLanguage: function(newValue, oldValue) {
-      logger.log('shared_uiLanguage changed from', oldValue, 'to', newValue);
-      
+      logger.log("shared_uiLanguage changed from", oldValue, "to", newValue);
+
       this.$i18n.locale = newValue;
       this.$root.$i18n.locale = newValue;
 
-      logger.log('this.$i18n.locale:', this.$i18n.locale);
-      logger.log('this.$root.$i18n.locale:', this.$root.$i18n.locale);
+      logger.log("this.$i18n.locale:", this.$i18n.locale);
+      logger.log("this.$root.$i18n.locale:", this.$root.$i18n.locale);
 
       moment.locale(newValue);
-
     }
   },
 
@@ -1189,7 +1255,9 @@ export default {
         this.$shared.filterMetacriticScore[0] == 0 &&
         this.$shared.filterMetacriticScore[1] == 100
       ) {
-        return `(${this.$t("ALL")}${this.$shared.filterMetacriticScoreNone ? "" : "*"})`;
+        return `(${this.$t("ALL")}${
+          this.$shared.filterMetacriticScoreNone ? "" : "*"
+        })`;
       }
 
       return `(${this.$shared.filterMetacriticScore[0]} - ${
@@ -1202,7 +1270,9 @@ export default {
         this.$shared.filterIMDBRating[0] == 0 &&
         this.$shared.filterIMDBRating[1] == 10
       ) {
-        return `(${this.$t("ALL")}${this.$shared.filterIMDBRatingNone ? "" : "*"})`;
+        return `(${this.$t("ALL")}${
+          this.$shared.filterIMDBRatingNone ? "" : "*"
+        })`;
       }
 
       return `(${this.$shared.filterIMDBRating[0]} - ${
@@ -1294,16 +1364,28 @@ export default {
       this.filtersChanged();
     },
 
-    setAllGenres: function(value) {
+    setAllGenres: function(value, exclusionList) {
       this.$shared.filterGenres.forEach(genre => {
+        if (exclusionList && exclusionList.find(val => genre.Name === val)) {
+          genre.Selected = !value;
+          return;
+        }
+
         genre.Selected = value;
       });
 
       this.filtersChanged();
     },
 
-    setAllAgeRatings: function(value) {
+    setAllAgeRatings: function(value, exclusionList) {
+      logger.log('setAllAgeRatings exclusionList:', exclusionList);
+      
       this.$shared.filterAgeRatings.forEach(ar => {
+        if (exclusionList && exclusionList.find(val => ar.Age == val.Age)) {
+          ar.Selected = !value;
+          return;
+        }
+
         ar.Selected = value;
       });
 
@@ -1376,24 +1458,42 @@ export default {
       this.filtersChanged();
     },
 
-    setAllQualities: function(value) {
+    setAllQualities: function(value, exclusionList) {
       this.$shared.filterQualities.forEach(quality => {
+        if (
+          exclusionList &&
+          exclusionList.find(val => quality.MI_Quality === val)
+        ) {
+          quality.Selected = !value;
+          return;
+        }
+
         quality.Selected = value;
       });
 
       this.filtersChanged();
     },
 
-    setAllAudioLanguages: function(value) {
+    setAllAudioLanguages: function(value, exclusionList) {
       this.$shared.filterAudioLanguages.forEach(lang => {
+        if (exclusionList && exclusionList.find(val => lang.Language === val)) {
+          lang.Selected = !value;
+          return;
+        }
+
         lang.Selected = value;
       });
 
       this.filtersChanged();
     },
 
-    setAllSubtitleLanguages: function(value) {
+    setAllSubtitleLanguages: function(value, exclusionList) {
       this.$shared.filterSubtitleLanguages.forEach(lang => {
+        if (exclusionList && exclusionList.find(val => lang.Language === val)) {
+          lang.Selected = !value;
+          return;
+        }
+
         lang.Selected = value;
       });
 
@@ -1499,7 +1599,9 @@ export default {
 
           eventBus.showSnackbar(
             "success",
-            `${this.$t("List {name} removed", { name: this.deleteListDialog.Name})}`
+            `${this.$t("List {name} removed", {
+              name: this.deleteListDialog.Name
+            })}`
           );
         } catch (err) {
           eventBus.showSnackbar("error", err);
@@ -1688,7 +1790,10 @@ export default {
       ) {
         this.snackbar.text = textOrErrorObject;
       } else if (textOrErrorObject.translateMe) {
-        this.snackbar.text = this.$t(textOrErrorObject.translateMe.text, textOrErrorObject.translateMe.payload);
+        this.snackbar.text = this.$t(
+          textOrErrorObject.translateMe.text,
+          textOrErrorObject.translateMe.payload
+        );
       } else if (textOrErrorObject.syscall && textOrErrorObject.code) {
         // fetch error
         this.snackbar.text =
@@ -1779,6 +1884,26 @@ export default {
           setFilter.filterIMDBFilmingLocations
         );
       }
+
+      if (setFilter.filterQualities) {
+        this.setAllQualities(false, setFilter.filterQualities);
+      }
+
+      if (setFilter.filterAgeRatings) {
+        this.setAllAgeRatings(false, setFilter.filterAgeRatings);
+      }
+
+      if (setFilter.filterGenres) {
+        this.setAllGenres(false, setFilter.filterGenres);
+      }
+
+      if (setFilter.filterAudioLanguages) {
+        this.setAllAudioLanguages(false, setFilter.filterAudioLanguages);
+      }
+
+      if (setFilter.filterSubtitleLanguages) {
+        this.setAllSubtitleLanguages(false, setFilter.filterSubtitleLanguages);
+      }
     });
 
     eventBus.$on("openVersionDialog", () => {
@@ -1808,6 +1933,14 @@ export default {
 <style>
 h1 {
   margin-bottom: 16px;
+}
+
+.light-grey {
+  color: lightgrey !important;
+}
+
+.dark-grey {
+  color: darkgrey !important;
 }
 
 .noshrink {

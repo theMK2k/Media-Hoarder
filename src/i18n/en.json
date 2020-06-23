@@ -31,7 +31,7 @@
   "Genres": "Genres",
   "Age Ratings": "Age Ratings",
   "Content Advisories": "Content Advisories",
-  "Persons": "Persons",
+  "People": "People",
   "all selected must apply": "all selected must apply",
   "one selected must apply": "one selected must apply",
   "Release Years": "Release Years",
@@ -732,5 +732,10 @@
 
   "Unable to launch: Mediaplayer Path is not set_ Please go to Settings and provide one_": "Unable to launch: Mediaplayer Path is not set. Please go to Settings and provide one.",
   "Cannot access {path}": "Cannot access {path}",
-  "Perform an IMDB Scraper Check before Scan": "Perform an IMDB Scraper Check before Scan"
+  "Perform an IMDB Scraper Check before Scan": "Perform an IMDB Scraper Check before Scan",
+
+  "Filter by this video quality": "Filter by this video quality",
+
+  "Age Rating": "Age Rating",
+  "Filter by this age rating": "Filter by this age rating"
 }

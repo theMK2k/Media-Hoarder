@@ -78,7 +78,7 @@
       <!-- workaround - else the mk-pagination would fuck off to the right when sidenav is shown -->
       <div
         v-if="$shared.sidenav"
-        v-bind:style="{ width: `${$shared.sidenav ? '256px!important' : '0px!important'}` }"
+        v-bind:style="{ width: `${$shared.sidenav ? '320px!important' : '0px!important'}` }"
       ></div>
     </v-row>
 
@@ -94,12 +94,12 @@
               >
                 <v-list-item-avatar
                   tile
-                  style="margin: 6px; height: 180px; width: 120px"
+                  style="margin: 6px; height: 190px; width: 130px"
                   v-on:click.stop="launch(item)"
                 >
                   <img
                     v-show="item.avatarHovered"
-                    style="height: 150px; width: 120px; position: absolute; z-index: 1; opacity: 0.5"
+                    style="height: 190px; width: 130px; position: absolute; z-index: 1; opacity: 0.5"
                     src="data:image/png;base64,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"
                   />
 
@@ -190,16 +190,43 @@
                       </v-list-item-subtitle>
 
                       <div style="font-size: .875rem; font-weight: normal">
-                        <span v-if="item.MI_Quality">{{ item.MI_Quality + ' | ' }}</span>
-                        <span v-if="item.AgeRating">{{ item.AgeRating + ' | ' }}</span>
-                        <span v-if="item.Genres">{{ item.Genres + ' | ' }}</span>
+                        <span v-if="item.MI_Quality">
+                          <span
+                            class="Clickable"
+                            v-on:click.stop="onVideoQualityClicked(item.MI_Quality)"
+                          >{{ item.MI_Quality }}</span>
+                          |
+                        </span>
+                        <span v-if="item.AgeRating">
+                          <span
+                            class="Clickable"
+                            v-on:click.stop="onAgeRatingClicked(item.AgeRating)"
+                          >{{ item.AgeRating }}</span>
+                          |
+                        </span>
+                        <span v-if="item.Genres">
+                          <span v-for="(genre, index) in item.Genres" v-bind:key="genre.name">
+                            <span>{{ index > 0 ? ', ' : '' }}</span>
+                            <span class="Clickable">{{ genre.translated }}</span>
+                          </span>
+                          |
+                        </span>
+
                         <span v-if="item.AudioLanguages">
                           <v-icon small>mdi-comment-outline</v-icon>
-                          {{ item.AudioLanguages + (item.SubtitleLanguages ? ' | ' : '') }}
+                          <span v-for="(lang, index) in item.AudioLanguages" v-bind:key="lang">
+                            <span>{{ index > 0 ? ', ' : ' ' }}</span>
+                            <span class="Clickable">{{ lang }}</span>
+                          </span>
+                          {{item.SubtitleLanguages ? ' | ' : ''}}
                         </span>
+
                         <span v-if="item.SubtitleLanguages">
-                          <v-icon small>mdi-subtitles-outline</v-icon>
-                          {{ item.SubtitleLanguages }}
+                          <v-icon small>mdi-comment-outline</v-icon>
+                          <span v-for="(lang, index) in item.SubtitleLanguages" v-bind:key="lang">
+                            <span>{{ index > 0 ? ', ' : ' ' }}</span>
+                            <span class="Clickable">{{ lang }}</span>
+                          </span>
                         </span>
                       </div>
                     </div>
@@ -236,10 +263,7 @@
                     </div>
                   </v-row>
 
-                  <v-row
-                    v-if="item.IMDB_plotSummary"
-                    style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
-                  >
+                  <v-row v-if="item.IMDB_plotSummary" style="margin: 8px 6px 8px 4px">
                     <div
                       v-show="!item.selected"
                       style="font-size: .875rem; font-weight: normal"
@@ -514,7 +538,10 @@
                   v-for="category in $shared.contentAdvisoryCategories"
                   v-bind:key="category.Name"
                 >
-                  <v-col sm="4" class="creditsLabel">{{ $t(`ParentalAdvisoryCategories.${category.Name}`) }}</v-col>
+                  <v-col
+                    sm="4"
+                    class="creditsLabel"
+                  >{{ $t(`ParentalAdvisoryCategories.${category.Name}`) }}</v-col>
                   <v-col sm="1" class="creditsContent">
                     <!-- <span v-if="company.role">...</span> -->
                   </v-col>
@@ -648,6 +675,20 @@
       v-on:close="onCompanyDialogClose"
     ></mk-company-dialog>
 
+    <mk-video-quality-dialog
+      ref="videoQualityDialog"
+      v-bind:show="videoQualityDialog.show"
+      v-bind:Video_Quality="videoQualityDialog.Video_Quality"
+      v-on:close="onVideoQualityDialogClose"
+    ></mk-video-quality-dialog>
+
+    <mk-age-rating-dialog
+      ref="ageRatingDialog"
+      v-bind:show="ageRatingDialog.show"
+      v-bind:Age_Rating="ageRatingDialog.Age_Rating"
+      v-on:close="onAgeRatingDialogClose"
+    ></mk-age-rating-dialog>
+
     <mk-plot-keyword-dialog
       ref="plotKeywordDialog"
       v-bind:show="plotKeywordDialog.show"
@@ -717,6 +758,8 @@ import Dialog from "@/components/shared/Dialog.vue";
 import ListDialog from "@/components/shared/ListDialog.vue";
 import PersonDialog from "@/components/shared/PersonDialog.vue";
 import CompanyDialog from "@/components/shared/CompanyDialog.vue";
+import VideoQualityDialog from "@/components/shared/VideoQualityDialog.vue";
+import AgeRatingDialog from "@/components/shared/AgeRatingDialog.vue";
 import PlotKeywordDialog from "@/components/shared/PlotKeywordDialog.vue";
 import FilmingLocationDialog from "@/components/shared/FilmingLocationDialog.vue";
 import VideoPlayerDialog from "@/components/shared/VideoPlayerDialog.vue";
@@ -738,6 +781,8 @@ export default {
     "mk-list-dialog": ListDialog,
     "mk-person-dialog": PersonDialog,
     "mk-company-dialog": CompanyDialog,
+    "mk-video-quality-dialog": VideoQualityDialog,
+    "mk-age-rating-dialog": AgeRatingDialog,
     "mk-plot-keyword-dialog": PlotKeywordDialog,
     "mk-filming-location-dialog": FilmingLocationDialog,
     "mk-video-player-dialog": VideoPlayerDialog,
@@ -801,6 +846,16 @@ export default {
       show: false,
       IMDB_Company_ID: null,
       Company_Name: null
+    },
+
+    videoQualityDialog: {
+      show: false,
+      Video_Quality: null
+    },
+
+    ageRatingDialog: {
+      show: false,
+      Age_Rating: null
     },
 
     plotKeywordDialog: {
@@ -1501,11 +1556,18 @@ export default {
       await store.fetchFilterPersons(this.mediatype, this.$local_t);
       await store.fetchFilterCompanies(this.mediatype, this.$local_t);
       await store.fetchFilterIMDBPlotKeywords(this.mediatype, this.$local_t);
-      await store.fetchFilterIMDBFilmingLocations(this.mediatype, this.$local_t);
+      await store.fetchFilterIMDBFilmingLocations(
+        this.mediatype,
+        this.$local_t
+      );
       await store.fetchFilterYears(this.mediatype);
       await store.fetchFilterQualities(this.mediatype);
       await store.fetchFilterLanguages(this.mediatype, "audio", this.$local_t);
-      await store.fetchFilterLanguages(this.mediatype, "subtitle", this.$local_t);
+      await store.fetchFilterLanguages(
+        this.mediatype,
+        "subtitle",
+        this.$local_t
+      );
       await store.fetchFilterIMDBRating(this.mediatype);
       await store.fetchFilterMetacriticScore(this.mediatype);
 
@@ -1537,6 +1599,24 @@ export default {
       this.companyDialog.IMDB_Company_ID = company.id;
       this.companyDialog.Company_Name = company.name;
       // this.$refs.personDialog.init();
+
+      return;
+    },
+
+    onVideoQualityClicked(videoQuality) {
+      logger.log("videoQuality clicked:", videoQuality);
+
+      this.videoQualityDialog.show = true;
+      this.videoQualityDialog.Video_Quality = videoQuality;
+
+      return;
+    },
+
+    onAgeRatingClicked(ageRating) {
+      logger.log("ageRating clicked:", ageRating);
+
+      this.ageRatingDialog.show = true;
+      this.ageRatingDialog.Age_Rating = ageRating;
 
       return;
     },
@@ -1679,6 +1759,14 @@ export default {
       this.companyDialog.show = false;
     },
 
+    onVideoQualityDialogClose() {
+      this.videoQualityDialog.show = false;
+    },
+
+    onAgeRatingDialogClose() {
+      this.ageRatingDialog.show = false;
+    },
+
     onPlotKeywordDialogClose() {
       this.plotKeywordDialog.show = false;
     },
@@ -1730,7 +1818,7 @@ export default {
       this.$set(item, `${section}Hovered`, value);
     },
 
-    onEditItem(item, attributeName, attributeDisplayText){
+    onEditItem(item, attributeName, attributeDisplayText) {
       this.editItemDialog.item = item;
       this.editItemDialog.attributeName = attributeName;
       this.editItemDialog.attributeDisplayText = attributeDisplayText;
@@ -1862,7 +1950,8 @@ export default {
       const result = await store.fetchMedia(
         this.mediatype,
         arr_id_Movies,
-        false
+        false,
+        this.$local_t
       );
 
       logger.log("completelyFetchMedia result:", result);
@@ -1891,8 +1980,8 @@ export default {
 
   // ### LifeCycle Hooks ###
   created() {
-    logger.log('MediaList created');
-    
+    logger.log("MediaList created");
+
     (async () => {
       await this.fetchFilters();
 
@@ -1905,7 +1994,7 @@ export default {
 
     this.sortAbles.forEach(sortAble => {
       sortAble.DescriptionTranslated = this.$t(sortAble.Description);
-    })
+    });
 
     eventBus.$on("searchTextChanged", () => {
       this.$shared.currentPage = 1;

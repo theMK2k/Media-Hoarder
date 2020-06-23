@@ -31,7 +31,7 @@
   "Genres": "Genres",
   "Age Ratings": "Alterseinstufungen",
   "Content Advisories": "Inhaltsbewertungen",
-  "Persons": "Personen",
+  "People": "Personen",
   "all selected must apply": "alle ausgewählten müssen enthalten sein",
   "one selected must apply": "eines der ausgewählten muss enthalten sein",
   "Release Years": "Veröffentlichungsjahre",
@@ -629,7 +629,7 @@
     "Documentary": "Dokumentation",
     "Drama": "Drama",
     "Family": "Familie",
-    "Fantasy": "Fantasie",
+    "Fantasy": "Fantasy",
     "Film-Noir": "Film-Noir",
     "History": "Geschichte",
     "Horror": "Horror",
@@ -814,5 +814,10 @@
 
   "Unable to launch: Mediaplayer Path is not set_ Please go to Settings and provide one_": "Aufruf nicht möglich: Media Player Pfad ist nicht festgelegt. Bitte Einstellungen aufrufen und einen Media Player Pfad festlegen.",
   "Cannot access {path}": "Auf den Pfad \"{path}\" kann nicht zugegriffen werden.",
-  "Perform an IMDB Scraper Check before Scan": "Perform an IMDB Scraper Check before Scan"
+  "Perform an IMDB Scraper Check before Scan": "Perform an IMDB Scraper Check before Scan",
+
+  "Filter by this video quality": "Nach dieser Videoqualität Filtern",
+
+  "Age Rating": "Alterseinstufung",
+  "Filter by this age rating": "Nach dieser Alterseinstufung Filtern"
 }

@@ -13,6 +13,38 @@ OK  - let user define preferred (local) Regions to identify the primary title
 OK  -> fetch Countries from https://www.imdb.com/search/title/ and provide as list
 OK  -> Auto set region by user's localization setting?
 
+## I18N Basic
+OK - moment.humanize should also be localized (see de.json!)
+OK - implement vue-i18n
+OK - Add UI-Language Selection in Settings
+OK - change static strings in components to $t('key')
+    OK src\App.vue
+    OK src\components\Settings.vue
+    OK src\components\Home.vue
+    OK src\components\MediaList.vue
+
+    OK src\components\shared\AddLanguagesDialog.vue
+    OK src\components\shared\AddRegionsDialog.vue
+    OK src\components\shared\AddTitleTypeDialog.vue
+    OK src\components\shared\CheckIMDBScraperDialog.vue
+    OK src\components\shared\CompanyDialog.vue
+    OK src\components\shared\Dialog.vue
+    OK src\components\shared\FilmingLocationDialog.vue
+    OK src\components\shared\LinkIMDBDialog.vue
+    OK src\components\shared\ListDialog.vue
+    OK src\components\shared\LocalVideoPlayerDialog.vue
+    OK src\components\shared\Pagination.vue
+    OK src\components\shared\PersonDialog.vue
+    OK src\components\shared\PlotKeywordDialog.vue
+    OK src\components\shared\RatingDemographicsDialog.vue
+    OK src\components\shared\ScanOptionsDialog.vue
+    OK src\components\shared\SearchDataDialog.vue
+    OK src\components\shared\SourcePath.vue
+    OK src\components\shared\TitleType.vue
+    OK src\components\shared\VersionDialog.vue
+    OK src\components\shared\VideoPlayerDialog.vue
+
+
 ## IMDB Scraper Checks / Watchdog
 
 OK - put all IMDB scraping functions from store.js into imdb-scraper.js
