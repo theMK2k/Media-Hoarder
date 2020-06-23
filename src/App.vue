@@ -668,7 +668,7 @@
         >{{snackbardetail}}</div>
       </div>
       <v-spacer />
-      <v-btn dark text @click="snackbar.show = false">Close</v-btn>
+      <v-btn dark text @click="snackbar.show = false">{{$t('Close')}}</v-btn>
     </v-snackbar>
 
     <!-- LOADING OVERLAY -->
@@ -1687,6 +1687,8 @@ export default {
         textOrErrorObject instanceof String
       ) {
         this.snackbar.text = textOrErrorObject;
+      } else if (textOrErrorObject.translateMe) {
+        this.snackbar.text = this.$t(textOrErrorObject.translateMe.text, textOrErrorObject.translateMe.payload);
       } else if (textOrErrorObject.syscall && textOrErrorObject.code) {
         // fetch error
         this.snackbar.text =

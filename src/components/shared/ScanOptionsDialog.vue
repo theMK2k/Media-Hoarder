@@ -64,7 +64,7 @@
             <span v-on="on">
               <v-checkbox
                 v-model="performCheck"
-                label="Perform an IMDB Scraper Check before Scan"
+                v-bind:label="$t('Perform an IMDB Scraper Check before Scan')"
                 color="dark-grey"
               ></v-checkbox>
             </span>

@@ -139,7 +139,7 @@
                               <v-icon
                                 v-show="item.nameHovered || item.selected"
                                 style="cursor: pointer"
-                                v-on:click.stop="onEditItem(item, 'Name', 'Title')"
+                                v-on:click.stop="onEditItem(item, 'Name', $t('Primary Title'))"
                               >mdi-pencil</v-icon>
                             </span>
                           </template>
@@ -174,7 +174,7 @@
                                 v-show="item.name2Hovered || item.selected"
                                 small
                                 style="cursor: pointer"
-                                v-on:click.stop="onEditItem(item, 'Name2', 'Secondary Title')"
+                                v-on:click.stop="onEditItem(item, 'Name2', $t('Secondary Title'))"
                               >mdi-pencil</v-icon>
                             </span>
                           </template>
@@ -1730,7 +1730,7 @@ export default {
       this.$set(item, `${section}Hovered`, value);
     },
 
-    onEditItem(item, attributeName, attributeDisplayText) {
+    onEditItem(item, attributeName, attributeDisplayText){
       this.editItemDialog.item = item;
       this.editItemDialog.attributeName = attributeName;
       this.editItemDialog.attributeDisplayText = attributeDisplayText;

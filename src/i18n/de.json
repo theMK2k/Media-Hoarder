@@ -126,7 +126,7 @@
   "The chosen path is already in use_": "Der gewählte Pfad wird bereits verwendet.",
   "Source path removed_": "Quellpfad entfernt.",
   "Description updated_": "Beschreibung aktualisiert.",
-  "{Path} added to ${MediaTypeUpper} source directories_": "{Path} wurde zu Quellpfaden für ${MediaTypeUpper} hinzugefügt.",
+  "{Path} added to {MediaTypeUpper} source directories_": "{Path} wurde zu Quellpfaden für {MediaTypeUpper} hinzugefügt.",
   "Title Type _{TitleType}_ added_": "Titel Typ \"{TitleType}\" hinzugefügt.",
   "Title Type _{TitleType}_ removed_": "Titel Typ \"{TitleType}\" entfernt.",
   "remove missing entries on _re-_scan": "bei (Neu-)Einlesen fehlende Einträge entfernen",
@@ -788,7 +788,7 @@
     "relativeTime": {
       "future": "in %s",
       "past": "vor %s",
-      "s": "wenige Sekunden",
+      "s": "wenigen Sekunden",
       "m": "einer Minute",
       "mm": "%d Minuten",
       "h": "einer Stunde",
@@ -805,8 +805,14 @@
       "doy": 4
     }
   },
-
   "Language of the Application": "Sprache der Anwendung",
   "Change the language of the application here_": "Hier kannst Du die Sprache der Anwendung ändern.",
-  "Application Language saved_": "Sprache der Anwendung gespeichert."
+  "Application Language saved_": "Sprache der Anwendung gespeichert.",
+
+  "Primary Title": "Primärtitel",
+  "Secondary Title": "Sekundärtitel",
+
+  "Unable to launch: Mediaplayer Path is not set_ Please go to Settings and provide one_": "Aufruf nicht möglich: Media Player Pfad ist nicht festgelegt. Bitte Einstellungen aufrufen und einen Media Player Pfad festlegen.",
+  "Cannot access {path}": "Auf den Pfad \"{path}\" kann nicht zugegriffen werden.",
+  "Perform an IMDB Scraper Check before Scan": "Perform an IMDB Scraper Check before Scan"
 }

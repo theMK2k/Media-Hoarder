@@ -2729,14 +2729,26 @@ async function launchMovie(movie) {
   if (!MediaplayerPath) {
     eventBus.showSnackbar(
       "error",
-      "Unable to launch: Mediaplayer Path is not set. Please go to Settings and provide one."
+      {
+        translateMe: {
+          text: "Unable to launch: Mediaplayer Path is not set_ Please go to Settings and provide one_"
+        }
+      }
+      
     );
   }
 
   const fileExists = await existsAsync(movie.Path);
 
   if (!fileExists) {
-    eventBus.showSnackbar("error", `Cannot access ${movie.Path}`);
+    eventBus.showSnackbar("error", {
+      translateMe: {
+        text: "Cannot access {path}",
+        payload: {
+          path: movie.Path
+        }
+      }
+    });
     return;
   }
 

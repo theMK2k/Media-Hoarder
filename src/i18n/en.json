@@ -126,7 +126,7 @@
   "The chosen path is already in use_": "The chosen path is already in use.",
   "Source path removed_": "Source path removed.",
   "Description updated_": "Description updated.",
-  "{Path} added to ${MediaTypeUpper} source directories_": "{Path} added to ${MediaTypeUpper} source directories.",
+  "{Path} added to {MediaTypeUpper} source directories_": "{Path} added to {MediaTypeUpper} source directories.",
   "Title Type _{TitleType}_ added_": "Title Type \"{TitleType}\" added.",
   "Title Type _{TitleType}_ removed_": "Title Type \"{TitleType}\" removed.",
   "remove missing entries on _re-_scan": "remove missing entries on (re-)scan",
@@ -724,8 +724,13 @@
     "Special Effects": "Special Effects"
   },
   "Sort by": "Sort by",
-
   "Language of the Application": "Language of the Application",
   "Change the language of the application here_": "Change the language of the application here.",
-  "Application Language saved_": "Application Language saved."
+  "Application Language saved_": "Application Language saved.",
+  "Primary Title": "Primary Title",
+  "Secondary Title": "Secondary Title",
+
+  "Unable to launch: Mediaplayer Path is not set_ Please go to Settings and provide one_": "Unable to launch: Mediaplayer Path is not set. Please go to Settings and provide one.",
+  "Cannot access {path}": "Cannot access {path}",
+  "Perform an IMDB Scraper Check before Scan": "Perform an IMDB Scraper Check before Scan"
 }

@@ -24,12 +24,11 @@ OK -> check if memory leak is only in dev-mode (yes, it still persists even in p
 - maybe we should use `https://www.imdb.com/find?q=` (which is IMDB search incl. ENTER)?
 
 ## I18N - Basic
-- investigate loading i18n .json from ./data/i18n
+- support all languages supported by DeepL or AWS (API):
+    en, de, fr, es, it, nl, pl, ja, pt-PT, pt-BR, ru, zh
 OK - moment.humanize should also be localized (see de.json!)
 OK - implement vue-i18n
-- Add UI-Language Selection in Settings
-- support all languages supported by DeepL (API):
-    en, de, fr, es, it, nl, pl, ja, pt-PT, pt-BR, ru, zh
+OK - Add UI-Language Selection in Settings
 - change static strings in components to $t('key')
     OK src\App.vue
     OK src\components\Settings.vue

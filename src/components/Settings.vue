@@ -19,11 +19,7 @@
       <!-- GENERAL -->
       <v-tab-item style="padding: 8px">
         <v-row class="settings-row">
-          <v-text-field
-            readonly
-            v-bind:label="$t('Media Player Path')"
-            v-model="MediaplayerPath"
-          ></v-text-field>
+          <v-text-field readonly v-bind:label="$t('Media Player Path')" v-model="MediaplayerPath"></v-text-field>
           <v-btn
             v-on:click="browseMediaplayerPath()"
             text
@@ -34,11 +30,7 @@
         </v-row>
 
         <v-row class="settings-row">
-          <v-text-field
-            readonly
-            v-bind:label="$t('Mediainfo CLI Path')"
-            v-model="MediainfoPath"
-          ></v-text-field>
+          <v-text-field readonly v-bind:label="$t('Mediainfo CLI Path')" v-model="MediainfoPath"></v-text-field>
           <v-btn
             v-on:click="browseMediainfoPath()"
             text
@@ -66,12 +58,7 @@
           ></v-select>
         </v-row>
 
-        <v-btn
-          text
-          small
-          color="primary"
-          v-on:click="openVersionDialog"
-        >{{$t("Show Version Info")}}</v-btn>
+        <v-btn text small color="primary" v-on:click="openVersionDialog">{{$t("Show Version Info")}}</v-btn>
         <v-btn
           text
           small
@@ -103,12 +90,7 @@
           ></mk-sourcepath>
         </div>
 
-        <v-btn
-          text
-          small
-          color="primary"
-          v-on:click="addSource('movies')"
-        >{{$t("Add Source Path")}}</v-btn>
+        <v-btn text small color="primary" v-on:click="addSource('movies')">{{$t("Add Source Path")}}</v-btn>
       </v-tab-item>
 
       <!-- SERIES -->
@@ -133,12 +115,7 @@
           ></mk-sourcepath>
         </div>
 
-        <v-btn
-          text
-          small
-          color="primary"
-          v-on:click="addSource('series')"
-        >{{$t("Add Source Path")}}</v-btn>
+        <v-btn text small color="primary" v-on:click="addSource('series')">{{$t("Add Source Path")}}</v-btn>
       </v-tab-item>
 
       <!-- DUPLICATES -->
@@ -292,7 +269,7 @@
           <p>{{$t('Change the language of the application here_')}}</p>
         </i>
 
-        <v-row class="settings-row" >
+        <v-row class="settings-row">
           <v-select
             item-text="name"
             item-value="code"
@@ -301,7 +278,7 @@
             style="margin-top: -16px; margin-bottom: 16px"
           ></v-select>
         </v-row>
-        
+
         <h3>{{$t('Languages of the Primary Title')}}</h3>
 
         <i>
@@ -437,7 +414,12 @@
           v-on:removeTitleType="onRemoveTitleType"
         ></mk-title-type>
 
-        <v-btn text small color="primary" v-on:click="openAddTitleTypeDialog">{{$t('Add Title Type')}}</v-btn>
+        <v-btn
+          text
+          small
+          color="primary"
+          v-on:click="openAddTitleTypeDialog"
+        >{{$t('Add Title Type')}}</v-btn>
       </v-tab-item>
     </v-tabs>
 
@@ -564,10 +546,13 @@ export default {
     },
 
     shared_uiLanguage: function(newValue) {
-      (async() => {
-        await store.setSetting('uiLanguage', newValue);
+      (async () => {
+        await store.setSetting("uiLanguage", newValue);
 
-        eventBus.showSnackbar("success", this.$t('Application Language saved_'))
+        eventBus.showSnackbar(
+          "success",
+          this.$t("Application Language saved_")
+        );
       })();
     }
   },
@@ -598,10 +583,10 @@ export default {
     browseMediaplayerPath() {
       const filters = helpers.isWindows
         ? [
-            { name: this.$t('Executables'), extensions: ["exe"] },
-            { name: this.$t('All Files'), extensions: ["*"] }
+            { name: this.$t("Executables"), extensions: ["exe"] },
+            { name: this.$t("All Files"), extensions: ["*"] }
           ]
-        : [{ name: this.$t('All Files'), extensions: ["*"] }];
+        : [{ name: this.$t("All Files"), extensions: ["*"] }];
 
       dialog.showOpenDialog(
         {
@@ -625,10 +610,10 @@ export default {
     browseMediainfoPath() {
       const filters = helpers.isWindows
         ? [
-            { name: this.$t('Executables'), extensions: ["exe"] },
-            { name: this.$t('All Files'), extensions: ["*"] }
+            { name: this.$t("Executables"), extensions: ["exe"] },
+            { name: this.$t("All Files"), extensions: ["*"] }
           ]
-        : [{ name: this.$t('All Files'), extensions: ["*"] }];
+        : [{ name: this.$t("All Files"), extensions: ["*"] }];
 
       dialog.showOpenDialog(
         {
@@ -674,7 +659,7 @@ export default {
           if (isAlreadyInUse) {
             return eventBus.showSnackbar(
               "error",
-              this.$t('The chosen path is already in use_')
+              this.$t("The chosen path is already in use_")
             );
           }
 
@@ -759,7 +744,7 @@ export default {
 
           eventBus.showLoadingOverlay(false);
 
-          eventBus.showSnackbar("success", this.$t('Source path removed.'));
+          eventBus.showSnackbar("success", this.$t("Source path removed_"));
         } catch (err) {
           eventBus.showSnackbar("error", err);
         }
@@ -793,7 +778,7 @@ export default {
 
           await this.fetchSourcePaths();
 
-          eventBus.showSnackbar("success", this.$t('Description updated_'));
+          eventBus.showSnackbar("success", this.$t("Description updated_"));
         } catch (err) {
           eventBus.showSnackbar("error", err);
         }
@@ -816,7 +801,12 @@ export default {
 
           eventBus.showSnackbar(
             "success",
-            this.$t('{Path} added to ${MediaTypeUpper} source directories_', {Path: this.sourcePathDescriptionDialog.Path, MediaTypeUpper: this.sourcePathDescriptionDialog.MediaTypeUpper})
+            this.$t("{Path} added to {MediaTypeUpper} source directories_", {
+              Path: this.sourcePathDescriptionDialog.Path,
+              MediaTypeUpper: this.$t(
+                this.sourcePathDescriptionDialog.MediaTypeUpper
+              )
+            })
           );
         } catch (err) {
           eventBus.showSnackbar("error", err);
@@ -1074,7 +1064,9 @@ export default {
 
       eventBus.showSnackbar(
         "success",
-        this.$t('Title Type _{TitleType}_ added_', {TitleType: titleType.TitleType})
+        this.$t("Title Type _{TitleType}_ added_", {
+          TitleType: titleType.TitleType
+        })
       );
     },
 
@@ -1093,7 +1085,9 @@ export default {
 
       eventBus.showSnackbar(
         "success",
-        this.$t('Title Type _{TitleType}_ removed_', {TitleType: titleType.TitleType})
+        this.$t("Title Type _{TitleType}_ removed_", {
+          TitleType: titleType.TitleType
+        })
       );
     },
 

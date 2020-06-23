@@ -2,7 +2,6 @@
   <v-dialog
     v-model="show"
     persistent
-    max-width="500px"
     v-on:keydown.escape="onCloseClick"
   >
     <v-card dark flat v-bind:ripple="false">
