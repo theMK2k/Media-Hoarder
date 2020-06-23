@@ -12,7 +12,9 @@ OK -> check if memory leak is only in dev-mode (yes, it still persists even in p
 - BUGFIX needed for filtering by genre (see: App.vue line 1372)
 - add AudioLanguageDialog
 - add SubtitleLanguageDialog
+-> for clicking the individual language in the MediaList
 -> allow "filter by this language"
+-> what do we do with "+3" entries?
 
 ## Fine-tune some text colors
 - some help texts are too bright
