@@ -287,6 +287,21 @@
 
       <!-- LANGUAGES -->
       <v-tab-item style="padding: 8px">
+        <h3>{{$t('Language of the Application')}}</h3>
+        <i>
+          <p>{{$t('Change the language of the application here_')}}</p>
+        </i>
+
+        <v-row class="settings-row" >
+          <v-select
+            item-text="name"
+            item-value="code"
+            v-model="$shared.uiLanguage"
+            v-bind:items="$shared.supportedLanguages"
+            style="margin-top: -16px; margin-bottom: 16px"
+          ></v-select>
+        </v-row>
+        
         <h3>{{$t('Languages of the Primary Title')}}</h3>
 
         <i>
@@ -546,6 +561,14 @@ export default {
 
     imdbRatingDemographic: function() {
       store.setSetting("IMDBRatingDemographic", this.imdbRatingDemographic);
+    },
+
+    shared_uiLanguage: function(newValue) {
+      (async() => {
+        await store.setSetting('uiLanguage', newValue);
+
+        eventBus.showSnackbar("success", this.$t('Application Language saved_'))
+      })();
     }
   },
 
@@ -555,13 +578,19 @@ export default {
         return sourcePath.MediaType === "series";
       });
     },
+
     moviesSourcePaths() {
       return this.sourcePaths.filter(sourcePath => {
         return sourcePath.MediaType === "movies";
       });
     },
+
     imdbRatingDemographic() {
       return this.$shared.imdbRatingDemographic;
+    },
+
+    shared_uiLanguage() {
+      return this.$shared.uiLanguage;
     }
   },
 

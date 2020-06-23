@@ -717,13 +717,15 @@
     "Production Department": "Production Department",
     "Series Thanks": "Series Thanks"
   },
-
   "CompanyCategories": {
     "Distributors": "Distributors",
     "Other": "Other",
     "Production": "Production",
     "Special Effects": "Special Effects"
   },
+  "Sort by": "Sort by",
 
-  "Sort by": "Sort by"
+  "Language of the Application": "Language of the Application",
+  "Change the language of the application here_": "Change the language of the application here.",
+  "Application Language saved_": "Application Language saved."
 }

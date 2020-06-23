@@ -126,7 +126,7 @@ dbsync.runSync(
 
         await fetchIMDBRatingDemographic();
 
-        shared.uiLanguage = await fetchuiLanguage();
+        shared.uiLanguage = await fetchUILanguage();
       })();
     });
   }
@@ -4703,8 +4703,8 @@ async function saveIMDBPersonData(data) {
   );
 }
 
-async function fetchuiLanguage() {
-  logger.log('fetchuiLanguage START');
+async function fetchUILanguage() {
+  logger.log('fetchUILanguage START');
   
   let lang = await getSetting("uiLanguage");
   let fallbackLanguage = null;
@@ -4713,23 +4713,26 @@ async function fetchuiLanguage() {
     fallbackLanguage = shared.fallbackLanguage.code.toLowerCase();
   }
 
+  if (lang) {
+    logger.log(`fetchUILanguage got previously saved language: "${lang}"`);
+  }
+
   if (!lang) {
     if (fallbackLanguage) {
-      logger.log(`fetchuiLanguage no locale defined, fallback to "${fallbackLanguage}"`);
+      logger.log(`fetchUILanguage no locale defined, fallback to "${fallbackLanguage}"`);
       lang = fallbackLanguage;
     } else {
-      logger.log(`fetchuiLanguage no locale defined, default to "en"`);
+      logger.log(`fetchUILanguage no locale defined, default to "en"`);
       lang = 'en';
     }
-    
   }
 
   if (!shared.supportedLanguages.find(supportedLanguage => supportedLanguage.code === lang)) {
-    logger.log(`fetchuiLanguage locale "${lang}" is not supported, fallback to "en"`);
+    logger.log(`fetchUILanguage locale "${lang}" is not supported, fallback to "en"`);
     lang = 'en';
   }
 
-  logger.log('fetchuiLanguage using');
+  logger.log(`fetchUILanguage using "${lang}"`);
   return lang;
 }
 
@@ -4802,5 +4805,5 @@ export {
   resetUserScanOptions,
   fetchRatingDemographics,
   saveIMDBPersonData,
-  fetchuiLanguage
+  fetchUILanguage as fetchUILanguage
 };

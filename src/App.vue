@@ -543,8 +543,7 @@
     <v-app-bar app clipped-left color="red" dense>
       <v-app-bar-nav-icon @click.stop="$shared.sidenav = !$shared.sidenav"></v-app-bar-nav-icon>
       <v-toolbar-title class="mr-12 align-center noshrink">
-        <span class="title">{{$t("appName")}}     {{shared_uiLanguage}}
-</span>
+        <span class="title">{{$t("appName")}}</span>
       </v-toolbar-title>
       <!-- <div class="flex-grow-1"></div> -->
       <v-spacer></v-spacer>
