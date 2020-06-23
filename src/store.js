@@ -1827,18 +1827,6 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
         filterAgeRatings += ")";
       }
 
-      filterAgeRatings += ")";filterAgeRatings += `OR AR.Age IN (`;
-
-        filterAgeRatings += shared.filterAgeRatings
-          .filter((filter) => filter.Selected && filter.Age >= 0)
-          .map((filter) => filter.Age)
-          .reduce((prev, current) => {
-            return prev + (prev ? ", " : "") + current;
-          }, "");
-
-        filterAgeRatings += ")";
-      }
-
       filterAgeRatings += ")";
     }
 
