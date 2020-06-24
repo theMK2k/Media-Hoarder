@@ -1,7 +1,8 @@
 const util = require("util");
 const path = require("path");
 const fs = require("fs");
-const request = require("request");
+const request = require('request')
+const requestretry = require('requestretry')
 
 // import path from 'path'
 
@@ -12,7 +13,8 @@ const isWindows = process.platform === "win32";
 
 const writeFileAsync = util.promisify(fs.writeFile);
 const existsAsync = util.promisify(fs.exists);
-const requestGetAsync = util.promisify(request.get);
+const requestGetAsync = util.promisify(request.get);  // TODO: get rid of that
+const requestretryAsync = util.promisify(requestretry);
 
 function getPath(relativePath) {
   /* eslint-disable no-undef */
@@ -148,6 +150,19 @@ async function downloadFile(url, targetPath, redownload) {
   }
 }
 
+function requestRetryStrategy(err, response, body, options) {
+  const mustRetry = !!err
+
+  if (mustRetry) {
+    process.stdout.write('.')
+  }
+
+  return {
+    mustRetry,
+    options: options,
+  }
+}
+
 export {
   isWindows,
   getPath,
@@ -156,5 +171,7 @@ export {
   getMovieNameFromFileName,
   getYearsFromFileName,
   getDirectoryName,
-  downloadFile
+  downloadFile,
+  requestretryAsync,
+  requestRetryStrategy
 };

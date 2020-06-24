@@ -6,6 +6,8 @@ const htmlToText = require("html-to-text");
 
 const requestGetAsync = util.promisify(request.get);
 
+const helpers = require("./helpers/helpers");
+
 function uppercaseEachWord(input) {
   logger.log("uppercaseEachWord:", input);
 
@@ -28,9 +30,21 @@ function uppercaseEachWord(input) {
 }
 
 async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
+  const options = {
+    method: 'GET',
+    url: `https://www.imdb.com/title/${movie.IMDB_tconst}`,
+    maxAttempts: 3,
+    retryDelay: 1000,
+    retryStrategy: helpers.requestRetryStrategy,
+  }
+
   const url = `https://www.imdb.com/title/${movie.IMDB_tconst}`;
   logger.log("scrapeIMDBmainPageData url:", url);
-  const response = await requestGetAsync(url);
+  
+  // const response = await requestGetAsync(url);
+  const response = await helpers.requestretryAsync(url);
+  
+  
   const html = response.body;
 
   let $IMDB_releaseType = "movie";
