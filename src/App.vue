@@ -1369,7 +1369,6 @@ export default {
       logger.log('setAllGenres this.$shared.filterGenres:', this.$shared.filterGenres);
       
       this.$shared.filterGenres.forEach(genre => {
-        // NEEDFIX: this doesn't work right now from genreDialog
         if (exclusionList && exclusionList.find(val => genre.Name === val.translated)) {
           genre.Selected = !value;
           return;

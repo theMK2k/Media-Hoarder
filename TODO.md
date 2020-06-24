@@ -9,7 +9,6 @@ OK -> we have a memory leak using eventBus.$on -> implement eventBus.$off on bef
 OK -> check if memory leak is only in dev-mode (yes, it still persists even in prod-mode)
 
 ## More Dialogs
-- BUGFIX needed for filtering by genre (see: App.vue line 1372)
 - add AudioLanguageDialog
 - add SubtitleLanguageDialog
 -> for clicking the individual language in the MediaList
