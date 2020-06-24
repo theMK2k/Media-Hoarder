@@ -822,5 +822,9 @@
   "Filter by this age rating": "Nach dieser Alterseinstufung Filtern",
 
   "Genre": "Genre",
-  "Filter by this genre": "Nach diesem Genre Filtern"
+  "Filter by this genre": "Nach diesem Genre Filtern",
+
+  "Subtitle Language": "Untertitelsprache",
+  "Audio Language": "Audiosprache",
+  "Filter by this language": "Nach dieser Sprache Filtern"
 }

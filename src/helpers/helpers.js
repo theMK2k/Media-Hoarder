@@ -40,6 +40,10 @@ function getTimeString(runtimeSeconds) {
 function uppercaseEachWord(input) {
   logger.log("uppercaseEachWord:", input);
 
+  if (!input) {
+    return input;
+  }
+
   let isNewBeginning = true;
   let text = input;
 

@@ -740,5 +740,9 @@
   "Filter by this age rating": "Filter by this age rating",
 
   "Genre": "Genre",
-  "Filter by this genre": "Filter by this genre"
+  "Filter by this genre": "Filter by this genre",
+
+  "Subtitle Language": "Subtitle Language",
+  "Audio Language": "Audio Language",
+  "Filter by this language": "Filter by this language"
 }

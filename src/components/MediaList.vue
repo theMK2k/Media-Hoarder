@@ -219,16 +219,16 @@
                           <v-icon small>mdi-comment-outline</v-icon>
                           <span v-for="(lang, index) in item.AudioLanguages" v-bind:key="lang">
                             <span>{{ index > 0 ? ', ' : ' ' }}</span>
-                            <span class="Clickable">{{ lang }}</span>
+                            <span class="Clickable" v-on:click.stop="onLanguageClicked(lang, 'audio')">{{ lang }}</span>
                           </span>
                           {{item.SubtitleLanguages ? ' | ' : ''}}
                         </span>
 
                         <span v-if="item.SubtitleLanguages">
-                          <v-icon small>mdi-comment-outline</v-icon>
+                          <v-icon small>mdi-subtitles-outline</v-icon>
                           <span v-for="(lang, index) in item.SubtitleLanguages" v-bind:key="lang">
                             <span>{{ index > 0 ? ', ' : ' ' }}</span>
-                            <span class="Clickable">{{ lang }}</span>
+                            <span class="Clickable" v-on:click.stop="onLanguageClicked(lang, 'subtitle')">{{ lang }}</span>
                           </span>
                         </span>
                       </div>
@@ -692,6 +692,15 @@
       v-on:close="onGenreDialogClose"
     ></mk-genre-dialog>
 
+    <mk-language-dialog
+      ref="languageDialog"
+      v-bind:show="languageDialog.show"
+      v-bind:Type="languageDialog.Type"
+      v-bind:Code="languageDialog.Code"
+      v-bind:Language="languageDialog.Language"
+      v-on:close="onLanguageDialogClose"
+    ></mk-language-dialog>
+
     <mk-age-rating-dialog
       ref="ageRatingDialog"
       v-bind:show="ageRatingDialog.show"
@@ -770,6 +779,7 @@ import PersonDialog from "@/components/shared/PersonDialog.vue";
 import CompanyDialog from "@/components/shared/CompanyDialog.vue";
 import VideoQualityDialog from "@/components/shared/VideoQualityDialog.vue";
 import GenreDialog from "@/components/shared/GenreDialog.vue";
+import LanguageDialog from "@/components/shared/LanguageDialog.vue";
 import AgeRatingDialog from "@/components/shared/AgeRatingDialog.vue";
 import PlotKeywordDialog from "@/components/shared/PlotKeywordDialog.vue";
 import FilmingLocationDialog from "@/components/shared/FilmingLocationDialog.vue";
@@ -794,6 +804,7 @@ export default {
     "mk-company-dialog": CompanyDialog,
     "mk-video-quality-dialog": VideoQualityDialog,
     "mk-genre-dialog": GenreDialog,
+    "mk-language-dialog": LanguageDialog,
     "mk-age-rating-dialog": AgeRatingDialog,
     "mk-plot-keyword-dialog": PlotKeywordDialog,
     "mk-filming-location-dialog": FilmingLocationDialog,
@@ -868,6 +879,13 @@ export default {
     genreDialog: {
       show: false,
       Video_Quality: null
+    },
+
+    languageDialog: {
+      show: false,
+      Type: null,
+      Code: null,
+      Language: null
     },
 
     ageRatingDialog: {
@@ -1638,6 +1656,17 @@ export default {
       return;
     },
 
+    onLanguageClicked(code, type) {
+      logger.log("language clicked:", code, type);
+
+      this.languageDialog.Type = type;
+      this.languageDialog.Language = 'TODO!';
+      this.languageDialog.Code = code;
+      this.languageDialog.show = true;
+
+      return;
+    },
+
     onAgeRatingClicked(ageRating) {
       logger.log("ageRating clicked:", ageRating);
 
@@ -1791,6 +1820,10 @@ export default {
 
     onGenreDialogClose() {
       this.genreDialog.show = false;
+    },
+
+    onLanguageDialogClose() {
+      this.languageDialog.show = false;
     },
 
     onAgeRatingDialogClose() {
