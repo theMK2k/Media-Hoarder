@@ -42,7 +42,7 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
   logger.log("scrapeIMDBmainPageData url:", url);
   
   // const response = await requestGetAsync(url);
-  const response = await helpers.requestretryAsync(url);
+  const response = await helpers.requestretryAsync(options);
   
   
   const html = response.body;

@@ -19,7 +19,7 @@ OK -> check if memory leak is only in dev-mode (yes, it still persists even in p
 - some help texts are too bright
 
 ## Harden fetch from web
-- How should we handle ECONNRESET? maybe request-retry?
+WIP - How should we handle ECONNRESET? maybe requestretry?
 - How can we test this?
 
 ## Icons for Navbar?
