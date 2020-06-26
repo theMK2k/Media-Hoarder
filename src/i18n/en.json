@@ -729,20 +729,17 @@
   "Application Language saved_": "Application Language saved.",
   "Primary Title": "Primary Title",
   "Secondary Title": "Secondary Title",
-
   "Unable to launch: Mediaplayer Path is not set_ Please go to Settings and provide one_": "Unable to launch: Mediaplayer Path is not set. Please go to Settings and provide one.",
   "Cannot access {path}": "Cannot access {path}",
   "Perform an IMDB Scraper Check before Scan": "Perform an IMDB Scraper Check before Scan",
-
   "Filter by this video quality": "Filter by this video quality",
-
   "Age Rating": "Age Rating",
   "Filter by this age rating": "Filter by this age rating",
-
   "Genre": "Genre",
   "Filter by this genre": "Filter by this genre",
-
   "Subtitle Language": "Subtitle Language",
   "Audio Language": "Audio Language",
-  "Filter by this language": "Filter by this language"
+  "Filter by this language": "Filter by this language",
+  "Checks with exceptions detected!": "Checks with exceptions detected!",
+  "Ignore Exception - Scan Media Now": "Ignore Exception - Scan Media Now"
 }

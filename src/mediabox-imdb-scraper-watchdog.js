@@ -53,7 +53,9 @@ function addLogEntry(testResult) {
       ? chalk.green("OK")
       : testResult.status === status.WARNING
       ? chalk.yellow("WARN")
-      : chalk.red("FAIL")
+      : testResult.status === status.ERROR
+      ? chalk.red("FAIL")
+      : chalk.red("EXCEPTION")
   }${chalk.white("]")} ${testResult.name}`;
 
   log.push(entry);

@@ -61,6 +61,12 @@
             border="left"
             v-if="checkResult === 2"
           >{{$t('Checks with error detected!')}}</v-alert>
+          <v-alert
+            type="error"
+            colored-border
+            border="left"
+            v-if="checkResult === 3"
+          >{{$t('Checks with exceptions detected!')}}</v-alert>
         </div>
       </v-card-text>
 
@@ -169,6 +175,13 @@ export default {
 
           this.checkResult = imdbScraperTests.status.ERROR;
           this.okButtonText = this.$t('Ignore Error - Scan Media Now');
+        }
+        if (check.result.status === imdbScraperTests.status.EXCEPTION) {
+          check.color = "red";
+          check.icon = "mdi-alert-circle-outline";
+
+          this.checkResult = imdbScraperTests.status.EXCEPTION;
+          this.okButtonText = this.$t('Ignore Exception - Scan Media Now');
         }
 
         check.isRunning = false;

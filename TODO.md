@@ -19,8 +19,13 @@ OK -> check if memory leak is only in dev-mode (yes, it still persists even in p
 - some help texts are too bright
 
 ## Harden fetch from web
-WIP - How should we handle ECONNRESET? maybe requestretry?
-- How can we test this?
+OK - How should we handle ECONNRESET? maybe requestretry?
+OK - How can we test this?
+- investigate offline error handling
+  OK - imdb scraper test Dialog
+  - imdb scraping during (re-)scan
+  - imdb search/find
+  - imdb scraping on persons, companies etc.
 
 ## Icons for Navbar?
 - would it be good to have (many) icons for the sections and filters in the navbar?
