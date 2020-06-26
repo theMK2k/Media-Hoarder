@@ -31,20 +31,20 @@ const log = [];
   logger.info('used config:', JSON.stringify(config, null, 2));
 
   addLogEntry(await imdbScraperTests.testIMDBmainPageData());
-  // addLogEntry(await imdbScraperTests.testIMDBplotSummary());
-  // addLogEntry(await imdbScraperTests.testIMDBreleaseinfo());
-  // addLogEntry(await imdbScraperTests.testIMDBtechnicalData());
-  // addLogEntry(await imdbScraperTests.testIMDBParentalGuideData());
-  // addLogEntry(await imdbScraperTests.testIMDBFullCreditsData());
-  // addLogEntry(await imdbScraperTests.testIMDBCompaniesData());
-  // addLogEntry(await imdbScraperTests.testIMDBPersonData());
-  // addLogEntry(await imdbScraperTests.testIMDBTrailerMediaURLs());
-  // addLogEntry(await imdbScraperTests.testIMDBplotKeywords());
-  // addLogEntry(await imdbScraperTests.testIMDBFilmingLocations());
-  // addLogEntry(await imdbScraperTests.testIMDBRatingDemographics());
-  // addLogEntry(await imdbScraperTests.testIMDBSuggestion());
-  // addLogEntry(await imdbScraperTests.testIMDBAdvancedTitleSearch());
-  // addLogEntry(await imdbScraperTests.testIMDBFind());
+  addLogEntry(await imdbScraperTests.testIMDBplotSummary());
+  addLogEntry(await imdbScraperTests.testIMDBreleaseinfo());
+  addLogEntry(await imdbScraperTests.testIMDBtechnicalData());
+  addLogEntry(await imdbScraperTests.testIMDBParentalGuideData());
+  addLogEntry(await imdbScraperTests.testIMDBFullCreditsData());
+  addLogEntry(await imdbScraperTests.testIMDBCompaniesData());
+  addLogEntry(await imdbScraperTests.testIMDBPersonData());
+  addLogEntry(await imdbScraperTests.testIMDBTrailerMediaURLs());
+  addLogEntry(await imdbScraperTests.testIMDBplotKeywords());
+  addLogEntry(await imdbScraperTests.testIMDBFilmingLocations());
+  addLogEntry(await imdbScraperTests.testIMDBRatingDemographics());
+  addLogEntry(await imdbScraperTests.testIMDBSuggestion());
+  addLogEntry(await imdbScraperTests.testIMDBAdvancedTitleSearch());
+  addLogEntry(await imdbScraperTests.testIMDBFind());
 })();
 
 function addLogEntry(testResult) {

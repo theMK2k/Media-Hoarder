@@ -1,10 +1,6 @@
-const util = require("util");
-const request = require("request");
 const logger = require("loglevel");
 const cheerio = require("cheerio");
 const htmlToText = require("html-to-text");
-
-const requestGetAsync = util.promisify(request.get);
 
 const helpers = require("./helpers/helpers");
 
@@ -30,21 +26,11 @@ function uppercaseEachWord(input) {
 }
 
 async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
-  const options = {
-    method: 'GET',
-    url: `https://www.imdb.com/title/${movie.IMDB_tconst}`,
-    maxAttempts: 3,
-    retryDelay: 1000,
-    retryStrategy: helpers.requestRetryStrategy,
-  }
-
   const url = `https://www.imdb.com/title/${movie.IMDB_tconst}`;
   logger.log("scrapeIMDBmainPageData url:", url);
   
-  // const response = await requestGetAsync(url);
-  const response = await helpers.requestretryAsync(options);
-  
-  
+  const response = await helpers.requestAsync(`https://www.imdb.com/title/${movie.IMDB_tconst}`);
+
   const html = response.body;
 
   let $IMDB_releaseType = "movie";
@@ -179,7 +165,7 @@ async function scrapeIMDBplotSummary(movie, shortSummary) {
 
   const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/plotsummary`;
   logger.log("scrapeIMDBplotSummary url:", url);
-  const response = await requestGetAsync(url);
+  const response = await helpers.requestAsync(url);
   const html = response.body;
 
   const shortSummaryClean = shortSummary.split("...")[0].trim();
@@ -215,7 +201,7 @@ async function scrapeIMDBposterURLs(posterMediaViewerURL) {
   let $IMDB_posterLarge_URL = null;
 
   const url = `https://www.imdb.com${posterMediaViewerURL}`;
-  const response = await requestGetAsync(url);
+  const response = await helpers.requestAsync(url);
   const html = response.body;
 
   const rxID = /(rm\d*)\?ref/;
@@ -243,7 +229,7 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
     "allowedTitleTypes:",
     allowedTitleTypes
   );
-  const response = await requestGetAsync(url);
+  const response = await helpers.requestAsync(url);
   const html = response.body;
   // logger.log('imdbReleaseinfoHTML', imdbReleaseinfoHTML);
 
@@ -343,7 +329,7 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
 async function scrapeIMDBtechnicalData(movie) {
   const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/technical`;
   logger.log("scrapeIMDBtechnicalData url:", url);
-  const response = await requestGetAsync(url);
+  const response = await helpers.requestAsync(url);
   const html = response.body;
 
   let $IMDB_runtimeMinutes = null;
@@ -389,7 +375,7 @@ async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturn
 
   const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/parentalguide`;
   logger.log("scrapeIMDBParentalGuideData url:", url);
-  const response = await requestGetAsync(url);
+  const response = await helpers.requestAsync(url);
   const html = response.body;
 
   logger.log("parentalguide html:", { html });
@@ -596,7 +582,7 @@ async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturn
 async function scrapeIMDBFullCreditsData(movie) {
   const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/fullcredits`;
   logger.log("scrapeIMDBFullCreditsData url:", url);
-  const response = await requestGetAsync(url);
+  const response = await helpers.requestAsync(url);
   const html = response.body;
 
   const topMax = 5;
@@ -713,7 +699,7 @@ async function scrapeIMDBFullCreditsData(movie) {
 async function scrapeIMDBCompaniesData(movie) {
   const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/companycredits`;
   logger.log("scrapeIMDBCompaniesData url:", url);
-  const response = await requestGetAsync(url);
+  const response = await helpers.requestAsync(url);
   const html = response.body;
 
   const topMax = 5;
@@ -827,7 +813,7 @@ function parseCreditsCategory(html, tableHeader, credits) {
 
 async function scrapeIMDBPersonData($IMDB_Person_ID, downloadFileCallback) {
   const url = `https://www.imdb.com/name/${$IMDB_Person_ID}`;
-  const response = await requestGetAsync(url);
+  const response = await helpers.requestAsync(url);
   const html = response.body;
 
   logger.log("scraping:", url);
@@ -870,7 +856,7 @@ async function scrapeIMDBPersonData($IMDB_Person_ID, downloadFileCallback) {
   }
 
   const urlBio = `https://www.imdb.com/name/${$IMDB_Person_ID}/bio`;
-  const responseBio = await requestGetAsync(urlBio);
+  const responseBio = await helpers.requestAsync(urlBio);
   const htmlBio = responseBio.body;
 
   const rxLongBio = /<h4 class="li_group">Mini Bio[\s\S]*?(<div[\s\S]*?)<\/div>/;
@@ -908,7 +894,7 @@ async function scrapeIMDBAdvancedTitleSearch(title, titleTypes) {
 
   logger.log("scrapeIMDBAdvancedTitleSearch url:", url);
 
-  const response = await requestGetAsync(url);
+  const response = await helpers.requestAsync(url);
   const html = response.body;
   const $ = cheerio.load(html);
 
@@ -978,7 +964,7 @@ async function scrapeIMDBSuggestion(searchTerm) {
 
   logger.log("scrapeIMDBSuggestion url:", url);
 
-  const response = await requestGetAsync(url);
+  const response = await helpers.requestAsync(url);
 
   let objResponse = null;
 
@@ -1021,7 +1007,7 @@ async function scrapeIMDBFind(searchTerm, type) {
 
   logger.log("scrapeIMDBAdvancedTitleSearch url:", url);
 
-  const response = await requestGetAsync(url);
+  const response = await helpers.requestAsync(url);
   const html = response.body;
   const $ = cheerio.load(html);
 
@@ -1077,7 +1063,7 @@ async function scrapeIMDBTrailerMediaURLs(trailerURL) {
 
   logger.log("trailerURL:", trailerURL);
 
-  const response = await requestGetAsync({
+  const response = await helpers.requestAsync({
     uri: trailerURL,
     headers: {
       "user-agent":
@@ -1126,7 +1112,7 @@ async function scrapeIMDBplotKeywords(movie) {
   const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/keywords`
   logger.log("scrapeIMDBplotKeywords url:", url);
 
-  const response = await requestGetAsync(url);
+  const response = await helpers.requestAsync(url);
   const html = response.body;
 
   const rxPlotKeywords = /<a href="\/search\/keyword\?[\s\S]*?>(.*?)<\/a>[\s\S]*?>(.*?relevant)/g;
@@ -1163,7 +1149,7 @@ async function scrapeIMDBFilmingLocations(movie) {
   const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/locations`
   logger.log("scrapeIMDBFilmingLocations url:", url);
 
-  const response = await requestGetAsync(url);
+  const response = await helpers.requestAsync(url);
   const html = response.body;
 
   `
@@ -1215,7 +1201,7 @@ async function scrapeIMDBRatingDemographics(movie) {
   const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/ratings`
   logger.log("scrapeIMDBRatingDemographics url:", url);
 
-  const response = await requestGetAsync(url);
+  const response = await helpers.requestAsync(url);
   const html = response.body;
 
   /*
