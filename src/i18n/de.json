@@ -812,7 +812,8 @@
   "Secondary Title": "Sekundärtitel",
   "Unable to launch: Mediaplayer Path is not set_ Please go to Settings and provide one_": "Aufruf nicht möglich: Media Player Pfad ist nicht festgelegt. Bitte Einstellungen aufrufen und einen Media Player Pfad festlegen.",
   "Cannot access {path}": "Auf den Pfad \"{path}\" kann nicht zugegriffen werden.",
-  "Perform an IMDB Scraper Check before Scan": "Perform an IMDB Scraper Check before Scan",
+  "Perform an IMDB Scraper Check before Scan": "Vor dem Einlesen eine IMDB Scraper Prüfung durchführen",
+
   "Filter by this video quality": "Nach dieser Videoqualität Filtern",
   "Age Rating": "Alterseinstufung",
   "Filter by this age rating": "Nach dieser Alterseinstufung Filtern",
