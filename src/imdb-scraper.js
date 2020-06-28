@@ -175,37 +175,50 @@ async function scrapeIMDBplotSummary(movie, shortSummary) {
     return { $IMDB_plotSummaryFull };
   }
 
-  const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/plotsummary`;
-  logger.log("scrapeIMDBplotSummary url:", url);
-  const response = await helpers.requestAsync(url);
-  const html = response.body;
-
-  const shortSummaryClean = shortSummary.split("...")[0].trim();
-
-  const rxplotSummary = new RegExp(
-    `<li class="ipl-zebra-list__item"[\\s\\S]*?<p>([\\s\\S]*?)</p>`,
-    "g"
-  );
-
-  let match = null;
-
-  while ((match = rxplotSummary.exec(html))) {
-    const plotSummaryFull = unescape(
-      htmlToText
-        .fromString(match[1], {
-          wordwrap: null,
-          ignoreImage: true,
-          ignoreHref: true
-        })
-        .trim()
-    );
-
-    if (plotSummaryFull.includes(shortSummaryClean)) {
-      $IMDB_plotSummaryFull = plotSummaryFull;
-    }
+  if (movie.scanErrors) {
+    delete movie.scanErrors['IMDB Plot Summary'];
   }
 
-  return { $IMDB_plotSummaryFull };
+  try {
+
+    const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/plotsummary`;
+    logger.log("scrapeIMDBplotSummary url:", url);
+    const response = await helpers.requestAsync(url);
+    const html = response.body;
+
+    const shortSummaryClean = shortSummary.split("...")[0].trim();
+
+    const rxplotSummary = new RegExp(
+      `<li class="ipl-zebra-list__item"[\\s\\S]*?<p>([\\s\\S]*?)</p>`,
+      "g"
+    );
+
+    let match = null;
+
+    while ((match = rxplotSummary.exec(html))) {
+      const plotSummaryFull = unescape(
+        htmlToText
+          .fromString(match[1], {
+            wordwrap: null,
+            ignoreImage: true,
+            ignoreHref: true
+          })
+          .trim()
+      );
+
+      if (plotSummaryFull.includes(shortSummaryClean)) {
+        $IMDB_plotSummaryFull = plotSummaryFull;
+      }
+    }
+
+    return { $IMDB_plotSummaryFull };
+  } catch (error) {
+    if (movie.scanErrors) {
+      movie.scanErrors['IMDB Plot Summary'] = error.message;
+    }
+
+    throw error;
+  }
 }
 
 async function scrapeIMDBposterURLs(posterMediaViewerURL) {
@@ -234,530 +247,597 @@ async function scrapeIMDBposterURLs(posterMediaViewerURL) {
 }
 
 async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
-  const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/releaseinfo`;
-  logger.log(
-    "scrapeIMDBreleaseinfo url:",
-    url,
-    "allowedTitleTypes:",
-    allowedTitleTypes
-  );
-  const response = await helpers.requestAsync(url);
-  const html = response.body;
-  // logger.log('imdbReleaseinfoHTML', imdbReleaseinfoHTML);
+  if (movie.scanErrors) {
+    delete movie.scanErrors['IMDB Release Info'];
+  }
 
-  let $IMDB_originalTitle = null;
-  const rxOriginalTitle = /td class="aka-item__name"> \(original title\)<\/td>[\s\S]*?<td class="aka-item__title">(.*?)<\/td>/;
-  if (rxOriginalTitle.test(html))
-    $IMDB_originalTitle = html.match(rxOriginalTitle)[1];
+  try {
 
-  logger.log("regions used:", regions);
+    const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/releaseinfo`;
+    logger.log(
+      "scrapeIMDBreleaseinfo url:",
+      url,
+      "allowedTitleTypes:",
+      allowedTitleTypes
+    );
+    const response = await helpers.requestAsync(url);
+    const html = response.body;
+    // logger.log('imdbReleaseinfoHTML', imdbReleaseinfoHTML);
 
-  let $IMDB_localTitle = null;
-  if (regions) {
-    for (let i = 0; i < regions.length; i++) {
-      const region = regions[i].name;
+    let $IMDB_originalTitle = null;
+    const rxOriginalTitle = /td class="aka-item__name"> \(original title\)<\/td>[\s\S]*?<td class="aka-item__title">(.*?)<\/td>/;
+    if (rxOriginalTitle.test(html))
+      $IMDB_originalTitle = html.match(rxOriginalTitle)[1];
 
-      logger.log("regions trying:", `"${region}"`);
+    logger.log("regions used:", regions);
 
-      if (!$IMDB_localTitle) {
-        const rxLocalTitleFuzzy = new RegExp(
-          `td class="aka-item__name">${region}(.*?)</td>[\\s\\S]*?<td class="aka-item__title">(.*?)</td>`,
-          "g"
-        );
+    let $IMDB_localTitle = null;
+    if (regions) {
+      for (let i = 0; i < regions.length; i++) {
+        const region = regions[i].name;
 
-        let match = null;
+        logger.log("regions trying:", `"${region}"`);
 
-        while ((match = rxLocalTitleFuzzy.exec(html))) {
-          logger.log("regions: fuzzy match found for", region)
+        if (!$IMDB_localTitle) {
+          const rxLocalTitleFuzzy = new RegExp(
+            `td class="aka-item__name">${region}(.*?)</td>[\\s\\S]*?<td class="aka-item__title">(.*?)</td>`,
+            "g"
+          );
 
-          const titleTypes = match[1];
-          const title = match[2];
+          let match = null;
 
-          if (titleTypes.trim()) {
-            const arrTitleTypes = [];
-            titleTypes.split("(").forEach(titleTypes => {
-              const cleanTitleType = titleTypes.replace(/[()]/g, "").trim();
+          while ((match = rxLocalTitleFuzzy.exec(html))) {
+            logger.log("regions: fuzzy match found for", region)
 
-              if (cleanTitleType) {
-                arrTitleTypes.push(cleanTitleType);
+            const titleTypes = match[1];
+            const title = match[2];
+
+            if (titleTypes.trim()) {
+              const arrTitleTypes = [];
+              titleTypes.split("(").forEach(titleTypes => {
+                const cleanTitleType = titleTypes.replace(/[()]/g, "").trim();
+
+                if (cleanTitleType) {
+                  arrTitleTypes.push(cleanTitleType);
+                }
+              });
+
+              logger.log("regions: local title match:", { title, arrTitleTypes });
+
+              let allowed = 0;
+              for (let i = 0; i < arrTitleTypes.length; i++) {
+                const titleType = arrTitleTypes[i];
+
+                if (allowedTitleTypes.find(allowed => allowed === titleType)) {
+                  allowed++;
+                }
               }
-            });
 
-            logger.log("regions: local title match:", { title, arrTitleTypes });
-
-            let allowed = 0;
-            for (let i = 0; i < arrTitleTypes.length; i++) {
-              const titleType = arrTitleTypes[i];
-
-              if (allowedTitleTypes.find(allowed => allowed === titleType)) {
-                allowed++;
+              if (allowed !== arrTitleTypes.length) {
+                logger.log(
+                  "regions: skipped local title, some title types are not allowed"
+                );
+                continue;
               }
             }
 
-            if (allowed !== arrTitleTypes.length) {
-              logger.log(
-                "regions: skipped local title, some title types are not allowed"
-              );
-              continue;
-            }
+            logger.log('regions: using local title:', title);
+            $IMDB_localTitle = title;
+            break;
           }
+        }
 
-          logger.log('regions: using local title:', title);
-          $IMDB_localTitle = title;
+        if ($IMDB_localTitle) {
           break;
         }
       }
+    }
 
-      if ($IMDB_localTitle) {
-        break;
+    let $IMDB_primaryTitle = null;
+    let $IMDB_startYear = null;
+    let $IMDB_endYear = null;
+    const rxPrimaryTitleYear = /ref_=ttrel_rel_tt"[\s\S]itemprop='url'>(.*?)<\/a>\s*?<span class="nobr">[\s\S]*?\((\d\d\d\d.*?)\)/;
+    if (rxPrimaryTitleYear.test(html)) {
+      $IMDB_primaryTitle = html.match(rxPrimaryTitleYear)[1];
+      const yearRange = html.match(rxPrimaryTitleYear)[2];
+
+      logger.log("yearRange:", yearRange);
+      $IMDB_startYear = yearRange.match(/(\d\d\d\d)/)[1];
+      if (/\d\d\d\d–\d\d\d\d/.test(yearRange)) {
+        $IMDB_endYear = yearRange.match(/\d\d\d\d–(\d\d\d\d)/)[1];
       }
     }
-  }
 
-  let $IMDB_primaryTitle = null;
-  let $IMDB_startYear = null;
-  let $IMDB_endYear = null;
-  const rxPrimaryTitleYear = /ref_=ttrel_rel_tt"[\s\S]itemprop='url'>(.*?)<\/a>\s*?<span class="nobr">[\s\S]*?\((\d\d\d\d.*?)\)/;
-  if (rxPrimaryTitleYear.test(html)) {
-    $IMDB_primaryTitle = html.match(rxPrimaryTitleYear)[1];
-    const yearRange = html.match(rxPrimaryTitleYear)[2];
-
-    logger.log("yearRange:", yearRange);
-    $IMDB_startYear = yearRange.match(/(\d\d\d\d)/)[1];
-    if (/\d\d\d\d–\d\d\d\d/.test(yearRange)) {
-      $IMDB_endYear = yearRange.match(/\d\d\d\d–(\d\d\d\d)/)[1];
+    return {
+      $IMDB_originalTitle,
+      $IMDB_localTitle,
+      $IMDB_primaryTitle,
+      $IMDB_startYear,
+      $IMDB_endYear
+    };
+  } catch (error) {
+    if (movie.scanErrors) {
+      movie.scanErrors['IMDB Release Info'] = error.message;
     }
-  }
 
-  return {
-    $IMDB_originalTitle,
-    $IMDB_localTitle,
-    $IMDB_primaryTitle,
-    $IMDB_startYear,
-    $IMDB_endYear
-  };
+    throw error;
+  }
 }
 
 async function scrapeIMDBtechnicalData(movie) {
-  const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/technical`;
-  logger.log("scrapeIMDBtechnicalData url:", url);
-  const response = await helpers.requestAsync(url);
-  const html = response.body;
-
-  let $IMDB_runtimeMinutes = null;
-  const rxRuntimeValue = /<td class="label"> Runtime <\/td>[\s\S]*?<td>([\s\S]*?)<\/td>/;
-
-  if (rxRuntimeValue.test(html)) {
-    const rxRuntimeMinutesTotal = /\((\d*?) min\)/;
-    const rxRuntimeMinutes = /\s(\d*?) min/;
-
-    if (rxRuntimeMinutesTotal.test(html)) {
-      $IMDB_runtimeMinutes = html.match(rxRuntimeMinutesTotal)[1];
-    } else if (rxRuntimeMinutes.test(html)) {
-      $IMDB_runtimeMinutes = html.match(rxRuntimeMinutes)[1];
-    }
+  if (movie.scanErrors) {
+    delete movie.scanErrors['IMDB Technical Data'];
   }
 
-  return {
-    $IMDB_runtimeMinutes
-  };
+  try {
+
+    const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/technical`;
+    logger.log("scrapeIMDBtechnicalData url:", url);
+    const response = await helpers.requestAsync(url);
+    const html = response.body;
+
+    let $IMDB_runtimeMinutes = null;
+    const rxRuntimeValue = /<td class="label"> Runtime <\/td>[\s\S]*?<td>([\s\S]*?)<\/td>/;
+
+    if (rxRuntimeValue.test(html)) {
+      const rxRuntimeMinutesTotal = /\((\d*?) min\)/;
+      const rxRuntimeMinutes = /\s(\d*?) min/;
+
+      if (rxRuntimeMinutesTotal.test(html)) {
+        $IMDB_runtimeMinutes = html.match(rxRuntimeMinutesTotal)[1];
+      } else if (rxRuntimeMinutes.test(html)) {
+        $IMDB_runtimeMinutes = html.match(rxRuntimeMinutes)[1];
+      }
+    }
+
+    return {
+      $IMDB_runtimeMinutes
+    };
+  } catch (error) {
+    if (movie.scanErrors) {
+      movie.scanErrors['IMDB Technical Data'] = error.message;
+    }
+
+    throw error;
+  }
 }
 
 let cacheAgeRatings = null;
 
 async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturnAllCallback, dbFireProcedureCallback, dbFireProcedureReturnScalarCallback) {
-  if (!cacheAgeRatings) {
-    cacheAgeRatings = await dbFireProcedureReturnAllCallback(
-      `SELECT id_AgeRating, Country, Code, Age FROM tbl_AgeRating`
-    );
-    logger.log("cacheAgeRatings:", cacheAgeRatings);
+  if (movie.scanErrors) {
+    delete movie.scanErrors['IMDB Parental Guide'];
   }
-
-  let regionCodes = [];
 
   try {
-    if (regions) {
-      regionCodes = regions.map(region => region.code ? region.code.toUpperCase() : '');
-    }
-  } catch (e) {
-    logger.error(e)
-  }
 
-  logger.log("AgeRating regionCodes:", regionCodes);
-
-  const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/parentalguide`;
-  logger.log("scrapeIMDBParentalGuideData url:", url);
-  const response = await helpers.requestAsync(url);
-  const html = response.body;
-
-  logger.log("parentalguide html:", { html });
-
-  const rxAgeRating = /a href="\/search\/title\?certificates=(.*?):(.*?)"/g;
-
-  let matchAgeRating = null;
-
-  const ageRatings = [];
-
-  // eslint-disable-next-line no-cond-assign
-  while ((matchAgeRating = rxAgeRating.exec(html))) {
-    const Country = matchAgeRating[1];
-    const Code = unescape(matchAgeRating[2]);
-
-    logger.log("rating found:", Country, Code);
-
-    const cachedRating = cacheAgeRatings.find(
-      cache => cache.Country === Country && cache.Code === Code
-    );
-
-    let Age = null;
-    if (cachedRating) {
-      Age = cachedRating.Age;
-      logger.log("Age (cached):", Age);
-    } else {
-      if (/\d+/.test(Code)) {
-        Age = parseInt(Code.match(/\d+/)[0]);
-        logger.log("Age (parsed):", Age);
-      }
-    }
-
-    ageRatings.push({ Country, Code, Age });
-    logger.log("ageRatings:", ageRatings);
-  }
-
-  let $IMDB_MinAge = null;
-  let $IMDB_MaxAge = null;
-  let $IMDB_id_AgeRating_Chosen_Country = null;
-
-  for (let i = 0; i < ageRatings.length; i++) {
-    const rating = ageRatings[i];
-    const cachedRating = cacheAgeRatings.find(
-      cache => cache.Country === rating.Country && cache.Code === rating.Code
-    );
-
-    if (!cachedRating) {
-      await dbFireProcedureCallback(
-        `INSERT INTO tbl_AgeRating (Country, Code, Age) VALUES ($Country, $Code, $Age)`,
-        { $Country: rating.Country, $Code: rating.Code, $Age: rating.Age }
+    if (!cacheAgeRatings) {
+      cacheAgeRatings = await dbFireProcedureReturnAllCallback(
+        `SELECT id_AgeRating, Country, Code, Age FROM tbl_AgeRating`
       );
-      rating.id_AgeRating = await dbFireProcedureReturnScalarCallback(
-        `SELECT id_AgeRating FROM tbl_AgeRating WHERE Country = $Country AND Code = $Code`,
-        { $Country: rating.Country, $Code: rating.Code }
-      );
-
-      cacheAgeRatings.push({
-        id_AgeRating: rating.id_AgeRating,
-        Country: rating.Country,
-        Code: rating.Code,
-        Age: rating.Age
-      });
-    } else {
-      rating.id_AgeRating = cachedRating.id_AgeRating;
+      logger.log("cacheAgeRatings:", cacheAgeRatings);
     }
 
-    if (rating.id_AgeRating && regionCodes.find(regionCode => regionCode === rating.Country)) {
-      logger.log('AgeRating regions FOUND:', rating);
-      $IMDB_id_AgeRating_Chosen_Country = rating.id_AgeRating;
-    }
+    let regionCodes = [];
 
-    if (rating.Age || rating.Age === 0) {
-      if (!$IMDB_MinAge) {
-        $IMDB_MinAge = rating.Age;
+    try {
+      if (regions) {
+        regionCodes = regions.map(region => region.code ? region.code.toUpperCase() : '');
       }
-
-      if (!$IMDB_MaxAge) {
-        $IMDB_MaxAge = rating.Age;
-      }
-
-      if ($IMDB_MinAge > rating.Age) {
-        $IMDB_MinAge = rating.Age;
-      }
-      if ($IMDB_MaxAge < rating.Age) {
-        $IMDB_MaxAge = rating.Age;
-      }
+    } catch (e) {
+      logger.error(e)
     }
-  }
 
-  logger.log("found age ratings:", ageRatings);
+    logger.log("AgeRating regionCodes:", regionCodes);
 
-  const rx_Parental_Advisory_Nudity = /<section id="advisory-nudity">[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>(.*?)<\/span>/;
-  let $IMDB_Parental_Advisory_Nudity = null;
+    const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/parentalguide`;
+    logger.log("scrapeIMDBParentalGuideData url:", url);
+    const response = await helpers.requestAsync(url);
+    const html = response.body;
 
-  if (rx_Parental_Advisory_Nudity.test(html)) {
-    const severity = html
-      .match(rx_Parental_Advisory_Nudity)[1]
-      .trim()
-      .toLowerCase();
+    logger.log("parentalguide html:", { html });
 
-    if (severity == "none") {
-      $IMDB_Parental_Advisory_Nudity = 0;
-    } else if (severity == "mild") {
-      $IMDB_Parental_Advisory_Nudity = 1;
-    } else if (severity == "moderate") {
-      $IMDB_Parental_Advisory_Nudity = 2;
-    } else if (severity == "severe") {
-      $IMDB_Parental_Advisory_Nudity = 3;
-    }
-  }
+    const rxAgeRating = /a href="\/search\/title\?certificates=(.*?):(.*?)"/g;
 
-  const rx_Parental_Advisory_Violence = /<section id="advisory-violence">[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>(.*?)<\/span>/;
-  let $IMDB_Parental_Advisory_Violence = null;
+    let matchAgeRating = null;
 
-  if (rx_Parental_Advisory_Violence.test(html)) {
-    const severity = html
-      .match(rx_Parental_Advisory_Violence)[1]
-      .trim()
-      .toLowerCase();
-
-    if (severity == "none") {
-      $IMDB_Parental_Advisory_Violence = 0;
-    } else if (severity == "mild") {
-      $IMDB_Parental_Advisory_Violence = 1;
-    } else if (severity == "moderate") {
-      $IMDB_Parental_Advisory_Violence = 2;
-    } else if (severity == "severe") {
-      $IMDB_Parental_Advisory_Violence = 3;
-    }
-  }
-
-  const rx_Parental_Advisory_Profanity = /<section id="advisory-profanity">[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>(.*?)<\/span>/;
-  let $IMDB_Parental_Advisory_Profanity = null;
-
-  if (rx_Parental_Advisory_Profanity.test(html)) {
-    const severity = html
-      .match(rx_Parental_Advisory_Profanity)[1]
-      .trim()
-      .toLowerCase();
-
-    if (severity == "none") {
-      $IMDB_Parental_Advisory_Profanity = 0;
-    } else if (severity == "mild") {
-      $IMDB_Parental_Advisory_Profanity = 1;
-    } else if (severity == "moderate") {
-      $IMDB_Parental_Advisory_Profanity = 2;
-    } else if (severity == "severe") {
-      $IMDB_Parental_Advisory_Profanity = 3;
-    }
-  }
-
-  const rx_Parental_Advisory_Alcohol = /<section id="advisory-alcohol">[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>(.*?)<\/span>/;
-  let $IMDB_Parental_Advisory_Alcohol = null;
-
-  if (rx_Parental_Advisory_Alcohol.test(html)) {
-    const severity = html
-      .match(rx_Parental_Advisory_Alcohol)[1]
-      .trim()
-      .toLowerCase();
-
-    if (severity == "none") {
-      $IMDB_Parental_Advisory_Alcohol = 0;
-    } else if (severity == "mild") {
-      $IMDB_Parental_Advisory_Alcohol = 1;
-    } else if (severity == "moderate") {
-      $IMDB_Parental_Advisory_Alcohol = 2;
-    } else if (severity == "severe") {
-      $IMDB_Parental_Advisory_Alcohol = 3;
-    }
-  }
-
-  const rx_Parental_Advisory_Frightening = /<section id="advisory-frightening">[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>(.*?)<\/span>/;
-  let $IMDB_Parental_Advisory_Frightening = null;
-
-  if (rx_Parental_Advisory_Frightening.test(html)) {
-    const severity = html
-      .match(rx_Parental_Advisory_Frightening)[1]
-      .trim()
-      .toLowerCase();
-
-    if (severity == "none") {
-      $IMDB_Parental_Advisory_Frightening = 0;
-    } else if (severity == "mild") {
-      $IMDB_Parental_Advisory_Frightening = 1;
-    } else if (severity == "moderate") {
-      $IMDB_Parental_Advisory_Frightening = 2;
-    } else if (severity == "severe") {
-      $IMDB_Parental_Advisory_Frightening = 3;
-    }
-  }
-
-  return {
-    $IMDB_MinAge,
-    $IMDB_MaxAge,
-    $IMDB_id_AgeRating_Chosen_Country,
-    $IMDB_Parental_Advisory_Nudity,
-    $IMDB_Parental_Advisory_Violence,
-    $IMDB_Parental_Advisory_Profanity,
-    $IMDB_Parental_Advisory_Alcohol,
-    $IMDB_Parental_Advisory_Frightening
-  };
-}
-
-async function scrapeIMDBFullCreditsData(movie) {
-  const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/fullcredits`;
-  logger.log("scrapeIMDBFullCreditsData url:", url);
-  const response = await helpers.requestAsync(url);
-  const html = response.body;
-
-  const topMax = 5;
-
-  const topCast = [];
-  const topDirector = [];
-  const topProducer = [];
-  const topWriter = [];
-
-  const credits = [];
-
-  const rx_castTable = /<h4 name="cast"[\s\S]*?<\/table>/;
-
-  if (rx_castTable.test(html)) {
-    const castTable = html.match(rx_castTable)[0];
-
-    const rx_castEntry = /<tr class.*?>[\s\S]*?<a href="\/name\/(nm\d*)\/[\s\S]*?>\s([\s\S]*?)<\/a>[\s\S]*?<\/tr>/g;
-
-    let match = null;
+    const ageRatings = [];
 
     // eslint-disable-next-line no-cond-assign
-    while ((match = rx_castEntry.exec(castTable))) {
-      // const entry = { id: match[1], name: match[2].replace(/^\s*/, '').replace(/\s*$/, ''), character: null };
-      const entry = {
-        category: "Cast",
-        id: match[1],
-        name: unescape(
-          htmlToText
-            .fromString(match[2], {
-              wordwrap: null,
-              ignoreImage: true,
-              ignoreHref: true
-            })
-            .trim()
-        ),
-        credit: null
-      };
+    while ((matchAgeRating = rxAgeRating.exec(html))) {
+      const Country = matchAgeRating[1];
+      const Code = unescape(matchAgeRating[2]);
 
-      const rx_character = /<td class="character">([\s\S]*?)<\/td>/;
-      if (rx_character.test(match[0])) {
-        entry.credit = unescape(
-          htmlToText
-            .fromString(match[0].match(rx_character)[1], {
-              wordwrap: null,
-              ignoreImage: true,
-              ignoreHref: true
-            })
-            .trim()
+      logger.log("rating found:", Country, Code);
+
+      const cachedRating = cacheAgeRatings.find(
+        cache => cache.Country === Country && cache.Code === Code
+      );
+
+      let Age = null;
+      if (cachedRating) {
+        Age = cachedRating.Age;
+        logger.log("Age (cached):", Age);
+      } else {
+        if (/\d+/.test(Code)) {
+          Age = parseInt(Code.match(/\d+/)[0]);
+          logger.log("Age (parsed):", Age);
+        }
+      }
+
+      ageRatings.push({ Country, Code, Age });
+      logger.log("ageRatings:", ageRatings);
+    }
+
+    let $IMDB_MinAge = null;
+    let $IMDB_MaxAge = null;
+    let $IMDB_id_AgeRating_Chosen_Country = null;
+
+    for (let i = 0; i < ageRatings.length; i++) {
+      const rating = ageRatings[i];
+      const cachedRating = cacheAgeRatings.find(
+        cache => cache.Country === rating.Country && cache.Code === rating.Code
+      );
+
+      if (!cachedRating) {
+        await dbFireProcedureCallback(
+          `INSERT INTO tbl_AgeRating (Country, Code, Age) VALUES ($Country, $Code, $Age)`,
+          { $Country: rating.Country, $Code: rating.Code, $Age: rating.Age }
         );
+        rating.id_AgeRating = await dbFireProcedureReturnScalarCallback(
+          `SELECT id_AgeRating FROM tbl_AgeRating WHERE Country = $Country AND Code = $Code`,
+          { $Country: rating.Country, $Code: rating.Code }
+        );
+
+        cacheAgeRatings.push({
+          id_AgeRating: rating.id_AgeRating,
+          Country: rating.Country,
+          Code: rating.Code,
+          Age: rating.Age
+        });
+      } else {
+        rating.id_AgeRating = cachedRating.id_AgeRating;
       }
 
-      credits.push(entry);
-      if (topCast.length < topMax) {
-        topCast.push(entry);
+      if (rating.id_AgeRating && regionCodes.find(regionCode => regionCode === rating.Country)) {
+        logger.log('AgeRating regions FOUND:', rating);
+        $IMDB_id_AgeRating_Chosen_Country = rating.id_AgeRating;
+      }
+
+      if (rating.Age || rating.Age === 0) {
+        if (!$IMDB_MinAge) {
+          $IMDB_MinAge = rating.Age;
+        }
+
+        if (!$IMDB_MaxAge) {
+          $IMDB_MaxAge = rating.Age;
+        }
+
+        if ($IMDB_MinAge > rating.Age) {
+          $IMDB_MinAge = rating.Age;
+        }
+        if ($IMDB_MaxAge < rating.Age) {
+          $IMDB_MaxAge = rating.Age;
+        }
       }
     }
+
+    logger.log("found age ratings:", ageRatings);
+
+    const rx_Parental_Advisory_Nudity = /<section id="advisory-nudity">[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>(.*?)<\/span>/;
+    let $IMDB_Parental_Advisory_Nudity = null;
+
+    if (rx_Parental_Advisory_Nudity.test(html)) {
+      const severity = html
+        .match(rx_Parental_Advisory_Nudity)[1]
+        .trim()
+        .toLowerCase();
+
+      if (severity == "none") {
+        $IMDB_Parental_Advisory_Nudity = 0;
+      } else if (severity == "mild") {
+        $IMDB_Parental_Advisory_Nudity = 1;
+      } else if (severity == "moderate") {
+        $IMDB_Parental_Advisory_Nudity = 2;
+      } else if (severity == "severe") {
+        $IMDB_Parental_Advisory_Nudity = 3;
+      }
+    }
+
+    const rx_Parental_Advisory_Violence = /<section id="advisory-violence">[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>(.*?)<\/span>/;
+    let $IMDB_Parental_Advisory_Violence = null;
+
+    if (rx_Parental_Advisory_Violence.test(html)) {
+      const severity = html
+        .match(rx_Parental_Advisory_Violence)[1]
+        .trim()
+        .toLowerCase();
+
+      if (severity == "none") {
+        $IMDB_Parental_Advisory_Violence = 0;
+      } else if (severity == "mild") {
+        $IMDB_Parental_Advisory_Violence = 1;
+      } else if (severity == "moderate") {
+        $IMDB_Parental_Advisory_Violence = 2;
+      } else if (severity == "severe") {
+        $IMDB_Parental_Advisory_Violence = 3;
+      }
+    }
+
+    const rx_Parental_Advisory_Profanity = /<section id="advisory-profanity">[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>(.*?)<\/span>/;
+    let $IMDB_Parental_Advisory_Profanity = null;
+
+    if (rx_Parental_Advisory_Profanity.test(html)) {
+      const severity = html
+        .match(rx_Parental_Advisory_Profanity)[1]
+        .trim()
+        .toLowerCase();
+
+      if (severity == "none") {
+        $IMDB_Parental_Advisory_Profanity = 0;
+      } else if (severity == "mild") {
+        $IMDB_Parental_Advisory_Profanity = 1;
+      } else if (severity == "moderate") {
+        $IMDB_Parental_Advisory_Profanity = 2;
+      } else if (severity == "severe") {
+        $IMDB_Parental_Advisory_Profanity = 3;
+      }
+    }
+
+    const rx_Parental_Advisory_Alcohol = /<section id="advisory-alcohol">[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>(.*?)<\/span>/;
+    let $IMDB_Parental_Advisory_Alcohol = null;
+
+    if (rx_Parental_Advisory_Alcohol.test(html)) {
+      const severity = html
+        .match(rx_Parental_Advisory_Alcohol)[1]
+        .trim()
+        .toLowerCase();
+
+      if (severity == "none") {
+        $IMDB_Parental_Advisory_Alcohol = 0;
+      } else if (severity == "mild") {
+        $IMDB_Parental_Advisory_Alcohol = 1;
+      } else if (severity == "moderate") {
+        $IMDB_Parental_Advisory_Alcohol = 2;
+      } else if (severity == "severe") {
+        $IMDB_Parental_Advisory_Alcohol = 3;
+      }
+    }
+
+    const rx_Parental_Advisory_Frightening = /<section id="advisory-frightening">[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>(.*?)<\/span>/;
+    let $IMDB_Parental_Advisory_Frightening = null;
+
+    if (rx_Parental_Advisory_Frightening.test(html)) {
+      const severity = html
+        .match(rx_Parental_Advisory_Frightening)[1]
+        .trim()
+        .toLowerCase();
+
+      if (severity == "none") {
+        $IMDB_Parental_Advisory_Frightening = 0;
+      } else if (severity == "mild") {
+        $IMDB_Parental_Advisory_Frightening = 1;
+      } else if (severity == "moderate") {
+        $IMDB_Parental_Advisory_Frightening = 2;
+      } else if (severity == "severe") {
+        $IMDB_Parental_Advisory_Frightening = 3;
+      }
+    }
+
+    return {
+      $IMDB_MinAge,
+      $IMDB_MaxAge,
+      $IMDB_id_AgeRating_Chosen_Country,
+      $IMDB_Parental_Advisory_Nudity,
+      $IMDB_Parental_Advisory_Violence,
+      $IMDB_Parental_Advisory_Profanity,
+      $IMDB_Parental_Advisory_Alcohol,
+      $IMDB_Parental_Advisory_Frightening
+    };
+  } catch (error) {
+    if (movie.scanErrors) {
+      movie.scanErrors['IMDB Parental Guide'] = error.message;
+    }
+
+    throw error;
+  }
+}
+
+
+async function scrapeIMDBFullCreditsData(movie) {
+  if (movie.scanErrors) {
+    delete movie.scanErrors['IMDB Full Credits'];
   }
 
-  const rx_creditsCategories = /<h4 class="dataHeaderWithBorder">([\s\S]*?)&nbsp/g;
+  try {
 
-  let ccMatch = null;
+    const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/fullcredits`;
+    logger.log("scrapeIMDBFullCreditsData url:", url);
+    const response = await helpers.requestAsync(url);
+    const html = response.body;
 
-  // eslint-disable-next-line no-cond-assign
-  while ((ccMatch = rx_creditsCategories.exec(html))) {
-    const creditsCategory = ccMatch[1].trim();
-    logger.log(creditsCategory);
+    const topMax = 5;
 
-    const result = parseCreditsCategory(html, creditsCategory, credits);
+    const topCast = [];
+    const topDirector = [];
+    const topProducer = [];
+    const topWriter = [];
 
-    if (creditsCategory === "Directed by") {
-      result.forEach(entry => {
-        if (topDirector.length < topMax) {
-          topDirector.push(entry);
+    const credits = [];
+
+    const rx_castTable = /<h4 name="cast"[\s\S]*?<\/table>/;
+
+    if (rx_castTable.test(html)) {
+      const castTable = html.match(rx_castTable)[0];
+
+      const rx_castEntry = /<tr class.*?>[\s\S]*?<a href="\/name\/(nm\d*)\/[\s\S]*?>\s([\s\S]*?)<\/a>[\s\S]*?<\/tr>/g;
+
+      let match = null;
+
+      // eslint-disable-next-line no-cond-assign
+      while ((match = rx_castEntry.exec(castTable))) {
+        // const entry = { id: match[1], name: match[2].replace(/^\s*/, '').replace(/\s*$/, ''), character: null };
+        const entry = {
+          category: "Cast",
+          id: match[1],
+          name: unescape(
+            htmlToText
+              .fromString(match[2], {
+                wordwrap: null,
+                ignoreImage: true,
+                ignoreHref: true
+              })
+              .trim()
+          ),
+          credit: null
+        };
+
+        const rx_character = /<td class="character">([\s\S]*?)<\/td>/;
+        if (rx_character.test(match[0])) {
+          entry.credit = unescape(
+            htmlToText
+              .fromString(match[0].match(rx_character)[1], {
+                wordwrap: null,
+                ignoreImage: true,
+                ignoreHref: true
+              })
+              .trim()
+          );
         }
-      });
-    }
-    if (creditsCategory === "Produced by") {
-      result.forEach(entry => {
-        if (topProducer.length < topMax) {
-          topProducer.push(entry);
+
+        credits.push(entry);
+        if (topCast.length < topMax) {
+          topCast.push(entry);
         }
-      });
+      }
     }
-    if (creditsCategory === "Writing Credits") {
-      result.forEach(entry => {
-        if (topWriter.length < topMax) {
-          topWriter.push(entry);
-        }
-      });
+
+    const rx_creditsCategories = /<h4 class="dataHeaderWithBorder">([\s\S]*?)&nbsp/g;
+
+    let ccMatch = null;
+
+    // eslint-disable-next-line no-cond-assign
+    while ((ccMatch = rx_creditsCategories.exec(html))) {
+      const creditsCategory = ccMatch[1].trim();
+      logger.log(creditsCategory);
+
+      const result = parseCreditsCategory(html, creditsCategory, credits);
+
+      if (creditsCategory === "Directed by") {
+        result.forEach(entry => {
+          if (topDirector.length < topMax) {
+            topDirector.push(entry);
+          }
+        });
+      }
+      if (creditsCategory === "Produced by") {
+        result.forEach(entry => {
+          if (topProducer.length < topMax) {
+            topProducer.push(entry);
+          }
+        });
+      }
+      if (creditsCategory === "Writing Credits") {
+        result.forEach(entry => {
+          if (topWriter.length < topMax) {
+            topWriter.push(entry);
+          }
+        });
+      }
     }
+
+    logger.log("credits:", credits);
+
+    let $IMDB_Top_Cast = topCast.length > 0 ? JSON.stringify(topCast) : null;
+    let $IMDB_Top_Writers =
+      topWriter.length > 0 ? JSON.stringify(topWriter) : null;
+    let $IMDB_Top_Directors =
+      topDirector.length > 0 ? JSON.stringify(topDirector) : null;
+    let $IMDB_Top_Producers =
+      topProducer.length > 0 ? JSON.stringify(topProducer) : null;
+
+    return {
+      topCredits: {
+        $IMDB_Top_Directors,
+        $IMDB_Top_Writers,
+        $IMDB_Top_Producers,
+        $IMDB_Top_Cast
+      },
+      credits
+    };
+  } catch (error) {
+    if (movie.scanErrors) {
+      movie.scanErrors['IMDB Parental Guide'] = error.message;
+    }
+
+    throw error;
   }
-
-  logger.log("credits:", credits);
-
-  let $IMDB_Top_Cast = topCast.length > 0 ? JSON.stringify(topCast) : null;
-  let $IMDB_Top_Writers =
-    topWriter.length > 0 ? JSON.stringify(topWriter) : null;
-  let $IMDB_Top_Directors =
-    topDirector.length > 0 ? JSON.stringify(topDirector) : null;
-  let $IMDB_Top_Producers =
-    topProducer.length > 0 ? JSON.stringify(topProducer) : null;
-
-  return {
-    topCredits: {
-      $IMDB_Top_Directors,
-      $IMDB_Top_Writers,
-      $IMDB_Top_Producers,
-      $IMDB_Top_Cast
-    },
-    credits
-  };
 }
 
 async function scrapeIMDBCompaniesData(movie) {
-  const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/companycredits`;
-  logger.log("scrapeIMDBCompaniesData url:", url);
-  const response = await helpers.requestAsync(url);
-  const html = response.body;
-
-  const topMax = 5;
-
-  const topProductionCompanies = [];
-
-  const companies = [];
-
-  const rx_companiesCategories = /<h4 class="dataHeaderWithBorder" id="(.*?)" name="(.*?)">(.*?)<\/h4>[\s\S]*?<\/ul>/g;
-
-  let ccMatch = null;
-
-  // eslint-disable-next-line no-cond-assign
-  while ((ccMatch = rx_companiesCategories.exec(html))) {
-    const companiesCategoryID = ccMatch[1].trim();
-    const companiesCategoryName = ccMatch[3].replace("Companies", "").trim();
-
-    logger.log(companiesCategoryID, companiesCategoryName);
-
-    const result = parseCompaniesCategory(
-      companiesCategoryName,
-      ccMatch[0],
-      companies
-    );
-
-    if (companiesCategoryName === "Production") {
-      result.forEach(entry => {
-        if (topProductionCompanies.length < topMax) {
-          topProductionCompanies.push(entry);
-        }
-      });
-    }
+  if (movie.scanErrors) {
+    delete movie.scanErrors['IMDB Companies'];
   }
 
-  logger.log("companies:", companies);
-  logger.log("topProductionCompanies:", topProductionCompanies);
+  try {
 
-  return {
-    topProductionCompanies: {
-      $IMDB_Top_Production_Companies:
-        topProductionCompanies.length > 0
-          ? JSON.stringify(topProductionCompanies)
-          : null
-    },
-    companies
-  };
+    const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/companycredits`;
+    logger.log("scrapeIMDBCompaniesData url:", url);
+    const response = await helpers.requestAsync(url);
+    const html = response.body;
+
+    const topMax = 5;
+
+    const topProductionCompanies = [];
+
+    const companies = [];
+
+    const rx_companiesCategories = /<h4 class="dataHeaderWithBorder" id="(.*?)" name="(.*?)">(.*?)<\/h4>[\s\S]*?<\/ul>/g;
+
+    let ccMatch = null;
+
+    // eslint-disable-next-line no-cond-assign
+    while ((ccMatch = rx_companiesCategories.exec(html))) {
+      const companiesCategoryID = ccMatch[1].trim();
+      const companiesCategoryName = ccMatch[3].replace("Companies", "").trim();
+
+      logger.log(companiesCategoryID, companiesCategoryName);
+
+      const result = parseCompaniesCategory(
+        companiesCategoryName,
+        ccMatch[0],
+        companies
+      );
+
+      if (companiesCategoryName === "Production") {
+        result.forEach(entry => {
+          if (topProductionCompanies.length < topMax) {
+            topProductionCompanies.push(entry);
+          }
+        });
+      }
+    }
+
+    logger.log("companies:", companies);
+    logger.log("topProductionCompanies:", topProductionCompanies);
+
+    return {
+      topProductionCompanies: {
+        $IMDB_Top_Production_Companies:
+          topProductionCompanies.length > 0
+            ? JSON.stringify(topProductionCompanies)
+            : null
+      },
+      companies
+    };
+
+  } catch (error) {
+    if (movie.scanErrors) {
+      movie.scanErrors['IMDB Companies'] = error.message;
+    }
+
+    throw error;
+  }
 }
 
 function parseCompaniesCategory(category, matchedhtml, companies) {
@@ -1119,52 +1199,71 @@ async function scrapeIMDBTrailerMediaURLs(trailerURL) {
 }
 
 async function scrapeIMDBplotKeywords(movie) {
-  let plotKeywords = [];
-
-  const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/keywords`
-  logger.log("scrapeIMDBplotKeywords url:", url);
-
-  const response = await helpers.requestAsync(url);
-  const html = response.body;
-
-  const rxPlotKeywords = /<a href="\/search\/keyword\?[\s\S]*?>(.*?)<\/a>[\s\S]*?>(.*?relevant)/g;
-
-  let match = null;
-
-  while ((match = rxPlotKeywords.exec(html))) {
-    const Keyword = uppercaseEachWord(match[1].trim());
-    const relevanceString = match[2].trim();
-    let NumVotes = null;
-    let NumRelevant = null;
-
-    const rxRelevance = /(\d+) of (\d+)/;
-    if (rxRelevance.test(relevanceString)) {
-      NumRelevant = parseInt(relevanceString.match(rxRelevance)[1]);
-      NumVotes = parseInt(relevanceString.match(rxRelevance)[2]);
-    }
-
-    plotKeywords.push({
-      Keyword,
-      NumVotes,
-      NumRelevant
-    })
+  if (movie.scanErrors) {
+    delete movie.scanErrors['IMDB Plot Keywords'];
   }
 
-  logger.log('plotKeywords:', plotKeywords)
+  try {
 
-  return plotKeywords;
+    let plotKeywords = [];
+
+    const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/keywords`
+    logger.log("scrapeIMDBplotKeywords url:", url);
+
+    const response = await helpers.requestAsync(url);
+    const html = response.body;
+
+    const rxPlotKeywords = /<a href="\/search\/keyword\?[\s\S]*?>(.*?)<\/a>[\s\S]*?>(.*?relevant)/g;
+
+    let match = null;
+
+    while ((match = rxPlotKeywords.exec(html))) {
+      const Keyword = uppercaseEachWord(match[1].trim());
+      const relevanceString = match[2].trim();
+      let NumVotes = null;
+      let NumRelevant = null;
+
+      const rxRelevance = /(\d+) of (\d+)/;
+      if (rxRelevance.test(relevanceString)) {
+        NumRelevant = parseInt(relevanceString.match(rxRelevance)[1]);
+        NumVotes = parseInt(relevanceString.match(rxRelevance)[2]);
+      }
+
+      plotKeywords.push({
+        Keyword,
+        NumVotes,
+        NumRelevant
+      })
+    }
+
+    logger.log('plotKeywords:', plotKeywords)
+
+    return plotKeywords;
+  } catch (error) {
+    if (movie.scanErrors) {
+      movie.scanErrors['IMDB Plot Keywords'] = error.message;
+    }
+
+    throw error;
+  }
 }
 
 async function scrapeIMDBFilmingLocations(movie) {
-  let filmingLocations = [];
+  if (movie.scanErrors) {
+    delete movie.scanErrors['IMDB Filming Locations'];
+  }
 
-  const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/locations`
-  logger.log("scrapeIMDBFilmingLocations url:", url);
+  try {
 
-  const response = await helpers.requestAsync(url);
-  const html = response.body;
+    let filmingLocations = [];
 
-  `
+    const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/locations`
+    logger.log("scrapeIMDBFilmingLocations url:", url);
+
+    const response = await helpers.requestAsync(url);
+    const html = response.body;
+
+    `
   <a href="/search/title?locations=Atlanta,%20Georgia,%20USA&ref_=ttloc_loc_2"
   itemprop='url'>Atlanta, Georgia, USA
   </a>                        </dt>
@@ -1175,85 +1274,104 @@ async function scrapeIMDBFilmingLocations(movie) {
   class="interesting-count-text" > 103 of 111 found this interesting</a>
   `
 
-  const rxFilmingLocations = /<a href="\/search\/title\?locations=[\s\S]*?>([\s\S]*?)<\/a>[\s\S]*?<dd>([\s\S]*?)<\/dd>[\s\S]*?class="interesting-count-text"\s*>(.*?)<\/a>/g;
+    const rxFilmingLocations = /<a href="\/search\/title\?locations=[\s\S]*?>([\s\S]*?)<\/a>[\s\S]*?<dd>([\s\S]*?)<\/dd>[\s\S]*?class="interesting-count-text"\s*>(.*?)<\/a>/g;
 
-  let match = null;
+    let match = null;
 
-  while ((match = rxFilmingLocations.exec(html))) {
-    const Location = match[1].trim();
-    const Details = match[2].trim().replace('(', '').replace(')', '');
+    while ((match = rxFilmingLocations.exec(html))) {
+      const Location = match[1].trim();
+      const Details = match[2].trim().replace('(', '').replace(')', '');
 
-    const interestingString = match[3];
+      const interestingString = match[3];
 
-    let NumInteresting = null;
-    let NumVotes = null;
+      let NumInteresting = null;
+      let NumVotes = null;
 
-    const rxInteresting = /(\d+) of (\d+)/;
-    if (rxInteresting.test(interestingString)) {
-      NumInteresting = parseInt(interestingString.match(rxInteresting)[1]);
-      NumVotes = parseInt(interestingString.match(rxInteresting)[2]);
+      const rxInteresting = /(\d+) of (\d+)/;
+      if (rxInteresting.test(interestingString)) {
+        NumInteresting = parseInt(interestingString.match(rxInteresting)[1]);
+        NumVotes = parseInt(interestingString.match(rxInteresting)[2]);
+      }
+
+      filmingLocations.push({
+        Location,
+        Details,
+        NumInteresting,
+        NumVotes
+      })
     }
 
-    filmingLocations.push({
-      Location,
-      Details,
-      NumInteresting,
-      NumVotes
-    })
+    logger.log('filmingLocations:', filmingLocations)
+
+    return filmingLocations;
+  } catch (error) {
+    if (movie.scanErrors) {
+      movie.scanErrors['IMDB Filming Locations'] = error.message;
+    }
+
+    throw error;
   }
-
-  logger.log('filmingLocations:', filmingLocations)
-
-  return filmingLocations;
 }
 
 async function scrapeIMDBRatingDemographics(movie) {
-  let ratingDemographics = {};
-
-  const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/ratings`
-  logger.log("scrapeIMDBRatingDemographics url:", url);
-
-  const response = await helpers.requestAsync(url);
-  const html = response.body;
-
-  /*
-    <td class="ratingTable" align="center">
-            <div class="bigcell">7,8</div>
-            <div class="smallcell">
-                <a href="/title/tt2207986/ratings?demo=females_aged_18_29">
-                    22
-                </a>
-            </div>
-    </td>
-  */
-  const rxRatingDemographics = /<td class="ratingTable[\s\S]*?<\/td>/g
-
-  let match = null;
-
-  while ((match = rxRatingDemographics.exec(html))) {
-    const ratingDemographicString = match[0];
-
-    const rxData = /<div class="bigcell">([\s\S]*?)<\/div>[\s\S]*?<div class="smallcell">[\s\S]*?\/ratings\?demo=(.*?)">([\s\S]*?)<\/a>/;
-
-    if (rxData.test(ratingDemographicString)) {
-      const ratingDemographicsMatch = ratingDemographicString.match(rxData);
-
-      const strRating = ratingDemographicsMatch[1].trim().replace(",", ".");
-      const demographic = ratingDemographicsMatch[2].trim();
-      const strNumVotes = ratingDemographicsMatch[3].trim().replace(/,/g, "");
-
-      ratingDemographics[`$IMDB_rating_${demographic}`] = parseFloat(strRating);
-      ratingDemographics[`$IMDB_numVotes_${demographic}`] = parseInt(strNumVotes);
-    }
+  if (movie.scanErrors) {
+    delete movie.scanErrors['IMDB Rating Demographics'];
   }
 
-  // we already have the following data as IMDB_rating and IMDB_numVotes from the main page and thus delete it here
-  delete ratingDemographics[`$IMDB_rating_imdb_users`];
-  delete ratingDemographics[`$IMDB_numVotes_imdb_users`];
+  try {
+    let ratingDemographics = {};
 
-  logger.log('ratingDemographics:', ratingDemographics)
+    const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/ratings`
+    logger.log("scrapeIMDBRatingDemographics url:", url);
 
-  return ratingDemographics;
+    const response = await helpers.requestAsync(url);
+    const html = response.body;
+
+    /*
+      <td class="ratingTable" align="center">
+              <div class="bigcell">7,8</div>
+              <div class="smallcell">
+                  <a href="/title/tt2207986/ratings?demo=females_aged_18_29">
+                      22
+                  </a>
+              </div>
+      </td>
+    */
+    const rxRatingDemographics = /<td class="ratingTable[\s\S]*?<\/td>/g
+
+    let match = null;
+
+    while ((match = rxRatingDemographics.exec(html))) {
+      const ratingDemographicString = match[0];
+
+      const rxData = /<div class="bigcell">([\s\S]*?)<\/div>[\s\S]*?<div class="smallcell">[\s\S]*?\/ratings\?demo=(.*?)">([\s\S]*?)<\/a>/;
+
+      if (rxData.test(ratingDemographicString)) {
+        const ratingDemographicsMatch = ratingDemographicString.match(rxData);
+
+        const strRating = ratingDemographicsMatch[1].trim().replace(",", ".");
+        const demographic = ratingDemographicsMatch[2].trim();
+        const strNumVotes = ratingDemographicsMatch[3].trim().replace(/,/g, "");
+
+        ratingDemographics[`$IMDB_rating_${demographic}`] = parseFloat(strRating);
+        ratingDemographics[`$IMDB_numVotes_${demographic}`] = parseInt(strNumVotes);
+      }
+    }
+
+    // we already have the following data as IMDB_rating and IMDB_numVotes from the main page and thus delete it here
+    delete ratingDemographics[`$IMDB_rating_imdb_users`];
+    delete ratingDemographics[`$IMDB_numVotes_imdb_users`];
+
+    logger.log('ratingDemographics:', ratingDemographics)
+
+    return ratingDemographics;
+  } catch (error) {
+    if (movie.scanErrors) {
+      movie.scanErrors['IMDB Rating Demographics'] = error.message;
+    }
+
+    throw error;
+  }
 }
 
 export {

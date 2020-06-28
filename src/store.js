@@ -1369,7 +1369,7 @@ async function fetchIMDBMetaData(movie, onlyNew) {
         );
         IMDBdata = Object.assign(IMDBdata, mainPageData);
       } catch (error) {
-        //
+        logger.error(error);
       }
     }
 
@@ -1380,8 +1380,12 @@ async function fetchIMDBMetaData(movie, onlyNew) {
         "rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics"
       ).enabled
     ) {
-      const ratingDemographics = await scrapeIMDBRatingDemographics(movie);
-      IMDBdata = Object.assign(IMDBdata, ratingDemographics);
+      try {
+        const ratingDemographics = await scrapeIMDBRatingDemographics(movie);
+        IMDBdata = Object.assign(IMDBdata, ratingDemographics);
+      } catch (error) {
+        logger.error(error);
+      }
     }
 
     if (
@@ -1389,11 +1393,15 @@ async function fetchIMDBMetaData(movie, onlyNew) {
       getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_plotSummary")
         .enabled
     ) {
-      const plotSummaryFull = await scrapeIMDBplotSummary(
-        movie,
-        IMDBdata.$IMDB_plotSummary
-      );
-      IMDBdata = Object.assign(IMDBdata, plotSummaryFull);
+      try {
+        const plotSummaryFull = await scrapeIMDBplotSummary(
+          movie,
+          IMDBdata.$IMDB_plotSummary
+        );
+        IMDBdata = Object.assign(IMDBdata, plotSummaryFull);
+      } catch (error) {
+        logger.error(error);
+      }
     }
 
     let plotKeywords = [];
@@ -1402,7 +1410,11 @@ async function fetchIMDBMetaData(movie, onlyNew) {
       getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_plotKeywords")
         .enabled
     ) {
-      plotKeywords = await scrapeIMDBplotKeywords(movie);
+      try {
+        plotKeywords = await scrapeIMDBplotKeywords(movie);
+      } catch (error) {
+        logger.error(error);
+      }
     }
 
     if (
@@ -1410,15 +1422,19 @@ async function fetchIMDBMetaData(movie, onlyNew) {
       getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo")
         .enabled
     ) {
-      const regions = await getRegions();
-      const allowedTitleTypes = await getAllowedTitleTypes();
-
-      const releaseinfo = await scrapeIMDBreleaseinfo(
-        movie,
-        regions,
-        allowedTitleTypes
-      );
-      IMDBdata = Object.assign(IMDBdata, releaseinfo);
+      try {
+        const regions = await getRegions();
+        const allowedTitleTypes = await getAllowedTitleTypes();
+  
+        const releaseinfo = await scrapeIMDBreleaseinfo(
+          movie,
+          regions,
+          allowedTitleTypes
+        );
+        IMDBdata = Object.assign(IMDBdata, releaseinfo);
+      } catch (error) {
+        logger.error(error);
+      }
     }
 
     if (
@@ -1426,8 +1442,12 @@ async function fetchIMDBMetaData(movie, onlyNew) {
       getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_technicalData")
         .enabled
     ) {
-      const technicalData = await scrapeIMDBtechnicalData(movie);
-      IMDBdata = Object.assign(IMDBdata, technicalData);
+      try {
+        const technicalData = await scrapeIMDBtechnicalData(movie);
+        IMDBdata = Object.assign(IMDBdata, technicalData);
+      } catch (error) {
+        logger.error(error);
+      }
     }
 
     if (
@@ -1437,15 +1457,19 @@ async function fetchIMDBMetaData(movie, onlyNew) {
         "rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData"
       ).enabled
     ) {
-      const regions = await getRegions();
-      const parentalguideData = await scrapeIMDBParentalGuideData(
-        movie,
-        regions,
-        db.fireProcedureReturnAll,
-        db.fireProcedure,
-        db.fireProcedureReturnScalar
-      );
-      IMDBdata = Object.assign(IMDBdata, parentalguideData);
+      try {
+        const regions = await getRegions();
+        const parentalguideData = await scrapeIMDBParentalGuideData(
+          movie,
+          regions,
+          db.fireProcedureReturnAll,
+          db.fireProcedure,
+          db.fireProcedureReturnScalar
+        );
+        IMDBdata = Object.assign(IMDBdata, parentalguideData);
+      } catch (error) {
+        logger.error(error);
+      }
     }
 
     let credits = [];
@@ -1454,9 +1478,13 @@ async function fetchIMDBMetaData(movie, onlyNew) {
       getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_creditsData")
         .enabled
     ) {
-      const creditsData = await scrapeIMDBFullCreditsData(movie);
-      IMDBdata = Object.assign(IMDBdata, creditsData.topCredits);
-      credits = creditsData.credits;
+      try {
+        const creditsData = await scrapeIMDBFullCreditsData(movie);
+        IMDBdata = Object.assign(IMDBdata, creditsData.topCredits);
+        credits = creditsData.credits;
+      } catch (error) {
+        logger.error(error);
+      }
     }
 
     let companies = [];
@@ -1465,9 +1493,13 @@ async function fetchIMDBMetaData(movie, onlyNew) {
       getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_companiesData")
         .enabled
     ) {
-      const companiesData = await scrapeIMDBCompaniesData(movie);
-      IMDBdata = Object.assign(IMDBdata, companiesData.topProductionCompanies);
-      companies = companiesData.companies;
+      try {
+        const companiesData = await scrapeIMDBCompaniesData(movie);
+        IMDBdata = Object.assign(IMDBdata, companiesData.topProductionCompanies);
+        companies = companiesData.companies;
+      } catch (error) {
+        logger.error(error);
+      }
     }
 
     let filmingLocations = [];
@@ -1478,7 +1510,12 @@ async function fetchIMDBMetaData(movie, onlyNew) {
         "rescanMoviesMetaData_fetchIMDBMetaData_filmingLocations"
       ).enabled
     ) {
-      filmingLocations = await scrapeIMDBFilmingLocations(movie);
+      try {
+        
+        filmingLocations = await scrapeIMDBFilmingLocations(movie);
+      } catch (error) {
+        logger.error(error);
+      }
     }
 
     logger.log("IMDBdata:", IMDBdata);
