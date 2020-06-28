@@ -26,134 +26,146 @@ function uppercaseEachWord(input) {
 }
 
 async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
-  const url = `https://www.imdb.com/title/${movie.IMDB_tconst}`;
-  logger.log("scrapeIMDBmainPageData url:", url);
-  
-  const response = await helpers.requestAsync(`https://www.imdb.com/title/${movie.IMDB_tconst}`);
-
-  const html = response.body;
-
-  let $IMDB_releaseType = "movie";
-  /*
-      short			-- tt0000006 -> "/search/title?genres=short"
-      tvMovie 		-- tt9915546 -> ">TV Movie" 
-      tvEpisode		-- tt8709982 -> ">Episode"
-      tvShort			-- tt9901788 -> ">TV Short"
-      tvMiniSeries	-- tt8916384 -> ">TV Mini-Series"
-      tvSpecial		-- tt8019378 -> ">TV Special"
-      video			-- tt8650100 -> ">Video"
-      videoGame		-- tt8848200 -> ">Video game"
-      */
-  if (/\/search\/title\?genres=short/.test(html)) $IMDB_releaseType = "";
-  if (/>TV Movie/.test(html)) $IMDB_releaseType = "tvMovie";
-  if (/>Episode/.test(html)) $IMDB_releaseType = "tvEpisode";
-  if (/>TV Short/.test(html)) $IMDB_releaseType = "tvShort";
-  if (/>TV Mini-Series/.test(html)) $IMDB_releaseType = "tvMiniSeries";
-  if (/>TV Special/.test(html)) $IMDB_releaseType = "tvSpecial";
-  if (/>Video\s/.test(html)) $IMDB_releaseType = "video";
-  if (/>Video game/.test(html)) $IMDB_releaseType = "videoGame";
-
-  const $IMDB_genres = [];
-
-  const rxGenres = /genres=(.*?)&/g;
-  let match = null;
-
-  // eslint-disable-next-line no-cond-assign
-  while ((match = rxGenres.exec(html))) {
-    const genre = match[1];
-    if (!$IMDB_genres.find(genreFind => genreFind == genre)) {
-      $IMDB_genres.push(genre);
-    }
+  if (movie.scanErrors) {
+    delete movie.scanErrors['IMDB Main Page'];
   }
 
-  let $IMDB_rating = null;
-  let $IMDB_numVotes = null;
+  try {
+    const url = `https://www.imdb.com/title/${movie.IMDB_tconst}`;
+    logger.log("scrapeIMDBmainPageData url:", url);
 
-  const rxRating = /<span itemprop="ratingValue">(.*?)<\/span>/;
-  if (rxRating.test(html)) {
-    const strRating = html.match(rxRating)[1].replace(",", ".");
-    $IMDB_rating = parseFloat(strRating);
+    const response = await helpers.requestAsync(`https://www.imdb.com/title/${movie.IMDB_tconst}`);
 
-    const matchVotes = html.match(/itemprop="ratingCount">(.*?)<\/span>/)[1];
-    logger.log("matchVotes:", matchVotes);
+    const html = response.body;
 
-    const strVotes = html
-      .match(/itemprop="ratingCount">(.*?)<\/span>/)[1]
-      .replace(/,/g, "");
-    logger.log("strVotes:", strVotes);
-    $IMDB_numVotes = parseInt(strVotes);
-  }
+    let $IMDB_releaseType = "movie";
+    /*
+        short			-- tt0000006 -> "/search/title?genres=short"
+        tvMovie 		-- tt9915546 -> ">TV Movie" 
+        tvEpisode		-- tt8709982 -> ">Episode"
+        tvShort			-- tt9901788 -> ">TV Short"
+        tvMiniSeries	-- tt8916384 -> ">TV Mini-Series"
+        tvSpecial		-- tt8019378 -> ">TV Special"
+        video			-- tt8650100 -> ">Video"
+        videoGame		-- tt8848200 -> ">Video game"
+        */
+    if (/\/search\/title\?genres=short/.test(html)) $IMDB_releaseType = "";
+    if (/>TV Movie/.test(html)) $IMDB_releaseType = "tvMovie";
+    if (/>Episode/.test(html)) $IMDB_releaseType = "tvEpisode";
+    if (/>TV Short/.test(html)) $IMDB_releaseType = "tvShort";
+    if (/>TV Mini-Series/.test(html)) $IMDB_releaseType = "tvMiniSeries";
+    if (/>TV Special/.test(html)) $IMDB_releaseType = "tvSpecial";
+    if (/>Video\s/.test(html)) $IMDB_releaseType = "video";
+    if (/>Video game/.test(html)) $IMDB_releaseType = "videoGame";
 
-  let $IMDB_metacriticScore = null;
+    const $IMDB_genres = [];
 
-  const rxMetacriticScore = /<div class="metacriticScore score_favorable titleReviewBarSubItem">[\s\S]*?<span>(\d*)<\/span>/;
-  if (rxMetacriticScore.test(html)) {
-    $IMDB_metacriticScore = parseInt(html.match(rxMetacriticScore)[1]);
-  }
+    const rxGenres = /genres=(.*?)&/g;
+    let match = null;
 
-  let $IMDB_posterSmall_URL = null;
-  let $IMDB_posterLarge_URL = null;
-  const rxPosterMediaViewerURL = /<div class="poster">[\s\S]*?<a href="(.*?)"[\s\S]*?>/; // "/title/tt0130827/mediaviewer/rm215942400"
-  if (rxPosterMediaViewerURL.test(html)) {
-    const posterURLs = await scrapeIMDBposterURLs(
-      html.match(rxPosterMediaViewerURL)[1]
-    );
-
-    const posterSmallPath = `data/extras/${movie.IMDB_tconst}_posterSmall.jpg`;
-    const posterSmallSuccess = await downloadFileCallback(
-      posterURLs.$IMDB_posterSmall_URL,
-      posterSmallPath,
-      false
-    );
-    if (posterSmallSuccess) {
-      $IMDB_posterSmall_URL = posterSmallPath;
+    // eslint-disable-next-line no-cond-assign
+    while ((match = rxGenres.exec(html))) {
+      const genre = match[1];
+      if (!$IMDB_genres.find(genreFind => genreFind == genre)) {
+        $IMDB_genres.push(genre);
+      }
     }
 
-    const posterLargePath = `data/extras/${movie.IMDB_tconst}_posterLarge.jpg`;
-    const posterLargeSuccess = await downloadFileCallback(
-      posterURLs.$IMDB_posterLarge_URL,
-      posterLargePath,
-      false
-    );
-    if (posterLargeSuccess) {
-      $IMDB_posterLarge_URL = posterLargePath;
+    let $IMDB_rating = null;
+    let $IMDB_numVotes = null;
+
+    const rxRating = /<span itemprop="ratingValue">(.*?)<\/span>/;
+    if (rxRating.test(html)) {
+      const strRating = html.match(rxRating)[1].replace(",", ".");
+      $IMDB_rating = parseFloat(strRating);
+
+      const matchVotes = html.match(/itemprop="ratingCount">(.*?)<\/span>/)[1];
+      logger.log("matchVotes:", matchVotes);
+
+      const strVotes = html
+        .match(/itemprop="ratingCount">(.*?)<\/span>/)[1]
+        .replace(/,/g, "");
+      logger.log("strVotes:", strVotes);
+      $IMDB_numVotes = parseInt(strVotes);
     }
+
+    let $IMDB_metacriticScore = null;
+
+    const rxMetacriticScore = /<div class="metacriticScore score_favorable titleReviewBarSubItem">[\s\S]*?<span>(\d*)<\/span>/;
+    if (rxMetacriticScore.test(html)) {
+      $IMDB_metacriticScore = parseInt(html.match(rxMetacriticScore)[1]);
+    }
+
+    let $IMDB_posterSmall_URL = null;
+    let $IMDB_posterLarge_URL = null;
+    const rxPosterMediaViewerURL = /<div class="poster">[\s\S]*?<a href="(.*?)"[\s\S]*?>/; // "/title/tt0130827/mediaviewer/rm215942400"
+    if (rxPosterMediaViewerURL.test(html)) {
+      const posterURLs = await scrapeIMDBposterURLs(
+        html.match(rxPosterMediaViewerURL)[1]
+      );
+
+      const posterSmallPath = `data/extras/${movie.IMDB_tconst}_posterSmall.jpg`;
+      const posterSmallSuccess = await downloadFileCallback(
+        posterURLs.$IMDB_posterSmall_URL,
+        posterSmallPath,
+        false
+      );
+      if (posterSmallSuccess) {
+        $IMDB_posterSmall_URL = posterSmallPath;
+      }
+
+      const posterLargePath = `data/extras/${movie.IMDB_tconst}_posterLarge.jpg`;
+      const posterLargeSuccess = await downloadFileCallback(
+        posterURLs.$IMDB_posterLarge_URL,
+        posterLargePath,
+        false
+      );
+      if (posterLargeSuccess) {
+        $IMDB_posterLarge_URL = posterLargePath;
+      }
+    }
+
+    let $IMDB_plotSummary = null;
+    const rxPlotSummary = /<div class="summary_text">([\s\S]*?)<\/div>/;
+    if (rxPlotSummary.test(html)) {
+      $IMDB_plotSummary = unescape(
+        htmlToText
+          .fromString(html.match(rxPlotSummary)[1], {
+            wordwrap: null,
+            ignoreImage: true,
+            ignoreHref: true
+          })
+          .replace("See full summary»", "")
+          .trim()
+      );
+    }
+
+    let $IMDB_Trailer_URL = null;
+    const rxTrailerUrl = /<a href="(\/video\/imdb\/vi\d*)\?playlistId=tt\d*&ref_=tt_ov_vi"[\s\S][\s\S].*?alt="Trailer"/;
+    if (rxTrailerUrl.test(html)) {
+      $IMDB_Trailer_URL = html.match(rxTrailerUrl)[1];
+    }
+
+    logger.log("$IMDB_Trailer_URL:", $IMDB_Trailer_URL);
+
+    return {
+      $IMDB_releaseType,
+      $IMDB_genres,
+      $IMDB_rating,
+      $IMDB_numVotes,
+      $IMDB_metacriticScore,
+      $IMDB_posterSmall_URL,
+      $IMDB_posterLarge_URL,
+      $IMDB_plotSummary,
+      $IMDB_Trailer_URL
+    };
+  } catch (error) {
+    if (movie.scanErrors) {
+      movie.scanErrors['IMDB Main Page'] = error.message;
+    }
+
+    throw error;
   }
-
-  let $IMDB_plotSummary = null;
-  const rxPlotSummary = /<div class="summary_text">([\s\S]*?)<\/div>/;
-  if (rxPlotSummary.test(html)) {
-    $IMDB_plotSummary = unescape(
-      htmlToText
-        .fromString(html.match(rxPlotSummary)[1], {
-          wordwrap: null,
-          ignoreImage: true,
-          ignoreHref: true
-        })
-        .replace("See full summary»", "")
-        .trim()
-    );
-  }
-
-  let $IMDB_Trailer_URL = null;
-  const rxTrailerUrl = /<a href="(\/video\/imdb\/vi\d*)\?playlistId=tt\d*&ref_=tt_ov_vi"[\s\S][\s\S].*?alt="Trailer"/;
-  if (rxTrailerUrl.test(html)) {
-    $IMDB_Trailer_URL = html.match(rxTrailerUrl)[1];
-  }
-
-  logger.log("$IMDB_Trailer_URL:", $IMDB_Trailer_URL);
-
-  return {
-    $IMDB_releaseType,
-    $IMDB_genres,
-    $IMDB_rating,
-    $IMDB_numVotes,
-    $IMDB_metacriticScore,
-    $IMDB_posterSmall_URL,
-    $IMDB_posterLarge_URL,
-    $IMDB_plotSummary,
-    $IMDB_Trailer_URL
-  };
 }
 
 async function scrapeIMDBplotSummary(movie, shortSummary) {
@@ -1022,11 +1034,11 @@ async function scrapeIMDBFind(searchTerm, type) {
       resultText: null,
       imageURL: null
     }
-    
+
     const idString = $($(item).find("td.primary_photo > a")).attr("href");
 
     if ($($(item).find("img"))) {
-       result.imageURL = $($(item).find("img")).attr("src");
+      result.imageURL = $($(item).find("img")).attr("src");
     }
 
     if (idString) {

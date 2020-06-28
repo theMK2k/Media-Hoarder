@@ -23,7 +23,15 @@ OK - How should we handle ECONNRESET? maybe requestretry?
 OK - How can we test this?
 - investigate offline error handling
   OK - imdb scraper test Dialog
-  - imdb scraping during (re-)scan
+  WIP - imdb scraping during (re-)scan
+    - currently:
+      - the scan is through, the item is marked as isNew = false
+      - now the movie won't be rescanned (quick scan)
+    - requirement:
+      - track errors during rescan
+      - mark item as scanErrors, containing the log of scan errors (NULL if everything is fine)
+      - show this at the item in MediaList with button for direct rescan of the item and info to also perform rescan
+      - on rescan (quick): also take items with hasScrapeErrors being truthy into account (not only isNew = true)
   - imdb search/find
   - imdb scraping on persons, companies etc.
 

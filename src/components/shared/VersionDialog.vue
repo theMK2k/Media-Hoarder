@@ -40,7 +40,7 @@
 
       <div style="margin-left: 24px">
         {{$t('Visit')}}
-        <a>todo-website.net</a> {{$t('for a better features overview_')}}
+        <a v-on:click.stop="openLink('https://media.hoarder.software')">https://media.hoarder.software</a> {{$t('for a better features overview_')}}
       </div>
 
       <v-card-actions style="margin-left: 16px" v-if="history && history.length > 0">

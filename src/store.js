@@ -139,10 +139,10 @@ function generateIndexQuery(tableName, ColumnNames, isUnique) {
 
   return `CREATE ${
     isUnique ? "UNIQUE " : ""
-  } INDEX IF NOT EXISTS main.IDX_${tableName}_${columnNamesString.replace(
-    /, /g,
-    "_"
-  )} ON ${tableName} (${columnNamesString})`;
+    } INDEX IF NOT EXISTS main.IDX_${tableName}_${columnNamesString.replace(
+      /, /g,
+      "_"
+    )} ON ${tableName} (${columnNamesString})`;
 }
 
 async function createIndexes(db) {
@@ -316,16 +316,16 @@ async function rescanHandleDuplicates() {
     const actualDuplicate =
       actualDuplicates.length > 0
         ? (await db.fireProcedureReturnAll(
-            "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
-            { $id_Movies: actualDuplicates[0] }
-          ))[0]
+          "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
+          { $id_Movies: actualDuplicates[0] }
+        ))[0]
         : null;
     const metaDuplicate =
       metaDuplicates.length > 0
         ? (await db.fireProcedureReturnAll(
-            "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
-            { $id_Movies: metaDuplicates[0] }
-          ))[0]
+          "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
+          { $id_Movies: metaDuplicates[0] }
+        ))[0]
         : null;
 
     // relink IMDB is alread handled by findIMDBtconst
@@ -517,10 +517,10 @@ async function filescanMovies(onlyNew) {
 			FROM tbl_SourcePaths
 			WHERE MediaType = 'movies'
 			${
+      shared.scanOptions.filescanMovies_id_SourcePaths_IN
+        ? "AND id_SourcePaths IN " +
         shared.scanOptions.filescanMovies_id_SourcePaths_IN
-          ? "AND id_SourcePaths IN " +
-            shared.scanOptions.filescanMovies_id_SourcePaths_IN
-          : ""
+        : ""
       }
 		`);
 
@@ -528,7 +528,7 @@ async function filescanMovies(onlyNew) {
       const movieSourcePath = moviesSourcePaths[i];
       logger.log(
         `  scanning Source Path ${movieSourcePath.Path} (${
-          movieSourcePath.Description
+        movieSourcePath.Description
         })`
       );
 
@@ -541,7 +541,7 @@ async function filescanMovies(onlyNew) {
 
       currentScanInfoHeader = `Rescanning Movies - ${
         movieSourcePath.Description
-      }`;
+        }`;
 
       eventBus.scanInfoShow(currentScanInfoHeader, "");
 
@@ -714,11 +714,13 @@ async function applyMetaData(onlyNew, id_Movies) {
 				, MOV.IMDB_endYear
 			FROM tbl_Movies MOV
 			WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
-			${onlyNew ? "AND MOV.isNew = 1" : ""}
+			${onlyNew ? "AND (MOV.isNew = 1 OR MOV.scanErrors IS NOT NULL)" : ""}
 			${id_Movies ? "AND MOV.id_Movies = " + id_Movies : ""}
 			`,
     []
   );
+
+  logger.log('scanErrors applyMetaData movies:', movies);
 
   for (let i = 0; i < movies.length; i++) {
     if (doAbortRescan) {
@@ -752,9 +754,9 @@ async function applyMetaData(onlyNew, id_Movies) {
           .toLowerCase()
           .includes(
             movie.IMDB_originalTitle.toLowerCase() &&
-              !movie.IMDB_originalTitle.toLowerCase().includes(
-                name[0].toLowerCase()
-              )
+            !movie.IMDB_originalTitle.toLowerCase().includes(
+              name[0].toLowerCase()
+            )
           ))
     ) {
       names.push(movie.IMDB_originalTitle);
@@ -768,9 +770,9 @@ async function applyMetaData(onlyNew, id_Movies) {
           .toLowerCase()
           .includes(
             movie.IMDB_primaryTitle.toLowerCase() &&
-              !movie.IMDB_primaryTitle.toLowerCase().includes(
-                name[0].toLowerCase()
-              )
+            !movie.IMDB_primaryTitle.toLowerCase().includes(
+              name[0].toLowerCase()
+            )
           ))
     ) {
       names.push(movie.IMDB_primaryTitle);
@@ -838,9 +840,9 @@ async function applyMetaData(onlyNew, id_Movies) {
     const duplicate =
       duplicates.length > 0
         ? (await db.fireProcedureReturnAll(
-            "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
-            { $id_Movies: duplicates[0] }
-          ))[0]
+          "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
+          { $id_Movies: duplicates[0] }
+        ))[0]
         : null;
 
     // Overwrite by duplicate
@@ -873,9 +875,9 @@ async function applyMetaData(onlyNew, id_Movies) {
       const metaDuplicate =
         metaDuplicates.length > 0
           ? (await db.fireProcedureReturnAll(
-              "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
-              { $id_Movies: metaDuplicates[0] }
-            ))[0]
+            "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
+            { $id_Movies: metaDuplicates[0] }
+          ))[0]
           : null;
 
       if (metaDuplicate) {
@@ -915,23 +917,25 @@ async function rescanMoviesMetaData(onlyNew, id_Movies) {
 			FROM tbl_Movies
 			WHERE 
 				(isRemoved IS NULL OR isRemoved = 0)
-				${onlyNew ? "AND isNew = 1" : ""}
+				${onlyNew ? "AND (isNew = 1 OR scanErrors IS NOT NULL)" : ""}
 				${
-          shared.scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
-            ? "AND id_SourcePaths IN " +
-              shared.scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
-            : ""
-        }
+    shared.scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
+      ? "AND id_SourcePaths IN " +
+      shared.scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
+      : ""
+    }
 				${
-          shared.scanOptions.rescanMoviesMetaData_id_Movies
-            ? "AND id_Movies = " +
-              shared.scanOptions.rescanMoviesMetaData_id_Movies
-            : ""
-        }
+    shared.scanOptions.rescanMoviesMetaData_id_Movies
+      ? "AND id_Movies = " +
+      shared.scanOptions.rescanMoviesMetaData_id_Movies
+      : ""
+    }
 				${id_Movies ? "AND id_Movies = " + id_Movies : ""}
 			`,
     []
   );
+
+    logger.log('scanErrors rescanMoviesMetadata movies:', movies);
 
   for (let i = 0; i < movies.length; i++) {
     if (doAbortRescan) {
@@ -1207,9 +1211,9 @@ async function findIMDBtconst(movie, onlyNew) {
     const actualDuplicate =
       actualDuplicates.length > 0
         ? (await db.fireProcedureReturnAll(
-            "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
-            { $id_Movies: actualDuplicates[0] }
-          ))[0]
+          "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
+          { $id_Movies: actualDuplicates[0] }
+        ))[0]
         : null;
 
     if (actualDuplicate && actualDuplicate.IMDB_tconst) {
@@ -1241,7 +1245,7 @@ async function findIMDBtconst(movie, onlyNew) {
         if (tconstIncluded !== tconst) {
           logger.log(
             `tconst compare;mismatch;${tconst};${tconstIncluded};${
-              movie.Filename
+            movie.Filename
             }`
           );
         } else {
@@ -1349,16 +1353,24 @@ async function fetchIMDBMetaData(movie, onlyNew) {
   let IMDBdata = {};
 
   try {
+    const scanErrorsString = await db.fireProcedureReturnScalar(`SELECT scanErrors FROM tbl_Movies WHERE id_Movies = $id_Movies`, { $id_Movies: movie.id_Movies });
+
+    movie.scanErrors = scanErrorsString ? JSON.parse(scanErrorsString) : {};
+
     if (
       shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_mainPageData &&
       getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_mainPageData")
         .enabled
     ) {
-      const mainPageData = await scrapeIMDBmainPageData(
-        movie,
-        helpers.downloadFile
-      );
-      IMDBdata = Object.assign(IMDBdata, mainPageData);
+      try {
+        const mainPageData = await scrapeIMDBmainPageData(
+          movie,
+          helpers.downloadFile
+        );
+        IMDBdata = Object.assign(IMDBdata, mainPageData);
+      } catch (error) {
+        //
+      }
     }
 
     if (
@@ -1502,18 +1514,22 @@ async function saveIMDBData(
   plotKeywords,
   filmingLocations
 ) {
-  const IMDB_genres = IMDBdata.$IMDB_genres;
+  const IMDB_genres = IMDBdata.$IMDB_genres || [];
   delete IMDBdata.$IMDB_genres;
 
-  let sql = "IMDB_Done = 1";
+  let sql = `IMDB_Done = ${Object.keys(movie.scanErrors).length > 0 ? '0' :'1'}, scanErrors = $scanErrors`;
   Object.keys(IMDBdata).forEach((key) => {
     sql += `, [${key.replace("$", "")}] = ${key}`;
   });
   sql = `UPDATE tbl_Movies SET ${sql} WHERE id_Movies = $id_Movies`;
 
+  const payload = Object.assign(IMDBdata, { $id_Movies: movie.id_Movies, $scanErrors: (movie.scanErrors && Object.keys(movie.scanErrors).length > 0 ? JSON.stringify(movie.scanErrors) : null) });
+  
+  logger.log('saveIMDBData payload:', payload, 'movie.scanErrors:', movie.scanErrors);
+
   await db.fireProcedure(
     sql,
-    Object.assign(IMDBdata, { $id_Movies: movie.id_Movies })
+    Object.assign(IMDBdata, { $id_Movies: movie.id_Movies, $scanErrors: (movie.scanErrors && Object.keys(movie.scanErrors).length > 0 ? JSON.stringify(movie.scanErrors) : null) })
   );
 
   const movieGenres = await db.fireProcedureReturnAll(
@@ -2362,7 +2378,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       ) {
         filterMetacriticScore += `(MOV.IMDB_metacriticScore >= ${
           shared.filterMetacriticScore[0]
-        } AND MOV.IMDB_metacriticScore <= ${shared.filterMetacriticScore[1]})`;
+          } AND MOV.IMDB_metacriticScore <= ${shared.filterMetacriticScore[1]})`;
       } else {
         filterMetacriticScore += "1 = 0";
       }
@@ -2387,7 +2403,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       if (shared.filterIMDBRating[0] > 0 || shared.filterIMDBRating[1] < 10) {
         filterIMDBRating += `(MOV.IMDB_rating >= ${
           shared.filterIMDBRating[0]
-        } AND MOV.IMDB_rating <= ${shared.filterIMDBRating[1]})`;
+          } AND MOV.IMDB_rating <= ${shared.filterIMDBRating[1]})`;
       } else {
         filterIMDBRating += "1 = 0";
       }
@@ -2425,7 +2441,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
 			MOV.id_Movies
 			, MOV.Name
 			, MOV.IMDB_rating${
-        shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""
+      shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""
       } AS IMDB_rating_default
 			, MOV.IMDB_metacriticScore
 			, IFNULL(MOV.Rating, 0) AS Rating
@@ -2433,7 +2449,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
 			, MOV.created_at
 			, MOV.last_access_at
       , MOV.IMDB_numVotes${
-        shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""
+      shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""
       } AS IMDB_numVotes_default
       , MOV.IMDB_plotSummary
       , MOV.Path
@@ -2444,8 +2460,8 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       , MOV.IMDB_MaxAge
 
       ${
-        minimumResultSet
-          ? `
+      minimumResultSet
+        ? `
         , 0 AS isCompletelyFetched
         , NULL AS FileName
         , NULL AS Size
@@ -2474,7 +2490,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
         , NULL AS IMDB_Trailer_URL
         , NULL AS NumExtras
       `
-          : `
+        : `
         , 1 AS isCompletelyFetched
         , MOV.FileName
         , MOV.Size
@@ -2549,13 +2565,13 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
         : "";
       item.IMDB_rating_defaultFormatted = item.IMDB_rating_default
         ? `${item.IMDB_rating_default.toLocaleString(undefined, {
-            minimumFractionDigits: 1,
-          })}`
+          minimumFractionDigits: 1,
+        })}`
         : "";
       item.IMDB_rating_defaultDisplay = item.IMDB_rating_defaultFormatted
         ? `${
-            item.IMDB_rating_defaultFormatted
-          } (${item.IMDB_numVotes_default.toLocaleString()})`
+        item.IMDB_rating_defaultFormatted
+        } (${item.IMDB_numVotes_default.toLocaleString()})`
         : "";
 
       item.AudioLanguages = generateLanguageString(
@@ -2576,7 +2592,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
             item.IMDB_MaxAge && item.IMDB_MaxAge > item.IMDB_MinAge
               ? "-" + item.IMDB_MaxAge
               : ""
-          }+`;
+            }+`;
         }
       }
 
@@ -3833,7 +3849,7 @@ async function fetchFilterLanguages($MediaType, $LanguageType, $t) {
     if (languageCodeNameMapping[result.Language]) {
       result.DisplayText = `${result.Language} - ${
         languageCodeNameMapping[result.Language]
-      }`;
+        }`;
       result.LanguageFull = languageCodeNameMapping[result.Language];
     }
   });
@@ -4315,8 +4331,8 @@ async function getMovieDuplicates(
           AND MOV.Size = MOVSource.Size                                     -- Must have same Size (actual duplicate)
           AND MOV.Extra_id_Movies_Owner IS NULL                             -- Exclude Extras
           ${
-            ignoreNew ? "AND (MOV.isNew IS NULL OR MOV.isNew = 0)" : ""
-          }    -- optional: only newly added movies (rescan)
+        ignoreNew ? "AND (MOV.isNew IS NULL OR MOV.isNew = 0)" : ""
+        }    -- optional: only newly added movies (rescan)
           `,
         { $id_Movies }
       );
@@ -4343,7 +4359,7 @@ async function getMovieDuplicates(
         AND MOV.IMDB_tconst IS NOT NULL                                     -- IMDB ID should exist
         AND MOV.Extra_id_Movies_Owner IS NULL                               -- Exclude Extras
         ${
-          ignoreNew ? "AND (MOV.isNew IS NULL OR MOV.isNew = 0)" : ""
+        ignoreNew ? "AND (MOV.isNew IS NULL OR MOV.isNew = 0)" : ""
         }      -- optional: only newly added movies (rescan)
         `,
         { $id_Movies }
@@ -4523,8 +4539,8 @@ async function getIMDBLanguages(regionCodes) {
   const filterRegions = !regionCodes
     ? null
     : regionCodes.reduce((prev, current) => {
-        return prev + (prev ? ", " : "") + `'${current}'`;
-      }, "");
+      return prev + (prev ? ", " : "") + `'${current}'`;
+    }, "");
 
   const sSQL = `
   SELECT DISTINCT
@@ -4761,8 +4777,8 @@ async function fetchRatingDemographics($id_Movies) {
     if (key.includes("rating")) {
       ratingDemographics[key + "_formatted"] = ratingDemographics[key]
         ? `${ratingDemographics[key].toLocaleString(undefined, {
-            minimumFractionDigits: 1,
-          })}`
+          minimumFractionDigits: 1,
+        })}`
         : "";
     }
 

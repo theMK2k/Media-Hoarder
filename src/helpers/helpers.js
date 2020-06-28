@@ -123,6 +123,10 @@ async function downloadFile(url, targetPath, redownload) {
   try {
     logger.log("downloadFile url:", url);
 
+    if (!url) {
+      return false;
+    }
+
     const fullPath = getPath(targetPath);
 
     if (!redownload) {
@@ -160,6 +164,8 @@ function requestRetryStrategy(err, response, body, options) {
 }
 
 async function requestAsync(options) {
+  // throw new Error('KILLME - Offline Test');
+  
   let optionsDerived = {};
 
   if (typeof options === "string") {
