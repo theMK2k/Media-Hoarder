@@ -5,8 +5,6 @@ const htmlToText = require("html-to-text");
 const helpers = require("./helpers/helpers");
 
 function uppercaseEachWord(input) {
-  logger.log("uppercaseEachWord:", input);
-
   let isNewBeginning = true;
   let text = input;
 
@@ -21,7 +19,6 @@ function uppercaseEachWord(input) {
     }
   }
 
-  logger.log("uppercaseEachWord result:", text);
   return text;
 }
 
@@ -100,29 +97,40 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
     let $IMDB_posterLarge_URL = null;
     const rxPosterMediaViewerURL = /<div class="poster">[\s\S]*?<a href="(.*?)"[\s\S]*?>/; // "/title/tt0130827/mediaviewer/rm215942400"
     if (rxPosterMediaViewerURL.test(html)) {
-      const posterURLs = await scrapeIMDBposterURLs(
-        html.match(rxPosterMediaViewerURL)[1]
-      );
-
-      const posterSmallPath = `data/extras/${movie.IMDB_tconst}_posterSmall.jpg`;
-      const posterSmallSuccess = await downloadFileCallback(
-        posterURLs.$IMDB_posterSmall_URL,
-        posterSmallPath,
-        false
-      );
-      if (posterSmallSuccess) {
-        $IMDB_posterSmall_URL = posterSmallPath;
+      if (movie.scanErrors) {
+        delete movie.scanErrors['IMDB Poster'];
+      }        
+      
+      try {
+        const posterURLs = await scrapeIMDBposterURLs(
+          html.match(rxPosterMediaViewerURL)[1]
+        );
+  
+        const posterSmallPath = `data/extras/${movie.IMDB_tconst}_posterSmall.jpg`;
+        const posterSmallSuccess = await downloadFileCallback(
+          posterURLs.$IMDB_posterSmall_URL,
+          posterSmallPath,
+          false
+        );
+        if (posterSmallSuccess) {
+          $IMDB_posterSmall_URL = posterSmallPath;
+        }
+  
+        const posterLargePath = `data/extras/${movie.IMDB_tconst}_posterLarge.jpg`;
+        const posterLargeSuccess = await downloadFileCallback(
+          posterURLs.$IMDB_posterLarge_URL,
+          posterLargePath,
+          false
+        );
+        if (posterLargeSuccess) {
+          $IMDB_posterLarge_URL = posterLargePath;
+        }
+      } catch (error) {
+        if (movie.scanErrors) {
+          movie.scanErrors['IMDB Poster'] = error.message;
+        }        
       }
-
-      const posterLargePath = `data/extras/${movie.IMDB_tconst}_posterLarge.jpg`;
-      const posterLargeSuccess = await downloadFileCallback(
-        posterURLs.$IMDB_posterLarge_URL,
-        posterLargePath,
-        false
-      );
-      if (posterLargeSuccess) {
-        $IMDB_posterLarge_URL = posterLargePath;
-      }
+      
     }
 
     let $IMDB_plotSummary = null;
@@ -225,19 +233,32 @@ async function scrapeIMDBposterURLs(posterMediaViewerURL) {
   let $IMDB_posterSmall_URL = null;
   let $IMDB_posterLarge_URL = null;
 
+  logger.log('scrapeIMDBposterURLs posterMediaViewerURL:', posterMediaViewerURL);
+
   const url = `https://www.imdb.com${posterMediaViewerURL}`;
   const response = await helpers.requestAsync(url);
   const html = response.body;
 
   const rxID = /(rm\d*)\?ref/;
-  if (rxID.test(html)) {
-    const ID = html.match(rxID)[1];
+  if (rxID.test(posterMediaViewerURL)) {
+    const ID = posterMediaViewerURL.match(rxID)[1];
+
+    logger.log('scrapeIMDBposterURLs ID:', ID);
 
     const rxString = `"id":"${ID}","h":\\d*,"msrc":"(.*?)","src":"(.*?)"`;
     const rxURLs = new RegExp(rxString);
 
-    $IMDB_posterSmall_URL = html.match(rxURLs)[1];
-    $IMDB_posterLarge_URL = html.match(rxURLs)[2];
+    const matches = html.match(rxURLs);
+    
+    if (!matches || matches.length < 3) {
+      logger.log('scrapeIMDBposterURLs html:', html);
+      throw new Error('IMDB Poster URLs cannot be found')
+    }
+    
+    logger.log('scrapeIMDBposterURLs matches:', matches);
+
+    $IMDB_posterSmall_URL = matches[1];
+    $IMDB_posterLarge_URL = matches[2];
   }
 
   return {

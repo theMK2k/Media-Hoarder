@@ -138,12 +138,13 @@
                             <span v-on="on">
                               <v-icon
                                 v-show="item.nameHovered || item.selected"
-                                style="cursor: pointer"
+                                class="Clickable"
                                 v-on:click.stop="onEditItem(item, 'Name', $t('Primary Title'))"
+                                style="margin-left: 8px"
                               >mdi-pencil</v-icon>
                             </span>
                           </template>
-                          <span>{{$t('Edit Primary Title')}}</span>
+                          <span style="margin-left:">{{$t('Edit Primary Title')}}</span>
                         </v-tooltip>
 
                         <v-tooltip bottom>
@@ -151,8 +152,23 @@
                             <span v-on="on">
                               <v-icon
                                 v-show="item.nameHovered || item.selected"
-                                style="cursor: pointer"
+                                class="Clickable"
+                                v-on:click.stop="onRescrapeIMDB(item)"
+                                style="margin-left: 8px"
+                              >mdi-reload-alert</v-icon>
+                            </span>
+                          </template>
+                          <span>{{$t('Rescan IMDB meta data')}}</span>
+                        </v-tooltip>
+
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{ on }">
+                            <span v-on="on">
+                              <v-icon
+                                v-show="item.nameHovered || item.selected"
+                                class="Clickable"
                                 v-on:click.stop="onOpenLinkIMDBDialog(item)"
+                                style="margin-left: 8px"
                               >mdi-link</v-icon>
                             </span>
                           </template>
@@ -173,7 +189,7 @@
                               <v-icon
                                 v-show="item.name2Hovered || item.selected"
                                 small
-                                style="cursor: pointer"
+                                class="Clickable"
                                 v-on:click.stop="onEditItem(item, 'Name2', $t('Secondary Title'))"
                               >mdi-pencil</v-icon>
                             </span>
@@ -219,7 +235,10 @@
                           <v-icon small>mdi-comment-outline</v-icon>
                           <span v-for="(lang, index) in item.AudioLanguages" v-bind:key="lang">
                             <span>{{ index > 0 ? ', ' : ' ' }}</span>
-                            <span class="Clickable" v-on:click.stop="onLanguageClicked(lang, 'audio')">{{ lang }}</span>
+                            <span
+                              class="Clickable"
+                              v-on:click.stop="onLanguageClicked(lang, 'audio')"
+                            >{{ lang }}</span>
                           </span>
                           {{item.SubtitleLanguages ? ' | ' : ''}}
                         </span>
@@ -228,7 +247,10 @@
                           <v-icon small>mdi-subtitles-outline</v-icon>
                           <span v-for="(lang, index) in item.SubtitleLanguages" v-bind:key="lang">
                             <span>{{ index > 0 ? ', ' : ' ' }}</span>
-                            <span class="Clickable" v-on:click.stop="onLanguageClicked(lang, 'subtitle')">{{ lang }}</span>
+                            <span
+                              class="Clickable"
+                              v-on:click.stop="onLanguageClicked(lang, 'subtitle')"
+                            >{{ lang }}</span>
                           </span>
                         </span>
                       </div>
@@ -371,9 +393,33 @@
                       </span>
                     </div>
                   </v-row>
+
+                  <v-row v-if="item.scanErrors">
+                    <v-alert
+                      type="warning"
+                      dense
+                      colored-border
+                      border="left"
+                      style="margin-left: 16px"
+                    >
+                      <span
+                        class="Clickable"
+                        v-on:click.stop="item.showScanErrors = !item.showScanErrors"
+                      >{{$t("Errors were encountered during the scan, consider a re-scan.")}}</span>
+                      <v-row v-if="item.showScanErrors">
+                        <ul style="font-size: 0.875rem; margin-left: 48px">
+                          <li
+                            v-for="(val, key) in item.scanErrors"
+                            v-bind:key="key"
+                          >{{key}}: {{val}}</li>
+                        </ul>
+                      </v-row>
+                    </v-alert>
+                  </v-row>
                 </v-col>
               </v-list-item-content>
             </v-list-item>
+
             <v-col v-if="item.selected" style="min-width: 100%">
               <v-row>
                 <v-col class="detailLabel">{{$t("Full Path")}}:</v-col>
@@ -1660,7 +1706,7 @@ export default {
       logger.log("language clicked:", code, type);
 
       this.languageDialog.Type = type;
-      this.languageDialog.Language = 'TODO!';
+      this.languageDialog.Language = "TODO!";
       this.languageDialog.Code = code;
       this.languageDialog.show = true;
 
@@ -1871,6 +1917,24 @@ export default {
         eventBus.showSnackbar("success", this.$t("entry linked successfully"));
 
         this.onLinkIMDBDialogClose();
+      } catch (err) {
+        logger.log("error:", JSON.stringify(err));
+        eventBus.showSnackbar("error", err);
+      }
+    },
+
+    async onRescrapeIMDB(item) {
+      try {
+        store.resetUserScanOptions();
+
+        await store.assignIMDB(item.id_Movies, item.IMDB_tconst, null, null, item);
+
+        eventBus.refetchMedia(this.$shared.currentPage);
+
+        eventBus.showSnackbar(
+          "success",
+          this.$t("entry rescanned successfully")
+        );
       } catch (err) {
         logger.log("error:", JSON.stringify(err));
         eventBus.showSnackbar("error", err);

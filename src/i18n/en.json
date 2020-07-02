@@ -741,5 +741,6 @@
   "Audio Language": "Audio Language",
   "Filter by this language": "Filter by this language",
   "Checks with exceptions detected!": "Checks with exceptions detected!",
-  "Ignore Exception - Scan Media Now": "Ignore Exception - Scan Media Now"
+  "Ignore Exception - Scan Media Now": "Ignore Exception - Scan Media Now",
+  "Rescan IMDB meta data": "Rescan IMDB meta data"
 }

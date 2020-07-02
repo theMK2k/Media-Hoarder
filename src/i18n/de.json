@@ -823,5 +823,6 @@
   "Audio Language": "Audiosprache",
   "Filter by this language": "Nach dieser Sprache Filtern",
   "Checks with exceptions detected!": "Prüfungen enthalten Ausnahmefehler!",
-  "Ignore Exception - Scan Media Now": "Ignoriere die Ausnahmefehler - Jetzt Medien einlesen"
+  "Ignore Exception - Scan Media Now": "Ignoriere die Ausnahmefehler - Jetzt Medien einlesen",
+  "Rescan IMDB meta data": "IMDB Metadaten erneut ermitteln"
 }

@@ -164,7 +164,7 @@ function requestRetryStrategy(err, response, body, options) {
 }
 
 async function requestAsync(options) {
-  throw new Error('KILLME - Offline Test');
+  // throw new Error('KILLME - Offline Test');
   
   let optionsDerived = {};
 

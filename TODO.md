@@ -21,19 +21,18 @@ OK -> check if memory leak is only in dev-mode (yes, it still persists even in p
 ## Harden fetch from web
 OK - How should we handle ECONNRESET? maybe requestretry?
 OK - How can we test this?
+
 - investigate offline error handling
   OK - imdb scraper test Dialog
-  WIP - imdb scraping during (re-)scan
-    - currently:
-      - the scan is through, the item is marked as isNew = false
-      - now the movie won't be rescanned (quick scan)
-    - requirement:
-      - track errors during rescan
-      - mark item as scanErrors, containing the log of scan errors (NULL if everything is fine)
-      - show this at the item in MediaList with button for direct rescan of the item and info to also perform rescan
-      - on rescan (quick): also take items with hasScrapeErrors being truthy into account (not only isNew = true)
-  - imdb search/find
-  - imdb scraping on persons, companies etc.
+  OK - imdb scraping during (re-)scan
+  OK  - track errors during rescan
+  OK  - mark item as scanErrors, containing the log of scan errors (NULL if everything is fine)
+  OK  - show this at the item in MediaList with button for direct rescan of the item and info to also perform rescan
+  OK  - on rescan (quick): also take items with hasScrapeErrors being truthy into account (not only isNew = true)
+  OK - check movie identification based on name (this should also fail during scan)
+  OK -> add movie identification on item-based rescan if no tconst is available
+- imdb search/find
+- imdb scraping on persons, companies etc.
 
 ## Icons for Navbar?
 - would it be good to have (many) icons for the sections and filters in the navbar?
