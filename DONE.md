@@ -44,6 +44,24 @@ OK - change static strings in components to $t('key')
     OK src\components\shared\VersionDialog.vue
     OK src\components\shared\VideoPlayerDialog.vue
 
+## Harden fetch from web
+OK - How should we handle ECONNRESET? maybe requestretry?
+OK - How can we test this?
+
+- investigate offline error handling
+  OK - imdb scraper test Dialog
+  OK - imdb scraping during (re-)scan
+  OK  - track errors during rescan
+  OK  - mark item as scanErrors, containing the log of scan errors (NULL if everything is fine)
+  OK  - show this at the item in MediaList with button for direct rescan of the item and info to also perform rescan
+  OK  - on rescan (quick): also take items with hasScrapeErrors being truthy into account (not only isNew = true)
+  OK - check movie identification based on name (this should also fail during scan)
+  OK -> add movie identification on item-based rescan if no tconst is available
+  OK - imdb search/find
+  OK - imdb scraping on persons, companies etc.
+
+## Icons for Navbar?
+OK - would it be good to have (many) icons for the sections and filters in the navbar?
 
 ## IMDB Scraper Checks / Watchdog
 

@@ -1826,6 +1826,8 @@ export default {
             });
           }
         }
+      } else if (textOrErrorObject.message) {
+        this.snackbar.text = textOrErrorObject.message;
       } else {
         this.snackbar.text = `<${this.$t("unknown text")}>`;
       }
