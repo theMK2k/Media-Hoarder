@@ -26,7 +26,7 @@
             <li>{{$t('Filescan in every Source Path')}}</li>
             <li>{{$t('If a file is missing, remove it from the collection')}}</li>
             <li>{{$t('If a new file is found, gather IMDB and mediainfo metadata')}}</li>
-            <li>{{$t("If a file is already known, don't gather any metadata")}}</li>
+            <li>{{$t("If a file is already known, don't gather any metadata _except the previous scan had errors_")}}</li>
           </ul>
         </div>
 

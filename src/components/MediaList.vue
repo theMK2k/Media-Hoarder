@@ -405,7 +405,7 @@
                       <span
                         class="Clickable"
                         v-on:click.stop="item.showScanErrors = !item.showScanErrors"
-                      >{{$t("Errors were encountered during the scan, consider a re-scan.")}}</span>
+                      >{{$t("Errors were encountered during the scan, consider a re-scan_")}}</span>
                       <v-row v-if="item.showScanErrors">
                         <ul style="font-size: 0.875rem; margin-left: 48px">
                           <li
@@ -1103,10 +1103,10 @@ export default {
       const filtersList = [];
 
       if (this.$shared.searchText) {
-        filtersList.push("Search");
+        filtersList.push(this.$t("Search"));
       }
       if (this.$shared.filterSourcePaths.find(filter => !filter.Selected)) {
-        filtersList.push("Source Paths");
+        filtersList.push(this.$t("Source Paths"));
       }
       if (
         this.$shared.filterGenres &&

@@ -230,9 +230,6 @@ async function scrapeIMDBplotSummary(movie, shortSummary) {
 }
 
 async function scrapeIMDBposterURLs(posterMediaViewerURL) {
-  let $IMDB_posterSmall_URL = null;
-  let $IMDB_posterLarge_URL = null;
-
   logger.log('scrapeIMDBposterURLs posterMediaViewerURL:', posterMediaViewerURL);
 
   const url = `https://www.imdb.com${posterMediaViewerURL}`;
@@ -250,21 +247,34 @@ async function scrapeIMDBposterURLs(posterMediaViewerURL) {
 
     const matches = html.match(rxURLs);
     
-    if (!matches || matches.length < 3) {
-      logger.log('scrapeIMDBposterURLs html:', html);
-      throw new Error('IMDB Poster URLs cannot be found')
+    if (matches && matches.length === 3) {
+      logger.log('scrapeIMDBposterURLs Variant 1 found')
+      
+      return {
+        $IMDB_posterSmall_URL: matches[1],
+        $IMDB_posterLarge_URL: matches[2]
+      }
+    }
+
+    // trying alternative approach
+
+    const rxString2 = `<img src="(.*?)" srcSet="(.*?)\\s.*?${ID}`;
+    const rxURLs2 = new RegExp(rxString2);
+
+    const matches2 = html.match(rxURLs2);
+
+    if (matches2 && matches2.length === 3) {
+      logger.log('scrapeIMDBposterURLs Variant 2 found')
+
+      return {
+        $IMDB_posterSmall_URL: matches2[2],
+        $IMDB_posterLarge_URL: matches2[1]
+      }
     }
     
-    logger.log('scrapeIMDBposterURLs matches:', matches);
-
-    $IMDB_posterSmall_URL = matches[1];
-    $IMDB_posterLarge_URL = matches[2];
+    logger.warn('scrapeIMDBposterURLs NO URLs found, html:', html);
+    throw new Error('IMDB Poster URLs cannot be found')
   }
-
-  return {
-    $IMDB_posterSmall_URL,
-    $IMDB_posterLarge_URL
-  };
 }
 
 async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {

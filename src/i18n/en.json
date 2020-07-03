@@ -598,7 +598,7 @@
   "Filescan in every Source Path": "Filescan in every Source Path",
   "If a file is missing, remove it from the collection": "If a file is missing, remove it from the collection",
   "If a new file is found, gather IMDB and mediainfo metadata": "If a new file is found, gather IMDB and mediainfo metadata",
-  "If a file is already known, don't gather any metadata": "If a file is already known, don't gather any metadata",
+  "If a file is already known, don't gather any metadata _except the previous scan had errors_": "If a file is already known, don't gather any metadata (except the previous scan had errors)",
   "If a file is new or already known, gather IMDB and mediainfo metadata": "If a file is new or already known, gather IMDB and mediainfo metadata",
   "This can take a while depending on your collection and internet connection": "This can take a while depending on your collection and internet connection",
   "IMDB Scraper Options": "IMDB Scraper Options",
@@ -742,5 +742,6 @@
   "Filter by this language": "Filter by this language",
   "Checks with exceptions detected!": "Checks with exceptions detected!",
   "Ignore Exception - Scan Media Now": "Ignore Exception - Scan Media Now",
-  "Rescan IMDB meta data": "Rescan IMDB meta data"
+  "Rescan IMDB meta data": "Rescan IMDB meta data",
+  "Errors were encountered during the scan, consider a re-scan_": "Errors were encountered during the scan, consider a re-scan."
 }

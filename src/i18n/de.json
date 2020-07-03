@@ -598,7 +598,7 @@
   "Filescan in every Source Path": "Einlesen der Dateien aus allen Quellpfaden",
   "If a file is missing, remove it from the collection": "Fehlt eine vormals bekannte Datei, wird sie aus der Sammlung entfernt",
   "If a new file is found, gather IMDB and mediainfo metadata": "Wird eine neue Datei gefunden, werden IMDB und Mediainfo Metadaten gesammelt",
-  "If a file is already known, don't gather any metadata": "Ist eine Datei bereits bekannt, werden keine Metadaten erneut gesammelt",
+  "If a file is already known, don't gather any metadata _except the previous scan had errors_": "Ist eine Datei bereits bekannt, werden keine Metadaten erneut gesammelt (außer das vorhergehende Einlesen war fehlerhaft)",
   "If a file is new or already known, gather IMDB and mediainfo metadata": "IMDB und Mediainfo Metadaten werden immer gesammelt, ungeachtet ob die Datei bereits bekannt war oder neu ist",
   "This can take a while depending on your collection and internet connection": "Dies kann eine Weile dauern, abhängig von der Internetleitung und der Größe der Sammlung",
   "IMDB Scraper Options": "IMDB Scraper Optionen",
@@ -813,7 +813,6 @@
   "Unable to launch: Mediaplayer Path is not set_ Please go to Settings and provide one_": "Aufruf nicht möglich: Media Player Pfad ist nicht festgelegt. Bitte Einstellungen aufrufen und einen Media Player Pfad festlegen.",
   "Cannot access {path}": "Auf den Pfad \"{path}\" kann nicht zugegriffen werden.",
   "Perform an IMDB Scraper Check before Scan": "Vor dem Einlesen eine IMDB Scraper Prüfung durchführen",
-
   "Filter by this video quality": "Nach dieser Videoqualität Filtern",
   "Age Rating": "Alterseinstufung",
   "Filter by this age rating": "Nach dieser Alterseinstufung Filtern",
@@ -824,5 +823,6 @@
   "Filter by this language": "Nach dieser Sprache Filtern",
   "Checks with exceptions detected!": "Prüfungen enthalten Ausnahmefehler!",
   "Ignore Exception - Scan Media Now": "Ignoriere die Ausnahmefehler - Jetzt Medien einlesen",
-  "Rescan IMDB meta data": "IMDB Metadaten erneut ermitteln"
+  "Rescan IMDB meta data": "IMDB Metadaten erneut ermitteln",
+  "Errors were encountered during the scan, consider a re-scan_": "Beim Einlesen sind Fehler aufgetreten. Ein erneutes Einlesen sollte durchgeführt werden."
 }
