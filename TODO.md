@@ -9,10 +9,10 @@ OK -> we have a memory leak using eventBus.$on -> implement eventBus.$off on bef
 OK -> check if memory leak is only in dev-mode (yes, it still persists even in prod-mode)
 
 ## More Dialogs
-- add AudioLanguageDialog
-- add SubtitleLanguageDialog
--> for clicking the individual language in the MediaList
--> allow "filter by this language"
+OK - add AudioLanguageDialog
+OK - add SubtitleLanguageDialog
+OK -> for clicking the individual language in the MediaList
+OK -> allow "filter by this language"
 -> what do we do with "+3" entries?
 
 ## Fine-tune some text colors

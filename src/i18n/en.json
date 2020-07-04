@@ -110,7 +110,7 @@
   "Languages for Audio and Subtitles": "Languages for Audio and Subtitles",
   "The languages and their sequence defined here will be used to show which audio and subtitle languages your media contain_": "The languages and their sequence defined here will be used to show which audio and subtitle languages your media contain.",
   "You currently don_t have a language for Audio and Subtitles set up_ {appName} will fall back to your system_s locale": "You currently don't have a language for Audio and Subtitles set up. {appName} will fall back to your system's locale",
-  "You currently don_t have a language for Audio and Subtitles set up. {appName} will fall back to the original title_": "You currently don't have a language for Audio and Subtitles set up. MediaBox will fall back to the original title.",
+  "You currently don_t have a language for Audio and Subtitles set up. {appName} will fall back to the original title_": "You currently don't have a language for Audio and Subtitles set up. {appName} will fall back to the original title.",
   "In _Regions_ you provided the regions to be used for the Primary Title_ However, many titles in IMDB have a special title type_ {appName} skips all special title types by default_ You can add title types here, so that they are actually used instead of being skipped_": "In \"Regions\" you provided the regions to be used for the Primary Title. However, many titles in IMDB have a special title type. {appName} skips all special title types by default. You can add title types here, so that they are actually used instead of being skipped.",
   "No title types added, this is fine_": "No title types added, this is fine.",
   "Add Title Type": "Add Title Type",

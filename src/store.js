@@ -78,7 +78,7 @@ dbsync.runSync(
       if (err.error && err.error.errorCode == "SYNCERR") {
         dialog.showMessageBox(null, {
           type: "error",
-          title: "MediaBox - DB Sync Error",
+          title: "Media Hoarder - DB Sync Error",
           message: err.error.message,
         });
         logger.error("ERROR:", err);
