@@ -1806,25 +1806,29 @@ async function saveIMDBData(
   }
 }
 
+function getPreferredLanguages() {
+  const preferredLanguages = [];
+
+  if (
+    shared.languagesAudioSubtitles &&
+    shared.languagesAudioSubtitles.length > 0
+  ) {
+    shared.languagesAudioSubtitles.forEach((lang) => {
+      preferredLanguages.push(lang.code);
+    });
+  } else if (shared.fallbackLanguage) {
+    preferredLanguages.push(shared.fallbackLanguage.code);
+  }
+
+  return preferredLanguages;
+}
+
 async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
   try {
     logger.log(
       "shared.languagesAudioSubtitles:",
       shared.languagesAudioSubtitles
     );
-
-    const preferredLanguages = [];
-
-    if (
-      shared.languagesAudioSubtitles &&
-      shared.languagesAudioSubtitles.length > 0
-    ) {
-      shared.languagesAudioSubtitles.forEach((lang) => {
-        preferredLanguages.push(lang.code);
-      });
-    } else if (shared.fallbackLanguage) {
-      preferredLanguages.push(shared.fallbackLanguage.code);
-    }
 
     let filterSourcePaths = "";
     logger.log("shared.filterSourcePaths:", shared.filterSourcePaths);
@@ -2649,14 +2653,12 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
         } (${item.IMDB_numVotes_default.toLocaleString()})`
         : "";
 
-      item.AudioLanguages = generateLanguageString(
-        item.MI_Audio_Languages,
-        preferredLanguages
+      item.AudioLanguages = generateLanguageArray(
+        item.MI_Audio_Languages
       );
 
-      item.SubtitleLanguages = generateLanguageString(
-        item.MI_Subtitle_Languages,
-        preferredLanguages
+      item.SubtitleLanguages = generateLanguageArray(
+        item.MI_Subtitle_Languages
       );
 
       if (item.Age || item.Age === 0) {
@@ -2715,14 +2717,6 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
         item.Genres = genres;
       }
 
-      if (item.AudioLanguages) {
-        item.AudioLanguages = item.AudioLanguages.split(", ");
-      }
-
-      if (item.SubtitleLanguages) {
-        item.SubtitleLanguages = item.SubtitleLanguages.split(", ");
-      }
-
       if (item.scanErrors) {
         item.scanErrors = JSON.parse(item.scanErrors);
       }
@@ -2730,6 +2724,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       // additional fields (prevent Recalculation of Pagination Items on mouseover)
       item.lists = [];
       item.extras = [];
+      item.extrasFetched = false;
       item.selected = false;
       item.lastAccessMoment = null;
 
@@ -2754,12 +2749,15 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
   }
 }
 
-function generateLanguageString(languages, preferredLanguages) {
+function generateLanguageArray(languages, maxLangDisplay) {
   if (!languages) {
     return null;
   }
 
-  const maxLangDisplay = 2;
+  const preferredLanguages = getPreferredLanguages();
+
+  maxLangDisplay = maxLangDisplay ? maxLangDisplay : 2;
+
   const languagesSplit = languages.split(",");
   const preferredLanguagesJoinLower = preferredLanguages
     .join(", ")
@@ -2813,7 +2811,7 @@ function generateLanguageString(languages, preferredLanguages) {
     result = languages;
   }
 
-  return result.join(", ");
+  return result;
 }
 
 async function clearRating($id_Movies, isHandlingDuplicates) {
@@ -5025,4 +5023,5 @@ export {
   fetchRatingDemographics,
   saveIMDBPersonData,
   fetchUILanguage,
+  generateLanguageArray
 };
