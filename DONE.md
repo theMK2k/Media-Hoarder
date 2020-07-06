@@ -60,6 +60,14 @@ OK - How can we test this?
   OK - imdb search/find
   OK - imdb scraping on persons, companies etc.
 
+## More Dialogs
+OK - add AudioLanguageDialog
+OK - add SubtitleLanguageDialog
+OK -> for clicking the individual language in the MediaList
+OK -> allow "filter by this language"
+OK -> what do we do with "+3" entries?
+OK  -> they should expand
+
 ## Icons for Navbar?
 OK - would it be good to have (many) icons for the sections and filters in the navbar?
 

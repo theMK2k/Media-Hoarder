@@ -237,7 +237,7 @@
                             <span>{{ index > 0 ? ', ' : ' ' }}</span>
                             <span
                               class="Clickable"
-                              v-on:click.stop="onLanguageClicked(lang, 'audio')"
+                              v-on:click.stop="onLanguageClicked(lang, 'audio', item)"
                             >{{ lang }}</span>
                           </span>
                           {{item.SubtitleLanguages ? ' | ' : ''}}
@@ -249,7 +249,7 @@
                             <span>{{ index > 0 ? ', ' : ' ' }}</span>
                             <span
                               class="Clickable"
-                              v-on:click.stop="onLanguageClicked(lang, 'subtitle')"
+                              v-on:click.stop="onLanguageClicked(lang, 'subtitle', item)"
                             >{{ lang }}</span>
                           </span>
                         </span>
@@ -304,7 +304,7 @@
                     style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
                   >
                     <div style="font-size: .875rem; font-weight: normal">
-                      <strong class="CreditCategory">{{$t('Directed by')}}</strong>
+                      <strong class="CreditCategory">{{$t('Directed by')}}:</strong>
                       <span
                         v-for="(credit, i) in item.IMDB_Top_Directors"
                         v-bind:key="credit.IMDB_Person_ID"
@@ -797,12 +797,13 @@
       v-on:cancel="onEditItemDialogCancel"
     ></mk-edit-item-dialog>
 
-    <mk-search-imdb-dialog
+    <mk-link-imdb-dialog
       ref="linkIMDBDialog"
       v-bind:show="linkIMDBDialog.show"
+      v-bind:filePath="linkIMDBDialog.filePath"
       v-on:close="onLinkIMDBDialogClose"
       v-on:selected="onLinkIMDBDialogSelected"
-    ></mk-search-imdb-dialog>
+    ></mk-link-imdb-dialog>
 
     <mk-rating-demographics-dialog
       ref="ratingDemographicsDialog"
@@ -857,7 +858,7 @@ export default {
     "mk-video-player-dialog": VideoPlayerDialog,
     "mk-local-video-player-dialog": LocalVideoPlayerDialog,
     "mk-edit-item-dialog": Dialog,
-    "mk-search-imdb-dialog": LinkIMDBDialog,
+    "mk-link-imdb-dialog": LinkIMDBDialog,
     "mk-pagination": Pagination,
     "mk-rating-demographics-dialog": RatingDemographicsDialog
   },
@@ -930,8 +931,7 @@ export default {
     languageDialog: {
       show: false,
       Type: null,
-      Code: null,
-      Language: null
+      Code: null
     },
 
     ageRatingDialog: {
@@ -1161,7 +1161,7 @@ export default {
             )))
       ) {
         filtersList.push(
-          `${this.$t("Persons")}${
+          `${this.$t("People")}${
             this.$shared.filterSettings.filterPersonsAND ? " ߷" : ""
           }`
         );
@@ -1358,13 +1358,16 @@ export default {
         if (movie.selected) {
           movie.selected = false;
         } else {
-          if (!movie.lists && !movie.extras) {
+          if (!movie.extrasFetched) {
             const { lists, extras } = await store.getMovieDetails(
               movie.id_Movies
             );
 
+            logger.log('movie details:', { lists, extras });
+
             this.$set(movie, "lists", lists);
             this.$set(movie, "extras", extras);
+            this.$set(movie, "extrasFetched", true);
           }
 
           this.$set(movie, "selected", true);
@@ -1702,15 +1705,34 @@ export default {
       return;
     },
 
-    onLanguageClicked(code, type) {
+    async onLanguageClicked(code, type, item) {
       logger.log("language clicked:", code, type);
 
+      if (/\+\d/.test(code)) {
+        // clicked language is expandable, e.g. "+4"
+        await this.expandLanguages(item, type);
+        return;
+      }
+
+      // clicked language is a standard language code, e.g. "De"
       this.languageDialog.Type = type;
-      this.languageDialog.Language = "TODO!";
       this.languageDialog.Code = code;
       this.languageDialog.show = true;
 
       return;
+    },
+
+    async expandLanguages(item, type) {
+      if (type === 'audio') {
+        item.AudioLanguages = store.generateLanguageArray(
+          item.MI_Audio_Languages, 9999
+        );
+      } else {
+        item.SubtitleLanguages = store.generateLanguageArray(
+          item.MI_Subtitle_Languages,
+          9999
+        );
+      }
     },
 
     onAgeRatingClicked(ageRating) {
@@ -1897,8 +1919,9 @@ export default {
 
     onOpenLinkIMDBDialog(item) {
       this.$refs.linkIMDBDialog.init();
-      this.linkIMDBDialog.show = true;
+      this.linkIMDBDialog.filePath = item.Path;
       this.linkIMDBDialog.item = item;
+      this.linkIMDBDialog.show = true;
     },
 
     onLinkIMDBDialogClose() {
@@ -1927,7 +1950,13 @@ export default {
       try {
         store.resetUserScanOptions();
 
-        await store.assignIMDB(item.id_Movies, item.IMDB_tconst, null, null, item);
+        await store.assignIMDB(
+          item.id_Movies,
+          item.IMDB_tconst,
+          null,
+          null,
+          item
+        );
 
         eventBus.refetchMedia(this.$shared.currentPage);
 

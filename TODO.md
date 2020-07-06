@@ -8,20 +8,19 @@ OK -> we have a memory leak using eventBus.$on -> implement eventBus.$off on bef
 -> we still have the memory leak: don't fetch all data at once (re-fetch for each page)
 OK -> check if memory leak is only in dev-mode (yes, it still persists even in prod-mode)
 
-## More Dialogs
-OK - add AudioLanguageDialog
-OK - add SubtitleLanguageDialog
-OK -> for clicking the individual language in the MediaList
-OK -> allow "filter by this language"
--> what do we do with "+3" entries?
-
 ## Fine-tune some text colors
 - some help texts are too bright
 
-## scrapeIMDBSuggestion - use alternative search method
+## Use Alternative Search Method
 
-- currently we use the suggestion API which doesn't support non-latin names
+- IMDB Detection uses Suggestion API which doesn't support non-latin names
+- IMDB Link Dialog uses Advanced Title Search API which doesn't support non-latin names
 - maybe we should use `https://www.imdb.com/find?q=` (which is IMDB search incl. ENTER)?
+-> replace it in LinkIMDBDialog
+-> also use it for IMDB detection by filename
+IMPORTANT: Find API only yields results if the movie title is complete
+=> we have to use find API only as fallback for the advancedTitleSearch
+=> maybe we should implement an "ultimate" search which combines results of all three searches?
 
 ## I18N - Basic
 - support all languages supported by DeepL or AWS (API):

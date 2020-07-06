@@ -1,16 +1,19 @@
 <template>
   <!--
     #
-    # This is the old LinkIMDBDialog which uses the IMDB Advanced Title Search
-    # Unfortunately the Advanced Title Search does not support non-latin characters, e.g.
+    # This is LinkIMDBDialog which uses the IMDB Find API
+    # it supports also non-latin characters, e.g.
     #
-    # 天気の子 (aka title for "Weathering with you") won't yield any results
+    # 天気の子 (aka title for "Weathering with you")
     #
   -->
   <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onCancelClick">
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">{{$t('Link with IMDB entry')}}</div>
+        <v-list-item-subtitle class="grey--text caption">
+          {{ filePath }}
+        </v-list-item-subtitle>
       </v-card-title>
       <v-card-text>
         <v-row style="padding-left: 16px; margin-bottom: 8px">
@@ -26,29 +29,20 @@
           ></v-text-field>
         </v-row>
 
-        <v-expansion-panels>
-          <v-expansion-panel style="padding: 0px!important; margin-bottom: 8px">
-            <v-expansion-panel-header
-              style="padding: 8px!important"
-            >{{$t('Media Types')}} {{titleTypesTitle()}}</v-expansion-panel-header>
-            <v-expansion-panel-content>
-              <v-row>
-                <v-btn text v-on:click="setAllTitleTypes(false)">{{$t('NONE')}}</v-btn>
-                <v-btn text v-on:click="setAllTitleTypes(true)">{{$t('ALL')}}</v-btn>
-              </v-row>
-              <v-checkbox
-                v-for="titleType in titleTypes"
-                v-bind:key="titleType.id"
-                v-model="titleType.checked"
-                v-bind:label="titleType.nameTranslated"
-                style="margin: 0px"
-                color="dark-grey"
-              ></v-checkbox>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-expansion-panels>
+        <v-select
+          v-bind:items="titleTypes"
+          item-text="name"
+          item-value="id"
+          v-model="chosenTitleType"
+          v-bind:label="$t('Title Types')"
+          style="margin-left: 4px; margin-right: -12px; margin-top: 16px; height: 40px"
+        >
+          <template v-slot:selection="{ item }">
+            <span>{{ $t(item.name) }}</span>
+          </template>
+        </v-select>
 
-        <v-row>
+        <v-row style="margin-top: 16px">
           <v-btn text v-bind:loading="isLoading" v-on:click.native="onSearchClick">{{$t('Search')}}</v-btn>
         </v-row>
 
@@ -64,7 +58,7 @@
             >
               <v-list-item three-line style="padding-left: 0px">
                 <div>
-                  <v-list-item-avatar tile style="margin: 6px; height: 100px; width: 80px">
+                  <v-list-item-avatar tile style="margin: 6px; height: 44px; width: 32px">
                     <v-img
                       contain
                       v-if="item.imageURL"
@@ -78,16 +72,16 @@
                   style="padding-top: 6px; padding-bottom: 6px"
                 >
                   <v-col style="padding: 0px!important">
-                    <v-row>
+                    <!-- <v-row>
                       <v-list-item-title
                         style="margin-bottom: 4px!important; font-size: 16px; margin-left: 12px"
-                      >{{ item.title }}</v-list-item-title>
-                    </v-row>
+                      >{{ item.resultText }}</v-list-item-title>
+                    </v-row> -->
 
                     <v-list-item-subtitle
-                      v-if="item.detailInfo"
+                      v-if="item.resultText"
                       style="margin-bottom: 4px"
-                    >{{ item.detailInfo }}</v-list-item-subtitle>
+                    >{{ item.resultText }}</v-list-item-subtitle>
 
                     <v-row style="margin-top: 8px">
                       <v-btn
@@ -119,7 +113,7 @@
 
 <script>
 // import * as store from "@/store";
-import { scrapeIMDBAdvancedTitleSearch } from "@/imdb-scraper";
+import { scrapeIMDBFind } from "@/imdb-scraper";
 
 // import * as helpers from "@/helpers/helpers";
 const logger = require("loglevel");
@@ -127,7 +121,7 @@ const logger = require("loglevel");
 import { eventBus } from "@/main";
 
 export default {
-  props: ["show"],
+  props: ["show", "filePath"],
 
   data() {
     return {
@@ -139,56 +133,20 @@ export default {
 
       titleTypes: [
         {
-          id: "feature",
-          name: "Feature Film",
-          checked: true
+          id: "all",
+          name: "All"
         },
         {
-          id: "tv_movie",
-          name: "TV Movie",
-          checked: true
+          id: "tt",
+          name: "Titles"
         },
         {
-          id: "tv_series",
-          name: "TV Series",
-          checked: true
-        },
-        {
-          id: "tv_episode",
-          name: "TV Episode",
-          checked: true
-        },
-        {
-          id: "tv_special",
-          name: "TV Special",
-          checked: true
-        },
-        {
-          id: "tv_miniseries",
-          name: "Mini-Series",
-          checked: true
-        },
-        {
-          id: "documentary",
-          name: "Documentary",
-          checked: true
-        },
-        {
-          id: "short",
-          name: "Short Film",
-          checked: true
-        },
-        {
-          id: "video",
-          name: "Video",
-          checked: true
-        },
-        {
-          id: "tv_short",
-          name: "TV Short",
-          checked: true
+          id: "ep",
+          name: "Episodes"
         }
       ],
+      
+      chosenTitleType: "all",
 
       searchResults: []
     };
@@ -246,11 +204,15 @@ export default {
         return;
       }
 
+      const titleType = this.chosenTitleType && this.chosenTitleType !== 'all' ? this.chosenTitleType : '';
+
       try {
-        this.searchResults = await scrapeIMDBAdvancedTitleSearch(
+        this.searchResults = await scrapeIMDBFind(
           this.searchText,
-          this.titleTypes
+          titleType
         );
+
+        logger.log('searchResults:', this.searchResults);
       } catch (err) {
         eventBus.showSnackbar("error", err);
       } finally {
