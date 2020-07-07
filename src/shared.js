@@ -1,6 +1,6 @@
 import Vue from "vue";
-const logger = require("loglevel");
-const moment = require("moment");
+// const logger = require("loglevel");
+// const moment = require("moment");
 
 const imdbScraperTests = require("./imdb-scraper-tests");
 
