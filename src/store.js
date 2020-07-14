@@ -126,6 +126,8 @@ dbsync.runSync(
 
         await fetchIMDBRatingDemographic();
 
+        await loadReleaseAttributes();
+
         shared.uiLanguage = await fetchUILanguage();
       })();
     });
@@ -4953,6 +4955,39 @@ async function fetchUILanguage() {
   return lang;
 }
 
+async function loadReleaseAttributes() {
+  const savedReleaseAttributes = await getSetting('ReleaseAttributes');
+  if (savedReleaseAttributes) {
+    const savedReleaseAttributesObject = JSON.parse(savedReleaseAttributes);
+
+    // merge with shared.releaseAttribues
+    savedReleaseAttributesObject.forEach(attrib => {
+      const foundAttrib = shared.releaseAttributes.find(attrib2 => attrib2.searchTerm === attrib.searchTerm);
+
+      if (foundAttrib) {
+        foundAttrib.displayAs = attrib.displayAs;
+        foundAttrib.deleted = attrib.deleted;
+        foundAttrib.sort = attrib.sort;
+      } else {
+        shared.releaseAttributes.push(attrib);
+      }
+    })
+
+  }
+  
+  sortReleaseAttributes();
+}
+
+function sortReleaseAttributes() {
+  shared.releaseAttributes.sort((a, b) => a.sort - b.sort);
+
+  let counter = 1;
+  shared.releaseAttributes.forEach(ra => {
+    ra.sort = counter;
+    counter++;
+  })
+}
+
 export {
   db,
   fetchSourcePaths,
@@ -5023,5 +5058,6 @@ export {
   fetchRatingDemographics,
   saveIMDBPersonData,
   fetchUILanguage,
-  generateLanguageArray
+  generateLanguageArray,
+  sortReleaseAttributes
 };

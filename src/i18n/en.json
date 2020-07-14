@@ -743,5 +743,17 @@
   "Checks with exceptions detected!": "Checks with exceptions detected!",
   "Ignore Exception - Scan Media Now": "Ignore Exception - Scan Media Now",
   "Rescan IMDB meta data": "Rescan IMDB meta data",
-  "Errors were encountered during the scan, consider a re-scan_": "Errors were encountered during the scan, consider a re-scan."
+  "Errors were encountered during the scan, consider a re-scan_": "Errors were encountered during the scan, consider a re-scan.",
+
+  "Release Attributes": "Release Attributes",
+  "Here you can set up which release attributes should be searched for in the file/directory names and how they should be displayed_": "Here you can set up which release attributes should be searched for in the file/directory names and how they should be displayed.",
+  "Search Term": "Search Term",
+  "Display As": "Display As",
+  "The search term is case insensitive and must contain whole words within the file/directory name_": "The search term is case insensitive and must contain whole words within the file/directory name.",
+  "Add Release Attribute": "Add Release Attribute",
+  "Edit Release Attribute": "Edit Release Attribute",
+  "Search Term is missing_": "Search Term is missing.",
+  "_Display As_ is missing_": "\"Display As\" is missing.",
+  "Release Attribute saved successfully_": "Release Attribute saved successfully.",
+  "Release Attribute removed successfully_": "Release Attribute removed successfully_"
 }

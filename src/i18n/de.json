@@ -824,5 +824,17 @@
   "Checks with exceptions detected!": "Prüfungen enthalten Ausnahmefehler!",
   "Ignore Exception - Scan Media Now": "Ignoriere die Ausnahmefehler - Jetzt Medien einlesen",
   "Rescan IMDB meta data": "IMDB Metadaten erneut ermitteln",
-  "Errors were encountered during the scan, consider a re-scan_": "Beim Einlesen sind Fehler aufgetreten. Ein erneutes Einlesen sollte durchgeführt werden."
+  "Errors were encountered during the scan, consider a re-scan_": "Beim Einlesen sind Fehler aufgetreten. Ein erneutes Einlesen sollte durchgeführt werden.",
+
+  "Release Attributes": "Veröffentlichungsattribute",
+  "Here you can set up which release attributes should be searched for in the file/directory names and how they should be displayed_": "Hier kann eingestellt werden, nach welchen Veröffentlichungsattributen gesucht werden soll und wie sie dargestellt werden sollen.",
+  "Search Term": "Suchtext",
+  "Display As": "Anzeige als",
+  "The search term is case insensitive and must contain whole words within the file/directory name_": "Der Suchtext macht keinen Unterschied bezüglich Groß-/Kleinschreibung und muss immer ganze Wörter im Datei/Verzeichnisnamen enthalten.",
+  "Add Release Attribute": "Veröffentlichungsattribut Hinzufügen",
+  "Edit Release Attribute": "Veröffentlichungsattribut Bearbeiten",
+  "Search Term is missing_": "Suchtext fehlt.",
+  "_Display As_ is missing_": "\"Anzeige als\" fehlt.",
+  "Release Attribute saved successfully_": "Veröffentlichungsattribut erfolgreich gespeichert.",
+  "Release Attribute removed successfully_": "Veröffentlichungsattribut erfolgreich entfernt."
 }

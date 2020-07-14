@@ -224,57 +224,57 @@ const shared = new Vue({
     userScanOptions: [
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_mainPageData",
-        enabled: true,
+        deleted: false,
         description:
           "Main Page (Genres, Rating/Votes, Metacritic Score, Poster, Plot Summary, Trailer URL)",
       },
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics",
-        enabled: true,
+        deleted: false,
         description:
           "Ratings (Rating by Demographics, e.g. Ages, Male/Female, US/Non-US)",
       },
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_plotSummary",
-        enabled: true,
+        deleted: false,
         description:
           "Full Plot Summary (Main Page only contains an extract of the full summary)",
       },
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_plotKeywords",
-        enabled: true,
+        deleted: false,
         description: "Plot Keywords",
       },
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo",
-        enabled: true,
+        deleted: false,
         description:
           "Release Info (Title, Localized Title, Original Title, Year)",
       },
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_technicalData",
-        enabled: true,
+        deleted: false,
         description: "Technical Data (Runtime)",
       },
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData",
-        enabled: true,
+        deleted: false,
         description:
           "Parental Guide (Age Rating, Levels of: Nudity, Violence, Profanity, Alcohol & Drugs, Frightening Scenes)",
       },
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_creditsData",
-        enabled: true,
+        deleted: false,
         description: "Credits",
       },
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_companiesData",
-        enabled: true,
+        deleted: false,
         description: "Companies",
       },
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_filmingLocations",
-        enabled: true,
+        deleted: false,
         description: "Filming Locations",
       },
     ],
@@ -448,7 +448,246 @@ const shared = new Vue({
       },
     ],
 
-    uiLanguage: 'en'
+    uiLanguage: 'en',
+
+    releaseAttributes: [
+      {
+        searchTerm: 'unrated',
+        displayAs: 'UNRATED',
+        deleted: false,
+        sort: -1000
+      },
+      {
+        searchTerm: 'director\'s',
+        displayAs: 'Director\'s Cut',
+        deleted: false,
+        sort: -999
+      },
+      {
+        searchTerm: 'directors cut',
+        displayAs: 'Director\'s Cut',
+        deleted: false,
+        sort: -998
+      },
+      {
+        searchTerm: 'dc',
+        displayAs: 'Director\'s Cut',
+        deleted: false,
+        sort: -997
+      },
+      {
+        searchTerm: 'recut',
+        displayAs: 'Recut',
+        deleted: false,
+        sort: -996
+      },
+      {
+        searchTerm: 'final cut',
+        displayAs: 'Final Cut',
+        deleted: false,
+        sort: -995
+      },
+      {
+        searchTerm: 'ultimate cut',
+        displayAs: 'Ultimate Cut',
+        deleted: false,
+        sort: -994
+      },
+      {
+        searchTerm: 'extended',
+        displayAs: 'EXTENDED',
+        deleted: false,
+        sort: -993
+      },
+      {
+        searchTerm: 'see',
+        displayAs: 'EXTENDED',
+        deleted: false,
+        sort: -992
+      },
+      {
+        searchTerm: 'remaster',
+        displayAs: 'REMASTERED',
+        deleted: false,
+        sort: -991
+      },
+      {
+        searchTerm: 'remastered',
+        displayAs: 'REMASTERED',
+        deleted: false,
+        sort: -990
+      },
+      {
+        searchTerm: 'special edition',
+        displayAs: 'SPECIAL EDITION',
+        deleted: false,
+        sort: -989
+      },
+      {
+        searchTerm: 'se',
+        displayAs: 'SPECIAL EDITION',
+        deleted: false,
+        sort: -988
+      },
+      {
+        searchTerm: 'see',
+        displayAs: 'SPECIAL EDITION',
+        deleted: false,
+        sort: -987
+      },
+      {
+        searchTerm: 'imax',
+        displayAs: 'IMAX',
+        deleted: false,
+        sort: -986
+      },
+      {
+        searchTerm: 'open matte',
+        displayAs: 'Open Matte',
+        deleted: false,
+        sort: -985
+      },
+      {
+        searchTerm: 'bootleg',
+        displayAs: 'BOOTLEG',
+        deleted: false,
+        sort: -984
+      },
+      {
+        searchTerm: 'bluray',
+        displayAs: 'BD',
+        deleted: false,
+        sort: -983
+      },
+      {
+        searchTerm: 'mbluray',
+        displayAs: 'BD',
+        deleted: false,
+        sort: -982
+      },
+      {
+        searchTerm: 'blu ray',
+        displayAs: 'BD',
+        deleted: false,
+        sort: -981
+      },
+      {
+        searchTerm: 'bd',
+        displayAs: 'BD',
+        deleted: false,
+        sort: -980
+      },
+      {
+        searchTerm: 'bdrip',
+        displayAs: 'BD',
+        deleted: false,
+        sort: -979
+      },
+      {
+        searchTerm: 'bdripld',
+        displayAs: 'BD',
+        deleted: false,
+        sort: -978
+      },
+      {
+        searchTerm: 'brrip',
+        displayAs: 'BD',
+        deleted: false,
+        sort: -977
+      },
+      {
+        searchTerm: 'dvd',
+        displayAs: 'DVD',
+        deleted: false,
+        sort: -976
+      },
+      {
+        searchTerm: 'dvdrip',
+        displayAs: 'DVD',
+        deleted: false,
+        sort: -975
+      },
+      {
+        searchTerm: 'dvdripld',
+        displayAs: 'DVD',
+        deleted: false,
+        sort: -974
+      },
+      {
+        searchTerm: 'dvdscr',
+        displayAs: 'DVD',
+        deleted: false,
+        sort: -973
+      },
+      {
+        searchTerm: 'r5',
+        displayAs: 'R5',
+        deleted: false,
+        sort: -972
+      },
+      {
+        searchTerm: 'r5ld',
+        displayAs: 'R5',
+        deleted: false,
+        sort: -971
+      },
+      {
+        searchTerm: 'web',
+        displayAs: 'WEB',
+        deleted: false,
+        sort: -970
+      },
+      {
+        searchTerm: 'webrip',
+        displayAs: 'WEB',
+        deleted: false,
+        sort: -969
+      },
+      {
+        searchTerm: 'webhd',
+        displayAs: 'WEB',
+        deleted: false,
+        sort: -968
+      },
+      {
+        searchTerm: 'netflix',
+        displayAs: 'WEB',
+        deleted: false,
+        sort: -967
+      },
+      {
+        searchTerm: 'amazon',
+        displayAs: 'WEB',
+        deleted: false,
+        sort: -966
+      },
+      {
+        searchTerm: 'hulu',
+        displayAs: 'WEB',
+        deleted: false,
+        sort: -965
+      },
+      {
+        searchTerm: 'hdrip',
+        displayAs: 'WEB',
+        deleted: false,
+        sort: -964
+      },
+      {
+        searchTerm: 'hdtv',
+        displayAs: 'HDTV',
+        deleted: false,
+        sort: -963
+      },
+      {
+        searchTerm: 'tv',
+        displayAs: 'TV',
+        deleted: false,
+        sort: -962
+      }
+
+      // TODO - more!
+    ]
   },
 
   methods: {}

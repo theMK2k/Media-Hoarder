@@ -1,6 +1,8 @@
 # DONE
 
-## Road to Release (Win/Linux/Mac)
+## v1.0.0
+
+### Road to Release (Win/Linux/Mac)
 OK - IMDB detection
 OK -> improve by utilizing year (162 of 170 matched, 2553 of 2648 matched)
 
@@ -13,7 +15,7 @@ OK  - let user define preferred (local) Regions to identify the primary title
 OK  -> fetch Countries from https://www.imdb.com/search/title/ and provide as list
 OK  -> Auto set region by user's localization setting?
 
-## I18N Basic
+### I18N Basic
 OK - moment.humanize should also be localized (see de.json!)
 OK - implement vue-i18n
 OK - Add UI-Language Selection in Settings
@@ -44,7 +46,7 @@ OK - change static strings in components to $t('key')
     OK src\components\shared\VersionDialog.vue
     OK src\components\shared\VideoPlayerDialog.vue
 
-## Harden fetch from web
+### Harden fetch from web
 OK - How should we handle ECONNRESET? maybe requestretry?
 OK - How can we test this?
 
@@ -60,7 +62,7 @@ OK - How can we test this?
   OK - imdb search/find
   OK - imdb scraping on persons, companies etc.
 
-## More Dialogs
+### More Dialogs
 OK - add AudioLanguageDialog
 OK - add SubtitleLanguageDialog
 OK -> for clicking the individual language in the MediaList
@@ -68,10 +70,10 @@ OK -> allow "filter by this language"
 OK -> what do we do with "+3" entries?
 OK  -> they should expand
 
-## Icons for Navbar?
+### Icons for Navbar?
 OK - would it be good to have (many) icons for the sections and filters in the navbar?
 
-## IMDB Scraper Checks / Watchdog
+### IMDB Scraper Checks / Watchdog
 
 OK - put all IMDB scraping functions from store.js into imdb-scraper.js
 OK - create a watchdog CLI which tests imdb-scraper.js
@@ -84,33 +86,33 @@ OK - Implement IMDB Scraper Checks Dialog, usable from
 OK    - Settings (via Button)
 OK    - after Scan Options Dialog and before actual Scan
 
-## Open moviechat.org button
+### Open moviechat.org button
 -> link https://moviechat.org/tt0054215
 
-## Filming Locations
+### Filming Locations
 OK - add as section in MediaLists
 OK - add filter
 
-## Rating Demographics
+### Rating Demographics
 OK - scrape
 OK - allow the user to choose which demography to use as IMDB rating
 OK - show demographics matrix when clicking IMDB score for an item
 
-## CompanyDialog, PersonDialog, Plot Keyword Dialog, Filming Locations Dialog
+### CompanyDialog, PersonDialog, Plot Keyword Dialog, Filming Locations Dialog
 include statistical infos (how many movies)
 
-## 720p, SD, HD Detection
+### 720p, SD, HD Detection
 OK - fix resolution Detection, e.g. 4:3 HD is oftentimes detected as 720p
 
-## Age Rating
+### Age Rating
 - use user-chosen regions (countries) as basis for the age rating shown in the main list
 
-## Settings - Scraper / Scan Media Options
+### Settings - Scraper / Scan Media Options
 - allow user to deselect things for the IMDB scraper (analog to store.scanOptions)
 
-## View-Switchig multiple event handling bug
+### View-Switchig multiple event handling bug
 
-## History/New Version Popup
+### History/New Version Popup
 - shown on startup
 - welcome message
 - latest introduced features
@@ -161,29 +163,29 @@ Content:
 -> load version-xx.html from file or from github if not available
 -> render within VersionDialog
 
-## Investigate an "AND" filter
+### Investigate an "AND" filter
 OK - how would SQL queries look?
 OK -> save AND filter setting alongside the filters themselves
 
-## Show Scan-Progress in Taskbar
+### Show Scan-Progress in Taskbar
 - see: https://www.electronjs.org/docs/tutorial/progress-bar
 
-## MediaList
+### MediaList
 - Bug? Age (range) isn't shown anymore
 
-## Rescan dialog
+### Rescan dialog
 - show warning when a source path cannot be found but it is set to remove entries on re-scan
 
-## Recalculation of Pagination Items on mouseover
+### Recalculation of Pagination Items on mouseover
 - when mouseover on items, pagination items get recalced
 - reason could be usage of this.$set (it was indeed)
 
-## Show Indicator when filters apply
+### Show Indicator when filters apply
 
-## Person Search
+### Person Search
 - "David Lynch" should have multiple hits, unfortunately only one is shown
 
-## Duplicates
+### Duplicates
 
 - an actual duplicate is the same file in another location (e.g. local copy vs. on server)
 - a meta duplicate has the same IMDB ID
@@ -207,7 +209,7 @@ Features:
 
 - also implement rescan (actualDuplicates and metaDuplicates can be found there, too)
 
-## IMDB title
+### IMDB title
 
 - provide languages management (also based on regions!)
 -> we need them for the "preferred Languages" from MediaInfo
@@ -226,19 +228,19 @@ on Rescan:
 -> if user has appropriate language type setting (i.e. the preferred language types accomply with the chosen regions) then filter the language types, i.e. Token = "($LANGUAGE_FULL title)"
 -> if the user has preferred title types then filter by them, else discard the title completely
 
-## Pagination
+### Pagination
 - implement better pagination control (move left, move right, middle: current page / total pages -> dropdown)
 
-## Plotkeywords
+### Plotkeywords
 OK - scrape plotkeywords
 OKish - show
 - filter
 
-## Full Plot Summary
+### Full Plot Summary
 - scrape full plot summary from /plotsummary (find the correct one using the summary text from main page)
 - show full plot summary when item is selected
 
-## Restructure Settings
+### Restructure Settings
 
 - Tabbed view (either sidebar or horizontal tabs)
   1. General
@@ -254,16 +256,16 @@ OKish - show
   3. Series
   - Source Paths
 
-## Media Scan
+### Media Scan
 OK - as soon as a tbl_Movies entry is written, also write Name
 
 - min/maxAge is false when 0 is in place
 
-## @Mike
+### @Mike
 
 Analyze the call App.vue -> store.rescan(onlyNew); -> node functionality without IPC or whatever
 
-## Other
+### Other
 OK - dont import "See full summary>>"
 
 OK - implement fetchFilter IMDB/Metacritic Score
@@ -296,23 +298,23 @@ OK - exit menuitem
 OK - fix Age Rating filter (undetermined yields no results -> see filterParentalAdvisory)
 OK - fix duplication check in filescan, e.g. "Audition ~ Ôdishon (De)(Sub De)(HD)[1999][Drama, Horror, Mystery][7.2 @ 65149][tt0235198].mkv"
 
-## Languages Filter
+### Languages Filter
 
 OK - MediaInfo Scan: add to tbl_Movies_Languages (Audio, Subtitle)
 OK - add Audio- and Subtitle Filters in App.vue
 
-## Watchlist
+### Watchlist
 
 - add as filter
 - implement "add to watchlist button"
 -> Implemented as arbitrary lists
 
-## Play "Button" as masked image
+### Play "Button" as masked image
 
 - see data/maskPlay.pdn/png
 - embedded as base64 with https://www.base64-image.de/
 
-## Extras
+### Extras
 
 OK - add "isExtraOf" relation for tbl_Movies
 OK -> don't count Extras (e.g. in filters)
@@ -320,17 +322,17 @@ OK -> don't show Extras in main list
 OK -> show Extras in expanded item
 OK -> implement extra detection in rescan (determine to which movie the extra must be assigned to, e.g. multiple releases of the same movie, maybe work with IMDB id but also with parts of the Name)
 
-## Last Seen (last_access_at)
+### Last Seen (last_access_at)
 
 - in movie details
 - as sortable
 - set after predefined time
 
-## IMDB MetaData
+### IMDB MetaData
 
 OK - Parental Guidance (Sex/Nudity, Gore etc. scores)
 
-## Filters
+### Filters
 
 OK - Company (Search-filter)
 OK - Person (Search-filter)
@@ -344,7 +346,7 @@ OK - Metacritic
 NAH - Number of Votes
 OK - Metacritic Score
 
-## MediaList - Sort
+### MediaList - Sort
 
 - Sort by:
 OK    - Name
@@ -352,35 +354,35 @@ OK    - Own Rating
 OK    - IMDB Rating
 OK    - Metacritic Score
 
-## Settings
+### Settings
 OK - Source Path dialog
     -> prefill Description with directory name?
 OK - "loader" on SourcePath removal (it may take some time)
 OK - sourcePath: check for removed files
 OK - minimumWaitForSetAccess (update Access datetime after ... seconds)
 
-## Company
+### Company
 
 OK - scrape from IMDB
 OK - find out a way to display the "top 5" companies involved
 
-## MediaList - Movie (non-selected)
+### MediaList - Movie (non-selected)
 
 OK - Metacritic Score
 
-## MediaList - Selected Movie
+### MediaList - Selected Movie
 
 OK - show more information
 OK - add Content Advisory (Sex & Nudity, Gore etc.)
 
-## Edit Movie
+### Edit Movie
 
 OK - allow to re-assign new IMDB entry
   OK -> opens IMDB search (store/scrapeIMDBAdvancedTitleSearch)
     OK - perform rescan after re-assign (only this movie)
       OK -> refactor rescanMoviesMetaData (we need to differentiate mediainfo metadata and imdb metadata, we don't need findIMDBtconst when id_Movies is provided)
 
-## Dialog Enter and Escape
+### Dialog Enter and Escape
 -> Enter should "OK" the dialog
 -> Esc should "Cancel" the dialog
 

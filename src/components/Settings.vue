@@ -15,6 +15,7 @@
       <v-tab>{{$t("Regions")}}</v-tab>
       <v-tab>{{$t("Languages")}}</v-tab>
       <v-tab>{{$t("Title Types")}}</v-tab>
+      <v-tab>{{$t("Release Attributes")}}</v-tab>
 
       <!-- GENERAL -->
       <v-tab-item style="padding: 8px">
@@ -421,6 +422,49 @@
           v-on:click="openAddTitleTypeDialog"
         >{{$t('Add Title Type')}}</v-btn>
       </v-tab-item>
+
+      <!-- RELEASE ATTRIBUTES -->
+      <v-tab-item style="padding: 8px">
+        <p>{{$t('Here you can set up which release attributes should be searched for in the file/directory names and how they should be displayed_')}}</p>
+        <p>{{$t('The search term is case insensitive and must contain whole words within the file/directory name_')}}</p>
+
+        <v-data-table
+          v-bind:headers="[{ text: $t('Search Term'), value: 'searchTerm'}, { text: $t('Display As'), value: 'displayAs'}, { text: '', value: 'actions', sortable: false }]"
+          v-bind:items="shared_releaseAttributesFiltered"
+          class="elevation-1"
+          hide-default-footer
+          v-bind:items-per-page="1000"
+        >
+          <template v-slot:item.actions="{ item }">
+            <v-icon small class="mr-2" @click="onEditReleaseAttribute(item)">mdi-pencil</v-icon>
+            <v-icon
+              small
+              class="mr-2"
+              color="red"
+              @click="onDeleteReleaseAttribute(item)"
+            >mdi-delete</v-icon>
+            <v-icon
+              small
+              class="mr-2"
+              v-bind:disabled="item.sort === 1"
+              @click="onReleaseAttributeUp(item)"
+            >mdi-arrow-up</v-icon>
+            <v-icon
+              small
+              class="mr-2"
+              v-bind:disabled="item.sort === releaseAttributesMaxSort"
+              @click="onReleaseAttributeDown(item)"
+            >mdi-arrow-down</v-icon>
+          </template>
+        </v-data-table>
+        <v-btn
+          v-on:click="onAddReleaseAttribute()"
+          text
+          small
+          color="primary"
+          style="margin-top: 16px"
+        >{{$t("Add")}}</v-btn>
+      </v-tab-item>
     </v-tabs>
 
     <mk-sourcepath-description-dialog
@@ -465,6 +509,13 @@
       v-on:close="onAddTitleTypeDialogClose"
       v-on:addTitleType="onAddTitleType"
     ></mk-add-title-type-dialog>
+    <mk-edit-release-attribute-dialog
+      ref="editReleaseAttributeDialog"
+      v-bind:show="editReleaseAttributeDialog.show"
+      v-bind:title="editReleaseAttributeDialog.title"
+      v-on:cancel="onEditReleaseAttributeDialogClose"
+      v-on:ok="onEditReleaseAttributeDialogOK"
+    ></mk-edit-release-attribute-dialog>
   </div>
 </template>
 
@@ -480,7 +531,9 @@ import Dialog from "@/components/shared/Dialog.vue";
 import AddRegionsDialog from "@/components/shared/AddRegionsDialog.vue";
 import AddLanguagesDialog from "@/components/shared/AddLanguagesDialog.vue";
 import AddTitleTypeDialog from "@/components/shared/AddTitleTypeDialog.vue";
+import EditReleaseAttributeDialog from "@/components/shared/EditReleaseAttributeDialog";
 import TitleType from "@/components/shared/TitleType.vue";
+
 import * as helpers from "@/helpers/helpers";
 
 export default {
@@ -491,6 +544,7 @@ export default {
     "mk-add-regions-dialog": AddRegionsDialog,
     "mk-add-languages-dialog": AddLanguagesDialog,
     "mk-add-title-type-dialog": AddTitleTypeDialog,
+    "mk-edit-release-attribute-dialog": EditReleaseAttributeDialog,
     "mk-title-type": TitleType
   },
 
@@ -531,7 +585,12 @@ export default {
       show: false
     },
 
-    tmpPath: ""
+    tmpPath: "",
+
+    editReleaseAttributeDialog: {
+      show: false,
+      title: ""
+    }
   }),
 
   watch: {
@@ -576,6 +635,14 @@ export default {
 
     shared_uiLanguage() {
       return this.$shared.uiLanguage;
+    },
+
+    shared_releaseAttributesFiltered() {
+      return this.$shared.releaseAttributes.filter(attrib => !attrib.deleted);
+    },
+
+    releaseAttributesMaxSort() {
+      return Math.max(...this.$shared.releaseAttributes.map(item => item.sort));
     }
   },
 
@@ -1097,6 +1164,132 @@ export default {
 
     openCheckIMDBScraperDialog() {
       eventBus.openCheckIMDBScraperDialog();
+    },
+
+    onEditReleaseAttribute(item) {
+      this.editReleaseAttributeDialog.title = this.$t("Edit Release Attribute");
+      this.$refs.editReleaseAttributeDialog.init(
+        item.searchTerm,
+        item.displayAs
+      );
+      this.editReleaseAttributeDialog.show = true;
+    },
+
+    onAddReleaseAttribute() {
+      this.editReleaseAttributeDialog.title = this.$t("Add Release Attribute");
+      this.$refs.editReleaseAttributeDialog.init("", "");
+      this.editReleaseAttributeDialog.show = true;
+    },
+
+    async onReleaseAttributeUp(item) {
+      const nextSort = Math.max(...this.$shared.releaseAttributes.map(ra => ra.sort).filter(ra => ra < item.sort));
+
+      if (nextSort) {
+        const ra = this.$shared.releaseAttributes.find(ra => ra.sort === nextSort);
+
+        ra.sort = item.sort;
+        item.sort = nextSort;
+
+        store.sortReleaseAttributes();
+
+        await store.setSetting(
+          "ReleaseAttributes",
+          JSON.stringify(this.$shared.releaseAttributes)
+        );
+
+        // HACK: update view
+        const temp = this.$shared.releaseAttributes;
+        this.$shared.releaseAttributes = null;
+        this.$shared.releaseAttributes = temp;
+      }
+    },
+
+    async onReleaseAttributeDown(item) {
+      const nextSort = Math.min(...this.$shared.releaseAttributes.map(ra => ra.sort).filter(ra => ra > item.sort));
+
+      if (nextSort) {
+        const ra = this.$shared.releaseAttributes.find(ra => ra.sort === nextSort);
+
+        ra.sort = item.sort;
+        item.sort = nextSort;
+
+        store.sortReleaseAttributes();
+
+        await store.setSetting(
+          "ReleaseAttributes",
+          JSON.stringify(this.$shared.releaseAttributes)
+        );
+
+        // HACK: update view
+        const temp = this.$shared.releaseAttributes;
+        this.$shared.releaseAttributes = null;
+        this.$shared.releaseAttributes = temp;
+      }
+    },
+
+    onEditReleaseAttributeDialogClose() {
+      this.editReleaseAttributeDialog.show = false;
+    },
+
+    async onEditReleaseAttributeDialogOK(item) {
+      try {
+        const searchTerm = item.searchTerm.toLowerCase();
+        const displayAs = item.displayAs;
+
+        let foundItem = this.$shared.releaseAttributes.find(
+          item2 => item2.searchTerm === searchTerm
+        );
+
+        if (!foundItem) {
+          this.$shared.releaseAttributes.push({
+            searchTerm,
+            displayAs,
+            deleted: false
+          });
+        } else {
+          foundItem.displayAs = displayAs;
+          foundItem.deleted = false;
+        }
+
+        await store.setSetting(
+          "ReleaseAttributes",
+          JSON.stringify(this.$shared.releaseAttributes)
+        );
+
+        eventBus.showSnackbar(
+          "success",
+          this.$t("Release Attribute saved successfully_")
+        );
+      } catch (e) {
+        eventBus.showSnackbar("error", e);
+      }
+
+      this.editReleaseAttributeDialog.show = false;
+    },
+
+    async onDeleteReleaseAttribute(item) {
+      try {
+        this.$shared.releaseAttributes.find(
+          item2 => item2.searchTerm === item.searchTerm
+        ).deleted = true;
+  
+        await store.setSetting(
+          "ReleaseAttributes",
+          JSON.stringify(this.$shared.releaseAttributes)
+        );
+
+        // HACK: update view
+        const temp = this.$shared.releaseAttributes;
+        this.$shared.releaseAttributes = null;
+        this.$shared.releaseAttributes = temp;
+  
+        eventBus.showSnackbar(
+          "success",
+          this.$t("Release Attribute removed successfully_")
+        );
+      } catch(e) {
+        eventBus.showSnackbar('error', e);
+      }
     }
   },
 
