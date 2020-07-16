@@ -211,16 +211,16 @@
                             class="Clickable"
                             v-on:click.stop="onVideoQualityClicked(item.MI_Quality)"
                           >{{ item.MI_Quality }}</span>
-                          |
                         </span>
                         <span v-if="item.AgeRating">
+                          |
                           <span
                             class="Clickable"
                             v-on:click.stop="onAgeRatingClicked(item.AgeRating)"
                           >{{ item.AgeRating }}</span>
-                          |
                         </span>
                         <span v-if="item.Genres">
+                          |
                           <span v-for="(genre, index) in item.Genres" v-bind:key="genre.name">
                             <span>{{ index > 0 ? ', ' : '' }}</span>
                             <span
@@ -228,10 +228,10 @@
                               v-on:click.stop="onGenreClicked(genre)"
                             >{{ genre.translated }}</span>
                           </span>
-                          |
                         </span>
 
                         <span v-if="item.AudioLanguages">
+                          |
                           <v-icon small>mdi-comment-outline</v-icon>
                           <span v-for="(lang, index) in item.AudioLanguages" v-bind:key="lang">
                             <span>{{ index > 0 ? ', ' : ' ' }}</span>
@@ -240,10 +240,10 @@
                               v-on:click.stop="onLanguageClicked(lang, 'audio', item)"
                             >{{ lang }}</span>
                           </span>
-                          {{item.SubtitleLanguages ? ' | ' : ''}}
                         </span>
 
                         <span v-if="item.SubtitleLanguages">
+                          |
                           <v-icon small>mdi-subtitles-outline</v-icon>
                           <span v-for="(lang, index) in item.SubtitleLanguages" v-bind:key="lang">
                             <span>{{ index > 0 ? ', ' : ' ' }}</span>
