@@ -70,7 +70,23 @@ function getMovieNameFromFileName(filename) {
       .join(".");
   }
 
-  filenameFiltered = filenameFiltered.replace(/\.,_/g, " ");
+  filenameFiltered = filenameFiltered.replace(/[.,_]/g, " ");
+
+  while (/\s\s/.test(filenameFiltered)) {
+    filenameFiltered = filenameFiltered.replace(/\s\s/g, " ");
+  }
+
+  return filenameFiltered;
+}
+
+function cleanupFileName(filename) {
+  let filenameFiltered = getMovieNameFromFileName(filename);
+
+  filenameFiltered = filenameFiltered.replace(/[()[\]]/g, " ");
+  
+  while (/\s\s/.test(filenameFiltered)) {
+    filenameFiltered = filenameFiltered.replace(/\s\s/g, " ");
+  }
 
   return filenameFiltered;
 }
@@ -206,4 +222,5 @@ export {
   downloadFile,
   requestAsync,
   requestRetryStrategy,
+  cleanupFileName
 };

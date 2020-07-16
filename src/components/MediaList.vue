@@ -253,6 +253,17 @@
                             >{{ lang }}</span>
                           </span>
                         </span>
+
+                        <span v-if="item.ReleaseAttributes">
+                          |
+                          <span
+                            v-for="(releaseAttribute, index) in item.ReleaseAttributes"
+                            v-bind:key="releaseAttribute"
+                          >
+                            <span>{{ index > 0 ? ', ' : ' ' }}</span>
+                            <span class="Clickable">{{ releaseAttribute }}</span>
+                          </span>
+                        </span>
                       </div>
                     </div>
                     <div class="flex-grow-1"></div>
@@ -1363,7 +1374,7 @@ export default {
               movie.id_Movies
             );
 
-            logger.log('movie details:', { lists, extras });
+            logger.log("movie details:", { lists, extras });
 
             this.$set(movie, "lists", lists);
             this.$set(movie, "extras", extras);
@@ -1723,9 +1734,10 @@ export default {
     },
 
     async expandLanguages(item, type) {
-      if (type === 'audio') {
+      if (type === "audio") {
         item.AudioLanguages = store.generateLanguageArray(
-          item.MI_Audio_Languages, 9999
+          item.MI_Audio_Languages,
+          9999
         );
       } else {
         item.SubtitleLanguages = store.generateLanguageArray(
@@ -1949,6 +1961,8 @@ export default {
     async onRescrapeIMDB(item) {
       try {
         store.resetUserScanOptions();
+
+        await store.findReleaseAttributes(item, false);
 
         await store.assignIMDB(
           item.id_Movies,

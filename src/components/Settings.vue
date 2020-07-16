@@ -589,7 +589,8 @@ export default {
 
     editReleaseAttributeDialog: {
       show: false,
-      title: ""
+      title: "",
+      oldItem: null
     }
   }),
 
@@ -642,7 +643,7 @@ export default {
     },
 
     releaseAttributesMaxSort() {
-      return Math.max(...this.$shared.releaseAttributes.map(item => item.sort));
+      return Math.max(...this.$shared.releaseAttributes.filter(item => !item.deleted).map(item => item.sort));
     }
   },
 
@@ -1168,6 +1169,7 @@ export default {
 
     onEditReleaseAttribute(item) {
       this.editReleaseAttributeDialog.title = this.$t("Edit Release Attribute");
+      this.editReleaseAttributeDialog.oldItem = item;
       this.$refs.editReleaseAttributeDialog.init(
         item.searchTerm,
         item.displayAs
@@ -1177,6 +1179,7 @@ export default {
 
     onAddReleaseAttribute() {
       this.editReleaseAttributeDialog.title = this.$t("Add Release Attribute");
+      this.editReleaseAttributeDialog.oldItem = null;
       this.$refs.editReleaseAttributeDialog.init("", "");
       this.editReleaseAttributeDialog.show = true;
     },
@@ -1236,20 +1239,31 @@ export default {
         const searchTerm = item.searchTerm.toLowerCase();
         const displayAs = item.displayAs;
 
-        let foundItem = this.$shared.releaseAttributes.find(
-          item2 => item2.searchTerm === searchTerm
-        );
+        let foundItem = this.editReleaseAttributeDialog.oldItem;
+        
+        if (!foundItem) {
+          foundItem = this.$shared.releaseAttributes.find(
+            item2 => (item2.searchTerm === searchTerm && item2.deleted)
+          );
+        }
 
         if (!foundItem) {
           this.$shared.releaseAttributes.push({
             searchTerm,
             displayAs,
-            deleted: false
+            deleted: false,
+            sort: this.editReleaseAttributeDialog.oldItem ? this.editReleaseAttributeDialog.oldItem.sort : (this.releaseAttributesMaxSort ? this.releaseAttributesMaxSort : 99999)
           });
         } else {
           foundItem.displayAs = displayAs;
           foundItem.deleted = false;
+
+          if (this.editReleaseAttributeDialog.oldItem) {
+            foundItem.sort = this.editReleaseAttributeDialog.oldItem.sort;
+          }
         }
+
+        store.sortReleaseAttributes();
 
         await store.setSetting(
           "ReleaseAttributes",
@@ -1269,10 +1283,10 @@ export default {
 
     async onDeleteReleaseAttribute(item) {
       try {
-        this.$shared.releaseAttributes.find(
-          item2 => item2.searchTerm === item.searchTerm
-        ).deleted = true;
+        item.deleted = true;
   
+        store.sortReleaseAttributes();
+
         await store.setSetting(
           "ReleaseAttributes",
           JSON.stringify(this.$shared.releaseAttributes)

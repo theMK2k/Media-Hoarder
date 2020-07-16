@@ -12,7 +12,7 @@
       </v-card-title>
 
       <div style="margin-left: 24px">
-        <v-text-field v-model="searchTerm" v-bind:label="$t('Search Term')"></v-text-field>
+        <v-text-field v-model="searchTerm" v-bind:label="$t('Search Term')" v-bind:disabled="isEdit"></v-text-field>
         <v-text-field v-model="displayAs" v-bind:label="$t('Display As')"></v-text-field>
       </div>
 
@@ -46,6 +46,7 @@ export default {
 
   data() {
     return {
+      isEdit: false,
       searchTerm: "",
       displayAs: ""
     };
@@ -59,6 +60,12 @@ export default {
     init(searchTerm, displayAs) {
       this.searchTerm = searchTerm;
       this.displayAs = displayAs;
+
+      if (searchTerm) {
+          this.isEdit = true;
+      } else {
+          this.isEdit = false;
+      }
     },
 
     onButtonClick(eventName) {

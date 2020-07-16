@@ -9,6 +9,21 @@
 -> let them be sortable
 => let user re-edit the entry/attributes
 
+### MediaInfo: alternatively use track.DURATION if track.Duration is not available
+
+-> Blues Brothers
+-> mediainfo-rar
+
+### BUGS
+
+- imdb scraper: make sure, all texts are treated with html2text, see "Robot &amp; Frank"
+- filescan: extras naming (see: "Die Üblichen Verdächtigen", "Vertigo")
+
+
+### Filter Reset Button
+
+- implement filter reset button in side bar menu
+
 ### Fine-tune some text colors
 
 - some help texts are too bright
@@ -22,6 +37,8 @@
   - generate a light-weight status page which informs users of broken IMDB scraper
 
 ### support Movies in directories (also .nfo parsing)
+
+- we currently expect the whole movie name and release attributes being included in the filename, this is not always the case
 
 ## LATER
 
