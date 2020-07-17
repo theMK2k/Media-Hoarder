@@ -29,8 +29,8 @@
         <span v-if="isNewVersionAvailable">
           {{$t('Version {latestVersion} is available - get it at', {latestVersion: latestVersion})}}
           <a
-            v-on:click.stop="openLink('https://github.com/theMK2k/MediaBox/releases')"
-          >https://github.com/theMK2k/MediaBox/releases</a>
+            v-on:click.stop="openLink('https://github.com/theMK2k/Media-Hoarder/releases')"
+          >https://github.com/theMK2k/Media-Hoarder/releases</a>
         </span>
         <span v-if="isUpToDate">{{$t('you are up to date')}}</span>
         <span
@@ -155,7 +155,7 @@ export default {
           logger.log("VersionDialog updateVersionInfo fetchRemoteHistory");
 
           const resRemoteVersionInfo = await fetch(
-            `https://raw.githubusercontent.com/theMK2k/MediaBox/master/public/history/${fileName}`
+            `https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/public/history/${fileName}`
           );
 
           const remoteVersionInfo = await resRemoteVersionInfo.text();
@@ -195,7 +195,7 @@ export default {
         this.currentVersion = objLocalHistory[0].version;
 
         const resRemoteHistory = await fetch(
-          "https://raw.githubusercontent.com/theMK2k/MediaBox/master/public/history/history.json"
+          "https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/public/history/history.json"
         );
 
         const remoteHistory = await resRemoteHistory.json();

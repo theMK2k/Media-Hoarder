@@ -93,7 +93,7 @@ Visit <https://nodejs.org> and download/install it for your OS. **Media Hoarder*
 ### Clone the repository
 
 ```bash
-git clone https://github.com/theMK2k/MediaBox.git
+git clone https://github.com/theMK2k/Media-Hoarder.git
 ```
 
 ### Project setup
