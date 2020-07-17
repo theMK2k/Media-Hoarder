@@ -827,6 +827,7 @@
   "Errors were encountered during the scan, consider a re-scan_": "Beim Einlesen sind Fehler aufgetreten. Ein erneutes Einlesen sollte durchgeführt werden.",
 
   "Release Attributes": "Veröffentlichungsattribute",
+  "Release Attribute": "Veröffentlichungsattribut",
   "Here you can set up which release attributes should be searched for in the file/directory names and how they should be displayed_": "Hier kann eingestellt werden, nach welchen Veröffentlichungsattributen gesucht werden soll und wie sie dargestellt werden sollen.",
   "Search Term": "Suchtext",
   "Display As": "Anzeige als",
@@ -836,5 +837,9 @@
   "Search Term is missing_": "Suchtext fehlt.",
   "_Display As_ is missing_": "\"Anzeige als\" fehlt.",
   "Release Attribute saved successfully_": "Veröffentlichungsattribut erfolgreich gespeichert.",
-  "Release Attribute removed successfully_": "Veröffentlichungsattribut erfolgreich entfernt."
+  "Release Attribute removed successfully_": "Veröffentlichungsattribut erfolgreich entfernt.",
+  "RESET": "ZURÜCKSETZEN",
+  "Filter by this release attribute": "Nach diesem Veröffentlichungsattribut filtern",
+  "Remove this release attribute for the current movie": "Dieses Veröffentlichungsattribut für den aktuellen Film entfernen",
+  "Release Attribute _{ReleaseAttribute}_ successfully removed from selected movie_": "Veröffentlichungsattribut \"{ReleaseAttribute}\" erfolgreich für den ausgewählten Film entfernt."
 }

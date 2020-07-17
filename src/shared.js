@@ -9,7 +9,7 @@ const shared = new Vue({
     sidenav: null,
     searchText: null,
 
-    filter: {
+    filters: {
       filterSourcePaths: [],
       filterGenres: [],
       filterSettings: {

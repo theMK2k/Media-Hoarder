@@ -176,7 +176,7 @@ export default {
       };
 
       const setFilter = {
-        filterAgeRatings: this.$shared.filter.filterAgeRatings.filter(ageRating => {
+        filterAgeRatings: this.$shared.filters.filterAgeRatings.filter(ageRating => {
           return (
             ageRating.Age >= limits.$Min_Age && ageRating.Age <= limits.$Max_Age
           );
