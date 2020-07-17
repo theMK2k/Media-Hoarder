@@ -3,7 +3,7 @@ module.exports = {
     electronBuilder: {
       builderOptions: {
         extraResources: [
-          'data/mediabox.db_initial',
+          'data/media-hoarder.db_initial',
           'data/mediainfo/**/*',
           'data/easylist.txt'
         ],

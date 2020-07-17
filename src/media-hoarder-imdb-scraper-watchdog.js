@@ -22,7 +22,7 @@ logger.setLevel(config.logLevel); // set to 0 for log output of imdb-scraper, el
 const log = [];
 
 (async () => {
-  logger.info('Syntax: mediabox-imdb-scraper-watchdog [options]')
+  logger.info('Syntax: media-hoarder-imdb-scraper-watchdog [options]')
   logger.info('')
   logger.info('options:')
   logger.info('         --logLevel=<logLevel>                                log level, default: 2')

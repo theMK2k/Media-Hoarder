@@ -71,8 +71,8 @@ let currentScanInfoHeader = "";
 let dbsync = dbsyncSQLite;
 
 dbsync.runSync(
-  helpers.getPath("data/mediabox.db_initial"),
-  helpers.getPath("data/mediabox.db"),
+  helpers.getPath("data/media-hoarder.db_initial"),
+  helpers.getPath("data/media-hoarder.db"),
   { doCreateTables: true, doCreateColumns: true, doCopyContent: true },
   (err) => {
     if (err) {

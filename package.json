@@ -1,5 +1,5 @@
 {
-  "name": "mediahoarder",
+  "name": "media-hoarder",
   "version": "0.1.0",
   "private": true,
   "description": "Media Hoarder - THE media frontend for data hoarders",
@@ -12,7 +12,7 @@
     "electron:buildremote": "vue-cli-service electron:build --win --linux --mac",
     "electron:serve": "vue-cli-service electron:serve",
     "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/i18n/**/*.json'",
-    "imdb-scraper-watchdog": "babel-node --presets es2015 src/mediabox-imdb-scraper-watchdog.js",
+    "imdb-scraper-watchdog": "babel-node --presets es2015 src/media-hoarder-imdb-scraper-watchdog.js",
     "invokebuilder": "vue invoke electron-builder",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
