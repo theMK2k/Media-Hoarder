@@ -5068,10 +5068,9 @@ async function loadReleaseAttributes() {
 
     // merge with shared.releaseAttribues
     savedReleaseAttributesObject.forEach(attrib => {
-      const foundAttrib = shared.releaseAttributes.find(attrib2 => attrib2.searchTerm === attrib.searchTerm);
+      const foundAttrib = shared.releaseAttributes.find(attrib2 => attrib2.searchTerm === attrib.searchTerm && attrib2.displayAs === attrib.displayAs);
 
       if (foundAttrib) {
-        foundAttrib.displayAs = attrib.displayAs;
         foundAttrib.deleted = attrib.deleted;
         foundAttrib.sort = attrib.sort;
       } else {
@@ -5217,7 +5216,7 @@ async function fetchFilterReleaseAttributes($MediaType) {
 
   logger.log("fetchFilterReleaseAttributes releaseAttributesHierarchy:", releaseAttributesHierarchy);
   
-  const results = [];
+  let results = [];
 
   for (let i = 0; i < releaseAttributesHierarchy.length; i++) {
     const ra = releaseAttributesHierarchy[i];
@@ -5274,14 +5273,16 @@ async function fetchFilterReleaseAttributes($MediaType) {
 
   const anyResults = await db.fireProcedureReturnAll(sqlAny, {$MediaType});
 
+  results = [anyResults[0], ...results.sort((a, b) => (a.ReleaseAttribute.toLowerCase() < b.ReleaseAttribute.toLowerCase() ? -1 : 1))];
+
   if (filterValues && filterValues.filterReleaseAttributes) {
     results.forEach((result) => {
-      const filterValue = filterValues.filterQualities.find(
+      const filterReleaseAttribute = filterValues.filterReleaseAttributes.find(
         (value) => value.ReleaseAttribute == result.ReleaseAttribute
       );
 
-      if (filterValue) {
-        result.Selected = filterValue.Selected;
+      if (filterReleaseAttribute) {
+        result.Selected = filterReleaseAttribute.Selected;
       }
 
       result.NumMovies = result.NumMovies.toLocaleString();
@@ -5290,7 +5291,7 @@ async function fetchFilterReleaseAttributes($MediaType) {
 
   logger.log("fetchFilterReleaseAttributes results:", results);
 
-  shared.filterReleaseAttributes = [anyResults[0], ...results.sort((a, b) => (a.ReleaseAttribute.toLowerCase() < b.ReleaseAttribute.toLowerCase() ? -1 : 1))];
+  shared.filterReleaseAttributes = results;
 }
 
 export {
