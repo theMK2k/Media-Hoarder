@@ -1206,6 +1206,28 @@ export default {
       ) {
         filtersList.push(this.$t("Subtitle Languages"));
       }
+
+      if (
+        this.$shared.filterReleaseAttributes &&
+        ((!this.$shared.filterSettings.filterReleaseAttributesAND &&
+          this.$shared.filterReleaseAttributes.find(
+            filter => !filter.Selected
+          )) ||
+          (this.$shared.filterSettings.filterReleaseAttributesAND &&
+            this.$shared.filterReleaseAttributes.find(
+              filter =>
+                filter.Selected && !filter.isAny
+            )))
+      ) {
+        filtersList.push(
+          `${this.$t("Release Attributes")}${
+            this.$shared.filterSettings.filterReleaseAttributesAND
+              ? " ߷"
+              : ""
+          }`
+        );
+      }
+
       if (
         this.$shared.filterIMDBPlotKeywords &&
         ((!this.$shared.filterSettings.filterIMDBPlotKeywordsAND &&
@@ -1665,6 +1687,7 @@ export default {
       );
       await store.fetchFilterIMDBRating(this.mediatype);
       await store.fetchFilterMetacriticScore(this.mediatype);
+      await store.fetchFilterReleaseAttributes(this.mediatype);
 
       await store.fetchSortValues(this.mediatype);
 

@@ -2501,6 +2501,90 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       filterIMDBRating += ")";
     }
 
+    let filterReleaseAttributes = "";
+    const releaseAttributesHierarchy = getReleaseAttributesHierarchy();
+
+    if (
+      shared.filterReleaseAttributes &&
+      ((!shared.filterSettings.filterReleaseAttributesAND &&
+        shared.filterReleaseAttributes.find((filter) => !filter.Selected)) ||
+        (shared.filterSettings.filterReleaseAttributesAND &&
+          shared.filterReleaseAttributes.find(
+            (filter) =>
+              filter.Selected && !filter.isAny
+          )))
+    ) {
+      const filterReleaseAttributesList = shared.filterReleaseAttributes
+        .filter(
+          (filter) => filter.Selected && !filter.isAny
+        )
+        .map((filter) => filter.ReleaseAttribute);
+
+      if (shared.filterSettings.filterReleaseAttributesAND) {
+        // use INTERSECT for AND-filter
+        // note: we don't have to take "none provided" into account
+        filterReleaseAttributes = "AND MOV.id_Movies IN (";
+
+        filterReleaseAttributes += filterReleaseAttributesList.reduce(
+          (prev, current) => {
+            return (
+              prev +
+              (prev ? " INTERSECT " : "") +
+              `SELECT id_Movies FROM tbl_Movies_Release_Attributes WHERE Release_Attributes_searchTerm IN (${releaseAttributesHierarchy.find(ra => ra.displayAs === current).searchTerms.map(param => param.replace(/'/g, "''")).reduce((prev2, current2) => {
+                return prev2 + (prev2 ? ", " : "") + `'${current2}'`;
+              }, "")})`
+            );
+          },
+          ""
+        );
+
+        filterReleaseAttributes += ")";
+      } else {
+        // OR-filter
+        if (
+          shared.filterReleaseAttributes.find(
+            (filter) =>
+              filter.Selected && filter.isAny
+          )
+        ) {
+          filterReleaseAttributes = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies_Release_Attributes) `;
+        } else {
+          filterReleaseAttributes = `AND (1=0 `;
+        }
+
+        if (
+          shared.filterReleaseAttributes.find(
+            (filter) =>
+              filter.Selected && !filter.isAny
+          )
+        ) {
+          const searchTerms = [];
+
+          releaseAttributesHierarchy.forEach(rah => {
+            if (filterReleaseAttributesList.find(ra => ra === rah.displayAs)) {
+              rah.searchTerms.forEach(searchTerm => {
+                searchTerms.push(searchTerm);
+              })
+            }
+          })
+          
+          filterReleaseAttributes += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_Release_Attributes WHERE Release_Attributes_searchTerm IN (`;
+
+          filterReleaseAttributes += searchTerms.reduce(
+            (prev, current) => {
+              return prev + (prev ? ", " : "") + `'${current.replace(/'/g, "''")}'`;
+            },
+            ""
+          );
+
+          filterReleaseAttributes += "))";
+        }
+
+        filterReleaseAttributes += ")";
+      }
+    }
+
+
     let filter_id_Movies = "";
     if (arr_id_Movies && arr_id_Movies.length) {
       filter_id_Movies = "AND MOV.id_Movies IN (";
@@ -2524,6 +2608,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       filterIMDBFilmingLocations
     );
     logger.log("fetchMedia filterAudioLanguages:", filterAudioLanguages);
+    logger.log("fetchMedia filterReleaseAttributes:", filterReleaseAttributes);
     logger.log("fetchMedia filter_id_Movies:", filter_id_Movies);
 
     const query = `
@@ -2634,6 +2719,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
 		${filterSubtitleLanguages}
 		${filterMetacriticScore}
     ${filterIMDBRating}
+    ${filterReleaseAttributes}
     ${filter_id_Movies}
 	`;
 
@@ -2954,7 +3040,7 @@ async function launchMovie(movie) {
 }
 
 async function fetchFilterValues($MediaType) {
-  const result = await getSetting(`filtersMediaType${$MediaType}`);
+  const result = await getSetting(`filtersMediaType_${$MediaType}`);
   if (!result) {
     return null;
   }
@@ -3719,13 +3805,14 @@ function saveFilterValues($MediaType) {
     filterIMDBRatingNone: shared.filterIMDBRatingNone,
     filterMetacriticScore: shared.filterMetacriticScore,
     filterMetacriticScoreNone: shared.filterMetacriticScoreNone,
+    filterReleaseAttributes: shared.filterReleaseAttributes
   };
 
   const filterValuesString = JSON.stringify(filterValues);
 
   logger.log("saveFilterValues:", filterValuesString);
 
-  setSetting(`filtersMediaType${$MediaType}`, filterValuesString);
+  setSetting(`filtersMediaType_${$MediaType}`, filterValuesString);
 }
 
 async function saveSortValues($MediaType) {
@@ -5096,6 +5183,116 @@ function getReleaseAttributes(searchTerms) {
   return releaseAttributes;
 }
 
+function getReleaseAttributesHierarchy() {
+  const shared_releaseAttributesFiltered = shared.releaseAttributes.filter(ra => !ra.deleted);
+  
+  const releaseAttributes = [];
+
+  for (let i = 0; i < shared_releaseAttributesFiltered.length; i++) {
+    const ra = shared_releaseAttributesFiltered[i];
+
+    const ra2 = releaseAttributes.find(ra2 => ra2.displayAs === ra.displayAs);
+    
+    if (ra2) {
+      ra2.searchTerms.push(ra.searchTerm);
+    } else {
+      releaseAttributes.push({
+        displayAs: ra.displayAs,
+        searchTerms: [ra.searchTerm]
+      })
+    }
+  }
+
+  return releaseAttributes;
+}
+
+async function fetchFilterReleaseAttributes($MediaType) {
+  logger.log("fetchFilterReleaseAttributes MediaType:", $MediaType);
+
+  const filterValues = await fetchFilterValues($MediaType);
+
+  logger.log("fetchFilterReleaseAttributes filterValues:", filterValues);
+
+  const releaseAttributesHierarchy = getReleaseAttributesHierarchy();
+
+  logger.log("fetchFilterReleaseAttributes releaseAttributesHierarchy:", releaseAttributesHierarchy);
+  
+  const results = [];
+
+  for (let i = 0; i < releaseAttributesHierarchy.length; i++) {
+    const ra = releaseAttributesHierarchy[i];
+
+    // TODO: filter by $MediaType, deleted movie etc
+    const sql = `
+    SELECT COUNT(1) FROM (
+      SELECT DISTINCT MRA.id_Movies
+      FROM tbl_Movies_Release_Attributes MRA
+      INNER JOIN tbl_Movies MOV ON MRA.id_Movies = MOV.id_Movies
+      INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+      WHERE
+        (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+        AND MRA.deleted = 0
+        AND MRA.Release_Attributes_searchTerm IN (${ra.searchTerms.map(param => param.replace(/'/g, "''")).reduce((prev, current) => {
+       return prev + (prev ? ", " : "") + `'${current}'`;
+     }, "")}))`
+     
+     logger.log("fetchFilterReleaseAttributes sql:", sql);
+
+     const NumMovies = await db.fireProcedureReturnScalar(sql, {$MediaType});
+
+     logger.log("fetchFilterReleaseAttributes NumMovies:", NumMovies);
+
+     if (NumMovies) {
+       results.push({
+         ReleaseAttribute: ra.displayAs,
+         NumMovies,
+         isAny: false,
+         Selected: true
+       })
+     }
+  }
+
+  // TODO: create "any" item
+  const sqlAny = `
+    SELECT
+      '<not available>' AS ReleaseAttribute
+      , 1 AS isAny
+      , 1 AS Selected
+      , (
+          SELECT COUNT(1)
+          FROM tbl_Movies MOV
+          INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+          WHERE
+            (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+            AND MOV.id_Movies NOT IN (
+              SELECT MRA.id_Movies
+              FROM tbl_Movies_Release_Attributes MRA
+              WHERE MRA.deleted = 0
+            )
+        ) AS NumMovies
+    `;
+
+  const anyResults = await db.fireProcedureReturnAll(sqlAny, {$MediaType});
+
+  if (filterValues && filterValues.filterReleaseAttributes) {
+    results.forEach((result) => {
+      const filterValue = filterValues.filterQualities.find(
+        (value) => value.ReleaseAttribute == result.ReleaseAttribute
+      );
+
+      if (filterValue) {
+        result.Selected = filterValue.Selected;
+      }
+
+      result.NumMovies = result.NumMovies.toLocaleString();
+    });
+  }
+
+  logger.log("fetchFilterReleaseAttributes results:", results);
+
+  shared.filterReleaseAttributes = [anyResults[0], ...results.sort((a, b) => (a.ReleaseAttribute.toLowerCase() < b.ReleaseAttribute.toLowerCase() ? -1 : 1))];
+}
+
 export {
   db,
   fetchSourcePaths,
@@ -5122,6 +5319,7 @@ export {
   fetchFilterLanguages,
   fetchFilterIMDBRating,
   fetchFilterMetacriticScore,
+  fetchFilterReleaseAttributes,
   isScanning,
   abortRescan,
   createList,

@@ -164,6 +164,40 @@
               </v-expansion-panel-content>
             </v-expansion-panel>
 
+            <!-- FILTER RELEASE ATTRIBUTES -->
+            <v-expansion-panel
+              v-show="$shared.filterReleaseAttributes && $shared.filterReleaseAttributes.length > 0"
+              style="padding: 0px!important"
+            >
+              <v-expansion-panel-header style="padding: 8px!important">
+                <div>
+                  <v-icon>mdi-package-variant</v-icon>
+                  {{$t("Release Attributes")}} {{$shared.filterSettings.filterReleaseAttributesAND ? '߷' : ''}} {{ filterReleaseAttributesTitle }}
+                </div>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-row>
+                  <v-btn text v-on:click="setAllReleaseAttributes(false)">{{$t("SET NONE")}}</v-btn>
+                  <v-btn text v-on:click="setAllReleaseAttributes(true)">{{$t("SET ALL")}}</v-btn>
+                </v-row>
+                <v-switch
+                  v-bind:label="$shared.filterSettings.filterReleaseAttributesAND ? $t('all selected must apply') : $t('one selected must apply')"
+                  color="red"
+                  v-model="$shared.filterSettings.filterReleaseAttributesAND"
+                  v-on:click.native="filtersChanged"
+                ></v-switch>
+                <v-checkbox
+                  v-for="filterReleaseAttribute in filterReleaseAttributes"
+                  v-bind:key="filterReleaseAttribute.ReleaseAttribute"
+                  v-bind:label="filterReleaseAttribute.ReleaseAttribute + ' (' + filterReleaseAttribute.NumMovies + ')'"
+                  v-model="filterReleaseAttribute.Selected"
+                  v-on:click.native="filtersChanged"
+                  style="margin: 0px"
+                  color="dark-grey"
+                ></v-checkbox>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
             <!-- FILTER LISTS -->
             <v-expansion-panel
               v-show="$shared.filterLists && $shared.filterLists.length > 0"
@@ -1126,6 +1160,14 @@ export default {
       );
     },
 
+    filterReleaseAttributes() {
+      return this.$shared.filterReleaseAttributes.filter(
+        fra =>
+          !this.$shared.filterSettings.filterReleaseAttributesAND ||
+          !fra.isAny
+      );
+    },
+
     filterIMDBPlotKeywordsTitle() {
       if (
         !this.$shared.filterIMDBPlotKeywords.find(
@@ -1246,6 +1288,29 @@ export default {
           .length +
         "/" +
         this.$shared.filterSubtitleLanguages.length +
+        ")"
+      );
+    },
+
+    filterReleaseAttributesTitle() {
+      if (
+        !this.$shared.filterReleaseAttributes.find(filter => !filter.Selected)
+      ) {
+        return `(${this.$t("ALL")})`;
+      }
+
+      if (
+        !this.$shared.filterReleaseAttributes.find(filter => filter.Selected)
+      ) {
+        return `(${this.$t("NONE")})`;
+      }
+
+      return (
+        "(" +
+        this.$shared.filterReleaseAttributes.filter(filter => filter.Selected)
+          .length +
+        "/" +
+        this.$shared.filterReleaseAttributes.length +
         ")"
       );
     },
@@ -1495,6 +1560,19 @@ export default {
         }
 
         lang.Selected = value;
+      });
+
+      this.filtersChanged();
+    },
+
+    setAllReleaseAttributes: function(value, exclusionList) {
+      this.$shared.filterReleaseAttributes.forEach(ra => {
+        if (exclusionList && exclusionList.find(val => ra.ReleaseAttribute === val)) {
+          ra.Selected = !value;
+          return;
+        }
+
+        ra.Selected = value;
       });
 
       this.filtersChanged();

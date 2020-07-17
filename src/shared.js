@@ -16,6 +16,7 @@ const shared = new Vue({
       filterCompaniesAND: false,
       filterIMDBPlotKeywordsAND: false,
       filterIMDBFilmingLocationsAND: false,
+      filterReleaseAttributesAND: false,
     },
     filterAgeRatings: [],
     filterRatings: [],
@@ -43,6 +44,8 @@ const shared = new Vue({
     filterIMDBPlotKeywords: [],
 
     filterIMDBFilmingLocations: [],
+
+    filterReleaseAttributes: [],
 
     contentAdvisoryCategories: [
       {
@@ -454,6 +457,18 @@ const shared = new Vue({
       {
         searchTerm: 'unrated',
         displayAs: 'UNRATED',
+        deleted: false,
+        sort: null
+      },
+      {
+        searchTerm: 'uncut',
+        displayAs: 'UNCUT',
+        deleted: false,
+        sort: null
+      },
+      {
+        searchTerm: 'uncensored',
+        displayAs: 'UNCUT',
         deleted: false,
         sort: null
       },

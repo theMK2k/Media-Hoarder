@@ -4,10 +4,11 @@
 
 ### Release Attributes
 
-- EXTENDED, Director's Cut, UNRATED etc.
--> implement in shared.releaseAttributes save as Settings.ReleaseAttributes
--> let them be sortable
-=> let user re-edit the entry/attributes
+OK - EXTENDED, Director's Cut, UNRATED etc.
+OK -> implement in shared.releaseAttributes save as Settings.ReleaseAttributes
+OK? -> let them be sortable
+OK? => let user re-edit the entry/attributes
+- Save/Load of filter
 
 ### MediaInfo: alternatively use track.DURATION if track.Duration is not available
 
@@ -18,7 +19,6 @@
 
 - imdb scraper: make sure, all texts are treated with html2text, see "Robot &amp; Frank"
 - filescan: extras naming (see: "Die Üblichen Verdächtigen", "Vertigo")
-
 
 ### Filter Reset Button
 
@@ -39,6 +39,8 @@
 ### support Movies in directories (also .nfo parsing)
 
 - we currently expect the whole movie name and release attributes being included in the filename, this is not always the case
+
+### MacOS Release
 
 ## LATER
 
