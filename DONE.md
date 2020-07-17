@@ -146,12 +146,12 @@ Content:
 ```json
 [
   {
-    version: "1.0",
-    description: "version-1.0.html"
+    "version": "1.0",
+    "description": "version-1.0.html"
   },
   {
-    version: "0.5",
-    description: "version-0.5.html"
+    "version": "0.5",
+    "description": "version-0.5.html"
   }
 ]
 ```
