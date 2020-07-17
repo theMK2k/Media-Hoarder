@@ -45,7 +45,7 @@
 
         <!-- Filters -->
         <div
-          v-if="($shared.filterSourcePaths && $shared.filterSourcePaths.length > 0) || ($shared.filterGenres && $shared.filterGenres.length > 0) || ($shared.filterAgeRatings && $shared.filterAgeRatings.length > 0) || ($shared.filterLists && $shared.filterLists.length > 0) || ($shared.filterAudioLanguages && $shared.filterAudioLanguages.length > 0) || ($shared.filterSubtitleLanguages && $shared.filterSubtitleLanguages.length > 0)"
+          v-if="($shared.filter.filterSourcePaths && $shared.filter.filterSourcePaths.length > 0) || ($shared.filter.filterGenres && $shared.filter.filterGenres.length > 0) || ($shared.filter.filterAgeRatings && $shared.filter.filterAgeRatings.length > 0) || ($shared.filter.filterLists && $shared.filter.filterLists.length > 0) || ($shared.filter.filterAudioLanguages && $shared.filter.filterAudioLanguages.length > 0) || ($shared.filter.filterSubtitleLanguages && $shared.filter.filterSubtitleLanguages.length > 0)"
         >
           <v-divider></v-divider>
 
@@ -54,7 +54,7 @@
           <v-expansion-panels accordion multiple>
             <!-- FILTER SOURCE PATHS -->
             <v-expansion-panel
-              v-show="$shared.filterSourcePaths && $shared.filterSourcePaths.length > 0"
+              v-show="$shared.filter.filterSourcePaths && $shared.filter.filterSourcePaths.length > 0"
               style="padding: 0px!important"
             >
               <v-expansion-panel-header style="padding: 8px!important">
@@ -69,7 +69,7 @@
                   <v-btn text v-on:click="setAllSourcePaths(true)">{{$t("SET ALL")}}</v-btn>
                 </v-row>
                 <v-checkbox
-                  v-for="sourcePath in $shared.filterSourcePaths"
+                  v-for="sourcePath in $shared.filter.filterSourcePaths"
                   v-bind:key="sourcePath.Description"
                   v-bind:label="sourcePath.Description + ' (' + sourcePath.NumMovies + ')'"
                   v-model="sourcePath.Selected"
@@ -82,7 +82,7 @@
 
             <!-- FILTER QUALITIES -->
             <v-expansion-panel
-              v-show="$shared.filterQualities && $shared.filterQualities.length > 0"
+              v-show="$shared.filter.filterQualities && $shared.filter.filterQualities.length > 0"
               style="padding: 0px!important"
             >
               <v-expansion-panel-header style="padding: 8px!important">
@@ -97,7 +97,7 @@
                   <v-btn text v-on:click="setAllQualities(true)">{{$t("SET ALL")}}</v-btn>
                 </v-row>
                 <v-checkbox
-                  v-for="quality in $shared.filterQualities"
+                  v-for="quality in $shared.filter.filterQualities"
                   v-bind:key="quality.MI_Quality"
                   v-bind:label="getFilterQualityLabel(quality.MI_Quality, quality.NumMovies)"
                   v-model="quality.Selected"
@@ -110,7 +110,7 @@
 
             <!-- FILTER AUDIO LANGUAGES -->
             <v-expansion-panel
-              v-show="$shared.filterAudioLanguages && $shared.filterAudioLanguages.length > 0"
+              v-show="$shared.filter.filterAudioLanguages && $shared.filter.filterAudioLanguages.length > 0"
               style="padding: 0px!important"
             >
               <v-expansion-panel-header style="padding: 8px!important">
@@ -125,7 +125,7 @@
                   <v-btn text v-on:click="setAllAudioLanguages(true)">{{$t("SET ALL")}}</v-btn>
                 </v-row>
                 <v-checkbox
-                  v-for="audioLanguage in $shared.filterAudioLanguages"
+                  v-for="audioLanguage in $shared.filter.filterAudioLanguages"
                   v-bind:key="audioLanguage.Language"
                   v-bind:label="audioLanguage.DisplayText + ' (' + audioLanguage.NumMovies + ')'"
                   v-model="audioLanguage.Selected"
@@ -138,7 +138,7 @@
 
             <!-- FILTER SUBTITLE LANGUAGES -->
             <v-expansion-panel
-              v-show="$shared.filterSubtitleLanguages && $shared.filterSubtitleLanguages.length > 0"
+              v-show="$shared.filter.filterSubtitleLanguages && $shared.filter.filterSubtitleLanguages.length > 0"
               style="padding: 0px!important"
             >
               <v-expansion-panel-header style="padding: 8px!important">
@@ -153,7 +153,7 @@
                   <v-btn text v-on:click="setAllSubtitleLanguages(true)">{{$t("SET ALL")}}</v-btn>
                 </v-row>
                 <v-checkbox
-                  v-for="subtitleLanguage in $shared.filterSubtitleLanguages"
+                  v-for="subtitleLanguage in $shared.filter.filterSubtitleLanguages"
                   v-bind:key="subtitleLanguage.Language"
                   v-bind:label="subtitleLanguage.DisplayText + ' (' + subtitleLanguage.NumMovies + ')'"
                   v-model="subtitleLanguage.Selected"
@@ -166,13 +166,13 @@
 
             <!-- FILTER RELEASE ATTRIBUTES -->
             <v-expansion-panel
-              v-show="$shared.filterReleaseAttributes && $shared.filterReleaseAttributes.length > 0"
+              v-show="$shared.filter.filterReleaseAttributes && $shared.filter.filterReleaseAttributes.length > 0"
               style="padding: 0px!important"
             >
               <v-expansion-panel-header style="padding: 8px!important">
                 <div>
                   <v-icon>mdi-package-variant</v-icon>
-                  {{$t("Release Attributes")}} {{$shared.filterSettings.filterReleaseAttributesAND ? '߷' : ''}} {{ filterReleaseAttributesTitle }}
+                  {{$t("Release Attributes")}} {{$shared.filter.filterSettings.filterReleaseAttributesAND ? '߷' : ''}} {{ filterReleaseAttributesTitle }}
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
@@ -181,9 +181,9 @@
                   <v-btn text v-on:click="setAllReleaseAttributes(true)">{{$t("SET ALL")}}</v-btn>
                 </v-row>
                 <v-switch
-                  v-bind:label="$shared.filterSettings.filterReleaseAttributesAND ? $t('all selected must apply') : $t('one selected must apply')"
+                  v-bind:label="$shared.filter.filterSettings.filterReleaseAttributesAND ? $t('all selected must apply') : $t('one selected must apply')"
                   color="red"
-                  v-model="$shared.filterSettings.filterReleaseAttributesAND"
+                  v-model="$shared.filter.filterSettings.filterReleaseAttributesAND"
                   v-on:click.native="filtersChanged"
                 ></v-switch>
                 <v-checkbox
@@ -200,7 +200,7 @@
 
             <!-- FILTER LISTS -->
             <v-expansion-panel
-              v-show="$shared.filterLists && $shared.filterLists.length > 0"
+              v-show="$shared.filter.filterLists && $shared.filter.filterLists.length > 0"
               style="padding: 0px!important"
             >
               <v-expansion-panel-header style="padding: 8px!important">
@@ -214,7 +214,7 @@
                   <v-btn text v-on:click="setAllLists(false)">{{$t("SET NONE")}}</v-btn>
                   <v-btn text v-on:click="setAllLists(true)">{{$t("SET ALL")}}</v-btn>
                 </v-row>
-                <v-row v-for="list in $shared.filterLists" v-bind:key="list.id_Lists">
+                <v-row v-for="list in $shared.filter.filterLists" v-bind:key="list.id_Lists">
                   <v-checkbox
                     v-bind:label="list.Name + ' (' + list.NumMovies + ')'"
                     v-model="list.Selected"
@@ -234,7 +234,7 @@
 
             <!-- FILTER (USER) RATINGS -->
             <v-expansion-panel
-              v-show="$shared.filterRatings && $shared.filterRatings.length > 0"
+              v-show="$shared.filter.filterRatings && $shared.filter.filterRatings.length > 0"
               style="padding: 0px!important"
             >
               <v-expansion-panel-header style="padding: 8px!important">
@@ -250,7 +250,7 @@
                   <v-btn text v-on:click="setAllRatings(true)">{{$t("SET ALL")}}</v-btn>
                 </v-row>
                 <v-checkbox
-                  v-for="rating in $shared.filterRatings"
+                  v-for="rating in $shared.filter.filterRatings"
                   v-bind:key="rating.Rating"
                   v-bind:label="getFilterRatingLabel(rating.Rating, rating.NumMovies)"
                   v-model="rating.Selected"
@@ -278,19 +278,19 @@
               </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-range-slider
-                  v-model="$shared.filterMetacriticScore"
+                  v-model="$shared.filter.filterMetacriticScore"
                   :max="100"
                   :min="0"
                   hide-details
                   class="align-center"
                   v-on:change="filtersChanged"
                 >
-                  <template v-slot:prepend>{{$shared.filterMetacriticScore[0]}}</template>
-                  <template v-slot:append>{{$shared.filterMetacriticScore[1]}}</template>
+                  <template v-slot:prepend>{{$shared.filter.filterMetacriticScore[0]}}</template>
+                  <template v-slot:append>{{$shared.filter.filterMetacriticScore[1]}}</template>
                 </v-range-slider>
                 <v-checkbox
                   v-bind:label="$t('include entries with no Metacritic score')"
-                  v-model="$shared.filterMetacriticScoreNone"
+                  v-model="$shared.filter.filterMetacriticScoreNone"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
                   color="dark-grey"
@@ -308,19 +308,19 @@
               </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-range-slider
-                  v-model="$shared.filterIMDBRating"
+                  v-model="$shared.filter.filterIMDBRating"
                   :max="10"
                   :min="0"
                   hide-details
                   class="align-center"
                   v-on:change="filtersChanged"
                 >
-                  <template v-slot:prepend>{{$shared.filterIMDBRating[0]}}</template>
-                  <template v-slot:append>{{$shared.filterIMDBRating[1]}}</template>
+                  <template v-slot:prepend>{{$shared.filter.filterIMDBRating[0]}}</template>
+                  <template v-slot:append>{{$shared.filter.filterIMDBRating[1]}}</template>
                 </v-range-slider>
                 <v-checkbox
                   v-bind:label="$t('include entries with no IMDB rating')"
-                  v-model="$shared.filterIMDBRatingNone"
+                  v-model="$shared.filter.filterIMDBRatingNone"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
                   color="dark-grey"
@@ -330,13 +330,13 @@
 
             <!-- FILTER GENRES -->
             <v-expansion-panel
-              v-show="$shared.filterGenres && $shared.filterGenres.length > 0"
+              v-show="$shared.filter.filterGenres && $shared.filter.filterGenres.length > 0"
               style="padding: 0px!important"
             >
               <v-expansion-panel-header style="padding: 8px!important">
                 <div>
                   <v-icon>mdi-drama-masks</v-icon>
-                  {{$t("Genres")}} {{$shared.filterSettings.filterGenresAND ? '߷' : ''}} {{ filterGenresTitle }}
+                  {{$t("Genres")}} {{$shared.filter.filterSettings.filterGenresAND ? '߷' : ''}} {{ filterGenresTitle }}
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
@@ -345,13 +345,13 @@
                   <v-btn text v-on:click="setAllGenres(true)">{{$t("SET ALL")}}</v-btn>
                 </v-row>
                 <v-switch
-                  v-bind:label="$shared.filterSettings.filterGenresAND ? $t('all selected must apply') : $t('one selected must apply')"
+                  v-bind:label="$shared.filter.filterSettings.filterGenresAND ? $t('all selected must apply') : $t('one selected must apply')"
                   color="red"
-                  v-model="$shared.filterSettings.filterGenresAND"
+                  v-model="$shared.filter.filterSettings.filterGenresAND"
                   v-on:click.native="filtersChanged"
                 ></v-switch>
                 <v-checkbox
-                  v-for="genre in $shared.filterGenres"
+                  v-for="genre in $shared.filter.filterGenres"
                   v-bind:key="genre.id_Genres"
                   v-bind:label="genre.Name + ' (' + genre.NumMovies + ')'"
                   v-model="genre.Selected"
@@ -364,7 +364,7 @@
 
             <!-- FILTER AGE RATINGS -->
             <v-expansion-panel
-              v-show="$shared.filterAgeRatings && $shared.filterAgeRatings.length > 0"
+              v-show="$shared.filter.filterAgeRatings && $shared.filter.filterAgeRatings.length > 0"
               style="padding: 0px!important"
             >
               <v-expansion-panel-header style="padding: 8px!important">
@@ -379,7 +379,7 @@
                   <v-btn text v-on:click="setAllAgeRatings(true)">{{$t("SET ALL")}}</v-btn>
                 </v-row>
                 <v-checkbox
-                  v-for="ageRating in $shared.filterAgeRatings"
+                  v-for="ageRating in $shared.filter.filterAgeRatings"
                   v-bind:key="ageRating.Age"
                   v-bind:label="(ageRating.Age === -1 ? `<${$t('undetermined')}>` : ageRating.Age) + ' (' + ageRating.NumMovies + ')'"
                   v-model="ageRating.Selected"
@@ -392,7 +392,7 @@
 
             <!-- FILTER GROUP: CONTENT ADVISORY -->
             <v-expansion-panel
-              v-show="($shared.filterParentalAdvisory.Nudity && $shared.filterParentalAdvisory.Nudity.length > 0) || ($shared.filterParentalAdvisory.Violence && $shared.filterParentalAdvisory.Violence.length > 0) || ($shared.filterParentalAdvisory.Profanity && $shared.filterParentalAdvisory.Profanity.length > 0) || ($shared.filterParentalAdvisory.Alcohol && $shared.filterParentalAdvisory.Alcohol.length > 0) || ($shared.filterParentalAdvisory.Frightening && $shared.filterParentalAdvisory.Frightening.length > 0)"
+              v-show="($shared.filter.filterParentalAdvisory.Nudity && $shared.filter.filterParentalAdvisory.Nudity.length > 0) || ($shared.filter.filterParentalAdvisory.Violence && $shared.filter.filterParentalAdvisory.Violence.length > 0) || ($shared.filter.filterParentalAdvisory.Profanity && $shared.filter.filterParentalAdvisory.Profanity.length > 0) || ($shared.filter.filterParentalAdvisory.Alcohol && $shared.filter.filterParentalAdvisory.Alcohol.length > 0) || ($shared.filter.filterParentalAdvisory.Frightening && $shared.filter.filterParentalAdvisory.Frightening.length > 0)"
               style="padding: 0px!important"
             >
               <v-expansion-panel-header style="padding: 8px!important">
@@ -406,7 +406,7 @@
                   <v-expansion-panel
                     v-for="category in filterParentalAdvisoryCategories"
                     v-bind:key="category.Name"
-                    v-show="$shared.filterParentalAdvisory[category.Name] && $shared.filterParentalAdvisory[category.Name].length > 0"
+                    v-show="$shared.filter.filterParentalAdvisory[category.Name] && $shared.filter.filterParentalAdvisory[category.Name].length > 0"
                     style="padding: 0px!important"
                   >
                     <v-expansion-panel-header
@@ -424,7 +424,7 @@
                         >{{$t("SET ALL")}}</v-btn>
                       </v-row>
                       <v-row
-                        v-for="paItem in $shared.filterParentalAdvisory[category.Name]"
+                        v-for="paItem in $shared.filter.filterParentalAdvisory[category.Name]"
                         v-bind:key="paItem.Severity"
                       >
                         <v-checkbox
@@ -446,7 +446,7 @@
               <v-expansion-panel-header style="padding: 8px!important">
                 <div>
                   <v-icon>mdi-human-male-male</v-icon>
-                  {{$t("People")}} {{$shared.filterSettings.filterPersonsAND ? '߷' : ''}} {{filterPersonsTitle}}
+                  {{$t("People")}} {{$shared.filter.filterSettings.filterPersonsAND ? '߷' : ''}} {{filterPersonsTitle}}
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
@@ -456,9 +456,9 @@
                   <v-btn text v-on:click="addPerson()">{{$t("FIND")}}</v-btn>
                 </v-row>
                 <v-switch
-                  v-bind:label="$shared.filterSettings.filterPersonsAND ? $t('all selected must apply') : $t('one selected must apply')"
+                  v-bind:label="$shared.filter.filterSettings.filterPersonsAND ? $t('all selected must apply') : $t('one selected must apply')"
                   color="red"
-                  v-model="$shared.filterSettings.filterPersonsAND"
+                  v-model="$shared.filter.filterSettings.filterPersonsAND"
                   v-on:click.native="filtersChanged"
                 ></v-switch>
                 <v-row v-for="person in filterPersons" v-bind:key="person.IMDB_Person_ID">
@@ -484,7 +484,7 @@
               <v-expansion-panel-header style="padding: 8px!important">
                 <div>
                   <v-icon>mdi-factory</v-icon>
-                  {{$t("Companies")}} {{$shared.filterSettings.filterCompaniesAND ? '߷' : ''}} {{filterCompaniesTitle}}
+                  {{$t("Companies")}} {{$shared.filter.filterSettings.filterCompaniesAND ? '߷' : ''}} {{filterCompaniesTitle}}
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
@@ -494,9 +494,9 @@
                   <v-btn text v-on:click="addCompany()">{{$t("FIND")}}</v-btn>
                 </v-row>
                 <v-switch
-                  v-bind:label="$shared.filterSettings.filterCompaniesAND ? $t('all selected must apply') : $t('one selected must apply')"
+                  v-bind:label="$shared.filter.filterSettings.filterCompaniesAND ? $t('all selected must apply') : $t('one selected must apply')"
                   color="red"
-                  v-model="$shared.filterSettings.filterCompaniesAND"
+                  v-model="$shared.filter.filterSettings.filterCompaniesAND"
                   v-on:click.native="filtersChanged"
                 ></v-switch>
                 <v-row v-for="company in filterCompanies" v-bind:key="company.Company_Name">
@@ -519,7 +519,7 @@
 
             <!-- FILTER YEARS -->
             <v-expansion-panel
-              v-show="$shared.filterYears && $shared.filterYears.length > 0"
+              v-show="$shared.filter.filterYears && $shared.filter.filterYears.length > 0"
               style="padding: 0px!important"
             >
               <v-expansion-panel-header style="padding: 8px!important">
@@ -534,7 +534,7 @@
                   <v-btn text v-on:click="setAllYears(true)">{{$t("SET ALL")}}</v-btn>
                 </v-row>
                 <v-checkbox
-                  v-for="year in $shared.filterYears"
+                  v-for="year in $shared.filter.filterYears"
                   v-bind:key="year.startYear"
                   v-bind:label="getFilterYearLabel(year.startYear, year.NumMovies)"
                   v-model="year.Selected"
@@ -550,7 +550,7 @@
               <v-expansion-panel-header style="padding: 8px!important">
                 <div>
                   <v-icon>mdi-book-open-outline</v-icon>
-                  {{$t("Plot Keywords")}} {{$shared.filterSettings.filterIMDBPlotKeywordsAND ? '߷' : ''}} {{ filterIMDBPlotKeywordsTitle }}
+                  {{$t("Plot Keywords")}} {{$shared.filter.filterSettings.filterIMDBPlotKeywordsAND ? '߷' : ''}} {{ filterIMDBPlotKeywordsTitle }}
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
@@ -560,9 +560,9 @@
                   <v-btn text v-on:click="addIMDBPlotKeyword()">{{$t("FIND")}}</v-btn>
                 </v-row>
                 <v-switch
-                  v-bind:label="$shared.filterSettings.filterIMDBPlotKeywordsAND ? $t('all selected must apply') : $t('one selected must apply')"
+                  v-bind:label="$shared.filter.filterSettings.filterIMDBPlotKeywordsAND ? $t('all selected must apply') : $t('one selected must apply')"
                   color="red"
-                  v-model="$shared.filterSettings.filterIMDBPlotKeywordsAND"
+                  v-model="$shared.filter.filterSettings.filterIMDBPlotKeywordsAND"
                   v-on:click.native="filtersChanged"
                 ></v-switch>
                 <v-row
@@ -591,7 +591,7 @@
               <v-expansion-panel-header style="padding: 8px!important">
                 <div>
                   <v-icon>mdi-map-marker-outline</v-icon>
-                  {{$t("Filming Locations")}} {{$shared.filterSettings.filterIMDBFilmingLocationsAND ? '߷' : ''}} {{ filterIMDBFilmingLocationsTitle }}
+                  {{$t("Filming Locations")}} {{$shared.filter.filterSettings.filterIMDBFilmingLocationsAND ? '߷' : ''}} {{ filterIMDBFilmingLocationsTitle }}
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
@@ -601,9 +601,9 @@
                   <v-btn text v-on:click="addIMDBFilmingLocation()">{{$t("FIND")}}</v-btn>
                 </v-row>
                 <v-switch
-                  v-bind:label="$shared.filterSettings.filterIMDBFilmingLocationsAND ? $t('all selected must apply') : $t('one selected must apply')"
+                  v-bind:label="$shared.filter.filterSettings.filterIMDBFilmingLocationsAND ? $t('all selected must apply') : $t('one selected must apply')"
                   color="red"
-                  v-model="$shared.filterSettings.filterIMDBFilmingLocationsAND"
+                  v-model="$shared.filter.filterSettings.filterIMDBFilmingLocationsAND"
                   v-on:click.native="filtersChanged"
                 ></v-switch>
                 <v-row
@@ -922,144 +922,144 @@ export default {
 
   computed: {
     filterSourcePathsTitle() {
-      if (!this.$shared.filterSourcePaths.find(filter => !filter.Selected)) {
+      if (!this.$shared.filter.filterSourcePaths.find(filter => !filter.Selected)) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (!this.$shared.filterSourcePaths.find(filter => filter.Selected)) {
+      if (!this.$shared.filter.filterSourcePaths.find(filter => filter.Selected)) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
         "(" +
-        this.$shared.filterSourcePaths.filter(filter => filter.Selected)
+        this.$shared.filter.filterSourcePaths.filter(filter => filter.Selected)
           .length +
         "/" +
-        this.$shared.filterSourcePaths.length +
+        this.$shared.filter.filterSourcePaths.length +
         ")"
       );
     },
 
     filterGenresTitle() {
-      if (!this.$shared.filterGenres.find(filter => !filter.Selected)) {
+      if (!this.$shared.filter.filterGenres.find(filter => !filter.Selected)) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (!this.$shared.filterGenres.find(filter => filter.Selected)) {
+      if (!this.$shared.filter.filterGenres.find(filter => filter.Selected)) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
         "(" +
-        this.$shared.filterGenres.filter(filter => filter.Selected).length +
+        this.$shared.filter.filterGenres.filter(filter => filter.Selected).length +
         "/" +
-        this.$shared.filterGenres.length +
+        this.$shared.filter.filterGenres.length +
         ")"
       );
     },
 
     filterAgeRatingsTitle() {
-      if (!this.$shared.filterAgeRatings.find(filter => !filter.Selected)) {
+      if (!this.$shared.filter.filterAgeRatings.find(filter => !filter.Selected)) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (!this.$shared.filterAgeRatings.find(filter => filter.Selected)) {
+      if (!this.$shared.filter.filterAgeRatings.find(filter => filter.Selected)) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
         "(" +
-        this.$shared.filterAgeRatings.filter(filter => filter.Selected).length +
+        this.$shared.filter.filterAgeRatings.filter(filter => filter.Selected).length +
         "/" +
-        this.$shared.filterAgeRatings.length +
+        this.$shared.filter.filterAgeRatings.length +
         ")"
       );
     },
 
     filterRatingsTitle() {
-      if (!this.$shared.filterRatings.find(filter => !filter.Selected)) {
+      if (!this.$shared.filter.filterRatings.find(filter => !filter.Selected)) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (!this.$shared.filterRatings.find(filter => filter.Selected)) {
+      if (!this.$shared.filter.filterRatings.find(filter => filter.Selected)) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
         "(" +
-        this.$shared.filterRatings.filter(filter => filter.Selected).length +
+        this.$shared.filter.filterRatings.filter(filter => filter.Selected).length +
         "/" +
-        this.$shared.filterRatings.length +
+        this.$shared.filter.filterRatings.length +
         ")"
       );
     },
 
     filterYearsTitle() {
-      if (!this.$shared.filterYears.find(filter => !filter.Selected)) {
+      if (!this.$shared.filter.filterYears.find(filter => !filter.Selected)) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (!this.$shared.filterYears.find(filter => filter.Selected)) {
+      if (!this.$shared.filter.filterYears.find(filter => filter.Selected)) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
         "(" +
-        this.$shared.filterYears.filter(filter => filter.Selected).length +
+        this.$shared.filter.filterYears.filter(filter => filter.Selected).length +
         "/" +
-        this.$shared.filterYears.length +
+        this.$shared.filter.filterYears.length +
         ")"
       );
     },
 
     filterQualitiesTitle() {
-      if (!this.$shared.filterQualities.find(filter => !filter.Selected)) {
+      if (!this.$shared.filter.filterQualities.find(filter => !filter.Selected)) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (!this.$shared.filterQualities.find(filter => filter.Selected)) {
+      if (!this.$shared.filter.filterQualities.find(filter => filter.Selected)) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
         "(" +
-        this.$shared.filterQualities.filter(filter => filter.Selected).length +
+        this.$shared.filter.filterQualities.filter(filter => filter.Selected).length +
         "/" +
-        this.$shared.filterQualities.length +
+        this.$shared.filter.filterQualities.length +
         ")"
       );
     },
 
     filterListsTitle() {
-      if (!this.$shared.filterLists.find(filter => !filter.Selected)) {
+      if (!this.$shared.filter.filterLists.find(filter => !filter.Selected)) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (!this.$shared.filterLists.find(filter => filter.Selected)) {
+      if (!this.$shared.filter.filterLists.find(filter => filter.Selected)) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
         "(" +
-        this.$shared.filterLists.filter(filter => filter.Selected).length +
+        this.$shared.filter.filterLists.filter(filter => filter.Selected).length +
         "/" +
-        this.$shared.filterLists.length +
+        this.$shared.filter.filterLists.length +
         ")"
       );
     },
 
     filterPersons() {
-      return this.$shared.filterPersons.filter(
-        fp => !this.$shared.filterSettings.filterPersonsAND || fp.IMDB_Person_ID
+      return this.$shared.filter.filterPersons.filter(
+        fp => !this.$shared.filter.filterSettings.filterPersonsAND || fp.IMDB_Person_ID
       );
     },
 
     filterPersonsTitle() {
       if (
-        !this.$shared.filterPersons.find(
+        !this.$shared.filter.filterPersons.find(
           filter =>
             !filter.Selected &&
-            (!this.$shared.filterSettings.filterPersonsAND ||
+            (!this.$shared.filter.filterSettings.filterPersonsAND ||
               filter.IMDB_Person_ID)
         )
       ) {
@@ -1067,10 +1067,10 @@ export default {
       }
 
       if (
-        !this.$shared.filterPersons.find(
+        !this.$shared.filter.filterPersons.find(
           filter =>
             filter.Selected &&
-            (!this.$shared.filterSettings.filterPersonsAND ||
+            (!this.$shared.filter.filterSettings.filterPersonsAND ||
               filter.IMDB_Person_ID)
         )
       ) {
@@ -1079,16 +1079,16 @@ export default {
 
       return (
         "(" +
-        this.$shared.filterPersons.filter(
+        this.$shared.filter.filterPersons.filter(
           filter =>
             filter.Selected &&
-            (!this.$shared.filterSettings.filterPersonsAND ||
+            (!this.$shared.filter.filterSettings.filterPersonsAND ||
               filter.IMDB_Person_ID)
         ).length +
         "/" +
-        this.$shared.filterPersons.filter(
+        this.$shared.filter.filterPersons.filter(
           filter =>
-            !this.$shared.filterSettings.filterPersonsAND ||
+            !this.$shared.filter.filterSettings.filterPersonsAND ||
             filter.IMDB_Person_ID
         ).length +
         ")"
@@ -1096,19 +1096,19 @@ export default {
     },
 
     filterCompanies() {
-      return this.$shared.filterCompanies.filter(
+      return this.$shared.filter.filterCompanies.filter(
         fp =>
-          !this.$shared.filterSettings.filterCompaniesAND ||
+          !this.$shared.filter.filterSettings.filterCompaniesAND ||
           fp.id_Filter_Companies
       );
     },
 
     filterCompaniesTitle() {
       if (
-        !this.$shared.filterCompanies.find(
+        !this.$shared.filter.filterCompanies.find(
           filter =>
             !filter.Selected &&
-            (!this.$shared.filterSettings.filterCompaniesAND ||
+            (!this.$shared.filter.filterSettings.filterCompaniesAND ||
               filter.id_Filter_Companies)
         )
       ) {
@@ -1116,10 +1116,10 @@ export default {
       }
 
       if (
-        !this.$shared.filterCompanies.find(
+        !this.$shared.filter.filterCompanies.find(
           filter =>
             filter.Selected &&
-            (!this.$shared.filterSettings.filterCompaniesAND ||
+            (!this.$shared.filter.filterSettings.filterCompaniesAND ||
               filter.id_Filter_Companies)
         )
       ) {
@@ -1128,16 +1128,16 @@ export default {
 
       return (
         "(" +
-        this.$shared.filterCompanies.filter(
+        this.$shared.filter.filterCompanies.filter(
           filter =>
             filter.Selected &&
-            (!this.$shared.filterSettings.filterCompaniesAND ||
+            (!this.$shared.filter.filterSettings.filterCompaniesAND ||
               filter.id_Filter_Companies)
         ).length +
         "/" +
-        this.$shared.filterCompanies.filter(
+        this.$shared.filter.filterCompanies.filter(
           filter =>
-            !this.$shared.filterSettings.filterCompaniesAND ||
+            !this.$shared.filter.filterSettings.filterCompaniesAND ||
             filter.id_Filter_Companies
         ).length +
         ")"
@@ -1145,35 +1145,35 @@ export default {
     },
 
     filterIMDBPlotKeywords() {
-      return this.$shared.filterIMDBPlotKeywords.filter(
+      return this.$shared.filter.filterIMDBPlotKeywords.filter(
         fp =>
-          !this.$shared.filterSettings.filterIMDBPlotKeywordsAND ||
+          !this.$shared.filter.filterSettings.filterIMDBPlotKeywordsAND ||
           fp.id_Filter_IMDB_Plot_Keywords
       );
     },
 
     filterIMDBFilmingLocations() {
-      return this.$shared.filterIMDBFilmingLocations.filter(
+      return this.$shared.filter.filterIMDBFilmingLocations.filter(
         fl =>
-          !this.$shared.filterSettings.filterIMDBFilmingLocationsAND ||
+          !this.$shared.filter.filterSettings.filterIMDBFilmingLocationsAND ||
           fl.id_Filter_IMDB_Filming_Locations
       );
     },
 
     filterReleaseAttributes() {
-      return this.$shared.filterReleaseAttributes.filter(
+      return this.$shared.filter.filterReleaseAttributes.filter(
         fra =>
-          !this.$shared.filterSettings.filterReleaseAttributesAND ||
+          !this.$shared.filter.filterSettings.filterReleaseAttributesAND ||
           !fra.isAny
       );
     },
 
     filterIMDBPlotKeywordsTitle() {
       if (
-        !this.$shared.filterIMDBPlotKeywords.find(
+        !this.$shared.filter.filterIMDBPlotKeywords.find(
           filter =>
             !filter.Selected &&
-            (!this.$shared.filterSettings.filterIMDBPlotKeywordsAND ||
+            (!this.$shared.filter.filterSettings.filterIMDBPlotKeywordsAND ||
               filter.id_Filter_IMDB_Plot_Keywords)
         )
       ) {
@@ -1181,10 +1181,10 @@ export default {
       }
 
       if (
-        !this.$shared.filterIMDBPlotKeywords.find(
+        !this.$shared.filter.filterIMDBPlotKeywords.find(
           filter =>
             filter.Selected &&
-            (!this.$shared.filterSettings.filterIMDBPlotKeywordsAND ||
+            (!this.$shared.filter.filterSettings.filterIMDBPlotKeywordsAND ||
               filter.id_Filter_IMDB_Plot_Keywords)
         )
       ) {
@@ -1193,16 +1193,16 @@ export default {
 
       return (
         "(" +
-        this.$shared.filterIMDBPlotKeywords.filter(
+        this.$shared.filter.filterIMDBPlotKeywords.filter(
           filter =>
             filter.Selected &&
-            (!this.$shared.filterSettings.filterIMDBPlotKeywordsAND ||
+            (!this.$shared.filter.filterSettings.filterIMDBPlotKeywordsAND ||
               filter.id_Filter_IMDB_Plot_Keywords)
         ).length +
         "/" +
-        this.$shared.filterIMDBPlotKeywords.filter(
+        this.$shared.filter.filterIMDBPlotKeywords.filter(
           filter =>
-            !this.$shared.filterSettings.filterIMDBPlotKeywordsAND ||
+            !this.$shared.filter.filterSettings.filterIMDBPlotKeywordsAND ||
             filter.id_Filter_IMDB_Plot_Keywords
         ).length +
         ")"
@@ -1211,10 +1211,10 @@ export default {
 
     filterIMDBFilmingLocationsTitle() {
       if (
-        !this.$shared.filterIMDBFilmingLocations.find(
+        !this.$shared.filter.filterIMDBFilmingLocations.find(
           filter =>
             !filter.Selected &&
-            (!this.$shared.filterSettings.filterIMDBFilmingLocationsAND ||
+            (!this.$shared.filter.filterSettings.filterIMDBFilmingLocationsAND ||
               filter.id_Filter_IMDB_Filming_Locations)
         )
       ) {
@@ -1222,10 +1222,10 @@ export default {
       }
 
       if (
-        !this.$shared.filterIMDBFilmingLocations.find(
+        !this.$shared.filter.filterIMDBFilmingLocations.find(
           filter =>
             filter.Selected &&
-            (!this.$shared.filterSettings.filterIMDBFilmingLocationsAND ||
+            (!this.$shared.filter.filterSettings.filterIMDBFilmingLocationsAND ||
               filter.id_Filter_IMDB_Filming_Locations)
         )
       ) {
@@ -1234,16 +1234,16 @@ export default {
 
       return (
         "(" +
-        this.$shared.filterIMDBFilmingLocations.filter(
+        this.$shared.filter.filterIMDBFilmingLocations.filter(
           filter =>
             filter.Selected &&
-            (!this.$shared.filterSettings.filterIMDBFilmingLocationsAND ||
+            (!this.$shared.filter.filterSettings.filterIMDBFilmingLocationsAND ||
               filter.id_Filter_IMDB_Filming_Locations)
         ).length +
         "/" +
-        this.$shared.filterIMDBFilmingLocations.filter(
+        this.$shared.filter.filterIMDBFilmingLocations.filter(
           filter =>
-            !this.$shared.filterSettings.filterIMDBFilmingLocationsAND ||
+            !this.$shared.filter.filterSettings.filterIMDBFilmingLocationsAND ||
             filter.id_Filter_IMDB_Filming_Locations
         ).length +
         ")"
@@ -1251,104 +1251,104 @@ export default {
     },
 
     filterAudioLanguagesTitle() {
-      if (!this.$shared.filterAudioLanguages.find(filter => !filter.Selected)) {
+      if (!this.$shared.filter.filterAudioLanguages.find(filter => !filter.Selected)) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (!this.$shared.filterAudioLanguages.find(filter => filter.Selected)) {
+      if (!this.$shared.filter.filterAudioLanguages.find(filter => filter.Selected)) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
         "(" +
-        this.$shared.filterAudioLanguages.filter(filter => filter.Selected)
+        this.$shared.filter.filterAudioLanguages.filter(filter => filter.Selected)
           .length +
         "/" +
-        this.$shared.filterAudioLanguages.length +
+        this.$shared.filter.filterAudioLanguages.length +
         ")"
       );
     },
 
     filterSubtitleLanguagesTitle() {
       if (
-        !this.$shared.filterSubtitleLanguages.find(filter => !filter.Selected)
+        !this.$shared.filter.filterSubtitleLanguages.find(filter => !filter.Selected)
       ) {
         return `(${this.$t("ALL")})`;
       }
 
       if (
-        !this.$shared.filterSubtitleLanguages.find(filter => filter.Selected)
+        !this.$shared.filter.filterSubtitleLanguages.find(filter => filter.Selected)
       ) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
         "(" +
-        this.$shared.filterSubtitleLanguages.filter(filter => filter.Selected)
+        this.$shared.filter.filterSubtitleLanguages.filter(filter => filter.Selected)
           .length +
         "/" +
-        this.$shared.filterSubtitleLanguages.length +
+        this.$shared.filter.filterSubtitleLanguages.length +
         ")"
       );
     },
 
     filterReleaseAttributesTitle() {
       if (
-        !this.$shared.filterReleaseAttributes.find(filter => !filter.Selected)
+        !this.$shared.filter.filterReleaseAttributes.find(filter => !filter.Selected)
       ) {
         return `(${this.$t("ALL")})`;
       }
 
       if (
-        !this.$shared.filterReleaseAttributes.find(filter => filter.Selected)
+        !this.$shared.filter.filterReleaseAttributes.find(filter => filter.Selected)
       ) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
         "(" +
-        this.$shared.filterReleaseAttributes.filter(filter => filter.Selected)
+        this.$shared.filter.filterReleaseAttributes.filter(filter => filter.Selected)
           .length +
         "/" +
-        this.$shared.filterReleaseAttributes.length +
+        this.$shared.filter.filterReleaseAttributes.length +
         ")"
       );
     },
 
     filterMetacriticScoreTitle() {
       if (
-        this.$shared.filterMetacriticScore[0] == 0 &&
-        this.$shared.filterMetacriticScore[1] == 100
+        this.$shared.filter.filterMetacriticScore[0] == 0 &&
+        this.$shared.filter.filterMetacriticScore[1] == 100
       ) {
         return `(${this.$t("ALL")}${
-          this.$shared.filterMetacriticScoreNone ? "" : "*"
+          this.$shared.filter.filterMetacriticScoreNone ? "" : "*"
         })`;
       }
 
-      return `(${this.$shared.filterMetacriticScore[0]} - ${
-        this.$shared.filterMetacriticScore[1]
-      }${this.$shared.filterMetacriticScoreNone ? "" : "*"})`;
+      return `(${this.$shared.filter.filterMetacriticScore[0]} - ${
+        this.$shared.filter.filterMetacriticScore[1]
+      }${this.$shared.filter.filterMetacriticScoreNone ? "" : "*"})`;
     },
 
     filterIMDBRatingTitle() {
       if (
-        this.$shared.filterIMDBRating[0] == 0 &&
-        this.$shared.filterIMDBRating[1] == 10
+        this.$shared.filter.filterIMDBRating[0] == 0 &&
+        this.$shared.filter.filterIMDBRating[1] == 10
       ) {
         return `(${this.$t("ALL")}${
-          this.$shared.filterIMDBRatingNone ? "" : "*"
+          this.$shared.filter.filterIMDBRatingNone ? "" : "*"
         })`;
       }
 
-      return `(${this.$shared.filterIMDBRating[0]} - ${
-        this.$shared.filterIMDBRating[1]
-      }${this.$shared.filterIMDBRatingNone ? "" : "*"})`;
+      return `(${this.$shared.filter.filterIMDBRating[0]} - ${
+        this.$shared.filter.filterIMDBRating[1]
+      }${this.$shared.filter.filterIMDBRatingNone ? "" : "*"})`;
     },
 
     filterContentAdvisoryTitle() {
       if (
-        !Object.keys(this.$shared.filterParentalAdvisory).find(category =>
-          this.$shared.filterParentalAdvisory[category].find(
+        !Object.keys(this.$shared.filter.filterParentalAdvisory).find(category =>
+          this.$shared.filter.filterParentalAdvisory[category].find(
             filter => !filter.Selected
           )
         )
@@ -1357,8 +1357,8 @@ export default {
       }
 
       if (
-        !Object.keys(this.$shared.filterParentalAdvisory).find(category =>
-          this.$shared.filterParentalAdvisory[category].find(
+        !Object.keys(this.$shared.filter.filterParentalAdvisory).find(category =>
+          this.$shared.filter.filterParentalAdvisory[category].find(
             filter => filter.Selected
           )
         )
@@ -1368,8 +1368,8 @@ export default {
 
       let numSelected = 0;
       let numAll = 0;
-      Object.keys(this.$shared.filterParentalAdvisory).find(category =>
-        this.$shared.filterParentalAdvisory[category].forEach(filter => {
+      Object.keys(this.$shared.filter.filterParentalAdvisory).find(category =>
+        this.$shared.filter.filterParentalAdvisory[category].forEach(filter => {
           numAll++;
           if (filter.Selected) {
             numSelected++;
@@ -1422,7 +1422,7 @@ export default {
     },
 
     setAllSourcePaths: function(value) {
-      this.$shared.filterSourcePaths.forEach(sp => {
+      this.$shared.filter.filterSourcePaths.forEach(sp => {
         sp.Selected = value;
       });
 
@@ -1430,7 +1430,7 @@ export default {
     },
 
     setAllGenres: function(value, exclusionList) {
-      this.$shared.filterGenres.forEach(genre => {
+      this.$shared.filter.filterGenres.forEach(genre => {
         if (exclusionList && exclusionList.find(val => genre.Name === val.translated)) {
           genre.Selected = !value;
           return;
@@ -1445,7 +1445,7 @@ export default {
     setAllAgeRatings: function(value, exclusionList) {
       logger.log('setAllAgeRatings exclusionList:', exclusionList);
       
-      this.$shared.filterAgeRatings.forEach(ar => {
+      this.$shared.filter.filterAgeRatings.forEach(ar => {
         if (exclusionList && exclusionList.find(val => ar.Age == val.Age)) {
           ar.Selected = !value;
           return;
@@ -1458,7 +1458,7 @@ export default {
     },
 
     setAllRatings: function(value) {
-      this.$shared.filterRatings.forEach(rating => {
+      this.$shared.filter.filterRatings.forEach(rating => {
         rating.Selected = value;
       });
 
@@ -1466,7 +1466,7 @@ export default {
     },
 
     setAllYears: function(value) {
-      this.$shared.filterYears.forEach(year => {
+      this.$shared.filter.filterYears.forEach(year => {
         year.Selected = value;
       });
 
@@ -1474,7 +1474,7 @@ export default {
     },
 
     setAllLists: function(value) {
-      this.$shared.filterLists.forEach(list => {
+      this.$shared.filter.filterLists.forEach(list => {
         list.Selected = value;
       });
 
@@ -1482,7 +1482,7 @@ export default {
     },
 
     setAllParentalAdvisory: function(category, value) {
-      this.$shared.filterParentalAdvisory[category.Name].forEach(paItem => {
+      this.$shared.filter.filterParentalAdvisory[category.Name].forEach(paItem => {
         paItem.Selected = value;
       });
 
@@ -1490,7 +1490,7 @@ export default {
     },
 
     setAllPersons: function(value, exclusionList) {
-      this.$shared.filterPersons.forEach(sp => {
+      this.$shared.filter.filterPersons.forEach(sp => {
         if (
           exclusionList &&
           exclusionList.find(val => sp.IMDB_Person_ID === val)
@@ -1508,7 +1508,7 @@ export default {
     setAllCompanies: function(value, exclusionList) {
       logger.log("setAllCompanies:", { value, exclusionList });
 
-      this.$shared.filterCompanies.forEach(sp => {
+      this.$shared.filter.filterCompanies.forEach(sp => {
         if (
           exclusionList &&
           exclusionList.find(val => sp.Company_Name === val)
@@ -1524,7 +1524,7 @@ export default {
     },
 
     setAllQualities: function(value, exclusionList) {
-      this.$shared.filterQualities.forEach(quality => {
+      this.$shared.filter.filterQualities.forEach(quality => {
         if (
           exclusionList &&
           exclusionList.find(val => quality.MI_Quality === val)
@@ -1540,7 +1540,7 @@ export default {
     },
 
     setAllAudioLanguages: function(value, exclusionList) {
-      this.$shared.filterAudioLanguages.forEach(lang => {
+      this.$shared.filter.filterAudioLanguages.forEach(lang => {
         if (exclusionList && exclusionList.find(val => lang.Language === val)) {
           lang.Selected = !value;
           return;
@@ -1553,7 +1553,7 @@ export default {
     },
 
     setAllSubtitleLanguages: function(value, exclusionList) {
-      this.$shared.filterSubtitleLanguages.forEach(lang => {
+      this.$shared.filter.filterSubtitleLanguages.forEach(lang => {
         if (exclusionList && exclusionList.find(val => lang.Language === val)) {
           lang.Selected = !value;
           return;
@@ -1566,7 +1566,7 @@ export default {
     },
 
     setAllReleaseAttributes: function(value, exclusionList) {
-      this.$shared.filterReleaseAttributes.forEach(ra => {
+      this.$shared.filter.filterReleaseAttributes.forEach(ra => {
         if (exclusionList && exclusionList.find(val => ra.ReleaseAttribute === val)) {
           ra.Selected = !value;
           return;
@@ -1579,7 +1579,7 @@ export default {
     },
 
     setAllIMDBPlotKeywords: function(value, exclusionList) {
-      this.$shared.filterIMDBPlotKeywords.forEach(pk => {
+      this.$shared.filter.filterIMDBPlotKeywords.forEach(pk => {
         if (
           exclusionList &&
           exclusionList.find(val => pk.id_IMDB_Plot_Keywords === val)
@@ -1595,7 +1595,7 @@ export default {
     },
 
     setAllIMDBFilmingLocations: function(value, exclusionList) {
-      this.$shared.filterIMDBFilmingLocations.forEach(fl => {
+      this.$shared.filter.filterIMDBFilmingLocations.forEach(fl => {
         if (
           exclusionList &&
           exclusionList.find(val => fl.id_IMDB_Filming_Locations === val)
@@ -1755,14 +1755,14 @@ export default {
 
     filterParentalAdvisoryCategoryTitle(category) {
       if (
-        !this.$shared.filterParentalAdvisory[category.Name].find(
+        !this.$shared.filter.filterParentalAdvisory[category.Name].find(
           filter => !filter.Selected
         )
       ) {
         return `(${this.$t("ALL")})`;
       }
       if (
-        !this.$shared.filterParentalAdvisory[category.Name].find(
+        !this.$shared.filter.filterParentalAdvisory[category.Name].find(
           filter => filter.Selected
         )
       ) {
@@ -1770,11 +1770,11 @@ export default {
       }
       return (
         "(" +
-        this.$shared.filterParentalAdvisory[category.Name].filter(
+        this.$shared.filter.filterParentalAdvisory[category.Name].filter(
           filter => filter.Selected
         ).length +
         "/" +
-        this.$shared.filterParentalAdvisory[category.Name].length +
+        this.$shared.filter.filterParentalAdvisory[category.Name].length +
         ")"
       );
     },

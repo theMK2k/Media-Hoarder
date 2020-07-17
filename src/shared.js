@@ -8,44 +8,47 @@ const shared = new Vue({
   data: {
     sidenav: null,
     searchText: null,
-    filterSourcePaths: [],
-    filterGenres: [],
-    filterSettings: {
-      filterGenresAND: false,
-      filterPersonsAND: false,
-      filterCompaniesAND: false,
-      filterIMDBPlotKeywordsAND: false,
-      filterIMDBFilmingLocationsAND: false,
-      filterReleaseAttributesAND: false,
+
+    filter: {
+      filterSourcePaths: [],
+      filterGenres: [],
+      filterSettings: {
+        filterGenresAND: false,
+        filterPersonsAND: false,
+        filterCompaniesAND: false,
+        filterIMDBPlotKeywordsAND: false,
+        filterIMDBFilmingLocationsAND: false,
+        filterReleaseAttributesAND: false,
+      },
+      filterAgeRatings: [],
+      filterRatings: [],
+      filterLists: [],
+      filterParentalAdvisory: {
+        Nudity: [],
+        Violence: [],
+        Profanity: [],
+        Alcohol: [],
+        Frightening: [],
+      },
+      filterPersons: [],
+      filterYears: [],
+      filterQualities: [],
+      filterCompanies: [],
+      filterAudioLanguages: [],
+      filterSubtitleLanguages: [],
+  
+      filterMetacriticScore: [0, 100],
+      filterMetacriticScoreNone: true,
+  
+      filterIMDBRating: [0, 10],
+      filterIMDBRatingNone: true,
+  
+      filterIMDBPlotKeywords: [],
+  
+      filterIMDBFilmingLocations: [],
+  
+      filterReleaseAttributes: [],
     },
-    filterAgeRatings: [],
-    filterRatings: [],
-    filterLists: [],
-    filterParentalAdvisory: {
-      Nudity: [],
-      Violence: [],
-      Profanity: [],
-      Alcohol: [],
-      Frightening: [],
-    },
-    filterPersons: [],
-    filterYears: [],
-    filterQualities: [],
-    filterCompanies: [],
-    filterAudioLanguages: [],
-    filterSubtitleLanguages: [],
-
-    filterMetacriticScore: [0, 100],
-    filterMetacriticScoreNone: true,
-
-    filterIMDBRating: [0, 10],
-    filterIMDBRatingNone: true,
-
-    filterIMDBPlotKeywords: [],
-
-    filterIMDBFilmingLocations: [],
-
-    filterReleaseAttributes: [],
 
     contentAdvisoryCategories: [
       {

@@ -1116,46 +1116,46 @@ export default {
       if (this.$shared.searchText) {
         filtersList.push(this.$t("Search"));
       }
-      if (this.$shared.filterSourcePaths.find(filter => !filter.Selected)) {
+      if (this.$shared.filter.filterSourcePaths.find(filter => !filter.Selected)) {
         filtersList.push(this.$t("Source Paths"));
       }
       if (
-        this.$shared.filterGenres &&
-        ((!this.$shared.filterSettings.filterGenresAND &&
-          this.$shared.filterGenres.find(filter => !filter.Selected)) ||
-          (this.$shared.filterSettings.filterGenresAND &&
-            this.$shared.filterGenres.find(filter => filter.Selected)))
+        this.$shared.filter.filterGenres &&
+        ((!this.$shared.filter.filterSettings.filterGenresAND &&
+          this.$shared.filter.filterGenres.find(filter => !filter.Selected)) ||
+          (this.$shared.filter.filterSettings.filterGenresAND &&
+            this.$shared.filter.filterGenres.find(filter => filter.Selected)))
       ) {
         filtersList.push(
           `${this.$t("Genres")}${
-            this.$shared.filterSettings.filterGenresAND ? " ߷" : ""
+            this.$shared.filter.filterSettings.filterGenresAND ? " ߷" : ""
           }`
         );
       }
-      if (this.$shared.filterAgeRatings.find(filter => !filter.Selected)) {
+      if (this.$shared.filter.filterAgeRatings.find(filter => !filter.Selected)) {
         filtersList.push(this.$t("Age Ratings"));
       }
-      if (this.$shared.filterRatings.find(filter => !filter.Selected)) {
+      if (this.$shared.filter.filterRatings.find(filter => !filter.Selected)) {
         filtersList.push(this.$t("My Ratings"));
       }
-      if (this.$shared.filterLists.find(filter => !filter.Selected)) {
+      if (this.$shared.filter.filterLists.find(filter => !filter.Selected)) {
         filtersList.push(this.$t("My Lists"));
       }
 
       if (
-        this.$shared.filterParentalAdvisory.Nudity.find(
+        this.$shared.filter.filterParentalAdvisory.Nudity.find(
           filter => !filter.Selected
         ) ||
-        this.$shared.filterParentalAdvisory.Violence.find(
+        this.$shared.filter.filterParentalAdvisory.Violence.find(
           filter => !filter.Selected
         ) ||
-        this.$shared.filterParentalAdvisory.Profanity.find(
+        this.$shared.filter.filterParentalAdvisory.Profanity.find(
           filter => !filter.Selected
         ) ||
-        this.$shared.filterParentalAdvisory.Alcohol.find(
+        this.$shared.filter.filterParentalAdvisory.Alcohol.find(
           filter => !filter.Selected
         ) ||
-        this.$shared.filterParentalAdvisory.Frightening.find(
+        this.$shared.filter.filterParentalAdvisory.Frightening.find(
           filter => !filter.Selected
         )
       ) {
@@ -1163,65 +1163,65 @@ export default {
       }
 
       if (
-        this.$shared.filterPersons &&
-        ((!this.$shared.filterSettings.filterPersonsAND &&
-          this.$shared.filterPersons.find(filter => !filter.Selected)) ||
-          (this.$shared.filterSettings.filterPersonsAND &&
-            this.$shared.filterPersons.find(
+        this.$shared.filter.filterPersons &&
+        ((!this.$shared.filter.filterSettings.filterPersonsAND &&
+          this.$shared.filter.filterPersons.find(filter => !filter.Selected)) ||
+          (this.$shared.filter.filterSettings.filterPersonsAND &&
+            this.$shared.filter.filterPersons.find(
               filter => filter.Selected && filter.IMDB_Person_ID
             )))
       ) {
         filtersList.push(
           `${this.$t("People")}${
-            this.$shared.filterSettings.filterPersonsAND ? " ߷" : ""
+            this.$shared.filter.filterSettings.filterPersonsAND ? " ߷" : ""
           }`
         );
       }
-      if (this.$shared.filterYears.find(filter => !filter.Selected)) {
+      if (this.$shared.filter.filterYears.find(filter => !filter.Selected)) {
         filtersList.push(this.$t("Release Years"));
       }
-      if (this.$shared.filterQualities.find(filter => !filter.Selected)) {
+      if (this.$shared.filter.filterQualities.find(filter => !filter.Selected)) {
         filtersList.push(this.$t("Video Quality"));
       }
       if (
-        this.$shared.filterCompanies &&
-        ((!this.$shared.filterSettings.filterCompaniesAND &&
-          this.$shared.filterCompanies.find(filter => !filter.Selected)) ||
-          (this.$shared.filterSettings.filterCompaniesAND &&
-            this.$shared.filterCompanies.find(
+        this.$shared.filter.filterCompanies &&
+        ((!this.$shared.filter.filterSettings.filterCompaniesAND &&
+          this.$shared.filter.filterCompanies.find(filter => !filter.Selected)) ||
+          (this.$shared.filter.filterSettings.filterCompaniesAND &&
+            this.$shared.filter.filterCompanies.find(
               filter => filter.Selected && filter.id_Filter_Companies
             )))
       ) {
         filtersList.push(
           `${this.$t("Companies")}${
-            this.$shared.filterSettings.filterCompaniesAND ? " ߷" : ""
+            this.$shared.filter.filterSettings.filterCompaniesAND ? " ߷" : ""
           }`
         );
       }
-      if (this.$shared.filterAudioLanguages.find(filter => !filter.Selected)) {
+      if (this.$shared.filter.filterAudioLanguages.find(filter => !filter.Selected)) {
         filtersList.push(this.$t("Audio Languages"));
       }
       if (
-        this.$shared.filterSubtitleLanguages.find(filter => !filter.Selected)
+        this.$shared.filter.filterSubtitleLanguages.find(filter => !filter.Selected)
       ) {
         filtersList.push(this.$t("Subtitle Languages"));
       }
 
       if (
-        this.$shared.filterReleaseAttributes &&
-        ((!this.$shared.filterSettings.filterReleaseAttributesAND &&
-          this.$shared.filterReleaseAttributes.find(
+        this.$shared.filter.filterReleaseAttributes &&
+        ((!this.$shared.filter.filterSettings.filterReleaseAttributesAND &&
+          this.$shared.filter.filterReleaseAttributes.find(
             filter => !filter.Selected
           )) ||
-          (this.$shared.filterSettings.filterReleaseAttributesAND &&
-            this.$shared.filterReleaseAttributes.find(
+          (this.$shared.filter.filterSettings.filterReleaseAttributesAND &&
+            this.$shared.filter.filterReleaseAttributes.find(
               filter =>
                 filter.Selected && !filter.isAny
             )))
       ) {
         filtersList.push(
           `${this.$t("Release Attributes")}${
-            this.$shared.filterSettings.filterReleaseAttributesAND
+            this.$shared.filter.filterSettings.filterReleaseAttributesAND
               ? " ߷"
               : ""
           }`
@@ -1229,54 +1229,54 @@ export default {
       }
 
       if (
-        this.$shared.filterIMDBPlotKeywords &&
-        ((!this.$shared.filterSettings.filterIMDBPlotKeywordsAND &&
-          this.$shared.filterIMDBPlotKeywords.find(
+        this.$shared.filter.filterIMDBPlotKeywords &&
+        ((!this.$shared.filter.filterSettings.filterIMDBPlotKeywordsAND &&
+          this.$shared.filter.filterIMDBPlotKeywords.find(
             filter => !filter.Selected
           )) ||
-          (this.$shared.filterSettings.filterIMDBPlotKeywordsAND &&
-            this.$shared.filterIMDBPlotKeywords.find(
+          (this.$shared.filter.filterSettings.filterIMDBPlotKeywordsAND &&
+            this.$shared.filter.filterIMDBPlotKeywords.find(
               filter => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords
             )))
       ) {
         filtersList.push(
           `${this.$t("Plot Keywords")}${
-            this.$shared.filterSettings.filterIMDBPlotKeywordsAND ? " ߷" : ""
+            this.$shared.filter.filterSettings.filterIMDBPlotKeywordsAND ? " ߷" : ""
           }`
         );
       }
       if (
-        this.$shared.filterIMDBFilmingLocations &&
-        ((!this.$shared.filterSettings.filterIMDBFilmingLocationsAND &&
-          this.$shared.filterIMDBFilmingLocations.find(
+        this.$shared.filter.filterIMDBFilmingLocations &&
+        ((!this.$shared.filter.filterSettings.filterIMDBFilmingLocationsAND &&
+          this.$shared.filter.filterIMDBFilmingLocations.find(
             filter => !filter.Selected
           )) ||
-          (this.$shared.filterSettings.filterIMDBFilmingLocationsAND &&
-            this.$shared.filterIMDBFilmingLocations.find(
+          (this.$shared.filter.filterSettings.filterIMDBFilmingLocationsAND &&
+            this.$shared.filter.filterIMDBFilmingLocations.find(
               filter =>
                 filter.Selected && filter.id_Filter_IMDB_Filming_Locations
             )))
       ) {
         filtersList.push(
           `${this.$t("Filming Locations")}${
-            this.$shared.filterSettings.filterIMDBFilmingLocationsAND
+            this.$shared.filter.filterSettings.filterIMDBFilmingLocationsAND
               ? " ߷"
               : ""
           }`
         );
       }
       if (
-        this.$shared.filterMetacriticScore[0] !== 0 ||
-        this.$shared.filterMetacriticScore[1] !== 100 ||
-        !this.$shared.filterMetacriticScoreNone
+        this.$shared.filter.filterMetacriticScore[0] !== 0 ||
+        this.$shared.filter.filterMetacriticScore[1] !== 100 ||
+        !this.$shared.filter.filterMetacriticScoreNone
       ) {
         filtersList.push(this.$t("Metacritic Score"));
       }
 
       if (
-        this.$shared.filterIMDBRating[0] !== 0 ||
-        this.$shared.filterIMDBRating[1] !== 10 ||
-        !this.$shared.filterIMDBRatingNone
+        this.$shared.filter.filterIMDBRating[0] !== 0 ||
+        this.$shared.filter.filterIMDBRating[1] !== 10 ||
+        !this.$shared.filter.filterIMDBRatingNone
       ) {
         filtersList.push(this.$t("IMDB Ratings"));
       }
