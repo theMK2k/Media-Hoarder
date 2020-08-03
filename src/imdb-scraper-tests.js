@@ -806,7 +806,7 @@ async function testIMDBRatingDemographics() {
   try {
     const expected = {
       $IMDB_rating_aged_under_18: 8.8,
-      $IMDB_numVotes_aged_under_18: 3000,
+      $IMDB_numVotes_aged_under_18: 2000,
       $IMDB_rating_aged_18_29: 8.6,
       $IMDB_numVotes_aged_18_29: 170000,
       $IMDB_rating_aged_30_44: 8.3,
