@@ -38,6 +38,8 @@
 ### support Movies in directories (also .nfo parsing)
 
 - [ ] we currently expect the whole movie name and release attributes being included in the filename, this is not always the case
+- [ ] find a way to decide if a movie file belongs to a dir-release or is standalone
+  - [ ] maybe by finding all dir-releases first and excluding them for the second scan of file-only releases
 
 ### MacOS Release
 
