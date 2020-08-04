@@ -482,7 +482,7 @@
     <mk-sourcepath-remove-dialog
       v-bind:show="sourcePathRemoveDialog.show"
       v-bind:title="$t('Remove Source Path')"
-      v-bind:question="$t('Do you really want to remove the source path {Path} _{MediaTypeUpper}_ including all associated media_')"
+      v-bind:question="$t('Do you really want to remove the source path {Path} _{MediaTypeUpper}_ including all associated media_', {Path: sourcePathRemoveDialog.Path, MediaTypeUpper: sourcePathRemoveDialog.MediaTypeUpper})"
       v-bind:yes="$t('YES_ Remove')"
       v-bind:cancel="$t('Cancel')"
       yesColor="error"

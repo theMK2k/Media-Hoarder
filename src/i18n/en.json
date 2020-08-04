@@ -760,5 +760,6 @@
   "RESET": "RESET",
   "Filter by this release attribute": "Filter by this release attribute",
   "Remove this release attribute for the current movie": "Remove this release attribute for the current movie",
-  "Release Attribute _{ReleaseAttribute}_ successfully removed from selected movie_": "Release Attribute \"{ReleaseAttribute}\" successfully removed from selected movie."
+  "Release Attribute _{ReleaseAttribute}_ successfully removed from selected movie_": "Release Attribute \"{ReleaseAttribute}\" successfully removed from selected movie.",
+  "entry successfully rescanned": "entry successfully rescanned"
 }

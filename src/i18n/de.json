@@ -841,5 +841,6 @@
   "RESET": "ZURÜCKSETZEN",
   "Filter by this release attribute": "Nach diesem Veröffentlichungsattribut filtern",
   "Remove this release attribute for the current movie": "Dieses Veröffentlichungsattribut für den aktuellen Film entfernen",
-  "Release Attribute _{ReleaseAttribute}_ successfully removed from selected movie_": "Veröffentlichungsattribut \"{ReleaseAttribute}\" erfolgreich für den ausgewählten Film entfernt."
+  "Release Attribute _{ReleaseAttribute}_ successfully removed from selected movie_": "Veröffentlichungsattribut \"{ReleaseAttribute}\" erfolgreich für den ausgewählten Film entfernt.",
+  "entry successfully rescanned": "Eintrag erfolgreich neu eingelesen"
 }

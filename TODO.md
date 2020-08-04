@@ -5,8 +5,12 @@
 ### BUGS
 
 - [x] imdb scraper: make sure, all texts are treated with html2text, see "Robot &amp; Frank"
+- [ ] single-item rescan doesn't update IMDB data? -> "Robot & Frank"
+- [x] complete rescan of movie with extras leads to multiple duplicates and extras added to main list
 - [ ] filescan: extras naming (see: "Die Üblichen Verdächtigen", "Vertigo")
 - [ ] dialogs: most of them do not utilize mediaType
+
+- [ ] Remove Source Path: Do you really want to remove the source path {Path} ({MediaTypeUpper}) including all associated media? (This does not delete any actual files)
 
 ### Filter Reset Button
 
