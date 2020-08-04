@@ -405,7 +405,7 @@
                     </div>
                   </v-row>
 
-                  <v-row v-if="item.scanErrors">
+                  <v-row v-if="item.scanErrors && Object.keys(item.scanErrors).length">
                     <v-alert
                       type="warning"
                       dense
@@ -418,10 +418,12 @@
                         v-on:click.stop="item.showScanErrors = !item.showScanErrors"
                       >{{$t("Errors were encountered during the scan, consider a re-scan_")}}</span>
                       <v-row v-if="item.showScanErrors">
-                        <ul style="font-size: 0.875rem; margin-left: 48px">
+                        <ul style="font-size: 0.875rem; margin-left: 4px; margin-top: 8px">
                           <li
                             v-for="(val, key) in item.scanErrors"
                             v-bind:key="key"
+                            class="Clickable"
+                            v-on:click.stop="item.showScanErrors = !item.showScanErrors"
                           >{{key}}: {{val}}</li>
                         </ul>
                       </v-row>
