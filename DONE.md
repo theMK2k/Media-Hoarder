@@ -50,6 +50,15 @@
     src\components\shared\VideoPlayerDialog.vue
 ```
 
+### IMDB Scraper Checks / Watchdog
+
+- [x] create a watchdog CLI which tests imdb-scraper.js
+  - [x] scrape different IMDB pages
+  - [x] compare with expected result (json suffices)
+  - [x] creates an error report
+  - [x] sends an email on error
+  - [x] start with "npm run imdb-scraper-watchdog"
+
 ### Release Attributes
 
 - [x] EXTENDED, Director's Cut, UNRATED etc.

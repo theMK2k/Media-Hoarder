@@ -169,7 +169,6 @@ export default {
     },
 
     async onFilterClick() {
-      // TODO: find Age Ratings that match MinAge and MaxAge
       const limits = {
         $Min_Age: this.getMinAge(this.Age_Rating),
         $Max_Age: this.getMaxAge(this.Age_Rating)

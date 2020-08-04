@@ -7,20 +7,6 @@
 - [ ] Blues Brothers
 - [ ] -> mediainfo-rar
 
-### IMDB Scraper Checks / Watchdog
-
-- [x] create a watchdog CLI which tests imdb-scraper.js
-  - [x] creates an error report
-  - [ ] sends an email on error
-  - [ ] saves status on web location (client can then check the status)
-  - [x] start with "npm run imdb-scraper-watchdog"
-
-- [ ] implement a watchdog which performs once a day
-  - [ ] scrape different IMDB pages
-  - [ ] compare with expected result (json suffices)
-  - [ ] generate an email which informs me of broken IMDB scraper
-  - [ ] generate a light-weight status page which informs users of broken IMDB scraper
-
 ### BUGS
 
 - [ ] imdb scraper: make sure, all texts are treated with html2text, see "Robot &amp; Frank"

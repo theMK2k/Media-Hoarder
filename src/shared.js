@@ -218,6 +218,9 @@ const shared = new Vue({
       rescanMoviesMetaData_fetchIMDBMetaData_creditsData: true,
       rescanMoviesMetaData_fetchIMDBMetaData_companiesData: true,
       rescanMoviesMetaData_fetchIMDBMetaData_filmingLocations: true,
+
+      rescanMoviesMetaData_findReleaseAttributes: true,
+      
       rescanMoviesMetaData_saveIMDBData: true,
 
       applyMetaData: true,
@@ -769,8 +772,6 @@ const shared = new Vue({
         deleted: false,
         sort: null
       }
-
-      // TODO - more!
     ]
   },
 
