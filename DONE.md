@@ -59,6 +59,12 @@
   - [x] sends an email on error
   - [x] start with "npm run imdb-scraper-watchdog"
 
+- [x] put all IMDB scraping functions from store.js into imdb-scraper.js
+- [x] Implement test-framework callable in app and also in imdb-scraper-watchdog
+- [x] Implement IMDB Scraper Checks Dialog, usable from
+  - [x] Settings (via Button)
+  - [x] after Scan Options Dialog and before actual Scan
+
 ### Release Attributes
 
 - [x] EXTENDED, Director's Cut, UNRATED etc.
@@ -101,13 +107,11 @@ OK? => let user re-edit the entry/attributes
 - [x] would it be good to have (many) icons for the sections and filters in the navbar?
 - [x] -> yes, all icons identified
 
-### IMDB Scraper Checks / Watchdog
 
-- [x] put all IMDB scraping functions from store.js into imdb-scraper.js
-- [x] Implement test-framework callable in app and also in imdb-scraper-watchdog
-- [x] Implement IMDB Scraper Checks Dialog, usable from
-  - [x] Settings (via Button)
-  - [x] after Scan Options Dialog and before actual Scan
+### MediaInfo: alternatively use track.DURATION if track.Duration is not available
+
+- [x] Blues Brothers
+- [x] -> mediainfo-rar
 
 ### Open moviechat.org button
 

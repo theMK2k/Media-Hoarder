@@ -379,6 +379,40 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
       }
     }
 
+    if ($IMDB_originalTitle) {
+      $IMDB_originalTitle = unescape(
+        htmlToText
+          .fromString($IMDB_originalTitle, {
+            wordwrap: null,
+            ignoreImage: true,
+            ignoreHref: true
+          })
+          .trim()
+      );
+    }
+    if ($IMDB_localTitle) {
+      $IMDB_localTitle = unescape(
+        htmlToText
+          .fromString($IMDB_localTitle, {
+            wordwrap: null,
+            ignoreImage: true,
+            ignoreHref: true
+          })
+          .trim()
+      );
+    }
+    if ($IMDB_primaryTitle) {
+      $IMDB_primaryTitle = unescape(
+        htmlToText
+          .fromString($IMDB_primaryTitle, {
+            wordwrap: null,
+            ignoreImage: true,
+            ignoreHref: true
+          })
+          .trim()
+      );
+    }
+
     return {
       $IMDB_originalTitle,
       $IMDB_localTitle,

@@ -2,14 +2,9 @@
 
 ## v1.0.0
 
-### MediaInfo: alternatively use track.DURATION if track.Duration is not available
-
-- [ ] Blues Brothers
-- [ ] -> mediainfo-rar
-
 ### BUGS
 
-- [ ] imdb scraper: make sure, all texts are treated with html2text, see "Robot &amp; Frank"
+- [x] imdb scraper: make sure, all texts are treated with html2text, see "Robot &amp; Frank"
 - [ ] filescan: extras naming (see: "Die Üblichen Verdächtigen", "Vertigo")
 - [ ] dialogs: most of them do not utilize mediaType
 
