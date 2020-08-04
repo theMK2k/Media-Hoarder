@@ -27,4 +27,4 @@ yarn-error.log*
 /data/extras
 
 #DB in use
-/data/media-hoarder.db
+/data/media-hoarder.db*
