@@ -2018,7 +2018,7 @@ export default {
 
         eventBus.showSnackbar(
           "success",
-          this.$t("entry rescanned successfully")
+          this.$t("entry successfully rescanned")
         );
       } catch (err) {
         logger.log("error:", JSON.stringify(err));
