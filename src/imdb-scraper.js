@@ -1074,7 +1074,7 @@ async function scrapeIMDBAdvancedTitleSearch(title, titleTypes) {
     );
 
     let title = $($(item).find("h3.lister-item-header")).text();
-    title = title.replace(/[\s\n]/g, " ");
+    title = title.replace(/[\s\n]/g, " ").replace(/^\s*\d+\./, "");
     while (/\s\s/g.test(title)) {
       title = title.replace(/\s\s/g, "");
     }
