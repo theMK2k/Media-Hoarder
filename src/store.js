@@ -1034,7 +1034,7 @@ async function applyMediaInfo(movie, onlyNew) {
     let tracks = [];
 
     if (miObj.File && miObj.File.track) {
-      tracks = miObj.File.tracks;
+      tracks = miObj.File.track;
     } else if (miObj.MediaInfo && miObj.MediaInfo.media) {
       miObj.MediaInfo.media.forEach((media) => {
         media.track.forEach((track) => {
@@ -1081,7 +1081,25 @@ async function applyMediaInfo(movie, onlyNew) {
             );
           }
         } else if (track.DURATION && track.DURATION.length > 0) {
-          logger.warn('TODO: track.DURATION', track.DURATION);
+          MI.$MI_Duration = track.DURATION[0];
+          
+          const matches = track.DURATION[0].match(/(\d+):(\d+):(\d+)/);
+
+          logger.log('DURATION matches:', matches);
+
+          let durationSeconds = 0;
+
+          durationSeconds += 60 * 60 * +matches[1];
+          durationSeconds += 60 * +matches[2];
+          durationSeconds += +matches[3];
+
+          if (durationSeconds > 0) {
+            MI.$MI_Duration_Seconds = durationSeconds;
+
+            MI.$MI_Duration_Formatted = helpers.getTimeString(
+              MI.$MI_Duration_Seconds
+            );
+          }
         }
 
         if (track.Width && track.Width.length > 0) {
