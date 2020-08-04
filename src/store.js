@@ -799,33 +799,6 @@ async function applyMetaData(onlyNew, id_Movies) {
       Name2,
     });
 
-    // if (
-    //   movie.IMDB_originalTitle &&
-    //   !movie.IMDB_localTitle.toLowerCase().includes(
-    //     movie.IMDB_originalTitle.toLowerCase()
-    //   )
-    // ) {
-    //   if (Name) {
-    //     Name2 = movie.IMDB_originalTitle;
-    //   } else {
-    //     Name = movie.IMDB_originalTitle;
-    //   }
-    // }
-
-    // if (
-    //   movie.IMDB_primaryTitle &&
-    //   !movie.IMDB_localTitle &&
-    //   !movie.IMDB_originalTitle.toLowerCase().includes(
-    //     movie.IMDB_primaryTitle.toLowerCase()
-    //   )
-    // ) {
-    //   if (Name) {
-    //     Name2 = movie.IMDB_originalTitle;
-    //   } else {
-    //     Name = movie.IMDB_originalTitle;
-    //   }
-    // }
-
     if (!Name) {
       Name = helpers.getMovieNameFromFileName(movie.Filename);
     }
@@ -907,7 +880,7 @@ async function applyMetaData(onlyNew, id_Movies) {
     );
   }
 
-  logger.log("applying IMDB Titles DONE");
+  logger.log("applying Metadata DONE");
 }
 
 async function rescanMoviesMetaData(onlyNew, id_Movies) {
@@ -977,7 +950,7 @@ async function rescanMoviesMetaData(onlyNew, id_Movies) {
       await fetchIMDBMetaData(movie, onlyNew);
 
     //TODO: if (shared.scanOptions.rescanMoviesMetaData_findReleaseAttributes)
-      await findReleaseAttributes(movie, onlyNew);
+    await findReleaseAttributes(movie, onlyNew);
 
     if (shared.scanOptions.applyMetaData)
       await applyMetaData(false, movie.id_Movies);
@@ -1082,7 +1055,7 @@ async function applyMediaInfo(movie, onlyNew) {
           }
         } else if (track.DURATION && track.DURATION.length > 0) {
           MI.$MI_Duration = track.DURATION[0];
-          
+
           const matches = track.DURATION[0].match(/(\d+):(\d+):(\d+)/);
 
           logger.log('DURATION matches:', matches);
@@ -1318,7 +1291,7 @@ async function findIMDBtconst(movie, onlyNew) {
     }
   } catch (error) {
     logger.error(error);
-    
+
     if (movie.scanErrors) {
       movie.scanErrors['IMDB entry detection'] = error.message;
     }
@@ -1335,7 +1308,7 @@ async function findIMDBtconst(movie, onlyNew) {
           $scanErrors: JSON.stringify(movie.scanErrors),
         }
       );
-    }    
+    }
   }
 }
 
@@ -2586,7 +2559,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
               })
             }
           })
-          
+
           filterReleaseAttributes += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_Release_Attributes WHERE Release_Attributes_searchTerm IN (`;
 
           filterReleaseAttributes += searchTerms.reduce(
@@ -2793,6 +2766,13 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
         }
       }
 
+      // only show secondary title if it is not part of the primary title or the primary title
+      if (item.Name2) {
+        if (item.Name.includes(item.Name2)) {
+          item.Name2 = "";
+        }
+      }
+
       item.SearchSpace =
         (item.Name || "").toLowerCase() +
         " " +
@@ -2846,7 +2826,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       } else {
         item.ReleaseAttributes = null;
       }
-      
+
       // additional fields (prevent Recalculation of Pagination Items on mouseover)
       item.lists = [];
       item.extras = [];
@@ -5081,7 +5061,7 @@ async function loadReleaseAttributes() {
     })
 
   }
-  
+
   sortReleaseAttributes();
 }
 
@@ -5102,7 +5082,7 @@ async function findReleaseAttributes(movie, onlyNew) {
     return;
   }
 
-  const filenameFiltered = " " + helpers.cleanupFileName(movie.Filename).toLowerCase() +" ";
+  const filenameFiltered = " " + helpers.cleanupFileName(movie.Filename).toLowerCase() + " ";
 
   logger.log("findReleaseAttributes filenameFiltered:", filenameFiltered);
 
@@ -5121,13 +5101,13 @@ async function findReleaseAttributes(movie, onlyNew) {
 
   shared.releaseAttributes.forEach(ra => {
     const available = alreadyAvailableReleaseAttributes.find(available => available.Release_Attributes_searchTerm === ra.searchTerm);
-    
+
     if (available) {
       // this searchTerm is already known
       available.foundAgain = true;
       return;
     }
-    
+
     if (filenameFiltered.includes(` ${ra.searchTerm} `)) {
       // newly found search term
       if (!foundSearchTerms.find(st => st === ra.searchTerm)) {
@@ -5149,7 +5129,7 @@ async function findReleaseAttributes(movie, onlyNew) {
         $id_Movies
         , $Release_Attributes_searchTerm
         , $deleted
-      )`, {  $id_Movies: movie.id_Movies, $Release_Attributes_searchTerm: foundSearchTerms[i], $deleted: false });
+      )`, { $id_Movies: movie.id_Movies, $Release_Attributes_searchTerm: foundSearchTerms[i], $deleted: false });
   }
 
   const deleteAvailableReleaseAttributes = alreadyAvailableReleaseAttributes.filter(ra => !ra.foundAgain);
@@ -5176,7 +5156,7 @@ function getReleaseAttributes(searchTerms) {
       return;
     }
 
-    if (arrSearchTerms.find(st => st ===  sra.searchTerm)) {
+    if (arrSearchTerms.find(st => st === sra.searchTerm)) {
       releaseAttributes.push(sra.displayAs);
     }
   })
@@ -5186,14 +5166,14 @@ function getReleaseAttributes(searchTerms) {
 
 function getReleaseAttributesHierarchy() {
   const shared_releaseAttributesFiltered = shared.releaseAttributes.filter(ra => !ra.deleted);
-  
+
   const releaseAttributes = [];
 
   for (let i = 0; i < shared_releaseAttributesFiltered.length; i++) {
     const ra = shared_releaseAttributesFiltered[i];
 
     const ra2 = releaseAttributes.find(ra2 => ra2.displayAs === ra.displayAs);
-    
+
     if (ra2) {
       ra2.searchTerms.push(ra.searchTerm);
     } else {
@@ -5217,7 +5197,7 @@ async function fetchFilterReleaseAttributes($MediaType) {
   const releaseAttributesHierarchy = getReleaseAttributesHierarchy();
 
   logger.log("fetchFilterReleaseAttributes releaseAttributesHierarchy:", releaseAttributesHierarchy);
-  
+
   let results = [];
 
   for (let i = 0; i < releaseAttributesHierarchy.length; i++) {
@@ -5234,23 +5214,23 @@ async function fetchFilterReleaseAttributes($MediaType) {
         (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
         AND MRA.deleted = 0
         AND MRA.Release_Attributes_searchTerm IN (${ra.searchTerms.map(param => param.replace(/'/g, "''")).reduce((prev, current) => {
-       return prev + (prev ? ", " : "") + `'${current}'`;
-     }, "")}))`
-     
-     logger.log("fetchFilterReleaseAttributes sql:", sql);
+      return prev + (prev ? ", " : "") + `'${current}'`;
+    }, "")}))`
 
-     const NumMovies = await db.fireProcedureReturnScalar(sql, {$MediaType});
+    logger.log("fetchFilterReleaseAttributes sql:", sql);
 
-     logger.log("fetchFilterReleaseAttributes NumMovies:", NumMovies);
+    const NumMovies = await db.fireProcedureReturnScalar(sql, { $MediaType });
 
-     if (NumMovies) {
-       results.push({
-         ReleaseAttribute: ra.displayAs,
-         NumMovies,
-         isAny: false,
-         Selected: true
-       })
-     }
+    logger.log("fetchFilterReleaseAttributes NumMovies:", NumMovies);
+
+    if (NumMovies) {
+      results.push({
+        ReleaseAttribute: ra.displayAs,
+        NumMovies,
+        isAny: false,
+        Selected: true
+      })
+    }
   }
 
   // TODO: create "any" item
@@ -5273,7 +5253,7 @@ async function fetchFilterReleaseAttributes($MediaType) {
         ) AS NumMovies
     `;
 
-  const anyResults = await db.fireProcedureReturnAll(sqlAny, {$MediaType});
+  const anyResults = await db.fireProcedureReturnAll(sqlAny, { $MediaType });
 
   results = [anyResults[0], ...results.sort((a, b) => (a.ReleaseAttribute.toLowerCase() < b.ReleaseAttribute.toLowerCase() ? -1 : 1))];
 
@@ -5300,7 +5280,7 @@ function resetFilters(objFilter) {
   if (!objFilter) {
     objFilter = shared.filters;
   }
-  
+
   Object.keys(objFilter).forEach(key => {
     logger.log('resetFilters', key);
 
@@ -5359,12 +5339,12 @@ async function removeReleaseAttributeFromMovie($id_Movies, releaseAttribute) {
 
   const sql = `
     UPDATE tbl_Movies_Release_Attributes SET deleted = 1 WHERE id_Movies = $id_Movies AND Release_Attributes_searchTerm IN (${ra.searchTerms.map(param => param.replace(/'/g, "''")).reduce((prev, current) => {
-      return prev + (prev ? ", " : "") + `'${current}'`;
-    }, "")})
+    return prev + (prev ? ", " : "") + `'${current}'`;
+  }, "")})
   `;
 
   await db.fireProcedure(sql, { $id_Movies });
-  
+
   return;
 }
 
