@@ -545,7 +545,7 @@ export default {
     "mk-add-languages-dialog": AddLanguagesDialog,
     "mk-add-title-type-dialog": AddTitleTypeDialog,
     "mk-edit-release-attribute-dialog": EditReleaseAttributeDialog,
-    "mk-title-type": TitleType
+    "mk-title-type": TitleType,
   },
 
   data: () => ({
@@ -561,7 +561,7 @@ export default {
       MediaType: null,
       MediaTypeUpper: null,
       Path: null,
-      Description: null
+      Description: null,
     },
 
     sourcePathRemoveDialog: {
@@ -569,20 +569,20 @@ export default {
       id_SourcePaths: null,
       MediaType: null,
       MediaTypeUpper: null,
-      Path: null
+      Path: null,
     },
 
     addRegionsDialog: {
-      show: false
+      show: false,
     },
 
     addLanguagesDialog: {
       show: false,
-      languageType: null
+      languageType: null,
     },
 
     addTitleTypeDialog: {
-      show: false
+      show: false,
     },
 
     tmpPath: "",
@@ -590,22 +590,22 @@ export default {
     editReleaseAttributeDialog: {
       show: false,
       title: "",
-      oldItem: null
-    }
+      oldItem: null,
+    },
   }),
 
   watch: {
-    minimumWaitForSetAccess: function() {
+    minimumWaitForSetAccess: function () {
       if (this.debouncedUpdateMinimumWaitForSetAccess) {
         this.debouncedUpdateMinimumWaitForSetAccess();
       }
     },
 
-    imdbRatingDemographic: function() {
+    imdbRatingDemographic: function () {
       store.setSetting("IMDBRatingDemographic", this.imdbRatingDemographic);
     },
 
-    shared_uiLanguage: function(newValue) {
+    shared_uiLanguage: function (newValue) {
       (async () => {
         await store.setSetting("uiLanguage", newValue);
 
@@ -614,18 +614,18 @@ export default {
           this.$t("Application Language saved_")
         );
       })();
-    }
+    },
   },
 
   computed: {
     tvSourcePaths() {
-      return this.sourcePaths.filter(sourcePath => {
+      return this.sourcePaths.filter((sourcePath) => {
         return sourcePath.MediaType === "series";
       });
     },
 
     moviesSourcePaths() {
-      return this.sourcePaths.filter(sourcePath => {
+      return this.sourcePaths.filter((sourcePath) => {
         return sourcePath.MediaType === "movies";
       });
     },
@@ -639,111 +639,110 @@ export default {
     },
 
     shared_releaseAttributesFiltered() {
-      return this.$shared.releaseAttributes.filter(attrib => !attrib.deleted);
+      return this.$shared.releaseAttributes.filter((attrib) => !attrib.deleted);
     },
 
     releaseAttributesMaxSort() {
-      return Math.max(...this.$shared.releaseAttributes.filter(item => !item.deleted).map(item => item.sort));
-    }
+      return Math.max(
+        ...this.$shared.releaseAttributes
+          .filter((item) => !item.deleted)
+          .map((item) => item.sort)
+      );
+    },
   },
 
   methods: {
-    browseMediaplayerPath() {
+    async browseMediaplayerPath() {
       const filters = helpers.isWindows
         ? [
             { name: this.$t("Executables"), extensions: ["exe"] },
-            { name: this.$t("All Files"), extensions: ["*"] }
+            { name: this.$t("All Files"), extensions: ["*"] },
           ]
         : [{ name: this.$t("All Files"), extensions: ["*"] }];
 
-      dialog.showOpenDialog(
-        {
-          title: this.$t("Path to your media player _e_g_ VLC_"),
-          properties: ["openFile"],
-          filters,
-          defaultPath: this.MediaplayerPath || ""
-        },
-        path => {
-          if (!path || path.length === 0) {
-            return;
-          }
+      const path = await dialog.showOpenDialog({
+        title: this.$t("Path to your media player _e_g_ VLC_"),
+        properties: ["openFile"],
+        filters,
+        defaultPath: this.MediaplayerPath || "",
+      });
 
-          this.MediaplayerPath = path[0];
+      logger.log("path:", path);
 
-          store.setSetting("MediaplayerPath", this.MediaplayerPath);
-        }
-      );
+      if (path.canceled) {
+        return;
+      }
+
+      this.MediaplayerPath = path.filePaths[0];
+
+      store.setSetting("MediaplayerPath", this.MediaplayerPath);
     },
 
-    browseMediainfoPath() {
+    async browseMediainfoPath() {
       const filters = helpers.isWindows
         ? [
             { name: this.$t("Executables"), extensions: ["exe"] },
-            { name: this.$t("All Files"), extensions: ["*"] }
+            { name: this.$t("All Files"), extensions: ["*"] },
           ]
         : [{ name: this.$t("All Files"), extensions: ["*"] }];
 
-      dialog.showOpenDialog(
-        {
-          title: this.$t("Path to mediainfo _get it from mediaarea_net_"),
-          properties: ["openFile"],
-          filters,
-          defaultPath: this.MediainfoPath || ""
-        },
-        path => {
-          if (!path || path.length === 0) {
-            return;
-          }
+      const path = await dialog.showOpenDialog({
+        title: this.$t("Path to mediainfo _get it from mediaarea_net_"),
+        properties: ["openFile"],
+        filters,
+        defaultPath: this.MediainfoPath || "",
+      });
 
-          this.MediainfoPath = path[0];
+      if (path.canceled) {
+        return;
+      }
 
-          store.setSetting("MediainfoPath", this.MediainfoPath);
-        }
-      );
+      this.MediainfoPath = path.filePaths[0];
+
+      store.setSetting("MediainfoPath", this.MediainfoPath);
     },
 
-    addSource(MediaType) {
-      dialog.showOpenDialog(
-        {
-          properties: ["openDirectory"]
-        },
-        folderposition => {
-          if (!folderposition || folderposition.length === 0) {
-            return;
-          }
+    async addSource(MediaType) {
+      const folderposition = await dialog.showOpenDialog({
+        properties: ["openDirectory"],
+      });
 
-          const chosenPath = folderposition[0];
-          const chosenPathLower = chosenPath.toLowerCase();
+      if (folderposition.canceled) {
+        return;
+      }
 
-          let isAlreadyInUse = false;
-          this.sourcePaths.forEach(sourcePath => {
-            const pathLower = sourcePath.Path.toLowerCase();
+      logger.log('folgerposition:', folderposition);
 
-            if (chosenPathLower.includes(pathLower)) {
-              isAlreadyInUse = true;
-            }
-          });
+      const chosenPath = folderposition.filePaths[0];
+      const chosenPathLower = chosenPath.toLowerCase();
 
-          if (isAlreadyInUse) {
-            return eventBus.showSnackbar(
-              "error",
-              this.$t("The chosen path is already in use_")
-            );
-          }
+      let isAlreadyInUse = false;
+      this.sourcePaths.forEach((sourcePath) => {
+        const pathLower = sourcePath.Path.toLowerCase();
 
-          this.sourcePathDescriptionDialog.id_SourcePaths = null;
-          this.sourcePathDescriptionDialog.MediaType = MediaType;
-          this.sourcePathDescriptionDialog.MediaTypeUpper = MediaType.toUpperCase();
-          this.sourcePathDescriptionDialog.Path = folderposition[0];
-          this.sourcePathDescriptionDialog.Description = null;
-
-          this.$refs.sourcePathDescriptionDialog.initTextValue(
-            helpers.getDirectoryName(folderposition[0])
-          );
-
-          this.sourcePathDescriptionDialog.show = true;
+        if (chosenPathLower.includes(pathLower)) {
+          isAlreadyInUse = true;
         }
+      });
+
+      if (isAlreadyInUse) {
+        return eventBus.showSnackbar(
+          "error",
+          this.$t("The chosen path is already in use_")
+        );
+      }
+
+      this.sourcePathDescriptionDialog.id_SourcePaths = null;
+      this.sourcePathDescriptionDialog.MediaType = MediaType;
+      this.sourcePathDescriptionDialog.MediaTypeUpper = MediaType.toUpperCase();
+      this.sourcePathDescriptionDialog.Path = chosenPath;
+      this.sourcePathDescriptionDialog.Description = null;
+
+      this.$refs.sourcePathDescriptionDialog.initTextValue(
+        helpers.getDirectoryName(chosenPath)
       );
+
+      this.sourcePathDescriptionDialog.show = true;
     },
 
     openDevTools() {
@@ -797,7 +796,7 @@ export default {
           await store.db.fireProcedure(
             `DELETE FROM tbl_SourcePaths WHERE id_SourcePaths = $id_SourcePaths`,
             {
-              $id_SourcePaths: this.sourcePathRemoveDialog.id_SourcePaths
+              $id_SourcePaths: this.sourcePathRemoveDialog.id_SourcePaths,
             }
           );
 
@@ -840,7 +839,7 @@ export default {
             `UPDATE tbl_SourcePaths SET Description = $Description WHERE id_SourcePaths = $id_SourcePaths`,
             {
               $id_SourcePaths: this.sourcePathDescriptionDialog.id_SourcePaths,
-              $Description: dialogResult.textValue
+              $Description: dialogResult.textValue,
             }
           );
 
@@ -861,7 +860,7 @@ export default {
             {
               $MediaType: this.sourcePathDescriptionDialog.MediaType,
               $Path: this.sourcePathDescriptionDialog.Path,
-              $Description: dialogResult.textValue
+              $Description: dialogResult.textValue,
             }
           );
 
@@ -873,7 +872,7 @@ export default {
               Path: this.sourcePathDescriptionDialog.Path,
               MediaTypeUpper: this.$t(
                 this.sourcePathDescriptionDialog.MediaTypeUpper
-              )
+              ),
             })
           );
         } catch (err) {
@@ -882,7 +881,7 @@ export default {
       })();
     },
 
-    updateMinimumWaitForSetAccess: function() {
+    updateMinimumWaitForSetAccess: function () {
       logger.log(
         "updating minimumWaitForSetAccess setting:",
         this.minimumWaitForSetAccess
@@ -928,12 +927,12 @@ export default {
       let maxSort = 0;
 
       this.$shared.regions.forEach(
-        region => (maxSort = Math.max(maxSort, region.sort))
+        (region) => (maxSort = Math.max(maxSort, region.sort))
       );
 
       maxSort++;
 
-      result.forEach(region =>
+      result.forEach((region) =>
         this.$shared.regions.push(Object.assign(region, { sort: maxSort++ }))
       );
 
@@ -953,12 +952,12 @@ export default {
       let maxSort = 0;
 
       languages.forEach(
-        language => (maxSort = Math.max(maxSort, language.sort))
+        (language) => (maxSort = Math.max(maxSort, language.sort))
       );
 
       maxSort++;
 
-      result.forEach(language =>
+      result.forEach((language) =>
         languages.push(Object.assign(language, { sort: maxSort++ }))
       );
 
@@ -973,7 +972,7 @@ export default {
     isTopRegion(region) {
       return (
         this.$shared.regions.findIndex(
-          region2 => region2.sort < region.sort
+          (region2) => region2.sort < region.sort
         ) === -1
       );
     },
@@ -984,14 +983,15 @@ export default {
           ? this.$shared.languagesPrimaryTitle
           : this.$shared.languagesAudioSubtitles;
       return (
-        languages.findIndex(language2 => language2.sort < language.sort) === -1
+        languages.findIndex((language2) => language2.sort < language.sort) ===
+        -1
       );
     },
 
     isBottomRegion(region) {
       return (
         this.$shared.regions.findIndex(
-          region2 => region2.sort > region.sort
+          (region2) => region2.sort > region.sort
         ) === -1
       );
     },
@@ -1002,7 +1002,8 @@ export default {
           ? this.$shared.languagesPrimaryTitle
           : this.$shared.languagesAudioSubtitles;
       return (
-        languages.findIndex(language2 => language2.sort > language.sort) === -1
+        languages.findIndex((language2) => language2.sort > language.sort) ===
+        -1
       );
     },
 
@@ -1081,11 +1082,11 @@ export default {
     async onDeleteRegion(region) {
       const sort = region.sort;
       this.$shared.regions.splice(
-        this.$shared.regions.findIndex(region2 => region2 === region),
+        this.$shared.regions.findIndex((region2) => region2 === region),
         1
       );
       this.$shared.regions.forEach(
-        region =>
+        (region) =>
           (region.sort = region.sort > sort ? region.sort - 1 : region.sort)
       );
       await store.setSetting("regions", JSON.stringify(this.$shared.regions));
@@ -1100,11 +1101,11 @@ export default {
       const sort = language.sort;
 
       languages.splice(
-        languages.findIndex(language2 => language2 === language),
+        languages.findIndex((language2) => language2 === language),
         1
       );
       languages.forEach(
-        language =>
+        (language) =>
           (language.sort =
             language.sort > sort ? language.sort - 1 : language.sort)
       );
@@ -1133,7 +1134,7 @@ export default {
       eventBus.showSnackbar(
         "success",
         this.$t("Title Type _{TitleType}_ added_", {
-          TitleType: titleType.TitleType
+          TitleType: titleType.TitleType,
         })
       );
     },
@@ -1141,7 +1142,7 @@ export default {
     async onRemoveTitleType(titleType) {
       this.$shared.imdbTitleTypesWhitelist.splice(
         this.$shared.imdbTitleTypesWhitelist.findIndex(
-          item => item.TitleType === titleType.TitleType
+          (item) => item.TitleType === titleType.TitleType
         ),
         1
       );
@@ -1154,7 +1155,7 @@ export default {
       eventBus.showSnackbar(
         "success",
         this.$t("Title Type _{TitleType}_ removed_", {
-          TitleType: titleType.TitleType
+          TitleType: titleType.TitleType,
         })
       );
     },
@@ -1185,10 +1186,16 @@ export default {
     },
 
     async onReleaseAttributeUp(item) {
-      const nextSort = Math.max(...this.$shared.releaseAttributes.map(ra => ra.sort).filter(ra => ra < item.sort));
+      const nextSort = Math.max(
+        ...this.$shared.releaseAttributes
+          .map((ra) => ra.sort)
+          .filter((ra) => ra < item.sort)
+      );
 
       if (nextSort) {
-        const ra = this.$shared.releaseAttributes.find(ra => ra.sort === nextSort);
+        const ra = this.$shared.releaseAttributes.find(
+          (ra) => ra.sort === nextSort
+        );
 
         ra.sort = item.sort;
         item.sort = nextSort;
@@ -1208,10 +1215,16 @@ export default {
     },
 
     async onReleaseAttributeDown(item) {
-      const nextSort = Math.min(...this.$shared.releaseAttributes.map(ra => ra.sort).filter(ra => ra > item.sort));
+      const nextSort = Math.min(
+        ...this.$shared.releaseAttributes
+          .map((ra) => ra.sort)
+          .filter((ra) => ra > item.sort)
+      );
 
       if (nextSort) {
-        const ra = this.$shared.releaseAttributes.find(ra => ra.sort === nextSort);
+        const ra = this.$shared.releaseAttributes.find(
+          (ra) => ra.sort === nextSort
+        );
 
         ra.sort = item.sort;
         item.sort = nextSort;
@@ -1240,10 +1253,10 @@ export default {
         const displayAs = item.displayAs;
 
         let foundItem = this.editReleaseAttributeDialog.oldItem;
-        
+
         if (!foundItem) {
           foundItem = this.$shared.releaseAttributes.find(
-            item2 => (item2.searchTerm === searchTerm && item2.deleted)
+            (item2) => item2.searchTerm === searchTerm && item2.deleted
           );
         }
 
@@ -1252,7 +1265,11 @@ export default {
             searchTerm,
             displayAs,
             deleted: false,
-            sort: this.editReleaseAttributeDialog.oldItem ? this.editReleaseAttributeDialog.oldItem.sort : (this.releaseAttributesMaxSort ? this.releaseAttributesMaxSort : 99999)
+            sort: this.editReleaseAttributeDialog.oldItem
+              ? this.editReleaseAttributeDialog.oldItem.sort
+              : this.releaseAttributesMaxSort
+              ? this.releaseAttributesMaxSort
+              : 99999,
           });
         } else {
           foundItem.displayAs = displayAs;
@@ -1284,7 +1301,7 @@ export default {
     async onDeleteReleaseAttribute(item) {
       try {
         item.deleted = true;
-  
+
         store.sortReleaseAttributes();
 
         await store.setSetting(
@@ -1296,15 +1313,15 @@ export default {
         const temp = this.$shared.releaseAttributes;
         this.$shared.releaseAttributes = null;
         this.$shared.releaseAttributes = temp;
-  
+
         eventBus.showSnackbar(
           "success",
           this.$t("Release Attribute removed successfully_")
         );
-      } catch(e) {
-        eventBus.showSnackbar('error', e);
+      } catch (e) {
+        eventBus.showSnackbar("error", e);
       }
-    }
+    },
   },
 
   // ### LifeCycle Hooks ###
@@ -1340,7 +1357,7 @@ export default {
       this.updateMinimumWaitForSetAccess,
       500
     );
-  }
+  },
 };
 </script>
 
