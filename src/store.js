@@ -380,9 +380,13 @@ async function rescanHandleDuplicates() {
 }
 
 async function mergeExtras(onlyNew) {
+  logger.log('mergeExtras START')
+
   if (!shared.scanOptions.mergeExtras) {
+    logger.log('mergeExtras OFF in scanOptions, abort')
     return;
   }
+
 
   eventBus.setProgressBar(2); // marquee
 
@@ -394,7 +398,8 @@ async function mergeExtras(onlyNew) {
 		, Filename
 		, Name
 		, Name2
-		, IMDB_tconst
+    , IMDB_tconst
+    , id_SourcePaths
 	FROM tbl_Movies MOV
 	WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
 		AND Filename LIKE '% - extra%'
@@ -402,7 +407,7 @@ async function mergeExtras(onlyNew) {
 		${onlyNew ? "AND MOV.isNew = 1" : ""}
 	`);
 
-  logger.log("Extra children:", children);
+  logger.log("mergeExtras Extra children (from db):", children);
 
   for (let i = 0; i < children.length; i++) {
     const child = children[i];
@@ -413,17 +418,21 @@ async function mergeExtras(onlyNew) {
 }
 
 async function mergeExtra(movie) {
-  logger.log("merging Extra:", movie);
+  logger.log("mergeExtra movie:", movie);
 
   const rxMovieName = /(^.*?) - extra/i;
   if (!rxMovieName.test(movie.Filename)) {
-    logger.log("Extra name not identifyable in:", movie.Filename);
+    logger.log("mergeExtra Extra name not identifyable in:", movie.Filename);
     return;
   }
 
   const $movieName = movie.Filename.match(rxMovieName)[1].trim();
 
-  logger.log("identified $movieName:", $movieName);
+  const $extraname = movie.Filename.match(/(extra.*?)[([.]/i)[1].trim();
+
+  logger.log("mergeExtra $extraname:", $extraname);
+
+  logger.log("mergeExtra identified $movieName:", $movieName);
 
   let possibleParents = await db.fireProcedureReturnAll(`
 		SELECT
@@ -436,11 +445,13 @@ async function mergeExtra(movie) {
 			, IMDB_tconst
 		FROM tbl_Movies MOV
 		WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+      AND id_SourcePaths = $id_SourcePaths
 			AND Filename NOT LIKE '% - extra%'
-			AND Filename LIKE '${$movieName.replace("'", "_")}%'
-	`);
+      AND Filename LIKE '${$movieName.replace("'", "_")}%'
+	`, { $id_SourcePaths: movie.id_SourcePaths });
 
-  logger.log("possibleParents:", possibleParents);
+  logger.log("mergeExtra possibleParents:", possibleParents);
+
 
   if (possibleParents.length == 0) {
     logger.log("no possible parent found :(");
@@ -448,14 +459,14 @@ async function mergeExtra(movie) {
   }
 
   if (possibleParents.length == 1) {
-    logger.log("single parent found");
-    await assignExtra(possibleParents[0], movie);
+    logger.log("mergeExtra single parent found");
+    await assignExtra(possibleParents[0], movie, $extraname);
     return;
   }
 
   possibleParents.forEach((parent) => {
     parent.distance = levenshtein.get(movie.Path, parent.Path);
-    logger.log("parent distance:", parent.distance, parent.Path);
+    logger.log("mergeExtra parent distance:", parent.distance, parent.Path);
   });
 
   const bestDistance = possibleParents.sort(
@@ -467,8 +478,8 @@ async function mergeExtra(movie) {
   );
 
   if (possibleParents.length == 1) {
-    logger.log("best parent by string distance found:", possibleParents[0]);
-    await assignExtra(possibleParents[0], movie);
+    logger.log("mergeExtra best parent by string distance found:", possibleParents[0]);
+    await assignExtra(possibleParents[0], movie, $extraname);
     return;
   }
 
@@ -476,20 +487,20 @@ async function mergeExtra(movie) {
     /1_\d/.test(movie.Filename)
   );
 
-  logger.log("possibleParentsMultipartFirst:", possibleParentsMultipartFirst);
+  logger.log("mergeExtra possibleParentsMultipartFirst:", possibleParentsMultipartFirst);
 
   if (possibleParentsMultipartFirst.length == 1) {
     logger.log("multipart start single parent found");
-    await assignExtra(possibleParentsMultipartFirst[0], movie);
+    await assignExtra(possibleParentsMultipartFirst[0], movie, $extraname);
     return;
   }
 }
 
-async function assignExtra(parent, child) {
-  logger.log("assigning", child.Filename, "as extra to", parent.Filename);
+async function assignExtra(parent, child, $extraname) {
+  logger.log("mergeExtra assigning", child.Filename, "as extra to", parent.Filename);
   await db.fireProcedure(
-    `UPDATE tbl_Movies SET Extra_id_Movies_Owner = $Extra_id_Movies_Owner WHERE id_Movies = $id_Movies`,
-    { $Extra_id_Movies_Owner: parent.id_Movies, $id_Movies: child.id_Movies }
+    `UPDATE tbl_Movies SET Extra_id_Movies_Owner = $Extra_id_Movies_Owner, Name = $extraname, Name2 = NULL WHERE id_Movies = $id_Movies`,
+    { $Extra_id_Movies_Owner: parent.id_Movies, $id_Movies: child.id_Movies, $extraname }
   );
   return;
 }
