@@ -12,7 +12,9 @@
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">{{$t('Link with IMDB entry')}}</div>
       </v-card-title>
-      <v-card-text>
+      <v-card-text
+        style="padding-right: 28px;"
+      >
         <v-row style="padding-left: 16px; margin-bottom: 8px">
           <v-text-field
             :append-icon-cb="() => {}"
