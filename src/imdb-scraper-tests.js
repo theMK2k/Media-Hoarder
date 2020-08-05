@@ -1024,7 +1024,7 @@ async function testIMDBAdvancedTitleSearch() {
         numResults: 32,
         result0: {
           tconst: "tt0109830",
-          title: " 1.Forrest Gump (1994) ",
+          title: "Forrest Gump (1994) ",
           imageURL:
             "https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_UY98_CR0,0,67,98_AL_.jpg",
           ageRating: "12",
