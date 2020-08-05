@@ -451,3 +451,13 @@ Dialog.vue
   N/A - Enter
   OK - Esc
 ```
+
+### Bugs
+
+- [x] imdb scraper: make sure, all texts are treated with html2text, see "Robot &amp; Frank"
+- [x] single-item rescan doesn't update IMDB data? -> "Robot & Frank"
+  -> misconcenption: actually an already removed duplicate provided the false names
+- [x] complete rescan of movie with extras leads to multiple duplicates and extras added to main list
+- [x] filescan: extras naming (see: "Die Üblichen Verdächtigen", "Vertigo")
+  - we now derive the Extra name from the filename and assign it to the primary name
+- [x] filescan: skip IMDB metadata retrieval for Extras, i.e. filename contains " - extra"

@@ -4,14 +4,7 @@
 
 ### BUGS
 
-- [x] imdb scraper: make sure, all texts are treated with html2text, see "Robot &amp; Frank"
-- [x] single-item rescan doesn't update IMDB data? -> "Robot & Frank"
-  -> misconcenption: actually an already removed duplicate provided the false names
 - [ ] delete entries with isRemoved = 1 at some point? maybe at the start of the next scan?
-- [x] complete rescan of movie with extras leads to multiple duplicates and extras added to main list
-- [x] filescan: extras naming (see: "Die Üblichen Verdächtigen", "Vertigo")
-  - we now derive the Extra name from the filename and assign it to the primary name
-- [ ] filescan: skip IMDB metadata retrieval for Extras, i.e. filename contains " - extra"
 - [ ] dialogs: most of them do not utilize mediaType
 
 - [ ] Remove Source Path: Do you really want to remove the source path {Path} ({MediaTypeUpper}) including all associated media? (This does not delete any actual files)
