@@ -262,12 +262,14 @@ async function rescan(onlyNew) {
   eventBus.rescanStarted();
 
   if (shared.scanOptions.filescanMovies) await filescanMovies(onlyNew);
+
+  if (shared.scanOptions.mergeExtras) await mergeExtras(onlyNew);
+
   if (shared.scanOptions.rescanMoviesMetaData)
     await rescanMoviesMetaData(onlyNew);
 
   // await rescanSeries();								// TODO: Series support
 
-  if (shared.scanOptions.mergeExtras) await mergeExtras(onlyNew);
 
   if (shared.scanOptions.handleDuplicates) await rescanHandleDuplicates();
 
@@ -390,6 +392,8 @@ async function mergeExtras(onlyNew) {
 
   eventBus.setProgressBar(2); // marquee
 
+  // removed: 		AND Extra_id_Movies_Owner IS NULL
+  //              because on rescan we also want to re-merge extras
   const children = await db.fireProcedureReturnAll(`
 	SELECT
 		id_Movies
@@ -403,7 +407,6 @@ async function mergeExtras(onlyNew) {
 	FROM tbl_Movies MOV
 	WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
 		AND Filename LIKE '% - extra%'
-		AND Extra_id_Movies_Owner IS NULL
 		${onlyNew ? "AND MOV.isNew = 1" : ""}
 	`);
 
@@ -455,6 +458,12 @@ async function mergeExtra(movie) {
 
   if (possibleParents.length == 0) {
     logger.log("no possible parent found :(");
+    if (movie.Extra_id_Movies_Owner) {
+      await db.fireProcedure(
+        `UPDATE tbl_Movies SET Extra_id_Movies_Owner = NULL WHERE id_Movies = $id_Movies`,
+        { $id_Movies: movie.id_Movies }
+      );
+    }
     return;
   }
 
@@ -905,10 +914,11 @@ async function rescanMoviesMetaData(onlyNew, id_Movies) {
 				, Filename
 				, MI_Done
 				, IMDB_Done
-				, IMDB_tconst
+        , IMDB_tconst
 			FROM tbl_Movies
 			WHERE 
-				(isRemoved IS NULL OR isRemoved = 0)
+        (isRemoved IS NULL OR isRemoved = 0)
+        AND Extra_id_Movies_Owner IS NULL
 				${onlyNew ? "AND (isNew = 1 OR scanErrors IS NOT NULL OR IFNULL(IMDB_Done, 0) = 0 OR IFNULL(MI_Done, 0) = 0)" : ""}
 				${
     shared.scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
