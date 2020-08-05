@@ -4,14 +4,9 @@
 
 ### BUGS
 
-- [ ] delete entries with isRemoved = 1 at some point? maybe at the start of the next scan?
 - [ ] dialogs: most of them do not utilize mediaType
 
-- [ ] Remove Source Path: Do you really want to remove the source path {Path} ({MediaTypeUpper}) including all associated media? (This does not delete any actual files)
-
-### Filter Reset Button
-
-- [ ] implement filter reset button in side bar menu
+- [ ] delete entries with isRemoved = 1 at some point? maybe at the start of the next scan?
 
 ### Fine-tune some text colors
 

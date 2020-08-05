@@ -93,6 +93,10 @@ OK? => let user re-edit the entry/attributes
   - [x] imdb search/find
   - [x] imdb scraping on persons, companies etc.
 
+### Filter Reset Button
+
+- [x] implement filter reset button in side bar menu
+
 ### More Dialogs
 
 - [x] add AudioLanguageDialog
@@ -461,3 +465,4 @@ Dialog.vue
 - [x] filescan: extras naming (see: "Die Üblichen Verdächtigen", "Vertigo")
   - we now derive the Extra name from the filename and assign it to the primary name
 - [x] filescan: skip IMDB metadata retrieval for Extras, i.e. filename contains " - extra"
+- [x] Remove Source Path: Do you really want to remove the source path {Path} ({MediaTypeUpper}) including all associated media? (This does not delete any actual files)
