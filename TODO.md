@@ -28,7 +28,7 @@
 
 - we currently expect the whole movie name and release attributes being included in the filename, this is not always the case
 - [x] find a way to decide if a movie file belongs to a dir-release or is standalone
-- [ ] if handling .rar files, summarize all files for the filesize
+- [x] if handling .rar files, summarize all individual filesizes
 - [x] use isDirectoryBased in findIMDBtconstIncluded (tt12345 in file- or directory name)
 - [x] use isDirectoryBased in findIMDBtconstInNFO (by .nfo file content)
 - [x] use isDirectoryBased in finding findIMDBtconstByFileOrDirname (by File/Dirname)

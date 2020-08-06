@@ -617,11 +617,14 @@ async function filescanMoviesPath(
 
         if (movieHave) {
           logger.log("HAVE:", pathLower, "movieHave:", movieHave);
+
+          const $Size = await getFileSize(pathItem);
+
           await db.fireProcedure(
             `UPDATE tbl_Movies SET isRemoved = 0, Size = $Size, file_created_at = $file_created_at WHERE id_Movies = $id_Movies`,
             {
               $id_Movies: movieHave.id_Movies,
-              $Size: pathItem.Size,
+              $Size,
               $file_created_at: pathItem.file_created_at,
             }
           );
@@ -820,6 +823,8 @@ async function addMovie(id_SourcePaths, pathItem) {
 
   logger.log('addMovie $Name:', $Name);
 
+  const $Size = await getFileSize(pathItem);
+
   const sqlQuery = `INSERT INTO tbl_Movies (
     id_SourcePaths
     , Name
@@ -850,7 +855,7 @@ async function addMovie(id_SourcePaths, pathItem) {
     $Path: pathItem.Path,
     $Directory: pathItem.Directory,
     $Filename: pathItem.Name,
-    $Size: pathItem.Size,
+    $Size,
     $file_created_at: pathItem.$file_created_at,
     $DIRECTORYBASED: (movieType === enmMovieTypes.DIRECTORYBASED)
   };
@@ -860,6 +865,54 @@ async function addMovie(id_SourcePaths, pathItem) {
   await db.fireProcedure(
     sqlQuery, sqlData
   );
+}
+
+/**
+ * Get the filesize of a media file:
+ * - usually it is the actual size of the file
+ * - when dealing with multipart .rar files, we need to summarize
+ * 
+ * @param {pathItem} pathItem 
+ */
+async function getFileSize(pathItem) {
+  logger.log('getFileSize pathItem.Name:', pathItem.Name);
+
+  if (pathItem.ExtensionLower !== ".rar") {
+    logger.log('getFileSize not .rar, we use the file size:', pathItem.Size);
+
+    return pathItem.Size;
+  }
+
+  let commonNameLower = pathItem.Name.toLowerCase().replace(".rar", "");
+
+
+  commonNameLower = commonNameLower.replace(/\.part\d*$/, "");
+
+  logger.log('getFileSize got .rar, using common name:', commonNameLower);
+
+  const pathItems = await listPath(pathItem.Directory);
+
+  return pathItems.filter(item => {
+    let itemCommonNameLower = item.Name.split(".")
+      .slice(0, -1)
+      .join(".").toLowerCase(); // remove file ending
+
+    itemCommonNameLower = itemCommonNameLower.replace(/\.part\d*$/, "");
+
+    if (itemCommonNameLower !== commonNameLower) {
+      return false;
+    }
+
+    if (item.ExtensionLower === ".rar" || /r\d\d/.test(item.ExtensionLower) || /\s\d\d/.test(item.ExtensionLower) || /\t\d\d/.test(item.ExtensionLower)) {
+      return true;
+    }
+
+    return false;
+  }).map(item => {
+    return item.Size;
+  }).reduce((acc, cur) => {
+    return acc + cur;
+  });
 }
 
 async function listPath(scanPath) {
