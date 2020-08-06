@@ -111,7 +111,6 @@ OK? => let user re-edit the entry/attributes
 - [x] would it be good to have (many) icons for the sections and filters in the navbar?
 - [x] -> yes, all icons identified
 
-
 ### MediaInfo: alternatively use track.DURATION if track.Duration is not available
 
 - [x] Blues Brothers
@@ -456,6 +455,10 @@ Dialog.vue
   OK - Esc
 ```
 
+### mediainfo-rar not needed
+
+- Mediainfo is also able to scan inside .rar files
+
 ### Bugs
 
 - [x] imdb scraper: make sure, all texts are treated with html2text, see "Robot &amp; Frank"
@@ -466,3 +469,4 @@ Dialog.vue
   - we now derive the Extra name from the filename and assign it to the primary name
 - [x] filescan: skip IMDB metadata retrieval for Extras, i.e. filename contains " - extra"
 - [x] Remove Source Path: Do you really want to remove the source path {Path} ({MediaTypeUpper}) including all associated media? (This does not delete any actual files)
+- [x] delete entries with isRemoved = 1 after successful rescan

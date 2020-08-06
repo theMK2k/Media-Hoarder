@@ -73,7 +73,7 @@
   "Title Types": "Title Types",
   "Media Player Path": "Media Player Path (e.g. path to VLC executable)",
   "Browse": "Browse",
-  "Mediainfo CLI Path": "Mediainfo CLI Path (i.e. path to Mediainfo CLI executable from mediaarea.net or mediainfo-rar from lundman.net)",
+  "Mediainfo CLI Path": "Mediainfo CLI Path (i.e. path to Mediainfo CLI executable from mediaarea.net)",
   "Number of seconds a medium should run until last access is updated": "Number of seconds a medium should run until 'last access' is updated",
   "IMDB Rating Demographic": "IMDB Rating Demographic",
   "Show Version Info": "Show Version Info",
@@ -592,7 +592,6 @@
 
   "Warning: Mediainfo CLI Path is not set_ Please go to": "Warning: Mediainfo CLI Path is not set. Please go to",
   "and provide one_ You can get Mediainfo CLI from": "and provide one. You can get Mediainfo CLI from",
-  "Alternatively you can use Mediainfo-RAR from": "Alternatively you can use Mediainfo-RAR from",
   "Quick Scan": "Quick Scan",
   "Complete Rescan": "Complete Rescan",
   "Filescan in every Source Path": "Filescan in every Source Path",

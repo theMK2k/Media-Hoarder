@@ -270,11 +270,16 @@ async function rescan(onlyNew) {
 
   // await rescanSeries();								// TODO: Series support
 
-
   if (shared.scanOptions.handleDuplicates) await rescanHandleDuplicates();
 
   // clear isNew flag from all entries
   await db.fireProcedure(`UPDATE tbl_Movies SET isNew = 0`, []);
+
+  // delete all removed entries
+  logger.log('rescan Cleanup START')
+  await db.fireProcedure(`DELETE FROM tbl_Movies WHERE isRemoved = 1`, []);
+  await ensureMovieDeleted();
+  logger.log('rescan CLEANUP END')
 
   isScanning = false;
   doAbortRescan = false;
@@ -995,7 +1000,6 @@ async function applyMediaInfo(movie, onlyNew) {
     return;
   }
 
-  // const mi_task = `${helpers.getPath('data/mediainfo/win/mediainfo-rar.exe')} --Output=XML "${movie.Path}"`;
   const mi_task = `${mediainfo} --Output=XML "${movie.Path}"`;
   logger.log("running mediainfo:", mi_task);
 

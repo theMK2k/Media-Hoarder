@@ -13,7 +13,7 @@
       <v-card-text>
         <v-alert type="warning" colored-border border="left" v-if="showMediaInfoWarning" dense>
           {{$t('Warning: Mediainfo CLI Path is not set_ Please go to')}}
-          <a v-on:click="openSettings">{{$t('Settings')}}</a> {{$t('and provide one_ You can get Mediainfo CLI from')}} <a v-on:click="openMediaArea">www.mediaarea.net</a>. {{$t('Alternatively you can use Mediainfo-RAR from')}} <a v-on:click="openLundman">http://lundman.net</a>.
+          <a v-on:click="openSettings">{{$t('Settings')}}</a> {{$t('and provide one_ You can get Mediainfo CLI from')}} <a v-on:click="openMediaArea">www.mediaarea.net</a>.
         </v-alert>
 
         <v-radio-group v-model="radioGroup">
@@ -202,12 +202,7 @@ export default {
 
     openMediaArea() {
       shell.openExternal(`https://mediaarea.net/en/MediaInfo`);
-    },
-
-    openLundman() {
-      shell.openExternal(`http://lundman.net/wiki/index.php/Mediainfo-rar`);
     }
-
   },
 
   // ### Lifecycle Hooks ###

@@ -2,12 +2,6 @@
 
 ## v1.0.0
 
-### BUGS
-
-- [ ] dialogs: most of them do not utilize mediaType
-
-- [ ] delete entries with isRemoved = 1 at some point? maybe at the start of the next scan?
-
 ### Fine-tune some text colors
 
 - [ ] some help texts are too bright
@@ -23,6 +17,8 @@
 - [ ] investigate binary signing
 
 ## LATER
+
+### Dialogs: most of them do not utilize mediaType
 
 ### Memory Leak (multiple reloads of medialist)
 
