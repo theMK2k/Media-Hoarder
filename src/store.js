@@ -9,15 +9,13 @@ var _ = require('lodash');
 // const moment = require("moment");
 const levenshtein = require("fast-levenshtein");
 const osLocale = require("os-locale");
+const path = require("path");
 
 const readdirAsync = util.promisify(fs.readdir);
 const existsAsync = util.promisify(fs.exists);
 const statAsync = util.promisify(fs.stat);
 const execAsync = util.promisify(child_process.exec);
 const readFileAsync = util.promisify(fs.readFile);
-
-const path = require("path");
-// import path from "path";
 
 import { eventBus } from "@/main";
 
@@ -263,10 +261,10 @@ async function rescan(onlyNew) {
 
   if (shared.scanOptions.filescanMovies) await filescanMovies(onlyNew);
 
-  if (shared.scanOptions.mergeExtras) await mergeExtras(onlyNew);
+  if (shared.scanOptions.mergeExtras) await mergeExtras(onlyNew); // TODO: merge extras from "extra" directory
 
   if (shared.scanOptions.rescanMoviesMetaData)
-    await rescanMoviesMetaData(onlyNew);
+    await rescanMoviesMetaData(onlyNew);  // TODO: isDirectoryBased
 
   // await rescanSeries();								// TODO: Series support
 
@@ -631,7 +629,7 @@ async function filescanMoviesPath(
         }
 
         if (
-          ![".avi", ".mp4", ".mkv", ".m2ts"].find((ext) => {
+          ![".avi", ".mp4", ".mkv", ".m2ts", ".rar"].find((ext) => {
             return ext === pathItem.ExtensionLower;
           })
         ) {
@@ -660,42 +658,207 @@ async function filescanMoviesPath(
   }
 }
 
+const enmMovieTypes = {
+  IGNORE: 0,
+  DIRECTORYBASED: 1,
+  FILEBASED: 2,
+  EXCEPTION: 3
+};
+
+/**
+ * Identify the type of movie (file-based, directory-based etc.)
+ * 
+ * the movie is to be IGNOREd if:
+ * - it has a ".rar" extension and it contains "part*.rar" in its name but not /part0*1/
+ * - it resides in a directory named "sample" or "proof"
+ *  
+ * the movie is DIRECTORYBASED if:
+ * - it resides alongside an .nfo AND the directory contains at most 2 media files (i.e. part1.rar, .mkv, .avi etc.)
+ * 
+ * else the movie is FILEBASED
+ * 
+ * @param {pathItem} pathItem 
+ */
+async function getMovieType(pathItem) {
+  logger.log('getMovieType pathItem:', pathItem);
+
+  const lastDirLower = helpers.getLastDirectoryName(pathItem.Directory).toLowerCase();
+
+  // check for IGNORE
+  if (await isIgnoreFile(pathItem)) {
+    return enmMovieTypes.IGNORE;
+  }
+
+  // check for DIRECTORYBASED
+  if (lastDirLower.match(/^extra/)) {
+    // file is inside an "extra" directory -> we should check the parent directory, if it is in itself DIRECTORYBASED
+    if (await isDirectoryBased(path.relative(pathItem.Directory, ".."))) {
+      return enmMovieTypes.DIRECTORYBASED;
+    } else {
+      return enmMovieTypes.FILEBASED;
+    }
+  }
+
+  if (await isDirectoryBased(pathItem.Directory)) {
+    return enmMovieTypes.DIRECTORYBASED;
+  }
+
+  return enmMovieTypes.FILEBASED;
+}
+
+/**
+ * check if the directory:
+ * - contains at most two media files
+ * - contains an .nfo file 
+ * @param {string} directory 
+ */
+async function isDirectoryBased(directory) {
+  logger.log("isDirectoryBased directory:", directory);
+
+  const pathItems = await listPath(directory);
+
+  let numMediaFiles = 0;
+  let nfoFound = false;
+
+  for (let i = 0; i < pathItems.length; i++) {
+    const pathItem = pathItems[i];
+
+    if (
+      ![".avi", ".mp4", ".mkv", ".m2ts", ".rar", ".nfo"].find((ext) => {
+        return ext === pathItem.ExtensionLower;
+      })
+    ) {
+      continue;
+    }
+
+    if (pathItem.ExtensionLower === ".nfo") {
+      nfoFound = true;
+      continue;
+    }
+
+    if (await isIgnoreFile(pathItem)) {
+      continue;
+    }
+
+    numMediaFiles++;
+  }
+
+  if (numMediaFiles < 3 && nfoFound) {
+    logger.log("isDirectoryBased YES! numMediaFiles:", numMediaFiles, "nfoFound:", nfoFound);
+    return true;
+  }
+
+  logger.log("isDirectoryBased NOPE! numMediaFiles:", numMediaFiles, "nfoFound:", nfoFound);
+  return false;
+}
+
+/**
+ * A file is to be ignored if:
+ * - it has a ".rar" extension and it contains "part*.rar" in its name but not /part0*1/
+ * - it resides in a directory named "sample" or "proof"
+ * 
+ * @param {pathItem} pathItem 
+ */
+async function isIgnoreFile(pathItem) {
+  const nameLower = pathItem.Name.toLowerCase();
+
+  const lastDirLower = helpers.getLastDirectoryName(pathItem.Directory).toLowerCase();
+
+  if (pathItem.isDirectory) {
+    logger.log('isIgnoreFile file is actually a directory, IGNORE');
+    return true;
+  }
+
+  if (pathItem.ExtensionLower === '.rar' && nameLower.match(/part.*\.rar/) && !nameLower.match(/part0*1\.rar/)) {
+    logger.log('isIgnoreFile file is .rar but it is not the first part, IGNORE');
+    return true;
+  }
+
+  if (lastDirLower === "sample") {
+    logger.log('isIgnoreFile file is in a "sample" directory, IGNORE');
+    return true;
+  }
+
+  if (lastDirLower === "proof") {
+    logger.log('isIgnoreFile file is in a "proof" directory, IGNORE');
+    return true;
+  }
+
+  logger.log('isIgnoreFile file is NOT to be ignored');
+  return false;
+}
+
+/**
+ * Add the movie to the database
+ * 
+ * @param {integer} id_SourcePaths 
+ * @param {pathItem} pathItem 
+ */
 async function addMovie(id_SourcePaths, pathItem) {
-  logger.log("add file:", pathItem);
+  logger.log("addMovie pathItem.Path:", pathItem.Path);
+
+  const movieType = await getMovieType(pathItem);
+
+  logger.log('addMovie movieType:', movieType);
+
+  if (movieType === enmMovieTypes.IGNORE || movieType === enmMovieTypes.EXCEPTION) {
+    logger.log("addMovie movieType is IGNORE or EXCEPTION, abort!");
+    return;
+  }
+
+  logger.log('addMovie adding:', pathItem.Name);
+
   // currentScanInfoHeader
   eventBus.scanInfoShow(currentScanInfoHeader, `adding ${pathItem.Name}`);
 
+  let $Name = null;
+  if (movieType === enmMovieTypes.DIRECTORYBASED) {
+    $Name = helpers.getMovieNameFromDirectory(pathItem.Directory)
+  } else {
+    $Name = helpers.getMovieNameFromFileName(pathItem.Name)
+  }
+
+  logger.log('addMovie $Name:', $Name);
+
+  const sqlQuery = `INSERT INTO tbl_Movies (
+    id_SourcePaths
+    , Name
+    , Path
+    , Directory
+    , Filename
+    , Size
+    , file_created_at
+    , created_at
+    , isNew
+    , isDirectoryBased
+  ) VALUES (
+    $id_SourcePaths
+    , $Name
+    , $Path
+    , $Directory
+    , $Filename
+    , $Size
+    , $created_at
+    , DATETIME('now')
+    , 1
+    , $DIRECTORYBASED
+  )`
+
+  const sqlData = {
+    $id_SourcePaths: id_SourcePaths,
+    $Name,
+    $Path: pathItem.Path,
+    $Directory: pathItem.Directory,
+    $Filename: pathItem.Name,
+    $Size: pathItem.Size,
+    $file_created_at: pathItem.$file_created_at,
+    $DIRECTORYBASED: (movieType === enmMovieTypes.DIRECTORYBASED)
+  };
+
+  logger.log('addMovie query:', sqlQuery, 'data:', sqlData);
+
   await db.fireProcedure(
-    `INSERT INTO tbl_Movies (
-			id_SourcePaths
-			, Name
-			, Path
-			, Directory
-			, Filename
-			, Size
-			, file_created_at
-			, created_at
-			, isNew
-		) VALUES (
-			$id_SourcePaths
-			, $Name
-			, $Path
-			, $Directory
-			, $Filename
-			, $Size
-			, $created_at
-			, DATETIME('now')
-			, 1
-		)`,
-    {
-      $id_SourcePaths: id_SourcePaths,
-      $Name: helpers.getMovieNameFromFileName(pathItem.Name),
-      $Path: pathItem.Path,
-      $Directory: pathItem.Directory,
-      $Filename: pathItem.Name,
-      $Size: pathItem.Size,
-      $file_created_at: pathItem.$file_created_at,
-    }
+    sqlQuery, sqlData
   );
 }
 
@@ -920,6 +1083,7 @@ async function rescanMoviesMetaData(onlyNew, id_Movies) {
 				, MI_Done
 				, IMDB_Done
         , IMDB_tconst
+        , isDirectoryBased
 			FROM tbl_Movies
 			WHERE 
         (isRemoved IS NULL OR isRemoved = 0)
@@ -1262,7 +1426,7 @@ async function findIMDBtconst(movie, onlyNew) {
     }
 
     if (!tconst) {
-      // tconst not found by duplicate
+      // tconst not found yet, maybe it's included in the file/directory name
       tconstIncluded = await findIMDBtconstIncluded(movie);
       if (
         !shared.scanOptions
@@ -1273,8 +1437,17 @@ async function findIMDBtconst(movie, onlyNew) {
     }
 
     if (!tconst) {
-      // tconst is not included in the filename, try to find it by searching imdb
-      tconst = await findIMDBtconstByFilename(movie);
+      // tconst not found yet, try to find it in the .nfo file (if it exists)
+      const tconstByNFO = await findIMDBtconstInNFO(movie);
+
+      if (tconstByNFO) {
+        tconst = tconstByNFO;
+      }
+    }
+
+    if (!tconst) {
+      // tconst not found yet, try to find it by searching imdb from the file/directory name
+      tconst = await findIMDBtconstByFileOrDirname(movie);
 
       if (
         shared.scanOptions
@@ -1337,47 +1510,106 @@ async function findIMDBtconst(movie, onlyNew) {
   }
 }
 
+/**
+ * Extract the IMDB tconst if it is included in the file or directory name, e.g. A Movie (2009)[tt123456789]
+ * 
+ * @param {movie} movie 
+ */
 async function findIMDBtconstIncluded(movie) {
-  // tconst is actually included in the filename, e.g. A Movie (2009)[tt123456789]
-  if (/\[tt\d*?\]/.test(movie.Filename)) {
-    const tconst = movie.Filename.match(/\[(tt\d*?)\]/)[1];
+  logger.log("findIMDBtconstIncluded START");
+  const name = (movie.isDirectoryBased ? helpers.getLastDirectoryName(movie.Directory) : movie.Filename);
 
-    if (tconst.length > 8) {
-      return tconst;
-    }
+  logger.log("findIMDBtconstIncluded name:", name);
+
+  if (/tt\d{6,}/.test(name)) {
+    const tconst = name.match(/(tt\d{6,})/)[1];
+
+    logger.log("findIMDBtconstIncluded tconst is included:", tconst);
+
+    return tconst;
   }
+
+  logger.log("findIMDBtconstIncluded tconst is NOT included");
 
   return "";
 }
 
-async function findIMDBtconstByFilename(movie) {
-  logger.log("findIMDBtconstByFilename START");
+async function findIMDBtconstInNFO(movie) {
+  logger.log("findIMDBtconstInNFO START");
+
+  if (!movie.isDirectoryBased) {
+    logger.log("findIMDBtconstInNFO movie is not directory-based, abort.");
+    return;
+  }
+
+  let searchPath = movie.Directory;
+
+  const lastDirectoryNameLower = helpers.getLastDirectoryName(movie.Directory).toLowerCase();
+
+  if (lastDirectoryNameLower.match(/^extra/)) {
+    // we are inside a sub-directory and need to search the parent directory
+    searchPath = path.relative(movie.Directory, "..");
+  }
+
+  logger.log("findIMDBtconstInNFO searching in", searchPath);
+
+  const pathItems = await listPath(searchPath);
+
+  const nfoFile = pathItems.find(pathItem => pathItem.ExtensionLower === ".nfo");
+
+  if (!nfoFile) {
+    logger.log("findIMDBtconstInNFO no .nfo file found, abort.");
+  }
+
+  logger.log("findIMDBtconstInNFO .nfo file found:", nfoFile.Name);
+
+  const nfoContent = (await readFileAsync(nfoFile.Path)).toString();
+
+  // logger.log('findIMDBtconstInNFO content:', nfoContent);
+
+  if (/tt\d{6,}/.test(nfoContent)) {
+    const tconst = nfoContent.match(/(tt\d{6,})/)[1];
+
+    logger.log("findIMDBtconstInNFO tconst found:", tconst);
+
+    return tconst;
+  }
+
+  logger.log("findIMDBtconstInNFO tconst is NOT found");
+
+  return "";
+}
+
+async function findIMDBtconstByFileOrDirname(movie) {
+  logger.log("findIMDBtconstByFileOrDirname START");
 
   const arrYears = helpers.getYearsFromFileName(movie.Filename, false);
 
   // const name = helpers.getMovieNameFromFileName(movie.Filename).replace(/[()[]]/g, ' ');
-  const name = helpers
-    .getMovieNameFromFileName(movie.Filename)
-    .replace(/\([^)]*?\)/g, "")
-    .replace(/\[[^\]]*?\]/g, "")
-    .trim();
+  const name =
+    (movie.isDirectoryBased ? helpers.getMovieNameFromDirectory(movie.Directory) : helpers.getMovieNameFromFileName(movie.Filename))
+      .replace(/\([^)]*?\)/g, "")
+      .replace(/\[[^\]]*?\]/g, "")
+      .trim();
 
-  logger.log("findIMDBtconstByFilename:", name);
+  logger.log('findIMDBtconstByFileOrDirname name:', name);
 
-  logger.log("findIMDBtconstByFilename years:", arrYears);
+  logger.log("findIMDBtconstByFileOrDirname:", name);
+
+  logger.log("findIMDBtconstByFileOrDirname years:", arrYears);
 
   const arrName = name.split(" ");
 
   for (let i = arrName.length; i > 0; i--) {
     const searchTerm = arrName.slice(0, i).join(" ");
 
-    logger.log(`findIMDBtconstByFilename trying: ${searchTerm}`);
+    logger.log(`findIMDBtconstByFileOrDirname trying: ${searchTerm}`);
 
     const results = await scrapeIMDBSuggestion(searchTerm);
 
     if (results.length === 1) {
       // definitely found our optimum!
-      logger.log("findIMDBtconstByFilename OPTIMUM found!", results);
+      logger.log("findIMDBtconstByFileOrDirname OPTIMUM found!", results);
       return results[0].tconst;
     }
 
@@ -2650,6 +2882,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       , AR.Age
       , MOV.IMDB_MinAge
       , MOV.IMDB_MaxAge
+      , MOV.isDirectoryBased
 
       ${
       minimumResultSet

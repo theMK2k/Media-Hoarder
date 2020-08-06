@@ -1112,6 +1112,10 @@ async function scrapeIMDBAdvancedTitleSearch(title, titleTypes) {
   return results;
 }
 
+/**
+ * IMPORTANT: this only supports latin characters!
+ * @param {string} searchTerm 
+ */
 async function scrapeIMDBSuggestion(searchTerm) {
   // only supports latin characters!
   // https://v2.sg.media-imdb.com/suggestion/d/Das%20Phantom%20Kommando%20(1985).json

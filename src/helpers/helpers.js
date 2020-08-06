@@ -36,8 +36,6 @@ function getTimeString(runtimeSeconds) {
 }
 
 function uppercaseEachWord(input) {
-  logger.log("uppercaseEachWord:", input);
-
   if (!input) {
     return input;
   }
@@ -77,6 +75,25 @@ function getMovieNameFromFileName(filename) {
   }
 
   return filenameFiltered;
+}
+
+function getLastDirectoryName(directory) {
+  const arrDirectory = directory.split(path.sep);
+  return arrDirectory[arrDirectory.length - 1];
+}
+
+function getMovieNameFromDirectory(directory) {
+  logger.log('getMovieNameFromDirectory directory:', directory);
+  
+  let lastDirectory = getLastDirectoryName(directory);
+  
+  lastDirectory = lastDirectory.replace(/[.,_]/g, " ");
+
+  while (/\s\s/.test(lastDirectory)) {
+    lastDirectory = lastDirectory.replace(/\s\s/g, " ");
+  }
+
+  return lastDirectory;
 }
 
 function cleanupFileName(filename) {
@@ -217,10 +234,12 @@ export {
   getTimeString,
   uppercaseEachWord,
   getMovieNameFromFileName,
+  getMovieNameFromDirectory,
   getYearsFromFileName,
   getDirectoryName,
   downloadFile,
   requestAsync,
   requestRetryStrategy,
-  cleanupFileName
+  cleanupFileName,
+  getLastDirectoryName
 };

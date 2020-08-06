@@ -2,15 +2,57 @@
 
 ## v1.0.0
 
+### Bugs
+
+- i18n: "Imported: wenigen Sekunden ago" <- mixed De and En
+
+### JSDoc everywhere
+
+```text
+/**
+ * Description of the function
+ * @param {string} myParam
+ */
+```
+
 ### Fine-tune some text colors
 
 - [ ] some help texts are too bright
 
+### Automatically find mediainfo and vlc
+
+- Linux "which"
+- Windows "where"
+
 ### support Movies in directories (also .nfo parsing)
 
-- [ ] we currently expect the whole movie name and release attributes being included in the filename, this is not always the case
-- [ ] find a way to decide if a movie file belongs to a dir-release or is standalone
-  - [ ] maybe by finding all dir-releases first and excluding them for the second scan of file-only releases
+- we currently expect the whole movie name and release attributes being included in the filename, this is not always the case
+- [x] find a way to decide if a movie file belongs to a dir-release or is standalone
+- [ ] if handling .rar files, summarize all files for the filesize
+- [x] use isDirectoryBased in findIMDBtconstIncluded (tt12345 in file- or directory name)
+- [x] use isDirectoryBased in findIMDBtconstInNFO (by .nfo file content)
+- [x] use isDirectoryBased in finding findIMDBtconstByFileOrDirname (by File/Dirname)
+- [ ] use isDirectoryBased in finding Release attributes (DUBBED, BDRip etc.)
+
+#### A directory-based media file is
+
+- a media file alongside an .nfo file (scene release)
+  -> also don't expect any other media files in the directory
+- a media file inside an "extra" or "extras" directory (this is our own definition!)
+  -> use the full filename as Extra Name
+
+-> set isDirectoryBased = 1
+-> ignore the filename and use the directory's name instead
+-> parse the .nfo for IMDB tconst
+
+=> anything else: treat it as file-based media file (isDirectoryBased = 0)
+
+#### ignored files are
+
+- a media file inside a "sample" directory
+- a media file inside a "proof" directory
+
+#### An ignored 
 
 ### MacOS Release
 
