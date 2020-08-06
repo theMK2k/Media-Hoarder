@@ -496,7 +496,7 @@ async function mergeExtra(movie) {
   }
 
   const possibleParentsMultipartFirst = possibleParents.filter((movie) =>
-    /1_\d/.test(movie.Filename)
+    /\s1_\d/.test(movie.Filename)
   );
 
   logger.log("mergeExtra possibleParentsMultipartFirst:", possibleParentsMultipartFirst);
@@ -991,7 +991,7 @@ async function applyMetaData(onlyNew, id_Movies) {
       Name = helpers.getMovieNameFromFileName(movie.Filename);
     }
 
-    const rxMultiPart = /(\d)_(\d)/;
+    const rxMultiPart = /\s(\d)_(\d)/;
     if (rxMultiPart.test(movie.Filename)) {
       const multiPartMatches = movie.Filename.match(rxMultiPart);
       Name += ` (${multiPartMatches[1]}/${multiPartMatches[2]})`;
