@@ -5393,9 +5393,24 @@ async function findReleaseAttributes(movie, onlyNew) {
     return;
   }
 
-  const filenameFiltered = " " + helpers.cleanupFileName(movie.Filename).toLowerCase() + " ";
+  let nameFiltered = " " + helpers.cleanupFileName(movie.Filename).toLowerCase() + " ";
 
-  logger.log("findReleaseAttributes filenameFiltered:", filenameFiltered);
+  if (movie.isDirectoryBased) {
+    let dirName = movie.Directory;
+
+    let lastDirectoryNameLower = helpers.getLastDirectoryName(movie.Directory).toLowerCase();
+  
+    if (lastDirectoryNameLower.match(/^extra/)) {
+      // we are inside a sub-directory and need to search the parent directory
+      dirName = path.relative(movie.Directory, "..");
+      lastDirectoryNameLower = helpers.getLastDirectoryName(dirName).toLowerCase();
+    }
+  
+    // use directory name instead of filename for directory-based movie
+    nameFiltered = " " + helpers.cleanupDirectoryName(lastDirectoryNameLower).toLowerCase() + " ";
+  }
+
+  logger.log("findReleaseAttributes nameFiltered:", nameFiltered);
 
   const alreadyAvailableReleaseAttributes = await db.fireProcedureReturnAll(`
     SELECT
@@ -5419,7 +5434,7 @@ async function findReleaseAttributes(movie, onlyNew) {
       return;
     }
 
-    if (filenameFiltered.includes(` ${ra.searchTerm} `)) {
+    if (nameFiltered.includes(` ${ra.searchTerm} `)) {
       // newly found search term
       if (!foundSearchTerms.find(st => st === ra.searchTerm)) {
         foundSearchTerms.push(ra.searchTerm);

@@ -68,7 +68,7 @@ function getMovieNameFromFileName(filename) {
       .join(".");
   }
 
-  filenameFiltered = filenameFiltered.replace(/[.,_]/g, " ");
+  filenameFiltered = filenameFiltered.replace(/[.,_-]/g, " ");
 
   while (/\s\s/.test(filenameFiltered)) {
     filenameFiltered = filenameFiltered.replace(/\s\s/g, " ");
@@ -87,7 +87,7 @@ function getMovieNameFromDirectory(directory) {
   
   let lastDirectory = getLastDirectoryName(directory);
   
-  lastDirectory = lastDirectory.replace(/[.,_]/g, " ");
+  lastDirectory = lastDirectory.replace(/[.,_-]/g, " ");
 
   while (/\s\s/.test(lastDirectory)) {
     lastDirectory = lastDirectory.replace(/\s\s/g, " ");
@@ -106,6 +106,18 @@ function cleanupFileName(filename) {
   }
 
   return filenameFiltered;
+}
+
+function cleanupDirectoryName(directory) {
+  let nameFiltered = getMovieNameFromDirectory(directory);
+
+  nameFiltered = nameFiltered.replace(/[()[\]]/g, " ");
+  
+  while (/\s\s/.test(nameFiltered)) {
+    nameFiltered = nameFiltered.replace(/\s\s/g, " ");
+  }
+
+  return nameFiltered;
 }
 
 function getYearsFromFileName(filename, includeEmptyString) {
@@ -241,5 +253,6 @@ export {
   requestAsync,
   requestRetryStrategy,
   cleanupFileName,
+  cleanupDirectoryName,
   getLastDirectoryName
 };
