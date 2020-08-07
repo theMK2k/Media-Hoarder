@@ -33,7 +33,7 @@
 - [x] use isDirectoryBased in findIMDBtconstInNFO (by .nfo file content)
 - [x] use isDirectoryBased in finding findIMDBtconstByFileOrDirname (by File/Dirname)
 - [x] use isDirectoryBased in finding Release attributes (DUBBED, BDRip etc.)
-- [ ] handle extras in "Extras" directory
+- [x] handle extras in "Extras" directory
 - [ ] check AssignIMDB (individual rescan)
 
 #### A directory-based media file is

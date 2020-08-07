@@ -54,7 +54,6 @@ function uppercaseEachWord(input) {
     }
   }
 
-  logger.log("uppercaseEachWord result:", text);
   return text;
 }
 

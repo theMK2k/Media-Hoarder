@@ -407,9 +407,10 @@ async function mergeExtras(onlyNew) {
 		, Name2
     , IMDB_tconst
     , id_SourcePaths
+    , isDirectoryBased
 	FROM tbl_Movies MOV
 	WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
-		AND Filename LIKE '% - extra%'
+		AND (Filename LIKE '% - extra%' OR (isDirectoryBased = 1 AND Directory LIKE '%extra%'))
 		${onlyNew ? "AND MOV.isNew = 1" : ""}
 	`);
 
@@ -417,18 +418,81 @@ async function mergeExtras(onlyNew) {
 
   for (let i = 0; i < children.length; i++) {
     const child = children[i];
-    await mergeExtra(child);
+
+    if (!child.isDirectoryBased) {
+      await mergeExtraFileBased(child);
+    } else {
+      await mergeExtraDirectoryBased(child);
+    }
   }
 
   eventBus.setProgressBar(-1); // off
 }
 
-async function mergeExtra(movie) {
-  logger.log("mergeExtra movie:", movie);
+async function mergeExtraDirectoryBased(movie) {
+  logger.log("mergeExtraDirectoryBased movie.Filename:", movie.Filename);
+
+  // first, check if the media file is actually an extra - it must reside in an "extra" or "extras" directory
+  const lastDirectoryNameLower = helpers.getLastDirectoryName(movie.Directory).toLowerCase();
+
+  if (!(lastDirectoryNameLower === "extra" || lastDirectoryNameLower === "extras")) {
+    logger.log('mergeExtraDirectoryBased media file is not in "extra" or "extras" directory, abort')
+  }
+
+  const $ParentDirectory = path.resolve(movie.Directory, "..");
+
+  logger.log('mergeExtraDirectoryBased $ParentDirectory:', $ParentDirectory);
+
+  let possibleParents = await db.fireProcedureReturnAll(`
+		SELECT
+			id_Movies
+			, Path
+			, Directory
+			, Filename
+			, Name
+			, Name2
+      , IMDB_tconst
+      , isDirectoryBased
+		FROM tbl_Movies MOV
+		WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+      AND Directory = $ParentDirectory
+      AND isDirectoryBased = 1
+	`, { $ParentDirectory });
+
+  logger.log("mergeExtraDirectoryBased possibleParents:", possibleParents);
+
+  if (possibleParents.length == 0) {
+    logger.log("no possible parent found :(");
+    if (movie.Extra_id_Movies_Owner) {
+      await db.fireProcedure(
+        `UPDATE tbl_Movies SET Extra_id_Movies_Owner = NULL WHERE id_Movies = $id_Movies`,
+        { $id_Movies: movie.id_Movies }
+      );
+    }
+    return;
+  }
+
+  if (possibleParents.length == 1) {
+    logger.log("mergeExtraDirectoryBased single parent found");
+    await assignExtra(possibleParents[0], movie, helpers.getMovieNameFromFileName(movie.Filename));
+    return;
+  }
+
+  if (possibleParents.length > 1) {
+    logger.log("mergeExtraDirectoryBased multiple parents found, we just use the first");
+    await assignExtra(possibleParents[0], movie, helpers.getMovieNameFromFileName(movie.Filename));
+    return;
+  }
+
+  return;
+}
+
+async function mergeExtraFileBased(movie) {
+  logger.log("mergeExtraFileBased movie:", movie);
 
   const rxMovieName = /(^.*?) - extra/i;
   if (!rxMovieName.test(movie.Filename)) {
-    logger.log("mergeExtra Extra name not identifyable in:", movie.Filename);
+    logger.log("mergeExtraFileBased Extra name not identifyable in:", movie.Filename);
     return;
   }
 
@@ -436,9 +500,9 @@ async function mergeExtra(movie) {
 
   const $extraname = movie.Filename.match(/(extra.*?)[([.]/i)[1].trim();
 
-  logger.log("mergeExtra $extraname:", $extraname);
+  logger.log("mergeExtraFileBased $extraname:", $extraname);
 
-  logger.log("mergeExtra identified $movieName:", $movieName);
+  logger.log("mergeExtraFileBased identified $movieName:", $movieName);
 
   let possibleParents = await db.fireProcedureReturnAll(`
 		SELECT
@@ -456,7 +520,7 @@ async function mergeExtra(movie) {
       AND Filename LIKE '${$movieName.replace("'", "_")}%'
 	`, { $id_SourcePaths: movie.id_SourcePaths });
 
-  logger.log("mergeExtra possibleParents:", possibleParents);
+  logger.log("mergeExtraFileBased possibleParents:", possibleParents);
 
 
   if (possibleParents.length == 0) {
@@ -471,14 +535,14 @@ async function mergeExtra(movie) {
   }
 
   if (possibleParents.length == 1) {
-    logger.log("mergeExtra single parent found");
+    logger.log("mergeExtraFileBased single parent found");
     await assignExtra(possibleParents[0], movie, $extraname);
     return;
   }
 
   possibleParents.forEach((parent) => {
     parent.distance = levenshtein.get(movie.Path, parent.Path);
-    logger.log("mergeExtra parent distance:", parent.distance, parent.Path);
+    logger.log("mergeExtraFileBased parent distance:", parent.distance, parent.Path);
   });
 
   const bestDistance = possibleParents.sort(
@@ -490,7 +554,7 @@ async function mergeExtra(movie) {
   );
 
   if (possibleParents.length == 1) {
-    logger.log("mergeExtra best parent by string distance found:", possibleParents[0]);
+    logger.log("mergeExtraFileBased best parent by string distance found:", possibleParents[0]);
     await assignExtra(possibleParents[0], movie, $extraname);
     return;
   }
@@ -499,7 +563,7 @@ async function mergeExtra(movie) {
     /\s1_\d/.test(movie.Filename)
   );
 
-  logger.log("mergeExtra possibleParentsMultipartFirst:", possibleParentsMultipartFirst);
+  logger.log("mergeExtraFileBased possibleParentsMultipartFirst:", possibleParentsMultipartFirst);
 
   if (possibleParentsMultipartFirst.length == 1) {
     logger.log("multipart start single parent found");
@@ -509,7 +573,7 @@ async function mergeExtra(movie) {
 }
 
 async function assignExtra(parent, child, $extraname) {
-  logger.log("mergeExtra assigning", child.Filename, "as extra to", parent.Filename);
+  logger.log("mergeExtraFileBased assigning", child.Filename, "as extra to", parent.Filename);
   await db.fireProcedure(
     `UPDATE tbl_Movies SET Extra_id_Movies_Owner = $Extra_id_Movies_Owner, Name = $extraname, Name2 = NULL WHERE id_Movies = $id_Movies`,
     { $Extra_id_Movies_Owner: parent.id_Movies, $id_Movies: child.id_Movies, $extraname }
@@ -695,9 +759,13 @@ async function getMovieType(pathItem) {
   // check for DIRECTORYBASED
   if (lastDirLower.match(/^extra/)) {
     // file is inside an "extra" directory -> we should check the parent directory, if it is in itself DIRECTORYBASED
-    if (await isDirectoryBased(path.relative(pathItem.Directory, ".."))) {
+    logger.log('getMovieType file is inside "extra" directory, check the parent directory...')
+
+    if (await isDirectoryBased(path.resolve(pathItem.Directory, ".."))) {
+      logger.log('getMovieType parent directory is directory-based')
       return enmMovieTypes.DIRECTORYBASED;
     } else {
+      logger.log('getMovieType parent directory is NOT directory-based')
       return enmMovieTypes.FILEBASED;
     }
   }
@@ -1601,7 +1669,7 @@ async function findIMDBtconstInNFO(movie) {
 
   if (lastDirectoryNameLower.match(/^extra/)) {
     // we are inside a sub-directory and need to search the parent directory
-    searchPath = path.relative(movie.Directory, "..");
+    searchPath = path.resolve(movie.Directory, "..");
   }
 
   logger.log("findIMDBtconstInNFO searching in", searchPath);
@@ -5402,7 +5470,7 @@ async function findReleaseAttributes(movie, onlyNew) {
   
     if (lastDirectoryNameLower.match(/^extra/)) {
       // we are inside a sub-directory and need to search the parent directory
-      dirName = path.relative(movie.Directory, "..");
+      dirName = path.resolve(movie.Directory, "..");
       lastDirectoryNameLower = helpers.getLastDirectoryName(dirName).toLowerCase();
     }
   
