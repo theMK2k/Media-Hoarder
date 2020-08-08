@@ -2036,7 +2036,7 @@ async function saveIMDBData(
     const movieGenre = movieGenres[i];
     
     if (!movieGenre.Found) {
-      // logger.log('removing genre', movieGenre);
+      logger.log('removing genre', movieGenre);
 
       await db.fireProcedure(
         "DELETE FROM tbl_Movies_Genres WHERE id_Movies_Genres = $id_Movies_Genres",
@@ -2101,7 +2101,7 @@ async function saveIMDBData(
     const movieCredit = movieCredits[i];
     
     if (!movieCredit.Found) {
-      // logger.log('removing credit', movieCredit);
+      logger.log('removing credit', movieCredit);
 
       await db.fireProcedure(
         "DELETE FROM tbl_Movies_IMDB_Credits WHERE id_Movies_IMDB_Credits = $id_Movies_IMDB_Credits",
@@ -2166,7 +2166,7 @@ async function saveIMDBData(
     const movieCompany = movieCompanies[i];
     
     if (!movieCompany.Found) {
-      // logger.log('removing company', movieCompany);
+      logger.log('removing company', movieCompany);
 
       await db.fireProcedure(
         "DELETE FROM tbl_Movies_IMDB_Companies WHERE id_Movies_IMDB_Companies = $id_Movies_IMDB_Companies",
@@ -2240,11 +2240,13 @@ async function saveIMDBData(
       logger.log('removing plot keyword', moviePlotKeyword);
 
       await db.fireProcedure(
-        "DELETE FROM tbl_Movies_IMDB_Plot_Keywords WHERE id_IMDB_Plot_Keywords = $id_IMDB_Plot_Keywords",
-        { $id_IMDB_Plot_Keywords: moviePlotKeyword.id_IMDB_Plot_Keywords }
+        "DELETE FROM tbl_Movies_IMDB_Plot_Keywords WHERE id_Movies_IMDB_Plot_Keywords = $id_Movies_IMDB_Plot_Keywords",
+        { $id_Movies_IMDB_Plot_Keywords: moviePlotKeyword.id_Movies_IMDB_Plot_Keywords }
       );
     }
   }
+
+  const movieFilmingLocations = await fetchMovieFilmingLocations(movie.id_Movies);
 
   for (let i = 0; i < filmingLocations.length; i++) {
     let filmingLocation = filmingLocations[i];
@@ -2267,6 +2269,12 @@ async function saveIMDBData(
 
     if (!$id_IMDB_Filming_Locations) {
       logger.error("unable to store filming location:", filmingLocation);
+    }
+
+    const movieFilmingLocation = movieFilmingLocations.find(fl => fl.id_IMDB_Filming_Locations === $id_IMDB_Filming_Locations);
+
+    if (movieFilmingLocation) {
+      movieFilmingLocation.Found = 1;
     }
 
     await db.fireProcedure(
@@ -2298,7 +2306,19 @@ async function saveIMDBData(
     );
   }
 
-  // TODO: remove existing filming locations that are not available anymore (re-link to another imdb entry)
+  // remove existing filming locations that are not available anymore (re-link to another imdb entry)
+  for (let i = 0; i < movieFilmingLocations.length; i++) {
+    const movieFilmingLocation = movieFilmingLocations[i];
+    
+    if (!movieFilmingLocation.Found) {
+      logger.log('removing filming location', movieFilmingLocation);
+
+      await db.fireProcedure(
+        "DELETE FROM tbl_Movies_IMDB_Filming_Locations WHERE id_Movies_IMDB_Filming_Locations = $id_Movies_IMDB_Filming_Locations",
+        { $id_Movies_IMDB_Filming_Locations: movieFilmingLocation.id_Movies_IMDB_Filming_Locations }
+      );
+    }
+  }
 }
 
 function getPreferredLanguages() {
@@ -4703,7 +4723,8 @@ async function fetchMoviePlotKeywords($id_Movies) {
   return await db.fireProcedureReturnAll(
     `
     SELECT
-      PK.id_IMDB_Plot_Keywords
+      MPK.id_Movies_IMDB_Plot_Keywords
+      , PK.id_IMDB_Plot_Keywords
       , PK.Keyword
       , MPK.NumVotes
       , MPK.NumRelevant
@@ -4719,7 +4740,8 @@ async function fetchMovieFilmingLocations($id_Movies) {
   return await db.fireProcedureReturnAll(
     `
     SELECT
-      MFL.id_IMDB_Filming_Locations
+      MFL.id_Movies_IMDB_Filming_Locations
+      , MFL.id_IMDB_Filming_Locations
       , FL.Location
       , MFL.NumVotes
       , MFL.NumInteresting
