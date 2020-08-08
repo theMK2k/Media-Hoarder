@@ -4,7 +4,6 @@
 
 ### Bugs
 
-- i18n: "Imported: wenigen Sekunden ago" <- mixed De and En
 - "Quiz Show" -> assign "Quiz" (leads to genre "Game Show") -> assign back to "Quiz Show" (genre "Game Show" persists)
   -> it seems, genres are not removed on re-assign
 

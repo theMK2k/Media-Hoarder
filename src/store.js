@@ -6,7 +6,7 @@ const child_process = require("child_process");
 const xml2js = require("xml2js");
 var _ = require('lodash');
 // const textVersion = require("textversionjs");
-// const moment = require("moment");
+const moment = require("moment");
 const levenshtein = require("fast-levenshtein");
 const osLocale = require("os-locale");
 const path = require("path");
@@ -91,8 +91,9 @@ dbsync.runSync(
       if (err) {
         return logger.error(err);
       }
-
+      
       (async () => {
+        // After the DB is successfully initialized, we can initialize everything else
         await createIndexes(db);
 
         await loadSettingDuplicatesHandling();
@@ -128,6 +129,8 @@ dbsync.runSync(
         await loadReleaseAttributes();
 
         shared.uiLanguage = await fetchUILanguage();
+
+        moment.locale(shared.uiLanguage);
       })();
     });
   }

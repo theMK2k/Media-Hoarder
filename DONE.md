@@ -501,3 +501,5 @@ Dialog.vue
 - [x] filescan: skip IMDB metadata retrieval for Extras, i.e. filename contains " - extra"
 - [x] Remove Source Path: Do you really want to remove the source path {Path} ({MediaTypeUpper}) including all associated media? (This does not delete any actual files)
 - [x] delete entries with isRemoved = 1 after successful rescan
+- [x] i18n: mixed up languages with i18n and moment
+
