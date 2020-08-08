@@ -2110,8 +2110,27 @@ async function saveIMDBData(
     }
   }
 
+  const movieCompanies = await db.fireProcedureReturnAll(
+    `
+	SELECT
+		id_Movies_IMDB_Companies
+		, id_Movies
+		, Category			AS category
+		, IMDB_Company_ID	AS id
+		, Company_Name		AS name
+		, Role			AS role
+	FROM tbl_Movies_IMDB_Companies WHERE id_Movies = $id_Movies`,
+    { $id_Movies: movie.id_Movies }
+  );
+
   for (let i = 0; i < companies.length; i++) {
     const company = companies[i];
+
+    const movieCompany = movieCompanies.find(mc => mc.category === company.category && mc.id === company.id);
+
+    if (movieCompany) {
+      movieCompany.Found = true;
+    }
 
     await db.fireProcedure(
       `
@@ -2142,7 +2161,19 @@ async function saveIMDBData(
     );
   }
 
-  // TODO: remove existing companies that are not available anymore (re-link to another imdb entry)
+  // remove existing companies that are not available anymore (re-link to another imdb entry)
+  for (let i = 0; i < movieCompanies.length; i++) {
+    const movieCompany = movieCompanies[i];
+    
+    if (!movieCompany.Found) {
+      // logger.log('removing company', movieCompany);
+
+      await db.fireProcedure(
+        "DELETE FROM tbl_Movies_IMDB_Companies WHERE id_Movies_IMDB_Companies = $id_Movies_IMDB_Companies",
+        { $id_Movies_IMDB_Companies: movieCompany.id_Movies_IMDB_Companies }
+      );
+    }
+  }
 
   for (let i = 0; i < plotKeywords.length; i++) {
     let plotKeyword = plotKeywords[i];
