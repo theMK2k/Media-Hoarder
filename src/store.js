@@ -2036,7 +2036,7 @@ async function saveIMDBData(
     const movieGenre = movieGenres[i];
     
     if (!movieGenre.Found) {
-      logger.log('removing genre', movieGenre);
+      // logger.log('removing genre', movieGenre);
 
       await db.fireProcedure(
         "DELETE FROM tbl_Movies_Genres WHERE id_Movies_Genres = $id_Movies_Genres",
@@ -2101,7 +2101,7 @@ async function saveIMDBData(
     const movieCredit = movieCredits[i];
     
     if (!movieCredit.Found) {
-      logger.log('removing credit', movieCredit);
+      // logger.log('removing credit', movieCredit);
 
       await db.fireProcedure(
         "DELETE FROM tbl_Movies_IMDB_Credits WHERE id_Movies_IMDB_Credits = $id_Movies_IMDB_Credits",
@@ -2166,7 +2166,7 @@ async function saveIMDBData(
     const movieCompany = movieCompanies[i];
     
     if (!movieCompany.Found) {
-      logger.log('removing company', movieCompany);
+      // logger.log('removing company', movieCompany);
 
       await db.fireProcedure(
         "DELETE FROM tbl_Movies_IMDB_Companies WHERE id_Movies_IMDB_Companies = $id_Movies_IMDB_Companies",
@@ -2237,7 +2237,7 @@ async function saveIMDBData(
     const moviePlotKeyword = moviePlotKeywords[i];
     
     if (!moviePlotKeyword.Found) {
-      logger.log('removing plot keyword', moviePlotKeyword);
+      // logger.log('removing plot keyword', moviePlotKeyword);
 
       await db.fireProcedure(
         "DELETE FROM tbl_Movies_IMDB_Plot_Keywords WHERE id_Movies_IMDB_Plot_Keywords = $id_Movies_IMDB_Plot_Keywords",
@@ -2311,7 +2311,7 @@ async function saveIMDBData(
     const movieFilmingLocation = movieFilmingLocations[i];
     
     if (!movieFilmingLocation.Found) {
-      logger.log('removing filming location', movieFilmingLocation);
+      // logger.log('removing filming location', movieFilmingLocation);
 
       await db.fireProcedure(
         "DELETE FROM tbl_Movies_IMDB_Filming_Locations WHERE id_Movies_IMDB_Filming_Locations = $id_Movies_IMDB_Filming_Locations",
