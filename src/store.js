@@ -2175,6 +2175,8 @@ async function saveIMDBData(
     }
   }
 
+  const moviePlotKeywords = await fetchMoviePlotKeywords(movie.id_Movies);
+
   for (let i = 0; i < plotKeywords.length; i++) {
     let plotKeyword = plotKeywords[i];
 
@@ -2196,6 +2198,12 @@ async function saveIMDBData(
 
     if (!$id_IMDB_Plot_Keywords) {
       logger.error("unable to store plot keyword:", plotKeyword);
+    }
+
+    const moviePlotKeyword = moviePlotKeywords.find(pk => pk.id_IMDB_Plot_Keywords === $id_IMDB_Plot_Keywords);
+
+    if (moviePlotKeyword) {
+      moviePlotKeyword.Found = 1;
     }
 
     await db.fireProcedure(
@@ -2225,6 +2233,18 @@ async function saveIMDBData(
   }
 
   // TODO: remove existing plot keywords that are not available anymore (re-link to another imdb entry)
+  for (let i = 0; i < moviePlotKeywords.length; i++) {
+    const moviePlotKeyword = moviePlotKeywords[i];
+    
+    if (!moviePlotKeyword.Found) {
+      logger.log('removing plot keyword', moviePlotKeyword);
+
+      await db.fireProcedure(
+        "DELETE FROM tbl_Movies_IMDB_Plot_Keywords WHERE id_IMDB_Plot_Keywords = $id_IMDB_Plot_Keywords",
+        { $id_IMDB_Plot_Keywords: moviePlotKeyword.id_IMDB_Plot_Keywords }
+      );
+    }
+  }
 
   for (let i = 0; i < filmingLocations.length; i++) {
     let filmingLocation = filmingLocations[i];

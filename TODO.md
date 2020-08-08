@@ -9,10 +9,10 @@
   -> check with other tbl_Movies_* tables
   - [x] tbl_Movies_Genres
   - [ ] tbl_Movies_AgeRating
-  - [ ] tbl_Movies_IMDB_Companies
+  - [x] tbl_Movies_IMDB_Companies
   - [x] tbl_Movies_IMDB_Credits
   - [ ] tbl_Movies_IMDB_Filming_Locations
-  - [ ] tbl_Movies_IMDB_Plot_Keywords
+  - [x] tbl_Movies_IMDB_Plot_Keywords
   - [ ] tbl_Movies_Languages
   - [ ] tbl_Movies_Release_Attributes
 
