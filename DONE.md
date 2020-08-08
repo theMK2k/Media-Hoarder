@@ -502,4 +502,9 @@ Dialog.vue
 - [x] Remove Source Path: Do you really want to remove the source path {Path} ({MediaTypeUpper}) including all associated media? (This does not delete any actual files)
 - [x] delete entries with isRemoved = 1 after successful rescan
 - [x] i18n: mixed up languages with i18n and moment
-
+- re-assigning IMDB doesn't clean up some metadata
+  - [x] tbl_Movies_Genres
+  - [x] tbl_Movies_IMDB_Companies
+  - [x] tbl_Movies_IMDB_Credits
+  - [x] tbl_Movies_IMDB_Filming_Locations
+  - [x] tbl_Movies_IMDB_Plot_Keywords

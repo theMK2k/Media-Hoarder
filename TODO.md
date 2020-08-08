@@ -4,17 +4,7 @@
 
 ### Bugs
 
-- "Quiz Show" -> assign "Quiz" (leads to genre "Game Show") -> assign back to "Quiz Show" (genre "Game Show" persists)
-  -> it seems, genres are not removed on re-assign
-  -> check with other tbl_Movies_* tables
-  - [x] tbl_Movies_Genres
-  - [ ] tbl_Movies_AgeRating
-  - [x] tbl_Movies_IMDB_Companies
-  - [x] tbl_Movies_IMDB_Credits
-  - [ ] tbl_Movies_IMDB_Filming_Locations
-  - [x] tbl_Movies_IMDB_Plot_Keywords
-  - [ ] tbl_Movies_Languages
-  - [ ] tbl_Movies_Release_Attributes
+- no bugs known
 
 ### JSDoc everywhere
 
