@@ -46,37 +46,12 @@
 
 - (re-)assign IMDB entry including embedded IMDB search dialog
 
-## IMDB ID detection
+## Documentation
 
-In order to retrieve metadata from IMDB, **Media Hoarder** needs to find out the IMDB ID for each movie.
-
-### IMDB ID as part of the file name
-
-If the actual IMDB ID is part of the file name, **Media Hoarder** will immediately use it. The ID must be of the format "tt0000000".
-
-Example:
-
-```text
-The Godfather [tt0068646].mkv
-```
-
-### IMDB ID is not part of the file name
-
-If the actual IMDB ID is not part of the filename, **Media Hoarder** tries to detect the correct IMDB entry by performing an IMDB search with parts of the filename.
-
-It is greatly beneficial if the file name also provides the movie's release year.
-
-We ran tests utilizing the following constructed test set:
-
-- mix of well-known and obscure movies
-- movie title in German localization
-- 2648 movies in total
-- manually labelled with the correct IMDB ID for comparison
-
-Result of the test:
-
-- 2553 of 2648 movies correctly detected
-- 95 of 2648 movies incorrectly detected
+Document|Description
+-|-
+[01-Media-Storage.md](docs/01-Media-Storage.md)|how **Media Hoarder** expects media files to be stored
+[02-IMDB-ID-Detection.md](docs/02-IMDB-ID-Detection.md)|in-depth talk about how **Media Hoarder** tries to find the correct IMDB entry for a movie
 
 ## Getting started from source
 

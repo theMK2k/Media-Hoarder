@@ -2998,6 +2998,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       } AS IMDB_numVotes_default
       , MOV.IMDB_plotSummary
       , MOV.Path
+      , MOV.Directory
       , MI_Duration_Formatted
       , IMDB_runtimeMinutes
       , AR.Age

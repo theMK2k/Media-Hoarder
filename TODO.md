@@ -24,6 +24,11 @@
 - Linux "which"
 - Windows "where"
 
+### Bugs
+
+- "Quiz Show" -> assign "Quiz" (leads to genre "Game Show") -> assign back to "Quiz Show" (genre "Game Show" persists)
+  -> it seems, genres are not removed on re-assign
+
 ### support Movies in directories (also .nfo parsing)
 
 - we currently expect the whole movie name and release attributes being included in the filename, this is not always the case
@@ -34,7 +39,8 @@
 - [x] use isDirectoryBased in finding findIMDBtconstByFileOrDirname (by File/Dirname)
 - [x] use isDirectoryBased in finding Release attributes (DUBBED, BDRip etc.)
 - [x] handle extras in "Extras" directory
-- [ ] check AssignIMDB (individual rescan)
+- [x] check AssignIMDB (individual rescan)
+- [ ] update /docs
 
 #### A directory-based media file is
 
