@@ -91,7 +91,7 @@ dbsync.runSync(
       if (err) {
         return logger.error(err);
       }
-      
+
       (async () => {
         // After the DB is successfully initialized, we can initialize everything else
         await createIndexes(db);
@@ -1992,14 +1992,19 @@ async function saveIMDBData(
   );
 
   const movieGenres = await db.fireProcedureReturnAll(
-    "SELECT MG.id_Genres, G.GenreID, G.Name FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres WHERE MG.id_Movies = $id_Movies",
+    "SELECT MG.id_Movies_Genres, MG.id_Genres, G.GenreID, G.Name, 0 AS Found FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres WHERE MG.id_Movies = $id_Movies",
     { $id_Movies: movie.id_Movies }
   );
 
   for (let i = 0; i < IMDB_genres.length; i++) {
     const genre = IMDB_genres[i];
 
-    if (!movieGenres.find((mg) => mg.GenreID === genre)) {
+    const movieGenre = movieGenres.find((mg) => mg.GenreID === genre);
+
+    if (movieGenre) {
+      // genre is already known
+      movieGenre.Found = true;
+    } else {
       // genre needs to be added for the movie
       if (!genres.find((g) => g.GenreID === genre)) {
         // genre needs to be added to main list of genres (we need id_Genres later)
@@ -2026,8 +2031,41 @@ async function saveIMDBData(
     }
   }
 
+  // remove existing genres that are not available anymore (re-link to another imdb entry)
+  for (let i = 0; i < movieGenres.length; i++) {
+    const movieGenre = movieGenres[i];
+    
+    if (!movieGenre.Found) {
+      // logger.log('removing genre', movieGenre);
+
+      await db.fireProcedure(
+        "DELETE FROM tbl_Movies_Genres WHERE id_Movies_Genres = $id_Movies_Genres",
+        { $id_Movies_Genres: movieGenre.id_Movies_Genres }
+      );
+    }
+  }
+
+  const movieCredits = await db.fireProcedureReturnAll(
+    `
+	SELECT
+		id_Movies_IMDB_Credits
+		, id_Movies
+		, Category			AS category
+		, IMDB_Person_ID	AS id
+		, Person_Name		AS name
+		, Credit			AS credit
+	FROM tbl_Movies_IMDB_Credits WHERE id_Movies = $id_Movies`,
+    { $id_Movies: movie.id_Movies }
+  );
+
   for (let i = 0; i < credits.length; i++) {
     const credit = credits[i];
+
+    const movieCredit = movieCredits.find(mc => mc.category === credit.category && mc.id === credit.id);
+
+    if (movieCredit) {
+      movieCredit.Found = true;
+    }
 
     await db.fireProcedure(
       `
@@ -2056,6 +2094,20 @@ async function saveIMDBData(
         $Credit: credit.credit,
       }
     );
+  }
+
+  // remove existing credits that are not available anymore (re-link to another imdb entry)
+  for (let i = 0; i < movieCredits.length; i++) {
+    const movieCredit = movieCredits[i];
+    
+    if (!movieCredit.Found) {
+      // logger.log('removing credit', movieCredit);
+
+      await db.fireProcedure(
+        "DELETE FROM tbl_Movies_IMDB_Credits WHERE id_Movies_IMDB_Credits = $id_Movies_IMDB_Credits",
+        { $id_Movies_IMDB_Credits: movieCredit.id_Movies_IMDB_Credits }
+      );
+    }
   }
 
   for (let i = 0; i < companies.length; i++) {
@@ -2089,6 +2141,8 @@ async function saveIMDBData(
       }
     );
   }
+
+  // TODO: remove existing companies that are not available anymore (re-link to another imdb entry)
 
   for (let i = 0; i < plotKeywords.length; i++) {
     let plotKeyword = plotKeywords[i];
@@ -2138,6 +2192,8 @@ async function saveIMDBData(
       }
     );
   }
+
+  // TODO: remove existing plot keywords that are not available anymore (re-link to another imdb entry)
 
   for (let i = 0; i < filmingLocations.length; i++) {
     let filmingLocation = filmingLocations[i];
@@ -2190,6 +2246,8 @@ async function saveIMDBData(
       }
     );
   }
+
+  // TODO: remove existing filming locations that are not available anymore (re-link to another imdb entry)
 }
 
 function getPreferredLanguages() {
@@ -5471,13 +5529,13 @@ async function findReleaseAttributes(movie, onlyNew) {
     let dirName = movie.Directory;
 
     let lastDirectoryNameLower = helpers.getLastDirectoryName(movie.Directory).toLowerCase();
-  
+
     if (lastDirectoryNameLower.match(/^extra/)) {
       // we are inside a sub-directory and need to search the parent directory
       dirName = path.resolve(movie.Directory, "..");
       lastDirectoryNameLower = helpers.getLastDirectoryName(dirName).toLowerCase();
     }
-  
+
     // use directory name instead of filename for directory-based movie
     nameFiltered = " " + helpers.cleanupDirectoryName(lastDirectoryNameLower).toLowerCase() + " ";
   }
