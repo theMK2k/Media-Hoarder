@@ -5,6 +5,8 @@
 ### Bugs
 
 - i18n: "Imported: wenigen Sekunden ago" <- mixed De and En
+- "Quiz Show" -> assign "Quiz" (leads to genre "Game Show") -> assign back to "Quiz Show" (genre "Game Show" persists)
+  -> it seems, genres are not removed on re-assign
 
 ### JSDoc everywhere
 
@@ -23,11 +25,6 @@
 
 - Linux "which"
 - Windows "where"
-
-### Bugs
-
-- "Quiz Show" -> assign "Quiz" (leads to genre "Game Show") -> assign back to "Quiz Show" (genre "Game Show" persists)
-  -> it seems, genres are not removed on re-assign
 
 #### ignored files are
 
