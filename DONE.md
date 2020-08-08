@@ -41,6 +41,11 @@
 
 => anything else: treat it as file-based media file (isDirectoryBased = 0)
 
+#### ignored files are
+
+- a media file inside a "sample" directory
+- a media file inside a "proof" directory
+
 ### I18N Basic
 
 - [x] moment.humanize should also be localized (see de.json!)

@@ -26,13 +26,6 @@
 - Linux "which"
 - Windows "where"
 
-#### ignored files are
-
-- a media file inside a "sample" directory
-- a media file inside a "proof" directory
-
-#### An ignored 
-
 ### MacOS Release
 
 - [ ] investigate binary signing
