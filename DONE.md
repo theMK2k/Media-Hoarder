@@ -15,6 +15,32 @@
 - [x] -> fetch Countries from <https://www.imdb.com/search/title/> and provide as list
 - [x] -> Auto set region by user's localization setting?
 
+### support Movies in directories (also .nfo parsing)
+
+- we currently expect the whole movie name and release attributes being included in the filename, this is not always the case
+- [x] find a way to decide if a movie file belongs to a dir-release or is standalone
+- [x] if handling .rar files, summarize all individual filesizes
+- [x] use isDirectoryBased in findIMDBtconstIncluded (tt12345 in file- or directory name)
+- [x] use isDirectoryBased in findIMDBtconstInNFO (by .nfo file content)
+- [x] use isDirectoryBased in finding findIMDBtconstByFileOrDirname (by File/Dirname)
+- [x] use isDirectoryBased in finding Release attributes (DUBBED, BDRip etc.)
+- [x] handle extras in "Extras" directory
+- [x] check AssignIMDB (individual rescan)
+- [x] update /docs
+
+#### A directory-based media file is
+
+- a media file alongside an .nfo file (scene release)
+  -> also don't expect any other media files in the directory
+- a media file inside an "extra" or "extras" directory (this is our own definition!)
+  -> use the full filename as Extra Name
+
+-> set isDirectoryBased = 1
+-> ignore the filename and use the directory's name instead
+-> parse the .nfo for IMDB tconst
+
+=> anything else: treat it as file-based media file (isDirectoryBased = 0)
+
 ### I18N Basic
 
 - [x] moment.humanize should also be localized (see de.json!)
