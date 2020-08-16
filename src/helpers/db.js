@@ -1,3 +1,6 @@
+/**
+ * Database interface and functions for sqlite access and management
+ */
 const logger = require('loglevel');
 const fs = require('fs');
 const sqlite3 = require('sqlite3').verbose();
@@ -6,8 +9,15 @@ const helpers = require('./helpers');
 
 // import * as helpers from '@/helpers/helpers';
 
+/**
+ * our main connection to the database
+ * created via initSQLite's _db = new sqlite3.Database
+ */
 let _db;
 
+/**
+ * @returns main connection to the database
+ */
 function getDb() {
 	if (!_db) {
 		logger.error('Db has not been initialized. Please call init first.');
@@ -16,6 +26,11 @@ function getDb() {
 	return _db;
 }
 
+/**
+ * Initialize the main connection if not already done
+ * 
+ * @param {*} callback 
+ */
 function initDbCB(callback) {
 	if (_db) {
 		logger.warn('Trying to init DB again!');
@@ -25,26 +40,57 @@ function initDbCB(callback) {
 	initSQLite(callback);
 }
 
+/**
+ * Fire a query to the database (callback)
+ * The callback is only invoked with the error Object, i.e. the query won't provide a result
+ * 
+ * @param {string} query 
+ * @param {object} vars 
+ * @param {*} callback 
+ */
 function fireProcedureCB(query, vars, callback) {
 	sqliteFireProcedureCB(query, vars, callback);
 }
 
+/**
+ * Fire a query to the database (callback)
+ * The callback is invoked with the first column's value of the first row and the error Object
+ * 
+ * @param {string} query 
+ * @param {object} vars 
+ * @param {*} callback 
+ */
 function fireProcedureReturnScalarCB(query, vars, callback) {
 	sqlitefireProcedureReturnScalarCB(query, vars, callback);
 }
 
+/**
+ * Fire a query to the database (callback)
+ * The callback is invoked with the result set and the error Object
+ * 
+ * @param {string} query 
+ * @param {object} vars 
+ * @param {*} callback 
+ */
 function fireProcedureReturnAllCB(query, vars, callback) {
 	sqlitefireProcedureReturnAllCB(query, vars, callback);
 }
 
+/**
+ * Fire a query to the database (Promise)
+ * resolves with no parameter, i.e. the query won't provide a result
+ * 
+ * @param {string} query 
+ * @param {object} vars 
+ */
 function fireProcedure(query, vars) {
 	return new Promise((resolve, reject) => {
-		sqliteFireProcedureCB(query, vars, (err, result) => {
+		sqliteFireProcedureCB(query, vars, (err) => {
 			if (err) {
 				return reject(err);
 			}
 
-			return resolve(result);
+			return resolve();
 		});
 	})
 }
@@ -71,18 +117,6 @@ function fireProcedureReturnAll(query, vars) {
 			return resolve(result);
 		});
 	})
-}
-
-
-export {
-	getDb,
-	initDbCB,
-	fireProcedureCB,
-	fireProcedureReturnScalarCB,
-	fireProcedureReturnAllCB,
-	fireProcedure,
-	fireProcedureReturnScalar,
-	fireProcedureReturnAll
 }
 
 function initSQLite(callback) {
@@ -121,4 +155,15 @@ function sqlitefireProcedureReturnAllCB(query, vars, callback) {
 	_db.all(query, vars, (err, all) => {
 		return callback(err, all);
 	})
+}
+
+export {
+	getDb,
+	initDbCB,
+	fireProcedureCB,
+	fireProcedureReturnScalarCB,
+	fireProcedureReturnAllCB,
+	fireProcedure,
+	fireProcedureReturnScalar,
+	fireProcedureReturnAll
 }

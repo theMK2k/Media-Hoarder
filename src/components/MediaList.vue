@@ -436,7 +436,7 @@
             <v-col v-if="item.selected" style="min-width: 100%">
               <v-row>
                 <v-col class="detailLabel">{{$t("Full Path")}}:</v-col>
-                <v-col class="detailContent">{{ item.Path }}</v-col>
+                <v-col class="detailContent">{{ item.fullPath }}</v-col>
               </v-row>
               <v-row>
                 <v-col class="detailLabel">{{$t('Imported')}}:</v-col>
@@ -503,7 +503,7 @@
 
                 <v-row
                   v-for="extra in item.extras"
-                  v-bind:key="extra.Path"
+                  v-bind:key="extra.fullPath"
                   class="Clickable"
                   style="padding-left: 24px; padding-top: 4px; align-items: flex-end;"
                   v-on:click.stop="launch(extra)"
@@ -1973,7 +1973,7 @@ export default {
 
     onOpenLinkIMDBDialog(item) {
       this.$refs.linkIMDBDialog.init();
-      this.linkIMDBDialog.filePath = item.Path;
+      this.linkIMDBDialog.filePath = item.fullPath;
       this.linkIMDBDialog.item = item;
       this.linkIMDBDialog.show = true;
     },

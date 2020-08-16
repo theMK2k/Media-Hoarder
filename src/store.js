@@ -387,6 +387,19 @@ async function rescanHandleDuplicates() {
   eventBus.setProgressBar(-1); // off
 }
 
+/**
+ * Create for each entry in movies:
+ * - fullPath from joining SourcePath and RelativePath
+ * - fullDirectory from joining SourcePath and RelativeDirectory
+ * @param {*} movies
+ */
+function ensureMoviesFullPath(movies) {
+  movies.forEach(movie => {
+    movie.fullPath = path.join(movie.SourcePath, movie.RelativePath);
+    movie.fullDirectory = path.join(movie.SourcePath, movie.RelativeDirectory);
+  })
+}
+
 async function mergeExtras(onlyNew) {
   logger.log('mergeExtras START')
 
@@ -402,20 +415,24 @@ async function mergeExtras(onlyNew) {
   //              because on rescan we also want to re-merge extras
   const children = await db.fireProcedureReturnAll(`
 	SELECT
-		id_Movies
-		, Path
-		, Directory
-		, Filename
-		, Name
-		, Name2
-    , IMDB_tconst
-    , id_SourcePaths
-    , isDirectoryBased
-	FROM tbl_Movies MOV
+		MOV.id_Movies
+		, MOV.RelativePath
+		, MOV.RelativeDirectory
+		, MOV.Filename
+		, MOV.Name
+		, MOV.Name2
+    , MOV.IMDB_tconst
+    , MOV.id_SourcePaths
+    , MOV.isDirectoryBased
+    , SP.Path AS SourcePath
+  FROM tbl_Movies MOV
+  INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
 	WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
-		AND (Filename LIKE '% - extra%' OR (isDirectoryBased = 1 AND Directory LIKE '%extra%'))
+		AND (Filename LIKE '% - extra%' OR (isDirectoryBased = 1 AND RelativeDirectory LIKE '%extra%'))
 		${onlyNew ? "AND MOV.isNew = 1" : ""}
-	`);
+  `);
+  
+  ensureMoviesFullPath(children);
 
   logger.log("mergeExtras Extra children (from db):", children);
 
@@ -436,21 +453,24 @@ async function mergeExtraDirectoryBased(movie) {
   logger.log("mergeExtraDirectoryBased movie.Filename:", movie.Filename);
 
   // first, check if the media file is actually an extra - it must reside in an "extra" or "extras" directory
-  const lastDirectoryNameLower = helpers.getLastDirectoryName(movie.Directory).toLowerCase();
+  const lastDirectoryNameLower = helpers.getLastDirectoryName(movie.fullDirectory).toLowerCase();
 
   if (!(lastDirectoryNameLower === "extra" || lastDirectoryNameLower === "extras")) {
     logger.log('mergeExtraDirectoryBased media file is not in "extra" or "extras" directory, abort')
   }
 
-  const $ParentDirectory = path.resolve(movie.Directory, "..");
+  logger.log('mergeExtraDirectoryBased movie.SourcePath:', movie.SourcePath);
+  logger.log('mergeExtraDirectoryBased path.resolve(movie.fullDirectory, "..")', path.resolve(movie.fullDirectory, ".."));
+
+  const $ParentDirectory = path.relative(movie.SourcePath, path.resolve(movie.fullDirectory, ".."));
 
   logger.log('mergeExtraDirectoryBased $ParentDirectory:', $ParentDirectory);
 
   let possibleParents = await db.fireProcedureReturnAll(`
 		SELECT
 			id_Movies
-			, Path
-			, Directory
+			, RelativePath
+			, RelativeDirectory
 			, Filename
 			, Name
 			, Name2
@@ -458,14 +478,14 @@ async function mergeExtraDirectoryBased(movie) {
       , isDirectoryBased
 		FROM tbl_Movies MOV
 		WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
-      AND Directory = $ParentDirectory
+      AND RelativeDirectory = $ParentDirectory
       AND isDirectoryBased = 1
 	`, { $ParentDirectory });
 
   logger.log("mergeExtraDirectoryBased possibleParents:", possibleParents);
 
   if (possibleParents.length == 0) {
-    logger.log("no possible parent found :(");
+    logger.log("mergeExtraDirectoryBased no possible parent found :(");
     if (movie.Extra_id_Movies_Owner) {
       await db.fireProcedure(
         `UPDATE tbl_Movies SET Extra_id_Movies_Owner = NULL WHERE id_Movies = $id_Movies`,
@@ -510,8 +530,8 @@ async function mergeExtraFileBased(movie) {
   let possibleParents = await db.fireProcedureReturnAll(`
 		SELECT
 			id_Movies
-			, Path
-			, Directory
+			, RelativePath
+			, RelativeDirectory
 			, Filename
 			, Name
 			, Name2
@@ -544,8 +564,8 @@ async function mergeExtraFileBased(movie) {
   }
 
   possibleParents.forEach((parent) => {
-    parent.distance = levenshtein.get(movie.Path, parent.Path);
-    logger.log("mergeExtraFileBased parent distance:", parent.distance, parent.Path);
+    parent.distance = levenshtein.get(movie.fullPath, parent.fullPath);
+    logger.log("mergeExtraFileBased parent distance:", parent.distance, parent.fullPath);
   });
 
   const bestDistance = possibleParents.sort(
@@ -593,17 +613,20 @@ async function filescanMovies(onlyNew) {
 
   try {
     const moviesHave = await db.fireProcedureReturnAll(`
-			SELECT
-				id_Movies
-				, LOWER(Path) AS tmp_PathLower
-			FROM tbl_Movies
-		`);
+      SELECT
+        MOV.id_Movies
+        , LOWER(MOV.RelativePath) AS tmp_PathLower
+        , LOWER(SP.Path) AS tmp_SourcePathLower
+      FROM tbl_Movies MOV
+      INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+  		`);
 
-    moviesHave.forEach((movie) => {
-      movie.tmp_PathLower = movie.tmp_PathLower.toLowerCase();
+
+    moviesHave.forEach(movie => {
+      movie.fullPathLower = path.join(movie.tmp_SourcePathLower, movie.tmp_PathLower)
     });
 
-    logger.log("moviesHave:", moviesHave);
+    logger.log("moviesHave:", moviesHave);  // #relpath: is this correct??
 
     const moviesSourcePaths = await db.fireProcedureReturnAll(`
 			SELECT
@@ -646,7 +669,7 @@ async function filescanMovies(onlyNew) {
       await filescanMoviesPath(
         onlyNew,
         moviesHave,
-        movieSourcePath.id_SourcePaths,
+        movieSourcePath,
         movieSourcePath.Path
       );
     }
@@ -664,26 +687,25 @@ async function filescanMovies(onlyNew) {
 async function filescanMoviesPath(
   onlyNew,
   moviesHave,
-  id_SourcePaths,
+  movieSourcePath,
   scanPath
 ) {
   logger.log("scan", scanPath);
 
   try {
-    const pathItems = await listPath(scanPath);
+    const pathItems = await listPath(movieSourcePath.Path, scanPath);
 
     // add files
     for (let i = 0; i < pathItems.length; i++) {
       const pathItem = pathItems[i];
-      const pathLower = pathItem.Path.toLowerCase();
 
       if (pathItem.isFile) {
         const movieHave = moviesHave.find(
-          (have) => have.tmp_PathLower === pathLower
+          (have) => have.fullPathLower === pathItem.fullPathLower
         );
 
         if (movieHave) {
-          logger.log("HAVE:", pathLower, "movieHave:", movieHave);
+          logger.log("HAVE:", pathItem.fullPathLower, "movieHave:", movieHave);
 
           const $Size = await getFileSize(pathItem);
 
@@ -706,7 +728,7 @@ async function filescanMoviesPath(
           continue;
         }
 
-        await addMovie(id_SourcePaths, pathItem);
+        await addMovie(movieSourcePath, pathItem);
       }
     }
 
@@ -718,8 +740,8 @@ async function filescanMoviesPath(
         await filescanMoviesPath(
           onlyNew,
           moviesHave,
-          id_SourcePaths,
-          pathItem.Path
+          movieSourcePath,
+          pathItem.fullPath
         );
       }
     }
@@ -749,10 +771,10 @@ const enmMovieTypes = {
  * 
  * @param {pathItem} pathItem 
  */
-async function getMovieType(pathItem) {
+async function getMovieType(basePath, pathItem) {
   logger.log('getMovieType pathItem:', pathItem);
 
-  const lastDirLower = helpers.getLastDirectoryName(pathItem.Directory).toLowerCase();
+  const lastDirLower = helpers.getLastDirectoryName(pathItem.fullDirectory).toLowerCase();
 
   // check for IGNORE
   if (await isIgnoreFile(pathItem)) {
@@ -764,7 +786,7 @@ async function getMovieType(pathItem) {
     // file is inside an "extra" directory -> we should check the parent directory, if it is in itself DIRECTORYBASED
     logger.log('getMovieType file is inside "extra" directory, check the parent directory...')
 
-    if (await isDirectoryBased(path.resolve(pathItem.Directory, ".."))) {
+    if (await isDirectoryBased(basePath, path.resolve(pathItem.fullDirectory, ".."))) {
       logger.log('getMovieType parent directory is directory-based')
       return enmMovieTypes.DIRECTORYBASED;
     } else {
@@ -773,7 +795,7 @@ async function getMovieType(pathItem) {
     }
   }
 
-  if (await isDirectoryBased(pathItem.Directory)) {
+  if (await isDirectoryBased(basePath, pathItem.fullDirectory)) {
     return enmMovieTypes.DIRECTORYBASED;
   }
 
@@ -786,44 +808,51 @@ async function getMovieType(pathItem) {
  * - contains an .nfo file 
  * @param {string} directory 
  */
-async function isDirectoryBased(directory) {
-  logger.log("isDirectoryBased directory:", directory);
-
-  const pathItems = await listPath(directory);
-
-  let numMediaFiles = 0;
-  let nfoFound = false;
-
-  for (let i = 0; i < pathItems.length; i++) {
-    const pathItem = pathItems[i];
-
-    if (
-      ![".avi", ".mp4", ".mkv", ".m2ts", ".rar", ".nfo"].find((ext) => {
-        return ext === pathItem.ExtensionLower;
-      })
-    ) {
-      continue;
+async function isDirectoryBased(basePath, directory) {
+  try {
+    
+    logger.log("isDirectoryBased directory:", directory);
+  
+    const pathItems = await listPath(basePath, directory);
+  
+    logger.log('isDirectoryBased pathItems:', pathItems);
+  
+    let numMediaFiles = 0;
+    let nfoFound = false;
+  
+    for (let i = 0; i < pathItems.length; i++) {
+      const pathItem = pathItems[i];
+  
+      if (
+        ![".avi", ".mp4", ".mkv", ".m2ts", ".rar", ".nfo"].find((ext) => {
+          return ext === pathItem.ExtensionLower;
+        })
+      ) {
+        continue;
+      }
+  
+      if (pathItem.ExtensionLower === ".nfo") {
+        nfoFound = true;
+        continue;
+      }
+  
+      if (await isIgnoreFile(pathItem)) {
+        continue;
+      }
+  
+      numMediaFiles++;
     }
-
-    if (pathItem.ExtensionLower === ".nfo") {
-      nfoFound = true;
-      continue;
+  
+    if (numMediaFiles < 3 && nfoFound) {
+      logger.log("isDirectoryBased YES! numMediaFiles:", numMediaFiles, "nfoFound:", nfoFound);
+      return true;
     }
-
-    if (await isIgnoreFile(pathItem)) {
-      continue;
-    }
-
-    numMediaFiles++;
+  
+    logger.log("isDirectoryBased NOPE! numMediaFiles:", numMediaFiles, "nfoFound:", nfoFound);
+    return false;
+  } catch (error) {
+    logger.error(error);
   }
-
-  if (numMediaFiles < 3 && nfoFound) {
-    logger.log("isDirectoryBased YES! numMediaFiles:", numMediaFiles, "nfoFound:", nfoFound);
-    return true;
-  }
-
-  logger.log("isDirectoryBased NOPE! numMediaFiles:", numMediaFiles, "nfoFound:", nfoFound);
-  return false;
 }
 
 /**
@@ -836,7 +865,7 @@ async function isDirectoryBased(directory) {
 async function isIgnoreFile(pathItem) {
   const nameLower = pathItem.Name.toLowerCase();
 
-  const lastDirLower = helpers.getLastDirectoryName(pathItem.Directory).toLowerCase();
+  const lastDirLower = helpers.getLastDirectoryName(pathItem.fullDirectory).toLowerCase();
 
   if (pathItem.isDirectory) {
     logger.log('isIgnoreFile file is actually a directory, IGNORE');
@@ -865,13 +894,13 @@ async function isIgnoreFile(pathItem) {
 /**
  * Add the movie to the database
  * 
- * @param {integer} id_SourcePaths 
+ * @param {*} movieSourcePath
  * @param {pathItem} pathItem 
  */
-async function addMovie(id_SourcePaths, pathItem) {
-  logger.log("addMovie pathItem.Path:", pathItem.Path);
+async function addMovie(movieSourcePath, pathItem) {
+  logger.log("addMovie pathItem.fullPath:", pathItem.fullPath);
 
-  const movieType = await getMovieType(pathItem);
+  const movieType = await getMovieType(movieSourcePath.Path, pathItem);
 
   logger.log('addMovie movieType:', movieType);
 
@@ -887,7 +916,7 @@ async function addMovie(id_SourcePaths, pathItem) {
 
   let $Name = null;
   if (movieType === enmMovieTypes.DIRECTORYBASED) {
-    $Name = helpers.getMovieNameFromDirectory(pathItem.Directory)
+    $Name = helpers.getMovieNameFromDirectory(pathItem.fullDirectory)
   } else {
     $Name = helpers.getMovieNameFromFileName(pathItem.Name)
   }
@@ -899,8 +928,8 @@ async function addMovie(id_SourcePaths, pathItem) {
   const sqlQuery = `INSERT INTO tbl_Movies (
     id_SourcePaths
     , Name
-    , Path
-    , Directory
+    , RelativePath
+    , RelativeDirectory
     , Filename
     , Size
     , file_created_at
@@ -910,8 +939,8 @@ async function addMovie(id_SourcePaths, pathItem) {
   ) VALUES (
     $id_SourcePaths
     , $Name
-    , $Path
-    , $Directory
+    , $RelativePath
+    , $RelativeDirectory
     , $Filename
     , $Size
     , $created_at
@@ -921,10 +950,10 @@ async function addMovie(id_SourcePaths, pathItem) {
   )`
 
   const sqlData = {
-    $id_SourcePaths: id_SourcePaths,
+    $id_SourcePaths: movieSourcePath.id_SourcePaths,
     $Name,
-    $Path: pathItem.Path,
-    $Directory: pathItem.Directory,
+    $RelativePath: pathItem.relativePath,
+    $RelativeDirectory: pathItem.relativeDirectory,
     $Filename: pathItem.Name,
     $Size,
     $file_created_at: pathItem.$file_created_at,
@@ -961,7 +990,7 @@ async function getFileSize(pathItem) {
 
   logger.log('getFileSize got .rar, using common name:', commonNameLower);
 
-  const pathItems = await listPath(pathItem.Directory);
+  const pathItems = await listPath(pathItem.fullDirectory, pathItem.fullDirectory);
 
   return pathItems.filter(item => {
     let itemCommonNameLower = item.Name.split(".")
@@ -986,7 +1015,11 @@ async function getFileSize(pathItem) {
   });
 }
 
-async function listPath(scanPath) {
+async function listPath(basePath, scanPath) {
+  if (!basePath || !scanPath) {
+    throw Error('listPath called without basePath!');
+  }
+  
   const readdirResult = await readdirAsync(scanPath, { withFileTypes: true });
 
   const arrResult = [];
@@ -1001,9 +1034,15 @@ async function listPath(scanPath) {
     const stats = await statAsync(fullPath);
 
     arrResult.push({
-      Path: fullPath,
+      fullPath: fullPath,
+      fullDirectory: scanPath,
+      fullPathLower: fullPath.toLowerCase(),
+
+      relativePath: path.relative(basePath, fullPath),
+      relativeDirectory: path.relative(basePath, scanPath),
+      relativePathLower: path.relative(basePath, fullPath).toLowerCase(),
+
       Name: dirent.name,
-      Directory: scanPath,
       ExtensionLower: path.extname(dirent.name).toLowerCase(),
       isFile: dirent.isFile(),
       isDirectory: dirent.isDirectory(),
@@ -1199,16 +1238,18 @@ async function rescanMoviesMetaData(onlyNew, id_Movies) {
   const movies = await db.fireProcedureReturnAll(
     `
 			SELECT
-				id_Movies
-				, id_SourcePaths
-				, Path
-				, Directory
-				, Filename
-				, MI_Done
-				, IMDB_Done
-        , IMDB_tconst
-        , isDirectoryBased
-			FROM tbl_Movies
+				MOV.id_Movies
+				, MOV.id_SourcePaths
+				, MOV.RelativePath
+				, MOV.RelativeDirectory
+				, MOV.Filename
+				, MOV.MI_Done
+				, MOV.IMDB_Done
+        , MOV.IMDB_tconst
+        , MOV.isDirectoryBased
+        , SP.Path AS SourcePath
+      FROM tbl_Movies MOV
+      INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
 			WHERE 
         (isRemoved IS NULL OR isRemoved = 0)
         AND Extra_id_Movies_Owner IS NULL
@@ -1229,6 +1270,8 @@ async function rescanMoviesMetaData(onlyNew, id_Movies) {
 			`,
     []
   );
+
+  ensureMoviesFullPath(movies);
 
   logger.log('scanErrors rescanMoviesMetadata movies:', movies);
 
@@ -1288,7 +1331,9 @@ async function applyMediaInfo(movie, onlyNew) {
     return;
   }
 
-  const mi_task = `${mediainfo} --Output=XML "${movie.Path}"`;
+  logger.log('applyMediaInfo movie:', movie);
+
+  const mi_task = `${mediainfo} --Output=XML "${movie.fullPath}"`;
   logger.log("running mediainfo:", mi_task);
 
   const audioLanguages = [];
@@ -1641,7 +1686,7 @@ async function findIMDBtconst(movie, onlyNew) {
  */
 async function findIMDBtconstIncluded(movie) {
   logger.log("findIMDBtconstIncluded START");
-  const name = (movie.isDirectoryBased ? helpers.getLastDirectoryName(movie.Directory) : movie.Filename);
+  const name = (movie.isDirectoryBased ? helpers.getLastDirectoryName(movie.fullDirectory) : movie.Filename);
 
   logger.log("findIMDBtconstIncluded name:", name);
 
@@ -1666,18 +1711,18 @@ async function findIMDBtconstInNFO(movie) {
     return;
   }
 
-  let searchPath = movie.Directory;
+  let searchPath = movie.fullDirectory;
 
-  const lastDirectoryNameLower = helpers.getLastDirectoryName(movie.Directory).toLowerCase();
+  const lastDirectoryNameLower = helpers.getLastDirectoryName(movie.fullDirectory).toLowerCase();
 
   if (lastDirectoryNameLower.match(/^extra/)) {
     // we are inside a sub-directory and need to search the parent directory
-    searchPath = path.resolve(movie.Directory, "..");
+    searchPath = path.resolve(movie.fullDirectory, "..");
   }
 
   logger.log("findIMDBtconstInNFO searching in", searchPath);
 
-  const pathItems = await listPath(searchPath);
+  const pathItems = await listPath(searchPath, searchPath);
 
   const nfoFile = pathItems.find(pathItem => pathItem.ExtensionLower === ".nfo");
 
@@ -1687,7 +1732,7 @@ async function findIMDBtconstInNFO(movie) {
 
   logger.log("findIMDBtconstInNFO .nfo file found:", nfoFile.Name);
 
-  const nfoContent = (await readFileAsync(nfoFile.Path)).toString();
+  const nfoContent = (await readFileAsync(nfoFile.fullPath)).toString();
 
   // logger.log('findIMDBtconstInNFO content:', nfoContent);
 
@@ -1711,7 +1756,7 @@ async function findIMDBtconstByFileOrDirname(movie) {
 
   // const name = helpers.getMovieNameFromFileName(movie.Filename).replace(/[()[]]/g, ' ');
   const name =
-    (movie.isDirectoryBased ? helpers.getMovieNameFromDirectory(movie.Directory) : helpers.getMovieNameFromFileName(movie.Filename))
+    (movie.isDirectoryBased ? helpers.getMovieNameFromDirectory(movie.fullDirectory) : helpers.getMovieNameFromFileName(movie.Filename))
       .replace(/\([^)]*?\)/g, "")
       .replace(/\[[^\]]*?\]/g, "")
       .trim();
@@ -2034,7 +2079,7 @@ async function saveIMDBData(
   // remove existing genres that are not available anymore (re-link to another imdb entry)
   for (let i = 0; i < movieGenres.length; i++) {
     const movieGenre = movieGenres[i];
-    
+
     if (!movieGenre.Found) {
       // logger.log('removing genre', movieGenre);
 
@@ -2099,7 +2144,7 @@ async function saveIMDBData(
   // remove existing credits that are not available anymore (re-link to another imdb entry)
   for (let i = 0; i < movieCredits.length; i++) {
     const movieCredit = movieCredits[i];
-    
+
     if (!movieCredit.Found) {
       // logger.log('removing credit', movieCredit);
 
@@ -2164,7 +2209,7 @@ async function saveIMDBData(
   // remove existing companies that are not available anymore (re-link to another imdb entry)
   for (let i = 0; i < movieCompanies.length; i++) {
     const movieCompany = movieCompanies[i];
-    
+
     if (!movieCompany.Found) {
       // logger.log('removing company', movieCompany);
 
@@ -2235,7 +2280,7 @@ async function saveIMDBData(
   // TODO: remove existing plot keywords that are not available anymore (re-link to another imdb entry)
   for (let i = 0; i < moviePlotKeywords.length; i++) {
     const moviePlotKeyword = moviePlotKeywords[i];
-    
+
     if (!moviePlotKeyword.Found) {
       // logger.log('removing plot keyword', moviePlotKeyword);
 
@@ -2309,7 +2354,7 @@ async function saveIMDBData(
   // remove existing filming locations that are not available anymore (re-link to another imdb entry)
   for (let i = 0; i < movieFilmingLocations.length; i++) {
     const movieFilmingLocation = movieFilmingLocations[i];
-    
+
     if (!movieFilmingLocation.Found) {
       // logger.log('removing filming location', movieFilmingLocation);
 
@@ -3129,14 +3174,15 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""
       } AS IMDB_numVotes_default
       , MOV.IMDB_plotSummary
-      , MOV.Path
-      , MOV.Directory
+      , MOV.RelativePath
+      , MOV.RelativeDirectory
       , MI_Duration_Formatted
       , IMDB_runtimeMinutes
       , AR.Age
       , MOV.IMDB_MinAge
       , MOV.IMDB_MaxAge
       , MOV.isDirectoryBased
+      , SP.Path AS SourcePath
 
       ${
       minimumResultSet
@@ -3203,10 +3249,11 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
         , (SELECT GROUP_CONCAT(MRA.Release_Attributes_searchTerm, ';') FROM tbl_Movies_Release_Attributes MRA WHERE MRA.id_Movies = MOV.id_Movies AND MRA.deleted = 0) AS ReleaseAttributesSearchTerms
       `
       }
-		FROM tbl_Movies MOV
+    FROM tbl_Movies MOV
+    INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
 		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 		WHERE	(MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
-					AND id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths WHERE MediaType = $MediaType)
+					AND MOV.id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths WHERE MediaType = $MediaType)
 		${filterSourcePaths}
 		${filterGenres}
 		${filterAgeRatings}
@@ -3230,6 +3277,8 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
     logger.log("fetchMedia query:", query);
 
     const result = await db.fireProcedureReturnAll(query, { $MediaType });
+
+    ensureMoviesFullPath(result);
 
     if (result && result.length > 0) {
       saveFilterValues($MediaType);
@@ -3530,21 +3579,21 @@ async function launchMovie(movie) {
     });
   }
 
-  const fileExists = await existsAsync(movie.Path);
+  const fileExists = await existsAsync(movie.fullPath);
 
   if (!fileExists) {
     eventBus.showSnackbar("error", {
       translateMe: {
         text: "Cannot access {path}",
         payload: {
-          path: movie.Path,
+          path: movie.fullPath,
         },
       },
     });
     return;
   }
 
-  const task = `${MediaplayerPath} "${movie.Path}"`;
+  const task = `${MediaplayerPath} "${movie.fullPath}"`;
   logger.log("launching:", task);
   await execAsync(task);
   logger.log("end launching:", task);
@@ -4620,9 +4669,20 @@ async function getMovieDetails($id_Movies) {
   );
 
   const extras = await db.fireProcedureReturnAll(
-    `SELECT id_Movies, Path, Filename, Name FROM tbl_Movies WHERE Extra_id_Movies_Owner = $id_Movies`,
+    `SELECT
+      MOV.id_Movies
+      , MOV.RelativePath
+      , MOV.RelativeDirectory
+      , MOV.Filename
+      , MOV.Name
+      , SP.Path AS SourcePath
+    FROM tbl_Movies MOV
+    INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+    WHERE Extra_id_Movies_Owner = $id_Movies`,
     { $id_Movies }
   );
+
+  ensureMoviesFullPath(extras);
 
   return {
     lists,
@@ -5082,7 +5142,16 @@ async function ensureMovieDeleted() {
     "DELETE FROM tbl_Movies_IMDB_Credits WHERE id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies)"
   );
   await db.fireProcedure(
+    "DELETE FROM tbl_Movies_IMDB_Filming_Locations WHERE id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies)"
+  );
+  await db.fireProcedure(
+    "DELETE FROM tbl_Movies_IMDB_Plot_Keywords WHERE id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies)"
+  );
+  await db.fireProcedure(
     "DELETE FROM tbl_Movies_Languages WHERE id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies)"
+  );
+  await db.fireProcedure(
+    "DELETE FROM tbl_Movies_Release_Attributes WHERE id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies)"
   );
 }
 
@@ -5599,13 +5668,13 @@ async function findReleaseAttributes(movie, onlyNew) {
   let nameFiltered = " " + helpers.cleanupFileName(movie.Filename).toLowerCase() + " ";
 
   if (movie.isDirectoryBased) {
-    let dirName = movie.Directory;
+    let dirName = movie.fullDirectory;
 
-    let lastDirectoryNameLower = helpers.getLastDirectoryName(movie.Directory).toLowerCase();
+    let lastDirectoryNameLower = helpers.getLastDirectoryName(movie.fullDirectory).toLowerCase();
 
     if (lastDirectoryNameLower.match(/^extra/)) {
       // we are inside a sub-directory and need to search the parent directory
-      dirName = path.resolve(movie.Directory, "..");
+      dirName = path.resolve(movie.fullDirectory, "..");
       lastDirectoryNameLower = helpers.getLastDirectoryName(dirName).toLowerCase();
     }
 

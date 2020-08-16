@@ -6,14 +6,32 @@
 
 - no bugs known
 
-### JSDoc everywhere
+### WIP: Relative movie directories (#relpath)
 
-```text
-/**
- * Description of the function
- * @param {string} myParam
- */
-```
+tbl_Movies:
+  Path -> RelativePath
+  Directory -> RelativeDirectory
+
+store.listPath now with basePath
+
+- a movie's directory and path should always be relative to the sourcePath definition
+-> use path.resolve etc. to work with them
+-> this way, a whole sourcePath can move to another location
+
+check:
+
+- [x] extras merging (by directory)
+- anything else?
+
+### use homedir for data
+
+- decide if we do %home%/.media-hoarder or anything else
+-> must work in Win, Linux and Mac
+
+add **media-hoarder.json** for configuring the data dir
+
+- use default values if it is not available
+- it should reside in /etc/ (Linux) or %AppData% (Windows)
 
 ### Fine-tune some text colors
 
@@ -29,6 +47,15 @@
 - [ ] investigate binary signing
 
 ## LATER
+
+### JSDoc everywhere
+
+```text
+/**
+ * Description of the function
+ * @param {string} myParam
+ */
+```
 
 ### Dialogs: most of them do not utilize mediaType
 
