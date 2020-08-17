@@ -241,6 +241,9 @@ async function requestAsync(options) {
 
 export {
   isWindows,
+  writeFileAsync,
+  existsAsync,
+  requestretryAsync,
   getPath,
   getTimeString,
   uppercaseEachWord,
@@ -253,5 +256,5 @@ export {
   requestRetryStrategy,
   cleanupFileName,
   cleanupDirectoryName,
-  getLastDirectoryName
+  getLastDirectoryName,
 };

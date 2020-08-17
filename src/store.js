@@ -128,6 +128,9 @@ dbsync.runSync(
 
         await loadReleaseAttributes();
 
+        await ensureToolPath('mediainfo', 'MediainfoPath');
+        await ensureToolPath('vlc', 'MediaplayerPath');
+
         shared.uiLanguage = await fetchUILanguage();
 
         moment.locale(shared.uiLanguage);
@@ -431,7 +434,7 @@ async function mergeExtras(onlyNew) {
 		AND (Filename LIKE '% - extra%' OR (isDirectoryBased = 1 AND RelativeDirectory LIKE '%extra%'))
 		${onlyNew ? "AND MOV.isNew = 1" : ""}
   `);
-  
+
   ensureMoviesFullPath(children);
 
   logger.log("mergeExtras Extra children (from db):", children);
@@ -810,19 +813,19 @@ async function getMovieType(basePath, pathItem) {
  */
 async function isDirectoryBased(basePath, directory) {
   try {
-    
+
     logger.log("isDirectoryBased directory:", directory);
-  
+
     const pathItems = await listPath(basePath, directory);
-  
+
     logger.log('isDirectoryBased pathItems:', pathItems);
-  
+
     let numMediaFiles = 0;
     let nfoFound = false;
-  
+
     for (let i = 0; i < pathItems.length; i++) {
       const pathItem = pathItems[i];
-  
+
       if (
         ![".avi", ".mp4", ".mkv", ".m2ts", ".rar", ".nfo"].find((ext) => {
           return ext === pathItem.ExtensionLower;
@@ -830,24 +833,24 @@ async function isDirectoryBased(basePath, directory) {
       ) {
         continue;
       }
-  
+
       if (pathItem.ExtensionLower === ".nfo") {
         nfoFound = true;
         continue;
       }
-  
+
       if (await isIgnoreFile(pathItem)) {
         continue;
       }
-  
+
       numMediaFiles++;
     }
-  
+
     if (numMediaFiles < 3 && nfoFound) {
       logger.log("isDirectoryBased YES! numMediaFiles:", numMediaFiles, "nfoFound:", nfoFound);
       return true;
     }
-  
+
     logger.log("isDirectoryBased NOPE! numMediaFiles:", numMediaFiles, "nfoFound:", nfoFound);
     return false;
   } catch (error) {
@@ -1019,7 +1022,7 @@ async function listPath(basePath, scanPath) {
   if (!basePath || !scanPath) {
     throw Error('listPath called without basePath!');
   }
-  
+
   const readdirResult = await readdirAsync(scanPath, { withFileTypes: true });
 
   const arrResult = [];
@@ -5944,6 +5947,73 @@ async function removeReleaseAttributeFromMovie($id_Movies, releaseAttribute) {
   await db.fireProcedure(sql, { $id_Movies });
 
   return;
+}
+
+async function ensureToolPath(executable, settingName) {
+  const toolPath = await getSetting(settingName);
+
+  if (toolPath) {
+    return;
+  }
+
+  let lookupTask = '';
+  
+  if (helpers.isWindows) {
+    // use where
+    lookupTask = `where ${executable}`;
+  } else {
+    // use whereis -b
+    lookupTask = `whereis -b ${executable}`;
+  }
+
+  try {
+    logger.log('ensureToolPath lookupTask:', lookupTask);
+
+    const { stdout, stderr } = await execAsync(lookupTask, );
+
+    if (stderr) {
+      logger.error(stderr);
+      return;
+    }
+
+    logger.log('ensureToolPath stdout:', stdout);
+
+    if (helpers.isWindows) {
+      const arrStdOut = stdout.split('\n');
+      for (let i = 0; i < arrStdOut.length; i++) {
+        const path = arrStdOut[i].trim();
+
+        logger.log('ensureToolPath checking path:', path);
+
+        if (await helpers.existsAsync(path)) {
+          logger.log('ensureToolPath path found at:', path);
+          setSetting(settingName, path);
+          return;
+        }
+      }
+    } else {
+      const arrStdOut = stdout.split('\n');
+      for (let i = 0; i < arrStdOut.length; i++) {
+        const arrLine = arrStdOut.split(' ');
+
+        for (let j = 0; j < arrLine.length; j++) {
+          const path = arrLine[j].trim();
+
+          logger.log('ensureToolPath checking path:', path);
+
+          if (await helpers.existsAsync(path)) {
+            logger.log('ensureToolPath path found at:', path);
+            setSetting(settingName, path);
+            return;
+          }
+        }
+      }
+    }
+  }
+  catch(err) {
+    logger.log('ensureToolPath tool not found or error:', err);
+  }
+
 }
 
 export {
