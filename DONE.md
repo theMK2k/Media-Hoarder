@@ -15,6 +15,23 @@
 - [x] -> fetch Countries from <https://www.imdb.com/search/title/> and provide as list
 - [x] -> Auto set region by user's localization setting?
 
+### Relative movie directories (#relpath)
+
+tbl_Movies:
+  Path -> RelativePath
+  Directory -> RelativeDirectory
+
+store.listPath now with basePath
+
+- a movie's directory and path should always be relative to the sourcePath definition
+-> use path.resolve etc. to work with them
+-> this way, a whole sourcePath can move to another location
+
+check:
+
+- [x] extras merging (by directory)
+- anything else?
+
 ### support Movies in directories (also .nfo parsing)
 
 - we currently expect the whole movie name and release attributes being included in the filename, this is not always the case

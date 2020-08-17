@@ -6,23 +6,6 @@
 
 - no bugs known
 
-### WIP: Relative movie directories (#relpath)
-
-tbl_Movies:
-  Path -> RelativePath
-  Directory -> RelativeDirectory
-
-store.listPath now with basePath
-
-- a movie's directory and path should always be relative to the sourcePath definition
--> use path.resolve etc. to work with them
--> this way, a whole sourcePath can move to another location
-
-check:
-
-- [x] extras merging (by directory)
-- anything else?
-
 ### use homedir for data
 
 - decide if we do %home%/.media-hoarder or anything else
