@@ -2036,6 +2036,18 @@ h1 {
   flex-shrink: 0 !important;
 }
 
+*::-webkit-scrollbar {
+  width: 8px!important;               /* width of the entire scrollbar */
+}
+*::-webkit-scrollbar-track {
+  background: #646464!important;        /* color of the tracking area */
+}
+*::-webkit-scrollbar-thumb {
+  background-color: #424242!important;    /* color of the scroll thumb */
+  border-radius: 10px!important;       /* roundness of the scroll thumb */
+  border: 2px solid #646464!important;  /* creates padding around scroll thumb */
+}
+
 .scrollcontainer {
   overflow-y: auto;
   overflow-x: hidden;
