@@ -6,6 +6,7 @@ const imdbScraperTests = require("./imdb-scraper-tests");
 
 const shared = new Vue({
   data: {
+    appName: 'Media Hoarder',
     sidenav: null,
     searchText: null,
 

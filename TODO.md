@@ -4,7 +4,7 @@
 
 ### Bugs
 
-- no bugs known
+- Settings -> Release Attributes: don't allow sorting
 
 ### use homedir for data
 

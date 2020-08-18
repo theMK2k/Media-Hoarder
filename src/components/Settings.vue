@@ -122,7 +122,7 @@
       <!-- DUPLICATES -->
       <v-tab-item style="padding: 8px">
       <v-card-text class="light-grey">
-          <p>{{$t('These settings describe how {appName} should handle duplicates', {appName: $t('appName')})}}</p>
+          <p>{{$t('These settings describe how {appName} should handle duplicates', {appName: $shared.appName})}}</p>
           <p>{{$t('You may have duplicates in the following scenarios')}}:</p>
           <ul>
             <li>{{$t('same file on a remote server and the local machine')}}</li>
@@ -135,7 +135,7 @@
       <v-card-text>
             <p>{{$t('An actual duplicate is identified by the same filename and filesize')}}</p>
       </v-card-text>
-          <p>{{$t('With actual duplicates, {appName} should also', {appName: $t('appName')})}}</p>
+          <p>{{$t('With actual duplicates, {appName} should also', {appName: $shared.appName})}}</p>
 
           <v-checkbox
             v-bind:label="$t('relink IMDB')"
@@ -192,7 +192,7 @@
       <v-card-text class="light-grey">
             <p>{{$t('A meta duplicate is identified by having the same IMDB link_ This can happen if you have the same movie in different formats')}}</p>
       </v-card-text>
-          <p>{{$t('With meta duplicates, {appName} should also', {appName: $t('appName')})}}</p>
+          <p>{{$t('With meta duplicates, {appName} should also', {appName: $shared.appName})}}</p>
 
           <v-checkbox
             v-bind:label="$t('add to list')"
@@ -223,10 +223,10 @@
         <v-alert type="warning" colored-border border="left" v-if="$shared.regions.length === 0">
           <span
             v-if="$shared.regions.length === 0 && $shared.fallbackRegion"
-          >{{$t('You currently don_t have a region set up_ {appName} will fall back to your system_s locale', {appName: $t('appName')})}}: {{ $shared.fallbackRegion.name }}.</span>
+          >{{$t('You currently don_t have a region set up_ {appName} will fall back to your system_s locale', {appName: $shared.appName})}}: {{ $shared.fallbackRegion.name }}.</span>
           <span
             v-if="$shared.regions.length === 0 && !$shared.fallbackRegion"
-          >{{$t('You currently don_t have a region set up_ {appName} will fall back to the original title_', {appName: $t('appName')})}}</span>
+          >{{$t('You currently don_t have a region set up_ {appName} will fall back to the original title_', {appName: $shared.appName})}}</span>
         </v-alert>
 
         <div>
@@ -294,10 +294,10 @@
         >
           <span
             v-if="$shared.fallbackLanguage"
-          >{{$t('You currently don_t have a language for the Primary Title set up_ {appName} will fall back to your system_s locale', {appName: $t('appName')})}}: {{ $shared.fallbackLanguage.DisplayText }}.</span>
+          >{{$t('You currently don_t have a language for the Primary Title set up_ {appName} will fall back to your system_s locale', {appName: $shared.appName})}}: {{ $shared.fallbackLanguage.DisplayText }}.</span>
           <span
             v-if="!$shared.fallbackLanguage"
-          >{{$t('You currently don_t have a language for the Primary Title set up_ {appName} will fall back to the original title_', {appName: $t('appName')})}}</span>
+          >{{$t('You currently don_t have a language for the Primary Title set up_ {appName} will fall back to the original title_', {appName: $shared.appName})}}</span>
         </v-alert>
 
         <div>
@@ -354,10 +354,10 @@
         >
           <span
             v-if="$shared.fallbackLanguage"
-          >{{$t('You currently don_t have a language for Audio and Subtitles set up_ {appName} will fall back to your system_s locale', {appName: $t('appName') })}}: {{ $shared.fallbackLanguage.DisplayText }}.</span>
+          >{{$t('You currently don_t have a language for Audio and Subtitles set up_ {appName} will fall back to your system_s locale', {appName: $shared.appName })}}: {{ $shared.fallbackLanguage.DisplayText }}.</span>
           <span
             v-if="!$shared.fallbackLanguage"
-          >{{$t('You currently don_t have a language for Audio and Subtitles set up. {appName} will fall back to the original title_', {appName: $t('appName')})}}</span>
+          >{{$t('You currently don_t have a language for Audio and Subtitles set up. {appName} will fall back to the original title_', {appName: $shared.appName})}}</span>
         </v-alert>
 
         <div>
@@ -402,7 +402,7 @@
       <!-- TITLE TYPES -->
       <v-tab-item style="padding: 8px">
         <v-card-text class="light-grey">
-          <p>{{$t('In _Regions_ you provided the regions to be used for the Primary Title_ However, many titles in IMDB have a special title type_ {appName} skips all special title types by default_ You can add title types here, so that they are actually used instead of being skipped_', {appName: $t('appName')})}}</p>
+          <p>{{$t('In _Regions_ you provided the regions to be used for the Primary Title_ However, many titles in IMDB have a special title type_ {appName} skips all special title types by default_ You can add title types here, so that they are actually used instead of being skipped_', {appName: $shared.appName})}}</p>
         </v-card-text>
 
         <v-alert

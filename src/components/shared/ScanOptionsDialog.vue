@@ -69,7 +69,7 @@
               ></v-checkbox>
             </span>
           </template>
-          <span>{{$t('{appName} scrapes imdb_com website data in order to build up the database_ If imdb_com changes their website this process may fail in some aspects_ This scraper check will identify potential problems_', {appName: $t('appName')})}}</span>
+          <span>{{$t('{appName} scrapes imdb_com website data in order to build up the database_ If imdb_com changes their website this process may fail in some aspects_ This scraper check will identify potential problems_', {appName: $shared.appName})}}</span>
         </v-tooltip>
 
         <div style="height: 16px"></div>
