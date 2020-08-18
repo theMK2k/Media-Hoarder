@@ -4,7 +4,12 @@
 
 ### Bugs
 
-- no bugs known
+- Settings -> Regions: regions aren't translated in the list
+- Settings -> Languages: languages aren't translated in the list
+
+### Other
+
+- Settings: provide dialog before removal for: Regions, Languages, Release Attributes
 
 ### From electron builder
 
