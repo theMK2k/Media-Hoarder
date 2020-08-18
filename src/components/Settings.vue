@@ -435,7 +435,7 @@
         </v-card-text>
 
         <v-data-table
-          v-bind:headers="[{ text: $t('Search Term'), value: 'searchTerm'}, { text: $t('Display As'), value: 'displayAs'}, { text: '', value: 'actions', sortable: false }]"
+          v-bind:headers="[{ text: $t('Search Term'), value: 'searchTerm', sortable: false}, { text: $t('Display As'), value: 'displayAs', sortable: false}, { text: '', value: 'actions', sortable: false }]"
           v-bind:items="shared_releaseAttributesFiltered"
           class="elevation-1"
           hide-default-footer

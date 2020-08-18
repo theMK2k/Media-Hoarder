@@ -515,6 +515,7 @@ Dialog.vue
 
 ### Bugs
 
+- [x] Settings -> Release Attributes: don't allow sorting
 - [x] imdb scraper: make sure, all texts are treated with html2text, see "Robot &amp; Frank"
 - [x] single-item rescan doesn't update IMDB data? -> "Robot & Frank"
   -> misconcenption: actually an already removed duplicate provided the false names

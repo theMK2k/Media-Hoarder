@@ -4,7 +4,7 @@
 
 ### Bugs
 
-- Settings -> Release Attributes: don't allow sorting
+- no bugs known
 
 ### minimumWaitForSetAccess default value
 
