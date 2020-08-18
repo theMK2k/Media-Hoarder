@@ -101,6 +101,5 @@ npm run electron:build
 
 ```bash
 npm uninstall sqlite3
-and then:
 npm install --save sqlite3
 ```
