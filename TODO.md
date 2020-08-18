@@ -6,6 +6,26 @@
 
 - Settings -> Release Attributes: don't allow sorting
 
+### minimumWaitForSetAccess default value
+
+- implement minimumWaitForSetAccess with a defaut value of 60 (seconds)
+
+### From electron builder
+
+#### Linux
+
+```text
+  • application Linux category is set to default "Utility"  reason=linux.category is not set and cannot map from macOS docs=https://www.electron.build/configuration/linux
+  • default Electron icon is used  reason=application icon is not set
+  • application Linux category is set to default "Utility"  reason=linux.category is not set and cannot map from macOS docs=https://www.electron.build/configuration/linux
+```
+
+#### Windows
+
+```text
+  • default Electron icon is used  reason=application icon is not set
+```
+
 ### use homedir for data
 
 - decide if we do %home%/.media-hoarder or anything else
@@ -24,6 +44,7 @@ add **media-hoarder.json** for configuring the data dir
 
 - Linux "which"
 - Windows "where"
+-> TODO: test in Linux
 
 ### MacOS Release
 
@@ -39,6 +60,10 @@ add **media-hoarder.json** for configuring the data dir
  * @param {string} myParam
  */
 ```
+
+### TV Series Support
+
+- incl. IMDB Rating heatmap like <https://whattowatchon.tv>
 
 ### Dialogs: most of them do not utilize mediaType
 

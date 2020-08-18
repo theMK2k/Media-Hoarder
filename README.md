@@ -94,3 +94,13 @@ npm start
 ```bash
 npm run electron:build
 ```
+
+## Known Issues
+
+- if sqlite3 has issues on installing/building perform:
+
+```bash
+npm uninstall sqlite3
+and then:
+npm install --save sqlite3
+```
