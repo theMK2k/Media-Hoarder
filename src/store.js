@@ -5994,7 +5994,7 @@ async function ensureToolPath(executable, settingName) {
     } else {
       const arrStdOut = stdout.split('\n');
       for (let i = 0; i < arrStdOut.length; i++) {
-        const arrLine = arrStdOut.split(' ');
+        const arrLine = arrStdOut[i].split(' ');
 
         for (let j = 0; j < arrLine.length; j++) {
           const path = arrLine[j].trim();
