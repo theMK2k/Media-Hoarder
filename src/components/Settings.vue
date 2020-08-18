@@ -121,20 +121,20 @@
 
       <!-- DUPLICATES -->
       <v-tab-item style="padding: 8px">
-        <i>
+      <v-card-text class="light-grey">
           <p>{{$t('These settings describe how {appName} should handle duplicates', {appName: $t('appName')})}}</p>
           <p>{{$t('You may have duplicates in the following scenarios')}}:</p>
           <ul>
             <li>{{$t('same file on a remote server and the local machine')}}</li>
             <li>{{$t('same media but in different formats')}}</li>
           </ul>
-        </i>
+      </v-card-text>
 
         <v-card style="width: 100%; margin-top:8px">
           <h3>{{$t('Actual Duplicates')}}</h3>
-          <i>
+      <v-card-text>
             <p>{{$t('An actual duplicate is identified by the same filename and filesize')}}</p>
-          </i>
+      </v-card-text>
           <p>{{$t('With actual duplicates, {appName} should also', {appName: $t('appName')})}}</p>
 
           <v-checkbox
@@ -189,9 +189,9 @@
 
         <v-card style="width: 100%; margin-top:8px">
           <h3>{{$t('Meta Duplicates')}}</h3>
-          <i>
+      <v-card-text class="light-grey">
             <p>{{$t('A meta duplicate is identified by having the same IMDB link_ This can happen if you have the same movie in different formats')}}</p>
-          </i>
+      </v-card-text>
           <p>{{$t('With meta duplicates, {appName} should also', {appName: $t('appName')})}}</p>
 
           <v-checkbox
@@ -215,10 +215,10 @@
 
       <!-- REGIONS -->
       <v-tab-item style="padding: 8px">
-        <i>
+      <v-card-text class="light-grey">
           <p>{{$t('The regions and their sequence defined here will be used for the Primary Title of the media as well as the age rating')}}</p>
           <p>{{$t('If a particular movie does not have a title for one of these regions, the Original Title of the movie is used Else, the Original Title will be used as Secondary Title if it is different')}}</p>
-        </i>
+      </v-card-text>
 
         <v-alert type="warning" colored-border border="left" v-if="$shared.regions.length === 0">
           <span
@@ -266,9 +266,9 @@
       <!-- LANGUAGES -->
       <v-tab-item style="padding: 8px">
         <h3>{{$t('Language of the Application')}}</h3>
-        <i>
+      <v-card-text class="light-grey">
           <p>{{$t('Change the language of the application here_')}}</p>
-        </i>
+      </v-card-text>
 
         <v-row class="settings-row">
           <v-select
@@ -282,9 +282,9 @@
 
         <h3>{{$t('Languages of the Primary Title')}}</h3>
 
-        <i>
+      <v-card-text class="light-grey">
           <p>{{$t('The languages and their sequence defined here will be used for the Primary Title of the media_')}}</p>
-        </i>
+      </v-card-text>
 
         <v-alert
           type="warning"
@@ -338,11 +338,13 @@
           v-on:click="openAddLanguagesDialog('languagesPrimaryTitle')"
         >{{$t('Add Languages')}}</v-btn>
 
+      <div style="height: 16px"></div>
+
         <h3>{{$t('Languages for Audio and Subtitles')}}</h3>
 
-        <i>
+      <v-card-text class="light-grey">
           <p>{{$t('The languages and their sequence defined here will be used to show which audio and subtitle languages your media contain_')}}</p>
-        </i>
+      </v-card-text>
 
         <v-alert
           type="warning"
@@ -399,7 +401,9 @@
 
       <!-- TITLE TYPES -->
       <v-tab-item style="padding: 8px">
-        <p>{{$t('In _Regions_ you provided the regions to be used for the Primary Title_ However, many titles in IMDB have a special title type_ {appName} skips all special title types by default_ You can add title types here, so that they are actually used instead of being skipped_', {appName: $t('appName')})}}</p>
+        <v-card-text class="light-grey">
+          <p>{{$t('In _Regions_ you provided the regions to be used for the Primary Title_ However, many titles in IMDB have a special title type_ {appName} skips all special title types by default_ You can add title types here, so that they are actually used instead of being skipped_', {appName: $t('appName')})}}</p>
+        </v-card-text>
 
         <v-alert
           colored-border
@@ -425,8 +429,10 @@
 
       <!-- RELEASE ATTRIBUTES -->
       <v-tab-item style="padding: 8px">
-        <p>{{$t('Here you can set up which release attributes should be searched for in the file/directory names and how they should be displayed_')}}</p>
-        <p>{{$t('The search term is case insensitive and must contain whole words within the file/directory name_')}}</p>
+        <v-card-text class="light-grey">
+          <p>{{$t('Here you can set up which release attributes should be searched for in the file/directory names and how they should be displayed_')}}</p>
+          <p>{{$t('The search term is case insensitive and must contain whole words within the file/directory name_')}}</p>
+        </v-card-text>
 
         <v-data-table
           v-bind:headers="[{ text: $t('Search Term'), value: 'searchTerm'}, { text: $t('Display As'), value: 'displayAs'}, { text: '', value: 'actions', sortable: false }]"

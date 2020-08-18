@@ -16,7 +16,7 @@ add **media-hoarder.json** for configuring the data dir
 - use default values if they are not available
 - it should reside in /etc/ (Linux) or %AppData% (Windows)
 
-### Fine-tune some text colors
+### WIP: Fine-tune some text colors
 
 - [ ] some help texts are too bright
 
