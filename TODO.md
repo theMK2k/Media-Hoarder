@@ -40,15 +40,14 @@ add **media-hoarder.json** for configuring the data dir
 
 - [ ] some help texts are too bright
 
-### Automatically find mediainfo and vlc
-
-- Linux "which"
-- Windows "where"
--> TODO: test in Linux
-
 ### MacOS Release
 
 - [ ] investigate binary signing
+
+### Implement Main Screen Cards
+
+- bigger cards
+- some info (maybe number of movies?)
 
 ## LATER
 

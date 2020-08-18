@@ -15,6 +15,12 @@
 - [x] -> fetch Countries from <https://www.imdb.com/search/title/> and provide as list
 - [x] -> Auto set region by user's localization setting?
 
+### Automatically find mediainfo and vlc
+
+- Linux "which"
+- Windows "where"
+-> test in Linux (success)
+
 ### Relative movie directories (#relpath)
 
 tbl_Movies:
