@@ -557,7 +557,7 @@ export default {
   data: () => ({
     MediaplayerPath: null,
     MediainfoPath: null,
-    minimumWaitForSetAccess: 5,
+    minimumWaitForSetAccess: 60,
 
     sourcePaths: [],
 
@@ -1354,9 +1354,7 @@ export default {
 
     this.MediaplayerPath = await store.getSetting("MediaplayerPath");
     this.MediainfoPath = await store.getSetting("MediainfoPath");
-    this.minimumWaitForSetAccess = await store.getSetting(
-      "minimumWaitForSetAccess"
-    );
+    this.minimumWaitForSetAccess = await store.getMinimumWaitForSetAccess();
 
     // lodash debounced functions
     this.debouncedUpdateMinimumWaitForSetAccess = _.debounce(

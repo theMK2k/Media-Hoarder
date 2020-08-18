@@ -6016,6 +6016,16 @@ async function ensureToolPath(executable, settingName) {
 
 }
 
+async function getMinimumWaitForSetAccess() {
+  const value = await getSetting('minimumWaitForSetAccess');
+
+  if (value === undefined || value === null) {
+    return 60;
+  }
+
+  return value;
+}
+
 export {
   db,
   fetchSourcePaths,
@@ -6092,5 +6102,6 @@ export {
   findReleaseAttributes,
   resetFilters,
   getReleaseAttributesHierarchy,
-  removeReleaseAttributeFromMovie
+  removeReleaseAttributeFromMovie,
+  getMinimumWaitForSetAccess
 };

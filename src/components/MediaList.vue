@@ -1438,9 +1438,7 @@ export default {
 
       logger.log("diff:", end.diff(start, "seconds"));
 
-      let minimumWaitForSetAccess = await store.getSetting(
-        "minimumWaitForSetAccess"
-      );
+      let minimumWaitForSetAccess = await store.getMinimumWaitForSetAccess();
 
       logger.log("minimumWaitForSetAccess:", minimumWaitForSetAccess);
 

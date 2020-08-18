@@ -350,6 +350,9 @@ Series
 
 ### Other
 
+- [x] implement minimumWaitForSetAccess with a defaut value of 60 (seconds)
+- [x] mediainfo-rar not needed anymore: Mediainfo is also able to scan inside .rar files
+
 - [x] dont import "See full summary>>"
 - [x] implement fetchFilter IMDB/Metacritic Score
 - [x] implement Company filter by Company Name instead of ID
@@ -508,10 +511,6 @@ Dialog.vue
   N/A - Enter
   OK - Esc
 ```
-
-### mediainfo-rar not needed
-
-- Mediainfo is also able to scan inside .rar files
 
 ### Bugs
 

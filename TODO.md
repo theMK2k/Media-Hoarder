@@ -6,10 +6,6 @@
 
 - no bugs known
 
-### minimumWaitForSetAccess default value
-
-- implement minimumWaitForSetAccess with a defaut value of 60 (seconds)
-
 ### From electron builder
 
 #### Linux
