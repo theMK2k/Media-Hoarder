@@ -514,6 +514,7 @@ Dialog.vue
 
 ### Bugs
 
+- [x] Settings -> Regions: regions aren't translated in the list
 - [x] Settings -> Release Attributes: don't allow sorting
 - [x] imdb scraper: make sure, all texts are treated with html2text, see "Robot &amp; Frank"
 - [x] single-item rescan doesn't update IMDB data? -> "Robot & Frank"

@@ -121,20 +121,20 @@
 
       <!-- DUPLICATES -->
       <v-tab-item style="padding: 8px">
-      <v-card-text class="light-grey">
+        <v-card-text class="light-grey">
           <p>{{$t('These settings describe how {appName} should handle duplicates', {appName: $shared.appName})}}</p>
           <p>{{$t('You may have duplicates in the following scenarios')}}:</p>
           <ul>
             <li>{{$t('same file on a remote server and the local machine')}}</li>
             <li>{{$t('same media but in different formats')}}</li>
           </ul>
-      </v-card-text>
+        </v-card-text>
 
         <v-card style="width: 100%; margin-top:8px">
           <h3>{{$t('Actual Duplicates')}}</h3>
-      <v-card-text>
+          <v-card-text>
             <p>{{$t('An actual duplicate is identified by the same filename and filesize')}}</p>
-      </v-card-text>
+          </v-card-text>
           <p>{{$t('With actual duplicates, {appName} should also', {appName: $shared.appName})}}</p>
 
           <v-checkbox
@@ -189,9 +189,9 @@
 
         <v-card style="width: 100%; margin-top:8px">
           <h3>{{$t('Meta Duplicates')}}</h3>
-      <v-card-text class="light-grey">
+          <v-card-text class="light-grey">
             <p>{{$t('A meta duplicate is identified by having the same IMDB link_ This can happen if you have the same movie in different formats')}}</p>
-      </v-card-text>
+          </v-card-text>
           <p>{{$t('With meta duplicates, {appName} should also', {appName: $shared.appName})}}</p>
 
           <v-checkbox
@@ -215,10 +215,10 @@
 
       <!-- REGIONS -->
       <v-tab-item style="padding: 8px">
-      <v-card-text class="light-grey">
+        <v-card-text class="light-grey">
           <p>{{$t('The regions and their sequence defined here will be used for the Primary Title of the media as well as the age rating')}}</p>
           <p>{{$t('If a particular movie does not have a title for one of these regions, the Original Title of the movie is used Else, the Original Title will be used as Secondary Title if it is different')}}</p>
-      </v-card-text>
+        </v-card-text>
 
         <v-alert type="warning" colored-border border="left" v-if="$shared.regions.length === 0">
           <span
@@ -236,7 +236,7 @@
                 <v-list-item two-line>
                   <v-list-item-content>
                     <v-list-item-title>
-                      {{ region.name }}
+                      {{ region.nameTranslated }}
                       <v-icon
                         color="red"
                         style="cursor: pointer"
@@ -266,9 +266,9 @@
       <!-- LANGUAGES -->
       <v-tab-item style="padding: 8px">
         <h3>{{$t('Language of the Application')}}</h3>
-      <v-card-text class="light-grey">
+        <v-card-text class="light-grey">
           <p>{{$t('Change the language of the application here_')}}</p>
-      </v-card-text>
+        </v-card-text>
 
         <v-row class="settings-row">
           <v-select
@@ -282,9 +282,9 @@
 
         <h3>{{$t('Languages of the Primary Title')}}</h3>
 
-      <v-card-text class="light-grey">
+        <v-card-text class="light-grey">
           <p>{{$t('The languages and their sequence defined here will be used for the Primary Title of the media_')}}</p>
-      </v-card-text>
+        </v-card-text>
 
         <v-alert
           type="warning"
@@ -338,13 +338,13 @@
           v-on:click="openAddLanguagesDialog('languagesPrimaryTitle')"
         >{{$t('Add Languages')}}</v-btn>
 
-      <div style="height: 16px"></div>
+        <div style="height: 16px"></div>
 
         <h3>{{$t('Languages for Audio and Subtitles')}}</h3>
 
-      <v-card-text class="light-grey">
+        <v-card-text class="light-grey">
           <p>{{$t('The languages and their sequence defined here will be used to show which audio and subtitle languages your media contain_')}}</p>
-      </v-card-text>
+        </v-card-text>
 
         <v-alert
           type="warning"
@@ -717,7 +717,7 @@ export default {
         return;
       }
 
-      logger.log('folgerposition:', folderposition);
+      logger.log("folgerposition:", folderposition);
 
       const chosenPath = folderposition.filePaths[0];
       const chosenPathLower = chosenPath.toLowerCase();
@@ -1335,8 +1335,15 @@ export default {
     await this.fetchSourcePaths();
 
     const regions = await store.getSetting("regions");
+
     if (regions) {
       this.$shared.regions = JSON.parse(regions);
+
+      this.$shared.regions.forEach((item) => {
+        item.nameTranslated = this.$t(
+          `RegionNames.${item.name.replace(/\./g, "_")}`
+        );
+      });
     }
 
     // await store.fetchLanguageSettings();

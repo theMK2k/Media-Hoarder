@@ -107,7 +107,7 @@ export default {
           this.items = await store.getIMDBRegions();
 
           this.items.forEach(item => {
-            item.nameTranslated = this.$t(`RegionNames.${item.name.replace(/\./g, '_')}`);
+            item.nameTranslated = this.$t(`RegionNames.${item.name.replace(/[.']/g, '_')}`);
           })
 
           this.items = this.items.sort((a, b) => (a.nameTranslated > b.nameTranslated) ? 0 : -1);
