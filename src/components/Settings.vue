@@ -1363,6 +1363,24 @@ export default {
     this.MediainfoPath = await store.getSetting("MediainfoPath");
     this.minimumWaitForSetAccess = await store.getMinimumWaitForSetAccess();
 
+    // translate language names
+    if (this.$shared.languagesPrimaryTitle) {
+      this.$shared.languagesPrimaryTitle.forEach((item) => {
+        item.nameTranslated = this.$t(
+          `LanguageNames.${item.name.replace(/\./g, "_")}`
+        );
+        item.DisplayText = `${item.nameTranslated} (${item.code})`;
+      });
+    }
+    if (this.$shared.languagesAudioSubtitles) {
+      this.$shared.languagesAudioSubtitles.forEach((item) => {
+        item.nameTranslated = this.$t(
+          `LanguageNames.${item.name.replace(/\./g, "_")}`
+        );
+        item.DisplayText = `${item.nameTranslated} (${item.code})`;
+      });
+    }
+
     // lodash debounced functions
     this.debouncedUpdateMinimumWaitForSetAccess = _.debounce(
       this.updateMinimumWaitForSetAccess,

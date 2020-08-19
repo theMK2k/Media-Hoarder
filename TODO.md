@@ -4,7 +4,7 @@
 
 ### Bugs
 
-- Settings -> Languages: languages aren't translated in the list
+- no bugs known
 
 ### Other
 

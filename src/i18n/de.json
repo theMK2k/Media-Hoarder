@@ -96,7 +96,7 @@
   "Meta Duplicates": "Meta-Duplikate",
   "A meta duplicate is identified by having the same IMDB link_ This can happen if you have the same movie in different formats": "Ein Meta-Duplikat wird durch die Verknüpfung zum selben IMDB Eintrag identifiziert. Dies kommt vor, wenn man z.B. einen Film in unterschiedlichen Formaten (SD, HD oder 4k) vorliegen hat.",
   "With meta duplicates, {appName} should also": "Bei Meta-Duplikaten soll {appName} auch ...",
-  "The regions and their sequence defined here will be used for the Primary Title of the media as well as the age rating": "Die Reihenfolge der hier festgelegten Regionen werden für die Ermittlung des Primärtitels und die Alterseinstufung des Mediums verwendet.",
+  "The regions and their sequence defined here will be used for the Primary Title of the media as well as the age rating": "Die Reihenfolge der hier festgelegten Regionen wird für die Ermittlung des Primärtitels und die Alterseinstufung der Medien verwendet.",
   "If a particular movie does not have a title for one of these regions, the Original Title of the movie is used Else, the Original Title will be used as Secondary Title if it is different": "Falls ein Medium keinen Titel für eine der festgelegten Regionen hat, dann wird der Original Titel des Mediums verwendet. Ansonsten wird der Original Titel als Sekundärtitel verwendet, wenn er sich vom o.g. Titel unterscheidet.",
   "You currently don_t have a region set up_ {appName} will fall back to your system_s locale": "Keine Region eingestellt, {appName} verwendet die vom System vorgegebene Region",
   "You currently don_t have a region set up_ {appName} will fall back to the original title_": "Keine Region festgelegt, {appName} verwendet den Original Titel.",
