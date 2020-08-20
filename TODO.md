@@ -4,11 +4,15 @@
 
 ### Bugs
 
-- no bugs known
+- vue-i18n: Value of key 'LanguageNames.N'Ko' is not a string!
 
 ### Other
 
-- Settings: provide dialog before removal for: Regions, Languages, Release Attributes
+- Settings: provide dialog before removal for
+  - [x] Regions
+  - [x] Languages
+  - [ ] Title Types
+  - [ ] Release Attributes
 
 ### From electron builder
 

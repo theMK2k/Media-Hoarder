@@ -87,7 +87,7 @@
           <mk-sourcepath
             v-bind:value="sourcePath"
             v-on:edit-description="onSourcePathEditDescription"
-            v-on:delete="onSourcePathDelete"
+            v-on:delete="openRemoveSourcePathDialog"
           ></mk-sourcepath>
         </div>
 
@@ -112,7 +112,7 @@
           <mk-sourcepath
             v-bind:value="sourcePath"
             v-on:edit-description="onSourcePathEditDescription"
-            v-on:delete="onSourcePathDelete"
+            v-on:delete="openRemoveSourcePathDialog"
           ></mk-sourcepath>
         </div>
 
@@ -240,7 +240,7 @@
                       <v-icon
                         color="red"
                         style="cursor: pointer"
-                        v-on:click="onDeleteRegion(region)"
+                        v-on:click="openRemoveRegionDialog(region)"
                       >mdi-delete</v-icon>
                       <v-icon
                         v-if="!isTopRegion(region)"
@@ -311,7 +311,7 @@
                       <v-icon
                         color="red"
                         style="cursor: pointer"
-                        v-on:click="onDeleteLanguage(language, 'languagesPrimaryTitle')"
+                        v-on:click="openRemoveLanguageDialog(language, 'languagesPrimaryTitle')"
                       >mdi-delete</v-icon>
                       <v-icon
                         v-if="!isTopLanguage(language, 'languagesPrimaryTitle')"
@@ -371,7 +371,7 @@
                       <v-icon
                         color="red"
                         style="cursor: pointer"
-                        v-on:click="onDeleteLanguage(language, 'languagesAudioSubtitles')"
+                        v-on:click="openRemoveLanguageDialog(language, 'languagesAudioSubtitles')"
                       >mdi-delete</v-icon>
                       <v-icon
                         v-if="!isTopLanguage(language, 'languagesAudioSubtitles')"
@@ -485,23 +485,34 @@
       v-on:ok="onSourcePathDescriptionDialogOK"
       v-on:cancel="onSourcePathDescriptionDialogCancel"
     ></mk-sourcepath-description-dialog>
-    <mk-sourcepath-remove-dialog
-      v-bind:show="sourcePathRemoveDialog.show"
+    <mk-remove-sourcepath-dialog
+      v-bind:show="removeSourcePathDialog.show"
       v-bind:title="$t('Remove Source Path')"
-      v-bind:question="$t('Do you really want to remove the source path {Path} _{MediaTypeUpper}_ including all associated media_', {Path: sourcePathRemoveDialog.Path, MediaTypeUpper: sourcePathRemoveDialog.MediaTypeUpper})"
+      v-bind:question="$t('Do you really want to remove the source path {Path} _{MediaTypeUpper}_ including all associated media_', {Path: removeSourcePathDialog.Path, MediaTypeUpper: removeSourcePathDialog.MediaTypeUpper})"
       v-bind:yes="$t('YES_ Remove')"
       v-bind:cancel="$t('Cancel')"
       yesColor="error"
       cancelColor="secondary"
-      v-on:yes="onSourcePathRemoveDialogOK"
-      v-on:cancel="onSourcePathRemoveDialogCancel"
-    ></mk-sourcepath-remove-dialog>
+      v-on:yes="onRemoveSourcePathDialogOK"
+      v-on:cancel="onRemoveSourcePathDialogCancel"
+    ></mk-remove-sourcepath-dialog>
     <mk-add-regions-dialog
       ref="addRegionsDialog"
       v-bind:show="addRegionsDialog.show"
       v-on:cancel="onAddRegionsDialogCancel"
       v-on:ok="onAddRegionsDialogOK"
     ></mk-add-regions-dialog>
+    <mk-remove-region-dialog
+      v-bind:show="removeRegionDialog.show"
+      v-bind:title="$t('Remove Region')"
+      v-bind:question="$t('Do you really want to remove the region {Region}_', {Region: removeRegionDialog.Region})"
+      v-bind:yes="$t('YES_ Remove')"
+      v-bind:cancel="$t('Cancel')"
+      yesColor="error"
+      cancelColor="secondary"
+      v-on:yes="onRemoveRegionDialogOK"
+      v-on:cancel="onRemoveRegionDialogCancel"
+    ></mk-remove-region-dialog>
     <mk-add-languages-dialog
       ref="addLanguagesDialog"
       v-bind:show="addLanguagesDialog.show"
@@ -509,6 +520,17 @@
       v-on:cancel="onAddLanguagesDialogCancel"
       v-on:ok="onAddLanguagesDialogOK"
     ></mk-add-languages-dialog>
+    <mk-remove-language-dialog
+      v-bind:show="removeLanguageDialog.show"
+      v-bind:title="$t('Remove Language')"
+      v-bind:question="$t('Do you really want to remove the language {Language}_', {Language: removeLanguageDialog.Language})"
+      v-bind:yes="$t('YES_ Remove')"
+      v-bind:cancel="$t('Cancel')"
+      yesColor="error"
+      cancelColor="secondary"
+      v-on:yes="onRemoveLanguageDialogOK"
+      v-on:cancel="onRemoveLanguageDialogCancel"
+    ></mk-remove-language-dialog>
     <mk-add-title-type-dialog
       ref="addTitleTypeDialog"
       v-bind:show="addTitleTypeDialog.show"
@@ -546,9 +568,11 @@ export default {
   components: {
     "mk-sourcepath": SourcePath,
     "mk-sourcepath-description-dialog": Dialog,
-    "mk-sourcepath-remove-dialog": Dialog,
+    "mk-remove-sourcepath-dialog": Dialog,
     "mk-add-regions-dialog": AddRegionsDialog,
+    "mk-remove-region-dialog": Dialog,
     "mk-add-languages-dialog": AddLanguagesDialog,
+    "mk-remove-language-dialog": Dialog,
     "mk-add-title-type-dialog": AddTitleTypeDialog,
     "mk-edit-release-attribute-dialog": EditReleaseAttributeDialog,
     "mk-title-type": TitleType,
@@ -570,7 +594,7 @@ export default {
       Description: null,
     },
 
-    sourcePathRemoveDialog: {
+    removeSourcePathDialog: {
       show: false,
       id_SourcePaths: null,
       MediaType: null,
@@ -582,9 +606,22 @@ export default {
       show: false,
     },
 
+    removeRegionDialog: {
+      show: false,
+      item: null,
+      Region: null,
+    },
+
     addLanguagesDialog: {
       show: false,
       languageType: null,
+    },
+
+    removeLanguageDialog: {
+      show: false,
+      item: null,
+      type: null,
+      Language: null,
     },
 
     addTitleTypeDialog: {
@@ -779,30 +816,30 @@ export default {
       this.sourcePathDescriptionDialog.show = true;
     },
 
-    onSourcePathDelete(sourcePathItem) {
-      this.sourcePathRemoveDialog.id_SourcePaths =
+    openRemoveSourcePathDialog(sourcePathItem) {
+      this.removeSourcePathDialog.id_SourcePaths =
         sourcePathItem.id_SourcePaths;
-      this.sourcePathRemoveDialog.Path = sourcePathItem.Path;
-      this.sourcePathRemoveDialog.MediaTypeUpper = sourcePathItem.MediaType.toUpperCase();
+      this.removeSourcePathDialog.Path = sourcePathItem.Path;
+      this.removeSourcePathDialog.MediaTypeUpper = sourcePathItem.MediaType.toUpperCase();
 
-      this.sourcePathRemoveDialog.show = true;
+      this.removeSourcePathDialog.show = true;
     },
 
-    onSourcePathRemoveDialogCancel() {
-      this.sourcePathRemoveDialog.show = false;
+    onRemoveSourcePathDialogCancel() {
+      this.removeSourcePathDialog.show = false;
     },
 
-    onSourcePathRemoveDialogOK() {
+    onRemoveSourcePathDialogOK() {
       (async () => {
         try {
           eventBus.showLoadingOverlay(true);
 
-          this.sourcePathRemoveDialog.show = false;
+          this.removeSourcePathDialog.show = false;
 
           await store.db.fireProcedure(
             `DELETE FROM tbl_SourcePaths WHERE id_SourcePaths = $id_SourcePaths`,
             {
-              $id_SourcePaths: this.sourcePathRemoveDialog.id_SourcePaths,
+              $id_SourcePaths: this.removeSourcePathDialog.id_SourcePaths,
             }
           );
 
@@ -917,6 +954,22 @@ export default {
       this.addLanguagesDialog.show = true;
 
       this.$refs.addLanguagesDialog.init();
+    },
+
+    openRemoveRegionDialog(item) {
+      this.removeRegionDialog.item = item;
+      this.removeRegionDialog.Region = item.nameTranslated;
+      this.removeRegionDialog.show = true;
+    },
+
+    onRemoveRegionDialogOK() {
+      this.removeRegion(this.removeRegionDialog.item);
+      this.removeRegionDialog.show = false;
+      eventBus.showSnackbar("success", this.$t("Region removed_"));
+    },
+
+    onRemoveRegionDialogCancel() {
+      this.removeRegionDialog.show = false;
     },
 
     onAddRegionsDialogCancel() {
@@ -1085,7 +1138,7 @@ export default {
       }
     },
 
-    async onDeleteRegion(region) {
+    async removeRegion(region) {
       const sort = region.sort;
       this.$shared.regions.splice(
         this.$shared.regions.findIndex((region2) => region2 === region),
@@ -1098,7 +1151,7 @@ export default {
       await store.setSetting("regions", JSON.stringify(this.$shared.regions));
     },
 
-    async onDeleteLanguage(language, languageType) {
+    async removeLanguage(language, languageType) {
       const languages =
         languageType === "languagesPrimaryTitle"
           ? this.$shared.languagesPrimaryTitle
@@ -1116,6 +1169,26 @@ export default {
             language.sort > sort ? language.sort - 1 : language.sort)
       );
       await store.setSetting(languageType, JSON.stringify(languages));
+    },
+
+    openRemoveLanguageDialog(item, type) {
+      this.removeLanguageDialog.item = item;
+      this.removeLanguageDialog.type = type;
+      this.removeLanguageDialog.Language = item.DisplayText;
+      this.removeLanguageDialog.show = true;
+    },
+
+    onRemoveLanguageDialogOK() {
+      this.removeLanguage(
+        this.removeLanguageDialog.item,
+        this.removeLanguageDialog.type
+      );
+      this.removeLanguageDialog.show = false;
+      eventBus.showSnackbar("success", this.$t("Language removed_"));
+    },
+
+    onRemoveLanguageDialogCancel() {
+      this.removeLanguageDialog.show = false;
     },
 
     openAddTitleTypeDialog() {

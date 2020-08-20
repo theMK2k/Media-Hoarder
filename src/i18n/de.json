@@ -840,5 +840,11 @@
   "Filter by this release attribute": "Nach diesem Veröffentlichungsattribut filtern",
   "Remove this release attribute for the current movie": "Dieses Veröffentlichungsattribut für den aktuellen Film entfernen",
   "Release Attribute _{ReleaseAttribute}_ successfully removed from selected movie_": "Veröffentlichungsattribut \"{ReleaseAttribute}\" erfolgreich für den ausgewählten Film entfernt.",
-  "entry successfully rescanned": "Eintrag erfolgreich neu eingelesen"
+  "entry successfully rescanned": "Eintrag erfolgreich neu eingelesen",
+  "Remove Region": "Region Entfernen",
+  "Do you really want to remove the region {Region}_": "Soll die Region {Region} wirklich entfernt werden?",
+  "Region removed_": "Region wurde entfernt.",
+  "Remove Language": "Sprache Entfernen",
+  "Do you really want to remove the language {Language}_": "Soll die Sprache {Language} wirklich entfernt werden?",
+  "Language removed_": "Sprache wurde entfernt."
 }
