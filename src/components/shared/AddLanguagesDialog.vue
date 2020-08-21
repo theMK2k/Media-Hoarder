@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onCancelClick">
+  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onCancelClick" scrollable>
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">{{$t('Add Languages')}}</div>
@@ -110,7 +110,7 @@ export default {
           this.items = await store.getIMDBLanguages();
 
           this.items.forEach(item => {
-            item.nameTranslated = this.$t(`LanguageNames.${item.name.replace(/\./g, '_')}`);
+            item.nameTranslated = this.$t(`LanguageNames.${item.name.replace(/[.']/g, '_')}`);
             item.DisplayText = `${item.nameTranslated} (${item.code})`;
           })
 
