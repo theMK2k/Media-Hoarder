@@ -514,6 +514,7 @@ Dialog.vue
 
 ### Bugs
 
+- [x] duplicate detection fails at special characters: e.g. "adams aebler"n
 - [x] Settings -> Languages: languages aren't translated in the list
 - [x] Settings -> Regions: regions aren't translated in the list
 - [x] Settings -> Release Attributes: don't allow sorting

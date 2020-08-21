@@ -626,7 +626,7 @@ async function filescanMovies(onlyNew) {
 
 
     moviesHave.forEach(movie => {
-      movie.fullPathLower = path.join(movie.tmp_SourcePathLower, movie.tmp_PathLower)
+      movie.fullPathLower = path.join(movie.tmp_SourcePathLower, movie.tmp_PathLower).toLowerCase();  // we need to lowercase in code again, because some special characters aren't lowercased properly by SQLite, e.g. "Ä" -> "ä"
     });
 
     logger.log("moviesHave:", moviesHave);  // #relpath: is this correct??
