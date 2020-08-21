@@ -1,6 +1,6 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px" transition="fab-transition">
-    <v-card style="min-height: 500px">
+  <v-dialog v-model="show" persistent max-width="1000px" transition="fab-transition" scrollable>
+    <v-card>
       <v-card-title>
         <v-row class="headline" style="width: 100%; font-size: 1.17em">
           {{$shared.appName}} {{currentVersion}}
@@ -8,68 +8,72 @@
 
           <v-btn text v-on:click="$emit('close')">{{$t('Close')}}</v-btn>
         </v-row>
+
+        <div class="v-card__text" style="padding: 0px">
+          <div
+            v-if="isLoadingHistory"
+            style="margin-bottom: 16px"
+          >
+            {{$t('Checking for Updates')}}
+            <v-progress-linear color="red accent-0" indeterminate rounded height="6"></v-progress-linear>
+          </div>
+
+          <v-alert
+            v-if="!isLoadingHistory"
+            v-bind:type="isNewVersionAvailable ? 'info' : (isUpToDate ? 'success' : 'warning')"
+            colored-border
+            border="left"
+            dense
+            style="margin-top: 8px"
+          >
+            <span v-if="isNewVersionAvailable">
+              {{$t('Version {latestVersion} is available - get it at', {latestVersion: latestVersion})}}
+              <a
+                v-on:click.stop="openLink('https://github.com/theMK2k/Media-Hoarder/releases')"
+              >https://github.com/theMK2k/Media-Hoarder/releases</a>
+            </span>
+            <span v-if="isUpToDate">{{$t('you are up to date')}}</span>
+            <span
+              v-if="!isNewVersionAvailable && !isUpToDate"
+            >{{$t('unable to determine if you are up to date')}}</span>
+          </v-alert>
+
+          <div class="light-grey">
+            {{$t('Visit')}}
+            <a
+              v-on:click.stop="openLink('https://media.hoarder.software')"
+            >https://media.hoarder.software</a>
+            {{$t('for a better features overview_')}}
+          </div>
+
+          <div v-if="history && history.length > 0" style="font-size: 16px; margin-top: 16px">
+            {{$t('Version History')}}
+            <v-btn
+              text
+              class="xs-fullwidth"
+              style="margin-right: 8px"
+              v-bind:disabled="infoPosition + 1 >= history.length"
+              v-on:click="infoPosition++"
+            >&lt;</v-btn>
+            {{history[infoPosition].version}}
+            <v-btn
+              text
+              class="xs-fullwidth"
+              v-bind:disabled="infoPosition === 0"
+              v-on:click="infoPosition--"
+            >&gt;</v-btn>
+          </div>
+
+          <div
+            v-if="isLoadingVersionInfo"
+            style="margin-left: 24px; margin-right:24px; margin-bottom: 16px"
+          >
+            <v-progress-linear color="red accent-0" indeterminate rounded height="6"></v-progress-linear>
+          </div>
+        </div>
       </v-card-title>
 
-      <div
-        v-if="isLoadingHistory"
-        style="margin-left: 24px; margin-right:24px; margin-bottom: 16px"
-      >
-        {{$t('Checking for Updates')}}
-        <v-progress-linear color="red accent-0" indeterminate rounded height="6"></v-progress-linear>
-      </div>
-
-      <v-alert
-        v-if="!isLoadingHistory"
-        v-bind:type="isNewVersionAvailable ? 'info' : (isUpToDate ? 'success' : 'warning')"
-        colored-border
-        border="left"
-        style="margin-left: 24px"
-        dense
-      >
-        <span v-if="isNewVersionAvailable">
-          {{$t('Version {latestVersion} is available - get it at', {latestVersion: latestVersion})}}
-          <a
-            v-on:click.stop="openLink('https://github.com/theMK2k/Media-Hoarder/releases')"
-          >https://github.com/theMK2k/Media-Hoarder/releases</a>
-        </span>
-        <span v-if="isUpToDate">{{$t('you are up to date')}}</span>
-        <span
-          v-if="!isNewVersionAvailable && !isUpToDate"
-        >{{$t('unable to determine if you are up to date')}}</span>
-      </v-alert>
-
-      <div style="margin-left: 24px">
-        {{$t('Visit')}}
-        <a v-on:click.stop="openLink('https://media.hoarder.software')">https://media.hoarder.software</a> {{$t('for a better features overview_')}}
-      </div>
-
-      <v-card-actions style="margin-left: 16px" v-if="history && history.length > 0">
-        {{$t('Version History')}}
-        
-        <v-btn
-          text
-          class="xs-fullwidth"
-          style="margin-right: 8px"
-          v-bind:disabled="infoPosition + 1 >= history.length"
-          v-on:click="infoPosition++"
-        >&lt;</v-btn>
-        {{history[infoPosition].version}}
-        <v-btn
-          text
-          class="xs-fullwidth"
-          v-bind:disabled="infoPosition === 0"
-          v-on:click="infoPosition--"
-        >&gt;</v-btn>
-      </v-card-actions>
-
-      <div
-        v-if="isLoadingVersionInfo"
-        style="margin-left: 24px; margin-right:24px; margin-bottom: 16px"
-      >
-        <v-progress-linear color="red accent-0" indeterminate rounded height="6"></v-progress-linear>
-      </div>
-
-      <v-card-text v-if="!isLoadingVersionInfo" style="color: white">
+      <v-card-text v-if="!isLoadingVersionInfo">
         <div v-html="versionInfo"></div>
       </v-card-text>
     </v-card>
@@ -101,14 +105,14 @@ export default {
       currentVersion: null,
       latestVersion: null,
 
-      infoPosition: 0
+      infoPosition: 0,
     };
   },
 
   watch: {
-    infoPosition: function(newValue) {
+    infoPosition: function (newValue) {
       this.updateVersionInfo(newValue);
-    }
+    },
   },
 
   methods: {
@@ -217,11 +221,11 @@ export default {
       } finally {
         this.isLoadingHistory = false;
       }
-    }
+    },
   },
 
   // ### Lifecycle Hooks ###
-  created() {}
+  created() {},
 };
 </script>
 

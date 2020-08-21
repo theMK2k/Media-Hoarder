@@ -1,93 +1,99 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onEscapePressed">
+  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onEscapePressed" scrollable>
     <v-card dark flat v-bind:ripple="false">
-      <v-list-item three-line style="padding-left: 0px">
-        <div>
-          <!-- <v-skeleton-loader
+      <v-card-title>
+        <v-row>
+          <div style="margin-left: 16px">
+            <v-list-item-title
+              class="headline mb-2"
+              style="margin-bottom: 0px!important"
+            >{{ Person_Name }}</v-list-item-title>
+          </div>
+        </v-row>
+
+        <v-progress-linear v-if="isScraping" color="red accent-0" indeterminate rounded height="3"></v-progress-linear>
+      </v-card-title>
+
+      <v-card-text>
+        <v-list-item three-line style="padding-left: 0px; align-items: flex-start">
+          <div>
+            <!-- <v-skeleton-loader
             v-if="isScraping"
             ref="skeleton"
             type="avatar"
             tile
             class="mx-auto"
             style="margin: 6px; height: 150px; width: 120px"
-          ></v-skeleton-loader>-->
+            ></v-skeleton-loader>-->
 
-          <v-list-item-avatar tile style="margin: 6px; height: 150px; width: 120px">
-            <!-- v-if="!isScraping" -->
-            <v-img
-              v-if="personData.Photo_URL"
-              contain
-              v-bind:src="personData.Photo_URL"
-              style="border-radius: 6px;"
-            ></v-img>
-          </v-list-item-avatar>
-        </div>
-        <v-list-item-content class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
-          <v-col style="padding: 0px!important" sm="12">
-            <v-row>
-              <div style="margin-left: 16px">
-                <v-list-item-title
-                  class="headline mb-2"
-                  style="margin-bottom: 0px!important"
-                >{{ Person_Name }}</v-list-item-title>
-              </div>
-            </v-row>
-
-            <v-progress-linear
-              v-if="isScraping"
-              color="red accent-0"
-              indeterminate
-              rounded
-              height="3"
-            ></v-progress-linear>
-
-            <v-row style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px">
-              <div
-                v-if="!showLongBio"
-                style="font-size: .875rem; font-weight: normal"
-                class="Clickable"
-                v-on:click.stop="showLongBio = true"
-              >{{ personData.ShortBio }}</div>
-              <div
-                v-if="showLongBio"
-                style="font-size: .875rem; font-weight: normal"
-                class="Clickable"
-                v-on:click.stop="showLongBio = false"
-              >
-                <p
-                  v-for="(line, index) in personData.LongBio.split('\n')"
-                  v-bind:key="index"
-                >{{line}}</p>
-              </div>
-            </v-row>
-          </v-col>
-        </v-list-item-content>
-      </v-list-item>
-      <v-col sm="12">
-        <v-row style="margin-top: 8px">
-          <v-btn
-            class="xs-fullwidth"
-            color="secondary"
-            v-on:click.native="onCloseClick"
-            style="margin-left: 8px;"
-          >{{$t('Close')}}</v-btn>
-          <v-btn
-            class="xs-fullwidth"
-            color="primary"
-            v-on:click.stop="openIMDB()"
-            style="margin-left: 8px;"
-          ><v-icon small>mdi-web</v-icon>&nbsp;IMDB</v-btn>
-          <v-btn
-            class="xs-fullwidth"
-            color="primary"
-            v-on:click.native="onFilterClick"
-            style="margin-left: 8px;"
+            <v-list-item-avatar tile style="margin: 6px; height: 150px; width: 120px">
+              <!-- v-if="!isScraping" -->
+              <v-img
+                v-if="personData.Photo_URL"
+                contain
+                v-bind:src="personData.Photo_URL"
+                style="border-radius: 6px;"
+              ></v-img>
+            </v-list-item-avatar>
+          </div>
+          <v-list-item-content
+            class="align-self-start"
+            style="padding-top: 6px; padding-bottom: 6px"
           >
-            {{$t('Filter by this person')}}
-            <span v-if="numMovies">({{numMovies}})</span>
-          </v-btn>
-        </v-row>
-      </v-col>
+            <v-col style="padding: 0px!important" sm="12">
+              <v-row style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px">
+                <div
+                  v-if="!showLongBio"
+                  style="font-size: .875rem; font-weight: normal"
+                  class="Clickable"
+                  v-on:click.stop="showLongBio = true"
+                >{{ personData.ShortBio }}</div>
+                <div
+                  v-if="showLongBio"
+                  style="font-size: .875rem; font-weight: normal"
+                  class="Clickable"
+                  v-on:click.stop="showLongBio = false"
+                >
+                  <p
+                    v-for="(line, index) in personData.LongBio.split('\n')"
+                    v-bind:key="index"
+                  >{{line}}</p>
+                </div>
+              </v-row>
+            </v-col>
+          </v-list-item-content>
+        </v-list-item>
+      </v-card-text>
+
+      <v-card-actions>
+        <v-col sm="12">
+          <v-row style="margin-top: 8px">
+            <v-btn
+              class="xs-fullwidth"
+              color="secondary"
+              v-on:click.native="onCloseClick"
+              style="margin-left: 8px;"
+            >{{$t('Close')}}</v-btn>
+            <v-btn
+              class="xs-fullwidth"
+              color="primary"
+              v-on:click.stop="openIMDB()"
+              style="margin-left: 8px;"
+            >
+              <v-icon small>mdi-web</v-icon>&nbsp;IMDB
+            </v-btn>
+            <v-btn
+              class="xs-fullwidth"
+              color="primary"
+              v-on:click.native="onFilterClick"
+              style="margin-left: 8px;"
+            >
+              {{$t('Filter by this person')}}
+              <span v-if="numMovies">({{numMovies}})</span>
+            </v-btn>
+          </v-row>
+        </v-col>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
@@ -110,21 +116,21 @@ export default {
       isScraping: false,
       personData: {},
       showLongBio: false,
-      numMovies: null
+      numMovies: null,
     };
   },
 
   watch: {
-    IMDB_Person_ID: function(newVal) {
+    IMDB_Person_ID: function (newVal) {
       this.init(newVal);
-    }
+    },
   },
 
   methods: {
     onButtonClick(eventName) {
       this.$emit(eventName, {
         dontAskAgain: this.dontAskAgainValue,
-        textValue: this.textValueLocal
+        textValue: this.textValueLocal,
       });
 
       this.resetData();
@@ -150,7 +156,7 @@ export default {
             ? "file://" + helpers.getPath(personData.$Photo_URL)
             : personData.$Photo_URL,
           ShortBio: personData.$ShortBio,
-          LongBio: personData.$LongBio
+          LongBio: personData.$LongBio,
         };
 
         logger.log("this.personData:", this.personData);
@@ -179,7 +185,6 @@ export default {
       `,
         { $IMDB_Person_ID }
       );
-
 
       this.personData = {};
       this.showLongBio = false;
@@ -212,7 +217,7 @@ export default {
       await store.addFilterPerson(this.IMDB_Person_ID, this.Person_Name);
 
       const setFilter = {
-        filterPersons: [this.IMDB_Person_ID]
+        filterPersons: [this.IMDB_Person_ID],
       };
 
       eventBus.personDialogConfirm(setFilter);
@@ -228,11 +233,11 @@ export default {
 
     onEscapePressed() {
       this.onCloseClick();
-    }
+    },
   },
 
   // ### Lifecycle Hooks ###
-  created() {}
+  created() {},
 };
 </script>
 

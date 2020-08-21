@@ -4,9 +4,11 @@
 
 ### Bugs
 
-- vue-i18n: Value of key 'LanguageNames.N'Ko' is not a string!
+- [ ] List Dialog layout
 
 ### Other
+
+- Dialogs: define v-dialog as scrollable where applicable
 
 - Settings: provide dialog before removal for
   - [x] Regions

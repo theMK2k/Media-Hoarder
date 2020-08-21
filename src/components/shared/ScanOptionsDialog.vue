@@ -5,6 +5,7 @@
     max-width="100%"
     v-on:keydown.escape="onCloseClick"
     v-on:keydown.enter="onOKClick"
+    scrollable
   >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>

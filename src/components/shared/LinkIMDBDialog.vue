@@ -7,14 +7,16 @@
     # 天気の子 (aka title for "Weathering with you") won't yield any results
     #
   -->
-  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onCancelClick">
+  <v-dialog
+    v-model="show"
+    persistent
+    max-width="1000px"
+    v-on:keydown.escape="onCancelClick"
+    scrollable
+  >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">{{$t('Link with IMDB entry')}}</div>
-      </v-card-title>
-      <v-card-text
-        style="padding-right: 28px;"
-      >
         <v-row style="padding-left: 16px; margin-bottom: 8px">
           <v-text-field
             :append-icon-cb="() => {}"
@@ -53,7 +55,8 @@
         <v-row>
           <v-btn text v-bind:loading="isLoading" v-on:click.native="onSearchClick">{{$t('Search')}}</v-btn>
         </v-row>
-
+      </v-card-title>
+      <v-card-text style="padding-right: 28px;">
         <v-row v-for="(item, i) in searchResults" :key="i">
           <v-col style="padding: 2px; margin-left: 16px">
             <v-card
@@ -143,56 +146,56 @@ export default {
         {
           id: "feature",
           name: "Feature Film",
-          checked: true
+          checked: true,
         },
         {
           id: "tv_movie",
           name: "TV Movie",
-          checked: true
+          checked: true,
         },
         {
           id: "tv_series",
           name: "TV Series",
-          checked: true
+          checked: true,
         },
         {
           id: "tv_episode",
           name: "TV Episode",
-          checked: true
+          checked: true,
         },
         {
           id: "tv_special",
           name: "TV Special",
-          checked: true
+          checked: true,
         },
         {
           id: "tv_miniseries",
           name: "Mini-Series",
-          checked: true
+          checked: true,
         },
         {
           id: "documentary",
           name: "Documentary",
-          checked: true
+          checked: true,
         },
         {
           id: "short",
           name: "Short Film",
-          checked: true
+          checked: true,
         },
         {
           id: "video",
           name: "Video",
-          checked: true
+          checked: true,
         },
         {
           id: "tv_short",
           name: "TV Short",
-          checked: true
-        }
+          checked: true,
+        },
       ],
 
-      searchResults: []
+      searchResults: [],
     };
   },
 
@@ -206,7 +209,7 @@ export default {
       this.isLinking = false;
 
       this.titleTypes.forEach(
-        titleType =>
+        (titleType) =>
           (titleType.nameTranslated = this.$t(
             `IMDBTitleTypes.${titleType.name}`
           ))
@@ -214,7 +217,7 @@ export default {
     },
 
     setAllTitleTypes(value) {
-      this.titleTypes.forEach(titleType => {
+      this.titleTypes.forEach((titleType) => {
         titleType.checked = value;
       });
     },
@@ -224,16 +227,16 @@ export default {
     },
 
     titleTypesTitle() {
-      if (!this.titleTypes.find(titleType => titleType.checked)) {
+      if (!this.titleTypes.find((titleType) => titleType.checked)) {
         return `(${this.$t("NONE")})`;
       }
 
-      if (!this.titleTypes.find(titleType => !titleType.checked)) {
+      if (!this.titleTypes.find((titleType) => !titleType.checked)) {
         return `(${this.$t("ALL")})`;
       }
 
       return `(${
-        this.titleTypes.filter(titleType => titleType.checked).length
+        this.titleTypes.filter((titleType) => titleType.checked).length
       }/${this.titleTypes.length})`;
     },
 
@@ -276,10 +279,10 @@ export default {
 
     setItemHovered(item, section, value) {
       this.$set(item, `${section}Hovered`, value);
-    }
+    },
   },
 
-  created() {}
+  created() {},
 };
 </script>
 

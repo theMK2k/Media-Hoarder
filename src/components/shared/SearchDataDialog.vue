@@ -1,10 +1,8 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onCancelClick">
+  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onCancelClick" scrollable>
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">{{ title }}</div>
-      </v-card-title>
-      <v-card-text>
         <v-row>
           <v-text-field
             :append-icon-cb="() => {}"
@@ -20,7 +18,8 @@
           ></v-text-field>
           <v-btn text v-on:click="runSearch">{{$t('Search')}}</v-btn>
         </v-row>
-
+      </v-card-title>
+      <v-card-text>
         <v-checkbox
           v-model="sortByNumMovies"
           v-bind:label="$t('Sort by number of movies')"

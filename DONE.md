@@ -350,6 +350,8 @@ Series
 
 ### Other
 
+- [x] Optimize Dialogs: scrollable content, fixed header and footer
+
 - [x] implement minimumWaitForSetAccess with a defaut value of 60 (seconds)
 - [x] mediainfo-rar not needed anymore: Mediainfo is also able to scan inside .rar files
 
@@ -514,6 +516,7 @@ Dialog.vue
 
 ### Bugs
 
+- [x] vue-i18n: Value of key 'LanguageNames.N'Ko' is not a string!
 - [x] duplicate detection fails at special characters: e.g. "adams aebler"n
 - [x] Settings -> Languages: languages aren't translated in the list
 - [x] Settings -> Regions: regions aren't translated in the list

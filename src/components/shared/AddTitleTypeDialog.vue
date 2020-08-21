@@ -1,14 +1,33 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onCloseClick">
+  <v-dialog
+    v-model="show"
+    persistent
+    max-width="1000px"
+    v-on:keydown.escape="onCloseClick"
+    scrollable
+  >
     <v-card dark flat v-bind:ripple="false">
-        <v-card-title>
+      <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">{{$t('Add Title Type')}}</div>
-        </v-card-title>
+      </v-card-title>
 
-        <mk-title-type v-for="item in filteredItems" v-bind:key="item.TitleType" v-bind:value="item" v-bind:showAdd="true" v-on:addTitleType="onAddTitleType"></mk-title-type>
+      <v-card-text>
+        <mk-title-type
+          v-for="item in filteredItems"
+          v-bind:key="item.TitleType"
+          v-bind:value="item"
+          v-bind:showAdd="true"
+          v-on:addTitleType="onAddTitleType"
+        ></mk-title-type>
+      </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" small v-on:click.native="onCloseClick()">{{$t('Close')}}</v-btn>
+        <v-btn
+          class="xs-fullwidth"
+          color="secondary"
+          small
+          v-on:click.native="onCloseClick()"
+        >{{$t('Close')}}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -27,21 +46,21 @@ export default {
   props: ["show"],
 
   components: {
-    "mk-title-type": TitleType
+    "mk-title-type": TitleType,
   },
 
   data() {
     return {
-      items: []
+      items: [],
     };
   },
 
   computed: {
     filteredItems() {
-      return this.items.filter(item => {
+      return this.items.filter((item) => {
         if (
           this.$shared.imdbTitleTypesWhitelist.findIndex(
-            used => used.TitleType === item.TitleType
+            (used) => used.TitleType === item.TitleType
           ) !== -1
         ) {
           return false;
@@ -49,7 +68,7 @@ export default {
 
         return true;
       });
-    }
+    },
   },
 
   methods: {
@@ -58,7 +77,7 @@ export default {
     },
 
     onAddTitleType(value) {
-        this.$emit("addTitleType", value);
+      this.$emit("addTitleType", value);
     },
 
     async init() {
@@ -69,10 +88,10 @@ export default {
           eventBus.showSnackbar("error", e);
         }
       }
-    }
+    },
   },
 
-  created() {}
+  created() {},
 };
 </script>
 

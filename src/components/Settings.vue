@@ -424,6 +424,7 @@
           small
           color="primary"
           v-on:click="openAddTitleTypeDialog"
+          style="margin-top: 16px"
         >{{$t('Add Title Type')}}</v-btn>
       </v-tab-item>
 

@@ -19,7 +19,7 @@
           dense
         >{{$t("No rating demographics found for")}} {{title}}</v-alert>
         <div v-if="ratingDemographics">
-          <table>
+          <table style="margin-left: auto; margin-right: auto">
             <tr>
               <td></td>
               <td><div class="rating-demographics-header">{{$t("All Ages")}}</div></td>
@@ -54,7 +54,7 @@
             </tr>
           </table>
 
-          <table>
+          <table style="margin-left: auto; margin-right: auto">
             <tr>
               <td><div class="rating-demographics-header three-columns">{{$t("Top 1000 Voters")}}</div></td>
               <td><div class="rating-demographics-header three-columns">{{$t("Non-US Users")}}</div></td>
