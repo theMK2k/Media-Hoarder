@@ -765,5 +765,7 @@
   "Do you really want to remove the region {Region}_": "Do you really want to remove the region {Region}?",
   "Remove Language": "Remove Language",
   "Do you really want to remove the language {Language}_": "Do you really want to remove the language {Language}?",
-  "Language removed_": "Language removed."
+  "Language removed_": "Language removed.",
+  "Remove Title Type": "Remove Title Type",
+  "Do you really want to remove the title type {TitleType}_": "Do you really want to remove the title type \"{TitleType}\"?"
 }

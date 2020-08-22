@@ -418,7 +418,7 @@
           v-bind:key="item.TitleType"
           v-bind:value="item"
           v-bind:showRemove="true"
-          v-on:removeTitleType="onRemoveTitleType"
+          v-on:removeTitleType="openRemoveTitleTypeDialog"
         ></mk-title-type>
 
         <v-btn
@@ -540,6 +540,17 @@
       v-on:close="onAddTitleTypeDialogClose"
       v-on:addTitleType="onAddTitleType"
     ></mk-add-title-type-dialog>
+    <mk-remove-title-type-dialog
+      v-bind:show="removeTitleTypeDialog.show"
+      v-bind:title="$t('Remove Title Type')"
+      v-bind:question="$t('Do you really want to remove the title type {TitleType}_', {TitleType: removeTitleTypeDialog.TitleType})"
+      v-bind:yes="$t('YES_ Remove')"
+      v-bind:cancel="$t('Cancel')"
+      yesColor="error"
+      cancelColor="secondary"
+      v-on:yes="onRemoveTitleTypeDialogOK"
+      v-on:cancel="onRemoveTitleTypeDialogCancel"
+    ></mk-remove-title-type-dialog>
     <mk-edit-release-attribute-dialog
       ref="editReleaseAttributeDialog"
       v-bind:show="editReleaseAttributeDialog.show"
@@ -577,6 +588,7 @@ export default {
     "mk-add-languages-dialog": AddLanguagesDialog,
     "mk-remove-language-dialog": Dialog,
     "mk-add-title-type-dialog": AddTitleTypeDialog,
+    "mk-remove-title-type-dialog": Dialog,
     "mk-edit-release-attribute-dialog": EditReleaseAttributeDialog,
     "mk-title-type": TitleType,
   },
@@ -629,6 +641,12 @@ export default {
 
     addTitleTypeDialog: {
       show: false,
+    },
+
+    removeTitleTypeDialog: {
+      show: false,
+      item: null,
+      TitleType: null
     },
 
     tmpPath: "",
@@ -1221,7 +1239,24 @@ export default {
       );
     },
 
-    async onRemoveTitleType(titleType) {
+    openRemoveTitleTypeDialog(titleType) {
+      logger.log('openRemoveTitleTypeDialog titleType:', titleType);
+
+      this.removeTitleTypeDialog.item = titleType;
+      this.removeTitleTypeDialog.TitleType = titleType.TitleType;
+      this.removeTitleTypeDialog.show = true;
+    },
+
+    async onRemoveTitleTypeDialogOK() {
+      await this.removeTitleType(this.removeTitleTypeDialog.item);
+      this.removeTitleTypeDialog.show = false;
+    },
+
+    onRemoveTitleTypeDialogCancel() {
+      this.removeTitleTypeDialog.show = false;
+    },
+    
+    async removeTitleType(titleType) {
       this.$shared.imdbTitleTypesWhitelist.splice(
         this.$shared.imdbTitleTypesWhitelist.findIndex(
           (item) => item.TitleType === titleType.TitleType

@@ -846,5 +846,7 @@
   "Region removed_": "Region wurde entfernt.",
   "Remove Language": "Sprache Entfernen",
   "Do you really want to remove the language {Language}_": "Soll die Sprache {Language} wirklich entfernt werden?",
-  "Language removed_": "Sprache wurde entfernt."
+  "Language removed_": "Sprache wurde entfernt.",
+  "Remove Title Type": "Titeltyp Entfernen",
+  "Do you really want to remove the title type {TitleType}_": "Soll der Titeltyp \"{TitleType}\" wirklich entfernt werden?"
 }
