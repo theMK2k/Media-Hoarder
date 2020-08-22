@@ -278,6 +278,8 @@ async function scrapeIMDBposterURLs(posterMediaViewerURL) {
 }
 
 async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
+  logger.log('scrapeIMDBreleaseinfo movie:', movie, 'regions:', regions, 'allowedTitleTypes:', allowedTitleTypes);
+  
   if (movie.scanErrors) {
     delete movie.scanErrors['IMDB Release Info'];
   }
@@ -413,13 +415,17 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
       );
     }
 
-    return {
+    const result = {
       $IMDB_originalTitle,
       $IMDB_localTitle,
       $IMDB_primaryTitle,
       $IMDB_startYear,
       $IMDB_endYear
-    };
+    }
+
+    logger.log('scrapeIMDBreleaseinfo result:', result);
+
+    return result;
   } catch (error) {
     if (movie.scanErrors) {
       movie.scanErrors['IMDB Release Info'] = error.message;

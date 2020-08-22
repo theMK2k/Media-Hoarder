@@ -1110,7 +1110,23 @@ async function applyMetaData(onlyNew, id_Movies) {
     }
 
     if (
+      movie.IMDB_primaryTitle &&
+      (name.length === 0 ||
+        !name[0]
+          .toLowerCase()
+          .includes(
+            movie.IMDB_primaryTitle.toLowerCase() &&
+            !movie.IMDB_primaryTitle.toLowerCase().includes(
+              name[0].toLowerCase()
+            )
+          ))
+    ) {
+      names.push(movie.IMDB_primaryTitle);
+    }
+
+    if (
       movie.IMDB_originalTitle &&
+      name.length < 2 &&
       (name.length === 0 ||
         !name[0]
           .toLowerCase()
@@ -1124,21 +1140,6 @@ async function applyMetaData(onlyNew, id_Movies) {
       names.push(movie.IMDB_originalTitle);
     }
 
-    if (
-      movie.IMDB_primaryTitle &&
-      name.length < 2 &&
-      (name.length === 0 ||
-        !name[0]
-          .toLowerCase()
-          .includes(
-            movie.IMDB_primaryTitle.toLowerCase() &&
-            !movie.IMDB_primaryTitle.toLowerCase().includes(
-              name[0].toLowerCase()
-            )
-          ))
-    ) {
-      names.push(movie.IMDB_primaryTitle);
-    }
 
     if (names.length > 0) {
       Name = names[0];
