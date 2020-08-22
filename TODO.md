@@ -8,13 +8,7 @@
 
 ### Other
 
-- Dialogs: define v-dialog as scrollable where applicable
-
-- Settings: provide dialog before removal for
-  - [x] Regions
-  - [x] Languages
-  - [ ] Title Types
-  - [ ] Release Attributes
+- nothing to see here
 
 ### From electron builder
 

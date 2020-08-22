@@ -350,6 +350,14 @@ Series
 
 ### Other
 
+- [x] Dialogs: define v-dialog as scrollable where applicable
+
+- [x] Settings: provide dialog before removal for
+  - [x] Regions
+  - [x] Languages
+  - [x] Title Types
+  - [x] Release Attributes
+
 - [x] List Dialog layout
 - [x] Optimize Dialogs: scrollable content, fixed header and footer
 

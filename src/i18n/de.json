@@ -848,5 +848,7 @@
   "Do you really want to remove the language {Language}_": "Soll die Sprache {Language} wirklich entfernt werden?",
   "Language removed_": "Sprache wurde entfernt.",
   "Remove Title Type": "Titeltyp Entfernen",
-  "Do you really want to remove the title type {TitleType}_": "Soll der Titeltyp \"{TitleType}\" wirklich entfernt werden?"
+  "Do you really want to remove the title type {TitleType}_": "Soll der Titeltyp \"{TitleType}\" wirklich entfernt werden?",
+  "Remove Release Attribute": "Veröffentlichungsattribut Entfernen",
+  "Do you really want to remove the release attribute {ReleaseAttribute}_": "Soll das Veröffentlichungsattribut \"{ReleaseAttribute}\" wirklich entfernt werden?"
 }

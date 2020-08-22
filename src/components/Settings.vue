@@ -450,7 +450,7 @@
               small
               class="mr-2"
               color="red"
-              @click="onDeleteReleaseAttribute(item)"
+              @click="openRemoveReleaseAttributeDialog(item)"
             >mdi-delete</v-icon>
             <v-icon
               small
@@ -558,6 +558,17 @@
       v-on:cancel="onEditReleaseAttributeDialogClose"
       v-on:ok="onEditReleaseAttributeDialogOK"
     ></mk-edit-release-attribute-dialog>
+    <mk-remove-release-attribute-dialog
+      v-bind:show="removeReleaseAttributeDialog.show"
+      v-bind:title="$t('Remove Release Attribute')"
+      v-bind:question="$t('Do you really want to remove the release attribute {ReleaseAttribute}_', {ReleaseAttribute: removeReleaseAttributeDialog.ReleaseAttribute})"
+      v-bind:yes="$t('YES_ Remove')"
+      v-bind:cancel="$t('Cancel')"
+      yesColor="error"
+      cancelColor="secondary"
+      v-on:yes="onRemoveReleaseAttributeDialogOK"
+      v-on:cancel="onRemoveReleaseAttributeDialogCancel"
+    ></mk-remove-release-attribute-dialog>
   </div>
 </template>
 
@@ -590,6 +601,7 @@ export default {
     "mk-add-title-type-dialog": AddTitleTypeDialog,
     "mk-remove-title-type-dialog": Dialog,
     "mk-edit-release-attribute-dialog": EditReleaseAttributeDialog,
+    "mk-remove-release-attribute-dialog": Dialog,
     "mk-title-type": TitleType,
   },
 
@@ -647,6 +659,12 @@ export default {
       show: false,
       item: null,
       TitleType: null
+    },
+
+    removeReleaseAttributeDialog: {
+      show: false,
+      item: null,
+      ReleaseAttribute: null
     },
 
     tmpPath: "",
@@ -1415,7 +1433,22 @@ export default {
       this.editReleaseAttributeDialog.show = false;
     },
 
-    async onDeleteReleaseAttribute(item) {
+    openRemoveReleaseAttributeDialog(item) {
+      this.removeReleaseAttributeDialog.item = item;
+      this.removeReleaseAttributeDialog.ReleaseAttribute = `${item.searchTerm} - ${item.displayAs}`;
+      this.removeReleaseAttributeDialog.show = true;
+    },
+
+    async onRemoveReleaseAttributeDialogOK() {
+      await this.removeReleaseAttribute(this.removeReleaseAttributeDialog.item);
+      this.removeReleaseAttributeDialog.show = false;
+    },
+
+    onRemoveReleaseAttributeDialogCancel() {
+      this.removeReleaseAttributeDialog.show = false;
+    },
+
+    async removeReleaseAttribute(item) {
       try {
         item.deleted = true;
 
