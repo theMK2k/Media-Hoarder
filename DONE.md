@@ -350,6 +350,8 @@ Series
 
 ### Other
 
+- [x] Fine-tune some text colors
+
 - [x] Dialogs: define v-dialog as scrollable where applicable
 
 - [x] Settings: provide dialog before removal for
