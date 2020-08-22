@@ -4,7 +4,7 @@
 
 ### Bugs
 
-- [ ] Title determination (Regional, Primary, Secondary)
+- no bugs known
 
 ### Other
 

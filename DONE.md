@@ -517,6 +517,7 @@ Dialog.vue
 
 ### Bugs
 
+- [x] Title determination (Regional, Primary, Secondary)
 - [x] vue-i18n: Value of key 'LanguageNames.N'Ko' is not a string!
 - [x] duplicate detection fails at special characters: e.g. "adams aebler"n
 - [x] Settings -> Languages: languages aren't translated in the list
