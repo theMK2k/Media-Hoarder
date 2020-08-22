@@ -27,6 +27,7 @@
       </li>
       <li>
         <v-select
+          class="mk-v-select-dynamic-width "
           solo
           dense
           v-bind:items="pages"

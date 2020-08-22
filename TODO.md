@@ -4,7 +4,7 @@
 
 ### Bugs
 
-- [ ] List Dialog layout
+- [ ] Title determination (Regional, Primary, Secondary)
 
 ### Other
 

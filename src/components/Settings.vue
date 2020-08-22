@@ -51,6 +51,7 @@
 
         <v-row class="settings-row">
           <v-select
+            class="mk-v-select-dynamic-width "
             v-bind:label="$t('IMDB Rating Demographic')"
             item-text="long"
             item-value="code"
@@ -272,6 +273,7 @@
 
         <v-row class="settings-row">
           <v-select
+            class="mk-v-select-dynamic-width "
             item-text="name"
             item-value="code"
             v-model="$shared.uiLanguage"

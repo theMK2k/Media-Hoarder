@@ -32,6 +32,7 @@
         </v-row>
 
         <v-select
+          class="mk-v-select-dynamic-width "
           v-bind:items="titleTypes"
           item-text="name"
           item-value="id"

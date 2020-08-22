@@ -2087,11 +2087,11 @@ h1 {
   display: none !important;
 }
 
-.v-input__slot {
+.mk-v-select-dynamic-width  .v-input__slot {
   margin: 0px !important;
 }
 
-.v-select__selections > input {
+.mk-v-select-dynamic-width  .v-select__selections > input {
   max-width: 0px !important;
 }
 </style>

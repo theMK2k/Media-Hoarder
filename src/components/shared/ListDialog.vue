@@ -9,48 +9,57 @@
     <v-card>
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">{{ title }}</div>
+        <div class="subtitle">{{ movieName }}</div>
       </v-card-title>
 
-      <div style="margin-left: 24px">
-        <div class="subtitle">{{ movieName }}</div>
-
+      <v-card-text style="padding: 0px">
         <v-radio-group v-model="chosenMethod">
-          <!-- LISTS COMBOBOX -->
-          <v-row v-if="allowUseExistingLists">
-            <!-- v-if="lists && lists.length > 0" style="width: 100%" -->
-            <v-radio
-              value="useExistingLists"
-              v-bind:label="`${$t('Existing List')}:`"
-              color="dark-grey"
-              style="margin-left: 8px; width: 140px; margin-top: -16px;"
-            ></v-radio>
-            <v-select
-              solo
-              v-bind:items="lists"
-              v-bind:item-text="$t('Name')"
-              item-value="id_Lists"
-              v-bind:disabled="chosenMethod != 'useExistingLists'"
-              v-model="chosen_id_Lists"
-            ></v-select>
-          </v-row>
+          <v-container style="width: 600px">
+            <!-- LISTS COMBOBOX -->
+            <v-row v-if="allowUseExistingLists">
+              <v-col cols="12" sm="4">
+                <v-radio
+                  value="useExistingLists"
+                  v-bind:label="`${$t('Existing List')}:`"
+                  color="dark-grey"
+                  style="margin-left: 8px;"
+                ></v-radio>
+              </v-col>
+              <v-col cols="12" sm="7">
+                <v-select
+                  solo
+                  v-bind:items="lists"
+                  v-bind:item-text="$t('Name')"
+                  item-value="id_Lists"
+                  v-bind:disabled="chosenMethod != 'useExistingLists'"
+                  v-model="chosen_id_Lists"
+                  style="margin-top: -16px; width: max-content"
+                ></v-select>
+              </v-col>
+            </v-row>
 
-          <!-- NEW LIST TEXT INPUT -->
-          <v-row v-if="allowCreateNewList">
-            <v-radio
-              value="createNewList"
-              v-bind:label="`${$t('New List')}:`"
-              color="dark-grey"
-              style="margin-left: 8px; width: 140px; margin-top: -16px;"
-            ></v-radio>
-            <v-text-field
-              v-model="newListName"
-              v-bind:disabled="chosenMethod != 'createNewList'"
-              v-on:keydown.enter="onListNameEnter"
-              style="margin-top: -12px"
-            ></v-text-field>
-          </v-row>
+            <!-- NEW LIST TEXT INPUT -->
+            <v-row v-if="allowCreateNewList">
+              <v-col cols="12" sm="4">
+                <v-radio
+                  value="createNewList"
+                  v-bind:label="`${$t('New List')}:`"
+                  color="dark-grey"
+                  style="margin-left: 8px;"
+                ></v-radio>
+              </v-col>
+              <v-col cols="12" sm="7">
+                <v-text-field
+                  v-model="newListName"
+                  v-bind:disabled="chosenMethod != 'createNewList'"
+                  v-on:keydown.enter="onListNameEnter"
+                  style="margin-top: -12px; width: 400px"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </v-container>
         </v-radio-group>
-      </div>
+      </v-card-text>
 
       <v-card-actions>
         <v-btn
@@ -85,14 +94,14 @@ export default {
     "movie",
     "lists",
     "allowUseExistingLists",
-    "allowCreateNewList"
+    "allowCreateNewList",
   ],
 
   data() {
     return {
       chosenMethod: "useExistingLists",
       chosen_id_Lists: null,
-      newListName: null
+      newListName: null,
     };
   },
 
@@ -108,7 +117,7 @@ export default {
           this.newListName &&
           this.newListName.trim().length > 0)
       );
-    }
+    },
   },
 
   watch: {},
@@ -131,7 +140,7 @@ export default {
       this.$emit(eventName, {
         chosenMethod: this.chosenMethod,
         chosen_id_Lists: this.chosen_id_Lists,
-        newListName: this.newListName
+        newListName: this.newListName,
       });
       this.resetData();
     },
@@ -146,15 +155,15 @@ export default {
 
     onEscapePressed() {
       this.onButtonClick("cancel");
-    }
+    },
   },
 
   // ### Lifecycle Hooks ###
   created() {
-    eventBus.$on("listDialogSetChosenMethod", value => {
+    eventBus.$on("listDialogSetChosenMethod", (value) => {
       this.chosenMethod = value;
     });
-    eventBus.$on("listDialogSetChosenList", id_Lists => {
+    eventBus.$on("listDialogSetChosenList", (id_Lists) => {
       logger.log("set chosen id_Lists:", id_Lists);
       this.chosen_id_Lists = id_Lists;
     });
@@ -163,7 +172,7 @@ export default {
   beforeDestroy() {
     eventBus.$off("listDialogSetChosenMethod");
     eventBus.$off("listDialogSetChosenList");
-  }
+  },
 };
 </script>
 
@@ -175,6 +184,10 @@ export default {
 .input-group--text-field {
   padding-left: 16px;
   /* padding-top: 0px; */
+}
+
+.v-input__control {
+  min-width: 200px;
 }
 
 @media screen and (max-width: 599px) {

@@ -350,6 +350,7 @@ Series
 
 ### Other
 
+- [x] List Dialog layout
 - [x] Optimize Dialogs: scrollable content, fixed header and footer
 
 - [x] implement minimumWaitForSetAccess with a defaut value of 60 (seconds)

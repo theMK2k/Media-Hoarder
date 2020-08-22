@@ -46,6 +46,7 @@
         </v-tooltip>
       </h1>
       <v-select
+        class="mk-v-select-dynamic-width "
         solo
         clearable
         dense
