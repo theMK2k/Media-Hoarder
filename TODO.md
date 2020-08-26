@@ -26,6 +26,8 @@
   • default Electron icon is used  reason=application icon is not set
 ```
 
+as per <https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/recipes.html#icons>
+
 ### use homedir for data
 
 - decide if we do %home%/.media-hoarder or anything else

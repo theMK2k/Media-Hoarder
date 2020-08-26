@@ -1,11 +1,13 @@
 'use strict'
 
+/* global __static */
 import { app, protocol, BrowserWindow, session } from 'electron'
 import {
 	createProtocol,
 	installVueDevtools
 } from 'vue-cli-plugin-electron-builder/lib'
 import { autoUpdater } from "electron-updater"
+import path from 'path'
 
 const fs = require('fs');
 
@@ -30,7 +32,7 @@ function createWindow() {
 			webSecurity: false,
 			webviewTag: true,
 			fullscreenable: false
-		}
+		}, icon: path.join(__static, 'icon.png')
 	});
 
 	// adBocker stuff

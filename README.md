@@ -77,6 +77,12 @@ git clone https://github.com/theMK2k/Media-Hoarder.git
 npm install
 ```
 
+### Generate Application Icons
+
+```bash
+npm run electron:generate-icons
+```
+
 ### Invoke Builder
 
 ```bash
