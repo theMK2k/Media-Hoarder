@@ -51,12 +51,23 @@
 
         <v-row class="settings-row">
           <v-select
-            class="mk-v-select-dynamic-width "
+            class="mk-v-select-dynamic-width"
             v-bind:label="$t('IMDB Rating Demographic')"
             item-text="long"
             item-value="code"
             v-model="$shared.imdbRatingDemographic"
             v-bind:items="$shared.imdbRatingDemographics"
+          ></v-select>
+        </v-row>
+
+        <v-row class="settings-row">
+          <v-select
+            class="mk-v-select-dynamic-width"
+            v-bind:label="$t('Log Level')"
+            item-text="name"
+            item-value="level"
+            v-model="$shared.logLevel"
+            v-bind:items="logLevels"
           ></v-select>
         </v-row>
 
@@ -273,7 +284,7 @@
 
         <v-row class="settings-row">
           <v-select
-            class="mk-v-select-dynamic-width "
+            class="mk-v-select-dynamic-width"
             item-text="name"
             item-value="code"
             v-model="$shared.uiLanguage"
@@ -606,6 +617,33 @@ export default {
   },
 
   data: () => ({
+    logLevels: [
+      {
+        level: 0,
+        name: "Trace",
+      },
+      {
+        level: 1,
+        name: "Debug",
+      },
+      {
+        level: 2,
+        name: "Info",
+      },
+      {
+        level: 3,
+        name: "Warn",
+      },
+      {
+        level: 4,
+        name: "Error",
+      },
+      {
+        level: 5,
+        name: "Silent",
+      },
+    ],
+
     MediaplayerPath: null,
     MediainfoPath: null,
     minimumWaitForSetAccess: 60,
@@ -658,13 +696,13 @@ export default {
     removeTitleTypeDialog: {
       show: false,
       item: null,
-      TitleType: null
+      TitleType: null,
     },
 
     removeReleaseAttributeDialog: {
       show: false,
       item: null,
-      ReleaseAttribute: null
+      ReleaseAttribute: null,
     },
 
     tmpPath: "",
@@ -695,6 +733,13 @@ export default {
           "success",
           this.$t("Application Language saved_")
         );
+      })();
+    },
+
+    shared_logLevel: function (newValue) {
+      (async () => {
+        store.setLogLevel(newValue);
+        await store.setSetting("LogLevel", newValue);
       })();
     },
   },
@@ -730,6 +775,10 @@ export default {
           .filter((item) => !item.deleted)
           .map((item) => item.sort)
       );
+    },
+
+    shared_logLevel() {
+      return this.$shared.logLevel;
     },
   },
 
@@ -1258,7 +1307,7 @@ export default {
     },
 
     openRemoveTitleTypeDialog(titleType) {
-      logger.log('openRemoveTitleTypeDialog titleType:', titleType);
+      logger.log("openRemoveTitleTypeDialog titleType:", titleType);
 
       this.removeTitleTypeDialog.item = titleType;
       this.removeTitleTypeDialog.TitleType = titleType.TitleType;
@@ -1273,7 +1322,7 @@ export default {
     onRemoveTitleTypeDialogCancel() {
       this.removeTitleTypeDialog.show = false;
     },
-    
+
     async removeTitleType(titleType) {
       this.$shared.imdbTitleTypesWhitelist.splice(
         this.$shared.imdbTitleTypesWhitelist.findIndex(

@@ -54,13 +54,6 @@ const definedError = require("@/helpers/defined-error");
 
 const isBuild = process.env.NODE_ENV === "production";
 
-if (!isBuild) {
-  logger.setLevel(0);
-}
-
-// eslint-disable-next-line no-console
-console.log("logLevel:", logger.getLevel());
-
 let isScanning = false;
 let doAbortRescan = false;
 
@@ -94,6 +87,8 @@ dbsync.runSync(
 
       (async () => {
         // After the DB is successfully initialized, we can initialize everything else
+        await ensureLogLevel();
+        
         await createIndexes(db);
 
         await loadSettingDuplicatesHandling();
@@ -5452,9 +5447,11 @@ async function findMissingSourcePaths() {
 
 async function loadLocalHistory(fileName) {
   try {
-    logger.log("loadLocalHistory fileName", fileName);
+    logger.log("loadLocalHistory fileName:", fileName);
 
-    const filePath = helpers.getPath(path.join("public", "history", fileName));
+    const filePath = isBuild ? path.join(__dirname, "history", fileName) : helpers.getPath(path.join("public", "history", fileName));
+
+    logger.log("loadLocalHistory filePath:", filePath);
 
     const fileExists = await existsAsync(filePath);
 
@@ -6027,6 +6024,27 @@ async function getMinimumWaitForSetAccess() {
   return value;
 }
 
+async function ensureLogLevel() {
+  if (!isBuild) {
+    setLogLevel(0);
+  }
+
+  const savedLogLevel = await getSetting("LogLevel");
+
+  if (savedLogLevel === 0 || savedLogLevel) {
+    setLogLevel(+savedLogLevel);
+  }
+}
+
+function setLogLevel(level) {
+  shared.logLevel = level;
+  
+  logger.setLevel(level);
+
+  // eslint-disable-next-line no-console
+  console.log("logLevel set to", logger.getLevel());
+}
+
 export {
   db,
   fetchSourcePaths,
@@ -6104,5 +6122,6 @@ export {
   resetFilters,
   getReleaseAttributesHierarchy,
   removeReleaseAttributeFromMovie,
-  getMinimumWaitForSetAccess
+  getMinimumWaitForSetAccess,
+  setLogLevel
 };

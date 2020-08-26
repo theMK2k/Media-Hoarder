@@ -9,6 +9,7 @@ const shared = new Vue({
     appName: 'Media Hoarder',
     sidenav: null,
     searchText: null,
+    logLevel: 0,
 
     filters: {
       filterSourcePaths: [],

@@ -769,5 +769,6 @@
   "Remove Title Type": "Remove Title Type",
   "Do you really want to remove the title type {TitleType}_": "Do you really want to remove the title type \"{TitleType}\"?",
   "Remove Release Attribute": "Remove Release Attribute",
-  "Do you really want to remove the release attribute {ReleaseAttribute}_": "Do you really want to remove the release attribute \"{ReleaseAttribute}\"?"
+  "Do you really want to remove the release attribute {ReleaseAttribute}_": "Do you really want to remove the release attribute \"{ReleaseAttribute}\"?",
+  "Log Level": "Log Level"
 }

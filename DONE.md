@@ -350,6 +350,8 @@ Series
 
 ### Other
 
+- [x] Settings: user-defined log level (stored in db)
+
 - [x] Fine-tune some text colors
 
 - [x] Dialogs: define v-dialog as scrollable where applicable
