@@ -28,16 +28,6 @@
 
 as per <https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/recipes.html#icons>
 
-### use homedir for data
-
-- decide if we do %home%/.media-hoarder or anything else
--> must work in Win, Linux and Mac
-
-add **media-hoarder.json** for configuring the data dir
-
-- use default values if they are not available
-- it should reside in /etc/ (Linux) or %AppData% (Windows)
-
 ### MacOS Release
 
 - [ ] investigate binary signing
