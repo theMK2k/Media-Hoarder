@@ -101,6 +101,12 @@ npm start
 npm run electron:build
 ```
 
+### Compiles and creates .deb package for Linux
+
+```bash
+npm run electron:build-linux
+```
+
 ## Known Issues
 
 - if sqlite3 has issues on installing/building perform:
