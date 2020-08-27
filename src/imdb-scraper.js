@@ -106,7 +106,7 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
           html.match(rxPosterMediaViewerURL)[1]
         );
   
-        const posterSmallPath = `data/extras/${movie.IMDB_tconst}_posterSmall.jpg`;
+        const posterSmallPath = `extras/${movie.IMDB_tconst}_posterSmall.jpg`;
         const posterSmallSuccess = await downloadFileCallback(
           posterURLs.$IMDB_posterSmall_URL,
           posterSmallPath,
@@ -116,7 +116,7 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
           $IMDB_posterSmall_URL = posterSmallPath;
         }
   
-        const posterLargePath = `data/extras/${movie.IMDB_tconst}_posterLarge.jpg`;
+        const posterLargePath = `extras/${movie.IMDB_tconst}_posterLarge.jpg`;
         const posterLargeSuccess = await downloadFileCallback(
           posterURLs.$IMDB_posterLarge_URL,
           posterLargePath,
@@ -1010,7 +1010,7 @@ async function scrapeIMDBPersonData($IMDB_Person_ID, downloadFileCallback) {
 
   if (rxPhotoURL.test(html)) {
     const url = html.match(rxPhotoURL)[1];
-    const photoPath = `data/extras/${$IMDB_Person_ID}_poster.jpg`;
+    const photoPath = `extras/${$IMDB_Person_ID}_poster.jpg`;
     const success = await downloadFileCallback(url, photoPath, false);
 
     if (success) {

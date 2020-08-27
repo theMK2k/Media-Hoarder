@@ -15,6 +15,25 @@
 - [x] -> fetch Countries from <https://www.imdb.com/search/title/> and provide as list
 - [x] -> Auto set region by user's localization setting?
 
+### Use User's Home dir for storing data
+
+isBuild: use APPDIR/data
+!isBuild: use ~/.media-hoarder
+
+- Linux: after .deb install, a normal user can't write to /opt/media-hoarder/...
+- Windows: not so problematic, as the app is installed in a user writable location
+
+-> use a ~/.media-hoarder directory
+-> this is the default location, we should be able to overwrite that via media-hoarder.json { "portable": true }
+
+-> don't store "/data" in:
+  - tbl_Movies IMDB_posterSmall_URL and IMDB_posterLarge_URL
+  - tbl_IMDB_Persons.Photo_URLgetStaticPath
+
+helpers:
+- getStaticPath: formerly known as getPath - returns absolute path to APPDIR/data
+- getDataPath: returns ~/.media-hoarder in !portable mode, else APPDIR/data
+
 ### Automatically find mediainfo and vlc
 
 - Linux "which"

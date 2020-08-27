@@ -2,6 +2,7 @@ const util = require("util");
 const path = require("path");
 const fs = require("fs");
 const requestretry = require("requestretry");
+const os = require("os");
 
 const logger = require("loglevel");
 
@@ -12,7 +13,25 @@ const writeFileAsync = util.promisify(fs.writeFile);
 const existsAsync = util.promisify(fs.exists);
 const requestretryAsync = util.promisify(requestretry);
 
-function getPath(relativePath) {
+/**
+ * get absolute path for a given relative path depending on portable mode:
+ * in portable mode it is APPDIR/data/relativePath
+ * in non-portable mode it is ~/.media-hoarder/relativePath
+ * @param {string} relativePath 
+ */
+function getDataPath(relativePath) {
+  if (!isBuild) {
+    return path.join(getStaticPath('data'), relativePath);
+  }
+
+  return path.join(os.homedir(), '.media-hoarder', relativePath);
+}
+
+/**
+ * get absolute path for a given relative path from APPDIR/data depending on isBuild
+ * @param {string} relativePath 
+ */
+function getStaticPath(relativePath) {
   /* eslint-disable no-undef */
   return path.join(isBuild ? __dirname : __static, "../", relativePath);
   /* eslint-enable no-undef */
@@ -171,7 +190,7 @@ async function downloadFile(url, targetPath, redownload) {
       return false;
     }
 
-    const fullPath = getPath(targetPath);
+    const fullPath = getDataPath(targetPath);
 
     if (!redownload) {
       const exists = await existsAsync(targetPath);
@@ -239,12 +258,19 @@ async function requestAsync(options) {
   return requestretryAsync(optionsDerived);
 }
 
+function ensureDirectorySync(path) {
+  if (!fs.existsSync(path)) {
+    fs.mkdirSync(path);
+  }
+}
+
 export {
   isWindows,
   writeFileAsync,
   existsAsync,
   requestretryAsync,
-  getPath,
+  getDataPath,
+  getStaticPath,
   getTimeString,
   uppercaseEachWord,
   getMovieNameFromFileName,
@@ -257,4 +283,5 @@ export {
   cleanupFileName,
   cleanupDirectoryName,
   getLastDirectoryName,
+  ensureDirectorySync
 };

@@ -60,8 +60,8 @@ async function testIMDBmainPageData() {
       $IMDB_rating: 8.4,
       $IMDB_numVotes: 714190,
       $IMDB_metacriticScore: 78,
-      $IMDB_posterSmall_URL: "data/extras/tt4154796_posterSmall.jpg",
-      $IMDB_posterLarge_URL: "data/extras/tt4154796_posterLarge.jpg",
+      $IMDB_posterSmall_URL: "extras/tt4154796_posterSmall.jpg",
+      $IMDB_posterLarge_URL: "extras/tt4154796_posterLarge.jpg",
       $IMDB_plotSummary:
         "After the devastating events of Avengers: Infinity War (2018), the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe.",
       $IMDB_Trailer_URL: "/video/imdb/vi2163260441",
@@ -551,7 +551,7 @@ async function testIMDBPersonData() {
   try {
     const expected = {
       $IMDB_Person_ID: "nm0001772",
-      $Photo_URL: "data/extras/nm0001772_poster.jpg",
+      $Photo_URL: "extras/nm0001772_poster.jpg",
       $ShortBio:
         "Sir Patrick Stewart was born in Mirfield, Yorkshire, England, to Gladys (Barrowclough), a textile worker and weaver, and Alfred Stewart, who was in the army. He was a member of various local drama groups from about age 12. He left school at age 15 to work as a junior reporter on a local paper; he quit when his editor told him he was spending too ...  »",
       $LongBio:

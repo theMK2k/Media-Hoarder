@@ -37,7 +37,7 @@ function createWindow() {
 
 	// adBocker stuff
 	try {
-		const easyListPath = helpers.getPath('data/easylist.txt');
+		const easyListPath = helpers.getStaticPath('data/easylist.txt');
 		console.log('instantiating adBlock with:', easyListPath);
 		const adBlocker = ElectronBlocker.parse(fs.readFileSync(easyListPath, 'utf-8'));
 		adBlocker.enableBlockingInSession(session.defaultSession);

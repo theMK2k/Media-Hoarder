@@ -61,9 +61,13 @@ let currentScanInfoHeader = "";
 
 let dbsync = dbsyncSQLite;
 
+// ensure standard paths
+helpers.ensureDirectorySync(helpers.getDataPath(''));
+helpers.ensureDirectorySync(helpers.getDataPath('extras'));
+
 dbsync.runSync(
-  helpers.getPath("data/media-hoarder.db_initial"),
-  helpers.getPath("data/media-hoarder.db"),
+  helpers.getStaticPath("data/media-hoarder.db_initial"),
+  helpers.getDataPath("media-hoarder.db"),
   { doCreateTables: true, doCreateColumns: true, doCopyContent: true },
   (err) => {
     if (err) {
@@ -3287,10 +3291,10 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
     result.forEach((item) => {
       // logger.log(item.Name);
       item.IMDB_posterSmall_URL = item.IMDB_posterSmall_URL
-        ? "file://" + helpers.getPath(item.IMDB_posterSmall_URL)
+        ? "file://" + helpers.getDataPath(item.IMDB_posterSmall_URL)
         : item.IMDB_posterSmall_URL;
       item.IMDB_posterLarge_URL = item.IMDB_posterLarge_URL
-        ? "file://" + helpers.getPath(item.IMDB_posterLarge_URL)
+        ? "file://" + helpers.getDataPath(item.IMDB_posterLarge_URL)
         : item.IMDB_posterLarge_URL;
       item.yearDisplay = item.startYear
         ? "(" + item.startYear + (item.endYear ? `-${item.endYear}` : "") + ")"
@@ -5449,7 +5453,7 @@ async function loadLocalHistory(fileName) {
   try {
     logger.log("loadLocalHistory fileName:", fileName);
 
-    const filePath = isBuild ? path.join(__dirname, "history", fileName) : helpers.getPath(path.join("public", "history", fileName));
+    const filePath = isBuild ? path.join(__dirname, "history", fileName) : helpers.getStaticPath(path.join("public", "history", fileName));
 
     logger.log("loadLocalHistory filePath:", filePath);
 

@@ -153,7 +153,7 @@ export default {
         this.personData = {
           IMDB_Person_ID: personData.$IMDB_Person_ID,
           Photo_URL: personData.$Photo_URL
-            ? "file://" + helpers.getPath(personData.$Photo_URL)
+            ? "file://" + helpers.getDataPath(personData.$Photo_URL)
             : personData.$Photo_URL,
           ShortBio: personData.$ShortBio,
           LongBio: personData.$LongBio,
@@ -201,7 +201,7 @@ export default {
       personData = personData[0];
 
       personData.Photo_URL = personData.Photo_URL
-        ? "file://" + helpers.getPath(personData.Photo_URL)
+        ? "file://" + helpers.getStaticPath(personData.Photo_URL)
         : personData.Photo_URL;
 
       this.personData = personData;

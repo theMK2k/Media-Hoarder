@@ -8,15 +8,8 @@
 
 ### Other
 
-- nothing to see here
-
-### Use User's Home dir for storing data
-
-- Linux: after .deb install, a normal user can't write to /opt/media-hoarder/...
-- Windows: not so problematic, as the app is installed in a user writable location
-
--> use a ~/.media-hoarder directory
--> this is the default location, we should be able to overwrite that via media-hoarder.json { "portable": true }
+- [ ] remove Series in menus and Settings
+- [ ] check AppImage usage (storing to ~/.media-hoarder should be possible)
 
 ### From electron builder
 

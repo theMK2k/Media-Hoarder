@@ -122,11 +122,11 @@ function fireProcedureReturnAll(query, vars) {
 function initSQLite(callback) {
 	logger.debug('Initializing SQLite');
 
-	if (!fs.existsSync(helpers.getPath('data/media-hoarder.db'))) {
-		fs.copyFileSync(helpers.getPath('data/media-hoarder.db_initial'), helpers.getPath('data/media-hoarder.db'));
+	if (!fs.existsSync(helpers.getDataPath('media-hoarder.db'))) {
+		fs.copyFileSync(helpers.getStaticPath('data/media-hoarder.db_initial'), helpers.getDataPath('media-hoarder.db'));
 	}
 
-	_db = new sqlite3.Database(helpers.getPath('data/media-hoarder.db'), (err) => {
+	_db = new sqlite3.Database(helpers.getDataPath('media-hoarder.db'), (err) => {
 		callback(err, _db);
 	});
 }
