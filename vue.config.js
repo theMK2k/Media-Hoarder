@@ -9,7 +9,10 @@ module.exports = {
         ],
         publish: [
           'github'
-        ]
+        ],
+        linux: {
+          category: 'AudioVideo'
+        }
       }
     },
     i18n: {
