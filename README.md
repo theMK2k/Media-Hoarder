@@ -101,7 +101,7 @@ npm start
 npm run electron:build
 ```
 
-### Compiles and creates .deb package for Linux
+### Compiles and creates .deb and .AppImage packages for Linux
 
 ```bash
 npm run electron:build-linux
