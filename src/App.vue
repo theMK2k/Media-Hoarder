@@ -825,7 +825,7 @@ export default {
     searchText: null,
     appSections: [
       { icon: "mdi-movie", text: "Movies", id: "movies" },
-      // not supported yet: { icon: "mdi-television", text: "Series", id: "series" }
+      // not yet implemented: { icon: "mdi-television", text: "Series", id: "series" }
     ],
 
     isScanning: false,

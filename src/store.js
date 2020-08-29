@@ -133,6 +133,8 @@ dbsync.runSync(
         shared.uiLanguage = await fetchUILanguage();
 
         moment.locale(shared.uiLanguage);
+
+        eventBus.dbInitialized();
       })();
     });
   }
@@ -6057,6 +6059,18 @@ function routeTo(router, route) {
   })
 }
 
+async function fetchNumMovies($MediaType) {
+  const numMovies = await db.fireProcedureReturnScalar(`
+    SELECT COUNT(1) FROM tbl_Movies MOV
+      WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+            AND MOV.Extra_id_Movies_Owner IS NULL
+            AND MOV.id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths WHERE MediaType = $MediaType)
+
+  `, { $MediaType })
+
+  return numMovies.toLocaleString();
+}
+
 export {
   db,
   fetchSourcePaths,
@@ -6136,5 +6150,6 @@ export {
   removeReleaseAttributeFromMovie,
   getMinimumWaitForSetAccess,
   setLogLevel,
-  routeTo
+  routeTo,
+  fetchNumMovies
 };

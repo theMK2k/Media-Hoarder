@@ -23,6 +23,10 @@ export const eventBus = new Vue({
     i18n,
 
     methods: {
+		dbInitialized() {
+			this.$emit('dbInitialized');
+		},
+		
 		scanInfoOff() {
 			this.$emit('scanInfoOff');
 		},

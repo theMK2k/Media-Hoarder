@@ -15,6 +15,11 @@
 - [x] -> fetch Countries from <https://www.imdb.com/search/title/> and provide as list
 - [x] -> Auto set region by user's localization setting?
 
+### Implement Home Screen Cards
+
+- bigger cards
+- some info (number of movies)
+
 ### Use User's Home dir for storing data
 
 isBuild: use APPDIR/data
@@ -388,6 +393,12 @@ Series
 - [x] Analyze the call App.vue -> store.rescan(onlyNew); -> node functionality without IPC or whatever
 
 ### Other
+
+- [X] check if built release also opens up a port (it doesn't)
+
+- [X] check AppImage usage (storing to ~/.media-hoarder should be possible)
+
+- [X] remove Series in menus and Settings (it will be implemented later)
 
 - [x] Settings: user-defined log level (stored in db)
 

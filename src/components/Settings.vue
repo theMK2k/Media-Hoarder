@@ -107,7 +107,7 @@
       </v-tab-item>
 
       <!-- SERIES -->
-      <!-- not supported yet
+      <!-- not yet implemented
       <v-tab-item style="padding: 8px">
         <h3>{{$t("Series")}} - {{$t("Source Paths")}}</h3>
         <v-alert

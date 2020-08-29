@@ -8,18 +8,11 @@
 
 ### Other
 
-- [ ] remove Series in menus and Settings
-- [ ] check AppImage usage (storing to ~/.media-hoarder should be possible)
-- [ ] check if built release also opens up a port
+- nothing right now
 
 ### MacOS Release
 
 - [ ] investigate binary signing
-
-### Implement Main Screen Cards
-
-- bigger cards
-- some info (maybe number of movies?)
 
 ## LATER
 
