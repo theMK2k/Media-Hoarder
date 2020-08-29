@@ -4,7 +4,7 @@ This file documents the attempts taken to get a clean, colorful and fun icon for
 
 ## Attempt 1: Fiverr
 
-The result is seen in [Project_5_Fin_34.ai](Project_5_Fin_34.ai).
+The result is seen in the buzzzy* files.
 
 ## Attempt 2: android-material-icon-generator
 
@@ -28,4 +28,4 @@ Icon Size: 6
 
 Banner: [x] None
 
-Result: [icons.zip](icons.zip)
+Result: [amig1.zip](amig1.zip)
