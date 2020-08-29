@@ -198,7 +198,7 @@ export default {
 
     openSettings() {
       this.$emit("cancel");
-      this.$router.push("/settings");
+      store.routeTo(this.$router, "/settings");
     },
 
     openMediaArea() {

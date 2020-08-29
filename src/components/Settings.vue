@@ -10,7 +10,7 @@
     <v-tabs color="white">
       <v-tab>{{$t("General")}}</v-tab>
       <v-tab>{{$t("Movies")}}</v-tab>
-      <v-tab>{{$t("Series")}}</v-tab>
+      <!-- <v-tab>{{$t("Series")}}</v-tab> -->
       <v-tab>{{$t("Duplicates")}}</v-tab>
       <v-tab>{{$t("Regions")}}</v-tab>
       <v-tab>{{$t("Languages")}}</v-tab>
@@ -107,6 +107,7 @@
       </v-tab-item>
 
       <!-- SERIES -->
+      <!-- not supported yet
       <v-tab-item style="padding: 8px">
         <h3>{{$t("Series")}} - {{$t("Source Paths")}}</h3>
         <v-alert
@@ -130,6 +131,7 @@
 
         <v-btn text small color="primary" v-on:click="addSource('series')">{{$t("Add Source Path")}}</v-btn>
       </v-tab-item>
+      -->
 
       <!-- DUPLICATES -->
       <v-tab-item style="padding: 8px">

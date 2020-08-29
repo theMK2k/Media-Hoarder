@@ -121,7 +121,7 @@ export default {
     },
 
     openSettings() {
-      return this.$router.push("/settings");
+      return store.routeTo(this.$router, "/settings");
     },
   },
 

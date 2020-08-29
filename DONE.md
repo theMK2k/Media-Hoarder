@@ -27,12 +27,32 @@ isBuild: use APPDIR/data
 -> this is the default location, we should be able to overwrite that via media-hoarder.json { "portable": true }
 
 -> don't store "/data" in:
-  - tbl_Movies IMDB_posterSmall_URL and IMDB_posterLarge_URL
-  - tbl_IMDB_Persons.Photo_URLgetStaticPath
+
+- tbl_Movies IMDB_posterSmall_URL and IMDB_posterLarge_URL
+- tbl_IMDB_Persons.Photo_URLgetStaticPath
 
 helpers:
+
 - getStaticPath: formerly known as getPath - returns absolute path to APPDIR/data
 - getDataPath: returns ~/.media-hoarder in !portable mode, else APPDIR/data
+
+### From electron builder
+
+#### Linux
+
+```text
+  • application Linux category is set to default "Utility"  reason=linux.category is not set and cannot map from macOS docs=https://www.electron.build/configuration/linux
+  • default Electron icon is used  reason=application icon is not set
+  • application Linux category is set to default "Utility"  reason=linux.category is not set and cannot map from macOS docs=https://www.electron.build/configuration/linux
+```
+
+#### Windows
+
+```text
+  • default Electron icon is used  reason=application icon is not set
+```
+
+as per <https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/recipes.html#icons>
 
 ### Automatically find mediainfo and vlc
 

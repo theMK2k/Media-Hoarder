@@ -18,11 +18,13 @@
 </template>
 
 <script>
+import * as store from "@/store";
+
 export default {
   data: () => ({
     items: [
       { icon: "mdi-movie", text: "Movies", id: "movies" },
-      { icon: "mdi-television", text: "Series", id: "series" },
+      // not supported yet: { icon: "mdi-television", text: "Series", id: "series" },
       { icon: "mdi-settings", text: "Settings", id: "settings" }
     ]
   }),
@@ -34,15 +36,15 @@ export default {
       }
 
       if (itemid == "movies") {
-        return this.$router.push("/medialist/movies");
+        return store.routeTo(this.$router, "/medialist/movies");
       }
 
       if (itemid == "series") {
-        return this.$router.push("/medialist/series");
+        return store.routeTo(this.$router, "/medialist/series");
       }
 
       if (itemid == "settings") {
-        return this.$router.push("/settings");
+        return store.routeTo(this.$router, "/settings");
       }
     }
   }

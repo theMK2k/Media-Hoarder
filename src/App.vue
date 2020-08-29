@@ -9,13 +9,6 @@
       v-bind:width="320"
     >
       <v-list dense>
-        <v-list-item @click="openSettings">
-          <v-list-item-action>
-            <v-icon>mdi-settings</v-icon>
-          </v-list-item-action>
-          <v-list-item-title>{{$t("Settings")}}</v-list-item-title>
-        </v-list-item>
-
         <v-list-item v-on:click="onRescan">
           <v-list-item-action>
             <v-icon v-show="!isScanning">mdi-reload-alert</v-icon>
@@ -29,11 +22,20 @@
 
         <v-divider></v-divider>
 
+        <v-list-item v-bind:to="'/settings'">
+          <v-list-item-action>
+            <v-icon>mdi-settings</v-icon>
+          </v-list-item-action>
+          <v-list-item-title>{{$t("Settings")}}</v-list-item-title>
+        </v-list-item>
+
+        <v-divider></v-divider>
+
         <!-- Movies, Series -->
         <v-list-item
           v-for="appSection in appSections"
           :key="appSection.text"
-          @click="goto(appSection.id)"
+          v-bind:to="sectionRoute(appSection.id)"
         >
           <v-list-item-action>
             <v-icon>{{ appSection.icon }}</v-icon>
@@ -819,10 +821,11 @@ export default {
   data: () => ({
     showLoadingOverlay: false,
     shared,
+    currentRoute: {},
     searchText: null,
     appSections: [
       { icon: "mdi-movie", text: "Movies", id: "movies" },
-      { icon: "mdi-television", text: "Series", id: "series" }
+      // not supported yet: { icon: "mdi-television", text: "Series", id: "series" }
     ],
 
     isScanning: false,
@@ -1386,23 +1389,18 @@ export default {
   },
 
   methods: {
-    goto(itemid) {
-      if (!itemid) {
-        return;
-      }
-
+    sectionRoute(itemid) {
       if (itemid == "movies") {
-        return this.$router.push("/medialist/movies");
+        return "/medialist/movies";
       }
 
       if (itemid == "series") {
-        return this.$router.push("/medialist/series");
+        return "/medialist/series";
       }
-    },
-    openSettings() {
-      return this.$router.push("/settings");
-    },
 
+      return "";
+    },
+    
     cancelRescan() {
       store.abortRescan();
     },
@@ -1856,7 +1854,7 @@ export default {
     this.$vuetify.theme.dark = true;
 
     if (this.$route.path !== "/") {
-      this.$router.push("/");
+      store.routeTo(this.$router, "/");
     }
 
     this.checkVersion();

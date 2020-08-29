@@ -10,24 +10,7 @@
 
 - [ ] remove Series in menus and Settings
 - [ ] check AppImage usage (storing to ~/.media-hoarder should be possible)
-
-### From electron builder
-
-#### Linux
-
-```text
-  • application Linux category is set to default "Utility"  reason=linux.category is not set and cannot map from macOS docs=https://www.electron.build/configuration/linux
-  • default Electron icon is used  reason=application icon is not set
-  • application Linux category is set to default "Utility"  reason=linux.category is not set and cannot map from macOS docs=https://www.electron.build/configuration/linux
-```
-
-#### Windows
-
-```text
-  • default Electron icon is used  reason=application icon is not set
-```
-
-as per <https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/recipes.html#icons>
+- [ ] check if built release also opens up a port
 
 ### MacOS Release
 
@@ -39,6 +22,8 @@ as per <https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/recipes
 - some info (maybe number of movies?)
 
 ## LATER
+
+### Raspberry Pi (armhf) Build
 
 ### JSDoc everywhere
 
@@ -52,8 +37,7 @@ as per <https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/recipes
 ### TV Series Support
 
 - incl. IMDB Rating heatmap like <https://whattowatchon.tv>
-
-### Dialogs: most of them do not utilize mediaType
+- Dialogs: most of them do not utilize mediaType
 
 ### Memory Leak (multiple reloads of medialist)
 

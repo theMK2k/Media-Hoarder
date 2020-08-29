@@ -6049,6 +6049,14 @@ function setLogLevel(level) {
   console.log("logLevel set to", logger.getLevel());
 }
 
+function routeTo(router, route) {
+  router.push(route).catch(err => {
+    if (err.name != "NavigationDuplicated") {
+       logger.error(err);
+     }
+  })
+}
+
 export {
   db,
   fetchSourcePaths,
@@ -6127,5 +6135,6 @@ export {
   getReleaseAttributesHierarchy,
   removeReleaseAttributeFromMovie,
   getMinimumWaitForSetAccess,
-  setLogLevel
+  setLogLevel,
+  routeTo
 };
