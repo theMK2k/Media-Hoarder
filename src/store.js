@@ -5967,7 +5967,7 @@ async function ensureToolPath(executable, settingName) {
     lookupTask = `where ${executable}`;
   } else {
     // use whereis -b
-    lookupTask = `whereis -b ${executable}`;
+    lookupTask = `which ${executable}`;
   }
 
   try {
@@ -5982,7 +5982,7 @@ async function ensureToolPath(executable, settingName) {
 
     logger.log('ensureToolPath stdout:', stdout);
 
-    if (helpers.isWindows) {
+    // if (helpers.isWindows) {
       const arrStdOut = stdout.split('\n');
       for (let i = 0; i < arrStdOut.length; i++) {
         const path = arrStdOut[i].trim();
@@ -5995,6 +5995,7 @@ async function ensureToolPath(executable, settingName) {
           return;
         }
       }
+    /*
     } else {
       const arrStdOut = stdout.split('\n');
       for (let i = 0; i < arrStdOut.length; i++) {
@@ -6013,6 +6014,7 @@ async function ensureToolPath(executable, settingName) {
         }
       }
     }
+    */
   }
   catch(err) {
     logger.log('ensureToolPath tool not found or error:', err);
