@@ -8,11 +8,18 @@
 
 ### Other
 
-- nothing right now
+- autodetect mediaplayer: MacOS: check if /Applications/VLC.app/Contents/MacOS/VLC exists, and use this
 
 ### MacOS Release
 
 - [ ] investigate binary signing
+
+### Home
+
+- provide an introductory text (on first run):
+  - user should download and install VLC or any other media player (if not already found)
+  - user should download and install Mediainfo CLI (if not already found)
+  - user should go to Settings
 
 ## LATER
 
