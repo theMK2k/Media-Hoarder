@@ -119,6 +119,12 @@ npm run electron:build-linux
 npm run electron:build-rpi
 ```
 
+### Compiles and creates .zip and .dmg packages for MacOS
+
+```bash
+npm run electron:build-mac
+```
+
 ## Known Issues
 
 - if sqlite3 has issues on installing/building perform:
