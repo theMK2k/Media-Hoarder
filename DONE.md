@@ -394,6 +394,8 @@ Series
 
 ### Other
 
+- [x] pin versions
+
 - [x] translate eventBus.scanInfoShow
 
 - [x] block any IMDB scan when one is already in progress
