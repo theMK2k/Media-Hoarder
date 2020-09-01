@@ -1845,7 +1845,7 @@ export default {
 
     onCheckIMDBScraperDialogOK() {
       this.checkIMDBScraperDialog.show = false;
-      store.rescan(this.scanOptions.onlyNew, this.$t);
+      store.rescan(this.scanOptions.onlyNew, this.$local_t);
       return;
     },
 
