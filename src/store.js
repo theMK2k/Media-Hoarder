@@ -261,16 +261,16 @@ async function fetchSourcePaths() {
   return result;
 }
 
-async function rescan(onlyNew) {
+async function rescan(onlyNew, $t) {  // TODO $t
   shared.isScanning = true;
   eventBus.rescanStarted();
 
-  if (shared.scanOptions.filescanMovies) await filescanMovies(onlyNew);
+  if (shared.scanOptions.filescanMovies) await filescanMovies(onlyNew, $t);
 
   if (shared.scanOptions.mergeExtras) await mergeExtras(onlyNew); // TODO: merge extras from "extra" directory
 
   if (shared.scanOptions.rescanMoviesMetaData)
-    await rescanMoviesMetaData(onlyNew);  // TODO: isDirectoryBased
+    await rescanMoviesMetaData(onlyNew, null, $t);  // TODO: isDirectoryBased
 
   // await rescanSeries();								// TODO: Series support
 
@@ -607,10 +607,10 @@ async function assignExtra(parent, child, $extraname) {
   return;
 }
 
-async function filescanMovies(onlyNew) {  // TODO: add $t and translate scanInfoShow Messages
+async function filescanMovies(onlyNew, $t) {
   logger.log("### filescanMovies started");
 
-  eventBus.scanInfoShow("Rescanning Movies", "Rescan started");
+  eventBus.scanInfoShow($t("Rescanning Movies"), $t("Rescan started"));
 
   eventBus.setProgressBar(2); // marquee
 
@@ -663,7 +663,7 @@ async function filescanMovies(onlyNew) {  // TODO: add $t and translate scanInfo
         );
       }
 
-      currentScanInfoHeader = `Rescanning Movies - ${
+      currentScanInfoHeader = `${$t('Rescanning Movies')} - ${
         movieSourcePath.Description
         }`;
 
@@ -900,7 +900,7 @@ async function isIgnoreFile(pathItem) {
  * @param {*} movieSourcePath
  * @param {pathItem} pathItem 
  */
-async function addMovie(movieSourcePath, pathItem) {  // TODO: add $t and translate scanInfoShow messages
+async function addMovie(movieSourcePath, pathItem) {
   logger.log("addMovie pathItem.fullPath:", pathItem.fullPath);
 
   const movieType = await getMovieType(movieSourcePath.Path, pathItem);
@@ -1247,7 +1247,7 @@ async function applyMetaData(onlyNew, id_Movies) {
   logger.log("applying Metadata DONE");
 }
 
-async function rescanMoviesMetaData(onlyNew, id_Movies) { // TODO: add $t and translate scanInfoShow messages
+async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
   const movies = await db.fireProcedureReturnAll(
     `
 			SELECT
@@ -1304,7 +1304,7 @@ async function rescanMoviesMetaData(onlyNew, id_Movies) { // TODO: add $t and tr
 
     // eventBus.scanInfoOff();
     eventBus.scanInfoShow(
-      "Rescanning Movies",
+      $t("Rescanning Movies"),
       `${movie.Name || movie.Filename}`
     );
 
@@ -4950,7 +4950,8 @@ async function assignIMDB(
   $IMDB_tconst,
   isHandlingDuplicates,
   noEventBus,
-  movie
+  movie,
+  $t
 ) {
   logger.log(
     "assignIMDB $id_Movies:",
@@ -4978,7 +4979,7 @@ async function assignIMDB(
     eventBus.rescanStarted();
   }
 
-  await rescanMoviesMetaData(false, $id_Movies);
+  await rescanMoviesMetaData(false, $id_Movies, $t);
   await applyMetaData(false, $id_Movies);
 
   if (isHandlingDuplicates) {
@@ -4992,7 +4993,7 @@ async function assignIMDB(
   );
 
   for (let i = 0; i < duplicates.length; i++) {
-    await assignIMDB(duplicates[i], $IMDB_tconst, true);
+    await assignIMDB(duplicates[i], $IMDB_tconst, true, false, null, $t);
   }
 
   if (!noEventBus) {

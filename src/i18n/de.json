@@ -853,5 +853,7 @@
   "Do you really want to remove the release attribute {ReleaseAttribute}_": "Soll das Veröffentlichungsattribut \"{ReleaseAttribute}\" wirklich entfernt werden?",
   "Log Level": "Log Level",
   "entries": "Einträge",
-  "scan already in progress": "Einlesen läuft bereits"
+  "scan already in progress": "Einlesen läuft bereits",
+  "Rescanning Movies": "Filme Einlesen",
+  "Rescan started": "Einlesen gestartet"
 }

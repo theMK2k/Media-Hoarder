@@ -1391,6 +1391,10 @@ export default {
   },
 
   methods: {
+    $local_t(payload) {
+      return this.$t(payload);
+    },
+    
     sectionRoute(itemid) {
       if (itemid == "movies") {
         return "/medialist/movies";
@@ -1739,7 +1743,7 @@ export default {
 
       if (!performCheck) {
         // just rescan without IMDB Scraper Check
-        store.rescan(onlyNew);
+        store.rescan(onlyNew, this.$local_t);
         return;
       }
 
@@ -1841,7 +1845,7 @@ export default {
 
     onCheckIMDBScraperDialogOK() {
       this.checkIMDBScraperDialog.show = false;
-      store.rescan(this.scanOptions.onlyNew);
+      store.rescan(this.scanOptions.onlyNew, this.$t);
       return;
     },
 

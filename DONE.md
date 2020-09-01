@@ -394,6 +394,8 @@ Series
 
 ### Other
 
+- [x] translate eventBus.scanInfoShow
+
 - [x] block any IMDB scan when one is already in progress
 
 - [x] check if built release also opens up a port (it doesn't)

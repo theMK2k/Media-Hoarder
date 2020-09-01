@@ -1991,7 +1991,7 @@ export default {
       try {
         store.resetUserScanOptions();
 
-        await store.assignIMDB(this.linkIMDBDialog.item.id_Movies, tconst);
+        await store.assignIMDB(this.linkIMDBDialog.item.id_Movies, tconst, false, false, this.$local_t);
 
         eventBus.refetchMedia(this.$shared.currentPage);
 
@@ -2015,10 +2015,11 @@ export default {
           item.IMDB_tconst,
           null,
           null,
-          item
+          item,
+          this.$local_t
         );
 
-        eventBus.refetchMedia(this.$shared.currentPage);
+        eventBus.refetchMedia(this.$shared.currentPage, this.$local_t);
 
         eventBus.showSnackbar(
           "success",
@@ -2239,14 +2240,14 @@ export default {
       this.completelyFetchMedia();
     });
 
-    eventBus.$on("refetchMedia", setPage => {
+    eventBus.$on("refetchMedia", (setPage, $t) => {
       logger.log("refetching media");
       (async () => {
         eventBus.showLoadingOverlay(true);
 
         this.items = [];
 
-        this.items = await store.fetchMedia(this.mediatype, null, true);
+        this.items = await store.fetchMedia(this.mediatype, null, true, $t);
 
         eventBus.showLoadingOverlay(false);
 
