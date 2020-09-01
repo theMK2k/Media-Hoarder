@@ -156,10 +156,11 @@
                                 class="Clickable"
                                 v-on:click.stop="onRescrapeIMDB(item)"
                                 style="margin-left: 8px"
+                                v-bind:disabled="isScanning"
                               >mdi-reload-alert</v-icon>
                             </span>
                           </template>
-                          <span>{{$t('Rescan IMDB meta data')}}</span>
+                          <span>{{$t('Rescan IMDB meta data')}}<span v-if="isScanning"><br>{{$t('scan already in progress')}}</span></span>
                         </v-tooltip>
 
                         <v-tooltip bottom>
@@ -1046,6 +1047,10 @@ export default {
   props: ["mediatype"],
 
   computed: {
+    isScanning() {
+      return this.$shared.isScanning;
+    },
+    
     searchText() {
       return this.$shared.searchText;
     },

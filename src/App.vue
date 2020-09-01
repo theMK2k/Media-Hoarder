@@ -828,8 +828,6 @@ export default {
       // not yet implemented: { icon: "mdi-television", text: "Series", id: "series" }
     ],
 
-    isScanning: false,
-
     scanInfo: {
       show: false,
       header: "",
@@ -924,6 +922,10 @@ export default {
   },
 
   computed: {
+    isScanning() {
+      return this.$shared.isScanning;
+    },
+    
     filterSourcePathsTitle() {
       if (!this.$shared.filters.filterSourcePaths.find(filter => !filter.Selected)) {
         return `(${this.$t("ALL")})`;
@@ -1714,7 +1716,7 @@ export default {
     },
 
     async onRescan() {
-      if (store.isScanning) {
+      if (this.$shared.isScanning) {
         store.abortRescan();
         return;
       }
@@ -1925,11 +1927,11 @@ export default {
     });
 
     eventBus.$on("rescanStarted", () => {
-      this.isScanning = true;
+      this.$shared.isScanning = true;
     });
 
     eventBus.$on("rescanStopped", () => {
-      this.isScanning = false;
+      this.$shared.isScanning = false;
     });
 
     eventBus.$on("scanInfoOff", () => {

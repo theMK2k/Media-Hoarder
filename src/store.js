@@ -54,7 +54,6 @@ const definedError = require("@/helpers/defined-error");
 
 const isBuild = process.env.NODE_ENV === "production";
 
-let isScanning = false;
 let doAbortRescan = false;
 
 let currentScanInfoHeader = "";
@@ -92,7 +91,7 @@ dbsync.runSync(
       (async () => {
         // After the DB is successfully initialized, we can initialize everything else
         await ensureLogLevel();
-        
+
         await createIndexes(db);
 
         await loadSettingDuplicatesHandling();
@@ -263,7 +262,7 @@ async function fetchSourcePaths() {
 }
 
 async function rescan(onlyNew) {
-  isScanning = true;
+  shared.isScanning = true;
   eventBus.rescanStarted();
 
   if (shared.scanOptions.filescanMovies) await filescanMovies(onlyNew);
@@ -286,7 +285,7 @@ async function rescan(onlyNew) {
   await ensureMovieDeleted();
   logger.log('rescan CLEANUP END')
 
-  isScanning = false;
+  shared.isScanning = false;
   doAbortRescan = false;
   eventBus.rescanStopped();
 }
@@ -608,7 +607,7 @@ async function assignExtra(parent, child, $extraname) {
   return;
 }
 
-async function filescanMovies(onlyNew) {
+async function filescanMovies(onlyNew) {  // TODO: add $t and translate scanInfoShow Messages
   logger.log("### filescanMovies started");
 
   eventBus.scanInfoShow("Rescanning Movies", "Rescan started");
@@ -901,7 +900,7 @@ async function isIgnoreFile(pathItem) {
  * @param {*} movieSourcePath
  * @param {pathItem} pathItem 
  */
-async function addMovie(movieSourcePath, pathItem) {
+async function addMovie(movieSourcePath, pathItem) {  // TODO: add $t and translate scanInfoShow messages
   logger.log("addMovie pathItem.fullPath:", pathItem.fullPath);
 
   const movieType = await getMovieType(movieSourcePath.Path, pathItem);
@@ -1100,44 +1099,53 @@ async function applyMetaData(onlyNew, id_Movies) {
 
     const names = [];
 
-    logger.log("names:", {
+    logger.log("applyMetaData names from IMDB:", {
       IMDB_localTitle: movie.IMDB_localTitle,
       IMDB_originalTitle: movie.IMDB_originalTitle,
       IMDB_primaryTitle: movie.IMDB_primaryTitle,
     });
 
     if (movie.IMDB_localTitle) {
+      logger.log("applyMetaData names: we use IMDB_localTitle:", movie.IMDB_localTitle);
       names.push(movie.IMDB_localTitle);
     }
 
     if (
       movie.IMDB_primaryTitle &&
-      (name.length === 0 ||
-        !name[0]
-          .toLowerCase()
-          .includes(
-            movie.IMDB_primaryTitle.toLowerCase() &&
-            !movie.IMDB_primaryTitle.toLowerCase().includes(
-              name[0].toLowerCase()
-            )
-          ))
+      (names.length === 0 ||
+        (
+          !names[0]
+            .toLowerCase()
+            .includes(
+              movie.IMDB_primaryTitle.toLowerCase()
+            ) &&
+          !movie.IMDB_primaryTitle.toLowerCase().includes(
+            names[0].toLowerCase()
+          )
+        )
+      )
     ) {
+      logger.log("applyMetaData names: we use IMDB_primaryTitle:", movie.IMDB_primaryTitle);
       names.push(movie.IMDB_primaryTitle);
     }
 
     if (
       movie.IMDB_originalTitle &&
-      name.length < 2 &&
-      (name.length === 0 ||
-        !name[0]
-          .toLowerCase()
-          .includes(
-            movie.IMDB_originalTitle.toLowerCase() &&
-            !movie.IMDB_originalTitle.toLowerCase().includes(
-              name[0].toLowerCase()
-            )
-          ))
+      names.length < 2 &&
+      (names.length === 0 ||
+        (
+          !names[0]
+            .toLowerCase()
+            .includes(
+              movie.IMDB_originalTitle.toLowerCase()
+            ) &&
+          !movie.IMDB_originalTitle.toLowerCase().includes(
+            names[0].toLowerCase()
+          )
+        )
+      )
     ) {
+      logger.log("applyMetaData names: we use IMDB_originalTitle:", movie.IMDB_originalTitle);
       names.push(movie.IMDB_originalTitle);
     }
 
@@ -1239,7 +1247,7 @@ async function applyMetaData(onlyNew, id_Movies) {
   logger.log("applying Metadata DONE");
 }
 
-async function rescanMoviesMetaData(onlyNew, id_Movies) {
+async function rescanMoviesMetaData(onlyNew, id_Movies) { // TODO: add $t and translate scanInfoShow messages
   const movies = await db.fireProcedureReturnAll(
     `
 			SELECT
@@ -5961,7 +5969,7 @@ async function ensureToolPath(executable, settingName) {
   }
 
   let lookupTask = '';
-  
+
   if (helpers.isWindows) {
     // use where
     lookupTask = `where ${executable}`;
@@ -5973,7 +5981,7 @@ async function ensureToolPath(executable, settingName) {
   try {
     logger.log('ensureToolPath lookupTask:', lookupTask);
 
-    const { stdout, stderr } = await execAsync(lookupTask, );
+    const { stdout, stderr } = await execAsync(lookupTask,);
 
     if (stderr) {
       logger.error(stderr);
@@ -5983,18 +5991,18 @@ async function ensureToolPath(executable, settingName) {
     logger.log('ensureToolPath stdout:', stdout);
 
     // if (helpers.isWindows) {
-      const arrStdOut = stdout.split('\n');
-      for (let i = 0; i < arrStdOut.length; i++) {
-        const path = arrStdOut[i].trim();
+    const arrStdOut = stdout.split('\n');
+    for (let i = 0; i < arrStdOut.length; i++) {
+      const path = arrStdOut[i].trim();
 
-        logger.log('ensureToolPath checking path:', path);
+      logger.log('ensureToolPath checking path:', path);
 
-        if (await helpers.existsAsync(path)) {
-          logger.log('ensureToolPath path found at:', path);
-          setSetting(settingName, path);
-          return;
-        }
+      if (await helpers.existsAsync(path)) {
+        logger.log('ensureToolPath path found at:', path);
+        setSetting(settingName, path);
+        return;
       }
+    }
     /*
     } else {
       const arrStdOut = stdout.split('\n');
@@ -6016,7 +6024,7 @@ async function ensureToolPath(executable, settingName) {
     }
     */
   }
-  catch(err) {
+  catch (err) {
     logger.log('ensureToolPath tool not found or error:', err);
   }
 
@@ -6046,7 +6054,7 @@ async function ensureLogLevel() {
 
 function setLogLevel(level) {
   shared.logLevel = level;
-  
+
   logger.setLevel(level);
 
   // eslint-disable-next-line no-console
@@ -6056,8 +6064,8 @@ function setLogLevel(level) {
 function routeTo(router, route) {
   router.push(route).catch(err => {
     if (err.name != "NavigationDuplicated") {
-       logger.error(err);
-     }
+      logger.error(err);
+    }
   })
 }
 
@@ -6100,7 +6108,6 @@ export {
   fetchFilterIMDBRating,
   fetchFilterMetacriticScore,
   fetchFilterReleaseAttributes,
-  isScanning,
   abortRescan,
   createList,
   addToList,

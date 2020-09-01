@@ -11,6 +11,8 @@ const shared = new Vue({
     searchText: null,
     logLevel: 0,
 
+    isScanning: false,
+
     filters: {
       filterSourcePaths: [],
       filterGenres: [],

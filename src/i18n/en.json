@@ -771,5 +771,6 @@
   "Remove Release Attribute": "Remove Release Attribute",
   "Do you really want to remove the release attribute {ReleaseAttribute}_": "Do you really want to remove the release attribute \"{ReleaseAttribute}\"?",
   "Log Level": "Log Level",
-  "entries": "entries"
+  "entries": "entries",
+  "scan already in progress": "scan already in progress"
 }
