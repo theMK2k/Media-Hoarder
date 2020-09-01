@@ -371,8 +371,8 @@ General
 - [x] Media Player Path
 - [x] MediaInfo Path
 - [x] Last Access retention (seconds)
-- [X] Update on Twins by filename + filesize
-- [X] Update on Twins by IMDB ID
+- [x] Update on Twins by filename + filesize
+- [x] Update on Twins by IMDB ID
 
 Cinema
   
@@ -394,11 +394,13 @@ Series
 
 ### Other
 
-- [X] check if built release also opens up a port (it doesn't)
+- [x] block any IMDB scan when one is already in progress
 
-- [X] check AppImage usage (storing to ~/.media-hoarder should be possible)
+- [x] check if built release also opens up a port (it doesn't)
 
-- [X] remove Series in menus and Settings (it will be implemented later)
+- [x] check AppImage usage (storing to ~/.media-hoarder should be possible)
+
+- [x] remove Series in menus and Settings (it will be implemented later)
 
 - [x] Settings: user-defined log level (stored in db)
 
