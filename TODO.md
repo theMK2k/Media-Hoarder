@@ -4,23 +4,19 @@
 
 ### Bugs
 
-- secondary title missing
+- no bugs found
 
 ### Other
 
-- autodetect mediaplayer: MacOS: check if /Applications/VLC.app/Contents/MacOS/VLC exists, and use this
-- review <https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html>
-
-### MacOS Release
-
-- [ ] investigate binary signing
+- [ ] autodetect mediaplayer: MacOS: check if /Applications/VLC.app/Contents/MacOS/VLC exists, and use this
+- [ ] review <https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html>
 
 ### Home
 
-- provide an introductory text (on first run):
-  - user should download and install VLC or any other media player (if not already found)
-  - user should download and install Mediainfo CLI (if not already found)
-  - user should go to Settings
+- [ ] provide an introductory text (on first run):
+  - [ ] user should download and install VLC or any other media player (if not already found)
+  - [ ] user should download and install Mediainfo CLI (if not already found)
+  - [ ] user should go to Settings
 
 ## LATER
 
