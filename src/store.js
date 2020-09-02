@@ -3301,10 +3301,10 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
     result.forEach((item) => {
       // logger.log(item.Name);
       item.IMDB_posterSmall_URL = item.IMDB_posterSmall_URL
-        ? "file://" + helpers.getDataPath(item.IMDB_posterSmall_URL)
+        ? "local-resource://" + helpers.getDataPath(item.IMDB_posterSmall_URL).replace(/\\/g, "\\\\")
         : item.IMDB_posterSmall_URL;
       item.IMDB_posterLarge_URL = item.IMDB_posterLarge_URL
-        ? "file://" + helpers.getDataPath(item.IMDB_posterLarge_URL)
+        ? "local-resource://" + helpers.getDataPath(item.IMDB_posterLarge_URL).replace(/\\/g, "\\\\")
         : item.IMDB_posterLarge_URL;
       item.yearDisplay = item.startYear
         ? "(" + item.startYear + (item.endYear ? `-${item.endYear}` : "") + ")"
@@ -3422,6 +3422,8 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       item.showScanErrors = false;
     });
 
+    logger.log(result);
+    
     return result;
   } catch (err) {
     logger.error(err);

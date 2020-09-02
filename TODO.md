@@ -8,7 +8,7 @@
 
 ### Other
 
-- [ ] review <https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html>
+- nothing as of yet
 
 ### Home
 

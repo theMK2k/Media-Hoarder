@@ -394,6 +394,8 @@ Series
 
 ### Other
 
+- [x] review <https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html>
+  - [x] re-enable websecurity
 - [x] Settings: allow writeable text fields for VLC and Mediainfo (or edit button)
 - [x] Settings: IMDB Demographics are not translated
 - [x] autodetect mediaplayer: MacOS: check if /Applications/VLC.app/Contents/MacOS/VLC exists, and use this

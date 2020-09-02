@@ -29,7 +29,7 @@ function createWindow() {
 	win = new BrowserWindow({
 		width: 1280, height: 800, webPreferences: {
 			nodeIntegration: true,
-			webSecurity: false,
+			// webSecurity: false,
 			webviewTag: true,
 			fullscreenable: false
 		}, icon: path.join(__static, 'icon.png')
@@ -42,27 +42,27 @@ function createWindow() {
 		const adBlocker = ElectronBlocker.parse(fs.readFileSync(easyListPath, 'utf-8'));
 		adBlocker.enableBlockingInSession(session.defaultSession);
 		adBlocker.on('request-blocked', (request) => {
-		console.log('blocked', request.tabId, request.url);
+			console.log('blocked', request.tabId, request.url);
 		});
 		adBlocker.on('request-redirected', (request) => {
-		console.log('redirected', request.tabId, request.url);
+			console.log('redirected', request.tabId, request.url);
 		});
 		adBlocker.on('request-whitelisted', (request) => {
-		console.log('whitelisted', request.tabId, request.url);
+			console.log('whitelisted', request.tabId, request.url);
 		});
 		adBlocker.on('csp-injected', (request) => {
-		console.log('csp', request.url);
+			console.log('csp', request.url);
 		});
 		adBlocker.on('script-injected', (script, url) => {
-		console.log('script', script.length, url);
+			console.log('script', script.length, url);
 		});
 		adBlocker.on('style-injected', (style, url) => {
-		console.log('style', style.length, url);
+			console.log('style', style.length, url);
 		});
 	} catch (e) {
 		console.error(e);
 	}
-	
+
 
 	win.maximize();
 	win.setMenu(null);
@@ -72,7 +72,7 @@ function createWindow() {
 		setTimeout(() => {
 			win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
 		}, 0);
-		
+
 		if (!process.env.IS_TEST) {
 			win.webContents.openDevTools();
 		}
@@ -87,6 +87,22 @@ function createWindow() {
 
 	win.on('closed', () => {
 		win = null
+	})
+}
+
+// allows us to use local files outside "public" folder as web ressource
+// https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#loading-local-images-resources
+function registerLocalResourceProtocol() {
+	protocol.registerFileProtocol('local-resource', (request, callback) => {
+		const url = request.url.replace(/^local-resource:\/\//, '')
+		// Decode URL to prevent errors when loading filenames with UTF-8 chars or chars like "#"
+		const decodedUrl = decodeURI(url) // Needed in case URL contains spaces
+		try {
+			return callback(decodedUrl)
+		}
+		catch (error) {
+			console.error('ERROR: registerLocalResourceProtocol: Could not get file path:', error)
+		}
 	})
 }
 
@@ -111,6 +127,8 @@ app.on('activate', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
+	registerLocalResourceProtocol();
+
 	if (isDevelopment && !process.env.IS_TEST) {
 		// Install Vue Devtools
 		// Devtools extensions are broken in Electron 6.0.0 and greater
