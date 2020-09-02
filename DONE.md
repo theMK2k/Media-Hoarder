@@ -394,6 +394,7 @@ Series
 
 ### Other
 
+- [x] autodetect mediaplayer: MacOS: check if /Applications/VLC.app/Contents/MacOS/VLC exists, and use this
 - [x] investigate binary signing for MacOS release
 - [x] pin versions
 - [x] translate eventBus.scanInfoShow

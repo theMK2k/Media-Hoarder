@@ -8,7 +8,6 @@
 
 ### Other
 
-- [ ] autodetect mediaplayer: MacOS: check if /Applications/VLC.app/Contents/MacOS/VLC exists, and use this
 - [ ] review <https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html>
 
 ### Home
