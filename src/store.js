@@ -5971,10 +5971,10 @@ async function ensureToolPath(executable, settingName) {
 
   // MacOS wild guess: VLC may be available at /Applications/VLC.app/Contents/MacOS/VLC
   if (process.platform === 'darwin' && executable === 'vlc') {
-    logger.log('ensureToolPath wild MacOS guess for VLC path:', path);
     const path = '/Applications/VLC.app/Contents/MacOS/VLC'
+
+
     if (await existsAsync(path)) {
-      logger.log('ensureToolPath wild MacOS guess SUCCESS!');
       setSetting(settingName, path);
       return;
     }
