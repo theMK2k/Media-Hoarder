@@ -20,7 +20,22 @@
       <!-- GENERAL -->
       <v-tab-item style="padding: 8px">
         <v-row class="settings-row">
-          <v-text-field readonly v-bind:label="$t('Media Player Path')" v-model="MediaplayerPath"></v-text-field>
+          <h3>{{$t('Media Player Path')}}</h3>
+
+          <v-card-text class="light-grey">
+            {{$t('{appName} needs the path to a media player of your choice for media playback_ We recommend the VLC media player, you can get it at_', {appName: $shared.appName})}}
+            <a
+              v-on:click="openURL('https://www.videolan.org/vlc/index.html')"
+            >https://www.videolan.org/vlc/index.html</a>
+          </v-card-text>
+
+          <v-text-field
+            readonly
+            v-bind:label="$t('Media Player Path')"
+            v-model="MediaplayerPath"
+            style="margin-left: 16px"
+          ></v-text-field>
+
           <v-btn
             v-on:click="browseMediaplayerPath()"
             text
@@ -31,7 +46,22 @@
         </v-row>
 
         <v-row class="settings-row">
-          <v-text-field readonly v-bind:label="$t('Mediainfo CLI Path')" v-model="MediainfoPath"></v-text-field>
+          <h3>{{$t('Mediainfo CLI Path')}}</h3>
+
+          <v-card-text class="light-grey">
+            {{$t('{appName} needs the path to Mediainfo CLI in order to determine duration, video resolution and languages of your media_ You can get Mediainfo CLI at_', {appName: $shared.appName})}}
+            <a
+              v-on:click="openURL('https://mediaarea.net/en/MediaInfo')"
+            >https://mediaarea.net/en/MediaInfo</a>
+          </v-card-text>
+
+          <v-text-field
+            readonly
+            v-bind:label="$t('Mediainfo CLI Path')"
+            v-model="MediainfoPath"
+            style="margin-left: 16px"
+          ></v-text-field>
+
           <v-btn
             v-on:click="browseMediainfoPath()"
             text
@@ -42,25 +72,45 @@
         </v-row>
 
         <v-row class="settings-row">
+          <h3>{{$t('Last Access Grace Period')}}</h3>
+
+          <v-card-text class="light-grey">
+            {{$t('{appName} provides the date and time of the last access for any medium_ In order to prevent unwanted updates, you can define a grace period in seconds where a medium can be played until the update is performed_', { appName: $shared.appName })}}
+          </v-card-text>
+
           <v-text-field
             type="number"
-            v-bind:label="$t('Number of seconds a medium should run until last access is updated')"
+            v-bind:label="$t('Last Access Grace Period')"
             v-model="minimumWaitForSetAccess"
+            style="margin-left: 16px"
           ></v-text-field>
         </v-row>
 
         <v-row class="settings-row">
+          <h3>{{$t('IMDB Rating Demographic')}}</h3>
+          
+          <v-card-text class="light-grey">
+            {{$t('{appName} provides the IMDB score and number of votes for each medium _where applicable__ By default these are the numbers of all IMDB users_ You can, however, decide if you wish to see those of a certain demographic, e_g_ by gender or age_', { appName: $shared.appName })}}
+          </v-card-text>
+          
           <v-select
             class="mk-v-select-dynamic-width"
             v-bind:label="$t('IMDB Rating Demographic')"
-            item-text="long"
+            item-text="long_translated"
             item-value="code"
             v-model="$shared.imdbRatingDemographic"
             v-bind:items="$shared.imdbRatingDemographics"
+            style="margin-left: 16px"
           ></v-select>
         </v-row>
 
         <v-row class="settings-row">
+          <h3>{{ $t('Log Level') }}</h3>
+
+          <v-card-text class="light-grey">
+            {{$t('{appName} logs certain events during runtime_ You can view these logs by pressing the _Open DevTools_ button below_ With the log level you decide which event severity should be logged_', { appName: $shared.appName })}}
+          </v-card-text>
+
           <v-select
             class="mk-v-select-dynamic-width"
             v-bind:label="$t('Log Level')"
@@ -68,6 +118,7 @@
             item-value="level"
             v-model="$shared.logLevel"
             v-bind:items="logLevels"
+            style="margin-left: 16px"
           ></v-select>
         </v-row>
 
@@ -291,7 +342,7 @@
             item-value="code"
             v-model="$shared.uiLanguage"
             v-bind:items="$shared.supportedLanguages"
-            style="margin-top: -16px; margin-bottom: 16px"
+            style="margin-top: -16px; margin-bottom: 16px; margin-left: 16px"
           ></v-select>
         </v-row>
 
@@ -586,7 +637,7 @@
 </template>
 
 <script>
-const { dialog, BrowserWindow } = require("electron").remote;
+const { dialog, BrowserWindow, shell } = require("electron").remote;
 const logger = require("loglevel");
 import * as _ from "lodash";
 
@@ -785,6 +836,10 @@ export default {
   },
 
   methods: {
+    openURL(url) {
+      shell.openExternal(url);
+    },
+
     async browseMediaplayerPath() {
       const filters = helpers.isWindows
         ? [
@@ -1527,6 +1582,12 @@ export default {
 
   // ### LifeCycle Hooks ###
   async created() {
+    this.$shared.imdbRatingDemographics.forEach(demographic => {
+      demographic.long_translated = this.$t(`RatingDemographics.${demographic.long}`);
+    })
+
+    logger.log('this.$shared.imdbRatingDemographics:', this.$shared.imdbRatingDemographics);
+    
     await this.fetchSourcePaths();
 
     const regions = await store.getSetting("regions");

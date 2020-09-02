@@ -70,9 +70,9 @@
   "Regions": "Regions",
   "Languages": "Languages",
   "Title Types": "Title Types",
-  "Media Player Path": "Media Player Path (e.g. path to VLC executable)",
+  "Media Player Path": "Media Player Path",
   "Browse": "Browse",
-  "Mediainfo CLI Path": "Mediainfo CLI Path (i.e. path to Mediainfo CLI executable from mediaarea.net)",
+  "Mediainfo CLI Path": "Mediainfo CLI Path",
   "Number of seconds a medium should run until last access is updated": "Number of seconds a medium should run until 'last access' is updated",
   "IMDB Rating Demographic": "IMDB Rating Demographic",
   "Show Version Info": "Show Version Info",
@@ -581,6 +581,7 @@
   "Hint": "Hint",
   "you can change your default rating demographic (shown in the main list) in the": "you can change your default rating demographic (shown in the main list) in the",
   "No rating demographics found for": "No rating demographics found for",
+
   "All Ages": "All Ages",
   "All": "All",
   "Females": "Females",
@@ -588,6 +589,26 @@
   "Top 1000 Voters": "Top 1000 Voters",
   "Non-US Users": "Non-US Users",
   "US Users": "US Users",
+
+  "RatingDemographics": {
+    "Aged under 18": "Aged under 18",
+    "Aged 18-29": "Aged 18-29",
+    "Aged 30-44": "Aged 30-44",
+    "Aged 45+": "Aged 45+",
+    "Females": "Females",
+    "Females aged under 18": "Females aged under 18",
+    "Females aged 18-29": "Females aged 18-29",
+    "Females aged 30-44": "Females aged 30-44",
+    "Females aged 45+": "Females aged 45+",
+    "Males": "Males",
+    "Males aged under 18": "Males aged under 18",
+    "Males aged 18-29": "Males aged 18-29",
+    "Males aged 30-44": "Males aged 30-44",
+    "Males aged 45+": "Males aged 45+",
+    "Top 1000 Voters": "Top 1000 Voters",
+    "Non-US Users": "Non-US Users",
+    "US Users": "US Users"
+  },
 
   "Warning: Mediainfo CLI Path is not set_ Please go to": "Warning: Mediainfo CLI Path is not set. Please go to",
   "and provide one_ You can get Mediainfo CLI from": "and provide one. You can get Mediainfo CLI from",
@@ -774,5 +795,11 @@
   "entries": "entries",
   "scan already in progress": "scan already in progress",
   "Rescanning Movies": "Rescanning Movies",
-  "Rescan started": "Rescan started"
+  "Rescan started": "Rescan started",
+  "{appName} needs the path to a media player of your choice for media playback_ We recommend the VLC media player, you can get it at_": "{appName} needs the path to a media player of your choice for media playback. We recommend the VLC media player, you can get it at:",
+  "{appName} needs the path to Mediainfo CLI in order to determine duration, video resolution and languages of your media_ You can get Mediainfo CLI at_": "{appName} needs the path to Mediainfo CLI in order to determine duration, video resolution and languages of your media. You can get Mediainfo CLI at_",
+  "Last Access Grace Period": "Last Access Grace Period",
+  "{appName} provides the date and time of the last access for any medium_ In order to prevent unwanted updates, you can define a grace period in seconds where a medium can be played until the update is performed_": "{appName} provides the date and time of the last access for any medium. In order to prevent unwanted updates, you can define a grace period in seconds where a medium can be played until the update is performed.",
+  "{appName} provides the IMDB score and number of votes for each medium _where applicable__ By default these are the numbers of all IMDB users_ You can, however, decide if you wish to see those of a certain demographic, e_g_ by gender or age_": "{appName} provides the IMDB score and number of votes for each medium (where applicable). By default these are the numbers of all IMDB users. You can, however, decide if you wish to see those of a certain demographic, e.g. by gender or age.",
+  "{appName} logs certain events during runtime_ You can view these logs by pressing the _Open DevTools_ button below_ With the log level you decide which event severity should be logged_": "{appName} logs certain events during runtime. You can view these logs by pressing the \"Open DevTools\" button below. With the log level you decide which event severity should be logged."
 }

@@ -108,91 +108,109 @@ const shared = new Vue({
         code: "",
         short: null,
         long: "All",
+        long_translated: ""
       },
       {
         code: "aged_under_18",
         short: "⚧<18",
         long: "Aged under 18",
+        long_translated: ""
       },
       {
         code: "aged_18_29",
         short: "⚧<30",
         long: "Aged 18-29",
+        long_translated: ""
       },
       {
         code: "aged_30_44",
         short: "⚧<45",
         long: "Aged 30-44",
+        long_translated: ""
       },
       {
         code: "aged_45_plus",
         short: "⚧45+",
         long: "Aged 45+",
+        long_translated: ""
       },
       {
         code: "females",
         short: "♀",
         long: "Females",
+        long_translated: ""
       },
       {
         code: "females_aged_under_18",
         short: "♀<18",
         long: "Females aged under 18",
+        long_translated: ""
       },
       {
         code: "females_aged_18_29",
         short: "♀<30",
         long: "Females aged 18-29",
+        long_translated: ""
       },
       {
         code: "females_aged_30_44",
         short: "♀<45",
         long: "Females aged 30-44",
+        long_translated: ""
       },
       {
         code: "females_aged_45_plus",
         short: "♀45+",
         long: "Females aged 45+",
+        long_translated: ""
       },
       {
         code: "males",
         short: "♂",
         long: "Males",
+        long_translated: ""
       },
       {
         code: "males_aged_under_18",
         short: "♂<18",
         long: "Males aged under 18",
+        long_translated: ""
       },
       {
         code: "males_aged_18_29",
         short: "♂<30",
         long: "Males aged 18-29",
+        long_translated: ""
       },
       {
         code: "males_aged_30_44",
         short: "♂<45",
         long: "Males aged 30-44",
+        long_translated: ""
       },
       {
         code: "males_aged_45_plus",
         short: "♂45+",
         long: "Males aged 45+",
+        long_translated: ""
       },
       {
         code: "top_1000_voters",
         short: "🎩",
-        long: "Top 1000 voters",
+        long: "Top 1000 Voters",
+        long_translated: ""
       },
       {
         code: "non_us_users",
         short: "non-US",
-        long: "Non-US users",
+        long: "Non-US Users",
+        long_translated: ""
       },
       {
         code: "us_users",
         short: "US",
-        long: "US users",
+        long: "US Users",
+        long_translated: ""
       },
     ],
     imdbRatingDemographic: "",
