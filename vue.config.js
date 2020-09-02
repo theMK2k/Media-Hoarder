@@ -4,7 +4,6 @@ module.exports = {
       builderOptions: {
         extraResources: [
           'data/media-hoarder.db_initial',
-          'data/mediainfo/**/*',
           'data/easylist.txt'
         ],
         publish: [
