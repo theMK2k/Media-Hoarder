@@ -10,13 +10,6 @@
 
 - nothing as of yet
 
-### Home
-
-- [ ] provide an introductory text (on first run):
-  - [ ] user should download and install VLC or any other media player (if not already found)
-  - [ ] user should download and install Mediainfo CLI (if not already found)
-  - [ ] user should go to Settings
-
 ## LATER
 
 ### Raspberry Pi (armhf) Build
