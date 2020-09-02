@@ -8,7 +8,6 @@
 
 ### Other
 
-- [ ] Settings: provide interactive button for ensureToolPath incl. feedback via toast
 - [ ] review <https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html>
 
 ### Home

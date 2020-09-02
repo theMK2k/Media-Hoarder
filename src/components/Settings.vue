@@ -43,6 +43,13 @@
             color="primary"
             style="margin-top: 16px"
           >{{$t("Browse")}}</v-btn>
+          <v-btn
+            v-on:click="showEditMediaplayerPathDialog()"
+            text
+            small
+            color="primary"
+            style="margin-top: 16px"
+          >{{$t("Edit")}}</v-btn>
         </v-row>
 
         <v-row class="settings-row">
@@ -69,6 +76,13 @@
             color="primary"
             style="margin-top: 16px"
           >{{$t("Browse")}}</v-btn>
+          <v-btn
+            v-on:click="showEditMediainfoPathDialog()"
+            text
+            small
+            color="primary"
+            style="margin-top: 16px"
+          >{{$t("Edit")}}</v-btn>
         </v-row>
 
         <v-row class="settings-row">
@@ -633,6 +647,31 @@
       v-on:yes="onRemoveReleaseAttributeDialogOK"
       v-on:cancel="onRemoveReleaseAttributeDialogCancel"
     ></mk-remove-release-attribute-dialog>
+    <mk-edit-mediaplayer-path-dialog
+      ref="editMediaplayerPathDialog"
+      v-bind:show="editMediaplayerPathDialog.show"
+      v-bind:title="$t('Edit Media Player Path')"
+      v-bind:question="$t('Please provide the path to your media player_')"
+      enterTextValue="true"
+      v-bind:ok="$t('OK')"
+      v-bind:cancel="$t('Cancel')"
+      cancelColor="secondary"
+      v-on:ok="onEditMediaplayerPathDialogOK"
+      v-on:cancel="onEditMediaplayerPathDialogCancel"
+    ></mk-edit-mediaplayer-path-dialog>
+    <mk-edit-mediainfo-path-dialog
+      ref="editMediainfoPathDialog"
+      v-bind:show="editMediainfoPathDialog.show"
+      v-bind:title="$t('Edit MediaInfo CLI Path')"
+      v-bind:question="$t('Please provide the path to MediaInfo CLI_')"
+      enterTextValue="true"
+      v-bind:ok="$t('OK')"
+      v-bind:cancel="$t('Cancel')"
+      cancelColor="secondary"
+      v-on:ok="onEditMediainfoPathDialogOK"
+      v-on:cancel="onEditMediainfoPathDialogCancel"
+    ></mk-edit-mediainfo-path-dialog>
+
   </div>
 </template>
 
@@ -667,6 +706,8 @@ export default {
     "mk-edit-release-attribute-dialog": EditReleaseAttributeDialog,
     "mk-remove-release-attribute-dialog": Dialog,
     "mk-title-type": TitleType,
+    "mk-edit-mediaplayer-path-dialog": Dialog,
+    "mk-edit-mediainfo-path-dialog": Dialog,
   },
 
   data: () => ({
@@ -718,6 +759,14 @@ export default {
       MediaType: null,
       MediaTypeUpper: null,
       Path: null,
+    },
+
+    editMediaplayerPathDialog: {
+      show: false,
+    },
+
+    editMediainfoPathDialog: {
+      show: false,
     },
 
     addRegionsDialog: {
@@ -931,6 +980,56 @@ export default {
       );
 
       this.sourcePathDescriptionDialog.show = true;
+    },
+
+    showEditMediaplayerPathDialog() {
+      this.$refs.editMediaplayerPathDialog.initTextValue(this.MediaplayerPath);
+      this.editMediaplayerPathDialog.show = true;
+    },
+
+    async onEditMediaplayerPathDialogOK(result) {
+      if (!await helpers.existsAsync(result.textValue)) {
+        eventBus.showSnackbar('error', this.$t(`The path _{path}_ cannot be found_`, { path: result.textValue }));
+        this.editMediaplayerPathDialog.show = false;
+        return;
+      }
+      
+      this.MediaplayerPath = result.textValue;
+
+      store.setSetting("MediaplayerPath", this.MediaplayerPath);
+
+      this.editMediaplayerPathDialog.show = false;
+
+      eventBus.showSnackbar('success', this.$t(`Media Player path changed to _{path}__`, { path: result.textValue }));
+    },
+
+    onEditMediaplayerPathDialogCancel() {
+      this.editMediaplayerPathDialog.show = false;
+    },
+
+    showEditMediainfoPathDialog() {
+      this.$refs.editMediainfoPathDialog.initTextValue(this.MediainfoPath);
+      this.editMediainfoPathDialog.show = true;
+    },
+
+    async onEditMediainfoPathDialogOK(result) {
+      if (!await helpers.existsAsync(result.textValue)) {
+        eventBus.showSnackbar('error', this.$t(`The path _{path}_ cannot be found_`, { path: result.textValue }));
+        this.editMediainfoPathDialog.show = false;
+        return;
+      }
+      
+      this.MediainfoPath = result.textValue;
+
+      store.setSetting("MediainfoPath", this.MediainfoPath);
+
+      this.editMediainfoPathDialog.show = false;
+
+      eventBus.showSnackbar('success', this.$t(`MediaInfo CLI path changed to _{path}__`, { path: result.textValue }));
+    },
+
+    onEditMediainfoPathDialogCancel() {
+      this.editMediainfoPathDialog.show = false;
     },
 
     openDevTools() {

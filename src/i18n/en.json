@@ -801,5 +801,13 @@
   "Last Access Grace Period": "Last Access Grace Period",
   "{appName} provides the date and time of the last access for any medium_ In order to prevent unwanted updates, you can define a grace period in seconds where a medium can be played until the update is performed_": "{appName} provides the date and time of the last access for any medium. In order to prevent unwanted updates, you can define a grace period in seconds where a medium can be played until the update is performed.",
   "{appName} provides the IMDB score and number of votes for each medium _where applicable__ By default these are the numbers of all IMDB users_ You can, however, decide if you wish to see those of a certain demographic, e_g_ by gender or age_": "{appName} provides the IMDB score and number of votes for each medium (where applicable). By default these are the numbers of all IMDB users. You can, however, decide if you wish to see those of a certain demographic, e.g. by gender or age.",
-  "{appName} logs certain events during runtime_ You can view these logs by pressing the _Open DevTools_ button below_ With the log level you decide which event severity should be logged_": "{appName} logs certain events during runtime. You can view these logs by pressing the \"Open DevTools\" button below. With the log level you decide which event severity should be logged."
+  "{appName} logs certain events during runtime_ You can view these logs by pressing the _Open DevTools_ button below_ With the log level you decide which event severity should be logged_": "{appName} logs certain events during runtime. You can view these logs by pressing the \"Open DevTools\" button below. With the log level you decide which event severity should be logged.",
+  "Edit": "Edit",
+  "Please provide the path to your media player_": "Please provide the path to your media player.",
+  "Edit Media Player Path": "Edit Media Player Path",
+  "The path _{path}_ cannot be found_": "The path \"{path}\" cannot be found.",
+  "Media Player path changed to _{path}__": "Media Player path changed to \"{path}\".",
+  "Edit MediaInfo CLI Path": "Edit MediaInfo CLI Path",
+  "Please provide the path to MediaInfo CLI_": "Please provide the path to MediaInfo CLI.",
+  "MediaInfo CLI path changed to _{path}__": "MediaInfo CLI path changed to \"{path}\"."
 }
