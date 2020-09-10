@@ -4,13 +4,13 @@ This document describes the steps necessary to get a new release done.
 
 ## Precondition
 
-- [ ] Increase Version Number in [../package.json](../package.json)
-- [ ] Document contents of [../DONE.md](../DONE.md) into `public/history/version-x.y.z.html`
-- [ ] Update history.json
+- [x] Increase Version Number in [../package.json](../package.json)
+- [x] Document contents of [../DONE.md](../DONE.md) into `public/history/version-x.y.z.html`
+- [x] Update history.json
 
 ## Windows Build
 
-- [ ] in Windows run `npm run electron:build`
+- [x] in Windows run `npm run electron:build`
 
 ## Linux Build
 
