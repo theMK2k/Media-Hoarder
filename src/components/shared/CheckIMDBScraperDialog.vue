@@ -21,7 +21,7 @@
         <v-row
           v-for="check in imdbScraperChecksFiltered"
           v-bind:key="check.key"
-          style="align-items: center"
+          style="align-items: center; height: 36px"
         >
           <v-btn
             class="ma-2"
