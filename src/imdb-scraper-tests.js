@@ -717,7 +717,7 @@ async function testIMDBFilmingLocations() {
   try {
     const expected = {
       locations0: {
-        Location: "Durham Cathedral, Durham DH1 3EH, UK",
+        Location: "Durham Cathedral, The College, Durham, County Durham, England, UK",
         Details: "Asgard.",
         NumInteresting: 68,
         NumVotes: 68,

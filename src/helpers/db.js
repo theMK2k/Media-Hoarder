@@ -1,4 +1,6 @@
 /**
+ * db.js v1.0
+ * 
  * Database interface and functions for sqlite access and management
  */
 const logger = require('loglevel');
