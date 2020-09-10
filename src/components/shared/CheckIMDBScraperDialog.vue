@@ -21,7 +21,7 @@
         <v-row
           v-for="check in imdbScraperChecksFiltered"
           v-bind:key="check.key"
-          style="align-items: center; height: 36px"
+          style="align-items: center"
         >
           <v-btn
             class="ma-2"
@@ -29,6 +29,7 @@
             v-bind:loading="check.isRunning"
             icon
             v-bind:color="check.color || 'blue lighten-2'"
+            style="margin: 4px 8px 4px 8px!important"
           >
             <v-icon>{{check.icon}}</v-icon>
           </v-btn>
