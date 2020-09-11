@@ -4,7 +4,7 @@ const logger = require("loglevel");
 const minimist = require('minimist');
 const nodemailer = require("nodemailer");
 
-const imdbScraperTests = require('../src/imdb-scraper-tests');
+const imdbScraperTests = require('./imdb-scraper-tests');
 
 const cmdArguments = minimist(process.argv.slice(2))
 
