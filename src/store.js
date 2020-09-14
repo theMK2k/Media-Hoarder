@@ -1458,14 +1458,20 @@ async function applyMediaInfo(movie, onlyNew) {
 
           MI.$MI_Quality = "SD";
 
-          if (iWidth > 1200 || iHeight >= 720) {
+          if (iWidth * iHeight > 720 * 576) {
             MI.$MI_Quality = "720p";
           }
-          if (iWidth > 1900 || iHeight >= 1080) {
+          if (iWidth * iHeight > 1280 * 720) {
             MI.$MI_Quality = "HD";
           }
-          if (iWidth > 3800 || iHeight >= 2000) {
+          if (iWidth * iHeight > 1920 * 1080) {
             MI.$MI_Quality = "UHD";
+          }
+          if (iWidth * iHeight > 3840 * 2160) {
+            MI.$MI_Quality = "4K";
+          }
+          if (iWidth * iHeight > 4096 * 2160) {
+            MI.$MI_Quality = "8K";
           }
         }
 

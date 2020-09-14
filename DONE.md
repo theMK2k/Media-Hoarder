@@ -394,6 +394,7 @@ Series
 
 ### Other
 
+- [x] calculate video resolution by multiplying width and height and use the megapixels
 - [x] review <https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html>
   - [x] re-enable websecurity
 - [x] Settings: allow writeable text fields for VLC and Mediainfo (or edit button)
