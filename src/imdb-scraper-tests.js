@@ -581,7 +581,7 @@ async function testIMDBPersonData() {
 }
 
 async function testIMDBTrailerMediaURLs() {
-  // TODO: unfortunately we can't scrape trailer media anymore
+  // NOTE: unfortunately we can't scrape trailer media anymore
   //       i.e. we can't find out the actual .mp4 video source
 
   const testResult = {

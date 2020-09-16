@@ -12,6 +12,13 @@
 
 ## LATER
 
+### Create i18n Editor
+
+- [ ] dropdown of available (to be translated) languages
+- [ ] read available en.json ($fieldName, $expectedText)
+- [ ] provide $expectedText as Input, let user type the translation in the language of choice
+- [ ] establish a way of file exchange
+
 ### Raspberry Pi (armhf) Build
 
 ### JSDoc everywhere

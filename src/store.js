@@ -261,13 +261,13 @@ async function fetchSourcePaths() {
   return result;
 }
 
-async function rescan(onlyNew, $t) {  // TODO $t
+async function rescan(onlyNew, $t) {
   shared.isScanning = true;
   eventBus.rescanStarted();
 
   if (shared.scanOptions.filescanMovies) await filescanMovies(onlyNew, $t);
 
-  if (shared.scanOptions.mergeExtras) await mergeExtras(onlyNew); // TODO: merge extras from "extra" directory
+  if (shared.scanOptions.mergeExtras) await mergeExtras(onlyNew);
 
   if (shared.scanOptions.rescanMoviesMetaData)
     await rescanMoviesMetaData(onlyNew, null, $t);  // TODO: isDirectoryBased
@@ -1319,8 +1319,8 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
     if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData)
       await fetchIMDBMetaData(movie, onlyNew);
 
-    //TODO: if (shared.scanOptions.rescanMoviesMetaData_findReleaseAttributes)
-    await findReleaseAttributes(movie, onlyNew);
+    if (shared.scanOptions.rescanMoviesMetaData_findReleaseAttributes)
+      await findReleaseAttributes(movie, onlyNew);
 
     if (shared.scanOptions.applyMetaData)
       await applyMetaData(false, movie.id_Movies);
@@ -2296,7 +2296,7 @@ async function saveIMDBData(
     );
   }
 
-  // TODO: remove existing plot keywords that are not available anymore (re-link to another imdb entry)
+  //remove existing plot keywords that are not available anymore (re-link to another imdb entry)
   for (let i = 0; i < moviePlotKeywords.length; i++) {
     const moviePlotKeyword = moviePlotKeywords[i];
 
@@ -5825,7 +5825,6 @@ async function fetchFilterReleaseAttributes($MediaType) {
   for (let i = 0; i < releaseAttributesHierarchy.length; i++) {
     const ra = releaseAttributesHierarchy[i];
 
-    // TODO: filter by $MediaType, deleted movie etc
     const sql = `
     SELECT COUNT(1) FROM (
       SELECT DISTINCT MRA.id_Movies
