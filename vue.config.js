@@ -11,8 +11,13 @@ module.exports = {
         ],
         linux: {
           category: 'AudioVideo'
+        },
+        afterSign: "@oshell/vue-cli-plugin-electron-builder-notarize",
+        mac: {
+          hardenedRuntime: true,
+          entitlements: "./entitlements.plist",
         }
-      }
+      },
     },
     i18n: {
       locale: 'en',
