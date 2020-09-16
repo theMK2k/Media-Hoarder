@@ -16,8 +16,9 @@ This document describes the steps necessary to get a new release done.
 
 ## Linux Build
 
-- [ ] in Linux run `npm run electron:build-linux`
-- [ ] use `???` as `???`
+- [x] in Linux run `npm run electron:build-linux`
+- [x] use `media-hoarder-%VERSION%.AppImage` as `media-hoarder-%VERSION%-linux-x64.AppImage`
+- [x] use `media-hoarder_1.0.0_amd64.deb` as `media-hoarder-%VERSION%-linux-x64.deb`
 
 ## Mac Build
 
