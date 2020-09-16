@@ -4,7 +4,8 @@
 
 ### Bugs
 
-- no bugs found
+- Linux version doesn't fetch data / endless loop? (at least not in our test VM)
+  -> test in livecd
 
 ### Other
 

@@ -22,8 +22,15 @@ This document describes the steps necessary to get a new release done.
 
 ## Mac Build
 
-- [ ] in MacOS run `npm run electron:build-mac`
-- [ ] use `???` as `???`
+- [x] in MacOS run:
+
+```bash
+export APPLE_ID=%APPLE_ID%
+export APPLE_ID_PASSWORD=%APPLE_ID_PASSWORD%
+npm run electron:build-mac
+```
+
+- [x] use `media-hoarder-%VERSION%.dmg` as `media-hoarder-%VERSION%-mac-x64.dmg`
 
 ## Currently not working: Raspberry Pi Build
 
