@@ -110,7 +110,7 @@
   "The languages and their sequence defined here will be used to show which audio and subtitle languages your media contain_": "Die hier festgelegte Reihenfolge der Sprachen wird zur Anzeige der in einem Medium enthaltenen Sprachen verwendet.",
   "You currently don_t have a language for Audio and Subtitles set up_ {appName} will fall back to your system_s locale": "Keine Sprachen für Audio und Untertitel festgelegt, {appName} verwendet die vom System vorgegebene",
   "You currently don_t have a language for Audio and Subtitles set up. {appName} will fall back to the original title_": "Keine Sprachen für Audio und Untertitel festgelegt, {appName} zeigt die zuerst gefundenen Sprachen an.",
-  "In _Regions_ you provided the regions to be used for the Primary Title_ However, many titles in IMDB have a special title type_ {appName} skips all special title types by default_ You can add title types here, so that they are actually used instead of being skipped_": "In \"Regionen\" wurden Regionen festgelegt, die für den Primären Titel verwendet werden. IMDB verwendet zusätzliche Titel Typen für viele Titel. {appName} ignoriert grundsätzlich alle Titel Typen. Hier können nun Titel Typen festgelegt werden, die nicht ignoriert werden sollen.",
+  "In _Regions_ you provided the regions to be used for the Primary Title_ However, many titles in IMDB have a special title type_ {appName} skips all special title types by default_ You can add title types here, so that they are actually used instead of being skipped_": "In \"REGIONEN\" wurden Regionen festgelegt, die für den Primärtitel verwendet werden. IMDB verwendet zusätzliche Titel Typen für viele Titel. {appName} ignoriert grundsätzlich alle Titel Typen. Hier können nun Titel Typen festgelegt werden, die nicht ignoriert werden sollen.",
   "No title types added, this is fine_": "Keine Titel Typen festgelegt, das ist OK.",
   "Add Title Type": "Titel Typ Hinzufügen",
   "Edit Description": "Beschreibung Bearbeiten",
@@ -891,5 +891,7 @@
   "Media Player path changed to _{path}__": "Media Player Pfad geändert auf \"{path}\".",
   "Edit MediaInfo CLI Path": "MediaInfo CLI Pfad Bearbeiten",
   "Please provide the path to MediaInfo CLI_": "Gib den Pfad zu MediaInfo CLI an.",
-  "MediaInfo CLI path changed to _{path}__": "MediaInfo CLI Pfad geändert auf \"{path}\"."
+  "MediaInfo CLI path changed to _{path}__": "MediaInfo CLI Pfad geändert auf \"{path}\".",
+  "Important_": "Wichtig:",
+  "If you want, for example, to see THISLANGUAGE titles, you must add the THISREGION region in _REGIONS__": "Wenn Du bspw. Deutsche Titel angezeigt bekommen möchtest, musst Du mindestens die Region 'Deutschland' unter \"REGIONEN\" hinzufügen."
 }

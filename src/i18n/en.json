@@ -810,5 +810,7 @@
   "Media Player path changed to _{path}__": "Media Player path changed to \"{path}\".",
   "Edit MediaInfo CLI Path": "Edit MediaInfo CLI Path",
   "Please provide the path to MediaInfo CLI_": "Please provide the path to MediaInfo CLI.",
-  "MediaInfo CLI path changed to _{path}__": "MediaInfo CLI path changed to \"{path}\"."
+  "MediaInfo CLI path changed to _{path}__": "MediaInfo CLI path changed to \"{path}\".",
+  "Important_": "Important:",
+  "If you want, for example, to see THISLANGUAGE titles, you must add the THISREGION region in _REGIONS__": "If you want, for example, to see English titles, you must add the 'United Kingdom' or 'United States' region in \"REGIONS\"."
 }

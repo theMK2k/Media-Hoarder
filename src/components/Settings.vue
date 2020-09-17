@@ -88,9 +88,9 @@
         <v-row class="settings-row">
           <h3>{{$t('Last Access Grace Period')}}</h3>
 
-          <v-card-text class="light-grey">
-            {{$t('{appName} provides the date and time of the last access for any medium_ In order to prevent unwanted updates, you can define a grace period in seconds where a medium can be played until the update is performed_', { appName: $shared.appName })}}
-          </v-card-text>
+          <v-card-text
+            class="light-grey"
+          >{{$t('{appName} provides the date and time of the last access for any medium_ In order to prevent unwanted updates, you can define a grace period in seconds where a medium can be played until the update is performed_', { appName: $shared.appName })}}</v-card-text>
 
           <v-text-field
             type="number"
@@ -102,11 +102,11 @@
 
         <v-row class="settings-row">
           <h3>{{$t('IMDB Rating Demographic')}}</h3>
-          
-          <v-card-text class="light-grey">
-            {{$t('{appName} provides the IMDB score and number of votes for each medium _where applicable__ By default these are the numbers of all IMDB users_ You can, however, decide if you wish to see those of a certain demographic, e_g_ by gender or age_', { appName: $shared.appName })}}
-          </v-card-text>
-          
+
+          <v-card-text
+            class="light-grey"
+          >{{$t('{appName} provides the IMDB score and number of votes for each medium _where applicable__ By default these are the numbers of all IMDB users_ You can, however, decide if you wish to see those of a certain demographic, e_g_ by gender or age_', { appName: $shared.appName })}}</v-card-text>
+
           <v-select
             class="mk-v-select-dynamic-width"
             v-bind:label="$t('IMDB Rating Demographic')"
@@ -121,9 +121,9 @@
         <v-row class="settings-row">
           <h3>{{ $t('Log Level') }}</h3>
 
-          <v-card-text class="light-grey">
-            {{$t('{appName} logs certain events during runtime_ You can view these logs by pressing the _Open DevTools_ button below_ With the log level you decide which event severity should be logged_', { appName: $shared.appName })}}
-          </v-card-text>
+          <v-card-text
+            class="light-grey"
+          >{{$t('{appName} logs certain events during runtime_ You can view these logs by pressing the _Open DevTools_ button below_ With the log level you decide which event severity should be logged_', { appName: $shared.appName })}}</v-card-text>
 
           <v-select
             class="mk-v-select-dynamic-width"
@@ -364,6 +364,10 @@
 
         <v-card-text class="light-grey">
           <p>{{$t('The languages and their sequence defined here will be used for the Primary Title of the media_')}}</p>
+          <p>
+            <strong>{{$t('Important_')}}</strong>
+            {{$t('If you want, for example, to see THISLANGUAGE titles, you must add the THISREGION region in _REGIONS__')}}
+          </p>
         </v-card-text>
 
         <v-alert
@@ -671,7 +675,6 @@
       v-on:ok="onEditMediainfoPathDialogOK"
       v-on:cancel="onEditMediainfoPathDialogCancel"
     ></mk-edit-mediainfo-path-dialog>
-
   </div>
 </template>
 
@@ -988,19 +991,29 @@ export default {
     },
 
     async onEditMediaplayerPathDialogOK(result) {
-      if (!await helpers.existsAsync(result.textValue)) {
-        eventBus.showSnackbar('error', this.$t(`The path _{path}_ cannot be found_`, { path: result.textValue }));
+      if (!(await helpers.existsAsync(result.textValue))) {
+        eventBus.showSnackbar(
+          "error",
+          this.$t(`The path _{path}_ cannot be found_`, {
+            path: result.textValue,
+          })
+        );
         this.editMediaplayerPathDialog.show = false;
         return;
       }
-      
+
       this.MediaplayerPath = result.textValue;
 
       store.setSetting("MediaplayerPath", this.MediaplayerPath);
 
       this.editMediaplayerPathDialog.show = false;
 
-      eventBus.showSnackbar('success', this.$t(`Media Player path changed to _{path}__`, { path: result.textValue }));
+      eventBus.showSnackbar(
+        "success",
+        this.$t(`Media Player path changed to _{path}__`, {
+          path: result.textValue,
+        })
+      );
     },
 
     onEditMediaplayerPathDialogCancel() {
@@ -1013,19 +1026,29 @@ export default {
     },
 
     async onEditMediainfoPathDialogOK(result) {
-      if (!await helpers.existsAsync(result.textValue)) {
-        eventBus.showSnackbar('error', this.$t(`The path _{path}_ cannot be found_`, { path: result.textValue }));
+      if (!(await helpers.existsAsync(result.textValue))) {
+        eventBus.showSnackbar(
+          "error",
+          this.$t(`The path _{path}_ cannot be found_`, {
+            path: result.textValue,
+          })
+        );
         this.editMediainfoPathDialog.show = false;
         return;
       }
-      
+
       this.MediainfoPath = result.textValue;
 
       store.setSetting("MediainfoPath", this.MediainfoPath);
 
       this.editMediainfoPathDialog.show = false;
 
-      eventBus.showSnackbar('success', this.$t(`MediaInfo CLI path changed to _{path}__`, { path: result.textValue }));
+      eventBus.showSnackbar(
+        "success",
+        this.$t(`MediaInfo CLI path changed to _{path}__`, {
+          path: result.textValue,
+        })
+      );
     },
 
     onEditMediainfoPathDialogCancel() {
@@ -1681,12 +1704,17 @@ export default {
 
   // ### LifeCycle Hooks ###
   async created() {
-    this.$shared.imdbRatingDemographics.forEach(demographic => {
-      demographic.long_translated = this.$t(`RatingDemographics.${demographic.long}`);
-    })
+    this.$shared.imdbRatingDemographics.forEach((demographic) => {
+      demographic.long_translated = this.$t(
+        `RatingDemographics.${demographic.long}`
+      );
+    });
 
-    logger.log('this.$shared.imdbRatingDemographics:', this.$shared.imdbRatingDemographics);
-    
+    logger.log(
+      "this.$shared.imdbRatingDemographics:",
+      this.$shared.imdbRatingDemographics
+    );
+
     await this.fetchSourcePaths();
 
     const regions = await store.getSetting("regions");
