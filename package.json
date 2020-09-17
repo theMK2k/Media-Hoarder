@@ -2,7 +2,7 @@
   "name": "media-hoarder",
   "version": "1.0.0",
   "private": true,
-  "description": "Media Hoarder - THE media frontend for data hoarders",
+  "description": "Media Hoarder - THE media frontend for data hoarders and movie lovers",
   "author": "mk2k <npm@hoarder.software> (https://media.hoarder.software)",
   "scripts": {
     "serve": "vue-cli-service serve",

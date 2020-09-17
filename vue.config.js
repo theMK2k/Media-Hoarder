@@ -2,6 +2,7 @@ module.exports = {
   pluginOptions: {
     electronBuilder: {
       builderOptions: {
+        productName: 'Media Hoarder',
         extraResources: [
           'data/media-hoarder.db_initial',
           'data/easylist.txt'
