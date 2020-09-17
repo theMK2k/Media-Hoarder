@@ -2,21 +2,13 @@
 
 ## v1.0.0
 
-### Proper Portable Mode
-
-- [x] use pre-build step to set portable mode explicitly
-- [ ] explicitly set the out-dir? -> e.g. /dist_electron/win-portable
-- [ ] implement pre-build step in all build tasks
-- [ ] target: RELEASE directory with media-hoarder-VERSION-... files
-- [ ] create set-release-version.js which renames the media-hoarder-VERSION-... files to media-hoarder-1.2.3-... files
-
 ### Bugs
 
 - no bugs currently known
 
 ### Other
 
-- [ ] re-browse Source Path
+- nothing
 
 ## LATER
 
@@ -86,6 +78,7 @@
 
 ### Other
 
+- [ ] re-browse Source Path
 - [ ] correctly implement scrollcontainer class (e.g. Medialist)
 - [ ] OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 

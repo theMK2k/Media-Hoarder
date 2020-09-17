@@ -15,6 +15,13 @@
 - [x] -> fetch Countries from <https://www.imdb.com/search/title/> and provide as list
 - [x] -> Auto set region by user's localization setting?
 
+### Proper Portable Mode
+
+- [x] use pre-build step to set portable mode explicitly
+- [x] implement pre-build step in all build tasks
+- [x] target: RELEASE directory with media-hoarder-VERSION-... files
+- [x] create set-release-version.js which renames the media-hoarder-VERSION-... files to media-hoarder-1.2.3-... files
+
 ### Implement Home Screen Cards
 
 - bigger cards
