@@ -7,20 +7,23 @@ const os = require("os");
 const logger = require("loglevel");
 
 const isBuild = process.env.NODE_ENV === "production";
+const isDevelopment = !isBuild;
 const isWindows = process.platform === "win32";
 
 const writeFileAsync = util.promisify(fs.writeFile);
 const existsAsync = util.promisify(fs.exists);
 const requestretryAsync = util.promisify(requestretry);
 
+const isPORTABLE = false;   // DON'T TOUCH! This is handled by set-portable.js
+
 /**
- * get absolute path for a given relative path depending on portable mode:
- * in portable mode it is APPDIR/data/relativePath
- * in non-portable mode it is ~/.media-hoarder/relativePath
+ * get absolute path for a given relative path depending wether the app is explicitly PORTABLE/!PORTABLE or in dev-mode (run via npm start) or built:
+ * in portable/dev mode it is APPDIR/data/relativePath
+ * in non-portable/non-dev mode it is ~/.media-hoarder/relativePath
  * @param {string} relativePath 
  */
 function getDataPath(relativePath) {
-  if (!isBuild) {
+  if (isDevelopment || isPORTABLE) {
     return path.join(getStaticPath('data'), relativePath);
   }
 

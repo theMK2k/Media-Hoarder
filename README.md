@@ -53,7 +53,19 @@ Document|Description
 [01-Media-Storage.md](docs/01-Media-Storage.md)|how **Media Hoarder** expects media files to be stored
 [02-IMDB-ID-Detection.md](docs/02-IMDB-ID-Detection.md)|in-depth talk about how **Media Hoarder** tries to find the correct IMDB entry for a movie
 
-## Getting started from source
+## Download and Install
+
+Downloads are availbale at [releases](https://github.com/theMK2k/Media-Hoarder/releases).
+
+Currently **Media Hoarder** comes as:
+
+- Windows 7/8/10 x64 Setup
+- Windows 7/8/10 x64 "portable"
+- Linux x64 Setup
+- Linux x64 AppImage "portable"
+- MacOS X x64 .dmg
+
+## For Developers: Getting started from source
 
 ### Install Node.js
 

@@ -2,6 +2,12 @@
 
 ## v1.0.0
 
+### Proper Portable Mode
+
+- [x] use pre-build step to set portable mode explicitly
+- [ ] explicitly set the out-dir? -> e.g. /dist_electron/win-portable
+- [ ] implement pre-build step in all build tasks
+
 ### Bugs
 
 - no bugs currently known
