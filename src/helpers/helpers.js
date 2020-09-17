@@ -253,6 +253,15 @@ async function requestAsync(options) {
     optionsDerived.retryDelay = 1000;
   }
 
+  // always provide header "Accept-Language": "en"
+  if (!optionsDerived.headers) {
+    optionsDerived.headers = {};
+  }
+
+  if (!optionsDerived.headers["Accept-Language"]) {
+    optionsDerived.headers["Accept-Language"] = "en";
+  }
+
   logger.log('request options:', optionsDerived);
 
   return requestretryAsync(optionsDerived);

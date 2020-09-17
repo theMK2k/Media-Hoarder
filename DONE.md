@@ -573,6 +573,11 @@ Dialog.vue
 
 ### Bugs
 
+- [x] IMDB Scraper: on a German IP, we still get the German title as Primary Title even though we set all languages to English
+  - [x] use "Accept-Language": "en" header on all calls to IMDB
+- [x] Linux version doesn't fetch data / endless loop? (in our test VM)
+  - [x] test in livecd (successful, fetch from web is working as expected)
+  -> we assume there is an issue with the VM
 - [x] Title determination (Regional, Primary, Secondary)
 - [x] vue-i18n: Value of key 'LanguageNames.N'Ko' is not a string!
 - [x] duplicate detection fails at special characters: e.g. "adams aebler"n

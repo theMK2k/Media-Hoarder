@@ -39,7 +39,7 @@ function performDefaultCheck(
     addSubLogEntry(
       testResult,
       `${msgPrefix ? msgPrefix + " " : ""}${fieldName} mismatch
-    got:      ${JSON.stringify(scrapeResult[fieldName])}"
+    got:      ${JSON.stringify(scrapeResult[fieldName])}
     expected: ${JSON.stringify(expected[fieldName])}`,
       status.WARNING
     );
@@ -199,7 +199,7 @@ async function testIMDBreleaseinfo() {
     const expected = {
       $IMDB_originalTitle: "Star Trek: The Next Generation",
       $IMDB_localTitle: "Raumschiff Enterprise: Das nächste Jahrhundert",
-      $IMDB_primaryTitle: "Raumschiff Enterprise - Das nächste Jahrhundert",
+      $IMDB_primaryTitle: "Star Trek: The Next Generation",
       $IMDB_startYear: "1987",
       $IMDB_endYear: "1994",
     };
@@ -555,7 +555,7 @@ async function testIMDBPersonData() {
       $ShortBio:
         "Sir Patrick Stewart was born in Mirfield, Yorkshire, England, to Gladys (Barrowclough), a textile worker and weaver, and Alfred Stewart, who was in the army. He was a member of various local drama groups from about age 12. He left school at age 15 to work as a junior reporter on a local paper; he quit when his editor told him he was spending too ...  »",
       $LongBio:
-        "Sir Patrick Stewart was born in Mirfield, Yorkshire, England, to Gladys (Barrowclough), a textile worker and weaver, and Alfred Stewart, who was in the army. He was a member of various local drama groups from about age 12. He left school at age 15 to work as a junior reporter on a local paper; he quit when his editor told him he was spending too much time at the theatre and not enough working. Stewart spent a year as a furniture salesman, saving cash to attend drama school. He was accepted by Bristol Old Vic Theatre School in 1957. He made his professional debut in 1959 in the repertory theatre in Lincoln; he worked at the Manchester Library Theatre and a tour around the world with the Old Vic Company followed in the early 1960s. Stewart joined the Royal Shakespeare Company in 1966, to begin his 27-year association. Following a spell with the Royal National Theatre in the mid 1980s, he went to Los Angeles, California to star on Raumschiff Enterprise - Das nächste Jahrhundert (1987), which ran from 1987-1994, playing the role of Captain Jean-Luc Picard. After the series ended, Stewart reprised his role for a string of successful Star Trek films: Star Trek: Treffen der Generationen (1994), Star Trek: Der erste Kontakt (1996), Star Trek: Der Aufstand (1998), and Star Trek: Nemesis (2002). Stewart continues to work on the stage and in various films. He was awarded Knight Bachelor of the Order of the British Empire in the 2010 Queen's New Year's Honours List for his services to drama.\n\n\n- IMDb Mini Biography By: International Audience Alliance for Patrick Stewart (IAAPS)",
+        "Sir Patrick Stewart was born in Mirfield, Yorkshire, England, to Gladys (Barrowclough), a textile worker and weaver, and Alfred Stewart, who was in the army. He was a member of various local drama groups from about age 12. He left school at age 15 to work as a junior reporter on a local paper; he quit when his editor told him he was spending too much time at the theatre and not enough working. Stewart spent a year as a furniture salesman, saving cash to attend drama school. He was accepted by Bristol Old Vic Theatre School in 1957. He made his professional debut in 1959 in the repertory theatre in Lincoln; he worked at the Manchester Library Theatre and a tour around the world with the Old Vic Company followed in the early 1960s. Stewart joined the Royal Shakespeare Company in 1966, to begin his 27-year association. Following a spell with the Royal National Theatre in the mid 1980s, he went to Los Angeles, California to star on Star Trek: The Next Generation (1987), which ran from 1987-1994, playing the role of Captain Jean-Luc Picard. After the series ended, Stewart reprised his role for a string of successful Star Trek films: Star Trek: Generations (1994), Star Trek: First Contact (1996), Star Trek: Insurrection (1998), and Star Trek: Nemesis (2002). Stewart continues to work on the stage and in various films. He was awarded Knight Bachelor of the Order of the British Empire in the 2010 Queen's New Year's Honours List for his services to drama.\n\n\n- IMDb Mini Biography By: International Audience Alliance for Patrick Stewart (IAAPS)",
     };
 
     const scrapeResult = await imdbScraper.scrapeIMDBPersonData(
@@ -1027,10 +1027,10 @@ async function testIMDBAdvancedTitleSearch() {
           title: "Forrest Gump (1994) ",
           imageURL:
             "https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_UY98_CR0,0,67,98_AL_.jpg",
-          ageRating: "12",
+          ageRating: "PG-13",
           runtime: "142 min",
           genres: "Drama, Romance",
-          detailInfo: "12 | 142 min | Drama, Romance",
+          detailInfo: "PG-13 | 142 min | Drama, Romance",
         },
       },
       // {
@@ -1160,7 +1160,7 @@ async function testIMDBFind() {
           id: "tt9426210",
           type: "title",
           resultText:
-            'Weathering with You - Das Mädchen, das die Sonne berührte (2019) aka "天気の子"',
+            'Weathering with You (2019) aka "天気の子"',
           imageURL:
             "https://m.media-amazon.com/images/M/MV5BNzE4ZDEzOGUtYWFjNC00ODczLTljOGQtZGNjNzhjNjdjNjgzXkEyXkFqcGdeQXVyNzE5ODMwNzI@._V1_UX32_CR0,0,32,44_AL_.jpg",
         },
