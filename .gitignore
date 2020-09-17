@@ -28,3 +28,6 @@ yarn-error.log*
 
 #DB in use
 /data/media-hoarder.db*
+
+#RELEASE
+/RELEASE

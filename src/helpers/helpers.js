@@ -278,6 +278,8 @@ function ensureDirectorySync(path) {
 
 export {
   isWindows,
+  isPORTABLE,
+  isDevelopment,
   writeFileAsync,
   existsAsync,
   requestretryAsync,

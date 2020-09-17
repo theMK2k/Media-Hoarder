@@ -7,6 +7,8 @@
 - [x] use pre-build step to set portable mode explicitly
 - [ ] explicitly set the out-dir? -> e.g. /dist_electron/win-portable
 - [ ] implement pre-build step in all build tasks
+- [ ] target: RELEASE directory with media-hoarder-VERSION-... files
+- [ ] create set-release-version.js which renames the media-hoarder-VERSION-... files to media-hoarder-1.2.3-... files
 
 ### Bugs
 

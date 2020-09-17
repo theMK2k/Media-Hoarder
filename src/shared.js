@@ -2,11 +2,14 @@ import Vue from "vue";
 // const logger = require("loglevel");
 // const moment = require("moment");
 
+const helpers = require("./helpers/helpers");
 const imdbScraperTests = require("./imdb-scraper-tests");
 
 const shared = new Vue({
   data: {
     appName: 'Media Hoarder',
+    isPORTABLE: helpers.isPORTABLE,
+    isDevelopment: helpers.isDevelopment,
     sidenav: null,
     searchText: null,
     logLevel: 0,
