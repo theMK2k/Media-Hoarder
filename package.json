@@ -9,7 +9,7 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "electron:build-win-setup": "npx mkdirp dist_electron/RELEASE && node set-portable --portable=false && vue-cli-service electron:build --win && npx move-file-cli dist_electron/*.exe dist_electron/RELEASE/media-hoarder-VERSION-win-x64-setup.exe",
-    "electron:build-win-portable": "npx mkdirp dist_electron/RELEASE && node set-portable --portable=true && vue-cli-service electron:build --win && npx move-file-cli dist_electron/win-unpacked media-hoarder && npx bestzip dist_electron/RELEASE/media-hoarder-VERSION-win-x64-portable.zip media-hoarder && npx rimraf media-hoarder",
+    "electron:build-win-portable": "npx mkdirp dist_electron/RELEASE && node set-portable --portable=true && vue-cli-service electron:build --win && npx move-file-cli dist_electron/win-unpacked media-hoarder && npx bestzip dist_electron/RELEASE/media-hoarder-VERSION-win-x64-portable.zip media-hoarder && npx rimraf media-hoarder && node set-portable --portable=false",
     "electron:build-linux": "vue-cli-service electron:build --linux deb appimage",
     "electron:build-mac": "vue-cli-service electron:build --mac dmg",
     "electron:build-rpi": "vue-cli-service electron:build --dir --linux --armv7l deb appimage",
