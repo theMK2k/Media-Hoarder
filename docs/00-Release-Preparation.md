@@ -6,13 +6,13 @@ This document describes the steps necessary to get a new release done.
 
 - [x] Increase Version Number in [../package.json](../package.json)
 - [x] Copy contents of [../DONE.md](../DONE.md) into `public/history/version-x.y.z.md` and clean up (keep it tidy)
-- [ ] git push
+- [x] git push
 
 ## Build Packs
 
 ### Windows Build
 
-- [ ] in Windows run:
+- [x] in Windows run:
 
 ```bash
 git pull
@@ -25,7 +25,7 @@ find properly named `*-portable.zip` and `*-setup.exe` in `RELEASE` directory
 
 ### Linux Build
 
-- [ ] in Linux run:
+- [x] in Linux run:
 
 ```bash
 git pull
@@ -43,6 +43,8 @@ npm run electron:build-linux-portable
 ```bash
 export APPLE_ID=%APPLE_ID%
 export APPLE_ID_PASSWORD=%APPLE_ID_PASSWORD%
+git pull
+npm i
 npm run electron:build-mac
 ```
 

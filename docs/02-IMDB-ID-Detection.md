@@ -20,11 +20,11 @@ The Godfather [tt0068646].mkv
 
 **Media Hoarder** parses .nfo files and checks if an IMDB ID is available. For this, the movie must be in the **same directory** as the .nfo file. The .nfo filename is irrelevant.
 
-### IMDB ID is not part of the file- or directory name
+### IMDB ID is neiher part of the file- nor the directory name
 
-If the actual IMDB ID is not part of the filename, **Media Hoarder** tries to detect the correct IMDB entry by performing an IMDB search with parts of the filename.
+If the actual IMDB ID is neither part of the file- nor the directory name, **Media Hoarder** tries to detect the correct IMDB entry by performing an IMDB search with parts of the filename.
 
-It is greatly beneficial if the file name also provides the movie's release year.
+It is greatly beneficial if the file name also provides the movie's **release year**.
 
 We ran tests utilizing the following constructed test set:
 
@@ -46,7 +46,7 @@ Result of the test:
 4. Furthermore remove anything enclosed in brackets from filtered name
 5. Feed the filtered name into a search query to IMDB
 
-- the search return no result: remove the last word from filtered name and run 5. again
+- the search returns no result: remove the last word from the filtered name and run 5. again
 - the search returns exactly one result: use this result's IMDB ID
 - the search returns more than one result: check if the result's release year is included in the extracted years from 4.
   - a year matched: use this result's IMDB ID

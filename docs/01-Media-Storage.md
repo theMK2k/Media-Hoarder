@@ -4,7 +4,7 @@ This document describes how **Media Hoarder** expects media files to be stored.
 
 ## Supported Media File Types
 
-Durin a (re-)scan **Media Hoarder** imports the following file types as media files:
+During a (re-)scan **Media Hoarder** imports the following file types as media files:
 
 - .avi, .mp4, .mkv, .m2ts - typical video file containers
 - .rar - multi-part archive format (only the first file will be imported)
