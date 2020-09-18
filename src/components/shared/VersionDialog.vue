@@ -3,17 +3,14 @@
     <v-card>
       <v-card-title>
         <v-row class="headline" style="width: 100%; font-size: 1.17em">
-          {{$shared.appName}} {{currentVersion}}
+          {{$shared.appName}} {{currentVersion}} ({{currentName}})
           <v-spacer></v-spacer>
 
           <v-btn text v-on:click="$emit('close')">{{$t('Close')}}</v-btn>
         </v-row>
 
         <div class="v-card__text" style="padding: 0px">
-          <div
-            v-if="isLoadingHistory"
-            style="margin-bottom: 16px"
-          >
+          <div v-if="isLoadingHistory" style="margin-bottom: 16px">
             {{$t('Checking for Updates')}}
             <v-progress-linear color="red accent-0" indeterminate rounded height="6"></v-progress-linear>
           </div>
@@ -27,7 +24,7 @@
             style="margin-top: 8px"
           >
             <span v-if="isNewVersionAvailable">
-              {{$t('Version {latestVersion} is available - get it at', {latestVersion: latestVersion})}}
+              {{$t('Version {latestVersion} ({latestName}) is available - get it at', {latestVersion: latestVersion, latestName: latestName})}}
               <a
                 v-on:click.stop="openLink('https://github.com/theMK2k/Media-Hoarder/releases')"
               >https://github.com/theMK2k/Media-Hoarder/releases</a>
@@ -106,7 +103,9 @@ export default {
 
       history: [],
       currentVersion: null,
+      currentName: null,
       latestVersion: null,
+      latestName: null,
 
       infoPosition: 0,
     };
@@ -200,6 +199,7 @@ export default {
 
         this.history = objLocalHistory;
         this.currentVersion = objLocalHistory[0].version;
+        this.currentName = objLocalHistory[0].name;
 
         const resRemoteHistory = await fetch(
           "https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/public/history/history.json"
@@ -210,8 +210,9 @@ export default {
         logger.log("VersionDialog checkVersion remoteHistory:", remoteHistory);
 
         this.latestVersion = remoteHistory[0].version;
+        this.latestName = remoteHistory[0].name;
 
-        if (semver.gt(this.latestVersion,this.currentVersion)) {
+        if (semver.gt(this.latestVersion, this.currentVersion)) {
           this.history = remoteHistory;
           this.isNewVersionAvailable = true;
         } else {

@@ -633,7 +633,7 @@
   "Add this Title Type": "Diesen Titel Typ Hinzufügen",
 
   "Checking for Updates": "Prüfe auf Updates",
-  "Version {latestVersion} is available - get it at": "Version {latestVersion} ist verfügbar - hol sie Dir über",
+  "Version {latestVersion} ({latestName}) is available - get it at": "Version {latestVersion} ({latestName}) ist verfügbar - hol sie Dir über",
   "you are up to date": "Deine Version ist aktuell",
   "unable to determine if you are up to date": "auf Updates konnte nicht geprüft werden",
   "Visit": "Besuche",
