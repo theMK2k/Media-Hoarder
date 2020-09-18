@@ -656,9 +656,12 @@
     <v-app-bar app clipped-left color="red" dense>
       <v-app-bar-nav-icon @click.stop="$shared.sidenav = !$shared.sidenav"></v-app-bar-nav-icon>
       <v-toolbar-title class="mr-12 align-center mk-noshrink">
-        <span
-          class="title"
-        >{{$shared.appName}}{{$shared.isPORTABLE ? ` - Portable` : ''}}{{$shared.isDevelopment ? ` (DEV)` : ''}}</span>
+        <span class="title">
+          {{$shared.appName}}
+          <span v-if="$shared.currentVersion">{{$shared.currentVersion}} ({{$shared.currentName}})</span>
+          {{$shared.isDevelopment ? ` (DEV)` : ''}}
+          {{$shared.isPORTABLE ? ` - Portable` : ''}}
+        </span>
       </v-toolbar-title>
       <!-- <div class="flex-grow-1"></div> -->
       <v-spacer></v-spacer>
@@ -1476,9 +1479,9 @@ export default {
     },
 
     currentRoute() {
-      logger.log('currentRoute:', this.$route);
+      logger.log("currentRoute:", this.$route);
       return this.$route;
-    }
+    },
   },
 
   methods: {
@@ -2001,7 +2004,6 @@ export default {
     this.checkVersion();
 
     this.searchText = this.$shared.searchText;
-    
 
     eventBus.$on("showSnackbar", ({ color, textOrErrorObject, timeout }) => {
       logger.debug("snackbar called:", textOrErrorObject);
@@ -2233,6 +2235,17 @@ h1 {
   color: red !important;
 }
 
+.mk-clickable-dark-grey {
+  font-size: 0.875rem;
+  font-weight: normal;
+  color: darkgrey !important;
+  cursor: pointer;
+}
+
+.mk-clickable-dark-grey:hover {
+  color: #2196f3 !important;
+}
+
 /* ### Vuetify fixes ### */
 
 /* this is part of v-select and makes it unneccessarily high */
@@ -2250,7 +2263,7 @@ h1 {
 
 /* ### marked overrides ### */
 code {
-  background-color: rgba(0, 0, 0, 0)!important;
-  color: rgba(255, 255, 255, 0.7)!important;
+  background-color: rgba(0, 0, 0, 0) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
 }
 </style>

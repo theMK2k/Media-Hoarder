@@ -10,6 +10,10 @@ const shared = new Vue({
     appName: 'Media Hoarder',
     isPORTABLE: helpers.isPORTABLE,
     isDevelopment: helpers.isDevelopment,
+    
+    currentVersion: null,
+    currentName: null,
+    
     sidenav: null,
     searchText: null,
     logLevel: 0,

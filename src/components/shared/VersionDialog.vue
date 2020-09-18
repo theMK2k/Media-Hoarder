@@ -3,10 +3,14 @@
     <v-card>
       <v-card-title>
         <v-row class="headline" style="width: 100%; font-size: 1.17em">
-          {{$shared.appName}} {{currentVersion}} ({{currentName}})
+          <div class="headline mk-clickable" v-on:click="showQuote = !showQuote">{{$shared.appName}} {{$shared.currentVersion}} ({{$shared.currentName}})</div>
           <v-spacer></v-spacer>
 
           <v-btn text v-on:click="$emit('close')">{{$t('Close')}}</v-btn>
+        </v-row>
+
+        <v-row v-if="showQuote" class="mk-clickable-dark-grey" style="line-height: 1.5" v-on:click="showQuote = false">
+          <i>{{ quote }}</i>
         </v-row>
 
         <div class="v-card__text" style="padding: 0px">
@@ -101,9 +105,10 @@ export default {
       isLoadingHistory: false,
       isLoadingVersionInfo: false,
 
+      showQuote: false,
+      quote: null,
+
       history: [],
-      currentVersion: null,
-      currentName: null,
       latestVersion: null,
       latestName: null,
 
@@ -198,8 +203,9 @@ export default {
         );
 
         this.history = objLocalHistory;
-        this.currentVersion = objLocalHistory[0].version;
-        this.currentName = objLocalHistory[0].name;
+        this.$shared.currentVersion = objLocalHistory[0].version;
+        this.$shared.currentName = objLocalHistory[0].name;
+        this.quote = objLocalHistory[0].quote;
 
         const resRemoteHistory = await fetch(
           "https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/public/history/history.json"
@@ -212,7 +218,7 @@ export default {
         this.latestVersion = remoteHistory[0].version;
         this.latestName = remoteHistory[0].name;
 
-        if (semver.gt(this.latestVersion, this.currentVersion)) {
+        if (semver.gt(this.latestVersion, this.$shared.currentVersion)) {
           this.history = remoteHistory;
           this.isNewVersionAvailable = true;
         } else {
