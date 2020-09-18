@@ -3388,13 +3388,13 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
         ? "(" + item.startYear + (item.endYear ? `-${item.endYear}` : "") + ")"
         : "";
       item.IMDB_rating_defaultFormatted = item.IMDB_rating_default
-        ? `${item.IMDB_rating_default.toLocaleString(undefined, {
+        ? `${item.IMDB_rating_default.toLocaleString(shared.uiLanguage, {
           minimumFractionDigits: 1,
         })}`
         : "";
       item.IMDB_rating_defaultDisplay = item.IMDB_rating_defaultFormatted
         ? `${item.IMDB_rating_defaultFormatted
-        } (${item.IMDB_numVotes_default.toLocaleString()})`
+        } (${item.IMDB_numVotes_default.toLocaleString(shared.uiLanguage)})`
         : "";
 
       item.AudioLanguages = generateLanguageArray(
@@ -3741,7 +3741,7 @@ async function fetchFilterSourcePaths($MediaType) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString();
+      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
     });
   }
 
@@ -3788,7 +3788,7 @@ async function fetchFilterGenres($MediaType, $t) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString();
+      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
     });
   }
 
@@ -3848,7 +3848,7 @@ async function fetchFilterAgeRatings($MediaType) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString();
+      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
     });
   }
 
@@ -3940,7 +3940,7 @@ async function fetchFilterRatings($MediaType) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString();
+      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
     });
   }
 
@@ -4067,7 +4067,7 @@ async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString();
+      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
     });
   }
 
@@ -4133,7 +4133,7 @@ async function fetchFilterPersons($MediaType, $t) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString();
+      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
     });
   }
 
@@ -4197,7 +4197,7 @@ async function fetchFilterCompanies($MediaType, $t) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString();
+      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
     });
   }
 
@@ -4265,7 +4265,7 @@ async function fetchFilterIMDBPlotKeywords($MediaType, $t) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString();
+      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
     });
   }
 
@@ -4331,7 +4331,7 @@ async function fetchFilterIMDBFilmingLocations($MediaType, $t) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString();
+      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
     });
   }
 
@@ -4385,7 +4385,7 @@ async function fetchFilterYears($MediaType) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString();
+      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
     });
   }
 
@@ -4426,7 +4426,7 @@ async function fetchFilterQualities($MediaType) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString();
+      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
     });
   }
 
@@ -4581,7 +4581,7 @@ async function fetchFilterLists($MediaType, $t) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString();
+      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
     });
   }
 
@@ -4663,7 +4663,7 @@ async function fetchFilterLanguages($MediaType, $LanguageType, $t) {
       }
     }
 
-    result.NumMovies = result.NumMovies.toLocaleString();
+    result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
 
     result.DisplayText = result.Language;
     if (languageCodeNameMapping[result.Language]) {
@@ -5628,7 +5628,7 @@ async function fetchRatingDemographics($id_Movies) {
   Object.keys(ratingDemographics).forEach((key) => {
     if (key.includes("rating")) {
       ratingDemographics[key + "_formatted"] = ratingDemographics[key]
-        ? `${ratingDemographics[key].toLocaleString(undefined, {
+        ? `${ratingDemographics[key].toLocaleString(shared.uiLanguage, {
           minimumFractionDigits: 1,
         })}`
         : "";
@@ -5636,7 +5636,7 @@ async function fetchRatingDemographics($id_Movies) {
 
     if (key.includes("numVotes")) {
       ratingDemographics[key + "_formatted"] = ratingDemographics[key]
-        ? `${ratingDemographics[key].toLocaleString()}`
+        ? `${ratingDemographics[key].toLocaleString(shared.uiLanguage)}`
         : "";
     }
   });
@@ -5955,7 +5955,7 @@ async function fetchFilterReleaseAttributes($MediaType) {
         result.Selected = filterReleaseAttribute.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString();
+      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
     });
   }
 
@@ -6164,7 +6164,7 @@ async function fetchNumMovies($MediaType) {
 
   `, { $MediaType })
 
-  return numMovies.toLocaleString();
+  return numMovies.toLocaleString(shared.uiLanguage);
 }
 
 export {
