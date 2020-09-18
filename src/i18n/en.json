@@ -63,7 +63,7 @@
   "include entries with no Metacritic score": "include entries with no Metacritic score",
   "include entries with no IMDB rating": "include entries with no IMDB rating",
   "none provided": "none provided",
-  "List {name} removed": "List '{name}' removed",
+  "List {name} deleted_": "List '{name}' deleted.",
   "unknown text": "unknown text",
   "General": "General",
   "Duplicates": "Duplicates",
@@ -813,5 +813,14 @@
   "MediaInfo CLI path changed to _{path}__": "MediaInfo CLI path changed to \"{path}\".",
   "Important_": "Important:",
   "If you want, for example, to see THISLANGUAGE titles, you must add the THISREGION region in _REGIONS__": "If you want, for example, to see English titles, you must add the 'United Kingdom' or 'United States' region in \"REGIONS\".",
-  "Path updated_": "Path updated."
+  "Do you really want to remove {name} from the filter list?": "Do you really want to remove '{name}' from the filter list?",
+  "Path updated_": "Path updated.",
+  "Remove Person": "Remove Person",
+  "Person {name} removed_": "Person '{name}' removed.",
+  "Remove Company": "Remove Company",
+  "Company {name} removed_": "Company '{name}' removed.",
+  "Remove Plot Keyword": "Remove Plot Keyword",
+  "Plot Keyword {name} removed_": "Plot Keyword '{name}' removed.",
+  "Remove Filming Location": "Remove Filming Location",
+  "Filming Location {name} removed_": "Filming Location '{name}' removed."
 }

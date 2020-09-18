@@ -401,6 +401,7 @@ Series
 
 ### Other
 
+- [x] App: ask before delete (mdi-delete items)
 - [x] re-browse Source Path
 - [x] calculate video resolution by multiplying width and height and use the megapixels
 - [x] review <https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html>

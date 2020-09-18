@@ -4,11 +4,13 @@
 
 ### Bugs
 
-- no bugs currently known
+- [ ] search filter is active but not shown in search text box
+- [ ] person/company... dialog: refetch image if it is not available anymore
 
 ### Other
 
-- [ ] App: ask before delete (mdi-delete items)
+- [ ] App: show search only when in movies or series (or: not in settings)
+- [ ] App: show filters only when in movies or series (or: not in settings)
 
 ## LATER
 

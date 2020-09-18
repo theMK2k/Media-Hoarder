@@ -51,7 +51,11 @@
         >
           <v-divider></v-divider>
 
-          <v-subheader style="margin: 0px!important; font-size: 16px">{{$t("Filters")}}<v-spacer></v-spacer><v-btn text v-on:click="resetFilters()">{{$t("RESET")}}</v-btn></v-subheader>
+          <v-subheader style="margin: 0px!important; font-size: 16px">
+            {{$t("Filters")}}
+            <v-spacer></v-spacer>
+            <v-btn text v-on:click="resetFilters()">{{$t("RESET")}}</v-btn>
+          </v-subheader>
 
           <v-expansion-panels accordion multiple>
             <!-- FILTER SOURCE PATHS -->
@@ -229,7 +233,7 @@
                     class="mk-mk-clickable-red"
                     v-if="list.id_Lists"
                     style="align-items: flex-start; padding-top: 4px"
-                    v-on:click="deleteList(list)"
+                    v-on:click="showDeleteDialog(list, deleteList, 'Delete List', 'Do you really want to delete the list {name}?', list.Name)"
                   >mdi-delete</v-icon>
                 </v-row>
               </v-expansion-panel-content>
@@ -477,7 +481,7 @@
                     class="mk-mk-clickable-red"
                     style="align-items: flex-start; padding-top: 4px"
                     v-if="person.id_Filter_Persons"
-                    v-on:click="deletePerson(person)"
+                    v-on:click="showDeleteDialog(person, deletePerson, 'Remove Person', 'Do you really want to remove {name} from the filter list?', person.Person_Name)"
                   >mdi-delete</v-icon>
                 </v-row>
               </v-expansion-panel-content>
@@ -516,7 +520,7 @@
                     class="mk-mk-clickable-red"
                     style="align-items: flex-start; padding-top: 4px"
                     v-if="company.id_Filter_Companies"
-                    v-on:click="deleteCompany(company)"
+                    v-on:click="showDeleteDialog(company, deleteCompany, 'Remove Company', 'Do you really want to remove {name} from the filter list?', company.Company_Name)"
                   >mdi-delete</v-icon>
                 </v-row>
               </v-expansion-panel-content>
@@ -586,7 +590,7 @@
                     class="mk-mk-clickable-red"
                     style="align-items: flex-start; padding-top: 4px"
                     v-if="plotKeyword.id_Filter_IMDB_Plot_Keywords"
-                    v-on:click="deleteFilterIMDBPlotKeyword(plotKeyword)"
+                    v-on:click="showDeleteDialog(plotKeyword, deleteFilterIMDBPlotKeyword, 'Remove Plot Keyword', 'Do you really want to remove {name} from the filter list?', plotKeyword.Keyword)"
                   >mdi-delete</v-icon>
                 </v-row>
               </v-expansion-panel-content>
@@ -628,7 +632,7 @@
                     class="mk-mk-clickable-red"
                     style="align-items: flex-start; padding-top: 4px"
                     v-if="filmingLocation.id_Filter_IMDB_Filming_Locations"
-                    v-on:click="deleteFilterIMDBFilmingLocation(filmingLocation)"
+                    v-on:click="showDeleteDialog(filmingLocation, deleteFilterIMDBFilmingLocation, 'Remove Filming Location', 'Do you really want to remove {name} from the filter list?', filmingLocation.Location)"
                   >mdi-delete</v-icon>
                 </v-row>
               </v-expansion-panel-content>
@@ -651,7 +655,9 @@
     <v-app-bar app clipped-left color="red" dense>
       <v-app-bar-nav-icon @click.stop="$shared.sidenav = !$shared.sidenav"></v-app-bar-nav-icon>
       <v-toolbar-title class="mr-12 align-center mk-noshrink">
-        <span class="title">{{$shared.appName}}{{$shared.isPORTABLE ? ` - Portable` : ''}}{{$shared.isDevelopment ? ` (DEV)` : ''}}</span>
+        <span
+          class="title"
+        >{{$shared.appName}}{{$shared.isPORTABLE ? ` - Portable` : ''}}{{$shared.isDevelopment ? ` (DEV)` : ''}}</span>
       </v-toolbar-title>
       <!-- <div class="flex-grow-1"></div> -->
       <v-spacer></v-spacer>
@@ -680,17 +686,17 @@
           v-on:close="versionDialog.show = false"
         ></mk-version-dialog>
 
-        <mk-delete-list-dialog
-          v-bind:show="deleteListDialog.show"
-          v-bind:title="$t('Delete List')"
-          v-bind:question="$t(`Do you really want to delete the list {name}?`, { name: deleteListDialog.Name })"
+        <mk-delete-dialog
+          v-bind:show="deleteDialog.show"
+          v-bind:title="$t(deleteDialog.Title)"
+          v-bind:question="$t(deleteDialog.Message, { name: deleteDialog.ItemName })"
           v-bind:yes="$t('YES DELETE')"
           v-bind:no="$t('No')"
           yesColor="error"
           noColor="secondary"
-          v-on:yes="onDeleteListDialogOK"
-          v-on:no="onDeleteListDialogCancel"
-        ></mk-delete-list-dialog>
+          v-on:yes="onDeleteDialogOK"
+          v-on:no="onDeleteDialogCancel"
+        ></mk-delete-dialog>
 
         <mk-search-companies-dialog
           ref="searchCompaniesDialog"
@@ -810,6 +816,7 @@ import CheckIMDBScraperDialog from "@/components/shared/CheckIMDBScraperDialog.v
 
 export default {
   components: {
+    "mk-delete-dialog": Dialog,
     "mk-delete-list-dialog": Dialog,
     "mk-search-companies-dialog": SearchDataDialog,
     "mk-search-persons-dialog": SearchDataDialog,
@@ -817,11 +824,11 @@ export default {
     "mk-search-filming-locations-dialog": SearchDataDialog,
     "mk-scan-options-dialog": ScanOptionsDialog,
     "mk-version-dialog": VersionDialog,
-    "mk-check-imdb-scraper-dialog": CheckIMDBScraperDialog
+    "mk-check-imdb-scraper-dialog": CheckIMDBScraperDialog,
   },
 
   props: {
-    source: String
+    source: String,
   },
   data: () => ({
     showLoadingOverlay: false,
@@ -836,11 +843,11 @@ export default {
     scanInfo: {
       show: false,
       header: "",
-      details: ""
+      details: "",
     },
 
     scanOptions: {
-      onlyNew: false
+      onlyNew: false,
     },
 
     snackbar: {
@@ -848,72 +855,75 @@ export default {
       color: "",
       timeout: 6000,
       text: "",
-      details: []
+      details: [],
     },
 
-    deleteListDialog: {
+    deleteDialog: {
       show: false,
-      id_Lists: null,
-      Name: null
+      item: null,
+      deleteFunction: null,
+      Title: null,
+      Message: null,
+      ItemName: null,
     },
 
     filterParentalAdvisoryCategories: [
       {
-        Name: "Nudity"
+        Name: "Nudity",
       },
       {
-        Name: "Violence"
+        Name: "Violence",
       },
       {
-        Name: "Profanity"
+        Name: "Profanity",
       },
       {
-        Name: "Alcohol"
+        Name: "Alcohol",
       },
       {
-        Name: "Frightening"
-      }
+        Name: "Frightening",
+      },
     ],
 
     searchCompaniesDialog: {
-      show: false
+      show: false,
     },
 
     searchPersonsDialog: {
-      show: false
+      show: false,
     },
 
     searchPlotKeywordsDialog: {
-      show: false
+      show: false,
     },
 
     searchFilmingLocationsDialog: {
-      show: false
+      show: false,
     },
 
     scanOptionsDialog: {
       show: false,
-      showMediaInfoWarning: false
+      showMediaInfoWarning: false,
     },
 
     versionDialog: {
-      show: true
+      show: true,
     },
 
     checkIMDBScraperDialog: {
       show: false,
-      settings: null
-    }
+      settings: null,
+    },
   }),
 
   watch: {
     // LEARNING: there is a difference with "this" in name: function(){} and name: () => {}
-    searchText: function(newValue, oldValue) {
+    searchText: function (newValue, oldValue) {
       logger.log("searchText old:", oldValue, "new:", newValue);
       this.debouncedEventBusSearchTextChanged(newValue);
     },
 
-    shared_uiLanguage: function(newValue, oldValue) {
+    shared_uiLanguage: function (newValue, oldValue) {
       logger.log("shared_uiLanguage changed from", oldValue, "to", newValue);
 
       this.$i18n.locale = newValue;
@@ -923,27 +933,36 @@ export default {
       logger.log("this.$root.$i18n.locale:", this.$root.$i18n.locale);
 
       moment.locale(newValue);
-    }
+    },
   },
 
   computed: {
     isScanning() {
       return this.$shared.isScanning;
     },
-    
+
     filterSourcePathsTitle() {
-      if (!this.$shared.filters.filterSourcePaths.find(filter => !filter.Selected)) {
+      if (
+        !this.$shared.filters.filterSourcePaths.find(
+          (filter) => !filter.Selected
+        )
+      ) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (!this.$shared.filters.filterSourcePaths.find(filter => filter.Selected)) {
+      if (
+        !this.$shared.filters.filterSourcePaths.find(
+          (filter) => filter.Selected
+        )
+      ) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
         "(" +
-        this.$shared.filters.filterSourcePaths.filter(filter => filter.Selected)
-          .length +
+        this.$shared.filters.filterSourcePaths.filter(
+          (filter) => filter.Selected
+        ).length +
         "/" +
         this.$shared.filters.filterSourcePaths.length +
         ")"
@@ -951,17 +970,22 @@ export default {
     },
 
     filterGenresTitle() {
-      if (!this.$shared.filters.filterGenres.find(filter => !filter.Selected)) {
+      if (
+        !this.$shared.filters.filterGenres.find((filter) => !filter.Selected)
+      ) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (!this.$shared.filters.filterGenres.find(filter => filter.Selected)) {
+      if (
+        !this.$shared.filters.filterGenres.find((filter) => filter.Selected)
+      ) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
         "(" +
-        this.$shared.filters.filterGenres.filter(filter => filter.Selected).length +
+        this.$shared.filters.filterGenres.filter((filter) => filter.Selected)
+          .length +
         "/" +
         this.$shared.filters.filterGenres.length +
         ")"
@@ -969,17 +993,25 @@ export default {
     },
 
     filterAgeRatingsTitle() {
-      if (!this.$shared.filters.filterAgeRatings.find(filter => !filter.Selected)) {
+      if (
+        !this.$shared.filters.filterAgeRatings.find(
+          (filter) => !filter.Selected
+        )
+      ) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (!this.$shared.filters.filterAgeRatings.find(filter => filter.Selected)) {
+      if (
+        !this.$shared.filters.filterAgeRatings.find((filter) => filter.Selected)
+      ) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
         "(" +
-        this.$shared.filters.filterAgeRatings.filter(filter => filter.Selected).length +
+        this.$shared.filters.filterAgeRatings.filter(
+          (filter) => filter.Selected
+        ).length +
         "/" +
         this.$shared.filters.filterAgeRatings.length +
         ")"
@@ -987,17 +1019,22 @@ export default {
     },
 
     filterRatingsTitle() {
-      if (!this.$shared.filters.filterRatings.find(filter => !filter.Selected)) {
+      if (
+        !this.$shared.filters.filterRatings.find((filter) => !filter.Selected)
+      ) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (!this.$shared.filters.filterRatings.find(filter => filter.Selected)) {
+      if (
+        !this.$shared.filters.filterRatings.find((filter) => filter.Selected)
+      ) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
         "(" +
-        this.$shared.filters.filterRatings.filter(filter => filter.Selected).length +
+        this.$shared.filters.filterRatings.filter((filter) => filter.Selected)
+          .length +
         "/" +
         this.$shared.filters.filterRatings.length +
         ")"
@@ -1005,17 +1042,20 @@ export default {
     },
 
     filterYearsTitle() {
-      if (!this.$shared.filters.filterYears.find(filter => !filter.Selected)) {
+      if (
+        !this.$shared.filters.filterYears.find((filter) => !filter.Selected)
+      ) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (!this.$shared.filters.filterYears.find(filter => filter.Selected)) {
+      if (!this.$shared.filters.filterYears.find((filter) => filter.Selected)) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
         "(" +
-        this.$shared.filters.filterYears.filter(filter => filter.Selected).length +
+        this.$shared.filters.filterYears.filter((filter) => filter.Selected)
+          .length +
         "/" +
         this.$shared.filters.filterYears.length +
         ")"
@@ -1023,17 +1063,22 @@ export default {
     },
 
     filterQualitiesTitle() {
-      if (!this.$shared.filters.filterQualities.find(filter => !filter.Selected)) {
+      if (
+        !this.$shared.filters.filterQualities.find((filter) => !filter.Selected)
+      ) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (!this.$shared.filters.filterQualities.find(filter => filter.Selected)) {
+      if (
+        !this.$shared.filters.filterQualities.find((filter) => filter.Selected)
+      ) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
         "(" +
-        this.$shared.filters.filterQualities.filter(filter => filter.Selected).length +
+        this.$shared.filters.filterQualities.filter((filter) => filter.Selected)
+          .length +
         "/" +
         this.$shared.filters.filterQualities.length +
         ")"
@@ -1041,17 +1086,20 @@ export default {
     },
 
     filterListsTitle() {
-      if (!this.$shared.filters.filterLists.find(filter => !filter.Selected)) {
+      if (
+        !this.$shared.filters.filterLists.find((filter) => !filter.Selected)
+      ) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (!this.$shared.filters.filterLists.find(filter => filter.Selected)) {
+      if (!this.$shared.filters.filterLists.find((filter) => filter.Selected)) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
         "(" +
-        this.$shared.filters.filterLists.filter(filter => filter.Selected).length +
+        this.$shared.filters.filterLists.filter((filter) => filter.Selected)
+          .length +
         "/" +
         this.$shared.filters.filterLists.length +
         ")"
@@ -1060,14 +1108,16 @@ export default {
 
     filterPersons() {
       return this.$shared.filters.filterPersons.filter(
-        fp => !this.$shared.filters.filterSettings.filterPersonsAND || fp.IMDB_Person_ID
+        (fp) =>
+          !this.$shared.filters.filterSettings.filterPersonsAND ||
+          fp.IMDB_Person_ID
       );
     },
 
     filterPersonsTitle() {
       if (
         !this.$shared.filters.filterPersons.find(
-          filter =>
+          (filter) =>
             !filter.Selected &&
             (!this.$shared.filters.filterSettings.filterPersonsAND ||
               filter.IMDB_Person_ID)
@@ -1078,7 +1128,7 @@ export default {
 
       if (
         !this.$shared.filters.filterPersons.find(
-          filter =>
+          (filter) =>
             filter.Selected &&
             (!this.$shared.filters.filterSettings.filterPersonsAND ||
               filter.IMDB_Person_ID)
@@ -1090,14 +1140,14 @@ export default {
       return (
         "(" +
         this.$shared.filters.filterPersons.filter(
-          filter =>
+          (filter) =>
             filter.Selected &&
             (!this.$shared.filters.filterSettings.filterPersonsAND ||
               filter.IMDB_Person_ID)
         ).length +
         "/" +
         this.$shared.filters.filterPersons.filter(
-          filter =>
+          (filter) =>
             !this.$shared.filters.filterSettings.filterPersonsAND ||
             filter.IMDB_Person_ID
         ).length +
@@ -1107,7 +1157,7 @@ export default {
 
     filterCompanies() {
       return this.$shared.filters.filterCompanies.filter(
-        fp =>
+        (fp) =>
           !this.$shared.filters.filterSettings.filterCompaniesAND ||
           fp.id_Filter_Companies
       );
@@ -1116,7 +1166,7 @@ export default {
     filterCompaniesTitle() {
       if (
         !this.$shared.filters.filterCompanies.find(
-          filter =>
+          (filter) =>
             !filter.Selected &&
             (!this.$shared.filters.filterSettings.filterCompaniesAND ||
               filter.id_Filter_Companies)
@@ -1127,7 +1177,7 @@ export default {
 
       if (
         !this.$shared.filters.filterCompanies.find(
-          filter =>
+          (filter) =>
             filter.Selected &&
             (!this.$shared.filters.filterSettings.filterCompaniesAND ||
               filter.id_Filter_Companies)
@@ -1139,14 +1189,14 @@ export default {
       return (
         "(" +
         this.$shared.filters.filterCompanies.filter(
-          filter =>
+          (filter) =>
             filter.Selected &&
             (!this.$shared.filters.filterSettings.filterCompaniesAND ||
               filter.id_Filter_Companies)
         ).length +
         "/" +
         this.$shared.filters.filterCompanies.filter(
-          filter =>
+          (filter) =>
             !this.$shared.filters.filterSettings.filterCompaniesAND ||
             filter.id_Filter_Companies
         ).length +
@@ -1156,7 +1206,7 @@ export default {
 
     filterIMDBPlotKeywords() {
       return this.$shared.filters.filterIMDBPlotKeywords.filter(
-        fp =>
+        (fp) =>
           !this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND ||
           fp.id_Filter_IMDB_Plot_Keywords
       );
@@ -1164,7 +1214,7 @@ export default {
 
     filterIMDBFilmingLocations() {
       return this.$shared.filters.filterIMDBFilmingLocations.filter(
-        fl =>
+        (fl) =>
           !this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND ||
           fl.id_Filter_IMDB_Filming_Locations
       );
@@ -1172,7 +1222,7 @@ export default {
 
     filterReleaseAttributes() {
       return this.$shared.filters.filterReleaseAttributes.filter(
-        fra =>
+        (fra) =>
           !this.$shared.filters.filterSettings.filterReleaseAttributesAND ||
           !fra.isAny
       );
@@ -1181,7 +1231,7 @@ export default {
     filterIMDBPlotKeywordsTitle() {
       if (
         !this.$shared.filters.filterIMDBPlotKeywords.find(
-          filter =>
+          (filter) =>
             !filter.Selected &&
             (!this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND ||
               filter.id_Filter_IMDB_Plot_Keywords)
@@ -1192,7 +1242,7 @@ export default {
 
       if (
         !this.$shared.filters.filterIMDBPlotKeywords.find(
-          filter =>
+          (filter) =>
             filter.Selected &&
             (!this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND ||
               filter.id_Filter_IMDB_Plot_Keywords)
@@ -1204,14 +1254,14 @@ export default {
       return (
         "(" +
         this.$shared.filters.filterIMDBPlotKeywords.filter(
-          filter =>
+          (filter) =>
             filter.Selected &&
             (!this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND ||
               filter.id_Filter_IMDB_Plot_Keywords)
         ).length +
         "/" +
         this.$shared.filters.filterIMDBPlotKeywords.filter(
-          filter =>
+          (filter) =>
             !this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND ||
             filter.id_Filter_IMDB_Plot_Keywords
         ).length +
@@ -1222,9 +1272,10 @@ export default {
     filterIMDBFilmingLocationsTitle() {
       if (
         !this.$shared.filters.filterIMDBFilmingLocations.find(
-          filter =>
+          (filter) =>
             !filter.Selected &&
-            (!this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND ||
+            (!this.$shared.filters.filterSettings
+              .filterIMDBFilmingLocationsAND ||
               filter.id_Filter_IMDB_Filming_Locations)
         )
       ) {
@@ -1233,9 +1284,10 @@ export default {
 
       if (
         !this.$shared.filters.filterIMDBFilmingLocations.find(
-          filter =>
+          (filter) =>
             filter.Selected &&
-            (!this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND ||
+            (!this.$shared.filters.filterSettings
+              .filterIMDBFilmingLocationsAND ||
               filter.id_Filter_IMDB_Filming_Locations)
         )
       ) {
@@ -1245,15 +1297,17 @@ export default {
       return (
         "(" +
         this.$shared.filters.filterIMDBFilmingLocations.filter(
-          filter =>
+          (filter) =>
             filter.Selected &&
-            (!this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND ||
+            (!this.$shared.filters.filterSettings
+              .filterIMDBFilmingLocationsAND ||
               filter.id_Filter_IMDB_Filming_Locations)
         ).length +
         "/" +
         this.$shared.filters.filterIMDBFilmingLocations.filter(
-          filter =>
-            !this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND ||
+          (filter) =>
+            !this.$shared.filters.filterSettings
+              .filterIMDBFilmingLocationsAND ||
             filter.id_Filter_IMDB_Filming_Locations
         ).length +
         ")"
@@ -1261,18 +1315,27 @@ export default {
     },
 
     filterAudioLanguagesTitle() {
-      if (!this.$shared.filters.filterAudioLanguages.find(filter => !filter.Selected)) {
+      if (
+        !this.$shared.filters.filterAudioLanguages.find(
+          (filter) => !filter.Selected
+        )
+      ) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (!this.$shared.filters.filterAudioLanguages.find(filter => filter.Selected)) {
+      if (
+        !this.$shared.filters.filterAudioLanguages.find(
+          (filter) => filter.Selected
+        )
+      ) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
         "(" +
-        this.$shared.filters.filterAudioLanguages.filter(filter => filter.Selected)
-          .length +
+        this.$shared.filters.filterAudioLanguages.filter(
+          (filter) => filter.Selected
+        ).length +
         "/" +
         this.$shared.filters.filterAudioLanguages.length +
         ")"
@@ -1281,21 +1344,26 @@ export default {
 
     filterSubtitleLanguagesTitle() {
       if (
-        !this.$shared.filters.filterSubtitleLanguages.find(filter => !filter.Selected)
+        !this.$shared.filters.filterSubtitleLanguages.find(
+          (filter) => !filter.Selected
+        )
       ) {
         return `(${this.$t("ALL")})`;
       }
 
       if (
-        !this.$shared.filters.filterSubtitleLanguages.find(filter => filter.Selected)
+        !this.$shared.filters.filterSubtitleLanguages.find(
+          (filter) => filter.Selected
+        )
       ) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
         "(" +
-        this.$shared.filters.filterSubtitleLanguages.filter(filter => filter.Selected)
-          .length +
+        this.$shared.filters.filterSubtitleLanguages.filter(
+          (filter) => filter.Selected
+        ).length +
         "/" +
         this.$shared.filters.filterSubtitleLanguages.length +
         ")"
@@ -1304,21 +1372,26 @@ export default {
 
     filterReleaseAttributesTitle() {
       if (
-        !this.$shared.filters.filterReleaseAttributes.find(filter => !filter.Selected)
+        !this.$shared.filters.filterReleaseAttributes.find(
+          (filter) => !filter.Selected
+        )
       ) {
         return `(${this.$t("ALL")})`;
       }
 
       if (
-        !this.$shared.filters.filterReleaseAttributes.find(filter => filter.Selected)
+        !this.$shared.filters.filterReleaseAttributes.find(
+          (filter) => filter.Selected
+        )
       ) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
         "(" +
-        this.$shared.filters.filterReleaseAttributes.filter(filter => filter.Selected)
-          .length +
+        this.$shared.filters.filterReleaseAttributes.filter(
+          (filter) => filter.Selected
+        ).length +
         "/" +
         this.$shared.filters.filterReleaseAttributes.length +
         ")"
@@ -1357,9 +1430,11 @@ export default {
 
     filterContentAdvisoryTitle() {
       if (
-        !Object.keys(this.$shared.filters.filterParentalAdvisory).find(category =>
+        !Object.keys(
+          this.$shared.filters.filterParentalAdvisory
+        ).find((category) =>
           this.$shared.filters.filterParentalAdvisory[category].find(
-            filter => !filter.Selected
+            (filter) => !filter.Selected
           )
         )
       ) {
@@ -1367,9 +1442,11 @@ export default {
       }
 
       if (
-        !Object.keys(this.$shared.filters.filterParentalAdvisory).find(category =>
+        !Object.keys(
+          this.$shared.filters.filterParentalAdvisory
+        ).find((category) =>
           this.$shared.filters.filterParentalAdvisory[category].find(
-            filter => filter.Selected
+            (filter) => filter.Selected
           )
         )
       ) {
@@ -1378,13 +1455,16 @@ export default {
 
       let numSelected = 0;
       let numAll = 0;
-      Object.keys(this.$shared.filters.filterParentalAdvisory).find(category =>
-        this.$shared.filters.filterParentalAdvisory[category].forEach(filter => {
-          numAll++;
-          if (filter.Selected) {
-            numSelected++;
-          }
-        })
+      Object.keys(this.$shared.filters.filterParentalAdvisory).find(
+        (category) =>
+          this.$shared.filters.filterParentalAdvisory[category].forEach(
+            (filter) => {
+              numAll++;
+              if (filter.Selected) {
+                numSelected++;
+              }
+            }
+          )
       );
 
       return `(${numSelected}/${numAll})`;
@@ -1392,14 +1472,14 @@ export default {
 
     shared_uiLanguage() {
       return this.$shared.uiLanguage;
-    }
+    },
   },
 
   methods: {
     $local_t(payload) {
       return this.$t(payload);
     },
-    
+
     sectionRoute(itemid) {
       if (itemid == "movies") {
         return "/medialist/movies";
@@ -1411,36 +1491,39 @@ export default {
 
       return "";
     },
-    
+
     cancelRescan() {
       store.abortRescan();
     },
 
-    eventBusSearchTextChanged: function(searchText) {
+    eventBusSearchTextChanged: function (searchText) {
       this.$shared.searchText = searchText;
       eventBus.searchTextChanged(searchText);
     },
 
-    eventBusRefetchMedia: function(setPage) {
+    eventBusRefetchMedia: function (setPage) {
       eventBus.refetchMedia(setPage);
     },
 
-    filtersChanged: function() {
+    filtersChanged: function () {
       logger.log("filters changed this.$shared:", this.$shared);
       this.debouncedEventBusRefetchMedia();
     },
 
-    setAllSourcePaths: function(value) {
-      this.$shared.filters.filterSourcePaths.forEach(sp => {
+    setAllSourcePaths: function (value) {
+      this.$shared.filters.filterSourcePaths.forEach((sp) => {
         sp.Selected = value;
       });
 
       this.filtersChanged();
     },
 
-    setAllGenres: function(value, exclusionList) {
-      this.$shared.filters.filterGenres.forEach(genre => {
-        if (exclusionList && exclusionList.find(val => genre.Name === val.translated)) {
+    setAllGenres: function (value, exclusionList) {
+      this.$shared.filters.filterGenres.forEach((genre) => {
+        if (
+          exclusionList &&
+          exclusionList.find((val) => genre.Name === val.translated)
+        ) {
           genre.Selected = !value;
           return;
         }
@@ -1451,11 +1534,11 @@ export default {
       this.filtersChanged();
     },
 
-    setAllAgeRatings: function(value, exclusionList) {
-      logger.log('setAllAgeRatings exclusionList:', exclusionList);
-      
-      this.$shared.filters.filterAgeRatings.forEach(ar => {
-        if (exclusionList && exclusionList.find(val => ar.Age == val.Age)) {
+    setAllAgeRatings: function (value, exclusionList) {
+      logger.log("setAllAgeRatings exclusionList:", exclusionList);
+
+      this.$shared.filters.filterAgeRatings.forEach((ar) => {
+        if (exclusionList && exclusionList.find((val) => ar.Age == val.Age)) {
           ar.Selected = !value;
           return;
         }
@@ -1466,43 +1549,45 @@ export default {
       this.filtersChanged();
     },
 
-    setAllRatings: function(value) {
-      this.$shared.filters.filterRatings.forEach(rating => {
+    setAllRatings: function (value) {
+      this.$shared.filters.filterRatings.forEach((rating) => {
         rating.Selected = value;
       });
 
       this.filtersChanged();
     },
 
-    setAllYears: function(value) {
-      this.$shared.filters.filterYears.forEach(year => {
+    setAllYears: function (value) {
+      this.$shared.filters.filterYears.forEach((year) => {
         year.Selected = value;
       });
 
       this.filtersChanged();
     },
 
-    setAllLists: function(value) {
-      this.$shared.filters.filterLists.forEach(list => {
+    setAllLists: function (value) {
+      this.$shared.filters.filterLists.forEach((list) => {
         list.Selected = value;
       });
 
       this.filtersChanged();
     },
 
-    setAllParentalAdvisory: function(category, value) {
-      this.$shared.filters.filterParentalAdvisory[category.Name].forEach(paItem => {
-        paItem.Selected = value;
-      });
+    setAllParentalAdvisory: function (category, value) {
+      this.$shared.filters.filterParentalAdvisory[category.Name].forEach(
+        (paItem) => {
+          paItem.Selected = value;
+        }
+      );
 
       this.filtersChanged();
     },
 
-    setAllPersons: function(value, exclusionList) {
-      this.$shared.filters.filterPersons.forEach(sp => {
+    setAllPersons: function (value, exclusionList) {
+      this.$shared.filters.filterPersons.forEach((sp) => {
         if (
           exclusionList &&
-          exclusionList.find(val => sp.IMDB_Person_ID === val)
+          exclusionList.find((val) => sp.IMDB_Person_ID === val)
         ) {
           sp.Selected = !value;
           return;
@@ -1514,13 +1599,13 @@ export default {
       this.filtersChanged();
     },
 
-    setAllCompanies: function(value, exclusionList) {
+    setAllCompanies: function (value, exclusionList) {
       logger.log("setAllCompanies:", { value, exclusionList });
 
-      this.$shared.filters.filterCompanies.forEach(sp => {
+      this.$shared.filters.filterCompanies.forEach((sp) => {
         if (
           exclusionList &&
-          exclusionList.find(val => sp.Company_Name === val)
+          exclusionList.find((val) => sp.Company_Name === val)
         ) {
           sp.Selected = !value;
           return;
@@ -1532,11 +1617,11 @@ export default {
       this.filtersChanged();
     },
 
-    setAllQualities: function(value, exclusionList) {
-      this.$shared.filters.filterQualities.forEach(quality => {
+    setAllQualities: function (value, exclusionList) {
+      this.$shared.filters.filterQualities.forEach((quality) => {
         if (
           exclusionList &&
-          exclusionList.find(val => quality.MI_Quality === val)
+          exclusionList.find((val) => quality.MI_Quality === val)
         ) {
           quality.Selected = !value;
           return;
@@ -1548,9 +1633,12 @@ export default {
       this.filtersChanged();
     },
 
-    setAllAudioLanguages: function(value, exclusionList) {
-      this.$shared.filters.filterAudioLanguages.forEach(lang => {
-        if (exclusionList && exclusionList.find(val => lang.Language === val)) {
+    setAllAudioLanguages: function (value, exclusionList) {
+      this.$shared.filters.filterAudioLanguages.forEach((lang) => {
+        if (
+          exclusionList &&
+          exclusionList.find((val) => lang.Language === val)
+        ) {
           lang.Selected = !value;
           return;
         }
@@ -1561,9 +1649,12 @@ export default {
       this.filtersChanged();
     },
 
-    setAllSubtitleLanguages: function(value, exclusionList) {
-      this.$shared.filters.filterSubtitleLanguages.forEach(lang => {
-        if (exclusionList && exclusionList.find(val => lang.Language === val)) {
+    setAllSubtitleLanguages: function (value, exclusionList) {
+      this.$shared.filters.filterSubtitleLanguages.forEach((lang) => {
+        if (
+          exclusionList &&
+          exclusionList.find((val) => lang.Language === val)
+        ) {
           lang.Selected = !value;
           return;
         }
@@ -1574,9 +1665,12 @@ export default {
       this.filtersChanged();
     },
 
-    setAllReleaseAttributes: function(value, exclusionList) {
-      this.$shared.filters.filterReleaseAttributes.forEach(ra => {
-        if (exclusionList && exclusionList.find(val => ra.ReleaseAttribute === val)) {
+    setAllReleaseAttributes: function (value, exclusionList) {
+      this.$shared.filters.filterReleaseAttributes.forEach((ra) => {
+        if (
+          exclusionList &&
+          exclusionList.find((val) => ra.ReleaseAttribute === val)
+        ) {
           ra.Selected = !value;
           return;
         }
@@ -1587,11 +1681,11 @@ export default {
       this.filtersChanged();
     },
 
-    setAllIMDBPlotKeywords: function(value, exclusionList) {
-      this.$shared.filters.filterIMDBPlotKeywords.forEach(pk => {
+    setAllIMDBPlotKeywords: function (value, exclusionList) {
+      this.$shared.filters.filterIMDBPlotKeywords.forEach((pk) => {
         if (
           exclusionList &&
-          exclusionList.find(val => pk.id_IMDB_Plot_Keywords === val)
+          exclusionList.find((val) => pk.id_IMDB_Plot_Keywords === val)
         ) {
           pk.Selected = !value;
           return;
@@ -1603,11 +1697,11 @@ export default {
       this.filtersChanged();
     },
 
-    setAllIMDBFilmingLocations: function(value, exclusionList) {
-      this.$shared.filters.filterIMDBFilmingLocations.forEach(fl => {
+    setAllIMDBFilmingLocations: function (value, exclusionList) {
+      this.$shared.filters.filterIMDBFilmingLocations.forEach((fl) => {
         if (
           exclusionList &&
-          exclusionList.find(val => fl.id_IMDB_Filming_Locations === val)
+          exclusionList.find((val) => fl.id_IMDB_Filming_Locations === val)
         ) {
           fl.Selected = !value;
           return;
@@ -1655,23 +1749,33 @@ export default {
       return `${quality} (${NumMovies})`;
     },
 
-    deleteList(list) {
-      this.deleteListDialog.id_Lists = list.id_Lists;
-      this.deleteListDialog.Name = list.Name;
-      this.deleteListDialog.show = true;
+    showDeleteDialog(item, deleteFunction, Title, Message, ItemName) {
+      this.deleteDialog.item = item;
+      this.deleteDialog.deleteFunction = deleteFunction;
+      this.deleteDialog.Title = Title;
+      this.deleteDialog.Message = Message;
+      this.deleteDialog.ItemName = ItemName;
+      this.deleteDialog.show = true;
     },
 
-    onDeleteListDialogOK() {
+    async onDeleteDialogOK() {
+      await this.deleteDialog.deleteFunction(this.deleteDialog.item);
+      this.deleteDialog.show = false;
+    },
+
+    onDeleteDialogCancel() {
+      this.deleteDialog.show = false;
+    },
+
+    async deleteList() {
       (async () => {
         try {
-          this.deleteListDialog.show = false;
-
           logger.log("DELETE LIST");
 
           await store.db.fireProcedure(
             `DELETE FROM tbl_Lists WHERE id_Lists = $id_Lists`,
             {
-              $id_Lists: this.deleteListDialog.id_Lists
+              $id_Lists: this.deleteDialog.item.id_Lists,
             }
           );
 
@@ -1686,8 +1790,8 @@ export default {
 
           eventBus.showSnackbar(
             "success",
-            `${this.$t("List {name} removed", {
-              name: this.deleteListDialog.Name
+            `${this.$t("List {name} deleted_", {
+              name: this.deleteDialog.ItemName,
             })}`
           );
         } catch (err) {
@@ -1696,32 +1800,52 @@ export default {
       })();
     },
 
-    deletePerson(person) {
-      store.deleteFilterPerson(person.id_Filter_Persons);
+    async deletePerson(person) {
+      await store.deleteFilterPerson(person.id_Filter_Persons);
+      eventBus.showSnackbar(
+        "success",
+        `${this.$t("Person {name} removed_", {
+          name: this.deleteDialog.ItemName,
+        })}`
+      );
       eventBus.refetchFilters();
     },
 
-    deleteFilterIMDBPlotKeyword(filterIMDBPlotKeyword) {
-      store.deleteFilterIMDBPlotKeyword(
+    async deleteFilterIMDBPlotKeyword(filterIMDBPlotKeyword) {
+      await store.deleteFilterIMDBPlotKeyword(
         filterIMDBPlotKeyword.id_Filter_IMDB_Plot_Keywords
       );
-      eventBus.refetchFilters();
-    },
-
-    deleteFilterIMDBFilmingLocation(filterIMDBFilmingLocation) {
-      store.deleteFilterIMDBFilmingLocation(
-        filterIMDBFilmingLocation.id_Filter_IMDB_Filming_Locations
+      eventBus.showSnackbar(
+        "success",
+        `${this.$t("Plot Keyword {name} removed_", {
+          name: this.deleteDialog.ItemName,
+        })}`
       );
       eventBus.refetchFilters();
     },
 
-    deleteCompany(company) {
-      store.deleteFilterCompany(company.id_Filter_Companies);
+    async deleteFilterIMDBFilmingLocation(filterIMDBFilmingLocation) {
+      await store.deleteFilterIMDBFilmingLocation(
+        filterIMDBFilmingLocation.id_Filter_IMDB_Filming_Locations
+      );
+      eventBus.showSnackbar(
+        "success",
+        `${this.$t("Filming Location {name} removed_", {
+          name: this.deleteDialog.ItemName,
+        })}`
+      );
       eventBus.refetchFilters();
     },
 
-    onDeleteListDialogCancel() {
-      this.deleteListDialog.show = false;
+    async deleteCompany(company) {
+      await store.deleteFilterCompany(company.id_Filter_Companies);
+      eventBus.showSnackbar(
+        "success",
+        `${this.$t("Company {name} removed_", {
+          name: this.deleteDialog.ItemName,
+        })}`
+      );
+      eventBus.refetchFilters();
     },
 
     async onRescan() {
@@ -1754,7 +1878,7 @@ export default {
 
       // perform IMDB Scraper Check before scan
       const settings = {
-        userScanOptions: shared.userScanOptions
+        userScanOptions: shared.userScanOptions,
       };
 
       this.scanOptions.onlyNew = onlyNew;
@@ -1765,14 +1889,14 @@ export default {
     filterParentalAdvisoryCategoryTitle(category) {
       if (
         !this.$shared.filters.filterParentalAdvisory[category.Name].find(
-          filter => !filter.Selected
+          (filter) => !filter.Selected
         )
       ) {
         return `(${this.$t("ALL")})`;
       }
       if (
         !this.$shared.filters.filterParentalAdvisory[category.Name].find(
-          filter => filter.Selected
+          (filter) => filter.Selected
         )
       ) {
         return `(${this.$t("NONE")})`;
@@ -1780,7 +1904,7 @@ export default {
       return (
         "(" +
         this.$shared.filters.filterParentalAdvisory[category.Name].filter(
-          filter => filter.Selected
+          (filter) => filter.Selected
         ).length +
         "/" +
         this.$shared.filters.filterParentalAdvisory[category.Name].length +
@@ -1857,7 +1981,7 @@ export default {
     resetFilters() {
       store.resetFilters();
       this.filtersChanged();
-    }
+    },
   },
 
   // ### LifeCycleHooks ###
@@ -1908,7 +2032,7 @@ export default {
           this.snackbar.details.push(textOrErrorObject.error.details);
         } else {
           if (Array.isArray(textOrErrorObject.error.details)) {
-            textOrErrorObject.error.details.forEach(detail => {
+            textOrErrorObject.error.details.forEach((detail) => {
               if (
                 typeof textOrErrorObject.error.details === "string" ||
                 textOrErrorObject.error.details instanceof String
@@ -1931,7 +2055,7 @@ export default {
       this.scanInfo = {
         header,
         details,
-        show: true
+        show: true,
       };
     });
 
@@ -1951,11 +2075,11 @@ export default {
       this.filtersChanged();
     });
 
-    eventBus.$on("showLoadingOverlay", value => {
+    eventBus.$on("showLoadingOverlay", (value) => {
       this.showLoadingOverlay = value;
     });
 
-    eventBus.$on("setFilter", setFilter => {
+    eventBus.$on("setFilter", (setFilter) => {
       if (!setFilter) {
         return;
       }
@@ -2009,7 +2133,7 @@ export default {
       this.versionDialog.show = true;
     });
 
-    eventBus.$on("openCheckIMDBScraperDialog", settings => {
+    eventBus.$on("openCheckIMDBScraperDialog", (settings) => {
       this.showCheckIMDBScraperDialog(settings);
     });
 
@@ -2025,7 +2149,7 @@ export default {
       this.eventBusRefetchMedia,
       1000
     );
-  }
+  },
 };
 </script>
 <style>
@@ -2046,15 +2170,15 @@ h1 {
 }
 
 *::-webkit-scrollbar {
-  width: 8px!important;               /* width of the entire scrollbar */
+  width: 8px !important; /* width of the entire scrollbar */
 }
 *::-webkit-scrollbar-track {
-  background: #646464!important;        /* color of the tracking area */
+  background: #646464 !important; /* color of the tracking area */
 }
 *::-webkit-scrollbar-thumb {
-  background-color: #424242!important;    /* color of the scroll thumb */
-  border-radius: 10px!important;       /* roundness of the scroll thumb */
-  border: 2px solid #646464!important;  /* creates padding around scroll thumb */
+  background-color: #424242 !important; /* color of the scroll thumb */
+  border-radius: 10px !important; /* roundness of the scroll thumb */
+  border: 2px solid #646464 !important; /* creates padding around scroll thumb */
 }
 
 .mk-scrollcontainer {
@@ -2097,7 +2221,7 @@ h1 {
 }
 
 .mk-mk-clickable-red:hover {
-  color:red !important;
+  color: red !important;
 }
 
 /* ### Vuetify fixes ### */
@@ -2107,11 +2231,11 @@ h1 {
   display: none !important;
 }
 
-.mk-v-select-dynamic-width  .v-input__slot {
+.mk-v-select-dynamic-width .v-input__slot {
   margin: 0px !important;
 }
 
-.mk-v-select-dynamic-width  .v-select__selections > input {
+.mk-v-select-dynamic-width .v-select__selections > input {
   max-width: 0px !important;
 }
 </style>
