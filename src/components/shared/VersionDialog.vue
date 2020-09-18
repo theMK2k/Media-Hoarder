@@ -11,6 +11,8 @@
 
         <v-row v-if="showQuote" class="mk-clickable-dark-grey" style="line-height: 1.5" v-on:click="showQuote = false">
           <i>{{ quote }}</i>
+          <br>
+          -- {{ quoteSource }}
         </v-row>
 
         <div class="v-card__text" style="padding: 0px">
@@ -107,6 +109,7 @@ export default {
 
       showQuote: false,
       quote: null,
+      quoteSource: null,
 
       history: [],
       latestVersion: null,
@@ -206,6 +209,7 @@ export default {
         this.$shared.currentVersion = objLocalHistory[0].version;
         this.$shared.currentName = objLocalHistory[0].name;
         this.quote = objLocalHistory[0].quote;
+        this.quoteSource = objLocalHistory[0].quoteSource;
 
         const resRemoteHistory = await fetch(
           "https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/public/history/history.json"
