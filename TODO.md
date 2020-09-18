@@ -5,6 +5,7 @@
 ### Use markdown -> html for history
 
 - [ ] check if marked does the job
+- [ ] update preparation notes
 
 ### Bugs
 
