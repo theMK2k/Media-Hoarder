@@ -11,7 +11,7 @@
         lg="4"
         md="6"
       >
-        <v-card dark flat hover class="Clickable" style="min-height: 130px">
+        <v-card dark flat hover class="mk-clickable" style="min-height: 130px">
           <!-- :color="item.color" -->
           <div class="d-flex flex-no-wrap justify-space-between">
             <div>
@@ -20,7 +20,7 @@
                 {{$t(`${item.text}`)}}
               </v-card-title>
 
-              <v-card-text class="light-grey">
+              <v-card-text class="mk-light-grey">
                 <p v-if="item.fetchNumMovies">{{ item.numMovies }} {{$t('entries')}}</p>
               </v-card-text>
             </div>

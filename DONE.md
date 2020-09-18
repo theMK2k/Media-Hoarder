@@ -401,6 +401,7 @@ Series
 
 ### Other
 
+- [x] re-browse Source Path
 - [x] calculate video resolution by multiplying width and height and use the megapixels
 - [x] review <https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html>
   - [x] re-enable websecurity
@@ -580,6 +581,7 @@ Dialog.vue
 
 ### Bugs
 
+- [x] MediaList: disable "IMDB relink" button when scan is in progress
 - [x] IMDB Scraper: on a German IP, we still get the German title as Primary Title even though we set all languages to English
   - [x] use "Accept-Language": "en" header on all calls to IMDB
 - [x] Linux version doesn't fetch data / endless loop? (in our test VM)

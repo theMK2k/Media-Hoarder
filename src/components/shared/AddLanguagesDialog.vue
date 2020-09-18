@@ -21,7 +21,7 @@
           v-bind:label="item.DisplayText"
           v-model="item.selected"
           style="margin: 0px"
-          color="dark-grey"
+          color="mk-dark-grey"
         ></v-checkbox>
       </v-card-text>
 

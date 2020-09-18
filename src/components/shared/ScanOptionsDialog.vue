@@ -18,8 +18,8 @@
         </v-alert>
 
         <v-radio-group v-model="radioGroup">
-          <v-radio v-bind:label="$t('Quick Scan')" v-bind:value="1" color="dark-grey"></v-radio>
-          <v-radio v-bind:label="$t('Complete Rescan')" v-bind:value="2" color="dark-grey"></v-radio>
+          <v-radio v-bind:label="$t('Quick Scan')" v-bind:value="1" color="mk-dark-grey"></v-radio>
+          <v-radio v-bind:label="$t('Complete Rescan')" v-bind:value="2" color="mk-dark-grey"></v-radio>
         </v-radio-group>
 
         <div v-if="radioGroup == 1">
@@ -53,7 +53,7 @@
                   v-model="userScanOption.enabled"
                   v-bind:label="userScanOption.description"
                   style="margin: 0px"
-                  color="dark-grey"
+                  color="mk-dark-grey"
                 ></v-checkbox>
               </v-col>
             </v-expansion-panel-content>
@@ -66,7 +66,7 @@
               <v-checkbox
                 v-model="performCheck"
                 v-bind:label="$t('Perform an IMDB Scraper Check before Scan')"
-                color="dark-grey"
+                color="mk-dark-grey"
               ></v-checkbox>
             </span>
           </template>

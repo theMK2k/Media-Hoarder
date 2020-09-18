@@ -38,7 +38,7 @@
             >{{$t('unable to determine if you are up to date')}}</span>
           </v-alert>
 
-          <div class="light-grey">
+          <div class="mk-light-grey">
             {{$t('Visit')}}
             <a
               v-on:click.stop="openLink('https://media.hoarder.software')"

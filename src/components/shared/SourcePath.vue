@@ -7,25 +7,34 @@
             <v-list-item-title>
               {{value.Description}}
               <v-icon
+                class="mk-clickable"
                 v-show="isHovered"
                 small
-                style="cursor: pointer"
                 v-on:click="onEditDescription"
               >mdi-pencil</v-icon>
               <v-icon
+                class="mk-mk-clickable-red"
                 v-show="isHovered"
                 small
-                color="red"
-                style="cursor: pointer"
                 v-on:click="onDelete"
               >mdi-delete</v-icon>
             </v-list-item-title>
-            <v-list-item-subtitle>{{value.Path}}</v-list-item-subtitle>
+            <v-list-item-subtitle
+              style="min-height: 28px"
+            >
+              {{value.Path}}
+              <v-icon
+                class="mk-clickable"
+                v-show="isHovered"
+                small
+                v-on:click="onEditPath"
+              >mdi-pencil</v-icon>
+            </v-list-item-subtitle>
 
             <v-checkbox
               dense
               v-model="value.checkRemovedFiles"
-              color="dark-grey"
+              color="mk-dark-grey"
               v-bind:label="$t('remove missing entries on _re-_scan')"
               style="margin-top: 0px"
               v-on:click.native="toggleCheckRemovedFiles"
@@ -47,7 +56,7 @@ export default {
   props: ["value"],
 
   data: () => ({
-    isHovered: false
+    isHovered: false,
   }),
 
   methods: {
@@ -59,29 +68,37 @@ export default {
       this.$emit("delete", this.value);
     },
 
+    onEditPath() {
+      this.$emit("edit-path", this.value);
+    },
+
     async toggleCheckRemovedFiles() {
       logger.log("checkRemovedFiles:", this.value.checkRemovedFiles);
       await store.db.fireProcedure(
         `UPDATE tbl_SourcePaths SET checkRemovedFiles = $checkRemovedFiles WHERE id_SourcePaths = $id_SourcePaths`,
         {
           $checkRemovedFiles: this.value.checkRemovedFiles,
-          $id_SourcePaths: this.value.id_SourcePaths
+          $id_SourcePaths: this.value.id_SourcePaths,
         }
       );
 
       if (this.value.checkRemovedFiles) {
         eventBus.showSnackbar(
           "success",
-          this.$t('OK, during _re-_scan, any missing file in the source path will lead to removal of the entry')
+          this.$t(
+            "OK, during _re-_scan, any missing file in the source path will lead to removal of the entry"
+          )
         );
       } else {
         eventBus.showSnackbar(
           "success",
-          this.$t('OK, during _re-_scan, no entry removal is performed - regardless if the file is available or not')
+          this.$t(
+            "OK, during _re-_scan, no entry removal is performed - regardless if the file is available or not"
+          )
         );
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

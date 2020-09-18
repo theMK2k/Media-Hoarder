@@ -46,7 +46,7 @@
                 v-model="titleType.checked"
                 v-bind:label="titleType.nameTranslated"
                 style="margin: 0px"
-                color="dark-grey"
+                color="mk-dark-grey"
               ></v-checkbox>
             </v-expansion-panel-content>
           </v-expansion-panel>

@@ -22,7 +22,7 @@
         <v-row class="settings-row">
           <h3>{{$t('Media Player Path')}}</h3>
 
-          <v-card-text class="light-grey">
+          <v-card-text class="mk-light-grey">
             {{$t('{appName} needs the path to a media player of your choice for media playback_ We recommend the VLC media player, you can get it at_', {appName: $shared.appName})}}
             <a
               v-on:click="openURL('https://www.videolan.org/vlc/index.html')"
@@ -55,7 +55,7 @@
         <v-row class="settings-row">
           <h3>{{$t('Mediainfo CLI Path')}}</h3>
 
-          <v-card-text class="light-grey">
+          <v-card-text class="mk-light-grey">
             {{$t('{appName} needs the path to Mediainfo CLI in order to determine duration, video resolution and languages of your media_ You can get Mediainfo CLI at_', {appName: $shared.appName})}}
             <a
               v-on:click="openURL('https://mediaarea.net/en/MediaInfo')"
@@ -89,7 +89,7 @@
           <h3>{{$t('Last Access Grace Period')}}</h3>
 
           <v-card-text
-            class="light-grey"
+            class="mk-light-grey"
           >{{$t('{appName} provides the date and time of the last access for any medium_ In order to prevent unwanted updates, you can define a grace period in seconds where a medium can be played until the update is performed_', { appName: $shared.appName })}}</v-card-text>
 
           <v-text-field
@@ -104,7 +104,7 @@
           <h3>{{$t('IMDB Rating Demographic')}}</h3>
 
           <v-card-text
-            class="light-grey"
+            class="mk-light-grey"
           >{{$t('{appName} provides the IMDB score and number of votes for each medium _where applicable__ By default these are the numbers of all IMDB users_ You can, however, decide if you wish to see those of a certain demographic, e_g_ by gender or age_', { appName: $shared.appName })}}</v-card-text>
 
           <v-select
@@ -122,7 +122,7 @@
           <h3>{{ $t('Log Level') }}</h3>
 
           <v-card-text
-            class="light-grey"
+            class="mk-light-grey"
           >{{$t('{appName} logs certain events during runtime_ You can view these logs by pressing the _Open DevTools_ button below_ With the log level you decide which event severity should be logged_', { appName: $shared.appName })}}</v-card-text>
 
           <v-select
@@ -165,6 +165,7 @@
             v-bind:value="sourcePath"
             v-on:edit-description="onSourcePathEditDescription"
             v-on:delete="openRemoveSourcePathDialog"
+            v-on:edit-path="onSourcePathEditPath"
           ></mk-sourcepath>
         </div>
 
@@ -191,6 +192,7 @@
             v-bind:value="sourcePath"
             v-on:edit-description="onSourcePathEditDescription"
             v-on:delete="openRemoveSourcePathDialog"
+            v-on:edit-path="onSourcePathEditPath"
           ></mk-sourcepath>
         </div>
 
@@ -200,7 +202,7 @@
 
       <!-- DUPLICATES -->
       <v-tab-item style="padding: 8px">
-        <v-card-text class="light-grey">
+        <v-card-text class="mk-light-grey">
           <p>{{$t('These settings describe how {appName} should handle duplicates', {appName: $shared.appName})}}</p>
           <p>{{$t('You may have duplicates in the following scenarios')}}:</p>
           <ul>
@@ -219,7 +221,7 @@
           <v-checkbox
             v-bind:label="$t('relink IMDB')"
             style="margin: 0px"
-            color="dark-grey"
+            color="mk-dark-grey"
             dense
             v-model="$shared.duplicatesHandling.actualDuplicate.relinkIMDB"
             v-on:click.native="duplicatesHandlingChanged"
@@ -227,7 +229,7 @@
           <v-checkbox
             v-bind:label="$t('add to list')"
             style="margin: 0px"
-            color="dark-grey"
+            color="mk-dark-grey"
             dense
             v-model="$shared.duplicatesHandling.actualDuplicate.addToList"
             v-on:click.native="duplicatesHandlingChanged"
@@ -235,7 +237,7 @@
           <v-checkbox
             v-bind:label="$t('update primary title')"
             style="margin: 0px"
-            color="dark-grey"
+            color="mk-dark-grey"
             dense
             v-model="$shared.duplicatesHandling.actualDuplicate.updateTitle"
             v-on:click.native="duplicatesHandlingChanged"
@@ -243,7 +245,7 @@
           <v-checkbox
             v-bind:label="$t('update secondary title')"
             style="margin: 0px"
-            color="dark-grey"
+            color="mk-dark-grey"
             dense
             v-model="$shared.duplicatesHandling.actualDuplicate.updateSubTitle"
             v-on:click.native="duplicatesHandlingChanged"
@@ -251,7 +253,7 @@
           <v-checkbox
             v-bind:label="$t('update rating')"
             style="margin: 0px"
-            color="dark-grey"
+            color="mk-dark-grey"
             dense
             v-model="$shared.duplicatesHandling.actualDuplicate.updateRating"
             v-on:click.native="duplicatesHandlingChanged"
@@ -259,7 +261,7 @@
           <v-checkbox
             v-bind:label="$t('update last access')"
             style="margin: 0px"
-            color="dark-grey"
+            color="mk-dark-grey"
             dense
             v-model="$shared.duplicatesHandling.actualDuplicate.updateLastAccess"
             v-on:click.native="duplicatesHandlingChanged"
@@ -268,7 +270,7 @@
 
         <v-card style="width: 100%; margin-top:8px">
           <h3>{{$t('Meta Duplicates')}}</h3>
-          <v-card-text class="light-grey">
+          <v-card-text class="mk-light-grey">
             <p>{{$t('A meta duplicate is identified by having the same IMDB link_ This can happen if you have the same movie in different formats')}}</p>
           </v-card-text>
           <p>{{$t('With meta duplicates, {appName} should also', {appName: $shared.appName})}}</p>
@@ -276,7 +278,7 @@
           <v-checkbox
             v-bind:label="$t('add to list')"
             style="margin: 0px"
-            color="dark-grey"
+            color="mk-dark-grey"
             dense
             v-model="$shared.duplicatesHandling.metaDuplicate.addToList"
             v-on:click.native="duplicatesHandlingChanged"
@@ -284,7 +286,7 @@
           <v-checkbox
             v-bind:label="$t('update rating')"
             style="margin: 0px"
-            color="dark-grey"
+            color="mk-dark-grey"
             dense
             v-model="$shared.duplicatesHandling.metaDuplicate.updateRating"
             v-on:click.native="duplicatesHandlingChanged"
@@ -294,7 +296,7 @@
 
       <!-- REGIONS -->
       <v-tab-item style="padding: 8px">
-        <v-card-text class="light-grey">
+        <v-card-text class="mk-light-grey">
           <p>{{$t('The regions and their sequence defined here will be used for the Primary Title of the media as well as the age rating')}}</p>
           <p>{{$t('If a particular movie does not have a title for one of these regions, the Original Title of the movie is used Else, the Original Title will be used as Secondary Title if it is different')}}</p>
         </v-card-text>
@@ -318,17 +320,17 @@
                       {{ region.nameTranslated }}
                       <v-icon
                         color="red"
-                        style="cursor: pointer"
+                        class="mk-clickable"
                         v-on:click="openRemoveRegionDialog(region)"
                       >mdi-delete</v-icon>
                       <v-icon
                         v-if="!isTopRegion(region)"
-                        style="cursor: pointer"
+                        class="mk-clickable"
                         v-on:click="onRegionMoveUp(region)"
                       >mdi-arrow-up</v-icon>
                       <v-icon
                         v-if="!isBottomRegion(region)"
-                        style="cursor: pointer"
+                        class="mk-clickable"
                         v-on:click="onRegionMoveDown(region)"
                       >mdi-arrow-down</v-icon>
                     </v-list-item-title>
@@ -345,7 +347,7 @@
       <!-- LANGUAGES -->
       <v-tab-item style="padding: 8px">
         <h3>{{$t('Language of the Application')}}</h3>
-        <v-card-text class="light-grey">
+        <v-card-text class="mk-light-grey">
           <p>{{$t('Change the language of the application here_')}}</p>
         </v-card-text>
 
@@ -362,7 +364,7 @@
 
         <h3>{{$t('Languages of the Primary Title')}}</h3>
 
-        <v-card-text class="light-grey">
+        <v-card-text class="mk-light-grey">
           <p>{{$t('The languages and their sequence defined here will be used for the Primary Title of the media_')}}</p>
           <p>
             <strong>{{$t('Important_')}}</strong>
@@ -393,18 +395,17 @@
                     <v-list-item-title>
                       {{ language.DisplayText }}
                       <v-icon
-                        color="red"
-                        style="cursor: pointer"
+                        class="mk-mk-clickable-red"
                         v-on:click="openRemoveLanguageDialog(language, 'languagesPrimaryTitle')"
                       >mdi-delete</v-icon>
                       <v-icon
                         v-if="!isTopLanguage(language, 'languagesPrimaryTitle')"
-                        style="cursor: pointer"
+                        class="mk-clickable"
                         v-on:click="onLanguageMoveUp(language, 'languagesPrimaryTitle')"
                       >mdi-arrow-up</v-icon>
                       <v-icon
                         v-if="!isBottomLanguage(language, 'languagesPrimaryTitle')"
-                        style="cursor: pointer"
+                        class="mk-clickable"
                         v-on:click="onLanguageMoveDown(language, 'languagesPrimaryTitle')"
                       >mdi-arrow-down</v-icon>
                     </v-list-item-title>
@@ -426,7 +427,7 @@
 
         <h3>{{$t('Languages for Audio and Subtitles')}}</h3>
 
-        <v-card-text class="light-grey">
+        <v-card-text class="mk-light-grey">
           <p>{{$t('The languages and their sequence defined here will be used to show which audio and subtitle languages your media contain_')}}</p>
         </v-card-text>
 
@@ -454,17 +455,17 @@
                       {{ language.DisplayText }}
                       <v-icon
                         color="red"
-                        style="cursor: pointer"
+                        class="mk-clickable"
                         v-on:click="openRemoveLanguageDialog(language, 'languagesAudioSubtitles')"
                       >mdi-delete</v-icon>
                       <v-icon
                         v-if="!isTopLanguage(language, 'languagesAudioSubtitles')"
-                        style="cursor: pointer"
+                        class="mk-clickable"
                         v-on:click="onLanguageMoveUp(language, 'languagesAudioSubtitles')"
                       >mdi-arrow-up</v-icon>
                       <v-icon
                         v-if="!isBottomLanguage(language, 'languagesAudioSubtitles')"
-                        style="cursor: pointer"
+                        class="mk-clickable"
                         v-on:click="onLanguageMoveDown(language, 'languagesAudioSubtitles')"
                       >mdi-arrow-down</v-icon>
                     </v-list-item-title>
@@ -485,7 +486,7 @@
 
       <!-- TITLE TYPES -->
       <v-tab-item style="padding: 8px">
-        <v-card-text class="light-grey">
+        <v-card-text class="mk-light-grey">
           <p>{{$t('In _Regions_ you provided the regions to be used for the Primary Title_ However, many titles in IMDB have a special title type_ {appName} skips all special title types by default_ You can add title types here, so that they are actually used instead of being skipped_', {appName: $shared.appName})}}</p>
         </v-card-text>
 
@@ -514,7 +515,7 @@
 
       <!-- RELEASE ATTRIBUTES -->
       <v-tab-item style="padding: 8px">
-        <v-card-text class="light-grey">
+        <v-card-text class="mk-light-grey">
           <p>{{$t('Here you can set up which release attributes should be searched for in the file/directory names and how they should be displayed_')}}</p>
           <p>{{$t('The search term is case insensitive and must contain whole words within the file/directory name_')}}</p>
         </v-card-text>
@@ -527,7 +528,7 @@
           v-bind:items-per-page="1000"
         >
           <template v-slot:item.actions="{ item }">
-            <v-icon small class="mr-2" @click="onEditReleaseAttribute(item)">mdi-pencil</v-icon>
+            <v-icon small class="mr-2 mk-clickable" @click="onEditReleaseAttribute(item)">mdi-pencil</v-icon>
             <v-icon
               small
               class="mr-2"
@@ -536,13 +537,13 @@
             >mdi-delete</v-icon>
             <v-icon
               small
-              class="mr-2"
+              class="mr-2 mk-clickable"
               v-bind:disabled="item.sort === 1"
               @click="onReleaseAttributeUp(item)"
             >mdi-arrow-up</v-icon>
             <v-icon
               small
-              class="mr-2"
+              class="mr-2 mk-clickable"
               v-bind:disabled="item.sort === releaseAttributesMaxSort"
               @click="onReleaseAttributeDown(item)"
             >mdi-arrow-down</v-icon>
@@ -951,7 +952,7 @@ export default {
         return;
       }
 
-      logger.log("folgerposition:", folderposition);
+      logger.log("folderposition:", folderposition);
 
       const chosenPath = folderposition.filePaths[0];
       const chosenPathLower = chosenPath.toLowerCase();
@@ -983,6 +984,57 @@ export default {
       );
 
       this.sourcePathDescriptionDialog.show = true;
+    },
+
+    async onSourcePathEditPath(sourcePath) {
+      logger.log("onSourcePathEditPath sourcePath:", sourcePath);
+
+      const folderposition = await dialog.showOpenDialog({
+        defaultPath: sourcePath.Path,
+        properties: ["openDirectory"],
+      });
+
+      if (folderposition.canceled) {
+        return;
+      }
+
+      logger.log("folderposition:", folderposition);
+
+      const chosenPath = folderposition.filePaths[0];
+      const chosenPathLower = chosenPath.toLowerCase();
+
+      let isAlreadyInUse = false;
+      this.sourcePaths.forEach((sp) => {
+        const pathLower = sp.Path.toLowerCase();
+
+        if (sourcePath !== sp && chosenPathLower.includes(pathLower)) {
+          isAlreadyInUse = true;
+        }
+      });
+
+      if (isAlreadyInUse) {
+        return eventBus.showSnackbar(
+          "error",
+          this.$t("The chosen path is already in use_")
+        );
+      }
+
+      // TODO: Update and show snackbar
+      try {
+        await store.db.fireProcedure(
+          `UPDATE tbl_SourcePaths SET Path = $Path WHERE id_SourcePaths = $id_SourcePaths`,
+          {
+            $id_SourcePaths: sourcePath.id_SourcePaths,
+            $Path: chosenPath,
+          }
+        );
+
+        await this.fetchSourcePaths();
+
+        eventBus.showSnackbar("success", this.$t("Path updated_"));
+      } catch (err) {
+        eventBus.showSnackbar("error", err);
+      }
     },
 
     showEditMediaplayerPathDialog() {

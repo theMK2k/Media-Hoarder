@@ -45,13 +45,13 @@
                 <div
                   v-if="!showLongBio"
                   style="font-size: .875rem; font-weight: normal"
-                  class="Clickable"
+                  class="mk-clickable"
                   v-on:click.stop="showLongBio = true"
                 >{{ personData.ShortBio }}</div>
                 <div
                   v-if="showLongBio"
                   style="font-size: .875rem; font-weight: normal"
-                  class="Clickable"
+                  class="mk-clickable"
                   v-on:click.stop="showLongBio = false"
                 >
                   <p

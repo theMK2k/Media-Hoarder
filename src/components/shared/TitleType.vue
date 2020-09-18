@@ -17,8 +17,8 @@
               <v-icon
                 v-show="showRemove && isHovered"
                 small
-                color="red"
-                style="align-items: flex-start; cursor: pointer"
+                class="mk-mk-clickable-red"
+                style="align-items: flex-start"
                 v-on:click="onRemoveTitleTypeClicked"
               >mdi-delete</v-icon>
             </v-list-item-title>

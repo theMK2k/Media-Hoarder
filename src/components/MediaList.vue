@@ -83,7 +83,7 @@
       ></div>
     </v-row>
 
-    <!-- scrollcontainer -->
+    <!-- mk-scrollcontainer -->
     <v-container class="pa-2" style="max-width: 100%!important; margin-top: 48px;">
       <v-row v-for="(item, i) in itemsFilteredPaginated" :key="i">
         <v-col>
@@ -139,7 +139,7 @@
                             <span v-on="on">
                               <v-icon
                                 v-show="item.nameHovered || item.selected"
-                                class="Clickable"
+                                class="mk-clickable"
                                 v-on:click.stop="onEditItem(item, 'Name', $t('Primary Title'))"
                                 style="margin-left: 8px"
                               >mdi-pencil</v-icon>
@@ -153,7 +153,7 @@
                             <span v-on="on">
                               <v-icon
                                 v-show="item.nameHovered || item.selected"
-                                class="Clickable"
+                                class="mk-clickable"
                                 v-on:click.stop="onRescrapeIMDB(item)"
                                 style="margin-left: 8px"
                                 v-bind:disabled="isScanning"
@@ -168,13 +168,14 @@
                             <span v-on="on">
                               <v-icon
                                 v-show="item.nameHovered || item.selected"
-                                class="Clickable"
+                                class="mk-clickable"
                                 v-on:click.stop="onOpenLinkIMDBDialog(item)"
                                 style="margin-left: 8px"
+                                v-bind:disabled="isScanning"
                               >mdi-link</v-icon>
                             </span>
                           </template>
-                          <span>{{$t('Link with IMDB entry')}}</span>
+                          <span>{{$t('Link with IMDB entry')}}<span v-if="isScanning"><br>{{$t('scan already in progress')}}</span></span>
                         </v-tooltip>
                       </v-list-item-title>
 
@@ -191,7 +192,7 @@
                               <v-icon
                                 v-show="item.name2Hovered || item.selected"
                                 small
-                                class="Clickable"
+                                class="mk-clickable"
                                 v-on:click.stop="onEditItem(item, 'Name2', $t('Secondary Title'))"
                               >mdi-pencil</v-icon>
                             </span>
@@ -202,7 +203,7 @@
                         <!-- <v-icon
                           v-show="item.name2Hovered"
                           small
-                          style="cursor: pointer"
+                          class="mk-clickable"
                           v-on:click.stop="onEditItem(item, 'Name2', 'Secondary Title')"
                         >mdi-pencil</v-icon>-->
                       </v-list-item-subtitle>
@@ -210,14 +211,14 @@
                       <div style="font-size: .875rem; font-weight: normal">
                         <span v-if="item.MI_Quality">
                           <span
-                            class="Clickable"
+                            class="mk-clickable"
                             v-on:click.stop="onVideoQualityClicked(item.MI_Quality)"
                           >{{ item.MI_Quality }}</span>
                         </span>
                         <span v-if="item.AgeRating">
                           |
                           <span
-                            class="Clickable"
+                            class="mk-clickable"
                             v-on:click.stop="onAgeRatingClicked(item.AgeRating)"
                           >{{ item.AgeRating }}</span>
                         </span>
@@ -226,7 +227,7 @@
                           <span v-for="(genre, index) in item.Genres" v-bind:key="genre.name">
                             <span>{{ index > 0 ? ', ' : '' }}</span>
                             <span
-                              class="Clickable"
+                              class="mk-clickable"
                               v-on:click.stop="onGenreClicked(genre)"
                             >{{ genre.translated }}</span>
                           </span>
@@ -238,7 +239,7 @@
                           <span v-for="(lang, index) in item.AudioLanguages" v-bind:key="lang">
                             <span>{{ index > 0 ? ', ' : ' ' }}</span>
                             <span
-                              class="Clickable"
+                              class="mk-clickable"
                               v-on:click.stop="onLanguageClicked(lang, 'audio', item)"
                             >{{ lang }}</span>
                           </span>
@@ -250,7 +251,7 @@
                           <span v-for="(lang, index) in item.SubtitleLanguages" v-bind:key="lang">
                             <span>{{ index > 0 ? ', ' : ' ' }}</span>
                             <span
-                              class="Clickable"
+                              class="mk-clickable"
                               v-on:click.stop="onLanguageClicked(lang, 'subtitle', item)"
                             >{{ lang }}</span>
                           </span>
@@ -263,7 +264,7 @@
                             v-bind:key="releaseAttribute"
                           >
                             <span>{{ index > 0 ? ', ' : ' ' }}</span>
-                            <span class="Clickable" v-on:click.stop="onShowReleaseAttributeDialog(releaseAttribute, item)">{{ releaseAttribute }}</span>
+                            <span class="mk-clickable" v-on:click.stop="onShowReleaseAttributeDialog(releaseAttribute, item)">{{ releaseAttribute }}</span>
                           </span>
                         </span>
                       </div>
@@ -277,7 +278,7 @@
                       >
                         <v-icon small color="amber" style="padding-bottom: 4px">mdi-star</v-icon>
                         <a
-                          class="headline mb-2 Clickable"
+                          class="headline mb-2 mk-clickable"
                           v-on:click.stop="onShowRatingDemographicsDialog(item)"
                         >{{item.IMDB_rating_defaultDisplay}}</a>
                         <span
@@ -324,7 +325,7 @@
                       >
                         <span v-if="i > 0">,&nbsp;</span>
                         <a
-                          class="Clickable"
+                          class="mk-clickable"
                           v-on:click.stop="onCreditClicked(credit)"
                         >{{ credit.name }}</a>
                       </span>
@@ -343,7 +344,7 @@
                       >
                         <span v-if="i > 0">,&nbsp;</span>
                         <a
-                          class="Clickable"
+                          class="mk-clickable"
                           v-on:click.stop="onCreditClicked(credit)"
                         >{{ credit.name }}</a>
                       </span>
@@ -362,7 +363,7 @@
                       >
                         <span v-if="i > 0">,&nbsp;</span>
                         <a
-                          class="Clickable"
+                          class="mk-clickable"
                           v-on:click.stop="onCreditClicked(credit)"
                         >{{ credit.name }}</a>
                       </span>
@@ -381,7 +382,7 @@
                       >
                         <span v-if="i > 0">,&nbsp;</span>
                         <a
-                          class="Clickable"
+                          class="mk-clickable"
                           v-on:click.stop="onCreditClicked(credit)"
                         >{{ credit.name }}</a>
                       </span>
@@ -400,7 +401,7 @@
                       >
                         <span v-if="i > 0">,&nbsp;</span>
                         <a
-                          class="Clickable"
+                          class="mk-clickable"
                           v-on:click.stop="onCompanyClicked(company)"
                         >{{ company.name }}</a>
                       </span>
@@ -416,7 +417,7 @@
                       style="margin-left: 16px"
                     >
                       <span
-                        class="Clickable"
+                        class="mk-clickable"
                         v-on:click.stop="item.showScanErrors = !item.showScanErrors"
                       >{{$t("Errors were encountered during the scan, consider a re-scan_")}}</span>
                       <v-row v-if="item.showScanErrors">
@@ -424,7 +425,7 @@
                           <li
                             v-for="(val, key) in item.scanErrors"
                             v-bind:key="key"
-                            class="Clickable"
+                            class="mk-clickable"
                             v-on:click.stop="item.showScanErrors = !item.showScanErrors"
                           >{{key}}: {{val}}</li>
                         </ul>
@@ -506,7 +507,7 @@
                 <v-row
                   v-for="extra in item.extras"
                   v-bind:key="extra.fullPath"
-                  class="Clickable"
+                  class="mk-clickable"
                   style="padding-left: 24px; padding-top: 4px; align-items: flex-end;"
                   v-on:click.stop="launch(extra)"
                 >{{ extra.Name }}</v-row>
@@ -515,7 +516,7 @@
               <!-- FULL CREDITS -->
               <v-row
                 style="padding-left: 16px; padding-top: 4px; align-items: flex-end;"
-                class="Clickable"
+                class="mk-clickable"
                 v-on:click.stop="showCredits(item, !item.showCredits)"
               >
                 <span style="font-size: 20px">{{$t("Credits")}}&nbsp;</span>
@@ -536,7 +537,7 @@
                   >
                     <v-col sm="4" class="creditsLabel">
                       <a
-                        class="Clickable"
+                        class="mk-clickable"
                         v-on:click.stop="onCreditClicked(credit)"
                       >{{ credit.name }}</a>
                     </v-col>
@@ -551,7 +552,7 @@
               <!-- COMPANIES -->
               <v-row
                 style="padding-left: 16px; padding-top: 4px; align-items: flex-end;"
-                class="Clickable"
+                class="mk-clickable"
                 v-on:click.stop="showCompanies(item, !item.showCompanies)"
               >
                 <span style="font-size: 20px">{{$t('Companies')}}&nbsp;</span>
@@ -572,7 +573,7 @@
                   >
                     <v-col sm="4" class="creditsLabel">
                       <a
-                        class="Clickable"
+                        class="mk-clickable"
                         v-on:click.stop="onCompanyClicked(company)"
                       >{{ company.name }}</a>
                     </v-col>
@@ -587,7 +588,7 @@
               <!-- CONTENT ADVISORY -->
               <v-row
                 style="padding-left: 16px; padding-top: 4px; align-items: flex-end;"
-                class="Clickable"
+                class="mk-clickable"
                 v-on:click.stop="showContentAdvisory(item, !item.showContentAdvisory)"
               >
                 <span style="font-size: 20px">{{$t('Content Advisory')}}&nbsp;</span>
@@ -618,7 +619,7 @@
               <!-- PLOT KEYWORDS -->
               <v-row
                 style="padding-left: 16px; padding-top: 4px; align-items: flex-end;"
-                class="Clickable"
+                class="mk-clickable"
                 v-on:click.stop="showPlotKeywords(item, !item.showPlotKeywords)"
               >
                 <span style="font-size: 20px">{{$t('Plot Keywords _Spoilers ahead!_')}}&nbsp;</span>
@@ -631,7 +632,7 @@
               >
                 <v-row v-for="plotKeyword in item.plotKeywords" v-bind:key="plotKeyword.Keyword">
                   <a
-                    class="Clickable"
+                    class="mk-clickable"
                     v-on:click.stop="onIMDBPlotKeywordClicked(plotKeyword)"
                   >{{ plotKeyword.Keyword }}</a>
 
@@ -645,7 +646,7 @@
               <!-- FILMING LOCATIONS -->
               <v-row
                 style="padding-left: 16px; padding-top: 4px; align-items: flex-end;"
-                class="Clickable"
+                class="mk-clickable"
                 v-on:click.stop="showFilmingLocations(item, !item.showFilmingLocations)"
               >
                 <span style="font-size: 20px">{{$t('Filming Locations')}}&nbsp;</span>
@@ -661,7 +662,7 @@
                   v-bind:key="filmingLocation.id_IMDB_Filming_Locations"
                 >
                   <a
-                    class="Clickable"
+                    class="mk-clickable"
                     v-on:click.stop="onIMDBFilmingLocationClicked(filmingLocation)"
                   >{{ filmingLocation.Location }}</a>
                 </v-row>

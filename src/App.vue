@@ -77,7 +77,7 @@
                   v-model="sourcePath.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
-                  color="dark-grey"
+                  color="mk-dark-grey"
                 ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -105,7 +105,7 @@
                   v-model="quality.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
-                  color="dark-grey"
+                  color="mk-dark-grey"
                 ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -133,7 +133,7 @@
                   v-model="audioLanguage.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
-                  color="dark-grey"
+                  color="mk-dark-grey"
                 ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -161,7 +161,7 @@
                   v-model="subtitleLanguage.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
-                  color="dark-grey"
+                  color="mk-dark-grey"
                 ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -195,7 +195,7 @@
                   v-model="filterReleaseAttribute.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
-                  color="dark-grey"
+                  color="mk-dark-grey"
                 ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -222,12 +222,13 @@
                     v-model="list.Selected"
                     v-on:click.native="filtersChanged"
                     style="margin: 0px"
-                    color="dark-grey"
+                    color="mk-dark-grey"
                   ></v-checkbox>
                   <v-spacer></v-spacer>
                   <v-icon
+                    class="mk-mk-clickable-red"
                     v-if="list.id_Lists"
-                    style="align-items: flex-start; padding-top: 4px; cursor: pointer"
+                    style="align-items: flex-start; padding-top: 4px"
                     v-on:click="deleteList(list)"
                   >mdi-delete</v-icon>
                 </v-row>
@@ -258,7 +259,7 @@
                   v-model="rating.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
-                  color="dark-grey"
+                  color="mk-dark-grey"
                 >
                   <v-icon
                     small
@@ -295,7 +296,7 @@
                   v-model="$shared.filters.filterMetacriticScoreNone"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
-                  color="dark-grey"
+                  color="mk-dark-grey"
                 ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -325,7 +326,7 @@
                   v-model="$shared.filters.filterIMDBRatingNone"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
-                  color="dark-grey"
+                  color="mk-dark-grey"
                 ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -359,7 +360,7 @@
                   v-model="genre.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
-                  color="dark-grey"
+                  color="mk-dark-grey"
                 ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -387,7 +388,7 @@
                   v-model="ageRating.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
-                  color="dark-grey"
+                  color="mk-dark-grey"
                 ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -434,7 +435,7 @@
                           v-model="paItem.Selected"
                           v-on:click.native="filtersChanged"
                           style="margin: 0px"
-                          color="dark-grey"
+                          color="mk-dark-grey"
                         ></v-checkbox>
                       </v-row>
                     </v-expansion-panel-content>
@@ -469,11 +470,12 @@
                     v-model="person.Selected"
                     v-on:click.native="filtersChanged"
                     style="margin: 0px"
-                    color="dark-grey"
+                    color="mk-dark-grey"
                   ></v-checkbox>
                   <v-spacer></v-spacer>
                   <v-icon
-                    style="align-items: flex-start; padding-top: 4px; cursor: pointer"
+                    class="mk-mk-clickable-red"
+                    style="align-items: flex-start; padding-top: 4px"
                     v-if="person.id_Filter_Persons"
                     v-on:click="deletePerson(person)"
                   >mdi-delete</v-icon>
@@ -507,11 +509,12 @@
                     v-model="company.Selected"
                     v-on:click.native="filtersChanged"
                     style="margin: 0px"
-                    color="dark-grey"
+                    color="mk-dark-grey"
                   ></v-checkbox>
                   <v-spacer></v-spacer>
                   <v-icon
-                    style="align-items: flex-start; padding-top: 4px; cursor: pointer"
+                    class="mk-mk-clickable-red"
+                    style="align-items: flex-start; padding-top: 4px"
                     v-if="company.id_Filter_Companies"
                     v-on:click="deleteCompany(company)"
                   >mdi-delete</v-icon>
@@ -542,7 +545,7 @@
                   v-model="year.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
-                  color="dark-grey"
+                  color="mk-dark-grey"
                 ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -576,11 +579,12 @@
                     v-model="plotKeyword.Selected"
                     v-on:click.native="filtersChanged"
                     style="margin: 0px"
-                    color="dark-grey"
+                    color="mk-dark-grey"
                   ></v-checkbox>
                   <v-spacer></v-spacer>
                   <v-icon
-                    style="align-items: flex-start; padding-top: 4px; cursor: pointer"
+                    class="mk-mk-clickable-red"
+                    style="align-items: flex-start; padding-top: 4px"
                     v-if="plotKeyword.id_Filter_IMDB_Plot_Keywords"
                     v-on:click="deleteFilterIMDBPlotKeyword(plotKeyword)"
                   >mdi-delete</v-icon>
@@ -617,11 +621,12 @@
                     v-model="filmingLocation.Selected"
                     v-on:click.native="filtersChanged"
                     style="margin: 0px"
-                    color="dark-grey"
+                    color="mk-dark-grey"
                   ></v-checkbox>
                   <v-spacer></v-spacer>
                   <v-icon
-                    style="align-items: flex-start; padding-top: 4px; cursor: pointer"
+                    class="mk-mk-clickable-red"
+                    style="align-items: flex-start; padding-top: 4px"
                     v-if="filmingLocation.id_Filter_IMDB_Filming_Locations"
                     v-on:click="deleteFilterIMDBFilmingLocation(filmingLocation)"
                   >mdi-delete</v-icon>
@@ -645,7 +650,7 @@
     <!-- TOP BAR -->
     <v-app-bar app clipped-left color="red" dense>
       <v-app-bar-nav-icon @click.stop="$shared.sidenav = !$shared.sidenav"></v-app-bar-nav-icon>
-      <v-toolbar-title class="mr-12 align-center noshrink">
+      <v-toolbar-title class="mr-12 align-center mk-noshrink">
         <span class="title">{{$shared.appName}}{{$shared.isPORTABLE ? ` - Portable` : ''}}{{$shared.isDevelopment ? ` (DEV)` : ''}}</span>
       </v-toolbar-title>
       <!-- <div class="flex-grow-1"></div> -->
@@ -2028,15 +2033,15 @@ h1 {
   margin-bottom: 16px;
 }
 
-.light-grey {
+.mk-light-grey {
   color: lightgrey !important;
 }
 
-.dark-grey {
+.mk-dark-grey {
   color: darkgrey !important;
 }
 
-.noshrink {
+.mk-noshrink {
   flex-shrink: 0 !important;
 }
 
@@ -2052,36 +2057,47 @@ h1 {
   border: 2px solid #646464!important;  /* creates padding around scroll thumb */
 }
 
-.scrollcontainer {
+.mk-scrollcontainer {
   overflow-y: auto;
   overflow-x: hidden;
 }
 
-.scrollcontainer::-webkit-scrollbar-track {
+.mk-scrollcontainer::-webkit-scrollbar-track {
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   background-color: #f5f5f5;
 }
 
-.scrollcontainer::-webkit-scrollbar {
+.mk-scrollcontainer::-webkit-scrollbar {
   width: 5px;
   background-color: #f5f5f5;
 }
 
-.scrollcontainer::-webkit-scrollbar-thumb {
+.mk-scrollcontainer::-webkit-scrollbar-thumb {
   background-color: #000000;
   border: 1px solid #555555;
 }
 
-.Clickable {
+.mk-clickable {
   font-size: 0.875rem;
   font-weight: normal;
-  color: #fff !important;
+  color: white !important;
   cursor: pointer;
 }
 
-.Clickable:hover {
+.mk-clickable:hover {
   color: #2196f3 !important;
+}
+
+.mk-mk-clickable-red {
+  font-size: 0.875rem;
+  font-weight: normal;
+  color: white !important;
+  cursor: pointer;
+}
+
+.mk-mk-clickable-red:hover {
+  color:red !important;
 }
 
 /* ### Vuetify fixes ### */

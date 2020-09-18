@@ -21,7 +21,7 @@
                 <v-radio
                   value="useExistingLists"
                   v-bind:label="`${$t('Existing List')}:`"
-                  color="dark-grey"
+                  color="mk-dark-grey"
                   style="margin-left: 8px;"
                 ></v-radio>
               </v-col>
@@ -44,7 +44,7 @@
                 <v-radio
                   value="createNewList"
                   v-bind:label="`${$t('New List')}:`"
-                  color="dark-grey"
+                  color="mk-dark-grey"
                   style="margin-left: 8px;"
                 ></v-radio>
               </v-col>

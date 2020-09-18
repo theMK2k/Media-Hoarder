@@ -8,7 +8,7 @@
 
 ### Other
 
-- nothing
+- [ ] App: ask before delete (mdi-delete items)
 
 ## LATER
 
@@ -78,8 +78,7 @@
 
 ### Other
 
-- [ ] re-browse Source Path
-- [ ] correctly implement scrollcontainer class (e.g. Medialist)
+- [ ] correctly implement mk-scrollcontainer class (e.g. Medialist)
 - [ ] OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 
 ### Youtube Support

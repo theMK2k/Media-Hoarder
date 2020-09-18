@@ -24,12 +24,12 @@
           v-model="sortByNumMovies"
           v-bind:label="$t('Sort by number of movies')"
           style="margin: 0px; margin-top: 12px"
-          color="dark-grey"
+          color="mk-dark-grey"
 
         ></v-checkbox>
 
         <v-row
-          class="item Clickable"
+          class="item mk-clickable"
           style="width: 100%"
           v-for="item in items"
           v-bind:key="item.id"
