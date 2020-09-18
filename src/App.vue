@@ -1994,6 +1994,9 @@ export default {
 
     this.checkVersion();
 
+    this.searchText = this.$shared.searchText;
+    
+
     eventBus.$on("showSnackbar", ({ color, textOrErrorObject, timeout }) => {
       logger.debug("snackbar called:", textOrErrorObject);
       this.snackbar.details = [];

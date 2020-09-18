@@ -4,7 +4,6 @@
 
 ### Bugs
 
-- [ ] search filter is active but not shown in search text box
 - [ ] person/company... dialog: refetch image if it is not available anymore
 
 ### Other
