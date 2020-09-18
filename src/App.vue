@@ -231,7 +231,7 @@
                   ></v-checkbox>
                   <v-spacer></v-spacer>
                   <v-icon
-                    class="mk-mk-clickable-red"
+                    class="mk-clickable-red"
                     v-if="list.id_Lists"
                     style="align-items: flex-start; padding-top: 4px"
                     v-on:click="showDeleteDialog(list, deleteList, 'Delete List', 'Do you really want to delete the list {name}?', list.Name)"
@@ -479,7 +479,7 @@
                   ></v-checkbox>
                   <v-spacer></v-spacer>
                   <v-icon
-                    class="mk-mk-clickable-red"
+                    class="mk-clickable-red"
                     style="align-items: flex-start; padding-top: 4px"
                     v-if="person.id_Filter_Persons"
                     v-on:click="showDeleteDialog(person, deletePerson, 'Remove Person', 'Do you really want to remove {name} from the filter list?', person.Person_Name)"
@@ -518,7 +518,7 @@
                   ></v-checkbox>
                   <v-spacer></v-spacer>
                   <v-icon
-                    class="mk-mk-clickable-red"
+                    class="mk-clickable-red"
                     style="align-items: flex-start; padding-top: 4px"
                     v-if="company.id_Filter_Companies"
                     v-on:click="showDeleteDialog(company, deleteCompany, 'Remove Company', 'Do you really want to remove {name} from the filter list?', company.Company_Name)"
@@ -588,7 +588,7 @@
                   ></v-checkbox>
                   <v-spacer></v-spacer>
                   <v-icon
-                    class="mk-mk-clickable-red"
+                    class="mk-clickable-red"
                     style="align-items: flex-start; padding-top: 4px"
                     v-if="plotKeyword.id_Filter_IMDB_Plot_Keywords"
                     v-on:click="showDeleteDialog(plotKeyword, deleteFilterIMDBPlotKeyword, 'Remove Plot Keyword', 'Do you really want to remove {name} from the filter list?', plotKeyword.Keyword)"
@@ -630,7 +630,7 @@
                   ></v-checkbox>
                   <v-spacer></v-spacer>
                   <v-icon
-                    class="mk-mk-clickable-red"
+                    class="mk-clickable-red"
                     style="align-items: flex-start; padding-top: 4px"
                     v-if="filmingLocation.id_Filter_IMDB_Filming_Locations"
                     v-on:click="showDeleteDialog(filmingLocation, deleteFilterIMDBFilmingLocation, 'Remove Filming Location', 'Do you really want to remove {name} from the filter list?', filmingLocation.Location)"
@@ -2224,14 +2224,14 @@ h1 {
   color: #2196f3 !important;
 }
 
-.mk-mk-clickable-red {
+.mk-clickable-red {
   font-size: 0.875rem;
   font-weight: normal;
   color: white !important;
   cursor: pointer;
 }
 
-.mk-mk-clickable-red:hover {
+.mk-clickable-red:hover {
   color: red !important;
 }
 

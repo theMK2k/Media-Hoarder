@@ -319,8 +319,7 @@
                     <v-list-item-title>
                       {{ region.nameTranslated }}
                       <v-icon
-                        color="red"
-                        class="mk-clickable"
+                        class="mk-clickable-red"
                         v-on:click="openRemoveRegionDialog(region)"
                       >mdi-delete</v-icon>
                       <v-icon
@@ -395,7 +394,7 @@
                     <v-list-item-title>
                       {{ language.DisplayText }}
                       <v-icon
-                        class="mk-mk-clickable-red"
+                        class="mk-clickable-red"
                         v-on:click="openRemoveLanguageDialog(language, 'languagesPrimaryTitle')"
                       >mdi-delete</v-icon>
                       <v-icon
@@ -454,8 +453,7 @@
                     <v-list-item-title>
                       {{ language.DisplayText }}
                       <v-icon
-                        color="red"
-                        class="mk-clickable"
+                        class="mk-clickable-red"
                         v-on:click="openRemoveLanguageDialog(language, 'languagesAudioSubtitles')"
                       >mdi-delete</v-icon>
                       <v-icon
@@ -531,8 +529,7 @@
             <v-icon small class="mr-2 mk-clickable" @click="onEditReleaseAttribute(item)">mdi-pencil</v-icon>
             <v-icon
               small
-              class="mr-2"
-              color="red"
+              class="mr-2 mk-clickable-red"
               @click="openRemoveReleaseAttributeDialog(item)"
             >mdi-delete</v-icon>
             <v-icon

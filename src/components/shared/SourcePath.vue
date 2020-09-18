@@ -13,7 +13,7 @@
                 v-on:click="onEditDescription"
               >mdi-pencil</v-icon>
               <v-icon
-                class="mk-mk-clickable-red"
+                class="mk-clickable-red"
                 v-show="isHovered"
                 small
                 v-on:click="onDelete"
