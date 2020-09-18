@@ -4,7 +4,7 @@
 
 ### Bugs
 
-- [ ] person/company... dialog: refetch image if it is not available anymore
+- no bugs currently known
 
 ### Other
 

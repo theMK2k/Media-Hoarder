@@ -582,6 +582,7 @@ Dialog.vue
 
 ### Bugs
 
+- [x] person dialog: fix photo url
 - [x] (hot reload) search filter is active but not shown in search text box
 - [x] MediaList: disable "IMDB relink" button when scan is in progress
 - [x] IMDB Scraper: on a German IP, we still get the German title as Primary Title even though we set all languages to English
