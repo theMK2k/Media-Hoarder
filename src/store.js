@@ -1304,20 +1304,50 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
 
     eventBus.setProgressBar((i + 1) / movies.length); // absolute progress
 
-    if (!id_Movies && shared.scanOptions.rescanMoviesMetaData_applyMediaInfo)
+    if (!id_Movies && shared.scanOptions.rescanMoviesMetaData_applyMediaInfo) {
+      eventBus.scanInfoShow(
+        $t("Rescanning Movies"),
+        `${movie.Name || movie.Filename} (${$t('applying MediaInfo')})`
+      );
+
       await applyMediaInfo(movie, onlyNew);
+    }
 
-    if (!id_Movies && shared.scanOptions.rescanMoviesMetaData_findIMDBtconst)
+    if (!id_Movies && shared.scanOptions.rescanMoviesMetaData_findIMDBtconst) {
+      eventBus.scanInfoShow(
+        $t("Rescanning Movies"),
+        `${movie.Name || movie.Filename} (${$t('determining IMDB ID')})`
+      );
+
       await findIMDBtconst(movie, onlyNew);
+    }
 
-    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData)
-      await fetchIMDBMetaData(movie, onlyNew);
+    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData) {
+      eventBus.scanInfoShow(
+        $t("Rescanning Movies"),
+        `${movie.Name || movie.Filename} (${$t('scraping IMDB metadata')})`
+      );
 
-    if (shared.scanOptions.rescanMoviesMetaData_findReleaseAttributes)
+      await fetchIMDBMetaData($t, movie, onlyNew);
+    }
+
+    if (shared.scanOptions.rescanMoviesMetaData_findReleaseAttributes) {
       await findReleaseAttributes(movie, onlyNew);
 
-    if (shared.scanOptions.applyMetaData)
+      eventBus.scanInfoShow(
+        $t("Rescanning Movies"),
+        `${movie.Name || movie.Filename} (${$t('finding release attributes')})`
+      );
+    }
+
+    if (shared.scanOptions.applyMetaData) {
       await applyMetaData(false, movie.id_Movies);
+
+      eventBus.scanInfoShow(
+        $t("Rescanning Movies"),
+        `${movie.Name || movie.Filename} (${$t('applying metadata')})`
+      );
+    }
   }
 
   eventBus.scanInfoOff();
@@ -1815,7 +1845,7 @@ async function findIMDBtconstByFileOrDirname(movie) {
   return "";
 }
 
-async function fetchIMDBMetaData(movie, onlyNew) {
+async function fetchIMDBMetaData($t, movie, onlyNew) {
   logger.log("fetchIMDBdata movie:", movie);
 
   // fetch IMDB data from imdb.com (incl. images)
@@ -1841,6 +1871,11 @@ async function fetchIMDBMetaData(movie, onlyNew) {
         .enabled
     ) {
       try {
+        eventBus.scanInfoShow(
+          $t("Rescanning Movies"),
+          `${movie.Name || movie.Filename} (${$t('scraping IMDB Main Page')})`
+        );
+
         const mainPageData = await scrapeIMDBmainPageData(
           movie,
           helpers.downloadFile
@@ -1859,6 +1894,11 @@ async function fetchIMDBMetaData(movie, onlyNew) {
       ).enabled
     ) {
       try {
+        eventBus.scanInfoShow(
+          $t("Rescanning Movies"),
+          `${movie.Name || movie.Filename} (${$t('scraping IMDB Rating Demographics')})`
+        );
+
         const ratingDemographics = await scrapeIMDBRatingDemographics(movie);
         IMDBdata = Object.assign(IMDBdata, ratingDemographics);
       } catch (error) {
@@ -1872,6 +1912,11 @@ async function fetchIMDBMetaData(movie, onlyNew) {
         .enabled
     ) {
       try {
+        eventBus.scanInfoShow(
+          $t("Rescanning Movies"),
+          `${movie.Name || movie.Filename} (${$t('scraping IMDB Plot Summary')})`
+        );
+
         const plotSummaryFull = await scrapeIMDBplotSummary(
           movie,
           IMDBdata.$IMDB_plotSummary
@@ -1889,6 +1934,11 @@ async function fetchIMDBMetaData(movie, onlyNew) {
         .enabled
     ) {
       try {
+        eventBus.scanInfoShow(
+          $t("Rescanning Movies"),
+          `${movie.Name || movie.Filename} (${$t('scraping IMDB Plot Keywords')})`
+        );
+
         plotKeywords = await scrapeIMDBplotKeywords(movie);
       } catch (error) {
         logger.error(error);
@@ -1903,6 +1953,11 @@ async function fetchIMDBMetaData(movie, onlyNew) {
       try {
         const regions = await getRegions();
         const allowedTitleTypes = await getAllowedTitleTypes();
+
+        eventBus.scanInfoShow(
+          $t("Rescanning Movies"),
+          `${movie.Name || movie.Filename} (${$t('scraping IMDB Release Info')})`
+        );
 
         const releaseinfo = await scrapeIMDBreleaseinfo(
           movie,
@@ -1921,6 +1976,11 @@ async function fetchIMDBMetaData(movie, onlyNew) {
         .enabled
     ) {
       try {
+        eventBus.scanInfoShow(
+          $t("Rescanning Movies"),
+          `${movie.Name || movie.Filename} (${$t('scraping IMDB Technical Data')})`
+        );
+
         const technicalData = await scrapeIMDBtechnicalData(movie);
         IMDBdata = Object.assign(IMDBdata, technicalData);
       } catch (error) {
@@ -1937,6 +1997,12 @@ async function fetchIMDBMetaData(movie, onlyNew) {
     ) {
       try {
         const regions = await getRegions();
+
+        eventBus.scanInfoShow(
+          $t("Rescanning Movies"),
+          `${movie.Name || movie.Filename} (${$t('scraping IMDB Parental Guide')})`
+        );
+
         const parentalguideData = await scrapeIMDBParentalGuideData(
           movie,
           regions,
@@ -1957,6 +2023,11 @@ async function fetchIMDBMetaData(movie, onlyNew) {
         .enabled
     ) {
       try {
+        eventBus.scanInfoShow(
+          $t("Rescanning Movies"),
+          `${movie.Name || movie.Filename} (${$t('scraping IMDB Full Credits')})`
+        );
+
         const creditsData = await scrapeIMDBFullCreditsData(movie);
         IMDBdata = Object.assign(IMDBdata, creditsData.topCredits);
         credits = creditsData.credits;
@@ -1972,6 +2043,11 @@ async function fetchIMDBMetaData(movie, onlyNew) {
         .enabled
     ) {
       try {
+        eventBus.scanInfoShow(
+          $t("Rescanning Movies"),
+          `${movie.Name || movie.Filename} (${$t('scraping IMDB Companies')})`
+        );
+
         const companiesData = await scrapeIMDBCompaniesData(movie);
         IMDBdata = Object.assign(IMDBdata, companiesData.topProductionCompanies);
         companies = companiesData.companies;
@@ -1989,6 +2065,10 @@ async function fetchIMDBMetaData(movie, onlyNew) {
       ).enabled
     ) {
       try {
+        eventBus.scanInfoShow(
+          $t("Rescanning Movies"),
+          `${movie.Name || movie.Filename} (${$t('scraping IMDB Filming Locations')})`
+        );
 
         filmingLocations = await scrapeIMDBFilmingLocations(movie);
       } catch (error) {
@@ -2004,6 +2084,11 @@ async function fetchIMDBMetaData(movie, onlyNew) {
     );
 
     if (shared.scanOptions.rescanMoviesMetaData_saveIMDBData) {
+      eventBus.scanInfoShow(
+        $t("Rescanning Movies"),
+        `${movie.Name || movie.Filename} (${$t('store IMDB metadata')})`
+      );
+
       await saveIMDBData(
         movie,
         IMDBdata,
@@ -3325,8 +3410,8 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       } else {
         if (item.IMDB_MinAge || item.IMDB_MinAge === 0) {
           item.AgeRating = `${item.IMDB_MinAge}${item.IMDB_MaxAge && item.IMDB_MaxAge > item.IMDB_MinAge
-              ? "-" + item.IMDB_MaxAge
-              : ""
+            ? "-" + item.IMDB_MaxAge
+            : ""
             }+`;
         }
       }

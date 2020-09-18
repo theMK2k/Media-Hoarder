@@ -903,5 +903,21 @@
   "Remove Plot Keyword": "Handlungsstichwort Entfernen",
   "Plot Keyword {name} removed_": "Handlungsstichwort '{name}' entfernt.",
   "Remove Filming Location": "Drehort Entfernen",
-  "Filming Location {name} removed_": "Drehort '{name}' entfernt."
+  "Filming Location {name} removed_": "Drehort '{name}' entfernt.",
+  "applying MediaInfo": "Anwenden von MediaInfo",
+  "determining IMDB ID": "Ermitteln von IMDB ID",
+  "scraping IMDB metadata": "Abrufen von IMDB Metadaten",
+  "finding release attributes": "Ermitteln von Veröffentlichungsattributen",
+  "applying metadata": "Anwenden von Metadaten",
+  "scraping IMDB Main Page": "Abrufen von IMDB Hauptseite",
+  "scraping IMDB Rating Demographics": "Abrufen von IMDB Bewertungsdemographien",
+  "scraping IMDB Plot Summary": "Abrufen von IMDB Handlungszusammenfassung",
+  "scraping IMDB Plot Keywords": "Abrufen von IMDB Handlungsstichwörtern",
+  "scraping IMDB Release Info": "Abrufen von IMDB Veröffentlichungsinfos",
+  "scraping IMDB Technical Data": "Abrufen von IMDB Technische Daten",
+  "scraping IMDB Parental Guide": "Abrufen von IMDB Alterseinstufung",
+  "scraping IMDB Full Credits": "Abrufen von IMDB Mitwirkende",
+  "scraping IMDB Companies": "Abrufen von IMDB Firmen",
+  "scraping IMDB Filming Locations": "Abrufen von IMDB Drehorte",
+  "store IMDB metadata": "Speichern der IMDB Metadaten"
 }

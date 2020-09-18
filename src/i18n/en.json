@@ -822,5 +822,21 @@
   "Remove Plot Keyword": "Remove Plot Keyword",
   "Plot Keyword {name} removed_": "Plot Keyword '{name}' removed.",
   "Remove Filming Location": "Remove Filming Location",
-  "Filming Location {name} removed_": "Filming Location '{name}' removed."
+  "Filming Location {name} removed_": "Filming Location '{name}' removed.",
+  "applying MediaInfo": "applying MediaInfo",
+  "determining IMDB ID": "determining IMDB ID",
+  "scraping IMDB metadata": "scraping IMDB metadata",
+  "finding release attributes": "finding release attributes",
+  "applying metadata": "applying metadata",
+  "scraping IMDB Main Page": "scraping IMDB Main Page",
+  "scraping IMDB Rating Demographics": "scraping IMDB Rating Demographics",
+  "scraping IMDB Plot Summary": "scraping IMDB Plot Summary",
+  "scraping IMDB Plot Keywords": "scraping IMDB Plot Keywords",
+  "scraping IMDB Release Info": "scraping IMDB Release Info",
+  "scraping IMDB Technical Data": "scraping IMDB Technical Data",
+  "scraping IMDB Parental Guide": "scraping IMDB Parental Guide",
+  "scraping IMDB Full Credits": "scraping IMDB Full Credits",
+  "scraping IMDB Companies": "scraping IMDB Companies",
+  "scraping IMDB Filming Locations": "scraping IMDB Filming Locations",
+  "store IMDB metadata": "store IMDB metadata"
 }
