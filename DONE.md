@@ -405,6 +405,7 @@ Series
 
 ### Other
 
+- [x] use user-defined language for localized numbers
 - [x] provide scraping details in snackbar during rescan
 - [x] use markdown for history
   - [x] update preparation notes
