@@ -4,12 +4,11 @@
 
 ### Bugs
 
-- no bugs currently known
+- nothing
 
 ### Other
 
-- [ ] App: show search only when in movies or series (or: not in settings)
-- [ ] App: show filters only when in movies or series (or: not in settings)
+- nothing
 
 ## LATER
 

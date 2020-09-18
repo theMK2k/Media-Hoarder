@@ -47,6 +47,7 @@
 
         <!-- Filters -->
         <div
+          v-show="currentRoute && currentRoute.name === 'medialist'"
           v-if="($shared.filters.filterSourcePaths && $shared.filters.filterSourcePaths.length > 0) || ($shared.filters.filterGenres && $shared.filters.filterGenres.length > 0) || ($shared.filters.filterAgeRatings && $shared.filters.filterAgeRatings.length > 0) || ($shared.filters.filterLists && $shared.filters.filterLists.length > 0) || ($shared.filters.filterAudioLanguages && $shared.filters.filterAudioLanguages.length > 0) || ($shared.filters.filterSubtitleLanguages && $shared.filters.filterSubtitleLanguages.length > 0)"
         >
           <v-divider></v-divider>
@@ -664,6 +665,7 @@
       <v-row align-content="end" justify="end" style="text-align: right!important">
         <v-text-field
           :append-icon-cb="() => {}"
+          v-show="currentRoute && currentRoute.name === 'medialist'"
           v-bind:placeholder="$t('Search') + '...'"
           single-line
           clearable
@@ -833,7 +835,6 @@ export default {
   data: () => ({
     showLoadingOverlay: false,
     shared,
-    currentRoute: {},
     searchText: null,
     appSections: [
       { icon: "mdi-movie", text: "Movies", id: "movies" },
@@ -1473,6 +1474,11 @@ export default {
     shared_uiLanguage() {
       return this.$shared.uiLanguage;
     },
+
+    currentRoute() {
+      logger.log('currentRoute:', this.$route);
+      return this.$route;
+    }
   },
 
   methods: {
