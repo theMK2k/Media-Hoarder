@@ -5,7 +5,7 @@ This document describes the steps necessary to get a new release done.
 ## Precondition
 
 - [x] Increase Version Number in [../package.json](../package.json)
-- [x] Document contents of [../DONE.md](../DONE.md) into `public/history/version-x.y.z.html`
+- [x] Copy contents of [../DONE.md](../DONE.md) into `public/history/version-x.y.z.md` and clean up (keep it tidy)
 - [ ] git push
 
 ## Build Packs
@@ -58,5 +58,7 @@ npm run electron:build-mac
 
 ## FINALLY: update history.json and push
 
-- [x] Update history.json
+- [x] Update history.json (create new entry on top of the others in the array)
+- [x] Test using `npm start` - it should show the new version incl. history
+- [x] remove any links in the history (enclose them in `inline code`)!
 - [x] git push

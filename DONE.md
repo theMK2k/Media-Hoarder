@@ -1,5 +1,9 @@
 # DONE
 
+## v1.1.0
+
+
+
 ## v1.0.0
 
 ### Road to Release (Win/Linux/Mac)
@@ -12,7 +16,7 @@
 
 - [x] preferred Regions
 - [x] let user define preferred (local) Regions to identify the primary title
-- [x] -> fetch Countries from <https://www.imdb.com/search/title/> and provide as list
+- [x] -> fetch Countries from `https://www.imdb.com/search/title/` and provide as list
 - [x] -> Auto set region by user's localization setting?
 
 ### Proper Portable Mode
@@ -401,6 +405,8 @@ Series
 
 ### Other
 
+- [x] use markdown for history
+  - [x] update preparation notes
 - [x] App: show search only when in medialist
 - [x] App: show filters only when in medialist
 - [x] App: ask before delete (mdi-delete items)
