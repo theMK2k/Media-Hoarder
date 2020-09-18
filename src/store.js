@@ -144,8 +144,7 @@ function generateIndexQuery(tableName, ColumnNames, isUnique) {
     return prev + (prev ? ", " : "") + `${current}`;
   }, "");
 
-  return `CREATE ${
-    isUnique ? "UNIQUE " : ""
+  return `CREATE ${isUnique ? "UNIQUE " : ""
     } INDEX IF NOT EXISTS main.IDX_${tableName}_${columnNamesString.replace(
       /, /g,
       "_"
@@ -640,8 +639,7 @@ async function filescanMovies(onlyNew, $t) {
 				, checkRemovedFiles
 			FROM tbl_SourcePaths
 			WHERE MediaType = 'movies'
-			${
-      shared.scanOptions.filescanMovies_id_SourcePaths_IN
+			${shared.scanOptions.filescanMovies_id_SourcePaths_IN
         ? "AND id_SourcePaths IN " +
         shared.scanOptions.filescanMovies_id_SourcePaths_IN
         : ""
@@ -651,8 +649,7 @@ async function filescanMovies(onlyNew, $t) {
     for (let i = 0; i < moviesSourcePaths.length; i++) {
       const movieSourcePath = moviesSourcePaths[i];
       logger.log(
-        `  scanning Source Path ${movieSourcePath.Path} (${
-        movieSourcePath.Description
+        `  scanning Source Path ${movieSourcePath.Path} (${movieSourcePath.Description
         })`
       );
 
@@ -663,8 +660,7 @@ async function filescanMovies(onlyNew, $t) {
         );
       }
 
-      currentScanInfoHeader = `${$t('Rescanning Movies')} - ${
-        movieSourcePath.Description
+      currentScanInfoHeader = `${$t('Rescanning Movies')} - ${movieSourcePath.Description
         }`;
 
       eventBus.scanInfoShow(currentScanInfoHeader, "");
@@ -1267,14 +1263,12 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
         (isRemoved IS NULL OR isRemoved = 0)
         AND Extra_id_Movies_Owner IS NULL
 				${onlyNew ? "AND (isNew = 1 OR scanErrors IS NOT NULL OR IFNULL(IMDB_Done, 0) = 0 OR IFNULL(MI_Done, 0) = 0)" : ""}
-				${
-    shared.scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
+				${shared.scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
       ? "AND id_SourcePaths IN " +
       shared.scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
       : ""
     }
-				${
-    shared.scanOptions.rescanMoviesMetaData_id_Movies
+				${shared.scanOptions.rescanMoviesMetaData_id_Movies
       ? "AND id_Movies = " +
       shared.scanOptions.rescanMoviesMetaData_id_Movies
       : ""
@@ -1645,8 +1639,7 @@ async function findIMDBtconst(movie, onlyNew) {
         if (tconstIncluded && tconst) {
           if (tconstIncluded !== tconst) {
             logger.log(
-              `tconst compare;mismatch;${tconst};${tconstIncluded};${
-              movie.Filename
+              `tconst compare;mismatch;${tconst};${tconstIncluded};${movie.Filename
               }`
             );
           } else {
@@ -3032,8 +3025,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
         shared.filters.filterMetacriticScore[0] > 0 ||
         shared.filters.filterMetacriticScore[1] < 100
       ) {
-        filterMetacriticScore += `(MOV.IMDB_metacriticScore >= ${
-          shared.filters.filterMetacriticScore[0]
+        filterMetacriticScore += `(MOV.IMDB_metacriticScore >= ${shared.filters.filterMetacriticScore[0]
           } AND MOV.IMDB_metacriticScore <= ${shared.filters.filterMetacriticScore[1]})`;
       } else {
         filterMetacriticScore += "1 = 0";
@@ -3057,8 +3049,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       }
 
       if (shared.filters.filterIMDBRating[0] > 0 || shared.filters.filterIMDBRating[1] < 10) {
-        filterIMDBRating += `(MOV.IMDB_rating >= ${
-          shared.filters.filterIMDBRating[0]
+        filterIMDBRating += `(MOV.IMDB_rating >= ${shared.filters.filterIMDBRating[0]
           } AND MOV.IMDB_rating <= ${shared.filters.filterIMDBRating[1]})`;
       } else {
         filterIMDBRating += "1 = 0";
@@ -3181,16 +3172,15 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
 		SELECT
 			MOV.id_Movies
 			, MOV.Name
-			, MOV.IMDB_rating${
-      shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""
+      , MOV.Name2
+			, MOV.IMDB_rating${shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""
       } AS IMDB_rating_default
 			, MOV.IMDB_metacriticScore
 			, IFNULL(MOV.Rating, 0) AS Rating
 			, MOV.startYear
 			, MOV.created_at
 			, MOV.last_access_at
-      , MOV.IMDB_numVotes${
-      shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""
+      , MOV.IMDB_numVotes${shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""
       } AS IMDB_numVotes_default
       , MOV.IMDB_plotSummary
       , MOV.RelativePath
@@ -3203,14 +3193,12 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       , MOV.isDirectoryBased
       , SP.Path AS SourcePath
 
-      ${
-      minimumResultSet
+      ${minimumResultSet
         ? `
         , 0 AS isCompletelyFetched
         , NULL AS Filename
         , NULL AS Size
         , NULL AS file_created_at
-        , NULL AS Name2
         , NULL AS endYear
         , NULL AS MI_Duration
         , NULL AS MI_Quality
@@ -3241,7 +3229,6 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
         , MOV.Filename
         , MOV.Size
         , MOV.file_created_at
-        , MOV.Name2
         , MOV.endYear
         , MOV.MI_Duration
         , MOV.MI_Quality
@@ -3321,8 +3308,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
         })}`
         : "";
       item.IMDB_rating_defaultDisplay = item.IMDB_rating_defaultFormatted
-        ? `${
-        item.IMDB_rating_defaultFormatted
+        ? `${item.IMDB_rating_defaultFormatted
         } (${item.IMDB_numVotes_default.toLocaleString()})`
         : "";
 
@@ -3338,8 +3324,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
         item.AgeRating = item.Age + "+";
       } else {
         if (item.IMDB_MinAge || item.IMDB_MinAge === 0) {
-          item.AgeRating = `${item.IMDB_MinAge}${
-            item.IMDB_MaxAge && item.IMDB_MaxAge > item.IMDB_MinAge
+          item.AgeRating = `${item.IMDB_MinAge}${item.IMDB_MaxAge && item.IMDB_MaxAge > item.IMDB_MinAge
               ? "-" + item.IMDB_MaxAge
               : ""
             }+`;
@@ -3429,7 +3414,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
     });
 
     logger.log(result);
-    
+
     return result;
   } catch (err) {
     logger.error(err);
@@ -4597,8 +4582,7 @@ async function fetchFilterLanguages($MediaType, $LanguageType, $t) {
 
     result.DisplayText = result.Language;
     if (languageCodeNameMapping[result.Language]) {
-      result.DisplayText = `${result.Language} - ${
-        languageCodeNameMapping[result.Language]
+      result.DisplayText = `${result.Language} - ${languageCodeNameMapping[result.Language]
         }`;
       result.LanguageFull = languageCodeNameMapping[result.Language];
     }
@@ -5104,8 +5088,7 @@ async function getMovieDuplicates(
 					AND MOV.Filename = MOVSource.Filename                             -- Must have same Filename (actual duplicate)
           AND MOV.Size = MOVSource.Size                                     -- Must have same Size (actual duplicate)
           AND MOV.Extra_id_Movies_Owner IS NULL                             -- Exclude Extras
-          ${
-        ignoreNew ? "AND (MOV.isNew IS NULL OR MOV.isNew = 0)" : ""
+          ${ignoreNew ? "AND (MOV.isNew IS NULL OR MOV.isNew = 0)" : ""
         }    -- optional: only newly added movies (rescan)
           `,
         { $id_Movies }
@@ -5132,8 +5115,7 @@ async function getMovieDuplicates(
 				AND MOV.IMDB_tconst = MOVSource.IMDB_tconst                         -- Same IMDB ID (meta Duplicate)
         AND MOV.IMDB_tconst IS NOT NULL                                     -- IMDB ID should exist
         AND MOV.Extra_id_Movies_Owner IS NULL                               -- Exclude Extras
-        ${
-        ignoreNew ? "AND (MOV.isNew IS NULL OR MOV.isNew = 0)" : ""
+        ${ignoreNew ? "AND (MOV.isNew IS NULL OR MOV.isNew = 0)" : ""
         }      -- optional: only newly added movies (rescan)
         `,
         { $id_Movies }
