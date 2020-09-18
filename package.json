@@ -45,6 +45,7 @@
     "os-locale": "4.0.0",
     "request": "2.88.0",
     "requestretry": "4.1.1",
+    "semver": "^7.3.2",
     "sqlite3": "5.0.0",
     "video.js": "7.6.6",
     "vue": "2.6.10",

@@ -86,6 +86,7 @@
 import * as marked from "marked";
 
 const logger = require("loglevel");
+const semver = require("semver");
 const { shell } = require("electron").remote;
 
 import * as store from "@/store";
@@ -208,13 +209,13 @@ export default {
 
         logger.log("VersionDialog checkVersion remoteHistory:", remoteHistory);
 
-        this.history = remoteHistory;
         this.latestVersion = remoteHistory[0].version;
 
-        if (this.currentVersion === this.latestVersion) {
-          this.isUpToDate = true;
-        } else {
+        if (semver.gt(this.latestVersion,this.currentVersion)) {
+          this.history = remoteHistory;
           this.isNewVersionAvailable = true;
+        } else {
+          this.isUpToDate = true;
         }
 
         this.updateVersionInfo(0);

@@ -2,5 +2,9 @@
     {
         "version": "1.0.0",
         "description": "version-1.0.0.md"
+    },
+    {
+        "version": "0.0.1-test",
+        "description": "version-0.0.1-test.md"
     }
 ]
