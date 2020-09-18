@@ -2247,4 +2247,10 @@ h1 {
 .mk-v-select-dynamic-width .v-select__selections > input {
   max-width: 0px !important;
 }
+
+/* ### marked overrides ### */
+code {
+  background-color: rgba(0, 0, 0, 0)!important;
+  color: rgba(255, 255, 255, 0.7)!important;
+}
 </style>

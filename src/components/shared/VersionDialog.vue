@@ -83,6 +83,8 @@
 <script>
 // import Vue from "vue";
 // import router from "@/router"; // workaround in order to access router.app.$t
+import * as marked from "marked";
+
 const logger = require("loglevel");
 const { shell } = require("electron").remote;
 
@@ -138,13 +140,13 @@ export default {
         const localVersionInfo = await store.loadLocalHistory(fileName);
 
         if (localVersionInfo) {
-          const localVersionInfoText = localVersionInfo.toString();
+          const localVersionInfoMD = localVersionInfo.toString();
 
           logger.log(
-            "VersionDialog updateVersionInfo loadLocalHistory localVersionInfoText:",
-            localVersionInfoText
+            "VersionDialog updateVersionInfo loadLocalHistory localVersionInfoMD:",
+            localVersionInfoMD
           );
-          this.versionInfo = localVersionInfoText;
+          this.versionInfo = marked(localVersionInfoMD);
         } else {
           logger.log(
             "VersionDialog updateVersionInfo loadLocalHistory NO localVersionInfo found!"
