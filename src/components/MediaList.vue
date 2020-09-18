@@ -32,7 +32,7 @@
         <span>{{$t('Reload List')}}</span>
       </v-tooltip>
       <h1 style="margin-bottom: 0px; margin-top: 0px;">
-        {{ $t(mediatype.toUpperCase()) }} ({{ itemsFiltered.length }})
+        {{ $t(mediatype.toUpperCase()) }} ({{ itemsFiltered.length.toLocaleString() }})
         <v-tooltip bottom v-if="filtersList.length > 0">
           <template v-slot:activator="{ on }">
             <span v-on="on">*</span>
