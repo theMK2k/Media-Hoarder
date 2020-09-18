@@ -1,5 +1,11 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onEscapePressed" scrollable>
+  <v-dialog
+    v-model="show"
+    persistent
+    max-width="1000px"
+    v-on:keydown.escape="onEscapePressed"
+    scrollable
+  >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         <v-row>
@@ -45,13 +51,13 @@
                 <div
                   v-if="!showLongBio"
                   style="font-size: .875rem; font-weight: normal"
-                  class="mk-clickable"
+                  class="Clickable"
                   v-on:click.stop="showLongBio = true"
                 >{{ personData.ShortBio }}</div>
                 <div
                   v-if="showLongBio"
                   style="font-size: .875rem; font-weight: normal"
-                  class="mk-clickable"
+                  class="Clickable"
                   v-on:click.stop="showLongBio = false"
                 >
                   <p
@@ -153,7 +159,8 @@ export default {
         this.personData = {
           IMDB_Person_ID: personData.$IMDB_Person_ID,
           Photo_URL: personData.$Photo_URL
-            ? "local-resource://" + helpers.getDataPath(personData.$Photo_URL).replace(/\\/g, "\\\\")
+            ? "local-resource://" +
+              helpers.getDataPath(personData.$Photo_URL).replace(/\\/g, "\\\\")
             : personData.$Photo_URL,
           ShortBio: personData.$ShortBio,
           LongBio: personData.$LongBio,
@@ -201,8 +208,9 @@ export default {
       personData = personData[0];
 
       personData.Photo_URL = personData.Photo_URL
-        ? "local-resource://" + helpers.getStaticPath(personData.Photo_URL).replace(/\\/g, "\\\\")
-        : personData.Photo_URL;
+        ? "local-resource://" +
+          helpers.getDataPath(personData.Photo_URL).replace(/\\/g, "\\\\")
+        : result.Photo_URL;
 
       this.personData = personData;
 
