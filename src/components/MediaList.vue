@@ -1680,8 +1680,8 @@ export default {
       this.listDialog.show = false;
     },
 
-    $local_t(payload) {
-      return this.$t(payload);
+    $local_t(key, payload) {
+      return this.$t(key, payload);
     },
 
     async fetchFilters(setFilter) {
@@ -1992,7 +1992,7 @@ export default {
       try {
         store.resetUserScanOptions();
 
-        await store.assignIMDB(this.linkIMDBDialog.item.id_Movies, tconst, false, false, this.$local_t);
+        await store.assignIMDB(this.linkIMDBDialog.item.id_Movies, tconst, false, false, null, this.$local_t);
 
         eventBus.refetchMedia(this.$shared.currentPage);
 
