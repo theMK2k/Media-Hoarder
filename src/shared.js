@@ -42,7 +42,7 @@ const shared = new Vue({
         Frightening: [],
       },
       filterPersons: [],
-      filterYears: [],
+      // filterYears: [],
       filterQualities: [],
       filterCompanies: [],
       filterAudioLanguages: [],
@@ -53,6 +53,11 @@ const shared = new Vue({
   
       filterIMDBRating: [0, 10],
       filterIMDBRatingNone: true,
+
+      filterReleaseYears: [new Date().getFullYear(), new Date().getFullYear()],
+      filterReleaseYearsNone: true,
+      filterReleaseYearsMin: new Date().getFullYear(),
+      filterReleaseYearsMax: new Date().getFullYear(),
   
       filterIMDBPlotKeywords: [],
   

@@ -140,7 +140,11 @@ export const eventBus = new Vue({
 			}
 
 			remote.getCurrentWindow().setProgressBar(value);
-		}
+		},
+
+		rescanFinished({ rescanAddedMovies, rescanRemovedMovies }) {
+			this.$emit('rescanFinished', { rescanAddedMovies, rescanRemovedMovies });
+		},
 	}
 });
 

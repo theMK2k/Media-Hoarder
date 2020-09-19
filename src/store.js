@@ -54,6 +54,7 @@ const definedError = require("@/helpers/defined-error");
 
 const isBuild = process.env.NODE_ENV === "production";
 
+let rescanAddedMovies = 0;
 let doAbortRescan = false;
 
 let currentScanInfoHeader = "";
@@ -261,6 +262,8 @@ async function fetchSourcePaths() {
 }
 
 async function rescan(onlyNew, $t) {
+  rescanAddedMovies = 0;
+  
   shared.isScanning = true;
   eventBus.rescanStarted();
 
@@ -280,6 +283,9 @@ async function rescan(onlyNew, $t) {
 
   // delete all removed entries
   logger.log('rescan Cleanup START')
+
+  const rescanRemovedMovies = await db.fireProcedureReturnScalar(`SELECT COUNT(1) FROM tbl_Movies WHERE isRemoved = 1`);
+  
   await db.fireProcedure(`DELETE FROM tbl_Movies WHERE isRemoved = 1`, []);
   await ensureMovieDeleted();
   logger.log('rescan CLEANUP END')
@@ -287,6 +293,7 @@ async function rescan(onlyNew, $t) {
   shared.isScanning = false;
   doAbortRescan = false;
   eventBus.rescanStopped();
+  eventBus.rescanFinished({ rescanAddedMovies, rescanRemovedMovies });
 }
 
 async function rescanHandleDuplicates() {
@@ -909,6 +916,8 @@ async function addMovie(movieSourcePath, pathItem) {
   }
 
   logger.log('addMovie adding:', pathItem.Name);
+  
+  rescanAddedMovies++;
 
   // currentScanInfoHeader
   eventBus.scanInfoShow(currentScanInfoHeader, `adding ${pathItem.Name}`);
@@ -1070,7 +1079,9 @@ async function applyMetaData(onlyNew, id_Movies) {
 				, IFNULL(MOV.IMDB_primaryTitle, '') AS IMDB_primaryTitle
 				, MOV.IMDB_startYear
         , MOV.IMDB_endYear
-			FROM tbl_Movies MOV
+        , SP.MediaType
+      FROM tbl_Movies MOV
+      INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = MOV.id_SourcePaths
 			WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
 			${onlyNew ? "AND (MOV.isNew = 1 OR MOV.scanErrors IS NOT NULL)" : ""}
 			${id_Movies ? "AND MOV.id_Movies = " + id_Movies : ""}
@@ -2950,41 +2961,33 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       }
     }
 
-    let filterYears = "";
-    logger.log("shared.filters.filterYears:", shared.filters.filterYears);
+    let filterReleaseYears = "";
     if (
-      shared.filters.filterYears &&
-      shared.filters.filterYears.find((filter) => !filter.Selected)
+      !(
+        shared.filters.filterReleaseYears[0] == shared.filters.filterReleaseYearsMin &&
+        shared.filters.filterReleaseYears[1] == shared.filters.filterReleaseYearsMax &&
+        shared.filters.filterReleaseYearsNone == true
+      )
     ) {
-      if (
-        shared.filters.filterYears.find(
-          (filter) => filter.Selected && filter.startYear == -1
-        )
-      ) {
-        filterYears = `AND (MOV.startYear IS NULL `;
+      if (!shared.filters.filterReleaseYearsNone) {
+        filterReleaseYears = "AND (MOV.startYear IS NOT NULL OR ";
       } else {
-        filterYears = `AND (1=0 `;
+        filterReleaseYears = "AND (1 = 0 OR ";
       }
 
       if (
-        shared.filters.filterYears.find(
-          (filter) => filter.Selected && filter.startYear >= 0
-        )
+        shared.filters.filterReleaseYears[0] > shared.filters.filterReleaseYearsMin ||
+        shared.filters.filterReleaseYears[1] < shared.filters.filterReleaseYearsMax
       ) {
-        filterYears += `OR MOV.startYear IN (`;
-
-        filterYears += shared.filters.filterYears
-          .filter((filter) => filter.Selected)
-          .map((filter) => filter.startYear)
-          .reduce((prev, current) => {
-            return prev + (prev ? ", " : "") + current;
-          }, "");
-
-        filterYears += ")";
+        filterReleaseYears += `(MOV.startYear >= ${shared.filters.filterReleaseYears[0]
+          } AND MOV.startYear <= ${shared.filters.filterReleaseYears[1]})`;
+      } else {
+        filterReleaseYears += "1 = 0";
       }
 
-      filterYears += ")";
+      filterReleaseYears += ")";
     }
+
 
     let filterQualities = "";
     logger.log("shared.filters.filterQualities:", shared.filters.filterQualities);
@@ -3352,7 +3355,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
 		${filterLists}
 		${filterParentalAdvisory}
 		${filterPersons}
-		${filterYears}
+		${filterReleaseYears}
 		${filterQualities}
     ${filterCompanies}
     ${filterIMDBPlotKeywords}
@@ -3635,22 +3638,14 @@ async function getSetting($Key) {
 
 async function setSetting($Key, $Value) {
   try {
-    const mustUpdate = await db.fireProcedureReturnScalar(
-      `SELECT COUNT(1) FROM tbl_Settings WHERE Key = $Key`,
-      { $Key }
+    await db.fireProcedure(
+      `INSERT INTO tbl_Settings (Key, Value) VALUES ($Key, $Value)
+        ON CONFLICT(Key)
+        DO UPDATE SET
+          Value = excluded.Value
+        `,
+      { $Value, $Key }
     );
-
-    if (mustUpdate) {
-      await db.fireProcedure(
-        `UPDATE tbl_Settings SET Value = $Value WHERE Key = $Key`,
-        { $Value, $Key }
-      );
-    } else {
-      await db.fireProcedure(
-        `INSERT INTO tbl_Settings (Key, Value) VALUES ($Key, $Value)`,
-        { $Value, $Key }
-      );
-    }
     return true;
   } catch (err) {
     logger.error(err);
@@ -4340,6 +4335,10 @@ async function fetchFilterIMDBFilmingLocations($MediaType, $t) {
   shared.filters.filterIMDBFilmingLocations = results;
 }
 
+/**
+ * The old filterYears, where each year gets its own checkbox
+ * @param {*} $MediaType 
+ */
 async function fetchFilterYears($MediaType) {
   logger.log("fetchFilterYears MediaType:", $MediaType);
 
@@ -4732,6 +4731,94 @@ async function fetchFilterMetacriticScore($MediaType) {
     filterValues.filterMetacriticScoreNone != undefined
   ) {
     shared.filters.filterMetacriticScoreNone = filterValues.filterMetacriticScoreNone;
+  }
+}
+
+async function ensureFilterReleaseYearsRange($MediaType) {
+  shared.filters.filterReleaseYearsMin = helpers.nz(await db.fireProcedureReturnScalar(
+    `
+    SELECT MIN(startYear)
+      FROM tbl_Movies MOV
+      INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+      WHERE
+        (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL`,
+    { $MediaType }
+  ), new Date().getFullYear());
+
+  logger.log('ensureFilterReleaseYearsRange Min:', shared.filters.filterReleaseYearsMin);
+
+  shared.filters.filterReleaseYearsMax = helpers.nz(await db.fireProcedureReturnScalar(
+    `
+    SELECT MAX(startYear)
+      FROM tbl_Movies MOV
+      INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+      WHERE
+        (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL`,
+    { $MediaType }
+  ), new Date().getFullYear());
+
+  logger.log('ensureFilterReleaseYearsRange Max:', shared.filters.filterReleaseYearsMax);
+
+  // if (shared.isScanning) {
+    // during rescan fuckups may happen
+    shared.filters.filterReleaseYears = [shared.filters.filterReleaseYearsMin, shared.filters.filterReleaseYearsMax];
+  // } else {
+  //  shared.filters.filterReleaseYears = [Math.max(shared.filters.filterReleaseYears[0], shared.filters.filterReleaseYearsMin), Math.min(shared.filters.filterReleaseYears[1], shared.filters.filterReleaseYearsMax)];  
+  //}
+}
+
+async function fetchFilterReleaseYears($MediaType) {
+  ensureFilterReleaseYearsRange($MediaType);
+  
+  // shared.filters.filterReleaseYearsMin = helpers.nz(await db.fireProcedureReturnScalar(
+  //   `
+  //   SELECT MIN(startYear)
+  //     FROM tbl_Movies MOV
+  //     INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+  //     WHERE
+  //       (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL`,
+  //   { $MediaType }
+  // ), new Date().getFullYear());
+
+  // logger.log('fetchFilterReleaseYears shared.filters.filterReleaseYearsMin via tbl_Movies:', shared.filters.filterReleaseYearsMin);
+
+  // shared.filters.filterReleaseYearsMax = helpers.nz(await db.fireProcedureReturnScalar(
+  //   `
+  //   SELECT MAX(startYear)
+  //     FROM tbl_Movies MOV
+  //     INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+  //     WHERE
+  //       (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL`,
+  //   { $MediaType }
+  // ), new Date().getFullYear());
+
+  // logger.log('fetchFilterReleaseYears shared.filters.filterReleaseYearsMax via tbl_Movies:', shared.filters.filterReleaseYearsMax);
+
+  shared.filters.filterReleaseYears = [shared.filters.filterReleaseYearsMin, shared.filters.filterReleaseYearsMax];
+
+  const filterValues = await fetchFilterValues($MediaType);
+
+  if (
+    filterValues &&
+    filterValues.filterReleaseYearsNone != null &&
+    filterValues.filterReleaseYearsNone != undefined
+  ) {
+    shared.filters.filterReleaseYearsNone = filterValues.filterReleaseYearsNone;
+  }
+
+  if (filterValues && filterValues.filterReleaseYears && filterValues.filterReleaseYears.length === 2 && filterValues.filterReleaseYearsMin == filterValues.filterReleaseYears[0] && filterValues.filterReleaseYearsMax == filterValues.filterReleaseYears[1]) {
+    // the old setting already was the "ALL" range, no need to overwrite
+    logger.log('fetchFilterReleaseYears: saved was the "ALL" range');
+    return;
+  }
+
+  if (
+    filterValues &&
+    filterValues.filterReleaseYears &&
+    filterValues.filterReleaseYears.length > 0
+  ) {
+    logger.log('fetchFilterReleaseYears: saved was NOT the "ALL" range:', filterValues);
+    shared.filters.filterReleaseYears = [Math.max(filterValues.filterReleaseYears[0], shared.filters.filterReleaseYearsMin), Math.min(filterValues.filterReleaseYears[1], shared.filters.filterReleaseYearsMax)];
   }
 }
 
@@ -5992,6 +6079,12 @@ function resetFilters(objFilter) {
       return;
     }
 
+    if (key === 'filterReleaseYears') {
+      logger.log('  is "filterReleaseYears" -> reset to [min, max]');
+      objFilter[key] = [shared.filters.filterReleaseYearsMin, shared.filters.filterReleaseYearsMax];
+      return;
+    }
+
     if (key === 'filterIMDBRating') {
       logger.log('  is "filterIMDBRating" -> reset to [0, 10]');
       objFilter[key] = [0, 10];
@@ -6060,7 +6153,7 @@ async function ensureToolPath(executable, settingName) {
     // use where
     lookupTask = `where ${executable}`;
   } else {
-    // use whereis -b
+    // use which
     lookupTask = `which ${executable}`;
   }
 
@@ -6161,7 +6254,6 @@ async function fetchNumMovies($MediaType) {
       WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
             AND MOV.Extra_id_Movies_Owner IS NULL
             AND MOV.id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths WHERE MediaType = $MediaType)
-
   `, { $MediaType })
 
   return numMovies.toLocaleString(shared.uiLanguage);
@@ -6188,6 +6280,7 @@ export {
   fetchFilterIMDBPlotKeywords,
   fetchFilterIMDBFilmingLocations,
   fetchFilterYears,
+  fetchFilterReleaseYears,
   fetchFilterQualities,
   fetchFilterCompanies,
   fetchFilterLanguages,
@@ -6246,5 +6339,6 @@ export {
   getMinimumWaitForSetAccess,
   setLogLevel,
   routeTo,
-  fetchNumMovies
+  fetchNumMovies,
+  ensureFilterReleaseYearsRange
 };

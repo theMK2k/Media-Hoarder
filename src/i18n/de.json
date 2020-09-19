@@ -33,7 +33,7 @@
   "People": "Personen",
   "all selected must apply": "alle ausgewählten müssen enthalten sein",
   "one selected must apply": "eines der ausgewählten muss enthalten sein",
-  "Release Years": "Veröffentlichungsjahre",
+  "Release Years": "Jahre",
   "Plot Keywords": "Handlungsstichwörter",
   "FIND": "SUCHEN",
   "Delete List": "Liste Löschen",
@@ -157,7 +157,7 @@
   "IMDB Rating": "IMDB Bewertung",
   "Metacritic Score": "Metacritic Bewertung",
   "My Rating": "Meine Bewertung",
-  "Release Year": "Veröffentlichungsjahr",
+  "Release Year": "Jahr",
   "Imported at": "Importiert am",
   "Last Access at": "Letzter Zugriff am",
   "Info copied to clipboard": "Info in Zwischenablage kopiert",
@@ -919,5 +919,10 @@
   "scraping IMDB Full Credits": "Abrufen von IMDB Mitwirkende",
   "scraping IMDB Companies": "Abrufen von IMDB Firmen",
   "scraping IMDB Filming Locations": "Abrufen von IMDB Drehorte",
-  "store IMDB metadata": "Speichern der IMDB Metadaten"
+  "store IMDB metadata": "Speichern der IMDB Metadaten",
+  "include entries with no release year": "auch Einträge ohne Jahresangabe einbeziehen",
+  "entry": "Eintrag",
+  "_Re-_scan finished_": "Einlesen abgeschlossen.",
+  "added": "hinzugefügt",
+  "removed": "entfernt"
 }

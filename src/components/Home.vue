@@ -21,7 +21,7 @@
               </v-card-title>
 
               <v-card-text class="mk-light-grey">
-                <p v-if="item.fetchNumMovies">{{ item.numMovies }} {{$t('entries')}}</p>
+                <p v-if="item.fetchNumMovies">{{ item.numMovies }} {{ item.numMovies == 1 ? $t('entry') : $t('entries')}}</p>
               </v-card-text>
             </div>
           </div>
@@ -102,6 +102,10 @@ export default {
     this.fetchNumMovies();
     
     eventBus.$on("dbInitialized", () => {
+      this.fetchNumMovies();
+    });
+
+    eventBus.$on("rescanFinished", () => {
       this.fetchNumMovies();
     });
   },

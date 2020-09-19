@@ -1203,7 +1203,15 @@ export default {
           }`
         );
       }
-      if (this.$shared.filters.filterYears.find(filter => !filter.Selected)) {
+      // if (this.$shared.filters.filterYears.find(filter => !filter.Selected)) {
+      //   filtersList.push(this.$t("Release Years"));
+      // }
+      
+      if (
+        this.$shared.filters.filterReleaseYears[0] != this.$shared.filters.filterReleaseYearsMin ||
+        this.$shared.filters.filterReleaseYears[1] != this.$shared.filters.filterReleaseYearsMax ||
+        !this.$shared.filters.filterReleaseYearsNone
+      ) {
         filtersList.push(this.$t("Release Years"));
       }
       if (this.$shared.filters.filterQualities.find(filter => !filter.Selected)) {
@@ -1306,8 +1314,6 @@ export default {
       ) {
         filtersList.push(this.$t("IMDB Ratings"));
       }
-
-      logger.log("filtersList:", filtersList);
 
       return filtersList;
     },
@@ -1701,7 +1707,8 @@ export default {
         this.mediatype,
         this.$local_t
       );
-      await store.fetchFilterYears(this.mediatype);
+      // await store.fetchFilterYears(this.mediatype);
+      await store.fetchFilterReleaseYears(this.mediatype);
       await store.fetchFilterQualities(this.mediatype);
       await store.fetchFilterLanguages(this.mediatype, "audio", this.$local_t);
       await store.fetchFilterLanguages(
@@ -2246,6 +2253,8 @@ export default {
       (async () => {
         eventBus.showLoadingOverlay(true);
 
+        await store.ensureFilterReleaseYearsRange(this.mediatype);
+
         this.items = [];
 
         this.items = await store.fetchMedia(this.mediatype, null, true, $t);
@@ -2256,7 +2265,8 @@ export default {
           setPage && setPage <= this.numPages ? setPage : 1;
         store.saveCurrentPage(this.mediatype);
 
-        this.completelyFetchMedia();
+        await this.completelyFetchMedia();
+
       })();
     });
 
@@ -2289,6 +2299,12 @@ export default {
     eventBus.$on("showCompanyDialog", value => {
       this.onCompanyClicked(value);
     });
+
+    eventBus.$on("rescanFinished", ({ rescanAddedMovies, rescanRemovedMovies }) => {
+      if (rescanAddedMovies || rescanRemovedMovies) {
+        this.onReload();
+      }
+    })
 
     this.updateCurrentTime();
 

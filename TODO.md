@@ -4,7 +4,7 @@
 
 ### Bugs
 
-- nothing
+- ensureFilterReleaseYearsRange / fetchFilterReleaseYears have still some fuckups on rescan / fetchMedia
 
 ### Other
 

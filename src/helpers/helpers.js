@@ -276,6 +276,14 @@ function ensureDirectorySync(path) {
   }
 }
 
+function nz(value, valueIfNull) {
+  if( typeof value === 'undefined' || value === null ){
+    return valueIfNull;
+  }
+
+  return value;
+}
+
 export {
   isWindows,
   isPORTABLE,
@@ -297,5 +305,6 @@ export {
   cleanupFileName,
   cleanupDirectoryName,
   getLastDirectoryName,
-  ensureDirectorySync
+  ensureDirectorySync,
+  nz
 };

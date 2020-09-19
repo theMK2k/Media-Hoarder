@@ -838,5 +838,10 @@
   "scraping IMDB Full Credits": "scraping IMDB Full Credits",
   "scraping IMDB Companies": "scraping IMDB Companies",
   "scraping IMDB Filming Locations": "scraping IMDB Filming Locations",
-  "store IMDB metadata": "store IMDB metadata"
+  "store IMDB metadata": "store IMDB metadata",
+  "include entries with no release year": "include entries with no release year",
+  "entry": "entry",
+  "_Re-_scan finished_": "(Re-)scan finished.",
+  "added": "added",
+  "removed": "removed"
 }

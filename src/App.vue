@@ -527,7 +527,38 @@
               </v-expansion-panel-content>
             </v-expansion-panel>
 
+            <!-- FILTER Release Years -->
+            <v-expansion-panel style="padding: 0px!important">
+              <v-expansion-panel-header style="padding: 8px!important">
+                <div>
+                  <v-icon>mdi-calendar-month-outline</v-icon>
+                  {{$t("Release Years")}} {{filterReleaseYearsTitle}}
+                </div>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-range-slider
+                  v-model="$shared.filters.filterReleaseYears"
+                  v-bind:max="$shared.filters.filterReleaseYearsMax"
+                  v-bind:min="$shared.filters.filterReleaseYearsMin"
+                  hide-details
+                  class="align-center"
+                  v-on:change="filtersChanged"
+                >
+                  <template v-slot:prepend>{{$shared.filters.filterReleaseYears[0]}}</template>
+                  <template v-slot:append>{{$shared.filters.filterReleaseYears[1]}}</template>
+                </v-range-slider>
+                <v-checkbox
+                  v-bind:label="$t('include entries with no release year')"
+                  v-model="$shared.filters.filterReleaseYearsNone"
+                  v-on:click.native="filtersChanged"
+                  style="margin: 0px"
+                  color="mk-dark-grey"
+                ></v-checkbox>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+
             <!-- FILTER YEARS -->
+            <!-- the old filterYears where each year gets its own checkbox
             <v-expansion-panel
               v-show="$shared.filters.filterYears && $shared.filters.filterYears.length > 0"
               style="padding: 0px!important"
@@ -554,6 +585,7 @@
                 ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
+            -->
 
             <!-- FILTER IMDB Plot Keywords -->
             <v-expansion-panel style="padding: 0px!important">
@@ -1044,26 +1076,26 @@ export default {
       );
     },
 
-    filterYearsTitle() {
-      if (
-        !this.$shared.filters.filterYears.find((filter) => !filter.Selected)
-      ) {
-        return `(${this.$t("ALL")})`;
-      }
+    // filterYearsTitle() {
+    //   if (
+    //     !this.$shared.filters.filterYears.find((filter) => !filter.Selected)
+    //   ) {
+    //     return `(${this.$t("ALL")})`;
+    //   }
 
-      if (!this.$shared.filters.filterYears.find((filter) => filter.Selected)) {
-        return `(${this.$t("NONE")})`;
-      }
+    //   if (!this.$shared.filters.filterYears.find((filter) => filter.Selected)) {
+    //     return `(${this.$t("NONE")})`;
+    //   }
 
-      return (
-        "(" +
-        this.$shared.filters.filterYears.filter((filter) => filter.Selected)
-          .length +
-        "/" +
-        this.$shared.filters.filterYears.length +
-        ")"
-      );
-    },
+    //   return (
+    //     "(" +
+    //     this.$shared.filters.filterYears.filter((filter) => filter.Selected)
+    //       .length +
+    //     "/" +
+    //     this.$shared.filters.filterYears.length +
+    //     ")"
+    //   );
+    // },
 
     filterQualitiesTitle() {
       if (
@@ -1416,6 +1448,21 @@ export default {
       }${this.$shared.filters.filterMetacriticScoreNone ? "" : "*"})`;
     },
 
+    filterReleaseYearsTitle() {
+      if (
+        this.$shared.filters.filterReleaseYears[0] == this.$shared.filters.filterReleaseYearsMin &&
+        this.$shared.filters.filterReleaseYears[1] == this.$shared.filters.filterReleaseYearsMax
+      ) {
+        return `(${this.$t("ALL")}${
+          this.$shared.filters.filterReleaseYearsNone ? "" : "*"
+        })`;
+      }
+
+      return `(${this.$shared.filters.filterReleaseYears[0]} - ${
+        this.$shared.filters.filterReleaseYears[1]
+      }${this.$shared.filters.filterReleaseYearsNone ? "" : "*"})`;
+    },
+
     filterIMDBRatingTitle() {
       if (
         this.$shared.filters.filterIMDBRating[0] == 0 &&
@@ -1484,8 +1531,8 @@ export default {
   },
 
   methods: {
-    $local_t(payload) {
-      return this.$t(payload);
+    $local_t(key, payload) {
+      return this.$t(key, payload);
     },
 
     sectionRoute(itemid) {
@@ -1565,13 +1612,13 @@ export default {
       this.filtersChanged();
     },
 
-    setAllYears: function (value) {
-      this.$shared.filters.filterYears.forEach((year) => {
-        year.Selected = value;
-      });
+    // setAllYears: function (value) {
+    //   this.$shared.filters.filterYears.forEach((year) => {
+    //     year.Selected = value;
+    //   });
 
-      this.filtersChanged();
-    },
+    //   this.filtersChanged();
+    // },
 
     setAllLists: function (value) {
       this.$shared.filters.filterLists.forEach((list) => {
@@ -2145,6 +2192,10 @@ export default {
 
     eventBus.$on("openCheckIMDBScraperDialog", (settings) => {
       this.showCheckIMDBScraperDialog(settings);
+    });
+
+    eventBus.$on("rescanFinished", ({ rescanAddedMovies, rescanRemovedMovies }) => {
+      eventBus.showSnackbar("success", `${this.$t('_Re-_scan finished_')} ${rescanAddedMovies} ${this.$t('added')}, ${rescanRemovedMovies} ${this.$t('removed')}.`);
     });
 
     // eventBus.scanInfoShow('KILLME', 'Asterix und das Geheimnis des Zaubertranks ~ Astérix - Le secret de la potion magique (De)(BD)[2018][Adventure, Animation, Comedy][6.9 @ 3074][tt8001346].mkv');
