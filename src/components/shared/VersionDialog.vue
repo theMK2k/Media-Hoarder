@@ -3,15 +3,23 @@
     <v-card>
       <v-card-title>
         <v-row class="headline" style="width: 100%; font-size: 1.17em">
-          <div class="headline mk-clickable" v-on:click="showQuote = !showQuote">{{$shared.appName}} {{$shared.currentVersion}} ({{$shared.currentName}})</div>
+          <div
+            class="headline mk-clickable"
+            v-on:click="showQuote = !showQuote"
+          >{{$shared.appName}} v{{$shared.currentVersion}} - {{$shared.currentName}}</div>
           <v-spacer></v-spacer>
 
           <v-btn text v-on:click="$emit('close')">{{$t('Close')}}</v-btn>
         </v-row>
 
-        <v-row v-if="showQuote" class="mk-clickable-dark-grey" style="line-height: 1.5" v-on:click="showQuote = false">
+        <v-row
+          v-if="showQuote"
+          class="mk-clickable-dark-grey"
+          style="line-height: 1.5"
+          v-on:click="showQuote = false"
+        >
           <i>{{ quote }}</i>
-          <br>
+          <br />
           -- {{ quoteSource }}
         </v-row>
 
@@ -30,7 +38,8 @@
             style="margin-top: 8px"
           >
             <span v-if="isNewVersionAvailable">
-              {{$t('Version {latestVersion} ({latestName}) is available - get it at', {latestVersion: latestVersion, latestName: latestName})}}
+              <strong>{{`${$shared.appName} v${latestVersion} - ${latestName}`}}</strong>
+              {{$t('is available_ Get it at', {appName: $shared.appName, latestVersion: latestVersion, latestName: latestName})}}
               <a
                 v-on:click.stop="openLink('https://github.com/theMK2k/Media-Hoarder/releases')"
               >https://github.com/theMK2k/Media-Hoarder/releases</a>
@@ -58,7 +67,7 @@
               v-bind:disabled="infoPosition + 1 >= history.length"
               v-on:click="infoPosition++"
             >&lt;</v-btn>
-            {{history[infoPosition].version}}
+            v{{history[infoPosition].version}} - {{history[infoPosition].name}}
             <v-btn
               text
               class="xs-fullwidth"

@@ -633,7 +633,7 @@
   "Add this Title Type": "Add this Title Type",
 
   "Checking for Updates": "Checking for Updates",
-  "Version {latestVersion} ({latestName}) is available - get it at": "Version {latestVersion} ({latestName}) is available - get it at",
+  "is available_ Get it at": "is available. Get it at",
   "you are up to date": "you are up to date",
   "unable to determine if you are up to date": "unable to determine if you are up to date",
   "Visit": "Visit",

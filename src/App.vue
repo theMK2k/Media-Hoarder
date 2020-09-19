@@ -658,7 +658,6 @@
       <v-toolbar-title class="mr-12 align-center mk-noshrink">
         <span class="title">
           {{$shared.appName}}
-          <span v-if="$shared.currentVersion">{{$shared.currentVersion}} ({{$shared.currentName}})</span>
           {{$shared.isDevelopment ? ` (DEV)` : ''}}
           {{$shared.isPORTABLE ? ` - Portable` : ''}}
         </span>
