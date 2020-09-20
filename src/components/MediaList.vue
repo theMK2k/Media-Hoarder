@@ -1231,19 +1231,19 @@ export default {
           }`
         );
       }
-      // if (this.$shared.filters.filterYears.find(filter => !filter.Selected)) {
-      //   filtersList.push(this.$t("Release Years"));
-      // }
-
-      if (
-        this.$shared.filters.filterReleaseYears[0] !=
-          this.$shared.filters.filterReleaseYearsMin ||
-        this.$shared.filters.filterReleaseYears[1] !=
-          this.$shared.filters.filterReleaseYearsMax ||
-        !this.$shared.filters.filterReleaseYearsNone
-      ) {
+      if (this.$shared.filters.filterYears.find(filter => !filter.Selected)) {
         filtersList.push(this.$t("Release Years"));
       }
+
+      // if (
+      //   this.$shared.filters.filterReleaseYears[0] !=
+      //     this.$shared.filters.filterReleaseYearsMin ||
+      //   this.$shared.filters.filterReleaseYears[1] !=
+      //     this.$shared.filters.filterReleaseYearsMax ||
+      //   !this.$shared.filters.filterReleaseYearsNone
+      // ) {
+      //   filtersList.push(this.$t("Release Years"));
+      // }
       if (
         this.$shared.filters.filterQualities.find((filter) => !filter.Selected)
       ) {
@@ -1749,8 +1749,8 @@ export default {
         this.mediatype,
         this.$local_t
       );
-      // await store.fetchFilterYears(this.mediatype);
-      await store.fetchFilterReleaseYears(this.mediatype);
+      await store.fetchFilterYears(this.mediatype);
+      // await store.fetchFilterReleaseYears(this.mediatype);
       await store.fetchFilterQualities(this.mediatype);
       await store.fetchFilterLanguages(this.mediatype, "audio", this.$local_t);
       await store.fetchFilterLanguages(
@@ -2312,7 +2312,7 @@ export default {
       (async () => {
         eventBus.showLoadingOverlay(true);
 
-        await store.ensureFilterReleaseYearsRange(this.mediatype);
+        // await store.ensureFilterReleaseYearsRange(this.mediatype);
 
         this.items = [];
 
@@ -2363,9 +2363,9 @@ export default {
       ({ rescanAddedMovies, rescanRemovedMovies }) => {
         if (rescanAddedMovies || rescanRemovedMovies) {
           (async () => {
-            // Reset after Rescan -> else we get fuckups with filterYears' range
-            store.resetFilters();
-            await store.saveFilterValues(this.mediatype);
+            // // Reset after Rescan -> else we get fuckups with filterYears' range
+            // store.resetFilters();
+            // await store.saveFilterValues(this.mediatype);
             this.onReload();
           })();
         }

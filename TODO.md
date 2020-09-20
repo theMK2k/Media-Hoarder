@@ -4,11 +4,11 @@
 
 ### Bugs
 
-- ensureFilterReleaseYearsRange / fetchFilterReleaseYears have still some fuckups on rescan / fetchMedia
+- nothing
 
 ### Other
 
-- nothing
+- [ ] enhance scrapeIMDBParentalGuideData with PG-Codes
 
 ## LATER
 

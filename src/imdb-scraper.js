@@ -534,6 +534,9 @@ async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturn
           Age = parseInt(Code.match(/\d+/)[0]);
           logger.log("Age (parsed):", Age);
         }
+        if (['Unrated', 'X', 'XXX'].find(definedCode => defindedCode === Code)) {
+          Age = 18;
+        }
       }
 
       ageRatings.push({ Country, Code, Age });

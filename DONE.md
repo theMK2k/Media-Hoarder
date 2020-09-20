@@ -405,7 +405,7 @@ Series
 
 ### Other
 
-- [x] use slider for release year filtering (see IMDB Rating filter or Metacritic Score filter)
+- [x] add button for Years filter "SET RANGE"
 - [x] implement store.setSetting with SQLite's `ON CONFLICT` method
 - [x] use user-defined language for localized numbers
 - [x] provide scraping details in snackbar during rescan

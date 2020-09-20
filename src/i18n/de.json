@@ -924,5 +924,6 @@
   "entry": "Eintrag",
   "_Re-_scan finished_": "Einlesen abgeschlossen.",
   "added": "hinzugefügt",
-  "removed": "entfernt"
+  "removed": "entfernt",
+  "SET RANGE": "BEREICH WÄHLEN"
 }

@@ -528,6 +528,7 @@
             </v-expansion-panel>
 
             <!-- FILTER Release Years -->
+            <!-- Unfortunately very unstable on rescan (the range changes and interferes with stored filter range etc.
             <v-expansion-panel style="padding: 0px!important">
               <v-expansion-panel-header style="padding: 8px!important">
                 <div>
@@ -555,10 +556,9 @@
                   color="mk-dark-grey"
                 ></v-checkbox>
               </v-expansion-panel-content>
-            </v-expansion-panel>
+            </v-expansion-panel>-->
 
             <!-- FILTER YEARS -->
-            <!-- the old filterYears where each year gets its own checkbox
             <v-expansion-panel
               v-show="$shared.filters.filterYears && $shared.filters.filterYears.length > 0"
               style="padding: 0px!important"
@@ -573,7 +573,28 @@
                 <v-row>
                   <v-btn text v-on:click="setAllYears(false)">{{$t("SET NONE")}}</v-btn>
                   <v-btn text v-on:click="setAllYears(true)">{{$t("SET ALL")}}</v-btn>
+                  <v-btn text v-on:click="showYearsRangeInput">{{$t("SET RANGE")}}</v-btn>
                 </v-row>
+                <div v-if="yearsRangeInput.show">
+                  <v-row v-if="yearsRangeInput.show">
+                    <v-range-slider
+                      v-model="yearsRangeInput.range"
+                      :max="yearsRangeInput.max"
+                      :min="yearsRangeInput.min"
+                      hide-details
+                      class="align-center"
+                    >
+                      <template v-slot:prepend>{{yearsRangeInput.range[0]}}</template>
+                      <template v-slot:append>{{yearsRangeInput.range[1]}}</template>
+                    </v-range-slider>
+                  </v-row>
+                  <v-row>
+                    <v-spacer></v-spacer>
+                    <v-btn text v-on:click="onYearsRangeInputCancel">{{$t('Cancel')}}</v-btn>
+                    <v-btn text v-on:click="onYearsRangeInputOK">{{$t('OK')}}</v-btn>
+                  </v-row>
+                </div>
+
                 <v-checkbox
                   v-for="year in $shared.filters.filterYears"
                   v-bind:key="year.startYear"
@@ -585,7 +606,6 @@
                 ></v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
-            -->
 
             <!-- FILTER IMDB Plot Keywords -->
             <v-expansion-panel style="padding: 0px!important">
@@ -949,6 +969,13 @@ export default {
       show: false,
       settings: null,
     },
+
+    yearsRangeInput: {
+      show: false,
+      min: 0,
+      max: 0,
+      range: [0, 0],
+    },
   }),
 
   watch: {
@@ -1076,26 +1103,26 @@ export default {
       );
     },
 
-    // filterYearsTitle() {
-    //   if (
-    //     !this.$shared.filters.filterYears.find((filter) => !filter.Selected)
-    //   ) {
-    //     return `(${this.$t("ALL")})`;
-    //   }
+    filterYearsTitle() {
+      if (
+        !this.$shared.filters.filterYears.find((filter) => !filter.Selected)
+      ) {
+        return `(${this.$t("ALL")})`;
+      }
 
-    //   if (!this.$shared.filters.filterYears.find((filter) => filter.Selected)) {
-    //     return `(${this.$t("NONE")})`;
-    //   }
+      if (!this.$shared.filters.filterYears.find((filter) => filter.Selected)) {
+        return `(${this.$t("NONE")})`;
+      }
 
-    //   return (
-    //     "(" +
-    //     this.$shared.filters.filterYears.filter((filter) => filter.Selected)
-    //       .length +
-    //     "/" +
-    //     this.$shared.filters.filterYears.length +
-    //     ")"
-    //   );
-    // },
+      return (
+        "(" +
+        this.$shared.filters.filterYears.filter((filter) => filter.Selected)
+          .length +
+        "/" +
+        this.$shared.filters.filterYears.length +
+        ")"
+      );
+    },
 
     filterQualitiesTitle() {
       if (
@@ -1448,20 +1475,20 @@ export default {
       }${this.$shared.filters.filterMetacriticScoreNone ? "" : "*"})`;
     },
 
-    filterReleaseYearsTitle() {
-      if (
-        this.$shared.filters.filterReleaseYears[0] == this.$shared.filters.filterReleaseYearsMin &&
-        this.$shared.filters.filterReleaseYears[1] == this.$shared.filters.filterReleaseYearsMax
-      ) {
-        return `(${this.$t("ALL")}${
-          this.$shared.filters.filterReleaseYearsNone ? "" : "*"
-        })`;
-      }
+    // filterReleaseYearsTitle() {
+    //   if (
+    //     this.$shared.filters.filterReleaseYears[0] == this.$shared.filters.filterReleaseYearsMin &&
+    //     this.$shared.filters.filterReleaseYears[1] == this.$shared.filters.filterReleaseYearsMax
+    //   ) {
+    //     return `(${this.$t("ALL")}${
+    //       this.$shared.filters.filterReleaseYearsNone ? "" : "*"
+    //     })`;
+    //   }
 
-      return `(${this.$shared.filters.filterReleaseYears[0]} - ${
-        this.$shared.filters.filterReleaseYears[1]
-      }${this.$shared.filters.filterReleaseYearsNone ? "" : "*"})`;
-    },
+    //   return `(${this.$shared.filters.filterReleaseYears[0]} - ${
+    //     this.$shared.filters.filterReleaseYears[1]
+    //   }${this.$shared.filters.filterReleaseYearsNone ? "" : "*"})`;
+    // },
 
     filterIMDBRatingTitle() {
       if (
@@ -1612,13 +1639,13 @@ export default {
       this.filtersChanged();
     },
 
-    // setAllYears: function (value) {
-    //   this.$shared.filters.filterYears.forEach((year) => {
-    //     year.Selected = value;
-    //   });
+    setAllYears: function (value) {
+      this.$shared.filters.filterYears.forEach((year) => {
+        year.Selected = value;
+      });
 
-    //   this.filtersChanged();
-    // },
+      this.filtersChanged();
+    },
 
     setAllLists: function (value) {
       this.$shared.filters.filterLists.forEach((list) => {
@@ -2037,6 +2064,54 @@ export default {
       store.resetFilters();
       this.filtersChanged();
     },
+
+    showYearsRangeInput() {
+      if (this.yearsRangeInput.show) {
+        this.yearsRangeInput.show = false;
+        return;
+      }
+      
+      let minYear = 9999;
+      this.$shared.filters.filterYears.forEach((year) => {
+        if (year.startYear != -1 && year.startYear < minYear) {
+          minYear = year.startYear;
+        }
+      });
+
+      let maxYear = 0;
+      this.$shared.filters.filterYears.forEach((year) => {
+        if (year.startYear != -1 && year.startYear > maxYear) {
+          maxYear = year.startYear;
+        }
+      });
+
+      this.yearsRangeInput.min = minYear;
+      this.yearsRangeInput.max = maxYear;
+      this.yearsRangeInput.range = [minYear, maxYear];
+      this.yearsRangeInput.show = true;
+    },
+
+    onYearsRangeInputCancel() {
+      this.yearsRangeInput.show = false;
+    },
+
+    onYearsRangeInputOK() {
+      this.$shared.filters.filterYears.forEach((year) => {
+        if (year.startYear === -1) {
+          return;
+        }
+
+        if (year.startYear >= this.yearsRangeInput.range[0] && year.startYear <= this.yearsRangeInput.range[1]) {
+          year.Selected = true;
+        } else {
+          year.Selected = false;
+        }
+      });
+
+      this.filtersChanged();
+
+      this.yearsRangeInput.show = false;
+    }
   },
 
   // ### LifeCycleHooks ###
@@ -2194,9 +2269,19 @@ export default {
       this.showCheckIMDBScraperDialog(settings);
     });
 
-    eventBus.$on("rescanFinished", ({ rescanAddedMovies, rescanRemovedMovies }) => {
-      eventBus.showSnackbar("success", `${this.$local_t('_Re-_scan finished_')} ${rescanAddedMovies} ${this.$local_t('added')}, ${rescanRemovedMovies} ${this.$local_t('removed')}.`);
-    });
+    eventBus.$on(
+      "rescanFinished",
+      ({ rescanAddedMovies, rescanRemovedMovies }) => {
+        eventBus.showSnackbar(
+          "success",
+          `${this.$local_t(
+            "_Re-_scan finished_"
+          )} ${rescanAddedMovies} ${this.$local_t(
+            "added"
+          )}, ${rescanRemovedMovies} ${this.$local_t("removed")}.`
+        );
+      }
+    );
 
     // eventBus.scanInfoShow('KILLME', 'Asterix und das Geheimnis des Zaubertranks ~ Astérix - Le secret de la potion magique (De)(BD)[2018][Adventure, Animation, Comedy][6.9 @ 3074][tt8001346].mkv');
 

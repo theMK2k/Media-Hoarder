@@ -843,5 +843,6 @@
   "entry": "entry",
   "_Re-_scan finished_": "(Re-)scan finished.",
   "added": "added",
-  "removed": "removed"
+  "removed": "removed",
+  "SET RANGE": "SET RANGE"
 }
