@@ -46,7 +46,7 @@
         </v-tooltip>
       </h1>
       <v-select
-        class="mk-v-select-dynamic-width "
+        class="mk-v-select-dynamic-width"
         solo
         clearable
         dense
@@ -160,7 +160,13 @@
                               >mdi-reload-alert</v-icon>
                             </span>
                           </template>
-                          <span>{{$t('Rescan IMDB meta data')}}<span v-if="isScanning"><br>{{$t('scan already in progress')}}</span></span>
+                          <span>
+                            {{$t('Rescan IMDB meta data')}}
+                            <span v-if="isScanning">
+                              <br />
+                              {{$t('scan already in progress')}}
+                            </span>
+                          </span>
                         </v-tooltip>
 
                         <v-tooltip bottom>
@@ -175,7 +181,13 @@
                               >mdi-link</v-icon>
                             </span>
                           </template>
-                          <span>{{$t('Link with IMDB entry')}}<span v-if="isScanning"><br>{{$t('scan already in progress')}}</span></span>
+                          <span>
+                            {{$t('Link with IMDB entry')}}
+                            <span v-if="isScanning">
+                              <br />
+                              {{$t('scan already in progress')}}
+                            </span>
+                          </span>
                         </v-tooltip>
                       </v-list-item-title>
 
@@ -264,7 +276,10 @@
                             v-bind:key="releaseAttribute"
                           >
                             <span>{{ index > 0 ? ', ' : ' ' }}</span>
-                            <span class="mk-clickable" v-on:click.stop="onShowReleaseAttributeDialog(releaseAttribute, item)">{{ releaseAttribute }}</span>
+                            <span
+                              class="mk-clickable"
+                              v-on:click.stop="onShowReleaseAttributeDialog(releaseAttribute, item)"
+                            >{{ releaseAttribute }}</span>
                           </span>
                         </span>
                       </div>
@@ -835,7 +850,6 @@
       v-on:close="releaseAttributeDialog.show = false"
       v-on:delete="onReleaseAttributesDialogDelete"
     ></mk-release-attribute-dialog>
-
   </div>
 </template>
 
@@ -895,32 +909,32 @@ export default {
     sortAbles: [
       {
         Field: "Name",
-        Description: "Name"
+        Description: "Name",
       },
       {
         Field: "IMDB_rating_default",
-        Description: "IMDB Rating"
+        Description: "IMDB Rating",
       },
       {
         Field: "IMDB_metacriticScore",
-        Description: "Metacritic Score"
+        Description: "Metacritic Score",
       },
       {
         Field: "Rating",
-        Description: "My Rating"
+        Description: "My Rating",
       },
       {
         Field: "startYear",
-        Description: "Release Year"
+        Description: "Release Year",
       },
       {
         Field: "created_at",
-        Description: "Imported at"
+        Description: "Imported at",
       },
       {
         Field: "last_access_at",
-        Description: "Last Access at"
-      }
+        Description: "Last Access at",
+      },
     ],
 
     listDialog: {
@@ -930,57 +944,57 @@ export default {
       movie: null,
       lists: [],
       allowUseExistingLists: false,
-      allowCreateNewList: false
+      allowCreateNewList: false,
     },
 
     personDialog: {
       show: false,
       IMDB_Person_ID: null,
-      Person_Name: null
+      Person_Name: null,
     },
 
     companyDialog: {
       show: false,
       IMDB_Company_ID: null,
-      Company_Name: null
+      Company_Name: null,
     },
 
     videoQualityDialog: {
       show: false,
-      Video_Quality: null
+      Video_Quality: null,
     },
 
     genreDialog: {
       show: false,
-      Video_Quality: null
+      Video_Quality: null,
     },
 
     languageDialog: {
       show: false,
       Type: null,
-      Code: null
+      Code: null,
     },
 
     ageRatingDialog: {
       show: false,
-      Age_Rating: null
+      Age_Rating: null,
     },
 
     plotKeywordDialog: {
       show: false,
       id_IMDB_Plot_Keywords: null,
-      Keyword: null
+      Keyword: null,
     },
 
     filmingLocationDialog: {
       show: false,
       id_IMDB_Filming_Locations: null,
-      Location: null
+      Location: null,
     },
 
     videoPlayerDialog: {
       show: false,
-      videoURL: null
+      videoURL: null,
     },
 
     localVideoPlayerDialog: {
@@ -988,7 +1002,7 @@ export default {
       show: false,
       videoURL: null,
       slateURL: null,
-      mimeType: null
+      mimeType: null,
     },
 
     editItemDialog: {
@@ -996,28 +1010,28 @@ export default {
       title: null,
       item: {},
       attributeName: null,
-      attributeDisplayText: null
+      attributeDisplayText: null,
     },
 
     linkIMDBDialog: {
       show: false,
-      item: {}
+      item: {},
     },
 
     ratingDemographicsDialog: {
       show: false,
-      title: null
+      title: null,
     },
 
     releaseAttributeDialog: {
       show: false,
       ReleaseAttribute: null,
-      movie: null
+      movie: null,
     },
 
     itemsPerPage: 20,
 
-    currentTime: moment()
+    currentTime: moment(),
   }),
 
   watch: {
@@ -1042,7 +1056,7 @@ export default {
 
     sortField() {
       this.completelyFetchMedia();
-    }
+    },
   },
 
   props: ["mediatype"],
@@ -1051,7 +1065,7 @@ export default {
     isScanning() {
       return this.$shared.isScanning;
     },
-    
+
     searchText() {
       return this.$shared.searchText;
     },
@@ -1108,7 +1122,7 @@ export default {
             detailInfo ? " | " + detailInfo : ""
           }`,
           numPages: this.numPages,
-          detailInfo
+          detailInfo,
         });
 
         page++;
@@ -1142,15 +1156,23 @@ export default {
       if (this.$shared.searchText) {
         filtersList.push(this.$t("Search"));
       }
-      if (this.$shared.filters.filterSourcePaths.find(filter => !filter.Selected)) {
+      if (
+        this.$shared.filters.filterSourcePaths.find(
+          (filter) => !filter.Selected
+        )
+      ) {
         filtersList.push(this.$t("Source Paths"));
       }
       if (
         this.$shared.filters.filterGenres &&
         ((!this.$shared.filters.filterSettings.filterGenresAND &&
-          this.$shared.filters.filterGenres.find(filter => !filter.Selected)) ||
+          this.$shared.filters.filterGenres.find(
+            (filter) => !filter.Selected
+          )) ||
           (this.$shared.filters.filterSettings.filterGenresAND &&
-            this.$shared.filters.filterGenres.find(filter => filter.Selected)))
+            this.$shared.filters.filterGenres.find(
+              (filter) => filter.Selected
+            )))
       ) {
         filtersList.push(
           `${this.$t("Genres")}${
@@ -1158,31 +1180,35 @@ export default {
           }`
         );
       }
-      if (this.$shared.filters.filterAgeRatings.find(filter => !filter.Selected)) {
+      if (
+        this.$shared.filters.filterAgeRatings.find((filter) => !filter.Selected)
+      ) {
         filtersList.push(this.$t("Age Ratings"));
       }
-      if (this.$shared.filters.filterRatings.find(filter => !filter.Selected)) {
+      if (
+        this.$shared.filters.filterRatings.find((filter) => !filter.Selected)
+      ) {
         filtersList.push(this.$t("My Ratings"));
       }
-      if (this.$shared.filters.filterLists.find(filter => !filter.Selected)) {
+      if (this.$shared.filters.filterLists.find((filter) => !filter.Selected)) {
         filtersList.push(this.$t("My Lists"));
       }
 
       if (
         this.$shared.filters.filterParentalAdvisory.Nudity.find(
-          filter => !filter.Selected
+          (filter) => !filter.Selected
         ) ||
         this.$shared.filters.filterParentalAdvisory.Violence.find(
-          filter => !filter.Selected
+          (filter) => !filter.Selected
         ) ||
         this.$shared.filters.filterParentalAdvisory.Profanity.find(
-          filter => !filter.Selected
+          (filter) => !filter.Selected
         ) ||
         this.$shared.filters.filterParentalAdvisory.Alcohol.find(
-          filter => !filter.Selected
+          (filter) => !filter.Selected
         ) ||
         this.$shared.filters.filterParentalAdvisory.Frightening.find(
-          filter => !filter.Selected
+          (filter) => !filter.Selected
         )
       ) {
         filtersList.push(this.$t("Content Advisories"));
@@ -1191,10 +1217,12 @@ export default {
       if (
         this.$shared.filters.filterPersons &&
         ((!this.$shared.filters.filterSettings.filterPersonsAND &&
-          this.$shared.filters.filterPersons.find(filter => !filter.Selected)) ||
+          this.$shared.filters.filterPersons.find(
+            (filter) => !filter.Selected
+          )) ||
           (this.$shared.filters.filterSettings.filterPersonsAND &&
             this.$shared.filters.filterPersons.find(
-              filter => filter.Selected && filter.IMDB_Person_ID
+              (filter) => filter.Selected && filter.IMDB_Person_ID
             )))
       ) {
         filtersList.push(
@@ -1206,24 +1234,30 @@ export default {
       // if (this.$shared.filters.filterYears.find(filter => !filter.Selected)) {
       //   filtersList.push(this.$t("Release Years"));
       // }
-      
+
       if (
-        this.$shared.filters.filterReleaseYears[0] != this.$shared.filters.filterReleaseYearsMin ||
-        this.$shared.filters.filterReleaseYears[1] != this.$shared.filters.filterReleaseYearsMax ||
+        this.$shared.filters.filterReleaseYears[0] !=
+          this.$shared.filters.filterReleaseYearsMin ||
+        this.$shared.filters.filterReleaseYears[1] !=
+          this.$shared.filters.filterReleaseYearsMax ||
         !this.$shared.filters.filterReleaseYearsNone
       ) {
         filtersList.push(this.$t("Release Years"));
       }
-      if (this.$shared.filters.filterQualities.find(filter => !filter.Selected)) {
+      if (
+        this.$shared.filters.filterQualities.find((filter) => !filter.Selected)
+      ) {
         filtersList.push(this.$t("Video Quality"));
       }
       if (
         this.$shared.filters.filterCompanies &&
         ((!this.$shared.filters.filterSettings.filterCompaniesAND &&
-          this.$shared.filters.filterCompanies.find(filter => !filter.Selected)) ||
+          this.$shared.filters.filterCompanies.find(
+            (filter) => !filter.Selected
+          )) ||
           (this.$shared.filters.filterSettings.filterCompaniesAND &&
             this.$shared.filters.filterCompanies.find(
-              filter => filter.Selected && filter.id_Filter_Companies
+              (filter) => filter.Selected && filter.id_Filter_Companies
             )))
       ) {
         filtersList.push(
@@ -1232,11 +1266,17 @@ export default {
           }`
         );
       }
-      if (this.$shared.filters.filterAudioLanguages.find(filter => !filter.Selected)) {
+      if (
+        this.$shared.filters.filterAudioLanguages.find(
+          (filter) => !filter.Selected
+        )
+      ) {
         filtersList.push(this.$t("Audio Languages"));
       }
       if (
-        this.$shared.filters.filterSubtitleLanguages.find(filter => !filter.Selected)
+        this.$shared.filters.filterSubtitleLanguages.find(
+          (filter) => !filter.Selected
+        )
       ) {
         filtersList.push(this.$t("Subtitle Languages"));
       }
@@ -1245,12 +1285,11 @@ export default {
         this.$shared.filters.filterReleaseAttributes &&
         ((!this.$shared.filters.filterSettings.filterReleaseAttributesAND &&
           this.$shared.filters.filterReleaseAttributes.find(
-            filter => !filter.Selected
+            (filter) => !filter.Selected
           )) ||
           (this.$shared.filters.filterSettings.filterReleaseAttributesAND &&
             this.$shared.filters.filterReleaseAttributes.find(
-              filter =>
-                filter.Selected && !filter.isAny
+              (filter) => filter.Selected && !filter.isAny
             )))
       ) {
         filtersList.push(
@@ -1266,16 +1305,18 @@ export default {
         this.$shared.filters.filterIMDBPlotKeywords &&
         ((!this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND &&
           this.$shared.filters.filterIMDBPlotKeywords.find(
-            filter => !filter.Selected
+            (filter) => !filter.Selected
           )) ||
           (this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND &&
             this.$shared.filters.filterIMDBPlotKeywords.find(
-              filter => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords
+              (filter) => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords
             )))
       ) {
         filtersList.push(
           `${this.$t("Plot Keywords")}${
-            this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND ? " ߷" : ""
+            this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND
+              ? " ߷"
+              : ""
           }`
         );
       }
@@ -1283,11 +1324,11 @@ export default {
         this.$shared.filters.filterIMDBFilmingLocations &&
         ((!this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND &&
           this.$shared.filters.filterIMDBFilmingLocations.find(
-            filter => !filter.Selected
+            (filter) => !filter.Selected
           )) ||
           (this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND &&
             this.$shared.filters.filterIMDBFilmingLocations.find(
-              filter =>
+              (filter) =>
                 filter.Selected && filter.id_Filter_IMDB_Filming_Locations
             )))
       ) {
@@ -1320,7 +1361,7 @@ export default {
 
     itemsFiltered() {
       return this.items
-        .filter(item => {
+        .filter((item) => {
           let isGood = true;
 
           if (this.searchText) {
@@ -1374,7 +1415,7 @@ export default {
             return 0;
           }
         });
-    }
+    },
   },
 
   methods: {
@@ -1391,10 +1432,10 @@ export default {
         if (movie.Rating == i) {
           const arr_id_Movies = await store.clearRating(movie.id_Movies);
 
-          this.items.forEach(movie => {
+          this.items.forEach((movie) => {
             if (
               arr_id_Movies.findIndex(
-                id_Movies => movie.id_Movies === id_Movies
+                (id_Movies) => movie.id_Movies === id_Movies
               ) !== -1
             ) {
               movie.Rating = null;
@@ -1403,10 +1444,10 @@ export default {
         } else {
           const arr_id_Movies = await store.setRating(movie.id_Movies, i);
 
-          this.items.forEach(movie => {
+          this.items.forEach((movie) => {
             if (
               arr_id_Movies.findIndex(
-                id_Movies => movie.id_Movies === id_Movies
+                (id_Movies) => movie.id_Movies === id_Movies
               ) !== -1
             ) {
               movie.Rating = i;
@@ -1471,10 +1512,11 @@ export default {
       const arr_id_Movies = await store.setLastAccess(movie.id_Movies);
       await this.updateCurrentTime();
 
-      this.items.forEach(mov => {
+      this.items.forEach((mov) => {
         if (
-          arr_id_Movies.findIndex(id_Movies => mov.id_Movies === id_Movies) !==
-          -1
+          arr_id_Movies.findIndex(
+            (id_Movies) => mov.id_Movies === id_Movies
+          ) !== -1
         ) {
           this.$set(mov, "lastAccessMoment", this.currentTime.clone());
           this.$set(mov, "last_access_at", this.currentTime.toISOString());
@@ -1844,7 +1886,7 @@ export default {
       return this.$t("{duration} ago", {
         timespan: moment
           .duration(movie.lastAccessMoment.diff(this.currentTime))
-          .humanize()
+          .humanize(),
       });
     },
 
@@ -1860,7 +1902,7 @@ export default {
       return this.$t("{duration} ago", {
         timespan: moment
           .duration(movie.createdMoment.diff(this.currentTime))
-          .humanize()
+          .humanize(),
       });
     },
 
@@ -1999,7 +2041,14 @@ export default {
       try {
         store.resetUserScanOptions();
 
-        await store.assignIMDB(this.linkIMDBDialog.item.id_Movies, tconst, false, false, null, this.$local_t);
+        await store.assignIMDB(
+          this.linkIMDBDialog.item.id_Movies,
+          tconst,
+          false,
+          false,
+          null,
+          this.$local_t
+        );
 
         eventBus.refetchMedia(this.$shared.currentPage);
 
@@ -2048,7 +2097,7 @@ export default {
       this.editItemDialog.attributeName = attributeName;
       this.editItemDialog.attributeDisplayText = attributeDisplayText;
       this.editItemDialog.title = this.$t("Edit {something}", {
-        something: attributeDisplayText
+        something: attributeDisplayText,
       });
       this.$refs.editItemNameDialog.initTextValue(item[attributeName]);
       this.editItemDialog.show = true;
@@ -2072,10 +2121,11 @@ export default {
         false
       );
 
-      this.items.forEach(mov => {
+      this.items.forEach((mov) => {
         if (
-          arr_id_Movies.findIndex(id_Movies => mov.id_Movies === id_Movies) !==
-          -1
+          arr_id_Movies.findIndex(
+            (id_Movies) => mov.id_Movies === id_Movies
+          ) !== -1
         ) {
           this.$set(mov, this.editItemDialog.attributeName, result.textValue);
         }
@@ -2084,7 +2134,7 @@ export default {
       eventBus.showSnackbar(
         "success",
         this.$t("{something} successfully changed_", {
-          something: this.editItemDialog.attributeDisplayText
+          something: this.editItemDialog.attributeDisplayText,
         })
       );
     },
@@ -2160,7 +2210,7 @@ export default {
     async completelyFetchMedia() {
       const arr_id_Movies = [];
 
-      this.itemsFilteredPaginated.forEach(item => {
+      this.itemsFilteredPaginated.forEach((item) => {
         if (!item.isCompletelyFetched) {
           arr_id_Movies.push(item.id_Movies);
         }
@@ -2181,13 +2231,13 @@ export default {
 
       logger.log("completelyFetchMedia result:", result);
 
-      result.forEach(item => {
-        this.itemsFilteredPaginated.forEach(itemPaginated => {
+      result.forEach((item) => {
+        this.itemsFilteredPaginated.forEach((itemPaginated) => {
           if (item.id_Movies !== itemPaginated.id_Movies) {
             return;
           }
 
-          Object.keys(itemPaginated).forEach(key => {
+          Object.keys(itemPaginated).forEach((key) => {
             itemPaginated[key] = item[key];
           });
         });
@@ -2213,15 +2263,24 @@ export default {
 
     async onReleaseAttributesDialogDelete() {
       try {
-        await store.removeReleaseAttributeFromMovie(this.releaseAttributeDialog.movie.id_Movies, this.releaseAttributeDialog.ReleaseAttribute);
-        
+        await store.removeReleaseAttributeFromMovie(
+          this.releaseAttributeDialog.movie.id_Movies,
+          this.releaseAttributeDialog.ReleaseAttribute
+        );
+
         eventBus.refetchMedia();
-        
-        eventBus.showSnackbar('success', this.$t('Release Attribute _{ReleaseAttribute}_ successfully removed from selected movie_', { ReleaseAttribute: this.releaseAttributeDialog.ReleaseAttribute }));
+
+        eventBus.showSnackbar(
+          "success",
+          this.$t(
+            "Release Attribute _{ReleaseAttribute}_ successfully removed from selected movie_",
+            { ReleaseAttribute: this.releaseAttributeDialog.ReleaseAttribute }
+          )
+        );
       } catch (error) {
-        eventBus.showSnackbar('error', error);
+        eventBus.showSnackbar("error", error);
       }
-    }
+    },
   },
 
   // ### LifeCycle Hooks ###
@@ -2238,7 +2297,7 @@ export default {
       logger.log("items:", this.items);
     })();
 
-    this.sortAbles.forEach(sortAble => {
+    this.sortAbles.forEach((sortAble) => {
       sortAble.DescriptionTranslated = this.$t(sortAble.Description);
     });
 
@@ -2266,45 +2325,52 @@ export default {
         store.saveCurrentPage(this.mediatype);
 
         await this.completelyFetchMedia();
-
       })();
     });
 
-    eventBus.$on("refetchFilters", setFilter => {
+    eventBus.$on("refetchFilters", (setFilter) => {
       this.fetchFilters(setFilter);
     });
 
-    eventBus.$on("listDialogSetUseExistingLists", value => {
+    eventBus.$on("listDialogSetUseExistingLists", (value) => {
       this.listDialog.useExistingLists = value;
       this.listDialog.createNewList = !value;
     });
 
-    eventBus.$on("listDialogSetCreateNewList", value => {
+    eventBus.$on("listDialogSetCreateNewList", (value) => {
       this.listDialog.createNewList = value;
       this.listDialog.useExistingLists = !value;
     });
 
-    eventBus.$on("showPersonDialog", value => {
+    eventBus.$on("showPersonDialog", (value) => {
       this.onCreditClicked(value);
     });
 
-    eventBus.$on("showPlotKeywordDialog", value => {
+    eventBus.$on("showPlotKeywordDialog", (value) => {
       this.onIMDBPlotKeywordClicked(value);
     });
 
-    eventBus.$on("showFilmingLocationDialog", value => {
+    eventBus.$on("showFilmingLocationDialog", (value) => {
       this.onIMDBFilmingLocationClicked(value);
     });
 
-    eventBus.$on("showCompanyDialog", value => {
+    eventBus.$on("showCompanyDialog", (value) => {
       this.onCompanyClicked(value);
     });
 
-    eventBus.$on("rescanFinished", ({ rescanAddedMovies, rescanRemovedMovies }) => {
-      if (rescanAddedMovies || rescanRemovedMovies) {
-        this.onReload();
+    eventBus.$on(
+      "rescanFinished",
+      ({ rescanAddedMovies, rescanRemovedMovies }) => {
+        if (rescanAddedMovies || rescanRemovedMovies) {
+          (async () => {
+            // Reset after Rescan -> else we get fuckups with filterYears' range
+            store.resetFilters();
+            await store.saveFilterValues(this.mediatype);
+            this.onReload();
+          })();
+        }
       }
-    })
+    );
 
     this.updateCurrentTime();
 
@@ -2325,7 +2391,7 @@ export default {
     eventBus.$off("showPlotKeywordDialog");
     eventBus.$off("showFilmingLocationDialog");
     eventBus.$off("showCompanyDialog");
-  }
+  },
 };
 </script>
 

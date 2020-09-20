@@ -18,6 +18,7 @@ const execAsync = util.promisify(child_process.exec);
 const readFileAsync = util.promisify(fs.readFile);
 
 import { eventBus } from "@/main";
+import { isObjectLike } from "lodash";
 
 const db = require("./helpers/db");
 // import * as db from "@/helpers/db";
@@ -4759,16 +4760,16 @@ async function ensureFilterReleaseYearsRange($MediaType) {
 
   logger.log('ensureFilterReleaseYearsRange Max:', shared.filters.filterReleaseYearsMax);
 
-  // if (shared.isScanning) {
+  if (shared.isScanning) {
     // during rescan fuckups may happen
     shared.filters.filterReleaseYears = [shared.filters.filterReleaseYearsMin, shared.filters.filterReleaseYearsMax];
-  // } else {
-  //  shared.filters.filterReleaseYears = [Math.max(shared.filters.filterReleaseYears[0], shared.filters.filterReleaseYearsMin), Math.min(shared.filters.filterReleaseYears[1], shared.filters.filterReleaseYearsMax)];  
-  //}
+  } else {
+   shared.filters.filterReleaseYears = [Math.max(shared.filters.filterReleaseYears[0], shared.filters.filterReleaseYearsMin), Math.min(shared.filters.filterReleaseYears[1], shared.filters.filterReleaseYearsMax)];  
+  }
 }
 
 async function fetchFilterReleaseYears($MediaType) {
-  ensureFilterReleaseYearsRange($MediaType);
+  await ensureFilterReleaseYearsRange($MediaType);
   
   // shared.filters.filterReleaseYearsMin = helpers.nz(await db.fireProcedureReturnScalar(
   //   `
@@ -6056,6 +6057,8 @@ function resetFilters(objFilter) {
     objFilter = shared.filters;
   }
 
+  const before = JSON.stringify(objFilter);
+
   Object.keys(objFilter).forEach(key => {
     logger.log('resetFilters', key);
 
@@ -6111,6 +6114,10 @@ function resetFilters(objFilter) {
       objFilter[key] = true;
     }
   })
+
+  const after = JSON.stringify(objFilter);
+
+  return (before != after);
 }
 
 async function removeReleaseAttributeFromMovie($id_Movies, releaseAttribute) {
@@ -6340,5 +6347,6 @@ export {
   setLogLevel,
   routeTo,
   fetchNumMovies,
-  ensureFilterReleaseYearsRange
+  ensureFilterReleaseYearsRange,
+  saveFilterValues
 };

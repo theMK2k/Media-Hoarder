@@ -2195,7 +2195,7 @@ export default {
     });
 
     eventBus.$on("rescanFinished", ({ rescanAddedMovies, rescanRemovedMovies }) => {
-      eventBus.showSnackbar("success", `${this.$t('_Re-_scan finished_')} ${rescanAddedMovies} ${this.$t('added')}, ${rescanRemovedMovies} ${this.$t('removed')}.`);
+      eventBus.showSnackbar("success", `${this.$local_t('_Re-_scan finished_')} ${rescanAddedMovies} ${this.$local_t('added')}, ${rescanRemovedMovies} ${this.$local_t('removed')}.`);
     });
 
     // eventBus.scanInfoShow('KILLME', 'Asterix und das Geheimnis des Zaubertranks ~ Astérix - Le secret de la potion magique (De)(BD)[2018][Adventure, Animation, Comedy][6.9 @ 3074][tt8001346].mkv');
