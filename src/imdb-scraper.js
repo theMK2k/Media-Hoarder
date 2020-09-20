@@ -1,3 +1,5 @@
+import { xml } from "cheerio";
+
 const logger = require("loglevel");
 const cheerio = require("cheerio");
 const htmlToText = require("html-to-text");
@@ -534,8 +536,25 @@ async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturn
           Age = parseInt(Code.match(/\d+/)[0]);
           logger.log("Age (parsed):", Age);
         }
-        if (['Unrated', 'X', 'XXX'].find(definedCode => defindedCode === Code)) {
-          Age = 18;
+        
+        const definedPGs = [
+          {
+            Age: 0,
+            codes: ['b.o.']
+          },
+          {
+            Age: 18,
+            codes: ['Unrated', 'X', 'XXX']
+          }
+        ]
+        
+        const foundPG = definedPGs.find(pg => {
+          return pg.codes.find(definedCode => definedCode === Code);
+        })
+
+        if (foundPG) {
+          Age = foundPG.Age;
+          logger.log("Age (found):", Age);
         }
       }
 

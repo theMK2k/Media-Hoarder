@@ -8,7 +8,7 @@
 
 ### Other
 
-- [ ] enhance scrapeIMDBParentalGuideData with PG-Codes
+- [ ] enhance scrapeIMDBParentalGuideData with PG-Codes (use tbl_AgeRatings)
 
 ## LATER
 
