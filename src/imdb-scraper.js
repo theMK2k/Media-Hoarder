@@ -540,11 +540,19 @@ async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturn
         const definedPGs = [
           {
             Age: 0,
-            codes: ['b.o.']
+            codes: ['b.o.', 'Tous+publics', 'Tous+Public']
+          },
+          {
+            Age: 6,
+            codes: ['U', 'Tous+publics+avec+avertissement']
+          },
+          {
+            Age: 12,
+            codes: ['T', 'PG', 'NRC', 'GP']
           },
           {
             Age: 18,
-            codes: ['Unrated', 'X', 'XXX']
+            codes: ['Unrated', 'X', 'XXX', 'SOA']
           }
         ]
         
