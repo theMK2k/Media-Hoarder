@@ -18,10 +18,11 @@
               <v-card-title class="headline">
                 <v-icon left>{{item.icon}}</v-icon>
                 {{$t(`${item.text}`)}}
+                <v-progress-linear v-if="item.fetchNumMovies && item.isFetchingNumMovies" color="red accent-0" indeterminate rounded height="3"></v-progress-linear>
               </v-card-title>
 
               <v-card-text class="mk-light-grey">
-                <p v-if="item.fetchNumMovies">{{ item.numMovies }} {{ item.numMovies == 1 ? $t('entry') : $t('entries')}}</p>
+                <p v-if="item.fetchNumMovies && !item.isFetchingNumMovies">{{ item.numMovies }} {{ item.numMovies == 1 ? $t('entry') : $t('entries')}}</p>
               </v-card-text>
             </div>
           </div>
@@ -43,6 +44,7 @@ export default {
         text: "Settings",
         id: "settings",
         fetchNumMovies: false,
+        isFetchingNumMovies: false,
       },
       {
         icon: "mdi-movie",
@@ -50,6 +52,7 @@ export default {
         id: "movies",
         fetchNumMovies: true,
         numMovies: null,
+        isFetchingNumMovies: true,
       },
       /* not yet implemented
       {
@@ -88,11 +91,13 @@ export default {
           const item = this.items[i];
     
           if (item.fetchNumMovies) {
+            item.isFetchingNumMovies = true;
             item.numMovies = await store.fetchNumMovies(item.id);
+            item.isFetchingNumMovies = false;
           }
         }
       } catch(e) {
-        //
+        
       }
     }
   },
