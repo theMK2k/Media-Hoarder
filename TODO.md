@@ -59,6 +59,7 @@
 - [ ] implement App - Filters as array with Sort field
 - [ ] add Settings - Filters tab
 - [ ] user may reorder and show/hide filters
+- [ ] also use this in the filtersList creation
 
 ### I18N - Basic
 
