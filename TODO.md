@@ -54,6 +54,12 @@
 - [ ] => we have to use find API only as fallback for the advancedTitleSearch
 - [ ] => maybe we should implement an "ultimate" search which combines results of all three searches?
 
+### Filters Customization
+
+- [ ] implement App - Filters as array with Sort field
+- [ ] add Settings - Filters tab
+- [ ] user may reorder and show/hide filters
+
 ### I18N - Basic
 
 - [ ] support all languages supported by DeepL or AWS (API): `en, de, fr, es, it, nl, pl, ja, pt-PT, pt-BR, ru, zh`
