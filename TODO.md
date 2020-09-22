@@ -14,10 +14,12 @@
 
 ### Create i18n Editor
 
+- [ ] investigate external i18n sources - so that tranlastors can access their creation
 - [ ] dropdown of available (to be translated) languages
 - [ ] read available en.json ($fieldName, $expectedText)
 - [ ] provide $expectedText as Input, let user type the translation in the language of choice
 - [ ] establish a way of file exchange
+- [ ] implement i18n/where.json as copy of en.json. The value describes the location in the UI where the string is shown.
 
 ### Raspberry Pi (armhf) Build
 
