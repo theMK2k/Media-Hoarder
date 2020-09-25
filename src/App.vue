@@ -15,8 +15,12 @@
             <v-icon v-show="isScanning">mdi-cancel</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title v-show="!isScanning">{{$t("Scan Media")}}</v-list-item-title>
-            <v-list-item-title v-show="isScanning">{{$t("Cancel Scan")}}</v-list-item-title>
+            <v-list-item-title v-show="!isScanning">{{
+              $t("Scan Media")
+            }}</v-list-item-title>
+            <v-list-item-title v-show="isScanning">{{
+              $t("Cancel Scan")
+            }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
@@ -26,7 +30,7 @@
           <v-list-item-action>
             <v-icon>mdi-settings</v-icon>
           </v-list-item-action>
-          <v-list-item-title>{{$t("Settings")}}</v-list-item-title>
+          <v-list-item-title>{{ $t("Settings") }}</v-list-item-title>
         </v-list-item>
 
         <v-divider></v-divider>
@@ -41,44 +45,68 @@
             <v-icon>{{ appSection.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>{{ $t(`${appSection.text}`) }}</v-list-item-title>
+            <v-list-item-title>{{
+              $t(`${appSection.text}`)
+            }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
         <!-- Filters -->
         <div
           v-show="currentRoute && currentRoute.name === 'medialist'"
-          v-if="($shared.filters.filterSourcePaths && $shared.filters.filterSourcePaths.length > 0) || ($shared.filters.filterGenres && $shared.filters.filterGenres.length > 0) || ($shared.filters.filterAgeRatings && $shared.filters.filterAgeRatings.length > 0) || ($shared.filters.filterLists && $shared.filters.filterLists.length > 0) || ($shared.filters.filterAudioLanguages && $shared.filters.filterAudioLanguages.length > 0) || ($shared.filters.filterSubtitleLanguages && $shared.filters.filterSubtitleLanguages.length > 0)"
+          v-if="
+            ($shared.filters.filterSourcePaths &&
+              $shared.filters.filterSourcePaths.length > 0) ||
+            ($shared.filters.filterGenres &&
+              $shared.filters.filterGenres.length > 0) ||
+            ($shared.filters.filterAgeRatings &&
+              $shared.filters.filterAgeRatings.length > 0) ||
+            ($shared.filters.filterLists &&
+              $shared.filters.filterLists.length > 0) ||
+            ($shared.filters.filterAudioLanguages &&
+              $shared.filters.filterAudioLanguages.length > 0) ||
+            ($shared.filters.filterSubtitleLanguages &&
+              $shared.filters.filterSubtitleLanguages.length > 0)
+          "
         >
           <v-divider></v-divider>
 
-          <v-subheader style="margin: 0px!important; font-size: 16px">
-            {{$t("Filters")}}
+          <v-subheader style="margin: 0px !important; font-size: 16px">
+            {{ $t("Filters") }}
             <v-spacer></v-spacer>
-            <v-btn text v-on:click="resetFilters()">{{$t("RESET")}}</v-btn>
+            <v-btn text v-on:click="resetFilters()">{{ $t("RESET") }}</v-btn>
           </v-subheader>
 
           <v-expansion-panels accordion multiple>
             <!-- FILTER SOURCE PATHS -->
             <v-expansion-panel
-              v-show="$shared.filters.filterSourcePaths && $shared.filters.filterSourcePaths.length > 0"
-              style="padding: 0px!important"
+              v-show="
+                $shared.filters.filterSourcePaths &&
+                $shared.filters.filterSourcePaths.length > 0
+              "
+              style="padding: 0px !important"
             >
-              <v-expansion-panel-header style="padding: 8px!important">
+              <v-expansion-panel-header style="padding: 8px !important">
                 <div>
                   <v-icon>mdi-folder-outline</v-icon>
-                  {{$t("Source Paths")}} {{filterSourcePathsTitle}}
+                  {{ $t("Source Paths") }} {{ filterSourcePathsTitle }}
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllSourcePaths(false)">{{$t("SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllSourcePaths(true)">{{$t("SET ALL")}}</v-btn>
+                  <v-btn text v-on:click="setAllSourcePaths(false)">{{
+                    $t("SET NONE")
+                  }}</v-btn>
+                  <v-btn text v-on:click="setAllSourcePaths(true)">{{
+                    $t("SET ALL")
+                  }}</v-btn>
                 </v-row>
                 <v-checkbox
                   v-for="sourcePath in $shared.filters.filterSourcePaths"
                   v-bind:key="sourcePath.Description"
-                  v-bind:label="sourcePath.Description + ' (' + sourcePath.NumMovies + ')'"
+                  v-bind:label="
+                    sourcePath.Description + ' (' + sourcePath.NumMovies + ')'
+                  "
                   v-model="sourcePath.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
@@ -89,24 +117,33 @@
 
             <!-- FILTER QUALITIES -->
             <v-expansion-panel
-              v-show="$shared.filters.filterQualities && $shared.filters.filterQualities.length > 0"
-              style="padding: 0px!important"
+              v-show="
+                $shared.filters.filterQualities &&
+                $shared.filters.filterQualities.length > 0
+              "
+              style="padding: 0px !important"
             >
-              <v-expansion-panel-header style="padding: 8px!important">
+              <v-expansion-panel-header style="padding: 8px !important">
                 <div>
                   <v-icon>mdi-video-outline</v-icon>
-                  {{$t("Video Quality")}} {{filterQualitiesTitle}}
+                  {{ $t("Video Quality") }} {{ filterQualitiesTitle }}
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllQualities(false)">{{$t("SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllQualities(true)">{{$t("SET ALL")}}</v-btn>
+                  <v-btn text v-on:click="setAllQualities(false)">{{
+                    $t("SET NONE")
+                  }}</v-btn>
+                  <v-btn text v-on:click="setAllQualities(true)">{{
+                    $t("SET ALL")
+                  }}</v-btn>
                 </v-row>
                 <v-checkbox
                   v-for="quality in $shared.filters.filterQualities"
                   v-bind:key="quality.MI_Quality"
-                  v-bind:label="getFilterQualityLabel(quality.MI_Quality, quality.NumMovies)"
+                  v-bind:label="
+                    getFilterQualityLabel(quality.MI_Quality, quality.NumMovies)
+                  "
                   v-model="quality.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
@@ -117,24 +154,36 @@
 
             <!-- FILTER AUDIO LANGUAGES -->
             <v-expansion-panel
-              v-show="$shared.filters.filterAudioLanguages && $shared.filters.filterAudioLanguages.length > 0"
-              style="padding: 0px!important"
+              v-show="
+                $shared.filters.filterAudioLanguages &&
+                $shared.filters.filterAudioLanguages.length > 0
+              "
+              style="padding: 0px !important"
             >
-              <v-expansion-panel-header style="padding: 8px!important">
+              <v-expansion-panel-header style="padding: 8px !important">
                 <div>
                   <v-icon>mdi-comment-outline</v-icon>
-                  {{$t("Audio Languages")}} {{ filterAudioLanguagesTitle }}
+                  {{ $t("Audio Languages") }} {{ filterAudioLanguagesTitle }}
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllAudioLanguages(false)">{{$t("SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllAudioLanguages(true)">{{$t("SET ALL")}}</v-btn>
+                  <v-btn text v-on:click="setAllAudioLanguages(false)">{{
+                    $t("SET NONE")
+                  }}</v-btn>
+                  <v-btn text v-on:click="setAllAudioLanguages(true)">{{
+                    $t("SET ALL")
+                  }}</v-btn>
                 </v-row>
                 <v-checkbox
                   v-for="audioLanguage in $shared.filters.filterAudioLanguages"
                   v-bind:key="audioLanguage.Language"
-                  v-bind:label="audioLanguage.DisplayText + ' (' + audioLanguage.NumMovies + ')'"
+                  v-bind:label="
+                    audioLanguage.DisplayText +
+                    ' (' +
+                    audioLanguage.NumMovies +
+                    ')'
+                  "
                   v-model="audioLanguage.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
@@ -145,24 +194,38 @@
 
             <!-- FILTER SUBTITLE LANGUAGES -->
             <v-expansion-panel
-              v-show="$shared.filters.filterSubtitleLanguages && $shared.filters.filterSubtitleLanguages.length > 0"
-              style="padding: 0px!important"
+              v-show="
+                $shared.filters.filterSubtitleLanguages &&
+                $shared.filters.filterSubtitleLanguages.length > 0
+              "
+              style="padding: 0px !important"
             >
-              <v-expansion-panel-header style="padding: 8px!important">
+              <v-expansion-panel-header style="padding: 8px !important">
                 <div>
                   <v-icon>mdi-subtitles-outline</v-icon>
-                  {{$t("Subtitle Languages")}} {{ filterSubtitleLanguagesTitle }}
+                  {{ $t("Subtitle Languages") }}
+                  {{ filterSubtitleLanguagesTitle }}
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllSubtitleLanguages(false)">{{$t("SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllSubtitleLanguages(true)">{{$t("SET ALL")}}</v-btn>
+                  <v-btn text v-on:click="setAllSubtitleLanguages(false)">{{
+                    $t("SET NONE")
+                  }}</v-btn>
+                  <v-btn text v-on:click="setAllSubtitleLanguages(true)">{{
+                    $t("SET ALL")
+                  }}</v-btn>
                 </v-row>
                 <v-checkbox
-                  v-for="subtitleLanguage in $shared.filters.filterSubtitleLanguages"
+                  v-for="subtitleLanguage in $shared.filters
+                    .filterSubtitleLanguages"
                   v-bind:key="subtitleLanguage.Language"
-                  v-bind:label="subtitleLanguage.DisplayText + ' (' + subtitleLanguage.NumMovies + ')'"
+                  v-bind:label="
+                    subtitleLanguage.DisplayText +
+                    ' (' +
+                    subtitleLanguage.NumMovies +
+                    ')'
+                  "
                   v-model="subtitleLanguage.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
@@ -173,30 +236,54 @@
 
             <!-- FILTER RELEASE ATTRIBUTES -->
             <v-expansion-panel
-              v-show="$shared.filters.filterReleaseAttributes && $shared.filters.filterReleaseAttributes.length > 0"
-              style="padding: 0px!important"
+              v-show="
+                $shared.filters.filterReleaseAttributes &&
+                $shared.filters.filterReleaseAttributes.length > 0
+              "
+              style="padding: 0px !important"
             >
-              <v-expansion-panel-header style="padding: 8px!important">
+              <v-expansion-panel-header style="padding: 8px !important">
                 <div>
                   <v-icon>mdi-package-variant</v-icon>
-                  {{$t("Release Attributes")}} {{$shared.filters.filterSettings.filterReleaseAttributesAND ? '߷' : ''}} {{ filterReleaseAttributesTitle }}
+                  {{ $t("Release Attributes") }}
+                  {{
+                    $shared.filters.filterSettings.filterReleaseAttributesAND
+                      ? "߷"
+                      : ""
+                  }}
+                  {{ filterReleaseAttributesTitle }}
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllReleaseAttributes(false)">{{$t("SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllReleaseAttributes(true)">{{$t("SET ALL")}}</v-btn>
+                  <v-btn text v-on:click="setAllReleaseAttributes(false)">{{
+                    $t("SET NONE")
+                  }}</v-btn>
+                  <v-btn text v-on:click="setAllReleaseAttributes(true)">{{
+                    $t("SET ALL")
+                  }}</v-btn>
                 </v-row>
                 <v-switch
-                  v-bind:label="$shared.filters.filterSettings.filterReleaseAttributesAND ? $t('all selected must apply') : $t('one selected must apply')"
+                  v-bind:label="
+                    $shared.filters.filterSettings.filterReleaseAttributesAND
+                      ? $t('all selected must apply')
+                      : $t('one selected must apply')
+                  "
                   color="red"
-                  v-model="$shared.filters.filterSettings.filterReleaseAttributesAND"
+                  v-model="
+                    $shared.filters.filterSettings.filterReleaseAttributesAND
+                  "
                   v-on:click.native="filtersChanged"
                 ></v-switch>
                 <v-checkbox
                   v-for="filterReleaseAttribute in filterReleaseAttributes"
                   v-bind:key="filterReleaseAttribute.ReleaseAttribute"
-                  v-bind:label="filterReleaseAttribute.ReleaseAttribute + ' (' + filterReleaseAttribute.NumMovies + ')'"
+                  v-bind:label="
+                    filterReleaseAttribute.ReleaseAttribute +
+                    ' (' +
+                    filterReleaseAttribute.NumMovies +
+                    ')'
+                  "
                   v-model="filterReleaseAttribute.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
@@ -207,21 +294,31 @@
 
             <!-- FILTER LISTS -->
             <v-expansion-panel
-              v-show="$shared.filters.filterLists && $shared.filters.filterLists.length > 0"
-              style="padding: 0px!important"
+              v-show="
+                $shared.filters.filterLists &&
+                $shared.filters.filterLists.length > 0
+              "
+              style="padding: 0px !important"
             >
-              <v-expansion-panel-header style="padding: 8px!important">
+              <v-expansion-panel-header style="padding: 8px !important">
                 <div>
                   <v-icon>mdi-clipboard-list-outline</v-icon>
-                  {{$t("My Lists")}} {{filterListsTitle}}
+                  {{ $t("My Lists") }} {{ filterListsTitle }}
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllLists(false)">{{$t("SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllLists(true)">{{$t("SET ALL")}}</v-btn>
+                  <v-btn text v-on:click="setAllLists(false)">{{
+                    $t("SET NONE")
+                  }}</v-btn>
+                  <v-btn text v-on:click="setAllLists(true)">{{
+                    $t("SET ALL")
+                  }}</v-btn>
                 </v-row>
-                <v-row v-for="list in $shared.filters.filterLists" v-bind:key="list.id_Lists">
+                <v-row
+                  v-for="list in $shared.filters.filterLists"
+                  v-bind:key="list.id_Lists"
+                >
                   <v-checkbox
                     v-bind:label="list.Name + ' (' + list.NumMovies + ')'"
                     v-model="list.Selected"
@@ -234,33 +331,51 @@
                     class="mk-clickable-red"
                     v-if="list.id_Lists"
                     style="align-items: flex-start; padding-top: 4px"
-                    v-on:click="showDeleteDialog(list, deleteList, 'Delete List', 'Do you really want to delete the list {name}?', list.Name)"
-                  >mdi-delete</v-icon>
+                    v-on:click="
+                      showDeleteDialog(
+                        list,
+                        deleteList,
+                        'Delete List',
+                        'Do you really want to delete the list {name}?',
+                        list.Name
+                      )
+                    "
+                    >mdi-delete</v-icon
+                  >
                 </v-row>
               </v-expansion-panel-content>
             </v-expansion-panel>
 
             <!-- FILTER (USER) RATINGS -->
             <v-expansion-panel
-              v-show="$shared.filters.filterRatings && $shared.filters.filterRatings.length > 0"
-              style="padding: 0px!important"
+              v-show="
+                $shared.filters.filterRatings &&
+                $shared.filters.filterRatings.length > 0
+              "
+              style="padding: 0px !important"
             >
-              <v-expansion-panel-header style="padding: 8px!important">
+              <v-expansion-panel-header style="padding: 8px !important">
                 <div>
                   <v-icon>mdi-star-outline</v-icon>
-                  {{$t("My Ratings")}} {{filterRatingsTitle}}
+                  {{ $t("My Ratings") }} {{ filterRatingsTitle }}
                 </div>
               </v-expansion-panel-header>
               <!--  {{ filterRatingsTitle }} -->
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllRatings(false)">{{$t("SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllRatings(true)">{{$t("SET ALL")}}</v-btn>
+                  <v-btn text v-on:click="setAllRatings(false)">{{
+                    $t("SET NONE")
+                  }}</v-btn>
+                  <v-btn text v-on:click="setAllRatings(true)">{{
+                    $t("SET ALL")
+                  }}</v-btn>
                 </v-row>
                 <v-checkbox
                   v-for="rating in $shared.filters.filterRatings"
                   v-bind:key="rating.Rating"
-                  v-bind:label="getFilterRatingLabel(rating.Rating, rating.NumMovies)"
+                  v-bind:label="
+                    getFilterRatingLabel(rating.Rating, rating.NumMovies)
+                  "
                   v-model="rating.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
@@ -270,18 +385,25 @@
                     small
                     v-for="i in 5"
                     v-bind:key="i"
-                    v-bind:color="(rating.Rating > (i - 1) ? 'amber' : (rating.Rating > 0 ? 'white' : 'grey'))"
-                  >mdi-star</v-icon>
+                    v-bind:color="
+                      rating.Rating > i - 1
+                        ? 'amber'
+                        : rating.Rating > 0
+                        ? 'white'
+                        : 'grey'
+                    "
+                    >mdi-star</v-icon
+                  >
                 </v-checkbox>
               </v-expansion-panel-content>
             </v-expansion-panel>
 
             <!-- FILTER Metacritic Score -->
-            <v-expansion-panel style="padding: 0px!important">
-              <v-expansion-panel-header style="padding: 8px!important">
+            <v-expansion-panel style="padding: 0px !important">
+              <v-expansion-panel-header style="padding: 8px !important">
                 <div>
                   <v-icon>mdi-numeric-10-box</v-icon>
-                  {{$t("Metacritic Scores")}} {{filterMetacriticScoreTitle}}
+                  {{ $t("Metacritic Scores") }} {{ filterMetacriticScoreTitle }}
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
@@ -293,8 +415,12 @@
                   class="align-center"
                   v-on:change="filtersChanged"
                 >
-                  <template v-slot:prepend>{{$shared.filters.filterMetacriticScore[0]}}</template>
-                  <template v-slot:append>{{$shared.filters.filterMetacriticScore[1]}}</template>
+                  <template v-slot:prepend>{{
+                    $shared.filters.filterMetacriticScore[0]
+                  }}</template>
+                  <template v-slot:append>{{
+                    $shared.filters.filterMetacriticScore[1]
+                  }}</template>
                 </v-range-slider>
                 <v-checkbox
                   v-bind:label="$t('include entries with no Metacritic score')"
@@ -307,11 +433,11 @@
             </v-expansion-panel>
 
             <!-- FILTER IMDB Rating -->
-            <v-expansion-panel style="padding: 0px!important">
-              <v-expansion-panel-header style="padding: 8px!important">
+            <v-expansion-panel style="padding: 0px !important">
+              <v-expansion-panel-header style="padding: 8px !important">
                 <div>
                   <v-icon>mdi-surround-sound-7-1</v-icon>
-                  {{$t("IMDB Ratings")}} {{filterIMDBRatingTitle}}
+                  {{ $t("IMDB Ratings") }} {{ filterIMDBRatingTitle }}
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
@@ -323,8 +449,12 @@
                   class="align-center"
                   v-on:change="filtersChanged"
                 >
-                  <template v-slot:prepend>{{$shared.filters.filterIMDBRating[0]}}</template>
-                  <template v-slot:append>{{$shared.filters.filterIMDBRating[1]}}</template>
+                  <template v-slot:prepend>{{
+                    $shared.filters.filterIMDBRating[0]
+                  }}</template>
+                  <template v-slot:append>{{
+                    $shared.filters.filterIMDBRating[1]
+                  }}</template>
                 </v-range-slider>
                 <v-checkbox
                   v-bind:label="$t('include entries with no IMDB rating')"
@@ -338,22 +468,37 @@
 
             <!-- FILTER GENRES -->
             <v-expansion-panel
-              v-show="$shared.filters.filterGenres && $shared.filters.filterGenres.length > 0"
-              style="padding: 0px!important"
+              v-show="
+                $shared.filters.filterGenres &&
+                $shared.filters.filterGenres.length > 0
+              "
+              style="padding: 0px !important"
             >
-              <v-expansion-panel-header style="padding: 8px!important">
+              <v-expansion-panel-header style="padding: 8px !important">
                 <div>
                   <v-icon>mdi-drama-masks</v-icon>
-                  {{$t("Genres")}} {{$shared.filters.filterSettings.filterGenresAND ? '߷' : ''}} {{ filterGenresTitle }}
+                  {{ $t("Genres") }}
+                  {{
+                    $shared.filters.filterSettings.filterGenresAND ? "߷" : ""
+                  }}
+                  {{ filterGenresTitle }}
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllGenres(false)">{{$t("SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllGenres(true)">{{$t("SET ALL")}}</v-btn>
+                  <v-btn text v-on:click="setAllGenres(false)">{{
+                    $t("SET NONE")
+                  }}</v-btn>
+                  <v-btn text v-on:click="setAllGenres(true)">{{
+                    $t("SET ALL")
+                  }}</v-btn>
                 </v-row>
                 <v-switch
-                  v-bind:label="$shared.filters.filterSettings.filterGenresAND ? $t('all selected must apply') : $t('one selected must apply')"
+                  v-bind:label="
+                    $shared.filters.filterSettings.filterGenresAND
+                      ? $t('all selected must apply')
+                      : $t('one selected must apply')
+                  "
                   color="red"
                   v-model="$shared.filters.filterSettings.filterGenresAND"
                   v-on:click.native="filtersChanged"
@@ -372,24 +517,38 @@
 
             <!-- FILTER AGE RATINGS -->
             <v-expansion-panel
-              v-show="$shared.filters.filterAgeRatings && $shared.filters.filterAgeRatings.length > 0"
-              style="padding: 0px!important"
+              v-show="
+                $shared.filters.filterAgeRatings &&
+                $shared.filters.filterAgeRatings.length > 0
+              "
+              style="padding: 0px !important"
             >
-              <v-expansion-panel-header style="padding: 8px!important">
+              <v-expansion-panel-header style="padding: 8px !important">
                 <div>
                   <v-icon>mdi-human-female-boy</v-icon>
-                  {{$t("Age Ratings")}} {{ filterAgeRatingsTitle }}
+                  {{ $t("Age Ratings") }} {{ filterAgeRatingsTitle }}
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllAgeRatings(false)">{{$t("SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllAgeRatings(true)">{{$t("SET ALL")}}</v-btn>
+                  <v-btn text v-on:click="setAllAgeRatings(false)">{{
+                    $t("SET NONE")
+                  }}</v-btn>
+                  <v-btn text v-on:click="setAllAgeRatings(true)">{{
+                    $t("SET ALL")
+                  }}</v-btn>
                 </v-row>
                 <v-checkbox
                   v-for="ageRating in $shared.filters.filterAgeRatings"
                   v-bind:key="ageRating.Age"
-                  v-bind:label="(ageRating.Age === -1 ? `<${$t('undetermined')}>` : ageRating.Age) + ' (' + ageRating.NumMovies + ')'"
+                  v-bind:label="
+                    (ageRating.Age === -1
+                      ? `<${$t('undetermined')}>`
+                      : ageRating.Age) +
+                    ' (' +
+                    ageRating.NumMovies +
+                    ')'
+                  "
                   v-model="ageRating.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
@@ -400,13 +559,26 @@
 
             <!-- FILTER GROUP: CONTENT ADVISORY -->
             <v-expansion-panel
-              v-show="($shared.filters.filterParentalAdvisory.Nudity && $shared.filters.filterParentalAdvisory.Nudity.length > 0) || ($shared.filters.filterParentalAdvisory.Violence && $shared.filters.filterParentalAdvisory.Violence.length > 0) || ($shared.filters.filterParentalAdvisory.Profanity && $shared.filters.filterParentalAdvisory.Profanity.length > 0) || ($shared.filters.filterParentalAdvisory.Alcohol && $shared.filters.filterParentalAdvisory.Alcohol.length > 0) || ($shared.filters.filterParentalAdvisory.Frightening && $shared.filters.filterParentalAdvisory.Frightening.length > 0)"
-              style="padding: 0px!important"
+              v-show="
+                ($shared.filters.filterParentalAdvisory.Nudity &&
+                  $shared.filters.filterParentalAdvisory.Nudity.length > 0) ||
+                ($shared.filters.filterParentalAdvisory.Violence &&
+                  $shared.filters.filterParentalAdvisory.Violence.length > 0) ||
+                ($shared.filters.filterParentalAdvisory.Profanity &&
+                  $shared.filters.filterParentalAdvisory.Profanity.length >
+                    0) ||
+                ($shared.filters.filterParentalAdvisory.Alcohol &&
+                  $shared.filters.filterParentalAdvisory.Alcohol.length > 0) ||
+                ($shared.filters.filterParentalAdvisory.Frightening &&
+                  $shared.filters.filterParentalAdvisory.Frightening.length > 0)
+              "
+              style="padding: 0px !important"
             >
-              <v-expansion-panel-header style="padding: 8px!important">
+              <v-expansion-panel-header style="padding: 8px !important">
                 <div>
                   <v-icon>mdi-movie-filter-outline</v-icon>
-                  {{$t("Content Advisories")}} {{ filterContentAdvisoryTitle }}
+                  {{ $t("Content Advisories") }}
+                  {{ filterContentAdvisoryTitle }}
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
@@ -414,29 +586,45 @@
                   <v-expansion-panel
                     v-for="category in filterParentalAdvisoryCategories"
                     v-bind:key="category.Name"
-                    v-show="$shared.filters.filterParentalAdvisory[category.Name] && $shared.filters.filterParentalAdvisory[category.Name].length > 0"
-                    style="padding: 0px!important"
+                    v-show="
+                      $shared.filters.filterParentalAdvisory[category.Name] &&
+                      $shared.filters.filterParentalAdvisory[category.Name]
+                        .length > 0
+                    "
+                    style="padding: 0px !important"
                   >
-                    <v-expansion-panel-header
-                      style="padding: 8px!important"
-                    >{{$t(`ParentalAdvisoryCategories.${category.Name}`)}} {{filterParentalAdvisoryCategoryTitle(category)}}</v-expansion-panel-header>
+                    <v-expansion-panel-header style="padding: 8px !important"
+                      >{{ $t(`ParentalAdvisoryCategories.${category.Name}`) }}
+                      {{
+                        filterParentalAdvisoryCategoryTitle(category)
+                      }}</v-expansion-panel-header
+                    >
                     <v-expansion-panel-content>
                       <v-row>
                         <v-btn
                           text
                           v-on:click="setAllParentalAdvisory(category, false)"
-                        >{{$t("SET NONE")}}</v-btn>
+                          >{{ $t("SET NONE") }}</v-btn
+                        >
                         <v-btn
                           text
                           v-on:click="setAllParentalAdvisory(category, true)"
-                        >{{$t("SET ALL")}}</v-btn>
+                          >{{ $t("SET ALL") }}</v-btn
+                        >
                       </v-row>
                       <v-row
-                        v-for="paItem in $shared.filters.filterParentalAdvisory[category.Name]"
+                        v-for="paItem in $shared.filters.filterParentalAdvisory[
+                          category.Name
+                        ]"
                         v-bind:key="paItem.Severity"
                       >
                         <v-checkbox
-                          v-bind:label="$t(`${paItem.DisplayText}`) + ' (' + paItem.NumMovies + ')'"
+                          v-bind:label="
+                            $t(`${paItem.DisplayText}`) +
+                            ' (' +
+                            paItem.NumMovies +
+                            ')'
+                          "
                           v-model="paItem.Selected"
                           v-on:click.native="filtersChanged"
                           style="margin: 0px"
@@ -450,28 +638,45 @@
             </v-expansion-panel>
 
             <!-- FILTER Persons -->
-            <v-expansion-panel style="padding: 0px!important">
-              <v-expansion-panel-header style="padding: 8px!important">
+            <v-expansion-panel style="padding: 0px !important">
+              <v-expansion-panel-header style="padding: 8px !important">
                 <div>
                   <v-icon>mdi-human-male-male</v-icon>
-                  {{$t("People")}} {{$shared.filters.filterSettings.filterPersonsAND ? '߷' : ''}} {{filterPersonsTitle}}
+                  {{ $t("People") }}
+                  {{
+                    $shared.filters.filterSettings.filterPersonsAND ? "߷" : ""
+                  }}
+                  {{ filterPersonsTitle }}
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllPersons(false)">{{$t("SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllPersons(true)">{{$t("SET ALL")}}</v-btn>
-                  <v-btn text v-on:click="addPerson()">{{$t("FIND")}}</v-btn>
+                  <v-btn text v-on:click="setAllPersons(false)">{{
+                    $t("SET NONE")
+                  }}</v-btn>
+                  <v-btn text v-on:click="setAllPersons(true)">{{
+                    $t("SET ALL")
+                  }}</v-btn>
+                  <v-btn text v-on:click="addPerson()">{{ $t("FIND") }}</v-btn>
                 </v-row>
                 <v-switch
-                  v-bind:label="$shared.filters.filterSettings.filterPersonsAND ? $t('all selected must apply') : $t('one selected must apply')"
+                  v-bind:label="
+                    $shared.filters.filterSettings.filterPersonsAND
+                      ? $t('all selected must apply')
+                      : $t('one selected must apply')
+                  "
                   color="red"
                   v-model="$shared.filters.filterSettings.filterPersonsAND"
                   v-on:click.native="filtersChanged"
                 ></v-switch>
-                <v-row v-for="person in filterPersons" v-bind:key="person.IMDB_Person_ID">
+                <v-row
+                  v-for="person in filterPersons"
+                  v-bind:key="person.IMDB_Person_ID"
+                >
                   <v-checkbox
-                    v-bind:label="person.Person_Name + ' (' + person.NumMovies + ')'"
+                    v-bind:label="
+                      person.Person_Name + ' (' + person.NumMovies + ')'
+                    "
                     v-model="person.Selected"
                     v-on:click.native="filtersChanged"
                     style="margin: 0px"
@@ -482,35 +687,61 @@
                     class="mk-clickable-red"
                     style="align-items: flex-start; padding-top: 4px"
                     v-if="person.id_Filter_Persons"
-                    v-on:click="showDeleteDialog(person, deletePerson, 'Remove Person', 'Do you really want to remove {name} from the filter list?', person.Person_Name)"
-                  >mdi-delete</v-icon>
+                    v-on:click="
+                      showDeleteDialog(
+                        person,
+                        deletePerson,
+                        'Remove Person',
+                        'Do you really want to remove {name} from the filter list?',
+                        person.Person_Name
+                      )
+                    "
+                    >mdi-delete</v-icon
+                  >
                 </v-row>
               </v-expansion-panel-content>
             </v-expansion-panel>
 
             <!-- FILTER Companies -->
-            <v-expansion-panel style="padding: 0px!important">
-              <v-expansion-panel-header style="padding: 8px!important">
+            <v-expansion-panel style="padding: 0px !important">
+              <v-expansion-panel-header style="padding: 8px !important">
                 <div>
                   <v-icon>mdi-factory</v-icon>
-                  {{$t("Companies")}} {{$shared.filters.filterSettings.filterCompaniesAND ? '߷' : ''}} {{filterCompaniesTitle}}
+                  {{ $t("Companies") }}
+                  {{
+                    $shared.filters.filterSettings.filterCompaniesAND ? "߷" : ""
+                  }}
+                  {{ filterCompaniesTitle }}
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllCompanies(false)">{{$t("SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllCompanies(true)">{{$t("SET ALL")}}</v-btn>
-                  <v-btn text v-on:click="addCompany()">{{$t("FIND")}}</v-btn>
+                  <v-btn text v-on:click="setAllCompanies(false)">{{
+                    $t("SET NONE")
+                  }}</v-btn>
+                  <v-btn text v-on:click="setAllCompanies(true)">{{
+                    $t("SET ALL")
+                  }}</v-btn>
+                  <v-btn text v-on:click="addCompany()">{{ $t("FIND") }}</v-btn>
                 </v-row>
                 <v-switch
-                  v-bind:label="$shared.filters.filterSettings.filterCompaniesAND ? $t('all selected must apply') : $t('one selected must apply')"
+                  v-bind:label="
+                    $shared.filters.filterSettings.filterCompaniesAND
+                      ? $t('all selected must apply')
+                      : $t('one selected must apply')
+                  "
                   color="red"
                   v-model="$shared.filters.filterSettings.filterCompaniesAND"
                   v-on:click.native="filtersChanged"
                 ></v-switch>
-                <v-row v-for="company in filterCompanies" v-bind:key="company.Company_Name">
+                <v-row
+                  v-for="company in filterCompanies"
+                  v-bind:key="company.Company_Name"
+                >
                   <v-checkbox
-                    v-bind:label="company.Company_Name + ' (' + company.NumMovies + ')'"
+                    v-bind:label="
+                      company.Company_Name + ' (' + company.NumMovies + ')'
+                    "
                     v-model="company.Selected"
                     v-on:click.native="filtersChanged"
                     style="margin: 0px"
@@ -521,8 +752,17 @@
                     class="mk-clickable-red"
                     style="align-items: flex-start; padding-top: 4px"
                     v-if="company.id_Filter_Companies"
-                    v-on:click="showDeleteDialog(company, deleteCompany, 'Remove Company', 'Do you really want to remove {name} from the filter list?', company.Company_Name)"
-                  >mdi-delete</v-icon>
+                    v-on:click="
+                      showDeleteDialog(
+                        company,
+                        deleteCompany,
+                        'Remove Company',
+                        'Do you really want to remove {name} from the filter list?',
+                        company.Company_Name
+                      )
+                    "
+                    >mdi-delete</v-icon
+                  >
                 </v-row>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -560,20 +800,29 @@
 
             <!-- FILTER YEARS -->
             <v-expansion-panel
-              v-show="$shared.filters.filterYears && $shared.filters.filterYears.length > 0"
-              style="padding: 0px!important"
+              v-show="
+                $shared.filters.filterYears &&
+                $shared.filters.filterYears.length > 0
+              "
+              style="padding: 0px !important"
             >
-              <v-expansion-panel-header style="padding: 8px!important">
+              <v-expansion-panel-header style="padding: 8px !important">
                 <div>
                   <v-icon>mdi-calendar-month-outline</v-icon>
-                  {{$t("Release Years")}} {{filterYearsTitle}}
+                  {{ $t("Release Years") }} {{ filterYearsTitle }}
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllYears(false)">{{$t("SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllYears(true)">{{$t("SET ALL")}}</v-btn>
-                  <v-btn text v-on:click="showYearsRangeInput">{{$t("SET RANGE")}}</v-btn>
+                  <v-btn text v-on:click="setAllYears(false)">{{
+                    $t("SET NONE")
+                  }}</v-btn>
+                  <v-btn text v-on:click="setAllYears(true)">{{
+                    $t("SET ALL")
+                  }}</v-btn>
+                  <v-btn text v-on:click="showYearsRangeInput">{{
+                    $t("SET RANGE")
+                  }}</v-btn>
                 </v-row>
                 <div v-if="yearsRangeInput.show">
                   <v-row v-if="yearsRangeInput.show">
@@ -584,21 +833,31 @@
                       hide-details
                       class="align-center"
                     >
-                      <template v-slot:prepend>{{yearsRangeInput.range[0]}}</template>
-                      <template v-slot:append>{{yearsRangeInput.range[1]}}</template>
+                      <template v-slot:prepend>{{
+                        yearsRangeInput.range[0]
+                      }}</template>
+                      <template v-slot:append>{{
+                        yearsRangeInput.range[1]
+                      }}</template>
                     </v-range-slider>
                   </v-row>
                   <v-row>
                     <v-spacer></v-spacer>
-                    <v-btn text v-on:click="onYearsRangeInputCancel">{{$t('Cancel')}}</v-btn>
-                    <v-btn text v-on:click="onYearsRangeInputOK">{{$t('OK')}}</v-btn>
+                    <v-btn text v-on:click="onYearsRangeInputCancel">{{
+                      $t("Cancel")
+                    }}</v-btn>
+                    <v-btn text v-on:click="onYearsRangeInputOK">{{
+                      $t("OK")
+                    }}</v-btn>
                   </v-row>
                 </div>
 
                 <v-checkbox
                   v-for="year in $shared.filters.filterYears"
                   v-bind:key="year.startYear"
-                  v-bind:label="getFilterYearLabel(year.startYear, year.NumMovies)"
+                  v-bind:label="
+                    getFilterYearLabel(year.startYear, year.NumMovies)
+                  "
                   v-model="year.Selected"
                   v-on:click.native="filtersChanged"
                   style="margin: 0px"
@@ -608,23 +867,41 @@
             </v-expansion-panel>
 
             <!-- FILTER IMDB Plot Keywords -->
-            <v-expansion-panel style="padding: 0px!important">
-              <v-expansion-panel-header style="padding: 8px!important">
+            <v-expansion-panel style="padding: 0px !important">
+              <v-expansion-panel-header style="padding: 8px !important">
                 <div>
                   <v-icon>mdi-book-open-outline</v-icon>
-                  {{$t("Plot Keywords")}} {{$shared.filters.filterSettings.filterIMDBPlotKeywordsAND ? '߷' : ''}} {{ filterIMDBPlotKeywordsTitle }}
+                  {{ $t("Plot Keywords") }}
+                  {{
+                    $shared.filters.filterSettings.filterIMDBPlotKeywordsAND
+                      ? "߷"
+                      : ""
+                  }}
+                  {{ filterIMDBPlotKeywordsTitle }}
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllIMDBPlotKeywords(false)">{{$t("SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllIMDBPlotKeywords(true)">{{$t("SET ALL")}}</v-btn>
-                  <v-btn text v-on:click="addIMDBPlotKeyword()">{{$t("FIND")}}</v-btn>
+                  <v-btn text v-on:click="setAllIMDBPlotKeywords(false)">{{
+                    $t("SET NONE")
+                  }}</v-btn>
+                  <v-btn text v-on:click="setAllIMDBPlotKeywords(true)">{{
+                    $t("SET ALL")
+                  }}</v-btn>
+                  <v-btn text v-on:click="addIMDBPlotKeyword()">{{
+                    $t("FIND")
+                  }}</v-btn>
                 </v-row>
                 <v-switch
-                  v-bind:label="$shared.filters.filterSettings.filterIMDBPlotKeywordsAND ? $t('all selected must apply') : $t('one selected must apply')"
+                  v-bind:label="
+                    $shared.filters.filterSettings.filterIMDBPlotKeywordsAND
+                      ? $t('all selected must apply')
+                      : $t('one selected must apply')
+                  "
                   color="red"
-                  v-model="$shared.filters.filterSettings.filterIMDBPlotKeywordsAND"
+                  v-model="
+                    $shared.filters.filterSettings.filterIMDBPlotKeywordsAND
+                  "
                   v-on:click.native="filtersChanged"
                 ></v-switch>
                 <v-row
@@ -632,7 +909,9 @@
                   v-bind:key="plotKeyword.id_Filter_IMDB_Plot_Keywords"
                 >
                   <v-checkbox
-                    v-bind:label="plotKeyword.Keyword + ' (' + plotKeyword.NumMovies + ')'"
+                    v-bind:label="
+                      plotKeyword.Keyword + ' (' + plotKeyword.NumMovies + ')'
+                    "
                     v-model="plotKeyword.Selected"
                     v-on:click.native="filtersChanged"
                     style="margin: 0px"
@@ -643,30 +922,57 @@
                     class="mk-clickable-red"
                     style="align-items: flex-start; padding-top: 4px"
                     v-if="plotKeyword.id_Filter_IMDB_Plot_Keywords"
-                    v-on:click="showDeleteDialog(plotKeyword, deleteFilterIMDBPlotKeyword, 'Remove Plot Keyword', 'Do you really want to remove {name} from the filter list?', plotKeyword.Keyword)"
-                  >mdi-delete</v-icon>
+                    v-on:click="
+                      showDeleteDialog(
+                        plotKeyword,
+                        deleteFilterIMDBPlotKeyword,
+                        'Remove Plot Keyword',
+                        'Do you really want to remove {name} from the filter list?',
+                        plotKeyword.Keyword
+                      )
+                    "
+                    >mdi-delete</v-icon
+                  >
                 </v-row>
               </v-expansion-panel-content>
             </v-expansion-panel>
 
             <!-- FILTER IMDB Filming Locations -->
-            <v-expansion-panel style="padding: 0px!important">
-              <v-expansion-panel-header style="padding: 8px!important">
+            <v-expansion-panel style="padding: 0px !important">
+              <v-expansion-panel-header style="padding: 8px !important">
                 <div>
                   <v-icon>mdi-map-marker-outline</v-icon>
-                  {{$t("Filming Locations")}} {{$shared.filters.filterSettings.filterIMDBFilmingLocationsAND ? '߷' : ''}} {{ filterIMDBFilmingLocationsTitle }}
+                  {{ $t("Filming Locations") }}
+                  {{
+                    $shared.filters.filterSettings.filterIMDBFilmingLocationsAND
+                      ? "߷"
+                      : ""
+                  }}
+                  {{ filterIMDBFilmingLocationsTitle }}
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-btn text v-on:click="setAllIMDBFilmingLocations(false)">{{$t("SET NONE")}}</v-btn>
-                  <v-btn text v-on:click="setAllIMDBFilmingLocations(true)">{{$t("SET ALL")}}</v-btn>
-                  <v-btn text v-on:click="addIMDBFilmingLocation()">{{$t("FIND")}}</v-btn>
+                  <v-btn text v-on:click="setAllIMDBFilmingLocations(false)">{{
+                    $t("SET NONE")
+                  }}</v-btn>
+                  <v-btn text v-on:click="setAllIMDBFilmingLocations(true)">{{
+                    $t("SET ALL")
+                  }}</v-btn>
+                  <v-btn text v-on:click="addIMDBFilmingLocation()">{{
+                    $t("FIND")
+                  }}</v-btn>
                 </v-row>
                 <v-switch
-                  v-bind:label="$shared.filters.filterSettings.filterIMDBFilmingLocationsAND ? $t('all selected must apply') : $t('one selected must apply')"
+                  v-bind:label="
+                    $shared.filters.filterSettings.filterIMDBFilmingLocationsAND
+                      ? $t('all selected must apply')
+                      : $t('one selected must apply')
+                  "
                   color="red"
-                  v-model="$shared.filters.filterSettings.filterIMDBFilmingLocationsAND"
+                  v-model="
+                    $shared.filters.filterSettings.filterIMDBFilmingLocationsAND
+                  "
                   v-on:click.native="filtersChanged"
                 ></v-switch>
                 <v-row
@@ -674,7 +980,12 @@
                   v-bind:key="filmingLocation.id_Filter_IMDB_Filming_Locations"
                 >
                   <v-checkbox
-                    v-bind:label="filmingLocation.Location + ' (' + filmingLocation.NumMovies + ')'"
+                    v-bind:label="
+                      filmingLocation.Location +
+                      ' (' +
+                      filmingLocation.NumMovies +
+                      ')'
+                    "
                     v-model="filmingLocation.Selected"
                     v-on:click.native="filtersChanged"
                     style="margin: 0px"
@@ -685,8 +996,17 @@
                     class="mk-clickable-red"
                     style="align-items: flex-start; padding-top: 4px"
                     v-if="filmingLocation.id_Filter_IMDB_Filming_Locations"
-                    v-on:click="showDeleteDialog(filmingLocation, deleteFilterIMDBFilmingLocation, 'Remove Filming Location', 'Do you really want to remove {name} from the filter list?', filmingLocation.Location)"
-                  >mdi-delete</v-icon>
+                    v-on:click="
+                      showDeleteDialog(
+                        filmingLocation,
+                        deleteFilterIMDBFilmingLocation,
+                        'Remove Filming Location',
+                        'Do you really want to remove {name} from the filter list?',
+                        filmingLocation.Location
+                      )
+                    "
+                    >mdi-delete</v-icon
+                  >
                 </v-row>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -699,24 +1019,30 @@
           <v-list-item-action>
             <v-icon>mdi-power</v-icon>
           </v-list-item-action>
-          <v-list-item-title>{{$t("Quit")}}</v-list-item-title>
+          <v-list-item-title>{{ $t("Quit") }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
     <!-- TOP BAR -->
     <v-app-bar app clipped-left color="red" dense>
-      <v-app-bar-nav-icon @click.stop="$shared.sidenav = !$shared.sidenav"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon
+        @click.stop="$shared.sidenav = !$shared.sidenav"
+      ></v-app-bar-nav-icon>
       <v-toolbar-title class="mr-12 align-center mk-noshrink">
         <span class="title">
-          {{$shared.appName}}
-          {{$shared.isDevelopment ? ` (DEV)` : ''}}
-          {{$shared.isPORTABLE ? ` - Portable` : ''}}
+          {{ $shared.appName }}
+          {{ $shared.isDevelopment ? ` (DEV)` : "" }}
+          {{ $shared.isPORTABLE ? ` - Portable` : "" }}
         </span>
       </v-toolbar-title>
       <!-- <div class="flex-grow-1"></div> -->
       <v-spacer></v-spacer>
-      <v-row align-content="end" justify="end" style="text-align: right!important">
+      <v-row
+        align-content="end"
+        justify="end"
+        style="text-align: right !important"
+      >
         <v-text-field
           :append-icon-cb="() => {}"
           v-show="currentRoute && currentRoute.name === 'medialist'"
@@ -729,14 +1055,32 @@
           v-model="searchText"
         ></v-text-field>
       </v-row>
-      <v-btn text style="margin-left: 16px; margin-right: -8px" v-on:click="toggleFullscreen">
-        <v-icon>mdi-fullscreen</v-icon>
-      </v-btn>
+
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <span v-on="on">
+            <v-btn
+              text
+              style="margin-left: 16px; margin-right: -8px"
+              v-on:click="toggleFullScreen"
+            >
+              <v-icon>mdi-fullscreen</v-icon>
+            </v-btn>
+          </span>
+        </template>
+        <span>{{ $t("Toggle Fullscreen (you can also use F11 on your keyboard)") }}</span>
+      </v-tooltip>
     </v-app-bar>
 
     <!-- CONTENT -->
     <v-content>
-      <v-container style="display: flex; max-width: 100%!important; padding: 0px!important">
+      <v-container
+        style="
+          display: flex;
+          max-width: 100% !important;
+          padding: 0px !important;
+        "
+      >
         <router-view></router-view>
 
         <mk-version-dialog
@@ -748,7 +1092,9 @@
         <mk-delete-dialog
           v-bind:show="deleteDialog.show"
           v-bind:title="$t(deleteDialog.Title)"
-          v-bind:question="$t(deleteDialog.Message, { name: deleteDialog.ItemName })"
+          v-bind:question="
+            $t(deleteDialog.Message, { name: deleteDialog.ItemName })
+          "
           v-bind:yes="$t('YES DELETE')"
           v-bind:no="$t('No')"
           yesColor="error"
@@ -815,10 +1161,18 @@
           <v-row align-content="start" justify="start">
             <!--  style="text-align: right!important" -->
             <div v-if="scanInfo.show">
-              <p style="margin: 0px!important">{{scanInfo.header}}</p>
+              <p style="margin: 0px !important">{{ scanInfo.header }}</p>
               <p
-                style="margin: 0px!important; font-size: 12px;text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"
-              >{{scanInfo.details}}</p>
+                style="
+                  margin: 0px !important;
+                  font-size: 12px;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                  overflow: hidden;
+                "
+              >
+                {{ scanInfo.details }}
+              </p>
             </div>
             <div class="flex-grow-1"></div>
             <v-btn text v-on:click="cancelRescan">
@@ -830,25 +1184,40 @@
     </v-content>
 
     <!-- SNACK BAR -->
-    <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
+    <v-snackbar
+      v-model="snackbar.show"
+      :color="snackbar.color"
+      :timeout="snackbar.timeout"
+    >
       <div>
-        <strong v-if="snackbar.details && snackbar.details.length > 0">{{ snackbar.text }}</strong>
-        <div v-if="!snackbar.details || snackbar.details.length === 0">{{ snackbar.text }}</div>
+        <strong v-if="snackbar.details && snackbar.details.length > 0">{{
+          snackbar.text
+        }}</strong>
+        <div v-if="!snackbar.details || snackbar.details.length === 0">
+          {{ snackbar.text }}
+        </div>
         <div
           v-for="(snackbardetail, index) in snackbar.details"
           v-bind:key="index"
           style="padding-left: 8px"
-        >{{snackbardetail}}</div>
+        >
+          {{ snackbardetail }}
+        </div>
       </div>
       <v-spacer />
-      <v-btn dark text @click="snackbar.show = false">{{$t('Close')}}</v-btn>
+      <v-btn dark text @click="snackbar.show = false">{{ $t("Close") }}</v-btn>
     </v-snackbar>
 
     <!-- LOADING OVERLAY -->
-    <v-overlay style="z-index: 1000;" v-bind:value="showLoadingOverlay">
-      <div style="text-align: center;">
+    <v-overlay style="z-index: 1000" v-bind:value="showLoadingOverlay">
+      <div style="text-align: center">
         <!-- <p style="text-shadow: 0 0 4px #FFFFFF; margin: 0px">loading</p> -->
-        <v-progress-circular indeterminate color="red" size="70" width="7"></v-progress-circular>
+        <v-progress-circular
+          indeterminate
+          color="red"
+          size="70"
+          width="7"
+        ></v-progress-circular>
       </div>
     </v-overlay>
   </v-app>
@@ -2073,7 +2442,7 @@ export default {
         this.yearsRangeInput.show = false;
         return;
       }
-      
+
       let minYear = 9999;
       this.$shared.filters.filterYears.forEach((year) => {
         if (year.startYear != -1 && year.startYear < minYear) {
@@ -2104,7 +2473,10 @@ export default {
           return;
         }
 
-        if (year.startYear >= this.yearsRangeInput.range[0] && year.startYear <= this.yearsRangeInput.range[1]) {
+        if (
+          year.startYear >= this.yearsRangeInput.range[0] &&
+          year.startYear <= this.yearsRangeInput.range[1]
+        ) {
           year.Selected = true;
         } else {
           year.Selected = false;
@@ -2116,13 +2488,26 @@ export default {
       this.yearsRangeInput.show = false;
     },
 
-    toggleFullscreen() {
-      remote.getCurrentWindow().setFullScreen(!remote.getCurrentWindow().isFullScreen());
+    toggleFullScreen() {
+      remote
+        .getCurrentWindow()
+        .setFullScreen(!remote.getCurrentWindow().isFullScreen());
+    },
+
+    onKeyDown(e) {
+      if (e.key === 'F11') {
+        logger.log('toggleFullScreen requested');
+        this.toggleFullScreen();
+      }
     }
   },
 
   // ### LifeCycleHooks ###
   created() {
+    document.onkeydown = this.onKeyDown;
+    
+    this.toggleFullScreen();
+
     this.$vuetify.theme.dark = true;
 
     if (this.$route.path !== "/") {

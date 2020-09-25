@@ -406,7 +406,9 @@ Series
 ### Other
 
 - [x] enhance scrapeIMDBParentalGuideData with PG-Codes (use tbl_AgeRatings)
-- [x] FullScreen toggle button
+- [x] FullScreen toggle
+  - [x] via button + tooltip
+  - [x] via F11 key
 - [x] add button for Years filter "SET RANGE"
 - [x] implement store.setSetting with SQLite's `ON CONFLICT` method
 - [x] use user-defined language for localized numbers
