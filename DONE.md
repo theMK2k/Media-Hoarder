@@ -405,6 +405,7 @@ Series
 
 ### Other
 
+- [x] FullScreen toggle button
 - [x] add button for Years filter "SET RANGE"
 - [x] implement store.setSetting with SQLite's `ON CONFLICT` method
 - [x] use user-defined language for localized numbers

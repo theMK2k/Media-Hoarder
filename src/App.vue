@@ -729,6 +729,9 @@
           v-model="searchText"
         ></v-text-field>
       </v-row>
+      <v-btn text style="margin-left: 16px; margin-right: -8px" v-on:click="toggleFullscreen">
+        <v-icon>mdi-fullscreen</v-icon>
+      </v-btn>
     </v-app-bar>
 
     <!-- CONTENT -->
@@ -2111,6 +2114,10 @@ export default {
       this.filtersChanged();
 
       this.yearsRangeInput.show = false;
+    },
+
+    toggleFullscreen() {
+      remote.getCurrentWindow().setFullScreen(!remote.getCurrentWindow().isFullScreen());
     }
   },
 
