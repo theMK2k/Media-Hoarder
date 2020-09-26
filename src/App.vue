@@ -1064,7 +1064,8 @@
               style="margin-left: 16px; margin-right: -8px"
               v-on:click="toggleFullScreen"
             >
-              <v-icon>mdi-fullscreen</v-icon>
+              <v-icon v-show="isFullScreen">mdi-fullscreen-exit</v-icon>
+              <v-icon v-show="!isFullScreen">mdi-fullscreen</v-icon>
             </v-btn>
           </span>
         </template>
@@ -1259,6 +1260,7 @@ export default {
     source: String,
   },
   data: () => ({
+    isFullScreen: true,
     showLoadingOverlay: false,
     shared,
     searchText: null,
@@ -2489,6 +2491,8 @@ export default {
     },
 
     toggleFullScreen() {
+      this.isFullScreen = !remote.getCurrentWindow().isFullScreen();
+
       remote
         .getCurrentWindow()
         .setFullScreen(!remote.getCurrentWindow().isFullScreen());
