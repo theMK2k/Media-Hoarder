@@ -405,6 +405,7 @@ Series
 
 ### Other
 
+- [x] include IMDB ID in search space (i.e. you can type/copy an IMDB ID in the search field and get results)
 - [x] enhance scrapeIMDBParentalGuideData with PG-Codes (use tbl_AgeRatings)
 - [x] FullScreen toggle
   - [x] via button + tooltip

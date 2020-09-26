@@ -3317,6 +3317,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       , MOV.IMDB_MaxAge
       , MOV.isDirectoryBased
       , SP.Path AS SourcePath
+      , MOV.IMDB_tconst
 
       ${minimumResultSet
         ? `
@@ -3329,7 +3330,6 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
         , NULL AS MI_Quality
         , NULL AS MI_Audio_Languages
         , NULL AS MI_Subtitle_Languages
-        , NULL AS IMDB_tconst
         , NULL AS IMDB_posterSmall_URL
         , NULL AS IMDB_posterLarge_URL
         , NULL AS IMDB_plotSummaryFull
@@ -3359,7 +3359,6 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
         , MOV.MI_Quality
         , MOV.MI_Audio_Languages
         , MOV.MI_Subtitle_Languages
-        , MOV.IMDB_tconst
         , MOV.IMDB_posterSmall_URL
         , MOV.IMDB_posterLarge_URL
         , MOV.IMDB_plotSummaryFull
@@ -3470,7 +3469,9 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
         " " +
         (item.IMDB_plotSummary || "").toLowerCase() +
         " " +
-        (item.Path || "").toLowerCase();
+        (item.Path || "").toLowerCase() + 
+        " " +
+        (item.IMDB_tconst || "").toLowerCase();
 
       item.IMDB_Top_Directors = item.IMDB_Top_Directors
         ? JSON.parse(item.IMDB_Top_Directors)

@@ -38,7 +38,7 @@ npm run electron:build-linux-portable
 
 ### Mac Build
 
-- [ ] in MacOS run:
+- [x] in MacOS run:
 
 ```bash
 export APPLE_ID=%APPLE_ID%
@@ -54,9 +54,18 @@ npm run electron:build-mac
 
 - [ ] on RPi run `npm run electron:build-rpi`
 
+## Create md5 checksum files
+
+- [x] create md5 checksum files
+
 ## Create Release on github
 
 - upload all files from Build Packs
+
+## Update Website
+
+- [ ] create new set of download locations
+- [ ] build and deploy website
 
 ## FINALLY: update history.json and push
 
