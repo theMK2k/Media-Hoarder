@@ -80,7 +80,7 @@ function runQuery({ db, query, params }, callback) {
 	logger.debug('  running query ...')
 	db.run(query, params, (err) => {
 		if (err) {
-			logger.debug('  error: ', err);
+			logger.error('  error: ', err);
 			logger.debug('  the query was: ', query);
 		} else {
 			logger.debug('  OK');
@@ -101,7 +101,7 @@ function syncTables(doCreateTables, callback) {
 		logger.debug('  got result');
 
 		if (err) {
-			logger.log(definedError.create('error in query', {err}));
+			logger.error(definedError.create('error in query', {err}));
 			return callback(err);
 		}
 
@@ -279,7 +279,7 @@ function syncContentTable(tableName, callback) {
 	// Fetch content in TemplateDB
 	templateDb.all(`SELECT * FROM [${tableName}]`, [], (err, contentTemplate) => {
 		if (err) {
-			logger.debug('  ERROR:', err);
+			logger.error('  ERROR:', err);
 			return callback(err);
 		}
 
@@ -289,13 +289,13 @@ function syncContentTable(tableName, callback) {
 
 		templateDb.all(`pragma table_info(${tableName})`, [], (err, colsTemplate) => {
 			if (err) {
-				logger.debug('  ERROR:', err);
+				logger.error('  ERROR:', err);
 				return callback(err);
 			}
 
 			workingDb.all(`pragma table_info(${tableName})`, [], (err, colsWorking) => {
 				if (err) {
-					logger.debug('  ERROR:', err);
+					logger.error('  ERROR:', err);
 					return callback(err);
 				}
 
@@ -406,7 +406,7 @@ function syncContentTableRow(content, callback) {
 		// logger.debug('statement:', statement);
 		workingDb.run(statement, params, (err) => {
 			if (err) {
-				logger.debug('      ERROR:', err);
+				logger.error('      ERROR:', err);
 				logger.debug('      Statement was:', statement);
 				logger.debug('      Params were:', params);
 			} else {
