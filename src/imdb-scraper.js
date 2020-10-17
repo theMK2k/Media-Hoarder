@@ -813,7 +813,7 @@ async function scrapeIMDBFullCreditsData(movie) {
       }
     }
 
-    const rx_creditsCategories = /<h4 class="dataHeaderWithBorder">([\s\S]*?)&nbsp/g;
+    const rx_creditsCategories = /class="dataHeaderWithBorder">([\s\S]*?)&nbsp/g;
 
     let ccMatch = null;
 
@@ -970,7 +970,7 @@ function parseCompaniesCategory(category, matchedhtml, companies) {
 
 function parseCreditsCategory(html, tableHeader, credits) {
   const rx_table = new RegExp(
-    `<h4 class="dataHeaderWithBorder">${tableHeader}[\\s\\S]*?<\\/table>`
+    `"dataHeaderWithBorder">${tableHeader}[\\s\\S]*?<\\/table>`
   );
 
   const result = [];
