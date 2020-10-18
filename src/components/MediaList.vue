@@ -703,6 +703,14 @@
                   text
                   v-bind:disabled="!item.IMDB_tconst"
                   color="primary"
+                  v-on:click.stop="openLetterboxd(item)"
+                >
+                  <v-icon small>mdi-web</v-icon>&nbsp;Letterboxd
+                </v-btn>
+                <v-btn
+                  text
+                  v-bind:disabled="!item.IMDB_tconst"
+                  color="primary"
                   v-on:click.stop="openMovieChat(item)"
                 >
                   <v-icon small>mdi-web</v-icon>&nbsp;MovieChat
@@ -1942,6 +1950,10 @@ export default {
 
     openIMDB(movie) {
       shell.openExternal(`https://www.imdb.com/title/${movie.IMDB_tconst}/`);
+    },
+
+    openLetterboxd(movie) {
+      shell.openExternal(`https://www.letterboxd.com/imdb/${movie.IMDB_tconst}/`);
     },
 
     openMovieChat(movie) {
