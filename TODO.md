@@ -8,7 +8,7 @@
 
 ### Other
 
-- implement half-stars (see letterboxd)
+- nothing
 
 ## LATER
 
