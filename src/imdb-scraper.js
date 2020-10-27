@@ -501,7 +501,7 @@ async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturn
       logger.error(e)
     }
 
-    logger.log("AgeRating regionCodes:", regionCodes);
+    logger.log("parentalguide AgeRating regionCodes:", regionCodes);
 
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/parentalguide`;
     logger.log("scrapeIMDBParentalGuideData url:", url);
@@ -521,7 +521,7 @@ async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturn
       const Country = matchAgeRating[1];
       const Code = unescape(matchAgeRating[2]);
 
-      logger.log("rating found:", Country, Code);
+      logger.log("parentalguide rating found:", Country, Code);
 
       const cachedRating = cacheAgeRatings.find(
         cache => cache.Country === Country && cache.Code === Code
@@ -530,11 +530,11 @@ async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturn
       let Age = null;
       if (cachedRating) {
         Age = cachedRating.Age;
-        logger.log("Age (cached):", Age);
+        logger.log("parentalguide Age (cached):", Age);
       } else {
         if (/\d+/.test(Code)) {
           Age = parseInt(Code.match(/\d+/)[0]);
-          logger.log("Age (parsed):", Age);
+          logger.log("parentalguide Age (parsed):", Age);
         }
         
         const definedPGs = [
@@ -551,6 +551,10 @@ async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturn
             codes: ['T', 'PG', 'NRC', 'GP']
           },
           {
+            Age: 17,
+            codes: ['R']
+          },
+          {
             Age: 18,
             codes: ['Unrated', 'X', 'XXX', 'SOA']
           }
@@ -562,12 +566,12 @@ async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturn
 
         if (foundPG) {
           Age = foundPG.Age;
-          logger.log("Age (found):", Age);
+          logger.log("parentalguide Age (found):", Age);
         }
       }
 
       ageRatings.push({ Country, Code, Age });
-      logger.log("ageRatings:", ageRatings);
+      logger.log("parentalguide ageRatings:", ageRatings);
     }
 
     let $IMDB_MinAge = null;
@@ -600,8 +604,8 @@ async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturn
         rating.id_AgeRating = cachedRating.id_AgeRating;
       }
 
-      if (rating.id_AgeRating && regionCodes.find(regionCode => regionCode === rating.Country)) {
-        logger.log('AgeRating regions FOUND:', rating);
+      if (rating.id_AgeRating && rating.Age != null && regionCodes.find(regionCode => regionCode === rating.Country)) {
+        logger.log('parentalguide AgeRating regions FOUND:', rating);
         $IMDB_id_AgeRating_Chosen_Country = rating.id_AgeRating;
       }
 
@@ -623,7 +627,7 @@ async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturn
       }
     }
 
-    logger.log("found age ratings:", ageRatings);
+    logger.log("parentalguide found age ratings:", ageRatings);
 
     const rx_Parental_Advisory_Nudity = /<section id="advisory-nudity">[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>(.*?)<\/span>/;
     let $IMDB_Parental_Advisory_Nudity = null;
