@@ -655,6 +655,10 @@ async function filescanMovies(onlyNew, $t) {
 		`);
 
     for (let i = 0; i < moviesSourcePaths.length; i++) {
+      if (doAbortRescan) {
+        break;
+      }
+      
       const movieSourcePath = moviesSourcePaths[i];
       logger.log(
         `  scanning Source Path ${movieSourcePath.Path} (${movieSourcePath.Description
@@ -704,6 +708,10 @@ async function filescanMoviesPath(
 
     // add files
     for (let i = 0; i < pathItems.length; i++) {
+      if (doAbortRescan) {
+        break;
+      }
+      
       const pathItem = pathItems[i];
 
       if (pathItem.isFile) {
@@ -737,6 +745,10 @@ async function filescanMoviesPath(
 
         await addMovie(movieSourcePath, pathItem);
       }
+    }
+
+    if (doAbortRescan) {
+      return;
     }
 
     // recurse directories
