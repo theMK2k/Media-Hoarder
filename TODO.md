@@ -6,10 +6,10 @@
 
 - nothing
 
-
 ### Other
 
 - nothing
+- cancel during rescan (also cancel MediaInfo activity)
 
 ## LATER
 

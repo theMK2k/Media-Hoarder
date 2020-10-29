@@ -1004,7 +1004,7 @@ export default {
       this.sourcePaths.forEach((sp) => {
         const pathLower = sp.Path.toLowerCase();
 
-        if (sourcePath !== sp && chosenPathLower.includes(pathLower)) {
+        if (sourcePath !== sp && chosenPathLower == pathLower) {
           isAlreadyInUse = true;
         }
       });
