@@ -113,29 +113,37 @@ export default {
 
     async init(Age_Rating) {
       const payload = {
-        $Min_Age: this.getMinAge(Age_Rating),
-        $Max_Age: this.getMaxAge(Age_Rating)
+        $MinAge: this.getMinAge(Age_Rating),
+        $MaxAge: this.getMaxAge(Age_Rating)
       };
 
       logger.log("payload:", payload);
 
-      this.numMovies = await store.db.fireProcedureReturnScalar(
-        `
-        SELECT COUNT(1) FROM
-        (
-          SELECT
-            MOV.id_Movies
-          FROM tbl_Movies MOV
-          LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
-          WHERE AR.Age BETWEEN $MinAge AND $MaxAge
-          AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
-        )
-      `,
-        {
-          $MinAge: this.getMinAge(Age_Rating),
-          $MaxAge: this.getMaxAge(Age_Rating)
-        }
-      );
+      try {
+        this.numMovies = await store.db.fireProcedureReturnScalar(
+          `
+          SELECT COUNT(1) FROM
+          (
+            SELECT
+              MOV.id_Movies
+            FROM tbl_Movies MOV
+            LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
+            WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+                  AND (
+                        AR.Age BETWEEN $MinAge AND $MaxAge
+                        OR (
+                              MOV.IMDB_id_AgeRating_Chosen_Country IS NULL AND MOV.IMDB_MinAge >= $MinAge AND MOV.IMDB_MaxAge <= $MaxAge
+                        )
+                  )
+          )
+        `,
+          payload
+        );
+      } catch(e) {
+        logger.error(e);
+      }
+
+      logger.log('numMovies:', this.numMovies);
     },
 
     onButtonClick(eventName) {

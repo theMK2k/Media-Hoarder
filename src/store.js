@@ -2579,7 +2579,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
           (filter) => filter.Selected && filter.Age == -1
         )
       ) {
-        filterAgeRatings = `AND (AR.Age IS NULL `;
+        filterAgeRatings = `AND ((AR.Age IS NULL AND MOV.IMDB_MinAge IS NULL AND MOV.IMDB_MaxAge IS NULL) `;
       } else {
         filterAgeRatings = `AND (1=0 `;
       }
@@ -2600,6 +2600,14 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
 
         filterAgeRatings += ")";
       }
+
+      shared.filters.filterAgeRatings
+          .filter((filter) => filter.Selected && filter.Age >= 0)
+          .map((filter) => filter.Age)
+          .forEach(age => {
+            filterAgeRatings += `
+            OR (MOV.IMDB_id_AgeRating_Chosen_Country IS NULL AND MOV.IMDB_MinAge >= ${age} AND MOV.IMDB_MaxAge <= ${age})`
+          })
 
       filterAgeRatings += ")";
     }
@@ -3862,22 +3870,50 @@ async function fetchFilterAgeRatings($MediaType) {
     `
 		SELECT
 			-1 AS Age
-			, (SELECT COUNT(1) FROM tbl_Movies MOV INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL AND MOV.IMDB_id_AgeRating_Chosen_Country IS NULL) AS NumMovies
+			, (
+        SELECT COUNT(1)
+        FROM tbl_Movies MOV
+        INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
+        WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+              AND MOV.Extra_id_Movies_Owner IS NULL
+              AND 
+              (
+                  MOV.IMDB_id_AgeRating_Chosen_Country IS NULL
+                  AND MOV.IMDB_MinAge IS NULL
+                  AND MOV.IMDB_MaxAge IS NULL
+              )
+        ) AS NumMovies
 			, 1 AS Selected
 		UNION
-		SELECT
-			Age
-			, COUNT(1) AS NumMovies
-			, 1 AS Selected
-		FROM (
-			SELECT
-				AR.Age
-			FROM tbl_Movies MOV
-			INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
-			INNER JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating AND AR.Age IS NOT NULL
-			WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
-		)
-		GROUP BY (Age)`,
+    SELECT
+      Ages.Age
+      , (
+          SELECT COUNT(1)
+          FROM tbl_Movies MOV
+          INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
+          LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating AND AR.Age IS NOT NULL
+          WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                AND (
+                      AR.Age = Ages.Age
+                      OR (
+                            MOV.IMDB_id_AgeRating_Chosen_Country IS NULL
+                            AND MOV.IMDB_MinAge >= Ages.Age
+                            AND MOV.IMDB_MaxAge <= Ages.Age
+                      )
+                    AND MOV.Extra_id_Movies_Owner IS NULL
+                )
+      ) AS NumMovies
+      , 1 AS Selected
+    FROM
+    (SELECT DISTINCT Age FROM (
+      SELECT AR.Age FROM tbl_AgeRating AR WHERE AR.Age IS NOT NULL
+      UNION
+      SELECT IMDB_MinAge FROM tbl_Movies MOV WHERE MOV.IMDB_MinAge IS NOT NULL
+      UNION
+      SELECT IMDB_MaxAge FROM tbl_Movies MOV WHERE MOV.IMDB_MinAge IS NOT NULL
+    )) Ages
+    WHERE NumMovies > 0
+    `,
     { $MediaType }
   );
 
