@@ -90,7 +90,7 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
 
     let $IMDB_metacriticScore = null;
 
-    const rxMetacriticScore = /<div class="metacriticScore score_favorable titleReviewBarSubItem">[\s\S]*?<span>(\d*)<\/span>/;
+    const rxMetacriticScore = /<div class="metacriticScore .*? titleReviewBarSubItem">[\s\S]*?<span>(\d*)<\/span>/;
     if (rxMetacriticScore.test(html)) {
       $IMDB_metacriticScore = parseInt(html.match(rxMetacriticScore)[1]);
     }
