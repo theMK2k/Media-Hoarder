@@ -673,7 +673,8 @@
   "<any other company>": "<alle anderen Firmen>",
   "<any other plot keyword>": "<alle anderen Handlungsstichwörter>",
   "<any other filming location>": "<alle anderen Drehorte>",
-  "CreditCatgegories": {
+  "CreditCategories": {
+    "Additional Crew": "Weitere Besatzung",
     "Art Department": "Kunstabteilung",
     "Art Direction by": "Künstlerische Leitung",
     "Camera and Electrical Department": "Abteilung Kamera und Elektrik",

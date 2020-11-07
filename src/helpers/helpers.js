@@ -284,6 +284,26 @@ function nz(value, valueIfNull) {
   return value;
 }
 
+function getStarRatingString(rating) {
+  let label = "";
+
+  for (let i = 1; i < 6; i++) {
+    const diff = rating - (i - 1);
+
+    if (diff >= 1) {
+      label += "★";
+    }
+    if (diff == 0.5) {
+      label += "½"; // we have to wait until unicode 2BEA is available (http://www.fileformat.info/info/unicode/char/002BEA/index.htm)
+    }
+    if (diff <= 0) {
+      label += "☆";
+    }
+  }
+
+  return label
+}
+
 export {
   isWindows,
   isPORTABLE,
@@ -306,5 +326,6 @@ export {
   cleanupDirectoryName,
   getLastDirectoryName,
   ensureDirectorySync,
-  nz
+  nz,
+  getStarRatingString
 };

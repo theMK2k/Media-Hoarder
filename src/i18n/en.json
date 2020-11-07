@@ -673,7 +673,8 @@
   "<any other company>": "<any other company>",
   "<any other plot keyword>": "<any other plot keyword>",
   "<any other filming location>": "<any other filming location>",
-  "CreditCatgegories": {
+  "CreditCategories": {
+    "Additional Crew": "Additional Crew",
     "Art Department": "Art Department",
     "Art Direction by": "Art Direction by",
     "Camera and Electrical Department": "Camera and Electrical Department",

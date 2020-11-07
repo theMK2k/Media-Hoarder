@@ -3999,7 +3999,7 @@ async function fetchFilterRatings($MediaType) {
         FROM tbl_Movies MOV
         INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
         WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
-              AND (MOV.Rating IS NULL OR MOV.Rating = 0.5)
+              AND MOV.Rating = 0.5
       ) AS NumMovies
     UNION
     SELECT

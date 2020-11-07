@@ -773,7 +773,7 @@
                 >
                   <v-row>
                     <strong>{{
-                      $t(`CreditCatgegories.${creditCategory.category}`)
+                      $t(`CreditCategories.${creditCategory.category}`)
                     }}</strong>
                   </v-row>
                   <v-row
@@ -1165,7 +1165,7 @@ const { shell } = require("electron").remote;
 
 const moment = require("moment");
 
-// import * as helpers from "@/helpers/helpers";
+import * as helpers from "@/helpers/helpers";
 
 const logger = require("loglevel");
 
@@ -1833,14 +1833,7 @@ export default {
       let info = "";
 
       if (movie.Rating) {
-        for (let i = 0; i < movie.Rating; i++) {
-          info += "★";
-        }
-
-        for (let i = 5; i > movie.Rating; i--) {
-          info += "☆";
-        }
-
+        info += helpers.getStarRatingString(movie.Rating);
         info += " ";
       }
 

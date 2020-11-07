@@ -1226,7 +1226,6 @@
 
 <script>
 import * as _ from "lodash";
-
 const remote = require("electron").remote;
 const logger = require("loglevel");
 const moment = require("moment");
@@ -1235,7 +1234,7 @@ const moment = require("moment");
 import * as store from "@/store";
 import { shared } from "@/shared";
 import { eventBus } from "@/main";
-// import * as helpers from "@/helpers/helpers";
+import * as helpers from "@/helpers/helpers";
 
 import Dialog from "@/components/shared/Dialog.vue";
 import SearchDataDialog from "@/components/shared/SearchDataDialog.vue";
@@ -2173,19 +2172,21 @@ export default {
       let label = "";
 
       if (rating) {
-        for (let i = 1; i < 6; i++) {
-          const diff = rating - (i - 1);
+        label += helpers.getStarRatingString(rating);
 
-          if (diff >= 1) {
-            label += "★";
-          }
-          if (diff == 0.5) {
-            label += "½";
-          }
-          if (diff <= 0) {
-            label += "☆";
-          }
-        }
+        // for (let i = 1; i < 6; i++) {
+        //   const diff = rating - (i - 1);
+
+        //   if (diff >= 1) {
+        //     label += "★";
+        //   }
+        //   if (diff == 0.5) {
+        //     label += "½"; // we have to wait until unicode 2BEA is available (http://www.fileformat.info/info/unicode/char/002BEA/index.htm)
+        //   }
+        //   if (diff <= 0) {
+        //     label += "☆";
+        //   }
+        // }
       } else {
         label += `<${this.$t("not yet rated")}>`;
       }
