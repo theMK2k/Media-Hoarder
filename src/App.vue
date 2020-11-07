@@ -2173,12 +2173,18 @@ export default {
       let label = "";
 
       if (rating) {
-        for (let i = 0; i < rating; i++) {
-          label += "★";
-        }
+        for (let i = 1; i < 6; i++) {
+          const diff = rating - (i - 1);
 
-        for (let i = 5; i > rating; i--) {
-          label += "☆";
+          if (diff >= 1) {
+            label += "★";
+          }
+          if (diff == 0.5) {
+            label += "½";
+          }
+          if (diff <= 0) {
+            label += "☆";
+          }
         }
       } else {
         label += `<${this.$t("not yet rated")}>`;
