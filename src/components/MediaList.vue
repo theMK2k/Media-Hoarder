@@ -1818,7 +1818,7 @@ export default {
       const cssClasses = {};
       if (IMDB_metacriticScore <= 39) {
         cssClasses.MetaCriticRed = true;
-      } else if (IMDB_metacriticScore <= 59) {
+      } else if (IMDB_metacriticScore <= 60) {
         cssClasses.MetaCriticYellow = true;
       } else {
         cssClasses.MetaCriticGreen = true;
