@@ -265,6 +265,8 @@ async function requestAsync(options) {
     optionsDerived.headers["Accept-Language"] = "en";
   }
 
+  optionsDerived.timeout = 10000;   // we set a 10s timeout
+
   logger.log('request options:', optionsDerived);
 
   return requestretryAsync(optionsDerived);
