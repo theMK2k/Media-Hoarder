@@ -3,6 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const requestretry = require("requestretry");
 const os = require("os");
+const filenamify = require('filenamify');
 
 const logger = require("loglevel");
 
@@ -15,6 +16,8 @@ const existsAsync = util.promisify(fs.exists);
 const requestretryAsync = util.promisify(requestretry);
 
 const isPORTABLE = false;   // DON'T TOUCH! This is handled by set-portable.js
+
+let requestAsyncDumpToFile = false;   // Temporarily set to true and every response of requestAsync will be dumped to a file
 
 /**
  * get absolute path for a given relative path depending wether the app is explicitly PORTABLE/!PORTABLE or in dev-mode (run via npm start) or built:
@@ -269,7 +272,16 @@ async function requestAsync(options) {
 
   logger.log('request options:', optionsDerived);
 
-  return requestretryAsync(optionsDerived);
+  // return requestretryAsync(optionsDerived);
+  const response = await requestretryAsync(optionsDerived);
+
+  if (requestAsyncDumpToFile) {
+    const filename = `${filenamify(optionsDerived.url)}.html`;
+    logger.log('dumping to', filename);
+    await writeFileAsync(`./${filename}`, response.body);
+  }
+
+  return response;
 }
 
 function ensureDirectorySync(path) {

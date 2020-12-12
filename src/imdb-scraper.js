@@ -508,8 +508,6 @@ async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturn
     const response = await helpers.requestAsync(url);
     const html = response.body;
 
-    logger.log("parentalguide html:", { html });
-
     const rxAgeRating = /a href="\/search\/title\?certificates=(.*?):(.*?)"/g;
 
     let matchAgeRating = null;
@@ -1013,7 +1011,7 @@ async function scrapeIMDBPersonData($IMDB_Person_ID, downloadFileCallback) {
   const response = await helpers.requestAsync(url);
   const html = response.body;
 
-  logger.log("scraping:", url);
+  logger.log("scrapeIMDBPersonData url:", url);
 
   const result = {
     $IMDB_Person_ID,
