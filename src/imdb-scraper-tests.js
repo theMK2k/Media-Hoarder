@@ -818,7 +818,7 @@ async function testIMDBRatingDemographics() {
       $IMDB_rating_males_aged_under_18: 8.6,
       $IMDB_numVotes_males_aged_under_18: 1000,
       $IMDB_rating_males_aged_18_29: 8.5,
-      $IMDB_numVotes_males_aged_18_29: 135000,
+      $IMDB_numVotes_males_aged_18_29: 130000,
       $IMDB_rating_males_aged_30_44: 8.2,
       $IMDB_numVotes_males_aged_30_44: 150000,
       $IMDB_rating_males_aged_45_plus: 8.1,
