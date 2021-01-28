@@ -805,6 +805,18 @@ const shared = new Vue({
         displayAs: 'TV',
         deleted: false,
         sort: null
+      },
+      {
+        searchTerm: 'restore',
+        displayAs: 'RESTORED',
+        deleted: false,
+        sort: null
+      },
+      {
+        searchTerm: 'restored',
+        displayAs: 'RESTORED',
+        deleted: false,
+        sort: null
       }
     ]
   },
