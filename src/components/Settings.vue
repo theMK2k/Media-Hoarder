@@ -1016,7 +1016,6 @@ export default {
         );
       }
 
-      // TODO: Update and show snackbar
       try {
         await store.db.fireProcedure(
           `UPDATE tbl_SourcePaths SET Path = $Path WHERE id_SourcePaths = $id_SourcePaths`,

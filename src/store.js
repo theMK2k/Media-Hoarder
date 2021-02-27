@@ -294,7 +294,7 @@ async function rescan(onlyNew, $t) {
   if (shared.scanOptions.mergeExtras) await mergeExtras(onlyNew);
 
   if (shared.scanOptions.rescanMoviesMetaData)
-    await rescanMoviesMetaData(onlyNew, null, $t);  // TODO: isDirectoryBased
+    await rescanMoviesMetaData(onlyNew, null, $t);
 
   // await rescanSeries();								// TODO: Series support
 
@@ -6116,7 +6116,6 @@ async function fetchFilterReleaseAttributes($MediaType) {
     }
   }
 
-  // TODO: create "any" item
   const sqlAny = `
     SELECT
       '<not available>' AS ReleaseAttribute

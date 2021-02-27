@@ -2,15 +2,14 @@
 
 ## v1.0.0
 
-### Show movie list in dialogs, e.g. PersonDialog
-
 ### Bugs
 
 - nothing
 
 ### Other
 
-- nothing
+- Show movie list in dialogs, e.g. PersonDialog
+- remove "SEE" from attributes, check other candidates
 
 ## LATER
 
