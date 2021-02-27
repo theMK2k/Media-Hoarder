@@ -2538,6 +2538,8 @@ function getPreferredLanguages() {
 }
 
 async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filters) {
+  logger.log('fetchMedia filters:', filters);
+
   try {
     logger.log(
       "shared.languagesAudioSubtitles:",
