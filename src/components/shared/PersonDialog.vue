@@ -12,16 +12,26 @@
           <div style="margin-left: 16px">
             <v-list-item-title
               class="headline mb-2"
-              style="margin-bottom: 0px!important"
-            >{{ Person_Name }}</v-list-item-title>
+              style="margin-bottom: 0px !important"
+              >{{ Person_Name }}</v-list-item-title
+            >
           </div>
         </v-row>
 
-        <v-progress-linear v-if="isScraping" color="red accent-0" indeterminate rounded height="3"></v-progress-linear>
+        <v-progress-linear
+          v-if="isScraping || isLoadingMovies"
+          color="red accent-0"
+          indeterminate
+          rounded
+          height="3"
+        ></v-progress-linear>
       </v-card-title>
 
       <v-card-text>
-        <v-list-item three-line style="padding-left: 0px; align-items: flex-start">
+        <v-list-item
+          three-line
+          style="padding-left: 0px; align-items: flex-start"
+        >
           <div>
             <!-- <v-skeleton-loader
             v-if="isScraping"
@@ -32,13 +42,16 @@
             style="margin: 6px; height: 150px; width: 120px"
             ></v-skeleton-loader>-->
 
-            <v-list-item-avatar tile style="margin: 6px; height: 150px; width: 120px">
+            <v-list-item-avatar
+              tile
+              style="margin: 6px; height: 150px; width: 120px"
+            >
               <!-- v-if="!isScraping" -->
               <v-img
                 v-if="personData.Photo_URL"
                 contain
                 v-bind:src="personData.Photo_URL"
-                style="border-radius: 6px;"
+                style="border-radius: 6px"
               ></v-img>
             </v-list-item-avatar>
           </div>
@@ -46,26 +59,58 @@
             class="align-self-start"
             style="padding-top: 6px; padding-bottom: 6px"
           >
-            <v-col style="padding: 0px!important" sm="12">
-              <v-row style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px">
+            <v-col style="padding: 0px !important" sm="12">
+              <v-row
+                style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
+              >
                 <div
                   v-if="!showLongBio"
-                  style="font-size: .875rem; font-weight: normal"
+                  style="font-size: 0.875rem; font-weight: normal"
                   class="mk-clickable"
                   v-on:click.stop="showLongBio = true"
-                >{{ personData.ShortBio }}</div>
+                >
+                  {{ personData.ShortBio }}
+                </div>
                 <div
                   v-if="showLongBio"
-                  style="font-size: .875rem; font-weight: normal"
+                  style="font-size: 0.875rem; font-weight: normal"
                   class="mk-clickable"
                   v-on:click.stop="showLongBio = false"
                 >
                   <p
                     v-for="(line, index) in personData.LongBio.split('\n')"
                     v-bind:key="index"
-                  >{{line}}</p>
+                  >
+                    {{ line }}
+                  </p>
                 </div>
               </v-row>
+              <v-row
+                v-if="!isScraping"
+                class="mk-clickable"
+                v-on:click.stop="toggleShowMovies()"
+                style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
+              >
+                found in
+                {{ numMovies + (numMovies === 1 ? " movie" : " movies") }}
+              </v-row>
+              <div
+                v-if="!isScraping && showMovies"
+                class="mk-clickable"
+                v-on:click.stop="toggleShowMovies()"
+              >
+                <v-row
+                  v-for="(movie, index) in movies"
+                  v-bind:key="index"
+                  style="
+                    margin-left: 20px;
+                    margin-right: 6px;
+                    margin-bottom: 8px;
+                  "
+                >
+                  {{ movie.Name }} {{ movie.yearDisplay }}
+                </v-row>
+              </div>
             </v-col>
           </v-list-item-content>
         </v-list-item>
@@ -78,13 +123,14 @@
               class="xs-fullwidth"
               color="secondary"
               v-on:click.native="onCloseClick"
-              style="margin-left: 8px;"
-            >{{$t('Close')}}</v-btn>
+              style="margin-left: 8px"
+              >{{ $t("Close") }}</v-btn
+            >
             <v-btn
               class="xs-fullwidth"
               color="primary"
               v-on:click.stop="openIMDB()"
-              style="margin-left: 8px;"
+              style="margin-left: 8px"
             >
               <v-icon small>mdi-web</v-icon>&nbsp;IMDB
             </v-btn>
@@ -92,10 +138,10 @@
               class="xs-fullwidth"
               color="primary"
               v-on:click.native="onFilterClick"
-              style="margin-left: 8px;"
+              style="margin-left: 8px"
             >
-              {{$t('Filter by this person')}}
-              <span v-if="numMovies">({{numMovies}})</span>
+              {{ $t("Filter by this person") }}
+              <span v-if="numMovies">({{ numMovies }})</span>
             </v-btn>
           </v-row>
         </v-col>
@@ -123,6 +169,9 @@ export default {
       personData: {},
       showLongBio: false,
       numMovies: null,
+      isLoadingMovies: false,
+      movies: [],
+      showMovies: false,
     };
   },
 
@@ -178,6 +227,11 @@ export default {
     async init($IMDB_Person_ID) {
       logger.log("PersonDialog INIT!");
 
+      this.personData = {};
+      this.showLongBio = false;
+      this.movies = [];
+      this.showMovies = false;
+
       this.numMovies = await store.db.fireProcedureReturnScalar(
         `
           SELECT COUNT(1) FROM
@@ -192,9 +246,6 @@ export default {
       `,
         { $IMDB_Person_ID }
       );
-
-      this.personData = {};
-      this.showLongBio = false;
 
       let personData = await store.fetchIMDBPerson($IMDB_Person_ID);
 
@@ -241,6 +292,62 @@ export default {
 
     onEscapePressed() {
       this.onCloseClick();
+    },
+
+    async toggleShowMovies() {
+      if (this.showMovies) {
+        this.showMovies = false;
+        return;
+      }
+
+      if (!this.movies.length > 0) {
+        this.isLoadingMovies = true;
+        const movies = (
+          await store.fetchMedia("movies", null, true, this.$t, {
+            filterSettings: {},
+            filterPersons: [
+              {
+                id_Filter_Persons: 0,
+                Selected: false,
+              },
+              {
+                id_Filter_Persons: 666,
+                Selected: true,
+                IMDB_Person_ID: this.IMDB_Person_ID,
+              },
+            ],
+          })
+        )
+          .sort((a, b) => {
+            if (a.startYear > b.startYear) {
+              return -1;
+            }
+
+            if (a.startYear === b.startYear) {
+              // TODO: sorting by name ASC doesn't seem to work
+              if (a.Name.toLowerCase() > b.Name.toLowerCase()) {
+                return -1;
+              }
+            }
+
+            return 0;
+          })
+          .map((item) => {
+            return {
+              Name: item.Name,
+              Name2: item.Name2,
+              yearDisplay: item.yearDisplay,
+            };
+          });
+
+        this.movies = movies.filter((item, index) => {
+          return movies.indexOf(item) === index;
+        });
+
+        this.isLoadingMovies = false;
+      }
+
+      this.showMovies = true;
     },
   },
 

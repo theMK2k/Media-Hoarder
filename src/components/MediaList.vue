@@ -2515,7 +2515,8 @@ export default {
         this.mediatype,
         arr_id_Movies,
         false,
-        this.$local_t
+        this.$local_t,
+        this.$shared.filters
       );
 
       logger.log("completelyFetchMedia result:", result);
@@ -2605,7 +2606,7 @@ export default {
 
         this.items = [];
 
-        this.items = await store.fetchMedia(this.mediatype, null, true, $t);
+        this.items = await store.fetchMedia(this.mediatype, null, true, $t, this.$shared.filters);
 
         eventBus.showLoadingOverlay(false);
 

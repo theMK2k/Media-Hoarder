@@ -2,6 +2,8 @@
 
 ## v1.0.0
 
+### Show movie list in dialogs, e.g. PersonDialog
+
 ### Bugs
 
 - nothing
@@ -98,7 +100,7 @@
 
 - [ ] check how fetchMedia/MediaList works if only filescan has been performed (no MI/IMDB data)
 
-### Unsure: Implement Backend as express server
+### Unsure: Implement Backend as express-like server
 
 - this way we can have front- and backend as independent apps
 - major re-write neccessary

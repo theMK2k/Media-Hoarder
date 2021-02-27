@@ -282,10 +282,10 @@ async function rescan(onlyNew, $t) {
     startTime: null,
     endTime: null,
     displayETA: ''
-  }  
+  }
 
   rescanAddedMovies = 0;
-  
+
   shared.isScanning = true;
   eventBus.rescanStarted();
 
@@ -307,7 +307,7 @@ async function rescan(onlyNew, $t) {
   logger.log('rescan Cleanup START')
 
   const rescanRemovedMovies = await db.fireProcedureReturnScalar(`SELECT COUNT(1) FROM tbl_Movies WHERE isRemoved = 1`);
-  
+
   await db.fireProcedure(`DELETE FROM tbl_Movies WHERE isRemoved = 1`, []);
   await ensureMovieDeleted();
   logger.log('rescan CLEANUP END')
@@ -679,7 +679,7 @@ async function filescanMovies(onlyNew, $t) {
       if (doAbortRescan) {
         break;
       }
-      
+
       const movieSourcePath = moviesSourcePaths[i];
       logger.log(
         `  scanning Source Path ${movieSourcePath.Path} (${movieSourcePath.Description
@@ -732,7 +732,7 @@ async function filescanMoviesPath(
       if (doAbortRescan) {
         break;
       }
-      
+
       const pathItem = pathItems[i];
 
       if (pathItem.isFile) {
@@ -950,7 +950,7 @@ async function addMovie(movieSourcePath, pathItem) {
   }
 
   logger.log('addMovie adding:', pathItem.Name);
-  
+
   rescanAddedMovies++;
 
   // currentScanInfoHeader
@@ -2537,7 +2537,7 @@ function getPreferredLanguages() {
   return preferredLanguages;
 }
 
-async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
+async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filters) {
   try {
     logger.log(
       "shared.languagesAudioSubtitles:",
@@ -2545,15 +2545,15 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
     );
 
     let filterSourcePaths = "";
-    logger.log("shared.filters.filterSourcePaths:", shared.filters.filterSourcePaths);
+    logger.log("filters.filterSourcePaths:", filters.filterSourcePaths);
     if (
-      shared.filters.filterSourcePaths &&
-      shared.filters.filterSourcePaths.find((filter) => !filter.Selected)
+      filters.filterSourcePaths &&
+      filters.filterSourcePaths.find((filter) => !filter.Selected)
     ) {
       filterSourcePaths =
         "AND MOV.id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths WHERE Description IN (";
 
-      filterSourcePaths += shared.filters.filterSourcePaths
+      filterSourcePaths += filters.filterSourcePaths
         .filter((filter) => filter.Selected)
         .map((filter) => filter.Description)
         .reduce((prev, current) => {
@@ -2565,17 +2565,17 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
 
     let filterGenres = "";
     if (
-      shared.filters.filterGenres &&
-      ((!shared.filters.filterSettings.filterGenresAND &&
-        shared.filters.filterGenres.find((filter) => !filter.Selected)) ||
-        (shared.filters.filterSettings.filterGenresAND &&
-          shared.filters.filterGenres.find((filter) => filter.Selected)))
+      filters.filterGenres &&
+      ((!filters.filterSettings.filterGenresAND &&
+        filters.filterGenres.find((filter) => !filter.Selected)) ||
+        (filters.filterSettings.filterGenresAND &&
+          filters.filterGenres.find((filter) => filter.Selected)))
     ) {
-      const filterGenresList = shared.filters.filterGenres
+      const filterGenresList = filters.filterGenres
         .filter((filter) => filter.Selected)
         .map((filter) => filter.id_Genres);
 
-      if (shared.filters.filterSettings.filterGenresAND) {
+      if (filters.filterSettings.filterGenresAND) {
         // use INTERSECT for AND-filter
         filterGenres = "AND MOV.id_Movies IN (";
 
@@ -2602,13 +2602,13 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
     }
 
     let filterAgeRatings = "";
-    logger.log("shared.filters.filterAgeRatings:", shared.filters.filterAgeRatings);
+    logger.log("filters.filterAgeRatings:", filters.filterAgeRatings);
     if (
-      shared.filters.filterAgeRatings &&
-      shared.filters.filterAgeRatings.find((filter) => !filter.Selected)
+      filters.filterAgeRatings &&
+      filters.filterAgeRatings.find((filter) => !filter.Selected)
     ) {
       if (
-        shared.filters.filterAgeRatings.find(
+        filters.filterAgeRatings.find(
           (filter) => filter.Selected && filter.Age == -1
         )
       ) {
@@ -2618,13 +2618,13 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       }
 
       if (
-        shared.filters.filterAgeRatings.find(
+        filters.filterAgeRatings.find(
           (filter) => filter.Selected && filter.Age >= 0
         )
       ) {
         filterAgeRatings += `OR AR.Age IN (`;
 
-        filterAgeRatings += shared.filters.filterAgeRatings
+        filterAgeRatings += filters.filterAgeRatings
           .filter((filter) => filter.Selected && filter.Age >= 0)
           .map((filter) => filter.Age)
           .reduce((prev, current) => {
@@ -2634,35 +2634,25 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
         filterAgeRatings += ")";
       }
 
-      shared.filters.filterAgeRatings
-          .filter((filter) => filter.Selected && filter.Age >= 0)
-          .map((filter) => filter.Age)
-          .forEach(age => {
-            filterAgeRatings += `
+      filters.filterAgeRatings
+        .filter((filter) => filter.Selected && filter.Age >= 0)
+        .map((filter) => filter.Age)
+        .forEach(age => {
+          filterAgeRatings += `
             OR (MOV.IMDB_id_AgeRating_Chosen_Country IS NULL AND MOV.IMDB_MinAge >= ${age} AND MOV.IMDB_MaxAge <= ${age})`
-          })
+        })
 
       filterAgeRatings += ")";
     }
 
-    // if (shared.filters.filterAgeRatings && shared.filters.filterAgeRatings.find(filter => !filter.Selected)) {
-    // 	filterAgeRatings = 'AND AR.Age IN (';
-
-    // 	filterAgeRatings += shared.filters.filterAgeRatings.filter(filter => filter.Selected).map(filter => filter.Age).reduce((prev, current) => {
-    // 		return prev + (prev ? ', ' : '') + current;
-    // 	}, '');
-
-    // 	filterAgeRatings += ')'
-    // }
-
     let filterRatings = "";
-    logger.log("shared.filters.filterRatings:", shared.filters.filterRatings);
+    logger.log("filters.filterRatings:", filters.filterRatings);
     if (
-      shared.filters.filterRatings &&
-      shared.filters.filterRatings.find((filter) => !filter.Selected)
+      filters.filterRatings &&
+      filters.filterRatings.find((filter) => !filter.Selected)
     ) {
       if (
-        shared.filters.filterRatings.find((filter) => filter.Selected && !filter.Rating)
+        filters.filterRatings.find((filter) => filter.Selected && !filter.Rating)
       ) {
         filterRatings = "AND (MOV.Rating IS NULL OR MOV.Rating = 0 ";
       } else {
@@ -2670,11 +2660,11 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       }
 
       if (
-        shared.filters.filterRatings.find((filter) => filter.Selected && filter.Rating)
+        filters.filterRatings.find((filter) => filter.Selected && filter.Rating)
       ) {
         filterRatings +=
           "OR MOV.Rating IN (" +
-          shared.filters.filterRatings
+          filters.filterRatings
             .filter((filter) => filter.Selected && filter.Rating)
             .map((filter) => filter.Rating)
             .reduce((prev, current) => {
@@ -2689,11 +2679,11 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
 
     let filterLists = "";
     if (
-      shared.filters.filterLists &&
-      shared.filters.filterLists.find((filter) => !filter.Selected)
+      filters.filterLists &&
+      filters.filterLists.find((filter) => !filter.Selected)
     ) {
       if (
-        shared.filters.filterLists.find((filter) => filter.Selected && !filter.id_Lists)
+        filters.filterLists.find((filter) => filter.Selected && !filter.id_Lists)
       ) {
         filterLists = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Lists_Movies) `;
       } else {
@@ -2701,11 +2691,11 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       }
 
       if (
-        shared.filters.filterLists.find((filter) => filter.Selected && filter.id_Lists)
+        filters.filterLists.find((filter) => filter.Selected && filter.id_Lists)
       ) {
         filterLists += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Lists_Movies WHERE id_Lists IN (`;
 
-        filterLists += shared.filters.filterLists
+        filterLists += filters.filterLists
           .filter((filter) => filter.Selected)
           .map((filter) => filter.id_Lists)
           .reduce((prev, current) => {
@@ -2719,66 +2709,69 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
     }
 
     let filterParentalAdvisory = "";
-    Object.keys(shared.filters.filterParentalAdvisory).forEach((category) => {
-      let filterPACategory = "";
-
-      if (
-        shared.filters.filterParentalAdvisory[category] &&
-        shared.filters.filterParentalAdvisory[category].find(
-          (filter) => !filter.Selected
-        )
-      ) {
+    if (filters.filterParentalAdvisory) {
+      Object.keys(filters.filterParentalAdvisory).forEach((category) => {
+        let filterPACategory = "";
+  
         if (
-          shared.filters.filterParentalAdvisory[category].find(
-            (filter) => filter.Selected && filter.Severity == -1
+          filters.filterParentalAdvisory[category] &&
+          filters.filterParentalAdvisory[category].find(
+            (filter) => !filter.Selected
           )
         ) {
-          filterPACategory = `AND (MOV.IMDB_Parental_Advisory_${category} IS NULL `;
-        } else {
-          filterPACategory = `AND (1=0 `;
-        }
-
-        if (
-          shared.filters.filterParentalAdvisory[category].find(
-            (filter) => filter.Selected && filter.Severity >= 0
-          )
-        ) {
-          filterPACategory += `OR MOV.IMDB_Parental_Advisory_${category} IN (`;
-
-          filterPACategory += shared.filters.filterParentalAdvisory[category]
-            .filter((filter) => filter.Selected)
-            .map((filter) => filter.Severity)
-            .reduce((prev, current) => {
-              return prev + (prev ? ", " : "") + current;
-            }, "");
-
+          if (
+            filters.filterParentalAdvisory[category].find(
+              (filter) => filter.Selected && filter.Severity == -1
+            )
+          ) {
+            filterPACategory = `AND (MOV.IMDB_Parental_Advisory_${category} IS NULL `;
+          } else {
+            filterPACategory = `AND (1=0 `;
+          }
+  
+          if (
+            filters.filterParentalAdvisory[category].find(
+              (filter) => filter.Selected && filter.Severity >= 0
+            )
+          ) {
+            filterPACategory += `OR MOV.IMDB_Parental_Advisory_${category} IN (`;
+  
+            filterPACategory += filters.filterParentalAdvisory[category]
+              .filter((filter) => filter.Selected)
+              .map((filter) => filter.Severity)
+              .reduce((prev, current) => {
+                return prev + (prev ? ", " : "") + current;
+              }, "");
+  
+            filterPACategory += ")";
+          }
+  
           filterPACategory += ")";
         }
-
-        filterPACategory += ")";
-      }
-
-      if (filterPACategory) {
-        filterParentalAdvisory += `${filterPACategory}
-				`;
-      }
-    });
+  
+        if (filterPACategory) {
+          filterParentalAdvisory += `${filterPACategory}
+          `;
+        }
+      });
+    }
 
     let filterPersons = "";
+    logger.log('filters.filterPersons:', filters.filterPersons);
     if (
-      shared.filters.filterPersons &&
-      ((!shared.filters.filterSettings.filterPersonsAND &&
-        shared.filters.filterPersons.find((filter) => !filter.Selected)) ||
-        (shared.filters.filterSettings.filterPersonsAND &&
-          shared.filters.filterPersons.find(
+      filters.filterPersons &&
+      ((!filters.filterSettings.filterPersonsAND &&
+        filters.filterPersons.find((filter) => !filter.Selected)) ||
+        (filters.filterSettings.filterPersonsAND &&
+          filters.filterPersons.find(
             (filter) => filter.Selected && filter.IMDB_Person_ID
           )))
     ) {
-      const filterPersonsList = shared.filters.filterPersons
+      const filterPersonsList = filters.filterPersons
         .filter((filter) => filter.Selected && filter.IMDB_Person_ID)
         .map((filter) => filter.IMDB_Person_ID);
 
-      if (shared.filters.filterSettings.filterPersonsAND) {
+      if (filters.filterSettings.filterPersonsAND) {
         // use INTERSECT for AND-filter
         // note: we don't have to take "any other person" into account
         filterPersons = "AND MOV.id_Movies IN (";
@@ -2795,7 +2788,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       } else {
         // OR-filter
         if (
-          shared.filters.filterPersons.find(
+          filters.filterPersons.find(
             (filter) => filter.Selected && !filter.id_Filter_Persons
           )
         ) {
@@ -2805,7 +2798,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
         }
 
         if (
-          shared.filters.filterPersons.find(
+          filters.filterPersons.find(
             (filter) => filter.Selected && filter.id_Filter_Persons
           )
         ) {
@@ -2824,19 +2817,19 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
 
     let filterCompanies = "";
     if (
-      shared.filters.filterCompanies &&
-      ((!shared.filters.filterSettings.filterCompaniesAND &&
-        shared.filters.filterCompanies.find((filter) => !filter.Selected)) ||
-        (shared.filters.filterSettings.filterCompaniesAND &&
-          shared.filters.filterCompanies.find(
+      filters.filterCompanies &&
+      ((!filters.filterSettings.filterCompaniesAND &&
+        filters.filterCompanies.find((filter) => !filter.Selected)) ||
+        (filters.filterSettings.filterCompaniesAND &&
+          filters.filterCompanies.find(
             (filter) => filter.Selected && filter.id_Filter_Companies
           )))
     ) {
-      const filterCompaniesList = shared.filters.filterCompanies
+      const filterCompaniesList = filters.filterCompanies
         .filter((filter) => filter.Selected && filter.id_Filter_Companies)
         .map((filter) => filter.Company_Name);
 
-      if (shared.filters.filterSettings.filterCompaniesAND) {
+      if (filters.filterSettings.filterCompaniesAND) {
         // use INTERSECT for AND-filter
         // note: we don't have to take "any other company" into account
         filterCompanies = "AND MOV.id_Movies IN (";
@@ -2853,7 +2846,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       } else {
         // OR-filter
         if (
-          shared.filters.filterCompanies.find(
+          filters.filterCompanies.find(
             (filter) => filter.Selected && !filter.id_Filter_Companies
           )
         ) {
@@ -2863,7 +2856,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
         }
 
         if (
-          shared.filters.filterCompanies.find(
+          filters.filterCompanies.find(
             (filter) => filter.Selected && filter.id_Filter_Companies
           )
         ) {
@@ -2882,21 +2875,21 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
 
     let filterIMDBPlotKeywords = "";
     if (
-      shared.filters.filterIMDBPlotKeywords &&
-      ((!shared.filters.filterSettings.filterIMDBPlotKeywordsAND &&
-        shared.filters.filterIMDBPlotKeywords.find((filter) => !filter.Selected)) ||
-        (shared.filters.filterSettings.filterIMDBPlotKeywordsAND &&
-          shared.filters.filterIMDBPlotKeywords.find(
+      filters.filterIMDBPlotKeywords &&
+      ((!filters.filterSettings.filterIMDBPlotKeywordsAND &&
+        filters.filterIMDBPlotKeywords.find((filter) => !filter.Selected)) ||
+        (filters.filterSettings.filterIMDBPlotKeywordsAND &&
+          filters.filterIMDBPlotKeywords.find(
             (filter) => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords
           )))
     ) {
-      const filterIMDBPlotKeywordsList = shared.filters.filterIMDBPlotKeywords
+      const filterIMDBPlotKeywordsList = filters.filterIMDBPlotKeywords
         .filter(
           (filter) => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords
         )
         .map((filter) => filter.id_IMDB_Plot_Keywords);
 
-      if (shared.filters.filterSettings.filterIMDBPlotKeywordsAND) {
+      if (filters.filterSettings.filterIMDBPlotKeywordsAND) {
         // use INTERSECT for AND-filter
         // note: we don't have to take "any other plot keyword" into account
         filterIMDBPlotKeywords = "AND MOV.id_Movies IN (";
@@ -2916,7 +2909,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       } else {
         // OR-filter
         if (
-          shared.filters.filterIMDBPlotKeywords.find(
+          filters.filterIMDBPlotKeywords.find(
             (filter) => filter.Selected && !filter.id_Filter_IMDB_Plot_Keywords
           )
         ) {
@@ -2926,7 +2919,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
         }
 
         if (
-          shared.filters.filterIMDBPlotKeywords.find(
+          filters.filterIMDBPlotKeywords.find(
             (filter) => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords
           )
         ) {
@@ -2948,22 +2941,22 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
 
     let filterIMDBFilmingLocations = "";
     if (
-      shared.filters.filterIMDBFilmingLocations &&
-      ((!shared.filters.filterSettings.filterIMDBFilmingLocationsAND &&
-        shared.filters.filterIMDBFilmingLocations.find((filter) => !filter.Selected)) ||
-        (shared.filters.filterSettings.filterIMDBFilmingLocationsAND &&
-          shared.filters.filterIMDBFilmingLocations.find(
+      filters.filterIMDBFilmingLocations &&
+      ((!filters.filterSettings.filterIMDBFilmingLocationsAND &&
+        filters.filterIMDBFilmingLocations.find((filter) => !filter.Selected)) ||
+        (filters.filterSettings.filterIMDBFilmingLocationsAND &&
+          filters.filterIMDBFilmingLocations.find(
             (filter) =>
               filter.Selected && filter.id_Filter_IMDB_Filming_Locations
           )))
     ) {
-      const filterIMDBFilmingLocationsList = shared.filters.filterIMDBFilmingLocations
+      const filterIMDBFilmingLocationsList = filters.filterIMDBFilmingLocations
         .filter(
           (filter) => filter.Selected && filter.id_Filter_IMDB_Filming_Locations
         )
         .map((filter) => filter.id_IMDB_Filming_Locations);
 
-      if (shared.filters.filterSettings.filterIMDBFilmingLocationsAND) {
+      if (filters.filterSettings.filterIMDBFilmingLocationsAND) {
         // use INTERSECT for AND-filter
         // note: we don't have to take "any other filming location" into account
         filterIMDBFilmingLocations = "AND MOV.id_Movies IN (";
@@ -2983,7 +2976,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       } else {
         // OR-filter
         if (
-          shared.filters.filterIMDBFilmingLocations.find(
+          filters.filterIMDBFilmingLocations.find(
             (filter) =>
               filter.Selected && !filter.id_Filter_IMDB_Filming_Locations
           )
@@ -2994,7 +2987,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
         }
 
         if (
-          shared.filters.filterIMDBFilmingLocations.find(
+          filters.filterIMDBFilmingLocations.find(
             (filter) =>
               filter.Selected && filter.id_Filter_IMDB_Filming_Locations
           )
@@ -3016,13 +3009,13 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
     }
 
     let filterYears = "";
-    logger.log("shared.filters.filterYears:", shared.filters.filterYears);
+    logger.log("filters.filterYears:", filters.filterYears);
     if (
-      shared.filters.filterYears &&
-      shared.filters.filterYears.find((filter) => !filter.Selected)
+      filters.filterYears &&
+      filters.filterYears.find((filter) => !filter.Selected)
     ) {
       if (
-        shared.filters.filterYears.find(
+        filters.filterYears.find(
           (filter) => filter.Selected && filter.startYear == -1
         )
       ) {
@@ -3032,13 +3025,13 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       }
 
       if (
-        shared.filters.filterYears.find(
+        filters.filterYears.find(
           (filter) => filter.Selected && filter.startYear >= 0
         )
       ) {
         filterYears += `OR MOV.startYear IN (`;
 
-        filterYears += shared.filters.filterYears
+        filterYears += filters.filterYears
           .filter((filter) => filter.Selected)
           .map((filter) => filter.startYear)
           .reduce((prev, current) => {
@@ -3051,42 +3044,14 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       filterYears += ")";
     }
 
-    // let filterReleaseYears = "";
-    // if (
-    //   !(
-    //     shared.filters.filterReleaseYears[0] == shared.filters.filterReleaseYearsMin &&
-    //     shared.filters.filterReleaseYears[1] == shared.filters.filterReleaseYearsMax &&
-    //     shared.filters.filterReleaseYearsNone == true
-    //   )
-    // ) {
-    //   if (!shared.filters.filterReleaseYearsNone) {
-    //     filterReleaseYears = "AND (MOV.startYear IS NOT NULL OR ";
-    //   } else {
-    //     filterReleaseYears = "AND (1 = 0 OR ";
-    //   }
-
-    //   if (
-    //     shared.filters.filterReleaseYears[0] > shared.filters.filterReleaseYearsMin ||
-    //     shared.filters.filterReleaseYears[1] < shared.filters.filterReleaseYearsMax
-    //   ) {
-    //     filterReleaseYears += `(MOV.startYear >= ${shared.filters.filterReleaseYears[0]
-    //       } AND MOV.startYear <= ${shared.filters.filterReleaseYears[1]})`;
-    //   } else {
-    //     filterReleaseYears += "1 = 0";
-    //   }
-
-    //   filterReleaseYears += ")";
-    // }
-
-
     let filterQualities = "";
-    logger.log("shared.filters.filterQualities:", shared.filters.filterQualities);
+    logger.log("filters.filterQualities:", filters.filterQualities);
     if (
-      shared.filters.filterQualities &&
-      shared.filters.filterQualities.find((filter) => !filter.Selected)
+      filters.filterQualities &&
+      filters.filterQualities.find((filter) => !filter.Selected)
     ) {
       if (
-        shared.filters.filterQualities.find(
+        filters.filterQualities.find(
           (filter) => filter.Selected && !filter.MI_Quality
         )
       ) {
@@ -3096,13 +3061,13 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       }
 
       if (
-        shared.filters.filterQualities.find(
+        filters.filterQualities.find(
           (filter) => filter.Selected && filter.MI_Quality
         )
       ) {
         filterQualities += `OR MOV.MI_Quality IN (`;
 
-        filterQualities += shared.filters.filterQualities
+        filterQualities += filters.filterQualities
           .filter((filter) => filter.Selected)
           .map((filter) => filter.MI_Quality)
           .reduce((prev, current) => {
@@ -3117,11 +3082,11 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
 
     let filterAudioLanguages = "";
     if (
-      shared.filters.filterAudioLanguages &&
-      shared.filters.filterAudioLanguages.find((filter) => !filter.Selected)
+      filters.filterAudioLanguages &&
+      filters.filterAudioLanguages.find((filter) => !filter.Selected)
     ) {
       if (
-        shared.filters.filterAudioLanguages.find(
+        filters.filterAudioLanguages.find(
           (filter) => filter.Selected && filter.Language == "<not available>"
         )
       ) {
@@ -3131,13 +3096,13 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       }
 
       if (
-        shared.filters.filterAudioLanguages.find(
+        filters.filterAudioLanguages.find(
           (filter) => filter.Selected && filter.Language !== "<not available>"
         )
       ) {
         filterAudioLanguages += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_Languages WHERE Type = 'audio' AND Language IN (`;
 
-        filterAudioLanguages += shared.filters.filterAudioLanguages
+        filterAudioLanguages += filters.filterAudioLanguages
           .filter((filter) => filter.Selected)
           .map((filter) => filter.Language)
           .reduce((prev, current) => {
@@ -3152,11 +3117,11 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
 
     let filterSubtitleLanguages = "";
     if (
-      shared.filters.filterSubtitleLanguages &&
-      shared.filters.filterSubtitleLanguages.find((filter) => !filter.Selected)
+      filters.filterSubtitleLanguages &&
+      filters.filterSubtitleLanguages.find((filter) => !filter.Selected)
     ) {
       if (
-        shared.filters.filterSubtitleLanguages.find(
+        filters.filterSubtitleLanguages.find(
           (filter) => filter.Selected && filter.Language == "<not available>"
         )
       ) {
@@ -3166,13 +3131,13 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       }
 
       if (
-        shared.filters.filterSubtitleLanguages.find(
+        filters.filterSubtitleLanguages.find(
           (filter) => filter.Selected && filter.Language !== "<not available>"
         )
       ) {
         filterSubtitleLanguages += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_Languages WHERE Type = 'subtitle' AND Language IN (`;
 
-        filterSubtitleLanguages += shared.filters.filterSubtitleLanguages
+        filterSubtitleLanguages += filters.filterSubtitleLanguages
           .filter((filter) => filter.Selected)
           .map((filter) => filter.Language)
           .reduce((prev, current) => {
@@ -3187,24 +3152,25 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
 
     let filterMetacriticScore = "";
     if (
+      filters.filterMetacriticScore &&
       !(
-        shared.filters.filterMetacriticScore[0] == 0 &&
-        shared.filters.filterMetacriticScore[1] == 100 &&
-        shared.filters.filterMetacriticScoreNone == true
+        filters.filterMetacriticScore[0] == 0 &&
+        filters.filterMetacriticScore[1] == 100 &&
+        filters.filterMetacriticScoreNone == true
       )
     ) {
-      if (!shared.filters.filterMetacriticScoreNone) {
+      if (!filters.filterMetacriticScoreNone) {
         filterMetacriticScore = "AND (MOV.IMDB_metacriticScore IS NOT NULL OR ";
       } else {
         filterMetacriticScore = "AND (1 = 0 OR ";
       }
 
       if (
-        shared.filters.filterMetacriticScore[0] > 0 ||
-        shared.filters.filterMetacriticScore[1] < 100
+        filters.filterMetacriticScore[0] > 0 ||
+        filters.filterMetacriticScore[1] < 100
       ) {
-        filterMetacriticScore += `(MOV.IMDB_metacriticScore >= ${shared.filters.filterMetacriticScore[0]
-          } AND MOV.IMDB_metacriticScore <= ${shared.filters.filterMetacriticScore[1]})`;
+        filterMetacriticScore += `(MOV.IMDB_metacriticScore >= ${filters.filterMetacriticScore[0]
+          } AND MOV.IMDB_metacriticScore <= ${filters.filterMetacriticScore[1]})`;
       } else {
         filterMetacriticScore += "1 = 0";
       }
@@ -3214,21 +3180,22 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
 
     let filterIMDBRating = "";
     if (
+      filters.filterIMDBRating &&
       !(
-        shared.filters.filterIMDBRating[0] == 0 &&
-        shared.filters.filterIMDBRating[1] == 10 &&
-        shared.filters.filterIMDBRatingNone == true
+        filters.filterIMDBRating[0] == 0 &&
+        filters.filterIMDBRating[1] == 10 &&
+        filters.filterIMDBRatingNone == true
       )
     ) {
-      if (!shared.filters.filterIMDBRatingNone) {
+      if (!filters.filterIMDBRatingNone) {
         filterIMDBRating = "AND (MOV.IMDB_rating IS NOT NULL OR ";
       } else {
         filterIMDBRating = "AND (1 = 0 OR ";
       }
 
-      if (shared.filters.filterIMDBRating[0] > 0 || shared.filters.filterIMDBRating[1] < 10) {
-        filterIMDBRating += `(MOV.IMDB_rating >= ${shared.filters.filterIMDBRating[0]
-          } AND MOV.IMDB_rating <= ${shared.filters.filterIMDBRating[1]})`;
+      if (filters.filterIMDBRating[0] > 0 || filters.filterIMDBRating[1] < 10) {
+        filterIMDBRating += `(MOV.IMDB_rating >= ${filters.filterIMDBRating[0]
+          } AND MOV.IMDB_rating <= ${filters.filterIMDBRating[1]})`;
       } else {
         filterIMDBRating += "1 = 0";
       }
@@ -3240,22 +3207,22 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
     const releaseAttributesHierarchy = getReleaseAttributesHierarchy();
 
     if (
-      shared.filters.filterReleaseAttributes &&
-      ((!shared.filters.filterSettings.filterReleaseAttributesAND &&
-        shared.filters.filterReleaseAttributes.find((filter) => !filter.Selected)) ||
-        (shared.filters.filterSettings.filterReleaseAttributesAND &&
-          shared.filters.filterReleaseAttributes.find(
+      filters.filterReleaseAttributes &&
+      ((!filters.filterSettings.filterReleaseAttributesAND &&
+        filters.filterReleaseAttributes.find((filter) => !filter.Selected)) ||
+        (filters.filterSettings.filterReleaseAttributesAND &&
+          filters.filterReleaseAttributes.find(
             (filter) =>
               filter.Selected && !filter.isAny
           )))
     ) {
-      const filterReleaseAttributesList = shared.filters.filterReleaseAttributes
+      const filterReleaseAttributesList = filters.filterReleaseAttributes
         .filter(
           (filter) => filter.Selected && !filter.isAny
         )
         .map((filter) => filter.ReleaseAttribute);
 
-      if (shared.filters.filterSettings.filterReleaseAttributesAND) {
+      if (filters.filterSettings.filterReleaseAttributesAND) {
         // use INTERSECT for AND-filter
         // note: we don't have to take "none provided" into account
         filterReleaseAttributes = "AND MOV.id_Movies IN (";
@@ -3277,7 +3244,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
       } else {
         // OR-filter
         if (
-          shared.filters.filterReleaseAttributes.find(
+          filters.filterReleaseAttributes.find(
             (filter) =>
               filter.Selected && filter.isAny
           )
@@ -3288,7 +3255,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
         }
 
         if (
-          shared.filters.filterReleaseAttributes.find(
+          filters.filterReleaseAttributes.find(
             (filter) =>
               filter.Selected && !filter.isAny
           )
@@ -3318,7 +3285,6 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
         filterReleaseAttributes += ")";
       }
     }
-
 
     let filter_id_Movies = "";
     if (arr_id_Movies && arr_id_Movies.length) {
@@ -3522,7 +3488,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t) {
         " " +
         (item.IMDB_plotSummary || "").toLowerCase() +
         " " +
-        (item.Path || "").toLowerCase() + 
+        (item.Path || "").toLowerCase() +
         " " +
         (item.IMDB_tconst || "").toLowerCase();
 
@@ -4935,7 +4901,7 @@ async function fetchFilterMetacriticScore($MediaType) {
 
 // async function fetchFilterReleaseYears($MediaType) {
 //   await ensureFilterReleaseYearsRange($MediaType);
-  
+
 //   shared.filters.filterReleaseYears = [shared.filters.filterReleaseYearsMin, shared.filters.filterReleaseYearsMax];
 
 //   const filterValues = await fetchFilterValues($MediaType);
@@ -6405,6 +6371,29 @@ async function fetchNumMovies($MediaType) {
   `, { $MediaType })
 
   return numMovies.toLocaleString(shared.uiLanguage);
+}
+
+async function fetchMediaNames($MediaType, filter) {
+  let filterPersons = '';
+  if (filter.IMDB_Person_ID) {
+    filterPersons = `AND MOV.id_Movies IN ()`
+  }
+
+  const query = `
+  SELECT
+    MOV.Name
+    , MOV.Name2
+    , MOV.startYear
+  FROM tbl_Movies MOV
+  INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+  WHERE	(MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+  AND MOV.id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths WHERE MediaType = $MediaType)
+  ${filterPersons}
+  `;
+
+  logger.log("fetchMovieNames query:", query);
+
+  const result = await db.fireProcedureReturnAll(query, { $MediaType });
 }
 
 export {
