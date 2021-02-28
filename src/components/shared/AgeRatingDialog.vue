@@ -27,7 +27,7 @@
             </v-row>
 
             <v-progress-linear
-              v-if="isScraping"
+              v-if="isScraping || isLoadingMovies"
               color="red accent-0"
               indeterminate
               rounded

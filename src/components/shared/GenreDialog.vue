@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onEscapePressed">
+  <v-dialog
+    v-model="show"
+    persistent
+    max-width="1000px"
+    v-on:keydown.escape="onEscapePressed"
+  >
     <v-card dark flat v-bind:ripple="false">
       <v-list-item style="padding-left: 0px">
         <!-- <div>
@@ -10,23 +15,54 @@
           class="align-self-start"
           style="padding-left: 8px; padding-bottom: 6px"
         >
-          <v-col style="padding: 0px!important" sm="12">
+          <v-col style="padding: 0px !important" sm="12">
             <v-row>
               <div style="margin-left: 16px">
                 <v-list-item-title
                   class="headline mb-2"
-                  style="margin-bottom: 0px!important"
-                >{{$t('Genre')}}: {{ Genre ? Genre.translated : '' }}</v-list-item-title>
+                  style="margin-bottom: 0px !important"
+                  >{{ $t("Genre") }}:
+                  {{ Genre ? Genre.translated : "" }}</v-list-item-title
+                >
               </div>
             </v-row>
 
             <v-progress-linear
-              v-if="isScraping"
+              v-if="isScraping || isLoadingMovies"
               color="red accent-0"
               indeterminate
               rounded
               height="3"
             ></v-progress-linear>
+
+            <div class="mk-clickable" v-on:click.stop="toggleShowMovies()">
+              <v-row
+                v-if="!isScraping"
+                style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
+              >
+                {{
+                  numMovies +
+                  " " +
+                  $t(numMovies === 1 ? "movie" : "movies") +
+                  (!showMovies ? " »" : "")
+                }}
+              </v-row>
+              <div v-if="!isScraping && showMovies">
+                <div v-for="(movie, index) in movies" v-bind:key="index">
+                  <v-row
+                    style="
+                      margin-left: 20px;
+                      margin-right: 6px;
+                      margin-bottom: 8px;
+                    "
+                  >
+                    {{ movie.Name }}
+                    {{ movie.Name2 ? " | " + movie.Name2 : "" }}
+                    {{ movie.yearDisplay }}
+                  </v-row>
+                </div>
+              </div>
+            </div>
           </v-col>
         </v-list-item-content>
       </v-list-item>
@@ -36,8 +72,9 @@
             class="xs-fullwidth"
             color="secondary"
             v-on:click.native="onCloseClick"
-            style="margin-left: 8px;"
-          >{{$t('Close')}}</v-btn>
+            style="margin-left: 8px"
+            >{{ $t("Close") }}</v-btn
+          >
           <!-- <v-btn
             class="xs-fullwidth"
             color="primary"
@@ -50,10 +87,10 @@
             class="xs-fullwidth"
             color="primary"
             v-on:click.native="onFilterClick"
-            style="margin-left: 8px;"
+            style="margin-left: 8px"
           >
-            {{$t('Filter by this genre')}}
-            <span v-if="numMovies">({{numMovies}})</span>
+            {{ $t("Filter by this genre") }}
+            <span v-if="numMovies">({{ numMovies }})</span>
           </v-btn>
         </v-row>
       </v-col>
@@ -76,24 +113,30 @@ export default {
   data() {
     return {
       isScraping: false,
-      numMovies: null
+      numMovies: null,
+      isLoadingMovies: false,
+      movies: [],
+      showMovies: false,
     };
   },
 
   watch: {
-    Genre: function(newVal) {
+    Genre: function (newVal) {
       this.init(newVal);
-    }
+    },
   },
 
   methods: {
     async init(genre) {
+      this.movies = [];
+      this.showMovies = false;
+
       this.numMovies = await store.db.fireProcedureReturnScalar(
         `
         SELECT COUNT(1) FROM
         (
-          SELECT
-            MOV.id_Movies
+          SELECT DISTINCT
+            MOV.Name || ' ' || IFNULL(MOV.startYear, 'xxx')
           FROM tbl_Movies MOV
           WHERE MOV.id_Movies IN (SELECT MG.id_Movies FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G WHERE MG.id_Genres = G.id_Genres AND G.Name = $Genre)
           AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
@@ -106,7 +149,7 @@ export default {
     onButtonClick(eventName) {
       this.$emit(eventName, {
         dontAskAgain: this.dontAskAgainValue,
-        textValue: this.textValueLocal
+        textValue: this.textValueLocal,
       });
 
       this.resetData();
@@ -135,7 +178,7 @@ export default {
 
     async onFilterClick() {
       const setFilter = {
-        filterGenres: [this.Genre]
+        filterGenres: [this.Genre],
       };
 
       eventBus.refetchFilters(setFilter);
@@ -145,11 +188,80 @@ export default {
 
     onEscapePressed() {
       this.onCloseClick();
-    }
+    },
+
+    async toggleShowMovies() {
+      if (this.showMovies) {
+        this.showMovies = false;
+        return;
+      }
+
+      if (!this.movies.length > 0) {
+        this.isLoadingMovies = true;
+        const movies = (
+          await store.fetchMedia("movies", null, true, this.$t, {
+            filterSettings: {},
+            filterGenres: [
+              { GenreID: "none", Name: "None", Selected: false, id_Genres: -1 },
+              ...this.$shared.filters.filterGenres
+                .filter((item) => {
+                  return item.Name === this.Genre.translated;
+                })
+                .map((item) => {
+                  return {
+                    GenreID: item.GenreID,
+                    Name: item.Name,
+                    Selected: true,
+                    id_Genres: item.id_Genres,
+                  };
+                }),
+            ],
+          })
+        )
+          .sort((a, b) => {
+            if (a.startYear > b.startYear) {
+              return -1;
+            }
+            if (a.startYear < b.startYear) {
+              return 1;
+            }
+            if (a.Name.toLowerCase() < b.Name.toLowerCase()) {
+              return -1;
+            }
+            if (a.Name.toLowerCase() > b.Name.toLowerCase()) {
+              return 1;
+            }
+
+            return 0;
+          })
+          .map((item) => {
+            return {
+              Name: item.Name,
+              Name2: item.Name2,
+              yearDisplay: item.yearDisplay,
+            };
+          });
+
+        this.movies = movies.filter((item, index) => {
+          return (
+            movies.findIndex((item2) => {
+              return (
+                `${item2.Name} ${item2.yearDisplay}` ===
+                `${item.Name} ${item.yearDisplay}`
+              );
+            }) === index
+          );
+        });
+
+        this.isLoadingMovies = false;
+      }
+
+      this.showMovies = true;
+    },
   },
 
   // ### Lifecycle Hooks ###
-  created() {}
+  created() {},
 };
 </script>
 
