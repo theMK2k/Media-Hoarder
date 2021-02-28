@@ -48,6 +48,7 @@
     "requestretry": "4.1.1",
     "semver": "^7.3.2",
     "sqlite3": "5.0.0",
+    "sqlstring-sqlite": "^0.1.1",
     "video.js": "7.6.6",
     "vue": "2.6.10",
     "vue-i18n": "8.17.3",

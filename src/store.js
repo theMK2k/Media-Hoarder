@@ -10,6 +10,7 @@ const moment = require("moment");
 const levenshtein = require("fast-levenshtein");
 const osLocale = require("os-locale");
 const path = require("path");
+const sqlString = require('sqlstring-sqlite');
 
 const readdirAsync = util.promisify(fs.readdir);
 const existsAsync = util.promisify(fs.exists);
@@ -2559,7 +2560,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
         .filter((filter) => filter.Selected)
         .map((filter) => filter.Description)
         .reduce((prev, current) => {
-          return prev + (prev ? ", " : "") + `'${current}'`;
+          return prev + (prev ? ", " : "") + `${sqlString.escape(current)}`;
         }, "");
 
       filterSourcePaths += "))";
@@ -2782,7 +2783,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
           return (
             prev +
             (prev ? " INTERSECT " : "") +
-            `SELECT id_Movies FROM tbl_Movies_IMDB_Credits WHERE IMDB_Person_ID = '${current}'`
+            `SELECT id_Movies FROM tbl_Movies_IMDB_Credits WHERE IMDB_Person_ID = ${sqlString.escape(current)}`
           );
         }, "");
 
@@ -2807,7 +2808,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
           filterPersons += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_IMDB_Credits WHERE IMDB_Person_ID IN (`;
 
           filterPersons += filterPersonsList.reduce((prev, current) => {
-            return prev + (prev ? ", " : "") + `'${current}'`;
+            return prev + (prev ? ", " : "") + `${sqlString.escape(current)}`;
           }, "");
 
           filterPersons += "))";
@@ -2840,7 +2841,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
           return (
             prev +
             (prev ? " INTERSECT " : "") +
-            `SELECT id_Movies FROM tbl_Movies_IMDB_Companies WHERE Company_Name = '${current}'`
+            `SELECT id_Movies FROM tbl_Movies_IMDB_Companies WHERE Company_Name = ${sqlString.escape(current)}`
           );
         }, "");
 
@@ -2865,7 +2866,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
           filterCompanies += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_IMDB_Companies WHERE Company_Name IN (`;
 
           filterCompanies += filterCompaniesList.reduce((prev, current) => {
-            return prev + (prev ? ", " : "") + `'${current}'`;
+            return prev + (prev ? ", " : "") + `${sqlString.escape(current)}`;
           }, "");
 
           filterCompanies += "))";
@@ -3073,7 +3074,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
           .filter((filter) => filter.Selected)
           .map((filter) => filter.MI_Quality)
           .reduce((prev, current) => {
-            return prev + (prev ? ", " : "") + `'${current}'`;
+            return prev + (prev ? ", " : "") + `${sqlString.escape(current)}`;
           }, "");
 
         filterQualities += ")";
@@ -3108,7 +3109,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
           .filter((filter) => filter.Selected)
           .map((filter) => filter.Language)
           .reduce((prev, current) => {
-            return prev + (prev ? ", " : "") + `'${current}'`;
+            return prev + (prev ? ", " : "") + `${sqlString.escape(current)}`;
           }, "");
 
         filterAudioLanguages += "))";
@@ -3143,7 +3144,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
           .filter((filter) => filter.Selected)
           .map((filter) => filter.Language)
           .reduce((prev, current) => {
-            return prev + (prev ? ", " : "") + `'${current}'`;
+            return prev + (prev ? ", " : "") + `${sqlString.escape(current)}`;
           }, "");
 
         filterSubtitleLanguages += "))";
@@ -3235,7 +3236,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
               prev +
               (prev ? " INTERSECT " : "") +
               `SELECT id_Movies FROM tbl_Movies_Release_Attributes WHERE Release_Attributes_searchTerm IN (${releaseAttributesHierarchy.find(ra => ra.displayAs === current).searchTerms.map(param => param.replace(/'/g, "''")).reduce((prev2, current2) => {
-                return prev2 + (prev2 ? ", " : "") + `'${current2}'`;
+                return prev2 + (prev2 ? ", " : "") + `${sqlString.escape(current2)}`;
               }, "")})`
             );
           },
@@ -3276,7 +3277,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
 
           filterReleaseAttributes += searchTerms.reduce(
             (prev, current) => {
-              return prev + (prev ? ", " : "") + `'${current.replace(/'/g, "''")}'`;
+              return prev + (prev ? ", " : "") + `${sqlString.escape(current)}`;
             },
             ""
           );
@@ -5586,7 +5587,7 @@ async function getIMDBLanguages(regionCodes) {
   const filterRegions = !regionCodes
     ? null
     : regionCodes.reduce((prev, current) => {
-      return prev + (prev ? ", " : "") + `'${current}'`;
+      return prev + (prev ? ", " : "") + `${sqlString.escape(current)}`;
     }, "");
 
   const sSQL = `
@@ -6099,7 +6100,7 @@ async function fetchFilterReleaseAttributes($MediaType) {
         (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
         AND MRA.deleted = 0
         AND MRA.Release_Attributes_searchTerm IN (${ra.searchTerms.map(param => param.replace(/'/g, "''")).reduce((prev, current) => {
-      return prev + (prev ? ", " : "") + `'${current}'`;
+      return prev + (prev ? ", " : "") + `${sqlString.escape(current)}`;
     }, "")}))`
 
     logger.log("fetchFilterReleaseAttributes sql:", sql);
@@ -6235,7 +6236,7 @@ async function removeReleaseAttributeFromMovie($id_Movies, releaseAttribute) {
 
   const sql = `
     UPDATE tbl_Movies_Release_Attributes SET deleted = 1 WHERE id_Movies = $id_Movies AND Release_Attributes_searchTerm IN (${ra.searchTerms.map(param => param.replace(/'/g, "''")).reduce((prev, current) => {
-    return prev + (prev ? ", " : "") + `'${current}'`;
+    return prev + (prev ? ", " : "") + `${sqlString.escape(current)}`;
   }, "")})
   `;
 
