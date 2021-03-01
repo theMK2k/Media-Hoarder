@@ -405,6 +405,9 @@ Series
 
 ### Other
 
+- [x] use " »" indicator on MediaList for expandable sections of text (e.g. plot keywords, people etc.)
+- [x] Show movie list in dialogs, e.g. PersonDialog
+- [x] remove "SEE" from attributes, check other candidates
 - [x] update 5-star rating to 5-star with half-steps rating, see also: <https://www.npmjs.com/package/vue-star-rating> <https://jsfiddle.net/craig_h_411/992o7cq5/>
   - [x] update "copy info"
   - [x] update "my ratings" filter

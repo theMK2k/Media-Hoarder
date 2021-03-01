@@ -759,13 +759,17 @@
                 class="mk-clickable"
                 v-on:click.stop="showCredits(item, !item.showCredits)"
               >
-                <span style="font-size: 20px">{{ $t("Credits") }}&nbsp;</span>
+                <span style="font-size: 20px">{{ $t("Credits") + (!item.showCredits ? " »" : "") }}&nbsp;</span>
               </v-row>
 
               <div
                 v-if="item.showCredits"
                 v-on:click.stop="showCredits(item, false)"
               >
+                <div v-if="!item.credits || item.credits.length === 0" style="margin-left: 24px">
+                  {{ $t('none provided')}}
+                </div>
+                
                 <div
                   v-for="creditCategory in item.credits"
                   v-bind:key="creditCategory.Category"
@@ -805,13 +809,17 @@
                 class="mk-clickable"
                 v-on:click.stop="showCompanies(item, !item.showCompanies)"
               >
-                <span style="font-size: 20px">{{ $t("Companies") }}&nbsp;</span>
+                <span style="font-size: 20px">{{ $t("Companies") + (!item.showCompanies ? " »" : "") }}&nbsp;</span>
               </v-row>
 
               <div
                 v-if="item.showCompanies"
                 v-on:click.stop="showCompanies(item, false)"
               >
+                <div v-if="!item.companies || item.companies.length === 0" style="margin-left: 24px">
+                  {{ $t('none provided')}}
+                </div>
+
                 <div
                   v-for="companyCategory in item.companies"
                   v-bind:key="companyCategory.Category"
@@ -854,7 +862,7 @@
                 "
               >
                 <span style="font-size: 20px"
-                  >{{ $t("Content Advisory") }}&nbsp;</span
+                  >{{ $t("Content Advisory") + (!item.showContentAdvisory ? " »" : "") }}&nbsp;</span
                 >
               </v-row>
 
@@ -892,15 +900,18 @@
                 v-on:click.stop="showPlotKeywords(item, !item.showPlotKeywords)"
               >
                 <span style="font-size: 20px"
-                  >{{ $t("Plot Keywords _Spoilers ahead!_") }}&nbsp;</span
+                  >{{ $t("Plot Keywords _Spoilers ahead!_") + (!item.showPlotKeywords ? " »" : "") }}&nbsp;</span
                 >
               </v-row>
 
               <div
-                style="margin-left: 24px"
                 v-if="item.showPlotKeywords"
                 v-on:click.stop="showPlotKeywords(item, false)"
               >
+                <div v-if="!item.plotKeywords || item.plotKeywords.length === 0" style="margin-left: 24px">
+                  {{ $t('none provided')}}
+                </div>
+
                 <v-row
                   v-for="plotKeyword in item.plotKeywords"
                   v-bind:key="plotKeyword.Keyword"
@@ -931,7 +942,7 @@
                 "
               >
                 <span style="font-size: 20px"
-                  >{{ $t("Filming Locations") }}&nbsp;</span
+                  >{{ $t("Filming Locations") + (!item.showFilmingLocations ? " »" : "") }}&nbsp;</span
                 >
               </v-row>
 
@@ -940,6 +951,10 @@
                 v-if="item.showFilmingLocations"
                 v-on:click.stop="showFilmingLocations(item, false)"
               >
+                <div v-if="!item.filmingLocations || item.filmingLocations.length === 0">
+                  {{ $t('none provided')}}
+                </div>
+
                 <v-row
                   v-for="filmingLocation in item.filmingLocations"
                   v-bind:key="filmingLocation.id_IMDB_Filming_Locations"
