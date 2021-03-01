@@ -555,12 +555,6 @@ const shared = new Vue({
         sort: null
       },
       {
-        searchTerm: 'see',
-        displayAs: 'EXTENDED',
-        deleted: false,
-        sort: null
-      },
-      {
         searchTerm: 'remaster',
         displayAs: 'REMASTERED',
         deleted: false,
@@ -580,12 +574,6 @@ const shared = new Vue({
       },
       {
         searchTerm: 'se',
-        displayAs: 'SPECIAL EDITION',
-        deleted: false,
-        sort: null
-      },
-      {
-        searchTerm: 'see',
         displayAs: 'SPECIAL EDITION',
         deleted: false,
         sort: null
