@@ -10,6 +10,7 @@
 
 - Show movie list in dialogs, e.g. PersonDialog
 - remove "SEE" from attributes, check other candidates
+- use " »" indicator on MediaList for expandable sections of text (e.g. plot keywords, people etc.)
 
 ## LATER
 
