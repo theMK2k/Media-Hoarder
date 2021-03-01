@@ -8,7 +8,7 @@
 
 ### Other
 
-- *Dialog movie list: don't use mk-clickable on the whole list
+- nothing
 
 ## LATER
 

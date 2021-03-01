@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onEscapePressed">
+  <v-dialog
+    v-model="show"
+    persistent
+    max-width="1000px"
+    v-on:keydown.escape="onEscapePressed"
+  >
     <v-card dark flat v-bind:ripple="false">
       <v-list-item style="padding-left: 0px">
         <!-- <div>
@@ -10,13 +15,14 @@
           class="align-self-start"
           style="padding-left: 8px; padding-bottom: 6px"
         >
-          <v-col style="padding: 0px!important" sm="12">
+          <v-col style="padding: 0px !important" sm="12">
             <v-row>
               <div style="margin-left: 16px">
                 <v-list-item-title
                   class="headline mb-2"
-                  style="margin-bottom: 0px!important"
-                >{{$t('Plot Keyword')}}: {{ Keyword }}</v-list-item-title>
+                  style="margin-bottom: 0px !important"
+                  >{{ $t("Plot Keyword") }}: {{ Keyword }}</v-list-item-title
+                >
               </div>
             </v-row>
 
@@ -28,10 +34,11 @@
               height="3"
             ></v-progress-linear>
 
-            <div class="mk-clickable" v-on:click.stop="toggleShowMovies()">
+            <div v-on:click.stop="toggleShowMovies()">
               <v-row
+                class="mk-clickable"
                 v-if="!isScraping"
-                style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
+                style="margin: 8px 6px 8px 4px"
               >
                 {{
                   numMovies +
@@ -65,16 +72,17 @@
             class="xs-fullwidth"
             color="secondary"
             v-on:click.native="onCloseClick"
-            style="margin-left: 8px;"
-          >{{$t('Close')}}</v-btn>
+            style="margin-left: 8px"
+            >{{ $t("Close") }}</v-btn
+          >
           <v-btn
             class="xs-fullwidth"
             color="primary"
             v-on:click.native="onFilterClick"
-            style="margin-left: 8px;"
+            style="margin-left: 8px"
           >
-            {{$t('Filter by this plot keyword')}}
-            <span v-if="numMovies">({{numMovies}})</span>
+            {{ $t("Filter by this plot keyword") }}
+            <span v-if="numMovies">({{ numMovies }})</span>
           </v-btn>
         </v-row>
       </v-col>
@@ -105,9 +113,9 @@ export default {
   },
 
   watch: {
-    id_IMDB_Plot_Keywords: function(newVal) {
+    id_IMDB_Plot_Keywords: function (newVal) {
       this.init(newVal);
-    }
+    },
   },
 
   methods: {
@@ -134,7 +142,7 @@ export default {
     onButtonClick(eventName) {
       this.$emit(eventName, {
         dontAskAgain: this.dontAskAgainValue,
-        textValue: this.textValueLocal
+        textValue: this.textValueLocal,
       });
 
       this.resetData();
@@ -151,7 +159,7 @@ export default {
       );
 
       const setFilter = {
-        filterIMDBPlotKeywords: [this.id_IMDB_Plot_Keywords]
+        filterIMDBPlotKeywords: [this.id_IMDB_Plot_Keywords],
       };
 
       eventBus.plotKeywordDialogConfirm(setFilter);
@@ -185,7 +193,7 @@ export default {
                 id_Filter_IMDB_Plot_Keywords: 666,
                 Selected: true,
                 id_IMDB_Plot_Keywords: this.id_IMDB_Plot_Keywords,
-                Keyword: this.Keyword
+                Keyword: this.Keyword,
               },
             ],
           })
@@ -233,7 +241,7 @@ export default {
   },
 
   // ### Lifecycle Hooks ###
-  created() {}
+  created() {},
 };
 </script>
 

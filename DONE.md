@@ -405,6 +405,7 @@ Series
 
 ### Other
 
+- [x] *Dialog movie list: don't use mk-clickable on the whole list
 - [x] use " »" indicator on MediaList for expandable sections of text (e.g. plot keywords, people etc.)
 - [x] Show movie list in dialogs, e.g. PersonDialog
 - [x] remove "SEE" from attributes, check other candidates

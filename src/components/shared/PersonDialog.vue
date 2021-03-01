@@ -61,7 +61,7 @@
           >
             <v-col style="padding: 0px !important" sm="12">
               <v-row
-                style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
+                style="margin: 8px 6px 8px 4px"
               >
                 <div
                   v-if="!showLongBio"
@@ -85,8 +85,9 @@
                   </p>
                 </div>
               </v-row>
-              <div class="mk-clickable" v-on:click.stop="toggleShowMovies()">
+              <div v-on:click.stop="toggleShowMovies()">
                 <v-row
+                  class="mk-clickable"
                   v-if="!isScraping"
                   style="
                     margin-left: 4px;

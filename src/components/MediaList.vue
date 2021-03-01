@@ -528,25 +528,6 @@
                     </div>
                   </v-row>
 
-                  <!-- <v-row
-                    v-if="item.IMDB_Top_Producers"
-                    style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
-                  >
-                    <div style="font-size: .875rem; font-weight: normal">
-                      <strong class="CreditCategory">Produced by:</strong>
-                      <span
-                        v-for="(credit, i) in item.IMDB_Top_Producers"
-                        v-bind:key="credit.IMDB_Person_ID"
-                      >
-                        <span v-if="i > 0">,&nbsp;</span>
-                        <a
-                          class="mk-clickable"
-                          v-on:click.stop="onCreditClicked(credit)"
-                        >{{ credit.name }}</a>
-                      </span>
-                    </div>
-                  </v-row>-->
-
                   <v-row
                     v-if="item.IMDB_Top_Cast"
                     style="

@@ -1,18 +1,25 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onEscapePressed">
+  <v-dialog
+    v-model="show"
+    persistent
+    max-width="1000px"
+    v-on:keydown.escape="onEscapePressed"
+  >
     <v-card dark flat v-bind:ripple="false">
       <v-list-item style="padding-left: 0px">
         <v-list-item-content
           class="align-self-start"
           style="padding-left: 8px; padding-bottom: 6px"
         >
-          <v-col style="padding: 0px!important" sm="12">
+          <v-col style="padding: 0px !important" sm="12">
             <v-row>
               <div style="margin-left: 16px">
                 <v-list-item-title
                   class="headline mb-2"
-                  style="margin-bottom: 0px!important"
-                >{{$t('Release Attribute')}}: {{ ReleaseAttribute }}</v-list-item-title>
+                  style="margin-bottom: 0px !important"
+                  >{{ $t("Release Attribute") }}:
+                  {{ ReleaseAttribute }}</v-list-item-title
+                >
               </div>
             </v-row>
 
@@ -24,10 +31,11 @@
               height="3"
             ></v-progress-linear>
 
-            <div class="mk-clickable" v-on:click.stop="toggleShowMovies()">
+            <div v-on:click.stop="toggleShowMovies()">
               <v-row
+                class="mk-clickable"
                 v-if="!isScraping"
-                style="margin-left: 4px; margin-right: 6px; margin-bottom: 8px"
+                style="margin: 8px 6px 8px 4px"
               >
                 {{
                   numMovies +
@@ -61,23 +69,27 @@
             class="xs-fullwidth"
             color="secondary"
             v-on:click.native="onCloseClick"
-            style="margin-left: 8px;"
-          >{{$t('Close')}}</v-btn>
+            style="margin-left: 8px"
+            >{{ $t("Close") }}</v-btn
+          >
           <v-btn
             class="xs-fullwidth"
             color="primary"
             v-on:click.native="onFilterClick"
-            style="margin-left: 8px;"
+            style="margin-left: 8px"
           >
-            {{$t('Filter by this release attribute')}}
-            <span v-if="numMovies">({{numMovies}})</span>
+            {{ $t("Filter by this release attribute") }}
+            <span v-if="numMovies">({{ numMovies }})</span>
           </v-btn>
           <v-btn
             class="xs-fullwidth"
             color="red"
             v-on:click.native="onButtonClick('delete')"
-            style="margin-left: 8px;"
-          >{{$t('Remove this release attribute for the current movie')}}</v-btn>
+            style="margin-left: 8px"
+            >{{
+              $t("Remove this release attribute for the current movie")
+            }}</v-btn
+          >
         </v-row>
       </v-col>
     </v-card>
@@ -108,9 +120,9 @@ export default {
   },
 
   watch: {
-    ReleaseAttribute: function(newVal) {
+    ReleaseAttribute: function (newVal) {
       this.init(newVal);
-    }
+    },
   },
 
   methods: {
@@ -120,7 +132,7 @@ export default {
 
       const releaseAttributesHierarchy = store.getReleaseAttributesHierarchy();
       const ra = releaseAttributesHierarchy.find(
-        rah => rah.displayAs === releaseAttribute
+        (rah) => rah.displayAs === releaseAttribute
       );
 
       this.numMovies = await store.db.fireProcedureReturnScalar(
@@ -135,10 +147,11 @@ export default {
                     (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
                     AND MRA.deleted = 0
                     AND MRA.Release_Attributes_searchTerm IN (${ra.searchTerms
-          .map(param => param.replace(/'/g, "''"))
-          .reduce((prev, current) => {
-            return prev + (prev ? ", " : "") + `'${current}'`;
-          }, "")}))`);
+                      .map((param) => param.replace(/'/g, "''"))
+                      .reduce((prev, current) => {
+                        return prev + (prev ? ", " : "") + `'${current}'`;
+                      }, "")}))`
+      );
     },
 
     onButtonClick(eventName) {
@@ -153,7 +166,7 @@ export default {
 
     async onFilterClick() {
       const setFilter = {
-        filterReleaseAttributes: [this.ReleaseAttribute]
+        filterReleaseAttributes: [this.ReleaseAttribute],
       };
 
       eventBus.refetchFilters(setFilter);
@@ -181,8 +194,8 @@ export default {
               {
                 isAny: false,
                 Selected: true,
-                ReleaseAttribute: this.ReleaseAttribute
-              }
+                ReleaseAttribute: this.ReleaseAttribute,
+              },
             ],
           })
         )
@@ -229,7 +242,7 @@ export default {
   },
 
   // ### Lifecycle Hooks ###
-  created() {}
+  created() {},
 };
 </script>
 
