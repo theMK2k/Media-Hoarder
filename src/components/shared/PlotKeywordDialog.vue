@@ -112,6 +112,9 @@ export default {
 
   methods: {
     async init($id_IMDB_Plot_Keywords) {
+      this.movies = [];
+      this.showMovies = false;
+
       this.numMovies = await store.db.fireProcedureReturnScalar(
         `
           SELECT COUNT(1) FROM
