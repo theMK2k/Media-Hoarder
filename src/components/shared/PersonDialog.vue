@@ -74,7 +74,7 @@
                 <div
                   v-if="showLongBio"
                   style="font-size: 0.875rem; font-weight: normal"
-                  class="mk-clickable"
+                  class="mk-clickable-white"
                   v-on:click.stop="showLongBio = false"
                 >
                   <p
