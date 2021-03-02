@@ -2784,6 +2784,17 @@ h1 {
   color: #2196f3 !important;
 }
 
+.mk-clickable-white {
+  font-size: 0.875rem;
+  font-weight: normal;
+  color: white !important;
+  cursor: pointer;
+}
+
+.mk-clickable-white:hover {
+  color: white !important;
+}
+
 /* ### Vuetify fixes ### */
 
 /* this is part of v-select and makes it unneccessarily high */

@@ -102,7 +102,7 @@
                     (!showMovies ? " »" : "")
                   }}
                 </v-row>
-                <div v-if="!isScraping && showMovies">
+                <div v-if="!isScraping && showMovies" class="mk-clickable-white">
                   <div v-for="(movie, index) in movies" v-bind:key="index">
                     <v-row
                       style="
