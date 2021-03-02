@@ -47,7 +47,7 @@
                   (!showMovies ? " »" : "")
                 }}
               </v-row>
-              <div v-if="!isScraping && showMovies">
+              <div v-if="!isScraping && showMovies" class="mk-clickable-white">
                 <div v-for="(movie, index) in movies" v-bind:key="index">
                   <v-row
                     style="
@@ -221,7 +221,7 @@ export default {
                 id_Filter_Companies: 666,
                 Selected: true,
                 IMDB_Company_ID: this.IMDB_Company_ID,
-                Company_Name: this.Company_Name
+                Company_Name: this.Company_Name,
               },
             ],
           })
