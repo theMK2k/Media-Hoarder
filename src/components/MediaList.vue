@@ -848,7 +848,7 @@
               </v-row>
 
               <div
-                style="margin-left: 24px"
+                style="margin-left: 8px"
                 v-if="item.showContentAdvisory"
                 v-on:click.stop="showContentAdvisory(item, false)"
               >
@@ -896,6 +896,7 @@
                 <v-row
                   v-for="plotKeyword in item.plotKeywords"
                   v-bind:key="plotKeyword.Keyword"
+                  style="margin-left: 24px"
                 >
                   <a
                     class="mk-clickable"
@@ -928,11 +929,11 @@
               </v-row>
 
               <div
-                style="margin-left: 24px"
+                style="margin-left: 36px"
                 v-if="item.showFilmingLocations"
                 v-on:click.stop="showFilmingLocations(item, false)"
               >
-                <div v-if="!item.filmingLocations || item.filmingLocations.length === 0">
+                <div v-if="!item.filmingLocations || item.filmingLocations.length === 0" style="margin-left: -12px">
                   {{ $t('none provided')}}
                 </div>
 
