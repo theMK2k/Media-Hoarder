@@ -1688,10 +1688,29 @@ export default {
             if (val_a.toLowerCase() > val_b.toLowerCase()) {
               return 1;
             }
+            if (val_a.toLowerCase() > val_b.toLowerCase()) {
+              return -1;
+            }
+
+            // equal, now sort by Name
+            if (a.Name.toLowerCase() < b.Name.toLowerCase()) {
+              return 1;
+            }
 
             return -1;
           } else {
             if (a[this.$shared.sortField] > b[this.$shared.sortField]) {
+              return -1;
+            }
+            if (a[this.$shared.sortField] < b[this.$shared.sortField]) {
+              return 1;
+            }
+
+            // equal, now sort by Name
+            if (a.Name.toLowerCase() > b.Name.toLowerCase()) {
+              return 1;
+            }
+            if (a.Name.toLowerCase() < b.Name.toLowerCase()) {
               return -1;
             }
 

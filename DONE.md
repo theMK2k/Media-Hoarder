@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] sort by Name as secondary criteria when sorting by anything else as first (e.g. year -> name)
 - [x] IMDB detection
 - [x] -> improve by utilizing year (162 of 170 matched, 2553 of 2648 matched)
 - [x] "Browse" VLC path -> depending on OS type provide default path / default extension
