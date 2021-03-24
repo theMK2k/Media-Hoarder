@@ -1688,7 +1688,7 @@ export default {
             if (val_a.toLowerCase() > val_b.toLowerCase()) {
               return 1;
             }
-            if (val_a.toLowerCase() > val_b.toLowerCase()) {
+            if (val_a.toLowerCase() < val_b.toLowerCase()) {
               return -1;
             }
 
