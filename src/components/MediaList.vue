@@ -1663,6 +1663,7 @@ export default {
             typeof a[this.$shared.sortField] === "string" ||
             a[this.$shared.sortField] instanceof String
           ) {
+            // string
             const val_a = a[this.$shared.sortField] || "";
             const val_b = b[this.$shared.sortField] || "";
 
@@ -1699,6 +1700,20 @@ export default {
 
             return -1;
           } else {
+            // not string
+            if (b[this.$shared.sortField] == null || typeof(b[this.$shared.sortField]) === 'undefined' ) {
+              // if (a[this.$shared.sortField] == null || typeof(a[this.$shared.sortField]) === 'undefined' ) {
+              //   //both null or undefined - sort by name
+              //   if (a.Name.toLowerCase() > b.Name.toLowerCase()) {
+              //     return 1;
+              //   }
+              //   if (a.Name.toLowerCase() < b.Name.toLowerCase()) {
+              //     return -1;
+              //   }
+              // }
+
+              return 1;
+            }
             if (a[this.$shared.sortField] > b[this.$shared.sortField]) {
               return -1;
             }
