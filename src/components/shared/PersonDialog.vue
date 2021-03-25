@@ -268,7 +268,7 @@ export default {
       personData.Photo_URL = personData.Photo_URL
         ? "local-resource://" +
           helpers.getDataPath(personData.Photo_URL).replace(/\\/g, "\\\\")
-        : result.Photo_URL;
+        : null;
 
       this.personData = personData;
 
