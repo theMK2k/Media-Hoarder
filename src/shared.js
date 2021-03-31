@@ -627,6 +627,12 @@ const shared = new Vue({
         sort: null
       },
       {
+        searchTerm: 'eac3d',
+        displayAs: 'DUBBED',
+        deleted: false,
+        sort: null
+      },
+      {
         searchTerm: 'ld',
         displayAs: 'DUBBED',
         deleted: false,
