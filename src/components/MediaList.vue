@@ -343,8 +343,9 @@
                         <span v-if="item.ReleaseAttributes">
                           |
                           <span
-                            v-for="(releaseAttribute,
-                            index) in item.ReleaseAttributes"
+                            v-for="(
+                              releaseAttribute, index
+                            ) in item.ReleaseAttributes"
                             v-bind:key="releaseAttribute"
                           >
                             <span>{{ index > 0 ? ", " : " " }}</span>
@@ -424,10 +425,7 @@
                             v-bind:clearable="true"
                             v-bind:show-rating="false"
                             inactive-color="grey"
-                            style="
-                              margin-right: 26px;
-                              padding: 0px !important;
-                            "
+                            style="margin-right: 26px; padding: 0px !important"
                             v-bind:star-points="[
                               7,
                               3,
@@ -565,8 +563,9 @@
                         >{{ $t("Production") }}:</strong
                       >
                       <span
-                        v-for="(company,
-                        i) in item.IMDB_Top_Production_Companies"
+                        v-for="(
+                          company, i
+                        ) in item.IMDB_Top_Production_Companies"
                         v-bind:key="i"
                       >
                         <span v-if="i > 0">,&nbsp;</span>
@@ -740,17 +739,24 @@
                 class="mk-clickable"
                 v-on:click.stop="showCredits(item, !item.showCredits)"
               >
-                <span style="font-size: 20px">{{ $t("Credits") + (!item.showCredits ? " »" : "") }}&nbsp;</span>
+                <span style="font-size: 20px"
+                  >{{
+                    $t("Credits") + (!item.showCredits ? " »" : "")
+                  }}&nbsp;</span
+                >
               </v-row>
 
               <div
                 v-if="item.showCredits"
                 v-on:click.stop="showCredits(item, false)"
               >
-                <div v-if="!item.credits || item.credits.length === 0" style="margin-left: 24px">
-                  {{ $t('none provided')}}
+                <div
+                  v-if="!item.credits || item.credits.length === 0"
+                  style="margin-left: 24px"
+                >
+                  {{ $t("none provided") }}
                 </div>
-                
+
                 <div
                   v-for="creditCategory in item.credits"
                   v-bind:key="creditCategory.Category"
@@ -790,15 +796,22 @@
                 class="mk-clickable"
                 v-on:click.stop="showCompanies(item, !item.showCompanies)"
               >
-                <span style="font-size: 20px">{{ $t("Companies") + (!item.showCompanies ? " »" : "") }}&nbsp;</span>
+                <span style="font-size: 20px"
+                  >{{
+                    $t("Companies") + (!item.showCompanies ? " »" : "")
+                  }}&nbsp;</span
+                >
               </v-row>
 
               <div
                 v-if="item.showCompanies"
                 v-on:click.stop="showCompanies(item, false)"
               >
-                <div v-if="!item.companies || item.companies.length === 0" style="margin-left: 24px">
-                  {{ $t('none provided')}}
+                <div
+                  v-if="!item.companies || item.companies.length === 0"
+                  style="margin-left: 24px"
+                >
+                  {{ $t("none provided") }}
                 </div>
 
                 <div
@@ -843,7 +856,10 @@
                 "
               >
                 <span style="font-size: 20px"
-                  >{{ $t("Content Advisory") + (!item.showContentAdvisory ? " »" : "") }}&nbsp;</span
+                  >{{
+                    $t("Content Advisory") +
+                    (!item.showContentAdvisory ? " »" : "")
+                  }}&nbsp;</span
                 >
               </v-row>
 
@@ -881,7 +897,10 @@
                 v-on:click.stop="showPlotKeywords(item, !item.showPlotKeywords)"
               >
                 <span style="font-size: 20px"
-                  >{{ $t("Plot Keywords _Spoilers ahead!_") + (!item.showPlotKeywords ? " »" : "") }}&nbsp;</span
+                  >{{
+                    $t("Plot Keywords _Spoilers ahead!_") +
+                    (!item.showPlotKeywords ? " »" : "")
+                  }}&nbsp;</span
                 >
               </v-row>
 
@@ -889,8 +908,11 @@
                 v-if="item.showPlotKeywords"
                 v-on:click.stop="showPlotKeywords(item, false)"
               >
-                <div v-if="!item.plotKeywords || item.plotKeywords.length === 0" style="margin-left: 24px">
-                  {{ $t('none provided')}}
+                <div
+                  v-if="!item.plotKeywords || item.plotKeywords.length === 0"
+                  style="margin-left: 24px"
+                >
+                  {{ $t("none provided") }}
                 </div>
 
                 <v-row
@@ -924,7 +946,10 @@
                 "
               >
                 <span style="font-size: 20px"
-                  >{{ $t("Filming Locations") + (!item.showFilmingLocations ? " »" : "") }}&nbsp;</span
+                  >{{
+                    $t("Filming Locations") +
+                    (!item.showFilmingLocations ? " »" : "")
+                  }}&nbsp;</span
                 >
               </v-row>
 
@@ -933,8 +958,13 @@
                 v-if="item.showFilmingLocations"
                 v-on:click.stop="showFilmingLocations(item, false)"
               >
-                <div v-if="!item.filmingLocations || item.filmingLocations.length === 0" style="margin-left: -12px">
-                  {{ $t('none provided')}}
+                <div
+                  v-if="
+                    !item.filmingLocations || item.filmingLocations.length === 0
+                  "
+                  style="margin-left: -12px"
+                >
+                  {{ $t("none provided") }}
                 </div>
 
                 <v-row
@@ -1660,6 +1690,15 @@ export default {
           }
 
           if (
+            (a[this.$shared.sortField] == null ||
+              typeof a[this.$shared.sortField] === "undefined") &&
+            (b[this.$shared.sortField] == null ||
+              typeof b[this.$shared.sortField] === "undefined")
+          ) {
+            return this.sort(a.Name.toLowerCase(), b.Name.toLowerCase(), false);
+          }
+
+          if (
             typeof a[this.$shared.sortField] === "string" ||
             a[this.$shared.sortField] instanceof String
           ) {
@@ -1684,6 +1723,8 @@ export default {
               if (val_a.toLowerCase() < val_b.toLowerCase()) {
                 return 1;
               }
+
+              return this.sort(a.Name.toLowerCase(), b.Name.toLowerCase(), false);
             }
 
             if (val_a.toLowerCase() > val_b.toLowerCase()) {
@@ -1694,26 +1735,16 @@ export default {
             }
 
             // equal, now sort by Name
-            if (a.Name.toLowerCase() < b.Name.toLowerCase()) {
-              return 1;
-            }
-
-            return -1;
+            return this.sort(a.Name.toLowerCase(), b.Name.toLowerCase(), false);
           } else {
             // not string
-            if (b[this.$shared.sortField] == null || typeof(b[this.$shared.sortField]) === 'undefined' ) {
-              // if (a[this.$shared.sortField] == null || typeof(a[this.$shared.sortField]) === 'undefined' ) {
-              //   //both null or undefined - sort by name
-              //   if (a.Name.toLowerCase() > b.Name.toLowerCase()) {
-              //     return 1;
-              //   }
-              //   if (a.Name.toLowerCase() < b.Name.toLowerCase()) {
-              //     return -1;
-              //   }
-              // }
-
-              return 1;
+            if (
+              b[this.$shared.sortField] == null ||
+              typeof b[this.$shared.sortField] === "undefined"
+            ) {
+              return -1;
             }
+
             if (a[this.$shared.sortField] > b[this.$shared.sortField]) {
               return -1;
             }
@@ -1722,14 +1753,7 @@ export default {
             }
 
             // equal, now sort by Name
-            if (a.Name.toLowerCase() > b.Name.toLowerCase()) {
-              return 1;
-            }
-            if (a.Name.toLowerCase() < b.Name.toLowerCase()) {
-              return -1;
-            }
-
-            return 0;
+            return this.sort(a.Name.toLowerCase(), b.Name.toLowerCase(), false);
           }
         });
     },
@@ -1745,10 +1769,10 @@ export default {
     },
 
     changeRating(movie) {
-      logger.log('changeRating movie:', movie, " movie.Rating:", movie.Rating);
+      logger.log("changeRating movie:", movie, " movie.Rating:", movie.Rating);
 
       const rating = movie.Rating;
-      
+
       (async () => {
         if (!rating) {
           const arr_id_Movies = await store.clearRating(movie.id_Movies);
@@ -2602,6 +2626,17 @@ export default {
         eventBus.showSnackbar("error", error);
       }
     },
+
+    sort(a, b, reverse) {
+      if (a > b) {
+        return reverse ? -1 : 1;
+      }
+      if (a < b) {
+        return reverse ? 1 : -1;
+      }
+
+      return 0;
+    },
   },
 
   // ### LifeCycle Hooks ###
@@ -2637,7 +2672,13 @@ export default {
 
         this.items = [];
 
-        this.items = await store.fetchMedia(this.mediatype, null, true, $t, this.$shared.filters);
+        this.items = await store.fetchMedia(
+          this.mediatype,
+          null,
+          true,
+          $t,
+          this.$shared.filters
+        );
 
         eventBus.showLoadingOverlay(false);
 
