@@ -14,6 +14,7 @@
 
 ### Create i18n Editor
 
+- [ ] include *.json export in Media Hoarder, also load additional files from %workdir%/i18n
 - [ ] investigate external i18n sources - so that tranlastors can access their creation
 - [ ] dropdown of available (to be translated) languages
 - [ ] read available en.json ($fieldName, $expectedText)
