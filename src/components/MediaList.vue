@@ -1686,75 +1686,31 @@ export default {
         })
         .sort((a, b) => {
           if (!this.$shared.sortField) {
-            return 0;
+            return 0; // nothing to sort
           }
 
-          if (
-            (a[this.$shared.sortField] == null ||
-              typeof a[this.$shared.sortField] === "undefined") &&
-            (b[this.$shared.sortField] == null ||
-              typeof b[this.$shared.sortField] === "undefined")
-          ) {
-            return this.sort(a.Name.toLowerCase(), b.Name.toLowerCase(), false);
-          }
-
-          if (
+          const valA =
             typeof a[this.$shared.sortField] === "string" ||
             a[this.$shared.sortField] instanceof String
-          ) {
-            // string
-            const val_a = a[this.$shared.sortField] || "";
-            const val_b = b[this.$shared.sortField] || "";
+              ? a[this.$shared.sortField].toLowerCase()
+              : a[this.$shared.sortField];
 
-            if (
-              this.$shared.sortField === "created_at" ||
-              this.$shared.sortField === "last_access_at" ||
-              this.$shared.sortField === "startYear"
-            ) {
-              // sort in reverse order
-              if (!val_a || !val_b) {
-                return -1;
-              }
+          const valB =
+            typeof b[this.$shared.sortField] === "string" ||
+            b[this.$shared.sortField] instanceof String
+              ? b[this.$shared.sortField].toLowerCase()
+              : b[this.$shared.sortField];
 
-              if (val_a.toLowerCase() > val_b.toLowerCase()) {
-                return -1;
-              }
+          const reverse = !(this.$shared.sortField === "Name");
 
-              if (val_a.toLowerCase() < val_b.toLowerCase()) {
-                return 1;
-              }
+          const primarySort = this.sort(valA, valB, reverse);
 
-              return this.sort(a.Name.toLowerCase(), b.Name.toLowerCase(), false);
-            }
-
-            if (val_a.toLowerCase() > val_b.toLowerCase()) {
-              return 1;
-            }
-            if (val_a.toLowerCase() < val_b.toLowerCase()) {
-              return -1;
-            }
-
-            // equal, now sort by Name
-            return this.sort(a.Name.toLowerCase(), b.Name.toLowerCase(), false);
-          } else {
-            // not string
-            if (
-              b[this.$shared.sortField] == null ||
-              typeof b[this.$shared.sortField] === "undefined"
-            ) {
-              return -1;
-            }
-
-            if (a[this.$shared.sortField] > b[this.$shared.sortField]) {
-              return -1;
-            }
-            if (a[this.$shared.sortField] < b[this.$shared.sortField]) {
-              return 1;
-            }
-
-            // equal, now sort by Name
+          if (!primarySort) {
+            // equal by primary sort -> sort by Name
             return this.sort(a.Name.toLowerCase(), b.Name.toLowerCase(), false);
           }
+
+          return primarySort;
         });
     },
   },
@@ -2627,7 +2583,22 @@ export default {
       }
     },
 
+    isNullOrUndefined(value) {
+      return (value == null || typeof value === "undefined");
+    },
+
     sort(a, b, reverse) {
+      if (this.isNullOrUndefined(a) && this.isNullOrUndefined(b)) {
+        return 0;
+      }
+
+      if (this.isNullOrUndefined(a)) {
+        return reverse ? 1 : -1;
+      }
+      if (this.isNullOrUndefined(b)) {
+        return reverse ? -1 : 1;
+      }
+      
       if (a > b) {
         return reverse ? -1 : 1;
       }
