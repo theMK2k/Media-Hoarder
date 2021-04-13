@@ -2569,8 +2569,8 @@ export default {
           if (Array.isArray(textOrErrorObject.error.details)) {
             textOrErrorObject.error.details.forEach((detail) => {
               if (
-                typeof textOrErrorObject.error.details === "string" ||
-                textOrErrorObject.error.details instanceof String
+                typeof detail === "string" ||
+                detail instanceof String
               ) {
                 this.snackbar.details.push(detail);
               }
