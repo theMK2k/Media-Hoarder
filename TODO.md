@@ -4,7 +4,7 @@
 
 ### Bugs
 
-- nothing
+- writing credits are sometimes not fetched at all, see Arlington Road (https://www.imdb.com/title/tt0137363/)
 
 ### Other
 
