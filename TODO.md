@@ -2,6 +2,8 @@
 
 ## v1.0.0
 
+- introduce #tags instead of lists (keep the datastructures in .db though)
+
 ### Bugs
 
 - writing credits are sometimes not fetched at all, see Arlington Road (https://www.imdb.com/title/tt0137363/)
