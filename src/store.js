@@ -3384,7 +3384,14 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
         , MOV.IMDB_posterSmall_URL
         , MOV.IMDB_posterLarge_URL
         , MOV.IMDB_plotSummaryFull
-        , (SELECT GROUP_CONCAT(G.Name, ', ') FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres AND MG.id_Movies = MOV.id_Movies) AS Genres
+        , (SELECT GROUP_CONCAT(GQ.Name, ', ') FROM
+            (
+              SELECT DISTINCT
+                G.Name
+              FROM tbl_Movies_Genres MG
+              INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres AND MG.id_Movies = MOV.id_Movies                
+            ) AS GQ
+        ) AS Genres
         , MOV.IMDB_Parental_Advisory_Nudity
         , MOV.IMDB_Parental_Advisory_Violence
         , MOV.IMDB_Parental_Advisory_Profanity
