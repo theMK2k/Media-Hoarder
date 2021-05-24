@@ -2,6 +2,23 @@
 
 ## v1.0.0
 
+- BUG: duplicate genres, e.g.
+  - Byzantinum (tt1531901)
+  - Gefangen in der Hölle (tt0243609)
+  - Helden von Hill 60 (tt1418646)
+- BUG: missing metadata, e.g.
+  - Gefangen in der Hölle (tt0243609) (poster, plot summary, )
+- BUG: file_created_at is always null?
+- New Filter: Data Quality
+  - missing secondary title
+  - missing IMDB Rating
+  - missing Metacritic Score
+  - missing Year
+  - missing plot summary
+  - ...
+- on Cancelling (re-scan): dont display button but show "cancelling..."
+- treat rescan of particular titles as a queue (don't disable all other titles when a rescan runs)
+  - same queue as a "Scan Media" process
 - introduce #tags instead of lists (keep the datastructures in .db though)
 
 ### Bugs
