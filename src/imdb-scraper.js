@@ -1,5 +1,4 @@
-import { xml } from "cheerio";
-
+const fs = require("fs");
 const logger = require("loglevel");
 const cheerio = require("cheerio");
 const htmlToText = require("html-to-text");

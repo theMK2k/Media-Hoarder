@@ -5,6 +5,7 @@ const minimist = require('minimist');
 const nodemailer = require("nodemailer");
 
 const imdbScraperTests = require('./imdb-scraper-tests');
+const helpers = require('./helpers/helpers');
 
 const cmdArguments = minimist(process.argv.slice(2))
 
@@ -16,7 +17,8 @@ const config = {
   smtpPass: cmdArguments.smtpPass,
   smtpSecure: cmdArguments.smtpPort == 465 ? true : false,
   smtpSendLevel: (cmdArguments.smtpSendLevel != undefined) ? +cmdArguments.smtpSendLevel : 2,
-  smtpReceiver: cmdArguments.smtpReceiver
+  smtpReceiver: cmdArguments.smtpReceiver,
+  dumpScrapedHTML: !!cmdArguments.dumpScrapedHTML
 }
 
 const status = {
@@ -29,6 +31,10 @@ logger.setLevel(config.logLevel); // set to 0 for log output of imdb-scraper, el
 
 logger.info("cmdArguments:", cmdArguments);
 
+if (config.dumpScrapedHTML) {
+  helpers.setRequestAsyncDumpToFile(true);
+}
+
 const log = {
   messages: [],
   maxLevel: 0
@@ -39,6 +45,7 @@ const log = {
   logger.info('')
   logger.info('options:')
   logger.info('         --logLevel=<logLevel>                                log level, default: 2')
+  logger.info('         --dumpScrapedHTML                                    dump scraped html to file')
   logger.info('         --smtpHost=<host address>                            smtp host address, default: null')
   logger.info('         --smtpPort=<port number>                             smtp port, default: null')
   logger.info('         --smtpUser=<username>                                smtp authentication user, default: null')

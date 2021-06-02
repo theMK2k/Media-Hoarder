@@ -19,6 +19,11 @@ const isPORTABLE = false;   // DON'T TOUCH! This is handled by set-portable.js
 
 let requestAsyncDumpToFile = false;   // Temporarily set to true and every response of requestAsync will be dumped to a file
 
+function setRequestAsyncDumpToFile(value) {
+  console.log('[setRequestAsyncDumpToFile] value:', value);
+  requestAsyncDumpToFile = value;
+}
+
 /**
  * get absolute path for a given relative path depending wether the app is explicitly PORTABLE/!PORTABLE or in dev-mode (run via npm start) or built:
  * in portable/dev mode it is APPDIR/data/relativePath
@@ -334,6 +339,7 @@ export {
   getYearsFromFileName,
   getDirectoryName,
   downloadFile,
+  setRequestAsyncDumpToFile,
   requestAsync,
   requestRetryStrategy,
   cleanupFileName,
