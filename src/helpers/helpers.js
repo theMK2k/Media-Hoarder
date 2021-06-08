@@ -24,6 +24,13 @@ function setRequestAsyncDumpToFile(value) {
   requestAsyncDumpToFile = value;
 }
 
+let imdbScraperWatchdogUseDumps = false;
+
+function setIMDBScraperWatchdogUseDumps(value) {
+  console.log('[setIMDBScraperWatchdogUseDumps] value:', value);
+  imdbScraperWatchdogUseDumps = value;
+}
+
 /**
  * get absolute path for a given relative path depending wether the app is explicitly PORTABLE/!PORTABLE or in dev-mode (run via npm start) or built:
  * in portable/dev mode it is APPDIR/data/relativePath
@@ -347,5 +354,7 @@ export {
   getLastDirectoryName,
   ensureDirectorySync,
   nz,
-  getStarRatingString
+  getStarRatingString,
+  setIMDBScraperWatchdogUseDumps,
+  imdbScraperWatchdogUseDumps
 };

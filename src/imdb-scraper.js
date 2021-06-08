@@ -2,6 +2,7 @@ const fs = require("fs");
 const logger = require("loglevel");
 const cheerio = require("cheerio");
 const htmlToText = require("html-to-text");
+const filenamify = require('filenamify');
 
 const helpers = require("./helpers/helpers");
 
@@ -23,30 +24,56 @@ function uppercaseEachWord(input) {
   return text;
 }
 
+/**
+ * scrape IMDB Main Page Data (e.g. https://www.imdb.com/title/tt4154796)
+ * @param {Object} movie
+ * @param {Function} downloadFileCallback
+ * @returns
+ */
 async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
   if (movie.scanErrors) {
-    delete movie.scanErrors['IMDB Main Page'];
+    delete movie.scanErrors["IMDB Main Page"];
   }
 
   try {
+    // ## Fetch HTML
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}`;
     logger.log("scrapeIMDBmainPageData url:", url);
 
-    const response = await helpers.requestAsync(`https://www.imdb.com/title/${movie.IMDB_tconst}`);
+    let response = null;
+  
+    if (helpers.imdbScraperWatchdogUseDumps) {
+      response = {
+        body: fs.readFileSync(`${filenamify(url)}.html`, 'UTF8')
+      }
+    } else {
+      response = await helpers.requestAsync(
+        `https://www.imdb.com/title/${movie.IMDB_tconst}`
+      );
+    }
 
     const html = response.body;
 
+    // V2: we partially use the application/ld+json data, too
+    const jsonData = JSON.parse(
+      html.match(
+        /\<script type\=\"application\/ld\+json\"\>([\s\S]*?)\<\/script\>/
+      )[1]
+    );
+
+    // ## Release Type
     let $IMDB_releaseType = "movie";
     /*
         short			-- tt0000006 -> "/search/title?genres=short"
         tvMovie 		-- tt9915546 -> ">TV Movie" 
         tvEpisode		-- tt8709982 -> ">Episode"
-        tvShort			-- tt9901788 -> ">TV Short"
+        tvShort			-- tt9861332 -> ">TV Short"
         tvMiniSeries	-- tt8916384 -> ">TV Mini-Series"
         tvSpecial		-- tt8019378 -> ">TV Special"
         video			-- tt8650100 -> ">Video"
         videoGame		-- tt8848200 -> ">Video game"
         */
+
     if (/\/search\/title\?genres=short/.test(html)) $IMDB_releaseType = "";
     if (/>TV Movie/.test(html)) $IMDB_releaseType = "tvMovie";
     if (/>Episode/.test(html)) $IMDB_releaseType = "tvEpisode";
@@ -56,6 +83,7 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
     if (/>Video\s/.test(html)) $IMDB_releaseType = "video";
     if (/>Video game/.test(html)) $IMDB_releaseType = "videoGame";
 
+    // ## Genres
     const $IMDB_genres = [];
 
     const rxGenres = /genres=(.*?)&/g;
@@ -63,12 +91,13 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
 
     // eslint-disable-next-line no-cond-assign
     while ((match = rxGenres.exec(html))) {
-      const genre = match[1];
-      if (!$IMDB_genres.find(genreFind => genreFind == genre)) {
+      const genre = match[1].toLowerCase();
+      if (!$IMDB_genres.find((genreFind) => genreFind == genre)) {
         $IMDB_genres.push(genre);
       }
     }
 
+    // ## IMDB Rating and Number of Votes
     let $IMDB_rating = null;
     let $IMDB_numVotes = null;
 
@@ -87,6 +116,18 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
       $IMDB_numVotes = parseInt(strVotes);
     }
 
+    // V2
+    if (jsonData.aggregateRating.ratingValue && jsonData.aggregateRating.ratingCount) {
+      logger.log({ ratingValue: jsonData.aggregateRating.ratingValue, ratingCount: jsonData.aggregateRating.ratingCount});
+
+      const strRating = jsonData.aggregateRating.ratingValue;
+      $IMDB_rating = parseFloat(strRating);
+  
+      const strVotes = jsonData.aggregateRating.ratingCount;
+      $IMDB_numVotes = parseInt(strVotes);
+    }
+
+    // ## Metacritic Score
     let $IMDB_metacriticScore = null;
 
     const rxMetacriticScore = /<div class="metacriticScore .*? titleReviewBarSubItem">[\s\S]*?<span>(\d*)<\/span>/;
@@ -94,19 +135,37 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
       $IMDB_metacriticScore = parseInt(html.match(rxMetacriticScore)[1]);
     }
 
+    
+    // V2
+    // <span class="score-meta" style="background-color:#54A72A">78</span>
+    const rxMetacriticScoreV2 = /<span class="score-meta[\s\S]*?>(\d+)<\/span>/;
+    if (rxMetacriticScoreV2.test(html)) {
+      $IMDB_metacriticScore = parseInt(html.match(rxMetacriticScoreV2)[1]);
+    }
+
+    // ## Poster
     let $IMDB_posterSmall_URL = null;
     let $IMDB_posterLarge_URL = null;
-    const rxPosterMediaViewerURL = /<div class="poster">[\s\S]*?<a href="(.*?)"[\s\S]*?>/; // "/title/tt0130827/mediaviewer/rm215942400"
+    let rxPosterMediaViewerURL = null;
+
+    rxPosterMediaViewerURL = /<div class="poster">[\s\S]*?<a href="(.*?)"[\s\S]*?>/; // "/title/tt0130827/mediaviewer/rm215942400"
+    
+    if (!rxPosterMediaViewerURL.test(html)) {
+      // V2
+      // <a class="ipc-lockup-overlay ipc-focusable" href="/title/tt4154796/mediaviewer/rm2775147008/?ref_=tt_ov_i" aria-label="View {Title} Poster">
+      rxPosterMediaViewerURL = /<a class="ipc-lockup-overlay ipc-focusable" href="(\/title\/.*?\/mediaviewer\/.*?\/.*?)" aria-label=".*?Poster">/;
+    }
+    
     if (rxPosterMediaViewerURL.test(html)) {
       if (movie.scanErrors) {
-        delete movie.scanErrors['IMDB Poster'];
-      }        
-      
+        delete movie.scanErrors["IMDB Poster"];
+      }
+
       try {
         const posterURLs = await scrapeIMDBposterURLs(
           html.match(rxPosterMediaViewerURL)[1]
         );
-  
+
         const posterSmallPath = `extras/${movie.IMDB_tconst}_posterSmall.jpg`;
         const posterSmallSuccess = await downloadFileCallback(
           posterURLs.$IMDB_posterSmall_URL,
@@ -116,7 +175,7 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
         if (posterSmallSuccess) {
           $IMDB_posterSmall_URL = posterSmallPath;
         }
-  
+
         const posterLargePath = `extras/${movie.IMDB_tconst}_posterLarge.jpg`;
         const posterLargeSuccess = await downloadFileCallback(
           posterURLs.$IMDB_posterLarge_URL,
@@ -128,12 +187,12 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
         }
       } catch (error) {
         if (movie.scanErrors) {
-          movie.scanErrors['IMDB Poster'] = error.message;
-        }        
+          movie.scanErrors["IMDB Poster"] = error.message;
+        }
       }
-      
     }
 
+    // ## Plot Summary
     let $IMDB_plotSummary = null;
     const rxPlotSummary = /<div class="summary_text">([\s\S]*?)<\/div>/;
     if (rxPlotSummary.test(html)) {
@@ -142,13 +201,14 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
           .fromString(html.match(rxPlotSummary)[1], {
             wordwrap: null,
             ignoreImage: true,
-            ignoreHref: true
+            ignoreHref: true,
           })
           .replace("See full summary»", "")
           .trim()
       );
     }
 
+    // ## Trailer
     let $IMDB_Trailer_URL = null;
     const rxTrailerUrl = /<a href="(\/video\/imdb\/vi\d*)\?playlistId=tt\d*&ref_=tt_ov_vi"[\s\S][\s\S].*?alt="Trailer"/;
     if (rxTrailerUrl.test(html)) {
@@ -166,11 +226,13 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
       $IMDB_posterSmall_URL,
       $IMDB_posterLarge_URL,
       $IMDB_plotSummary,
-      $IMDB_Trailer_URL
+      $IMDB_Trailer_URL,
     };
   } catch (error) {
+    logger.error(error);
+    
     if (movie.scanErrors) {
-      movie.scanErrors['IMDB Main Page'] = error.message;
+      movie.scanErrors["IMDB Main Page"] = error.message;
     }
 
     throw error;
@@ -185,11 +247,10 @@ async function scrapeIMDBplotSummary(movie, shortSummary) {
   }
 
   if (movie.scanErrors) {
-    delete movie.scanErrors['IMDB Plot Summary'];
+    delete movie.scanErrors["IMDB Plot Summary"];
   }
 
   try {
-
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/plotsummary`;
     logger.log("scrapeIMDBplotSummary url:", url);
     const response = await helpers.requestAsync(url);
@@ -210,7 +271,7 @@ async function scrapeIMDBplotSummary(movie, shortSummary) {
           .fromString(match[1], {
             wordwrap: null,
             ignoreImage: true,
-            ignoreHref: true
+            ignoreHref: true,
           })
           .trim()
       );
@@ -223,7 +284,7 @@ async function scrapeIMDBplotSummary(movie, shortSummary) {
     return { $IMDB_plotSummaryFull };
   } catch (error) {
     if (movie.scanErrors) {
-      movie.scanErrors['IMDB Plot Summary'] = error.message;
+      movie.scanErrors["IMDB Plot Summary"] = error.message;
     }
 
     throw error;
@@ -231,7 +292,10 @@ async function scrapeIMDBplotSummary(movie, shortSummary) {
 }
 
 async function scrapeIMDBposterURLs(posterMediaViewerURL) {
-  logger.log('scrapeIMDBposterURLs posterMediaViewerURL:', posterMediaViewerURL);
+  logger.log(
+    "scrapeIMDBposterURLs posterMediaViewerURL:",
+    posterMediaViewerURL
+  );
 
   const url = `https://www.imdb.com${posterMediaViewerURL}`;
   const response = await helpers.requestAsync(url);
@@ -241,20 +305,20 @@ async function scrapeIMDBposterURLs(posterMediaViewerURL) {
   if (rxID.test(posterMediaViewerURL)) {
     const ID = posterMediaViewerURL.match(rxID)[1];
 
-    logger.log('scrapeIMDBposterURLs ID:', ID);
+    logger.log("scrapeIMDBposterURLs ID:", ID);
 
     const rxString = `"id":"${ID}","h":\\d*,"msrc":"(.*?)","src":"(.*?)"`;
     const rxURLs = new RegExp(rxString);
 
     const matches = html.match(rxURLs);
-    
+
     if (matches && matches.length === 3) {
-      logger.log('scrapeIMDBposterURLs Variant 1 found')
-      
+      logger.log("scrapeIMDBposterURLs Variant 1 found");
+
       return {
         $IMDB_posterSmall_URL: matches[1],
-        $IMDB_posterLarge_URL: matches[2]
-      }
+        $IMDB_posterLarge_URL: matches[2],
+      };
     }
 
     // trying alternative approach
@@ -265,28 +329,34 @@ async function scrapeIMDBposterURLs(posterMediaViewerURL) {
     const matches2 = html.match(rxURLs2);
 
     if (matches2 && matches2.length === 3) {
-      logger.log('scrapeIMDBposterURLs Variant 2 found')
+      logger.log("scrapeIMDBposterURLs Variant 2 found");
 
       return {
         $IMDB_posterSmall_URL: matches2[2],
-        $IMDB_posterLarge_URL: matches2[1]
-      }
+        $IMDB_posterLarge_URL: matches2[1],
+      };
     }
-    
-    logger.warn('scrapeIMDBposterURLs NO URLs found, html:', html);
-    throw new Error('IMDB Poster URLs cannot be found')
+
+    logger.warn("scrapeIMDBposterURLs NO URLs found, html:", html);
+    throw new Error("IMDB Poster URLs cannot be found");
   }
 }
 
 async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
-  logger.log('scrapeIMDBreleaseinfo movie:', movie, 'regions:', regions, 'allowedTitleTypes:', allowedTitleTypes);
-  
+  logger.log(
+    "scrapeIMDBreleaseinfo movie:",
+    movie,
+    "regions:",
+    regions,
+    "allowedTitleTypes:",
+    allowedTitleTypes
+  );
+
   if (movie.scanErrors) {
-    delete movie.scanErrors['IMDB Release Info'];
+    delete movie.scanErrors["IMDB Release Info"];
   }
 
   try {
-
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/releaseinfo`;
     logger.log(
       "scrapeIMDBreleaseinfo url:",
@@ -321,14 +391,14 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
           let match = null;
 
           while ((match = rxLocalTitleFuzzy.exec(html))) {
-            logger.log("regions: fuzzy match found for", region)
+            logger.log("regions: fuzzy match found for", region);
 
             const titleTypes = match[1];
             const title = match[2];
 
             if (titleTypes.trim()) {
               const arrTitleTypes = [];
-              titleTypes.split("(").forEach(titleTypes => {
+              titleTypes.split("(").forEach((titleTypes) => {
                 const cleanTitleType = titleTypes.replace(/[()]/g, "").trim();
 
                 if (cleanTitleType) {
@@ -336,13 +406,18 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
                 }
               });
 
-              logger.log("regions: local title match:", { title, arrTitleTypes });
+              logger.log("regions: local title match:", {
+                title,
+                arrTitleTypes,
+              });
 
               let allowed = 0;
               for (let i = 0; i < arrTitleTypes.length; i++) {
                 const titleType = arrTitleTypes[i];
 
-                if (allowedTitleTypes.find(allowed => allowed === titleType)) {
+                if (
+                  allowedTitleTypes.find((allowed) => allowed === titleType)
+                ) {
                   allowed++;
                 }
               }
@@ -355,7 +430,7 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
               }
             }
 
-            logger.log('regions: using local title:', title);
+            logger.log("regions: using local title:", title);
             $IMDB_localTitle = title;
             break;
           }
@@ -388,7 +463,7 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
           .fromString($IMDB_originalTitle, {
             wordwrap: null,
             ignoreImage: true,
-            ignoreHref: true
+            ignoreHref: true,
           })
           .trim()
       );
@@ -399,7 +474,7 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
           .fromString($IMDB_localTitle, {
             wordwrap: null,
             ignoreImage: true,
-            ignoreHref: true
+            ignoreHref: true,
           })
           .trim()
       );
@@ -410,7 +485,7 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
           .fromString($IMDB_primaryTitle, {
             wordwrap: null,
             ignoreImage: true,
-            ignoreHref: true
+            ignoreHref: true,
           })
           .trim()
       );
@@ -421,15 +496,15 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
       $IMDB_localTitle,
       $IMDB_primaryTitle,
       $IMDB_startYear,
-      $IMDB_endYear
-    }
+      $IMDB_endYear,
+    };
 
-    logger.log('scrapeIMDBreleaseinfo result:', result);
+    logger.log("scrapeIMDBreleaseinfo result:", result);
 
     return result;
   } catch (error) {
     if (movie.scanErrors) {
-      movie.scanErrors['IMDB Release Info'] = error.message;
+      movie.scanErrors["IMDB Release Info"] = error.message;
     }
 
     throw error;
@@ -438,11 +513,10 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
 
 async function scrapeIMDBtechnicalData(movie) {
   if (movie.scanErrors) {
-    delete movie.scanErrors['IMDB Technical Data'];
+    delete movie.scanErrors["IMDB Technical Data"];
   }
 
   try {
-
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/technical`;
     logger.log("scrapeIMDBtechnicalData url:", url);
     const response = await helpers.requestAsync(url);
@@ -463,11 +537,11 @@ async function scrapeIMDBtechnicalData(movie) {
     }
 
     return {
-      $IMDB_runtimeMinutes
+      $IMDB_runtimeMinutes,
     };
   } catch (error) {
     if (movie.scanErrors) {
-      movie.scanErrors['IMDB Technical Data'] = error.message;
+      movie.scanErrors["IMDB Technical Data"] = error.message;
     }
 
     throw error;
@@ -476,13 +550,18 @@ async function scrapeIMDBtechnicalData(movie) {
 
 let cacheAgeRatings = null;
 
-async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturnAllCallback, dbFireProcedureCallback, dbFireProcedureReturnScalarCallback) {
+async function scrapeIMDBParentalGuideData(
+  movie,
+  regions,
+  dbFireProcedureReturnAllCallback,
+  dbFireProcedureCallback,
+  dbFireProcedureReturnScalarCallback
+) {
   if (movie.scanErrors) {
-    delete movie.scanErrors['IMDB Parental Guide'];
+    delete movie.scanErrors["IMDB Parental Guide"];
   }
 
   try {
-
     if (!cacheAgeRatings) {
       cacheAgeRatings = await dbFireProcedureReturnAllCallback(
         `SELECT id_AgeRating, Country, Code, Age FROM tbl_AgeRating`
@@ -494,10 +573,12 @@ async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturn
 
     try {
       if (regions) {
-        regionCodes = regions.map(region => region.code ? region.code.toUpperCase() : '');
+        regionCodes = regions.map((region) =>
+          region.code ? region.code.toUpperCase() : ""
+        );
       }
     } catch (e) {
-      logger.error(e)
+      logger.error(e);
     }
 
     logger.log("parentalguide AgeRating regionCodes:", regionCodes);
@@ -521,7 +602,7 @@ async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturn
       logger.log("parentalguide rating found:", Country, Code);
 
       const cachedRating = cacheAgeRatings.find(
-        cache => cache.Country === Country && cache.Code === Code
+        (cache) => cache.Country === Country && cache.Code === Code
       );
 
       let Age = null;
@@ -533,33 +614,33 @@ async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturn
           Age = parseInt(Code.match(/\d+/)[0]);
           logger.log("parentalguide Age (parsed):", Age);
         }
-        
+
         const definedPGs = [
           {
             Age: 0,
-            codes: ['b.o.', 'Tous+publics', 'Tous+Public']
+            codes: ["b.o.", "Tous+publics", "Tous+Public"],
           },
           {
             Age: 6,
-            codes: ['U', 'Tous+publics+avec+avertissement']
+            codes: ["U", "Tous+publics+avec+avertissement"],
           },
           {
             Age: 12,
-            codes: ['T', 'PG', 'NRC', 'GP']
+            codes: ["T", "PG", "NRC", "GP"],
           },
           {
             Age: 17,
-            codes: ['R']
+            codes: ["R"],
           },
           {
             Age: 18,
-            codes: ['Unrated', 'X', 'XXX', 'SOA']
-          }
-        ]
-        
-        const foundPG = definedPGs.find(pg => {
-          return pg.codes.find(definedCode => definedCode === Code);
-        })
+            codes: ["Unrated", "X", "XXX", "SOA"],
+          },
+        ];
+
+        const foundPG = definedPGs.find((pg) => {
+          return pg.codes.find((definedCode) => definedCode === Code);
+        });
 
         if (foundPG) {
           Age = foundPG.Age;
@@ -578,7 +659,8 @@ async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturn
     for (let i = 0; i < ageRatings.length; i++) {
       const rating = ageRatings[i];
       const cachedRating = cacheAgeRatings.find(
-        cache => cache.Country === rating.Country && cache.Code === rating.Code
+        (cache) =>
+          cache.Country === rating.Country && cache.Code === rating.Code
       );
 
       if (!cachedRating) {
@@ -595,14 +677,18 @@ async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturn
           id_AgeRating: rating.id_AgeRating,
           Country: rating.Country,
           Code: rating.Code,
-          Age: rating.Age
+          Age: rating.Age,
         });
       } else {
         rating.id_AgeRating = cachedRating.id_AgeRating;
       }
 
-      if (rating.id_AgeRating && rating.Age != null && regionCodes.find(regionCode => regionCode === rating.Country)) {
-        logger.log('parentalguide AgeRating regions FOUND:', rating);
+      if (
+        rating.id_AgeRating &&
+        rating.Age != null &&
+        regionCodes.find((regionCode) => regionCode === rating.Country)
+      ) {
+        logger.log("parentalguide AgeRating regions FOUND:", rating);
         $IMDB_id_AgeRating_Chosen_Country = rating.id_AgeRating;
       }
 
@@ -734,25 +820,23 @@ async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturn
       $IMDB_Parental_Advisory_Violence,
       $IMDB_Parental_Advisory_Profanity,
       $IMDB_Parental_Advisory_Alcohol,
-      $IMDB_Parental_Advisory_Frightening
+      $IMDB_Parental_Advisory_Frightening,
     };
   } catch (error) {
     if (movie.scanErrors) {
-      movie.scanErrors['IMDB Parental Guide'] = error.message;
+      movie.scanErrors["IMDB Parental Guide"] = error.message;
     }
 
     throw error;
   }
 }
 
-
 async function scrapeIMDBFullCreditsData(movie) {
   if (movie.scanErrors) {
-    delete movie.scanErrors['IMDB Full Credits'];
+    delete movie.scanErrors["IMDB Full Credits"];
   }
 
   try {
-
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/fullcredits`;
     logger.log("scrapeIMDBFullCreditsData url:", url);
     const response = await helpers.requestAsync(url);
@@ -787,11 +871,11 @@ async function scrapeIMDBFullCreditsData(movie) {
               .fromString(match[2], {
                 wordwrap: null,
                 ignoreImage: true,
-                ignoreHref: true
+                ignoreHref: true,
               })
               .trim()
           ),
-          credit: null
+          credit: null,
         };
 
         const rx_character = /<td class="character">([\s\S]*?)<\/td>/;
@@ -801,7 +885,7 @@ async function scrapeIMDBFullCreditsData(movie) {
               .fromString(match[0].match(rx_character)[1], {
                 wordwrap: null,
                 ignoreImage: true,
-                ignoreHref: true
+                ignoreHref: true,
               })
               .trim()
           );
@@ -826,21 +910,21 @@ async function scrapeIMDBFullCreditsData(movie) {
       const result = parseCreditsCategory(html, creditsCategory, credits);
 
       if (creditsCategory === "Directed by") {
-        result.forEach(entry => {
+        result.forEach((entry) => {
           if (topDirector.length < topMax) {
             topDirector.push(entry);
           }
         });
       }
       if (creditsCategory === "Produced by") {
-        result.forEach(entry => {
+        result.forEach((entry) => {
           if (topProducer.length < topMax) {
             topProducer.push(entry);
           }
         });
       }
       if (creditsCategory === "Writing Credits") {
-        result.forEach(entry => {
+        result.forEach((entry) => {
           if (topWriter.length < topMax) {
             topWriter.push(entry);
           }
@@ -863,13 +947,13 @@ async function scrapeIMDBFullCreditsData(movie) {
         $IMDB_Top_Directors,
         $IMDB_Top_Writers,
         $IMDB_Top_Producers,
-        $IMDB_Top_Cast
+        $IMDB_Top_Cast,
       },
-      credits
+      credits,
     };
   } catch (error) {
     if (movie.scanErrors) {
-      movie.scanErrors['IMDB Parental Guide'] = error.message;
+      movie.scanErrors["IMDB Parental Guide"] = error.message;
     }
 
     throw error;
@@ -878,11 +962,10 @@ async function scrapeIMDBFullCreditsData(movie) {
 
 async function scrapeIMDBCompaniesData(movie) {
   if (movie.scanErrors) {
-    delete movie.scanErrors['IMDB Companies'];
+    delete movie.scanErrors["IMDB Companies"];
   }
 
   try {
-
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/companycredits`;
     logger.log("scrapeIMDBCompaniesData url:", url);
     const response = await helpers.requestAsync(url);
@@ -912,7 +995,7 @@ async function scrapeIMDBCompaniesData(movie) {
       );
 
       if (companiesCategoryName === "Production") {
-        result.forEach(entry => {
+        result.forEach((entry) => {
           if (topProductionCompanies.length < topMax) {
             topProductionCompanies.push(entry);
           }
@@ -928,14 +1011,13 @@ async function scrapeIMDBCompaniesData(movie) {
         $IMDB_Top_Production_Companies:
           topProductionCompanies.length > 0
             ? JSON.stringify(topProductionCompanies)
-            : null
+            : null,
       },
-      companies
+      companies,
     };
-
   } catch (error) {
     if (movie.scanErrors) {
-      movie.scanErrors['IMDB Companies'] = error.message;
+      movie.scanErrors["IMDB Companies"] = error.message;
     }
 
     throw error;
@@ -959,7 +1041,7 @@ function parseCompaniesCategory(category, matchedhtml, companies) {
       category,
       id: match[1],
       name: match[2].trim(),
-      role: match[3].trim()
+      role: match[3].trim(),
     };
 
     companies.push(entry);
@@ -989,7 +1071,7 @@ function parseCreditsCategory(html, tableHeader, credits) {
         category: tableHeader,
         id: match[1],
         name: match[2].trim(),
-        credit: null
+        credit: null,
       };
 
       const rx_credit = /<td class="credit">([\s\S]*?)<\/td>/;
@@ -1016,7 +1098,7 @@ async function scrapeIMDBPersonData($IMDB_Person_ID, downloadFileCallback) {
     $IMDB_Person_ID,
     $Photo_URL: null,
     $ShortBio: null,
-    $LongBio: null
+    $LongBio: null,
   };
 
   const rxShortBio = /<div class="name-trivia-bio-text">([\s\S]*?)<\/div>/;
@@ -1028,7 +1110,7 @@ async function scrapeIMDBPersonData($IMDB_Person_ID, downloadFileCallback) {
         .fromString(html.match(rxShortBio)[1], {
           wordwrap: null,
           ignoreImage: true,
-          ignoreHref: true
+          ignoreHref: true,
         })
         .replace("See full bio", "")
         .trim()
@@ -1062,7 +1144,7 @@ async function scrapeIMDBPersonData($IMDB_Person_ID, downloadFileCallback) {
         .fromString(htmlBio.match(rxLongBio)[1], {
           wordwrap: null,
           ignoreImage: true,
-          ignoreHref: true
+          ignoreHref: true,
         })
         .trim()
     );
@@ -1078,12 +1160,12 @@ async function scrapeIMDBAdvancedTitleSearch(title, titleTypes) {
   //
   const url =
     `https://www.imdb.com/search/title/?title=${title}` +
-    (titleTypes.find(titleType => !titleType.checked)
+    (titleTypes.find((titleType) => !titleType.checked)
       ? "&title_type=" +
-      titleTypes
-        .filter(titleType => titleType.checked)
-        .map(titleType => titleType.id)
-        .reduce((prev, current) => prev + (prev ? "," : "") + current)
+        titleTypes
+          .filter((titleType) => titleType.checked)
+          .map((titleType) => titleType.id)
+          .reduce((prev, current) => prev + (prev ? "," : "") + current)
       : "");
 
   logger.log("scrapeIMDBAdvancedTitleSearch url:", url);
@@ -1140,7 +1222,7 @@ async function scrapeIMDBAdvancedTitleSearch(title, titleTypes) {
       ageRating,
       runtime,
       genres,
-      detailInfo
+      detailInfo,
     });
   });
 
@@ -1151,7 +1233,7 @@ async function scrapeIMDBAdvancedTitleSearch(title, titleTypes) {
 
 /**
  * IMPORTANT: this only supports latin characters!
- * @param {string} searchTerm 
+ * @param {string} searchTerm
  */
 async function scrapeIMDBSuggestion(searchTerm) {
   // only supports latin characters!
@@ -1175,13 +1257,13 @@ async function scrapeIMDBSuggestion(searchTerm) {
   const results = [];
 
   if (objResponse && objResponse.d && objResponse.d.length > 0) {
-    objResponse.d.forEach(item => {
+    objResponse.d.forEach((item) => {
       results.push({
         tconst: item.id,
         title: item.l,
         titleType: item.q,
         year: item.y,
-        imageURL: item.i ? item.i.imageUrl : null
+        imageURL: item.i ? item.i.imageUrl : null,
       });
     });
   }
@@ -1200,8 +1282,9 @@ async function scrapeIMDBFind(searchTerm, type) {
   // People:   https://www.imdb.com/find?s=nm&q=laurence+fishburn
   // Company:  https://www.imdb.com/find?s=co&q=universal
   // Keyword:  https://www.imdb.com/find?s=kw&q=christmas
-  const url =
-    `https://www.imdb.com/find?q=${encodeURI(searchTerm)}${type ? '&s=' + type : ''}`;
+  const url = `https://www.imdb.com/find?q=${encodeURI(searchTerm)}${
+    type ? "&s=" + type : ""
+  }`;
 
   logger.log("scrapeIMDBAdvancedTitleSearch url:", url);
 
@@ -1218,8 +1301,8 @@ async function scrapeIMDBFind(searchTerm, type) {
       id: null,
       type: null,
       resultText: null,
-      imageURL: null
-    }
+      imageURL: null,
+    };
 
     const idString = $($(item).find("td.primary_photo > a")).attr("href");
 
@@ -1230,10 +1313,10 @@ async function scrapeIMDBFind(searchTerm, type) {
     if (idString) {
       if (/tt\d*/.test(idString)) {
         result.id = idString.match(/tt\d*/)[0];
-        result.type = "title"
+        result.type = "title";
       } else if (/nm\d*/.test(idString)) {
         result.id = idString.match(/tt\d*/)[0];
-        result.type = "name"
+        result.type = "name";
       }
     }
 
@@ -1241,7 +1324,9 @@ async function scrapeIMDBFind(searchTerm, type) {
       return;
     }
 
-    result.resultText = $($(item).find("td.result_text")).text().trim();
+    result.resultText = $($(item).find("td.result_text"))
+      .text()
+      .trim();
 
     // result.resultText = result.resultText.replace(/[\s\n]/g, " ");
     while (/\s\s/g.test(result.resultText)) {
@@ -1249,7 +1334,7 @@ async function scrapeIMDBFind(searchTerm, type) {
     }
 
     results.push(result);
-  })
+  });
 
   return results;
 }
@@ -1265,8 +1350,8 @@ async function scrapeIMDBTrailerMediaURLs(trailerURL) {
     uri: trailerURL,
     headers: {
       "user-agent":
-        "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36"
-    }
+        "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
+    },
   });
 
   const html = response.body;
@@ -1287,7 +1372,7 @@ async function scrapeIMDBTrailerMediaURLs(trailerURL) {
     result.push({
       definition,
       mimeType,
-      mediaURL
+      mediaURL,
     });
   }
 
@@ -1300,20 +1385,19 @@ async function scrapeIMDBTrailerMediaURLs(trailerURL) {
 
   return {
     mediaURLs: result,
-    slateURL
+    slateURL,
   };
 }
 
 async function scrapeIMDBplotKeywords(movie) {
   if (movie.scanErrors) {
-    delete movie.scanErrors['IMDB Plot Keywords'];
+    delete movie.scanErrors["IMDB Plot Keywords"];
   }
 
   try {
-
     let plotKeywords = [];
 
-    const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/keywords`
+    const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/keywords`;
     logger.log("scrapeIMDBplotKeywords url:", url);
 
     const response = await helpers.requestAsync(url);
@@ -1338,16 +1422,16 @@ async function scrapeIMDBplotKeywords(movie) {
       plotKeywords.push({
         Keyword,
         NumVotes,
-        NumRelevant
-      })
+        NumRelevant,
+      });
     }
 
-    logger.log('plotKeywords:', plotKeywords)
+    logger.log("plotKeywords:", plotKeywords);
 
     return plotKeywords;
   } catch (error) {
     if (movie.scanErrors) {
-      movie.scanErrors['IMDB Plot Keywords'] = error.message;
+      movie.scanErrors["IMDB Plot Keywords"] = error.message;
     }
 
     throw error;
@@ -1356,14 +1440,13 @@ async function scrapeIMDBplotKeywords(movie) {
 
 async function scrapeIMDBFilmingLocations(movie) {
   if (movie.scanErrors) {
-    delete movie.scanErrors['IMDB Filming Locations'];
+    delete movie.scanErrors["IMDB Filming Locations"];
   }
 
   try {
-
     let filmingLocations = [];
 
-    const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/locations`
+    const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/locations`;
     logger.log("scrapeIMDBFilmingLocations url:", url);
 
     const response = await helpers.requestAsync(url);
@@ -1378,7 +1461,7 @@ async function scrapeIMDBFilmingLocations(movie) {
                           <div class="did-you-know-actions">
   <a href="/title/tt3498820/locations?item=lc0924105"
   class="interesting-count-text" > 103 of 111 found this interesting</a>
-  `
+  `;
 
     const rxFilmingLocations = /<a href="\/search\/title\?locations=[\s\S]*?>([\s\S]*?)<\/a>[\s\S]*?<dd>([\s\S]*?)<\/dd>[\s\S]*?class="interesting-count-text"\s*>(.*?)<\/a>/g;
 
@@ -1386,7 +1469,10 @@ async function scrapeIMDBFilmingLocations(movie) {
 
     while ((match = rxFilmingLocations.exec(html))) {
       const Location = match[1].trim();
-      const Details = match[2].trim().replace('(', '').replace(')', '');
+      const Details = match[2]
+        .trim()
+        .replace("(", "")
+        .replace(")", "");
 
       const interestingString = match[3];
 
@@ -1403,16 +1489,16 @@ async function scrapeIMDBFilmingLocations(movie) {
         Location,
         Details,
         NumInteresting,
-        NumVotes
-      })
+        NumVotes,
+      });
     }
 
-    logger.log('filmingLocations:', filmingLocations)
+    logger.log("filmingLocations:", filmingLocations);
 
     return filmingLocations;
   } catch (error) {
     if (movie.scanErrors) {
-      movie.scanErrors['IMDB Filming Locations'] = error.message;
+      movie.scanErrors["IMDB Filming Locations"] = error.message;
     }
 
     throw error;
@@ -1421,13 +1507,13 @@ async function scrapeIMDBFilmingLocations(movie) {
 
 async function scrapeIMDBRatingDemographics(movie) {
   if (movie.scanErrors) {
-    delete movie.scanErrors['IMDB Rating Demographics'];
+    delete movie.scanErrors["IMDB Rating Demographics"];
   }
 
   try {
     let ratingDemographics = {};
 
-    const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/ratings`
+    const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/ratings`;
     logger.log("scrapeIMDBRatingDemographics url:", url);
 
     const response = await helpers.requestAsync(url);
@@ -1443,7 +1529,7 @@ async function scrapeIMDBRatingDemographics(movie) {
               </div>
       </td>
     */
-    const rxRatingDemographics = /<td class="ratingTable[\s\S]*?<\/td>/g
+    const rxRatingDemographics = /<td class="ratingTable[\s\S]*?<\/td>/g;
 
     let match = null;
 
@@ -1459,8 +1545,12 @@ async function scrapeIMDBRatingDemographics(movie) {
         const demographic = ratingDemographicsMatch[2].trim();
         const strNumVotes = ratingDemographicsMatch[3].trim().replace(/,/g, "");
 
-        ratingDemographics[`$IMDB_rating_${demographic}`] = parseFloat(strRating);
-        ratingDemographics[`$IMDB_numVotes_${demographic}`] = parseInt(strNumVotes);
+        ratingDemographics[`$IMDB_rating_${demographic}`] = parseFloat(
+          strRating
+        );
+        ratingDemographics[`$IMDB_numVotes_${demographic}`] = parseInt(
+          strNumVotes
+        );
       }
     }
 
@@ -1468,12 +1558,12 @@ async function scrapeIMDBRatingDemographics(movie) {
     delete ratingDemographics[`$IMDB_rating_imdb_users`];
     delete ratingDemographics[`$IMDB_numVotes_imdb_users`];
 
-    logger.log('ratingDemographics:', ratingDemographics)
+    logger.log("ratingDemographics:", ratingDemographics);
 
     return ratingDemographics;
   } catch (error) {
     if (movie.scanErrors) {
-      movie.scanErrors['IMDB Rating Demographics'] = error.message;
+      movie.scanErrors["IMDB Rating Demographics"] = error.message;
     }
 
     throw error;
@@ -1496,5 +1586,5 @@ export {
   scrapeIMDBTrailerMediaURLs,
   scrapeIMDBplotKeywords,
   scrapeIMDBFilmingLocations,
-  scrapeIMDBRatingDemographics
+  scrapeIMDBRatingDemographics,
 };

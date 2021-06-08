@@ -31,3 +31,6 @@ yarn-error.log*
 
 #RELEASE
 /RELEASE
+
+#test HTML files for imdb-scraper-watchdog
+/*.html

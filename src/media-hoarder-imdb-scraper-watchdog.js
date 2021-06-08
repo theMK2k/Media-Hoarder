@@ -18,7 +18,8 @@ const config = {
   smtpSecure: cmdArguments.smtpPort == 465 ? true : false,
   smtpSendLevel: (cmdArguments.smtpSendLevel != undefined) ? +cmdArguments.smtpSendLevel : 2,
   smtpReceiver: cmdArguments.smtpReceiver,
-  dumpScrapedHTML: !!cmdArguments.dumpScrapedHTML
+  dumpScrapedHTML: !!cmdArguments.dumpScrapedHTML,
+  useDumps: !!cmdArguments.useDumps
 }
 
 const status = {
@@ -35,6 +36,10 @@ if (config.dumpScrapedHTML) {
   helpers.setRequestAsyncDumpToFile(true);
 }
 
+if (config.useDumps) {
+  helpers.setIMDBScraperWatchdogUseDumps(true);
+}
+
 const log = {
   messages: [],
   maxLevel: 0
@@ -46,6 +51,7 @@ const log = {
   logger.info('options:')
   logger.info('         --logLevel=<logLevel>                                log level, default: 2')
   logger.info('         --dumpScrapedHTML                                    dump scraped html to file')
+  logger.info('         --useDumps                                           do not actually scrape but use previously dumped files')
   logger.info('         --smtpHost=<host address>                            smtp host address, default: null')
   logger.info('         --smtpPort=<port number>                             smtp port, default: null')
   logger.info('         --smtpUser=<username>                                smtp authentication user, default: null')
