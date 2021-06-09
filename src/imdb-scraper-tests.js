@@ -147,6 +147,100 @@ async function testIMDBmainPageData() {
   return testResult;
 }
 
+async function testIMDBmainPageData2() {
+  const testResult = {
+    name: "IMDB Main Page Data 2",
+    status: status.SUCCESS,
+    log: [],
+  };
+
+  try {
+    const expected = {
+      $IMDB_releaseType: "movie",
+      $IMDB_genres: ["drama","romance","war"],
+      $IMDB_rating: 8.4,
+      $IMDB_numVotes: 4000,
+      $IMDB_posterSmall_URL: "extras/tt0039822_posterSmall.jpg",
+      $IMDB_posterLarge_URL: "extras/tt0039822_posterLarge.jpg",
+      $IMDB_plotSummary:
+        "1941 in a small town in Nazi occupied France. Against the will of its elderly male and his adult niece residents, the Nazis commandeer a house for one of their officers, Lt. Werner von Ebrennac, to live in for as long as he is in the area on Nazi business. As a figurative and lit...",
+      $IMDB_Trailer_URL: "/video/imdb/vi2163260441",
+    };
+
+    const movie = {
+      IMDB_tconst: "tt0039822",
+    };
+
+    const scrapeResult = await imdbScraper.scrapeIMDBmainPageData(
+      movie,
+      async () => {
+        return true;
+      }
+    );
+
+    if (!scrapeResult) {
+      addSubLogEntry(testResult, "no response", status.ERROR);
+      return;
+    }
+
+    performDefaultCheck(
+      scrapeResult,
+      expected,
+      testResult,
+      "$IMDB_releaseType"
+    );
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_genres");
+
+    if (!scrapeResult.$IMDB_rating) {
+      addSubLogEntry(testResult, "$IMDB_rating missing", status.ERROR);
+    } else if (scrapeResult.$IMDB_rating < 7) {
+      addSubLogEntry(
+        testResult,
+        `$IMDB_rating unexpected value
+    got:      "${scrapeResult.$IMDB_rating}"
+    expected: > 7`,
+        status.WARNING
+      );
+    }
+
+    if (!scrapeResult.$IMDB_numVotes) {
+      addSubLogEntry(testResult, "$IMDB_numVotes missing", status.ERROR);
+    } else if (scrapeResult.$IMDB_numVotes < expected.$IMDB_numVotes) {
+      addSubLogEntry(
+        testResult,
+        `$IMDB_numVotes not lower than expected value
+    got:      "${scrapeResult.$IMDB_numVotes}"
+    expected: "${expected.$IMDB_numVotes}"`,
+        status.WARNING
+      );
+    }
+
+    performDefaultCheck(
+      scrapeResult,
+      expected,
+      testResult,
+      "$IMDB_posterSmall_URL"
+    );
+    performDefaultCheck(
+      scrapeResult,
+      expected,
+      testResult,
+      "$IMDB_posterLarge_URL"
+    );
+    performDefaultCheck(
+      scrapeResult,
+      expected,
+      testResult,
+      "$IMDB_plotSummary"
+    );
+  } catch (error) {
+    testResult.status = status.EXCEPTION;
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+  }
+
+  return testResult;
+}
+
 async function testIMDBplotSummary() {
   const testResult = {
     name: "IMDB Plot Summary",
@@ -161,7 +255,7 @@ async function testIMDBplotSummary() {
     };
 
     const movie = {
-      IMDB_tconst: "tt4154796",
+      IMDB_tconst: "tt0039822",
     };
 
     const scrapeResult = await imdbScraper.scrapeIMDBplotSummary(
@@ -1242,6 +1336,7 @@ async function testIMDBFind() {
 
 export {
   testIMDBmainPageData,
+  testIMDBmainPageData2,
   testIMDBplotSummary,
   testIMDBreleaseinfo,
   testIMDBtechnicalData,

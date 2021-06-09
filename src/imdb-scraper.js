@@ -190,15 +190,23 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
     // ## Plot Summary
     let $IMDB_plotSummary = null;
     const rxPlotSummary = /<div class="summary_text">([\s\S]*?)<\/div>/;
-    if (rxPlotSummary.test(html)) {
+    const rxPlotSummary2 = /data-testid="plot-l"[\s\S]*?>([\s\S]*?)<\//;
+
+    let rxPlotSummaryChosen = null;
+
+    if (rxPlotSummary.test(html)) rxPlotSummaryChosen = rxPlotSummary;
+    if (rxPlotSummary2.test(html)) rxPlotSummaryChosen = rxPlotSummary2;
+
+    if (rxPlotSummaryChosen) {
       $IMDB_plotSummary = unescape(
         htmlToText
-          .fromString(html.match(rxPlotSummary)[1], {
+          .fromString(html.match(rxPlotSummaryChosen)[1], {
             wordwrap: null,
             ignoreImage: true,
             ignoreHref: true,
           })
           .replace("See full summary»", "")
+          .replace(/ Read all$/, "")
           .trim()
       );
     }

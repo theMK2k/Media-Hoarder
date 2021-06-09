@@ -63,6 +63,7 @@ const log = {
   logger.info('used config:', JSON.stringify(config, null, 2));
 
   addLogEntry(await imdbScraperTests.testIMDBmainPageData());
+  addLogEntry(await imdbScraperTests.testIMDBmainPageData2());
   addLogEntry(await imdbScraperTests.testIMDBplotSummary());
   addLogEntry(await imdbScraperTests.testIMDBreleaseinfo());
   addLogEntry(await imdbScraperTests.testIMDBtechnicalData());
