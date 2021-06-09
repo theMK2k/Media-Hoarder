@@ -293,19 +293,33 @@ async function scrapeIMDBplotSummary(movie, shortSummary) {
 
 async function scrapeIMDBposterURLs(posterMediaViewerURL) {
   logger.log(
-    "scrapeIMDBposterURLs posterMediaViewerURL:",
+    "[scrapeIMDBposterURLs] posterMediaViewerURL:",
     posterMediaViewerURL
   );
 
   const url = `https://www.imdb.com${posterMediaViewerURL}`;
-  const response = await helpers.requestAsync(url);
+  
+  let response = null;
+
+  if (helpers.imdbScraperWatchdogUseDumps) {
+
+    const filename = `${filenamify(`https://www.imdb.com${posterMediaViewerURL}`)}.html`;
+
+    logger.log('[scrapeIMDBposterURLs] reading from file:', filename);
+
+    response = {
+      body: fs.readFileSync(filename, 'UTF8')
+    }
+  } else {
+    response = await helpers.requestAsync(url);
+  }
+
   const html = response.body;
 
-  const rxID = /(rm\d*)\?ref/;
+  const rxID = /(rm\d*).*?\?ref/;
   if (rxID.test(posterMediaViewerURL)) {
     const ID = posterMediaViewerURL.match(rxID)[1];
-
-    logger.log("scrapeIMDBposterURLs ID:", ID);
+    logger.log("[scrapeIMDBposterURLs] ID:", ID);
 
     const rxString = `"id":"${ID}","h":\\d*,"msrc":"(.*?)","src":"(.*?)"`;
     const rxURLs = new RegExp(rxString);
@@ -313,7 +327,7 @@ async function scrapeIMDBposterURLs(posterMediaViewerURL) {
     const matches = html.match(rxURLs);
 
     if (matches && matches.length === 3) {
-      logger.log("scrapeIMDBposterURLs Variant 1 found");
+      logger.log("[scrapeIMDBposterURLs] Variant 1 found");
 
       return {
         $IMDB_posterSmall_URL: matches[1],
@@ -329,7 +343,7 @@ async function scrapeIMDBposterURLs(posterMediaViewerURL) {
     const matches2 = html.match(rxURLs2);
 
     if (matches2 && matches2.length === 3) {
-      logger.log("scrapeIMDBposterURLs Variant 2 found");
+      logger.log("[scrapeIMDBposterURLs] Variant 2 found");
 
       return {
         $IMDB_posterSmall_URL: matches2[2],
@@ -337,7 +351,7 @@ async function scrapeIMDBposterURLs(posterMediaViewerURL) {
       };
     }
 
-    logger.warn("scrapeIMDBposterURLs NO URLs found, html:", html);
+    logger.warn("scrapeIMDBposterURLs NO URLs found!");
     throw new Error("IMDB Poster URLs cannot be found");
   }
 }
