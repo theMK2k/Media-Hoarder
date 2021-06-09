@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const requestretry = require("requestretry");
 const os = require("os");
-const filenamify = require('filenamify');
+const filenamify = require("filenamify");
 
 const logger = require("loglevel");
 
@@ -15,19 +15,19 @@ const writeFileAsync = util.promisify(fs.writeFile);
 const existsAsync = util.promisify(fs.exists);
 const requestretryAsync = util.promisify(requestretry);
 
-const isPORTABLE = false;   // DON'T TOUCH! This is handled by set-portable.js
+const isPORTABLE = false; // DON'T TOUCH! This is handled by set-portable.js
 
-let requestAsyncDumpToFile = false;   // Temporarily set to true and every response of requestAsync will be dumped to a file
+let requestAsyncDumpToFile = false; // Temporarily set to true and every response of requestAsync will be dumped to a file
 
 function setRequestAsyncDumpToFile(value) {
-  console.log('[setRequestAsyncDumpToFile] value:', value);
+  console.log("[setRequestAsyncDumpToFile] value:", value);
   requestAsyncDumpToFile = value;
 }
 
 let imdbScraperWatchdogUseDumps = false;
 
 function setIMDBScraperWatchdogUseDumps(value) {
-  console.log('[setIMDBScraperWatchdogUseDumps] value:', value);
+  console.log("[setIMDBScraperWatchdogUseDumps] value:", value);
   imdbScraperWatchdogUseDumps = value;
 }
 
@@ -35,19 +35,19 @@ function setIMDBScraperWatchdogUseDumps(value) {
  * get absolute path for a given relative path depending wether the app is explicitly PORTABLE/!PORTABLE or in dev-mode (run via npm start) or built:
  * in portable/dev mode it is APPDIR/data/relativePath
  * in non-portable/non-dev mode it is ~/.media-hoarder/relativePath
- * @param {string} relativePath 
+ * @param {string} relativePath
  */
 function getDataPath(relativePath) {
   if (isDevelopment || isPORTABLE) {
-    return path.join(getStaticPath('data'), relativePath);
+    return path.join(getStaticPath("data"), relativePath);
   }
 
-  return path.join(os.homedir(), '.media-hoarder', relativePath);
+  return path.join(os.homedir(), ".media-hoarder", relativePath);
 }
 
 /**
  * get absolute path for a given relative path from APPDIR/data depending on isBuild
- * @param {string} relativePath 
+ * @param {string} relativePath
  */
 function getStaticPath(relativePath) {
   /* eslint-disable no-undef */
@@ -119,10 +119,10 @@ function getLastDirectoryName(directory) {
 }
 
 function getMovieNameFromDirectory(directory) {
-  logger.log('getMovieNameFromDirectory directory:', directory);
-  
+  logger.log("getMovieNameFromDirectory directory:", directory);
+
   let lastDirectory = getLastDirectoryName(directory);
-  
+
   lastDirectory = lastDirectory.replace(/[.,_-]/g, " ");
 
   while (/\s\s/.test(lastDirectory)) {
@@ -136,7 +136,7 @@ function cleanupFileName(filename) {
   let filenameFiltered = getMovieNameFromFileName(filename);
 
   filenameFiltered = filenameFiltered.replace(/[()[\]]/g, " ");
-  
+
   while (/\s\s/.test(filenameFiltered)) {
     filenameFiltered = filenameFiltered.replace(/\s\s/g, " ");
   }
@@ -148,7 +148,7 @@ function cleanupDirectoryName(directory) {
   let nameFiltered = getMovieNameFromDirectory(directory);
 
   nameFiltered = nameFiltered.replace(/[()[\]]/g, " ");
-  
+
   while (/\s\s/.test(nameFiltered)) {
     nameFiltered = nameFiltered.replace(/\s\s/g, " ");
   }
@@ -235,7 +235,7 @@ function requestRetryStrategy(err, response, body, options) {
   const mustRetry = !!err;
 
   if (mustRetry) {
-    logger.log('request retry - options:', options);
+    logger.log("request retry - options:", options);
   }
 
   return {
@@ -246,7 +246,6 @@ function requestRetryStrategy(err, response, body, options) {
 
 async function requestAsync(options) {
   // throw new Error('KILLME - Offline Test');
-  
   let optionsDerived = {};
 
   if (typeof options === "string") {
@@ -280,16 +279,22 @@ async function requestAsync(options) {
     optionsDerived.headers["Accept-Language"] = "en";
   }
 
-  optionsDerived.timeout = 10000;   // we set a 10s timeout
+  optionsDerived.timeout = 10000; // we set a 10s timeout
 
-  logger.log('request options:', optionsDerived);
+  logger.log("request options:", optionsDerived);
+
+  if (imdbScraperWatchdogUseDumps) {
+    return {
+      body: fs.readFileSync(`${filenamify(optionsDerived.url)}.html`, "UTF8"),
+    };
+  }
 
   // return requestretryAsync(optionsDerived);
   const response = await requestretryAsync(optionsDerived);
 
   if (requestAsyncDumpToFile) {
     const filename = `${filenamify(optionsDerived.url)}.html`;
-    logger.log('dumping to', filename);
+    logger.log("dumping to", filename);
     await writeFileAsync(`./${filename}`, response.body);
   }
 
@@ -303,7 +308,7 @@ function ensureDirectorySync(path) {
 }
 
 function nz(value, valueIfNull) {
-  if( typeof value === 'undefined' || value === null ){
+  if (typeof value === "undefined" || value === null) {
     return valueIfNull;
   }
 
@@ -327,7 +332,7 @@ function getStarRatingString(rating) {
     }
   }
 
-  return label
+  return label;
 }
 
 export {
@@ -356,5 +361,5 @@ export {
   nz,
   getStarRatingString,
   setIMDBScraperWatchdogUseDumps,
-  imdbScraperWatchdogUseDumps
+  imdbScraperWatchdogUseDumps,
 };

@@ -2,7 +2,7 @@ const fs = require("fs");
 const logger = require("loglevel");
 const cheerio = require("cheerio");
 const htmlToText = require("html-to-text");
-const filenamify = require('filenamify');
+const filenamify = require("filenamify");
 
 const helpers = require("./helpers/helpers");
 
@@ -40,17 +40,7 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}`;
     logger.log("scrapeIMDBmainPageData url:", url);
 
-    let response = null;
-  
-    if (helpers.imdbScraperWatchdogUseDumps) {
-      response = {
-        body: fs.readFileSync(`${filenamify(url)}.html`, 'UTF8')
-      }
-    } else {
-      response = await helpers.requestAsync(
-        `https://www.imdb.com/title/${movie.IMDB_tconst}`
-      );
-    }
+    const response = await helpers.requestAsync(url);
 
     const html = response.body;
 
@@ -117,12 +107,18 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
     }
 
     // V2
-    if (jsonData.aggregateRating.ratingValue && jsonData.aggregateRating.ratingCount) {
-      logger.log({ ratingValue: jsonData.aggregateRating.ratingValue, ratingCount: jsonData.aggregateRating.ratingCount});
+    if (
+      jsonData.aggregateRating.ratingValue &&
+      jsonData.aggregateRating.ratingCount
+    ) {
+      logger.log({
+        ratingValue: jsonData.aggregateRating.ratingValue,
+        ratingCount: jsonData.aggregateRating.ratingCount,
+      });
 
       const strRating = jsonData.aggregateRating.ratingValue;
       $IMDB_rating = parseFloat(strRating);
-  
+
       const strVotes = jsonData.aggregateRating.ratingCount;
       $IMDB_numVotes = parseInt(strVotes);
     }
@@ -135,7 +131,6 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
       $IMDB_metacriticScore = parseInt(html.match(rxMetacriticScore)[1]);
     }
 
-    
     // V2
     // <span class="score-meta" style="background-color:#54A72A">78</span>
     const rxMetacriticScoreV2 = /<span class="score-meta[\s\S]*?>(\d+)<\/span>/;
@@ -149,13 +144,13 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
     let rxPosterMediaViewerURL = null;
 
     rxPosterMediaViewerURL = /<div class="poster">[\s\S]*?<a href="(.*?)"[\s\S]*?>/; // "/title/tt0130827/mediaviewer/rm215942400"
-    
+
     if (!rxPosterMediaViewerURL.test(html)) {
       // V2
       // <a class="ipc-lockup-overlay ipc-focusable" href="/title/tt4154796/mediaviewer/rm2775147008/?ref_=tt_ov_i" aria-label="View {Title} Poster">
       rxPosterMediaViewerURL = /<a class="ipc-lockup-overlay ipc-focusable" href="(\/title\/.*?\/mediaviewer\/.*?\/.*?)" aria-label=".*?Poster">/;
     }
-    
+
     if (rxPosterMediaViewerURL.test(html)) {
       if (movie.scanErrors) {
         delete movie.scanErrors["IMDB Poster"];
@@ -230,7 +225,7 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
     };
   } catch (error) {
     logger.error(error);
-    
+
     if (movie.scanErrors) {
       movie.scanErrors["IMDB Main Page"] = error.message;
     }
@@ -253,7 +248,9 @@ async function scrapeIMDBplotSummary(movie, shortSummary) {
   try {
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/plotsummary`;
     logger.log("scrapeIMDBplotSummary url:", url);
+
     const response = await helpers.requestAsync(url);
+
     const html = response.body;
 
     const shortSummaryClean = shortSummary.split("...")[0].trim();
@@ -298,21 +295,8 @@ async function scrapeIMDBposterURLs(posterMediaViewerURL) {
   );
 
   const url = `https://www.imdb.com${posterMediaViewerURL}`;
-  
-  let response = null;
 
-  if (helpers.imdbScraperWatchdogUseDumps) {
-
-    const filename = `${filenamify(`https://www.imdb.com${posterMediaViewerURL}`)}.html`;
-
-    logger.log('[scrapeIMDBposterURLs] reading from file:', filename);
-
-    response = {
-      body: fs.readFileSync(filename, 'UTF8')
-    }
-  } else {
-    response = await helpers.requestAsync(url);
-  }
+  const response = await helpers.requestAsync(url);
 
   const html = response.body;
 
