@@ -284,10 +284,10 @@ async function requestAsync(options) {
   logger.log("request options:", optionsDerived);
 
   if (imdbScraperWatchdogUseDumps) {
-    const filename = `${filenamify(optionsDerived.url)}.html`;
+    const filename = `${filenamify(optionsDerived.url ? optionsDerived.url : optionsDerived.uri)}.html`;
     if (fs.existsSync(filename)) {
       return {
-        body: fs.readFileSync(`${filenamify(optionsDerived.url)}.html`, "UTF8"),
+        body: fs.readFileSync(`${filenamify(optionsDerived.url ? optionsDerived.url : optionsDerived.uri)}.html`, "UTF8"),
       };
     }
   }
@@ -296,7 +296,7 @@ async function requestAsync(options) {
   const response = await requestretryAsync(optionsDerived);
 
   if (requestAsyncDumpToFile) {
-    const filename = `${filenamify(optionsDerived.url)}.html`;
+    const filename = `${filenamify(optionsDerived.url ? optionsDerived.url : optionsDerived.uri)}.html`;
     logger.log("dumping to", filename);
     await writeFileAsync(`./${filename}`, response.body);
   }

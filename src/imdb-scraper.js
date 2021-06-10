@@ -255,7 +255,6 @@ async function scrapeIMDBplotSummary(movie, shortSummary) {
 
   try {
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/plotsummary`;
-    logger.log("scrapeIMDBplotSummary url:", url);
 
     const response = await helpers.requestAsync(url);
 
@@ -263,14 +262,27 @@ async function scrapeIMDBplotSummary(movie, shortSummary) {
 
     const shortSummaryClean = shortSummary.split("...")[0].trim();
 
-    const rxplotSummary = new RegExp(
+    const rxPlotSummary = new RegExp(
       `<li class="ipl-zebra-list__item"[\\s\\S]*?<p>([\\s\\S]*?)</p>`,
       "g"
     );
 
+    const rxPlotSummary2 = new RegExp(
+      `<li.*?id="summary[\\s\\S]*?<p>([\\s\\S]*?)</p>`, "g"
+    );
+
+    let rxPlotSummaryChosen = null;
+    if (html.match(rxPlotSummary)) rxPlotSummaryChosen = rxPlotSummary;
+    if (html.match(rxPlotSummary2)) rxPlotSummaryChosen = rxPlotSummary2;
+
+    if (!rxPlotSummaryChosen) {
+      logger.log('scrapeIMDBplotSummary no regex matches!');
+      return { $IMDB_plotSummaryFull };
+    }
+
     let match = null;
 
-    while ((match = rxplotSummary.exec(html))) {
+    while ((match = rxPlotSummaryChosen.exec(html))) {
       const plotSummaryFull = unescape(
         htmlToText
           .fromString(match[1], {
@@ -282,12 +294,15 @@ async function scrapeIMDBplotSummary(movie, shortSummary) {
       );
 
       if (plotSummaryFull.includes(shortSummaryClean)) {
+        logger.log('scrapeIMDBplotSummary matching full summary found!');
         $IMDB_plotSummaryFull = plotSummaryFull;
       }
     }
 
     return { $IMDB_plotSummaryFull };
   } catch (error) {
+    logger.error(error);
+    
     if (movie.scanErrors) {
       movie.scanErrors["IMDB Plot Summary"] = error.message;
     }
@@ -1346,53 +1361,58 @@ async function scrapeIMDBFind(searchTerm, type) {
 }
 
 async function scrapeIMDBTrailerMediaURLs(trailerURL) {
-  const result = [];
-
-  trailerURL = trailerURL.replace("/video/imdb/", "/videoplayer/");
-
-  logger.log("trailerURL:", trailerURL);
-
-  const response = await helpers.requestAsync({
-    uri: trailerURL,
-    headers: {
-      "user-agent":
-        "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
-    },
-  });
-
-  const html = response.body;
-
-  // logger.log('trailerURLs html:', html);
-
-  // "definition":"auto","mimeType":"application\u002Fx-mpegURL","videoUrl":"https:\u002F\u002Fimdb-video.media-imdb.com\u002Fvi1499136537\u002Fhls-1563882933870-master.m3u8?Expires=1575383713&Signature=PXs6zzGNbbxUR5SKWcNIWg~iA2TYAgfao8VNfaelya7rlNgxYz9yeh3kLJdUYqHQOK57Tbk5abPzx2lMLZea3lLRmR9T17~MN4M4RAaYUZR5w69wnQKu2wzGv5n7qgm3IaXyVdO61L37fuecTvzz-tigaVaWDnViTr5tkpf7Pu4isE-qF9hd1xX~oXDk5A~z2TdGzII16faXnxIY~xs~7rbKMgKfTJUxGtUmjSGTKXqEIh-VqPG0p4gYaXOCB-HCu42hqxeb8ll2XFPiBTCogyoBj-r0CRYZhx9GQ7FbfCkE0t9bgJ16dhy8eb9tVwsaZ6wjMjoQxu-CiaLDelciqg__&Key-Pair-Id=APKAIFLZBVQZ24NQH3KA"
-  const rxMediaURL = /"definition":"(.*?)","mimeType":"(.*?)","videoUrl":"(.*?)"/g;
-
-  let match = null;
-
-  // eslint-disable-next-line no-cond-assign
-  while ((match = rxMediaURL.exec(html))) {
-    const definition = match[1];
-    const mimeType = match[2].replace(/\\u002F/g, "/");
-    const mediaURL = match[3].replace(/\\u002F/g, "/");
-
-    result.push({
-      definition,
-      mimeType,
-      mediaURL,
+  try {
+    const result = [];
+  
+    trailerURL = trailerURL.replace("/video/imdb/", "/videoplayer/");
+  
+    logger.log("trailerURL:", trailerURL);
+  
+    const response = await helpers.requestAsync({
+      uri: trailerURL,
+      headers: {
+        "user-agent":
+          "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
+      },
     });
+  
+    const html = response.body;
+  
+    // logger.log('trailerURLs html:', html);
+  
+    // "definition":"auto","mimeType":"application\u002Fx-mpegURL","videoUrl":"https:\u002F\u002Fimdb-video.media-imdb.com\u002Fvi1499136537\u002Fhls-1563882933870-master.m3u8?Expires=1575383713&Signature=PXs6zzGNbbxUR5SKWcNIWg~iA2TYAgfao8VNfaelya7rlNgxYz9yeh3kLJdUYqHQOK57Tbk5abPzx2lMLZea3lLRmR9T17~MN4M4RAaYUZR5w69wnQKu2wzGv5n7qgm3IaXyVdO61L37fuecTvzz-tigaVaWDnViTr5tkpf7Pu4isE-qF9hd1xX~oXDk5A~z2TdGzII16faXnxIY~xs~7rbKMgKfTJUxGtUmjSGTKXqEIh-VqPG0p4gYaXOCB-HCu42hqxeb8ll2XFPiBTCogyoBj-r0CRYZhx9GQ7FbfCkE0t9bgJ16dhy8eb9tVwsaZ6wjMjoQxu-CiaLDelciqg__&Key-Pair-Id=APKAIFLZBVQZ24NQH3KA"
+    const rxMediaURL = /"definition":"(.*?)","mimeType":"(.*?)","videoUrl":"(.*?)"/g;
+  
+    let match = null;
+  
+    // eslint-disable-next-line no-cond-assign
+    while ((match = rxMediaURL.exec(html))) {
+      const definition = match[1];
+      const mimeType = match[2].replace(/\\u002F/g, "/");
+      const mediaURL = match[3].replace(/\\u002F/g, "/");
+  
+      result.push({
+        definition,
+        mimeType,
+        mediaURL,
+      });
+    }
+  
+    const rxSlate = /"slate":.*?"url":"(.*?)"/;
+  
+    let slateURL = null;
+    if (rxSlate.test(html)) {
+      slateURL = html.match(rxSlate)[1].replace(/\\u002F/g, "/");
+    }
+  
+    return {
+      mediaURLs: result,
+      slateURL,
+    };
+  } catch (err) {
+    logger.error(err);
+    throw err;
   }
-
-  const rxSlate = /"slate":.*?"url":"(.*?)"/;
-
-  let slateURL = null;
-  if (rxSlate.test(html)) {
-    slateURL = html.match(rxSlate)[1].replace(/\\u002F/g, "/");
-  }
-
-  return {
-    mediaURLs: result,
-    slateURL,
-  };
 }
 
 async function scrapeIMDBplotKeywords(movie) {

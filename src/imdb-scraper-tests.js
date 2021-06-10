@@ -24,7 +24,8 @@ function performDefaultCheck(
   testResult,
   fieldName,
   msgPrefix,
-  allowFalsy
+  allowFalsy,
+  checkIncludes
 ) {
   if (!allowFalsy && !scrapeResult[fieldName]) {
     addSubLogEntry(
@@ -33,8 +34,10 @@ function performDefaultCheck(
       status.ERROR
     );
   } else if (
-    JSON.stringify(scrapeResult[fieldName]) !==
-    JSON.stringify(expected[fieldName])
+    (!checkIncludes && JSON.stringify(scrapeResult[fieldName]) !==
+      JSON.stringify(expected[fieldName])
+    ) ||
+    (checkIncludes && JSON.stringify(scrapeResult[fieldName]).includes(JSON.stringify(expected[fieldName])))
   ) {
     addSubLogEntry(
       testResult,
@@ -157,13 +160,13 @@ async function testIMDBmainPageData2() {
   try {
     const expected = {
       $IMDB_releaseType: "movie",
-      $IMDB_genres: ["drama","romance","war"],
+      $IMDB_genres: ["drama", "romance", "war"],
       $IMDB_rating: 8.4,
       $IMDB_numVotes: 4000,
       $IMDB_posterSmall_URL: "extras/tt0039822_posterSmall.jpg",
       $IMDB_posterLarge_URL: "extras/tt0039822_posterLarge.jpg",
       $IMDB_plotSummary:
-        "1941 in a small town in Nazi occupied France. Against the will of its elderly male and his adult niece residents, the Nazis commandeer a house for one of their officers, Lt. Werner von Ebrennac, to live in for as long as he is in the area on Nazi business. As a figurative and lit...",
+        "1941 in a small town in Nazi occupied France",
       $IMDB_Trailer_URL: "/video/imdb/vi2163260441",
     };
 
@@ -227,11 +230,15 @@ async function testIMDBmainPageData2() {
       testResult,
       "$IMDB_posterLarge_URL"
     );
+
     performDefaultCheck(
       scrapeResult,
       expected,
       testResult,
-      "$IMDB_plotSummary"
+      "$IMDB_plotSummary",
+      null,
+      null,
+      true
     );
   } catch (error) {
     testResult.status = status.EXCEPTION;
@@ -251,7 +258,7 @@ async function testIMDBplotSummary() {
   try {
     const expected = {
       $IMDB_plotSummaryFull:
-        "After the devastating events of Avengers: Infinity War (2018), the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe.",
+        "1941 in a small town in Nazi occupied France. Against the will of its elderly male and his adult niece residents, the Nazis commandeer a house for one of their officers, Lt. Werner von Ebrennac, to live in for as long as he is in the area on Nazi business. As a figurative and literal silent protest against the Nazis and the officer, the uncle and niece do whatever is required of them while the officer is in their house, however they do not acknowledge his presence, living largely in silence whenever he is around. The officer treats the housing situation with care, like he is a guest. Although not a nightly occurrence, the officer begins an evening routine with his reluctant hosts: in his civilian clothes, he knocks on the door of the room in which they have convened for the evening, walking in shortly thereafter knowing that no acknowledgment will be made for him to enter, he visits with them for no more than five minutes before he bids them a good evening as he exits. During these visits, he speaks reverently about, among other things, culture - music and literature in particular as he is a composer and musician - his national pride, his love of France, and what he hopes will emerge from the war, namely a strong and free France, stronger than it was before the war, and the marriage between the French and German cultures which will enrich the lives of all Europeans. All the while, he makes no expectations from them, either to listen, or to answer if they are indeed listening. At the end of what ends up being his six month stay at the house, he does end up having a profound effect on the uncle and niece, despite that effect being largely unacknowledged, as his stay in France has a profound effect on him, opening up his eyes to the reality of the war based largely on his first ever visit into Paris.",
     };
 
     const movie = {
@@ -260,7 +267,7 @@ async function testIMDBplotSummary() {
 
     const scrapeResult = await imdbScraper.scrapeIMDBplotSummary(
       movie,
-      "After the devastating events of Avengers: Infinity War (2018), the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe."
+      "1941 in a small town in Nazi occupied France. Against the will of its elderly male and his adult niece residents, the Nazis commandeer a house for one of their officers, Lt. Werner von Ebrennac, to live in for as long as he is in the area on Nazi business. As a figurative and lit..."
     );
 
     if (!scrapeResult) {
