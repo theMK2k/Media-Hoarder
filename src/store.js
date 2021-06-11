@@ -4580,6 +4580,10 @@ function abortRescan() {
   doAbortRescan = true;
 }
 
+function resetAbortRescan() {
+  doAbortRescan = false;
+}
+
 function saveFilterValues($MediaType) {
   const filterValues = shared.filters;
 
@@ -6407,6 +6411,7 @@ async function fetchMediaNames($MediaType, filter) {
 
 export {
   db,
+  doAbortRescan,
   fetchSourcePaths,
   rescan,
   fetchMedia,
@@ -6434,6 +6439,7 @@ export {
   fetchFilterMetacriticScore,
   fetchFilterReleaseAttributes,
   abortRescan,
+  resetAbortRescan,
   createList,
   addToList,
   removeFromList,

@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] on Cancelling (re-scan): dont display button but show "cancelling..."
 - [x] imdb scraper: support "new" main page
 - [x] fix in imdb scraper where genres were duplicated
 - [x] fix in imdb scraper where metadata was missing (poster, plot summary)

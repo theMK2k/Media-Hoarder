@@ -12,8 +12,6 @@
   - missing plot summary
   - ...
 
-- on Cancelling (re-scan): dont display button but show "cancelling..."
-
 - treat rescan of particular titles as a queue (don't disable all other titles when a rescan runs)
   - same queue as a "Scan Media" process
 

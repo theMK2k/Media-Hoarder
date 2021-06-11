@@ -9,7 +9,7 @@
       v-bind:width="320"
     >
       <v-list dense>
-        <v-list-item v-on:click="onRescan">
+        <v-list-item v-on:click="onRescan" v-bind:disabled="store.doAbortRescan">
           <v-list-item-action>
             <v-icon v-show="!isScanning">mdi-reload-alert</v-icon>
             <v-icon v-show="isScanning">mdi-cancel</v-icon>
@@ -18,8 +18,11 @@
             <v-list-item-title v-show="!isScanning">{{
               $t("Scan Media")
             }}</v-list-item-title>
-            <v-list-item-title v-show="isScanning">{{
+            <v-list-item-title v-show="isScanning && !store.doAbortRescan">{{
               $t("Cancel Scan")
+            }}</v-list-item-title>
+            <v-list-item-title v-show="isScanning && store.doAbortRescan">{{
+              $t("Cancelling___")
             }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
@@ -1176,8 +1179,9 @@
               </p>
             </div>
             <div class="flex-grow-1"></div>
-            <v-btn text v-on:click="cancelRescan">
-              <v-icon>mdi-cancel</v-icon>
+            <v-btn text v-on:click="cancelRescan" v-bind:disabled="store.doAbortRescan">
+              <v-icon v-if="!store.doAbortRescan">mdi-cancel</v-icon>
+              <span v-if="store.doAbortRescan">{{ $t('Cancelling___') }}</span>
             </v-btn>
           </v-row>
         </v-bottom-navigation>
@@ -1372,6 +1376,10 @@ export default {
   },
 
   computed: {
+    store() {
+      return store;
+    },
+    
     isScanning() {
       return this.$shared.isScanning;
     },
@@ -2600,6 +2608,7 @@ export default {
 
     eventBus.$on("rescanStopped", () => {
       this.$shared.isScanning = false;
+      store.resetAbortRescan();
     });
 
     eventBus.$on("scanInfoOff", () => {
