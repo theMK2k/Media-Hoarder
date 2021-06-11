@@ -36,8 +36,8 @@
 
             <div v-on:click.stop="toggleShowMovies()">
               <v-row
+                v-if="numMovies !== null"
                 class="mk-clickable"
-                v-if="!isScraping"
                 style="margin: 8px 6px 8px 4px"
               >
                 {{
@@ -47,7 +47,7 @@
                   (!showMovies ? " »" : "")
                 }}
               </v-row>
-              <div v-if="!isScraping && showMovies" class="mk-clickable-white">
+              <div v-if="showMovies" class="mk-clickable-white">
                 <div v-for="(movie, index) in movies" v-bind:key="index">
                   <v-row
                     style="
@@ -69,6 +69,7 @@
       <v-col sm="12">
         <v-row style="margin-top: 8px">
           <v-btn
+            v-if="numMovies !== null"
             class="xs-fullwidth"
             color="secondary"
             v-on:click.native="onCloseClick"
@@ -82,7 +83,6 @@
             style="margin-left: 8px"
           >
             {{ $t("Filter by this plot keyword") }}
-            <span v-if="numMovies">({{ numMovies }})</span>
           </v-btn>
         </v-row>
       </v-col>
@@ -122,6 +122,7 @@ export default {
     async init($id_IMDB_Plot_Keywords) {
       this.movies = [];
       this.showMovies = false;
+      this.numMovies = null;
 
       this.numMovies = await store.db.fireProcedureReturnScalar(
         `
