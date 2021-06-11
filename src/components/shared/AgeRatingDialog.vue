@@ -36,8 +36,8 @@
 
             <div v-on:click.stop="toggleShowMovies()">
               <v-row
+                v-if="numMovies !== null"
                 class="mk-clickable"
-                v-if="!isScraping"
                 style="margin: 8px 6px 8px 4px"
               >
                 {{
@@ -47,7 +47,7 @@
                   (!showMovies ? " »" : "")
                 }}
               </v-row>
-              <div v-if="!isScraping && showMovies" class="mk-clickable-white">
+              <div v-if="showMovies" class="mk-clickable-white">
                 <div v-for="(movie, index) in movies" v-bind:key="index">
                   <v-row
                     style="
@@ -84,13 +84,13 @@
             <v-icon small>mdi-web</v-icon>&nbsp;IMDB
           </v-btn>-->
           <v-btn
+            v-if="numMovies !== null"
             class="xs-fullwidth"
             color="primary"
             v-on:click.native="onFilterClick"
             style="margin-left: 8px"
           >
             {{ $t("Filter by this age rating") }}
-            <span v-if="numMovies">({{ numMovies }})</span>
           </v-btn>
         </v-row>
       </v-col>
@@ -154,6 +154,7 @@ export default {
     async init(Age_Rating) {
       this.movies = [];
       this.showMovies = false;
+      this.numMovies = null;
 
       const payload = {
         $MinAge: this.getMinAge(Age_Rating),
