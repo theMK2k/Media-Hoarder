@@ -2,14 +2,6 @@
 
 ## v1.0.0
 
-- BUG: duplicate genres, e.g.
-  - Byzantinum (tt1531901)
-  - Gefangen in der Hölle (tt0243609)
-  - Helden von Hill 60 (tt1418646)
-
-- BUG: missing metadata, e.g.
-  - Gefangen in der Hölle (tt0243609) (poster, plot summary, )
-
 - BUG: file_created_at is always null?
 
 - New Filter: Data Quality
