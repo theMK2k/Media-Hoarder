@@ -2,7 +2,12 @@
 
 ## v1.0.0
 
-- BUG: file_created_at is always null?
+### Bugs
+
+- file_created_at is always null?
+- writing credits are sometimes not fetched at all, see Arlington Road (https://www.imdb.com/title/tt0137363/)
+
+### Other
 
 - New Filter: Data Quality
   - missing secondary title
@@ -16,14 +21,6 @@
   - same queue as a "Scan Media" process
 
 - introduce #tags instead of lists (keep the datastructures in .db though)
-
-### Bugs
-
-- writing credits are sometimes not fetched at all, see Arlington Road (https://www.imdb.com/title/tt0137363/)
-
-### Other
-
-- nothing
 
 ## LATER
 
@@ -74,7 +71,7 @@
 
 ### Filters Customization
 
-- [ ] implement App - Filters as array with Sort field
+- [ ] UI: implement App - Filters as array with Sort field
 - [ ] add Settings - Filters tab
 - [ ] user may reorder and show/hide filters
 - [ ] also use this in the filtersList creation
