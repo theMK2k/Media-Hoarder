@@ -2,7 +2,6 @@ const fs = require("fs");
 const logger = require("loglevel");
 const cheerio = require("cheerio");
 const htmlToText = require("html-to-text");
-const filenamify = require("filenamify");
 
 const helpers = require("./helpers/helpers");
 
@@ -925,8 +924,14 @@ async function scrapeIMDBFullCreditsData(movie) {
 
     // eslint-disable-next-line no-cond-assign
     while ((ccMatch = rx_creditsCategories.exec(html))) {
-      const creditsCategory = ccMatch[1].trim();
-      logger.log(creditsCategory);
+      const creditsCategory = unescape(
+        htmlToText
+          .fromString(ccMatch[1], {
+            wordwrap: null,
+            ignoreImage: true,
+            ignoreHref: true,
+          })).split('(')[0].trim();
+      logger.log('creditsCategory found:', creditsCategory);
 
       const result = parseCreditsCategory(html, creditsCategory, credits);
 

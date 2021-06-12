@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] writing credits are sometimes not fetched at all, see Arlington Road
 - [x] on Cancelling (re-scan): dont display button but show "cancelling..."
 - [x] imdb scraper: support "new" main page
 - [x] fix in imdb scraper where genres were duplicated

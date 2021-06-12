@@ -26,7 +26,8 @@
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
     "publish": "vue-cli-service electron:build -p always",
-    "start": "bash ./apply-hotfixes.sh && vue invoke electron-builder && vue-cli-service electron:serve"
+    "start": "bash ./apply-hotfixes.sh && vue invoke electron-builder && vue-cli-service electron:serve",
+    "start:lite": "bash ./apply-hotfixes.sh && vue-cli-service electron:serve"
   },
   "main": "background.js",
   "dependencies": {
