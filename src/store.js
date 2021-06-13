@@ -6441,9 +6441,10 @@ async function ensureToolPath(executable, settingName) {
   }
 
   // MacOS wild guess: VLC may be available at /Applications/VLC.app/Contents/MacOS/VLC
+  // TODO: this would always overwrite any user's setting!
+  // TODO: use shipped vlc and mediainfo-cli from ./bin/%platform%/
   if (process.platform === 'darwin' && executable === 'vlc') {
     const path = '/Applications/VLC.app/Contents/MacOS/VLC'
-
 
     if (await existsAsync(path)) {
       setSetting(settingName, path);
