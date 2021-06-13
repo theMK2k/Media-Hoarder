@@ -8,17 +8,7 @@
 
 ### Other
 
-- New Filter: Data Quality
-  - missing IMDB Link
-  - has Scan Errors
-  - missing Secondary Title
-  - missing Poster
-  - missing Plot Summary
-  - [x] fill the asterisk in MediaList
-  - i18n
-
-- check TMDB German Interface for better German words
-
+- nothing
 ## LATER
 
 ### Create i18n Editor

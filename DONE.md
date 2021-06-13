@@ -8,6 +8,14 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] New Filter: Data Quality
+  - missing IMDB Link
+  - has Scan Errors
+  - missing Secondary Title
+  - missing Poster
+  - missing Plot Summary
+  - [x] fill the asterisk in MediaList
+  - [x] i18n
 - [x] writing credits are sometimes not fetched at all, see Arlington Road
 - [x] on Cancelling (re-scan): dont display button but show "cancelling..."
 - [x] imdb scraper: support "new" main page
