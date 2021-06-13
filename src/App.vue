@@ -9,7 +9,10 @@
       v-bind:width="320"
     >
       <v-list dense>
-        <v-list-item v-on:click="onRescan" v-bind:disabled="store.doAbortRescan">
+        <v-list-item
+          v-on:click="onRescan"
+          v-bind:disabled="store.doAbortRescan"
+        >
           <v-list-item-action>
             <v-icon v-show="!isScanning">mdi-reload-alert</v-icon>
             <v-icon v-show="isScanning">mdi-cancel</v-icon>
@@ -1013,6 +1016,66 @@
                 </v-row>
               </v-expansion-panel-content>
             </v-expansion-panel>
+
+            <!-- FILTER DATA QUALITY -->
+            <v-expansion-panel
+              v-show="
+                $shared.filters.filterDataQuality &&
+                $shared.filters.filterDataQuality.length > 0
+              "
+              style="padding: 0px !important"
+            >
+              <v-expansion-panel-header style="padding: 8px !important">
+                <div>
+                  <v-icon>mdi-folder-outline</v-icon>
+                  {{ $t("Data Quality") }}
+                  {{
+                    $shared.filters.filterSettings.filterDataQualityAND
+                      ? "߷"
+                      : ""
+                  }}
+                  {{ filterDataQualityTitle }}
+                </div>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-row>
+                  <v-btn text v-on:click="setAllDataQuality(false)">{{
+                    $t("SET NONE")
+                  }}</v-btn>
+                  <v-btn text v-on:click="setAllDataQuality(true)">{{
+                    $t("SET ALL")
+                  }}</v-btn>
+                </v-row>
+                <v-switch
+                  v-bind:label="
+                    $shared.filters.filterSettings.filterDataQualityAND
+                      ? $t('all selected must apply')
+                      : $t('one selected must apply')
+                  "
+                  color="red"
+                  v-model="$shared.filters.filterSettings.filterDataQualityAND"
+                  v-on:click.native="filtersChanged"
+                ></v-switch>
+                <v-row
+                  v-for="dataQuality in $shared.filters.filterDataQuality"
+                  v-bind:key="dataQuality.Name"
+                >
+                  <v-checkbox
+                    v-bind:key="dataQuality.Name"
+                    v-bind:label="
+                      $t(dataQuality.DisplayText) +
+                      ' (' +
+                      dataQuality.NumMovies +
+                      ')'
+                    "
+                    v-model="dataQuality.Selected"
+                    v-on:click.native="filtersChanged"
+                    style="margin: 0px"
+                    color="mk-dark-grey"
+                  ></v-checkbox>
+                </v-row>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
           </v-expansion-panels>
         </div>
 
@@ -1072,7 +1135,9 @@
             </v-btn>
           </span>
         </template>
-        <span>{{ $t("Toggle Fullscreen (you can also use F11 on your keyboard)") }}</span>
+        <span>{{
+          $t("Toggle Fullscreen (you can also use F11 on your keyboard)")
+        }}</span>
       </v-tooltip>
     </v-app-bar>
 
@@ -1179,9 +1244,13 @@
               </p>
             </div>
             <div class="flex-grow-1"></div>
-            <v-btn text v-on:click="cancelRescan" v-bind:disabled="store.doAbortRescan">
+            <v-btn
+              text
+              v-on:click="cancelRescan"
+              v-bind:disabled="store.doAbortRescan"
+            >
               <v-icon v-if="!store.doAbortRescan">mdi-cancel</v-icon>
-              <span v-if="store.doAbortRescan">{{ $t('Cancelling___') }}</span>
+              <span v-if="store.doAbortRescan">{{ $t("Cancelling___") }}</span>
             </v-btn>
           </v-row>
         </v-bottom-navigation>
@@ -1379,7 +1448,7 @@ export default {
     store() {
       return store;
     },
-    
+
     isScanning() {
       return this.$shared.isScanning;
     },
@@ -1408,6 +1477,34 @@ export default {
         ).length +
         "/" +
         this.$shared.filters.filterSourcePaths.length +
+        ")"
+      );
+    },
+
+    filterDataQualityTitle() {
+      if (
+        !this.$shared.filters.filterDataQuality.find(
+          (filter) => !filter.Selected
+        )
+      ) {
+        return `(${this.$t("ALL")})`;
+      }
+
+      if (
+        !this.$shared.filters.filterDataQuality.find(
+          (filter) => filter.Selected
+        )
+      ) {
+        return `(${this.$t("NONE")})`;
+      }
+
+      return (
+        "(" +
+        this.$shared.filters.filterDataQuality.filter(
+          (filter) => filter.Selected
+        ).length +
+        "/" +
+        this.$shared.filters.filterDataQuality.length +
         ")"
       );
     },
@@ -1888,24 +1985,22 @@ export default {
 
     filterContentAdvisoryTitle() {
       if (
-        !Object.keys(
-          this.$shared.filters.filterParentalAdvisory
-        ).find((category) =>
-          this.$shared.filters.filterParentalAdvisory[category].find(
-            (filter) => !filter.Selected
-          )
+        !Object.keys(this.$shared.filters.filterParentalAdvisory).find(
+          (category) =>
+            this.$shared.filters.filterParentalAdvisory[category].find(
+              (filter) => !filter.Selected
+            )
         )
       ) {
         return `(${this.$t("ALL")})`;
       }
 
       if (
-        !Object.keys(
-          this.$shared.filters.filterParentalAdvisory
-        ).find((category) =>
-          this.$shared.filters.filterParentalAdvisory[category].find(
-            (filter) => filter.Selected
-          )
+        !Object.keys(this.$shared.filters.filterParentalAdvisory).find(
+          (category) =>
+            this.$shared.filters.filterParentalAdvisory[category].find(
+              (filter) => filter.Selected
+            )
         )
       ) {
         return `(${this.$t("NONE")})`;
@@ -2171,6 +2266,19 @@ export default {
         }
 
         fl.Selected = value;
+      });
+
+      this.filtersChanged();
+    },
+
+    setAllDataQuality: function (value, exclusionList) {
+      this.$shared.filters.filterDataQuality.forEach((dq) => {
+        if (exclusionList && exclusionList.find((val) => dq.Name === val)) {
+          dq.Selected = !value;
+          return;
+        }
+
+        dq.Selected = value;
       });
 
       this.filtersChanged();
@@ -2514,17 +2622,17 @@ export default {
     },
 
     onKeyDown(e) {
-      if (e.key === 'F11') {
-        logger.log('toggleFullScreen requested');
+      if (e.key === "F11") {
+        logger.log("toggleFullScreen requested");
         this.toggleFullScreen();
       }
-    }
+    },
   },
 
   // ### LifeCycleHooks ###
   created() {
     document.onkeydown = this.onKeyDown;
-    
+
     this.toggleFullScreen();
 
     this.$vuetify.theme.dark = true;
@@ -2576,10 +2684,7 @@ export default {
         } else {
           if (Array.isArray(textOrErrorObject.error.details)) {
             textOrErrorObject.error.details.forEach((detail) => {
-              if (
-                typeof detail === "string" ||
-                detail instanceof String
-              ) {
+              if (typeof detail === "string" || detail instanceof String) {
                 this.snackbar.details.push(detail);
               }
             });

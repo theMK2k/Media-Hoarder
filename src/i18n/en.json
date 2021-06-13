@@ -849,5 +849,12 @@
   "Toggle Fullscreen (you can also use F11 on your keyboard)": "Toggle Fullscreen (you can also use F11 on your keyboard)",
   "movie": "movie",
   "movies": "movies",
-  "Cancelling___": "Cancelling..."
+  "Cancelling___": "Cancelling...",
+  "Data Quality": "Data Quality",
+  "<no Anomalities>": "<no Anomalities>",
+  "missing IMDB Link": "missing IMDB Link",
+  "has Scan Errors": "has Scan Errors",
+  "missing Secondary Title": "missing Secondary Title",
+  "missing Poster": "missing Poster",
+  "missing Plot Summary": "missing Plot Summary"  
 }

@@ -30,6 +30,7 @@ const shared = new Vue({
         filterIMDBPlotKeywordsAND: false,
         filterIMDBFilmingLocationsAND: false,
         filterReleaseAttributesAND: false,
+        filterDataQualityAND: false
       },
       filterAgeRatings: [],
       filterRatings: [],
@@ -64,6 +65,8 @@ const shared = new Vue({
       filterIMDBFilmingLocations: [],
   
       filterReleaseAttributes: [],
+
+      filterDataQuality: []
     },
 
     contentAdvisoryCategories: [

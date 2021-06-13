@@ -930,5 +930,12 @@
   "Toggle Fullscreen (you can also use F11 on your keyboard)": "Vollbild Umschalten (funktioniert auch mit F11)",
   "movie": "Film",
   "movies": "Filme",
-  "Cancelling___": "Abbruch..."
+  "Cancelling___": "Abbruch...",
+  "Data Quality": "Datenqualität",
+  "<no Anomalities>": "<ohne Auffälligkeiten>",
+  "missing IMDB Link": "kein IMDB Link",
+  "has Scan Errors": "Fehler beim Einlesen",
+  "missing Secondary Title": "kein Sekundärtitel",
+  "missing Poster": "kein Poster",
+  "missing Plot Summary": "keine Handlungszusammenfassung"
 }

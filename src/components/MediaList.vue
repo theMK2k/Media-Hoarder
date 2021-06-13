@@ -427,26 +427,8 @@
                             inactive-color="grey"
                             style="margin-right: 26px; padding: 0px !important"
                             v-bind:star-points="[
-                              7,
-                              3,
-                              6,
-                              6,
-                              2,
-                              6,
-                              5,
-                              8,
-                              4,
-                              12,
-                              7,
-                              10,
-                              10,
-                              12,
-                              9,
-                              8,
-                              12,
-                              6,
-                              8,
-                              6,
+                              7, 3, 6, 6, 2, 6, 5, 8, 4, 12, 7, 10, 10, 12, 9,
+                              8, 12, 6, 8, 6,
                             ]"
                             v-bind:glow="1"
                             v-on:rating-selected="changeRating(item)"
@@ -1669,6 +1651,24 @@ export default {
         filtersList.push(this.$t("IMDB Ratings"));
       }
 
+      if (
+        this.$shared.filters.filterDataQuality &&
+        ((!this.$shared.filters.filterSettings.filterDataQualityAND &&
+          this.$shared.filters.filterDataQuality.find(
+            (filter) => !filter.Selected
+          )) ||
+          (this.$shared.filters.filterSettings.filterDataQualityAND &&
+            this.$shared.filters.filterDataQuality.find(
+              (filter) => filter.Selected
+            )))
+      ) {
+        filtersList.push(
+          `${this.$t("Data Quality")}${
+            this.$shared.filters.filterSettings.filterDataQualityAND ? " ߷" : ""
+          }`
+        );
+      }
+
       return filtersList;
     },
 
@@ -2055,6 +2055,7 @@ export default {
       await store.fetchFilterIMDBRating(this.mediatype);
       await store.fetchFilterMetacriticScore(this.mediatype);
       await store.fetchFilterReleaseAttributes(this.mediatype);
+      await store.fetchFilterDataQuality(this.mediatype);
 
       await store.fetchSortValues(this.mediatype);
 
@@ -2584,7 +2585,7 @@ export default {
     },
 
     isNullOrUndefined(value) {
-      return (value == null || typeof value === "undefined");
+      return value == null || typeof value === "undefined";
     },
 
     sort(a, b, reverse) {
@@ -2598,7 +2599,7 @@ export default {
       if (this.isNullOrUndefined(b)) {
         return reverse ? -1 : 1;
       }
-      
+
       if (a > b) {
         return reverse ? -1 : 1;
       }

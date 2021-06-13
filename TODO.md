@@ -4,22 +4,20 @@
 
 ### Bugs
 
-- file_created_at is always null?
+- IMDB Rating and Metacritic filter don't work properly (selected range 0-1 reveals thousands of movies)
 
 ### Other
 
 - New Filter: Data Quality
-  - missing secondary title
-  - missing IMDB Rating
-  - missing Metacritic Score
-  - missing Year
-  - missing plot summary
-  - ...
+  - missing IMDB Link
+  - has Scan Errors
+  - missing Secondary Title
+  - missing Poster
+  - missing Plot Summary
+  - [x] fill the asterisk in MediaList
+  - i18n
 
-- treat rescan of particular titles as a queue (don't disable all other titles when a rescan runs)
-  - same queue as a "Scan Media" process
-
-- introduce #tags instead of lists (keep the datastructures in .db though)
+- check TMDB German Interface for better German words
 
 ## LATER
 
@@ -99,6 +97,9 @@
 
 ### Other
 
+- [ ] treat rescan of particular titles as a queue (don't disable all other titles when a rescan runs)
+  - same queue as a "Scan Media" process
+- introduce #tags instead of lists (keep the datastructures in .db though)
 - [ ] correctly implement mk-scrollcontainer class (e.g. Medialist)
 - [ ] OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
 

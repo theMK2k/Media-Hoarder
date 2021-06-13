@@ -19,6 +19,7 @@ const execAsync = util.promisify(child_process.exec);
 const readFileAsync = util.promisify(fs.readFile);
 
 import { eventBus } from "@/main";
+import { select } from "async";
 import { isObjectLike } from "lodash";
 
 const db = require("./helpers/db");
@@ -2715,7 +2716,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
     if (filters.filterParentalAdvisory) {
       Object.keys(filters.filterParentalAdvisory).forEach((category) => {
         let filterPACategory = "";
-  
+
         if (
           filters.filterParentalAdvisory[category] &&
           filters.filterParentalAdvisory[category].find(
@@ -2731,27 +2732,27 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
           } else {
             filterPACategory = `AND (1=0 `;
           }
-  
+
           if (
             filters.filterParentalAdvisory[category].find(
               (filter) => filter.Selected && filter.Severity >= 0
             )
           ) {
             filterPACategory += `OR MOV.IMDB_Parental_Advisory_${category} IN (`;
-  
+
             filterPACategory += filters.filterParentalAdvisory[category]
               .filter((filter) => filter.Selected)
               .map((filter) => filter.Severity)
               .reduce((prev, current) => {
                 return prev + (prev ? ", " : "") + current;
               }, "");
-  
+
             filterPACategory += ")";
           }
-  
+
           filterPACategory += ")";
         }
-  
+
         if (filterPACategory) {
           filterParentalAdvisory += `${filterPACategory}
           `;
@@ -3289,6 +3290,69 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
       }
     }
 
+    let filterDataQuality = "";
+    logger.log('filters.filterDataQuality:', filters.filterDataQuality);
+
+    const getFilterDataQualityQuery = function (filterDataQualityName) {
+      switch (filterDataQualityName) {
+        case '<noAnomalities>':
+          return `SELECT id_Movies FROM tbl_Movies WHERE (
+            IMDB_tconst IS NOT NULL
+            AND scanErrors IS NULL
+            AND Name2 IS NOT NULL
+            AND IMDB_posterSmall_URL IS NOT NULL
+            AND IMDB_plotSummary IS NOT NULL
+          )`;
+        case 'missingIMDBLink':
+          return `SELECT id_Movies FROM tbl_Movies WHERE IMDB_tconst IS NULL`;
+        case 'hasScanErrors': return `SELECT id_Movies FROM tbl_Movies WHERE scanErrors IS NOT NULL`;
+        case 'missingSecondaryTitle': return `SELECT id_Movies FROM tbl_Movies WHERE Name2 IS NULL`;
+        case 'missingPoster': return `SELECT id_Movies FROM tbl_Movies WHERE IMDB_posterSmall_URL IS NULL`;
+        case 'missingPlotSummary': return `SELECT id_Movies FROM tbl_Movies WHERE IMDB_plotSummary IS NULL`;
+        default:
+          throw new Error(`Unknown data quality filter "${filterDataQualityName}"`)
+          break;
+      }
+    }
+
+    if (
+      filters.filterDataQuality &&
+      (!filters.filterSettings.filterDataQualityAND &&
+        filters.filterDataQuality.find((filter) => !filter.Selected)) ||
+        (filters.filterSettings.filterDataQualityAND &&
+          filters.filterDataQuality.find(
+            (filter) => filter.Selected
+          ))
+    ) {
+      const filterDataQualityList = filters.filterDataQuality
+        .filter((filter) => filter.Selected)
+        .map((filter) => filter.Name);
+
+      if (filters.filterSettings.filterDataQualityAND) {
+        // use INTERSECT for AND-filter
+        filterDataQuality = "AND MOV.id_Movies IN (";
+
+        filterDataQuality += filterDataQualityList.reduce((prev, current) => {
+          return (
+            prev +
+            (prev ? " INTERSECT " : "") +
+            getFilterDataQualityQuery(current)
+          );
+        }, "");
+
+        filterDataQuality += ")";
+      } else {
+        // use UNION for OR-filter
+        filterDataQuality += `AND MOV.id_Movies IN (`;
+
+        filterDataQuality += filterDataQualityList.reduce((prev, current) => {
+          return prev + (prev ? " UNION " : "") + getFilterDataQualityQuery(current);
+        }, "");
+
+        filterDataQuality += ")";
+      }
+    }
+
     let filter_id_Movies = "";
     if (arr_id_Movies && arr_id_Movies.length) {
       filter_id_Movies = "AND MOV.id_Movies IN (";
@@ -3313,6 +3377,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
     );
     logger.log("fetchMedia filterAudioLanguages:", filterAudioLanguages);
     logger.log("fetchMedia filterReleaseAttributes:", filterReleaseAttributes);
+    logger.log("fetchMedia filterDataQuality:", filterDataQuality);
     logger.log("fetchMedia filter_id_Movies:", filter_id_Movies);
 
     const query = `
@@ -3430,6 +3495,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
 		${filterMetacriticScore}
     ${filterIMDBRating}
     ${filterReleaseAttributes}
+    ${filterDataQuality}
     ${filter_id_Movies}
 	`;
 
@@ -3774,6 +3840,117 @@ async function fetchSortValues($MediaType) {
   logger.log("shared.sortField:", shared.sortField);
 
   return JSON.parse(result);
+}
+
+async function fetchFilterDataQuality($MediaType) {
+  logger.log("fetchFilterDataQuality MediaType:", $MediaType);
+
+  const filterValues = await fetchFilterValues($MediaType);
+
+  logger.log("fetchFilterDataQuality filterValues:", filterValues);
+
+  const results = await db.fireProcedureReturnAll(
+    `
+      SELECT
+        1 AS Selected
+        , '<noAnomalities>' AS Name
+        , '<no Anomalities>' AS DisplayText
+        , (
+          SELECT COUNT(1) FROM tbl_Movies MOV
+          INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
+          WHERE
+            (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+            AND MOV.Extra_id_Movies_Owner IS NULL
+            AND (
+              MOV.IMDB_tconst IS NOT NULL
+              AND MOV.scanErrors IS NULL
+              AND MOV.Name2 IS NOT NULL
+              AND MOV.IMDB_posterSmall_URL IS NOT NULL
+              AND MOV.IMDB_plotSummary IS NOT NULL
+            )
+      ) AS NumMovies
+      UNION ALL
+      SELECT
+        1 AS Selected
+        , 'missingIMDBLink' AS Name
+        , 'missing IMDB Link' AS DisplayText
+        , (
+            SELECT COUNT(1) FROM tbl_Movies MOV
+            INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
+            WHERE
+              (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+              AND MOV.Extra_id_Movies_Owner IS NULL
+              AND MOV.IMDB_tconst IS NULL
+        ) AS NumMovies
+      UNION ALL
+      SELECT 1 AS Selected
+      , 'hasScanErrors' AS Name
+      , 'has Scan Errors' AS DisplayText
+      , (
+          SELECT COUNT(1) FROM tbl_Movies MOV
+          INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
+          WHERE
+            (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+            AND MOV.Extra_id_Movies_Owner IS NULL
+            AND MOV.scanErrors IS NOT NULL
+      ) AS NumMovies
+      UNION ALL
+      SELECT 1 AS Selected
+      , 'missingSecondaryTitle' AS Name
+      , 'missing Secondary Title' AS DisplayText
+      , (
+          SELECT COUNT(1) FROM tbl_Movies MOV
+          INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
+          WHERE
+            (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+            AND MOV.Extra_id_Movies_Owner IS NULL
+            AND MOV.Name2 IS NULL
+      ) AS NumMovies
+      UNION ALL
+      SELECT 1 AS Selected
+      , 'missingPoster' AS Name
+      , 'missing Poster' AS DisplayText
+      , (
+          SELECT COUNT(1) FROM tbl_Movies MOV
+          INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
+          WHERE
+            (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+            AND MOV.Extra_id_Movies_Owner IS NULL
+            AND MOV.IMDB_posterSmall_URL IS NULL
+      ) AS NumMovies
+      UNION ALL
+      SELECT 1 AS Selected
+      , 'missingPlotSummary' AS Name
+      , 'missing Plot Summary' AS DisplayText
+      , (
+          SELECT COUNT(1) FROM tbl_Movies MOV
+          INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
+          WHERE
+            (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+            AND MOV.Extra_id_Movies_Owner IS NULL
+            AND MOV.IMDB_plotSummary IS NULL
+      ) AS NumMovies
+    `,
+    { $MediaType }
+  );
+
+  if (filterValues && filterValues.filterDataQuality) {
+    results.forEach((result) => {
+      const filterValue = filterValues.filterDataQuality.find(
+        (value) => value.Name === result.Name
+      );
+
+      if (filterValue) {
+        result.Selected = filterValue.Selected;
+      }
+
+      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
+    });
+  }
+
+  logger.log("fetchFilterDataQuality result:", results);
+
+  shared.filters.filterDataQuality = results;
 }
 
 async function fetchFilterSourcePaths($MediaType) {
@@ -6438,6 +6615,7 @@ export {
   fetchFilterIMDBRating,
   fetchFilterMetacriticScore,
   fetchFilterReleaseAttributes,
+  fetchFilterDataQuality,
   abortRescan,
   resetAbortRescan,
   createList,
