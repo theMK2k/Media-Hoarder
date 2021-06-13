@@ -3164,9 +3164,9 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
       )
     ) {
       if (!filters.filterMetacriticScoreNone) {
-        filterMetacriticScore = "AND (MOV.IMDB_metacriticScore IS NOT NULL OR ";
+        filterMetacriticScore = "AND (MOV.IMDB_metacriticScore IS NOT NULL AND ";
       } else {
-        filterMetacriticScore = "AND (1 = 0 OR ";
+        filterMetacriticScore = "AND (MOV.IMDB_metacriticScore IS NULL OR ";
       }
 
       if (
@@ -3192,9 +3192,9 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
       )
     ) {
       if (!filters.filterIMDBRatingNone) {
-        filterIMDBRating = "AND (MOV.IMDB_rating IS NOT NULL OR ";
+        filterIMDBRating = "AND (MOV.IMDB_rating IS NOT NULL AND ";
       } else {
-        filterIMDBRating = "AND (1 = 0 OR ";
+        filterIMDBRating = "AND (MOV.IMDB_rating IS NULL OR ";
       }
 
       if (filters.filterIMDBRating[0] > 0 || filters.filterIMDBRating[1] < 10) {

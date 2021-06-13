@@ -2,13 +2,16 @@
 
 ## v1.0.0
 
+- provide MediaInfo CLI alongside the App (use ./bin/%platform%/mediainfo-cli/)
+
 ### Bugs
 
-- IMDB Rating and Metacritic filter don't work properly (selected range 0-1 reveals thousands of movies)
+- nothing
 
 ### Other
 
 - nothing
+
 ## LATER
 
 ### Create i18n Editor

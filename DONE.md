@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] IMDB Rating and Metacritic filters fixed
 - [x] New Filter: Data Quality
   - missing IMDB Link
   - has Scan Errors
