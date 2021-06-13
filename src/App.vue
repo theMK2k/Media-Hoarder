@@ -1027,7 +1027,7 @@
             >
               <v-expansion-panel-header style="padding: 8px !important">
                 <div>
-                  <v-icon>mdi-folder-outline</v-icon>
+                  <v-icon>mdi-check-box-outline</v-icon>
                   {{ $t("Data Quality") }}
                   {{
                     $shared.filters.filterSettings.filterDataQualityAND
