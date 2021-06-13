@@ -3,6 +3,7 @@
 ## v1.0.0
 
 - provide MediaInfo CLI alongside the App (use ./bin/%platform%/mediainfo-cli/)
+  - use the location as default location of mediainfo cli
 
 ### Bugs
 

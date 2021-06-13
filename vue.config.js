@@ -10,14 +10,25 @@ module.exports = {
         publish: [
           'github'
         ],
+        win: {
+          extraResources: [
+            'bin/win'
+          ]
+        },
         linux: {
-          category: 'AudioVideo'
+          category: 'AudioVideo',
+          extraResources: [
+            'bin/linux'
+          ]
         },
         afterSign: "@oshell/vue-cli-plugin-electron-builder-notarize",
         mac: {
           hardenedRuntime: true,
           entitlements: "./entitlements.plist",
-        }
+          extraResources: [
+            'bin/mac'
+          ]
+        },
       },
     },
     i18n: {
