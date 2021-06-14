@@ -8,6 +8,9 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] provide VLC and MediaInfo CLI alongside the App (use ./bin/%platform%/mediainfo-cli/)
+        - use the location as default location of mediainfo cli
+        - currently only for Windows
 - [x] IMDB Rating and Metacritic filters fixed
 - [x] New Filter: Data Quality
   - missing IMDB Link
