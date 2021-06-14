@@ -611,7 +611,7 @@
     "US Users": "US Users"
   },
 
-  "Warning: Mediainfo CLI Path is not set_ Please go to": "Warning: Mediainfo CLI Path is not set. Please go to",
+  "Warning: Mediainfo CLI Path cannot be found_ Please go to": "Warning: Mediainfo CLI Path cannot be found. Please go to",
   "and provide one_ You can get Mediainfo CLI from": "and provide one. You can get Mediainfo CLI from",
   "Quick Scan": "Quick Scan",
   "Complete Rescan": "Complete Rescan",
@@ -777,7 +777,7 @@
   "Search Term is missing_": "Search Term is missing.",
   "_Display As_ is missing_": "\"Display As\" is missing.",
   "Release Attribute saved successfully_": "Release Attribute saved successfully.",
-  "Release Attribute removed successfully_": "Release Attribute removed successfully_",
+  "Release Attribute removed successfully_": "Release Attribute removed successfully.",
   "RESET": "RESET",
   "Filter by this release attribute": "Filter by this release attribute",
   "Remove this release attribute for the current movie": "Remove this release attribute for the current movie",
@@ -799,7 +799,7 @@
   "Rescanning Movies": "Rescanning Movies",
   "Rescan started": "Rescan started",
   "{appName} needs the path to a media player of your choice for media playback_ We recommend the VLC media player, you can get it at_": "{appName} needs the path to a media player of your choice for media playback. We recommend the VLC media player, you can get it at:",
-  "{appName} needs the path to Mediainfo CLI in order to determine duration, video resolution and languages of your media_ You can get Mediainfo CLI at_": "{appName} needs the path to Mediainfo CLI in order to determine duration, video resolution and languages of your media. You can get Mediainfo CLI at_",
+  "{appName} needs the path to Mediainfo CLI in order to determine duration, video resolution and languages of your media_ You can get Mediainfo CLI at_": "{appName} needs the path to Mediainfo CLI in order to determine duration, video resolution and languages of your media. You can get Mediainfo CLI at:",
   "Last Access Grace Period": "Last Access Grace Period",
   "{appName} provides the date and time of the last access for any medium_ In order to prevent unwanted updates, you can define a grace period in seconds where a medium can be played until the update is performed_": "{appName} provides the date and time of the last access for any medium. In order to prevent unwanted updates, you can define a grace period in seconds where a medium can be played until the update is performed.",
   "{appName} provides the IMDB score and number of votes for each medium _where applicable__ By default these are the numbers of all IMDB users_ You can, however, decide if you wish to see those of a certain demographic, e_g_ by gender or age_": "{appName} provides the IMDB score and number of votes for each medium (where applicable). By default these are the numbers of all IMDB users. You can, however, decide if you wish to see those of a certain demographic, e.g. by gender or age.",

@@ -611,7 +611,7 @@
     "US Users": "Amerikaner"
   },
 
-  "Warning: Mediainfo CLI Path is not set_ Please go to": "Warnung: Mediainfo CLI Pfad ist nicht eingestellt. Bitte unter",
+  "Warning: Mediainfo CLI Path cannot be found_ Please go to": "Warnung: Mediainfo CLI Pfad konnte nicht gefunden werden. Bitte unter",
   "and provide one_ You can get Mediainfo CLI from": "einstellen. Mediainfo CLI bekommt man von",
   "Quick Scan": "Schnelles Einlesen",
   "Complete Rescan": "Vollständiges Einlesen",
@@ -746,8 +746,6 @@
     "Special Effects": "Spezialeffekte"
   },
 
-  "Sort by": "Sortiert nach",
-
   "moment": {
     "months": [
       "Januar",
@@ -826,6 +824,7 @@
       "doy": 4
     }
   },
+  "Sort by": "Sortiert nach",
   "Language of the Application": "Sprache der Anwendung",
   "Change the language of the application here_": "Hier kannst Du die Sprache der Anwendung ändern.",
   "Application Language saved_": "Sprache der Anwendung gespeichert.",
@@ -836,7 +835,7 @@
   "Perform an IMDB Scraper Check before Scan": "Vor dem Einlesen eine IMDB Scraper Prüfung durchführen",
   "Filter by this video quality": "Nach dieser Videoqualität Filtern",
   "Age Rating": "Altersfreigabe",
-  "Filter by this age rating": "Nach dieser Alterfreigabe Filtern",
+  "Filter by this age rating": "Nach dieser Altersfreigabe Filtern",
   "Genre": "Genre",
   "Filter by this genre": "Nach diesem Genre Filtern",
   "Subtitle Language": "Untertitelsprache",
