@@ -6440,18 +6440,32 @@ async function ensureToolPath(executable, settingName) {
     return;
   }
 
-  // MacOS wild guess: VLC may be available at /Applications/VLC.app/Contents/MacOS/VLC
-  // TODO: this would always overwrite any user's setting!
-  // TODO: use shipped vlc and mediainfo-cli from ./bin/%platform%/
-  if (process.platform === 'darwin' && executable === 'vlc') {
-    const path = '/Applications/VLC.app/Contents/MacOS/VLC'
+  let toolpath = null;  // no path is set, for win we can use shipped vlc and mediainfo, for mac we could wildly guess
 
-    if (await existsAsync(path)) {
-      setSetting(settingName, path);
-      return;
+  if (process.platform === 'win32') {
+    if (executable === 'vlc') {
+      toolpath = helpers.getStaticPath(path.join('bin', 'win', 'vlc', 'vlc.exe'));
+      logger.log('ensureToolPath VLC path:', toolpath);
+    }
+    if (executable === 'mediainfo') {
+      // use ./bin/win/mediainfo-cli/MediaInfo.exe
+      toolpath = helpers.getStaticPath(path.join('bin', 'win', 'mediainfo-cli', 'MediaInfo.exe'));
+      logger.log('ensureToolPath MediaInfo CLI path:', toolpath);
     }
   }
 
+  // MacOS wild guess: VLC may be available at /Applications/VLC.app/Contents/MacOS/VLC
+  if (process.platform === 'darwin' && executable === 'vlc') {
+    toolpath = '/Applications/VLC.app/Contents/MacOS/VLC'
+  }
+
+  // check if the application is available and save
+  if (await existsAsync(toolpath)) {
+    setSetting(settingName, toolpath);
+    return;
+  }
+
+  // use which/where to find the application (possibly it is already installed)
   let lookupTask = '';
 
   if (helpers.isWindows) {
