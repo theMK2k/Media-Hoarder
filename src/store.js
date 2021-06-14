@@ -3319,10 +3319,10 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
       filters.filterDataQuality &&
       (!filters.filterSettings.filterDataQualityAND &&
         filters.filterDataQuality.find((filter) => !filter.Selected)) ||
-        (filters.filterSettings.filterDataQualityAND &&
-          filters.filterDataQuality.find(
-            (filter) => filter.Selected
-          ))
+      (filters.filterSettings.filterDataQualityAND &&
+        filters.filterDataQuality.find(
+          (filter) => filter.Selected
+        ))
     ) {
       const filterDataQualityList = filters.filterDataQuality
         .filter((filter) => filter.Selected)

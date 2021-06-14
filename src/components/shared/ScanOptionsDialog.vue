@@ -13,7 +13,7 @@
       </v-card-title>
       <v-card-text>
         <v-alert type="warning" colored-border border="left" v-if="showMediaInfoWarning" dense>
-          {{$t('Warning: Mediainfo CLI Path is not set_ Please go to')}}
+          {{$t('Warning: Mediainfo CLI Path cannot be found_ Please go to')}}
           <a v-on:click="openSettings">{{$t('Settings')}}</a> {{$t('and provide one_ You can get Mediainfo CLI from')}} <a v-on:click="openMediaArea">www.mediaarea.net</a>.
         </v-alert>
 
@@ -118,6 +118,7 @@
 <script>
 const logger = require("loglevel");
 
+import * as helpers from "@/helpers/helpers";
 import * as store from "@/store";
 
 const { shell } = require("electron").remote;
@@ -189,9 +190,15 @@ export default {
 
       logger.log("this.missingSourcePaths:", this.missingSourcePaths);
 
-      this.showMediaInfoWarning = (await store.getSetting("MediainfoPath"))
-        ? false
-        : true;
+      const mediaInfoPath = await store.getSetting("MediainfoPath");
+
+      if (!await helpers.existsAsync(mediaInfoPath)) {
+        this.showMediaInfoWarning = true;
+      } else {
+        this.showMediaInfoWarning = false;
+      }
+
+      this.showMediaInfoWarning = true;   // KILLME
 
       this.isLoading = false;
     },
