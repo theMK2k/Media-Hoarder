@@ -3295,7 +3295,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
 
     const getFilterDataQualityQuery = function (filterDataQualityName) {
       switch (filterDataQualityName) {
-        case '<noAnomalities>':
+        case '<noAnomalies>':
           return `SELECT id_Movies FROM tbl_Movies WHERE (
             IMDB_tconst IS NOT NULL
             AND scanErrors IS NULL
@@ -3853,8 +3853,8 @@ async function fetchFilterDataQuality($MediaType) {
     `
       SELECT
         1 AS Selected
-        , '<noAnomalities>' AS Name
-        , '<no Anomalities>' AS DisplayText
+        , '<noAnomalies>' AS Name
+        , '<no Anomalies>' AS DisplayText
         , (
           SELECT COUNT(1) FROM tbl_Movies MOV
           INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
