@@ -2,7 +2,9 @@
 
 ## v1.0.0
 
-- nothing
+- introduce a scan error (more like scan warning) when:
+  - actual runtime differs from imdb runtime
+  - release year differs from imdb year
 
 ### Bugs
 
