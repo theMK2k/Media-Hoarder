@@ -198,8 +198,6 @@ export default {
         this.showMediaInfoWarning = false;
       }
 
-      this.showMediaInfoWarning = true;   // KILLME
-
       this.isLoading = false;
     },
 
