@@ -2,8 +2,6 @@
 
 ## v1.0.0
 
-- check if dialogs are scrollable (see IMDB Scraper Check Dialog)
-
 - placeholder image for Person Dialog
 
 - introduce a scan error (more like scan warning) when:
