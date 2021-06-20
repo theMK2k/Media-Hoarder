@@ -2,6 +2,8 @@
 
 ## v1.0.0
 
+- check if dialogs are scrollable (see IMDB Scraper Check Dialog)
+
 - introduce a scan error (more like scan warning) when:
   - actual runtime differs from imdb runtime
   - release year differs from imdb year
