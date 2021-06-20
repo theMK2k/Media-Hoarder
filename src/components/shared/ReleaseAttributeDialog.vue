@@ -4,94 +4,76 @@
     persistent
     max-width="1000px"
     v-on:keydown.escape="onEscapePressed"
+    scrollable
   >
     <v-card dark flat v-bind:ripple="false">
-      <v-list-item style="padding-left: 0px">
-        <v-list-item-content
-          class="align-self-start"
-          style="padding-left: 8px; padding-bottom: 6px"
-        >
-          <v-col style="padding: 0px !important" sm="12">
-            <v-row>
-              <div style="margin-left: 16px">
-                <v-list-item-title
-                  class="headline mb-2"
-                  style="margin-bottom: 0px !important"
-                  >{{ $t("Release Attribute") }}:
-                  {{ ReleaseAttribute }}</v-list-item-title
-                >
-              </div>
-            </v-row>
+      <v-card-title>
+        {{ $t("Release Attribute") }}:
+        {{ ReleaseAttribute }}
+        <v-progress-linear
+          v-if="isScraping || isLoadingMovies"
+          color="red accent-0"
+          indeterminate
+          rounded
+          height="3"
+        ></v-progress-linear>
+      </v-card-title>
 
-            <v-progress-linear
-              v-if="isScraping || isLoadingMovies"
-              color="red accent-0"
-              indeterminate
-              rounded
-              height="3"
-            ></v-progress-linear>
-
-            <div v-on:click.stop="toggleShowMovies()">
-              <v-row
-                v-if="numMovies !== null"
-                class="mk-clickable"
-                style="margin: 8px 6px 8px 4px"
-              >
-                {{
-                  numMovies +
-                  " " +
-                  $t(numMovies === 1 ? "movie" : "movies") +
-                  (!showMovies ? " »" : "")
-                }}
-              </v-row>
-              <div v-if="showMovies" class="mk-clickable-white">
-                <div v-for="(movie, index) in movies" v-bind:key="index">
-                  <v-row
-                    style="
-                      margin-left: 20px;
-                      margin-right: 6px;
-                      margin-bottom: 8px;
-                    "
-                  >
-                    {{ movie.Name }}
-                    {{ movie.Name2 ? " | " + movie.Name2 : "" }}
-                    {{ movie.yearDisplay }}
-                  </v-row>
-                </div>
-              </div>
-            </div>
-          </v-col>
-        </v-list-item-content>
-      </v-list-item>
-      <v-col sm="12">
-        <v-row style="margin-top: 8px">
-          <v-btn
-            class="xs-fullwidth"
-            color="secondary"
-            v-on:click.native="onCloseClick"
-            style="margin-left: 8px"
-            >{{ $t("Close") }}</v-btn
-          >
-          <v-btn
+      <v-card-text>
+        <div v-on:click.stop="toggleShowMovies()">
+          <v-row
             v-if="numMovies !== null"
-            class="xs-fullwidth"
-            color="primary"
-            v-on:click.native="onFilterClick"
-            style="margin-left: 8px"
+            class="mk-clickable"
+            style="margin: 8px 6px 8px 4px"
           >
-            {{ $t("Filter by this release attribute") }}
-          </v-btn>
-          <v-btn
-            class="xs-fullwidth"
-            color="red"
-            v-on:click.native="onButtonClick('delete')"
-            style="margin-left: 8px"
-            >{{
-              $t("Remove this release attribute for the current movie")
-            }}</v-btn
-          >
-        </v-row>
-      </v-col>
+            {{
+              numMovies +
+              " " +
+              $t(numMovies === 1 ? "movie" : "movies") +
+              (!showMovies ? " »" : "")
+            }}
+          </v-row>
+          <div v-if="showMovies" class="mk-clickable-white">
+            <div v-for="(movie, index) in movies" v-bind:key="index">
+              <v-row
+                style="margin-left: 20px; margin-right: 6px; margin-bottom: 0px"
+              >
+                {{ movie.Name }}
+                {{ movie.Name2 ? " | " + movie.Name2 : "" }}
+                {{ movie.yearDisplay }}
+              </v-row>
+            </div>
+          </div>
+        </div>
+      </v-card-text>
+
+      <v-card-actions>
+        <v-btn
+          class="xs-fullwidth"
+          color="secondary"
+          v-on:click.native="onCloseClick"
+          style="margin-left: 8px"
+          >{{ $t("Close") }}</v-btn
+        >
+        <v-btn
+          v-if="numMovies !== null"
+          class="xs-fullwidth"
+          color="primary"
+          v-on:click.native="onFilterClick"
+          style="margin-left: 8px"
+        >
+          {{ $t("Filter by this release attribute") }}
+        </v-btn>
+        <v-btn
+          class="xs-fullwidth"
+          color="red"
+          v-on:click.native="onButtonClick('delete')"
+          style="margin-left: 8px"
+          >{{
+            $t("Remove this release attribute for the current movie")
+          }}</v-btn
+        >
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>

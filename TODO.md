@@ -4,6 +4,8 @@
 
 - check if dialogs are scrollable (see IMDB Scraper Check Dialog)
 
+- placeholder image for Person Dialog
+
 - introduce a scan error (more like scan warning) when:
   - actual runtime differs from imdb runtime
   - release year differs from imdb year
@@ -17,6 +19,16 @@
 - nothing
 
 ## LATER
+
+### Create Movie Editor
+
+- Primary Title
+- Secondary Title
+- Description
+- Languages
+- Genres
+- Release Attributes
+...
 
 ### Create i18n Editor
 
