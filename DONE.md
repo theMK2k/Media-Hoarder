@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] rework video quality detection (1085p is not UHD)
 - [x] provide VLC and MediaInfo CLI alongside the App (use ./bin/%platform%/mediainfo-cli/)
         - use the location as default location of mediainfo cli
         - currently only for Windows

@@ -1539,21 +1539,23 @@ async function applyMediaInfo(movie, onlyNew) {
           }
           const iHeight = parseInt(height);
 
+          const tolerance = 1.1;  // tolerance level, so that e.g. 1085p is NOT UHD
+          
           MI.$MI_Quality = "SD";
 
-          if (iWidth * iHeight > 720 * 576) {
+          if (iWidth * iHeight > 720 * 576 * tolerance) {
             MI.$MI_Quality = "720p";
           }
-          if (iWidth * iHeight > 1280 * 720) {
+          if (iWidth * iHeight > 1280 * 720 * tolerance) {
             MI.$MI_Quality = "HD";
           }
-          if (iWidth * iHeight > 1920 * 1080) {
+          if (iWidth * iHeight > 1920 * 1080 * tolerance) {
             MI.$MI_Quality = "UHD";
           }
-          if (iWidth * iHeight > 3840 * 2160) {
+          if (iWidth * iHeight > 3840 * 2160 * tolerance) {
             MI.$MI_Quality = "4K";
           }
-          if (iWidth * iHeight > 4096 * 2160) {
+          if (iWidth * iHeight > 4096 * 2160 * tolerance) {
             MI.$MI_Quality = "8K";
           }
         }
