@@ -2,6 +2,7 @@
 
 ## v1.0.0
 
+- placeholder image for movies
 - placeholder image for Person Dialog
 
 - introduce a scan error (more like scan warning) when:
