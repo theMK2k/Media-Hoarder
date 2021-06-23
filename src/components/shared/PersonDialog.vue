@@ -33,15 +33,6 @@
           style="padding-left: 0px; align-items: flex-start"
         >
           <div>
-            <!-- <v-skeleton-loader
-            v-if="isScraping"
-            ref="skeleton"
-            type="avatar"
-            tile
-            class="mx-auto"
-            style="margin: 6px; height: 150px; width: 120px"
-            ></v-skeleton-loader>-->
-
             <v-list-item-avatar
               tile
               style="margin: 6px; height: 150px; width: 120px"
@@ -53,6 +44,16 @@
                 v-bind:src="personData.Photo_URL"
                 style="border-radius: 6px"
               ></v-img>
+              <v-icon v-if="!personData.Photo_URL && !isScraping" disabled x-large loading>
+                mdi-account-outline
+              </v-icon>
+              <v-progress-circular
+                v-if="isScraping"
+                indeterminate
+                color="grey"
+                size="32"
+                width="5"
+              ></v-progress-circular>
             </v-list-item-avatar>
           </div>
           <v-list-item-content
@@ -60,9 +61,7 @@
             style="padding-top: 6px; padding-bottom: 6px"
           >
             <v-col style="padding: 0px !important" sm="12">
-              <v-row
-                style="margin: 8px 6px 8px 4px"
-              >
+              <v-row style="margin: 8px 6px 8px 4px">
                 <div
                   v-if="!showLongBio"
                   style="font-size: 0.875rem; font-weight: normal"

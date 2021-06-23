@@ -2,22 +2,9 @@
 
 ## v1.0.0
 
-- placeholder image for movies
-- placeholder image for Person Dialog
-
 - introduce a scan error (more like scan warning) when:
   - actual runtime differs from imdb runtime
   - release year differs from imdb year
-
-### Bugs
-
-- nothing
-
-### Other
-
-- nothing
-
-## LATER
 
 ### Create Movie Editor
 
@@ -28,6 +15,18 @@
 - Genres
 - Release Attributes
 ...
+
+
+
+### Bugs
+
+- nothing
+
+### Other
+
+- nothing
+
+## LATER
 
 ### Create i18n Editor
 
