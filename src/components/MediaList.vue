@@ -270,13 +270,6 @@
                           </template>
                           <span>{{ $t("Edit Secondary Title") }}</span>
                         </v-tooltip>
-
-                        <!-- <v-icon
-                          v-show="item.name2Hovered"
-                          small
-                          class="mk-clickable"
-                          v-on:click.stop="onEditItem(item, 'Name2', 'Secondary Title')"
-                        >mdi-pencil</v-icon>-->
                       </v-list-item-subtitle>
 
                       <div style="font-size: 0.875rem; font-weight: normal">
@@ -1162,6 +1155,7 @@ import * as store from "@/store";
 import { eventBus } from "@/main";
 import { scrapeIMDBTrailerMediaURLs } from "@/imdb-scraper";
 import Dialog from "@/components/shared/Dialog.vue";
+import EditMediaItemDialog from "@/components/shared/EditMediaItemDialog.vue";
 import ListDialog from "@/components/shared/ListDialog.vue";
 import PersonDialog from "@/components/shared/PersonDialog.vue";
 import CompanyDialog from "@/components/shared/CompanyDialog.vue";
@@ -1205,6 +1199,7 @@ export default {
     "mk-pagination": Pagination,
     "mk-rating-demographics-dialog": RatingDemographicsDialog,
     "mk-release-attribute-dialog": ReleaseAttributeDialog,
+    "mk-edit-media-item-dialog": EditMediaItemDialog
   },
 
   data: () => ({
@@ -1335,6 +1330,11 @@ export default {
     itemsPerPage: 20,
 
     currentTime: moment(),
+
+    editMediaItemDialog: {
+      mediaItem: null,
+      mediaItemBackup: null
+    }
   }),
 
   watch: {
@@ -2617,6 +2617,18 @@ export default {
 
       return 0;
     },
+
+    onOpenEditMediaItemDialog(item) {
+      this.editMediaItemDialog.mediaItem = item;
+      this.editMediaItemDialog.mediaItemBackup = JSON.stringify(JSON.parse(item));
+      this.editMediaItemDialog.show = true;
+    },
+
+    onEditMediaItemDialogCancel() {
+      
+      
+      this.editMediaItemDialog.show = false;
+    }
   },
 
   // ### LifeCycle Hooks ###
