@@ -856,5 +856,9 @@
   "has Scan Errors": "has Scan Errors",
   "missing Secondary Title": "missing Secondary Title",
   "missing Poster": "missing Poster",
-  "missing Plot Summary": "missing Plot Summary"  
+  "missing Plot Summary": "missing Plot Summary",
+
+  "Edit Movie": "Edit Movie",
+  "Edit Series": "Edit Series",
+  "Edit Episode": "Edit Episode"
 }
