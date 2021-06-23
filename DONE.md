@@ -8,6 +8,8 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] placeholder icon for Person Dialog, also circular progress while scraping
+- [x] placeholder icon for movies
 - [x] rework video quality detection (1085p is not UHD)
 - [x] provide VLC and MediaInfo CLI alongside the App (use ./bin/%platform%/mediainfo-cli/)
         - use the location as default location of mediainfo cli
