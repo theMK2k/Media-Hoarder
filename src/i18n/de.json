@@ -936,5 +936,9 @@
   "has Scan Errors": "Fehler beim Einlesen",
   "missing Secondary Title": "kein Sekundärtitel",
   "missing Poster": "kein Poster",
-  "missing Plot Summary": "keine Handlungsbeschreibung"
+  "missing Plot Summary": "keine Handlungsbeschreibung",
+
+  "Edit Movie": "Film Bearbeiten",
+  "Edit Series": "Serie Bearbeiten",
+  "Edit Episode": "Episode Bearbeiten"
 }

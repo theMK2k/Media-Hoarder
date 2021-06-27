@@ -815,6 +815,33 @@ const shared = new Vue({
         deleted: false,
         sort: null
       }
+    ],
+
+    videoQualities: [
+      {
+        name: 'SD',
+        minResolution: 0 * 0
+      },
+      {
+        name: '720p',
+        minResolution: 720 * 576
+      },
+      {
+        name: 'HD',
+        minResolution: 1280 * 720
+      },
+      {
+        name: 'UHD',
+        minResolution: 1920 * 1080
+      },
+      {
+        name: '4K',
+        minResolution: 3840 * 2160
+      },
+      {
+        name: '8K',
+        minResolution: 4096 * 2160
+      }
     ]
   },
 

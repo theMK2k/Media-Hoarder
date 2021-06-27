@@ -1,5 +1,6 @@
 <template>
   <v-dialog
+    v-if="mediaItem"
     v-model="show"
     persistent
     max-width="1000px"
@@ -8,35 +9,29 @@
   >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
-        {{ $t(`Edit {typeDisplaytext}`, { typeDisplayText }) }} : {{ mediaItem.Name }}
+        {{ $t(caption) }}: {{ mediaItemBackup.Name }}
+        {{ mediaItemBackup.yearDisplay }}
       </v-card-title>
 
       <v-card-text>
-        <div v-on:click.stop="toggleShowMovies()">
-          <v-row
-            v-if="numMovies !== null"
-            class="mk-clickable"
-            style="margin: 8px 6px 8px 4px"
-          >
-            {{
-              numMovies +
-              " " +
-              $t(numMovies === 1 ? "movie" : "movies") +
-              (!showMovies ? " »" : "")
-            }}
-          </v-row>
-          <div v-if="showMovies" class="mk-clickable-white">
-            <div v-for="(movie, index) in movies" v-bind:key="index">
-              <v-row
-                style="margin-left: 20px; margin-right: 6px; margin-bottom: 0px"
-              >
-                {{ movie.Name }}
-                {{ movie.Name2 ? " | " + movie.Name2 : "" }}
-                {{ movie.yearDisplay }}
-              </v-row>
-            </div>
-          </div>
-        </div>
+        <v-text-field
+          v-bind:label="$t('Primary Title')"
+          v-model="mediaItem.Name"
+        ></v-text-field>
+        <v-text-field
+          v-bind:label="$t('Secondary Title')"
+          v-model="mediaItem.Name2"
+        ></v-text-field>
+        <v-text-field
+          v-bind:label="$t('Release Year')"
+          v-model="mediaItem.startYear"
+        ></v-text-field>
+        <v-select
+          v-bind:label="$t('Video Quality')"
+          v-bind:items="$shared.videoQualities.map((item) => item.name)"
+          v-model="mediaItem.MI_Quality"
+        >
+        </v-select>
       </v-card-text>
 
       <v-card-actions>
@@ -66,23 +61,32 @@ const logger = require("loglevel");
 import { eventBus } from "@/main";
 
 export default {
-  props: ["show", "type", "typeDisplayText", "mediaItem"],
+  props: ["show", "type", "caption", "mediaItem"],
 
   data() {
     return {
+      mediaItemBackup: {},
     };
   },
 
   watch: {
+    mediaItem(newValue) {
+      this.mediaItemBackup = newValue
+        ? JSON.parse(JSON.stringify(newValue))
+        : {};
+    },
   },
 
   methods: {
     onOKClick() {
-      this.$emit('ok');
+      // TODO: check if changes have been made (compare mediaItemBackup with mediaItem)
+      let hasChanges = false;
+
+      this.$emit("ok", hasChanges);
     },
-    
+
     onCancelClick() {
-        this.$emit('cancel');
+      this.$emit("cancel");
     },
 
     onEscapePressed() {

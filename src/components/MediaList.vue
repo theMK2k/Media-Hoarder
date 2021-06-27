@@ -186,7 +186,7 @@
                                 v-show="item.nameHovered || item.selected"
                                 class="mk-clickable"
                                 v-on:click.stop="
-                                  onEditItem(item, 'Name', $t('Primary Title'))
+                                  onOpenEditMediaItemDialog(item);
                                 "
                                 style="margin-left: 8px"
                                 >mdi-pencil</v-icon
@@ -194,7 +194,7 @@
                             </span>
                           </template>
                           <span style="margin-left: ">{{
-                            $t("Edit Primary Title")
+                            $t("Edit Movie")
                           }}</span>
                         </v-tooltip>
 
@@ -250,26 +250,6 @@
                       >
                         <!-- v-if="item.Name2 || item.selected" -->
                         {{ item.Name2 }}
-                        <v-tooltip bottom>
-                          <template v-slot:activator="{ on }">
-                            <span v-on="on">
-                              <v-icon
-                                v-show="item.name2Hovered || item.selected"
-                                small
-                                class="mk-clickable"
-                                v-on:click.stop="
-                                  onEditItem(
-                                    item,
-                                    'Name2',
-                                    $t('Secondary Title')
-                                  )
-                                "
-                                >mdi-pencil</v-icon
-                              >
-                            </span>
-                          </template>
-                          <span>{{ $t("Edit Secondary Title") }}</span>
-                        </v-tooltip>
                       </v-list-item-subtitle>
 
                       <div style="font-size: 0.875rem; font-weight: normal">
@@ -1110,18 +1090,6 @@
       v-on:close="onLocalVideoPlayerDialogClose"
     ></mk-local-video-player-dialog>
 
-    <mk-edit-item-dialog
-      ref="editItemNameDialog"
-      v-bind:show="editItemDialog.show"
-      v-bind:title="editItemDialog.title"
-      enterTextValue="true"
-      ok="OK"
-      cancel="Cancel"
-      cancelColor="secondary"
-      v-on:ok="onEditItemDialogOK"
-      v-on:cancel="onEditItemDialogCancel"
-    ></mk-edit-item-dialog>
-
     <mk-link-imdb-dialog
       ref="linkIMDBDialog"
       v-bind:show="linkIMDBDialog.show"
@@ -1144,6 +1112,17 @@
       v-on:close="releaseAttributeDialog.show = false"
       v-on:delete="onReleaseAttributesDialogDelete"
     ></mk-release-attribute-dialog>
+
+    <mk-edit-media-item-dialog
+      ref="editMediaItemDialog"
+      v-bind:show="editMediaItemDialog.show"
+      v-bind:mediaItem="editMediaItemDialog.mediaItem"
+      v-bind:caption="'Edit Movie'"
+
+      v-on:cancel="onEditMediaItemDialogCancel"
+      v-on:ok="onEditMediaItemDialogOK"
+    >
+    </mk-edit-media-item-dialog>
   </div>
 </template>
 
@@ -1154,7 +1133,6 @@ import * as Humanize from "humanize-plus";
 import * as store from "@/store";
 import { eventBus } from "@/main";
 import { scrapeIMDBTrailerMediaURLs } from "@/imdb-scraper";
-import Dialog from "@/components/shared/Dialog.vue";
 import EditMediaItemDialog from "@/components/shared/EditMediaItemDialog.vue";
 import ListDialog from "@/components/shared/ListDialog.vue";
 import PersonDialog from "@/components/shared/PersonDialog.vue";
@@ -1194,7 +1172,6 @@ export default {
     "mk-filming-location-dialog": FilmingLocationDialog,
     "mk-video-player-dialog": VideoPlayerDialog,
     "mk-local-video-player-dialog": LocalVideoPlayerDialog,
-    "mk-edit-item-dialog": Dialog,
     "mk-link-imdb-dialog": LinkIMDBDialog,
     "mk-pagination": Pagination,
     "mk-rating-demographics-dialog": RatingDemographicsDialog,
@@ -1332,8 +1309,8 @@ export default {
     currentTime: moment(),
 
     editMediaItemDialog: {
+      show: false,
       mediaItem: null,
-      mediaItemBackup: null
     }
   }),
 
@@ -2401,17 +2378,6 @@ export default {
       this.$set(item, `${section}Hovered`, value);
     },
 
-    onEditItem(item, attributeName, attributeDisplayText) {
-      this.editItemDialog.item = item;
-      this.editItemDialog.attributeName = attributeName;
-      this.editItemDialog.attributeDisplayText = attributeDisplayText;
-      this.editItemDialog.title = this.$t("Edit {something}", {
-        something: attributeDisplayText,
-      });
-      this.$refs.editItemNameDialog.initTextValue(item[attributeName]);
-      this.editItemDialog.show = true;
-    },
-
     async onEditItemDialogOK(result) {
       logger.log("EDIT NAME DIALOG OK result:", result);
       this.editItemDialog.show = false;
@@ -2619,15 +2585,23 @@ export default {
     },
 
     onOpenEditMediaItemDialog(item) {
-      this.editMediaItemDialog.mediaItem = item;
-      this.editMediaItemDialog.mediaItemBackup = JSON.stringify(JSON.parse(item));
+      logger.log('onOpenEditMediaItemDialog item:', item);
+      logger.log('this.$t:', this.$t);
+      this.editMediaItemDialog.mediaItem = JSON.parse(JSON.stringify(item));  // we don't allow direct manipulation of the item itself
       this.editMediaItemDialog.show = true;
     },
 
     onEditMediaItemDialogCancel() {
-      
-      
+      // nothing changed, so we can go along
       this.editMediaItemDialog.show = false;
+    },
+
+    onEditMediaItemDialogOK(hasChanges) {
+      this.editMediaItemDialog.show = false;
+
+      if (hasChanges) {
+        this.onReload();
+      }
     }
   },
 
