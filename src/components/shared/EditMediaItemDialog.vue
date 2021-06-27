@@ -32,6 +32,10 @@
           v-model="mediaItem.MI_Quality"
         >
         </v-select>
+
+        <div v-for="genre in genres" v-bind:key="genre.GenreID">
+          {{ genre.Name }}
+        </div>
       </v-card-text>
 
       <v-card-actions>
@@ -56,8 +60,10 @@
 </template>
 
 <script>
-import * as store from "@/store";
 const logger = require("loglevel");
+
+import * as helpers from "@/helpers/helpers";
+import * as store from "@/store";
 import { eventBus } from "@/main";
 
 export default {
@@ -74,6 +80,26 @@ export default {
       this.mediaItemBackup = newValue
         ? JSON.parse(JSON.stringify(newValue))
         : {};
+    },
+  },
+
+  computed: {
+    i18nCurrentMessages() {
+      logger.log(
+        "this.$i18n.messages[this.$i18n.locale]:",
+        this.$i18n.messages[this.$i18n.locale]
+      );
+      let messages = this.$i18n.messages[this.$i18n.locale];
+      return messages || this.$i18n.messages["en"];
+    },
+
+    genres() {
+      return Object.keys(this.i18nCurrentMessages.GenreNames).map((key) => {
+        return {
+          GenreID: key.toLowerCase(),
+          Name: this.i18nCurrentMessages.GenreNames[key],
+        };
+      }).sort((a, b) => helpers.compare(a.Name, b.Name, false));
     },
   },
 

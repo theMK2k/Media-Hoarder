@@ -338,6 +338,33 @@ function getStarRatingString(rating) {
   return label;
 }
 
+function isNullOrUndefined(value) {
+  return value == null || typeof value === "undefined";
+}
+
+function compare(a, b, reverse) {
+  if (this.isNullOrUndefined(a) && this.isNullOrUndefined(b)) {
+    return 0;
+  }
+
+  if (this.isNullOrUndefined(a)) {
+    return reverse ? 1 : -1;
+  }
+  if (this.isNullOrUndefined(b)) {
+    return reverse ? -1 : 1;
+  }
+
+  if (a > b) {
+    return reverse ? -1 : 1;
+  }
+  if (a < b) {
+    return reverse ? 1 : -1;
+  }
+
+  return 0;
+}
+
+
 export {
   isWindows,
   isPORTABLE,
@@ -365,4 +392,6 @@ export {
   getStarRatingString,
   setIMDBScraperWatchdogUseDumps,
   imdbScraperWatchdogUseDumps,
+  isNullOrUndefined,
+  compare
 };

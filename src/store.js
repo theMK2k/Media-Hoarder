@@ -4044,7 +4044,7 @@ async function fetchFilterGenres($MediaType, $t) {
 
   logger.log("fetchFilterGenres resultsFiltered:", resultsFiltered);
 
-  shared.filters.filterGenres = resultsFiltered;
+  shared.filters.filterGenres = resultsFiltered.sort((a, b) => helpers.compare(a.Name, b.Name, false));
 }
 
 async function fetchFilterAgeRatings($MediaType) {

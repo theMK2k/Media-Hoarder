@@ -1688,11 +1688,11 @@ export default {
 
           const reverse = !(this.$shared.sortField === "Name");
 
-          const primarySort = this.sort(valA, valB, reverse);
+          const primarySort = helpers.compare(valA, valB, reverse);
 
           if (!primarySort) {
             // equal by primary sort -> sort by Name
-            return this.sort(a.Name.toLowerCase(), b.Name.toLowerCase(), false);
+            return helpers.compare(a.Name.toLowerCase(), b.Name.toLowerCase(), false);
           }
 
           return primarySort;
@@ -2558,35 +2558,8 @@ export default {
       }
     },
 
-    isNullOrUndefined(value) {
-      return value == null || typeof value === "undefined";
-    },
-
-    sort(a, b, reverse) {
-      if (this.isNullOrUndefined(a) && this.isNullOrUndefined(b)) {
-        return 0;
-      }
-
-      if (this.isNullOrUndefined(a)) {
-        return reverse ? 1 : -1;
-      }
-      if (this.isNullOrUndefined(b)) {
-        return reverse ? -1 : 1;
-      }
-
-      if (a > b) {
-        return reverse ? -1 : 1;
-      }
-      if (a < b) {
-        return reverse ? 1 : -1;
-      }
-
-      return 0;
-    },
-
     onOpenEditMediaItemDialog(item) {
       logger.log('onOpenEditMediaItemDialog item:', item);
-      logger.log('this.$t:', this.$t);
       this.editMediaItemDialog.mediaItem = JSON.parse(JSON.stringify(item));  // we don't allow direct manipulation of the item itself
       this.editMediaItemDialog.show = true;
     },

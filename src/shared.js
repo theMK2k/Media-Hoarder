@@ -845,7 +845,11 @@ const shared = new Vue({
     ]
   },
 
-  methods: {}
+  computed: {
+  },
+
+  methods: {
+  }
 });
 
 shared.install = function() {
