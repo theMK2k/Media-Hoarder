@@ -26,6 +26,7 @@
           v-bind:label="$t('Release Year')"
           v-model="mediaItem.startYear"
         ></v-text-field>
+
         <v-select
           v-bind:label="$t('Video Quality')"
           v-bind:items="$shared.videoQualities.map((item) => item.name)"
@@ -33,9 +34,87 @@
         >
         </v-select>
 
-        <div v-for="genre in genres" v-bind:key="genre.GenreID">
-          {{ genre.Name }}
+        <h2 style="margin-top: 8px; margin-bottom: 8px">{{ $t("Genres") }}</h2>
+        <v-chip
+          v-for="(genre, index) in mediaItem.Genres"
+          v-bind:key="index"
+          label
+          outlined
+          draggable
+          close
+          close-icon="mdi-delete"
+          style="margin-right: 4px; margin-bottom: 4px"
+          v-on:click:close="onRemoveGenre(index)"
+        >
+          {{ genre.translated }}
+        </v-chip>
+        <div v-if="!mediaItem.Genres || mediaItem.Genres.length === 0">
+          <p>{{ $t("no genres") }}</p>
         </div>
+
+        <v-row align="center">
+          <v-menu
+            v-model="showAddGenreDialog"
+            v-bind:close-on-click="false"
+            v-bind:close-on-content-click="false"
+            bottom
+            right
+            transition="scale-transition"
+            origin="top left"
+          >
+            <template v-slot:activator="{ on }">
+              <v-btn
+                color="primary"
+                text
+                small
+                style="
+                  margin-left: 12px;
+                  margin-right: 4px;
+                  margin-bottom: 4px;
+                  margin-top: 8px;
+                "
+                v-on="on"
+                v-on:click="onShowAddGenreDialog"
+                >{{ $t("Add Genre") }}</v-btn
+              >
+            </template>
+            <v-card width="300">
+              <v-card-title>
+                {{ $t("Add Genre") }}
+              </v-card-title>
+              <v-card-text>
+                <v-select
+                  v-bind:items="genres"
+                  v-model="selectedGenre"
+                  item-text="Name"
+                  item-value="GenreID"
+                ></v-select>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="secondary"
+                  v-on:click.stop="showAddGenreDialog = false"
+                  >{{ $t("Cancel") }}</v-btn
+                >
+                <v-btn color="primary" v-on:click.stop="onAddGenreDialogOK">{{
+                  $t("OK")
+                }}</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-menu>
+        </v-row>
+
+        <!--
+        <v-btn
+          color="primary"
+          text
+          small
+          style="margin-right: 4px; margin-bottom: 4px"
+          v-on:click="onShowAddGenreDialog"
+          >{{ $t("ADD GENRE") }}</v-btn
+        >
+-->
       </v-card-text>
 
       <v-card-actions>
@@ -72,6 +151,8 @@ export default {
   data() {
     return {
       mediaItemBackup: {},
+      showAddGenreDialog: false,
+      selectedGenre: null,
     };
   },
 
@@ -94,12 +175,17 @@ export default {
     },
 
     genres() {
-      return Object.keys(this.i18nCurrentMessages.GenreNames).map((key) => {
-        return {
-          GenreID: key.toLowerCase(),
-          Name: this.i18nCurrentMessages.GenreNames[key],
-        };
-      }).sort((a, b) => helpers.compare(a.Name, b.Name, false));
+      return Object.keys(this.i18nCurrentMessages.GenreNames)
+        .map((key) => {
+          return {
+            GenreID: key,
+            Name: this.i18nCurrentMessages.GenreNames[key],
+          };
+        })
+        .sort((a, b) => helpers.compare(a.Name, b.Name, false))
+        .filter((item) =>
+          !this.mediaItem.Genres.find((genre) => genre.name === item.GenreID)
+        );
     },
   },
 
@@ -117,6 +203,32 @@ export default {
 
     onEscapePressed() {
       this.onCancelClick();
+    },
+
+    onRemoveGenre(index) {
+      const genre = this.mediaItem.Genres[index];
+      this.mediaItem.Genres.splice(index, 1);
+
+      eventBus.showSnackbar(
+        "success",
+        this.$t('Genre "{genre}" removed_', { genre: genre.translated })
+      );
+    },
+
+    onShowAddGenreDialog() {
+      this.selectedGenre = this.genres.length > 0 ? this.genres[0].GenreID : null;
+    },
+
+    onAddGenreDialogOK() {
+      // TODO: actually add the genre
+      if (this.selectedGenre) {
+        this.mediaItem.Genres.push({
+          name: this.selectedGenre,
+          translated: this.genres.find(genre => genre.GenreID === this.selectedGenre).Name
+        })
+      }
+      
+      this.showAddGenreDialog = false;
     },
   },
 

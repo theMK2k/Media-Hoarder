@@ -940,5 +940,7 @@
 
   "Edit Movie": "Film Bearbeiten",
   "Edit Series": "Serie Bearbeiten",
-  "Edit Episode": "Episode Bearbeiten"
+  "Edit Episode": "Episode Bearbeiten",
+  "Add Genre": "Genre Hinzufügen",
+  "Genre \"{genre}\" removed_": "Genre \"{genre}\" wurde entfernt."
 }

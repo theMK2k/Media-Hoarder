@@ -860,5 +860,7 @@
 
   "Edit Movie": "Edit Movie",
   "Edit Series": "Edit Series",
-  "Edit Episode": "Edit Episode"
+  "Edit Episode": "Edit Episode",
+  "Add Genre": "Add Genre",
+  "Genre \"{genre}\" removed_": "Genre \"{genre}\" removed."
 }

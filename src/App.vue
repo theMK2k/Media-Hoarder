@@ -2924,6 +2924,10 @@ h1 {
   max-width: 0px !important;
 }
 
+.v-icon.mdi-delete:hover {
+  color: red!important
+}
+
 /* ### marked overrides ### */
 code {
   background-color: rgba(0, 0, 0, 0) !important;
