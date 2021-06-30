@@ -857,7 +857,7 @@
   "Search Term is missing_": "Suchtext fehlt.",
   "_Display As_ is missing_": "\"Anzeige als\" fehlt.",
   "Release Attribute saved successfully_": "Veröffentlichungsattribut erfolgreich gespeichert.",
-  "Release Attribute removed successfully_": "Veröffentlichungsattribut erfolgreich entfernt.",
+  "Release Attribute \"{releaseAttribute}\" removed_": "Veröffentlichungsattribut \"{releaseAttribute}\" wurde entfernt.",
   "RESET": "ZURÜCKSETZEN",
   "Filter by this release attribute": "Nach diesem Veröffentlichungsattribut filtern",
   "Remove this release attribute for the current movie": "Dieses Veröffentlichungsattribut für den aktuellen Film entfernen",
