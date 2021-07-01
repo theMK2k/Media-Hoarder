@@ -862,5 +862,6 @@
   "Edit Series": "Edit Series",
   "Edit Episode": "Edit Episode",
   "Add Genre": "Add Genre",
-  "Genre \"{genre}\" removed_": "Genre \"{genre}\" removed."
+  "Genre \"{genre}\" removed_": "Genre \"{genre}\" removed.",
+  "Primary Title is missing_": "Primary Title is missing."
 }

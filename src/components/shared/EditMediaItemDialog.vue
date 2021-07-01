@@ -223,6 +223,8 @@ import * as helpers from "@/helpers/helpers";
 import * as store from "@/store";
 import { eventBus } from "@/main";
 
+const { deepDiffMapper } = require("@/helpers/deep-diff-mapper");
+
 export default {
   props: ["show", "type", "caption", "mediaItem"],
 
@@ -247,7 +249,7 @@ export default {
   computed: {
     i18nCurrentMessages() {
       logger.log(
-        "this.$i18n.messages[this.$i18n.locale]:",
+        "EditMediaItemDialog this.$i18n.messages[this.$i18n.locale]:",
         this.$i18n.messages[this.$i18n.locale]
       );
       let messages = this.$i18n.messages[this.$i18n.locale];
@@ -265,7 +267,7 @@ export default {
         .sort((a, b) => helpers.compare(a.Name, b.Name, false))
         .filter(
           (item) =>
-            !this.mediaItem.Genres.find((genre) => genre.name === item.GenreID)
+            !this.mediaItem.Genres || !this.mediaItem.Genres.find((genre) => genre.name === item.GenreID)
         );
     },
 
@@ -306,9 +308,44 @@ export default {
   },
 
   methods: {
-    onOKClick() {
-      // TODO: check if changes have been made (compare mediaItemBackup with mediaItem)
+    async onOKClick() {
+      // Check some fields
+      if (!this.mediaItem.Name) {
+        return eventBus.showSnackbar("error", this.$t('Primary Title is missing_'));
+      }
+
       let hasChanges = false;
+      const diff = deepDiffMapper.prune(
+        deepDiffMapper.map(this.mediaItem, this.mediaItemBackup)
+      );
+
+      logger.log('EditMediaItemDialog diff:', diff);
+      logger.log('EditMediaItemDialog Object.keys(diff):', Object.keys(diff));
+
+      if (Object.keys(diff).length > 0) {
+        logger.log('EditMediaItemDialog has changes!');
+        hasChanges = true;
+      }
+
+      if (Object.keys(diff).find(key => key === 'Name')) {
+        await store.updateMediaRecordField(this.mediaItem.id_Movies, 'Name', this.mediaItem.Name);
+      }
+
+      if (Object.keys(diff).find(key => key === 'Name2')) {
+        await store.updateMediaRecordField(this.mediaItem.id_Movies, 'Name2', this.mediaItem.Name2);
+      }
+
+      if (Object.keys(diff).find(key => key === 'startYear')) {
+        await store.updateMediaRecordField(this.mediaItem.id_Movies, 'startYear', this.mediaItem.startYear);
+      }
+
+      if (Object.keys(diff).find(key => key === 'MI_Quality')) {
+        await store.updateMediaRecordField(this.mediaItem.id_Movies, 'MI_Quality', this.mediaItem.MI_Quality);
+      }
+
+      if (Object.keys(diff).find(key => key === 'Genres')) {
+        await store.updateMovieGenres(this.mediaItem.id_Movies, this.mediaItem.Genres.map(item => item.name.toLowerCase()));
+      }
 
       this.$emit("ok", hasChanges);
     },
@@ -324,11 +361,11 @@ export default {
     onRemoveGenre(index) {
       const genre = this.mediaItem.Genres[index];
 
-      logger.log("genre array (before):", this.mediaItem.Genres);
+      logger.log("EditMediaItemDialog genre array (before):", this.mediaItem.Genres);
 
       this.mediaItem.Genres.splice(index, 1);
 
-      logger.log("genre array (after):", this.mediaItem.Genres);
+      logger.log("EditMediaItemDialog genre array (after):", this.mediaItem.Genres);
 
       eventBus.showSnackbar(
         "success",
@@ -343,6 +380,10 @@ export default {
 
     onAddGenreDialogOK() {
       if (this.selectedGenre) {
+        if (!this.mediaItem.Genres) {
+          this.mediaItem.Genres = [];
+        }
+        
         this.mediaItem.Genres.push({
           name: this.selectedGenre,
           translated: this.genres.find(
@@ -355,9 +396,9 @@ export default {
     },
 
     getReleaseAttribute(searchTerm) {
-      logger.log("searchTerm:", searchTerm);
+      logger.log("EditMediaItemDialog searchTerm:", searchTerm);
       logger.log(
-        "this.$shared.releaseAttributes",
+        "EditMediaItemDialog this.$shared.releaseAttributes",
         this.$shared.releaseAttributes
       );
       return this.$shared.releaseAttributes.find(
@@ -371,13 +412,13 @@ export default {
       );
 
       const arr = this.arrayReleaseAttributesSearchTerms;
-      logger.log("arr:", arr);
+      logger.log("EditMediaItemDialog arr:", arr);
 
       arr.splice(index, 1);
-      logger.log("spliced:", arr);
+      logger.log("EditMediaItemDialog spliced:", arr);
 
       const joined = arr.join(";");
-      logger.log("joined:", joined);
+      logger.log("EditMediaItemDialog joined:", joined);
 
       this.mediaItem.ReleaseAttributesSearchTerms = joined;
 
@@ -398,6 +439,7 @@ export default {
 
     onAddReleaseAttributeDialogOK() {
       if (this.selectedReleaseAttribute) {
+        // TODO: add release attribute to stringlist
         // this.mediaItem.Genres.push({
         //   name: this.selectedGenre,
         //   translated: this.genres.find(

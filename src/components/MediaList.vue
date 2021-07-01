@@ -2479,6 +2479,7 @@ export default {
     },
 
     onReload() {
+      logger.log('MediaList onReload');
       eventBus.refetchMedia();
     },
 

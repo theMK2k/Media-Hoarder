@@ -2194,6 +2194,7 @@ async function saveIMDBData(
     Object.assign(IMDBdata, { $id_Movies: movie.id_Movies, $scanErrors: (movie.scanErrors && Object.keys(movie.scanErrors).length > 0 ? JSON.stringify(movie.scanErrors) : null) })
   );
 
+  // TODO: START use await updateMovieGenres($id_Movies, genres)
   const movieGenres = await db.fireProcedureReturnAll(
     "SELECT MG.id_Movies_Genres, MG.id_Genres, G.GenreID, G.Name, 0 AS Found FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres WHERE MG.id_Movies = $id_Movies",
     { $id_Movies: movie.id_Movies }
@@ -2247,6 +2248,7 @@ async function saveIMDBData(
       );
     }
   }
+  // TODO: END use await updateMovieGenres($id_Movies, genres)
 
   const movieCredits = await db.fireProcedureReturnAll(
     `
@@ -6603,6 +6605,87 @@ async function fetchMediaNames($MediaType, filter) {
   const result = await db.fireProcedureReturnAll(query, { $MediaType });
 }
 
+async function updateMediaName($id_Movies, $Name) {
+  const query = `UPDATE tbl_Movies SET Name = $Name WHERE id_Movies = $id_Movies`;
+  await db.fireProcedure(query, { $id_Movies, $Name });
+}
+
+async function updateMediaName2($id_Movies, $Name2) {
+  const query = `UPDATE tbl_Movies SET Name2 = $Name2 WHERE id_Movies = $id_Movies`;
+  await db.fireProcedure(query, { $id_Movies, $Name2 });
+}
+
+async function updateMediaRecordField($id_Movies, FieldName, $Value) {
+  const query = `UPDATE tbl_Movies SET ${FieldName} = $Value WHERE id_Movies = $id_Movies`;
+  await db.fireProcedure(query, { $id_Movies, $Value });
+}
+
+/**
+ * 
+ * @param {Integer} $id_Movies 
+ * @param {Array<String>} genres e.g. ['action', 'adventure', 'sci-fi']
+ */
+async function updateMovieGenres($id_Movies, genres) {
+  const availableGenres = await db.fireProcedureReturnAll(
+    "SELECT id_Genres, GenreID, Name FROM tbl_Genres",
+    []
+  );
+  
+  const movieGenres = await db.fireProcedureReturnAll(
+    "SELECT MG.id_Movies_Genres, MG.id_Genres, G.GenreID, G.Name, 0 AS Found FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres WHERE MG.id_Movies = $id_Movies",
+    { $id_Movies }
+  );
+
+  for (let i = 0; i < genres.length; i++) {
+    const genre = genres[i].toLowerCase();
+
+    const movieGenre = movieGenres.find((mg) => mg.GenreID === genre);
+
+    if (movieGenre) {
+      // genre is already known
+      movieGenre.Found = true;
+    } else {
+      // genre needs to be added for the movie
+      if (!availableGenres.find((g) => g.GenreID === genre)) {
+        // genre needs to be added to main list of genres (we need id_Genres later)
+        await db.fireProcedure(
+          "INSERT INTO tbl_Genres (GenreID, Name) VALUES ($GenreID, $Name)",
+          { $GenreID: genre, $Name: helpers.uppercaseEachWord(genre) }
+        );
+        const id_Genres = await db.fireProcedureReturnScalar(
+          "SELECT id_Genres FROM tbl_Genres WHERE GenreID = $GenreID",
+          { $GenreID: genre }
+        );
+        availableGenres.push({
+          id_Genres: id_Genres,
+          GenreID: genre,
+          Name: helpers.uppercaseEachWord(genre),
+        });
+      }
+
+      const id_Genres = availableGenres.find((g) => g.GenreID === genre).id_Genres;
+      await db.fireProcedure(
+        "INSERT INTO tbl_Movies_Genres (id_Movies, id_Genres) VALUES ($id_Movies, $id_Genres)",
+        { $id_Movies, $id_Genres: id_Genres }
+      );
+    }
+  }
+
+  // remove existing genres that are not available anymore (e.g. re-link to another imdb entry)
+  for (let i = 0; i < movieGenres.length; i++) {
+    const movieGenre = movieGenres[i];
+
+    if (!movieGenre.Found) {
+      // logger.log('removing genre', movieGenre);
+
+      await db.fireProcedure(
+        "DELETE FROM tbl_Movies_Genres WHERE id_Movies_Genres = $id_Movies_Genres",
+        { $id_Movies_Genres: movieGenre.id_Movies_Genres }
+      );
+    }
+  }
+}
+
 export {
   db,
   doAbortRescan,
@@ -6688,5 +6771,7 @@ export {
   routeTo,
   fetchNumMovies,
   // ensureFilterReleaseYearsRange,
-  saveFilterValues
+  saveFilterValues,
+  updateMediaRecordField,
+  updateMovieGenres
 };
