@@ -64,15 +64,6 @@
         >
           {{ $t("Filter by this release attribute") }}
         </v-btn>
-        <v-btn
-          class="xs-fullwidth"
-          color="red"
-          v-on:click.native="onButtonClick('delete')"
-          style="margin-left: 8px"
-          >{{
-            $t("Remove this release attribute for the current movie")
-          }}</v-btn
-        >
       </v-card-actions>
     </v-card>
   </v-dialog>

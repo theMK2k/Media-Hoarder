@@ -272,6 +272,10 @@ export default {
     },
 
     arrayReleaseAttributesSearchTerms() {
+      if (!this.mediaItem.ReleaseAttributesSearchTerms) {
+        return [];
+      }
+      
       return this.mediaItem.ReleaseAttributesSearchTerms.split(";").filter(
         (item) => !!item
       );
@@ -345,6 +349,10 @@ export default {
 
       if (Object.keys(diff).find(key => key === 'Genres')) {
         await store.updateMovieGenres(this.mediaItem.id_Movies, this.mediaItem.Genres.map(item => item.name.toLowerCase()));
+      }
+
+      if (Object.keys(diff).find(key => key === 'ReleaseAttributesSearchTerms')) {
+        await store.updateMovieReleaseAttribues(this.mediaItem.id_Movies, this.mediaItem.ReleaseAttributesSearchTerms);
       }
 
       this.$emit("ok", hasChanges);
@@ -439,13 +447,7 @@ export default {
 
     onAddReleaseAttributeDialogOK() {
       if (this.selectedReleaseAttribute) {
-        // TODO: add release attribute to stringlist
-        // this.mediaItem.Genres.push({
-        //   name: this.selectedGenre,
-        //   translated: this.genres.find(
-        //     (genre) => genre.GenreID === this.selectedGenre
-        //   ).Name,
-        // });
+        this.mediaItem.ReleaseAttributesSearchTerms = (this.mediaItem.ReleaseAttributesSearchTerms ? this.mediaItem.ReleaseAttributesSearchTerms + ';' : '') + this.selectedReleaseAttribute
       }
 
       this.showAddReleaseAttributeDialog = false;
