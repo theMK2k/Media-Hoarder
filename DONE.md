@@ -47,6 +47,16 @@
 - [x] target: RELEASE directory with media-hoarder-VERSION-... files
 - [x] create set-release-version.js which renames the media-hoarder-VERSION-... files to media-hoarder-1.2.3-... files
 
+### Create Movie Editor
+
+- Primary Title
+- Secondary Title
+- Description
+- Languages
+- Genres
+- Release Attributes
+...
+
 ### Implement Home Screen Cards
 
 - bigger cards

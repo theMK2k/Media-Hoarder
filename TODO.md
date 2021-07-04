@@ -6,18 +6,6 @@
   - actual runtime differs from imdb runtime
   - release year differs from imdb year
 
-### Create Movie Editor
-
-- Primary Title
-- Secondary Title
-- Description
-- Languages
-- Genres
-- Release Attributes
-...
-
-
-
 ### Bugs
 
 - nothing
