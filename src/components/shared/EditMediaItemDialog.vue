@@ -40,6 +40,13 @@
         >
         </v-select>
 
+        <!-- Description -->
+        <v-textarea
+          v-bind:label="$t('Description')"
+          v-model="mediaItem.plotSummaryFull"
+        >
+        </v-textarea>
+
         <!-- Genres -->
         <div>
           <h2 style="margin-top: 8px; margin-bottom: 8px">
@@ -218,6 +225,7 @@
 
 <script>
 const logger = require("loglevel");
+import * as _ from "lodash";
 
 import * as helpers from "@/helpers/helpers";
 import * as store from "@/store";
@@ -240,6 +248,8 @@ export default {
 
   watch: {
     mediaItem(newValue) {
+      logger.log('EditMediaItemDialog mediaItem changed:', newValue);
+
       this.mediaItemBackup = newValue
         ? JSON.parse(JSON.stringify(newValue))
         : {};
@@ -353,6 +363,32 @@ export default {
 
       if (Object.keys(diff).find(key => key === 'ReleaseAttributesSearchTerms')) {
         await store.updateMovieReleaseAttribues(this.mediaItem.id_Movies, this.mediaItem.ReleaseAttributesSearchTerms);
+      }
+
+      if (Object.keys(diff).find(key => key === 'plotSummaryFull')) {
+        const plotSummaryFull = this.mediaItem.plotSummaryFull;
+        let plotSummary = _.truncate(this.mediaItem.plotSummaryFull, { length: 400, separator: ' ', omission: ' ...'});
+
+        await store.updateMediaRecordField(this.mediaItem.id_Movies, 'plotSummary', plotSummary);
+        await store.updateMediaRecordField(this.mediaItem.id_Movies, 'plotSummaryFull', plotSummaryFull);
+      }
+
+      // store fields that have been (re-)defined by the user
+      let definedByUser = await store.fetchMovieFieldsDefinedByUser(this.mediaItem.id_Movies);
+      const definedByUserOld = JSON.stringify(definedByUser);
+      
+      logger.log('definedByUser (from db):', definedByUser);
+
+      Object.keys(diff).forEach(key => {
+        if (!definedByUser.find(item => item === key)) {
+          definedByUser.push(key);
+        }
+      })
+
+      logger.log('definedByUser (new):', definedByUser);
+
+      if (definedByUserOld !== JSON.stringify(definedByUser)) {
+        await store.updateMediaRecordField(this.mediaItem.id_Movies, 'DefinedByUser', definedByUser.map(item => `|${item}|`).join(','));
       }
 
       this.$emit("ok", hasChanges);

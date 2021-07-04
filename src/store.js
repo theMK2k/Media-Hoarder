@@ -3597,7 +3597,7 @@ async function fetchMedia(
       , MOV.IMDB_numVotes${
         shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""
       } AS IMDB_numVotes_default
-      , MOV.IMDB_plotSummary
+      , IFNULL(MOV.plotSummary, IFNULL(MOV.IMDB_plotSummary_Translated, MOV.IMDB_plotSummary)) AS plotSummary
       , MOV.RelativePath
       , MOV.RelativeDirectory
       , MI_Duration_Formatted
@@ -3623,7 +3623,7 @@ async function fetchMedia(
         , NULL AS MI_Subtitle_Languages
         , NULL AS IMDB_posterSmall_URL
         , NULL AS IMDB_posterLarge_URL
-        , NULL AS IMDB_plotSummaryFull
+        , IFNULL(MOV.plotSummaryFull, IFNULL(MOV.IMDB_plotSummaryFull_Translated, MOV.IMDB_plotSummaryFull)) AS plotSummaryFull
         , NULL AS Genres
         , NULL AS IMDB_Parental_Advisory_Nudity
         , NULL AS IMDB_Parental_Advisory_Violence
@@ -3652,7 +3652,7 @@ async function fetchMedia(
         , MOV.MI_Subtitle_Languages
         , MOV.IMDB_posterSmall_URL
         , MOV.IMDB_posterLarge_URL
-        , MOV.IMDB_plotSummaryFull
+        , IFNULL(MOV.plotSummaryFull, IFNULL(MOV.IMDB_plotSummaryFull_Translated, MOV.IMDB_plotSummaryFull)) AS plotSummaryFull
         , (SELECT GROUP_CONCAT(GQ.Name, ', ') FROM
             (
               SELECT DISTINCT
@@ -7049,6 +7049,17 @@ async function updateMovieReleaseAttribues($id_Movies, searchTermsString) {
   }
 }
 
+/**
+ * Returns an array of fieldnames which have been (re-)defined by the user and not the scraper
+ * On the database DefinedByUser is a string, e.g. "|field1|,|field2|" so this is queryable with LIKE '%|field1|%'
+ * @param {Integer} $id_Movies 
+ */
+async function fetchMovieFieldsDefinedByUser($id_Movies) {
+  const definedByUser = await db.fireProcedureReturnScalar(`SELECT DefinedByUser FROM tbl_Movies WHERE id_Movies = $id_Movies`, { $id_Movies });
+
+  return !definedByUser ? [] : definedByUser.split(',').map(item => item.match(/^\|(.*?)\|/)[1]);
+}
+
 export {
   db,
   doAbortRescan,
@@ -7138,4 +7149,5 @@ export {
   updateMediaRecordField,
   updateMovieGenres,
   updateMovieReleaseAttribues,
+  fetchMovieFieldsDefinedByUser
 };

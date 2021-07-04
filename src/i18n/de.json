@@ -943,5 +943,6 @@
   "Edit Episode": "Episode Bearbeiten",
   "Add Genre": "Genre Hinzufügen",
   "Genre \"{genre}\" removed_": "Genre \"{genre}\" wurde entfernt.",
-  "Primary Title is missing_": "Primärtitel fehlt."
+  "Primary Title is missing_": "Primärtitel fehlt.",
+  "Description": "Beschreibung"
 }

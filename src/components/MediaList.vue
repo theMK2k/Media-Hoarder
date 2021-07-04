@@ -420,20 +420,20 @@
                   </v-row>
 
                   <v-row
-                    v-if="item.IMDB_plotSummary"
+                    v-if="item.plotSummary"
                     style="margin: 8px 6px 8px 4px"
                   >
                     <div
                       v-show="!item.selected"
                       style="font-size: 0.875rem; font-weight: normal"
                     >
-                      {{ item.IMDB_plotSummary }}
+                      {{ item.plotSummary }}
                     </div>
                     <div
                       v-show="item.selected"
                       style="font-size: 0.875rem; font-weight: normal"
                     >
-                      {{ item.IMDB_plotSummaryFull || item.IMDB_plotSummary }}
+                      {{ item.plotSummaryFull || item.plotSummary }}
                     </div>
                   </v-row>
 
