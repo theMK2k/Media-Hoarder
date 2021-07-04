@@ -148,11 +148,7 @@
                     v-bind:src="item.IMDB_posterSmall_URL"
                     style="border-radius: 6px"
                   ></v-img>
-                  <v-icon
-                    v-if="!item.IMDB_posterSmall_URL"
-                    disabled
-                    x-large
-                  >
+                  <v-icon v-if="!item.IMDB_posterSmall_URL" disabled x-large>
                     mdi-filmstrip
                   </v-icon>
 
@@ -186,7 +182,7 @@
                                 v-show="item.nameHovered || item.selected"
                                 class="mk-clickable"
                                 v-on:click.stop="
-                                  onOpenEditMediaItemDialog(item);
+                                  onOpenEditMediaItemDialog(item)
                                 "
                                 style="margin-left: 8px"
                                 >mdi-pencil</v-icon
@@ -1118,7 +1114,6 @@
       v-bind:show="editMediaItemDialog.show"
       v-bind:mediaItem="editMediaItemDialog.mediaItem"
       v-bind:caption="'Edit Movie'"
-
       v-on:cancel="onEditMediaItemDialogCancel"
       v-on:ok="onEditMediaItemDialogOK"
     >
@@ -1176,7 +1171,7 @@ export default {
     "mk-pagination": Pagination,
     "mk-rating-demographics-dialog": RatingDemographicsDialog,
     "mk-release-attribute-dialog": ReleaseAttributeDialog,
-    "mk-edit-media-item-dialog": EditMediaItemDialog
+    "mk-edit-media-item-dialog": EditMediaItemDialog,
   },
 
   data: () => ({
@@ -1311,7 +1306,7 @@ export default {
     editMediaItemDialog: {
       show: false,
       mediaItem: null,
-    }
+    },
   }),
 
   watch: {
@@ -1692,7 +1687,11 @@ export default {
 
           if (!primarySort) {
             // equal by primary sort -> sort by Name
-            return helpers.compare(a.Name.toLowerCase(), b.Name.toLowerCase(), false);
+            return helpers.compare(
+              a.Name.toLowerCase(),
+              b.Name.toLowerCase(),
+              false
+            );
           }
 
           return primarySort;
@@ -2479,7 +2478,7 @@ export default {
     },
 
     onReload() {
-      logger.log('MediaList onReload');
+      logger.log("MediaList onReload");
       eventBus.refetchMedia();
     },
 
@@ -2560,8 +2559,8 @@ export default {
     },
 
     onOpenEditMediaItemDialog(item) {
-      logger.log('onOpenEditMediaItemDialog item:', item);
-      this.editMediaItemDialog.mediaItem = JSON.parse(JSON.stringify(item));  // we don't allow direct manipulation of the item itself
+      logger.log("onOpenEditMediaItemDialog item:", item);
+      this.editMediaItemDialog.mediaItem = JSON.parse(JSON.stringify(item)); // we don't allow direct manipulation of the item itself
       this.editMediaItemDialog.show = true;
     },
 
@@ -2574,9 +2573,14 @@ export default {
       this.editMediaItemDialog.show = false;
 
       if (hasChanges) {
+        eventBus.showSnackbar(
+          "success",
+          this.$t('Your changes have been saved_')
+        );
+
         this.onReload();
       }
-    }
+    },
   },
 
   // ### LifeCycle Hooks ###

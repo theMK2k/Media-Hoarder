@@ -327,6 +327,9 @@ export default {
       if (!this.mediaItem.Name) {
         return eventBus.showSnackbar("error", this.$t('Primary Title is missing_'));
       }
+      if (this.mediaItem.startYear && !/\d\d\d\d/.test(this.mediaItem.startYear)) {
+        return eventBus.showSnackbar("error", this.$t('Year is malformed_'));
+      }
 
       let hasChanges = false;
       const diff = deepDiffMapper.prune(
@@ -403,18 +406,11 @@ export default {
     },
 
     onRemoveGenre(index) {
-      const genre = this.mediaItem.Genres[index];
-
       logger.log("EditMediaItemDialog genre array (before):", this.mediaItem.Genres);
 
       this.mediaItem.Genres.splice(index, 1);
 
       logger.log("EditMediaItemDialog genre array (after):", this.mediaItem.Genres);
-
-      eventBus.showSnackbar(
-        "success",
-        this.$t('Genre "{genre}" removed_', { genre: genre.translated })
-      );
     },
 
     onShowAddGenreDialog() {
@@ -451,10 +447,6 @@ export default {
     },
 
     onRemoveReleaseAttribute(index) {
-      const ra = this.getReleaseAttribute(
-        this.arrayReleaseAttributesSearchTerms[index]
-      );
-
       const arr = this.arrayReleaseAttributesSearchTerms;
       logger.log("EditMediaItemDialog arr:", arr);
 
@@ -465,13 +457,6 @@ export default {
       logger.log("EditMediaItemDialog joined:", joined);
 
       this.mediaItem.ReleaseAttributesSearchTerms = joined;
-
-      eventBus.showSnackbar(
-        "success",
-        this.$t('Release Attribute "{releaseAttribute}" removed_', {
-          releaseAttribute: ra,
-        })
-      );
     },
 
     onShowAddReleaseAttributeDialog() {

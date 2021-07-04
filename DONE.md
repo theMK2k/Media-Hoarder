@@ -51,11 +51,11 @@
 
 - Primary Title
 - Secondary Title
+- Year
 - Description
-- Languages
 - Genres
 - Release Attributes
-...
+- on (re-)scan: don't overwrite user-defined data (see tbl_Movies.DefinedByUser field definitions)
 
 ### Implement Home Screen Cards
 

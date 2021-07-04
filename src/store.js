@@ -159,12 +159,11 @@ function generateIndexQuery(tableName, ColumnNames, isUnique) {
     return prev + (prev ? ", " : "") + `${current}`;
   }, "");
 
-  return `CREATE ${
-    isUnique ? "UNIQUE " : ""
-  } INDEX IF NOT EXISTS main.IDX_${tableName}_${columnNamesString.replace(
-    /, /g,
-    "_"
-  )} ON ${tableName} (${columnNamesString})`;
+  return `CREATE ${isUnique ? "UNIQUE " : ""
+    } INDEX IF NOT EXISTS main.IDX_${tableName}_${columnNamesString.replace(
+      /, /g,
+      "_"
+    )} ON ${tableName} (${columnNamesString})`;
 }
 
 async function createIndexes(db) {
@@ -366,20 +365,20 @@ async function rescanHandleDuplicates() {
     const actualDuplicate =
       actualDuplicates.length > 0
         ? (
-            await db.fireProcedureReturnAll(
-              "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
-              { $id_Movies: actualDuplicates[0] }
-            )
-          )[0]
+          await db.fireProcedureReturnAll(
+            "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
+            { $id_Movies: actualDuplicates[0] }
+          )
+        )[0]
         : null;
     const metaDuplicate =
       metaDuplicates.length > 0
         ? (
-            await db.fireProcedureReturnAll(
-              "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
-              { $id_Movies: metaDuplicates[0] }
-            )
-          )[0]
+          await db.fireProcedureReturnAll(
+            "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
+            { $id_Movies: metaDuplicates[0] }
+          )
+        )[0]
         : null;
 
     // relink IMDB is alread handled by findIMDBtconst
@@ -724,11 +723,10 @@ async function filescanMovies(onlyNew, $t) {
 				, checkRemovedFiles
 			FROM tbl_SourcePaths
 			WHERE MediaType = 'movies'
-			${
+			${shared.scanOptions.filescanMovies_id_SourcePaths_IN
+        ? "AND id_SourcePaths IN " +
         shared.scanOptions.filescanMovies_id_SourcePaths_IN
-          ? "AND id_SourcePaths IN " +
-            shared.scanOptions.filescanMovies_id_SourcePaths_IN
-          : ""
+        : ""
       }
 		`);
 
@@ -749,9 +747,8 @@ async function filescanMovies(onlyNew, $t) {
         );
       }
 
-      currentScanInfoHeader = `${$t("Rescanning Movies")} - ${
-        movieSourcePath.Description
-      }`;
+      currentScanInfoHeader = `${$t("Rescanning Movies")} - ${movieSourcePath.Description
+        }`;
 
       eventBus.scanInfoShow(currentScanInfoHeader, "");
 
@@ -1196,29 +1193,34 @@ async function listPath(basePath, scanPath) {
 
 async function applyMetaData(onlyNew, id_Movies) {
   // create Name, Name2 etc. from IMDBData for each movie, also apply possible metadata from duplicates
-  logger.log("applying Metadata...");
+  logger.log("applyMetaData onlyNew:", onlyNew, "id_Movies:", id_Movies);
+
+  const query = `
+  SELECT
+    MOV.id_Movies
+    , MOV.Filename
+    , IFNULL(MOV.IMDB_localTitle, '') AS IMDB_localTitle
+    , IFNULL(MOV.IMDB_originalTitle, '') AS IMDB_originalTitle
+    , IFNULL(MOV.IMDB_primaryTitle, '') AS IMDB_primaryTitle
+    , MOV.IMDB_startYear
+    , MOV.IMDB_endYear
+    , SP.MediaType
+    , MOV.DefinedByUser
+  FROM tbl_Movies MOV
+  INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+  WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+  ${onlyNew ? "AND (MOV.isNew = 1 OR MOV.scanErrors IS NOT NULL)" : ""}
+  ${id_Movies ? "AND MOV.id_Movies = " + id_Movies : ""}
+  `
+
+  logger.log('applyMetaData query:', query);
 
   const movies = await db.fireProcedureReturnAll(
-    `
-			SELECT
-				MOV.id_Movies
-				, MOV.Filename
-				, IFNULL(MOV.IMDB_localTitle, '') AS IMDB_localTitle
-				, IFNULL(MOV.IMDB_originalTitle, '') AS IMDB_originalTitle
-				, IFNULL(MOV.IMDB_primaryTitle, '') AS IMDB_primaryTitle
-				, MOV.IMDB_startYear
-        , MOV.IMDB_endYear
-        , SP.MediaType
-      FROM tbl_Movies MOV
-      INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = MOV.id_SourcePaths
-			WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
-			${onlyNew ? "AND (MOV.isNew = 1 OR MOV.scanErrors IS NOT NULL)" : ""}
-			${id_Movies ? "AND MOV.id_Movies = " + id_Movies : ""}
-			`,
+    query,
     []
   );
 
-  logger.log("scanErrors applyMetaData movies:", movies);
+  logger.log("applyMetaData movies:", movies);
 
   for (let i = 0; i < movies.length; i++) {
     if (doAbortRescan) {
@@ -1319,11 +1321,11 @@ async function applyMetaData(onlyNew, id_Movies) {
     const duplicate =
       duplicates.length > 0
         ? (
-            await db.fireProcedureReturnAll(
-              "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
-              { $id_Movies: duplicates[0] }
-            )
-          )[0]
+          await db.fireProcedureReturnAll(
+            "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
+            { $id_Movies: duplicates[0] }
+          )
+        )[0]
         : null;
 
     // Overwrite by duplicate
@@ -1356,11 +1358,11 @@ async function applyMetaData(onlyNew, id_Movies) {
       const metaDuplicate =
         metaDuplicates.length > 0
           ? (
-              await db.fireProcedureReturnAll(
-                "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
-                { $id_Movies: metaDuplicates[0] }
-              )
-            )[0]
+            await db.fireProcedureReturnAll(
+              "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
+              { $id_Movies: metaDuplicates[0] }
+            )
+          )[0]
           : null;
 
       if (metaDuplicate) {
@@ -1368,17 +1370,47 @@ async function applyMetaData(onlyNew, id_Movies) {
       }
     }
 
+    // omit anything that has been (re-)defined by the user
+    const definedByUser = getFieldsDefinedByUser(movie.DefinedByUser);
+    logger.log('applyMetaData definedByUser:', definedByUser);
+
+    const data = {
+      $id_Movies: movie.id_Movies,
+      $endYear: endYear,
+      $last_access_at,
+      $Rating,
+    }
+
+    let query = `UPDATE tbl_Movies SET
+    last_access_at = $last_access_at
+      , endYear = $endYear
+      , Rating = $Rating`
+
+    if (!definedByUser.find(item => item === 'Name')) {
+      data.$Name = Name;
+      query += '\n, Name = $Name'
+    } else {
+      logger.log('applyMetaData omitting Name (already defined by the user)');
+    }
+    if (!definedByUser.find(item => item === 'Name2')) {
+      data.$Name2 = Name2;
+      query += '\n, Name2 = $Name2'
+    } else {
+      logger.log('applyMetaData omitting Name2 (already defined by the user)');
+    }
+    if (!definedByUser.find(item => item === 'startYear')) {
+      data.$startYear = startYear;
+      query += '\n, startYear = $startYear'
+    } else {
+      logger.log('applyMetaData omitting startYear (already defined by the user)');
+    }
+    query += '\nWHERE id_Movies = $id_Movies'
+
+
+
     await db.fireProcedure(
-      `UPDATE tbl_Movies Set Name = $Name, Name2 = $Name2, startYear = $startYear, endYear = $endYear, last_access_at = $last_access_at, Rating = $Rating WHERE id_Movies = $id_Movies`,
-      {
-        $Name: Name,
-        $Name2: Name2,
-        $id_Movies: movie.id_Movies,
-        $startYear: startYear,
-        $endYear: endYear,
-        $last_access_at,
-        $Rating,
-      }
+      query,
+      data
     );
   }
 
@@ -1399,28 +1431,26 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
         , MOV.IMDB_tconst
         , MOV.isDirectoryBased
         , SP.Path AS SourcePath
+        , MOV.DefinedByUser
       FROM tbl_Movies MOV
       INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
 			WHERE 
         (isRemoved IS NULL OR isRemoved = 0)
         AND Extra_id_Movies_Owner IS NULL
-				${
-          onlyNew
-            ? "AND (isNew = 1 OR scanErrors IS NOT NULL OR IFNULL(IMDB_Done, 0) = 0 OR IFNULL(MI_Done, 0) = 0)"
-            : ""
-        }
-				${
-          shared.scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
-            ? "AND id_SourcePaths IN " +
-              shared.scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
-            : ""
-        }
-				${
-          shared.scanOptions.rescanMoviesMetaData_id_Movies
-            ? "AND id_Movies = " +
-              shared.scanOptions.rescanMoviesMetaData_id_Movies
-            : ""
-        }
+				${onlyNew
+      ? "AND (isNew = 1 OR scanErrors IS NOT NULL OR IFNULL(IMDB_Done, 0) = 0 OR IFNULL(MI_Done, 0) = 0)"
+      : ""
+    }
+				${shared.scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
+      ? "AND id_SourcePaths IN " +
+      shared.scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
+      : ""
+    }
+				${shared.scanOptions.rescanMoviesMetaData_id_Movies
+      ? "AND id_Movies = " +
+      shared.scanOptions.rescanMoviesMetaData_id_Movies
+      : ""
+    }
 				${id_Movies ? "AND id_Movies = " + id_Movies : ""}
 			`,
     []
@@ -1443,6 +1473,7 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
     rescanETA.startTime = new Date().getTime();
 
     const movie = movies[i];
+    const definedByUser = getFieldsDefinedByUser(movie.DefinedByUser);
 
     if (
       shared.scanOptions.rescanMoviesMetaData_maxEntries &&
@@ -1487,12 +1518,16 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
     }
 
     if (shared.scanOptions.rescanMoviesMetaData_findReleaseAttributes) {
-      await findReleaseAttributes(movie, onlyNew);
-
-      eventBus.scanInfoShow(
-        $t("Rescanning Movies") + rescanETA.displayETA,
-        `${movie.Name || movie.Filename} (${$t("finding release attributes")})`
-      );
+      if (!definedByUser.find(item => item === 'ReleaseAttributesSearchTerms')) {
+        await findReleaseAttributes(movie, onlyNew);
+  
+        eventBus.scanInfoShow(
+          $t("Rescanning Movies") + rescanETA.displayETA,
+          `${movie.Name || movie.Filename} (${$t("finding release attributes")})`
+        );
+      } else {
+        logger.log('rescanMoviesMetaData omitting Release Attribtues (already defined by the user)');
+      }
     }
 
     if (shared.scanOptions.applyMetaData) {
@@ -1794,11 +1829,11 @@ async function findIMDBtconst(movie, onlyNew) {
       const actualDuplicate =
         actualDuplicates.length > 0
           ? (
-              await db.fireProcedureReturnAll(
-                "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
-                { $id_Movies: actualDuplicates[0] }
-              )
-            )[0]
+            await db.fireProcedureReturnAll(
+              "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
+              { $id_Movies: actualDuplicates[0] }
+            )
+          )[0]
           : null;
 
       if (actualDuplicate && actualDuplicate.IMDB_tconst) {
@@ -2312,16 +2347,18 @@ async function saveIMDBData(
   plotKeywords,
   filmingLocations
 ) {
+  const definedByUser = getFieldsDefinedByUser(movie.DefinedByUser);
+
   const IMDB_genres = IMDBdata.$IMDB_genres || [];
   delete IMDBdata.$IMDB_genres;
+  logger.log('saveIMDBData IMDB_genres:', IMDB_genres);
 
   // consider IMDB_Done only if at least the imdb main page has been scraped and no errors occured during the process
-  let sql = `IMDB_Done = ${
-    !getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_mainPageData")
-      .enabled || Object.keys(movie.scanErrors).length > 0
-      ? "0"
-      : "1"
-  }, scanErrors = $scanErrors`;
+  let sql = `IMDB_Done = ${!getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_mainPageData")
+    .enabled || Object.keys(movie.scanErrors).length > 0
+    ? "0"
+    : "1"
+    }, scanErrors = $scanErrors`;
   Object.keys(IMDBdata).forEach((key) => {
     sql += `, [${key.replace("$", "")}] = ${key}`;
   });
@@ -2353,61 +2390,11 @@ async function saveIMDBData(
     })
   );
 
-  // TODO: START use await updateMovieGenres($id_Movies, genres)
-  const movieGenres = await db.fireProcedureReturnAll(
-    "SELECT MG.id_Movies_Genres, MG.id_Genres, G.GenreID, G.Name, 0 AS Found FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres WHERE MG.id_Movies = $id_Movies",
-    { $id_Movies: movie.id_Movies }
-  );
-
-  for (let i = 0; i < IMDB_genres.length; i++) {
-    const genre = IMDB_genres[i];
-
-    const movieGenre = movieGenres.find((mg) => mg.GenreID === genre);
-
-    if (movieGenre) {
-      // genre is already known
-      movieGenre.Found = true;
-    } else {
-      // genre needs to be added for the movie
-      if (!genres.find((g) => g.GenreID === genre)) {
-        // genre needs to be added to main list of genres (we need id_Genres later)
-        await db.fireProcedure(
-          "INSERT INTO tbl_Genres (GenreID, Name) VALUES ($GenreID, $Name)",
-          { $GenreID: genre, $Name: helpers.uppercaseEachWord(genre) }
-        );
-        const id_Genres = await db.fireProcedureReturnScalar(
-          "SELECT id_Genres FROM tbl_Genres WHERE GenreID = $GenreID",
-          { $GenreID: genre }
-        );
-        genres.push({
-          id_Genres: id_Genres,
-          GenreID: genre,
-          Name: helpers.uppercaseEachWord(genre),
-        });
-      }
-
-      const id_Genres = genres.find((g) => g.GenreID === genre).id_Genres;
-      await db.fireProcedure(
-        "INSERT INTO tbl_Movies_Genres (id_Movies, id_Genres) VALUES ($id_Movies, $id_Genres)",
-        { $id_Movies: movie.id_Movies, $id_Genres: id_Genres }
-      );
-    }
+  if (definedByUser.find(item => item === 'Genres')) {
+    logger.log('saveIMDBData omitting Genres (already defined by the user)');
+  } else {
+    await updateMovieGenres(movie.id_Movies, IMDB_genres);
   }
-
-  // remove existing genres that are not available anymore (re-link to another imdb entry)
-  for (let i = 0; i < movieGenres.length; i++) {
-    const movieGenre = movieGenres[i];
-
-    if (!movieGenre.Found) {
-      // logger.log('removing genre', movieGenre);
-
-      await db.fireProcedure(
-        "DELETE FROM tbl_Movies_Genres WHERE id_Movies_Genres = $id_Movies_Genres",
-        { $id_Movies_Genres: movieGenre.id_Movies_Genres }
-      );
-    }
-  }
-  // TODO: END use await updateMovieGenres($id_Movies, genres)
 
   const movieCredits = await db.fireProcedureReturnAll(
     `
@@ -3488,7 +3475,7 @@ async function fetchMedia(
     let filterDataQuality = "";
     logger.log("filters.filterDataQuality:", filters.filterDataQuality);
 
-    const getFilterDataQualityQuery = function(filterDataQualityName) {
+    const getFilterDataQualityQuery = function (filterDataQualityName) {
       switch (filterDataQualityName) {
         case "<noAnomalies>":
           return `SELECT id_Movies FROM tbl_Movies WHERE (
@@ -3519,7 +3506,7 @@ async function fetchMedia(
     if (
       (filters.filterDataQuality &&
         !filters.filterSettings.filterDataQualityAND &&
-          filters.filterDataQuality.find((filter) => !filter.Selected)) ||
+        filters.filterDataQuality.find((filter) => !filter.Selected)) ||
       (filters.filterSettings.filterDataQualityAND &&
         filters.filterDataQuality.find((filter) => filter.Selected))
     ) {
@@ -3586,16 +3573,14 @@ async function fetchMedia(
 			MOV.id_Movies
 			, MOV.Name
       , MOV.Name2
-			, MOV.IMDB_rating${
-        shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""
+			, MOV.IMDB_rating${shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""
       } AS IMDB_rating_default
 			, MOV.IMDB_metacriticScore
 			, IFNULL(MOV.Rating, 0) AS Rating
 			, MOV.startYear
 			, MOV.created_at
 			, MOV.last_access_at
-      , MOV.IMDB_numVotes${
-        shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""
+      , MOV.IMDB_numVotes${shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""
       } AS IMDB_numVotes_default
       , IFNULL(MOV.plotSummary, IFNULL(MOV.IMDB_plotSummary_Translated, MOV.IMDB_plotSummary)) AS plotSummary
       , MOV.RelativePath
@@ -3609,9 +3594,8 @@ async function fetchMedia(
       , SP.Path AS SourcePath
       , MOV.IMDB_tconst
 
-      ${
-        minimumResultSet
-          ? `
+      ${minimumResultSet
+        ? `
         , 0 AS isCompletelyFetched
         , NULL AS Filename
         , NULL AS Size
@@ -3640,7 +3624,7 @@ async function fetchMedia(
         , NULL AS scanErrors
         , NULL AS ReleaseAttributesSearchTerms
       `
-          : `
+        : `
         , 1 AS isCompletelyFetched
         , MOV.Filename
         , MOV.Size
@@ -3718,24 +3702,23 @@ async function fetchMedia(
       // logger.log(item.Name);
       item.IMDB_posterSmall_URL = item.IMDB_posterSmall_URL
         ? "local-resource://" +
-          helpers.getDataPath(item.IMDB_posterSmall_URL).replace(/\\/g, "\\\\")
+        helpers.getDataPath(item.IMDB_posterSmall_URL).replace(/\\/g, "\\\\")
         : item.IMDB_posterSmall_URL;
       item.IMDB_posterLarge_URL = item.IMDB_posterLarge_URL
         ? "local-resource://" +
-          helpers.getDataPath(item.IMDB_posterLarge_URL).replace(/\\/g, "\\\\")
+        helpers.getDataPath(item.IMDB_posterLarge_URL).replace(/\\/g, "\\\\")
         : item.IMDB_posterLarge_URL;
       item.yearDisplay = item.startYear
         ? "(" + item.startYear + (item.endYear ? `-${item.endYear}` : "") + ")"
         : "";
       item.IMDB_rating_defaultFormatted = item.IMDB_rating_default
         ? `${item.IMDB_rating_default.toLocaleString(shared.uiLanguage, {
-            minimumFractionDigits: 1,
-          })}`
+          minimumFractionDigits: 1,
+        })}`
         : "";
       item.IMDB_rating_defaultDisplay = item.IMDB_rating_defaultFormatted
-        ? `${
-            item.IMDB_rating_defaultFormatted
-          } (${item.IMDB_numVotes_default.toLocaleString(shared.uiLanguage)})`
+        ? `${item.IMDB_rating_defaultFormatted
+        } (${item.IMDB_numVotes_default.toLocaleString(shared.uiLanguage)})`
         : "";
 
       item.AudioLanguages = generateLanguageArray(item.MI_Audio_Languages);
@@ -3748,11 +3731,10 @@ async function fetchMedia(
         item.AgeRating = item.Age + "+";
       } else {
         if (item.IMDB_MinAge || item.IMDB_MinAge === 0) {
-          item.AgeRating = `${item.IMDB_MinAge}${
-            item.IMDB_MaxAge && item.IMDB_MaxAge > item.IMDB_MinAge
-              ? "-" + item.IMDB_MaxAge
-              : ""
-          }+`;
+          item.AgeRating = `${item.IMDB_MinAge}${item.IMDB_MaxAge && item.IMDB_MaxAge > item.IMDB_MinAge
+            ? "-" + item.IMDB_MaxAge
+            : ""
+            }+`;
         }
       }
 
@@ -5199,9 +5181,8 @@ async function fetchFilterLanguages($MediaType, $LanguageType, $t) {
 
     result.DisplayText = result.Language;
     if (languageCodeNameMapping[result.Language]) {
-      result.DisplayText = `${result.Language} - ${
-        languageCodeNameMapping[result.Language]
-      }`;
+      result.DisplayText = `${result.Language} - ${languageCodeNameMapping[result.Language]
+        }`;
       result.LanguageFull = languageCodeNameMapping[result.Language];
     }
   });
@@ -5772,9 +5753,8 @@ async function getMovieDuplicates(
 					AND MOV.Filename = MOVSource.Filename                             -- Must have same Filename (actual duplicate)
           AND MOV.Size = MOVSource.Size                                     -- Must have same Size (actual duplicate)
           AND MOV.Extra_id_Movies_Owner IS NULL                             -- Exclude Extras
-          ${
-            ignoreNew ? "AND (MOV.isNew IS NULL OR MOV.isNew = 0)" : ""
-          }    -- optional: only newly added movies (rescan)
+          ${ignoreNew ? "AND (MOV.isNew IS NULL OR MOV.isNew = 0)" : ""
+        }    -- optional: only newly added movies (rescan)
           `,
         { $id_Movies }
       );
@@ -5800,8 +5780,7 @@ async function getMovieDuplicates(
 				AND MOV.IMDB_tconst = MOVSource.IMDB_tconst                         -- Same IMDB ID (meta Duplicate)
         AND MOV.IMDB_tconst IS NOT NULL                                     -- IMDB ID should exist
         AND MOV.Extra_id_Movies_Owner IS NULL                               -- Exclude Extras
-        ${
-          ignoreNew ? "AND (MOV.isNew IS NULL OR MOV.isNew = 0)" : ""
+        ${ignoreNew ? "AND (MOV.isNew IS NULL OR MOV.isNew = 0)" : ""
         }      -- optional: only newly added movies (rescan)
         `,
         { $id_Movies }
@@ -5990,8 +5969,8 @@ async function getIMDBLanguages(regionCodes) {
   const filterRegions = !regionCodes
     ? null
     : regionCodes.reduce((prev, current) => {
-        return prev + (prev ? ", " : "") + `${sqlString.escape(current)}`;
-      }, "");
+      return prev + (prev ? ", " : "") + `${sqlString.escape(current)}`;
+    }, "");
 
   const sSQL = `
   SELECT DISTINCT
@@ -6232,8 +6211,8 @@ async function fetchRatingDemographics($id_Movies) {
     if (key.includes("rating")) {
       ratingDemographics[key + "_formatted"] = ratingDemographics[key]
         ? `${ratingDemographics[key].toLocaleString(shared.uiLanguage, {
-            minimumFractionDigits: 1,
-          })}`
+          minimumFractionDigits: 1,
+        })}`
         : "";
     }
 
@@ -6552,10 +6531,10 @@ async function fetchFilterReleaseAttributes($MediaType) {
         (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
         AND MRA.deleted = 0
         AND MRA.Release_Attributes_searchTerm IN (${ra.searchTerms
-          .map((param) => param.replace(/'/g, "''"))
-          .reduce((prev, current) => {
-            return prev + (prev ? ", " : "") + `${sqlString.escape(current)}`;
-          }, "")}))`;
+        .map((param) => param.replace(/'/g, "''"))
+        .reduce((prev, current) => {
+          return prev + (prev ? ", " : "") + `${sqlString.escape(current)}`;
+        }, "")}))`;
 
     logger.log("fetchFilterReleaseAttributes sql:", sql);
 
@@ -7057,7 +7036,11 @@ async function updateMovieReleaseAttribues($id_Movies, searchTermsString) {
 async function fetchMovieFieldsDefinedByUser($id_Movies) {
   const definedByUser = await db.fireProcedureReturnScalar(`SELECT DefinedByUser FROM tbl_Movies WHERE id_Movies = $id_Movies`, { $id_Movies });
 
-  return !definedByUser ? [] : definedByUser.split(',').map(item => item.match(/^\|(.*?)\|/)[1]);
+  return getFieldsDefinedByUser(definedByUser);
+}
+
+function getFieldsDefinedByUser(definedByUserString) {
+  return !definedByUserString ? [] : definedByUserString.split(',').map(item => item.match(/^\|(.*?)\|/)[1]);
 }
 
 export {
@@ -7149,5 +7132,6 @@ export {
   updateMediaRecordField,
   updateMovieGenres,
   updateMovieReleaseAttribues,
-  fetchMovieFieldsDefinedByUser
+  fetchMovieFieldsDefinedByUser,
+  getFieldsDefinedByUser
 };

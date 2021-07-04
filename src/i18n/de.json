@@ -944,5 +944,7 @@
   "Add Genre": "Genre Hinzufügen",
   "Genre \"{genre}\" removed_": "Genre \"{genre}\" wurde entfernt.",
   "Primary Title is missing_": "Primärtitel fehlt.",
-  "Description": "Beschreibung"
+  "Description": "Beschreibung",
+  "Year is malformed_": "Jahr muss aus vier Ziffern bestehen.",
+  "Your changes have been saved_": "Deine Änderungen wurden gespeichert."
 }
