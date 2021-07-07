@@ -944,5 +944,6 @@
   "Add Genre": "Genre Hinzufügen",
   "Genre \"{genre}\" removed_": "Genre \"{genre}\" wurde entfernt.",
   "Primary Title is missing_": "Primärtitel fehlt.",
-  "Description": "Beschreibung"
+  "Description": "Beschreibung",
+  "checking IMDB link": "prüfe IMDB Verknüpfung"
 }

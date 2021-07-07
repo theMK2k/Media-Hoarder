@@ -262,6 +262,8 @@ const shared = new Vue({
 
       applyMetaData: true,
 
+      checkIMDBtconst: true,
+
       mergeExtras: true,
 
       handleDuplicates: true,
