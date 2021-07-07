@@ -6,6 +6,8 @@
   - actual runtime differs from imdb runtime
   - release year differs from imdb year
 
+- i18n IMDB Scraper Test Dialog
+
 ### Bugs
 
 - nothing

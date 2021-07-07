@@ -1539,6 +1539,14 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
       );
     }
 
+    if (shared.scanOptions.checkIMDBtconst) {
+      await checkIMDBtconst(movie.id_Movies);
+
+      eventBus.scanInfoShow(
+        $t("Rescanning Movies") + rescanETA.displayETA, `${movie.Name || movie.Filename} (${$t("checking IMDB link")})`
+      )
+    }
+
     rescanETA.endTime = new Date().getTime();
     rescanETA.elapsedMS += rescanETA.endTime - rescanETA.startTime;
     rescanETA.averageMS = rescanETA.elapsedMS / rescanETA.counter;
@@ -1553,6 +1561,13 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
   eventBus.setProgressBar(-1); // off
 }
 
+/**
+ * Run MediaInfo-CLI on the file
+ * Analyze the data provided by MediaInfo-CLI and store it in tbl_Movies (MI_* fields)
+ * @param {Object} movie 
+ * @param {Boolean} onlyNew 
+ * @returns 
+ */
 async function applyMediaInfo(movie, onlyNew) {
   // run mediainfo on movie file
   // parse mediainfo result and save to db
@@ -7041,6 +7056,26 @@ async function fetchMovieFieldsDefinedByUser($id_Movies) {
 
 function getFieldsDefinedByUser(definedByUserString) {
   return !definedByUserString ? [] : definedByUserString.split(',').map(item => item.match(/^\|(.*?)\|/)[1]);
+}
+
+/**
+ * Check if the IMDB tconst is plausible, if not, a scanError will be added
+ * @param {Integer} $id_Movies
+ */
+async function checkIMDBtconst($id_Movies) {
+  const queryMovie = `SELECT MI_Duration_Seconds
+    , IMDB_runtimeMinutes
+    , IMDB_startYear
+    FROM tbl_Movies WHERE id_Movies = $id_Movies
+  `;
+
+  const rowsMovie = db.fireProcedureReturnAll(queryMovie, { $id_Movies });
+
+  
+
+  const movie = rowsMovie[0];
+
+
 }
 
 export {

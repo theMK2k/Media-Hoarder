@@ -946,5 +946,6 @@
   "Primary Title is missing_": "Primärtitel fehlt.",
   "Description": "Beschreibung",
   "Year is malformed_": "Jahr muss aus vier Ziffern bestehen.",
-  "Your changes have been saved_": "Deine Änderungen wurden gespeichert."
+  "Your changes have been saved_": "Deine Änderungen wurden gespeichert.",
+  "checking IMDB link": "prüfe IMDB Verknüpfung"
 }
