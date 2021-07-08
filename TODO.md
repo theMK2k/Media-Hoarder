@@ -6,7 +6,11 @@
   - actual runtime differs from imdb runtime
   - release year differs from imdb year
 
-- i18n IMDB Scraper Test Dialog
+- i18n
+  - IMDB Scraper Test Dialog
+  - IMDB Options in ScanMedia Dialog
+
+- optimize text about removal of known missing file in ScanMedia Dialog (it is dependant on the setting of the source path)
 
 ### Bugs
 

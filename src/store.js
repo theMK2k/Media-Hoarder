@@ -1519,32 +1519,32 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
 
     if (shared.scanOptions.rescanMoviesMetaData_findReleaseAttributes) {
       if (!definedByUser.find(item => item === 'ReleaseAttributesSearchTerms')) {
-        await findReleaseAttributes(movie, onlyNew);
-  
         eventBus.scanInfoShow(
           $t("Rescanning Movies") + rescanETA.displayETA,
           `${movie.Name || movie.Filename} (${$t("finding release attributes")})`
         );
+
+        await findReleaseAttributes(movie, onlyNew);
       } else {
         logger.log('rescanMoviesMetaData omitting Release Attribtues (already defined by the user)');
       }
     }
 
     if (shared.scanOptions.applyMetaData) {
-      await applyMetaData(false, movie.id_Movies);
-
       eventBus.scanInfoShow(
         $t("Rescanning Movies") + rescanETA.displayETA,
         `${movie.Name || movie.Filename} (${$t("applying metadata")})`
       );
+
+      await applyMetaData(false, movie.id_Movies);
     }
 
     if (shared.scanOptions.checkIMDBtconst) {
-      await checkIMDBtconst(movie.id_Movies);
-
       eventBus.scanInfoShow(
         $t("Rescanning Movies") + rescanETA.displayETA, `${movie.Name || movie.Filename} (${$t("checking IMDB link")})`
       )
+
+      await checkIMDBtconst(movie.id_Movies);
     }
 
     rescanETA.endTime = new Date().getTime();
@@ -7063,19 +7063,31 @@ function getFieldsDefinedByUser(definedByUserString) {
  * @param {Integer} $id_Movies
  */
 async function checkIMDBtconst($id_Movies) {
-  const queryMovie = `SELECT MI_Duration_Seconds
+  const queryMovie = `
+  SELECT
+    scanErrors
+    , MI_Duration_Seconds
     , IMDB_runtimeMinutes
     , IMDB_startYear
     FROM tbl_Movies WHERE id_Movies = $id_Movies
   `;
 
-  const rowsMovie = db.fireProcedureReturnAll(queryMovie, { $id_Movies });
+  logger.log('checkIMDBtconst query:', queryMovie, '$id_Movies:', $id_Movies);
 
-  
+  const rowsMovie = await db.fireProcedureReturnAll(queryMovie, { $id_Movies });
+
+  logger.log('checkIMDBtconst rowsMovie:', rowsMovie);
 
   const movie = rowsMovie[0];
 
+  movie.scanErrors = movie.scanErrors ? JSON.parse(movie.scanErrors) : {};
 
+  // TODO: compare runtimes (both must be non-null)
+
+  // TODO: movie.scanErrors["IMDB entry detection"] = 'some text here!';
+
+
+  logger.log('checkIMDBtconst movie:', movie);
 }
 
 export {
