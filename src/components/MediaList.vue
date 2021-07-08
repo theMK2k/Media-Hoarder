@@ -558,8 +558,10 @@
                           $t(
                             "Errors were encountered during the scan, consider a re-scan_"
                           )
-                        }}</span
+                        }}
+                        </span
                       >
+                        <v-btn small text color="primary" v-on:click="clearScanErrors(item)">{{ $t('Clear this message') }}</v-btn>
                       <v-row v-if="item.showScanErrors">
                         <ul
                           style="
@@ -2581,6 +2583,11 @@ export default {
         this.onReload();
       }
     },
+
+    async clearScanErrors(item) {
+      await store.updateMediaRecordField(item.id_Movies, 'scanErrors', null);
+      item.scanErrors = null;
+    }
   },
 
   // ### LifeCycle Hooks ###

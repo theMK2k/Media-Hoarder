@@ -947,5 +947,6 @@
   "Description": "Beschreibung",
   "Year is malformed_": "Jahr muss aus vier Ziffern bestehen.",
   "Your changes have been saved_": "Deine Änderungen wurden gespeichert.",
-  "checking IMDB link": "prüfe IMDB Verknüpfung"
+  "checking IMDB link": "prüfe IMDB Verknüpfung",
+  "Clear this message": "Diese Meldung entfernen"
 }

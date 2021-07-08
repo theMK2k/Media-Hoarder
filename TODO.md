@@ -5,10 +5,12 @@
 - introduce a scan error (more like scan warning) when:
   - actual runtime differs from imdb runtime
   - release year differs from imdb year
+  - provide text button to explicitly clear the error message (provide tooltip with more info)
 
 - i18n
   - IMDB Scraper Test Dialog
   - IMDB Options in ScanMedia Dialog
+  - Scan Errors(?)
 
 - optimize text about removal of known missing file in ScanMedia Dialog (it is dependant on the setting of the source path)
 
