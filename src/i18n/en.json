@@ -612,7 +612,7 @@
   "Quick Scan": "Quick Scan",
   "Complete Rescan": "Complete Rescan",
   "Filescan in every Source Path": "Filescan in every Source Path",
-  "If a file is missing, remove it from the collection": "If a file is missing, remove it from the collection",
+  "If a file is missing, remove it from the collection (depending on the setting of the Source Path)": "If a file is missing, remove it from the collection (depending on the setting of the Source Path)",
   "If a new file is found, gather IMDB and mediainfo metadata": "If a new file is found, gather IMDB and mediainfo metadata",
   "If a file is already known, don't gather any metadata _except the previous scan had errors_": "If a file is already known, don't gather any metadata (except the previous scan had errors)",
   "If a file is new or already known, gather IMDB and mediainfo metadata": "If a file is new or already known, gather IMDB and mediainfo metadata",

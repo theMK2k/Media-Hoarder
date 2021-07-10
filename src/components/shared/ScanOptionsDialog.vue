@@ -25,18 +25,18 @@
         <div v-if="radioGroup == 1">
           <ul>
             <li>{{$t('Filescan in every Source Path')}}</li>
-            <li>{{$t('If a file is missing, remove it from the collection')}}</li>
-            <li>{{$t('If a new file is found, gather IMDB and mediainfo metadata')}}</li>
-            <li>{{$t("If a file is already known, don't gather any metadata _except the previous scan had errors_")}}</li>
+            <li>{{$t('If a file is missing, remove it from the collection (depending on the setting of the Source Path)')}}</li>
+            <li><strong>{{$t('If a new file is found, gather IMDB and mediainfo metadata')}}</strong></li>
+            <li><strong>{{$t("If a file is already known, don't gather any metadata _except the previous scan had errors_")}}</strong></li>
           </ul>
         </div>
 
         <div v-if="radioGroup == 2">
           <ul>
             <li>{{$t('Filescan in every Source Path')}}</li>
-            <li>{{$t('If a file is missing, remove it from the collection')}}</li>
-            <li>{{$t('If a file is new or already known, gather IMDB and mediainfo metadata')}}</li>
-            <li>{{$t('This can take a while depending on your collection and internet connection')}}</li>
+            <li>{{$t('If a file is missing, remove it from the collection (depending on the setting of the Source Path)')}}</li>
+            <li><strong>{{$t('If a file is new or already known, gather IMDB and mediainfo metadata')}}</strong></li>
+            <li><strong>{{$t('This can take a while depending on your collection and internet connection')}}</strong></li>
           </ul>
         </div>
 

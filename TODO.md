@@ -2,7 +2,7 @@
 
 ## v1.0.0
 
-- optimize text about removal of known missing file in ScanMedia Dialog (it is dependant on the setting of the source path)
+- nothing
 
 ### Bugs
 

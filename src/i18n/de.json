@@ -612,7 +612,7 @@
   "Quick Scan": "Schnelles Einlesen",
   "Complete Rescan": "Vollständiges Einlesen",
   "Filescan in every Source Path": "Einlesen der Dateien aus allen Quellpfaden",
-  "If a file is missing, remove it from the collection": "Fehlt eine vormals bekannte Datei, wird sie aus der Sammlung entfernt",
+  "If a file is missing, remove it from the collection (depending on the setting of the Source Path)": "Fehlt eine vormals bekannte Datei, wird sie aus der Sammlung entfernt (in Abhängigkeit zur Einstellung am Quellpfad)",
   "If a new file is found, gather IMDB and mediainfo metadata": "Wird eine neue Datei gefunden, werden IMDB und Mediainfo Metadaten gesammelt",
   "If a file is already known, don't gather any metadata _except the previous scan had errors_": "Ist eine Datei bereits bekannt, werden keine Metadaten erneut gesammelt (außer das vorhergehende Einlesen war fehlerhaft)",
   "If a file is new or already known, gather IMDB and mediainfo metadata": "IMDB und Mediainfo Metadaten werden immer gesammelt, ungeachtet ob die Datei bereits bekannt war oder neu ist",

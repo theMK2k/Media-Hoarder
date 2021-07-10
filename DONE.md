@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- optimize text about removal of known missing file in ScanMedia Dialog (it is dependant on the setting of the source path)
 - i18n
   - [x] IMDB Scraper Test Dialog
   - [x] IMDB Options in ScanMedia Dialog
