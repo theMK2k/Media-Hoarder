@@ -540,11 +540,10 @@
     "Zimbabwe": "Simbabwe",
     "World-wide": "Weltweit"
   },
-
   "Close": "Schließen",
   "IMDB Scraper Check": "IMDB Scraper Prüfung",
   "Run Checks": "Prüfungen Starten",
-  "The imdb_com web scraper is tested using a test-set of example data_ This way we can assure that the data from imdb_com will be correctly scraped_": "Der imdb.com Web Scraper Test wird anhand vordefinierter Testdaten durchgeführt. Damit kann gewährleistet werden, dass neu gelesene Daten korrekt abgerufen werden.",
+  "The imdb_com web scraper is tested using a test-set of example data_ This way we can assure that the data from imdb_com will be correctly scraped_": "Die Prüfung des imdb.com Web Scrapers wird anhand vordefinierter Testdaten durchgeführt. Damit kann gewährleistet werden, dass neu gelesene Daten korrekt abgerufen werden.",
   "All checks successful!": "Alle Prüfungen erfolgreich!",
   "Checks with warning detected!": "Prüfungen enthalten Warnungen!",
   "Checks with error detected!": "Prüfungen enthalten Fehler!",
@@ -555,7 +554,6 @@
   "Filter by this company": "Nach dieser Firma Filtern",
   "Filming Location": "Drehort",
   "Filter by this filming location": "Nach diesem Drehort Filtern",
-
   "Enter a title": "Titel eingeben",
   "Media Types": "Medientypen",
   "Select for linking": "Für Verknüpfung Auswählen",
@@ -589,7 +587,6 @@
   "Top 1000 Voters": "Top 1000",
   "Non-US Users": "Nicht-Amerikaner",
   "US Users": "Amerikaner",
-
   "RatingDemographics": {
     "All": "Alle",
     "Aged under 18": "Unter 18 Jahre",
@@ -610,7 +607,6 @@
     "Non-US Users": "Nicht-Amerikaner",
     "US Users": "Amerikaner"
   },
-
   "Warning: Mediainfo CLI Path cannot be found_ Please go to": "Warnung: Mediainfo CLI Pfad konnte nicht gefunden werden. Bitte unter",
   "and provide one_ You can get Mediainfo CLI from": "einstellen. Mediainfo CLI bekommt man von",
   "Quick Scan": "Schnelles Einlesen",
@@ -631,7 +627,6 @@
   "note: the {label} title would be: _{title}_": "Hinweis: Der {label} Titel ist \"{title}\"",
   "e_g_": "z.B.",
   "Add this Title Type": "Diesen Titel Typ Hinzufügen",
-
   "Checking for Updates": "Prüfe auf Updates",
   "is available_ Get it at": "ist verfügbar. Download über",
   "you are up to date": "Deine Version ist aktuell",
@@ -738,14 +733,12 @@
     "Production Department": "Produktionsabteilung",
     "Series Thanks": "Danke (Serie)"
   },
-
   "CompanyCategories": {
     "Distributors": "Distribution",
     "Other": "Andere",
     "Production": "Produktion",
     "Special Effects": "Spezialeffekte"
   },
-
   "moment": {
     "months": [
       "Januar",
@@ -845,7 +838,6 @@
   "Ignore Exception - Scan Media Now": "Ignoriere die Ausnahmefehler - Jetzt Medien einlesen",
   "Rescan IMDB meta data": "IMDB Metadaten erneut ermitteln",
   "Errors were encountered during the scan, consider a re-scan_": "Beim Einlesen sind Fehler aufgetreten. Ein erneutes Einlesen sollte durchgeführt werden.",
-
   "Release Attributes": "Veröffentlichungsattribute",
   "Release Attribute": "Veröffentlichungsattribut",
   "Here you can set up which release attributes should be searched for in the file/directory names and how they should be displayed_": "Hier kann eingestellt werden, nach welchen Veröffentlichungsattributen gesucht werden soll und wie sie dargestellt werden sollen.",
@@ -937,7 +929,6 @@
   "missing Secondary Title": "kein Sekundärtitel",
   "missing Poster": "kein Poster",
   "missing Plot Summary": "keine Handlungsbeschreibung",
-
   "Edit Movie": "Film Bearbeiten",
   "Edit Series": "Serie Bearbeiten",
   "Edit Episode": "Episode Bearbeiten",
@@ -949,7 +940,6 @@
   "Your changes have been saved_": "Deine Änderungen wurden gespeichert.",
   "checking IMDB link": "prüfe IMDB Verknüpfung",
   "Clear this message": "Diese Meldung entfernen",
-
   "IMDB Main Page": "IMDB Hauptseite",
   "IMDB Poster": "IMDB Poster",
   "IMDB Plot Summary": "IMDB Handlungsbeschreibung",
@@ -962,7 +952,17 @@
   "IMDB Rating Demographics": "Demographien der IMDB Bewertungen",
   "IMDB entry detection": "IMDB Eintragserkennung",
   "IMDB link verification": "IMDB Link Verifikation",
-
   "Warning: the actual runtime of the movie ({runtimeMovie}min) deviates by at least 5 minutes from the runtime reported by IMDB ({runtimeIMDB}min)_ Please check if the correct IMDB entry is used here_": "Warnung: der Unterschied zwischen der tatsächlichen Laufzeit des Films ({runtimeMovie}min) und der Laufzeit, die von IMDB gemeldet wird ({runtimeIMDB}min), ist größer als 5 Minuten. Bitte überprüfe, ob hier der richtige IMDB Eintrag verwendet wird.",
-  "Warning: the release date provided in the file/directory name ({yearMovie}) deviates by at least 2 years from the one reported by IMDB ({yearIMDB})_ Please check if the correct IMDB entry is used here_": "Warnung: der Unterschied zwischen dem Veröffentlichungsjahr aus dem Datei/Verzeichnisnamen ({yearMovie}) und dem Veröffentlichungsjahr, das von IMDB gemeldet wird ({yearIMDB}) ist größer als 2 Jahre. Bitte überprüfe, ob hier der richtige IMDB Eintrag verwendet wird."
+  "Warning: the release date provided in the file/directory name ({yearMovie}) deviates by at least 2 years from the one reported by IMDB ({yearIMDB})_ Please check if the correct IMDB entry is used here_": "Warnung: der Unterschied zwischen dem Veröffentlichungsjahr aus dem Datei/Verzeichnisnamen ({yearMovie}) und dem Veröffentlichungsjahr, das von IMDB gemeldet wird ({yearIMDB}) ist größer als 2 Jahre. Bitte überprüfe, ob hier der richtige IMDB Eintrag verwendet wird.",
+  "Main Page (Genres, Rating/Votes, Metacritic Score, Poster, Plot Summary, Trailer URL)": "Hauptseite (Genres, IMDB Bewertungen, Metacritic Bewertungen, Poster, Handlungsbeschreibung, Trailer URL)",
+  "Ratings (Rating by Demographics, e_g_ Ages, Male/Female, US/Non-US)": "Bewertungen (nach Demographie, z.B. Altersverteilung, Männlich/Weiblich, Amerikanisch/Nicht-Amerikanisch)",
+  "Full Plot Summary (Main Page only contains an extract of the full summary)": "Vollständige Handungsbeschreibung (Die Hauptseite enthält ggf. nur einen Ausschnitt)",
+  "Release Info (Title, Localized Title, Original Title, Year)": "Veröffentlichungsinfos (Titel, Regionaler Titel, Original Titel, Jahr)",
+  "Technical Data (Runtime)": "Technische Daten (Laufzeit)",
+  "Parental Guide (Age Rating, Levels of: Nudity, Violence, Profanity, Alcohol & Drugs, Frightening Scenes)": "Alterseinstufung (Abstufung nach: Nacktheit, Gewalt, Schimpfwörter, Alkohol & Drogen, Beängstigende & Intensive Szenen)",
+  "Person Data (Ad-Hoc)": "Mitwirkende (Ad-Hoc)",
+  "Trailer Media URLs (Ad-Hoc)": "Trailer Media URLs (Ad-Hoc)",
+  "Suggestion Search (Ad-Hoc)": "Vorschlagssuche (Ad-Hoc)",
+  "Advanced Title Search (Ad-Hoc)": "Erweiterte Suche (Ad-Hoc)",
+  "Find (Ad-Hoc)": "Suche (Ad-Hoc)"
 }

@@ -2,11 +2,6 @@
 
 ## v1.0.0
 
-- i18n
-  - IMDB Scraper Test Dialog
-  - IMDB Options in ScanMedia Dialog
-  - [x] Scan Errors (all of the keys, and the value for verifyIMDBtconst)
-
 - optimize text about removal of known missing file in ScanMedia Dialog (it is dependant on the setting of the source path)
 
 ### Bugs

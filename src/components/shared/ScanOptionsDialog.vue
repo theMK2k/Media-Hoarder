@@ -51,7 +51,7 @@
                   v-for="userScanOption in $shared.userScanOptions"
                   v-bind:key="userScanOption.key"
                   v-model="userScanOption.enabled"
-                  v-bind:label="userScanOption.description"
+                  v-bind:label="$t(userScanOption.description)"
                   style="margin: 0px"
                   color="mk-dark-grey"
                 ></v-checkbox>

@@ -33,7 +33,7 @@
           >
             <v-icon>{{check.icon}}</v-icon>
           </v-btn>
-          <span style="color: white">{{check.description}}</span>
+          <span style="color: white">{{$t(check.description)}}</span>
           <div v-if="check.result && check.result.log">
             <li
               v-for="(logEntry, index) in check.result.log"

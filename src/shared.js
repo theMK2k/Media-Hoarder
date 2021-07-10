@@ -280,7 +280,7 @@ const shared = new Vue({
         key: "rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics",
         enabled: true,
         description:
-          "Ratings (Rating by Demographics, e.g. Ages, Male/Female, US/Non-US)",
+          "Ratings (Rating by Demographics, e_g_ Ages, Male/Female, US/Non-US)",
       },
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_plotSummary",
@@ -342,7 +342,7 @@ const shared = new Vue({
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics",
         description:
-          "Ratings (Rating by Demographics, e.g. Ages, Male/Female, US/Non-US)",
+          "Ratings (Rating by Demographics, e_g_ Ages, Male/Female, US/Non-US)",
         enabled: true,
         checkFunction: imdbScraperTests.testIMDBRatingDemographics,
         icon: null,

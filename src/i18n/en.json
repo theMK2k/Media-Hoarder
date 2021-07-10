@@ -554,7 +554,6 @@
   "Filter by this company": "Filter by this company",
   "Filming Location": "Filming Location",
   "Filter by this filming location": "Filter by this filming location",
-
   "Enter a title": "Enter a title",
   "Media Types": "Media Types",
   "Select for linking": "Select for linking",
@@ -581,7 +580,6 @@
   "Hint": "Hint",
   "you can change your default rating demographic (shown in the main list) in the": "you can change your default rating demographic (shown in the main list) in the",
   "No rating demographics found for": "No rating demographics found for",
-
   "All Ages": "All Ages",
   "All": "All",
   "Females": "Females",
@@ -589,7 +587,6 @@
   "Top 1000 Voters": "Top 1000 Voters",
   "Non-US Users": "Non-US Users",
   "US Users": "US Users",
-
   "RatingDemographics": {
     "All": "All",
     "Aged under 18": "Aged under 18",
@@ -610,7 +607,6 @@
     "Non-US Users": "Non-US Users",
     "US Users": "US Users"
   },
-
   "Warning: Mediainfo CLI Path cannot be found_ Please go to": "Warning: Mediainfo CLI Path cannot be found. Please go to",
   "and provide one_ You can get Mediainfo CLI from": "and provide one. You can get Mediainfo CLI from",
   "Quick Scan": "Quick Scan",
@@ -631,7 +627,6 @@
   "note: the {label} title would be: _{title}_": "note: the {label} title would be: \"{title}\"",
   "e_g_": "e.g.",
   "Add this Title Type": "Add this Title Type",
-
   "Checking for Updates": "Checking for Updates",
   "is available_ Get it at": "is available. Get it at",
   "you are up to date": "you are up to date",
@@ -765,7 +760,6 @@
   "Ignore Exception - Scan Media Now": "Ignore Exception - Scan Media Now",
   "Rescan IMDB meta data": "Rescan IMDB meta data",
   "Errors were encountered during the scan, consider a re-scan_": "Errors were encountered during the scan, consider a re-scan.",
-
   "Release Attributes": "Release Attributes",
   "Release Attribute": "Release Attribute",
   "Here you can set up which release attributes should be searched for in the file/directory names and how they should be displayed_": "Here you can set up which release attributes should be searched for in the file/directory names and how they should be displayed.",
@@ -857,7 +851,6 @@
   "missing Secondary Title": "missing Secondary Title",
   "missing Poster": "missing Poster",
   "missing Plot Summary": "missing Plot Summary",
-
   "Edit Movie": "Edit Movie",
   "Edit Series": "Edit Series",
   "Edit Episode": "Edit Episode",
@@ -869,7 +862,6 @@
   "Your changes have been saved_": "Your changes have been saved.",
   "checking IMDB link": "checking IMDB link",
   "Clear this message": "Clear this message",
-
   "IMDB Main Page": "IMDB Main Page",
   "IMDB Poster": "IMDB Poster",
   "IMDB Plot Summary": "IMDB Plot Summary",
@@ -882,7 +874,19 @@
   "IMDB Rating Demographics": "IMDB Rating Demographics",
   "IMDB entry detection": "IMDB entry detection",
   "IMDB link verification": "IMDB link verification",
-
   "Warning: the actual runtime of the movie ({runtimeMovie}min) deviates by at least 5 minutes from the runtime reported by IMDB ({runtimeIMDB}min)_ Please check if the correct IMDB entry is used here_": "Warning: the actual runtime of the movie ({runtimeMovie}min) deviates by at least 5 minutes from the runtime reported by IMDB ({runtimeIMDB}min). Please check if the correct IMDB entry is used here.",
-  "Warning: the release date provided in the file/directory name ({yearMovie}) deviates by at least 2 years from the one reported by IMDB ({yearIMDB})_ Please check if the correct IMDB entry is used here_": "Warning: the release date provided in the file/directory name ({yearMovie}) deviates by at least 2 years from the one reported by IMDB ({yearIMDB}). Please check if the correct IMDB entry is used here."
+  "Warning: the release date provided in the file/directory name ({yearMovie}) deviates by at least 2 years from the one reported by IMDB ({yearIMDB})_ Please check if the correct IMDB entry is used here_": "Warning: the release date provided in the file/directory name ({yearMovie}) deviates by at least 2 years from the one reported by IMDB ({yearIMDB}). Please check if the correct IMDB entry is used here.",
+  
+  "Main Page (Genres, Rating/Votes, Metacritic Score, Poster, Plot Summary, Trailer URL)": "Main Page (Genres, Rating/Votes, Metacritic Score, Poster, Plot Summary, Trailer URL)",
+  "Ratings (Rating by Demographics, e_g_ Ages, Male/Female, US/Non-US)": "Ratings (Rating by Demographics, e.g. Ages, Male/Female, US/Non-US)",
+  "Full Plot Summary (Main Page only contains an extract of the full summary)": "Full Plot Summary (Main Page only contains an extract of the full summary)",
+  "Release Info (Title, Localized Title, Original Title, Year)": "Release Info (Title, Localized Title, Original Title, Year)",
+  "Technical Data (Runtime)": "Technical Data (Runtime)",
+  "Parental Guide (Age Rating, Levels of: Nudity, Violence, Profanity, Alcohol & Drugs, Frightening Scenes)": "Parental Guide (Age Rating, Levels of: Nudity, Violence, Profanity, Alcohol & Drugs, Frightening Scenes)",
+
+  "Person Data (Ad-Hoc)": "Person Data (Ad-Hoc)",
+  "Trailer Media URLs (Ad-Hoc)": "Trailer Media URLs (Ad-Hoc)",
+  "Suggestion Search (Ad-Hoc)": "Suggestion Search (Ad-Hoc)",
+  "Advanced Title Search (Ad-Hoc)": "Advanced Title Search (Ad-Hoc)",
+  "Find (Ad-Hoc)": "Find (Ad-Hoc)"
 }

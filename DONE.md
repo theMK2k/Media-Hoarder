@@ -8,6 +8,10 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- i18n
+  - [x] IMDB Scraper Test Dialog
+  - [x] IMDB Options in ScanMedia Dialog
+  - [x] Scan Errors (all of the keys, and the value for verifyIMDBtconst)
 - [x] introduce a scan error (more like scan warning) when:
   - actual runtime differs from imdb runtime
   - release year differs from imdb year
