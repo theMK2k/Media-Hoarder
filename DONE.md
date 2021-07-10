@@ -8,6 +8,10 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] introduce a scan error (more like scan warning) when:
+  - actual runtime differs from imdb runtime
+  - release year differs from imdb year
+  - provide text button to explicitly clear the error message
 - [x] placeholder icon for Person Dialog, also circular progress while scraping
 - [x] placeholder icon for movies
 - [x] rework video quality detection (1085p is not UHD)

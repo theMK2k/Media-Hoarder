@@ -2025,7 +2025,7 @@ async function findIMDBtconstInNFO(movie) {
 async function findIMDBtconstByFileOrDirname(movie) {
   logger.log("findIMDBtconstByFileOrDirname START");
 
-  const arrYears = helpers.getYearsFromFileName(movie.Filename, false);
+  const arrYears = helpers.getYearsFromFileName(movie.Filename, false); // TODO: also directoryName (if movie.isDirectoryBased)
 
   // const name = helpers.getMovieNameFromFileName(movie.Filename).replace(/[()[]]/g, ' ');
   const name = (movie.isDirectoryBased
@@ -7097,6 +7097,7 @@ async function verifyIMDBtconst($id_Movies, $t) {
     , MI_Duration_Seconds
     , IMDB_runtimeMinutes
     , IMDB_startYear
+    , Filename
     FROM tbl_Movies WHERE id_Movies = $id_Movies
   `;
 
@@ -7133,22 +7134,62 @@ async function verifyIMDBtconst($id_Movies, $t) {
 
     if (diff > 4) {
       movie.scanErrors["IMDB link verification"] =
-        "Warning: the actual runtime of the movie deviates by at least 5 minutes from the runtime reported by IMDB. Please check if the correct IMDB entry is used here.";
+        {
+          message: "Warning: the actual runtime of the movie ({runtimeMovie}min) deviates by at least 5 minutes from the runtime reported by IMDB ({runtimeIMDB}min)_ Please check if the correct IMDB entry is used here_",
+          data: {
+            runtimeMovie: parseInt(MI_runtimeMinutes),
+            runtimeIMDB: parseInt(movie.IMDB_runtimeMinutes)
+          }
+        }
     }
   }
 
-  await db.fireProcedure(
-    `
-    UPDATE tbl_Movies
-      SET	scanErrors = $scanErrors
-    WHERE id_Movies = $id_Movies
-    `,
-    {
-      $id_Movies,
-      $scanErrors: JSON.stringify(movie.scanErrors),
-    }
-  );
+  if (!movie.scanErrors["IMDB link verification"] && movie.IMDB_startYear) {
 
+    const arrYears = helpers.getYearsFromFileName(movie.Filename, false); // TODO: also directoryName (if movie.isDirectoryBased)
+
+    let yearDiff = -1;
+    let yearMovie = -1;
+
+    arrYears.forEach(year => {
+      const diff = Math.abs(year - parseInt(movie.IMDB_startYear));
+
+      if (yearDiff === -1 || diff < yearDiff) {
+        yearDiff = diff;
+        yearMovie = year;
+      }
+    });
+
+    if (yearDiff !== -1 && yearDiff > 1) {
+      movie.scanErrors["IMDB link verification"] =
+        {
+          message: "Warning: the release date provided in the file/directory name ({yearMovie}) deviates by at least 2 years from the one reported by IMDB ({yearIMDB})_ Please check if the correct IMDB entry is used here_",
+          data: {
+            yearMovie,
+            yearIMDB: movie.IMDB_startYear
+          }
+        }
+    }
+  }
+
+  if (JSON.stringify(movie.scanErrors) === "{}") {
+    await db.fireProcedure(`
+      UPDATE tbl_Movies SET scanErrors = NULL WHERE id_Movies = $id_Movies
+    `, { $id_Movies });
+  } else {
+    await db.fireProcedure(
+      `
+      UPDATE tbl_Movies
+        SET	scanErrors = $scanErrors
+      WHERE id_Movies = $id_Movies
+      `,
+      {
+        $id_Movies,
+        $scanErrors: JSON.stringify(movie.scanErrors),
+      }
+    );
+  }
+  
   logger.log("verifyIMDBtconst movie:", movie);
 }
 

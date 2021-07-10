@@ -948,5 +948,21 @@
   "Year is malformed_": "Jahr muss aus vier Ziffern bestehen.",
   "Your changes have been saved_": "Deine Änderungen wurden gespeichert.",
   "checking IMDB link": "prüfe IMDB Verknüpfung",
-  "Clear this message": "Diese Meldung entfernen"
+  "Clear this message": "Diese Meldung entfernen",
+
+  "IMDB Main Page": "IMDB Hauptseite",
+  "IMDB Poster": "IMDB Poster",
+  "IMDB Plot Summary": "IMDB Handlungsbeschreibung",
+  "IMDB Release Info": "IMDB Veröffentlichungsinfos",
+  "IMDB Technical Data": "IMDB Technische Daten",
+  "IMDB Parental Guide": "IMDB Alterseinstufung",
+  "IMDB Companies": "IMDB Firmen",
+  "IMDB Plot Keywords": "IMDB Schlüsselwörter",
+  "IMDB Filming Locations": "IMDB Drehorte",
+  "IMDB Rating Demographics": "Demographien der IMDB Bewertungen",
+  "IMDB entry detection": "IMDB Eintragserkennung",
+  "IMDB link verification": "IMDB Link Verifikation",
+
+  "Warning: the actual runtime of the movie ({runtimeMovie}min) deviates by at least 5 minutes from the runtime reported by IMDB ({runtimeIMDB}min)_ Please check if the correct IMDB entry is used here_": "Warnung: der Unterschied zwischen der tatsächlichen Laufzeit des Films ({runtimeMovie}min) und der Laufzeit, die von IMDB gemeldet wird ({runtimeIMDB}min), ist größer als 5 Minuten. Bitte überprüfe, ob hier der richtige IMDB Eintrag verwendet wird.",
+  "Warning: the release date provided in the file/directory name ({yearMovie}) deviates by at least 2 years from the one reported by IMDB ({yearIMDB})_ Please check if the correct IMDB entry is used here_": "Warnung: der Unterschied zwischen dem Veröffentlichungsjahr aus dem Datei/Verzeichnisnamen ({yearMovie}) und dem Veröffentlichungsjahr, das von IMDB gemeldet wird ({yearIMDB}) ist größer als 2 Jahre. Bitte überprüfe, ob hier der richtige IMDB Eintrag verwendet wird."
 }

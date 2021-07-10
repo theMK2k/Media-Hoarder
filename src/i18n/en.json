@@ -868,5 +868,21 @@
   "Year is malformed_": "Year is malformed.",
   "Your changes have been saved_": "Your changes have been saved.",
   "checking IMDB link": "checking IMDB link",
-  "Clear this message": "Clear this message"
+  "Clear this message": "Clear this message",
+
+  "IMDB Main Page": "IMDB Main Page",
+  "IMDB Poster": "IMDB Poster",
+  "IMDB Plot Summary": "IMDB Plot Summary",
+  "IMDB Release Info": "IMDB Release Info",
+  "IMDB Technical Data": "IMDB Technical Data",
+  "IMDB Parental Guide": "IMDB Parental Guide",
+  "IMDB Companies": "IMDB Companies",
+  "IMDB Plot Keywords": "IMDB Plot Keywords",
+  "IMDB Filming Locations": "IMDB Filming Locations",
+  "IMDB Rating Demographics": "IMDB Rating Demographics",
+  "IMDB entry detection": "IMDB entry detection",
+  "IMDB link verification": "IMDB link verification",
+
+  "Warning: the actual runtime of the movie ({runtimeMovie}min) deviates by at least 5 minutes from the runtime reported by IMDB ({runtimeIMDB}min)_ Please check if the correct IMDB entry is used here_": "Warning: the actual runtime of the movie ({runtimeMovie}min) deviates by at least 5 minutes from the runtime reported by IMDB ({runtimeIMDB}min). Please check if the correct IMDB entry is used here.",
+  "Warning: the release date provided in the file/directory name ({yearMovie}) deviates by at least 2 years from the one reported by IMDB ({yearIMDB})_ Please check if the correct IMDB entry is used here_": "Warning: the release date provided in the file/directory name ({yearMovie}) deviates by at least 2 years from the one reported by IMDB ({yearIMDB}). Please check if the correct IMDB entry is used here."
 }

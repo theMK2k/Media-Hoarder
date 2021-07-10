@@ -561,7 +561,7 @@
                         }}
                         </span
                       >
-                        <v-btn small text color="primary" v-on:click="clearScanErrors(item)">{{ $t('Clear this message') }}</v-btn>
+                        <v-btn small text color="primary" v-on:click.stop="clearScanErrors(item)">{{ $t('Clear this message') }}</v-btn>
                       <v-row v-if="item.showScanErrors">
                         <ul
                           style="
@@ -573,12 +573,11 @@
                           <li
                             v-for="(val, key) in item.scanErrors"
                             v-bind:key="key"
-                            class="mk-clickable"
                             v-on:click.stop="
                               item.showScanErrors = !item.showScanErrors
                             "
                           >
-                            {{ key }}: {{ val }}
+                            {{ $t(key) }}: {{ val.message ? $t(val.message, val.data) : val }}
                           </li>
                         </ul>
                       </v-row>
