@@ -6315,16 +6315,17 @@ async function fetchUILanguage() {
     }
   }
 
-  if (
-    !shared.supportedLanguages.find(
-      (supportedLanguage) => supportedLanguage.code === lang
-    )
-  ) {
-    logger.log(
-      `fetchUILanguage locale "${lang}" is not supported, fallback to "en"`
-    );
-    lang = "en";
-  }
+  // currently, we can't check for supported languages as they now rely on .json files present for i18n messages
+  // if (
+  //   !supportedLanguageCodes.find(
+  //     (code) => code === lang
+  //   )
+  // ) {
+  //   logger.log(
+  //     `fetchUILanguage locale "${lang}" is not supported, fallback to "en"`
+  //   );
+  //   lang = "en";
+  // }
 
   logger.log(`fetchUILanguage using "${lang}"`);
   return lang;

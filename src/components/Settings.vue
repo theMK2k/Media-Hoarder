@@ -356,7 +356,7 @@
             item-text="name"
             item-value="code"
             v-model="$shared.uiLanguage"
-            v-bind:items="$shared.supportedLanguages"
+            v-bind:items="availableLanguages"
             style="margin-top: -16px; margin-bottom: 16px; margin-left: 16px"
           ></v-select>
         </v-row>
@@ -693,6 +693,8 @@ import TitleType from "@/components/shared/TitleType.vue";
 
 import * as helpers from "@/helpers/helpers";
 
+const { languageCodeNameMapping } = require("@/languages");
+
 export default {
   components: {
     "mk-sourcepath": SourcePath,
@@ -815,6 +817,8 @@ export default {
       title: "",
       oldItem: null,
     },
+
+    availableLanguages: []
   }),
 
   watch: {
@@ -1812,6 +1816,15 @@ export default {
       });
     }
 
+    this.availableLanguages = this.$i18n.availableLocales.map(locale => {
+      return {
+        code: locale,
+        name: this.$i18n._vm.messages[locale].LanguageNames[languageCodeNameMapping[helpers.uppercaseEachWord(locale)]]
+      }
+    })
+
+    logger.log('Settings.create this.availableLanguages:', this.availableLanguages);
+    
     // lodash debounced functions
     this.debouncedUpdateMinimumWaitForSetAccess = _.debounce(
       this.updateMinimumWaitForSetAccess,

@@ -1,14 +1,41 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 
+const fs = require('fs');
+const path = require("path");
+
 const moment = require("moment");
 
 const logger = require('loglevel');
 
+const helpers = require("./helpers/helpers");
+
 Vue.use(VueI18n)
 
-function loadLocaleMessages () {
+function loadLocaleMessages() {
   const locales = require.context('./i18n', true, /[A-Za-z0-9-_,\s]+\.json$/i)
+
+  const extraLocales = {}
+
+  const extraLocalesPath = helpers.getDataPath('i18n');
+  const extraLocalesFiles = fs.readdirSync(extraLocalesPath);
+
+  logger.log('loadLocaleMessages extraLocalesFiles:', extraLocalesFiles);
+
+  extraLocalesFiles.forEach(extraLocalesFile => {
+    const rx = /^([A-Za-z0-9-_]+)\.json$/;
+    if (!rx.test(extraLocalesFile)) {
+      logger.log(`skipping locales file ${extraLocalesFile} as it doesn't match expected format`);
+    }
+
+    const locale = extraLocalesFile.match(rx)[1];
+
+    logger.log(`loadLocaleMessages using messages for ${locale} from ${extraLocalesFile} in i18n directory`);
+
+    extraLocales[locale] = JSON.parse(fs.readFileSync(path.join(extraLocalesPath, extraLocalesFile)));
+  })
+
+  logger.log(`loadLocaleMessages locales:`, locales);
 
   const messages = {}
   locales.keys().forEach(key => {
@@ -16,10 +43,15 @@ function loadLocaleMessages () {
     if (matched && matched.length > 1) {
       const locale = matched[1]
       messages[locale] = locales(key)
+
     }
   })
 
-  logger.log('locales messages:', messages);
+  Object.keys(extraLocales).forEach(key => {
+    messages[key] = extraLocales[key];
+  })
+
+  logger.log('loadLocaleMessages messages:', messages);
 
   return messages
 }

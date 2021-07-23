@@ -1437,6 +1437,7 @@ export default {
       this.$i18n.locale = newValue;
       this.$root.$i18n.locale = newValue;
 
+      logger.log('this.$i18n:', this.$i18n);
       logger.log("this.$i18n.locale:", this.$i18n.locale);
       logger.log("this.$root.$i18n.locale:", this.$root.$i18n.locale);
 
