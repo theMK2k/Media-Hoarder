@@ -43,7 +43,6 @@ function loadLocaleMessages() {
     if (matched && matched.length > 1) {
       const locale = matched[1]
       messages[locale] = locales(key)
-
     }
   })
 
@@ -51,6 +50,21 @@ function loadLocaleMessages() {
     messages[key] = extraLocales[key];
   })
 
+  // Print all messages to the console (in order to count words)
+  // function printMessage(msg) {
+  //   if (typeof msg === 'string') {
+  //     logger.log(msg);
+  //   }
+
+  //   if (typeof msg === 'object') {
+  //     Object.keys(msg).forEach(key => {
+  //       printMessage(msg[key]);
+  //     })
+  //   }
+  // }
+
+  // printMessage(messages.en);
+  
   logger.log('loadLocaleMessages messages:', messages);
 
   return messages
