@@ -300,7 +300,7 @@ async function testIMDBreleaseinfo() {
     const expected = {
       $IMDB_originalTitle: "Star Trek: The Next Generation",
       $IMDB_localTitle: "Raumschiff Enterprise: Das nächste Jahrhundert",
-      $IMDB_primaryTitle: "Star Trek: the Next Generation",
+      $IMDB_primaryTitle: "Star Trek: The Next Generation",
       $IMDB_startYear: "1987",
       $IMDB_endYear: "1994",
     };
