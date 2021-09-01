@@ -14,27 +14,6 @@ Vue.use(VueI18n)
 
 function loadLocaleMessages() {
   const locales = require.context('./i18n', true, /[A-Za-z0-9-_,\s]+\.json$/i)
-
-  const extraLocales = {}
-
-  const extraLocalesPath = helpers.getDataPath('i18n');
-  const extraLocalesFiles = fs.readdirSync(extraLocalesPath);
-
-  logger.log('loadLocaleMessages extraLocalesFiles:', extraLocalesFiles);
-
-  extraLocalesFiles.forEach(extraLocalesFile => {
-    const rx = /^([A-Za-z0-9-_]+)\.json$/;
-    if (!rx.test(extraLocalesFile)) {
-      logger.log(`skipping locales file ${extraLocalesFile} as it doesn't match expected format`);
-    }
-
-    const locale = extraLocalesFile.match(rx)[1];
-
-    logger.log(`loadLocaleMessages using messages for ${locale} from ${extraLocalesFile} in i18n directory`);
-
-    extraLocales[locale] = JSON.parse(fs.readFileSync(path.join(extraLocalesPath, extraLocalesFile)));
-  })
-
   logger.log(`loadLocaleMessages locales:`, locales);
 
   const messages = {}
@@ -46,9 +25,31 @@ function loadLocaleMessages() {
     }
   })
 
-  Object.keys(extraLocales).forEach(key => {
-    messages[key] = extraLocales[key];
-  })
+  const extraLocales = {}
+  const extraLocalesPath = helpers.getDataPath('i18n');
+
+  if (fs.existsSync(extraLocalesPath)) {
+    const extraLocalesFiles = fs.readdirSync(extraLocalesPath);
+
+    logger.log('loadLocaleMessages extraLocalesFiles:', extraLocalesFiles);
+
+    extraLocalesFiles.forEach(extraLocalesFile => {
+      const rx = /^([A-Za-z0-9-_]+)\.json$/;
+      if (!rx.test(extraLocalesFile)) {
+        logger.log(`skipping locales file ${extraLocalesFile} as it doesn't match expected format`);
+      }
+
+      const locale = extraLocalesFile.match(rx)[1];
+
+      logger.log(`loadLocaleMessages using messages for ${locale} from ${extraLocalesFile} in i18n directory`);
+
+      extraLocales[locale] = JSON.parse(fs.readFileSync(path.join(extraLocalesPath, extraLocalesFile)));
+    })
+
+    Object.keys(extraLocales).forEach(key => {
+      messages[key] = extraLocales[key];
+    })
+  }
 
   // Print all messages to the console (in order to count words)
   // function printMessage(msg) {
@@ -66,7 +67,6 @@ function loadLocaleMessages() {
   // printMessage(messages.en);
   
   logger.log('loadLocaleMessages messages:', messages);
-
   return messages
 }
 
