@@ -30,6 +30,9 @@ module.exports = {
           ]
         },
       },
+			contextIsolation: false,
+      nodeIntegration: true,
+      enableRemoteModule: true
     },
     i18n: {
       locale: 'en',

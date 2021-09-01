@@ -29,6 +29,8 @@ function createWindow() {
 	win = new BrowserWindow({
 		width: 1280, height: 800, webPreferences: {
 			nodeIntegration: true,
+			contextIsolation: false,
+			enableRemoteModule: true,
 			// webSecurity: false,
 			webviewTag: true,
 			fullscreenable: false
