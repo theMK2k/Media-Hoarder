@@ -70,7 +70,7 @@ Currently **Media Hoarder** comes as:
 
 ### Install Node.js
 
-Visit <https://nodejs.org> and download/install it for your OS. **Media Hoarder** is developed with Node.js v10 but should be also compatible with newer versions.
+Visit <https://nodejs.org> and download/install it for your OS. **Media Hoarder** is developed with Node.js v14 but should be also compatible with newer versions.
 
 ### Install vue-cli
 
