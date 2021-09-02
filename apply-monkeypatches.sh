@@ -1,6 +1,5 @@
 #!/bin/sh
-echo "applying monkeypatches"
-echo "TODO: check if monkeypatching sign.js is still necessary"
+echo "(no monkeypatches necessary)"
 
 # monkeypatch when@3.7.8
 # cp ./monkeypatches/node_modules.when.lib.env.js ./node_modules/when/lib/env.js
