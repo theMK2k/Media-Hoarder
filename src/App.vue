@@ -2632,6 +2632,8 @@ export default {
 
   // ### LifeCycleHooks ###
   created() {
+    logger.log('this.$vuetify.theme:', this.$vuetify.theme);
+    
     document.onkeydown = this.onKeyDown;
 
     this.toggleFullScreen();
@@ -2913,6 +2915,7 @@ h1 {
 /* ### Vuetify fixes ### */
 
 /* this is part of v-select and makes it unneccessarily high */
+/*
 .v-text-field__details {
   display: none !important;
 }
@@ -2920,6 +2923,7 @@ h1 {
 .mk-v-select-dynamic-width .v-input__slot {
   margin: 0px !important;
 }
+*/
 
 .mk-v-select-dynamic-width .v-select__selections > input {
   max-width: 0px !important;

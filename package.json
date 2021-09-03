@@ -72,8 +72,12 @@
     "eslint": "7.32.0",
     "eslint-plugin-vue": "7.17.0",
     "nodemailer": "6.6.3",
+    "sass": "^1.39.0",
+    "sass-loader": "12.1.0",
+    "sass-variable-loader": "^0.1.2",
     "vue-cli-plugin-electron-builder": "2.1.1",
-    "vue-template-compiler": "2.6.14"
+    "vue-template-compiler": "2.6.14",
+    "vuetify-loader": "^1.7.3"
   },
   "eslintConfig": {
     "root": true,

@@ -1,4 +1,12 @@
+const importVariablesScss = `@import "~@/styles/variables.scss"`;
+
 module.exports = {
+  configureWebpack: {
+  },
+  css: {
+    sourceMap: true
+  },
+
   pluginOptions: {
     electronBuilder: {
       builderOptions: {
@@ -30,7 +38,7 @@ module.exports = {
           ]
         },
       },
-			contextIsolation: false,
+      contextIsolation: false,
       nodeIntegration: true,
       enableRemoteModule: true
     },
