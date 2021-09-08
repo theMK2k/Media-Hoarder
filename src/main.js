@@ -1,156 +1,153 @@
-import Vue from 'vue';
-import App from '@/App.vue';
-import Vuetify from 'vuetify';
-import '@mdi/font/css/materialdesignicons.css';
+import Vue from "vue";
+import App from "@/App.vue";
 
-const logger = require('loglevel');
-
-import 'vuetify/dist/vuetify.min.css'
+const logger = require("loglevel");
 
 const remote = require("electron").remote;
 
-import router from '@/router'
-import { shared } from '@/shared'
-import i18n from './i18n'
+import router from "@/router";
+import { shared } from "@/shared";
+import i18n from "./i18n";
+import vuetify from "@/plugins/vuetify";
 
-Vue.use(Vuetify)
+import "@babel/polyfill";
+import "roboto-fontface/css/roboto/roboto-fontface.css";
+import "@mdi/font/css/materialdesignicons.css";
 
 Vue.use(shared);
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
 export const eventBus = new Vue({
-    i18n,
+  methods: {
+    dbInitialized() {
+      this.$emit("dbInitialized");
+    },
 
-    methods: {
-		dbInitialized() {
-			this.$emit('dbInitialized');
-		},
-		
-		scanInfoOff() {
-			this.$emit('scanInfoOff');
-		},
+    scanInfoOff() {
+      this.$emit("scanInfoOff");
+    },
 
-		scanInfoShow(header, details) {
-			// logger.log('scanInfoShow:', {header, details});
-			this.$emit('scanInfoShow', {header, details});
-		},
+    scanInfoShow(header, details) {
+      // logger.log('scanInfoShow:', {header, details});
+      this.$emit("scanInfoShow", { header, details });
+    },
 
-		showSnackbar(color, textOrErrorObject, timeout) {
-			timeout = timeout || 6000;	// 6s default timeout
-			this.$emit('showSnackbar', { color, textOrErrorObject, timeout });
-		},
+    showSnackbar(color, textOrErrorObject, timeout) {
+      timeout = timeout || 6000; // 6s default timeout
+      this.$emit("showSnackbar", { color, textOrErrorObject, timeout });
+    },
 
-		rescanStarted() {
-			this.$emit('rescanStarted');
-		},
-		
-		rescanStopped() {
-			this.$emit('rescanStopped');
-		},
+    rescanStarted() {
+      this.$emit("rescanStarted");
+    },
 
-		searchTextChanged(searchText) {
-			this.$emit('searchTextChanged', { searchText });
-		},
+    rescanStopped() {
+      this.$emit("rescanStopped");
+    },
 
-		refetchMedia(setPage, $t) {
-			this.$emit('refetchMedia', setPage, $t);
-		},
+    searchTextChanged(searchText) {
+      this.$emit("searchTextChanged", { searchText });
+    },
 
-		refetchFilters(setFilter) {
-			this.$emit('refetchFilters', setFilter);
-		},
+    refetchMedia(setPage, $t) {
+      this.$emit("refetchMedia", setPage, $t);
+    },
 
-		initListDialog() {
-			this.$emit('initListDialog');
-		},
+    refetchFilters(setFilter) {
+      this.$emit("refetchFilters", setFilter);
+    },
 
-		listDialogSetChosenMethod(value) {
-			this.$emit('listDialogSetChosenMethod', value);
-		},
+    initListDialog() {
+      this.$emit("initListDialog");
+    },
 
-		listDialogSetCreateNewList(value) {
-			this.$emit('listDialogSetCreateNewList', value);
-		},
+    listDialogSetChosenMethod(value) {
+      this.$emit("listDialogSetChosenMethod", value);
+    },
 
-		listDialogSetChosenList(id_Lists) {
-			this.$emit('listDialogSetChosenList', id_Lists);
-		},
+    listDialogSetCreateNewList(value) {
+      this.$emit("listDialogSetCreateNewList", value);
+    },
 
-		filtersChanged() {
-			this.$emit('filtersChanged');
-		},
+    listDialogSetChosenList(id_Lists) {
+      this.$emit("listDialogSetChosenList", id_Lists);
+    },
 
-		showLoadingOverlay(value) {
-			this.$emit('showLoadingOverlay', value);
-		},
+    filtersChanged() {
+      this.$emit("filtersChanged");
+    },
 
-		setFilter(setFilter) {
-			this.$emit('setFilter', setFilter);
-		},
+    showLoadingOverlay(value) {
+      this.$emit("showLoadingOverlay", value);
+    },
 
-		showPersonDialog(credit) {
-			this.$emit('showPersonDialog', credit);
-		},
+    setFilter(setFilter) {
+      this.$emit("setFilter", setFilter);
+    },
 
-		showCompanyDialog(company) {
-			this.$emit('showCompanyDialog', company);
-		},
+    showPersonDialog(credit) {
+      this.$emit("showPersonDialog", credit);
+    },
 
-		showPlotKeywordDialog(plotKeyword) {
-			this.$emit('showPlotKeywordDialog', plotKeyword);
-		},
+    showCompanyDialog(company) {
+      this.$emit("showCompanyDialog", company);
+    },
 
-		showFilmingLocationDialog(filmingLocation) {
-			this.$emit('showFilmingLocationDialog', filmingLocation);
-		},
+    showPlotKeywordDialog(plotKeyword) {
+      this.$emit("showPlotKeywordDialog", plotKeyword);
+    },
 
-		personDialogConfirm(result) {
-			this.$emit('personDialogConfirm', result);
-		},
+    showFilmingLocationDialog(filmingLocation) {
+      this.$emit("showFilmingLocationDialog", filmingLocation);
+    },
 
-		companyDialogConfirm(result) {
-			this.$emit('companyDialogConfirm', result);
-		},
+    personDialogConfirm(result) {
+      this.$emit("personDialogConfirm", result);
+    },
 
-		plotKeywordDialogConfirm(result) {
-			this.$emit('plotKeywordDialogConfirm', result);
-		},
+    companyDialogConfirm(result) {
+      this.$emit("companyDialogConfirm", result);
+    },
 
-		filmingLocationDialogConfirm(result) {
-			this.$emit('filmingLocationDialogConfirm', result);
-		},
+    plotKeywordDialogConfirm(result) {
+      this.$emit("plotKeywordDialogConfirm", result);
+    },
 
-		openVersionDialog() {
-			this.$emit('openVersionDialog');
-		},
+    filmingLocationDialogConfirm(result) {
+      this.$emit("filmingLocationDialogConfirm", result);
+    },
 
-		openCheckIMDBScraperDialog(settings) {
-			this.$emit('openCheckIMDBScraperDialog', settings);
-		},
+    openVersionDialog() {
+      this.$emit("openVersionDialog");
+    },
 
-		setProgressBar(value) {
-			// value 0.00 - 1.00: absolute progress
-			// value > 1.00: marquee
-			// value < 0: off
-			logger.log('setProgressBar value:', value);
+    openCheckIMDBScraperDialog(settings) {
+      this.$emit("openCheckIMDBScraperDialog", settings);
+    },
 
-			if (!value && value !== 0) {
-				return;
-			}
+    setProgressBar(value) {
+      // value 0.00 - 1.00: absolute progress
+      // value > 1.00: marquee
+      // value < 0: off
+      logger.log("setProgressBar value:", value);
 
-			remote.getCurrentWindow().setProgressBar(value);
-		},
+      if (!value && value !== 0) {
+        return;
+      }
 
-		rescanFinished({ rescanAddedMovies, rescanRemovedMovies }) {
-			this.$emit('rescanFinished', { rescanAddedMovies, rescanRemovedMovies });
-		},
-	}
+      remote.getCurrentWindow().setProgressBar(value);
+    },
+
+    rescanFinished({ rescanAddedMovies, rescanRemovedMovies }) {
+      this.$emit("rescanFinished", { rescanAddedMovies, rescanRemovedMovies });
+    },
+  },
 });
 
 new Vue({
-	i18n,
-	router,
-	vuetify: new Vuetify({ iconfont: 'mdi' }),
-	render: h => h(App),
-}).$mount('#app')
+  i18n,
+  router,
+  vuetify,
+  render: (h) => h(App),
+}).$mount("#app");

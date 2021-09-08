@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="100%" v-on:keydown.escape="onCloseClick">
+  <v-dialog
+    v-model="show"
+    persistent
+    max-width="100%"
+    v-on:keydown.escape="onCloseClick"
+  >
     <!--  style="min-height: 600px!important" -->
     <v-card dark flat v-bind:ripple="false">
       <!--  style="min-height: 600px!important" -->
@@ -7,7 +12,7 @@
         v-if="show"
         v-bind:src="src"
         nodeintegration
-        style="width: 100%; min-height: 600px!important"
+        style="width: 100%; min-height: 600px !important"
       ></webview>
       <v-col sm="12">
         <v-row style="margin-top: 8px">
@@ -15,8 +20,9 @@
             class="xs-fullwidth"
             color="secondary"
             v-on:click.native="onCloseClick"
-            style="margin-left: 8px;"
-          >{{$t('Close')}}</v-btn>
+            style="margin-left: 8px"
+            >{{ $t("Close") }}</v-btn
+          >
         </v-row>
       </v-col>
     </v-card>
@@ -34,11 +40,11 @@ export default {
   methods: {
     onCloseClick() {
       this.$emit("close");
-    }
+    },
   },
 
   // ### Lifecycle Hooks ###
-  created() {}
+  created() {},
 };
 </script>
 

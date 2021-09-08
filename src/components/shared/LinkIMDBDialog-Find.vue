@@ -16,8 +16,12 @@
   >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
-        <div class="headline" style="width: 100%; font-size: 1.17em">{{$t('Link with IMDB entry')}}</div>
-        <v-list-item-subtitle class="grey--text caption">{{ filePath }}</v-list-item-subtitle>
+        <div class="headline" style="width: 100%; font-size: 1.17em">
+          {{ $t("Link with IMDB entry") }}
+        </div>
+        <v-list-item-subtitle class="grey--text caption">{{
+          filePath
+        }}</v-list-item-subtitle>
         <v-row style="padding-left: 16px; margin-bottom: 8px">
           <v-text-field
             :append-icon-cb="() => {}"
@@ -32,13 +36,18 @@
         </v-row>
 
         <v-select
-          class="mk-v-select-dynamic-width "
+          class="mk-v-select-dynamic-width"
           v-bind:items="titleTypes"
           item-text="name"
           item-value="id"
           v-model="chosenTitleType"
           v-bind:label="$t('Title Types')"
-          style="margin-left: 4px; margin-right: -12px; margin-top: 16px; height: 40px"
+          style="
+            margin-left: 4px;
+            margin-right: -12px;
+            margin-top: 16px;
+            height: 40px;
+          "
         >
           <template v-slot:selection="{ item }">
             <span>{{ $t(item.name) }}</span>
@@ -46,7 +55,12 @@
         </v-select>
 
         <v-row style="margin-top: 16px">
-          <v-btn text v-bind:loading="isLoading" v-on:click.native="onSearchClick">{{$t('Search')}}</v-btn>
+          <v-btn
+            text
+            v-bind:loading="isLoading"
+            v-on:click.native="onSearchClick"
+            >{{ $t("Search") }}</v-btn
+          >
         </v-row>
       </v-card-title>
       <v-card-text>
@@ -62,12 +76,15 @@
             >
               <v-list-item three-line style="padding-left: 0px">
                 <div>
-                  <v-list-item-avatar tile style="margin: 6px; height: 44px; width: 32px">
+                  <v-list-item-avatar
+                    tile
+                    style="margin: 6px; height: 44px; width: 32px"
+                  >
                     <v-img
                       contain
                       v-if="item.imageURL"
                       v-bind:src="item.imageURL"
-                      style="border-radius: 6px;"
+                      style="border-radius: 6px"
                     ></v-img>
                   </v-list-item-avatar>
                 </div>
@@ -75,7 +92,7 @@
                   class="align-self-start"
                   style="padding-top: 6px; padding-bottom: 6px"
                 >
-                  <v-col style="padding: 0px!important">
+                  <v-col style="padding: 0px !important">
                     <!-- <v-row>
                       <v-list-item-title
                         style="margin-bottom: 4px!important; font-size: 16px; margin-left: 12px"
@@ -85,7 +102,8 @@
                     <v-list-item-subtitle
                       v-if="item.resultText"
                       style="margin-bottom: 4px"
-                    >{{ item.resultText }}</v-list-item-subtitle>
+                      >{{ item.resultText }}</v-list-item-subtitle
+                    >
 
                     <v-row style="margin-top: 8px">
                       <v-btn
@@ -94,7 +112,8 @@
                         color="primary"
                         v-bind:loading="isLinking"
                         v-on:click.stop="onSelectClick(item)"
-                      >{{$t('Select for linking')}}</v-btn>
+                        >{{ $t("Select for linking") }}</v-btn
+                      >
                     </v-row>
                   </v-col>
                 </v-list-item-content>
@@ -109,7 +128,8 @@
           class="xs-fullwidth"
           color="secondary"
           v-on:click.native="onCancelClick()"
-        >{{$t('Close')}}</v-btn>
+          >{{ $t("Close") }}</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>

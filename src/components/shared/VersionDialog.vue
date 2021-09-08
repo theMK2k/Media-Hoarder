@@ -1,15 +1,24 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px" transition="fab-transition" scrollable>
+  <v-dialog
+    v-model="show"
+    persistent
+    max-width="1000px"
+    transition="fab-transition"
+    scrollable
+  >
     <v-card>
       <v-card-title>
         <v-row class="headline" style="width: 100%; font-size: 1.17em">
           <div
             class="headline mk-clickable"
             v-on:click="showQuote = !showQuote"
-          >{{$shared.appName}} v{{$shared.currentVersion}} - {{$shared.currentName}}</div>
+          >
+            {{ $shared.appName }} v{{ $shared.currentVersion }} -
+            {{ $shared.currentName }}
+          </div>
           <v-spacer></v-spacer>
 
-          <v-btn text v-on:click="$emit('close')">{{$t('Close')}}</v-btn>
+          <v-btn text v-on:click="$emit('close')">{{ $t("Close") }}</v-btn>
         </v-row>
 
         <v-row
@@ -25,62 +34,95 @@
 
         <div class="v-card__text" style="padding: 0px">
           <div v-if="isLoadingHistory" style="margin-bottom: 16px">
-            {{$t('Checking for Updates')}}
-            <v-progress-linear color="red accent-0" indeterminate rounded height="6"></v-progress-linear>
+            {{ $t("Checking for Updates") }}
+            <v-progress-linear
+              color="red accent-0"
+              indeterminate
+              rounded
+              height="6"
+            ></v-progress-linear>
           </div>
 
           <v-alert
             v-if="!isLoadingHistory"
-            v-bind:type="isNewVersionAvailable ? 'info' : (isUpToDate ? 'success' : 'warning')"
+            v-bind:type="
+              isNewVersionAvailable
+                ? 'info'
+                : isUpToDate
+                ? 'success'
+                : 'warning'
+            "
             colored-border
             border="left"
             dense
             style="margin-top: 8px"
           >
             <span v-if="isNewVersionAvailable">
-              <strong>{{`${$shared.appName} v${latestVersion} - ${latestName}`}}</strong>
-              {{$t('is available_ Get it at', {appName: $shared.appName, latestVersion: latestVersion, latestName: latestName})}}
+              <strong>{{
+                `${$shared.appName} v${latestVersion} - ${latestName}`
+              }}</strong>
+              {{
+                $t("is available_ Get it at", {
+                  appName: $shared.appName,
+                  latestVersion: latestVersion,
+                  latestName: latestName,
+                })
+              }}
               <a
-                v-on:click.stop="openLink('https://github.com/theMK2k/Media-Hoarder/releases')"
-              >https://github.com/theMK2k/Media-Hoarder/releases</a>
+                v-on:click.stop="
+                  openLink('https://github.com/theMK2k/Media-Hoarder/releases')
+                "
+                >https://github.com/theMK2k/Media-Hoarder/releases</a
+              >
             </span>
-            <span v-if="isUpToDate">{{$t('you are up to date')}}</span>
-            <span
-              v-if="!isNewVersionAvailable && !isUpToDate"
-            >{{$t('unable to determine if you are up to date')}}</span>
+            <span v-if="isUpToDate">{{ $t("you are up to date") }}</span>
+            <span v-if="!isNewVersionAvailable && !isUpToDate">{{
+              $t("unable to determine if you are up to date")
+            }}</span>
           </v-alert>
 
           <div class="mk-light-grey">
-            {{$t('Visit')}}
-            <a
-              v-on:click.stop="openLink('https://media.hoarder.software')"
-            >https://media.hoarder.software</a>
-            {{$t('for a better features overview_')}}
+            {{ $t("Visit") }}
+            <a v-on:click.stop="openLink('https://media.hoarder.software')"
+              >https://media.hoarder.software</a
+            >
+            {{ $t("for a better features overview_") }}
           </div>
 
-          <div v-if="history && history.length > 0" style="font-size: 16px; margin-top: 16px">
-            {{$t('Version History')}}
+          <div
+            v-if="history && history.length > 0"
+            style="font-size: 16px; margin-top: 16px"
+          >
+            {{ $t("Version History") }}
             <v-btn
               text
               class="xs-fullwidth"
               style="margin-right: 8px"
               v-bind:disabled="infoPosition + 1 >= history.length"
               v-on:click="infoPosition++"
-            >&lt;</v-btn>
-            v{{history[infoPosition].version}} - {{history[infoPosition].name}}
+              >&lt;</v-btn
+            >
+            v{{ history[infoPosition].version }} -
+            {{ history[infoPosition].name }}
             <v-btn
               text
               class="xs-fullwidth"
               v-bind:disabled="infoPosition === 0"
               v-on:click="infoPosition--"
-            >&gt;</v-btn>
+              >&gt;</v-btn
+            >
           </div>
 
           <div
             v-if="isLoadingVersionInfo"
-            style="margin-left: 24px; margin-right:24px; margin-bottom: 16px"
+            style="margin-left: 24px; margin-right: 24px; margin-bottom: 16px"
           >
-            <v-progress-linear color="red accent-0" indeterminate rounded height="6"></v-progress-linear>
+            <v-progress-linear
+              color="red accent-0"
+              indeterminate
+              rounded
+              height="6"
+            ></v-progress-linear>
           </div>
         </div>
       </v-card-title>

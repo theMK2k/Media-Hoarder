@@ -4,29 +4,34 @@
       <v-btn text v-on:click="$router.go(-1)">
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
-      {{$t("Settings")}}
+      {{ $t("Settings") }}
     </h1>
 
     <v-tabs color="white">
-      <v-tab>{{$t("General")}}</v-tab>
-      <v-tab>{{$t("Movies")}}</v-tab>
+      <v-tab>{{ $t("General") }}</v-tab>
+      <v-tab>{{ $t("Movies") }}</v-tab>
       <!-- <v-tab>{{$t("Series")}}</v-tab> -->
-      <v-tab>{{$t("Duplicates")}}</v-tab>
-      <v-tab>{{$t("Regions")}}</v-tab>
-      <v-tab>{{$t("Languages")}}</v-tab>
-      <v-tab>{{$t("Title Types")}}</v-tab>
-      <v-tab>{{$t("Release Attributes")}}</v-tab>
+      <v-tab>{{ $t("Duplicates") }}</v-tab>
+      <v-tab>{{ $t("Regions") }}</v-tab>
+      <v-tab>{{ $t("Languages") }}</v-tab>
+      <v-tab>{{ $t("Title Types") }}</v-tab>
+      <v-tab>{{ $t("Release Attributes") }}</v-tab>
 
       <!-- GENERAL -->
       <v-tab-item style="padding: 8px">
         <v-row class="settings-row">
-          <h3>{{$t('Media Player Path')}}</h3>
+          <h3>{{ $t("Media Player Path") }}</h3>
 
           <v-card-text class="mk-light-grey">
-            {{$t('{appName} needs the path to a media player of your choice for media playback_ We recommend the VLC media player, you can get it at_', {appName: $shared.appName})}}
-            <a
-              v-on:click="openURL('https://www.videolan.org/vlc/index.html')"
-            >https://www.videolan.org/vlc/index.html</a>
+            {{
+              $t(
+                "{appName} needs the path to a media player of your choice for media playback_ We recommend the VLC media player, you can get it at_",
+                { appName: $shared.appName }
+              )
+            }}
+            <a v-on:click="openURL('https://www.videolan.org/vlc/index.html')"
+              >https://www.videolan.org/vlc/index.html</a
+            >
           </v-card-text>
 
           <v-text-field
@@ -42,24 +47,31 @@
             small
             color="primary"
             style="margin-top: 16px"
-          >{{$t("Browse")}}</v-btn>
+            >{{ $t("Browse") }}</v-btn
+          >
           <v-btn
             v-on:click="showEditMediaplayerPathDialog()"
             text
             small
             color="primary"
             style="margin-top: 16px"
-          >{{$t("Edit")}}</v-btn>
+            >{{ $t("Edit") }}</v-btn
+          >
         </v-row>
 
         <v-row class="settings-row">
-          <h3>{{$t('Mediainfo CLI Path')}}</h3>
+          <h3>{{ $t("Mediainfo CLI Path") }}</h3>
 
           <v-card-text class="mk-light-grey">
-            {{$t('{appName} needs the path to Mediainfo CLI in order to determine duration, video resolution and languages of your media_ You can get Mediainfo CLI at_', {appName: $shared.appName})}}
-            <a
-              v-on:click="openURL('https://mediaarea.net/en/MediaInfo')"
-            >https://mediaarea.net/en/MediaInfo</a>
+            {{
+              $t(
+                "{appName} needs the path to Mediainfo CLI in order to determine duration, video resolution and languages of your media_ You can get Mediainfo CLI at_",
+                { appName: $shared.appName }
+              )
+            }}
+            <a v-on:click="openURL('https://mediaarea.net/en/MediaInfo')"
+              >https://mediaarea.net/en/MediaInfo</a
+            >
           </v-card-text>
 
           <v-text-field
@@ -75,22 +87,27 @@
             small
             color="primary"
             style="margin-top: 16px"
-          >{{$t("Browse")}}</v-btn>
+            >{{ $t("Browse") }}</v-btn
+          >
           <v-btn
             v-on:click="showEditMediainfoPathDialog()"
             text
             small
             color="primary"
             style="margin-top: 16px"
-          >{{$t("Edit")}}</v-btn>
+            >{{ $t("Edit") }}</v-btn
+          >
         </v-row>
 
         <v-row class="settings-row">
-          <h3>{{$t('Last Access Grace Period')}}</h3>
+          <h3>{{ $t("Last Access Grace Period") }}</h3>
 
-          <v-card-text
-            class="mk-light-grey"
-          >{{$t('{appName} provides the date and time of the last access for any medium_ In order to prevent unwanted updates, you can define a grace period in seconds where a medium can be played until the update is performed_', { appName: $shared.appName })}}</v-card-text>
+          <v-card-text class="mk-light-grey">{{
+            $t(
+              "{appName} provides the date and time of the last access for any medium_ In order to prevent unwanted updates, you can define a grace period in seconds where a medium can be played until the update is performed_",
+              { appName: $shared.appName }
+            )
+          }}</v-card-text>
 
           <v-text-field
             type="number"
@@ -101,11 +118,14 @@
         </v-row>
 
         <v-row class="settings-row">
-          <h3>{{$t('IMDB Rating Demographic')}}</h3>
+          <h3>{{ $t("IMDB Rating Demographic") }}</h3>
 
-          <v-card-text
-            class="mk-light-grey"
-          >{{$t('{appName} provides the IMDB score and number of votes for each medium _where applicable__ By default these are the numbers of all IMDB users_ You can, however, decide if you wish to see those of a certain demographic, e_g_ by gender or age_', { appName: $shared.appName })}}</v-card-text>
+          <v-card-text class="mk-light-grey">{{
+            $t(
+              "{appName} provides the IMDB score and number of votes for each medium _where applicable__ By default these are the numbers of all IMDB users_ You can, however, decide if you wish to see those of a certain demographic, e_g_ by gender or age_",
+              { appName: $shared.appName }
+            )
+          }}</v-card-text>
 
           <v-select
             class="mk-v-select-dynamic-width"
@@ -119,11 +139,14 @@
         </v-row>
 
         <v-row class="settings-row">
-          <h3>{{ $t('Log Level') }}</h3>
+          <h3>{{ $t("Log Level") }}</h3>
 
-          <v-card-text
-            class="mk-light-grey"
-          >{{$t('{appName} logs certain events during runtime_ You can view these logs by pressing the _Open DevTools_ button below_ With the log level you decide which event severity should be logged_', { appName: $shared.appName })}}</v-card-text>
+          <v-card-text class="mk-light-grey">{{
+            $t(
+              "{appName} logs certain events during runtime_ You can view these logs by pressing the _Open DevTools_ button below_ With the log level you decide which event severity should be logged_",
+              { appName: $shared.appName }
+            )
+          }}</v-card-text>
 
           <v-select
             class="mk-v-select-dynamic-width"
@@ -136,25 +159,31 @@
           ></v-select>
         </v-row>
 
-        <v-btn text small color="primary" v-on:click="openVersionDialog">{{$t("Show Version Info")}}</v-btn>
+        <v-btn text small color="primary" v-on:click="openVersionDialog">{{
+          $t("Show Version Info")
+        }}</v-btn>
         <v-btn
           text
           small
           color="primary"
           v-on:click="openCheckIMDBScraperDialog"
-        >{{$t("Check IMDB Scraper")}}</v-btn>
-        <v-btn text small color="primary" v-on:click="openDevTools">{{$t("Open DevTools")}}</v-btn>
+          >{{ $t("Check IMDB Scraper") }}</v-btn
+        >
+        <v-btn text small color="primary" v-on:click="openDevTools">{{
+          $t("Open DevTools")
+        }}</v-btn>
       </v-tab-item>
 
       <!-- MOVIES -->
       <v-tab-item style="padding: 8px">
-        <h3>{{$t("Movies")}} - {{$t("Source Paths")}}</h3>
+        <h3>{{ $t("Movies") }} - {{ $t("Source Paths") }}</h3>
         <v-alert
           type="warning"
           colored-border
           border="left"
           v-if="moviesSourcePaths.length == 0"
-        >{{$t("no paths defined")}}</v-alert>
+          >{{ $t("no paths defined") }}</v-alert
+        >
 
         <div
           v-for="sourcePath in moviesSourcePaths"
@@ -169,7 +198,9 @@
           ></mk-sourcepath>
         </div>
 
-        <v-btn text small color="primary" v-on:click="addSource('movies')">{{$t("Add Source Path")}}</v-btn>
+        <v-btn text small color="primary" v-on:click="addSource('movies')">{{
+          $t("Add Source Path")
+        }}</v-btn>
       </v-tab-item>
 
       <!-- SERIES -->
@@ -203,20 +234,41 @@
       <!-- DUPLICATES -->
       <v-tab-item style="padding: 8px">
         <v-card-text class="mk-light-grey">
-          <p>{{$t('These settings describe how {appName} should handle duplicates', {appName: $shared.appName})}}</p>
-          <p>{{$t('You may have duplicates in the following scenarios')}}:</p>
+          <p>
+            {{
+              $t(
+                "These settings describe how {appName} should handle duplicates",
+                { appName: $shared.appName }
+              )
+            }}
+          </p>
+          <p>{{ $t("You may have duplicates in the following scenarios") }}:</p>
           <ul>
-            <li>{{$t('same file on a remote server and the local machine')}}</li>
-            <li>{{$t('same media but in different formats')}}</li>
+            <li>
+              {{ $t("same file on a remote server and the local machine") }}
+            </li>
+            <li>{{ $t("same media but in different formats") }}</li>
           </ul>
         </v-card-text>
 
-        <v-card style="width: 100%; margin-top:8px">
-          <h3>{{$t('Actual Duplicates')}}</h3>
+        <v-card style="width: 100%; margin-top: 8px">
+          <h3>{{ $t("Actual Duplicates") }}</h3>
           <v-card-text>
-            <p>{{$t('An actual duplicate is identified by the same filename and filesize')}}</p>
+            <p>
+              {{
+                $t(
+                  "An actual duplicate is identified by the same filename and filesize"
+                )
+              }}
+            </p>
           </v-card-text>
-          <p>{{$t('With actual duplicates, {appName} should also', {appName: $shared.appName})}}</p>
+          <p>
+            {{
+              $t("With actual duplicates, {appName} should also", {
+                appName: $shared.appName,
+              })
+            }}
+          </p>
 
           <v-checkbox
             v-bind:label="$t('relink IMDB')"
@@ -263,17 +315,31 @@
             style="margin: 0px"
             color="mk-dark-grey"
             dense
-            v-model="$shared.duplicatesHandling.actualDuplicate.updateLastAccess"
+            v-model="
+              $shared.duplicatesHandling.actualDuplicate.updateLastAccess
+            "
             v-on:click.native="duplicatesHandlingChanged"
           ></v-checkbox>
         </v-card>
 
-        <v-card style="width: 100%; margin-top:8px">
-          <h3>{{$t('Meta Duplicates')}}</h3>
+        <v-card style="width: 100%; margin-top: 8px">
+          <h3>{{ $t("Meta Duplicates") }}</h3>
           <v-card-text class="mk-light-grey">
-            <p>{{$t('A meta duplicate is identified by having the same IMDB link_ This can happen if you have the same movie in different formats')}}</p>
+            <p>
+              {{
+                $t(
+                  "A meta duplicate is identified by having the same IMDB link_ This can happen if you have the same movie in different formats"
+                )
+              }}
+            </p>
           </v-card-text>
-          <p>{{$t('With meta duplicates, {appName} should also', {appName: $shared.appName})}}</p>
+          <p>
+            {{
+              $t("With meta duplicates, {appName} should also", {
+                appName: $shared.appName,
+              })
+            }}
+          </p>
 
           <v-checkbox
             v-bind:label="$t('add to list')"
@@ -297,17 +363,45 @@
       <!-- REGIONS -->
       <v-tab-item style="padding: 8px">
         <v-card-text class="mk-light-grey">
-          <p>{{$t('The regions and their sequence defined here will be used for the Primary Title of the media as well as the age rating')}}</p>
-          <p>{{$t('If a particular movie does not have a title for one of these regions, the Original Title of the movie is used Else, the Original Title will be used as Secondary Title if it is different')}}</p>
+          <p>
+            {{
+              $t(
+                "The regions and their sequence defined here will be used for the Primary Title of the media as well as the age rating"
+              )
+            }}
+          </p>
+          <p>
+            {{
+              $t(
+                "If a particular movie does not have a title for one of these regions, the Original Title of the movie is used Else, the Original Title will be used as Secondary Title if it is different"
+              )
+            }}
+          </p>
         </v-card-text>
 
-        <v-alert type="warning" colored-border border="left" v-if="$shared.regions.length === 0">
-          <span
-            v-if="$shared.regions.length === 0 && $shared.fallbackRegion"
-          >{{$t('You currently don_t have a region set up_ {appName} will fall back to your system_s locale', {appName: $shared.appName})}}: {{ $shared.fallbackRegion.name }}.</span>
+        <v-alert
+          type="warning"
+          colored-border
+          border="left"
+          v-if="$shared.regions.length === 0"
+        >
+          <span v-if="$shared.regions.length === 0 && $shared.fallbackRegion"
+            >{{
+              $t(
+                "You currently don_t have a region set up_ {appName} will fall back to your system_s locale",
+                { appName: $shared.appName }
+              )
+            }}: {{ $shared.fallbackRegion.name }}.</span
+          >
           <span
             v-if="$shared.regions.length === 0 && !$shared.fallbackRegion"
-          >{{$t('You currently don_t have a region set up_ {appName} will fall back to the original title_', {appName: $shared.appName})}}</span>
+            >{{
+              $t(
+                "You currently don_t have a region set up_ {appName} will fall back to the original title_",
+                { appName: $shared.appName }
+              )
+            }}</span
+          >
         </v-alert>
 
         <div>
@@ -321,17 +415,20 @@
                       <v-icon
                         class="mk-clickable-red"
                         v-on:click="openRemoveRegionDialog(region)"
-                      >mdi-delete</v-icon>
+                        >mdi-delete</v-icon
+                      >
                       <v-icon
                         v-if="!isTopRegion(region)"
                         class="mk-clickable"
                         v-on:click="onRegionMoveUp(region)"
-                      >mdi-arrow-up</v-icon>
+                        >mdi-arrow-up</v-icon
+                      >
                       <v-icon
                         v-if="!isBottomRegion(region)"
                         class="mk-clickable"
                         v-on:click="onRegionMoveDown(region)"
-                      >mdi-arrow-down</v-icon>
+                        >mdi-arrow-down</v-icon
+                      >
                     </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
@@ -340,14 +437,16 @@
           </div>
         </div>
 
-        <v-btn text small color="primary" v-on:click="openAddRegionsDialog">{{$t('Add Regions')}}</v-btn>
+        <v-btn text small color="primary" v-on:click="openAddRegionsDialog">{{
+          $t("Add Regions")
+        }}</v-btn>
       </v-tab-item>
 
       <!-- LANGUAGES -->
       <v-tab-item style="padding: 8px">
-        <h3>{{$t('Language of the Application')}}</h3>
+        <h3>{{ $t("Language of the Application") }}</h3>
         <v-card-text class="mk-light-grey">
-          <p>{{$t('Change the language of the application here_')}}</p>
+          <p>{{ $t("Change the language of the application here_") }}</p>
         </v-card-text>
 
         <v-row class="settings-row">
@@ -361,13 +460,23 @@
           ></v-select>
         </v-row>
 
-        <h3>{{$t('Languages of the Primary Title')}}</h3>
+        <h3>{{ $t("Languages of the Primary Title") }}</h3>
 
         <v-card-text class="mk-light-grey">
-          <p>{{$t('The languages and their sequence defined here will be used for the Primary Title of the media_')}}</p>
           <p>
-            <strong>{{$t('Important_')}}</strong>
-            {{$t('If you want, for example, to see THISLANGUAGE titles, you must add the THISREGION region in _REGIONS__')}}
+            {{
+              $t(
+                "The languages and their sequence defined here will be used for the Primary Title of the media_"
+              )
+            }}
+          </p>
+          <p>
+            <strong>{{ $t("Important_") }}</strong>
+            {{
+              $t(
+                "If you want, for example, to see THISLANGUAGE titles, you must add the THISREGION region in _REGIONS__"
+              )
+            }}
           </p>
         </v-card-text>
 
@@ -375,18 +484,32 @@
           type="warning"
           colored-border
           border="left"
-          v-if="!$shared.languagesPrimaryTitle || $shared.languagesPrimaryTitle.length === 0"
+          v-if="
+            !$shared.languagesPrimaryTitle ||
+            $shared.languagesPrimaryTitle.length === 0
+          "
         >
-          <span
-            v-if="$shared.fallbackLanguage"
-          >{{$t('You currently don_t have a language for the Primary Title set up_ {appName} will fall back to your system_s locale', {appName: $shared.appName})}}: {{ $shared.fallbackLanguage.DisplayText }}.</span>
-          <span
-            v-if="!$shared.fallbackLanguage"
-          >{{$t('You currently don_t have a language for the Primary Title set up_ {appName} will fall back to the original title_', {appName: $shared.appName})}}</span>
+          <span v-if="$shared.fallbackLanguage"
+            >{{
+              $t(
+                "You currently don_t have a language for the Primary Title set up_ {appName} will fall back to your system_s locale",
+                { appName: $shared.appName }
+              )
+            }}: {{ $shared.fallbackLanguage.DisplayText }}.</span
+          >
+          <span v-if="!$shared.fallbackLanguage">{{
+            $t(
+              "You currently don_t have a language for the Primary Title set up_ {appName} will fall back to the original title_",
+              { appName: $shared.appName }
+            )
+          }}</span>
         </v-alert>
 
         <div>
-          <div v-for="language in $shared.languagesPrimaryTitle" v-bind:key="language.code">
+          <div
+            v-for="language in $shared.languagesPrimaryTitle"
+            v-bind:key="language.code"
+          >
             <v-row style="margin: 8px">
               <v-card style="width: 100%">
                 <v-list-item two-line>
@@ -395,18 +518,32 @@
                       {{ language.DisplayText }}
                       <v-icon
                         class="mk-clickable-red"
-                        v-on:click="openRemoveLanguageDialog(language, 'languagesPrimaryTitle')"
-                      >mdi-delete</v-icon>
+                        v-on:click="
+                          openRemoveLanguageDialog(
+                            language,
+                            'languagesPrimaryTitle'
+                          )
+                        "
+                        >mdi-delete</v-icon
+                      >
                       <v-icon
                         v-if="!isTopLanguage(language, 'languagesPrimaryTitle')"
                         class="mk-clickable"
-                        v-on:click="onLanguageMoveUp(language, 'languagesPrimaryTitle')"
-                      >mdi-arrow-up</v-icon>
+                        v-on:click="
+                          onLanguageMoveUp(language, 'languagesPrimaryTitle')
+                        "
+                        >mdi-arrow-up</v-icon
+                      >
                       <v-icon
-                        v-if="!isBottomLanguage(language, 'languagesPrimaryTitle')"
+                        v-if="
+                          !isBottomLanguage(language, 'languagesPrimaryTitle')
+                        "
                         class="mk-clickable"
-                        v-on:click="onLanguageMoveDown(language, 'languagesPrimaryTitle')"
-                      >mdi-arrow-down</v-icon>
+                        v-on:click="
+                          onLanguageMoveDown(language, 'languagesPrimaryTitle')
+                        "
+                        >mdi-arrow-down</v-icon
+                      >
                     </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
@@ -420,32 +557,53 @@
           small
           color="primary"
           v-on:click="openAddLanguagesDialog('languagesPrimaryTitle')"
-        >{{$t('Add Languages')}}</v-btn>
+          >{{ $t("Add Languages") }}</v-btn
+        >
 
         <div style="height: 16px"></div>
 
-        <h3>{{$t('Languages for Audio and Subtitles')}}</h3>
+        <h3>{{ $t("Languages for Audio and Subtitles") }}</h3>
 
         <v-card-text class="mk-light-grey">
-          <p>{{$t('The languages and their sequence defined here will be used to show which audio and subtitle languages your media contain_')}}</p>
+          <p>
+            {{
+              $t(
+                "The languages and their sequence defined here will be used to show which audio and subtitle languages your media contain_"
+              )
+            }}
+          </p>
         </v-card-text>
 
         <v-alert
           type="warning"
           colored-border
           border="left"
-          v-if="!$shared.languagesAudioSubtitles || $shared.languagesAudioSubtitles.length === 0"
+          v-if="
+            !$shared.languagesAudioSubtitles ||
+            $shared.languagesAudioSubtitles.length === 0
+          "
         >
-          <span
-            v-if="$shared.fallbackLanguage"
-          >{{$t('You currently don_t have a language for Audio and Subtitles set up_ {appName} will fall back to your system_s locale', {appName: $shared.appName })}}: {{ $shared.fallbackLanguage.DisplayText }}.</span>
-          <span
-            v-if="!$shared.fallbackLanguage"
-          >{{$t('You currently don_t have a language for Audio and Subtitles set up. {appName} will fall back to the original title_', {appName: $shared.appName})}}</span>
+          <span v-if="$shared.fallbackLanguage"
+            >{{
+              $t(
+                "You currently don_t have a language for Audio and Subtitles set up_ {appName} will fall back to your system_s locale",
+                { appName: $shared.appName }
+              )
+            }}: {{ $shared.fallbackLanguage.DisplayText }}.</span
+          >
+          <span v-if="!$shared.fallbackLanguage">{{
+            $t(
+              "You currently don_t have a language for Audio and Subtitles set up. {appName} will fall back to the original title_",
+              { appName: $shared.appName }
+            )
+          }}</span>
         </v-alert>
 
         <div>
-          <div v-for="language in $shared.languagesAudioSubtitles" v-bind:key="language.code">
+          <div
+            v-for="language in $shared.languagesAudioSubtitles"
+            v-bind:key="language.code"
+          >
             <v-row style="margin: 8px">
               <v-card style="width: 100%">
                 <v-list-item two-line>
@@ -454,18 +612,37 @@
                       {{ language.DisplayText }}
                       <v-icon
                         class="mk-clickable-red"
-                        v-on:click="openRemoveLanguageDialog(language, 'languagesAudioSubtitles')"
-                      >mdi-delete</v-icon>
+                        v-on:click="
+                          openRemoveLanguageDialog(
+                            language,
+                            'languagesAudioSubtitles'
+                          )
+                        "
+                        >mdi-delete</v-icon
+                      >
                       <v-icon
-                        v-if="!isTopLanguage(language, 'languagesAudioSubtitles')"
+                        v-if="
+                          !isTopLanguage(language, 'languagesAudioSubtitles')
+                        "
                         class="mk-clickable"
-                        v-on:click="onLanguageMoveUp(language, 'languagesAudioSubtitles')"
-                      >mdi-arrow-up</v-icon>
+                        v-on:click="
+                          onLanguageMoveUp(language, 'languagesAudioSubtitles')
+                        "
+                        >mdi-arrow-up</v-icon
+                      >
                       <v-icon
-                        v-if="!isBottomLanguage(language, 'languagesAudioSubtitles')"
+                        v-if="
+                          !isBottomLanguage(language, 'languagesAudioSubtitles')
+                        "
                         class="mk-clickable"
-                        v-on:click="onLanguageMoveDown(language, 'languagesAudioSubtitles')"
-                      >mdi-arrow-down</v-icon>
+                        v-on:click="
+                          onLanguageMoveDown(
+                            language,
+                            'languagesAudioSubtitles'
+                          )
+                        "
+                        >mdi-arrow-down</v-icon
+                      >
                     </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
@@ -479,20 +656,29 @@
           small
           color="primary"
           v-on:click="openAddLanguagesDialog('languagesAudioSubtitles')"
-        >{{$t('Add Languages')}}</v-btn>
+          >{{ $t("Add Languages") }}</v-btn
+        >
       </v-tab-item>
 
       <!-- TITLE TYPES -->
       <v-tab-item style="padding: 8px">
         <v-card-text class="mk-light-grey">
-          <p>{{$t('In _Regions_ you provided the regions to be used for the Primary Title_ However, many titles in IMDB have a special title type_ {appName} skips all special title types by default_ You can add title types here, so that they are actually used instead of being skipped_', {appName: $shared.appName})}}</p>
+          <p>
+            {{
+              $t(
+                "In _Regions_ you provided the regions to be used for the Primary Title_ However, many titles in IMDB have a special title type_ {appName} skips all special title types by default_ You can add title types here, so that they are actually used instead of being skipped_",
+                { appName: $shared.appName }
+              )
+            }}
+          </p>
         </v-card-text>
 
         <v-alert
           colored-border
           border="left"
           v-if="$shared.imdbTitleTypesWhitelist.length === 0"
-        >{{$t('No title types added, this is fine_')}}</v-alert>
+          >{{ $t("No title types added, this is fine_") }}</v-alert
+        >
 
         <mk-title-type
           v-for="item in $shared.imdbTitleTypesWhitelist"
@@ -508,42 +694,67 @@
           color="primary"
           v-on:click="openAddTitleTypeDialog"
           style="margin-top: 16px"
-        >{{$t('Add Title Type')}}</v-btn>
+          >{{ $t("Add Title Type") }}</v-btn
+        >
       </v-tab-item>
 
       <!-- RELEASE ATTRIBUTES -->
       <v-tab-item style="padding: 8px">
         <v-card-text class="mk-light-grey">
-          <p>{{$t('Here you can set up which release attributes should be searched for in the file/directory names and how they should be displayed_')}}</p>
-          <p>{{$t('The search term is case insensitive and must contain whole words within the file/directory name_')}}</p>
+          <p>
+            {{
+              $t(
+                "Here you can set up which release attributes should be searched for in the file/directory names and how they should be displayed_"
+              )
+            }}
+          </p>
+          <p>
+            {{
+              $t(
+                "The search term is case insensitive and must contain whole words within the file/directory name_"
+              )
+            }}
+          </p>
         </v-card-text>
 
         <v-data-table
-          v-bind:headers="[{ text: $t('Search Term'), value: 'searchTerm', sortable: false}, { text: $t('Display As'), value: 'displayAs', sortable: false}, { text: '', value: 'actions', sortable: false }]"
+          v-bind:headers="[
+            { text: $t('Search Term'), value: 'searchTerm', sortable: false },
+            { text: $t('Display As'), value: 'displayAs', sortable: false },
+            { text: '', value: 'actions', sortable: false },
+          ]"
           v-bind:items="shared_releaseAttributesFiltered"
           class="elevation-1"
           hide-default-footer
           v-bind:items-per-page="1000"
         >
           <template v-slot:item.actions="{ item }">
-            <v-icon small class="mr-2 mk-clickable" @click="onEditReleaseAttribute(item)">mdi-pencil</v-icon>
+            <v-icon
+              small
+              class="mr-2 mk-clickable"
+              @click="onEditReleaseAttribute(item)"
+              >mdi-pencil</v-icon
+            >
             <v-icon
               small
               class="mr-2 mk-clickable-red"
               @click="openRemoveReleaseAttributeDialog(item)"
-            >mdi-delete</v-icon>
+              >mdi-delete</v-icon
+            >
             <v-icon
               small
               class="mr-2 mk-clickable"
               v-bind:disabled="item.sort === 1"
               @click="onReleaseAttributeUp(item)"
-            >mdi-arrow-up</v-icon>
+              >mdi-arrow-up</v-icon
+            >
             <v-icon
               small
               class="mr-2 mk-clickable"
               v-bind:disabled="item.sort === releaseAttributesMaxSort"
               @click="onReleaseAttributeDown(item)"
-            >mdi-arrow-down</v-icon>
+              >mdi-arrow-down</v-icon
+            >
           </template>
         </v-data-table>
         <v-btn
@@ -552,7 +763,8 @@
           small
           color="primary"
           style="margin-top: 16px"
-        >{{$t("Add")}}</v-btn>
+          >{{ $t("Add") }}</v-btn
+        >
       </v-tab-item>
     </v-tabs>
 
@@ -560,7 +772,15 @@
       ref="sourcePathDescriptionDialog"
       v-bind:show="sourcePathDescriptionDialog.show"
       v-bind:title="$t('Edit Description')"
-      v-bind:question="$t('Please provide a description for the source path {Path} _{MediaTypeUpper}_', {Path: sourcePathDescriptionDialog.Path, MediaTypeUpper: sourcePathDescriptionDialog.MediaTypeUpper})"
+      v-bind:question="
+        $t(
+          'Please provide a description for the source path {Path} _{MediaTypeUpper}_',
+          {
+            Path: sourcePathDescriptionDialog.Path,
+            MediaTypeUpper: sourcePathDescriptionDialog.MediaTypeUpper,
+          }
+        )
+      "
       enterTextValue="true"
       v-bind:ok="$t('OK')"
       v-bind:cancel="$t('Cancel')"
@@ -571,7 +791,15 @@
     <mk-remove-sourcepath-dialog
       v-bind:show="removeSourcePathDialog.show"
       v-bind:title="$t('Remove Source Path')"
-      v-bind:question="$t('Do you really want to remove the source path {Path} _{MediaTypeUpper}_ including all associated media_', {Path: removeSourcePathDialog.Path, MediaTypeUpper: removeSourcePathDialog.MediaTypeUpper})"
+      v-bind:question="
+        $t(
+          'Do you really want to remove the source path {Path} _{MediaTypeUpper}_ including all associated media_',
+          {
+            Path: removeSourcePathDialog.Path,
+            MediaTypeUpper: removeSourcePathDialog.MediaTypeUpper,
+          }
+        )
+      "
       v-bind:yes="$t('YES_ Remove')"
       v-bind:cancel="$t('Cancel')"
       yesColor="error"
@@ -588,7 +816,11 @@
     <mk-remove-region-dialog
       v-bind:show="removeRegionDialog.show"
       v-bind:title="$t('Remove Region')"
-      v-bind:question="$t('Do you really want to remove the region {Region}_', {Region: removeRegionDialog.Region})"
+      v-bind:question="
+        $t('Do you really want to remove the region {Region}_', {
+          Region: removeRegionDialog.Region,
+        })
+      "
       v-bind:yes="$t('YES_ Remove')"
       v-bind:cancel="$t('Cancel')"
       yesColor="error"
@@ -606,7 +838,11 @@
     <mk-remove-language-dialog
       v-bind:show="removeLanguageDialog.show"
       v-bind:title="$t('Remove Language')"
-      v-bind:question="$t('Do you really want to remove the language {Language}_', {Language: removeLanguageDialog.Language})"
+      v-bind:question="
+        $t('Do you really want to remove the language {Language}_', {
+          Language: removeLanguageDialog.Language,
+        })
+      "
       v-bind:yes="$t('YES_ Remove')"
       v-bind:cancel="$t('Cancel')"
       yesColor="error"
@@ -623,7 +859,11 @@
     <mk-remove-title-type-dialog
       v-bind:show="removeTitleTypeDialog.show"
       v-bind:title="$t('Remove Title Type')"
-      v-bind:question="$t('Do you really want to remove the title type {TitleType}_', {TitleType: removeTitleTypeDialog.TitleType})"
+      v-bind:question="
+        $t('Do you really want to remove the title type {TitleType}_', {
+          TitleType: removeTitleTypeDialog.TitleType,
+        })
+      "
       v-bind:yes="$t('YES_ Remove')"
       v-bind:cancel="$t('Cancel')"
       yesColor="error"
@@ -641,7 +881,12 @@
     <mk-remove-release-attribute-dialog
       v-bind:show="removeReleaseAttributeDialog.show"
       v-bind:title="$t('Remove Release Attribute')"
-      v-bind:question="$t('Do you really want to remove the release attribute {ReleaseAttribute}_', {ReleaseAttribute: removeReleaseAttributeDialog.ReleaseAttribute})"
+      v-bind:question="
+        $t(
+          'Do you really want to remove the release attribute {ReleaseAttribute}_',
+          { ReleaseAttribute: removeReleaseAttributeDialog.ReleaseAttribute }
+        )
+      "
       v-bind:yes="$t('YES_ Remove')"
       v-bind:cancel="$t('Cancel')"
       yesColor="error"
@@ -818,7 +1063,7 @@ export default {
       oldItem: null,
     },
 
-    availableLanguages: []
+    availableLanguages: [],
   }),
 
   watch: {
@@ -1125,7 +1370,8 @@ export default {
       this.sourcePathDescriptionDialog.id_SourcePaths =
         sourcePathItem.id_SourcePaths;
       this.sourcePathDescriptionDialog.Path = sourcePathItem.Path;
-      this.sourcePathDescriptionDialog.MediaTypeUpper = sourcePathItem.MediaType.toUpperCase();
+      this.sourcePathDescriptionDialog.MediaTypeUpper =
+        sourcePathItem.MediaType.toUpperCase();
       this.sourcePathDescriptionDialog.Description = sourcePathItem.Description;
 
       this.$refs.sourcePathDescriptionDialog.initTextValue(
@@ -1139,7 +1385,8 @@ export default {
       this.removeSourcePathDialog.id_SourcePaths =
         sourcePathItem.id_SourcePaths;
       this.removeSourcePathDialog.Path = sourcePathItem.Path;
-      this.removeSourcePathDialog.MediaTypeUpper = sourcePathItem.MediaType.toUpperCase();
+      this.removeSourcePathDialog.MediaTypeUpper =
+        sourcePathItem.MediaType.toUpperCase();
 
       this.removeSourcePathDialog.show = true;
     },
@@ -1816,15 +2063,20 @@ export default {
       });
     }
 
-    this.availableLanguages = this.$i18n.availableLocales.map(locale => {
+    this.availableLanguages = this.$i18n.availableLocales.map((locale) => {
       return {
         code: locale,
-        name: this.$i18n._vm.messages[locale].LanguageNames[languageCodeNameMapping[helpers.uppercaseEachWord(locale)]]
-      }
-    })
+        name: this.$i18n._vm.messages[locale].LanguageNames[
+          languageCodeNameMapping[helpers.uppercaseEachWord(locale)]
+        ],
+      };
+    });
 
-    logger.log('Settings.create this.availableLanguages:', this.availableLanguages);
-    
+    logger.log(
+      "Settings.create this.availableLanguages:",
+      this.availableLanguages
+    );
+
     // lodash debounced functions
     this.debouncedUpdateMinimumWaitForSetAccess = _.debounce(
       this.updateMinimumWaitForSetAccess,

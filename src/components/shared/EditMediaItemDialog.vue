@@ -248,7 +248,7 @@ export default {
 
   watch: {
     mediaItem(newValue) {
-      logger.log('EditMediaItemDialog mediaItem changed:', newValue);
+      logger.log("EditMediaItemDialog mediaItem changed:", newValue);
 
       this.mediaItemBackup = newValue
         ? JSON.parse(JSON.stringify(newValue))
@@ -277,7 +277,8 @@ export default {
         .sort((a, b) => helpers.compare(a.Name, b.Name, false))
         .filter(
           (item) =>
-            !this.mediaItem.Genres || !this.mediaItem.Genres.find((genre) => genre.name === item.GenreID)
+            !this.mediaItem.Genres ||
+            !this.mediaItem.Genres.find((genre) => genre.name === item.GenreID)
         );
     },
 
@@ -285,7 +286,7 @@ export default {
       if (!this.mediaItem.ReleaseAttributesSearchTerms) {
         return [];
       }
-      
+
       return this.mediaItem.ReleaseAttributesSearchTerms.split(";").filter(
         (item) => !!item
       );
@@ -325,10 +326,16 @@ export default {
     async onOKClick() {
       // Check some fields
       if (!this.mediaItem.Name) {
-        return eventBus.showSnackbar("error", this.$t('Primary Title is missing_'));
+        return eventBus.showSnackbar(
+          "error",
+          this.$t("Primary Title is missing_")
+        );
       }
-      if (this.mediaItem.startYear && !/\d\d\d\d/.test(this.mediaItem.startYear)) {
-        return eventBus.showSnackbar("error", this.$t('Year is malformed_'));
+      if (
+        this.mediaItem.startYear &&
+        !/\d\d\d\d/.test(this.mediaItem.startYear)
+      ) {
+        return eventBus.showSnackbar("error", this.$t("Year is malformed_"));
       }
 
       let hasChanges = false;
@@ -336,62 +343,104 @@ export default {
         deepDiffMapper.map(this.mediaItem, this.mediaItemBackup)
       );
 
-      logger.log('EditMediaItemDialog diff:', diff);
-      logger.log('EditMediaItemDialog Object.keys(diff):', Object.keys(diff));
+      logger.log("EditMediaItemDialog diff:", diff);
+      logger.log("EditMediaItemDialog Object.keys(diff):", Object.keys(diff));
 
       if (Object.keys(diff).length > 0) {
-        logger.log('EditMediaItemDialog has changes!');
+        logger.log("EditMediaItemDialog has changes!");
         hasChanges = true;
       }
 
-      if (Object.keys(diff).find(key => key === 'Name')) {
-        await store.updateMediaRecordField(this.mediaItem.id_Movies, 'Name', this.mediaItem.Name);
+      if (Object.keys(diff).find((key) => key === "Name")) {
+        await store.updateMediaRecordField(
+          this.mediaItem.id_Movies,
+          "Name",
+          this.mediaItem.Name
+        );
       }
 
-      if (Object.keys(diff).find(key => key === 'Name2')) {
-        await store.updateMediaRecordField(this.mediaItem.id_Movies, 'Name2', this.mediaItem.Name2);
+      if (Object.keys(diff).find((key) => key === "Name2")) {
+        await store.updateMediaRecordField(
+          this.mediaItem.id_Movies,
+          "Name2",
+          this.mediaItem.Name2
+        );
       }
 
-      if (Object.keys(diff).find(key => key === 'startYear')) {
-        await store.updateMediaRecordField(this.mediaItem.id_Movies, 'startYear', this.mediaItem.startYear);
+      if (Object.keys(diff).find((key) => key === "startYear")) {
+        await store.updateMediaRecordField(
+          this.mediaItem.id_Movies,
+          "startYear",
+          this.mediaItem.startYear
+        );
       }
 
-      if (Object.keys(diff).find(key => key === 'MI_Quality')) {
-        await store.updateMediaRecordField(this.mediaItem.id_Movies, 'MI_Quality', this.mediaItem.MI_Quality);
+      if (Object.keys(diff).find((key) => key === "MI_Quality")) {
+        await store.updateMediaRecordField(
+          this.mediaItem.id_Movies,
+          "MI_Quality",
+          this.mediaItem.MI_Quality
+        );
       }
 
-      if (Object.keys(diff).find(key => key === 'Genres')) {
-        await store.updateMovieGenres(this.mediaItem.id_Movies, this.mediaItem.Genres.map(item => item.name.toLowerCase()));
+      if (Object.keys(diff).find((key) => key === "Genres")) {
+        await store.updateMovieGenres(
+          this.mediaItem.id_Movies,
+          this.mediaItem.Genres.map((item) => item.name.toLowerCase())
+        );
       }
 
-      if (Object.keys(diff).find(key => key === 'ReleaseAttributesSearchTerms')) {
-        await store.updateMovieReleaseAttribues(this.mediaItem.id_Movies, this.mediaItem.ReleaseAttributesSearchTerms);
+      if (
+        Object.keys(diff).find((key) => key === "ReleaseAttributesSearchTerms")
+      ) {
+        await store.updateMovieReleaseAttribues(
+          this.mediaItem.id_Movies,
+          this.mediaItem.ReleaseAttributesSearchTerms
+        );
       }
 
-      if (Object.keys(diff).find(key => key === 'plotSummaryFull')) {
+      if (Object.keys(diff).find((key) => key === "plotSummaryFull")) {
         const plotSummaryFull = this.mediaItem.plotSummaryFull;
-        let plotSummary = _.truncate(this.mediaItem.plotSummaryFull, { length: 400, separator: ' ', omission: ' ...'});
+        let plotSummary = _.truncate(this.mediaItem.plotSummaryFull, {
+          length: 400,
+          separator: " ",
+          omission: " ...",
+        });
 
-        await store.updateMediaRecordField(this.mediaItem.id_Movies, 'plotSummary', plotSummary);
-        await store.updateMediaRecordField(this.mediaItem.id_Movies, 'plotSummaryFull', plotSummaryFull);
+        await store.updateMediaRecordField(
+          this.mediaItem.id_Movies,
+          "plotSummary",
+          plotSummary
+        );
+        await store.updateMediaRecordField(
+          this.mediaItem.id_Movies,
+          "plotSummaryFull",
+          plotSummaryFull
+        );
       }
 
       // store fields that have been (re-)defined by the user
-      let definedByUser = await store.fetchMovieFieldsDefinedByUser(this.mediaItem.id_Movies);
+      let definedByUser = await store.fetchMovieFieldsDefinedByUser(
+        this.mediaItem.id_Movies
+      );
       const definedByUserOld = JSON.stringify(definedByUser);
-      
-      logger.log('definedByUser (from db):', definedByUser);
 
-      Object.keys(diff).forEach(key => {
-        if (!definedByUser.find(item => item === key)) {
+      logger.log("definedByUser (from db):", definedByUser);
+
+      Object.keys(diff).forEach((key) => {
+        if (!definedByUser.find((item) => item === key)) {
           definedByUser.push(key);
         }
-      })
+      });
 
-      logger.log('definedByUser (new):', definedByUser);
+      logger.log("definedByUser (new):", definedByUser);
 
       if (definedByUserOld !== JSON.stringify(definedByUser)) {
-        await store.updateMediaRecordField(this.mediaItem.id_Movies, 'DefinedByUser', definedByUser.map(item => `|${item}|`).join(','));
+        await store.updateMediaRecordField(
+          this.mediaItem.id_Movies,
+          "DefinedByUser",
+          definedByUser.map((item) => `|${item}|`).join(",")
+        );
       }
 
       this.$emit("ok", hasChanges);
@@ -406,11 +455,17 @@ export default {
     },
 
     onRemoveGenre(index) {
-      logger.log("EditMediaItemDialog genre array (before):", this.mediaItem.Genres);
+      logger.log(
+        "EditMediaItemDialog genre array (before):",
+        this.mediaItem.Genres
+      );
 
       this.mediaItem.Genres.splice(index, 1);
 
-      logger.log("EditMediaItemDialog genre array (after):", this.mediaItem.Genres);
+      logger.log(
+        "EditMediaItemDialog genre array (after):",
+        this.mediaItem.Genres
+      );
     },
 
     onShowAddGenreDialog() {
@@ -423,7 +478,7 @@ export default {
         if (!this.mediaItem.Genres) {
           this.mediaItem.Genres = [];
         }
-        
+
         this.mediaItem.Genres.push({
           name: this.selectedGenre,
           translated: this.genres.find(
@@ -468,7 +523,10 @@ export default {
 
     onAddReleaseAttributeDialogOK() {
       if (this.selectedReleaseAttribute) {
-        this.mediaItem.ReleaseAttributesSearchTerms = (this.mediaItem.ReleaseAttributesSearchTerms ? this.mediaItem.ReleaseAttributesSearchTerms + ';' : '') + this.selectedReleaseAttribute
+        this.mediaItem.ReleaseAttributesSearchTerms =
+          (this.mediaItem.ReleaseAttributesSearchTerms
+            ? this.mediaItem.ReleaseAttributesSearchTerms + ";"
+            : "") + this.selectedReleaseAttribute;
       }
 
       this.showAddReleaseAttributeDialog = false;

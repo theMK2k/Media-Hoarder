@@ -98,10 +98,7 @@ function getMovieNameFromFileName(filename) {
   let filenameFiltered = filename;
 
   if (filenameFiltered.includes(".")) {
-    filenameFiltered = filenameFiltered
-      .split(".")
-      .slice(0, -1)
-      .join(".");
+    filenameFiltered = filenameFiltered.split(".").slice(0, -1).join(".");
   }
 
   filenameFiltered = filenameFiltered.replace(/[.,_-]/g, " ");
@@ -284,10 +281,17 @@ async function requestAsync(options) {
   logger.log("request options:", optionsDerived);
 
   if (imdbScraperWatchdogUseDumps) {
-    const filename = `${filenamify(optionsDerived.url ? optionsDerived.url : optionsDerived.uri)}.html`;
+    const filename = `${filenamify(
+      optionsDerived.url ? optionsDerived.url : optionsDerived.uri
+    )}.html`;
     if (fs.existsSync(filename)) {
       return {
-        body: fs.readFileSync(`${filenamify(optionsDerived.url ? optionsDerived.url : optionsDerived.uri)}.html`, "UTF8"),
+        body: fs.readFileSync(
+          `${filenamify(
+            optionsDerived.url ? optionsDerived.url : optionsDerived.uri
+          )}.html`,
+          "UTF8"
+        ),
       };
     }
   }
@@ -296,7 +300,9 @@ async function requestAsync(options) {
   const response = await requestretryAsync(optionsDerived);
 
   if (requestAsyncDumpToFile) {
-    const filename = `${filenamify(optionsDerived.url ? optionsDerived.url : optionsDerived.uri)}.html`;
+    const filename = `${filenamify(
+      optionsDerived.url ? optionsDerived.url : optionsDerived.uri
+    )}.html`;
     logger.log("dumping to", filename);
     await writeFileAsync(`./${filename}`, response.body);
   }
@@ -364,7 +370,6 @@ function compare(a, b, reverse) {
   return 0;
 }
 
-
 export {
   isWindows,
   isPORTABLE,
@@ -393,5 +398,5 @@ export {
   setIMDBScraperWatchdogUseDumps,
   imdbScraperWatchdogUseDumps,
   isNullOrUndefined,
-  compare
+  compare,
 };

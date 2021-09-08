@@ -1,54 +1,60 @@
-import Vue from 'vue'
-import VueI18n from 'vue-i18n'
+import Vue from "vue";
+import VueI18n from "vue-i18n";
 
-const fs = require('fs');
+const fs = require("fs");
 const path = require("path");
 
 const moment = require("moment");
 
-const logger = require('loglevel');
+const logger = require("loglevel");
 
 const helpers = require("./helpers/helpers");
 
-Vue.use(VueI18n)
+Vue.use(VueI18n);
 
 function loadLocaleMessages() {
-  const locales = require.context('./i18n', true, /[A-Za-z0-9-_,\s]+\.json$/i)
+  const locales = require.context("./i18n", true, /[A-Za-z0-9-_,\s]+\.json$/i);
   logger.log(`loadLocaleMessages locales:`, locales);
 
-  const messages = {}
-  locales.keys().forEach(key => {
-    const matched = key.match(/([A-Za-z0-9-_]+)\./i)
+  const messages = {};
+  locales.keys().forEach((key) => {
+    const matched = key.match(/([A-Za-z0-9-_]+)\./i);
     if (matched && matched.length > 1) {
-      const locale = matched[1]
-      messages[locale] = locales(key)
+      const locale = matched[1];
+      messages[locale] = locales(key);
     }
-  })
+  });
 
-  const extraLocales = {}
-  const extraLocalesPath = helpers.getDataPath('i18n');
+  const extraLocales = {};
+  const extraLocalesPath = helpers.getDataPath("i18n");
 
   if (fs.existsSync(extraLocalesPath)) {
     const extraLocalesFiles = fs.readdirSync(extraLocalesPath);
 
-    logger.log('loadLocaleMessages extraLocalesFiles:', extraLocalesFiles);
+    logger.log("loadLocaleMessages extraLocalesFiles:", extraLocalesFiles);
 
-    extraLocalesFiles.forEach(extraLocalesFile => {
+    extraLocalesFiles.forEach((extraLocalesFile) => {
       const rx = /^([A-Za-z0-9-_]+)\.json$/;
       if (!rx.test(extraLocalesFile)) {
-        logger.log(`skipping locales file ${extraLocalesFile} as it doesn't match expected format`);
+        logger.log(
+          `skipping locales file ${extraLocalesFile} as it doesn't match expected format`
+        );
       }
 
       const locale = extraLocalesFile.match(rx)[1];
 
-      logger.log(`loadLocaleMessages using messages for ${locale} from ${extraLocalesFile} in i18n directory`);
+      logger.log(
+        `loadLocaleMessages using messages for ${locale} from ${extraLocalesFile} in i18n directory`
+      );
 
-      extraLocales[locale] = JSON.parse(fs.readFileSync(path.join(extraLocalesPath, extraLocalesFile)));
-    })
+      extraLocales[locale] = JSON.parse(
+        fs.readFileSync(path.join(extraLocalesPath, extraLocalesFile))
+      );
+    });
 
-    Object.keys(extraLocales).forEach(key => {
+    Object.keys(extraLocales).forEach((key) => {
       messages[key] = extraLocales[key];
-    })
+    });
   }
 
   // Print all messages to the console (in order to count words)
@@ -65,9 +71,9 @@ function loadLocaleMessages() {
   // }
 
   // printMessage(messages.en);
-  
-  logger.log('loadLocaleMessages messages:', messages);
-  return messages
+
+  logger.log("loadLocaleMessages messages:", messages);
+  return messages;
 }
 
 const messages = loadLocaleMessages();
@@ -75,50 +81,50 @@ const messages = loadLocaleMessages();
 validateMessages(messages);
 
 // Load Moment Locales
-Object.keys(messages).forEach(key => {
+Object.keys(messages).forEach((key) => {
   if (messages[key].moment) {
     moment.locale(key, messages[key].moment);
   }
-})
+});
 
 // any other locale should have at least the keys, that "en" has
 function validateMessages(messages) {
-  Object.keys(messages).forEach(locale => {
-    if (locale === 'en') {
+  Object.keys(messages).forEach((locale) => {
+    if (locale === "en") {
       return;
     }
-    
+
     const checkKeys = function (en, other) {
-      Object.keys(en).forEach(key => {
-        if (typeof en[key] === 'string') {
-          if (en[key].includes('_')) {
+      Object.keys(en).forEach((key) => {
+        if (typeof en[key] === "string") {
+          if (en[key].includes("_")) {
             logger.warn(`Locale en contains underscore in key '${key}'`);
           }
         }
-        
+
         if (other[key] === undefined) {
           logger.warn(`Locale ${locale} is missing key '${key}'!`);
           return;
         }
 
-        if (typeof en[key] === 'object') {
+        if (typeof en[key] === "object") {
           checkKeys(en[key], other[key]);
         }
-        
-        if (typeof other[key] === 'string') {
-          if (other[key].includes('_')) {
+
+        if (typeof other[key] === "string") {
+          if (other[key].includes("_")) {
             logger.warn(`Locale ${locale} contains underscore in key '${key}'`);
           }
         }
-      })
-    }
+      });
+    };
 
     checkKeys(messages.en, messages[locale]);
-  })
+  });
 }
 
 export default new VueI18n({
-  locale: process.env.VUE_APP_I18N_LOCALE || 'en',
-  fallbackLocale: process.env.VUE_APP_I18N_FALLBACK_LOCALE || 'en',
-  messages
-})
+  locale: process.env.VUE_APP_I18N_LOCALE || "en",
+  fallbackLocale: process.env.VUE_APP_I18N_FALLBACK_LOCALE || "en",
+  messages,
+});

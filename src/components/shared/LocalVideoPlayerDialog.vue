@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="100%" v-on:keydown.escape="onEscapePressed">
+  <v-dialog
+    v-model="show"
+    persistent
+    max-width="100%"
+    v-on:keydown.escape="onEscapePressed"
+  >
     <!--  style="min-height: 600px!important" -->
     <v-card dark flat v-bind:ripple="false">
       <!--
@@ -16,7 +21,13 @@
         data-setup="{}"
         v-bind:poster="slateURL"
         autoplay
-        style="width: 100%; min-height: 600px!important; background-color: black; border-color: black; outline-color: black;"
+        style="
+          width: 100%;
+          min-height: 600px !important;
+          background-color: black;
+          border-color: black;
+          outline-color: black;
+        "
       >
         <source v-bind:src="videoURL" v-bind:type="mimeType" />
       </video>
@@ -26,8 +37,9 @@
             class="xs-fullwidth"
             color="secondary"
             v-on:click.native="onCloseClick"
-            style="margin-left: 8px;"
-          >{{$t('Close')}}</v-btn>
+            style="margin-left: 8px"
+            >{{ $t("Close") }}</v-btn
+          >
         </v-row>
       </v-col>
     </v-card>
@@ -50,30 +62,26 @@ export default {
 
     init() {
       const options = {};
-      videojs(
-        "mk-video-player",
-        options,
-        function onPlayerReady() {
-          videojs.log("Your player is ready!");
+      videojs("mk-video-player", options, function onPlayerReady() {
+        videojs.log("Your player is ready!");
 
-          // In this context, `this` is the player that was created by Video.js.
-          this.play();
+        // In this context, `this` is the player that was created by Video.js.
+        this.play();
 
-          // How about an event listener?
-          this.on("ended", function() {
-            videojs.log("Awww...over so soon?!");
-          });
-        }
-      );
+        // How about an event listener?
+        this.on("ended", function () {
+          videojs.log("Awww...over so soon?!");
+        });
+      });
     },
-    
+
     onEscapePressed() {
       this.onCloseClick();
-    }
+    },
   },
 
   // ### Lifecycle Hooks ###
-  created() {}
+  created() {},
 };
 </script>
 

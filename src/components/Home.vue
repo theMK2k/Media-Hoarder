@@ -1,10 +1,9 @@
 <template>
   <div style="width: 100%">
-    <h1 style="margin-left: 8px">{{$t('Home')}}</h1>
-
+    <h1 style="margin-left: 8px">{{ $t("Home") }}</h1>
     <v-row dense style="margin-left: 4px; margin-right: 4px">
       <v-col
-        v-for="(item) in items"
+        v-for="item in items"
         v-bind:key="item.id"
         v-on:click="onItemClick(item.id)"
         cols="12"
@@ -16,13 +15,22 @@
           <div class="d-flex flex-no-wrap justify-space-between">
             <div>
               <v-card-title class="headline">
-                <v-icon left>{{item.icon}}</v-icon>
-                {{$t(`${item.text}`)}}
-                <v-progress-linear v-if="item.fetchNumMovies && item.isFetchingNumMovies" color="red accent-0" indeterminate rounded height="3"></v-progress-linear>
+                <v-icon left>{{ item.icon }}</v-icon>
+                {{ $t(`${item.text}`) }}
+                <v-progress-linear
+                  v-if="item.fetchNumMovies && item.isFetchingNumMovies"
+                  color="red accent-0"
+                  indeterminate
+                  rounded
+                  height="3"
+                ></v-progress-linear>
               </v-card-title>
 
               <v-card-text class="mk-light-grey">
-                <p v-if="item.fetchNumMovies && !item.isFetchingNumMovies">{{ item.numMovies }} {{ item.numMovies == 1 ? $t('entry') : $t('entries')}}</p>
+                <p v-if="item.fetchNumMovies && !item.isFetchingNumMovies">
+                  {{ item.numMovies }}
+                  {{ item.numMovies == 1 ? $t("entry") : $t("entries") }}
+                </p>
               </v-card-text>
             </div>
           </div>
@@ -35,6 +43,7 @@
 <script>
 import * as store from "@/store";
 import { eventBus } from "@/main";
+const logger = require("loglevel");
 
 export default {
   data: () => ({
@@ -89,23 +98,23 @@ export default {
       try {
         for (let i = 0; i < this.items.length; i++) {
           const item = this.items[i];
-    
+
           if (item.fetchNumMovies) {
             item.isFetchingNumMovies = true;
             item.numMovies = await store.fetchNumMovies(item.id);
             item.isFetchingNumMovies = false;
           }
         }
-      } catch(e) {
-        
+      } catch (e) {
+        logger.log("fetchNumMovies ERROR:", e);
       }
-    }
+    },
   },
 
   // Lifecycle Hooks
   created() {
     this.fetchNumMovies();
-    
+
     eventBus.$on("dbInitialized", () => {
       this.fetchNumMovies();
     });
@@ -118,5 +127,4 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>
+<style scoped></style>

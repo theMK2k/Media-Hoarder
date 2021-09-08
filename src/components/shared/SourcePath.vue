@@ -5,30 +5,31 @@
         <v-list-item two-line>
           <v-list-item-content>
             <v-list-item-title>
-              {{value.Description}}
+              {{ value.Description }}
               <v-icon
                 class="mk-clickable"
                 v-show="isHovered"
                 small
                 v-on:click="onEditDescription"
-              >mdi-pencil</v-icon>
+                >mdi-pencil</v-icon
+              >
               <v-icon
                 class="mk-clickable-red"
                 v-show="isHovered"
                 small
                 v-on:click="onDelete"
-              >mdi-delete</v-icon>
+                >mdi-delete</v-icon
+              >
             </v-list-item-title>
-            <v-list-item-subtitle
-              style="min-height: 28px"
-            >
-              {{value.Path}}
+            <v-list-item-subtitle style="min-height: 28px">
+              {{ value.Path }}
               <v-icon
                 class="mk-clickable"
                 v-show="isHovered"
                 small
                 v-on:click="onEditPath"
-              >mdi-pencil</v-icon>
+                >mdi-pencil</v-icon
+              >
             </v-list-item-subtitle>
 
             <v-checkbox
@@ -102,5 +103,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

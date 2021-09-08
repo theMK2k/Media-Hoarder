@@ -221,7 +221,7 @@ export default {
           ];
         }
 
-        logger.log('filters:', filters);
+        logger.log("filters:", filters);
 
         const movies = (
           await store.fetchMedia("movies", null, true, this.$t, filters)

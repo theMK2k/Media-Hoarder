@@ -1,15 +1,15 @@
-import logger from "loglevel";
+// import logger from "loglevel";
 
 /**
  * Find differences between two Objects
  */
-const deepDiffMapper = (function() {
+const deepDiffMapper = (function () {
   return {
     VALUE_CREATED: "created",
     VALUE_UPDATED: "updated",
     VALUE_DELETED: "deleted",
     VALUE_UNCHANGED: "unchanged",
-    map: function(newObj, oldObj) {
+    map: function (newObj, oldObj) {
       if (this.isFunction(newObj) || this.isFunction(oldObj)) {
         throw "Invalid argument. Function given, object expected.";
       }
@@ -39,17 +39,17 @@ const deepDiffMapper = (function() {
 
         diff[key] = this.map(newObj[key], value2);
       }
-      for (var key in oldObj) {
-        if (this.isFunction(oldObj[key]) || diff[key] !== undefined) {
+      for (var key2 in oldObj) {
+        if (this.isFunction(oldObj[key2]) || diff[key2] !== undefined) {
           continue;
         }
 
-        diff[key] = this.map(undefined, oldObj[key]);
+        diff[key2] = this.map(undefined, oldObj[key2]);
       }
 
       return diff;
     },
-    compareValues: function(value1, value2) {
+    compareValues: function (value1, value2) {
       if (value1 === value2) {
         return this.VALUE_UNCHANGED;
       }
@@ -68,35 +68,38 @@ const deepDiffMapper = (function() {
       }
       return this.VALUE_UPDATED;
     },
-    isFunction: function(x) {
+    isFunction: function (x) {
       return Object.prototype.toString.call(x) === "[object Function]";
     },
-    isArray: function(x) {
+    isArray: function (x) {
       return Object.prototype.toString.call(x) === "[object Array]";
     },
-    isDate: function(x) {
+    isDate: function (x) {
       return Object.prototype.toString.call(x) === "[object Date]";
     },
-    isObject: function(x) {
+    isObject: function (x) {
       return Object.prototype.toString.call(x) === "[object Object]";
     },
-    isValue: function(x) {
+    isValue: function (x) {
       return !this.isObject(x) && !this.isArray(x);
     },
-    isDiffValue: function(x) {
-      return this.isObject(x) && Object.keys(x).length === 2 && Object.keys(x).find(key => key === 'data') && Object.keys(x).find(key => key === 'type');
+    isDiffValue: function (x) {
+      return (
+        this.isObject(x) &&
+        Object.keys(x).length === 2 &&
+        Object.keys(x).find((key) => key === "data") &&
+        Object.keys(x).find((key) => key === "type")
+      );
     },
-    isEmptyObject: function(x) {
+    isEmptyObject: function (x) {
       return JSON.stringify(x) === JSON.stringify({});
     },
-    hasChanges: function(obj) {
+    hasChanges: function (obj) {
       let hasChanges = false;
 
       if (this.isObject(obj)) {
         if (obj.type) {
-          if (
-            obj.type !== this.VALUE_UNCHANGED
-          ) {
+          if (obj.type !== this.VALUE_UNCHANGED) {
             return true;
           }
 
@@ -123,11 +126,11 @@ const deepDiffMapper = (function() {
 
     prune(obj) {
       // logger.log('[prune] obj:', obj);
-      
+
       if (this.isObject(obj)) {
         const keys = Object.keys(obj);
 
-        keys.forEach(key => {
+        keys.forEach((key) => {
           const subObj = obj[key];
 
           if (this.isDiffValue(subObj) || this.isArray(subObj)) {
@@ -137,9 +140,9 @@ const deepDiffMapper = (function() {
           }
 
           if (this.isArray(subObj)) {
-            subObj.forEach(subObj2 => {
+            subObj.forEach((subObj2) => {
               this.prune(subObj2);
-            })
+            });
           }
 
           if (this.isObject(subObj)) {
@@ -148,11 +151,11 @@ const deepDiffMapper = (function() {
               delete obj[key];
             }
           }
-        })
+        });
       }
 
       return obj;
-    }
+    },
   };
 })();
 

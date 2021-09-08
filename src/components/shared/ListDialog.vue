@@ -8,7 +8,9 @@
   >
     <v-card>
       <v-card-title>
-        <div class="headline" style="width: 100%; font-size: 1.17em">{{ title }}</div>
+        <div class="headline" style="width: 100%; font-size: 1.17em">
+          {{ title }}
+        </div>
         <div class="subtitle">{{ movieName }}</div>
       </v-card-title>
 
@@ -22,7 +24,7 @@
                   value="useExistingLists"
                   v-bind:label="`${$t('Existing List')}:`"
                   color="mk-dark-grey"
-                  style="margin-left: 8px;"
+                  style="margin-left: 8px"
                 ></v-radio>
               </v-col>
               <v-col cols="12" sm="7">
@@ -45,7 +47,7 @@
                   value="createNewList"
                   v-bind:label="`${$t('New List')}:`"
                   color="mk-dark-grey"
-                  style="margin-left: 8px;"
+                  style="margin-left: 8px"
                 ></v-radio>
               </v-col>
               <v-col cols="12" sm="7">
@@ -66,13 +68,15 @@
           class="xs-fullwidth"
           color="secondary"
           v-on:click.native="onButtonClick('cancel')"
-        >{{$t('Cancel')}}</v-btn>
+          >{{ $t("Cancel") }}</v-btn
+        >
         <v-btn
           v-bind:disabled="!canConfirm"
           class="xs-fullwidth"
           color="primary"
           v-on:click.native="onButtonClick('ok')"
-        >{{$t('OK')}}</v-btn>
+          >{{ $t("OK") }}</v-btn
+        >
         <!-- v-bind:disabled="enterTextValue && !textValueEmptyAllowed && !textValueLocal" -->
         <!-- </v-row> -->
       </v-card-actions>

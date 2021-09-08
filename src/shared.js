@@ -7,13 +7,13 @@ const imdbScraperTests = require("./imdb-scraper-tests");
 
 const shared = new Vue({
   data: {
-    appName: 'Media Hoarder',
+    appName: "Media Hoarder",
     isPORTABLE: helpers.isPORTABLE,
     isDevelopment: helpers.isDevelopment,
-    
+
     currentVersion: null,
     currentName: null,
-    
+
     sidenav: null,
     searchText: null,
     logLevel: 0,
@@ -30,7 +30,7 @@ const shared = new Vue({
         filterIMDBPlotKeywordsAND: false,
         filterIMDBFilmingLocationsAND: false,
         filterReleaseAttributesAND: false,
-        filterDataQualityAND: false
+        filterDataQualityAND: false,
       },
       filterAgeRatings: [],
       filterRatings: [],
@@ -48,10 +48,10 @@ const shared = new Vue({
       filterCompanies: [],
       filterAudioLanguages: [],
       filterSubtitleLanguages: [],
-  
+
       filterMetacriticScore: [0, 100],
       filterMetacriticScoreNone: true,
-  
+
       filterIMDBRating: [0, 10],
       filterIMDBRatingNone: true,
 
@@ -59,14 +59,14 @@ const shared = new Vue({
       // filterReleaseYearsNone: true,
       // filterReleaseYearsMin: new Date().getFullYear(),
       // filterReleaseYearsMax: new Date().getFullYear(),
-  
+
       filterIMDBPlotKeywords: [],
-  
+
       filterIMDBFilmingLocations: [],
-  
+
       filterReleaseAttributes: [],
 
-      filterDataQuality: []
+      filterDataQuality: [],
     },
 
     contentAdvisoryCategories: [
@@ -123,109 +123,109 @@ const shared = new Vue({
         code: "",
         short: null,
         long: "All",
-        long_translated: ""
+        long_translated: "",
       },
       {
         code: "aged_under_18",
         short: "⚧<18",
         long: "Aged under 18",
-        long_translated: ""
+        long_translated: "",
       },
       {
         code: "aged_18_29",
         short: "⚧<30",
         long: "Aged 18-29",
-        long_translated: ""
+        long_translated: "",
       },
       {
         code: "aged_30_44",
         short: "⚧<45",
         long: "Aged 30-44",
-        long_translated: ""
+        long_translated: "",
       },
       {
         code: "aged_45_plus",
         short: "⚧45+",
         long: "Aged 45+",
-        long_translated: ""
+        long_translated: "",
       },
       {
         code: "females",
         short: "♀",
         long: "Females",
-        long_translated: ""
+        long_translated: "",
       },
       {
         code: "females_aged_under_18",
         short: "♀<18",
         long: "Females aged under 18",
-        long_translated: ""
+        long_translated: "",
       },
       {
         code: "females_aged_18_29",
         short: "♀<30",
         long: "Females aged 18-29",
-        long_translated: ""
+        long_translated: "",
       },
       {
         code: "females_aged_30_44",
         short: "♀<45",
         long: "Females aged 30-44",
-        long_translated: ""
+        long_translated: "",
       },
       {
         code: "females_aged_45_plus",
         short: "♀45+",
         long: "Females aged 45+",
-        long_translated: ""
+        long_translated: "",
       },
       {
         code: "males",
         short: "♂",
         long: "Males",
-        long_translated: ""
+        long_translated: "",
       },
       {
         code: "males_aged_under_18",
         short: "♂<18",
         long: "Males aged under 18",
-        long_translated: ""
+        long_translated: "",
       },
       {
         code: "males_aged_18_29",
         short: "♂<30",
         long: "Males aged 18-29",
-        long_translated: ""
+        long_translated: "",
       },
       {
         code: "males_aged_30_44",
         short: "♂<45",
         long: "Males aged 30-44",
-        long_translated: ""
+        long_translated: "",
       },
       {
         code: "males_aged_45_plus",
         short: "♂45+",
         long: "Males aged 45+",
-        long_translated: ""
+        long_translated: "",
       },
       {
         code: "top_1000_voters",
         short: "🎩",
         long: "Top 1000 Voters",
-        long_translated: ""
+        long_translated: "",
       },
       {
         code: "non_us_users",
         short: "non-US",
         long: "Non-US Users",
-        long_translated: ""
+        long_translated: "",
       },
       {
         code: "us_users",
         short: "US",
         long: "US Users",
-        long_translated: ""
+        long_translated: "",
       },
     ],
     imdbRatingDemographic: "",
@@ -257,7 +257,7 @@ const shared = new Vue({
       rescanMoviesMetaData_fetchIMDBMetaData_filmingLocations: true,
 
       rescanMoviesMetaData_findReleaseAttributes: true,
-      
+
       rescanMoviesMetaData_saveIMDBData: true,
 
       applyMetaData: true,
@@ -496,365 +496,363 @@ const shared = new Vue({
       },
     ],
 
-    uiLanguage: 'en',
+    uiLanguage: "en",
 
     releaseAttributes: [
       {
-        searchTerm: 'unrated',
-        displayAs: 'UNRATED',
+        searchTerm: "unrated",
+        displayAs: "UNRATED",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'uncut',
-        displayAs: 'UNCUT',
+        searchTerm: "uncut",
+        displayAs: "UNCUT",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'uncensored',
-        displayAs: 'UNCUT',
+        searchTerm: "uncensored",
+        displayAs: "UNCUT",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'director\'s',
-        displayAs: 'Director\'s Cut',
+        searchTerm: "director's",
+        displayAs: "Director's Cut",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'directors cut',
-        displayAs: 'Director\'s Cut',
+        searchTerm: "directors cut",
+        displayAs: "Director's Cut",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'dc',
-        displayAs: 'Director\'s Cut',
+        searchTerm: "dc",
+        displayAs: "Director's Cut",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'recut',
-        displayAs: 'Recut',
+        searchTerm: "recut",
+        displayAs: "Recut",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'final cut',
-        displayAs: 'Final Cut',
+        searchTerm: "final cut",
+        displayAs: "Final Cut",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'ultimate cut',
-        displayAs: 'Ultimate Cut',
+        searchTerm: "ultimate cut",
+        displayAs: "Ultimate Cut",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'extended',
-        displayAs: 'EXTENDED',
+        searchTerm: "extended",
+        displayAs: "EXTENDED",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'remaster',
-        displayAs: 'REMASTERED',
+        searchTerm: "remaster",
+        displayAs: "REMASTERED",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'remastered',
-        displayAs: 'REMASTERED',
+        searchTerm: "remastered",
+        displayAs: "REMASTERED",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'special edition',
-        displayAs: 'SPECIAL EDITION',
+        searchTerm: "special edition",
+        displayAs: "SPECIAL EDITION",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'se',
-        displayAs: 'SPECIAL EDITION',
+        searchTerm: "se",
+        displayAs: "SPECIAL EDITION",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'imax',
-        displayAs: 'IMAX',
+        searchTerm: "imax",
+        displayAs: "IMAX",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'open matte',
-        displayAs: 'Open Matte',
+        searchTerm: "open matte",
+        displayAs: "Open Matte",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'bootleg',
-        displayAs: 'BOOTLEG',
+        searchTerm: "bootleg",
+        displayAs: "BOOTLEG",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'dubbed',
-        displayAs: 'DUBBED',
+        searchTerm: "dubbed",
+        displayAs: "DUBBED",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'ac3d',
-        displayAs: 'DUBBED',
+        searchTerm: "ac3d",
+        displayAs: "DUBBED",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'ac3ld',
-        displayAs: 'DUBBED',
+        searchTerm: "ac3ld",
+        displayAs: "DUBBED",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'ac3md',
-        displayAs: 'DUBBED',
+        searchTerm: "ac3md",
+        displayAs: "DUBBED",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'dvdripld',
-        displayAs: 'DUBBED',
+        searchTerm: "dvdripld",
+        displayAs: "DUBBED",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'eac3d',
-        displayAs: 'DUBBED',
+        searchTerm: "eac3d",
+        displayAs: "DUBBED",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'ld',
-        displayAs: 'DUBBED',
+        searchTerm: "ld",
+        displayAs: "DUBBED",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'bdripld',
-        displayAs: 'DUBBED',
+        searchTerm: "bdripld",
+        displayAs: "DUBBED",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'r5ld',
-        displayAs: 'DUBBED',
+        searchTerm: "r5ld",
+        displayAs: "DUBBED",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'screener',
-        displayAs: 'SCREENER',
+        searchTerm: "screener",
+        displayAs: "SCREENER",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'webscr',
-        displayAs: 'SCREENER',
+        searchTerm: "webscr",
+        displayAs: "SCREENER",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'dvdscr',
-        displayAs: 'SCREENER',
+        searchTerm: "dvdscr",
+        displayAs: "SCREENER",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'bluray',
-        displayAs: 'BD',
+        searchTerm: "bluray",
+        displayAs: "BD",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'mbluray',
-        displayAs: 'BD',
+        searchTerm: "mbluray",
+        displayAs: "BD",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'blu ray',
-        displayAs: 'BD',
+        searchTerm: "blu ray",
+        displayAs: "BD",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'bd',
-        displayAs: 'BD',
+        searchTerm: "bd",
+        displayAs: "BD",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'bdrip',
-        displayAs: 'BD',
+        searchTerm: "bdrip",
+        displayAs: "BD",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'bdripld',
-        displayAs: 'BD',
+        searchTerm: "bdripld",
+        displayAs: "BD",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'brrip',
-        displayAs: 'BD',
+        searchTerm: "brrip",
+        displayAs: "BD",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'dvd',
-        displayAs: 'DVD',
+        searchTerm: "dvd",
+        displayAs: "DVD",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'dvdrip',
-        displayAs: 'DVD',
+        searchTerm: "dvdrip",
+        displayAs: "DVD",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'dvdripld',
-        displayAs: 'DVD',
+        searchTerm: "dvdripld",
+        displayAs: "DVD",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'dvdscr',
-        displayAs: 'DVD',
+        searchTerm: "dvdscr",
+        displayAs: "DVD",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'r5',
-        displayAs: 'R5',
+        searchTerm: "r5",
+        displayAs: "R5",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'r5ld',
-        displayAs: 'R5',
+        searchTerm: "r5ld",
+        displayAs: "R5",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'web',
-        displayAs: 'WEB',
+        searchTerm: "web",
+        displayAs: "WEB",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'webrip',
-        displayAs: 'WEB',
+        searchTerm: "webrip",
+        displayAs: "WEB",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'webhd',
-        displayAs: 'WEB',
+        searchTerm: "webhd",
+        displayAs: "WEB",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'netflix',
-        displayAs: 'WEB',
+        searchTerm: "netflix",
+        displayAs: "WEB",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'amazon',
-        displayAs: 'WEB',
+        searchTerm: "amazon",
+        displayAs: "WEB",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'hulu',
-        displayAs: 'WEB',
+        searchTerm: "hulu",
+        displayAs: "WEB",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'hdrip',
-        displayAs: 'WEB',
+        searchTerm: "hdrip",
+        displayAs: "WEB",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'hdtv',
-        displayAs: 'HDTV',
+        searchTerm: "hdtv",
+        displayAs: "HDTV",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'tv',
-        displayAs: 'TV',
+        searchTerm: "tv",
+        displayAs: "TV",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'restore',
-        displayAs: 'RESTORED',
+        searchTerm: "restore",
+        displayAs: "RESTORED",
         deleted: false,
-        sort: null
+        sort: null,
       },
       {
-        searchTerm: 'restored',
-        displayAs: 'RESTORED',
+        searchTerm: "restored",
+        displayAs: "RESTORED",
         deleted: false,
-        sort: null
-      }
+        sort: null,
+      },
     ],
 
     videoQualities: [
       {
-        name: 'SD',
-        minResolution: 0 * 0
+        name: "SD",
+        minResolution: 0 * 0,
       },
       {
-        name: '720p',
-        minResolution: 720 * 576
+        name: "720p",
+        minResolution: 720 * 576,
       },
       {
-        name: 'HD',
-        minResolution: 1280 * 720
+        name: "HD",
+        minResolution: 1280 * 720,
       },
       {
-        name: 'UHD',
-        minResolution: 1920 * 1080
+        name: "UHD",
+        minResolution: 1920 * 1080,
       },
       {
-        name: '4K',
-        minResolution: 3840 * 2160
+        name: "4K",
+        minResolution: 3840 * 2160,
       },
       {
-        name: '8K',
-        minResolution: 4096 * 2160
-      }
-    ]
+        name: "8K",
+        minResolution: 4096 * 2160,
+      },
+    ],
   },
 
-  computed: {
-  },
+  computed: {},
 
-  methods: {
-  }
+  methods: {},
 });
 
-shared.install = function() {
+shared.install = function () {
   Object.defineProperty(Vue.prototype, "$shared", {
     get() {
       return shared;

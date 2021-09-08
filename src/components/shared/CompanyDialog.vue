@@ -82,7 +82,7 @@ const logger = require("loglevel");
 
 const { shell } = require("electron").remote;
 
-const sqlString = require('sqlstring-sqlite');
+const sqlString = require("sqlstring-sqlite");
 
 import { eventBus } from "@/main";
 

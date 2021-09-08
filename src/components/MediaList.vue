@@ -161,7 +161,7 @@
                 class="align-self-start"
                 style="padding-top: 6px; padding-bottom: 6px"
               >
-                <v-col style="padding: 0px !important">
+                <v-col style="padding: 0px !important; margin-top: 20px">
                   <v-row>
                     <div style="margin-left: 16px">
                       <v-list-item-title
@@ -559,9 +559,14 @@
                             "Errors were encountered during the scan, consider a re-scan_"
                           )
                         }}
-                        </span
+                      </span>
+                      <v-btn
+                        small
+                        text
+                        color="primary"
+                        v-on:click.stop="clearScanErrors(item)"
+                        >{{ $t("Clear this message") }}</v-btn
                       >
-                        <v-btn small text color="primary" v-on:click.stop="clearScanErrors(item)">{{ $t('Clear this message') }}</v-btn>
                       <v-row v-if="item.showScanErrors">
                         <ul
                           style="
@@ -577,7 +582,8 @@
                               item.showScanErrors = !item.showScanErrors
                             "
                           >
-                            {{ $t(key) }}: {{ val.message ? $t(val.message, val.data) : val }}
+                            {{ $t(key) }}:
+                            {{ val.message ? $t(val.message, val.data) : val }}
                           </li>
                         </ul>
                       </v-row>
@@ -2576,7 +2582,7 @@ export default {
       if (hasChanges) {
         eventBus.showSnackbar(
           "success",
-          this.$t('Your changes have been saved_')
+          this.$t("Your changes have been saved_")
         );
 
         this.onReload();
@@ -2584,9 +2590,9 @@ export default {
     },
 
     async clearScanErrors(item) {
-      await store.updateMediaRecordField(item.id_Movies, 'scanErrors', null);
+      await store.updateMediaRecordField(item.id_Movies, "scanErrors", null);
       item.scanErrors = null;
-    }
+    },
   },
 
   // ### LifeCycle Hooks ###

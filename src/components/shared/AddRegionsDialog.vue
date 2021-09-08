@@ -1,8 +1,16 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onCancelClick" scrollable>
+  <v-dialog
+    v-model="show"
+    persistent
+    max-width="1000px"
+    v-on:keydown.escape="onCancelClick"
+    scrollable
+  >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
-        <div class="headline" style="width: 100%; font-size: 1.17em">{{$t('Add Regions')}}</div>
+        <div class="headline" style="width: 100%; font-size: 1.17em">
+          {{ $t("Add Regions") }}
+        </div>
       </v-card-title>
       <v-card-text>
         <v-text-field
@@ -26,13 +34,19 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCancelClick()">{{$t('Cancel')}}</v-btn>
+        <v-btn
+          class="xs-fullwidth"
+          color="secondary"
+          v-on:click.native="onCancelClick()"
+          >{{ $t("Cancel") }}</v-btn
+        >
         <v-btn
           v-bind:disabled="!canConfirm"
           class="xs-fullwidth"
           color="primary"
           v-on:click.native="onOKClick()"
-        >{{$t('OK')}}</v-btn>
+          >{{ $t("OK") }}</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -54,34 +68,39 @@ export default {
     return {
       items: [],
       searchText: "",
-      filter: ""
+      filter: "",
     };
   },
 
   watch: {
-    searchText: function(newValue) {
+    searchText: function (newValue) {
       this.debouncedSearchTextChanged(newValue);
-    }
+    },
   },
 
   computed: {
     filteredItems() {
-      return this.items.filter(item => {
-        if (this.$shared.regions.findIndex(used => used.code === item.code) !== -1) {
+      return this.items.filter((item) => {
+        if (
+          this.$shared.regions.findIndex((used) => used.code === item.code) !==
+          -1
+        ) {
           return false;
         }
-        
+
         if (!this.filter) {
           return true;
         }
 
-        return item.nameTranslated.toLowerCase().includes(this.filter.toLowerCase());
+        return item.nameTranslated
+          .toLowerCase()
+          .includes(this.filter.toLowerCase());
       });
     },
 
     canConfirm() {
-      return (this.items.findIndex(item => item.selected) !== -1);
-    }
+      return this.items.findIndex((item) => item.selected) !== -1;
+    },
   },
 
   methods: {
@@ -90,8 +109,14 @@ export default {
     },
 
     onOKClick() {
-      logger.log('this.items.filter(item => item.selected):', this.items.filter(item => item.selected));
-      this.$emit("ok", this.items.filter(item => item.selected));
+      logger.log(
+        "this.items.filter(item => item.selected):",
+        this.items.filter((item) => item.selected)
+      );
+      this.$emit(
+        "ok",
+        this.items.filter((item) => item.selected)
+      );
     },
 
     async searchTextChanged(searchText) {
@@ -106,11 +131,15 @@ export default {
         try {
           this.items = await store.getIMDBRegions();
 
-          this.items.forEach(item => {
-            item.nameTranslated = this.$t(`RegionNames.${item.name.replace(/[.']/g, '_')}`);
-          })
+          this.items.forEach((item) => {
+            item.nameTranslated = this.$t(
+              `RegionNames.${item.name.replace(/[.']/g, "_")}`
+            );
+          });
 
-          this.items = this.items.sort((a, b) => (a.nameTranslated > b.nameTranslated) ? 0 : -1);
+          this.items = this.items.sort((a, b) =>
+            a.nameTranslated > b.nameTranslated ? 0 : -1
+          );
 
           logger.log("countries this.items:", this.items);
         } catch (e) {
@@ -118,16 +147,16 @@ export default {
         }
       }
 
-      this.items.forEach(item => {
+      this.items.forEach((item) => {
         item.selected = false;
       });
-    }
+    },
   },
 
   created() {
     // lodash debounced functions
     this.debouncedSearchTextChanged = _.debounce(this.searchTextChanged, 500);
-  }
+  },
 };
 </script>
 

@@ -1,8 +1,16 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onCancelClick" scrollable>
+  <v-dialog
+    v-model="show"
+    persistent
+    max-width="1000px"
+    v-on:keydown.escape="onCancelClick"
+    scrollable
+  >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
-        <div class="headline" style="width: 100%; font-size: 1.17em">{{ title }}</div>
+        <div class="headline" style="width: 100%; font-size: 1.17em">
+          {{ title }}
+        </div>
         <v-row>
           <v-text-field
             :append-icon-cb="() => {}"
@@ -16,7 +24,7 @@
             v-on:keydown.enter="runSearch"
             style="padding-top: 0px; margin-left: 12px"
           ></v-text-field>
-          <v-btn text v-on:click="runSearch">{{$t('Search')}}</v-btn>
+          <v-btn text v-on:click="runSearch">{{ $t("Search") }}</v-btn>
         </v-row>
       </v-card-title>
       <v-card-text>
@@ -25,7 +33,6 @@
           v-bind:label="$t('Sort by number of movies')"
           style="margin: 0px; margin-top: 12px"
           color="mk-dark-grey"
-
         ></v-checkbox>
 
         <v-row
@@ -34,11 +41,17 @@
           v-for="item in items"
           v-bind:key="item.id"
           v-on:click.stop="onItemClicked(item)"
-        >{{ item.name }} ({{item.NumMovies}})</v-row>
+          >{{ item.name }} ({{ item.NumMovies }})</v-row
+        >
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCancelClick()">{{$t('Close')}}</v-btn>
+        <v-btn
+          class="xs-fullwidth"
+          color="secondary"
+          v-on:click.native="onCancelClick()"
+          >{{ $t("Close") }}</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -61,14 +74,14 @@ export default {
       items: [],
       searchText: "",
       sortByNumMovies: false,
-      isLoading: false
+      isLoading: false,
     };
   },
 
   watch: {
-    sortByNumMovies: function() {
+    sortByNumMovies: function () {
       this.runSearch();
-    }
+    },
   },
 
   methods: {
@@ -111,7 +124,11 @@ export default {
 					FROM tbl_Movies_IMDB_Companies MC
 					WHERE Company_Name LIKE '${this.searchText}%'
           GROUP BY Company_Name
-          ${this.sortByNumMovies ? 'ORDER BY NumMovies DESC' : 'ORDER BY name ASC'}
+          ${
+            this.sortByNumMovies
+              ? "ORDER BY NumMovies DESC"
+              : "ORDER BY name ASC"
+          }
           `;
       }
 
@@ -132,7 +149,11 @@ export default {
 					FROM tbl_Movies_IMDB_Credits MC
 					WHERE Person_Name LIKE '${this.searchText}%'
           GROUP BY IMDB_Person_ID
-          ${this.sortByNumMovies ? 'ORDER BY NumMovies DESC' : 'ORDER BY name ASC'}
+          ${
+            this.sortByNumMovies
+              ? "ORDER BY NumMovies DESC"
+              : "ORDER BY name ASC"
+          }
           `;
       }
 
@@ -151,7 +172,11 @@ export default {
               ) AS NumMovies
           FROM tbl_IMDB_Plot_Keywords PK
           WHERE PK.Keyword LIKE '%${this.searchText}%'
-          ${this.sortByNumMovies ? 'ORDER BY NumMovies DESC' : 'ORDER BY Keyword ASC'}
+          ${
+            this.sortByNumMovies
+              ? "ORDER BY NumMovies DESC"
+              : "ORDER BY Keyword ASC"
+          }
           `;
       }
 
@@ -170,7 +195,11 @@ export default {
             ) AS NumMovies
           FROM tbl_IMDB_Filming_Locations FL
           WHERE FL.Location LIKE '%${this.searchText}%'
-          ${this.sortByNumMovies ? 'ORDER BY NumMovies DESC' : 'ORDER BY Location ASC'}
+          ${
+            this.sortByNumMovies
+              ? "ORDER BY NumMovies DESC"
+              : "ORDER BY Location ASC"
+          }
           `;
       }
 
@@ -193,17 +222,17 @@ export default {
       if (this.searchMode === "plot-keywords") {
         eventBus.showPlotKeywordDialog({
           id_IMDB_Plot_Keywords: item.id,
-          Keyword: item.name
+          Keyword: item.name,
         });
       }
 
       if (this.searchMode === "filming-locations") {
         eventBus.showFilmingLocationDialog({
           id_IMDB_Filming_Locations: item.id,
-          Location: item.name
+          Location: item.name,
         });
       }
-    }
+    },
   },
 
   created() {
@@ -224,7 +253,7 @@ export default {
 
   beforeDestroy() {
     eventBus.$off("personDialogConfirm");
-  }
+  },
 };
 </script>
 

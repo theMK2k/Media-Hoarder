@@ -44,7 +44,12 @@
                 v-bind:src="personData.Photo_URL"
                 style="border-radius: 6px"
               ></v-img>
-              <v-icon v-if="!personData.Photo_URL && !isScraping" disabled x-large loading>
+              <v-icon
+                v-if="!personData.Photo_URL && !isScraping"
+                disabled
+                x-large
+                loading
+              >
                 mdi-account-outline
               </v-icon>
               <v-progress-circular

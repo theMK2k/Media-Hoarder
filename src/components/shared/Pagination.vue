@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-top: -8px!important">
+  <div style="margin-top: -8px !important">
     <ul class="v-pagination theme--dark">
       <li>
         <button
@@ -8,9 +8,16 @@
           v-bind:class="prevClass"
           v-bind:disabled="$shared.currentPage == 1"
           v-on:click="$shared.currentPage = 1"
-          style="height: 48px!important; width: 48px!important; margin: 8px 8px 0px 0px!important"
+          style="
+            height: 48px !important;
+            width: 48px !important;
+            margin: 8px 8px 0px 0px !important;
+          "
         >
-          <i aria-hidden="true" class="v-icon notranslate mdi mdi-chevron-double-left theme--dark"></i>
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate mdi mdi-chevron-double-left theme--dark"
+          ></i>
         </button>
       </li>
       <li>
@@ -20,14 +27,21 @@
           v-bind:class="prevClass"
           v-bind:disabled="$shared.currentPage == 1"
           v-on:click="onPrevClicked"
-          style="height: 48px!important; width: 48px!important; margin: 8px 8px 0px 0px!important"
+          style="
+            height: 48px !important;
+            width: 48px !important;
+            margin: 8px 8px 0px 0px !important;
+          "
         >
-          <i aria-hidden="true" class="v-icon notranslate mdi mdi-chevron-left theme--dark"></i>
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate mdi mdi-chevron-left theme--dark"
+          ></i>
         </button>
       </li>
       <li>
         <v-select
-          class="mk-v-select-dynamic-width "
+          class="mk-v-select-dynamic-width"
           solo
           dense
           v-bind:items="pages"
@@ -36,17 +50,22 @@
           label="Page"
           v-model="$shared.currentPage"
           style="height: 40px"
-        > <!-- v-bind:style="selectStyle" -->
+        >
+          <!-- v-bind:style="selectStyle" -->
           <template v-slot:item="{ item }">
-            <div>{{ item.page + ' / ' + item.numPages }}</div>
+            <div>{{ item.page + " / " + item.numPages }}</div>
             <div style="width: 16px"></div>
-            <div v-if="item.detailInfo" class="grey--text caption">{{ ' ' + item.detailInfo }}</div>
+            <div v-if="item.detailInfo" class="grey--text caption">
+              {{ " " + item.detailInfo }}
+            </div>
             <!-- <span v-if="index === 1" class="grey--text caption">(+{{ value.length - 1 }} others)</span> -->
           </template>
           <template v-slot:selection="{ item }">
-            <div>{{ item.page + ' / ' + item.numPages }}</div>
+            <div>{{ item.page + " / " + item.numPages }}</div>
             <div style="width: 16px"></div>
-            <div v-if="item.detailInfo" class="grey--text caption">{{ ' ' + item.detailInfo }}</div>
+            <div v-if="item.detailInfo" class="grey--text caption">
+              {{ " " + item.detailInfo }}
+            </div>
             <!-- <span v-if="index === 1" class="grey--text caption">(+{{ value.length - 1 }} others)</span> -->
           </template>
         </v-select>
@@ -59,9 +78,16 @@
           v-bind:class="nextClass"
           v-bind:disabled="$shared.currentPage >= length"
           v-on:click="onNextClicked"
-          style="height: 48px!important; width: 48px!important; margin: 8px 8px 0px 8px!important"
+          style="
+            height: 48px !important;
+            width: 48px !important;
+            margin: 8px 8px 0px 8px !important;
+          "
         >
-          <i aria-hidden="true" class="v-icon notranslate mdi mdi-chevron-right theme--dark"></i>
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate mdi mdi-chevron-right theme--dark"
+          ></i>
         </button>
       </li>
       <li>
@@ -71,9 +97,16 @@
           v-bind:class="nextClass"
           v-bind:disabled="$shared.currentPage >= length"
           v-on:click="$shared.currentPage = length"
-          style="height: 48px!important; width: 48px!important; margin: 8px 8px 0px 0px!important"
+          style="
+            height: 48px !important;
+            width: 48px !important;
+            margin: 8px 8px 0px 0px !important;
+          "
         >
-          <i aria-hidden="true" class="v-icon notranslate mdi mdi-chevron-double-right theme--dark"></i>
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate mdi mdi-chevron-double-right theme--dark"
+          ></i>
         </button>
       </li>
     </ul>
@@ -89,14 +122,14 @@ export default {
   computed: {
     prevClass() {
       return {
-        "v-pagination__navigation--disabled": this.$shared.currentPage == 1
+        "v-pagination__navigation--disabled": this.$shared.currentPage == 1,
       };
     },
 
     nextClass() {
       return {
         "v-pagination__navigation--disabled":
-          this.$shared.currentPage >= this.length
+          this.$shared.currentPage >= this.length,
       };
     },
 
@@ -106,7 +139,7 @@ export default {
         // items.push(i);
         items.push({
           page: i,
-          displayText: `${i} / ${this.length}`
+          displayText: `${i} / ${this.length}`,
         });
       }
 
@@ -167,11 +200,9 @@ export default {
       if (this.$shared.currentPage > 1) {
         this.$shared.currentPage--;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

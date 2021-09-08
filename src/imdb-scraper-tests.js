@@ -34,10 +34,13 @@ function performDefaultCheck(
       status.ERROR
     );
   } else if (
-    (!checkIncludes && JSON.stringify(scrapeResult[fieldName]) !==
-      JSON.stringify(expected[fieldName])
-    ) ||
-    (checkIncludes && JSON.stringify(scrapeResult[fieldName]).includes(JSON.stringify(expected[fieldName])))
+    (!checkIncludes &&
+      JSON.stringify(scrapeResult[fieldName]) !==
+        JSON.stringify(expected[fieldName])) ||
+    (checkIncludes &&
+      JSON.stringify(scrapeResult[fieldName]).includes(
+        JSON.stringify(expected[fieldName])
+      ))
   ) {
     addSubLogEntry(
       testResult,
@@ -165,8 +168,7 @@ async function testIMDBmainPageData2() {
       $IMDB_numVotes: 4000,
       $IMDB_posterSmall_URL: "extras/tt0039822_posterSmall.jpg",
       $IMDB_posterLarge_URL: "extras/tt0039822_posterLarge.jpg",
-      $IMDB_plotSummary:
-        "1941 in a small town in Nazi occupied France",
+      $IMDB_plotSummary: "1941 in a small town in Nazi occupied France",
       $IMDB_Trailer_URL: "/video/imdb/vi2163260441",
     };
 
@@ -499,10 +501,14 @@ async function testIMDBFullCreditsData() {
   try {
     const expected = {
       topCredits: {
-        $IMDB_Top_Directors: "[{\"category\":\"Directed by\",\"id\":\"nm0751577\",\"name\":\"Anthony Russo\",\"credit\":null},{\"category\":\"Directed by\",\"id\":\"nm0751648\",\"name\":\"Joe Russo\",\"credit\":null}]",
-        $IMDB_Top_Writers: "[{\"category\":\"Writing Credits\",\"id\":\"nm1321655\",\"name\":\"Christopher Markus\",\"credit\":\"(screenplay by) &\"},{\"category\":\"Writing Credits\",\"id\":\"nm1321656\",\"name\":\"Stephen McFeely\",\"credit\":\"(screenplay by)\"},{\"category\":\"Writing Credits\",\"id\":\"nm0498278\",\"name\":\"Stan Lee\",\"credit\":\"(based on the Marvel comics by) and\"},{\"category\":\"Writing Credits\",\"id\":\"nm0456158\",\"name\":\"Jack Kirby\",\"credit\":\"(based on the Marvel comics by)\"},{\"category\":\"Writing Credits\",\"id\":\"nm0800209\",\"name\":\"Joe Simon\",\"credit\":\"(Captain America created by) and\"}]",
-        $IMDB_Top_Producers: "[{\"category\":\"Produced by\",\"id\":\"nm0022285\",\"name\":\"Victoria Alonso\",\"credit\":\"executive producer\"},{\"category\":\"Produced by\",\"id\":\"nm0068416\",\"name\":\"Mitchell Bell\",\"credit\":\"co-producer (as Mitch Bell)\"},{\"category\":\"Produced by\",\"id\":\"nm2753152\",\"name\":\"Ari Costa\",\"credit\":\"associate producer\"},{\"category\":\"Produced by\",\"id\":\"nm0195669\",\"name\":\"Louis D'Esposito\",\"credit\":\"executive producer\"},{\"category\":\"Produced by\",\"id\":\"nm0269463\",\"name\":\"Jon Favreau\",\"credit\":\"executive producer\"}]",
-        $IMDB_Top_Cast: "[{\"category\":\"Cast\",\"id\":\"nm0000375\",\"name\":\"Robert Downey Jr.\",\"credit\":\"Tony Stark / Iron Man\"},{\"category\":\"Cast\",\"id\":\"nm0262635\",\"name\":\"Chris Evans\",\"credit\":\"Steve Rogers / Captain America\"},{\"category\":\"Cast\",\"id\":\"nm0749263\",\"name\":\"Mark Ruffalo\",\"credit\":\"Bruce Banner / Hulk\"},{\"category\":\"Cast\",\"id\":\"nm1165110\",\"name\":\"Chris Hemsworth\",\"credit\":\"Thor\"},{\"category\":\"Cast\",\"id\":\"nm0424060\",\"name\":\"Scarlett Johansson\",\"credit\":\"Natasha Romanoff / Black Widow\"}]"
+        $IMDB_Top_Directors:
+          '[{"category":"Directed by","id":"nm0751577","name":"Anthony Russo","credit":null},{"category":"Directed by","id":"nm0751648","name":"Joe Russo","credit":null}]',
+        $IMDB_Top_Writers:
+          '[{"category":"Writing Credits","id":"nm1321655","name":"Christopher Markus","credit":"(screenplay by) &"},{"category":"Writing Credits","id":"nm1321656","name":"Stephen McFeely","credit":"(screenplay by)"},{"category":"Writing Credits","id":"nm0498278","name":"Stan Lee","credit":"(based on the Marvel comics by) and"},{"category":"Writing Credits","id":"nm0456158","name":"Jack Kirby","credit":"(based on the Marvel comics by)"},{"category":"Writing Credits","id":"nm0800209","name":"Joe Simon","credit":"(Captain America created by) and"}]',
+        $IMDB_Top_Producers:
+          '[{"category":"Produced by","id":"nm0022285","name":"Victoria Alonso","credit":"executive producer"},{"category":"Produced by","id":"nm0068416","name":"Mitchell Bell","credit":"co-producer (as Mitch Bell)"},{"category":"Produced by","id":"nm2753152","name":"Ari Costa","credit":"associate producer"},{"category":"Produced by","id":"nm0195669","name":"Louis D\'Esposito","credit":"executive producer"},{"category":"Produced by","id":"nm0269463","name":"Jon Favreau","credit":"executive producer"}]',
+        $IMDB_Top_Cast:
+          '[{"category":"Cast","id":"nm0000375","name":"Robert Downey Jr.","credit":"Tony Stark / Iron Man"},{"category":"Cast","id":"nm0262635","name":"Chris Evans","credit":"Steve Rogers / Captain America"},{"category":"Cast","id":"nm0749263","name":"Mark Ruffalo","credit":"Bruce Banner / Hulk"},{"category":"Cast","id":"nm1165110","name":"Chris Hemsworth","credit":"Thor"},{"category":"Cast","id":"nm0424060","name":"Scarlett Johansson","credit":"Natasha Romanoff / Black Widow"}]',
       },
 
       credits0: {
@@ -651,7 +657,7 @@ async function testIMDBPersonData() {
       $IMDB_Person_ID: "nm3380149",
       $Photo_URL: "extras/nm3380149_poster.jpg",
       $ShortBio:
-        "This is a test biography for testing a const page with over 150 characters so I'm going to make this really long by typing really hard. I hope this does not break any other test but since this const page was not locked and there was no biography before this one I guess it should be alright. Typing this makes me feel like the \"good old\" days of ...  »",
+        'This is a test biography for testing a const page with over 150 characters so I\'m going to make this really long by typing really hard. I hope this does not break any other test but since this const page was not locked and there was no biography before this one I guess it should be alright. Typing this makes me feel like the "good old" days of ...  »',
       $LongBio:
         "This is a test biography for testing a const page with over 150 characters so I'm going to make this really long by typing really hard. I hope this does not break any other test but since this const page was not locked and there was no biography before this one I guess it should be alright. Typing this makes me feel like the \"good old\" days of writing essays in school, where 90% of the time I was just trying to make my sentences really long to meet the word requirement like I am doing now. There is no word count in this text box so I don't even know how far I am, so I pasted this to the word doc where they have word count and I found out I wasn't even at 100. That hit me hard in the heart and I couldn't take it. But what else could I do besides keep typing and making this really long. Ok I think I'm good with this length I'm just going to copy this paragraph three times.\n\nThis is a test biography for testing a const page with over 150 characters so I'm going to make this really long by typing really hard. I hope this does not break any other test but since this const page was not locked and there was no biography before this one I guess it should be alright. Typing this makes me feel like the \"good old\" days of writing essays in school, where 90% of the time I was just trying to make my sentences really long to meet the word requirement like I am doing now. There is no word count in this text box so I don't even know how far I am, so I pasted this to the word doc where they have word count and I found out I wasn't even at 100. That hit me hard in the heart and I couldn't take it. But what else could I do besides keep typing and making this really long. Ok I think I'm good with this length I'm just going to copy this paragraph three times.\n\nThis is a test biography for testing a const page with over 150 characters so I'm going to make this really long by typing really hard. I hope this does not break any other test but since this const page was not locked and there was no biography before this one I guess it should be alright. Typing this makes me feel like the \"good old\" days of writing essays in school, where 90% of the time I was just trying to make my sentences really long to meet the word requirement like I am doing now. There is no word count in this text box so I don't even know how far I am, so I pasted this to the word doc where they have word count and I found out I wasn't even at 100. That hit me hard in the heart and I couldn't take it. But what else could I do besides keep typing and making this really long. Ok I think I'm good with this length I'm just going to copy this paragraph three times.\n\n\n- IMDb Mini Biography By: jiajguo",
     };
@@ -815,7 +821,8 @@ async function testIMDBFilmingLocations() {
   try {
     const expected = {
       locations0: {
-        Location: "Durham Cathedral, The College, Durham, County Durham, England, UK",
+        Location:
+          "Durham Cathedral, The College, Durham, County Durham, England, UK",
         Details: "Thor Meets His Mother In Asgard",
         NumInteresting: 68,
         NumVotes: 68,
@@ -1152,8 +1159,7 @@ async function testIMDBAdvancedTitleSearch() {
       if (!scrapeResult) {
         addSubLogEntry(
           testResult,
-          `query '${expectedValue.title}' [${expectedValue.titleTypes
-          }] no response`,
+          `query '${expectedValue.title}' [${expectedValue.titleTypes}] no response`,
           status.ERROR
         );
         return;
@@ -1162,8 +1168,7 @@ async function testIMDBAdvancedTitleSearch() {
       if (scrapeResult.length === 0) {
         addSubLogEntry(
           testResult,
-          `query '${expectedValue.title}' [${expectedValue.titleTypes
-          }] results missing`,
+          `query '${expectedValue.title}' [${expectedValue.titleTypes}] results missing`,
           status.ERROR
         );
         return;
@@ -1172,8 +1177,7 @@ async function testIMDBAdvancedTitleSearch() {
       if (scrapeResult.length < expectedValue.numResults) {
         addSubLogEntry(
           testResult,
-          `query '${expectedValue.title}' [${expectedValue.titleTypes
-          }] results count mismatch
+          `query '${expectedValue.title}' [${expectedValue.titleTypes}] results count mismatch
                       got:      ${scrapeResult.length} entries
                       expected: ${expectedValue.numResults}+ entries`,
           status.WARNING
@@ -1255,8 +1259,7 @@ async function testIMDBFind() {
         result0: {
           id: "tt9426210",
           type: "title",
-          resultText:
-            'Weathering with You (2019) aka "天気の子"',
+          resultText: 'Weathering with You (2019) aka "天気の子"',
           imageURL:
             "https://m.media-amazon.com/images/M/MV5BNzE4ZDEzOGUtYWFjNC00ODczLTljOGQtZGNjNzhjNjdjNjgzXkEyXkFqcGdeQXVyNzE5ODMwNzI@._V1_UX32_CR0,0,32,44_AL_.jpg",
         },
@@ -1276,8 +1279,7 @@ async function testIMDBFind() {
       if (!scrapeResult) {
         addSubLogEntry(
           testResult,
-          `query '${expectedValue.searchTerm}' [${expectedValue.type
-          }] no response`,
+          `query '${expectedValue.searchTerm}' [${expectedValue.type}] no response`,
           status.ERROR
         );
         return;
@@ -1286,8 +1288,7 @@ async function testIMDBFind() {
       if (scrapeResult.length === 0) {
         addSubLogEntry(
           testResult,
-          `query '${expectedValue.searchTerm}' [${expectedValue.type
-          }] results missing`,
+          `query '${expectedValue.searchTerm}' [${expectedValue.type}] results missing`,
           status.ERROR
         );
         return;
@@ -1296,8 +1297,7 @@ async function testIMDBFind() {
       if (scrapeResult.length < expectedValue.numResults) {
         addSubLogEntry(
           testResult,
-          `query '${expectedValue.searchTerm}' [${expectedValue.type
-          }] results count mismatch
+          `query '${expectedValue.searchTerm}' [${expectedValue.type}] results count mismatch
                       got:      ${scrapeResult.length} entries
                       expected: ${expectedValue.numResults}+ entries`,
           status.WARNING

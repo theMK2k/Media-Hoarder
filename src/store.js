@@ -19,8 +19,6 @@ const execAsync = util.promisify(child_process.exec);
 const readFileAsync = util.promisify(fs.readFile);
 
 import { eventBus } from "@/main";
-import { select } from "async";
-import { isObjectLike } from "lodash";
 
 const db = require("./helpers/db");
 // import * as db from "@/helpers/db";
@@ -767,6 +765,7 @@ async function filescanMovies(onlyNew, $t) {
 
     logger.log("### filescanMovies END");
   } catch (err) {
+    logger.log("filescanMovies ERROR:", err);
     throw err;
   } finally {
     eventBus.setProgressBar(-1); // off
@@ -2028,9 +2027,10 @@ async function findIMDBtconstByFileOrDirname(movie) {
   const arrYears = helpers.getYearsFromFileName(movie.Filename, false); // TODO: also directoryName (if movie.isDirectoryBased)
 
   // const name = helpers.getMovieNameFromFileName(movie.Filename).replace(/[()[]]/g, ' ');
-  const name = (movie.isDirectoryBased
-    ? helpers.getMovieNameFromDirectory(movie.fullDirectory)
-    : helpers.getMovieNameFromFileName(movie.Filename)
+  const name = (
+    movie.isDirectoryBased
+      ? helpers.getMovieNameFromDirectory(movie.fullDirectory)
+      : helpers.getMovieNameFromFileName(movie.Filename)
   )
     .replace(/\([^)]*?\)/g, "")
     .replace(/\[[^\]]*?\]/g, "")
@@ -3498,7 +3498,7 @@ async function fetchMedia(
     let filterDataQuality = "";
     logger.log("filters.filterDataQuality:", filters.filterDataQuality);
 
-    const getFilterDataQualityQuery = function(filterDataQualityName) {
+    const getFilterDataQualityQuery = function (filterDataQualityName) {
       switch (filterDataQualityName) {
         case "<noAnomalies>":
           return `SELECT id_Movies FROM tbl_Movies WHERE (
@@ -3522,7 +3522,6 @@ async function fetchMedia(
           throw new Error(
             `Unknown data quality filter "${filterDataQualityName}"`
           );
-          break;
       }
     };
 
@@ -4010,8 +4009,7 @@ async function launchMovie(movie) {
   if (!MediaplayerPath) {
     eventBus.showSnackbar("error", {
       translateMe: {
-        text:
-          "Unable to launch: Mediaplayer Path is not set_ Please go to Settings and provide one_",
+        text: "Unable to launch: Mediaplayer Path is not set_ Please go to Settings and provide one_",
       },
     });
   }
@@ -5736,6 +5734,7 @@ async function loadSettingDuplicatesHandling() {
 
     if (objLoadedSetting.actualDuplicate) {
       Object.keys(objLoadedSetting.actualDuplicate).forEach((key) => {
+        // eslint-disable-next-line no-prototype-builtins
         if (shared.duplicatesHandling.actualDuplicate.hasOwnProperty(key)) {
           shared.duplicatesHandling.actualDuplicate[key] =
             objLoadedSetting.actualDuplicate[key];
@@ -5745,6 +5744,7 @@ async function loadSettingDuplicatesHandling() {
 
     if (objLoadedSetting.metaDuplicate) {
       Object.keys(objLoadedSetting.metaDuplicate).forEach((key) => {
+        // eslint-disable-next-line no-prototype-builtins
         if (shared.duplicatesHandling.metaDuplicate.hasOwnProperty(key)) {
           shared.duplicatesHandling.metaDuplicate[key] =
             objLoadedSetting.metaDuplicate[key];
@@ -6464,9 +6464,8 @@ async function findReleaseAttributes(movie, onlyNew) {
     );
   }
 
-  const deleteAvailableReleaseAttributes = alreadyAvailableReleaseAttributes.filter(
-    (ra) => !ra.foundAgain
-  );
+  const deleteAvailableReleaseAttributes =
+    alreadyAvailableReleaseAttributes.filter((ra) => !ra.foundAgain);
 
   logger.log(
     "findReleaseAttributes deleteAvailableReleaseAttributes:",
@@ -6874,39 +6873,6 @@ async function fetchNumMovies($MediaType) {
   return numMovies.toLocaleString(shared.uiLanguage);
 }
 
-async function fetchMediaNames($MediaType, filter) {
-  let filterPersons = "";
-  if (filter.IMDB_Person_ID) {
-    filterPersons = `AND MOV.id_Movies IN ()`;
-  }
-
-  const query = `
-  SELECT
-    MOV.Name
-    , MOV.Name2
-    , MOV.startYear
-  FROM tbl_Movies MOV
-  INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
-  WHERE	(MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
-  AND MOV.id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths WHERE MediaType = $MediaType)
-  ${filterPersons}
-  `;
-
-  logger.log("fetchMovieNames query:", query);
-
-  const result = await db.fireProcedureReturnAll(query, { $MediaType });
-}
-
-async function updateMediaName($id_Movies, $Name) {
-  const query = `UPDATE tbl_Movies SET Name = $Name WHERE id_Movies = $id_Movies`;
-  await db.fireProcedure(query, { $id_Movies, $Name });
-}
-
-async function updateMediaName2($id_Movies, $Name2) {
-  const query = `UPDATE tbl_Movies SET Name2 = $Name2 WHERE id_Movies = $id_Movies`;
-  await db.fireProcedure(query, { $id_Movies, $Name2 });
-}
-
 async function updateMediaRecordField($id_Movies, FieldName, $Value) {
   const query = `UPDATE tbl_Movies SET ${FieldName} = $Value WHERE id_Movies = $id_Movies`;
   await db.fireProcedure(query, { $id_Movies, $Value });
@@ -6955,8 +6921,9 @@ async function updateMovieGenres($id_Movies, genres) {
         });
       }
 
-      const id_Genres = availableGenres.find((g) => g.GenreID === genre)
-        .id_Genres;
+      const id_Genres = availableGenres.find(
+        (g) => g.GenreID === genre
+      ).id_Genres;
       await db.fireProcedure(
         "INSERT INTO tbl_Movies_Genres (id_Movies, id_Genres) VALUES ($id_Movies, $id_Genres)",
         { $id_Movies, $id_Genres: id_Genres }
@@ -7091,7 +7058,7 @@ function getFieldsDefinedByUser(definedByUserString) {
  * Check if the IMDB tconst is plausible, if not, a scanError will be added
  * @param {Integer} $id_Movies
  */
-async function verifyIMDBtconst($id_Movies, $t) {
+async function verifyIMDBtconst($id_Movies) {
   const queryMovie = `
   SELECT
     scanErrors
@@ -7134,25 +7101,24 @@ async function verifyIMDBtconst($id_Movies, $t) {
     logger.log("verifyIMDBtconst diff:", diff);
 
     if (diff > 4) {
-      movie.scanErrors["IMDB link verification"] =
-        {
-          message: "Warning: the actual runtime of the movie ({runtimeMovie}min) deviates by at least 5 minutes from the runtime reported by IMDB ({runtimeIMDB}min)_ Please check if the correct IMDB entry is used here_",
-          data: {
-            runtimeMovie: parseInt(MI_runtimeMinutes),
-            runtimeIMDB: parseInt(movie.IMDB_runtimeMinutes)
-          }
-        }
+      movie.scanErrors["IMDB link verification"] = {
+        message:
+          "Warning: the actual runtime of the movie ({runtimeMovie}min) deviates by at least 5 minutes from the runtime reported by IMDB ({runtimeIMDB}min)_ Please check if the correct IMDB entry is used here_",
+        data: {
+          runtimeMovie: parseInt(MI_runtimeMinutes),
+          runtimeIMDB: parseInt(movie.IMDB_runtimeMinutes),
+        },
+      };
     }
   }
 
   if (!movie.scanErrors["IMDB link verification"] && movie.IMDB_startYear) {
-
     const arrYears = helpers.getYearsFromFileName(movie.Filename, false); // TODO: also directoryName (if movie.isDirectoryBased)
 
     let yearDiff = -1;
     let yearMovie = -1;
 
-    arrYears.forEach(year => {
+    arrYears.forEach((year) => {
       const diff = Math.abs(year - parseInt(movie.IMDB_startYear));
 
       if (yearDiff === -1 || diff < yearDiff) {
@@ -7162,21 +7128,24 @@ async function verifyIMDBtconst($id_Movies, $t) {
     });
 
     if (yearDiff !== -1 && yearDiff > 1) {
-      movie.scanErrors["IMDB link verification"] =
-        {
-          message: "Warning: the release date provided in the file/directory name ({yearMovie}) deviates by at least 2 years from the one reported by IMDB ({yearIMDB})_ Please check if the correct IMDB entry is used here_",
-          data: {
-            yearMovie,
-            yearIMDB: movie.IMDB_startYear
-          }
-        }
+      movie.scanErrors["IMDB link verification"] = {
+        message:
+          "Warning: the release date provided in the file/directory name ({yearMovie}) deviates by at least 2 years from the one reported by IMDB ({yearIMDB})_ Please check if the correct IMDB entry is used here_",
+        data: {
+          yearMovie,
+          yearIMDB: movie.IMDB_startYear,
+        },
+      };
     }
   }
 
   if (JSON.stringify(movie.scanErrors) === "{}") {
-    await db.fireProcedure(`
+    await db.fireProcedure(
+      `
       UPDATE tbl_Movies SET scanErrors = NULL WHERE id_Movies = $id_Movies
-    `, { $id_Movies });
+    `,
+      { $id_Movies }
+    );
   } else {
     await db.fireProcedure(
       `
@@ -7190,7 +7159,7 @@ async function verifyIMDBtconst($id_Movies, $t) {
       }
     );
   }
-  
+
   logger.log("verifyIMDBtconst movie:", movie);
 }
 
