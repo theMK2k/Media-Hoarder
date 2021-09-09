@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-top: -8px !important">
+  <div>
     <ul class="v-pagination theme--dark">
       <li>
         <button
@@ -9,8 +9,8 @@
           v-bind:disabled="$shared.currentPage == 1"
           v-on:click="$shared.currentPage = 1"
           style="
-            height: 48px !important;
-            width: 48px !important;
+            height: 38px !important;
+            width: 38px !important;
             margin: 8px 8px 0px 0px !important;
           "
         >
@@ -28,8 +28,8 @@
           v-bind:disabled="$shared.currentPage == 1"
           v-on:click="onPrevClicked"
           style="
-            height: 48px !important;
-            width: 48px !important;
+            height: 38px !important;
+            width: 38px !important;
             margin: 8px 8px 0px 0px !important;
           "
         >
@@ -49,7 +49,7 @@
           item-value="page"
           label="Page"
           v-model="$shared.currentPage"
-          style="height: 40px"
+          style="height: 40px; margin-top: 8px"
         >
           <!-- v-bind:style="selectStyle" -->
           <template v-slot:item="{ item }">
@@ -79,8 +79,8 @@
           v-bind:disabled="$shared.currentPage >= length"
           v-on:click="onNextClicked"
           style="
-            height: 48px !important;
-            width: 48px !important;
+            height: 38px !important;
+            width: 38px !important;
             margin: 8px 8px 0px 8px !important;
           "
         >
@@ -98,8 +98,8 @@
           v-bind:disabled="$shared.currentPage >= length"
           v-on:click="$shared.currentPage = length"
           style="
-            height: 48px !important;
-            width: 48px !important;
+            height: 38px !important;
+            width: 38px !important;
             margin: 8px 8px 0px 0px !important;
           "
         >

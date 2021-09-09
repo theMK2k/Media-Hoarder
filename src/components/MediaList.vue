@@ -73,7 +73,12 @@
         item-value="Field"
         v-model="$shared.sortField"
         v-bind:label="$t('Sort')"
-        style="margin-left: 8px; max-width: 320px; height: 40px"
+        style="
+          margin-left: 8px;
+          margin-top: 8px;
+          max-width: 320px;
+          height: 40px;
+        "
         v-on:change="onSortChanged"
       >
         <template v-slot:selection="{ item }">
@@ -87,8 +92,6 @@
       <v-spacer></v-spacer>
 
       <div v-if="numPages">
-        <!-- <v-pagination v-bind:length="numPages" v-model="$shared.currentPage" total-visible="7"></v-pagination> -->
-
         <mk-pagination
           v-bind:length="numPages"
           v-bind:pages="paginationItems"
@@ -108,7 +111,7 @@
     <!-- mk-scrollcontainer -->
     <v-container
       class="pa-2"
-      style="max-width: 100% !important; margin-top: 48px"
+      style="max-width: 100% !important; margin-top: 60px"
     >
       <v-row v-for="(item, i) in itemsFilteredPaginated" :key="i">
         <v-col>
@@ -161,7 +164,7 @@
                 class="align-self-start"
                 style="padding-top: 6px; padding-bottom: 6px"
               >
-                <v-col style="padding: 0px !important; margin-top: 20px">
+                <v-col style="padding: 0px !important; margin-top: 16px">
                   <v-row>
                     <div style="margin-left: 16px">
                       <v-list-item-title
@@ -368,7 +371,7 @@
                           >{{ item.IMDB_metacriticScore }}</span
                         >
                       </div>
-                      <v-row>
+                      <v-row style="margin-top: 0px">
                         <div class="flex-grow-1"></div>
                         <!-- <div
                           style="
@@ -417,7 +420,7 @@
 
                   <v-row
                     v-if="item.plotSummary"
-                    style="margin: 8px 6px 8px 4px"
+                    style="margin: 16px 6px 8px 4px"
                   >
                     <div
                       v-show="!item.selected"
@@ -728,7 +731,7 @@
                   v-bind:key="creditCategory.Category"
                   style="margin-left: 24px"
                 >
-                  <v-row>
+                  <v-row style="margin-top: 12px">
                     <strong>{{
                       $t(`CreditCategories.${creditCategory.category}`)
                     }}</strong>
@@ -785,7 +788,7 @@
                   v-bind:key="companyCategory.Category"
                   style="margin-left: 24px"
                 >
-                  <v-row>
+                  <v-row style="margin-top: 12px">
                     <strong>{{
                       $t(`CompanyCategories.${companyCategory.category}`)
                     }}</strong>
@@ -837,6 +840,7 @@
                 <v-row
                   v-for="category in $shared.contentAdvisoryCategories"
                   v-bind:key="category.Name"
+                  style="margin-top: 12px"
                 >
                   <v-col sm="4" class="creditsLabel">{{
                     $t(`ParentalAdvisoryCategories.${category.Name}`)
@@ -884,7 +888,7 @@
                 <v-row
                   v-for="plotKeyword in item.plotKeywords"
                   v-bind:key="plotKeyword.Keyword"
-                  style="margin-left: 24px"
+                  style="margin-top: 12px; margin-left: 24px"
                 >
                   <a
                     class="mk-clickable"
@@ -936,6 +940,7 @@
                 <v-row
                   v-for="filmingLocation in item.filmingLocations"
                   v-bind:key="filmingLocation.id_IMDB_Filming_Locations"
+                  style="margin-top: 12px"
                 >
                   <a
                     class="mk-clickable"
@@ -947,7 +952,7 @@
                 </v-row>
               </div>
 
-              <v-row style="margin-top: 8px">
+              <v-row style="margin-top: 16px">
                 <v-btn text color="primary" v-on:click.stop="copyInfo(item)">{{
                   $t("Copy Info")
                 }}</v-btn>

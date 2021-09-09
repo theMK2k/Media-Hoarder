@@ -1142,7 +1142,7 @@
     </v-app-bar>
 
     <!-- CONTENT -->
-    <v-content>
+    <v-main>
       <v-container
         style="
           display: flex;
@@ -1255,7 +1255,7 @@
           </v-row>
         </v-bottom-navigation>
       </v-container>
-    </v-content>
+    </v-main>
 
     <!-- SNACK BAR -->
     <v-snackbar
@@ -2913,7 +2913,6 @@ h1 {
 /* ### Vuetify fixes ### */
 
 /* this is part of v-select and makes it unneccessarily high */
-/*
 .v-text-field__details {
   display: none !important;
 }
@@ -2921,7 +2920,6 @@ h1 {
 .mk-v-select-dynamic-width .v-input__slot {
   margin: 0px !important;
 }
-*/
 
 .mk-v-select-dynamic-width .v-select__selections > input {
   max-width: 0px !important;
