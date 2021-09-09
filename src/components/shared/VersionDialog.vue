@@ -55,7 +55,7 @@
             colored-border
             border="left"
             dense
-            style="margin-top: 8px"
+            style="margin-top: 12px"
           >
             <span v-if="isNewVersionAvailable">
               <strong>{{

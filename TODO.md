@@ -1,5 +1,43 @@
 # TODO
 
+## Vuetify Upgrade to 2.5.8
+
+### Layout Fixes
+
+- [x] MediaList
+- [x] Pagination.vue
+- [...] VersionDialog.vue
+- [ ] AddLanguagesDialog.vue
+- [ ] AddRegionsDialog.vue
+- [ ] AddTitleTypeDialog.vue
+- [ ] AgeRatingDialog.vue
+- [ ] App.vue
+- [ ] CheckIMDBScraperDialog.vue
+- [ ] CompanyDialog.vue
+- [ ] Dialog.vue
+- [ ] EditMediaItemDialog.vue
+- [ ] EditReleaseAttributeDialog.vue
+- [ ] FilmingLocationDialog.vue
+- [ ] GenreDialog.vue
+- [ ] Home.vue
+- [ ] LanguageDialog.vue
+- [ ] LinkIMDBDialog.vue
+- [ ] LinkIMDBDialog-AdvancedTitleSearch.vue
+- [ ] LinkIMDBDialog-Find.vue
+- [ ] ListDialog.vue
+- [ ] LocalVideoPlayerDialog.vue
+- [ ] PersonDialog.vue
+- [ ] PlotKeywordDialog.vue
+- [ ] RatingDemographicsDialog.vue
+- [ ] ReleaseAttributeDialog.vue
+- [ ] ScanOptionsDialog.vue
+- [ ] SearchDataDialog.vue
+- [ ] Settings.vue
+- [ ] SourcePath.vue
+- [ ] TitleType.vue
+- [ ] VideoPlayerDialog.vue
+- [ ] VideoQualityDialog.vue
+
 ## v1.0.0
 
 - nothing
