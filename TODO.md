@@ -4,22 +4,24 @@
 
 ### Layout Fixes
 
+- [?] Dialog.vue
+
 - [x] MediaList
 - [x] Pagination.vue
-- [...] VersionDialog.vue
+- [x] Home.vue
+- [x] VersionDialog.vue
+- [x] Settings.vue
+- [x] CheckIMDBScraperDialog.vue
 - [ ] AddLanguagesDialog.vue
 - [ ] AddRegionsDialog.vue
 - [ ] AddTitleTypeDialog.vue
 - [ ] AgeRatingDialog.vue
 - [ ] App.vue
-- [ ] CheckIMDBScraperDialog.vue
 - [ ] CompanyDialog.vue
-- [ ] Dialog.vue
 - [ ] EditMediaItemDialog.vue
 - [ ] EditReleaseAttributeDialog.vue
 - [ ] FilmingLocationDialog.vue
 - [ ] GenreDialog.vue
-- [ ] Home.vue
 - [ ] LanguageDialog.vue
 - [ ] LinkIMDBDialog.vue
 - [ ] LinkIMDBDialog-AdvancedTitleSearch.vue
@@ -32,15 +34,18 @@
 - [ ] ReleaseAttributeDialog.vue
 - [ ] ScanOptionsDialog.vue
 - [ ] SearchDataDialog.vue
-- [ ] Settings.vue
 - [ ] SourcePath.vue
 - [ ] TitleType.vue
 - [ ] VideoPlayerDialog.vue
 - [ ] VideoQualityDialog.vue
+- [ ] rescan info bar (bottom)
 
 ## v1.0.0
 
-- nothing
+- Drag/Drop Rearrange:
+  - Settings - Regions
+  - Settings - Languages
+  - Settings - Release Attributes
 
 ### Bugs
 

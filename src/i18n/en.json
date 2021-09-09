@@ -807,7 +807,7 @@
   "Please provide the path to MediaInfo CLI_": "Please provide the path to MediaInfo CLI.",
   "MediaInfo CLI path changed to _{path}__": "MediaInfo CLI path changed to \"{path}\".",
   "Important_": "Important:",
-  "If you want, for example, to see THISLANGUAGE titles, you must add the THISREGION region in _REGIONS__": "If you want, for example, to see English titles, you must add the 'United Kingdom' or 'United States' region in \"REGIONS\".",
+  "If you want, for example, to see THISLANGUAGE titles, you must also add the THISREGION region in _REGIONS__": "If you want, for example, to see English titles, you must also add the 'United Kingdom' or 'United States' region in \"REGIONS\".",
   "Do you really want to remove {name} from the filter list?": "Do you really want to remove '{name}' from the filter list?",
   "Path updated_": "Path updated.",
   "Remove Person": "Remove Person",

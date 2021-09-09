@@ -24,11 +24,13 @@
       </v-card-title>
 
       <v-card-text>
-        {{
-          $t(
-            "The imdb_com web scraper is tested using a test-set of example data_ This way we can assure that the data from imdb_com will be correctly scraped_"
-          )
-        }}
+        <div style="margin-top: 12px; margin-bottom: 12px">
+          {{
+            $t(
+              "The imdb_com web scraper is tested using a test-set of example data_ This way we can assure that the data from imdb_com will be correctly scraped_"
+            )
+          }}
+        </div>
         <v-row
           v-for="check in imdbScraperChecksFiltered"
           v-bind:key="check.key"

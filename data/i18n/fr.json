@@ -885,7 +885,7 @@
   "Please provide the path to MediaInfo CLI_": "fr: Gib den Pfad zu MediaInfo CLI an.",
   "MediaInfo CLI path changed to _{path}__": "fr: MediaInfo CLI Pfad geändert auf \"{path}\".",
   "Important_": "fr: Wichtig:",
-  "If you want, for example, to see THISLANGUAGE titles, you must add the THISREGION region in _REGIONS__": "fr: Wenn Du bspw. Deutsche Titel angezeigt bekommen möchtest, musst Du mindestens die Region 'Deutschland' unter \"REGIONEN\" hinzufügen.",
+  "If you want, for example, to see THISLANGUAGE titles, you must also add the THISREGION region in _REGIONS__": "fr: Wenn Du bspw. Deutsche Titel angezeigt bekommen möchtest, musst Du mindestens die Region 'Deutschland' unter \"REGIONEN\" hinzufügen.",
   "Path updated_": "fr: Pfad aktualisiert.",
   "Do you really want to remove {name} from the filter list?": "fr: Soll '{name}' wirklich aus der Filterliste entfernt werden?",
   "Remove Person": "fr: Person Entfernen",

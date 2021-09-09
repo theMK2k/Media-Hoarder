@@ -262,64 +262,68 @@
               }}
             </p>
           </v-card-text>
-          <p>
-            {{
-              $t("With actual duplicates, {appName} should also", {
-                appName: $shared.appName,
-              })
-            }}
-          </p>
+          <div style="margin-left: 16px">
+            <p>
+              {{
+                $t("With actual duplicates, {appName} should also", {
+                  appName: $shared.appName,
+                })
+              }}
+            </p>
 
-          <v-checkbox
-            v-bind:label="$t('relink IMDB')"
-            style="margin: 0px"
-            color="mk-dark-grey"
-            dense
-            v-model="$shared.duplicatesHandling.actualDuplicate.relinkIMDB"
-            v-on:click.native="duplicatesHandlingChanged"
-          ></v-checkbox>
-          <v-checkbox
-            v-bind:label="$t('add to list')"
-            style="margin: 0px"
-            color="mk-dark-grey"
-            dense
-            v-model="$shared.duplicatesHandling.actualDuplicate.addToList"
-            v-on:click.native="duplicatesHandlingChanged"
-          ></v-checkbox>
-          <v-checkbox
-            v-bind:label="$t('update primary title')"
-            style="margin: 0px"
-            color="mk-dark-grey"
-            dense
-            v-model="$shared.duplicatesHandling.actualDuplicate.updateTitle"
-            v-on:click.native="duplicatesHandlingChanged"
-          ></v-checkbox>
-          <v-checkbox
-            v-bind:label="$t('update secondary title')"
-            style="margin: 0px"
-            color="mk-dark-grey"
-            dense
-            v-model="$shared.duplicatesHandling.actualDuplicate.updateSubTitle"
-            v-on:click.native="duplicatesHandlingChanged"
-          ></v-checkbox>
-          <v-checkbox
-            v-bind:label="$t('update rating')"
-            style="margin: 0px"
-            color="mk-dark-grey"
-            dense
-            v-model="$shared.duplicatesHandling.actualDuplicate.updateRating"
-            v-on:click.native="duplicatesHandlingChanged"
-          ></v-checkbox>
-          <v-checkbox
-            v-bind:label="$t('update last access')"
-            style="margin: 0px"
-            color="mk-dark-grey"
-            dense
-            v-model="
-              $shared.duplicatesHandling.actualDuplicate.updateLastAccess
-            "
-            v-on:click.native="duplicatesHandlingChanged"
-          ></v-checkbox>
+            <v-checkbox
+              v-bind:label="$t('relink IMDB')"
+              style="margin: 0px"
+              color="mk-dark-grey"
+              dense
+              v-model="$shared.duplicatesHandling.actualDuplicate.relinkIMDB"
+              v-on:click.native="duplicatesHandlingChanged"
+            ></v-checkbox>
+            <v-checkbox
+              v-bind:label="$t('add to list')"
+              style="margin: 0px"
+              color="mk-dark-grey"
+              dense
+              v-model="$shared.duplicatesHandling.actualDuplicate.addToList"
+              v-on:click.native="duplicatesHandlingChanged"
+            ></v-checkbox>
+            <v-checkbox
+              v-bind:label="$t('update primary title')"
+              style="margin: 0px"
+              color="mk-dark-grey"
+              dense
+              v-model="$shared.duplicatesHandling.actualDuplicate.updateTitle"
+              v-on:click.native="duplicatesHandlingChanged"
+            ></v-checkbox>
+            <v-checkbox
+              v-bind:label="$t('update secondary title')"
+              style="margin: 0px"
+              color="mk-dark-grey"
+              dense
+              v-model="
+                $shared.duplicatesHandling.actualDuplicate.updateSubTitle
+              "
+              v-on:click.native="duplicatesHandlingChanged"
+            ></v-checkbox>
+            <v-checkbox
+              v-bind:label="$t('update rating')"
+              style="margin: 0px"
+              color="mk-dark-grey"
+              dense
+              v-model="$shared.duplicatesHandling.actualDuplicate.updateRating"
+              v-on:click.native="duplicatesHandlingChanged"
+            ></v-checkbox>
+            <v-checkbox
+              v-bind:label="$t('update last access')"
+              style="margin: 0px"
+              color="mk-dark-grey"
+              dense
+              v-model="
+                $shared.duplicatesHandling.actualDuplicate.updateLastAccess
+              "
+              v-on:click.native="duplicatesHandlingChanged"
+            ></v-checkbox>
+          </div>
         </v-card>
 
         <v-card style="width: 100%; margin-top: 8px">
@@ -333,30 +337,32 @@
               }}
             </p>
           </v-card-text>
-          <p>
-            {{
-              $t("With meta duplicates, {appName} should also", {
-                appName: $shared.appName,
-              })
-            }}
-          </p>
+          <div style="margin-left: 16px">
+            <p>
+              {{
+                $t("With meta duplicates, {appName} should also", {
+                  appName: $shared.appName,
+                })
+              }}
+            </p>
 
-          <v-checkbox
-            v-bind:label="$t('add to list')"
-            style="margin: 0px"
-            color="mk-dark-grey"
-            dense
-            v-model="$shared.duplicatesHandling.metaDuplicate.addToList"
-            v-on:click.native="duplicatesHandlingChanged"
-          ></v-checkbox>
-          <v-checkbox
-            v-bind:label="$t('update rating')"
-            style="margin: 0px"
-            color="mk-dark-grey"
-            dense
-            v-model="$shared.duplicatesHandling.metaDuplicate.updateRating"
-            v-on:click.native="duplicatesHandlingChanged"
-          ></v-checkbox>
+            <v-checkbox
+              v-bind:label="$t('add to list')"
+              style="margin: 0px"
+              color="mk-dark-grey"
+              dense
+              v-model="$shared.duplicatesHandling.metaDuplicate.addToList"
+              v-on:click.native="duplicatesHandlingChanged"
+            ></v-checkbox>
+            <v-checkbox
+              v-bind:label="$t('update rating')"
+              style="margin: 0px"
+              color="mk-dark-grey"
+              dense
+              v-model="$shared.duplicatesHandling.metaDuplicate.updateRating"
+              v-on:click.native="duplicatesHandlingChanged"
+            ></v-checkbox>
+          </div>
         </v-card>
       </v-tab-item>
 
@@ -474,7 +480,7 @@
             <strong>{{ $t("Important_") }}</strong>
             {{
               $t(
-                "If you want, for example, to see THISLANGUAGE titles, you must add the THISREGION region in _REGIONS__"
+                "If you want, for example, to see THISLANGUAGE titles, you must also add the THISREGION region in _REGIONS__"
               )
             }}
           </p>
