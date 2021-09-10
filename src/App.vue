@@ -1,5 +1,5 @@
 <template>
-  <v-app id="inspire">
+  <v-app>
     <!-- SIDEBAR -->
     <v-navigation-drawer
       v-model="$shared.sidenav"
@@ -99,7 +99,7 @@
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
-                <v-row>
+                <v-row style="margin-bottom: 8px">
                   <v-btn text v-on:click="setAllSourcePaths(false)">{{
                     $t("SET NONE")
                   }}</v-btn>
@@ -136,7 +136,7 @@
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
-                <v-row>
+                <v-row style="margin-bottom: 8px">
                   <v-btn text v-on:click="setAllQualities(false)">{{
                     $t("SET NONE")
                   }}</v-btn>
@@ -173,7 +173,7 @@
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
-                <v-row>
+                <v-row style="margin-bottom: 8px">
                   <v-btn text v-on:click="setAllAudioLanguages(false)">{{
                     $t("SET NONE")
                   }}</v-btn>
@@ -214,7 +214,7 @@
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
-                <v-row>
+                <v-row style="margin-bottom: 8px">
                   <v-btn text v-on:click="setAllSubtitleLanguages(false)">{{
                     $t("SET NONE")
                   }}</v-btn>
@@ -261,7 +261,7 @@
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
-                <v-row>
+                <v-row style="margin-bottom: 8px">
                   <v-btn text v-on:click="setAllReleaseAttributes(false)">{{
                     $t("SET NONE")
                   }}</v-btn>
@@ -313,7 +313,7 @@
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
-                <v-row>
+                <v-row style="margin-bottom: 8px">
                   <v-btn text v-on:click="setAllLists(false)">{{
                     $t("SET NONE")
                   }}</v-btn>
@@ -368,7 +368,7 @@
               </v-expansion-panel-header>
               <!--  {{ filterRatingsTitle }} -->
               <v-expansion-panel-content>
-                <v-row>
+                <v-row style="margin-bottom: 8px">
                   <v-btn text v-on:click="setAllRatings(false)">{{
                     $t("SET NONE")
                   }}</v-btn>
@@ -491,7 +491,7 @@
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
-                <v-row>
+                <v-row style="margin-bottom: 8px">
                   <v-btn text v-on:click="setAllGenres(false)">{{
                     $t("SET NONE")
                   }}</v-btn>
@@ -536,7 +536,7 @@
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
-                <v-row>
+                <v-row style="margin-bottom: 8px">
                   <v-btn text v-on:click="setAllAgeRatings(false)">{{
                     $t("SET NONE")
                   }}</v-btn>
@@ -606,7 +606,7 @@
                       }}</v-expansion-panel-header
                     >
                     <v-expansion-panel-content>
-                      <v-row>
+                      <v-row style="margin-bottom: 8px">
                         <v-btn
                           text
                           v-on:click="setAllParentalAdvisory(category, false)"
@@ -656,7 +656,7 @@
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
-                <v-row>
+                <v-row style="margin-bottom: 8px">
                   <v-btn text v-on:click="setAllPersons(false)">{{
                     $t("SET NONE")
                   }}</v-btn>
@@ -721,7 +721,7 @@
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
-                <v-row>
+                <v-row style="margin-bottom: 8px">
                   <v-btn text v-on:click="setAllCompanies(false)">{{
                     $t("SET NONE")
                   }}</v-btn>
@@ -819,7 +819,7 @@
                 </div>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
-                <v-row>
+                <v-row style="margin-bottom: 8px">
                   <v-btn text v-on:click="setAllYears(false)">{{
                     $t("SET NONE")
                   }}</v-btn>
