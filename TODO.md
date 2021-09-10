@@ -12,32 +12,32 @@
 - [x] VersionDialog.vue
 - [x] Settings.vue
 - [x] CheckIMDBScraperDialog.vue
-- [ ] AddLanguagesDialog.vue
-- [ ] AddRegionsDialog.vue
-- [ ] AddTitleTypeDialog.vue
-- [ ] AgeRatingDialog.vue
+- [x] AddLanguagesDialog.vue
+- [x] AddRegionsDialog.vue
+- [x] AddTitleTypeDialog.vue
+- [x] AgeRatingDialog.vue
 - [ ] App.vue
-- [ ] CompanyDialog.vue
+- [x] CompanyDialog.vue
 - [ ] EditMediaItemDialog.vue
 - [ ] EditReleaseAttributeDialog.vue
-- [ ] FilmingLocationDialog.vue
-- [ ] GenreDialog.vue
-- [ ] LanguageDialog.vue
+- [x] FilmingLocationDialog.vue
+- [x] GenreDialog.vue
+- [x] LanguageDialog.vue
 - [ ] LinkIMDBDialog.vue
 - [ ] LinkIMDBDialog-AdvancedTitleSearch.vue
 - [ ] LinkIMDBDialog-Find.vue
 - [ ] ListDialog.vue
 - [ ] LocalVideoPlayerDialog.vue
 - [ ] PersonDialog.vue
-- [ ] PlotKeywordDialog.vue
+- [x] PlotKeywordDialog.vue
 - [ ] RatingDemographicsDialog.vue
-- [ ] ReleaseAttributeDialog.vue
+- [x] ReleaseAttributeDialog.vue
 - [ ] ScanOptionsDialog.vue
 - [ ] SearchDataDialog.vue
 - [ ] SourcePath.vue
 - [ ] TitleType.vue
 - [ ] VideoPlayerDialog.vue
-- [ ] VideoQualityDialog.vue
+- [x] VideoQualityDialog.vue
 - [ ] rescan info bar (bottom)
 
 ## v1.0.0

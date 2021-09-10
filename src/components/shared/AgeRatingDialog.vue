@@ -35,7 +35,7 @@
           <div v-if="showMovies" class="mk-clickable-white">
             <div v-for="(movie, index) in movies" v-bind:key="index">
               <v-row
-                style="margin-left: 20px; margin-right: 6px; margin-bottom: 0px"
+                style="margin-left: 20px; margin-right: 6px; margin-bottom: 8px"
               >
                 {{ movie.Name }}
                 {{ movie.Name2 ? " | " + movie.Name2 : "" }}
