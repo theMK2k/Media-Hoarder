@@ -8,16 +8,7 @@
   >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
-        <v-row>
-          <div style="margin-left: 16px">
-            <v-list-item-title
-              class="headline mb-2"
-              style="margin-bottom: 0px !important"
-              >{{ Person_Name }}</v-list-item-title
-            >
-          </div>
-        </v-row>
-
+        {{ Person_Name }}
         <v-progress-linear
           v-if="isScraping || isLoadingMovies"
           color="red accent-0"
@@ -66,7 +57,7 @@
             style="padding-top: 6px; padding-bottom: 6px"
           >
             <v-col style="padding: 0px !important" sm="12">
-              <v-row style="margin: 8px 6px 8px 4px">
+              <v-row style="margin: 0px 6px 8px 4px">
                 <div
                   v-if="!showLongBio"
                   style="font-size: 0.875rem; font-weight: normal"
@@ -106,6 +97,7 @@
                   <div v-for="(movie, index) in movies" v-bind:key="index">
                     <v-row
                       style="
+                        margin-top: 8px;
                         margin-left: 20px;
                         margin-right: 6px;
                         margin-bottom: 8px;

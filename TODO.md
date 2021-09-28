@@ -16,19 +16,19 @@
 - [x] AddRegionsDialog.vue
 - [x] AddTitleTypeDialog.vue
 - [x] AgeRatingDialog.vue
-- [ ] App.vue
+- [x] App.vue
 - [x] CompanyDialog.vue
-- [ ] EditMediaItemDialog.vue
-- [ ] EditReleaseAttributeDialog.vue
+- [x] EditMediaItemDialog.vue
+- [x] EditReleaseAttributeDialog.vue
 - [x] FilmingLocationDialog.vue
 - [x] GenreDialog.vue
 - [x] LanguageDialog.vue
-- [ ] LinkIMDBDialog.vue
+- [x] LinkIMDBDialog.vue
 - [ ] LinkIMDBDialog-AdvancedTitleSearch.vue
 - [ ] LinkIMDBDialog-Find.vue
 - [ ] ListDialog.vue
 - [ ] LocalVideoPlayerDialog.vue
-- [ ] PersonDialog.vue
+- [x] PersonDialog.vue
 - [x] PlotKeywordDialog.vue
 - [ ] RatingDemographicsDialog.vue
 - [x] ReleaseAttributeDialog.vue
