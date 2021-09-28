@@ -37,7 +37,7 @@
 
         <v-row
           class="item mk-clickable"
-          style="width: 100%"
+          style="width: 100%; margin-bottom: 4px"
           v-for="item in items"
           v-bind:key="item.id"
           v-on:click.stop="onItemClicked(item)"

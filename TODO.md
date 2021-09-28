@@ -30,10 +30,10 @@
 - [.] LocalVideoPlayerDialog.vue (not in use)
 - [x] PersonDialog.vue
 - [x] PlotKeywordDialog.vue
-- [ ] RatingDemographicsDialog.vue
+- [x] RatingDemographicsDialog.vue
 - [x] ReleaseAttributeDialog.vue
-- [ ] ScanOptionsDialog.vue
-- [ ] SearchDataDialog.vue
+- [x] ScanOptionsDialog.vue
+- [x] SearchDataDialog.vue
 - [ ] SourcePath.vue
 - [ ] TitleType.vue
 - [ ] VideoPlayerDialog.vue
