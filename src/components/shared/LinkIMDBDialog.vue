@@ -34,9 +34,9 @@
 
         <v-expansion-panels>
           <v-expansion-panel
-            style="padding: 0px !important; margin-bottom: 8px"
+            style="padding: 0px !important; margin-bottom: 24px"
           >
-            <v-expansion-panel-header style="padding: 8px !important"
+            <v-expansion-panel-header style="padding: 16px !important"
               >{{ $t("Media Types") }}
               {{ titleTypesTitle() }}</v-expansion-panel-header
             >
@@ -70,7 +70,8 @@
           >
         </v-row>
       </v-card-title>
-      <v-card-text style="padding-right: 28px">
+
+      <v-card-text style="padding-right: 28px; padding-top: 16px">
         <v-row v-for="(item, i) in searchResults" :key="i">
           <v-col style="padding: 2px; margin-left: 16px">
             <v-card
@@ -106,6 +107,7 @@
                           margin-bottom: 4px !important;
                           font-size: 16px;
                           margin-left: 12px;
+                          margin-top: 8px;
                         "
                         >{{ item.title }}</v-list-item-title
                       >
@@ -113,7 +115,7 @@
 
                     <v-list-item-subtitle
                       v-if="item.detailInfo"
-                      style="margin-bottom: 4px"
+                      style="margin-bottom: 4px; margin-top: 8px"
                       >{{ item.detailInfo }}</v-list-item-subtitle
                     >
 
