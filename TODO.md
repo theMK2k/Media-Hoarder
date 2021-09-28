@@ -34,9 +34,9 @@
 - [x] ReleaseAttributeDialog.vue
 - [x] ScanOptionsDialog.vue
 - [x] SearchDataDialog.vue
-- [ ] SourcePath.vue
-- [ ] TitleType.vue
-- [ ] VideoPlayerDialog.vue
+- [x] SourcePath.vue
+- [x] TitleType.vue
+- [x] VideoPlayerDialog.vue
 - [x] VideoQualityDialog.vue
 - [ ] rescan info bar (bottom)
 

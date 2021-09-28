@@ -15,7 +15,7 @@
         style="width: 100%; min-height: 600px !important"
       ></webview>
       <v-col sm="12">
-        <v-row style="margin-top: 8px">
+        <v-row style="margin-top: 8px; margin-bottom: 0px">
           <v-btn
             class="xs-fullwidth"
             color="secondary"
