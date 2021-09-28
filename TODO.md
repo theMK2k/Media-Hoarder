@@ -26,7 +26,7 @@
 - [x] LinkIMDBDialog.vue
 - [ ] LinkIMDBDialog-AdvancedTitleSearch.vue
 - [ ] LinkIMDBDialog-Find.vue
-- [ ] ListDialog.vue
+- [x] ListDialog.vue
 - [ ] LocalVideoPlayerDialog.vue
 - [x] PersonDialog.vue
 - [x] PlotKeywordDialog.vue
@@ -46,6 +46,7 @@
   - Settings - Regions
   - Settings - Languages
   - Settings - Release Attributes
+- LinkIMDBDialog: use LinkIMDBDialog-AdvancedTitleSearch.vue (layout fix if necessary)
 
 ### Bugs
 

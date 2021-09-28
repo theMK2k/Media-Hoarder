@@ -16,7 +16,7 @@
 
       <v-card-text style="padding: 0px">
         <v-radio-group v-model="chosenMethod">
-          <v-container style="width: 600px">
+          <div style="width: 600px; margin-left: 12px">
             <!-- LISTS COMBOBOX -->
             <v-row v-if="allowUseExistingLists">
               <v-col cols="12" sm="4">
@@ -59,7 +59,7 @@
                 ></v-text-field>
               </v-col>
             </v-row>
-          </v-container>
+          </div>
         </v-radio-group>
       </v-card-text>
 
