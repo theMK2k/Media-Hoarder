@@ -1224,30 +1224,29 @@
           fixed
           dark
           v-show="scanInfo.show"
-          style="height: auto; padding: 4px 8px 4px 20px; z-index: 100"
+          style="height: auto; padding: 4px 8px 4px 8px; z-index: 100"
         >
           <!-- v-model="bottomNav" -->
-          <v-row align-content="start" justify="start">
+          <v-row
+            align-content="start"
+            justify="start"
+            style="margin-top: 0px; margin-bottom: 0px; max-width: 100%"
+          >
             <!--  style="text-align: right!important" -->
-            <div v-if="scanInfo.show">
-              <p style="margin: 0px !important">{{ scanInfo.header }}</p>
-              <p
-                style="
-                  margin: 0px !important;
-                  font-size: 12px;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                  overflow: hidden;
-                "
-              >
+            <div v-if="scanInfo.show" style="flex: 1">
+              <p style="margin: 0px !important">
+                {{ scanInfo.header }}
+              </p>
+              <p style="margin: 0px !important; font-size: 12px">
                 {{ scanInfo.details }}
               </p>
             </div>
-            <div class="flex-grow-1"></div>
+            <!-- <div class="flex-grow-1"></div> -->
             <v-btn
               text
               v-on:click="cancelRescan"
               v-bind:disabled="store.doAbortRescan"
+              style="flex: 0 0 80px"
             >
               <v-icon v-if="!store.doAbortRescan">mdi-cancel</v-icon>
               <span v-if="store.doAbortRescan">{{ $t("Cancelling___") }}</span>
@@ -1340,7 +1339,15 @@ export default {
     ],
 
     scanInfo: {
-      show: false,
+      show: true,
+      header:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad",
+      details:
+        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab",
+    },
+
+    scanInfo_orig: {
+      show: false, // KILLME: true
       header: "",
       details: "",
     },

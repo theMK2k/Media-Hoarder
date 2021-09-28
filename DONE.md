@@ -49,6 +49,46 @@
 - [x] -> fetch Countries from `https://www.imdb.com/search/title/` and provide as list
 - [x] -> Auto set region by user's localization setting?
 
+## Vuetify Upgrade to 2.5.8
+
+### Layout Fixes
+
+- [?] Dialog.vue
+
+- [x] MediaList
+- [x] Pagination.vue
+- [x] Home.vue
+- [x] VersionDialog.vue
+- [x] Settings.vue
+- [x] CheckIMDBScraperDialog.vue
+- [x] AddLanguagesDialog.vue
+- [x] AddRegionsDialog.vue
+- [x] AddTitleTypeDialog.vue
+- [x] AgeRatingDialog.vue
+- [x] App.vue
+- [x] CompanyDialog.vue
+- [x] EditMediaItemDialog.vue
+- [x] EditReleaseAttributeDialog.vue
+- [x] FilmingLocationDialog.vue
+- [x] GenreDialog.vue
+- [x] LanguageDialog.vue
+- [x] LinkIMDBDialog.vue
+- [.] LinkIMDBDialog-AdvancedTitleSearch.vue (not in use)
+- [.] LinkIMDBDialog-Find.vue
+- [x] ListDialog.vue
+- [.] LocalVideoPlayerDialog.vue (not in use)
+- [x] PersonDialog.vue
+- [x] PlotKeywordDialog.vue
+- [x] RatingDemographicsDialog.vue
+- [x] ReleaseAttributeDialog.vue
+- [x] ScanOptionsDialog.vue
+- [x] SearchDataDialog.vue
+- [x] SourcePath.vue
+- [x] TitleType.vue
+- [x] VideoPlayerDialog.vue
+- [x] VideoQualityDialog.vue
+- [x] App.vue BOTTOM BAR
+
 ### Proper Portable Mode
 
 - [x] use pre-build step to set portable mode explicitly
