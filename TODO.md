@@ -24,10 +24,10 @@
 - [x] GenreDialog.vue
 - [x] LanguageDialog.vue
 - [x] LinkIMDBDialog.vue
-- [ ] LinkIMDBDialog-AdvancedTitleSearch.vue
-- [ ] LinkIMDBDialog-Find.vue
+- [.] LinkIMDBDialog-AdvancedTitleSearch.vue (not in use)
+- [.] LinkIMDBDialog-Find.vue
 - [x] ListDialog.vue
-- [ ] LocalVideoPlayerDialog.vue
+- [.] LocalVideoPlayerDialog.vue (not in use)
 - [x] PersonDialog.vue
 - [x] PlotKeywordDialog.vue
 - [ ] RatingDemographicsDialog.vue
