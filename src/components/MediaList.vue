@@ -113,8 +113,8 @@
       class="pa-2"
       style="max-width: 100% !important; margin-top: 60px"
     >
-      <v-row v-for="(item, i) in itemsFilteredPaginated" :key="i">
-        <v-col>
+      <v-row v-for="(item, i) in itemsFilteredPaginated" v-bind:key="i">
+        <v-col style="padding-bottom: 0px">
           <v-card
             dark
             flat
@@ -993,7 +993,7 @@
         </v-col>
       </v-row>
 
-      <v-row>
+      <v-row style="margin-bottom: 0px">
         <v-spacer></v-spacer>
         <div v-if="numPages">
           <!-- <v-pagination v-bind:length="numPages" v-model="$shared.currentPage" total-visible="7"></v-pagination> -->

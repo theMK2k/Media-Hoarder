@@ -40,35 +40,37 @@
         </button>
       </li>
       <li>
-        <v-select
-          class="mk-v-select-dynamic-width"
-          solo
-          dense
-          v-bind:items="pages"
-          item-text="displayText"
-          item-value="page"
-          label="Page"
-          v-model="$shared.currentPage"
-          style="height: 40px; margin-top: 8px"
-        >
-          <!-- v-bind:style="selectStyle" -->
-          <template v-slot:item="{ item }">
-            <div>{{ item.page + " / " + item.numPages }}</div>
-            <div style="width: 16px"></div>
-            <div v-if="item.detailInfo" class="grey--text caption">
-              {{ " " + item.detailInfo }}
-            </div>
-            <!-- <span v-if="index === 1" class="grey--text caption">(+{{ value.length - 1 }} others)</span> -->
-          </template>
-          <template v-slot:selection="{ item }">
-            <div>{{ item.page + " / " + item.numPages }}</div>
-            <div style="width: 16px"></div>
-            <div v-if="item.detailInfo" class="grey--text caption">
-              {{ " " + item.detailInfo }}
-            </div>
-            <!-- <span v-if="index === 1" class="grey--text caption">(+{{ value.length - 1 }} others)</span> -->
-          </template>
-        </v-select>
+        <div>
+          <v-select
+            class="mk-v-select-dynamic-width"
+            solo
+            dense
+            v-bind:items="pages"
+            item-text="displayText"
+            item-value="page"
+            label="Page"
+            v-model="$shared.currentPage"
+            style="height: 40px; margin-top: 8px"
+          >
+            <!-- v-bind:style="selectStyle" -->
+            <template v-slot:item="{ item }">
+              <div>{{ item.page + " / " + item.numPages }}</div>
+              <div style="width: 16px"></div>
+              <div v-if="item.detailInfo" class="grey--text caption">
+                {{ " " + item.detailInfo }}
+              </div>
+              <!-- <span v-if="index === 1" class="grey--text caption">(+{{ value.length - 1 }} others)</span> -->
+            </template>
+            <template v-slot:selection="{ item }">
+              <div>{{ item.page + " / " + item.numPages }}</div>
+              <div style="width: 16px"></div>
+              <div v-if="item.detailInfo" class="grey--text caption">
+                {{ " " + item.detailInfo }}
+              </div>
+              <!-- <span v-if="index === 1" class="grey--text caption">(+{{ value.length - 1 }} others)</span> -->
+            </template>
+          </v-select>
+        </div>
         <!-- style="max-width: 200px; height: 40px" -->
       </li>
       <li>
