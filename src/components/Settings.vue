@@ -410,11 +410,15 @@
           >
         </v-alert>
 
-        <div>
+        <draggable
+          v-model="$shared.regions"
+          group="regions"
+          v-on:end="onRegionsDragEnd"
+        >
           <div v-for="region in $shared.regions" v-bind:key="region.code">
             <v-row style="margin: 8px">
               <v-card style="width: 100%">
-                <v-list-item two-line>
+                <v-list-item two-line style="cursor: grab">
                   <v-list-item-content>
                     <v-list-item-title>
                       {{ region.nameTranslated }}
@@ -423,25 +427,13 @@
                         v-on:click="openRemoveRegionDialog(region)"
                         >mdi-delete</v-icon
                       >
-                      <v-icon
-                        v-if="!isTopRegion(region)"
-                        class="mk-clickable"
-                        v-on:click="onRegionMoveUp(region)"
-                        >mdi-arrow-up</v-icon
-                      >
-                      <v-icon
-                        v-if="!isBottomRegion(region)"
-                        class="mk-clickable"
-                        v-on:click="onRegionMoveDown(region)"
-                        >mdi-arrow-down</v-icon
-                      >
                     </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
               </v-card>
             </v-row>
           </div>
-        </div>
+        </draggable>
 
         <v-btn text small color="primary" v-on:click="openAddRegionsDialog">{{
           $t("Add Regions")
@@ -511,14 +503,18 @@
           }}</span>
         </v-alert>
 
-        <div>
+        <draggable
+          v-model="$shared.languagesPrimaryTitle"
+          group="languagesPrimaryTitle"
+          v-on:end="onLanguagesDragEnd('languagesPrimaryTitle')"
+        >
           <div
             v-for="language in $shared.languagesPrimaryTitle"
             v-bind:key="language.code"
           >
             <v-row style="margin: 8px">
               <v-card style="width: 100%">
-                <v-list-item two-line>
+                <v-list-item two-line style="cursor: grab">
                   <v-list-item-content>
                     <v-list-item-title>
                       {{ language.DisplayText }}
@@ -532,31 +528,13 @@
                         "
                         >mdi-delete</v-icon
                       >
-                      <v-icon
-                        v-if="!isTopLanguage(language, 'languagesPrimaryTitle')"
-                        class="mk-clickable"
-                        v-on:click="
-                          onLanguageMoveUp(language, 'languagesPrimaryTitle')
-                        "
-                        >mdi-arrow-up</v-icon
-                      >
-                      <v-icon
-                        v-if="
-                          !isBottomLanguage(language, 'languagesPrimaryTitle')
-                        "
-                        class="mk-clickable"
-                        v-on:click="
-                          onLanguageMoveDown(language, 'languagesPrimaryTitle')
-                        "
-                        >mdi-arrow-down</v-icon
-                      >
                     </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
               </v-card>
             </v-row>
           </div>
-        </div>
+        </draggable>
 
         <v-btn
           text
@@ -605,14 +583,18 @@
           }}</span>
         </v-alert>
 
-        <div>
+        <draggable
+          v-model="$shared.languagesAudioSubtitles"
+          group="languagesAudioSubtitles"
+          v-on:end="onLanguagesDragEnd('languagesAudioSubtitles')"
+        >
           <div
             v-for="language in $shared.languagesAudioSubtitles"
             v-bind:key="language.code"
           >
             <v-row style="margin: 8px">
               <v-card style="width: 100%">
-                <v-list-item two-line>
+                <v-list-item two-line style="cursor: grab">
                   <v-list-item-content>
                     <v-list-item-title>
                       {{ language.DisplayText }}
@@ -626,36 +608,13 @@
                         "
                         >mdi-delete</v-icon
                       >
-                      <v-icon
-                        v-if="
-                          !isTopLanguage(language, 'languagesAudioSubtitles')
-                        "
-                        class="mk-clickable"
-                        v-on:click="
-                          onLanguageMoveUp(language, 'languagesAudioSubtitles')
-                        "
-                        >mdi-arrow-up</v-icon
-                      >
-                      <v-icon
-                        v-if="
-                          !isBottomLanguage(language, 'languagesAudioSubtitles')
-                        "
-                        class="mk-clickable"
-                        v-on:click="
-                          onLanguageMoveDown(
-                            language,
-                            'languagesAudioSubtitles'
-                          )
-                        "
-                        >mdi-arrow-down</v-icon
-                      >
                     </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
               </v-card>
             </v-row>
           </div>
-        </div>
+        </draggable>
 
         <v-btn
           text
@@ -931,6 +890,7 @@
 const { dialog, BrowserWindow, shell } = require("electron").remote;
 const logger = require("loglevel");
 import * as _ from "lodash";
+import draggable from "vuedraggable";
 
 import { eventBus } from "@/main";
 import * as store from "@/store";
@@ -948,6 +908,7 @@ const { languageCodeNameMapping } = require("@/languages");
 
 export default {
   components: {
+    draggable,
     "mk-sourcepath": SourcePath,
     "mk-sourcepath-description-dialog": Dialog,
     "mk-remove-sourcepath-dialog": Dialog,
@@ -1553,19 +1514,7 @@ export default {
     },
 
     async onAddRegionsDialogOK(result) {
-      logger.log("result:", result);
-
-      let maxSort = 0;
-
-      this.$shared.regions.forEach(
-        (region) => (maxSort = Math.max(maxSort, region.sort))
-      );
-
-      maxSort++;
-
-      result.forEach((region) =>
-        this.$shared.regions.push(Object.assign(region, { sort: maxSort++ }))
-      );
+      result.forEach((region) => this.$shared.regions.push(region));
 
       await store.setSetting("regions", JSON.stringify(this.$shared.regions));
 
@@ -1573,24 +1522,12 @@ export default {
     },
 
     async onAddLanguagesDialogOK(result) {
-      logger.log("result:", result);
-
       const languages =
         this.addLanguagesDialog.languageType === "languagesPrimaryTitle"
           ? this.$shared.languagesPrimaryTitle
           : this.$shared.languagesAudioSubtitles;
 
-      let maxSort = 0;
-
-      languages.forEach(
-        (language) => (maxSort = Math.max(maxSort, language.sort))
-      );
-
-      maxSort++;
-
-      result.forEach((language) =>
-        languages.push(Object.assign(language, { sort: maxSort++ }))
-      );
+      result.forEach((language) => languages.push(language));
 
       await store.setSetting(
         this.addLanguagesDialog.languageType,
@@ -1600,125 +1537,10 @@ export default {
       this.addLanguagesDialog.show = false;
     },
 
-    isTopRegion(region) {
-      return (
-        this.$shared.regions.findIndex(
-          (region2) => region2.sort < region.sort
-        ) === -1
-      );
-    },
-
-    isTopLanguage(language, languageType) {
-      const languages =
-        languageType === "languagesPrimaryTitle"
-          ? this.$shared.languagesPrimaryTitle
-          : this.$shared.languagesAudioSubtitles;
-      return (
-        languages.findIndex((language2) => language2.sort < language.sort) ===
-        -1
-      );
-    },
-
-    isBottomRegion(region) {
-      return (
-        this.$shared.regions.findIndex(
-          (region2) => region2.sort > region.sort
-        ) === -1
-      );
-    },
-
-    isBottomLanguage(language, languageType) {
-      const languages =
-        languageType === "languagesPrimaryTitle"
-          ? this.$shared.languagesPrimaryTitle
-          : this.$shared.languagesAudioSubtitles;
-      return (
-        languages.findIndex((language2) => language2.sort > language.sort) ===
-        -1
-      );
-    },
-
-    async onRegionMoveUp(region) {
-      for (let i = 0; i < this.$shared.regions.length; i++) {
-        if (this.$shared.regions[i].sort === region.sort - 1) {
-          this.$shared.regions[i].sort++;
-          region.sort--;
-          logger.log(this.$shared.regions);
-
-          this.$shared.regions.sort((a, b) => a.sort - b.sort);
-          await store.setSetting(
-            "regions",
-            JSON.stringify(this.$shared.regions)
-          );
-          return;
-        }
-      }
-    },
-
-    async onLanguageMoveUp(language, languageType) {
-      const languages =
-        languageType === "languagesPrimaryTitle"
-          ? this.$shared.languagesPrimaryTitle
-          : this.$shared.languagesAudioSubtitles;
-
-      for (let i = 0; i < languages.length; i++) {
-        if (languages[i].sort === language.sort - 1) {
-          languages[i].sort++;
-          language.sort--;
-          logger.log(languages);
-
-          languages.sort((a, b) => a.sort - b.sort);
-          await store.setSetting(languageType, JSON.stringify(languages));
-          return;
-        }
-      }
-    },
-
-    async onRegionMoveDown(region) {
-      for (let i = 0; i < this.$shared.regions.length; i++) {
-        if (this.$shared.regions[i].sort === region.sort + 1) {
-          this.$shared.regions[i].sort--;
-          region.sort++;
-          logger.log(this.$shared.regions);
-
-          this.$shared.regions.sort((a, b) => a.sort - b.sort);
-          await store.setSetting(
-            "regions",
-            JSON.stringify(this.$shared.regions)
-          );
-          return;
-        }
-      }
-    },
-
-    async onLanguageMoveDown(language, languageType) {
-      const languages =
-        languageType === "languagesPrimaryTitle"
-          ? this.$shared.languagesPrimaryTitle
-          : this.$shared.languagesAudioSubtitles;
-
-      for (let i = 0; i < languages.length; i++) {
-        if (languages[i].sort === language.sort + 1) {
-          languages[i].sort--;
-          language.sort++;
-          logger.log(languages);
-
-          languages.sort((a, b) => a.sort - b.sort);
-          await store.setSetting(languageType, JSON.stringify(languages));
-          return;
-        }
-      }
-    },
-
     async removeRegion(region) {
-      const sort = region.sort;
       this.$shared.regions.splice(
         this.$shared.regions.findIndex((region2) => region2 === region),
         1
-      );
-      this.$shared.regions.forEach(
-        (region) =>
-          (region.sort = region.sort > sort ? region.sort - 1 : region.sort)
       );
       await store.setSetting("regions", JSON.stringify(this.$shared.regions));
     },
@@ -1729,17 +1551,23 @@ export default {
           ? this.$shared.languagesPrimaryTitle
           : this.$shared.languagesAudioSubtitles;
 
-      const sort = language.sort;
-
       languages.splice(
         languages.findIndex((language2) => language2 === language),
         1
       );
-      languages.forEach(
-        (language) =>
-          (language.sort =
-            language.sort > sort ? language.sort - 1 : language.sort)
-      );
+      await store.setSetting(languageType, JSON.stringify(languages));
+    },
+
+    async onRegionsDragEnd() {
+      await store.setSetting("regions", JSON.stringify(this.$shared.regions));
+    },
+
+    async onLanguagesDragEnd(languageType) {
+      const languages =
+        languageType === "languagesPrimaryTitle"
+          ? this.$shared.languagesPrimaryTitle
+          : this.$shared.languagesAudioSubtitles;
+
       await store.setSetting(languageType, JSON.stringify(languages));
     },
 

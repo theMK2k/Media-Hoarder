@@ -2,11 +2,13 @@
 
 ## v1.0.0
 
-- Drag/Drop Rearrange:
-  - Settings - Regions
-  - Settings - Languages
-  - Settings - Release Attributes
-- LinkIMDBDialog: use LinkIMDBDialog-AdvancedTitleSearch.vue (layout fix if necessary)
+- [ ] Drag/Drop Rearrange:
+  - [x] Settings - Regions
+  - [x] Settings - Languages
+  - [ ] Settings - Release Attributes
+  - [ ] App - Sidebar Menu (Genres, Years ...)
+
+- [ ] LinkIMDBDialog: use LinkIMDBDialog-AdvancedTitleSearch.vue (layout fix if necessary)
 
 ### Bugs
 

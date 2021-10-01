@@ -104,6 +104,7 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
 
     // V2
     if (
+      jsonData.aggregateRating &&
       jsonData.aggregateRating.ratingValue &&
       jsonData.aggregateRating.ratingCount
     ) {
