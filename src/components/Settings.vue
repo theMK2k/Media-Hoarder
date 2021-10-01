@@ -683,44 +683,55 @@
         </v-card-text>
 
         <v-data-table
+          ref="releaseAttributesTable"
           v-bind:headers="[
             { text: $t('Search Term'), value: 'searchTerm', sortable: false },
             { text: $t('Display As'), value: 'displayAs', sortable: false },
             { text: '', value: 'actions', sortable: false },
+            {
+              text: '',
+              value: 'deleted',
+              visible: false,
+              filter: releaseAttributesFilter,
+              align: 'd-none',
+            },
           ]"
-          v-bind:items="shared_releaseAttributesFiltered"
+          v-bind:items="$shared.releaseAttributes"
           class="elevation-1"
           hide-default-footer
           v-bind:items-per-page="1000"
         >
-          <template v-slot:item.actions="{ item }">
-            <v-icon
-              small
-              class="mr-2 mk-clickable"
-              @click="onEditReleaseAttribute(item)"
-              >mdi-pencil</v-icon
+          <template v-slot:body="{ items }">
+            <draggable
+              v-bind:list="items"
+              tag="tbody"
+              v-on:end="onReleaseAttributesDragEnd"
             >
-            <v-icon
-              small
-              class="mr-2 mk-clickable-red"
-              @click="openRemoveReleaseAttributeDialog(item)"
-              >mdi-delete</v-icon
-            >
-            <v-icon
-              small
-              class="mr-2 mk-clickable"
-              v-bind:disabled="item.sort === 1"
-              @click="onReleaseAttributeUp(item)"
-              >mdi-arrow-up</v-icon
-            >
-            <v-icon
-              small
-              class="mr-2 mk-clickable"
-              v-bind:disabled="item.sort === releaseAttributesMaxSort"
-              @click="onReleaseAttributeDown(item)"
-              >mdi-arrow-down</v-icon
+              <tr
+                v-for="(item, index) in items"
+                v-bind:key="index"
+                style="cursor: grab"
+              >
+                <td>{{ item.searchTerm }}</td>
+                <td>{{ item.displayAs }}</td>
+                <td>
+                  <v-icon
+                    small
+                    class="mr-2 mk-clickable"
+                    @click="onEditReleaseAttribute(item)"
+                    >mdi-pencil</v-icon
+                  >
+                  <v-icon
+                    small
+                    class="mr-2 mk-clickable-red"
+                    @click="openRemoveReleaseAttributeDialog(item)"
+                    >mdi-delete</v-icon
+                  >
+                </td>
+              </tr></draggable
             >
           </template>
+          <!-- <template v-slot:item.actions="{ item }"> </template> -->
         </v-data-table>
         <v-btn
           v-on:click="onAddReleaseAttribute()"
@@ -1082,18 +1093,6 @@ export default {
 
     shared_uiLanguage() {
       return this.$shared.uiLanguage;
-    },
-
-    shared_releaseAttributesFiltered() {
-      return this.$shared.releaseAttributes.filter((attrib) => !attrib.deleted);
-    },
-
-    releaseAttributesMaxSort() {
-      return Math.max(
-        ...this.$shared.releaseAttributes
-          .filter((item) => !item.deleted)
-          .map((item) => item.sort)
-      );
     },
 
     shared_logLevel() {
@@ -1562,6 +1561,33 @@ export default {
       await store.setSetting("regions", JSON.stringify(this.$shared.regions));
     },
 
+    async onReleaseAttributesDragEnd() {
+      // We use the internal data from the data table (they hold the current sequence but don't contain items marked as deleted)
+      const releaseAttributes = JSON.parse(
+        JSON.stringify(
+          this.$refs.releaseAttributesTable._data.internalCurrentItems
+        )
+      );
+
+      this.$shared.releaseAttributes.forEach((ra) => {
+        if (
+          !releaseAttributes.find(
+            (ra2) =>
+              ra2.searchTerm === ra.searchTerm && ra2.displayAs === ra.displayAs
+          )
+        ) {
+          releaseAttributes.push(ra);
+        }
+      });
+
+      this.$shared.releaseAttributes = releaseAttributes;
+
+      await store.setSetting(
+        "ReleaseAttributes",
+        JSON.stringify(releaseAttributes)
+      );
+    },
+
     async onLanguagesDragEnd(languageType) {
       const languages =
         languageType === "languagesPrimaryTitle"
@@ -1681,64 +1707,6 @@ export default {
       this.editReleaseAttributeDialog.show = true;
     },
 
-    async onReleaseAttributeUp(item) {
-      const nextSort = Math.max(
-        ...this.$shared.releaseAttributes
-          .map((ra) => ra.sort)
-          .filter((ra) => ra < item.sort)
-      );
-
-      if (nextSort) {
-        const ra = this.$shared.releaseAttributes.find(
-          (ra) => ra.sort === nextSort
-        );
-
-        ra.sort = item.sort;
-        item.sort = nextSort;
-
-        store.sortReleaseAttributes();
-
-        await store.setSetting(
-          "ReleaseAttributes",
-          JSON.stringify(this.$shared.releaseAttributes)
-        );
-
-        // HACK: update view
-        const temp = this.$shared.releaseAttributes;
-        this.$shared.releaseAttributes = null;
-        this.$shared.releaseAttributes = temp;
-      }
-    },
-
-    async onReleaseAttributeDown(item) {
-      const nextSort = Math.min(
-        ...this.$shared.releaseAttributes
-          .map((ra) => ra.sort)
-          .filter((ra) => ra > item.sort)
-      );
-
-      if (nextSort) {
-        const ra = this.$shared.releaseAttributes.find(
-          (ra) => ra.sort === nextSort
-        );
-
-        ra.sort = item.sort;
-        item.sort = nextSort;
-
-        store.sortReleaseAttributes();
-
-        await store.setSetting(
-          "ReleaseAttributes",
-          JSON.stringify(this.$shared.releaseAttributes)
-        );
-
-        // HACK: update view
-        const temp = this.$shared.releaseAttributes;
-        this.$shared.releaseAttributes = null;
-        this.$shared.releaseAttributes = temp;
-      }
-    },
-
     onEditReleaseAttributeDialogClose() {
       this.editReleaseAttributeDialog.show = false;
     },
@@ -1761,22 +1729,11 @@ export default {
             searchTerm,
             displayAs,
             deleted: false,
-            sort: this.editReleaseAttributeDialog.oldItem
-              ? this.editReleaseAttributeDialog.oldItem.sort
-              : this.releaseAttributesMaxSort
-              ? this.releaseAttributesMaxSort
-              : 99999,
           });
         } else {
           foundItem.displayAs = displayAs;
           foundItem.deleted = false;
-
-          if (this.editReleaseAttributeDialog.oldItem) {
-            foundItem.sort = this.editReleaseAttributeDialog.oldItem.sort;
-          }
         }
-
-        store.sortReleaseAttributes();
 
         await store.setSetting(
           "ReleaseAttributes",
@@ -1813,8 +1770,6 @@ export default {
       try {
         item.deleted = true;
 
-        store.sortReleaseAttributes();
-
         await store.setSetting(
           "ReleaseAttributes",
           JSON.stringify(this.$shared.releaseAttributes)
@@ -1832,6 +1787,10 @@ export default {
       } catch (e) {
         eventBus.showSnackbar("error", e);
       }
+    },
+
+    releaseAttributesFilter(value /*, search, item*/) {
+      return !value;
     },
   },
 
@@ -1909,6 +1868,11 @@ export default {
     logger.log(
       "Settings.create this.availableLanguages:",
       this.availableLanguages
+    );
+
+    logger.log(
+      "this.$shared.releaseAttributes:",
+      this.$shared.releaseAttributes
     );
 
     // lodash debounced functions

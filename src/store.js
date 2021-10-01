@@ -6334,39 +6334,25 @@ async function fetchUILanguage() {
 async function loadReleaseAttributes() {
   const savedReleaseAttributes = await getSetting("ReleaseAttributes");
   if (savedReleaseAttributes) {
-    const savedReleaseAttributesObject = JSON.parse(savedReleaseAttributes);
+    const oldSharedReleaseAttributes = JSON.parse(
+      JSON.stringify(shared.releaseAttributes)
+    );
 
-    // merge with shared.releaseAttribues
-    savedReleaseAttributesObject.forEach((attrib) => {
-      const foundAttrib = shared.releaseAttributes.find(
-        (attrib2) =>
-          attrib2.searchTerm === attrib.searchTerm &&
-          attrib2.displayAs === attrib.displayAs
-      );
+    shared.releaseAttributes = JSON.parse(savedReleaseAttributes);
 
-      if (foundAttrib) {
-        foundAttrib.deleted = attrib.deleted;
-        foundAttrib.sort = attrib.sort;
-      } else {
-        shared.releaseAttributes.push(attrib);
+    // merge with old shared.releaseAttribues
+    oldSharedReleaseAttributes.forEach((oldAttrib) => {
+      if (
+        !shared.releaseAttributes.find(
+          (attrib) =>
+            attrib.searchTerm === oldAttrib.searchTerm &&
+            attrib.displayAs === oldAttrib.displayAs
+        )
+      ) {
+        shared.releaseAttributes.push(oldAttrib);
       }
     });
   }
-
-  sortReleaseAttributes();
-}
-
-function sortReleaseAttributes() {
-  shared.releaseAttributes.sort(
-    (a, b) =>
-      (a.deleted ? 10000 : 0) + a.sort - ((b.deleted ? 10000 : 0) + b.sort)
-  );
-
-  let counter = 1;
-  shared.releaseAttributes.forEach((ra) => {
-    ra.sort = counter;
-    counter++;
-  });
 }
 
 async function findReleaseAttributes(movie, onlyNew) {
@@ -7238,7 +7224,6 @@ export {
   saveIMDBPersonData,
   fetchUILanguage,
   generateLanguageArray,
-  sortReleaseAttributes,
   findReleaseAttributes,
   resetFilters,
   getReleaseAttributesHierarchy,
