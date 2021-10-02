@@ -11,6 +11,9 @@ import path from "path";
 
 const fs = require("fs");
 
+import * as _ from "lodash";
+const windowStateKeeper = require("electron-window-state");
+
 import * as helpers from "./helpers/helpers";
 
 import { ElectronBlocker } from "@cliqz/adblocker-electron";
@@ -27,10 +30,18 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 function createWindow() {
+  // Load the previous state with fallback to defaults
+  const mainWindowState = windowStateKeeper({
+    defaultWidth: 1000,
+    defaultHeight: 800,
+  });
+
   // Create the browser window.
   win = new BrowserWindow({
-    width: 1280,
-    height: 800,
+    x: mainWindowState.x,
+    y: mainWindowState.y,
+    width: mainWindowState.width,
+    height: mainWindowState.height,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -41,6 +52,11 @@ function createWindow() {
     },
     icon: path.join(__static, "icon.png"),
   });
+
+  // Let us register listeners on the window, so we can update the state
+  // automatically (the listeners will be removed when the window is closed)
+  // and restore the maximized or full screen state
+  mainWindowState.manage(win);
 
   // adBocker stuff
   try {
@@ -92,6 +108,11 @@ function createWindow() {
       // autoUpdater.checkForUpdatesAndNotify();
     }, 0);
   }
+
+  win.on("resize", _.debounce(mainWindowState.saveState, 500));
+  win.on("move", _.debounce(mainWindowState.saveState, 500));
+
+  win.on("close", mainWindowState.saveState);
 
   win.on("closed", () => {
     win = null;

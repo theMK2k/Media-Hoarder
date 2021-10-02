@@ -38,6 +38,7 @@
     "chalk": "4.1.2",
     "cheerio": "1.0.0-rc.10",
     "core-js": "3.18.1",
+    "electron-window-state": "5.0.3",
     "fast-levenshtein": "3.0.0",
     "filenamify": "4.3.0",
     "html-to-text": "5.1.1",
@@ -59,7 +60,7 @@
     "vue-i18n": "8.26.3",
     "vue-router": "3.5.2",
     "vue-star-rating": "1.7.0",
-    "vuedraggable": "^2.24.3",
+    "vuedraggable": "2.24.3",
     "vuetify": "2.5.9",
     "xml2js": "0.4.23"
   },
