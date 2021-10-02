@@ -20,9 +20,109 @@ const shared = new Vue({
 
     isScanning: false,
 
+    filterGroups: [
+      {
+        name: "filterSourcePaths",
+        visible: true,
+      },
+      {
+        name: "filterQualities",
+        visible: true,
+      },
+      {
+        name: "filterAudioLanguages",
+        visible: true,
+      },
+      {
+        name: "filterSubtitleLanguages",
+        visible: true,
+      },
+      {
+        name: "filterReleaseAttributes",
+        visible: true,
+      },
+      {
+        name: "filterLists",
+        visible: true,
+      },
+      {
+        name: "filterRatings",
+        visible: true,
+      },
+      {
+        name: "filterMetacriticScore",
+        visible: true,
+      },
+      {
+        name: "filterIMDBRating",
+        visible: true,
+      },
+      {
+        name: "filterGenres",
+        visible: true,
+      },
+      {
+        name: "filterAgeRatings",
+        visible: true,
+      },
+      {
+        name: "filterParentalAdvisory",
+        visible: true,
+      },
+      {
+        name: "filterPersons",
+        visible: true,
+      },
+      {
+        name: "filterCompanies",
+        visible: true,
+      },
+      {
+        name: "filterYears",
+        visible: true,
+      },
+      {
+        name: "filterIMDBPlotKeywords",
+        visible: true,
+      },
+      {
+        name: "filterIMDBFilmingLocations",
+        visible: true,
+      },
+      {
+        name: "filterDataQuality",
+        visible: true,
+      },
+    ],
+
     filters: {
       filterSourcePaths: [],
+      filterQualities: [],
+      filterAudioLanguages: [],
+      filterSubtitleLanguages: [],
+      filterReleaseAttributes: [],
+      filterLists: [],
+      filterRatings: [],
+      filterMetacriticScore: [0, 100],
+      filterMetacriticScoreNone: true,
+      filterIMDBRating: [0, 10],
+      filterIMDBRatingNone: true,
       filterGenres: [],
+      filterAgeRatings: [],
+      filterParentalAdvisory: {
+        Nudity: [],
+        Violence: [],
+        Profanity: [],
+        Alcohol: [],
+        Frightening: [],
+      },
+      filterPersons: [],
+      filterCompanies: [],
+      filterYears: [],
+      filterIMDBPlotKeywords: [],
+      filterIMDBFilmingLocations: [],
+      filterDataQuality: [],
+
       filterSettings: {
         filterGenresAND: false,
         filterPersonsAND: false,
@@ -32,41 +132,6 @@ const shared = new Vue({
         filterReleaseAttributesAND: false,
         filterDataQualityAND: false,
       },
-      filterAgeRatings: [],
-      filterRatings: [],
-      filterLists: [],
-      filterParentalAdvisory: {
-        Nudity: [],
-        Violence: [],
-        Profanity: [],
-        Alcohol: [],
-        Frightening: [],
-      },
-      filterPersons: [],
-      filterYears: [],
-      filterQualities: [],
-      filterCompanies: [],
-      filterAudioLanguages: [],
-      filterSubtitleLanguages: [],
-
-      filterMetacriticScore: [0, 100],
-      filterMetacriticScoreNone: true,
-
-      filterIMDBRating: [0, 10],
-      filterIMDBRatingNone: true,
-
-      // filterReleaseYears: [new Date().getFullYear(), new Date().getFullYear()],
-      // filterReleaseYearsNone: true,
-      // filterReleaseYearsMin: new Date().getFullYear(),
-      // filterReleaseYearsMax: new Date().getFullYear(),
-
-      filterIMDBPlotKeywords: [],
-
-      filterIMDBFilmingLocations: [],
-
-      filterReleaseAttributes: [],
-
-      filterDataQuality: [],
     },
 
     contentAdvisoryCategories: [

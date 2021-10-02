@@ -138,6 +138,7 @@ dbsync.runSync(
         await fetchIMDBRatingDemographic();
 
         await loadReleaseAttributes();
+        await loadFilterGroups();
 
         await ensureToolPath("mediainfo", "MediainfoPath");
         await ensureToolPath("vlc", "MediaplayerPath");
@@ -318,9 +319,6 @@ async function rescan(onlyNew, $t) {
 }
 
 async function rescanHandleDuplicates() {
-  // const KILLME = 1;
-  // if (KILLME === 1) return;
-
   logger.log("### rescanHandleDuplicates ###");
 
   eventBus.setProgressBar(2); // marquee
@@ -6350,6 +6348,24 @@ async function loadReleaseAttributes() {
         )
       ) {
         shared.releaseAttributes.push(oldAttrib);
+      }
+    });
+  }
+}
+
+async function loadFilterGroups() {
+  const savedFilterGroups = await getSetting("filterGroups");
+  if (savedFilterGroups) {
+    const oldSharedFilterGroups = JSON.parse(
+      JSON.stringify(shared.filterGroups)
+    );
+
+    shared.filterGroups = JSON.parse(savedFilterGroups);
+
+    // merge with old shared.releaseAttribues
+    oldSharedFilterGroups.forEach((oldFG) => {
+      if (!shared.filterGroups.find((fg) => fg.name === oldFG.name)) {
+        shared.filterGroups.push(oldFG);
       }
     });
   }

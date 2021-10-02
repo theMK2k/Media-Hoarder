@@ -2,11 +2,23 @@
 
 ## v1.0.0
 
-- [ ] Drag/Drop Rearrange:
+- [ ] KILLME checker script
+  - [ ] prevent build
+  - [ ] prevent push?
+
+- [ ] implement https://github.com/mawie81/electron-window-state
+
+- [x] Drag/Drop Rearrange:
   - [x] Settings - Regions
   - [x] Settings - Languages
-  - [ ] Settings - Release Attributes
-  - [ ] App - Sidebar Menu (Genres, Years ...)
+  - [x] Settings - Release Attributes
+  - [x] App - Sidebar Filter Menu (Genres, Years ...)
+    - [x] when a filter is applied, set the filterGroup visible = true
+    - [x] show "RESET" and "EDIT" buttons only on hover
+
+- [ ] check layouts of sidebar filters
+
+- [ ] rename "Video Quality" to "Video Resolution"
 
 - [ ] LinkIMDBDialog: use LinkIMDBDialog-AdvancedTitleSearch.vue (layout fix if necessary)
 
