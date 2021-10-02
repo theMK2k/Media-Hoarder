@@ -1132,6 +1132,7 @@
                       color="red"
                       v-model="$shared.filters.filterSettings.filterPersonsAND"
                       v-on:click.native="filtersChanged"
+                      style="margin-bottom: 8px; margin-left: -10px"
                     ></v-switch>
                     <v-row
                       v-for="person in filterPersons"
@@ -1239,6 +1240,7 @@
                         $shared.filters.filterSettings.filterCompaniesAND
                       "
                       v-on:click.native="filtersChanged"
+                      style="margin-bottom: 8px; margin-left: -10px"
                     ></v-switch>
                     <v-row
                       v-for="company in filterCompanies"
@@ -1444,6 +1446,7 @@
                         $shared.filters.filterSettings.filterIMDBPlotKeywordsAND
                       "
                       v-on:click.native="filtersChanged"
+                      style="margin-bottom: 8px; margin-left: -10px"
                     ></v-switch>
                     <v-row
                       v-for="plotKeyword in filterIMDBPlotKeywords"
@@ -1561,6 +1564,7 @@
                           .filterIMDBFilmingLocationsAND
                       "
                       v-on:click.native="filtersChanged"
+                      style="margin-bottom: 8px; margin-left: -10px"
                     ></v-switch>
                     <v-row
                       v-for="filmingLocation in filterIMDBFilmingLocations"
@@ -1670,6 +1674,7 @@
                         $shared.filters.filterSettings.filterDataQualityAND
                       "
                       v-on:click.native="filtersChanged"
+                      style="margin-bottom: 8px; margin-left: -10px"
                     ></v-switch>
                     <v-row
                       v-for="dataQuality in $shared.filters.filterDataQuality"
