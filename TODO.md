@@ -2,23 +2,18 @@
 
 ## v1.0.0
 
+- [ ] Medialist: check layout if lines overflow
+
 - [ ] KILLME checker script
   - [ ] prevent build
   - [ ] prevent push?
 
 - [ ] implement https://github.com/mawie81/electron-window-state
-
-- [x] Drag/Drop Rearrange:
-  - [x] Settings - Regions
-  - [x] Settings - Languages
-  - [x] Settings - Release Attributes
-  - [x] App - Sidebar Filter Menu (Genres, Years ...)
-    - [x] when a filter is applied, set the filterGroup visible = true
-    - [x] show "RESET" and "EDIT" buttons only on hover
-
-- [ ] check layouts of sidebar filters
-
-- [ ] rename "Video Quality" to "Video Resolution"
+  - [ ] debug node_modules/electron-window-state (it's unmaintained)
+    - maximizing works
+    - fullscreen works
+    - floating windows works
+    - top-down maximized FAILS!
 
 - [ ] LinkIMDBDialog: use LinkIMDBDialog-AdvancedTitleSearch.vue (layout fix if necessary)
 
