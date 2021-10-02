@@ -2,13 +2,11 @@
 
 ## v1.0.0
 
-- [ ] Medialist: check layout if lines overflow
-
 - [ ] KILLME checker script
   - [ ] prevent build
   - [ ] prevent push?
 
-- [ ] implement https://github.com/mawie81/electron-window-state
+- [ ] implement <https://github.com/mawie81/electron-window-state>
   - [ ] debug node_modules/electron-window-state (it's unmaintained)
     - maximizing works
     - fullscreen works
@@ -103,7 +101,7 @@
 
 - page: 56 (God bless America)
 
-### Other
+### Other (later)
 
 - [ ] treat rescan of particular titles as a queue (don't disable all other titles when a rescan runs)
   - same queue as a "Scan Media" process

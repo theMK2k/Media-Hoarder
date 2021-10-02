@@ -165,81 +165,94 @@
                 style="padding-top: 6px; padding-bottom: 6px"
               >
                 <v-col style="padding: 0px !important; margin-top: 16px">
-                  <v-row>
-                    <div style="margin-left: 16px">
+                  <v-row style="margin-right: 0px">
+                    <div
+                      style="
+                        margin-left: 16px;
+                        max-width: -webkit-fill-available;
+                      "
+                    >
                       <v-list-item-title
                         class="headline mb-2"
                         style="margin-bottom: 0px !important"
                         v-on:mouseover="setItemHovered(item, 'name', true)"
                         v-on:mouseleave="setItemHovered(item, 'name', false)"
                       >
-                        {{ item.Name }} {{ item.yearDisplay }}
-                        <span v-show="item.NumExtras"
-                          >+{{ item.NumExtras }}</span
-                        >
+                        <div style="display: flex">
+                          <div
+                            style="overflow: hidden; text-overflow: ellipsis"
+                          >
+                            {{ item.Name }} {{ item.yearDisplay }}
+                            <span v-show="item.NumExtras"
+                              >+{{ item.NumExtras }}</span
+                            >
+                          </div>
 
-                        <v-tooltip bottom>
-                          <template v-slot:activator="{ on }">
-                            <span v-on="on">
-                              <v-icon
-                                v-show="item.nameHovered || item.selected"
-                                class="mk-clickable"
-                                v-on:click.stop="
-                                  onOpenEditMediaItemDialog(item)
-                                "
-                                style="margin-left: 8px"
-                                >mdi-pencil</v-icon
-                              >
-                            </span>
-                          </template>
-                          <span style="margin-left: ">{{
-                            $t("Edit Movie")
-                          }}</span>
-                        </v-tooltip>
+                          <div>
+                            <v-tooltip bottom>
+                              <template v-slot:activator="{ on }">
+                                <span v-on="on">
+                                  <v-icon
+                                    v-show="item.nameHovered || item.selected"
+                                    class="mk-clickable"
+                                    v-on:click.stop="
+                                      onOpenEditMediaItemDialog(item)
+                                    "
+                                    style="margin-left: 8px"
+                                    >mdi-pencil</v-icon
+                                  >
+                                </span>
+                              </template>
+                              <span style="margin-left: ">{{
+                                $t("Edit Movie")
+                              }}</span>
+                            </v-tooltip>
 
-                        <v-tooltip bottom>
-                          <template v-slot:activator="{ on }">
-                            <span v-on="on">
-                              <v-icon
-                                v-show="item.nameHovered || item.selected"
-                                class="mk-clickable"
-                                v-on:click.stop="onRescrapeIMDB(item)"
-                                style="margin-left: 8px"
-                                v-bind:disabled="isScanning"
-                                >mdi-reload-alert</v-icon
-                              >
-                            </span>
-                          </template>
-                          <span>
-                            {{ $t("Rescan IMDB meta data") }}
-                            <span v-if="isScanning">
-                              <br />
-                              {{ $t("scan already in progress") }}
-                            </span>
-                          </span>
-                        </v-tooltip>
+                            <v-tooltip bottom>
+                              <template v-slot:activator="{ on }">
+                                <span v-on="on">
+                                  <v-icon
+                                    v-show="item.nameHovered || item.selected"
+                                    class="mk-clickable"
+                                    v-on:click.stop="onRescrapeIMDB(item)"
+                                    style="margin-left: 8px"
+                                    v-bind:disabled="isScanning"
+                                    >mdi-reload-alert</v-icon
+                                  >
+                                </span>
+                              </template>
+                              <span>
+                                {{ $t("Rescan IMDB meta data") }}
+                                <span v-if="isScanning">
+                                  <br />
+                                  {{ $t("scan already in progress") }}
+                                </span>
+                              </span>
+                            </v-tooltip>
 
-                        <v-tooltip bottom>
-                          <template v-slot:activator="{ on }">
-                            <span v-on="on">
-                              <v-icon
-                                v-show="item.nameHovered || item.selected"
-                                class="mk-clickable"
-                                v-on:click.stop="onOpenLinkIMDBDialog(item)"
-                                style="margin-left: 8px"
-                                v-bind:disabled="isScanning"
-                                >mdi-link</v-icon
-                              >
-                            </span>
-                          </template>
-                          <span>
-                            {{ $t("Link with IMDB entry") }}
-                            <span v-if="isScanning">
-                              <br />
-                              {{ $t("scan already in progress") }}
-                            </span>
-                          </span>
-                        </v-tooltip>
+                            <v-tooltip bottom>
+                              <template v-slot:activator="{ on }">
+                                <span v-on="on">
+                                  <v-icon
+                                    v-show="item.nameHovered || item.selected"
+                                    class="mk-clickable"
+                                    v-on:click.stop="onOpenLinkIMDBDialog(item)"
+                                    style="margin-left: 8px"
+                                    v-bind:disabled="isScanning"
+                                    >mdi-link</v-icon
+                                  >
+                                </span>
+                              </template>
+                              <span>
+                                {{ $t("Link with IMDB entry") }}
+                                <span v-if="isScanning">
+                                  <br />
+                                  {{ $t("scan already in progress") }}
+                                </span>
+                              </span>
+                            </v-tooltip>
+                          </div>
+                        </div>
                       </v-list-item-title>
 
                       <v-list-item-subtitle

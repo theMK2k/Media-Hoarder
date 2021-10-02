@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] Medialist: fix layout if movie name overflows
 - [x] check layouts of sidebar filters
 - [x] Drag/Drop Rearrange:
   - [x] Settings - Regions
