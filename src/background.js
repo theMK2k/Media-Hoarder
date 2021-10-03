@@ -12,7 +12,7 @@ import path from "path";
 const fs = require("fs");
 
 import * as _ from "lodash";
-const windowStateKeeper = require("electron-window-state");
+const windowStateKeeper = require("./helpers/electron-window-state");
 
 import * as helpers from "./helpers/helpers";
 

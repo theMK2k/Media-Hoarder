@@ -8,6 +8,8 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] implement <https://github.com/mawie81/electron-window-state>
+  - [x] debug node_modules/electron-window-state (it's unmaintained)
 - [x] KILLME checker script
   - [x] prevent build
 - [x] Medialist: fix layout if movie name overflows

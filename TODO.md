@@ -2,13 +2,6 @@
 
 ## v1.0.0
 
-- [ ] implement <https://github.com/mawie81/electron-window-state>
-  - [ ] debug node_modules/electron-window-state (it's unmaintained)
-    - maximizing works
-    - fullscreen works
-    - floating windows works
-    - top-down maximized FAILS!
-
 - [ ] LinkIMDBDialog: use LinkIMDBDialog-AdvancedTitleSearch.vue (layout fix if necessary)
 
 ### Bugs
