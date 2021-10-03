@@ -1,12 +1,4 @@
 <template>
-  <!--
-    #
-    # This is the old LinkIMDBDialog which uses the IMDB Advanced Title Search
-    # Unfortunately the Advanced Title Search does not support non-latin characters, e.g.
-    #
-    # 天気の子 (aka title for "Weathering with you") won't yield any results
-    #
-  -->
   <v-dialog
     v-model="show"
     persistent
@@ -41,7 +33,7 @@
               {{ titleTypesTitle() }}</v-expansion-panel-header
             >
             <v-expansion-panel-content>
-              <v-row>
+              <v-row style="margin-bottom: 8px">
                 <v-btn text v-on:click="setAllTitleTypes(false)">{{
                   $t("NONE")
                 }}</v-btn>
@@ -101,7 +93,7 @@
                   style="padding-top: 6px; padding-bottom: 6px"
                 >
                   <v-col style="padding: 0px !important">
-                    <v-row>
+                    <v-row style="margin-bottom: 8px">
                       <v-list-item-title
                         style="
                           margin-bottom: 4px !important;
@@ -115,7 +107,7 @@
 
                     <v-list-item-subtitle
                       v-if="item.detailInfo"
-                      style="margin-bottom: 4px; margin-top: 8px"
+                      style="margin-top: -8px; margin-bottom: 4px"
                       >{{ item.detailInfo }}</v-list-item-subtitle
                     >
 
@@ -151,7 +143,7 @@
 
 <script>
 // import * as store from "@/store";
-import { scrapeIMDBAdvancedTitleSearch } from "@/imdb-scraper";
+import { scrapeIMDBAdvancedTitleSearch, scrapeIMDBFind } from "@/imdb-scraper";
 
 // import * as helpers from "@/helpers/helpers";
 const logger = require("loglevel");
@@ -278,16 +270,46 @@ export default {
         return;
       }
 
+      // 天気の子
+      let advancedTitleSearchResults = null;
       try {
-        this.searchResults = await scrapeIMDBAdvancedTitleSearch(
+        advancedTitleSearchResults = await scrapeIMDBAdvancedTitleSearch(
           this.searchText,
           this.titleTypes
         );
       } catch (err) {
-        eventBus.showSnackbar("error", err);
-      } finally {
-        this.isLoading = false;
+        //
       }
+
+      let findResults = null;
+      try {
+        findResults = await scrapeIMDBFind(this.searchText, null);
+      } catch (err) {
+        logger.error(err);
+      }
+
+      logger.log("advancedTitleSearchResults:", advancedTitleSearchResults);
+      logger.log("findResults:", findResults);
+
+      this.searchResults = advancedTitleSearchResults || [];
+
+      if (findResults) {
+        findResults.forEach((result) => {
+          if (result.type !== "title") {
+            return;
+          }
+          // KILLME: uncomment
+          // if (
+          //   !this.searchResults.find(
+          //     (result2) => result.tconst === result2.tconst
+          //   )
+          // ) {
+          this.searchResults.push(result);
+          // }
+        });
+      }
+
+      this.isLoading = false;
     },
 
     onSelectClick(item) {

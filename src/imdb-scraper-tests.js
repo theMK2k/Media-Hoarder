@@ -1257,9 +1257,9 @@ async function testIMDBFind() {
         type: null,
         numResults: 1,
         result0: {
-          id: "tt9426210",
+          tconst: "tt9426210",
+          title: 'Weathering with You (2019) aka "天気の子"',
           type: "title",
-          resultText: 'Weathering with You (2019) aka "天気の子"',
           imageURL:
             "https://m.media-amazon.com/images/M/MV5BNzE4ZDEzOGUtYWFjNC00ODczLTljOGQtZGNjNzhjNjdjNjgzXkEyXkFqcGdeQXVyNzE5ODMwNzI@._V1_UX32_CR0,0,32,44_AL_.jpg",
         },
@@ -1308,7 +1308,7 @@ async function testIMDBFind() {
         scrapeResult[0],
         expectedValue.result0,
         testResult,
-        "id",
+        "tconst",
         `query '${expectedValue.searchTerm}' [${expectedValue.type}]`
       );
       performDefaultCheck(
@@ -1322,7 +1322,7 @@ async function testIMDBFind() {
         scrapeResult[0],
         expectedValue.result0,
         testResult,
-        "resultText",
+        "title",
         `query '${expectedValue.searchTerm}' [${expectedValue.type}]`
       );
       performDefaultCheck(

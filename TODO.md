@@ -2,7 +2,7 @@
 
 ## v1.0.0
 
-- [ ] LinkIMDBDialog: use LinkIMDBDialog-AdvancedTitleSearch.vue (layout fix if necessary)
+- nothing
 
 ### Bugs
 

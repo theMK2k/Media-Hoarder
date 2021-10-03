@@ -1337,13 +1337,15 @@ async function scrapeIMDBFind(searchTerm, type) {
 
   const items = $("tr.findResult");
 
+  logger.log("scrapeIMDBFind items:", items);
+
   const results = [];
 
   items.each((index, item) => {
     const result = {
-      id: null,
+      tconst: null,
       type: null,
-      resultText: null,
+      title: null,
       imageURL: null,
     };
 
@@ -1355,23 +1357,23 @@ async function scrapeIMDBFind(searchTerm, type) {
 
     if (idString) {
       if (/tt\d*/.test(idString)) {
-        result.id = idString.match(/tt\d*/)[0];
+        result.tconst = idString.match(/tt\d*/)[0];
         result.type = "title";
       } else if (/nm\d*/.test(idString)) {
-        result.id = idString.match(/tt\d*/)[0];
+        result.tconst = idString.match(/nm\d*/)[0];
         result.type = "name";
       }
     }
 
-    if (!result.id) {
+    if (!result.tconst) {
       return;
     }
 
-    result.resultText = $($(item).find("td.result_text")).text().trim();
+    result.title = $($(item).find("td.result_text")).text().trim();
 
     // result.resultText = result.resultText.replace(/[\s\n]/g, " ");
-    while (/\s\s/g.test(result.resultText)) {
-      result.resultText = result.resultText.replace(/\s\s/g, "");
+    while (/\s\s/g.test(result.title)) {
+      result.title = result.title.replace(/\s\s/g, "");
     }
 
     results.push(result);

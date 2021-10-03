@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] LinkIMDBDialog: use Find and merge with AdvancedTitleSearch
 - [x] implement <https://github.com/mawie81/electron-window-state>
   - [x] debug node_modules/electron-window-state (it's unmaintained)
 - [x] KILLME checker script
@@ -86,8 +87,6 @@
 - [x] GenreDialog.vue
 - [x] LanguageDialog.vue
 - [x] LinkIMDBDialog.vue
-- [.] LinkIMDBDialog-AdvancedTitleSearch.vue (not in use)
-- [.] LinkIMDBDialog-Find.vue
 - [x] ListDialog.vue
 - [.] LocalVideoPlayerDialog.vue (not in use)
 - [x] PersonDialog.vue
