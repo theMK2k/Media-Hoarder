@@ -14,6 +14,8 @@
 
 ## LATER
 
+### Find Inspiration from <https://github.com/whyboris/Video-Hub-App>
+
 ### Create i18n Editor
 
 - [x] load message definitions from %workdir%/i18n (e.g. zh.json, fr.json etc.)

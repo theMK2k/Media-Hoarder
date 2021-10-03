@@ -298,14 +298,13 @@ export default {
           if (result.type !== "title") {
             return;
           }
-          // KILLME: uncomment
-          // if (
-          //   !this.searchResults.find(
-          //     (result2) => result.tconst === result2.tconst
-          //   )
-          // ) {
-          this.searchResults.push(result);
-          // }
+          if (
+            !this.searchResults.find(
+              (result2) => result.tconst === result2.tconst
+            )
+          ) {
+            this.searchResults.push(result);
+          }
         });
       }
 
