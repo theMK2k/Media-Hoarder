@@ -8,6 +8,8 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] KILLME checker script
+  - [x] prevent build
 - [x] Medialist: fix layout if movie name overflows
 - [x] check layouts of sidebar filters
 - [x] Drag/Drop Rearrange:

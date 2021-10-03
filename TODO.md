@@ -2,10 +2,6 @@
 
 ## v1.0.0
 
-- [ ] KILLME checker script
-  - [ ] prevent build
-  - [ ] prevent push?
-
 - [ ] implement <https://github.com/mawie81/electron-window-state>
   - [ ] debug node_modules/electron-window-state (it's unmaintained)
     - maximizing works
