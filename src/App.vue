@@ -3303,8 +3303,6 @@ export default {
 
     document.onkeydown = this.onKeyDown;
 
-    // this.toggleFullScreen(); KILLME
-
     this.$vuetify.theme.dark = true;
 
     if (this.$route.path !== "/") {

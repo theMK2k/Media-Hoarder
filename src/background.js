@@ -88,7 +88,6 @@ function createWindow() {
     console.error(e);
   }
 
-  // win.maximize();  // KILLME
   win.setMenu(null);
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
