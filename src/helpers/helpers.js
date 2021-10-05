@@ -20,14 +20,14 @@ const isPORTABLE = false; // DON'T TOUCH! This is handled by set-portable.js
 let requestAsyncDumpToFile = false; // Temporarily set to true and every response of requestAsync will be dumped to a file
 
 function setRequestAsyncDumpToFile(value) {
-  console.log("[setRequestAsyncDumpToFile] value:", value);
+  logger.log("[setRequestAsyncDumpToFile] value:", value);
   requestAsyncDumpToFile = value;
 }
 
 let imdbScraperWatchdogUseDumps = false;
 
 function setIMDBScraperWatchdogUseDumps(value) {
-  console.log("[setIMDBScraperWatchdogUseDumps] value:", value);
+  logger.log("[setIMDBScraperWatchdogUseDumps] value:", value);
   imdbScraperWatchdogUseDumps = value;
 }
 
