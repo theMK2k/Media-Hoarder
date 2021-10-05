@@ -1,117 +1,109 @@
 <template>
-  <div>
-    <ul class="v-pagination theme--dark">
-      <li>
-        <button
-          type="button"
-          class="v-pagination__navigation"
-          v-bind:class="prevClass"
-          v-bind:disabled="$shared.currentPage == 1"
-          v-on:click="$shared.currentPage = 1"
-          style="
-            height: 38px !important;
-            width: 38px !important;
-            margin: 8px 8px 0px 0px !important;
-          "
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon notranslate mdi mdi-chevron-double-left theme--dark"
-          ></i>
-        </button>
-      </li>
-      <li>
-        <button
-          type="button"
-          class="v-pagination__navigation"
-          v-bind:class="prevClass"
-          v-bind:disabled="$shared.currentPage == 1"
-          v-on:click="onPrevClicked"
-          style="
-            height: 38px !important;
-            width: 38px !important;
-            margin: 8px 8px 0px 0px !important;
-          "
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon notranslate mdi mdi-chevron-left theme--dark"
-          ></i>
-        </button>
-      </li>
-      <li>
-        <div>
-          <v-select
-            class="mk-v-select-dynamic-width"
-            solo
-            dense
-            v-bind:items="pages"
-            item-text="displayText"
-            item-value="page"
-            label="Page"
-            v-model="$shared.currentPage"
-            style="height: 40px; margin-top: 8px"
-          >
-            <!-- v-bind:style="selectStyle" -->
-            <template v-slot:item="{ item }">
-              <div>{{ item.page + " / " + item.numPages }}</div>
-              <div style="width: 16px"></div>
-              <div v-if="item.detailInfo" class="grey--text caption">
-                {{ " " + item.detailInfo }}
-              </div>
-              <!-- <span v-if="index === 1" class="grey--text caption">(+{{ value.length - 1 }} others)</span> -->
-            </template>
-            <template v-slot:selection="{ item }">
-              <div>{{ item.page + " / " + item.numPages }}</div>
-              <div style="width: 16px"></div>
-              <div v-if="item.detailInfo" class="grey--text caption">
-                {{ " " + item.detailInfo }}
-              </div>
-              <!-- <span v-if="index === 1" class="grey--text caption">(+{{ value.length - 1 }} others)</span> -->
-            </template>
-          </v-select>
+  <div class="v-pagination theme--dark">
+    <v-pagination v-if="false"></v-pagination>
+    <!-- we have to use this, else we don't get v-pagination* classes -->
+    <button
+      type="button"
+      class="v-pagination__navigation"
+      v-bind:class="prevClass"
+      v-bind:disabled="$shared.currentPage == 1"
+      v-on:click="$shared.currentPage = 1"
+      style="
+        height: 38px !important;
+        width: 38px !important;
+        margin: 8px 8px 0px 0px !important;
+        display: inline-block;
+      "
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate mdi mdi-chevron-double-left theme--dark"
+      ></i>
+    </button>
+    <button
+      type="button"
+      class="v-pagination__navigation"
+      v-bind:class="prevClass"
+      v-bind:disabled="$shared.currentPage == 1"
+      v-on:click="onPrevClicked"
+      style="
+        height: 38px !important;
+        width: 38px !important;
+        margin: 8px 8px 0px 0px !important;
+        display: inline-block;
+      "
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate mdi mdi-chevron-left theme--dark"
+      ></i>
+    </button>
+    <v-select
+      class="mk-v-select-dynamic-width"
+      solo
+      dense
+      v-bind:items="pages"
+      item-text="displayText"
+      item-value="page"
+      label="Page"
+      v-model="$shared.currentPage"
+      style="height: 40px; margin-top: 8px; display: inline-block"
+    >
+      <!-- v-bind:style="selectStyle" -->
+      <template v-slot:item="{ item }">
+        <div>{{ item.page + " / " + item.numPages }}</div>
+        <div style="width: 16px"></div>
+        <div v-if="item.detailInfo" class="grey--text caption">
+          {{ " " + item.detailInfo }}
         </div>
-        <!-- style="max-width: 200px; height: 40px" -->
-      </li>
-      <li>
-        <button
-          type="button"
-          class="v-pagination__navigation"
-          v-bind:class="nextClass"
-          v-bind:disabled="$shared.currentPage >= length"
-          v-on:click="onNextClicked"
-          style="
-            height: 38px !important;
-            width: 38px !important;
-            margin: 8px 8px 0px 8px !important;
-          "
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon notranslate mdi mdi-chevron-right theme--dark"
-          ></i>
-        </button>
-      </li>
-      <li>
-        <button
-          type="button"
-          class="v-pagination__navigation"
-          v-bind:class="nextClass"
-          v-bind:disabled="$shared.currentPage >= length"
-          v-on:click="$shared.currentPage = length"
-          style="
-            height: 38px !important;
-            width: 38px !important;
-            margin: 8px 8px 0px 0px !important;
-          "
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon notranslate mdi mdi-chevron-double-right theme--dark"
-          ></i>
-        </button>
-      </li>
-    </ul>
+        <!-- <span v-if="index === 1" class="grey--text caption">(+{{ value.length - 1 }} others)</span> -->
+      </template>
+      <template v-slot:selection="{ item }">
+        <div>{{ item.page + " / " + item.numPages }}</div>
+        <div style="width: 16px"></div>
+        <div v-if="item.detailInfo" class="grey--text caption">
+          {{ " " + item.detailInfo }}
+        </div>
+        <!-- <span v-if="index === 1" class="grey--text caption">(+{{ value.length - 1 }} others)</span> -->
+      </template>
+    </v-select>
+    <!-- style="max-width: 200px; height: 40px" -->
+    <button
+      type="button"
+      class="v-pagination__navigation"
+      v-bind:class="nextClass"
+      v-bind:disabled="$shared.currentPage >= length"
+      v-on:click="onNextClicked"
+      style="
+        height: 38px !important;
+        width: 38px !important;
+        margin: 8px 8px 0px 8px !important;
+        display: inline-block;
+      "
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate mdi mdi-chevron-right theme--dark"
+      ></i>
+    </button>
+    <button
+      type="button"
+      class="v-pagination__navigation"
+      v-bind:class="nextClass"
+      v-bind:disabled="$shared.currentPage >= length"
+      v-on:click="$shared.currentPage = length"
+      style="
+        height: 38px !important;
+        width: 38px !important;
+        margin: 8px 8px 0px 0px !important;
+        display: inline-block;
+      "
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon notranslate mdi mdi-chevron-double-right theme--dark"
+      ></i>
+    </button>
   </div>
 </template>
 
