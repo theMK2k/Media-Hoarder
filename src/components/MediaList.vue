@@ -637,7 +637,7 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col class="detailLabel">{{ $t("Size") }}</v-col>
+                <v-col class="detailLabel">{{ $t("Size") }}:</v-col>
                 <v-col v-if="item.Size" class="detailContent">{{
                   Humanize().fileSize(item.Size)
                 }}</v-col>
@@ -2015,8 +2015,6 @@ export default {
               this.listDialog.movie.id_Movies
             );
 
-            await this.fetchFilters();
-
             eventBus.refetchMedia(this.$shared.currentPage);
 
             eventBus.showSnackbar("success", this.$t("item removed from list"));
@@ -2618,8 +2616,6 @@ export default {
     logger.log("MediaList created");
 
     (async () => {
-      await this.fetchFilters();
-
       eventBus.refetchMedia();
 
       this.$shared.currentPage = await store.fetchCurrentPage(this.mediatype);
@@ -2642,10 +2638,9 @@ export default {
       (async () => {
         eventBus.showLoadingOverlay(true);
 
-        // await store.ensureFilterReleaseYearsRange(this.mediatype);
+        await this.fetchFilters();
 
         this.items = [];
-
         this.items = await store.fetchMedia(
           this.mediatype,
           null,

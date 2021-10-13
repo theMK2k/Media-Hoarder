@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] reload filters after saving user edited entry
 - [x] LinkIMDBDialog: use Find and merge with AdvancedTitleSearch
 - [x] implement <https://github.com/mawie81/electron-window-state>
   - [x] debug node_modules/electron-window-state (it's unmaintained)

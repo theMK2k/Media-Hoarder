@@ -2993,7 +2993,7 @@ export default {
             []
           );
 
-          eventBus.refetchFilters();
+          eventBus.refetchMedia(this.$shared.currentPage);
 
           eventBus.showSnackbar(
             "success",
