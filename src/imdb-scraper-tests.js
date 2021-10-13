@@ -824,8 +824,8 @@ async function testIMDBFilmingLocations() {
         Location:
           "Durham Cathedral, The College, Durham, County Durham, England, UK",
         Details: "Thor Meets His Mother In Asgard",
-        NumInteresting: 68,
-        NumVotes: 68,
+        NumInteresting: 60,
+        NumVotes: 60,
       },
     };
 

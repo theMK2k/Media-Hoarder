@@ -35,9 +35,7 @@
 - [x] placeholder icon for Person Dialog, also circular progress while scraping
 - [x] placeholder icon for movies
 - [x] rework video quality detection (1085p is not UHD)
-- [x] provide VLC and MediaInfo CLI alongside the App (use ./bin/%platform%/mediainfo-cli/)
-        - use the location as default location of mediainfo cli
-        - currently only for Windows
+- [x] provide VLC and MediaInfo CLI alongside the App (use ./bin/%platform%/mediainfo-cli/) - use the location as default location of mediainfo cli - currently only for Windows
 - [x] IMDB Rating and Metacritic filters fixed
 - [x] New Filter: Data Quality
   - missing IMDB Link
@@ -57,12 +55,20 @@
 - [x] -> improve by utilizing year (162 of 170 matched, 2553 of 2648 matched)
 - [x] "Browse" VLC path -> depending on OS type provide default path / default extension
 - [x] -> provide mediainfo-rar or similar for Linux/Mac - or better yet let the user provide a path?
+
   - [x] -> user must provide
 
 - [x] preferred Regions
 - [x] let user define preferred (local) Regions to identify the primary title
 - [x] -> fetch Countries from `https://www.imdb.com/search/title/` and provide as list
 - [x] -> Auto set region by user's localization setting?
+
+## How long does it take to import 7,600 movies?
+
+- start: 2021-10-09 15:30
+- end: 2021-10-11 6:30
+  => 39h / 7600
+  => 18s / Movie
 
 ## Vuetify Upgrade to 2.5.8
 
@@ -167,19 +173,19 @@ as per <https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/recipes
 
 - Linux "which"
 - Windows "where"
--> test in Linux (success)
+  -> test in Linux (success)
 
 ### Relative movie directories (#relpath)
 
 tbl_Movies:
-  Path -> RelativePath
-  Directory -> RelativeDirectory
+Path -> RelativePath
+Directory -> RelativeDirectory
 
 store.listPath now with basePath
 
 - a movie's directory and path should always be relative to the sourcePath definition
--> use path.resolve etc. to work with them
--> this way, a whole sourcePath can move to another location
+  -> use path.resolve etc. to work with them
+  -> this way, a whole sourcePath can move to another location
 
 check:
 
@@ -255,6 +261,7 @@ check:
 ### IMDB Scraper Checks / Watchdog
 
 - [x] create a watchdog CLI which tests imdb-scraper.js
+
   - [x] scrape different IMDB pages
   - [x] compare with expected result (json suffices)
   - [x] creates an error report
@@ -479,7 +486,7 @@ General
 - [x] Update on Twins by IMDB ID
 
 Cinema
-  
+
 - [x] Source Paths
 
 Series
@@ -499,7 +506,7 @@ Series
 ### Other
 
 - [x] sort by last_access faulty after introduction of 2nd sort criteria (name)
-- [x] *Dialog movie list: don't use mk-clickable on the whole list
+- [x] \*Dialog movie list: don't use mk-clickable on the whole list
 - [x] use " »" indicator on MediaList for expandable sections of text (e.g. plot keywords, people etc.)
 - [x] Show movie list in dialogs, e.g. PersonDialog
 - [x] remove "SEE" from attributes, check other candidates
@@ -709,7 +716,7 @@ Dialog.vue
   - [x] use "Accept-Language": "en" header on all calls to IMDB
 - [x] Linux version doesn't fetch data / endless loop? (in our test VM)
   - [x] test in livecd (successful, fetch from web is working as expected)
-  -> we assume there is an issue with the VM
+        -> we assume there is an issue with the VM
 - [x] Title determination (Regional, Primary, Secondary)
 - [x] vue-i18n: Value of key 'LanguageNames.N'Ko' is not a string!
 - [x] duplicate detection fails at special characters: e.g. "adams aebler"n
@@ -718,7 +725,7 @@ Dialog.vue
 - [x] Settings -> Release Attributes: don't allow sorting
 - [x] imdb scraper: make sure, all texts are treated with html2text, see "Robot &amp; Frank"
 - [x] single-item rescan doesn't update IMDB data? -> "Robot & Frank"
-  -> misconcenption: actually an already removed duplicate provided the false names
+      -> misconcenption: actually an already removed duplicate provided the false names
 - [x] complete rescan of movie with extras leads to multiple duplicates and extras added to main list
 - [x] filescan: extras naming (see: "Die Üblichen Verdächtigen", "Vertigo")
   - we now derive the Extra name from the filename and assign it to the primary name
