@@ -8,6 +8,18 @@
       style="z-index: 20"
       v-bind:width="320"
     >
+      <!-- SIDEBAR OVERLAY -->
+      <v-overlay style="z-index: 1000" v-bind:value="showSidebarLoadingOverlay">
+        <div style="text-align: center">
+          <v-progress-circular
+            indeterminate
+            color="red"
+            size="70"
+            width="7"
+          ></v-progress-circular>
+        </div>
+      </v-overlay>
+
       <v-list dense>
         <v-list-item
           v-on:click="onRescan"
@@ -1903,7 +1915,7 @@
       <v-btn dark text @click="snackbar.show = false">{{ $t("Close") }}</v-btn>
     </v-snackbar>
 
-    <!-- LOADING OVERLAY -->
+    <!-- MAIN LOADING OVERLAY -->
     <v-overlay style="z-index: 1000" v-bind:value="showLoadingOverlay">
       <div style="text-align: center">
         <!-- <p style="text-shadow: 0 0 4px #FFFFFF; margin: 0px">loading</p> -->
@@ -1955,6 +1967,7 @@ export default {
   data: () => ({
     isFullScreen: true,
     showLoadingOverlay: false,
+    showSidebarLoadingOverlay: false,
     filterHeaderHovered: false,
     editFilters: {
       isEditFilters: false,
@@ -3394,6 +3407,10 @@ export default {
 
     eventBus.$on("showLoadingOverlay", (value) => {
       this.showLoadingOverlay = value;
+    });
+
+    eventBus.$on("showSidebarLoadingOverlay", (value) => {
+      this.showSidebarLoadingOverlay = value;
     });
 
     eventBus.$on("setFilter", (setFilter) => {

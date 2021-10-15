@@ -1341,6 +1341,8 @@ export default {
       show: false,
       mediaItem: null,
     },
+
+    loadFilterValuesFromStorage: false,
   }),
 
   watch: {
@@ -2043,35 +2045,95 @@ export default {
     },
 
     async fetchFilters(setFilter) {
-      eventBus.showLoadingOverlay(true);
+      eventBus.showSidebarLoadingOverlay(true);
 
-      await store.fetchFilterSettings(this.mediatype);
-      await store.fetchFilterSourcePaths(this.mediatype);
-      await store.fetchFilterGenres(this.mediatype, this.$local_t);
-      await store.fetchFilterAgeRatings(this.mediatype);
-      await store.fetchFilterRatings(this.mediatype);
-      await store.fetchFilterLists(this.mediatype, this.$local_t);
-      await store.fetchFilterParentalAdvisory(this.mediatype);
-      await store.fetchFilterPersons(this.mediatype, this.$local_t);
-      await store.fetchFilterCompanies(this.mediatype, this.$local_t);
-      await store.fetchFilterIMDBPlotKeywords(this.mediatype, this.$local_t);
+      await store.fetchFilterSettings(
+        this.mediatype,
+        this.loadFilterValuesFromStorage
+      );
+      await store.fetchFilterSourcePaths(
+        this.mediatype,
+        this.loadFilterValuesFromStorage
+      );
+      await store.fetchFilterGenres(
+        this.mediatype,
+        this.$local_t,
+        this.loadFilterValuesFromStorage
+      );
+      await store.fetchFilterAgeRatings(
+        this.mediatype,
+        this.loadFilterValuesFromStorage
+      );
+      await store.fetchFilterRatings(
+        this.mediatype,
+        this.loadFilterValuesFromStorage
+      );
+      await store.fetchFilterLists(
+        this.mediatype,
+        this.$local_t,
+        this.loadFilterValuesFromStorage
+      );
+      await store.fetchFilterParentalAdvisory(
+        this.mediatype,
+        this.loadFilterValuesFromStorage
+      );
+      await store.fetchFilterPersons(
+        this.mediatype,
+        this.$local_t,
+        this.loadFilterValuesFromStorage
+      );
+      await store.fetchFilterCompanies(
+        this.mediatype,
+        this.$local_t,
+        this.loadFilterValuesFromStorage
+      );
+      await store.fetchFilterIMDBPlotKeywords(
+        this.mediatype,
+        this.$local_t,
+        this.loadFilterValuesFromStorage
+      );
       await store.fetchFilterIMDBFilmingLocations(
         this.mediatype,
-        this.$local_t
+        this.$local_t,
+        this.loadFilterValuesFromStorage
       );
-      await store.fetchFilterYears(this.mediatype);
-      // await store.fetchFilterReleaseYears(this.mediatype);
-      await store.fetchFilterQualities(this.mediatype);
-      await store.fetchFilterLanguages(this.mediatype, "audio", this.$local_t);
+      await store.fetchFilterYears(
+        this.mediatype,
+        this.loadFilterValuesFromStorage
+      );
+      // await store.fetchFilterReleaseYears(this.mediatype, this.loadFilterValuesFromStorage);
+      await store.fetchFilterQualities(
+        this.mediatype,
+        this.loadFilterValuesFromStorage
+      );
+      await store.fetchFilterLanguages(
+        this.mediatype,
+        "audio",
+        this.$local_t,
+        this.loadFilterValuesFromStorage
+      );
       await store.fetchFilterLanguages(
         this.mediatype,
         "subtitle",
-        this.$local_t
+        this.$local_t,
+        this.loadFilterValuesFromStorage
       );
-      await store.fetchFilterIMDBRating(this.mediatype);
-      await store.fetchFilterMetacriticScore(this.mediatype);
-      await store.fetchFilterReleaseAttributes(this.mediatype);
-      await store.fetchFilterDataQuality(this.mediatype);
+      await store.fetchFilterIMDBRating(
+        this.mediatype,
+        this.loadFilterValuesFromStorage
+      );
+      await store.fetchFilterMetacriticScore(
+        this.mediatype,
+        this.loadFilterValuesFromStorage
+      );
+      await store.fetchFilterReleaseAttributes(
+        this.mediatype,
+        this.loadFilterValuesFromStorage
+      );
+      await store.fetchFilterDataQuality(
+        this.mediatype,
+        this.loadFilterValuesFromStorage
+      );
 
       await store.fetchSortValues(this.mediatype);
 
@@ -2080,7 +2142,7 @@ export default {
       if (setFilter) {
         eventBus.setFilter(setFilter);
       }
-      eventBus.showLoadingOverlay(false);
+      eventBus.showSidebarLoadingOverlay(false);
     },
 
     onCreditClicked(credit) {
@@ -2645,15 +2707,17 @@ export default {
           this.$shared.filters
         );
 
-        eventBus.showLoadingOverlay(false);
-
         this.$shared.currentPage =
           setPage && setPage <= this.numPages ? setPage : 1;
         store.saveCurrentPage(this.mediatype);
 
         await this.completelyFetchMedia();
 
+        eventBus.showLoadingOverlay(false);
+
         await this.fetchFilters();
+
+        this.loadFilterValuesFromStorage = false; // only load filter values from storage initially
       })();
     });
 

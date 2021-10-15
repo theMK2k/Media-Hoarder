@@ -82,6 +82,10 @@ export const eventBus = new Vue({
       this.$emit("showLoadingOverlay", value);
     },
 
+    showSidebarLoadingOverlay(value) {
+      this.$emit("showSidebarLoadingOverlay", value);
+    },
+
     setFilter(setFilter) {
       this.$emit("setFilter", setFilter);
     },

@@ -7,7 +7,9 @@
 ### Bugs
 
 - layout fixes in medialist, app
-- refetch filters within refetch media resets filters e.g. when "set none" is clicked
+- now that we refetch filters, investigate the num-movies values for the filters
+  - thoroughly test filters
+- deactivate and "load animate" only the filter that is currently loading
 
 ### Other
 
