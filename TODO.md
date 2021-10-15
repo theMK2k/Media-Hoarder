@@ -6,7 +6,7 @@
 
 ### Bugs
 
-- nothing
+- layout fixes in medialist
 
 ### Other
 

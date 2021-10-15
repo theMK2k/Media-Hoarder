@@ -451,11 +451,7 @@
 
                   <v-row
                     v-if="item.IMDB_Top_Directors"
-                    style="
-                      margin-left: 4px;
-                      margin-right: 6px;
-                      margin-bottom: 8px;
-                    "
+                    class="mk-main-detail-row"
                   >
                     <div style="font-size: 0.875rem; font-weight: normal">
                       <strong class="CreditCategory"
@@ -477,11 +473,7 @@
 
                   <v-row
                     v-if="item.IMDB_Top_Writers"
-                    style="
-                      margin-left: 4px;
-                      margin-right: 6px;
-                      margin-bottom: 8px;
-                    "
+                    class="mk-main-detail-row"
                   >
                     <div style="font-size: 0.875rem; font-weight: normal">
                       <strong class="CreditCategory"
@@ -501,14 +493,7 @@
                     </div>
                   </v-row>
 
-                  <v-row
-                    v-if="item.IMDB_Top_Cast"
-                    style="
-                      margin-left: 4px;
-                      margin-right: 6px;
-                      margin-bottom: 8px;
-                    "
-                  >
+                  <v-row v-if="item.IMDB_Top_Cast" class="mk-main-detail-row">
                     <div style="font-size: 0.875rem; font-weight: normal">
                       <strong class="CreditCategory">{{ $t("Cast") }}:</strong>
                       <span
@@ -527,11 +512,7 @@
 
                   <v-row
                     v-if="item.IMDB_Top_Production_Companies"
-                    style="
-                      margin-left: 4px;
-                      margin-right: 6px;
-                      margin-bottom: 8px;
-                    "
+                    class="mk-main-detail-row"
                   >
                     <div style="font-size: 0.875rem; font-weight: normal">
                       <strong class="CreditCategory"
@@ -610,12 +591,16 @@
             </v-list-item>
 
             <v-col v-if="item.selected" style="min-width: 100%">
-              <v-row>
-                <v-col class="detailLabel">{{ $t("Full Path") }}:</v-col>
+              <v-row class="mk-detail-row">
+                <v-col class="detailLabel"
+                  ><strong>{{ $t("Full Path") }}:</strong></v-col
+                >
                 <v-col class="detailContent">{{ item.fullPath }}</v-col>
               </v-row>
-              <v-row>
-                <v-col class="detailLabel">{{ $t("Imported") }}:</v-col>
+              <v-row class="mk-detail-row">
+                <v-col class="detailLabel"
+                  ><strong>{{ $t("Imported") }}:</strong></v-col
+                >
                 <v-col class="detailContent">
                   <v-tooltip right>
                     <template v-slot:activator="{ on }">
@@ -625,8 +610,10 @@
                   </v-tooltip>
                 </v-col>
               </v-row>
-              <v-row>
-                <v-col class="detailLabel">{{ $t("Last Access") }}:</v-col>
+              <v-row class="mk-detail-row">
+                <v-col class="detailLabel"
+                  ><strong>{{ $t("Last Access") }}:</strong></v-col
+                >
                 <v-col class="detailContent">
                   <v-tooltip right>
                     <template v-slot:activator="{ on }">
@@ -636,14 +623,18 @@
                   </v-tooltip>
                 </v-col>
               </v-row>
-              <v-row>
-                <v-col class="detailLabel">{{ $t("Size") }}:</v-col>
+              <v-row class="mk-detail-row">
+                <v-col class="detailLabel"
+                  ><strong>{{ $t("Size") }}:</strong></v-col
+                >
                 <v-col v-if="item.Size" class="detailContent">{{
                   Humanize().fileSize(item.Size)
                 }}</v-col>
               </v-row>
-              <v-row>
-                <v-col class="detailLabel">{{ $t("File Created at") }}:</v-col>
+              <v-row class="mk-detail-row">
+                <v-col class="detailLabel"
+                  ><strong>{{ $t("File Created at") }}:</strong></v-col
+                >
                 <v-col v-if="item.file_created_at" class="detailContent">{{
                   moment()
                     .utc(parseInt(item.file_created_at))
@@ -652,8 +643,10 @@
                 }}</v-col>
               </v-row>
 
-              <v-row>
-                <v-col class="detailLabel">{{ $t("In Lists") }}:</v-col>
+              <v-row class="mk-detail-row">
+                <v-col class="detailLabel"
+                  ><strong>{{ $t("In Lists") }}:</strong></v-col
+                >
                 <v-col class="detailContent">
                   <span v-if="item.lists && item.lists.length > 0">
                     <span
@@ -668,6 +661,7 @@
                     >&lt;{{ $t("not in any list") }}&gt;</span
                   >
                   <v-btn
+                    class="mk-btn-small"
                     text
                     small
                     color="primary"
@@ -721,7 +715,7 @@
                 class="mk-clickable"
                 v-on:click.stop="showCredits(item, !item.showCredits)"
               >
-                <span style="font-size: 20px"
+                <span class="mk-item-detailcategory-header"
                   >{{
                     $t("Credits") + (!item.showCredits ? " »" : "")
                   }}&nbsp;</span
@@ -729,6 +723,7 @@
               </v-row>
 
               <div
+                class="mk-item-detailcategory-content"
                 v-if="item.showCredits"
                 v-on:click.stop="showCredits(item, false)"
               >
@@ -749,9 +744,13 @@
                       $t(`CreditCategories.${creditCategory.category}`)
                     }}</strong>
                   </v-row>
+                  <!--  v-on:mouseover="setItemHovered(credit, 'credit', true)"
+                    v-on:mouseleave="setItemHovered(credit, 'credit', false)"
+                  -->
                   <v-row
                     v-for="credit in creditCategory.items"
                     v-bind:key="credit.id_Movies_IMDB_Credits"
+                    class="mk-highlightable-row"
                   >
                     <v-col sm="4" class="creditsLabel">
                       <a
@@ -778,7 +777,7 @@
                 class="mk-clickable"
                 v-on:click.stop="showCompanies(item, !item.showCompanies)"
               >
-                <span style="font-size: 20px"
+                <span class="mk-item-detailcategory-header"
                   >{{
                     $t("Companies") + (!item.showCompanies ? " »" : "")
                   }}&nbsp;</span
@@ -786,6 +785,7 @@
               </v-row>
 
               <div
+                class="mk-item-detailcategory-content"
                 v-if="item.showCompanies"
                 v-on:click.stop="showCompanies(item, false)"
               >
@@ -809,6 +809,7 @@
                   <v-row
                     v-for="company in companyCategory.items"
                     v-bind:key="company.id_Movies_IMDB_Credits"
+                    class="mk-highlightable-row"
                   >
                     <v-col sm="4" class="creditsLabel">
                       <a
@@ -837,7 +838,7 @@
                   showContentAdvisory(item, !item.showContentAdvisory)
                 "
               >
-                <span style="font-size: 20px"
+                <span class="mk-item-detailcategory-header"
                   >{{
                     $t("Content Advisory") +
                     (!item.showContentAdvisory ? " »" : "")
@@ -846,18 +847,25 @@
               </v-row>
 
               <div
-                style="margin-left: 8px"
+                class="mk-item-detailcategory-content"
                 v-if="item.showContentAdvisory"
                 v-on:click.stop="showContentAdvisory(item, false)"
+                style="margin-left: 8px"
               >
                 <v-row
                   v-for="category in $shared.contentAdvisoryCategories"
                   v-bind:key="category.Name"
-                  style="margin-top: 12px"
+                  class="mk-highlightable-row"
+                  style="margin-top: 12px; margin-left: 6px"
                 >
-                  <v-col sm="4" class="creditsLabel">{{
-                    $t(`ParentalAdvisoryCategories.${category.Name}`)
-                  }}</v-col>
+                  <v-col
+                    sm="4"
+                    class="creditsContent"
+                    style="padding-left: 12px"
+                    >{{
+                      $t(`ParentalAdvisoryCategories.${category.Name}`)
+                    }}</v-col
+                  >
                   <v-col sm="1" class="creditsContent">
                     <!-- <span v-if="company.role">...</span> -->
                   </v-col>
@@ -879,7 +887,7 @@
                 class="mk-clickable"
                 v-on:click.stop="showPlotKeywords(item, !item.showPlotKeywords)"
               >
-                <span style="font-size: 20px"
+                <span class="mk-item-detailcategory-header"
                   >{{
                     $t("Plot Keywords _Spoilers ahead!_") +
                     (!item.showPlotKeywords ? " »" : "")
@@ -888,6 +896,7 @@
               </v-row>
 
               <div
+                class="mk-item-detailcategory-content"
                 v-if="item.showPlotKeywords"
                 v-on:click.stop="showPlotKeywords(item, false)"
               >
@@ -928,7 +937,7 @@
                   showFilmingLocations(item, !item.showFilmingLocations)
                 "
               >
-                <span style="font-size: 20px"
+                <span class="mk-item-detailcategory-header"
                   >{{
                     $t("Filming Locations") +
                     (!item.showFilmingLocations ? " »" : "")
@@ -2615,18 +2624,7 @@ export default {
   created() {
     logger.log("MediaList created");
 
-    (async () => {
-      eventBus.refetchMedia();
-
-      this.$shared.currentPage = await store.fetchCurrentPage(this.mediatype);
-
-      logger.log("items:", this.items);
-    })();
-
-    this.sortAbles.forEach((sortAble) => {
-      sortAble.DescriptionTranslated = this.$t(sortAble.Description);
-    });
-
+    // Register eventBus events
     eventBus.$on("searchTextChanged", () => {
       this.$shared.currentPage = 1;
       store.saveCurrentPage(this.mediatype);
@@ -2703,6 +2701,18 @@ export default {
       }
     );
 
+    (async () => {
+      eventBus.refetchMedia();
+
+      this.$shared.currentPage = await store.fetchCurrentPage(this.mediatype);
+
+      logger.log("items:", this.items);
+    })();
+
+    this.sortAbles.forEach((sortAble) => {
+      sortAble.DescriptionTranslated = this.$t(sortAble.Description);
+    });
+
     this.updateCurrentTime();
 
     setInterval(() => {
@@ -2778,16 +2788,18 @@ export default {
 }
 
 .detailLabel {
+  font-size: 14px;
   padding-left: 16px;
   padding-right: 0px;
   padding-top: 0px;
   padding-bottom: 0px;
-  width: 140px !important;
-  max-width: 140px !important;
-  min-width: 140px !important;
+  width: 146px !important;
+  max-width: 146px !important;
+  min-width: 146px !important;
 }
 
 .detailContent {
+  font-size: 14px;
   padding-left: 0px;
   padding-right: 0px;
   padding-top: 0px;
@@ -2796,13 +2808,14 @@ export default {
 }
 
 .creditsLabel {
-  padding-left: 16px;
+  padding-left: 14px;
   padding-right: 0px;
   padding-top: 0px;
   padding-bottom: 0px;
 }
 
 .creditsContent {
+  font-size: 14px;
   padding-left: 0px;
   padding-right: 0px;
   padding-top: 0px;

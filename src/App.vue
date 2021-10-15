@@ -3609,6 +3609,34 @@ h1 {
   cursor: grab !important;
 }
 
+.mk-item-detailcategory-content {
+  margin-bottom: 8px;
+}
+
+.mk-item-detailcategory-header {
+  font-size: 16px;
+}
+
+.mk-btn-small {
+  height: 20px !important;
+}
+
+.mk-main-detail-row {
+  margin-top: 12px !important;
+  margin-right: 6px !important;
+  margin-bottom: 8px !important;
+  margin-left: 4px !important;
+}
+
+.mk-detail-row {
+  margin-bottom: -6px;
+}
+
+.mk-highlightable-row:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+}
+
 /* ### Vuetify fixes ### */
 
 /* this is part of v-select and makes it unneccessarily high */
