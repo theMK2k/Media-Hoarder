@@ -6,7 +6,8 @@
 
 ### Bugs
 
-- layout fixes in medialist
+- layout fixes in medialist, app
+- refetch filters within refetch media resets filters e.g. when "set none" is clicked
 
 ### Other
 

@@ -2636,8 +2636,6 @@ export default {
       (async () => {
         eventBus.showLoadingOverlay(true);
 
-        await this.fetchFilters();
-
         this.items = [];
         this.items = await store.fetchMedia(
           this.mediatype,
@@ -2654,6 +2652,8 @@ export default {
         store.saveCurrentPage(this.mediatype);
 
         await this.completelyFetchMedia();
+
+        await this.fetchFilters();
       })();
     });
 

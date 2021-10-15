@@ -3777,7 +3777,7 @@ async function fetchMedia(
         " " +
         (item.IMDB_plotSummary || "").toLowerCase() +
         " " +
-        (item.Path || "").toLowerCase() +
+        (item.fullPath || "").toLowerCase() +
         " " +
         (item.IMDB_tconst || "").toLowerCase();
 

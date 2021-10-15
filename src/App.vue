@@ -3637,6 +3637,19 @@ h1 {
   border-radius: 6px;
 }
 
+/* ### Vuetify overrides ### */
+.v-expansion-panel-header {
+  font-size: 16px;
+}
+
+.v-alert {
+  font-size: 14px;
+}
+
+.v-list-item__title {
+  font-size: 16px !important;
+}
+
 /* ### Vuetify fixes ### */
 
 /* this is part of v-select and makes it unneccessarily high */
