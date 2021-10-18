@@ -2047,93 +2047,139 @@ export default {
     async fetchFilters(setFilter) {
       eventBus.showSidebarLoadingOverlay(true);
 
-      await store.fetchFilterSettings(
-        this.mediatype,
-        this.loadFilterValuesFromStorage
-      );
-      await store.fetchFilterSourcePaths(
-        this.mediatype,
-        this.loadFilterValuesFromStorage
-      );
-      await store.fetchFilterGenres(
-        this.mediatype,
-        this.$local_t,
-        this.loadFilterValuesFromStorage
-      );
-      await store.fetchFilterAgeRatings(
-        this.mediatype,
-        this.loadFilterValuesFromStorage
-      );
-      await store.fetchFilterRatings(
-        this.mediatype,
-        this.loadFilterValuesFromStorage
-      );
-      await store.fetchFilterLists(
-        this.mediatype,
-        this.$local_t,
-        this.loadFilterValuesFromStorage
-      );
-      await store.fetchFilterParentalAdvisory(
-        this.mediatype,
-        this.loadFilterValuesFromStorage
-      );
-      await store.fetchFilterPersons(
-        this.mediatype,
-        this.$local_t,
-        this.loadFilterValuesFromStorage
-      );
-      await store.fetchFilterCompanies(
-        this.mediatype,
-        this.$local_t,
-        this.loadFilterValuesFromStorage
-      );
-      await store.fetchFilterIMDBPlotKeywords(
-        this.mediatype,
-        this.$local_t,
-        this.loadFilterValuesFromStorage
-      );
-      await store.fetchFilterIMDBFilmingLocations(
-        this.mediatype,
-        this.$local_t,
-        this.loadFilterValuesFromStorage
-      );
-      await store.fetchFilterYears(
-        this.mediatype,
-        this.loadFilterValuesFromStorage
-      );
-      // await store.fetchFilterReleaseYears(this.mediatype, this.loadFilterValuesFromStorage);
-      await store.fetchFilterQualities(
-        this.mediatype,
-        this.loadFilterValuesFromStorage
-      );
-      await store.fetchFilterLanguages(
-        this.mediatype,
-        "audio",
-        this.$local_t,
-        this.loadFilterValuesFromStorage
-      );
-      await store.fetchFilterLanguages(
-        this.mediatype,
-        "subtitle",
-        this.$local_t,
-        this.loadFilterValuesFromStorage
-      );
-      await store.fetchFilterIMDBRating(
-        this.mediatype,
-        this.loadFilterValuesFromStorage
-      );
-      await store.fetchFilterMetacriticScore(
-        this.mediatype,
-        this.loadFilterValuesFromStorage
-      );
-      await store.fetchFilterReleaseAttributes(
-        this.mediatype,
-        this.loadFilterValuesFromStorage
-      );
-      await store.fetchFilterDataQuality(
-        this.mediatype,
-        this.loadFilterValuesFromStorage
-      );
+      for (let i = 0; i < this.$shared.filterGroups.length; i++) {
+        const filter = this.$shared.filterGroups[i];
+
+        switch (filter.name) {
+          case "filterSettings":
+            await store.fetchFilterSettings(
+              this.mediatype,
+              this.loadFilterValuesFromStorage
+            );
+            break;
+          case "filterSourcePaths":
+            await store.fetchFilterSourcePaths(
+              this.mediatype,
+              this.loadFilterValuesFromStorage
+            );
+            break;
+          case "filterGenres":
+            await store.fetchFilterGenres(
+              this.mediatype,
+              this.$local_t,
+              this.loadFilterValuesFromStorage
+            );
+            break;
+          case "filterAgeRatings":
+            await store.fetchFilterAgeRatings(
+              this.mediatype,
+              this.loadFilterValuesFromStorage
+            );
+            break;
+          case "filterRatings":
+            await store.fetchFilterRatings(
+              this.mediatype,
+              this.loadFilterValuesFromStorage
+            );
+            break;
+          case "filterLists":
+            await store.fetchFilterLists(
+              this.mediatype,
+              this.$local_t,
+              this.loadFilterValuesFromStorage
+            );
+            break;
+          case "filterParentalAdvisory":
+            await store.fetchFilterParentalAdvisory(
+              this.mediatype,
+              this.loadFilterValuesFromStorage
+            );
+            break;
+          case "filterPersons":
+            await store.fetchFilterPersons(
+              this.mediatype,
+              this.$local_t,
+              this.loadFilterValuesFromStorage
+            );
+            break;
+          case "filterCompanies":
+            await store.fetchFilterCompanies(
+              this.mediatype,
+              this.$local_t,
+              this.loadFilterValuesFromStorage
+            );
+            break;
+          case "filterIMDBPlotKeywords":
+            await store.fetchFilterIMDBPlotKeywords(
+              this.mediatype,
+              this.$local_t,
+              this.loadFilterValuesFromStorage
+            );
+            break;
+          case "filterIMDBFilmingLocations":
+            await store.fetchFilterIMDBFilmingLocations(
+              this.mediatype,
+              this.$local_t,
+              this.loadFilterValuesFromStorage
+            );
+            break;
+          case "filterYears":
+            // await store.fetchFilterReleaseYears(this.mediatype, this.loadFilterValuesFromStorage);
+            await store.fetchFilterYears(
+              this.mediatype,
+              this.loadFilterValuesFromStorage
+            );
+            break;
+          case "filterQualities":
+            await store.fetchFilterQualities(
+              this.mediatype,
+              this.loadFilterValuesFromStorage
+            );
+            break;
+          case "filterAudioLanguages":
+            await store.fetchFilterLanguages(
+              this.mediatype,
+              "audio",
+              this.$local_t,
+              this.loadFilterValuesFromStorage
+            );
+            break;
+          case "filterSubtitleLanguages":
+            await store.fetchFilterLanguages(
+              this.mediatype,
+              "subtitle",
+              this.$local_t,
+              this.loadFilterValuesFromStorage
+            );
+            break;
+          case "filterIMDBRating":
+            await store.fetchFilterIMDBRating(
+              this.mediatype,
+              this.loadFilterValuesFromStorage
+            );
+            break;
+          case "filterMetacriticScore":
+            await store.fetchFilterMetacriticScore(
+              this.mediatype,
+              this.loadFilterValuesFromStorage
+            );
+            break;
+          case "filterReleaseAttributes":
+            await store.fetchFilterReleaseAttributes(
+              this.mediatype,
+              this.loadFilterValuesFromStorage
+            );
+            break;
+          case "filterDataQuality":
+            await store.fetchFilterDataQuality(
+              this.mediatype,
+              this.loadFilterValuesFromStorage
+            );
+            break;
+          default:
+            throw new Error("Unsupported filter type:", filter.name);
+        }
+      }
 
       await store.fetchSortValues(this.mediatype);
 
