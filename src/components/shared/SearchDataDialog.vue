@@ -147,7 +147,7 @@ export default {
                 				AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
 								)) AS NumMovies
 					FROM tbl_Movies_IMDB_Credits MC
-					WHERE Person_Name LIKE '${this.searchText}%'
+					WHERE Person_Name LIKE '%${this.searchText}%'
           GROUP BY IMDB_Person_ID
           ${
             this.sortByNumMovies
@@ -211,6 +211,13 @@ export default {
     },
 
     onItemClicked(item) {
+      logger.log(
+        "onItemClicked this.searchMode:",
+        this.searchMode,
+        "item:",
+        item
+      );
+
       if (this.searchMode === "companies") {
         eventBus.showCompanyDialog(item);
       }

@@ -155,23 +155,26 @@
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
                       }"
+                      style="display: flex; align-items: center"
                     >
-                      <v-icon
-                        v-show="$shared.loadingFilter !== 'filterSourcePaths'"
-                        v-bind:class="{
-                          'mk-dark-grey': !filterGroup.visible,
-                        }"
-                        >mdi-folder-outline</v-icon
-                      >
-                      <v-progress-circular
-                        class="mk-filter-spinner"
-                        v-show="$shared.loadingFilter === 'filterSourcePaths'"
-                        v-bind:size="16"
-                        v-bind:width="3"
-                        color="white"
-                        indeterminate
-                      >
-                      </v-progress-circular>
+                      <span class="mk-filter-icon-container">
+                        <v-icon
+                          v-show="$shared.loadingFilter !== 'filterSourcePaths'"
+                          v-bind:class="{
+                            'mk-dark-grey': !filterGroup.visible,
+                          }"
+                          >mdi-folder-outline</v-icon
+                        >
+                        <v-progress-circular
+                          class="mk-filter-spinner"
+                          v-show="$shared.loadingFilter === 'filterSourcePaths'"
+                          v-bind:size="16"
+                          v-bind:width="3"
+                          color="white"
+                          indeterminate
+                        >
+                        </v-progress-circular>
+                      </span>
                       {{ $t("Source Paths") }} {{ filterSourcePathsTitle }}
                     </div>
                     <template v-slot:actions>
@@ -236,23 +239,26 @@
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
                       }"
+                      style="display: flex; align-items: center"
                     >
-                      <v-icon
-                        v-show="$shared.loadingFilter !== 'filterQualities'"
-                        v-bind:class="{
-                          'mk-dark-grey': !filterGroup.visible,
-                        }"
-                        >mdi-video-outline</v-icon
-                      >
-                      <v-progress-circular
-                        class="mk-filter-spinner"
-                        v-show="$shared.loadingFilter === 'filterQualities'"
-                        v-bind:size="16"
-                        v-bind:width="3"
-                        color="white"
-                        indeterminate
-                      >
-                      </v-progress-circular>
+                      <span class="mk-filter-icon-container">
+                        <v-icon
+                          v-show="$shared.loadingFilter !== 'filterQualities'"
+                          v-bind:class="{
+                            'mk-dark-grey': !filterGroup.visible,
+                          }"
+                          >mdi-video-outline</v-icon
+                        >
+                        <v-progress-circular
+                          class="mk-filter-spinner"
+                          v-show="$shared.loadingFilter === 'filterQualities'"
+                          v-bind:size="16"
+                          v-bind:width="3"
+                          color="white"
+                          indeterminate
+                        >
+                        </v-progress-circular>
+                      </span>
                       {{ $t("Video Quality") }} {{ filterQualitiesTitle }}
                     </div>
                     <template v-slot:actions>
@@ -319,27 +325,30 @@
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
                       }"
+                      style="display: flex; align-items: center"
                     >
-                      <v-icon
-                        v-show="
-                          $shared.loadingFilter !== 'filterAudioLanguages'
-                        "
-                        v-bind:class="{
-                          'mk-dark-grey': !filterGroup.visible,
-                        }"
-                        >mdi-comment-outline</v-icon
-                      >
-                      <v-progress-circular
-                        class="mk-filter-spinner"
-                        v-show="
-                          $shared.loadingFilter === 'filterAudioLanguages'
-                        "
-                        v-bind:size="16"
-                        v-bind:width="3"
-                        color="white"
-                        indeterminate
-                      >
-                      </v-progress-circular>
+                      <span class="mk-filter-icon-container">
+                        <v-icon
+                          v-show="
+                            $shared.loadingFilter !== 'filterAudioLanguages'
+                          "
+                          v-bind:class="{
+                            'mk-dark-grey': !filterGroup.visible,
+                          }"
+                          >mdi-comment-outline</v-icon
+                        >
+                        <v-progress-circular
+                          class="mk-filter-spinner"
+                          v-show="
+                            $shared.loadingFilter === 'filterAudioLanguages'
+                          "
+                          v-bind:size="16"
+                          v-bind:width="3"
+                          color="white"
+                          indeterminate
+                        >
+                        </v-progress-circular>
+                      </span>
                       {{ $t("Audio Languages") }}
                       {{ filterAudioLanguagesTitle }}
                     </div>
@@ -408,27 +417,30 @@
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
                       }"
+                      style="display: flex; align-items: center"
                     >
-                      <v-icon
-                        v-show="
-                          $shared.loadingFilter !== 'filterSubtitleLanguages'
-                        "
-                        v-bind:class="{
-                          'mk-dark-grey': !filterGroup.visible,
-                        }"
-                        >mdi-subtitles-outline</v-icon
-                      >
-                      <v-progress-circular
-                        class="mk-filter-spinner"
-                        v-show="
-                          $shared.loadingFilter === 'filterAudioLanguages'
-                        "
-                        v-bind:size="16"
-                        v-bind:width="3"
-                        color="white"
-                        indeterminate
-                      >
-                      </v-progress-circular>
+                      <span class="mk-filter-icon-container">
+                        <v-icon
+                          v-show="
+                            $shared.loadingFilter !== 'filterSubtitleLanguages'
+                          "
+                          v-bind:class="{
+                            'mk-dark-grey': !filterGroup.visible,
+                          }"
+                          >mdi-subtitles-outline</v-icon
+                        >
+                        <v-progress-circular
+                          class="mk-filter-spinner"
+                          v-show="
+                            $shared.loadingFilter === 'filterSubtitleLanguages'
+                          "
+                          v-bind:size="16"
+                          v-bind:width="3"
+                          color="white"
+                          indeterminate
+                        >
+                        </v-progress-circular>
+                      </span>
                       {{ $t("Subtitle Languages") }}
                       {{ filterSubtitleLanguagesTitle }}
                     </div>
@@ -497,27 +509,30 @@
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
                       }"
+                      style="display: flex; align-items: center"
                     >
-                      <v-icon
-                        v-show="
-                          $shared.loadingFilter !== 'filterReleaseAttributes'
-                        "
-                        v-bind:class="{
-                          'mk-dark-grey': !filterGroup.visible,
-                        }"
-                        >mdi-package-variant</v-icon
-                      >
-                      <v-progress-circular
-                        class="mk-filter-spinner"
-                        v-show="
-                          $shared.loadingFilter === 'filterReleaseAttributes'
-                        "
-                        v-bind:size="16"
-                        v-bind:width="3"
-                        color="white"
-                        indeterminate
-                      >
-                      </v-progress-circular>
+                      <span class="mk-filter-icon-container">
+                        <v-icon
+                          v-show="
+                            $shared.loadingFilter !== 'filterReleaseAttributes'
+                          "
+                          v-bind:class="{
+                            'mk-dark-grey': !filterGroup.visible,
+                          }"
+                          >mdi-package-variant</v-icon
+                        >
+                        <v-progress-circular
+                          class="mk-filter-spinner"
+                          v-show="
+                            $shared.loadingFilter === 'filterReleaseAttributes'
+                          "
+                          v-bind:size="16"
+                          v-bind:width="3"
+                          color="white"
+                          indeterminate
+                        >
+                        </v-progress-circular>
+                      </span>
                       {{ $t("Release Attributes") }}
                       {{
                         $shared.filters.filterSettings
@@ -603,23 +618,26 @@
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
                       }"
+                      style="display: flex; align-items: center"
                     >
-                      <v-icon
-                        v-show="$shared.loadingFilter !== 'filterLists'"
-                        v-bind:class="{
-                          'mk-dark-grey': !filterGroup.visible,
-                        }"
-                        >mdi-clipboard-list-outline</v-icon
-                      >
-                      <v-progress-circular
-                        class="mk-filter-spinner"
-                        v-show="$shared.loadingFilter === 'filterLists'"
-                        v-bind:size="16"
-                        v-bind:width="3"
-                        color="white"
-                        indeterminate
-                      >
-                      </v-progress-circular>
+                      <span class="mk-filter-icon-container">
+                        <v-icon
+                          v-show="$shared.loadingFilter !== 'filterLists'"
+                          v-bind:class="{
+                            'mk-dark-grey': !filterGroup.visible,
+                          }"
+                          >mdi-clipboard-list-outline</v-icon
+                        >
+                        <v-progress-circular
+                          class="mk-filter-spinner"
+                          v-show="$shared.loadingFilter === 'filterLists'"
+                          v-bind:size="16"
+                          v-bind:width="3"
+                          color="white"
+                          indeterminate
+                        >
+                        </v-progress-circular>
+                      </span>
                       {{ $t("My Lists") }} {{ filterListsTitle }}
                     </div>
                     <template v-slot:actions>
@@ -698,23 +716,26 @@
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
                       }"
+                      style="display: flex; align-items: center"
                     >
-                      <v-icon
-                        v-show="$shared.loadingFilter !== 'filterRatings'"
-                        v-bind:class="{
-                          'mk-dark-grey': !filterGroup.visible,
-                        }"
-                        >mdi-star-outline</v-icon
-                      >
-                      <v-progress-circular
-                        class="mk-filter-spinner"
-                        v-show="$shared.loadingFilter === 'filterRatings'"
-                        v-bind:size="16"
-                        v-bind:width="3"
-                        color="white"
-                        indeterminate
-                      >
-                      </v-progress-circular>
+                      <span class="mk-filter-icon-container">
+                        <v-icon
+                          v-show="$shared.loadingFilter !== 'filterRatings'"
+                          v-bind:class="{
+                            'mk-dark-grey': !filterGroup.visible,
+                          }"
+                          >mdi-star-outline</v-icon
+                        >
+                        <v-progress-circular
+                          class="mk-filter-spinner"
+                          v-show="$shared.loadingFilter === 'filterRatings'"
+                          v-bind:size="16"
+                          v-bind:width="3"
+                          color="white"
+                          indeterminate
+                        >
+                        </v-progress-circular>
+                      </span>
                       {{ $t("My Ratings") }} {{ filterRatingsTitle }}
                     </div>
                     <template v-slot:actions>
@@ -793,27 +814,30 @@
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
                       }"
+                      style="display: flex; align-items: center"
                     >
-                      <v-icon
-                        v-show="
-                          $shared.loadingFilter !== 'filterMetacriticScore'
-                        "
-                        v-bind:class="{
-                          'mk-dark-grey': !filterGroup.visible,
-                        }"
-                        >mdi-numeric-10-box</v-icon
-                      >
-                      <v-progress-circular
-                        class="mk-filter-spinner"
-                        v-show="
-                          $shared.loadingFilter === 'filterMetacriticScore'
-                        "
-                        v-bind:size="16"
-                        v-bind:width="3"
-                        color="white"
-                        indeterminate
-                      >
-                      </v-progress-circular>
+                      <span class="mk-filter-icon-container">
+                        <v-icon
+                          v-show="
+                            $shared.loadingFilter !== 'filterMetacriticScore'
+                          "
+                          v-bind:class="{
+                            'mk-dark-grey': !filterGroup.visible,
+                          }"
+                          >mdi-numeric-10-box</v-icon
+                        >
+                        <v-progress-circular
+                          class="mk-filter-spinner"
+                          v-show="
+                            $shared.loadingFilter === 'filterMetacriticScore'
+                          "
+                          v-bind:size="16"
+                          v-bind:width="3"
+                          color="white"
+                          indeterminate
+                        >
+                        </v-progress-circular>
+                      </span>
                       {{ $t("Metacritic Scores") }}
                       {{ filterMetacriticScoreTitle }}
                     </div>
@@ -883,23 +907,26 @@
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
                       }"
+                      style="display: flex; align-items: center"
                     >
-                      <v-icon
-                        v-show="$shared.loadingFilter !== 'filterIMDBRatings'"
-                        v-bind:class="{
-                          'mk-dark-grey': !filterGroup.visible,
-                        }"
-                        >mdi-surround-sound-7-1</v-icon
-                      >
-                      <v-progress-circular
-                        class="mk-filter-spinner"
-                        v-show="$shared.loadingFilter === 'filterIMDBRatings'"
-                        v-bind:size="16"
-                        v-bind:width="3"
-                        color="white"
-                        indeterminate
-                      >
-                      </v-progress-circular>
+                      <span class="mk-filter-icon-container">
+                        <v-icon
+                          v-show="$shared.loadingFilter !== 'filterIMDBRatings'"
+                          v-bind:class="{
+                            'mk-dark-grey': !filterGroup.visible,
+                          }"
+                          >mdi-surround-sound-7-1</v-icon
+                        >
+                        <v-progress-circular
+                          class="mk-filter-spinner"
+                          v-show="$shared.loadingFilter === 'filterIMDBRatings'"
+                          v-bind:size="16"
+                          v-bind:width="3"
+                          color="white"
+                          indeterminate
+                        >
+                        </v-progress-circular>
+                      </span>
                       {{ $t("IMDB Ratings") }} {{ filterIMDBRatingTitle }}
                     </div>
                     <template v-slot:actions>
@@ -964,23 +991,26 @@
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
                       }"
+                      style="display: flex; align-items: center"
                     >
-                      <v-icon
-                        v-show="$shared.loadingFilter !== 'filterGenres'"
-                        v-bind:class="{
-                          'mk-dark-grey': !filterGroup.visible,
-                        }"
-                        >mdi-drama-masks</v-icon
-                      >
-                      <v-progress-circular
-                        class="mk-filter-spinner"
-                        v-show="$shared.loadingFilter === 'filterGenres'"
-                        v-bind:size="16"
-                        v-bind:width="3"
-                        color="white"
-                        indeterminate
-                      >
-                      </v-progress-circular>
+                      <span class="mk-filter-icon-container">
+                        <v-icon
+                          v-show="$shared.loadingFilter !== 'filterGenres'"
+                          v-bind:class="{
+                            'mk-dark-grey': !filterGroup.visible,
+                          }"
+                          >mdi-drama-masks</v-icon
+                        >
+                        <v-progress-circular
+                          class="mk-filter-spinner"
+                          v-show="$shared.loadingFilter === 'filterGenres'"
+                          v-bind:size="16"
+                          v-bind:width="3"
+                          color="white"
+                          indeterminate
+                        >
+                        </v-progress-circular>
+                      </span>
                       {{ $t("Genres") }}
                       {{
                         $shared.filters.filterSettings.filterGenresAND
@@ -1056,23 +1086,26 @@
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
                       }"
+                      style="display: flex; align-items: center"
                     >
-                      <v-icon
-                        v-show="$shared.loadingFilter !== 'filterAgeRatings'"
-                        v-bind:class="{
-                          'mk-dark-grey': !filterGroup.visible,
-                        }"
-                        >mdi-human-female-boy</v-icon
-                      >
-                      <v-progress-circular
-                        class="mk-filter-spinner"
-                        v-show="$shared.loadingFilter === 'filterAgeRatings'"
-                        v-bind:size="16"
-                        v-bind:width="3"
-                        color="white"
-                        indeterminate
-                      >
-                      </v-progress-circular>
+                      <span class="mk-filter-icon-container">
+                        <v-icon
+                          v-show="$shared.loadingFilter !== 'filterAgeRatings'"
+                          v-bind:class="{
+                            'mk-dark-grey': !filterGroup.visible,
+                          }"
+                          >mdi-human-female-boy</v-icon
+                        >
+                        <v-progress-circular
+                          class="mk-filter-spinner"
+                          v-show="$shared.loadingFilter === 'filterAgeRatings'"
+                          v-bind:size="16"
+                          v-bind:width="3"
+                          color="white"
+                          indeterminate
+                        >
+                        </v-progress-circular>
+                      </span>
                       {{ $t("Age Ratings") }} {{ filterAgeRatingsTitle }}
                     </div>
                     <template v-slot:actions>
@@ -1141,27 +1174,30 @@
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
                       }"
+                      style="display: flex; align-items: center"
                     >
-                      <v-icon
-                        v-show="
-                          $shared.loadingFilter !== 'filerParentalAdvisory'
-                        "
-                        v-bind:class="{
-                          'mk-dark-grey': !filterGroup.visible,
-                        }"
-                        >mdi-movie-filter-outline</v-icon
-                      >
-                      <v-progress-circular
-                        class="mk-filter-spinner"
-                        v-show="
-                          $shared.loadingFilter === 'filterParentalAdvisory'
-                        "
-                        v-bind:size="16"
-                        v-bind:width="3"
-                        color="white"
-                        indeterminate
-                      >
-                      </v-progress-circular>
+                      <span class="mk-filter-icon-container">
+                        <v-icon
+                          v-show="
+                            $shared.loadingFilter !== 'filterParentalAdvisory'
+                          "
+                          v-bind:class="{
+                            'mk-dark-grey': !filterGroup.visible,
+                          }"
+                          >mdi-movie-filter-outline</v-icon
+                        >
+                        <v-progress-circular
+                          class="mk-filter-spinner"
+                          v-show="
+                            $shared.loadingFilter === 'filterParentalAdvisory'
+                          "
+                          v-bind:size="16"
+                          v-bind:width="3"
+                          color="white"
+                          indeterminate
+                        >
+                        </v-progress-circular>
+                      </span>
                       {{ $t("Content Advisories") }}
                       {{ filterContentAdvisoryTitle }}
                     </div>
@@ -1265,23 +1301,26 @@
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
                       }"
+                      style="display: flex; align-items: center"
                     >
-                      <v-icon
-                        v-show="$shared.loadingFilter !== 'filterPersons'"
-                        v-bind:class="{
-                          'mk-dark-grey': !filterGroup.visible,
-                        }"
-                        >mdi-human-male-male</v-icon
-                      >
-                      <v-progress-circular
-                        class="mk-filter-spinner"
-                        v-show="$shared.loadingFilter === 'filterPersons'"
-                        v-bind:size="16"
-                        v-bind:width="3"
-                        color="white"
-                        indeterminate
-                      >
-                      </v-progress-circular>
+                      <span class="mk-filter-icon-container">
+                        <v-icon
+                          v-show="$shared.loadingFilter !== 'filterPersons'"
+                          v-bind:class="{
+                            'mk-dark-grey': !filterGroup.visible,
+                          }"
+                          >mdi-human-male-male</v-icon
+                        >
+                        <v-progress-circular
+                          class="mk-filter-spinner"
+                          v-show="$shared.loadingFilter === 'filterPersons'"
+                          v-bind:size="16"
+                          v-bind:width="3"
+                          color="white"
+                          indeterminate
+                        >
+                        </v-progress-circular>
+                      </span>
                       {{ $t("People") }}
                       {{
                         $shared.filters.filterSettings.filterPersonsAND
@@ -1382,23 +1421,26 @@
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
                       }"
+                      style="display: flex; align-items: center"
                     >
-                      <v-icon
-                        v-show="$shared.loadingFilter !== 'filterCompanies'"
-                        v-bind:class="{
-                          'mk-dark-grey': !filterGroup.visible,
-                        }"
-                        >mdi-factory</v-icon
-                      >
-                      <v-progress-circular
-                        class="mk-filter-spinner"
-                        v-show="$shared.loadingFilter === 'filterCompanies'"
-                        v-bind:size="16"
-                        v-bind:width="3"
-                        color="white"
-                        indeterminate
-                      >
-                      </v-progress-circular>
+                      <span class="mk-filter-icon-container">
+                        <v-icon
+                          v-show="$shared.loadingFilter !== 'filterCompanies'"
+                          v-bind:class="{
+                            'mk-dark-grey': !filterGroup.visible,
+                          }"
+                          >mdi-factory</v-icon
+                        >
+                        <v-progress-circular
+                          class="mk-filter-spinner"
+                          v-show="$shared.loadingFilter === 'filterCompanies'"
+                          v-bind:size="16"
+                          v-bind:width="3"
+                          color="white"
+                          indeterminate
+                        >
+                        </v-progress-circular>
+                      </span>
                       {{ $t("Companies") }}
                       {{
                         $shared.filters.filterSettings.filterCompaniesAND
@@ -1501,23 +1543,26 @@
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
                       }"
+                      style="display: flex; align-items: center"
                     >
-                      <v-icon
-                        v-show="$shared.loadingFilter !== 'filterYears'"
-                        v-bind:class="{
-                          'mk-dark-grey': !filterGroup.visible,
-                        }"
-                        >mdi-calendar-month-outline</v-icon
-                      >
-                      <v-progress-circular
-                        class="mk-filter-spinner"
-                        v-show="$shared.loadingFilter === 'filterYears'"
-                        v-bind:size="16"
-                        v-bind:width="3"
-                        color="white"
-                        indeterminate
-                      >
-                      </v-progress-circular>
+                      <span class="mk-filter-icon-container">
+                        <v-icon
+                          v-show="$shared.loadingFilter !== 'filterYears'"
+                          v-bind:class="{
+                            'mk-dark-grey': !filterGroup.visible,
+                          }"
+                          >mdi-calendar-month-outline</v-icon
+                        >
+                        <v-progress-circular
+                          class="mk-filter-spinner"
+                          v-show="$shared.loadingFilter === 'filterYears'"
+                          v-bind:size="16"
+                          v-bind:width="3"
+                          color="white"
+                          indeterminate
+                        >
+                        </v-progress-circular>
+                      </span>
                       {{ $t("Release Years") }} {{ filterYearsTitle }}
                     </div>
                     <template v-slot:actions>
@@ -1612,27 +1657,30 @@
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
                       }"
+                      style="display: flex; align-items: center"
                     >
-                      <v-icon
-                        v-show="
-                          $shared.loadingFilter !== 'filterIMDBPlotKeywords'
-                        "
-                        v-bind:class="{
-                          'mk-dark-grey': !filterGroup.visible,
-                        }"
-                        >mdi-book-open-outline</v-icon
-                      >
-                      <v-progress-circular
-                        class="mk-filter-spinner"
-                        v-show="
-                          $shared.loadingFilter === 'filterIMDBPlotKeywords'
-                        "
-                        v-bind:size="16"
-                        v-bind:width="3"
-                        color="white"
-                        indeterminate
-                      >
-                      </v-progress-circular>
+                      <span class="mk-filter-icon-container">
+                        <v-icon
+                          v-show="
+                            $shared.loadingFilter !== 'filterIMDBPlotKeywords'
+                          "
+                          v-bind:class="{
+                            'mk-dark-grey': !filterGroup.visible,
+                          }"
+                          >mdi-book-open-outline</v-icon
+                        >
+                        <v-progress-circular
+                          class="mk-filter-spinner"
+                          v-show="
+                            $shared.loadingFilter === 'filterIMDBPlotKeywords'
+                          "
+                          v-bind:size="16"
+                          v-bind:width="3"
+                          color="white"
+                          indeterminate
+                        >
+                        </v-progress-circular>
+                      </span>
                       {{ $t("Plot Keywords") }}
                       {{
                         $shared.filters.filterSettings.filterIMDBPlotKeywordsAND
@@ -1740,27 +1788,30 @@
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
                       }"
+                      style="display: flex; align-items: center"
                     >
-                      <v-icon
-                        v-show="
-                          $shared.loadingFilter !== 'filterIMDBFilmingLocations'
-                        "
-                        v-bind:class="{
-                          'mk-dark-grey': !filterGroup.visible,
-                        }"
-                        >mdi-map-marker-outline</v-icon
-                      >
-                      <v-progress-circular
-                        class="mk-filter-spinner"
-                        v-show="
-                          $shared.loadingFilter === 'filterIMDBFilmingLocations'
-                        "
-                        v-bind:size="16"
-                        v-bind:width="3"
-                        color="white"
-                        indeterminate
-                      >
-                      </v-progress-circular>
+                      <span class="mk-filter-icon-container">
+                        <v-icon
+                          v-show="
+                            $shared.loadingFilter !== 'filterIMDBFilmingLocations'
+                          "
+                          v-bind:class="{
+                            'mk-dark-grey': !filterGroup.visible,
+                          }"
+                          >mdi-map-marker-outline</v-icon
+                        >
+                        <v-progress-circular
+                          class="mk-filter-spinner"
+                          v-show="
+                            $shared.loadingFilter === 'filterIMDBFilmingLocations'
+                          "
+                          v-bind:size="16"
+                          v-bind:width="3"
+                          color="white"
+                          indeterminate
+                        >
+                        </v-progress-circular>
+                      </span>
                       {{ $t("Filming Locations") }}
                       {{
                         $shared.filters.filterSettings
@@ -1877,23 +1928,26 @@
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
                       }"
+                      style="display: flex; align-items: center"
                     >
-                      <v-icon
-                        v-show="$shared.loadingFilter !== 'filterDataQuality'"
-                        v-bind:class="{
-                          'mk-dark-grey': !filterGroup.visible,
-                        }"
-                        >mdi-check-box-outline</v-icon
-                      >
-                      <v-progress-circular
-                        class="mk-filter-spinner"
-                        v-show="$shared.loadingFilter === 'filterDataQuality'"
-                        v-bind:size="16"
-                        v-bind:width="3"
-                        color="white"
-                        indeterminate
-                      >
-                      </v-progress-circular>
+                      <span class="mk-filter-icon-container">
+                        <v-icon
+                          v-show="$shared.loadingFilter !== 'filterDataQuality'"
+                          v-bind:class="{
+                            'mk-dark-grey': !filterGroup.visible,
+                          }"
+                          >mdi-check-box-outline</v-icon
+                        >
+                        <v-progress-circular
+                          class="mk-filter-spinner"
+                          v-show="$shared.loadingFilter === 'filterDataQuality'"
+                          v-bind:size="16"
+                          v-bind:width="3"
+                          color="white"
+                          indeterminate
+                        >
+                        </v-progress-circular>
+                      </span>
                       {{ $t("Data Quality") }}
                       {{
                         $shared.filters.filterSettings.filterDataQualityAND
@@ -3915,6 +3969,12 @@ h1 {
 .mk-filter-spinner {
   margin-left: 5px;
   margin-right: 2px;
+}
+
+.mk-filter-icon-container {
+  width: 28px;
+  height: 24px;
+  display: inline-block;
 }
 
 /* ### Vuetify overrides ### */

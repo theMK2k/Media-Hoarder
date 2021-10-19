@@ -1343,6 +1343,8 @@ export default {
     },
 
     loadFilterValuesFromStorage: false,
+
+    fetchFiltersIteration: 0, // detect another fetch even when one is already running
   }),
 
   watch: {
@@ -2045,14 +2047,36 @@ export default {
     },
 
     async fetchFilters(setFilter) {
-      eventBus.showSidebarLoadingOverlay(true);
+      // eventBus.showSidebarLoadingOverlay(true);
+
+      const currentFetchFiltersIteration = ++this.fetchFiltersIteration;
 
       this.$shared.isLoadingFilter = true;
 
-      for (let i = 0; i < this.$shared.filterGroups.length; i++) {
-        const filter = this.$shared.filterGroups[i];
+      let filterGroups = JSON.parse(JSON.stringify(this.$shared.filterGroups));
 
-        this.$shared.loadingFilterProgress = 100 * ((i) / this.$shared.filterGroups.length);
+      // put any filter in setFilter on top of the list
+      if (setFilter) {
+        Object.keys(setFilter).forEach(filtername => {
+          const index = filterGroups.findIndex((item) => item.name === filtername);
+
+          const item = filterGroups[index];
+
+          filterGroups = [item, ...filterGroups.splice(index, 1)];
+        })
+      }
+
+      logger.log('fetchFilters filterGroups:', filterGroups);
+
+      for (let i = 0; i < filterGroups.length; i++) {
+        if (currentFetchFiltersIteration !== this.fetchFiltersIteration) {
+          break;
+        }
+
+        const filter = filterGroups[i];
+
+        this.$shared.loadingFilterProgress =
+          100 * (i / filterGroups.length);
 
         switch (filter.name) {
           case "filterSettings":
@@ -2185,17 +2209,22 @@ export default {
         }
       }
 
+      if (setFilter) {
+        eventBus.setFilter(setFilter);
+      }
+
+      if (currentFetchFiltersIteration !== this.fetchFiltersIteration) {
+        // another fetch has been initiated
+        return;
+      }
+
       this.$shared.loadingFilterProgress = 100;
 
       await store.fetchSortValues(this.mediatype);
 
       await store.fetchCurrentPage(this.mediatype);
 
-      if (setFilter) {
-        eventBus.setFilter(setFilter);
-      }
-
-      eventBus.showSidebarLoadingOverlay(false);
+      // eventBus.showSidebarLoadingOverlay(false);
 
       this.$shared.isLoadingFilter = false;
     },
