@@ -21,6 +21,8 @@ const shared = new Vue({
     isScanning: false,
 
     loadingFilter: "",
+    isLoadingFilter: false,
+    loadingFilterProgress: 0,
 
     filterGroups: [
       {

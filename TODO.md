@@ -10,6 +10,7 @@
 - now that we refetch filters, investigate the num-movies values for the filters
   - thoroughly test filters
 - deactivate and "load animate" only the filter that is currently loading
+  - introduces new problems, we deactive the sidebar as along as any filter is fetched
 
 ### Other
 

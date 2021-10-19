@@ -2047,8 +2047,12 @@ export default {
     async fetchFilters(setFilter) {
       eventBus.showSidebarLoadingOverlay(true);
 
+      this.$shared.isLoadingFilter = true;
+
       for (let i = 0; i < this.$shared.filterGroups.length; i++) {
         const filter = this.$shared.filterGroups[i];
+
+        this.$shared.loadingFilterProgress = 100 * ((i) / this.$shared.filterGroups.length);
 
         switch (filter.name) {
           case "filterSettings":
@@ -2181,6 +2185,8 @@ export default {
         }
       }
 
+      this.$shared.loadingFilterProgress = 100;
+
       await store.fetchSortValues(this.mediatype);
 
       await store.fetchCurrentPage(this.mediatype);
@@ -2188,7 +2194,10 @@ export default {
       if (setFilter) {
         eventBus.setFilter(setFilter);
       }
+
       eventBus.showSidebarLoadingOverlay(false);
+
+      this.$shared.isLoadingFilter = false;
     },
 
     onCreditClicked(credit) {

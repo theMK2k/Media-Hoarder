@@ -115,6 +115,18 @@
               >{{ $t("Cancel") }}</v-btn
             >
           </v-subheader>
+          <div
+            v-if="!$shared.isLoadingFilter"
+            style="height: 3px; width: 100%"
+          ></div>
+          <v-progress-linear
+            v-if="$shared.isLoadingFilter"
+            v-model="$shared.loadingFilterProgress"
+            color="white accent-0"
+            rounded
+            height="3"
+            style="margin-left: 8px; width: 298px"
+          ></v-progress-linear>
 
           <v-expansion-panels accordion multiple v-model="expandedFilterGroups">
             <draggable
@@ -133,7 +145,7 @@
                   v-if="filterGroup.name === 'filterSourcePaths'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
                   style="padding: 0px !important; width: 316px"
-                  v-bind:disabled="
+                  xxx-v-bind:disabled="
                     $shared.loadingFilter === 'filterSourcePaths'
                   "
                 >
@@ -297,7 +309,7 @@
                   v-if="filterGroup.name === 'filterAudioLanguages'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
                   style="padding: 0px !important; width: 316px"
-                  v-bind:disabled="
+                  xxx-v-bind:disabled="
                     $shared.loadingFilter === 'filterAudioLanguages'
                   "
                 >
@@ -386,7 +398,7 @@
                   v-if="filterGroup.name === 'filterSubtitleLanguages'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
                   style="padding: 0px !important; width: 316px"
-                  v-bind:disabled="
+                  xxx-v-bind:disabled="
                     $shared.loadingFilter === 'filterSubtitleLanguages'
                   "
                 >
@@ -475,7 +487,7 @@
                   v-if="filterGroup.name === 'filterReleaseAttributes'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
                   style="padding: 0px !important; width: 316px"
-                  v-bind:disabled="
+                  xxx-v-bind:disabled="
                     $shared.loadingFilter === 'filterReleaseAttributes'
                   "
                 >
@@ -771,7 +783,7 @@
                   v-if="filterGroup.name === 'filterMetacriticScore'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
                   style="padding: 0px !important; width: 316px"
-                  v-bind:disabled="
+                  xxx-v-bind:disabled="
                     $shared.loadingFilter === 'filterMetacriticScore'
                   "
                 >
@@ -861,7 +873,7 @@
                   v-if="filterGroup.name === 'filterIMDBRating'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
                   style="padding: 0px !important; width: 316px"
-                  v-bind:disabled="
+                  xxx-v-bind:disabled="
                     $shared.loadingFilter === 'filterIMDBRatings'
                   "
                 >
@@ -1119,7 +1131,7 @@
                   v-if="filterGroup.name === 'filterParentalAdvisory'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
                   style="padding: 0px !important; width: 316px"
-                  v-bind:disabled="
+                  xxx-v-bind:disabled="
                     $shared.loadingFilter === 'filterParentalAdvisory'
                   "
                 >
@@ -1590,7 +1602,7 @@
                   v-if="filterGroup.name === 'filterIMDBPlotKeywords'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
                   style="padding: 0px !important; width: 316px"
-                  v-bind:disabled="
+                  xxx-v-bind:disabled="
                     $shared.loadingFilter === 'filterIMDBPlotKeywords'
                   "
                 >
@@ -1718,7 +1730,7 @@
                   v-if="filterGroup.name === 'filterIMDBFilmingLocations'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
                   style="padding: 0px !important; width: 316px"
-                  v-bind:disabled="
+                  xxx-v-bind:disabled="
                     $shared.loadingFilter === 'filterIMDBFilmingLocations'
                   "
                 >
@@ -1855,7 +1867,7 @@
                   v-if="filterGroup.name === 'filterDataQuality'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
                   style="padding: 0px !important; width: 316px"
-                  v-bind:disabled="
+                  xxx-v-bind:disabled="
                     $shared.loadingFilter === 'filterDataQuality'
                   "
                 >
