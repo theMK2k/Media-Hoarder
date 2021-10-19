@@ -222,7 +222,6 @@
                         filtersChanged(
                           $shared.filters.filterSourcePaths,
                           sourcePath,
-                          sourcePath.Description,
                           setAllSourcePaths
                         )
                       "
@@ -309,7 +308,13 @@
                         )
                       "
                       v-model="quality.Selected"
-                      v-on:click.native="filtersChanged"
+                      v-on:click.native="
+                        filtersChanged(
+                          $shared.filters.filterQualities,
+                          quality,
+                          setAllQualities
+                        )
+                      "
                       style="margin: 0px"
                       color="mk-dark-grey"
                     ></v-checkbox>
@@ -401,7 +406,13 @@
                         ')'
                       "
                       v-model="audioLanguage.Selected"
-                      v-on:click.native="filtersChanged"
+                      v-on:click.native="
+                        filtersChanged(
+                          $shared.filters.filterAudioLanguages,
+                          audioLanguage,
+                          setAllAudioLanguages
+                        )
+                      "
                       style="margin: 0px"
                       color="mk-dark-grey"
                     ></v-checkbox>
@@ -493,7 +504,13 @@
                         ')'
                       "
                       v-model="subtitleLanguage.Selected"
-                      v-on:click.native="filtersChanged"
+                      v-on:click.native="
+                        filtersChanged(
+                          $shared.filters.filterSubtitleLanguages,
+                          subtitleLanguage,
+                          setAllSubtitleLanguages
+                        )
+                      "
                       style="margin: 0px"
                       color="mk-dark-grey"
                     ></v-checkbox>
@@ -604,7 +621,13 @@
                         ')'
                       "
                       v-model="filterReleaseAttribute.Selected"
-                      v-on:click.native="filtersChanged"
+                      v-on:click.native="
+                        filtersChanged(
+                          $shared.filters.filterReleaseAttributes,
+                          filterReleaseAttribute,
+                          setAllReleaseAttributes
+                        )
+                      "
                       style="margin: 0px"
                       color="mk-dark-grey"
                     ></v-checkbox>
@@ -685,7 +708,13 @@
                       <v-checkbox
                         v-bind:label="list.Name + ' (' + list.NumMovies + ')'"
                         v-model="list.Selected"
-                        v-on:click.native="filtersChanged"
+                        v-on:click.native="
+                          filtersChanged(
+                            $shared.filters.filterLists,
+                            list,
+                            setAllLists
+                          )
+                        "
                         style="margin: 0px"
                         color="mk-dark-grey"
                       ></v-checkbox>
@@ -784,7 +813,13 @@
                         getFilterRatingLabel(rating.Rating, rating.NumMovies)
                       "
                       v-model="rating.Selected"
-                      v-on:click.native="filtersChanged"
+                      v-on:click.native="
+                        filtersChanged(
+                          $shared.filters.filterRatings,
+                          rating,
+                          setAllRatings
+                        )
+                      "
                       style="margin: 0px"
                       color="mk-dark-grey"
                     >
@@ -1072,7 +1107,13 @@
                       v-bind:key="genre.id_Genres"
                       v-bind:label="genre.Name + ' (' + genre.NumMovies + ')'"
                       v-model="genre.Selected"
-                      v-on:click.native="filtersChanged"
+                      v-on:click.native="
+                        filtersChanged(
+                          $shared.filters.filterGenres,
+                          genre,
+                          setAllGenres
+                        )
+                      "
                       style="margin: 0px"
                       color="mk-dark-grey"
                     ></v-checkbox>
@@ -1158,7 +1199,13 @@
                         ')'
                       "
                       v-model="ageRating.Selected"
-                      v-on:click.native="filtersChanged"
+                      v-on:click.native="
+                        filtersChanged(
+                          $shared.filters.filterAgeRatings,
+                          ageRating,
+                          setAllAgeRatings
+                        )
+                      "
                       style="margin: 0px"
                       color="mk-dark-grey"
                     ></v-checkbox>
@@ -1283,7 +1330,15 @@
                                 ')'
                               "
                               v-model="paItem.Selected"
-                              v-on:click.native="filtersChanged"
+                              v-on:click.native="
+                                filtersChanged(
+                                  $shared.filters.filterParentalAdvisory[
+                                    category.Name
+                                  ],
+                                  paItem,
+                                  (x) => setAllParentalAdvisory(category, x)
+                                )
+                              "
                               style="margin: 0px"
                               color="mk-dark-grey"
                             ></v-checkbox>
@@ -1390,7 +1445,9 @@
                           person.Person_Name + ' (' + person.NumMovies + ')'
                         "
                         v-model="person.Selected"
-                        v-on:click.native="filtersChanged"
+                        v-on:click.native="
+                          filtersChanged(filterPersons, person, setAllPersons)
+                        "
                         style="margin: 0px"
                         color="mk-dark-grey"
                       ></v-checkbox>
@@ -1512,7 +1569,13 @@
                           company.Company_Name + ' (' + company.NumMovies + ')'
                         "
                         v-model="company.Selected"
-                        v-on:click.native="filtersChanged"
+                        v-on:click.native="
+                          filtersChanged(
+                            filterCompanies,
+                            company,
+                            setAllCompanies
+                          )
+                        "
                         style="margin: 0px"
                         color="mk-dark-grey"
                       ></v-checkbox>
@@ -1641,7 +1704,13 @@
                         getFilterYearLabel(year.startYear, year.NumMovies)
                       "
                       v-model="year.Selected"
-                      v-on:click.native="filtersChanged"
+                      v-on:click.native="
+                        filtersChanged(
+                          $shared.filters.filterYears,
+                          year,
+                          setAllYears
+                        )
+                      "
                       style="margin: 0px"
                       color="mk-dark-grey"
                     ></v-checkbox>
@@ -1755,7 +1824,13 @@
                           ')'
                         "
                         v-model="plotKeyword.Selected"
-                        v-on:click.native="filtersChanged"
+                        v-on:click.native="
+                          filtersChanged(
+                            filterIMDBPlotKeywords,
+                            plotKeyword,
+                            setAllIMDBPlotKeywords
+                          )
+                        "
                         style="margin: 0px"
                         color="mk-dark-grey"
                       ></v-checkbox>
@@ -1897,7 +1972,13 @@
                           ')'
                         "
                         v-model="filmingLocation.Selected"
-                        v-on:click.native="filtersChanged"
+                        v-on:click.native="
+                          filtersChanged(
+                            filterIMDBFilmingLocations,
+                            filmingLocation,
+                            setAllIMDBFilmingLocations
+                          )
+                        "
                         style="margin: 0px"
                         color="mk-dark-grey"
                       ></v-checkbox>
@@ -2022,7 +2103,13 @@
                           ')'
                         "
                         v-model="dataQuality.Selected"
-                        v-on:click.native="filtersChanged"
+                        v-on:click.native="
+                          filtersChanged(
+                            $shared.filters.filterDataQuality,
+                            dataQuality,
+                            setAllDataQuality
+                          )
+                        "
                         style="margin: 0px"
                         color="mk-dark-grey"
                       ></v-checkbox>
@@ -3025,16 +3112,10 @@ export default {
       eventBus.refetchMedia(setPage);
     },
 
-    filtersChanged: function (
-      filterCollection,
-      filterItem,
-      filterItemID,
-      setAllFunction
-    ) {
+    filtersChanged: function (filterCollection, filterItem, setAllFunction) {
       if (
         filterCollection &&
         filterItem &&
-        filterItemID &&
         setAllFunction &&
         filterCollection.length > 1 &&
         !filterItem.Selected
@@ -3045,7 +3126,8 @@ export default {
           )
         ) {
           // all items were selected, deselect them and keep the clicked one
-          setAllFunction(false, [filterItemID]);
+          setAllFunction(false);
+          filterItem.Selected = true;
         }
       }
 

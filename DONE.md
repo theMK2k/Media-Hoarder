@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] App: filter item isolation (click a filter item where all other items are true: set all items false but the clicked one)
 - [x] Search Data Dialog: do in-client sort by numMovies
 - [x] Search Data Dialog: use "*" as placeholder
 - [x] "load animate" only the filter that is currently loading

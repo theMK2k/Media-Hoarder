@@ -6,13 +6,13 @@
 
 ### Bugs
 
-- [ ] fetch filter first after delete
+- [ ] check NumMovies in Filters (e.g. "Director's Cut" only has 3 entries)
 - [ ] now that we refetch filters, investigate the num-movies values for the filters
   - thoroughly test filters
 
 ### Other
 
-- [ ] click a filter item where all other items are true: set all items false but the clicked one
+- nothing
 
 ## LATER
 
