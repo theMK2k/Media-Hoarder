@@ -2046,6 +2046,11 @@ export default {
       return this.$t(key, payload);
     },
 
+    /**
+     * @param {Object} setFilter:
+     *                 key has value null: the filter will be refetched early
+     *                 key has values: the filter items will be enabled
+     */
     async fetchFilters(setFilter) {
       // eventBus.showSidebarLoadingOverlay(true);
 
@@ -2778,7 +2783,7 @@ export default {
       this.completelyFetchMedia();
     });
 
-    eventBus.$on("refetchMedia", (setPage, $t) => {
+    eventBus.$on("refetchMedia", (setPage, $t, setFilter) => {
       logger.log("refetching media");
       (async () => {
         eventBus.showLoadingOverlay(true);
@@ -2800,7 +2805,7 @@ export default {
 
         eventBus.showLoadingOverlay(false);
 
-        await this.fetchFilters();
+        await this.fetchFilters(setFilter);
 
         this.loadFilterValuesFromStorage = false; // only load filter values from storage initially
       })();

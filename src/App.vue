@@ -218,7 +218,14 @@
                         ')'
                       "
                       v-model="sourcePath.Selected"
-                      v-on:click.native="filtersChanged"
+                      v-on:click.native="
+                        filtersChanged(
+                          $shared.filters.filterSourcePaths,
+                          sourcePath,
+                          sourcePath.Description,
+                          setAllSourcePaths
+                        )
+                      "
                       style="margin: 0px"
                       color="mk-dark-grey"
                     ></v-checkbox>
@@ -3018,13 +3025,44 @@ export default {
       eventBus.refetchMedia(setPage);
     },
 
-    filtersChanged: function () {
+    filtersChanged: function (
+      filterCollection,
+      filterItem,
+      filterItemID,
+      setAllFunction
+    ) {
+      if (
+        filterCollection &&
+        filterItem &&
+        filterItemID &&
+        setAllFunction &&
+        filterCollection.length > 1 &&
+        !filterItem.Selected
+      ) {
+        if (
+          !filterCollection.find(
+            (item) => item !== filterItem && !item.Selected
+          )
+        ) {
+          // all items were selected, deselect them and keep the clicked one
+          setAllFunction(false, [filterItemID]);
+        }
+      }
+
       logger.log("filters changed this.$shared:", this.$shared);
       this.debouncedEventBusRefetchMedia();
     },
 
-    setAllSourcePaths: function (value) {
+    setAllSourcePaths: function (value, exclusionList) {
       this.$shared.filters.filterSourcePaths.forEach((sp) => {
+        if (
+          exclusionList &&
+          exclusionList.find((val) => sp.Description === val.Description)
+        ) {
+          sp.Selected = !value;
+          return;
+        }
+
         sp.Selected = value;
       });
 
@@ -3320,6 +3358,7 @@ export default {
             []
           );
 
+          eventBus.refetchFilters({ filterLists: null });
           eventBus.refetchMedia(this.$shared.currentPage);
 
           eventBus.showSnackbar(
@@ -3342,7 +3381,14 @@ export default {
           name: this.deleteDialog.ItemName,
         })}`
       );
-      eventBus.refetchFilters();
+      this.$shared.filters.filterPersons.splice(
+        this.$shared.filters.filterPersons.findIndex(
+          (filterPerson) =>
+            filterPerson.id_Filter_Persons === person.id_Filter_Persons
+        ),
+        1
+      );
+      eventBus.refetchMedia({ filterPersons: null });
     },
 
     async deleteFilterIMDBPlotKeyword(filterIMDBPlotKeyword) {
@@ -3355,7 +3401,15 @@ export default {
           name: this.deleteDialog.ItemName,
         })}`
       );
-      eventBus.refetchFilters();
+      this.$shared.filters.filterIMDBPlotKeywords.splice(
+        this.$shared.filters.filterIMDBPlotKeywords.findIndex(
+          (plotKeyword) =>
+            plotKeyword.id_Filter_IMDB_Plot_Keywords ===
+            filterIMDBPlotKeyword.id_Filter_IMDB_Plot_Keywords
+        ),
+        1
+      );
+      eventBus.refetchMedia({ filterIMDBPlotKeywords: null });
     },
 
     async deleteFilterIMDBFilmingLocation(filterIMDBFilmingLocation) {
@@ -3368,18 +3422,33 @@ export default {
           name: this.deleteDialog.ItemName,
         })}`
       );
-      eventBus.refetchFilters();
+      this.$shared.filters.filterIMDBFilmingLocations.splice(
+        this.$shared.filters.filterIMDBFilmingLocations.findIndex(
+          (filmingLocation) =>
+            filmingLocation.id_Filter_IMDB_Filming_Locations ===
+            filterIMDBFilmingLocation.id_Filter_IMDB_Filming_Locations
+        ),
+        1
+      );
+      eventBus.refetchMedia({ filterIMDBFilmingLocations: null });
     },
 
-    async deleteCompany(company) {
-      await store.deleteFilterCompany(company.id_Filter_Companies);
+    async deleteCompany(filterCompany) {
+      await store.deleteFilterCompany(filterCompany.id_Filter_Companies);
       eventBus.showSnackbar(
         "success",
         `${this.$t("Company {name} removed_", {
           name: this.deleteDialog.ItemName,
         })}`
       );
-      eventBus.refetchFilters();
+      this.$shared.filters.filterCompanies.splice(
+        this.$shared.filters.filterCompanies.findIndex(
+          (company) =>
+            company.id_Filter_Companies === filterCompany.id_Filter_Companies
+        ),
+        1
+      );
+      eventBus.refetchMedia({ filterCompanies: null });
     },
 
     async onRescan() {

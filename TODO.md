@@ -6,12 +6,13 @@
 
 ### Bugs
 
+- [ ] fetch filter first after delete
 - [ ] now that we refetch filters, investigate the num-movies values for the filters
   - thoroughly test filters
 
 ### Other
 
-- nothing
+- [ ] click a filter item where all other items are true: set all items false but the clicked one
 
 ## LATER
 
