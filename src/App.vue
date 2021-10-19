@@ -1793,7 +1793,8 @@
                       <span class="mk-filter-icon-container">
                         <v-icon
                           v-show="
-                            $shared.loadingFilter !== 'filterIMDBFilmingLocations'
+                            $shared.loadingFilter !==
+                            'filterIMDBFilmingLocations'
                           "
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
@@ -1803,7 +1804,8 @@
                         <v-progress-circular
                           class="mk-filter-spinner"
                           v-show="
-                            $shared.loadingFilter === 'filterIMDBFilmingLocations'
+                            $shared.loadingFilter ===
+                            'filterIMDBFilmingLocations'
                           "
                           v-bind:size="16"
                           v-bind:width="3"

@@ -8,14 +8,10 @@
 
 - [ ] now that we refetch filters, investigate the num-movies values for the filters
   - thoroughly test filters
-- [ ] deactivate and "load animate" only the filter that is currently loading
-  - [ ] fetch the filter that has been modified first (added items, removed items)
-  - [ ] kill previously started fetching of filters (else we clash)
-- [ ] Search Data Dialog: SQL Injection possible
 
 ### Other
 
-- [ ] Search Data Dialog: use "*" as placeholder
+- nothing
 
 ## LATER
 

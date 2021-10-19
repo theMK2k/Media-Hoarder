@@ -14,7 +14,7 @@
         <v-row>
           <v-text-field
             :append-icon-cb="() => {}"
-            v-bind:placeholder="$t(`Search___ (use '%' to list all)`)"
+            v-bind:placeholder="$t(`Search___ (use '*' to list all)`)"
             single-line
             append-icon="mdi-magnify"
             color="white"
@@ -31,6 +31,7 @@
         <v-checkbox
           v-model="sortByNumMovies"
           v-bind:label="$t('Sort by number of movies')"
+          v-on:change="sortItems(items)"
           style="margin: 0px; margin-top: 12px"
           color="mk-dark-grey"
         ></v-checkbox>
@@ -61,8 +62,9 @@
 // import * as _ from "lodash";
 
 import * as store from "@/store";
-// import * as helpers from "@/helpers/helpers";
+import * as helpers from "@/helpers/helpers";
 const logger = require("loglevel");
+const sqlString = require("sqlstring-sqlite");
 
 import { eventBus } from "@/main";
 
@@ -76,12 +78,6 @@ export default {
       sortByNumMovies: false,
       isLoading: false,
     };
-  },
-
-  watch: {
-    sortByNumMovies: function () {
-      this.runSearch();
-    },
   },
 
   methods: {
@@ -104,6 +100,12 @@ export default {
         return;
       }
 
+      let searchText = this.searchText;
+
+      searchText = searchText.replace(/\*/g, "%");
+      searchText = sqlString.escape(searchText);
+      searchText = searchText.substring(1, searchText.length - 1); // remove start and trailing "'"
+
       this.isLoading = true;
 
       let sql = "";
@@ -122,7 +124,7 @@ export default {
                 				AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
 								)) AS NumMovies
 					FROM tbl_Movies_IMDB_Companies MC
-					WHERE Company_Name LIKE '${this.searchText}%'
+					WHERE Company_Name LIKE '%${searchText}%'
           GROUP BY Company_Name
           ${
             this.sortByNumMovies
@@ -147,7 +149,7 @@ export default {
                 				AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
 								)) AS NumMovies
 					FROM tbl_Movies_IMDB_Credits MC
-					WHERE Person_Name LIKE '%${this.searchText}%'
+					WHERE Person_Name LIKE '%${searchText}%'
           GROUP BY IMDB_Person_ID
           ${
             this.sortByNumMovies
@@ -171,7 +173,7 @@ export default {
                				AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
               ) AS NumMovies
           FROM tbl_IMDB_Plot_Keywords PK
-          WHERE PK.Keyword LIKE '%${this.searchText}%'
+          WHERE PK.Keyword LIKE '%${searchText}%'
           ${
             this.sortByNumMovies
               ? "ORDER BY NumMovies DESC"
@@ -194,7 +196,7 @@ export default {
              				AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
             ) AS NumMovies
           FROM tbl_IMDB_Filming_Locations FL
-          WHERE FL.Location LIKE '%${this.searchText}%'
+          WHERE FL.Location LIKE '%${searchText}%'
           ${
             this.sortByNumMovies
               ? "ORDER BY NumMovies DESC"
@@ -205,7 +207,9 @@ export default {
 
       logger.log("search query:", sql);
 
-      this.items = await store.db.fireProcedureReturnAll(sql, []);
+      const items = await store.db.fireProcedureReturnAll(sql, []);
+      this.sortItems(items);
+      this.items = items;
 
       this.isLoading = false;
     },
@@ -239,6 +243,19 @@ export default {
           Location: item.name,
         });
       }
+    },
+
+    sortItems(items) {
+      logger.log("sortItems items:", items);
+      items.sort((a, b) => {
+        const valA = this.sortByNumMovies ? a.NumMovies : a.name.toLowerCase();
+        const valB = this.sortByNumMovies ? b.NumMovies : b.name.toLowerCase();
+
+        const reverse = this.sortByNumMovies;
+
+        return helpers.compare(valA, valB, reverse);
+      });
+      logger.log("sortItems items (sorted):", items);
     },
   },
 

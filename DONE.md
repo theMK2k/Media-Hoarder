@@ -8,6 +8,11 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] Search Data Dialog: do in-client sort by numMovies
+- [x] Search Data Dialog: use "*" as placeholder
+- [x] "load animate" only the filter that is currently loading
+  - [x] fetch the filter that has been modified first (added items, removed items)
+  - [x] kill previously started fetching of filters (else we clash)
 - [x] reload filters after saving user edited entry
 - [x] LinkIMDBDialog: use Find and merge with AdvancedTitleSearch
 - [x] implement <https://github.com/mawie81/electron-window-state>

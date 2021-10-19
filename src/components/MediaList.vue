@@ -2057,16 +2057,18 @@ export default {
 
       // put any filter in setFilter on top of the list
       if (setFilter) {
-        Object.keys(setFilter).forEach(filtername => {
-          const index = filterGroups.findIndex((item) => item.name === filtername);
+        Object.keys(setFilter).forEach((filtername) => {
+          const index = filterGroups.findIndex(
+            (item) => item.name === filtername
+          );
 
           const item = filterGroups[index];
 
           filterGroups = [item, ...filterGroups.splice(index, 1)];
-        })
+        });
       }
 
-      logger.log('fetchFilters filterGroups:', filterGroups);
+      logger.log("fetchFilters filterGroups:", filterGroups);
 
       for (let i = 0; i < filterGroups.length; i++) {
         if (currentFetchFiltersIteration !== this.fetchFiltersIteration) {
@@ -2075,8 +2077,7 @@ export default {
 
         const filter = filterGroups[i];
 
-        this.$shared.loadingFilterProgress =
-          100 * (i / filterGroups.length);
+        this.$shared.loadingFilterProgress = 100 * (i / filterGroups.length);
 
         switch (filter.name) {
           case "filterSettings":
