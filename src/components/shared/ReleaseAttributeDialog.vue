@@ -70,6 +70,8 @@
 </template>
 
 <script>
+const sqlString = require("sqlstring-sqlite");
+
 import * as store from "@/store";
 // import * as helpers from "@/helpers/helpers";
 // const logger = require("loglevel");
@@ -120,11 +122,16 @@ export default {
                 WHERE
                     (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
                     AND MRA.deleted = 0
-                    AND MRA.Release_Attributes_searchTerm IN (${ra.searchTerms
-                      .map((param) => param.replace(/'/g, "''"))
-                      .reduce((prev, current) => {
-                        return prev + (prev ? ", " : "") + `'${current}'`;
-                      }, "")}))`
+                    AND MRA.Release_Attributes_searchTerm IN (${ra.searchTerms.reduce(
+                      (prev, current) => {
+                        return (
+                          prev +
+                          (prev ? ", " : "") +
+                          `${sqlString.escape(current)}`
+                        );
+                      },
+                      ""
+                    )}))`
       );
     },
 
