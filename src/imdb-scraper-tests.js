@@ -70,7 +70,7 @@ async function testIMDBmainPageData() {
       $IMDB_posterLarge_URL: "extras/tt4154796_posterLarge.jpg",
       $IMDB_plotSummary:
         "After the devastating events of Avengers: Infinity War (2018), the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe.",
-      $IMDB_Trailer_URL: "/video/imdb/vi2163260441",
+      $IMDB_Trailer_URL: "/video/vi2163260441",
     };
 
     const movie = {
@@ -145,6 +145,12 @@ async function testIMDBmainPageData() {
       testResult,
       "$IMDB_plotSummary"
     );
+    performDefaultCheck(
+      scrapeResult,
+      expected,
+      testResult,
+      "$IMDB_Trailer_URL"
+    );
   } catch (error) {
     testResult.status = status.EXCEPTION;
     testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
@@ -169,7 +175,7 @@ async function testIMDBmainPageData2() {
       $IMDB_posterSmall_URL: "extras/tt0039822_posterSmall.jpg",
       $IMDB_posterLarge_URL: "extras/tt0039822_posterLarge.jpg",
       $IMDB_plotSummary: "1941 in a small town in Nazi occupied France",
-      $IMDB_Trailer_URL: "/video/imdb/vi2163260441",
+      $IMDB_Trailer_URL: null,
     };
 
     const movie = {
@@ -239,6 +245,15 @@ async function testIMDBmainPageData2() {
       testResult,
       "$IMDB_plotSummary",
       null,
+      null,
+      true
+    );
+
+    performDefaultCheck(
+      scrapeResult,
+      expected,
+      testResult,
+      "$IMDB_Trailer_URL",
       null,
       true
     );

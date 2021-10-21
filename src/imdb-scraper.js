@@ -214,7 +214,7 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
     // ## Trailer
     let $IMDB_Trailer_URL = null;
     const rxTrailerUrl =
-      /<a href="(\/video\/imdb\/vi\d*)\?playlistId=tt\d*&ref_=tt_ov_vi"[\s\S][\s\S].*?alt="Trailer"/;
+      /href="(\/video\/vi\d*)\?playlistId=tt\d*&amp;ref_=tt_ov_vi"[\s\S]*?aria-label="Watch {VideoTitle}"/;
     if (rxTrailerUrl.test(html)) {
       $IMDB_Trailer_URL = html.match(rxTrailerUrl)[1];
     }

@@ -2,7 +2,7 @@
 
 ## v1.0.0
 
-- nothing
+- [ ] main page data actually delivers mp4 urls for trailers - utilize the vi0000000000 from our trailer URL
 
 ### Bugs
 
