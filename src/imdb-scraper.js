@@ -47,6 +47,13 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
       html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]
     );
 
+    // V3?
+    // const jsonDataNext = JSON.parse(
+    //   html.match(
+    //     /<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/
+    //   )[1]
+    // );
+
     // ## Release Type
     let $IMDB_releaseType = "movie";
     /*
@@ -213,10 +220,16 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
 
     // ## Trailer
     let $IMDB_Trailer_URL = null;
-    const rxTrailerUrl =
-      /href="(\/video\/vi\d*)\?playlistId=tt\d*&amp;ref_=tt_ov_vi"[\s\S]*?aria-label="Watch {VideoTitle}"/;
-    if (rxTrailerUrl.test(html)) {
-      $IMDB_Trailer_URL = html.match(rxTrailerUrl)[1];
+
+    if (jsonData.trailer && jsonData.trailer.embedUrl) {
+      // V2
+      $IMDB_Trailer_URL = jsonData.trailer.embedUrl;
+    } else {
+      const rxTrailerUrl =
+        /href="(\/video\/vi\d*)\?playlistId=tt\d*&amp;ref_=tt_ov_vi"[\s\S]*?aria-label="Watch {VideoTitle}"/;
+      if (rxTrailerUrl.test(html)) {
+        $IMDB_Trailer_URL = html.match(rxTrailerUrl)[1];
+      }
     }
 
     logger.log("$IMDB_Trailer_URL:", $IMDB_Trailer_URL);
