@@ -1017,7 +1017,7 @@
 
       <v-row style="margin-bottom: 0px">
         <v-spacer></v-spacer>
-        <div v-if="numPages">
+        <div v-if="numPages" style="margin-right: 4px">
           <!-- <v-pagination v-bind:length="numPages" v-model="$shared.currentPage" total-visible="7"></v-pagination> -->
           <mk-pagination
             v-bind:length="numPages"
