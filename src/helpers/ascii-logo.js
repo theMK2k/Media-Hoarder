@@ -26,7 +26,7 @@ D77777777777777777N          7777777777777777777          7777777777777777777
    O77777777777$                 I77777777777N                777777777777      
       7777777                       7777777                     $7777777        
                                                                                 
-Media Hoarder starting up...
+Media Hoarder by MK2k https://media.hoarder.software
 
 `;
 
