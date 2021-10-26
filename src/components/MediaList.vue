@@ -2005,8 +2005,6 @@ export default {
               false
             );
 
-            await this.fetchFilters();
-
             const { lists } = await store.getMovieDetails(
               this.listDialog.movie.id_Movies
             );
@@ -2014,6 +2012,8 @@ export default {
             this.$set(this.listDialog.movie, "lists", lists);
 
             eventBus.showSnackbar("success", this.$t("item added to list"));
+
+            await this.fetchFilters();
           }
 
           // Remove from list

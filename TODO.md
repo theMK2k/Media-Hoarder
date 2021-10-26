@@ -6,7 +6,6 @@
 
 ### Bugs
 
-- [ ] check NumMovies in Filters (e.g. "Director's Cut" only has 3 entries)
 - [ ] now that we refetch filters, investigate the num-movies values for the filters
   - thoroughly test filters
 - [ ] Settings -> Scraper Test: Failed Test with warning
