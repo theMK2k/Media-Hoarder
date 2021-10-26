@@ -13,10 +13,13 @@ const fs = require("fs");
 
 import * as _ from "lodash";
 const windowStateKeeper = require("./helpers/electron-window-state");
+import { ElectronBlocker } from "@cliqz/adblocker-electron";
 
 import * as helpers from "./helpers/helpers";
 
-import { ElectronBlocker } from "@cliqz/adblocker-electron";
+import { asciiLogo } from "./helpers/ascii-logo";
+
+console.log(asciiLogo);
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 

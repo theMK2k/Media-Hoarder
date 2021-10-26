@@ -2343,12 +2343,13 @@ import * as _ from "lodash";
 const remote = require("electron").remote;
 const logger = require("loglevel");
 const moment = require("moment");
+import draggable from "vuedraggable";
 
 import * as store from "@/store";
 import { shared } from "@/shared";
 import { eventBus } from "@/main";
 import * as helpers from "@/helpers/helpers";
-import draggable from "vuedraggable";
+import { asciiLogo } from "@/helpers/ascii-logo";
 
 import Dialog from "@/components/shared/Dialog.vue";
 import SearchDataDialog from "@/components/shared/SearchDataDialog.vue";
@@ -3777,6 +3778,8 @@ export default {
 
   // ### LifeCycleHooks ###
   created() {
+    logger.info(asciiLogo);
+    
     logger.log("this.$vuetify.theme:", this.$vuetify.theme);
 
     document.onkeydown = this.onKeyDown;

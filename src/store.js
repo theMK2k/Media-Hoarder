@@ -6779,11 +6779,12 @@ async function fetchFilterReleaseAttributes($MediaType) {
       LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
       WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
       AND MRA.deleted = 0
-      AND MRA.Release_Attributes_searchTerm IN (${ra.searchTerms
-        .map((param) => param.replace(/'/g, "''"))
-        .reduce((prev, current) => {
+      AND MRA.Release_Attributes_searchTerm IN (${ra.searchTerms.reduce(
+        (prev, current) => {
           return prev + (prev ? ", " : "") + `${sqlString.escape(current)}`;
-        }, "")})
+        },
+        ""
+      )})
           ${additionalFilterQuery}        
     )
 `;
