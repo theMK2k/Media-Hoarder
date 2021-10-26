@@ -1777,6 +1777,8 @@ export default {
             }
           });
         }
+
+        this.fetchFilters();
       })();
     },
 

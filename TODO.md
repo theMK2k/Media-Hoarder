@@ -6,9 +6,7 @@
 
 ### Bugs
 
-- [ ] thoroughly test filters
 - [ ] Settings -> Scraper Test: Failed Test with warning
-- [ ] 
 
 ### Other
 
