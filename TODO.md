@@ -6,9 +6,9 @@
 
 ### Bugs
 
-- [ ] now that we refetch filters, investigate the num-movies values for the filters
-  - thoroughly test filters
+- [ ] thoroughly test filters
 - [ ] Settings -> Scraper Test: Failed Test with warning
+- [ ] 
 
 ### Other
 

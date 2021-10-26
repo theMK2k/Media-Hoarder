@@ -3441,8 +3441,8 @@ export default {
             []
           );
 
-          eventBus.refetchFilters({ filterLists: null });
-          eventBus.refetchMedia(this.$shared.currentPage);
+          // eventBus.refetchFilters({ filterLists: null });
+          eventBus.refetchMedia(this.$shared.currentPage, null, { filterLists: null });
 
           eventBus.showSnackbar(
             "success",
