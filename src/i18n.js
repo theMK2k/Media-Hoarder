@@ -47,9 +47,13 @@ function loadLocaleMessages() {
         `loadLocaleMessages using messages for ${locale} from ${extraLocalesFile} in i18n directory`
       );
 
-      extraLocales[locale] = JSON.parse(
-        fs.readFileSync(path.join(extraLocalesPath, extraLocalesFile))
-      );
+      try {
+        extraLocales[locale] = JSON.parse(
+          fs.readFileSync(path.join(extraLocalesPath, extraLocalesFile))
+        );
+      } catch (err) {
+        logger.error(`ERROR while opening '${extraLocalesFile}:`, err);
+      }
     });
 
     Object.keys(extraLocales).forEach((key) => {
