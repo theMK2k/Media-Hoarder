@@ -31,7 +31,7 @@
                 <v-select
                   solo
                   v-bind:items="lists"
-                  v-bind:item-text="$t('Name')"
+                  item-text="Name"
                   item-value="id_Lists"
                   v-bind:disabled="chosenMethod != 'useExistingLists'"
                   v-model="chosen_id_Lists"
