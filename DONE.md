@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] Fix: Crash/White Screen on startup when malformed i18n file is present
 - [x] "Add to list" takes considerable time to finally show the list entry in the movie's entry
 - [x] App: filter item isolation (click a filter item where all other items are true: set all items false but the clicked one)
 - [x] Search Data Dialog: do in-client sort by numMovies
