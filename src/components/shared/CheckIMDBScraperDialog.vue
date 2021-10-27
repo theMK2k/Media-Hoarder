@@ -38,11 +38,12 @@
         >
           <v-btn
             class="ma-2"
+            v-bind:ripple="false"
             text
             v-bind:loading="check.isRunning"
             icon
             v-bind:color="check.color || 'blue lighten-2'"
-            style="margin: 4px 8px 4px 8px !important"
+            style="margin: 4px 8px 4px 8px !important; cursor: default"
           >
             <v-icon>{{ check.icon }}</v-icon>
           </v-btn>
