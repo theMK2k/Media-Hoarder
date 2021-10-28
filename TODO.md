@@ -2,7 +2,7 @@
 
 ## v1.0.0
 
-- nothing
+- layout the app with css grid (see: https://layout.bradwoods.io/customize)
 
 ### Bugs
 
