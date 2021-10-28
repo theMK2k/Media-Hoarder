@@ -6,11 +6,21 @@
 
 ### Bugs
 
-- [ ] Settings -> Scraper Test: Failed Test with warning
+- nothing
 
 ### Other
 
 - nothing
+
+### FR Translation v0.1
+
+- `"Audio Languages": "Langues"`: *is there a possibility to explicitly distinguish between Audio and Subtitle Languages?*
+- `"Find Filming Location": "Rechercher par Société de Production ",`: *incorrect translation*
+- `"Mediainfo CLI Path": "Chemin d'accès à l'ILC Mediainfo",`: *"ILC" instead of "CLI", really?* (multiple apply)
+- `"IMDB Rating Demographic": "Evaluations d'IMDB par tranche d'âge",`: *Demographic is not only specified by age (e.g. US/Non-US, Male/Female)*
+- Tu/Toi vs. Vous/Votre: *we are not a banking app, so let's drop the formal "vous" and use informal "tu"* (multiple apply)
+
+(last line: 105) 
 
 ## LATER
 
