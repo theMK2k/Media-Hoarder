@@ -2,7 +2,9 @@
 
 ## v1.0.0
 
-- layout the app with css grid (see: https://layout.bradwoods.io/customize)
+- layout the app with css grid
+  - https://layout.bradwoods.io/customize
+  - https://vuejsexamples.com/a-simple-and-responsive-example-of-css-grid-with-vuejs-and-last-fm-apis/
 
 ### Bugs
 
