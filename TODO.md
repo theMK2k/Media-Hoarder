@@ -10,7 +10,7 @@
 
 ### Other
 
-- [ ] investigate "long click" checkbox inversion
+- nothing
 
 ### FR Translation v0.1
 

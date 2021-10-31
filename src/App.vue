@@ -218,8 +218,9 @@
                         ')'
                       "
                       v-model="sourcePath.Selected"
-                      v-on:click.native="
-                        filtersChanged(
+                      v-on:mouseup="filterCheckboxMouseup"
+                      v-on:mousedown="
+                        filterCheckboxMousedown(
                           $shared.filters.filterSourcePaths,
                           sourcePath,
                           setAllSourcePaths
@@ -308,8 +309,9 @@
                         )
                       "
                       v-model="quality.Selected"
-                      v-on:click.native="
-                        filtersChanged(
+                      v-on:mouseup="filterCheckboxMouseup"
+                      v-on:mousedown="
+                        filterCheckboxMousedown(
                           $shared.filters.filterQualities,
                           quality,
                           setAllQualities
@@ -406,8 +408,9 @@
                         ')'
                       "
                       v-model="audioLanguage.Selected"
-                      v-on:click.native="
-                        filtersChanged(
+                      v-on:mouseup="filterCheckboxMouseup"
+                      v-on:mousedown="
+                        filterCheckboxMousedown(
                           $shared.filters.filterAudioLanguages,
                           audioLanguage,
                           setAllAudioLanguages
@@ -504,8 +507,9 @@
                         ')'
                       "
                       v-model="subtitleLanguage.Selected"
-                      v-on:click.native="
-                        filtersChanged(
+                      v-on:mouseup="filterCheckboxMouseup"
+                      v-on:mousedown="
+                        filterCheckboxMousedown(
                           $shared.filters.filterSubtitleLanguages,
                           subtitleLanguage,
                           setAllSubtitleLanguages
@@ -621,8 +625,9 @@
                         ')'
                       "
                       v-model="filterReleaseAttribute.Selected"
-                      v-on:click.native="
-                        filtersChanged(
+                      v-on:mouseup="filterCheckboxMouseup"
+                      v-on:mousedown="
+                        filterCheckboxMousedown(
                           $shared.filters.filterReleaseAttributes,
                           filterReleaseAttribute,
                           setAllReleaseAttributes
@@ -708,8 +713,9 @@
                       <v-checkbox
                         v-bind:label="list.Name + ' (' + list.NumMovies + ')'"
                         v-model="list.Selected"
-                        v-on:click.native="
-                          filtersChanged(
+                        v-on:mouseup="filterCheckboxMouseup"
+                        v-on:mousedown="
+                          filterCheckboxMousedown(
                             $shared.filters.filterLists,
                             list,
                             setAllLists
@@ -813,8 +819,9 @@
                         getFilterRatingLabel(rating.Rating, rating.NumMovies)
                       "
                       v-model="rating.Selected"
-                      v-on:click.native="
-                        filtersChanged(
+                      v-on:mouseup="filterCheckboxMouseup"
+                      v-on:mousedown="
+                        filterCheckboxMousedown(
                           $shared.filters.filterRatings,
                           rating,
                           setAllRatings
@@ -1107,8 +1114,9 @@
                       v-bind:key="genre.id_Genres"
                       v-bind:label="genre.Name + ' (' + genre.NumMovies + ')'"
                       v-model="genre.Selected"
-                      v-on:click.native="
-                        filtersChanged(
+                      v-on:mouseup="filterCheckboxMouseup"
+                      v-on:mousedown="
+                        filterCheckboxMousedown(
                           $shared.filters.filterGenres,
                           genre,
                           setAllGenres
@@ -1199,8 +1207,9 @@
                         ')'
                       "
                       v-model="ageRating.Selected"
-                      v-on:click.native="
-                        filtersChanged(
+                      v-on:mouseup="filterCheckboxMouseup"
+                      v-on:mousedown="
+                        filterCheckboxMousedown(
                           $shared.filters.filterAgeRatings,
                           ageRating,
                           setAllAgeRatings
@@ -1330,8 +1339,9 @@
                                 ')'
                               "
                               v-model="paItem.Selected"
-                              v-on:click.native="
-                                filtersChanged(
+                              v-on:mouseup="filterCheckboxMouseup"
+                              v-on:mousedown="
+                                filterCheckboxMousedown(
                                   $shared.filters.filterParentalAdvisory[
                                     category.Name
                                   ],
@@ -1445,8 +1455,13 @@
                           person.Person_Name + ' (' + person.NumMovies + ')'
                         "
                         v-model="person.Selected"
-                        v-on:click.native="
-                          filtersChanged(filterPersons, person, setAllPersons)
+                        v-on:mouseup="filterCheckboxMouseup"
+                        v-on:mousedown="
+                          filterCheckboxMousedown(
+                            filterPersons,
+                            person,
+                            setAllPersons
+                          )
                         "
                         style="margin: 0px"
                         color="mk-dark-grey"
@@ -1569,8 +1584,9 @@
                           company.Company_Name + ' (' + company.NumMovies + ')'
                         "
                         v-model="company.Selected"
-                        v-on:click.native="
-                          filtersChanged(
+                        v-on:mouseup="filterCheckboxMouseup"
+                        v-on:mousedown="
+                          filterCheckboxMousedown(
                             filterCompanies,
                             company,
                             setAllCompanies
@@ -1704,8 +1720,9 @@
                         getFilterYearLabel(year.startYear, year.NumMovies)
                       "
                       v-model="year.Selected"
-                      v-on:click.native="
-                        filtersChanged(
+                      v-on:mouseup="filterCheckboxMouseup"
+                      v-on:mousedown="
+                        filterCheckboxMousedown(
                           $shared.filters.filterYears,
                           year,
                           setAllYears
@@ -1824,8 +1841,9 @@
                           ')'
                         "
                         v-model="plotKeyword.Selected"
-                        v-on:click.native="
-                          filtersChanged(
+                        v-on:mouseup="filterCheckboxMouseup"
+                        v-on:mousedown="
+                          filterCheckboxMousedown(
                             filterIMDBPlotKeywords,
                             plotKeyword,
                             setAllIMDBPlotKeywords
@@ -1972,8 +1990,9 @@
                           ')'
                         "
                         v-model="filmingLocation.Selected"
-                        v-on:click.native="
-                          filtersChanged(
+                        v-on:mouseup="filterCheckboxMouseup"
+                        v-on:mousedown="
+                          filterCheckboxMousedown(
                             filterIMDBFilmingLocations,
                             filmingLocation,
                             setAllIMDBFilmingLocations
@@ -2103,8 +2122,9 @@
                           ')'
                         "
                         v-model="dataQuality.Selected"
-                        v-on:click.native="
-                          filtersChanged(
+                        v-on:mouseup="filterCheckboxMouseup"
+                        v-on:mousedown="
+                          filterCheckboxMousedown(
                             $shared.filters.filterDataQuality,
                             dataQuality,
                             setAllDataQuality
@@ -2378,6 +2398,7 @@ export default {
     showLoadingOverlay: false,
     showSidebarLoadingOverlay: false,
     filterHeaderHovered: false,
+    isolateFilterItemTimeout: null,
     editFilters: {
       isEditFilters: false,
       oldFilterGroups: null,
@@ -3113,26 +3134,41 @@ export default {
       eventBus.refetchMedia(setPage);
     },
 
-    filtersChanged: function (filterCollection, filterItem, setAllFunction) {
-      if (
-        filterCollection &&
-        filterItem &&
-        setAllFunction &&
-        filterCollection.length > 1 &&
-        !filterItem.Selected
-      ) {
-        if (
-          !filterCollection.find(
-            (item) => item !== filterItem && !item.Selected
-          )
-        ) {
-          // all items were selected, deselect them and keep the clicked one
-          setAllFunction(false);
-          filterItem.Selected = true;
-        }
-      }
+    filterCheckboxMousedown: function (
+      filterCollection,
+      filterItem,
+      setAllFunction
+    ) {
+      logger.log("filterCheckboxMousedown START");
 
-      logger.log("filters changed this.$shared:", this.$shared);
+      this.isolateFilterItemTimeout = setTimeout(() => {
+        if (
+          filterCollection &&
+          filterItem &&
+          setAllFunction &&
+          filterCollection.length > 1
+        ) {
+          setAllFunction(false);
+          // filterItem.Selected = true;
+        }
+
+        this.filtersChanged();
+      }, 1000);
+    },
+
+    filterCheckboxMouseup: function () {
+      logger.log("filterCheckboxMouseup START");
+
+      if (this.isolateFilterItemTimeout) {
+        // mouse button released earlier than the timeout
+        clearTimeout(this.isolateFilterItemTimeout); // cancel the timeout
+        this.isolateFilterItemTimeout = null;
+      }
+      this.filtersChanged();
+    },
+
+    filtersChanged: function () {
+      logger.log("filtersChanged START this.$shared:", this.$shared);
       this.debouncedEventBusRefetchMedia();
     },
 
@@ -3442,7 +3478,9 @@ export default {
           );
 
           // eventBus.refetchFilters({ filterLists: null });
-          eventBus.refetchMedia(this.$shared.currentPage, null, { filterLists: null });
+          eventBus.refetchMedia(this.$shared.currentPage, null, {
+            filterLists: null,
+          });
 
           eventBus.showSnackbar(
             "success",
@@ -3779,7 +3817,7 @@ export default {
   // ### LifeCycleHooks ###
   created() {
     logger.info(asciiLogo);
-    
+
     logger.log("this.$vuetify.theme:", this.$vuetify.theme);
 
     document.onkeydown = this.onKeyDown;
