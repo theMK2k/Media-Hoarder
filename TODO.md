@@ -2,15 +2,27 @@
 
 ## v1.0.0
 
-- nothing
+- layout the app with css grid (see: https://layout.bradwoods.io/customize)
 
 ### Bugs
 
-- [ ] Settings -> Scraper Test: Failed Test with warning
+- nothing
 
 ### Other
 
-- nothing
+- [ ] investigate "long click" checkbox inversion
+
+### FR Translation v0.1
+
+- `"Audio Languages": "Langues"`: *is there a possibility to explicitly distinguish between Audio and Subtitle Languages?*
+- `"Find Filming Location": "Rechercher par Société de Production ",`: *incorrect translation*
+- `"Mediainfo CLI Path": "Chemin d'accès à Mediainfo CLI",`: *"ILC" instead of "CLI", really?* (multiple apply)
+- `"IMDB Rating Demographic": "Evaluations d'IMDB par tranche d'âge",`: *Demographic is not only specified by age (e.g. US/Non-US, Male/Female)*
+- [x] Tu/Toi vs. Vous/Votre: *we are not a banking app, so let's drop the formal "vous" and use informal "tu"* (multiple apply)
+
+- scrape = ?
+
+(last line: 105) 
 
 ## LATER
 
