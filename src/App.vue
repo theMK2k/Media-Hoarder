@@ -4222,4 +4222,10 @@ code {
   background-color: rgba(0, 0, 0, 0) !important;
   color: rgba(255, 255, 255, 0.7) !important;
 }
+
+/* ### vue-word-highlighter overrides ### */
+mark {
+  background-color: rgba(0, 0, 0, 0);
+  color: #ffc107;
+}
 </style>

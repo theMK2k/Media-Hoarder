@@ -2,9 +2,9 @@
 
 ## v1.0.0
 
-- handle helpers.isPortable via env-var (get rid of set-portable.js)
-- update ETA in scan message every second
-- layout the app with css grid (see: https://layout.bradwoods.io/customize)
+- [ ] handle helpers.isPortable via env-var (get rid of set-portable.js)
+- [ ] update ETA in scan message every second
+- [ ] layout the app with css grid (see: <https://layout.bradwoods.io/customize>)
 
 ### Bugs
 
