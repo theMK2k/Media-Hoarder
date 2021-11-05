@@ -8,6 +8,8 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] add IMDB ID to MediaList
+- [x] Highlight search results (Name, Name2, IMDB_plotSummary, fullPath, IMDB_tconst)
 - [x] "long click" checkbox filter isolation
 - [x] Fix: Crash/White Screen on startup when malformed i18n file is present
 - [x] "Add to list" takes considerable time to finally show the list entry in the movie's entry

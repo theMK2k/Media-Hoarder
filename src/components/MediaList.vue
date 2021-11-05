@@ -182,10 +182,15 @@
                           <div
                             style="overflow: hidden; text-overflow: ellipsis"
                           >
-                            {{ item.Name }} {{ item.yearDisplay }}
-                            <span v-show="item.NumExtras"
-                              >+{{ item.NumExtras }}</span
+                            <word-highlighter
+                              v-bind:query="$shared.searchText || ''"
                             >
+                              {{ item.Name }}
+                              {{ item.yearDisplay }}
+                              <span v-show="item.NumExtras"
+                                >+{{ item.NumExtras }}</span
+                              >
+                            </word-highlighter>
                           </div>
 
                           <div>
@@ -261,7 +266,11 @@
                         v-on:mouseleave="setItemHovered(item, 'name2', false)"
                       >
                         <!-- v-if="item.Name2 || item.selected" -->
-                        {{ item.Name2 }}
+                        <word-highlighter
+                          v-bind:query="$shared.searchText || ''"
+                        >
+                          {{ item.Name2 }}
+                        </word-highlighter>
                       </v-list-item-subtitle>
 
                       <div style="font-size: 0.875rem; font-weight: normal">
@@ -418,6 +427,7 @@
                             v-bind:clearable="true"
                             v-bind:show-rating="false"
                             inactive-color="grey"
+                            active-color="#ffc107"
                             style="margin-right: 26px; padding: 0px !important"
                             v-bind:star-points="[
                               7, 3, 6, 6, 2, 6, 5, 8, 4, 12, 7, 10, 10, 12, 9,
@@ -439,7 +449,9 @@
                       v-show="!item.selected"
                       style="font-size: 0.875rem; font-weight: normal"
                     >
-                      {{ item.plotSummary }}
+                      <word-highlighter v-bind:query="$shared.searchText || ''">
+                        {{ item.plotSummary }}
+                      </word-highlighter>
                     </div>
                     <div
                       v-show="item.selected"
@@ -595,7 +607,11 @@
                 <v-col class="detailLabel"
                   ><strong>{{ $t("Full Path") }}:</strong></v-col
                 >
-                <v-col class="detailContent">{{ item.fullPath }}</v-col>
+                <v-col class="detailContent">
+                  <word-highlighter v-bind:query="$shared.searchText || ''">
+                    {{ item.fullPath }}</word-highlighter
+                  ></v-col
+                >
               </v-row>
               <v-row class="mk-detail-row">
                 <v-col class="detailLabel"
@@ -642,7 +658,16 @@
                     .format("YYYY-MM-DD HH:mm:ss")
                 }}</v-col>
               </v-row>
-
+              <v-row class="mk-detail-row">
+                <v-col class="detailLabel"
+                  ><strong>{{ $t("IMDB ID") }}:</strong></v-col
+                >
+                <v-col class="detailContent">
+                  <word-highlighter v-bind:query="$shared.searchText || ''">
+                    {{ item.IMDB_tconst || notAvailableText }}
+                  </word-highlighter>
+                </v-col>
+              </v-row>
               <v-row class="mk-detail-row">
                 <v-col class="detailLabel"
                   ><strong>{{ $t("In Lists") }}:</strong></v-col
@@ -1162,6 +1187,7 @@ import * as Humanize from "humanize-plus";
 import * as store from "@/store";
 import { eventBus } from "@/main";
 import { scrapeIMDBTrailerMediaURLs } from "@/imdb-scraper";
+import WordHighlighter from "vue-word-highlighter";
 import EditMediaItemDialog from "@/components/shared/EditMediaItemDialog.vue";
 import ListDialog from "@/components/shared/ListDialog.vue";
 import PersonDialog from "@/components/shared/PersonDialog.vue";
@@ -1190,6 +1216,7 @@ const logger = require("loglevel");
 export default {
   components: {
     "star-rating": StarRating,
+    "word-highlighter": WordHighlighter,
     "mk-list-dialog": ListDialog,
     "mk-person-dialog": PersonDialog,
     "mk-company-dialog": CompanyDialog,
@@ -1375,6 +1402,11 @@ export default {
   props: ["mediatype"],
 
   computed: {
+    notAvailableText() {
+      // we can't use "<" or ">" in template without irritating the formatter/linter
+      return this.$t("<not available>");
+    },
+
     isScanning() {
       return this.$shared.isScanning;
     },
@@ -1784,7 +1816,6 @@ export default {
 
     selectItem(movie) {
       logger.log("movie selected:", movie);
-
       (async () => {
         if (movie.selected) {
           movie.selected = false;
@@ -1987,7 +2018,6 @@ export default {
       this.listDialog.show = false;
 
       logger.log("onListDialogOK data:", data);
-
       (async () => {
         try {
           if (!data.chosen_id_Lists && !data.newListName) {
@@ -2736,7 +2766,9 @@ export default {
           "success",
           this.$t(
             "Release Attribute _{ReleaseAttribute}_ successfully removed from selected movie_",
-            { ReleaseAttribute: this.releaseAttributeDialog.ReleaseAttribute }
+            {
+              ReleaseAttribute: this.releaseAttributeDialog.ReleaseAttribute,
+            }
           )
         );
       } catch (error) {
@@ -2856,7 +2888,6 @@ export default {
         }
       }
     );
-
     (async () => {
       eventBus.refetchMedia();
 
@@ -2898,7 +2929,7 @@ export default {
   background-color: red;
 }
 .MetaCriticYellow {
-  background-color: rgb(255, 204, 51);
+  background-color: #ffc107;
 }
 .MetaCriticGreen {
   background-color: green;
