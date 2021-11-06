@@ -1,7 +1,7 @@
-const logger = require("loglevel");
 const cheerio = require("cheerio");
 const htmlToText = require("html-to-text");
 
+const logger = require("./helpers/logger");
 const helpers = require("./helpers/helpers");
 
 function uppercaseEachWord(input) {

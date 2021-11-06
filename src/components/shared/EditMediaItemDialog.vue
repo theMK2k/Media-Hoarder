@@ -224,7 +224,7 @@
 </template>
 
 <script>
-const logger = require("loglevel");
+const logger = require("../../helpers/logger");
 import * as _ from "lodash";
 
 import * as helpers from "@/helpers/helpers";

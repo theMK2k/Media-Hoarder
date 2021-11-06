@@ -1211,7 +1211,7 @@ const moment = require("moment");
 
 import * as helpers from "@/helpers/helpers";
 
-const logger = require("loglevel");
+const logger = require("../helpers/logger");
 
 export default {
   components: {
@@ -2084,187 +2084,197 @@ export default {
      *                 key has values: the filter items will be enabled
      */
     async fetchFilters(setFilter) {
-      // eventBus.showSidebarLoadingOverlay(true);
+      logger.groupCollapsed("[Fetch Filters]");
 
-      const currentFetchFiltersIteration = ++this.fetchFiltersIteration;
+      try {
+        // eventBus.showSidebarLoadingOverlay(true);
 
-      this.$shared.isLoadingFilter = true;
+        const currentFetchFiltersIteration = ++this.fetchFiltersIteration;
 
-      let filterGroups = JSON.parse(JSON.stringify(this.$shared.filterGroups));
+        this.$shared.isLoadingFilter = true;
 
-      // put any filter in setFilter on top of the list
-      if (setFilter) {
-        Object.keys(setFilter).forEach((filtername) => {
-          const index = filterGroups.findIndex(
-            (item) => item.name === filtername
-          );
+        let filterGroups = JSON.parse(
+          JSON.stringify(this.$shared.filterGroups)
+        );
 
-          const item = filterGroups[index];
+        // put any filter in setFilter on top of the list
+        if (setFilter) {
+          Object.keys(setFilter).forEach((filtername) => {
+            const index = filterGroups.findIndex(
+              (item) => item.name === filtername
+            );
 
-          filterGroups = [item, ...filterGroups.splice(index, 1)];
-        });
-      }
+            const item = filterGroups[index];
 
-      logger.log("fetchFilters filterGroups:", filterGroups);
+            filterGroups = [item, ...filterGroups.splice(index, 1)];
+          });
+        }
 
-      for (let i = 0; i < filterGroups.length; i++) {
+        logger.log("fetchFilters filterGroups:", filterGroups);
+
+        for (let i = 0; i < filterGroups.length; i++) {
+          if (currentFetchFiltersIteration !== this.fetchFiltersIteration) {
+            break;
+          }
+
+          const filter = filterGroups[i];
+
+          this.$shared.loadingFilterProgress = 100 * (i / filterGroups.length);
+
+          switch (filter.name) {
+            case "filterSettings":
+              await store.fetchFilterSettings(
+                this.mediatype,
+                this.loadFilterValuesFromStorage
+              );
+              break;
+            case "filterSourcePaths":
+              await store.fetchFilterSourcePaths(
+                this.mediatype,
+                this.loadFilterValuesFromStorage
+              );
+              break;
+            case "filterGenres":
+              await store.fetchFilterGenres(
+                this.mediatype,
+                this.$local_t,
+                this.loadFilterValuesFromStorage
+              );
+              break;
+            case "filterAgeRatings":
+              await store.fetchFilterAgeRatings(
+                this.mediatype,
+                this.loadFilterValuesFromStorage
+              );
+              break;
+            case "filterRatings":
+              await store.fetchFilterRatings(
+                this.mediatype,
+                this.loadFilterValuesFromStorage
+              );
+              break;
+            case "filterLists":
+              await store.fetchFilterLists(
+                this.mediatype,
+                this.$local_t,
+                this.loadFilterValuesFromStorage
+              );
+              break;
+            case "filterParentalAdvisory":
+              await store.fetchFilterParentalAdvisory(
+                this.mediatype,
+                this.loadFilterValuesFromStorage
+              );
+              break;
+            case "filterPersons":
+              await store.fetchFilterPersons(
+                this.mediatype,
+                this.$local_t,
+                this.loadFilterValuesFromStorage
+              );
+              break;
+            case "filterCompanies":
+              await store.fetchFilterCompanies(
+                this.mediatype,
+                this.$local_t,
+                this.loadFilterValuesFromStorage
+              );
+              break;
+            case "filterIMDBPlotKeywords":
+              await store.fetchFilterIMDBPlotKeywords(
+                this.mediatype,
+                this.$local_t,
+                this.loadFilterValuesFromStorage
+              );
+              break;
+            case "filterIMDBFilmingLocations":
+              await store.fetchFilterIMDBFilmingLocations(
+                this.mediatype,
+                this.$local_t,
+                this.loadFilterValuesFromStorage
+              );
+              break;
+            case "filterYears":
+              // await store.fetchFilterReleaseYears(this.mediatype, this.loadFilterValuesFromStorage);
+              await store.fetchFilterYears(
+                this.mediatype,
+                this.loadFilterValuesFromStorage
+              );
+              break;
+            case "filterQualities":
+              await store.fetchFilterQualities(
+                this.mediatype,
+                this.loadFilterValuesFromStorage
+              );
+              break;
+            case "filterAudioLanguages":
+              await store.fetchFilterLanguages(
+                this.mediatype,
+                "audio",
+                this.$local_t,
+                this.loadFilterValuesFromStorage
+              );
+              break;
+            case "filterSubtitleLanguages":
+              await store.fetchFilterLanguages(
+                this.mediatype,
+                "subtitle",
+                this.$local_t,
+                this.loadFilterValuesFromStorage
+              );
+              break;
+            case "filterIMDBRating":
+              await store.fetchFilterIMDBRating(
+                this.mediatype,
+                this.loadFilterValuesFromStorage
+              );
+              break;
+            case "filterMetacriticScore":
+              await store.fetchFilterMetacriticScore(
+                this.mediatype,
+                this.loadFilterValuesFromStorage
+              );
+              break;
+            case "filterReleaseAttributes":
+              await store.fetchFilterReleaseAttributes(
+                this.mediatype,
+                this.loadFilterValuesFromStorage
+              );
+              break;
+            case "filterDataQuality":
+              await store.fetchFilterDataQuality(
+                this.mediatype,
+                this.loadFilterValuesFromStorage
+              );
+              break;
+            default:
+              throw new Error("Unsupported filter type:", filter.name);
+          }
+        }
+
+        if (setFilter) {
+          eventBus.setFilter(setFilter);
+        }
+
         if (currentFetchFiltersIteration !== this.fetchFiltersIteration) {
-          break;
+          // another fetch has been initiated
+          return;
         }
 
-        const filter = filterGroups[i];
+        this.$shared.loadingFilterProgress = 100;
 
-        this.$shared.loadingFilterProgress = 100 * (i / filterGroups.length);
+        await store.fetchSortValues(this.mediatype);
 
-        switch (filter.name) {
-          case "filterSettings":
-            await store.fetchFilterSettings(
-              this.mediatype,
-              this.loadFilterValuesFromStorage
-            );
-            break;
-          case "filterSourcePaths":
-            await store.fetchFilterSourcePaths(
-              this.mediatype,
-              this.loadFilterValuesFromStorage
-            );
-            break;
-          case "filterGenres":
-            await store.fetchFilterGenres(
-              this.mediatype,
-              this.$local_t,
-              this.loadFilterValuesFromStorage
-            );
-            break;
-          case "filterAgeRatings":
-            await store.fetchFilterAgeRatings(
-              this.mediatype,
-              this.loadFilterValuesFromStorage
-            );
-            break;
-          case "filterRatings":
-            await store.fetchFilterRatings(
-              this.mediatype,
-              this.loadFilterValuesFromStorage
-            );
-            break;
-          case "filterLists":
-            await store.fetchFilterLists(
-              this.mediatype,
-              this.$local_t,
-              this.loadFilterValuesFromStorage
-            );
-            break;
-          case "filterParentalAdvisory":
-            await store.fetchFilterParentalAdvisory(
-              this.mediatype,
-              this.loadFilterValuesFromStorage
-            );
-            break;
-          case "filterPersons":
-            await store.fetchFilterPersons(
-              this.mediatype,
-              this.$local_t,
-              this.loadFilterValuesFromStorage
-            );
-            break;
-          case "filterCompanies":
-            await store.fetchFilterCompanies(
-              this.mediatype,
-              this.$local_t,
-              this.loadFilterValuesFromStorage
-            );
-            break;
-          case "filterIMDBPlotKeywords":
-            await store.fetchFilterIMDBPlotKeywords(
-              this.mediatype,
-              this.$local_t,
-              this.loadFilterValuesFromStorage
-            );
-            break;
-          case "filterIMDBFilmingLocations":
-            await store.fetchFilterIMDBFilmingLocations(
-              this.mediatype,
-              this.$local_t,
-              this.loadFilterValuesFromStorage
-            );
-            break;
-          case "filterYears":
-            // await store.fetchFilterReleaseYears(this.mediatype, this.loadFilterValuesFromStorage);
-            await store.fetchFilterYears(
-              this.mediatype,
-              this.loadFilterValuesFromStorage
-            );
-            break;
-          case "filterQualities":
-            await store.fetchFilterQualities(
-              this.mediatype,
-              this.loadFilterValuesFromStorage
-            );
-            break;
-          case "filterAudioLanguages":
-            await store.fetchFilterLanguages(
-              this.mediatype,
-              "audio",
-              this.$local_t,
-              this.loadFilterValuesFromStorage
-            );
-            break;
-          case "filterSubtitleLanguages":
-            await store.fetchFilterLanguages(
-              this.mediatype,
-              "subtitle",
-              this.$local_t,
-              this.loadFilterValuesFromStorage
-            );
-            break;
-          case "filterIMDBRating":
-            await store.fetchFilterIMDBRating(
-              this.mediatype,
-              this.loadFilterValuesFromStorage
-            );
-            break;
-          case "filterMetacriticScore":
-            await store.fetchFilterMetacriticScore(
-              this.mediatype,
-              this.loadFilterValuesFromStorage
-            );
-            break;
-          case "filterReleaseAttributes":
-            await store.fetchFilterReleaseAttributes(
-              this.mediatype,
-              this.loadFilterValuesFromStorage
-            );
-            break;
-          case "filterDataQuality":
-            await store.fetchFilterDataQuality(
-              this.mediatype,
-              this.loadFilterValuesFromStorage
-            );
-            break;
-          default:
-            throw new Error("Unsupported filter type:", filter.name);
-        }
+        await store.fetchCurrentPage(this.mediatype);
+
+        // eventBus.showSidebarLoadingOverlay(false);
+
+        this.$shared.isLoadingFilter = false;
+      } catch (err) {
+        logger.error(err);
       }
 
-      if (setFilter) {
-        eventBus.setFilter(setFilter);
-      }
-
-      if (currentFetchFiltersIteration !== this.fetchFiltersIteration) {
-        // another fetch has been initiated
-        return;
-      }
-
-      this.$shared.loadingFilterProgress = 100;
-
-      await store.fetchSortValues(this.mediatype);
-
-      await store.fetchCurrentPage(this.mediatype);
-
-      // eventBus.showSidebarLoadingOverlay(false);
-
-      this.$shared.isLoadingFilter = false;
+      logger.groupEnd();
     },
 
     onCreditClicked(credit) {
@@ -2699,41 +2709,49 @@ export default {
     },
 
     async completelyFetchMedia() {
-      const arr_id_Movies = [];
+      logger.groupCollapsed("[Fetch Media Details]");
 
-      this.itemsFilteredPaginated.forEach((item) => {
-        if (!item.isCompletelyFetched) {
-          arr_id_Movies.push(item.id_Movies);
-        }
-      });
+      try {
+        const arr_id_Movies = [];
 
-      logger.log("completelyFetchMedia arr_id_Movies:", arr_id_Movies);
-
-      if (arr_id_Movies.length === 0) {
-        return;
-      }
-
-      const result = await store.fetchMedia(
-        this.mediatype,
-        arr_id_Movies,
-        false,
-        this.$local_t,
-        this.$shared.filters
-      );
-
-      logger.log("completelyFetchMedia result:", result);
-
-      result.forEach((item) => {
-        this.itemsFilteredPaginated.forEach((itemPaginated) => {
-          if (item.id_Movies !== itemPaginated.id_Movies) {
-            return;
+        this.itemsFilteredPaginated.forEach((item) => {
+          if (!item.isCompletelyFetched) {
+            arr_id_Movies.push(item.id_Movies);
           }
+        });
 
-          Object.keys(itemPaginated).forEach((key) => {
-            itemPaginated[key] = item[key];
+        logger.log("completelyFetchMedia arr_id_Movies:", arr_id_Movies);
+
+        if (arr_id_Movies.length === 0) {
+          return;
+        }
+
+        const result = await store.fetchMedia(
+          this.mediatype,
+          arr_id_Movies,
+          false,
+          this.$local_t,
+          this.$shared.filters
+        );
+
+        logger.log("completelyFetchMedia result:", result);
+
+        result.forEach((item) => {
+          this.itemsFilteredPaginated.forEach((itemPaginated) => {
+            if (item.id_Movies !== itemPaginated.id_Movies) {
+              return;
+            }
+
+            Object.keys(itemPaginated).forEach((key) => {
+              itemPaginated[key] = item[key];
+            });
           });
         });
-      });
+      } catch (err) {
+        logger.error(err);
+      }
+
+      logger.groupEnd();
     },
 
     onShowRatingDemographicsDialog(item) {
@@ -2818,7 +2836,7 @@ export default {
     });
 
     eventBus.$on("refetchMedia", (setPage, $t, setFilter) => {
-      logger.log("refetching media");
+      logger.groupCollapsed("[Fetch Media List]");
       (async () => {
         eventBus.showLoadingOverlay(true);
 
@@ -2843,6 +2861,7 @@ export default {
 
         this.loadFilterValuesFromStorage = false; // only load filter values from storage initially
       })();
+      logger.groupEnd();
     });
 
     eventBus.$on("refetchFilters", (setFilter) => {

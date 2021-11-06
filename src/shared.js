@@ -1,5 +1,5 @@
 import Vue from "vue";
-// const logger = require("loglevel");
+// const logger = require("./helpers/logger");
 // const moment = require("moment");
 
 const helpers = require("./helpers/helpers");

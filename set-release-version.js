@@ -5,7 +5,7 @@
  */
 const fs = require("fs");
 
-const logger = require("loglevel");
+const logger = require("./helpers/logger");
 
 const version = require("./package.json").version;
 

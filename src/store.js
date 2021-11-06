@@ -1,7 +1,6 @@
 const fs = require("fs");
 const util = require("util");
 const { dialog } = require("electron").remote;
-const logger = require("loglevel");
 const child_process = require("child_process");
 const xml2js = require("xml2js");
 var _ = require("lodash");
@@ -18,16 +17,13 @@ const statAsync = util.promisify(fs.stat);
 const execAsync = util.promisify(child_process.exec);
 const readFileAsync = util.promisify(fs.readFile);
 
+import { asciiLogo } from "@/helpers/ascii-logo";
 import { eventBus } from "@/main";
 
+const logger = require("./helpers/logger");
 const db = require("./helpers/db");
-// import * as db from "@/helpers/db";
-
 const dbsyncSQLite = require("./helpers/dbsync-sqlite");
-// import * as dbsyncSQLite from "@/helpers/dbsync-sqlite";
-
 const helpers = require("./helpers/helpers");
-// import * as helpers from "@/helpers/helpers";
 
 const {
   languageNameCodeMapping,
@@ -77,6 +73,9 @@ let dbsync = dbsyncSQLite;
 helpers.ensureDirectorySync(helpers.getDataPath(""));
 helpers.ensureDirectorySync(helpers.getDataPath("extras"));
 
+logger.info(asciiLogo);
+
+logger.groupCollapsed("[Initialization]");
 dbsync.runSync(
   helpers.getStaticPath("data/media-hoarder.db_initial"),
   helpers.getDataPath("media-hoarder.db"),
@@ -148,6 +147,8 @@ dbsync.runSync(
         moment.locale(shared.uiLanguage);
 
         eventBus.dbInitialized();
+
+        logger.groupEnd();
       })();
     });
   }
@@ -3845,8 +3846,6 @@ async function fetchMedia(
       item.showScanErrors = false;
     });
 
-    logger.log(result);
-
     return result;
   } catch (err) {
     logger.error(err);
@@ -5163,8 +5162,6 @@ function saveFilterValues($MediaType) {
 
   const filterValuesString = JSON.stringify(filterValues);
 
-  logger.log("saveFilterValues:", filterValuesString);
-
   setSetting(`filtersMediaType_${$MediaType}`, filterValuesString);
 }
 
@@ -5895,19 +5892,12 @@ async function assignIMDB(
 }
 
 async function saveCurrentPage($MediaType) {
-  logger.log("saveCurrentPage");
-
-  logger.log("saveCurrentPage shared.currentPage:", shared.currentPage);
   await setSetting(`currentPageMediatype${$MediaType}`, shared.currentPage);
 }
 
 async function fetchCurrentPage($MediaType) {
-  logger.log("fetchCurrentPage");
-
   const currentPage = await getSetting(`currentPageMediatype${$MediaType}`);
   shared.currentPage = parseInt(currentPage || 1);
-
-  logger.log("fetchCurrentPage shared.currentPage:", shared.currentPage);
 }
 
 function selectBestQualityMediaURL(mediaURLs) {

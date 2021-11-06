@@ -63,7 +63,7 @@
 
 import * as store from "@/store";
 import * as helpers from "@/helpers/helpers";
-const logger = require("loglevel");
+const logger = require("../../helpers/logger");
 const sqlString = require("sqlstring-sqlite");
 
 import { eventBus } from "@/main";

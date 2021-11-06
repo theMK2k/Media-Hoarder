@@ -47,7 +47,7 @@
 </template>
 
 <script>
-// const logger = require("loglevel");
+// const logger = require("../../helpers/logger");
 const videojs = require("video.js");
 
 // import { eventBus } from "@/main";

@@ -48,7 +48,7 @@
 </template>
 
 <script>
-const logger = require("loglevel");
+const logger = require("../../helpers/logger");
 
 import * as store from "@/store";
 import { eventBus } from "@/main";

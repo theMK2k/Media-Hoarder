@@ -78,7 +78,7 @@
 
 <script>
 import * as store from "@/store";
-const logger = require("loglevel");
+const logger = require("../../helpers/logger");
 
 const { shell } = require("electron").remote;
 

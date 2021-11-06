@@ -103,7 +103,7 @@
 // import Vue from "vue";
 // import router from "@/router"; // workaround in order to access router.app.$t
 
-const logger = require("loglevel");
+const logger = require("../../helpers/logger");
 // const { shell } = require("electron").remote;
 
 const imdbScraperTests = require("@/imdb-scraper-tests");

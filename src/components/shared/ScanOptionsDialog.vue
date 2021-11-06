@@ -194,7 +194,7 @@
 </template>
 
 <script>
-const logger = require("loglevel");
+const logger = require("../../helpers/logger");
 
 import * as helpers from "@/helpers/helpers";
 import * as store from "@/store";
@@ -218,8 +218,6 @@ export default {
 
   computed: {
     imdbOptionsTitle() {
-      logger.log("imdbOptionsTitle START");
-
       if (
         this.$shared.userScanOptions.findIndex(
           (scanOption) => !scanOption.enabled

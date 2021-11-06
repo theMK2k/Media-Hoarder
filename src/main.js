@@ -1,9 +1,9 @@
 import Vue from "vue";
 import App from "@/App.vue";
 
-const logger = require("loglevel");
-
 const remote = require("electron").remote;
+
+const logger = require("./helpers/logger");
 
 import router from "@/router";
 import { shared } from "@/shared";

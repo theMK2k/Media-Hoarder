@@ -57,7 +57,7 @@ import * as _ from "lodash";
 
 import * as store from "@/store";
 // import * as helpers from "@/helpers/helpers";
-const logger = require("loglevel");
+const logger = require("../../helpers/logger");
 
 import { eventBus } from "@/main";
 

@@ -153,7 +153,7 @@
 import * as store from "@/store";
 import * as helpers from "@/helpers/helpers";
 import { scrapeIMDBPersonData } from "@/imdb-scraper";
-const logger = require("loglevel");
+const logger = require("../../helpers/logger");
 
 const { shell } = require("electron").remote;
 

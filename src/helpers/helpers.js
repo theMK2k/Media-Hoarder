@@ -5,7 +5,7 @@ const requestretry = require("requestretry");
 const os = require("os");
 const filenamify = require("filenamify");
 
-const logger = require("loglevel");
+const logger = require("./logger");
 
 const isBuild = process.env.NODE_ENV === "production";
 const isDevelopment = !isBuild;

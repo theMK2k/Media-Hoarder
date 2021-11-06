@@ -108,7 +108,7 @@
 </template>
 
 <script>
-// const logger = require("loglevel");
+// const logger = require("../../helpers/logger");
 
 export default {
   props: ["length", "pages"],
