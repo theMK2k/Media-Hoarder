@@ -2,7 +2,6 @@
 
 ## v1.0.0
 
-- [ ] (electron) The remote module is deprecated. Use https://github.com/electron/remote instead.
 - [ ] handle helpers.isPortable via env-var (get rid of set-portable.js)
 
 ### Bugs
