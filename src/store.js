@@ -62,6 +62,7 @@ let rescanETA = {
   endTime: null,
   timeRemaining: null,
   displayETA: "",
+  progressPercent: 0,
 };
 
 let doAbortRescan = false;
@@ -283,6 +284,7 @@ async function rescan(onlyNew, $t) {
     endTime: null,
     timeRemaining: null,
     displayETA: "",
+    progressPercent: 0,
   };
 
   rescanAddedMovies = 0;
@@ -1571,6 +1573,7 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
         ((rescanETA.numItems - rescanETA.counter) * rescanETA.averageMS) / 1000
       )
     )})`;
+    rescanETA.progressPercent = 100 * (rescanETA.counter / rescanETA.numItems);
   }
 
   eventBus.scanInfoOff();

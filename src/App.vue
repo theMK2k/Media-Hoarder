@@ -2288,13 +2288,22 @@
           v-show="scanInfo.show"
           style="height: auto; padding: 4px 8px 4px 8px; z-index: 100"
         >
-          <!-- v-model="bottomNav" -->
           <v-row
             align-content="start"
             justify="start"
             style="margin-top: 0px; margin-bottom: 0px; max-width: 100%"
           >
-            <!--  style="text-align: right!important" -->
+            <v-progress-linear
+              v-if="true"
+              color="white accent-0"
+              v-bind:indeterminate="!scanInfo.rescanETA"
+              v-bind:value="
+                scanInfo.rescanETA ? scanInfo.rescanETA.progressPercent : 0
+              "
+              rounded
+              height="3"
+              style="margin-bottom: 4px"
+            ></v-progress-linear>
             <div v-if="scanInfo.show" style="flex: 1">
               <p style="margin: 0px !important">
                 {{ scanInfo.header }}
@@ -2418,6 +2427,16 @@ export default {
       details: "",
       rescanETA: null,
     },
+
+    // KILLME
+    // scanInfo: {
+    //   show: true,
+    //   headerOriginal: "SCANINFO",
+    //   header: "SCANINFO",
+    //   details: "SCAN DETAILS",
+    //   // rescanETA: null,
+    //   rescanETA: {},
+    // },
 
     scanInfoInterval: null,
 
