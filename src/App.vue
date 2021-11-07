@@ -2428,16 +2428,6 @@ export default {
       rescanETA: null,
     },
 
-    // KILLME
-    // scanInfo: {
-    //   show: true,
-    //   headerOriginal: "SCANINFO",
-    //   header: "SCANINFO",
-    //   details: "SCAN DETAILS",
-    //   // rescanETA: null,
-    //   rescanETA: {},
-    // },
-
     scanInfoInterval: null,
 
     scanOptions: {
