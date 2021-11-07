@@ -1,7 +1,7 @@
 import Vue from "vue";
 import App from "@/App.vue";
 
-const remote = require("electron").remote;
+const remote = require("@electron/remote");
 
 const logger = require("./helpers/logger");
 

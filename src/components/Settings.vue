@@ -898,7 +898,7 @@
 </template>
 
 <script>
-const { dialog, BrowserWindow, shell } = require("electron").remote;
+const { dialog, BrowserWindow, shell } = require("@electron/remote");
 import * as _ from "lodash";
 import draggable from "vuedraggable";
 

@@ -199,7 +199,7 @@ const logger = require("../../helpers/logger");
 import * as helpers from "@/helpers/helpers";
 import * as store from "@/store";
 
-const { shell } = require("electron").remote;
+const { shell } = require("@electron/remote");
 
 // import { eventBus } from "@/main";
 

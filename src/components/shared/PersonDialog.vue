@@ -155,7 +155,7 @@ import * as helpers from "@/helpers/helpers";
 import { scrapeIMDBPersonData } from "@/imdb-scraper";
 const logger = require("../../helpers/logger");
 
-const { shell } = require("electron").remote;
+const { shell } = require("@electron/remote");
 
 import { eventBus } from "@/main";
 

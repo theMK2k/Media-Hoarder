@@ -80,7 +80,7 @@
 import * as store from "@/store";
 const logger = require("../../helpers/logger");
 
-const { shell } = require("electron").remote;
+const { shell } = require("@electron/remote");
 
 const sqlString = require("sqlstring-sqlite");
 

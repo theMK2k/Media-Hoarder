@@ -1,6 +1,6 @@
 const fs = require("fs");
 const util = require("util");
-const { dialog } = require("electron").remote;
+const { dialog } = require("@electron/remote");
 const child_process = require("child_process");
 const xml2js = require("xml2js");
 var _ = require("lodash");

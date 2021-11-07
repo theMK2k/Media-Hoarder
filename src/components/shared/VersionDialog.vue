@@ -141,7 +141,7 @@ import * as marked from "marked";
 
 const logger = require("../../helpers/logger");
 const semver = require("semver");
-const { shell } = require("electron").remote;
+const { shell } = require("@electron/remote");
 
 import * as store from "@/store";
 

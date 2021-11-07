@@ -1205,7 +1205,7 @@ import Pagination from "@/components/shared/Pagination.vue";
 import RatingDemographicsDialog from "@/components/shared/RatingDemographicsDialog";
 import ReleaseAttributeDialog from "@/components/shared/ReleaseAttributeDialog";
 
-const { shell } = require("electron").remote;
+const { shell } = require("@electron/remote");
 
 const moment = require("moment");
 

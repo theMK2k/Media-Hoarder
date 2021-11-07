@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] (electron) The remote module is deprecated. Use https://github.com/electron/remote instead.
 - [x] update ETA in scan message every second
 - [X] use logger.group/groupCollapsed, logger.groupEnd throughout the app
 - [x] add IMDB ID to MediaList

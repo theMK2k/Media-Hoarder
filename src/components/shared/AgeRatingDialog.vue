@@ -73,8 +73,6 @@ import * as store from "@/store";
 // import * as helpers from "@/helpers/helpers";
 const logger = require("../../helpers/logger");
 
-// const { shell } = require("electron").remote;
-
 import { eventBus } from "@/main";
 
 export default {

@@ -76,8 +76,6 @@ const logger = require("../../helpers/logger");
 
 const { languageCodeNameMapping } = require("@/languages");
 
-// const { shell } = require("electron").remote;
-
 import { eventBus } from "@/main";
 
 export default {

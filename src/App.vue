@@ -2360,7 +2360,7 @@
 
 <script>
 import * as _ from "lodash";
-const remote = require("electron").remote;
+const remote = require("@electron/remote");
 const moment = require("moment");
 import draggable from "vuedraggable";
 
