@@ -2413,9 +2413,13 @@ export default {
 
     scanInfo: {
       show: false,
+      headerOriginal: "",
       header: "",
       details: "",
+      rescanETA: null,
     },
+
+    scanInfoInterval: null,
 
     scanOptions: {
       onlyNew: false,
@@ -3826,6 +3830,32 @@ export default {
 
     this.searchText = this.$shared.searchText;
 
+    // Update ScanInfo every second
+    if (this.scanInfoInterval) {
+      clearInterval(this.scanInfoInterval);
+      this.scanInfoInterval = null;
+    }
+
+    this.scanInfoInterval = setInterval(() => {
+      if (!this.scanInfo.show) {
+        return;
+      }
+      if (!this.scanInfo.rescanETA) {
+        return;
+      }
+      this.scanInfo.rescanETA.timeRemaining = Math.max(
+        this.scanInfo.rescanETA.timeRemaining - 1,
+        0
+      );
+      this.scanInfo.header = this.scanInfo.headerOriginal.replace(
+        "{remainingTimeDisplay}",
+        this.scanInfo.rescanETA &&
+          typeof this.scanInfo.rescanETA.timeRemaining === "number"
+          ? `(${helpers.getTimeString(this.scanInfo.rescanETA.timeRemaining)})`
+          : ""
+      );
+    }, 1000);
+
     eventBus.$on("showSnackbar", ({ color, textOrErrorObject, timeout }) => {
       logger.debug("snackbar called:", textOrErrorObject);
       this.snackbar.details = [];
@@ -3880,11 +3910,21 @@ export default {
       this.snackbar.show = true;
     });
 
-    eventBus.$on("scanInfoShow", ({ header, details }) => {
+    eventBus.$on("scanInfoShow", ({ headerOriginal, details, rescanETA }) => {
       this.scanInfo = {
-        header,
+        headerOriginal: headerOriginal,
+        header: headerOriginal.replace(
+          "{remainingTimeDisplay}",
+          this.scanInfo.rescanETA &&
+            typeof this.scanInfo.rescanETA.timeRemaining === "number"
+            ? `(${helpers.getTimeString(
+                this.scanInfo.rescanETA.timeRemaining
+              )})`
+            : ""
+        ),
         details,
         show: true,
+        rescanETA,
       };
     });
 
@@ -4025,6 +4065,13 @@ export default {
       this.eventBusRefetchMedia,
       1000
     );
+  },
+
+  beforeDestroy() {
+    if (this.scanInfoInterval) {
+      clearInterval(this.scanInfoInterval);
+      this.scanInfoInterval = null;
+    }
   },
 };
 </script>

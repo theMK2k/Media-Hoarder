@@ -2,13 +2,13 @@
 
 ## v1.0.0
 
+- [ ] (electron) The remote module is deprecated. Use https://github.com/electron/remote instead.
 - [ ] handle helpers.isPortable via env-var (get rid of set-portable.js)
-- [ ] update ETA in scan message every second
-- [ ] layout the app with css grid (see: <https://layout.bradwoods.io/customize>)
 
 ### Bugs
 
-- nothing
+- [ ] items which have a scan error scew the next scan's time-per-item
+- [ ] first scanned item shows 1s of remaining time (better not show anything)
 
 ### Other
 
@@ -108,6 +108,7 @@
 
 ### Other (later)
 
+- [ ] layout the app with css grid (see: <https://layout.bradwoods.io/customize>)
 - [ ] treat rescan of particular titles as a queue (don't disable all other titles when a rescan runs)
   - same queue as a "Scan Media" process
 - introduce #tags instead of lists (keep the datastructures in .db though)

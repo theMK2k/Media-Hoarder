@@ -58,6 +58,10 @@ function getStaticPath(relativePath) {
 function getTimeString(runtimeSeconds) {
   let result = "";
 
+  if (typeof runtimeSeconds !== "number") {
+    return "";
+  }
+
   const hours = Math.floor(runtimeSeconds / (60 * 60));
   if (hours > 0) {
     result += `${hours}:`;

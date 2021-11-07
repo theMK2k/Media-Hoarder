@@ -28,9 +28,9 @@ export const eventBus = new Vue({
       this.$emit("scanInfoOff");
     },
 
-    scanInfoShow(header, details) {
+    scanInfoShow(headerOriginal, details, rescanETA) {
       // logger.log('scanInfoShow:', {header, details});
-      this.$emit("scanInfoShow", { header, details });
+      this.$emit("scanInfoShow", { headerOriginal, details, rescanETA });
     },
 
     showSnackbar(color, textOrErrorObject, timeout) {

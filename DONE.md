@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] update ETA in scan message every second
 - [X] use logger.group/groupCollapsed, logger.groupEnd throughout the app
 - [x] add IMDB ID to MediaList
 - [x] Highlight search results (Name, Name2, IMDB_plotSummary, fullPath, IMDB_tconst)

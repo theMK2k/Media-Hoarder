@@ -457,7 +457,7 @@
     "Panama": "Panama",
     "Peru": "Perou",
     "French Polynesia": "Polynésie française",
-    "Papua New Guinea": "Papouasie_Nouvelle_Guinée",
+    "Papua New Guinea": "Papouasie Nouvelle Guinée",
     "Philippines": "Philippines",
     "Pakistan": "Pakistan",
     "Poland": "Pologne",
@@ -622,7 +622,7 @@
   "{appName} scrapes imdb_com website data in order to build up the database_ If imdb_com changes their website this process may fail in some aspects_ This scraper check will identify potential problems_": "{appName} collecte les données du site IMDB.com afin de construire sa base de donnée. Si IMDB.com effectue des changements sur ses pages, il se peut que le procédé échoue. Cette collecte de données peut potentiellement identifier des anomalies.",
   "Warning: the following source paths are currently not available and all entries will be removed! (check Settings)": "Attention: les chemins d'accès sources suivants sont actuellement indisponibles - toute entrée liée va être supprimée! (Vérifier les paramètres)",
   "OK, I take the risk": "Ok, j'ai pris connaissance du risque",
-  "Search___ (use '%' to list all)": "Rechercher... (utiliser '%' pour tout inventorier)",
+  "Search___ (use '*' to list all)": "Rechercher... (utiliser '*' pour tout inventorier)",
   "Sort by number of movies": "Trier par nombre de film",
   "seen in {count} of 20M+": "Vu par {count} sur plus de 20 millions",
   "note: the {label} title would be: _{title}_": "Info: Le bandeau de titre {label} est \"{title}\"",
@@ -871,7 +871,7 @@
   "scan already in progress": "Recherche déjà en cours",
   "Rescanning Movies": "Nouvelle recherche",
   "Rescan started": "Nouvelle recherche démarrée",
-  "{appName} needs the path to a media player of your choice for media playback_ We recommend the VLC media player, you can get it at_": "{appName} a besoin d'un chemin vers le lecteur média de votre choix. Nous recommandons VLC Media Player, que vous pouvez obtenir sur_",
+  "{appName} needs the path to a media player of your choice for media playback_ We recommend the VLC media player, you can get it at_": "{appName} a besoin d'un chemin vers le lecteur média de votre choix. Nous recommandons VLC Media Player, que vous pouvez obtenir sur:",
   "{appName} needs the path to Mediainfo CLI in order to determine duration, video resolution and languages of your media_ You can get Mediainfo CLI at_": "{appName} a besoin du chemin vers Mediainfo CLI afin de déterminer la durée, la résolution video ainsi que la langue de votre média . Vous pouvez télécharger Mediainfo CLI ici:",
   "Last Access Grace Period": "Délai d'attente pour \"Dernier accès\"",
   "{appName} provides the date and time of the last access for any medium_ In order to prevent unwanted updates, you can define a grace period in seconds where a medium can be played until the update is performed_": "{appName} fournit la date et l'heure du dernier accès à un media. Afin d'éviter les mises à jour indésirables, vous pouvez définir ici le délai d'attente en secondes durant lequel un média peut être lu, avant qu'une mise à jour ne soit appliquée.",
@@ -965,5 +965,7 @@
   "Trailer Media URLs (Ad-Hoc)": "Liens des bandes annonces (Ad-Hoc)",
   "Suggestion Search (Ad-Hoc)": "Suggestion de recherche (Ad-Hoc)",
   "Advanced Title Search (Ad-Hoc)": "Recherche de titre avancée (Ad-Hoc)",
-  "Find (Ad-Hoc)": "Rechercher (Ad-Hoc)"
+  "Find (Ad-Hoc)": "Rechercher (Ad-Hoc)",
+  "Edit Filters": "fr: Edit Filters",
+  "Show/Hide this filter": "fr: Show/Hide this filter"  
 }
