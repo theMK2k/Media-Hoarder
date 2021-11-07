@@ -8,7 +8,7 @@ const fs = require("fs");
 const minimist = require("minimist");
 const { exit } = require("process");
 
-const logger = require("./helpers/logger");
+const logger = require("./src/helpers/logger");
 
 logger.setLevel(0);
 
