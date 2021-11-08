@@ -43,7 +43,7 @@
 <script>
 import * as store from "@/store";
 import { eventBus } from "@/main";
-const logger = require("loglevel");
+const logger = require("../helpers/logger");
 
 export default {
   data: () => ({

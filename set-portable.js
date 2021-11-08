@@ -5,9 +5,10 @@
  */
 const fs = require("fs");
 
-const logger = require("loglevel");
 const minimist = require("minimist");
 const { exit } = require("process");
+
+const logger = require("./src/helpers/logger");
 
 logger.setLevel(0);
 

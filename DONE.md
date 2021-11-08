@@ -8,6 +8,11 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] Fix: Scan Media: cancel in early stage leads to mass removal!
+- [x] Bottom Bar: show marquee or steps progress
+- [x] (electron) The remote module is deprecated. Use https://github.com/electron/remote instead.
+- [x] update ETA in scan message every second
+- [X] use logger.group/groupCollapsed, logger.groupEnd throughout the app
 - [x] add IMDB ID to MediaList
 - [x] Highlight search results (Name, Name2, IMDB_plotSummary, fullPath, IMDB_tconst)
 - [x] "long click" checkbox filter isolation

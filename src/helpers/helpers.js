@@ -5,7 +5,7 @@ const requestretry = require("requestretry");
 const os = require("os");
 const filenamify = require("filenamify");
 
-const logger = require("loglevel");
+const logger = require("./logger");
 
 const isBuild = process.env.NODE_ENV === "production";
 const isDevelopment = !isBuild;
@@ -57,6 +57,10 @@ function getStaticPath(relativePath) {
 
 function getTimeString(runtimeSeconds) {
   let result = "";
+
+  if (typeof runtimeSeconds !== "number") {
+    return "";
+  }
 
   const hours = Math.floor(runtimeSeconds / (60 * 60));
   if (hours > 0) {

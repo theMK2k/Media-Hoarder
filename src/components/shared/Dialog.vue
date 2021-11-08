@@ -85,7 +85,7 @@
 <script>
 // import Vue from "vue";
 // import router from "@/router"; // workaround in order to access router.app.$t
-const logger = require("loglevel");
+const logger = require("../../helpers/logger");
 
 // import { eventBus } from "@/main";
 
@@ -165,9 +165,7 @@ export default {
   },
 
   // ### Lifecycle Hooks ###
-  created() {
-    logger.debug("dontAskAgain:", this.dontAskAgain);
-  },
+  created() {},
 };
 </script>
 

@@ -194,12 +194,12 @@
 </template>
 
 <script>
-const logger = require("loglevel");
+const logger = require("../../helpers/logger");
 
 import * as helpers from "@/helpers/helpers";
 import * as store from "@/store";
 
-const { shell } = require("electron").remote;
+const { shell } = require("@electron/remote");
 
 // import { eventBus } from "@/main";
 
@@ -218,8 +218,6 @@ export default {
 
   computed: {
     imdbOptionsTitle() {
-      logger.log("imdbOptionsTitle START");
-
       if (
         this.$shared.userScanOptions.findIndex(
           (scanOption) => !scanOption.enabled

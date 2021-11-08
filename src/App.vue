@@ -2288,13 +2288,22 @@
           v-show="scanInfo.show"
           style="height: auto; padding: 4px 8px 4px 8px; z-index: 100"
         >
-          <!-- v-model="bottomNav" -->
           <v-row
             align-content="start"
             justify="start"
             style="margin-top: 0px; margin-bottom: 0px; max-width: 100%"
           >
-            <!--  style="text-align: right!important" -->
+            <v-progress-linear
+              v-if="true"
+              color="white accent-0"
+              v-bind:indeterminate="!scanInfo.rescanETA"
+              v-bind:value="
+                scanInfo.rescanETA ? scanInfo.rescanETA.progressPercent : 0
+              "
+              rounded
+              height="3"
+              style="margin-bottom: 4px"
+            ></v-progress-linear>
             <div v-if="scanInfo.show" style="flex: 1">
               <p style="margin: 0px !important">
                 {{ scanInfo.header }}
@@ -2360,16 +2369,16 @@
 
 <script>
 import * as _ from "lodash";
-const remote = require("electron").remote;
-const logger = require("loglevel");
+const remote = require("@electron/remote");
 const moment = require("moment");
 import draggable from "vuedraggable";
+
+const logger = require("./helpers/logger");
 
 import * as store from "@/store";
 import { shared } from "@/shared";
 import { eventBus } from "@/main";
 import * as helpers from "@/helpers/helpers";
-import { asciiLogo } from "@/helpers/ascii-logo";
 
 import Dialog from "@/components/shared/Dialog.vue";
 import SearchDataDialog from "@/components/shared/SearchDataDialog.vue";
@@ -2413,9 +2422,13 @@ export default {
 
     scanInfo: {
       show: false,
+      headerOriginal: "",
       header: "",
       details: "",
+      rescanETA: null,
     },
+
+    scanInfoInterval: null,
 
     scanOptions: {
       onlyNew: false,
@@ -3099,7 +3112,6 @@ export default {
     },
 
     currentRoute() {
-      logger.log("currentRoute:", this.$route);
       return this.$route;
     },
   },
@@ -3677,7 +3689,6 @@ export default {
     },
 
     checkVersion() {
-      logger.log("App checkVersion START");
       setTimeout(() => {
         this.$refs.versionDialog.checkVersion();
       });
@@ -3816,10 +3827,6 @@ export default {
 
   // ### LifeCycleHooks ###
   created() {
-    logger.info(asciiLogo);
-
-    logger.log("this.$vuetify.theme:", this.$vuetify.theme);
-
     document.onkeydown = this.onKeyDown;
 
     this.$vuetify.theme.dark = true;
@@ -3831,6 +3838,32 @@ export default {
     this.checkVersion();
 
     this.searchText = this.$shared.searchText;
+
+    // Update ScanInfo every second
+    if (this.scanInfoInterval) {
+      clearInterval(this.scanInfoInterval);
+      this.scanInfoInterval = null;
+    }
+
+    this.scanInfoInterval = setInterval(() => {
+      if (!this.scanInfo.show) {
+        return;
+      }
+      if (!this.scanInfo.rescanETA) {
+        return;
+      }
+      this.scanInfo.rescanETA.timeRemaining = Math.max(
+        this.scanInfo.rescanETA.timeRemaining - 1,
+        0
+      );
+      this.scanInfo.header = this.scanInfo.headerOriginal.replace(
+        "{remainingTimeDisplay}",
+        this.scanInfo.rescanETA &&
+          typeof this.scanInfo.rescanETA.timeRemaining === "number"
+          ? `(${helpers.getTimeString(this.scanInfo.rescanETA.timeRemaining)})`
+          : ""
+      );
+    }, 1000);
 
     eventBus.$on("showSnackbar", ({ color, textOrErrorObject, timeout }) => {
       logger.debug("snackbar called:", textOrErrorObject);
@@ -3886,11 +3919,21 @@ export default {
       this.snackbar.show = true;
     });
 
-    eventBus.$on("scanInfoShow", ({ header, details }) => {
+    eventBus.$on("scanInfoShow", ({ headerOriginal, details, rescanETA }) => {
       this.scanInfo = {
-        header,
+        headerOriginal: headerOriginal,
+        header: headerOriginal.replace(
+          "{remainingTimeDisplay}",
+          this.scanInfo.rescanETA &&
+            typeof this.scanInfo.rescanETA.timeRemaining === "number"
+            ? `(${helpers.getTimeString(
+                this.scanInfo.rescanETA.timeRemaining
+              )})`
+            : ""
+        ),
         details,
         show: true,
+        rescanETA,
       };
     });
 
@@ -4031,6 +4074,13 @@ export default {
       this.eventBusRefetchMedia,
       1000
     );
+  },
+
+  beforeDestroy() {
+    if (this.scanInfoInterval) {
+      clearInterval(this.scanInfoInterval);
+      this.scanInfoInterval = null;
+    }
   },
 };
 </script>

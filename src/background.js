@@ -1,6 +1,8 @@
 "use strict";
 
 /* global __static */
+require("@electron/remote/main").initialize();
+
 import { app, protocol, BrowserWindow, session } from "electron";
 import {
   createProtocol,

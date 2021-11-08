@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
 const chalk = require("chalk");
-const logger = require("loglevel");
 const minimist = require("minimist");
 const nodemailer = require("nodemailer");
 
-const imdbScraperTests = require("./imdb-scraper-tests");
+const logger = require("./helpers/logger");
 const helpers = require("./helpers/helpers");
+const imdbScraperTests = require("./imdb-scraper-tests");
 
 const cmdArguments = minimist(process.argv.slice(2));
 

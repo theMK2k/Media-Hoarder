@@ -6,8 +6,7 @@ const path = require("path");
 
 const moment = require("moment");
 
-const logger = require("loglevel");
-
+const logger = require("./helpers/logger");
 const helpers = require("./helpers/helpers");
 
 Vue.use(VueI18n);

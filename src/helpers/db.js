@@ -3,7 +3,7 @@
  *
  * Database interface and functions for sqlite access and management
  */
-const logger = require("loglevel");
+const logger = require("./logger");
 const fs = require("fs");
 const sqlite3 = require("sqlite3").verbose();
 

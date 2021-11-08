@@ -898,10 +898,11 @@
 </template>
 
 <script>
-const { dialog, BrowserWindow, shell } = require("electron").remote;
-const logger = require("loglevel");
+const { dialog, BrowserWindow, shell } = require("@electron/remote");
 import * as _ from "lodash";
 import draggable from "vuedraggable";
+
+const logger = require("../helpers/logger");
 
 import { eventBus } from "@/main";
 import * as store from "@/store";
@@ -1796,6 +1797,7 @@ export default {
 
   // ### LifeCycle Hooks ###
   async created() {
+    logger.groupCollapsed("[Initialize Settings]");
     this.$shared.imdbRatingDemographics.forEach((demographic) => {
       demographic.long_translated = this.$t(
         `RatingDemographics.${demographic.long}`
@@ -1880,6 +1882,8 @@ export default {
       this.updateMinimumWaitForSetAccess,
       500
     );
+
+    logger.groupEnd();
   },
 };
 </script>

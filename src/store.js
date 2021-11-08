@@ -1,7 +1,6 @@
 const fs = require("fs");
 const util = require("util");
-const { dialog } = require("electron").remote;
-const logger = require("loglevel");
+const { dialog } = require("@electron/remote");
 const child_process = require("child_process");
 const xml2js = require("xml2js");
 var _ = require("lodash");
@@ -18,16 +17,13 @@ const statAsync = util.promisify(fs.stat);
 const execAsync = util.promisify(child_process.exec);
 const readFileAsync = util.promisify(fs.readFile);
 
+import { asciiLogo } from "@/helpers/ascii-logo";
 import { eventBus } from "@/main";
 
+const logger = require("./helpers/logger");
 const db = require("./helpers/db");
-// import * as db from "@/helpers/db";
-
 const dbsyncSQLite = require("./helpers/dbsync-sqlite");
-// import * as dbsyncSQLite from "@/helpers/dbsync-sqlite";
-
 const helpers = require("./helpers/helpers");
-// import * as helpers from "@/helpers/helpers";
 
 const {
   languageNameCodeMapping,
@@ -64,7 +60,9 @@ let rescanETA = {
   averageMS: null,
   startTime: null,
   endTime: null,
+  timeRemaining: null,
   displayETA: "",
+  progressPercent: 0,
 };
 
 let doAbortRescan = false;
@@ -77,6 +75,9 @@ let dbsync = dbsyncSQLite;
 helpers.ensureDirectorySync(helpers.getDataPath(""));
 helpers.ensureDirectorySync(helpers.getDataPath("extras"));
 
+logger.info(asciiLogo);
+
+logger.groupCollapsed("[Initialization]");
 dbsync.runSync(
   helpers.getStaticPath("data/media-hoarder.db_initial"),
   helpers.getDataPath("media-hoarder.db"),
@@ -148,6 +149,8 @@ dbsync.runSync(
         moment.locale(shared.uiLanguage);
 
         eventBus.dbInitialized();
+
+        logger.groupEnd();
       })();
     });
   }
@@ -279,7 +282,9 @@ async function rescan(onlyNew, $t) {
     averageMS: null,
     startTime: null,
     endTime: null,
+    timeRemaining: null,
     displayETA: "",
+    progressPercent: 0,
   };
 
   rescanAddedMovies = 0;
@@ -729,10 +734,6 @@ async function filescanMovies(onlyNew, $t) {
 		`);
 
     for (let i = 0; i < moviesSourcePaths.length; i++) {
-      if (doAbortRescan) {
-        break;
-      }
-
       const movieSourcePath = moviesSourcePaths[i];
       logger.log(
         `  scanning Source Path ${movieSourcePath.Path} (${movieSourcePath.Description})`
@@ -783,10 +784,6 @@ async function filescanMoviesPath(
 
     // add files
     for (let i = 0; i < pathItems.length; i++) {
-      if (doAbortRescan) {
-        break;
-      }
-
       const pathItem = pathItems[i];
 
       if (pathItem.isFile) {
@@ -820,10 +817,6 @@ async function filescanMoviesPath(
 
         await addMovie(movieSourcePath, pathItem);
       }
-    }
-
-    if (doAbortRescan) {
-      return;
     }
 
     // recurse directories
@@ -1481,15 +1474,16 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
 
     // eventBus.scanInfoOff();
     eventBus.scanInfoShow(
-      $t("Rescanning Movies") + rescanETA.displayETA,
-      `${movie.Name || movie.Filename}`
+      $t("Rescanning Movies") + " {remainingTimeDisplay}",
+      `${movie.Name || movie.Filename}`,
+      rescanETA
     );
 
     eventBus.setProgressBar((i + 1) / movies.length); // absolute progress
 
     if (!id_Movies && shared.scanOptions.rescanMoviesMetaData_applyMediaInfo) {
       eventBus.scanInfoShow(
-        $t("Rescanning Movies") + rescanETA.displayETA,
+        $t("Rescanning Movies") + " {remainingTimeDisplay}",
         `${movie.Name || movie.Filename} (${$t("applying MediaInfo")})`
       );
 
@@ -1498,8 +1492,9 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
 
     if (!id_Movies && shared.scanOptions.rescanMoviesMetaData_findIMDBtconst) {
       eventBus.scanInfoShow(
-        $t("Rescanning Movies") + rescanETA.displayETA,
-        `${movie.Name || movie.Filename} (${$t("determining IMDB ID")})`
+        $t("Rescanning Movies") + " {remainingTimeDisplay}",
+        `${movie.Name || movie.Filename} (${$t("determining IMDB ID")})`,
+        rescanETA
       );
 
       await findIMDBtconst(movie, onlyNew);
@@ -1507,8 +1502,9 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
 
     if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData) {
       eventBus.scanInfoShow(
-        $t("Rescanning Movies") + rescanETA.displayETA,
-        `${movie.Name || movie.Filename} (${$t("scraping IMDB metadata")})`
+        $t("Rescanning Movies") + " {remainingTimeDisplay}",
+        `${movie.Name || movie.Filename} (${$t("scraping IMDB metadata")})`,
+        rescanETA
       );
 
       await fetchIMDBMetaData($t, movie, onlyNew);
@@ -1519,10 +1515,11 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
         !definedByUser.find((item) => item === "ReleaseAttributesSearchTerms")
       ) {
         eventBus.scanInfoShow(
-          $t("Rescanning Movies") + rescanETA.displayETA,
+          $t("Rescanning Movies") + " {remainingTimeDisplay}",
           `${movie.Name || movie.Filename} (${$t(
             "finding release attributes"
-          )})`
+          )})`,
+          rescanETA
         );
 
         await findReleaseAttributes(movie, onlyNew);
@@ -1535,8 +1532,9 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
 
     if (shared.scanOptions.applyMetaData) {
       eventBus.scanInfoShow(
-        $t("Rescanning Movies") + rescanETA.displayETA,
-        `${movie.Name || movie.Filename} (${$t("applying metadata")})`
+        $t("Rescanning Movies") + " {remainingTimeDisplay}",
+        `${movie.Name || movie.Filename} (${$t("applying metadata")})`,
+        rescanETA
       );
 
       await applyMetaData(false, movie.id_Movies);
@@ -1544,8 +1542,9 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
 
     if (shared.scanOptions.checkIMDBtconst) {
       eventBus.scanInfoShow(
-        $t("Rescanning Movies") + rescanETA.displayETA,
-        `${movie.Name || movie.Filename} (${$t("checking IMDB link")})`
+        $t("Rescanning Movies") + " {remainingTimeDisplay}",
+        `${movie.Name || movie.Filename} (${$t("checking IMDB link")})`,
+        rescanETA
       );
 
       await verifyIMDBtconst(movie.id_Movies, $t);
@@ -1554,11 +1553,15 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
     rescanETA.endTime = new Date().getTime();
     rescanETA.elapsedMS += rescanETA.endTime - rescanETA.startTime;
     rescanETA.averageMS = rescanETA.elapsedMS / rescanETA.counter;
+    rescanETA.timeRemaining = Math.round(
+      ((rescanETA.numItems - rescanETA.counter) * rescanETA.averageMS) / 1000
+    );
     rescanETA.displayETA = ` (${helpers.getTimeString(
       Math.round(
         ((rescanETA.numItems - rescanETA.counter) * rescanETA.averageMS) / 1000
       )
     )})`;
+    rescanETA.progressPercent = 100 * (rescanETA.counter / rescanETA.numItems);
   }
 
   eventBus.scanInfoOff();
@@ -2106,8 +2109,9 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
     ) {
       try {
         eventBus.scanInfoShow(
-          $t("Rescanning Movies") + rescanETA.displayETA,
-          `${movie.Name || movie.Filename} (${$t("scraping IMDB Main Page")})`
+          $t("Rescanning Movies") + " {remainingTimeDisplay}",
+          `${movie.Name || movie.Filename} (${$t("scraping IMDB Main Page")})`,
+          rescanETA
         );
 
         const mainPageData = await scrapeIMDBmainPageData(
@@ -2129,10 +2133,11 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
     ) {
       try {
         eventBus.scanInfoShow(
-          $t("Rescanning Movies") + rescanETA.displayETA,
+          $t("Rescanning Movies") + " {remainingTimeDisplay}",
           `${movie.Name || movie.Filename} (${$t(
             "scraping IMDB Rating Demographics"
-          )})`
+          )})`,
+          rescanETA
         );
 
         const ratingDemographics = await scrapeIMDBRatingDemographics(movie);
@@ -2149,10 +2154,11 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
     ) {
       try {
         eventBus.scanInfoShow(
-          $t("Rescanning Movies") + rescanETA.displayETA,
+          $t("Rescanning Movies") + " {remainingTimeDisplay}",
           `${movie.Name || movie.Filename} (${$t(
             "scraping IMDB Plot Summary"
-          )})`
+          )})`,
+          rescanETA
         );
 
         const plotSummaryFull = await scrapeIMDBplotSummary(
@@ -2173,10 +2179,11 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
     ) {
       try {
         eventBus.scanInfoShow(
-          $t("Rescanning Movies") + rescanETA.displayETA,
+          $t("Rescanning Movies") + " {remainingTimeDisplay}",
           `${movie.Name || movie.Filename} (${$t(
             "scraping IMDB Plot Keywords"
-          )})`
+          )})`,
+          rescanETA
         );
 
         plotKeywords = await scrapeIMDBplotKeywords(movie);
@@ -2195,10 +2202,11 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
         const allowedTitleTypes = await getAllowedTitleTypes();
 
         eventBus.scanInfoShow(
-          $t("Rescanning Movies") + rescanETA.displayETA,
+          $t("Rescanning Movies") + " {remainingTimeDisplay}",
           `${movie.Name || movie.Filename} (${$t(
             "scraping IMDB Release Info"
-          )})`
+          )})`,
+          rescanETA
         );
 
         const releaseinfo = await scrapeIMDBreleaseinfo(
@@ -2219,10 +2227,11 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
     ) {
       try {
         eventBus.scanInfoShow(
-          $t("Rescanning Movies") + rescanETA.displayETA,
+          $t("Rescanning Movies") + " {remainingTimeDisplay}",
           `${movie.Name || movie.Filename} (${$t(
             "scraping IMDB Technical Data"
-          )})`
+          )})`,
+          rescanETA
         );
 
         const technicalData = await scrapeIMDBtechnicalData(movie);
@@ -2243,10 +2252,11 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
         const regions = await getRegions();
 
         eventBus.scanInfoShow(
-          $t("Rescanning Movies") + rescanETA.displayETA,
+          $t("Rescanning Movies") + " {remainingTimeDisplay}",
           `${movie.Name || movie.Filename} (${$t(
             "scraping IMDB Parental Guide"
-          )})`
+          )})`,
+          rescanETA
         );
 
         const parentalguideData = await scrapeIMDBParentalGuideData(
@@ -2270,10 +2280,11 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
     ) {
       try {
         eventBus.scanInfoShow(
-          $t("Rescanning Movies") + rescanETA.displayETA,
+          $t("Rescanning Movies") + " {remainingTimeDisplay}",
           `${movie.Name || movie.Filename} (${$t(
             "scraping IMDB Full Credits"
-          )})`
+          )})`,
+          rescanETA
         );
 
         const creditsData = await scrapeIMDBFullCreditsData(movie);
@@ -2292,8 +2303,9 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
     ) {
       try {
         eventBus.scanInfoShow(
-          $t("Rescanning Movies") + rescanETA.displayETA,
-          `${movie.Name || movie.Filename} (${$t("scraping IMDB Companies")})`
+          $t("Rescanning Movies") + " {remainingTimeDisplay}",
+          `${movie.Name || movie.Filename} (${$t("scraping IMDB Companies")})`,
+          rescanETA
         );
 
         const companiesData = await scrapeIMDBCompaniesData(movie);
@@ -2317,10 +2329,11 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
     ) {
       try {
         eventBus.scanInfoShow(
-          $t("Rescanning Movies") + rescanETA.displayETA,
+          $t("Rescanning Movies") + " {remainingTimeDisplay}",
           `${movie.Name || movie.Filename} (${$t(
             "scraping IMDB Filming Locations"
-          )})`
+          )})`,
+          rescanETA
         );
 
         filmingLocations = await scrapeIMDBFilmingLocations(movie);
@@ -2338,8 +2351,9 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
 
     if (shared.scanOptions.rescanMoviesMetaData_saveIMDBData) {
       eventBus.scanInfoShow(
-        $t("Rescanning Movies") + rescanETA.displayETA,
-        `${movie.Name || movie.Filename} (${$t("store IMDB metadata")})`
+        $t("Rescanning Movies") + " {remainingTimeDisplay}",
+        `${movie.Name || movie.Filename} (${$t("store IMDB metadata")})`,
+        rescanETA
       );
 
       await saveIMDBData(
@@ -3845,8 +3859,6 @@ async function fetchMedia(
       item.showScanErrors = false;
     });
 
-    logger.log(result);
-
     return result;
   } catch (err) {
     logger.error(err);
@@ -5163,8 +5175,6 @@ function saveFilterValues($MediaType) {
 
   const filterValuesString = JSON.stringify(filterValues);
 
-  logger.log("saveFilterValues:", filterValuesString);
-
   setSetting(`filtersMediaType_${$MediaType}`, filterValuesString);
 }
 
@@ -5895,19 +5905,12 @@ async function assignIMDB(
 }
 
 async function saveCurrentPage($MediaType) {
-  logger.log("saveCurrentPage");
-
-  logger.log("saveCurrentPage shared.currentPage:", shared.currentPage);
   await setSetting(`currentPageMediatype${$MediaType}`, shared.currentPage);
 }
 
 async function fetchCurrentPage($MediaType) {
-  logger.log("fetchCurrentPage");
-
   const currentPage = await getSetting(`currentPageMediatype${$MediaType}`);
   shared.currentPage = parseInt(currentPage || 1);
-
-  logger.log("fetchCurrentPage shared.currentPage:", shared.currentPage);
 }
 
 function selectBestQualityMediaURL(mediaURLs) {

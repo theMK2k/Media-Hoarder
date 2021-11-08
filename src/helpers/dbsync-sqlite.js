@@ -1,9 +1,8 @@
-const logger = require("loglevel");
-
 const fs = require("fs");
 const sqlite3 = require("sqlite3").verbose();
 const async = require("async");
 
+const logger = require("./logger");
 const definedError = require("./defined-error");
 
 const dryRun = false; // if true, don't actually run sqlStatements

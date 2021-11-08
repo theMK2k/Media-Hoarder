@@ -1,9 +1,9 @@
 import Vue from "vue";
 import App from "@/App.vue";
 
-const logger = require("loglevel");
+const remote = require("@electron/remote");
 
-const remote = require("electron").remote;
+const logger = require("./helpers/logger");
 
 import router from "@/router";
 import { shared } from "@/shared";
@@ -28,9 +28,9 @@ export const eventBus = new Vue({
       this.$emit("scanInfoOff");
     },
 
-    scanInfoShow(header, details) {
+    scanInfoShow(headerOriginal, details, rescanETA) {
       // logger.log('scanInfoShow:', {header, details});
-      this.$emit("scanInfoShow", { header, details });
+      this.$emit("scanInfoShow", { headerOriginal, details, rescanETA });
     },
 
     showSnackbar(color, textOrErrorObject, timeout) {
