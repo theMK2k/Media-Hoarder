@@ -3654,6 +3654,8 @@ async function fetchMedia(
         , NULL AS endYear
         , NULL AS MI_Duration
         , NULL AS MI_Quality
+        , NULL AS Audio_Languages
+        , NULL AS Subtitle_Languages
         , NULL AS MI_Audio_Languages
         , NULL AS MI_Subtitle_Languages
         , NULL AS IMDB_posterSmall_URL
@@ -3683,6 +3685,8 @@ async function fetchMedia(
         , MOV.endYear
         , MOV.MI_Duration
         , MOV.MI_Quality
+        , (SELECT GROUP_CONCAT(Language, ', ') FROM tbl_Movies_Languages ML WHERE ML.id_Movies = MOV.id_Movies AND ML.Type = 'audio') AS Audio_Languages
+        , (SELECT GROUP_CONCAT(Language, ', ') FROM tbl_Movies_Languages ML WHERE ML.id_Movies = MOV.id_Movies AND ML.Type = 'subtitle') AS Subtitle_Languages
         , MOV.MI_Audio_Languages
         , MOV.MI_Subtitle_Languages
         , MOV.IMDB_posterSmall_URL
@@ -3755,11 +3759,9 @@ async function fetchMedia(
           } (${item.IMDB_numVotes_default.toLocaleString(shared.uiLanguage)})`
         : "";
 
-      item.AudioLanguages = generateLanguageArray(item.MI_Audio_Languages);
+      item.AudioLanguages = generateLanguageArray(item.Audio_Languages);
 
-      item.SubtitleLanguages = generateLanguageArray(
-        item.MI_Subtitle_Languages
-      );
+      item.SubtitleLanguages = generateLanguageArray(item.Subtitle_Languages);
 
       if (item.Age || item.Age === 0) {
         item.AgeRating = item.Age + "+";

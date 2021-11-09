@@ -6,6 +6,7 @@
 
 ### Bugs
 
+- [ ] "Trace" Loglevel is not recognized when starting in PROD mode
 - [ ] items which have a scan error skew the next scan's time-per-item
 - [ ] first scanned item shows 1s of remaining time (better not show anything)
 
