@@ -2,6 +2,7 @@
 
 ## v1.0.0
 
+- [ ] (My) List Dialog: preselection should be the last selected list
 - [ ] handle helpers.isPortable via env-var (get rid of set-portable.js)
 
 ### Bugs
