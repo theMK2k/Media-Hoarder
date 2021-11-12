@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] (My) List Dialog: preselection should be the last selected list
 - [x] languages from tbl_Movies_Languages are not taken into account for the Media List
 - [x] Fix: Scan Media: cancel in early stage leads to mass removal!
 - [x] Bottom Bar: show marquee or steps progress

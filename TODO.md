@@ -2,11 +2,11 @@
 
 ## v1.0.0
 
-- [ ] (My) List Dialog: preselection should be the last selected list
 - [ ] handle helpers.isPortable via env-var (get rid of set-portable.js)
 
 ### Bugs
 
+- [ ] complete scan reveals no credits, plot keywords, ...
 - [ ] "Trace" Loglevel is not recognized when starting in PROD mode
 - [ ] items which have a scan error skew the next scan's time-per-item
 - [ ] first scanned item shows 1s of remaining time (better not show anything)

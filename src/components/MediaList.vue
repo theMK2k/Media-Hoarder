@@ -1276,6 +1276,7 @@ export default {
       lists: [],
       allowUseExistingLists: false,
       allowCreateNewList: false,
+      lastChosenListID: null,
     },
 
     personDialog: {
@@ -1943,7 +1944,17 @@ export default {
           this.listDialog.allowUseExistingLists = true;
 
           eventBus.listDialogSetChosenMethod("useExistingLists");
-          eventBus.listDialogSetChosenList(this.listDialog.lists[0].id_Lists);
+
+          let last_chosen_id_Lists = this.listDialog.lastChosenListID;
+          if (
+            !this.listDialog.lists.find(
+              (list) => list.id_Lists === last_chosen_id_Lists
+            )
+          ) {
+            last_chosen_id_Lists = this.listDialog.lists[0].id_Lists;
+          }
+
+          eventBus.listDialogSetChosenList(last_chosen_id_Lists);
         } else {
           logger.log("addToList GOT NO existing lists");
           this.listDialog.allowUseExistingLists = false;
@@ -2008,6 +2019,7 @@ export default {
         this.listDialog.title = this.$t("Remove from List");
         this.listDialog.movie = item;
         this.listDialog.show = true;
+        this.listDialog.lastChosenListID = null;
 
         eventBus.listDialogSetChosenMethod("useExistingLists");
         eventBus.listDialogSetChosenList(this.listDialog.lists[0].id_Lists);
@@ -2042,6 +2054,8 @@ export default {
             );
 
             this.$set(this.listDialog.movie, "lists", lists);
+
+            this.listDialog.lastChosenListID = data.chosen_id_Lists;
 
             eventBus.showSnackbar("success", this.$t("item added to list"));
 
