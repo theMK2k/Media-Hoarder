@@ -10,7 +10,7 @@
 - [ ] "Trace" Loglevel is not recognized when starting in PROD mode
 - [ ] some log groups do not close before the next opens
 - [ ] items which have a scan error skew the next scan's time-per-item
-- [ ] first scanned item shows 1s of remaining time (better not show anything)
+- [ ] first scanned item shows 1s of remaining time (better not show anything or guess)
 
 ### Other
 
