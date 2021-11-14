@@ -3,11 +3,13 @@
 ## v1.0.0
 
 - [ ] handle helpers.isPortable via env-var (get rid of set-portable.js)
+- [ ] add a new rescan method: "rescan entries with errors"
 
 ### Bugs
 
-- [ ] complete scan reveals no credits, plot keywords, ...
+- [ ] Filters: "Select All", "Select None", "Search": use icons and tooltip
 - [ ] "Trace" Loglevel is not recognized when starting in PROD mode
+- [ ] some log groups do not close before the next opens
 - [ ] items which have a scan error skew the next scan's time-per-item
 - [ ] first scanned item shows 1s of remaining time (better not show anything)
 

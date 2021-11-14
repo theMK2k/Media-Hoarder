@@ -209,6 +209,7 @@
                       }}</v-btn>
                     </v-row>
                     <v-checkbox
+                      class="mk-filter-checkbox"
                       v-for="sourcePath in $shared.filters.filterSourcePaths"
                       v-bind:key="sourcePath.Description"
                       v-bind:label="
@@ -226,7 +227,6 @@
                           setAllSourcePaths
                         )
                       "
-                      style="margin: 0px"
                       color="mk-dark-grey"
                     ></v-checkbox>
                   </v-expansion-panel-content>
@@ -300,6 +300,7 @@
                       }}</v-btn>
                     </v-row>
                     <v-checkbox
+                      class="mk-filter-checkbox"
                       v-for="quality in $shared.filters.filterQualities"
                       v-bind:key="quality.MI_Quality"
                       v-bind:label="
@@ -317,7 +318,6 @@
                           setAllQualities
                         )
                       "
-                      style="margin: 0px"
                       color="mk-dark-grey"
                     ></v-checkbox>
                   </v-expansion-panel-content>
@@ -398,6 +398,7 @@
                       }}</v-btn>
                     </v-row>
                     <v-checkbox
+                      class="mk-filter-checkbox"
                       v-for="audioLanguage in $shared.filters
                         .filterAudioLanguages"
                       v-bind:key="audioLanguage.Language"
@@ -416,7 +417,6 @@
                           setAllAudioLanguages
                         )
                       "
-                      style="margin: 0px"
                       color="mk-dark-grey"
                     ></v-checkbox>
                   </v-expansion-panel-content>
@@ -497,6 +497,7 @@
                       }}</v-btn>
                     </v-row>
                     <v-checkbox
+                      class="mk-filter-checkbox"
                       v-for="subtitleLanguage in $shared.filters
                         .filterSubtitleLanguages"
                       v-bind:key="subtitleLanguage.Language"
@@ -515,7 +516,6 @@
                           setAllSubtitleLanguages
                         )
                       "
-                      style="margin: 0px"
                       color="mk-dark-grey"
                     ></v-checkbox>
                   </v-expansion-panel-content>
@@ -616,6 +616,7 @@
                       v-on:click.native="filtersChanged"
                     ></v-switch>
                     <v-checkbox
+                      class="mk-filter-checkbox"
                       v-for="filterReleaseAttribute in filterReleaseAttributes"
                       v-bind:key="filterReleaseAttribute.ReleaseAttribute"
                       v-bind:label="
@@ -633,7 +634,6 @@
                           setAllReleaseAttributes
                         )
                       "
-                      style="margin: 0px"
                       color="mk-dark-grey"
                     ></v-checkbox>
                   </v-expansion-panel-content>
@@ -711,6 +711,7 @@
                       v-bind:key="list.id_Lists"
                     >
                       <v-checkbox
+                        class="mk-filter-checkbox mk-filter-removable"
                         v-bind:label="list.Name + ' (' + list.NumMovies + ')'"
                         v-model="list.Selected"
                         v-on:mouseup="filterCheckboxMouseup"
@@ -721,7 +722,6 @@
                             setAllLists
                           )
                         "
-                        style="margin: 0px"
                         color="mk-dark-grey"
                       ></v-checkbox>
                       <v-spacer></v-spacer>
@@ -813,6 +813,7 @@
                       }}</v-btn>
                     </v-row>
                     <v-checkbox
+                      class="mk-filter-checkbox"
                       v-for="rating in $shared.filters.filterRatings"
                       v-bind:key="rating.Rating"
                       v-bind:label="
@@ -827,7 +828,6 @@
                           setAllRatings
                         )
                       "
-                      style="margin: 0px"
                       color="mk-dark-grey"
                     >
                       <v-icon
@@ -1110,6 +1110,7 @@
                       v-on:click.native="filtersChanged"
                     ></v-switch>
                     <v-checkbox
+                      class="mk-filter-checkbox"
                       v-for="genre in $shared.filters.filterGenres"
                       v-bind:key="genre.id_Genres"
                       v-bind:label="genre.Name + ' (' + genre.NumMovies + ')'"
@@ -1122,7 +1123,6 @@
                           setAllGenres
                         )
                       "
-                      style="margin: 0px"
                       color="mk-dark-grey"
                     ></v-checkbox>
                   </v-expansion-panel-content>
@@ -1196,6 +1196,7 @@
                       }}</v-btn>
                     </v-row>
                     <v-checkbox
+                      class="mk-filter-checkbox"
                       v-for="ageRating in $shared.filters.filterAgeRatings"
                       v-bind:key="ageRating.Age"
                       v-bind:label="
@@ -1215,7 +1216,6 @@
                           setAllAgeRatings
                         )
                       "
-                      style="margin: 0px"
                       color="mk-dark-grey"
                     ></v-checkbox>
                   </v-expansion-panel-content>
@@ -1332,6 +1332,7 @@
                             v-bind:key="paItem.Severity"
                           >
                             <v-checkbox
+                              class="mk-filter-checkbox"
                               v-bind:label="
                                 $t(`${paItem.DisplayText}`) +
                                 ' (' +
@@ -1349,7 +1350,6 @@
                                   (x) => setAllParentalAdvisory(category, x)
                                 )
                               "
-                              style="margin: 0px"
                               color="mk-dark-grey"
                             ></v-checkbox>
                           </v-row>
@@ -1451,6 +1451,7 @@
                       v-bind:key="person.IMDB_Person_ID"
                     >
                       <v-checkbox
+                        class="mk-filter-checkbox mk-filter-removable"
                         v-bind:label="
                           person.Person_Name + ' (' + person.NumMovies + ')'
                         "
@@ -1463,7 +1464,6 @@
                             setAllPersons
                           )
                         "
-                        style="margin: 0px"
                         color="mk-dark-grey"
                       ></v-checkbox>
                       <v-spacer></v-spacer>
@@ -1580,6 +1580,7 @@
                       v-bind:key="company.Company_Name"
                     >
                       <v-checkbox
+                        class="mk-filter-checkbox mk-filter-removable"
                         v-bind:label="
                           company.Company_Name + ' (' + company.NumMovies + ')'
                         "
@@ -1592,7 +1593,6 @@
                             setAllCompanies
                           )
                         "
-                        style="margin: 0px"
                         color="mk-dark-grey"
                       ></v-checkbox>
                       <v-spacer></v-spacer>
@@ -1714,6 +1714,7 @@
                     </div>
 
                     <v-checkbox
+                      class="mk-filter-checkbox"
                       v-for="year in $shared.filters.filterYears"
                       v-bind:key="year.startYear"
                       v-bind:label="
@@ -1728,7 +1729,6 @@
                           setAllYears
                         )
                       "
-                      style="margin: 0px"
                       color="mk-dark-grey"
                     ></v-checkbox>
                   </v-expansion-panel-content>
@@ -1834,6 +1834,7 @@
                       v-bind:key="plotKeyword.id_Filter_IMDB_Plot_Keywords"
                     >
                       <v-checkbox
+                        class="mk-filter-checkbox mk-filter-removable"
                         v-bind:label="
                           plotKeyword.Keyword +
                           ' (' +
@@ -1849,7 +1850,6 @@
                             setAllIMDBPlotKeywords
                           )
                         "
-                        style="margin: 0px"
                         color="mk-dark-grey"
                       ></v-checkbox>
                       <v-spacer></v-spacer>
@@ -1983,6 +1983,7 @@
                       "
                     >
                       <v-checkbox
+                        class="mk-filter-checkbox mk-filter-removable"
                         v-bind:label="
                           filmingLocation.Location +
                           ' (' +
@@ -1998,7 +1999,6 @@
                             setAllIMDBFilmingLocations
                           )
                         "
-                        style="margin: 0px"
                         color="mk-dark-grey"
                       ></v-checkbox>
                       <v-spacer></v-spacer>
@@ -2114,6 +2114,7 @@
                       v-bind:key="dataQuality.Name"
                     >
                       <v-checkbox
+                        class="mk-filter-checkbox"
                         v-bind:key="dataQuality.Name"
                         v-bind:label="
                           $t(dataQuality.DisplayText) +
@@ -2130,7 +2131,6 @@
                             setAllDataQuality
                           )
                         "
-                        style="margin: 0px"
                         color="mk-dark-grey"
                       ></v-checkbox>
                     </v-row>
@@ -4265,6 +4265,14 @@ div.v-messages {
 
 .v-icon.mdi-delete:hover {
   color: red !important;
+}
+
+.mk-filter-checkbox {
+  margin: 0px;
+}
+
+.mk-filter-removable {
+  max-width: 268px;
 }
 
 /* ### marked overrides ### */

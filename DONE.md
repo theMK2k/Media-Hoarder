@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] Layout: delete button in sidebar filters
 - [x] (My) List Dialog: preselection should be the last selected list
 - [x] languages from tbl_Movies_Languages are not taken into account for the Media List
 - [x] Fix: Scan Media: cancel in early stage leads to mass removal!
