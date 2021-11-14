@@ -7,7 +7,6 @@
 
 ### Bugs
 
-- [ ] Filters: "Select All", "Select None", "Search": use icons and tooltip
 - [ ] "Trace" Loglevel is not recognized when starting in PROD mode
 - [ ] some log groups do not close before the next opens
 - [ ] items which have a scan error skew the next scan's time-per-item
