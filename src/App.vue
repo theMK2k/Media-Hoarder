@@ -202,20 +202,36 @@
                   <v-expansion-panel-content>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllSourcePaths(false)"
-                      >
-                        <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
-                      </v-btn>
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllSourcePaths(true)"
-                      >
-                        <v-icon>mdi-check-box-multiple-outline</v-icon>
-                      </v-btn>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllSourcePaths(false)"
+                            >
+                              <v-icon
+                                >mdi-checkbox-multiple-blank-outline</v-icon
+                              >
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET NONE") }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllSourcePaths(true)"
+                            >
+                              <v-icon>mdi-check-box-multiple-outline</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET ALL") }}</span>
+                      </v-tooltip>
                     </v-row>
                     <v-checkbox
                       class="mk-filter-checkbox"
@@ -302,20 +318,36 @@
                   <v-expansion-panel-content>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllQualities(false)"
-                      >
-                        <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
-                      </v-btn>
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllQualities(true)"
-                      >
-                        <v-icon>mdi-check-box-multiple-outline</v-icon>
-                      </v-btn>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllQualities(false)"
+                            >
+                              <v-icon
+                                >mdi-checkbox-multiple-blank-outline</v-icon
+                              >
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET NONE") }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllQualities(true)"
+                            >
+                              <v-icon>mdi-check-box-multiple-outline</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET ALL") }}</span>
+                      </v-tooltip>
                     </v-row>
                     <v-checkbox
                       class="mk-filter-checkbox"
@@ -409,20 +441,36 @@
                   <v-expansion-panel-content>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllAudioLanguages(false)"
-                      >
-                        <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
-                      </v-btn>
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllAudioLanguages(true)"
-                      >
-                        <v-icon>mdi-check-box-multiple-outline</v-icon>
-                      </v-btn>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllAudioLanguages(false)"
+                            >
+                              <v-icon
+                                >mdi-checkbox-multiple-blank-outline</v-icon
+                              >
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET NONE") }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllAudioLanguages(true)"
+                            >
+                              <v-icon>mdi-check-box-multiple-outline</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET ALL") }}</span>
+                      </v-tooltip>
                     </v-row>
                     <v-checkbox
                       class="mk-filter-checkbox"
@@ -517,20 +565,36 @@
                   <v-expansion-panel-content>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllSubtitleLanguages(false)"
-                      >
-                        <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
-                      </v-btn>
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllSubtitleLanguages(true)"
-                      >
-                        <v-icon>mdi-check-box-multiple-outline</v-icon>
-                      </v-btn>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllSubtitleLanguages(false)"
+                            >
+                              <v-icon
+                                >mdi-checkbox-multiple-blank-outline</v-icon
+                              >
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET NONE") }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllSubtitleLanguages(true)"
+                            >
+                              <v-icon>mdi-check-box-multiple-outline</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET ALL") }}</span>
+                      </v-tooltip>
                     </v-row>
                     <v-checkbox
                       class="mk-filter-checkbox"
@@ -631,20 +695,36 @@
                   <v-expansion-panel-content>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllReleaseAttributes(false)"
-                      >
-                        <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
-                      </v-btn>
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllReleaseAttributes(true)"
-                      >
-                        <v-icon>mdi-check-box-multiple-outline</v-icon>
-                      </v-btn>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllReleaseAttributes(false)"
+                            >
+                              <v-icon
+                                >mdi-checkbox-multiple-blank-outline</v-icon
+                              >
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET NONE") }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllReleaseAttributes(true)"
+                            >
+                              <v-icon>mdi-check-box-multiple-outline</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET ALL") }}</span>
+                      </v-tooltip>
                     </v-row>
                     <v-switch
                       v-bind:label="
@@ -745,20 +825,36 @@
                   <v-expansion-panel-content>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllLists(false)"
-                      >
-                        <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
-                      </v-btn>
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllLists(true)"
-                      >
-                        <v-icon>mdi-check-box-multiple-outline</v-icon>
-                      </v-btn>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllLists(false)"
+                            >
+                              <v-icon
+                                >mdi-checkbox-multiple-blank-outline</v-icon
+                              >
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET NONE") }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllLists(true)"
+                            >
+                              <v-icon>mdi-check-box-multiple-outline</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET ALL") }}</span>
+                      </v-tooltip>
                     </v-row>
                     <v-row
                       v-for="list in $shared.filters.filterLists"
@@ -860,20 +956,36 @@
                   <v-expansion-panel-content>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllRatings(false)"
-                      >
-                        <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
-                      </v-btn>
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllRatings(true)"
-                      >
-                        <v-icon>mdi-check-box-multiple-outline</v-icon>
-                      </v-btn>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllRatings(false)"
+                            >
+                              <v-icon
+                                >mdi-checkbox-multiple-blank-outline</v-icon
+                              >
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET NONE") }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllRatings(true)"
+                            >
+                              <v-icon>mdi-check-box-multiple-outline</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET ALL") }}</span>
+                      </v-tooltip>
                     </v-row>
                     <v-checkbox
                       class="mk-filter-checkbox"
@@ -1156,20 +1268,36 @@
                   <v-expansion-panel-content>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllGenres(false)"
-                      >
-                        <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
-                      </v-btn>
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllGenres(true)"
-                      >
-                        <v-icon>mdi-check-box-multiple-outline</v-icon>
-                      </v-btn>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllGenres(false)"
+                            >
+                              <v-icon
+                                >mdi-checkbox-multiple-blank-outline</v-icon
+                              >
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET NONE") }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllGenres(true)"
+                            >
+                              <v-icon>mdi-check-box-multiple-outline</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET ALL") }}</span>
+                      </v-tooltip>
                     </v-row>
                     <v-switch
                       v-bind:label="
@@ -1261,20 +1389,36 @@
                   <v-expansion-panel-content>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllAgeRatings(false)"
-                      >
-                        <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
-                      </v-btn>
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllAgeRatings(true)"
-                      >
-                        <v-icon>mdi-check-box-multiple-outline</v-icon>
-                      </v-btn>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllAgeRatings(false)"
+                            >
+                              <v-icon
+                                >mdi-checkbox-multiple-blank-outline</v-icon
+                              >
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET NONE") }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllAgeRatings(true)"
+                            >
+                              <v-icon>mdi-check-box-multiple-outline</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET ALL") }}</span>
+                      </v-tooltip>
                     </v-row>
                     <v-checkbox
                       class="mk-filter-checkbox"
@@ -1393,26 +1537,42 @@
                         <v-expansion-panel-content>
                           <v-row style="margin-bottom: 8px">
                             <v-spacer />
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="
-                                setAllParentalAdvisory(category, false)
-                              "
-                            >
-                              <v-icon
-                                >mdi-checkbox-multiple-blank-outline</v-icon
-                              >
-                            </v-btn>
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="
-                                setAllParentalAdvisory(category, true)
-                              "
-                            >
-                              <v-icon>mdi-check-box-multiple-outline</v-icon>
-                            </v-btn>
+                            <v-tooltip bottom style="z-index: 21">
+                              <template v-slot:activator="{ on }">
+                                <span v-on="on">
+                                  <v-btn
+                                    class="mk-filter-action-btn"
+                                    text
+                                    v-on:click="
+                                      setAllParentalAdvisory(category, false)
+                                    "
+                                  >
+                                    <v-icon
+                                      >mdi-checkbox-multiple-blank-outline</v-icon
+                                    >
+                                  </v-btn>
+                                </span>
+                              </template>
+                              <span>{{ $t("SET NONE") }}</span>
+                            </v-tooltip>
+                            <v-tooltip bottom style="z-index: 21">
+                              <template v-slot:activator="{ on }">
+                                <span v-on="on">
+                                  <v-btn
+                                    class="mk-filter-action-btn"
+                                    text
+                                    v-on:click="
+                                      setAllParentalAdvisory(category, true)
+                                    "
+                                  >
+                                    <v-icon
+                                      >mdi-check-box-multiple-outline</v-icon
+                                    >
+                                  </v-btn>
+                                </span>
+                              </template>
+                              <span>{{ $t("SET ALL") }}</span>
+                            </v-tooltip>
                           </v-row>
                           <v-row
                             v-for="paItem in $shared.filters
@@ -1514,27 +1674,50 @@
                   <v-expansion-panel-content>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllPersons(false)"
-                      >
-                        <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
-                      </v-btn>
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllPersons(true)"
-                      >
-                        <v-icon>mdi-check-box-multiple-outline</v-icon>
-                      </v-btn>
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="addPerson()"
-                      >
-                        <v-icon>mdi-magnify</v-icon>
-                      </v-btn>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllPersons(false)"
+                            >
+                              <v-icon
+                                >mdi-checkbox-multiple-blank-outline</v-icon
+                              >
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET NONE") }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllPersons(true)"
+                            >
+                              <v-icon>mdi-check-box-multiple-outline</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET ALL") }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="addPerson()"
+                            >
+                              <v-icon>mdi-magnify</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("Find Person") }}</span>
+                      </v-tooltip>
                     </v-row>
                     <v-switch
                       v-bind:label="
@@ -1654,27 +1837,50 @@
                   <v-expansion-panel-content>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllCompanies(false)"
-                      >
-                        <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
-                      </v-btn>
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllCompanies(true)"
-                      >
-                        <v-icon>mdi-check-box-multiple-outline</v-icon>
-                      </v-btn>
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="addCompany()"
-                      >
-                        <v-icon>mdi-magnify</v-icon>
-                      </v-btn>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllCompanies(false)"
+                            >
+                              <v-icon
+                                >mdi-checkbox-multiple-blank-outline</v-icon
+                              >
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET NONE") }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllCompanies(true)"
+                            >
+                              <v-icon>mdi-check-box-multiple-outline</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET ALL") }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="addCompany()"
+                            >
+                              <v-icon>mdi-magnify</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("Find Company") }}</span>
+                      </v-tooltip>
                     </v-row>
                     <v-switch
                       v-bind:label="
@@ -1790,27 +1996,50 @@
                   <v-expansion-panel-content>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllYears(false)"
-                      >
-                        <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
-                      </v-btn>
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllYears(true)"
-                      >
-                        <v-icon>mdi-check-box-multiple-outline</v-icon>
-                      </v-btn>
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="showYearsRangeInput()"
-                      >
-                        <v-icon>mdi-arrow-expand-horizontal</v-icon>
-                      </v-btn>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllYears(false)"
+                            >
+                              <v-icon
+                                >mdi-checkbox-multiple-blank-outline</v-icon
+                              >
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET NONE") }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllYears(true)"
+                            >
+                              <v-icon>mdi-check-box-multiple-outline</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET ALL") }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="showYearsRangeInput()"
+                            >
+                              <v-icon>mdi-arrow-expand-horizontal</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET RANGE") }}</span>
+                      </v-tooltip>
                     </v-row>
                     <div v-if="yearsRangeInput.show">
                       <v-row v-if="yearsRangeInput.show">
@@ -1934,27 +2163,50 @@
                   <v-expansion-panel-content>
                     <v-row>
                       <v-spacer />
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllIMDBPlotKeywords(false)"
-                      >
-                        <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
-                      </v-btn>
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllIMDBPlotKeywords(true)"
-                      >
-                        <v-icon>mdi-check-box-multiple-outline</v-icon>
-                      </v-btn>
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="addIMDBPlotKeyword()"
-                      >
-                        <v-icon>mdi-magnify</v-icon>
-                      </v-btn>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllIMDBPlotKeywords(false)"
+                            >
+                              <v-icon
+                                >mdi-checkbox-multiple-blank-outline</v-icon
+                              >
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET NONE") }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllIMDBPlotKeywords(true)"
+                            >
+                              <v-icon>mdi-check-box-multiple-outline</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET ALL") }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="addIMDBPlotKeyword()"
+                            >
+                              <v-icon>mdi-magnify</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("Find Plot Keyword") }}</span>
+                      </v-tooltip>
                     </v-row>
                     <v-switch
                       v-bind:label="
@@ -2088,27 +2340,50 @@
                   <v-expansion-panel-content>
                     <v-row>
                       <v-spacer />
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllIMDBFilmingLocations(false)"
-                      >
-                        <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
-                      </v-btn>
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllIMDBFilmingLocations(true)"
-                      >
-                        <v-icon>mdi-check-box-multiple-outline</v-icon>
-                      </v-btn>
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="addIMDBFilmingLocation()"
-                      >
-                        <v-icon>mdi-magnify</v-icon>
-                      </v-btn>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllIMDBFilmingLocations(false)"
+                            >
+                              <v-icon
+                                >mdi-checkbox-multiple-blank-outline</v-icon
+                              >
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET NONE") }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllIMDBFilmingLocations(true)"
+                            >
+                              <v-icon>mdi-check-box-multiple-outline</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET ALL") }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="addIMDBFilmingLocation()"
+                            >
+                              <v-icon>mdi-magnify</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("Find Person") }}</span>
+                      </v-tooltip>
                     </v-row>
                     <v-switch
                       v-bind:label="
@@ -2239,20 +2514,36 @@
                   <v-expansion-panel-content>
                     <v-row>
                       <v-spacer />
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllDataQuality(false)"
-                      >
-                        <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
-                      </v-btn>
-                      <v-btn
-                        class="mk-filter-action-btn"
-                        text
-                        v-on:click="setAllDataQuality(true)"
-                      >
-                        <v-icon>mdi-check-box-multiple-outline</v-icon>
-                      </v-btn>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllDataQuality(false)"
+                            >
+                              <v-icon
+                                >mdi-checkbox-multiple-blank-outline</v-icon
+                              >
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET NONE") }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllDataQuality(true)"
+                            >
+                              <v-icon>mdi-check-box-multiple-outline</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("SET ALL") }}</span>
+                      </v-tooltip>
                     </v-row>
                     <v-switch
                       v-bind:label="
@@ -4436,6 +4727,8 @@ div.v-messages {
 .mk-filter-action-btn.v-btn:not(.v-btn--round).v-size--default {
   margin-right: -3px;
   margin-left: 3px;
+  margin-top: 8px;
+  margin-bottom: 0px;
   height: 30px;
   padding: 0 0px;
   min-width: 30px;

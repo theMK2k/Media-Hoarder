@@ -2,8 +2,7 @@
 
 ## v1.0.0
 
-- [ ] handle helpers.isPortable via env-var (get rid of set-portable.js)
-- [ ] add a new rescan method: "rescan entries with errors"
+- nothing
 
 ### Bugs
 
@@ -110,6 +109,8 @@
 
 ### Other (later)
 
+- [ ] handle helpers.isPortable via env-var (get rid of set-portable.js)
+- [ ] add a new rescan method: "rescan entries with errors"
 - [ ] layout the app with css grid (see: <https://layout.bradwoods.io/customize>)
 - [ ] treat rescan of particular titles as a queue (don't disable all other titles when a rescan runs)
   - same queue as a "Scan Media" process
