@@ -1591,7 +1591,7 @@ async function applyMediaInfo(movie, onlyNew) {
 
   logger.log("applyMediaInfo movie:", movie);
 
-  const mi_task = `${mediainfo} --Output=XML "${movie.fullPath}"`;
+  const mi_task = `"${mediainfo}" --Output=XML "${movie.fullPath}"`;
   logger.log("running mediainfo:", mi_task);
 
   const audioLanguages = [];
@@ -4036,7 +4036,7 @@ async function launchMovie(movie) {
     return;
   }
 
-  const task = `${MediaplayerPath} "${movie.fullPath}"`;
+  const task = `"${MediaplayerPath}" "${movie.fullPath}"`;
   logger.log("launching:", task);
   await execAsync(task);
   logger.log("end launching:", task);
