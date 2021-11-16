@@ -2,7 +2,9 @@
 
 ## v1.0.0
 
-- nothing
+- rescan re-links imdb using the builtin imdb id finder (see: Blender Sourcepath)
+- allow imdbid in relink dialog
+- Test mediainfo and VLC in Linux/MacOS (we now use "" in the exec)
 
 ### Bugs
 
