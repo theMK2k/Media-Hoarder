@@ -1377,12 +1377,7 @@ export default {
 
   watch: {
     currentPage(newValue, oldValue) {
-      logger.log(
-        "watch currentPage: newValue:",
-        newValue,
-        "oldValue:",
-        oldValue
-      );
+      logger.log("[currentPage] newValue:", newValue, "oldValue:", oldValue);
 
       if (!newValue) {
         this.$shared.currentPage = oldValue || 1;
@@ -1474,7 +1469,7 @@ export default {
         page++;
       }
 
-      logger.log("paginationItems:", result);
+      logger.log("[paginationItems] result:", result);
 
       return result;
     },
@@ -1780,7 +1775,12 @@ export default {
     },
 
     changeRating(movie) {
-      logger.log("changeRating movie:", movie, " movie.Rating:", movie.Rating);
+      logger.log(
+        "[changeRating] movie:",
+        movie,
+        " movie.Rating:",
+        movie.Rating
+      );
 
       const rating = movie.Rating;
 
@@ -1816,7 +1816,7 @@ export default {
     },
 
     selectItem(movie) {
-      logger.log("movie selected:", movie);
+      logger.log("[selectItem] movie:", movie);
       (async () => {
         if (movie.selected) {
           movie.selected = false;
@@ -1826,7 +1826,7 @@ export default {
               movie.id_Movies
             );
 
-            logger.log("movie details:", { lists, extras });
+            logger.log("[selectItem] movie details:", { lists, extras });
 
             this.$set(movie, "lists", lists);
             this.$set(movie, "extras", extras);
@@ -1845,13 +1845,13 @@ export default {
 
       const end = moment();
 
-      logger.log("start:", start, "end:", end);
+      logger.log("[launch] start:", start, "end:", end);
 
-      logger.log("diff:", end.diff(start, "seconds"));
+      logger.log("[launch] diff:", end.diff(start, "seconds"));
 
       let minimumWaitForSetAccess = await store.getMinimumWaitForSetAccess();
 
-      logger.log("minimumWaitForSetAccess:", minimumWaitForSetAccess);
+      logger.log("[launch] minimumWaitForSetAccess:", minimumWaitForSetAccess);
 
       if (minimumWaitForSetAccess) {
         minimumWaitForSetAccess = parseInt(minimumWaitForSetAccess);
@@ -1860,11 +1860,11 @@ export default {
       }
 
       if (end.diff(start, "seconds") < minimumWaitForSetAccess) {
-        logger.log("RUNTIME TOO SHORT");
+        logger.log("[launch] RUNTIME TOO SHORT");
         return;
       }
 
-      logger.log("RUNTIME LONG ENOUGH");
+      logger.log("[launch] RUNTIME LONG ENOUGH");
 
       const arr_id_Movies = await store.setLastAccess(movie.id_Movies);
       await this.updateCurrentTime();
@@ -1940,7 +1940,7 @@ export default {
         this.listDialog.allowUseExistingLists = false;
 
         if (this.listDialog.lists && this.listDialog.lists.length > 0) {
-          logger.log("addToList GOT existing lists");
+          logger.log("[addToList] GOT existing lists");
           this.listDialog.allowUseExistingLists = true;
 
           eventBus.listDialogSetChosenMethod("useExistingLists");
@@ -1956,7 +1956,7 @@ export default {
 
           eventBus.listDialogSetChosenList(last_chosen_id_Lists);
         } else {
-          logger.log("addToList GOT NO existing lists");
+          logger.log("[addToList] GOT NO existing lists");
           this.listDialog.allowUseExistingLists = false;
           eventBus.listDialogSetChosenMethod("createNewList");
         }
@@ -1972,7 +1972,7 @@ export default {
     showTrailer(item) {
       this.videoPlayerDialog.videoURL = `https://www.imdb.com${item.IMDB_Trailer_URL}`;
       logger.log(
-        "this.videoPlayerDialog.videoURL:",
+        "[showTrailer] this.videoPlayerDialog.videoURL:",
         this.videoPlayerDialog.videoURL
       );
       this.videoPlayerDialog.show = true;
@@ -1984,7 +1984,7 @@ export default {
           `https://www.imdb.com${item.IMDB_Trailer_URL}`
         );
 
-        logger.log("trailerMediaURLs:", trailerMediaURLs);
+        logger.log("[showTrailer] trailerMediaURLs:", trailerMediaURLs);
 
         if (
           !trailerMediaURLs ||
@@ -1998,7 +1998,10 @@ export default {
           trailerMediaURLs.mediaURLs
         );
 
-        logger.log("selected best quality trailerMediaURL:", trailerMediaURL);
+        logger.log(
+          "[showTrailerLocal] selected best quality trailerMediaURL:",
+          trailerMediaURL
+        );
 
         this.localVideoPlayerDialog.videoURL = trailerMediaURL.mediaURL;
         this.localVideoPlayerDialog.mimeType = trailerMediaURL.mimeType;
@@ -2029,7 +2032,7 @@ export default {
     onListDialogOK(data) {
       this.listDialog.show = false;
 
-      logger.log("onListDialogOK data:", data);
+      logger.log("[onListDialogOK] data:", data);
       (async () => {
         try {
           if (!data.chosen_id_Lists && !data.newListName) {
@@ -2098,7 +2101,7 @@ export default {
      *                 key has values: the filter items will be enabled
      */
     async fetchFilters(setFilter) {
-      logger.groupCollapsed("[Fetch Filters]");
+      logger.group("[Fetch Filters]");
 
       try {
         // eventBus.showSidebarLoadingOverlay(true);
@@ -2124,7 +2127,7 @@ export default {
           });
         }
 
-        logger.log("fetchFilters filterGroups:", filterGroups);
+        logger.log("[fetchFilters] filterGroups:", filterGroups);
 
         for (let i = 0; i < filterGroups.length; i++) {
           if (currentFetchFiltersIteration !== this.fetchFiltersIteration) {
@@ -2272,6 +2275,7 @@ export default {
 
         if (currentFetchFiltersIteration !== this.fetchFiltersIteration) {
           // another fetch has been initiated
+          logger.groupEnd();
           return;
         }
 
@@ -2292,7 +2296,7 @@ export default {
     },
 
     onCreditClicked(credit) {
-      logger.log("credit clicked:", credit);
+      logger.log("[onCreditClicked] credit:", credit);
 
       this.personDialog.show = true;
       this.personDialog.IMDB_Person_ID = credit.id;
@@ -2303,7 +2307,7 @@ export default {
     },
 
     onCompanyClicked(company) {
-      logger.log("company clicked:", company);
+      logger.log("[onCompanyClicked]:", company);
 
       this.companyDialog.show = true;
       this.companyDialog.IMDB_Company_ID = company.id;
@@ -2314,7 +2318,7 @@ export default {
     },
 
     onVideoQualityClicked(videoQuality) {
-      logger.log("videoQuality clicked:", videoQuality);
+      logger.log("[onVideoQualityClicked]:", videoQuality);
 
       this.videoQualityDialog.show = true;
       this.videoQualityDialog.Video_Quality = videoQuality;
@@ -2323,7 +2327,7 @@ export default {
     },
 
     onGenreClicked(genre) {
-      logger.log("genre clicked:", genre);
+      logger.log("[onGenreClicked]:", genre);
 
       this.genreDialog.show = true;
       this.genreDialog.Genre = genre;
@@ -2332,7 +2336,7 @@ export default {
     },
 
     async onLanguageClicked(code, type, item) {
-      logger.log("language clicked:", code, type);
+      logger.log("[onLanguageClicked]:", code, type);
 
       if (/\+\d/.test(code)) {
         // clicked language is expandable, e.g. "+4"
@@ -2363,7 +2367,7 @@ export default {
     },
 
     onAgeRatingClicked(ageRating) {
-      logger.log("ageRating clicked:", ageRating);
+      logger.log("[onAgeRatingClicked]:", ageRating);
 
       this.ageRatingDialog.show = true;
       this.ageRatingDialog.Age_Rating = ageRating;
@@ -2372,7 +2376,7 @@ export default {
     },
 
     onIMDBPlotKeywordClicked(plotKeyword) {
-      logger.log("plotKeyword clicked:", plotKeyword);
+      logger.log("[onPlotKeywordClicked]:", plotKeyword);
 
       this.plotKeywordDialog.show = true;
       this.plotKeywordDialog.id_IMDB_Plot_Keywords =
@@ -2383,7 +2387,7 @@ export default {
     },
 
     onIMDBFilmingLocationClicked(filmingLocation) {
-      logger.log("filmingLocation clicked:", filmingLocation);
+      logger.log("[onIMDBFilmingLocationClicked]:", filmingLocation);
 
       this.filmingLocationDialog.show = true;
       this.filmingLocationDialog.id_IMDB_Filming_Locations =
@@ -2482,7 +2486,7 @@ export default {
       if (!movie.credits) {
         const credits = await store.fetchMovieCredits(movie.id_Movies);
 
-        logger.log(credits);
+        logger.log("[showCredits] credits:", credits);
 
         this.$set(movie, "credits", credits);
       }
@@ -2499,7 +2503,7 @@ export default {
       if (!movie.companies) {
         const companies = await store.fetchMovieCompanies(movie.id_Movies);
 
-        logger.log(companies);
+        logger.log("[showCompanies] companies:", companies);
 
         this.$set(movie, "companies", companies);
       }
@@ -2581,7 +2585,7 @@ export default {
 
         this.onLinkIMDBDialogClose();
       } catch (err) {
-        logger.log("error:", JSON.stringify(err));
+        logger.log("[onLinkIMDBDialogSelected] error:", JSON.stringify(err));
         eventBus.showSnackbar("error", err);
       }
     },
@@ -2608,7 +2612,7 @@ export default {
           this.$t("entry successfully rescanned")
         );
       } catch (err) {
-        logger.log("error:", JSON.stringify(err));
+        logger.log("[onRescrapeIMDB] error:", JSON.stringify(err));
         eventBus.showSnackbar("error", err);
       }
     },
@@ -2618,7 +2622,7 @@ export default {
     },
 
     async onEditItemDialogOK(result) {
-      logger.log("EDIT NAME DIALOG OK result:", result);
+      logger.log("[onEditItemDialogOK] EDIT NAME DIALOG OK result:", result);
       this.editItemDialog.show = false;
 
       const useActualDuplicates =
@@ -2686,7 +2690,7 @@ export default {
           movie.id_Movies
         );
 
-        logger.log("plotKeywords", plotKeywords);
+        logger.log("[showPlotKeywords] plotKeywords:", plotKeywords);
 
         this.$set(movie, "plotKeywords", plotKeywords);
       }
@@ -2705,7 +2709,10 @@ export default {
           movie.id_Movies
         );
 
-        logger.log("filmingLocations", filmingLocations);
+        logger.log(
+          "[showFilmingLocations] filmingLocations:",
+          filmingLocations
+        );
 
         this.$set(movie, "filmingLocations", filmingLocations);
       }
@@ -2718,12 +2725,12 @@ export default {
     },
 
     onReload() {
-      logger.log("MediaList onReload");
+      logger.log("[onReload]");
       eventBus.refetchMedia();
     },
 
     async completelyFetchMedia() {
-      logger.groupCollapsed("[Fetch Media Details]");
+      logger.group("[Fetch Media Details]");
 
       try {
         const arr_id_Movies = [];
@@ -2734,7 +2741,7 @@ export default {
           }
         });
 
-        logger.log("completelyFetchMedia arr_id_Movies:", arr_id_Movies);
+        logger.log("[completelyFetchMedia] arr_id_Movies:", arr_id_Movies);
 
         if (arr_id_Movies.length === 0) {
           return;
@@ -2748,7 +2755,7 @@ export default {
           this.$shared.filters
         );
 
-        logger.log("completelyFetchMedia result:", result);
+        logger.log("[completelyFetchMedia] result:", result);
 
         result.forEach((item) => {
           this.itemsFilteredPaginated.forEach((itemPaginated) => {
@@ -2809,7 +2816,7 @@ export default {
     },
 
     onOpenEditMediaItemDialog(item) {
-      logger.log("onOpenEditMediaItemDialog item:", item);
+      logger.log("[onOpenEditMediaItemDialog] item:", item);
       this.editMediaItemDialog.mediaItem = JSON.parse(JSON.stringify(item)); // we don't allow direct manipulation of the item itself
       this.editMediaItemDialog.show = true;
     },
@@ -2840,7 +2847,7 @@ export default {
 
   // ### LifeCycle Hooks ###
   created() {
-    logger.log("MediaList created");
+    logger.log("[created] MediaList created");
 
     // Register eventBus events
     eventBus.$on("searchTextChanged", () => {
@@ -2850,7 +2857,7 @@ export default {
     });
 
     eventBus.$on("refetchMedia", (setPage, $t, setFilter) => {
-      logger.groupCollapsed("[Fetch Media List]");
+      logger.group("[Fetch Media List]");
       (async () => {
         eventBus.showLoadingOverlay(true);
 
@@ -2926,7 +2933,7 @@ export default {
 
       this.$shared.currentPage = await store.fetchCurrentPage(this.mediatype);
 
-      logger.log("items:", this.items);
+      logger.log("[created] this.items:", this.items);
     })();
 
     this.sortAbles.forEach((sortAble) => {
@@ -2941,7 +2948,7 @@ export default {
   },
 
   beforeDestroy() {
-    logger.log("MediaList beforeDestroy START");
+    logger.log("[beforeDestroy] MediaList beforeDestroy START");
     this.items = [];
     eventBus.$off("searchTextChanged");
     eventBus.$off("refetchMedia");

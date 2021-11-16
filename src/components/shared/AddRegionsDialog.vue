@@ -110,7 +110,7 @@ export default {
 
     onOKClick() {
       logger.log(
-        "this.items.filter(item => item.selected):",
+        "[onOKClick] this.items.filter(item => item.selected):",
         this.items.filter((item) => item.selected)
       );
       this.$emit(
@@ -127,7 +127,7 @@ export default {
       this.searchText = "";
 
       if (this.items.length === 0) {
-        // logger.log('TODO: fetch Countries from https://www.imdb.com/search/title/');
+        // logger.log('[init] TODO: fetch Countries from https://www.imdb.com/search/title/');
         try {
           this.items = await store.getIMDBRegions();
 
@@ -141,7 +141,7 @@ export default {
             a.nameTranslated > b.nameTranslated ? 0 : -1
           );
 
-          logger.log("countries this.items:", this.items);
+          logger.log("[init] this.items:", this.items);
         } catch (e) {
           eventBus.showSnackbar("error", e);
         }

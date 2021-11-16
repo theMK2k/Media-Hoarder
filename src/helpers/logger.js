@@ -1,12 +1,8 @@
 const logger = require("loglevel");
 
 logger.group = (label) => {
-  console.group(label);
-};
-
-logger.groupCollapsed = (label) => {
   if (logger.getLevel() < 2) {
-    console.groupCollapsed(label);
+    console.group(label);
   } else {
     console.group(label);
   }

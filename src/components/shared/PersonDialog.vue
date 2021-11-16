@@ -191,7 +191,7 @@ export default {
     },
 
     async scrapeData() {
-      logger.log("PersonDialog SCRAPE!");
+      logger.log("[scrapeData] START");
       this.isScraping = true;
 
       try {
@@ -202,7 +202,7 @@ export default {
 
         store.saveIMDBPersonData(personData);
 
-        logger.log("scraped personData:", personData);
+        logger.log("[scrapeData] personData:", personData);
 
         this.personData = {
           IMDB_Person_ID: personData.$IMDB_Person_ID,
@@ -214,7 +214,7 @@ export default {
           LongBio: personData.$LongBio,
         };
 
-        logger.log("this.personData:", this.personData);
+        logger.log("[scrapeData] this.personData:", this.personData);
       } catch (err) {
         logger.log(err);
         eventBus.showSnackbar("error", err);
@@ -224,7 +224,7 @@ export default {
     },
 
     async init($IMDB_Person_ID) {
-      logger.log("PersonDialog INIT!");
+      logger.log("[init] START");
 
       this.personData = {};
       this.showLongBio = false;
@@ -249,7 +249,7 @@ export default {
 
       let personData = await store.fetchIMDBPerson($IMDB_Person_ID);
 
-      logger.log("fetched personData:", personData);
+      logger.log("[init] fetched personData:", personData);
 
       if (!personData || personData.length === 0) {
         await this.scrapeData();
@@ -265,7 +265,7 @@ export default {
 
       this.personData = personData;
 
-      logger.log("this.personData:", this.personData);
+      logger.log("[init] this.personData:", this.personData);
     },
 
     onCloseClick() {

@@ -168,7 +168,7 @@ export default {
       this.chosenMethod = value;
     });
     eventBus.$on("listDialogSetChosenList", (id_Lists) => {
-      logger.log("set chosen id_Lists:", id_Lists);
+      logger.log("[created] set chosen id_Lists:", id_Lists);
       this.chosen_id_Lists = id_Lists;
     });
   },

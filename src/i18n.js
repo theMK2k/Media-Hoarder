@@ -13,7 +13,7 @@ Vue.use(VueI18n);
 
 function loadLocaleMessages() {
   const locales = require.context("./i18n", true, /[A-Za-z0-9-_,\s]+\.json$/i);
-  logger.log(`loadLocaleMessages locales:`, locales);
+  logger.log(`[loadLocaleMessages] locales:`, locales);
 
   const messages = {};
   locales.keys().forEach((key) => {
@@ -30,20 +30,20 @@ function loadLocaleMessages() {
   if (fs.existsSync(extraLocalesPath)) {
     const extraLocalesFiles = fs.readdirSync(extraLocalesPath);
 
-    logger.log("loadLocaleMessages extraLocalesFiles:", extraLocalesFiles);
+    logger.log("[loadLocaleMessages] extraLocalesFiles:", extraLocalesFiles);
 
     extraLocalesFiles.forEach((extraLocalesFile) => {
       const rx = /^([A-Za-z0-9-_]+)\.json$/;
       if (!rx.test(extraLocalesFile)) {
         logger.log(
-          `skipping locales file ${extraLocalesFile} as it doesn't match expected format`
+          `[loadLocaleMessages] skipping locales file ${extraLocalesFile} as it doesn't match expected format`
         );
       }
 
       const locale = extraLocalesFile.match(rx)[1];
 
       logger.log(
-        `loadLocaleMessages using messages for ${locale} from ${extraLocalesFile} in i18n directory`
+        `[loadLocaleMessages] loadLocaleMessages using messages for ${locale} from ${extraLocalesFile} in i18n directory`
       );
 
       try {
@@ -51,7 +51,10 @@ function loadLocaleMessages() {
           fs.readFileSync(path.join(extraLocalesPath, extraLocalesFile))
         );
       } catch (err) {
-        logger.error(`ERROR while opening '${extraLocalesFile}:`, err);
+        logger.error(
+          `[loadLocaleMessages] ERROR while opening '${extraLocalesFile}:`,
+          err
+        );
       }
     });
 
@@ -75,7 +78,7 @@ function loadLocaleMessages() {
 
   // printMessage(messages.en);
 
-  logger.log("loadLocaleMessages messages:", messages);
+  logger.log("[loadLocaleMessages] messages:", messages);
   return messages;
 }
 
@@ -101,12 +104,16 @@ function validateMessages(messages) {
       Object.keys(en).forEach((key) => {
         if (typeof en[key] === "string") {
           if (en[key].includes("_")) {
-            logger.warn(`Locale en contains underscore in key '${key}'`);
+            logger.warn(
+              `[validateMessages] Locale en contains underscore in key '${key}'`
+            );
           }
         }
 
         if (other[key] === undefined) {
-          logger.warn(`Locale ${locale} is missing key '${key}'!`);
+          logger.warn(
+            `[validateMessages] Locale ${locale} is missing key '${key}'!`
+          );
           return;
         }
 
@@ -116,7 +123,9 @@ function validateMessages(messages) {
 
         if (typeof other[key] === "string") {
           if (other[key].includes("_")) {
-            logger.warn(`Locale ${locale} contains underscore in key '${key}'`);
+            logger.warn(
+              `[validateMessages] Locale ${locale} contains underscore in key '${key}'`
+            );
           }
         }
       });

@@ -120,7 +120,7 @@ function getLastDirectoryName(directory) {
 }
 
 function getMovieNameFromDirectory(directory) {
-  logger.log("getMovieNameFromDirectory directory:", directory);
+  logger.log("[getMovieNameFromDirectory] directory:", directory);
 
   let lastDirectory = getLastDirectoryName(directory);
 
@@ -203,7 +203,7 @@ function getDirectoryName(pathString) {
 
 async function downloadFile(url, targetPath, redownload) {
   try {
-    logger.log("downloadFile url:", url);
+    logger.log("[downloadFile] url:", url);
 
     if (!url) {
       return false;
@@ -214,12 +214,12 @@ async function downloadFile(url, targetPath, redownload) {
     if (!redownload) {
       const exists = await existsAsync(targetPath);
       if (exists) {
-        logger.log("  target file already exists, abort");
+        logger.log("[downloadFile]  target file already exists, abort");
         return true;
       }
     }
 
-    logger.log("  fetching from web");
+    logger.log("[downloadFile]  fetching from web");
     const response = await requestAsync({ url, encoding: null });
     const data = response.body;
 
@@ -236,7 +236,7 @@ function requestRetryStrategy(err, response, body, options) {
   const mustRetry = !!err;
 
   if (mustRetry) {
-    logger.log("request retry - options:", options);
+    logger.log("[requestRetryStrategy] retrying options:", options);
   }
 
   return {
@@ -281,7 +281,7 @@ async function requestAsync(options) {
 
   optionsDerived.timeout = 10000; // we set a 10s timeout
 
-  logger.log("request options:", optionsDerived);
+  logger.log("[requestAsync] optionsDerived:", optionsDerived);
 
   if (imdbScraperWatchdogUseDumps) {
     const filename = `${filenamify(
@@ -306,7 +306,7 @@ async function requestAsync(options) {
     const filename = `${filenamify(
       optionsDerived.url ? optionsDerived.url : optionsDerived.uri
     )}.html`;
-    logger.log("dumping to", filename);
+    logger.log("[requestAsync] dumping to", filename);
     await writeFileAsync(`./${filename}`, response.body);
   }
 

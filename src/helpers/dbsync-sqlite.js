@@ -16,10 +16,10 @@ function runSync(
   { doCreateTables, doCreateColumns, doCopyContent },
   callback
 ) {
-  logger.debug("Syncing DB...");
+  logger.debug("[runSync] Syncing DB...");
 
-  logger.debug("Template DB Path:", templateDBPath);
-  logger.debug("Working DB Path :", workingDBPath);
+  logger.debug("[runSync] Template DB Path:", templateDBPath);
+  logger.debug("[runSync] Working DB Path :", workingDBPath);
 
   if (!fs.existsSync(templateDBPath)) {
     return callback(
@@ -53,7 +53,7 @@ function runSync(
       }
 
       syncTables(doCreateTables, (err) => {
-        logger.log("syncTables done");
+        logger.log("[runSync] syncTables done");
 
         if (err) {
           logger.log(err);
@@ -82,24 +82,24 @@ function runSync(
 export { runSync };
 
 function runQuery({ db, query, params }, callback) {
-  // logger.debug('runQuery START');
+  // logger.debug('[runQuery] START');
   if (!query) {
-    // logger.debug('  query is null, aborting');
+    // logger.debug('[runQuery]  query is null, aborting');
     return callback(null);
   }
 
   if (dryRun) {
-    logger.debug("  SQL Query suppressed due to dryRun:", query);
+    logger.debug("[runQuery]  SQL Query suppressed due to dryRun:", query);
     return callback(null);
   }
 
-  logger.debug("  running query ...");
+  logger.debug("[runSync]  running query ...");
   db.run(query, params, (err) => {
     if (err) {
-      logger.error("  error: ", err);
-      logger.debug("  the query was: ", query);
+      logger.error("[runSync]  error: ", err);
+      logger.debug("[runSync]  the query was: ", query);
     } else {
-      logger.debug("  OK");
+      logger.debug("[runSync]  OK");
     }
     callback(err);
   });
@@ -107,24 +107,24 @@ function runQuery({ db, query, params }, callback) {
 
 function syncTables(doCreateTables, callback) {
   if (!doCreateTables) {
-    logger.debug("skipping syncTables due to configuration");
+    logger.debug("[syncTables] skipping syncTables due to configuration");
     return callback(null);
   }
 
-  logger.debug("syncTables start");
+  logger.debug("[syncTables] START");
 
   templateDb.all(
     `select tbl_name, sql from sqlite_master WHERE type='table' AND name not like 'sqlite%' AND name not like 'xtb_Database_Properties'`,
     [],
     (err, rowsTemplate) => {
-      logger.debug("  got result");
+      logger.debug("[syncTables]  got result");
 
       if (err) {
         logger.error(definedError.create("error in query", { err }));
         return callback(err);
       }
 
-      // logger.debug('rowsTemplate:', rowsTemplate);
+      // logger.debug('[syncTables] rowsTemplate:', rowsTemplate);
 
       workingDb.all(
         `select tbl_name from sqlite_master WHERE type='table' AND name not like 'sqlite%' AND name not like 'xtb_Database_Properties'`,
@@ -134,7 +134,7 @@ function syncTables(doCreateTables, callback) {
             return callback(err);
           }
 
-          // logger.debug('rowsWorking:', rowsWorking);
+          // logger.debug('[syncTables] rowsWorking:', rowsWorking);
 
           let sqlStatements = [{ db: workingDb, query: null, params: [] }]; // we always include a null-statement in order to at least call the creation routine one time
 
@@ -152,7 +152,9 @@ function syncTables(doCreateTables, callback) {
             }
           });
 
-          logger.debug("  found " + (sqlStatements.length - 1) + " new tables");
+          logger.debug(
+            "[syncTables]  found " + (sqlStatements.length - 1) + " new tables"
+          );
 
           async.mapSeries(sqlStatements, runQuery, (err) => {
             return callback(err);
@@ -165,22 +167,22 @@ function syncTables(doCreateTables, callback) {
 
 function syncColumns(doCreateColumns, callback) {
   if (!doCreateColumns) {
-    logger.debug("skipping syncColumns due to configuration");
+    logger.debug("[syncColumns] skipping syncColumns due to configuration");
     return callback(null);
   }
 
-  logger.debug("syncColumns start");
+  logger.debug("[syncColumns] START");
 
   templateDb.all(
     `select tbl_name from sqlite_master WHERE type='table' AND name not like 'sqlite%' AND name not like 'xtb_Database_Properties'`,
     [],
     (err, rowsTemplate) => {
       if (err) {
-        logger.debug("err:", err);
+        logger.debug("[syncColumns] err:", err);
         return callback(err);
       }
 
-      // logger.debug('rowsTemplate:', rowsTemplate);
+      // logger.debug('[syncColumns] rowsTemplate:', rowsTemplate);
 
       workingDb.all(
         `select tbl_name from sqlite_master WHERE type='table' AND name not like 'sqlite%' AND name not like 'xtb_Database_Properties'`,
@@ -190,7 +192,7 @@ function syncColumns(doCreateColumns, callback) {
             return callback(err);
           }
 
-          // logger.debug('rowsWorking:', rowsWorking);
+          // logger.debug('[syncColumns] rowsWorking:', rowsWorking);
 
           let analyzeTables = [null]; // we always include a null-statement in order to at least call the routine one time
 
@@ -204,7 +206,9 @@ function syncColumns(doCreateColumns, callback) {
             }
           });
 
-          logger.debug("  analyzing " + (analyzeTables.length - 1) + " tables");
+          logger.debug(
+            "[syncColumns]  analyzing " + (analyzeTables.length - 1) + " tables"
+          );
 
           async.mapSeries(analyzeTables, syncColumnsTable, (err) => {
             return callback(err);
@@ -220,22 +224,22 @@ function syncColumnsTable(table, callback) {
     return callback(null);
   }
 
-  logger.debug("  analyzing table " + table);
+  logger.debug("[syncColumnsTable]  analyzing table " + table);
 
   templateDb.all(`pragma table_info(${table})`, [], (err, colsTemplate) => {
     if (err) {
-      logger.debug("err:", err);
+      logger.debug("[syncColumnsTable] err:", err);
       return callback(err);
     }
 
-    // logger.debug('    colsTemplate:', colsTemplate);
+    // logger.debug('[syncColumnsTable]    colsTemplate:', colsTemplate);
 
     workingDb.all(`pragma table_info(${table})`, [], (err, colsWorking) => {
       if (err) {
         return callback(err);
       }
 
-      // logger.debug('    colsWorking:', colsWorking);
+      // logger.debug('[syncColumnsTable]    colsWorking:', colsWorking);
 
       let sqlStatements = [{ db: workingDb, query: null, params: [] }];
       let numMissingCols = 0;
@@ -249,7 +253,10 @@ function syncColumnsTable(table, callback) {
           return;
         }
 
-        logger.debug("  found missing column:", colTemplate.name);
+        logger.debug(
+          "[syncColumnsTable]  found missing column:",
+          colTemplate.name
+        );
         numMissingCols++;
 
         sqlStatements.push({
@@ -269,7 +276,9 @@ function syncColumnsTable(table, callback) {
         });
       });
 
-      logger.debug("  found " + numMissingCols + " missing column/s");
+      logger.debug(
+        "[syncColumnsTable]  found " + numMissingCols + " missing column/s"
+      );
 
       async.mapSeries(sqlStatements, runQuery, (err) => {
         return callback(err);
@@ -280,11 +289,11 @@ function syncColumnsTable(table, callback) {
 
 function syncContent(doCopyContent, callback) {
   if (!doCopyContent) {
-    logger.debug("skipping syncContent due to configuration");
+    logger.debug("[syncContent] skipping syncContent due to configuration");
     return callback(null);
   }
 
-  logger.debug("syncContent start");
+  logger.debug("[syncContent] START");
 
   let tablesToAnalyze = [null];
 
@@ -293,7 +302,7 @@ function syncContent(doCopyContent, callback) {
     [],
     (err, tablesTemplate) => {
       if (err) {
-        logger.debug("err:", err);
+        logger.debug("[syncContent] err:", err);
         return callback(err);
       }
       workingDb.all(
@@ -304,8 +313,8 @@ function syncContent(doCopyContent, callback) {
             return callback(err);
           }
 
-          // logger.debug('tablesTemplate:', tablesTemplate);
-          // logger.debug('tablesWorking:', tablesWorking);
+          // logger.debug('[syncContent] tablesTemplate:', tablesTemplate);
+          // logger.debug('[syncContent] tablesWorking:', tablesWorking);
 
           tablesTemplate.forEach((tableTemplate) => {
             if (
@@ -313,7 +322,7 @@ function syncContent(doCopyContent, callback) {
                 return tableTemplate["tbl_name"] === tableWorking["tbl_name"];
               })
             ) {
-              // logger.debug('  table ' + tableTemplate['tbl_name'] + ' found');
+              // logger.debug('[syncContent]  table ' + tableTemplate['tbl_name'] + ' found');
               tablesToAnalyze.push(tableTemplate["tbl_name"]);
             }
           });
@@ -332,12 +341,12 @@ function syncContentTable(tableName, callback) {
     return callback(null);
   }
 
-  logger.debug("  analyzing table " + tableName);
+  logger.debug("[syncContentTable]  analyzing table " + tableName);
 
   // Fetch content in TemplateDB
   templateDb.all(`SELECT * FROM [${tableName}]`, [], (err, contentTemplate) => {
     if (err) {
-      logger.error("  ERROR:", err);
+      logger.error("[syncContentTable]  ERROR:", err);
       return callback(err);
     }
 
@@ -350,7 +359,7 @@ function syncContentTable(tableName, callback) {
       [],
       (err, colsTemplate) => {
         if (err) {
-          logger.error("  ERROR:", err);
+          logger.error("[syncContentTable]  ERROR:", err);
           return callback(err);
         }
 
@@ -359,7 +368,7 @@ function syncContentTable(tableName, callback) {
           [],
           (err, colsWorking) => {
             if (err) {
-              logger.error("  ERROR:", err);
+              logger.error("[syncContentTable]  ERROR:", err);
               return callback(err);
             }
 
@@ -374,23 +383,27 @@ function syncContentTable(tableName, callback) {
             });
 
             if (numPK === 0) {
-              logger.debug("    ERROR: no PK column found!");
+              logger.debug("[syncContentTable]    ERROR: no PK column found!");
               return callback({ error: "no PK column found!" });
             }
 
             if (numPK > 1) {
-              logger.debug("    ERROR: multiple PK columns found!");
+              logger.debug(
+                "[syncContentTable]    ERROR: multiple PK columns found!"
+              );
               return callback({ error: "multiple PK columns found!" });
             }
 
-            logger.debug("    PK column name:", pkColumnName);
+            logger.debug("[syncContentTable]    PK column name:", pkColumnName);
 
             if (
               !colsWorking.find((colWorking) => {
                 return colWorking.name === pkColumnName;
               })
             ) {
-              logger.debug("    ERROR: PK column not found in working DB");
+              logger.debug(
+                "[syncContentTable]    ERROR: PK column not found in working DB"
+              );
               return callback({ error: "PK column not found in working DB" });
             }
 
@@ -422,7 +435,7 @@ function syncContentTable(tableName, callback) {
 }
 
 function syncContentTableRow(content, callback) {
-  // logger.debug('syncing content table row:', content);
+  // logger.debug('[syncContentTableRow] syncing content table row:', content);
 
   const query = `SELECT COUNT(1) AS count FROM [${content._tableName}] WHERE ${content._pkColumnName} = $${content._pkColumnName}`;
   const selectParams = {};
@@ -437,7 +450,7 @@ function syncContentTableRow(content, callback) {
 
     if (row.count === 0) {
       // Create INSERT statement
-      logger.debug("    INSERT");
+      logger.debug("[syncContentTableRow]    INSERT");
 
       let insertStatement = `INSERT INTO [${content._tableName}] `;
       let colNames = "";
@@ -455,7 +468,7 @@ function syncContentTableRow(content, callback) {
 
     if (row.count === 1) {
       // Create UPDATE statement
-      // logger.debug('    UPDATE');
+      // logger.debug('[syncContentTableRow]    UPDATE');
 
       let updateStatement = `UPDATE [${content._tableName}] SET `;
 
@@ -480,14 +493,14 @@ function syncContentTableRow(content, callback) {
       params["$" + content._pkColumnName] = content[content._pkColumnName];
     }
 
-    // logger.debug('statement:', statement);
+    // logger.debug('[syncContentTableRow] statement:', statement);
     workingDb.run(statement, params, (err) => {
       if (err) {
-        logger.error("      ERROR:", err);
-        logger.debug("      Statement was:", statement);
-        logger.debug("      Params were:", params);
+        logger.error("[syncContentTableRow]      ERROR:", err);
+        logger.debug("[syncContentTableRow]      Statement was:", statement);
+        logger.debug("[syncContentTableRow]      Params were:", params);
       } else {
-        // logger.debug('      OK');
+        // logger.debug('[syncContentTableRow]      OK');
       }
 
       return callback();

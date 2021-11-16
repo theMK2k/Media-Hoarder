@@ -260,7 +260,7 @@ export default {
     },
 
     async onSearchClick() {
-      logger.log("onSearchClick");
+      logger.log("[onSearchClick] START");
 
       this.isLoading = true;
 
@@ -288,8 +288,11 @@ export default {
         logger.error(err);
       }
 
-      logger.log("advancedTitleSearchResults:", advancedTitleSearchResults);
-      logger.log("findResults:", findResults);
+      logger.log(
+        "[onSearchClick] advancedTitleSearchResults:",
+        advancedTitleSearchResults
+      );
+      logger.log("[onSearchClick] findResults:", findResults);
 
       this.searchResults = advancedTitleSearchResults || [];
 
@@ -312,7 +315,7 @@ export default {
     },
 
     onSelectClick(item) {
-      logger.log("onSelectClick item:", item);
+      logger.log("[onSelectClick]  item:", item);
 
       if (!item.tconst) {
         return eventBus.showSnackbar("error", this.$t("identifier missing"));

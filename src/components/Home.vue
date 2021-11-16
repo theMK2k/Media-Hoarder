@@ -106,7 +106,7 @@ export default {
           }
         }
       } catch (e) {
-        logger.log("fetchNumMovies ERROR:", e);
+        logger.log("[fetchNumMovies] ERROR:", e);
       }
     },
   },

@@ -328,7 +328,7 @@ export default {
 
       this.ratingDemographics = await store.fetchRatingDemographics(id_Movies);
 
-      logger.log("ratingDemographics:", this.ratingDemographics);
+      logger.log("[init] ratingDemographics:", this.ratingDemographics);
 
       this.isLoading = false;
     },

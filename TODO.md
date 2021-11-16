@@ -2,14 +2,15 @@
 
 ## v1.0.0
 
-- rescan re-links imdb using the builtin imdb id finder (see: Blender Sourcepath)
-- allow imdbid in relink dialog
-- Test mediainfo and VLC in Linux/MacOS (we now use "" in the exec)
+- [ ] allow imdbid in relink dialog
+- [ ] Test mediainfo and VLC in Linux/MacOS (we now use "" in the exec)
 
 ### Bugs
 
+- [CHECK] some log groups do not close before the next opens
+- [ ] write cli tests and optimize findIMDBtconst
+- [ ] rescan re-links imdb using the builtin imdb id finder (see: Blender Sourcepath)
 - [ ] "Trace" Loglevel is not recognized when starting in PROD mode
-- [ ] some log groups do not close before the next opens
 - [ ] items which have a scan error skew the next scan's time-per-item
 - [ ] first scanned item shows 1s of remaining time (better not show anything or guess)
 

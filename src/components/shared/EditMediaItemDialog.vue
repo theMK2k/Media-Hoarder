@@ -248,7 +248,7 @@ export default {
 
   watch: {
     mediaItem(newValue) {
-      logger.log("EditMediaItemDialog mediaItem changed:", newValue);
+      logger.log("[mediaItem] changed:", newValue);
 
       this.mediaItemBackup = newValue
         ? JSON.parse(JSON.stringify(newValue))
@@ -259,7 +259,7 @@ export default {
   computed: {
     i18nCurrentMessages() {
       logger.log(
-        "EditMediaItemDialog this.$i18n.messages[this.$i18n.locale]:",
+        "[i18nCurrentMessages] this.$i18n.messages[this.$i18n.locale]:",
         this.$i18n.messages[this.$i18n.locale]
       );
       let messages = this.$i18n.messages[this.$i18n.locale];
@@ -343,11 +343,11 @@ export default {
         deepDiffMapper.map(this.mediaItem, this.mediaItemBackup)
       );
 
-      logger.log("EditMediaItemDialog diff:", diff);
-      logger.log("EditMediaItemDialog Object.keys(diff):", Object.keys(diff));
+      logger.log("[onOKClick] diff:", diff);
+      logger.log("[onOKClick] Object.keys(diff):", Object.keys(diff));
 
       if (Object.keys(diff).length > 0) {
-        logger.log("EditMediaItemDialog has changes!");
+        logger.log("[onOKClick] EditMediaItemDialog has changes!");
         hasChanges = true;
       }
 
@@ -425,7 +425,7 @@ export default {
       );
       const definedByUserOld = JSON.stringify(definedByUser);
 
-      logger.log("definedByUser (from db):", definedByUser);
+      logger.log("[onOKClick] definedByUser (from db):", definedByUser);
 
       Object.keys(diff).forEach((key) => {
         if (!definedByUser.find((item) => item === key)) {
@@ -433,7 +433,7 @@ export default {
         }
       });
 
-      logger.log("definedByUser (new):", definedByUser);
+      logger.log("[onOKClick] definedByUser (new):", definedByUser);
 
       if (definedByUserOld !== JSON.stringify(definedByUser)) {
         await store.updateMediaRecordField(
@@ -456,16 +456,13 @@ export default {
 
     onRemoveGenre(index) {
       logger.log(
-        "EditMediaItemDialog genre array (before):",
+        "[onRemoveGenre] genre array (before):",
         this.mediaItem.Genres
       );
 
       this.mediaItem.Genres.splice(index, 1);
 
-      logger.log(
-        "EditMediaItemDialog genre array (after):",
-        this.mediaItem.Genres
-      );
+      logger.log("[onRemoveGenre] genre array (after):", this.mediaItem.Genres);
     },
 
     onShowAddGenreDialog() {
@@ -491,9 +488,9 @@ export default {
     },
 
     getReleaseAttribute(searchTerm) {
-      logger.log("EditMediaItemDialog searchTerm:", searchTerm);
+      logger.log("[getReleaseAttribute] searchTerm:", searchTerm);
       logger.log(
-        "EditMediaItemDialog this.$shared.releaseAttributes",
+        "[getReleaseAttribute] EditMediaItemDialog this.$shared.releaseAttributes",
         this.$shared.releaseAttributes
       );
       return this.$shared.releaseAttributes.find(
@@ -503,13 +500,13 @@ export default {
 
     onRemoveReleaseAttribute(index) {
       const arr = this.arrayReleaseAttributesSearchTerms;
-      logger.log("EditMediaItemDialog arr:", arr);
+      logger.log("[onRemoveReleaseAttribute] arr:", arr);
 
       arr.splice(index, 1);
-      logger.log("EditMediaItemDialog spliced:", arr);
+      logger.log("[onRemoveReleaseAttribute] spliced:", arr);
 
       const joined = arr.join(";");
-      logger.log("EditMediaItemDialog joined:", joined);
+      logger.log("[onRemoveReleaseAttribute] joined:", joined);
 
       this.mediaItem.ReleaseAttributesSearchTerms = joined;
     },

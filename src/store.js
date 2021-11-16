@@ -77,7 +77,7 @@ helpers.ensureDirectorySync(helpers.getDataPath("extras"));
 
 logger.info(asciiLogo);
 
-logger.groupCollapsed("[Initialization]");
+logger.group("[Initialization]");
 dbsync.runSync(
   helpers.getStaticPath("data/media-hoarder.db_initial"),
   helpers.getDataPath("media-hoarder.db"),
@@ -90,11 +90,11 @@ dbsync.runSync(
           title: "Media Hoarder - DB Sync Error",
           message: err.error.message,
         });
-        logger.error("ERROR:", err);
+        logger.error("[Initialization] ERROR:", err);
         return;
       }
 
-      logger.log("WARN:", err);
+      logger.log("[Initialization] WARN:", err);
     }
 
     db.initDbCB((err) => {
@@ -112,7 +112,10 @@ dbsync.runSync(
 
         shared.currentLocale = await osLocale();
 
-        logger.log("shared.currentLocale:", shared.currentLocale);
+        logger.log(
+          "[Initialization] shared.currentLocale:",
+          shared.currentLocale
+        );
 
         const fallbackRegion = await getSetting("fallbackRegion");
         if (fallbackRegion) {
@@ -120,7 +123,10 @@ dbsync.runSync(
 
           if (fallbackRegionObj.locale === shared.currentLocale) {
             shared.fallbackRegion = fallbackRegionObj;
-            logger.log("Fallback Region (from db):", shared.fallbackRegion);
+            logger.log(
+              "[Initialization] Fallback Region (from db):",
+              shared.fallbackRegion
+            );
           }
         }
 
@@ -170,7 +176,7 @@ function generateIndexQuery(tableName, ColumnNames, isUnique) {
 }
 
 async function createIndexes(db) {
-  logger.log("creating indexes...");
+  logger.log("[createIndexes] START");
 
   const queries = [
     generateIndexQuery("tbl_Genres", ["GenreID"], true),
@@ -247,14 +253,14 @@ async function createIndexes(db) {
     generateIndexQuery("tbl_Movies_Release_Attributes", ["id_Movies"], false),
   ];
 
-  logger.log("queries:", queries);
+  logger.log("[createIndexes] queries:", queries);
 
   for (let i = 0; i < queries.length; i++) {
     logger.log(".");
     await db.fireProcedure(queries[i]);
   }
 
-  logger.log("index creation done");
+  logger.log("[createIndexes] index creation done");
 }
 
 async function fetchSourcePaths() {
@@ -307,7 +313,7 @@ async function rescan(onlyNew, $t) {
   await db.fireProcedure(`UPDATE tbl_Movies SET isNew = 0`, []);
 
   // delete all removed entries
-  logger.log("rescan Cleanup START");
+  logger.log("[rescan] Cleanup START");
 
   const rescanRemovedMovies = await db.fireProcedureReturnScalar(
     `SELECT COUNT(1) FROM tbl_Movies WHERE isRemoved = 1`
@@ -315,7 +321,7 @@ async function rescan(onlyNew, $t) {
 
   await db.fireProcedure(`DELETE FROM tbl_Movies WHERE isRemoved = 1`, []);
   await ensureMovieDeleted();
-  logger.log("rescan CLEANUP END");
+  logger.log("[rescan] CLEANUP END");
 
   shared.isScanning = false;
   doAbortRescan = false;
@@ -324,7 +330,7 @@ async function rescan(onlyNew, $t) {
 }
 
 async function rescanHandleDuplicates() {
-  logger.log("### rescanHandleDuplicates ###");
+  logger.log("[rescan] ### rescanHandleDuplicates ###");
 
   eventBus.setProgressBar(2); // marquee
 
@@ -332,11 +338,11 @@ async function rescanHandleDuplicates() {
     "SELECT id_Movies FROM tbl_Movies WHERE isNew = 1 AND Extra_id_Movies_Owner IS NULL"
   );
 
-  logger.log("newMovies:", newMovies);
+  logger.log("[rescan] newMovies:", newMovies);
 
   const arrNewMovies = newMovies.map((movie) => movie.id_Movies);
 
-  logger.log("arrNewMovies:", arrNewMovies);
+  logger.log("[rescan] arrNewMovies:", arrNewMovies);
 
   for (let i = 0; i < arrNewMovies.length; i++) {
     const $id_Movies = arrNewMovies[i];
@@ -348,7 +354,7 @@ async function rescanHandleDuplicates() {
       )
     )[0];
 
-    logger.log("currentMovie:", currentMovie);
+    logger.log("[rescan] currentMovie:", currentMovie);
 
     const actualDuplicates = await getMovieDuplicates(
       $id_Movies,
@@ -394,21 +400,21 @@ async function rescanHandleDuplicates() {
         actualDuplicate) ||
       (shared.duplicatesHandling.metaDuplicate.addToList && metaDuplicate)
     ) {
-      logger.log("addToList by duplicate");
+      logger.log("[rescanHandleDuplicates] addToList by duplicate");
 
       const duplicate =
         shared.duplicatesHandling.actualDuplicate.addToList && actualDuplicate
           ? actualDuplicate
           : metaDuplicate;
 
-      logger.log("addToList duplicate:", duplicate);
+      logger.log("[rescanHandleDuplicates] addToList duplicate:", duplicate);
 
       const inLists = await db.fireProcedureReturnAll(
         "SELECT id_Lists FROM tbl_Lists_Movies WHERE id_Movies = $id_Movies",
         { $id_Movies: duplicate.id_Movies }
       );
 
-      logger.log("addToList inLists:", inLists);
+      logger.log("[rescanHandleDuplicates] addToList inLists:", inLists);
 
       for (let i = 0; i < inLists.length; i++) {
         const id_Lists = inLists[i].id_Lists;
@@ -440,10 +446,10 @@ function ensureMoviesFullPath(movies) {
 }
 
 async function mergeExtras(onlyNew) {
-  logger.log("mergeExtras START");
+  logger.log("[mergeExtras] START");
 
   if (!shared.scanOptions.mergeExtras) {
-    logger.log("mergeExtras OFF in scanOptions, abort");
+    logger.log("[mergeExtras] mergeExtras OFF in scanOptions, abort");
     return;
   }
 
@@ -472,7 +478,7 @@ async function mergeExtras(onlyNew) {
 
   ensureMoviesFullPath(children);
 
-  logger.log("mergeExtras Extra children (from db):", children);
+  logger.log("[mergeExtras] Extra children (from db):", children);
 
   for (let i = 0; i < children.length; i++) {
     const child = children[i];
@@ -488,7 +494,7 @@ async function mergeExtras(onlyNew) {
 }
 
 async function mergeExtraDirectoryBased(movie) {
-  logger.log("mergeExtraDirectoryBased movie.Filename:", movie.Filename);
+  logger.log("[mergeExtraDirectoryBased] movie.Filename:", movie.Filename);
 
   // first, check if the media file is actually an extra - it must reside in an "extra" or "extras" directory
   const lastDirectoryNameLower = helpers
@@ -499,13 +505,13 @@ async function mergeExtraDirectoryBased(movie) {
     !(lastDirectoryNameLower === "extra" || lastDirectoryNameLower === "extras")
   ) {
     logger.log(
-      'mergeExtraDirectoryBased media file is not in "extra" or "extras" directory, abort'
+      '[mergeExtraDirectoryBased] media file is not in "extra" or "extras" directory, abort'
     );
   }
 
-  logger.log("mergeExtraDirectoryBased movie.SourcePath:", movie.SourcePath);
+  logger.log("[mergeExtraDirectoryBased] movie.SourcePath:", movie.SourcePath);
   logger.log(
-    'mergeExtraDirectoryBased path.resolve(movie.fullDirectory, "..")',
+    '[mergeExtraDirectoryBased] path.resolve(movie.fullDirectory, "..")',
     path.resolve(movie.fullDirectory, "..")
   );
 
@@ -514,7 +520,7 @@ async function mergeExtraDirectoryBased(movie) {
     path.resolve(movie.fullDirectory, "..")
   );
 
-  logger.log("mergeExtraDirectoryBased $ParentDirectory:", $ParentDirectory);
+  logger.log("[mergeExtraDirectoryBased] $ParentDirectory:", $ParentDirectory);
 
   let possibleParents = await db.fireProcedureReturnAll(
     `
@@ -535,10 +541,10 @@ async function mergeExtraDirectoryBased(movie) {
     { $ParentDirectory }
   );
 
-  logger.log("mergeExtraDirectoryBased possibleParents:", possibleParents);
+  logger.log("[mergeExtraDirectoryBased] possibleParents:", possibleParents);
 
   if (possibleParents.length == 0) {
-    logger.log("mergeExtraDirectoryBased no possible parent found :(");
+    logger.log("[mergeExtraDirectoryBased] no possible parent found :(");
     if (movie.Extra_id_Movies_Owner) {
       await db.fireProcedure(
         `UPDATE tbl_Movies SET Extra_id_Movies_Owner = NULL WHERE id_Movies = $id_Movies`,
@@ -549,7 +555,7 @@ async function mergeExtraDirectoryBased(movie) {
   }
 
   if (possibleParents.length == 1) {
-    logger.log("mergeExtraDirectoryBased single parent found");
+    logger.log("[mergeExtraDirectoryBased] single parent found");
     await assignExtra(
       possibleParents[0],
       movie,
@@ -560,7 +566,7 @@ async function mergeExtraDirectoryBased(movie) {
 
   if (possibleParents.length > 1) {
     logger.log(
-      "mergeExtraDirectoryBased multiple parents found, we just use the first"
+      "[mergeExtraDirectoryBased] multiple parents found, we just use the first"
     );
     await assignExtra(
       possibleParents[0],
@@ -574,12 +580,12 @@ async function mergeExtraDirectoryBased(movie) {
 }
 
 async function mergeExtraFileBased(movie) {
-  logger.log("mergeExtraFileBased movie:", movie);
+  logger.log("[mergeExtraFileBased] movie:", movie);
 
   const rxMovieName = /(^.*?) - extra/i;
   if (!rxMovieName.test(movie.Filename)) {
     logger.log(
-      "mergeExtraFileBased Extra name not identifyable in:",
+      "[mergeExtraFileBased] Extra name not identifyable in:",
       movie.Filename
     );
     return;
@@ -589,9 +595,9 @@ async function mergeExtraFileBased(movie) {
 
   const $extraname = movie.Filename.match(/(extra.*?)[([.]/i)[1].trim();
 
-  logger.log("mergeExtraFileBased $extraname:", $extraname);
+  logger.log("[mergeExtraFileBased] $extraname:", $extraname);
 
-  logger.log("mergeExtraFileBased identified $movieName:", $movieName);
+  logger.log("[mergeExtraFileBased] identified $movieName:", $movieName);
 
   let possibleParents = await db.fireProcedureReturnAll(
     `
@@ -612,10 +618,10 @@ async function mergeExtraFileBased(movie) {
     { $id_SourcePaths: movie.id_SourcePaths }
   );
 
-  logger.log("mergeExtraFileBased possibleParents:", possibleParents);
+  logger.log("[mergeExtraFileBased] possibleParents:", possibleParents);
 
   if (possibleParents.length == 0) {
-    logger.log("no possible parent found :(");
+    logger.log("[mergeExtraFileBased] no possible parent found :(");
     if (movie.Extra_id_Movies_Owner) {
       await db.fireProcedure(
         `UPDATE tbl_Movies SET Extra_id_Movies_Owner = NULL WHERE id_Movies = $id_Movies`,
@@ -626,7 +632,7 @@ async function mergeExtraFileBased(movie) {
   }
 
   if (possibleParents.length == 1) {
-    logger.log("mergeExtraFileBased single parent found");
+    logger.log("[mergeExtraFileBased] single parent found");
     await assignExtra(possibleParents[0], movie, $extraname);
     return;
   }
@@ -634,7 +640,7 @@ async function mergeExtraFileBased(movie) {
   possibleParents.forEach((parent) => {
     parent.distance = levenshtein.get(movie.fullPath, parent.fullPath);
     logger.log(
-      "mergeExtraFileBased parent distance:",
+      "[mergeExtraFileBased] parent distance:",
       parent.distance,
       parent.fullPath
     );
@@ -650,7 +656,7 @@ async function mergeExtraFileBased(movie) {
 
   if (possibleParents.length == 1) {
     logger.log(
-      "mergeExtraFileBased best parent by string distance found:",
+      "[mergeExtraFileBased] best parent by string distance found:",
       possibleParents[0]
     );
     await assignExtra(possibleParents[0], movie, $extraname);
@@ -662,12 +668,12 @@ async function mergeExtraFileBased(movie) {
   );
 
   logger.log(
-    "mergeExtraFileBased possibleParentsMultipartFirst:",
+    "[mergeExtraFileBased] possibleParentsMultipartFirst:",
     possibleParentsMultipartFirst
   );
 
   if (possibleParentsMultipartFirst.length == 1) {
-    logger.log("multipart start single parent found");
+    logger.log("[mergeExtraFileBased] multipart start single parent found");
     await assignExtra(possibleParentsMultipartFirst[0], movie, $extraname);
     return;
   }
@@ -675,7 +681,7 @@ async function mergeExtraFileBased(movie) {
 
 async function assignExtra(parent, child, $extraname) {
   logger.log(
-    "mergeExtraFileBased assigning",
+    "[mergeExtraFileBased] assigning",
     child.Filename,
     "as extra to",
     parent.Filename
@@ -692,7 +698,7 @@ async function assignExtra(parent, child, $extraname) {
 }
 
 async function filescanMovies(onlyNew, $t) {
-  logger.log("### filescanMovies started");
+  logger.log("[filescanMovies] START");
 
   eventBus.scanInfoShow($t("Rescanning Movies"), $t("Rescan started"));
 
@@ -714,7 +720,7 @@ async function filescanMovies(onlyNew, $t) {
         .toLowerCase(); // we need to lowercase in code again, because some special characters aren't lowercased properly by SQLite, e.g. "Ä" -> "ä"
     });
 
-    logger.log("moviesHave:", moviesHave); // #relpath: is this correct??
+    logger.log("[filescanMovies] moviesHave:", moviesHave); // #relpath: is this correct??
 
     const moviesSourcePaths = await db.fireProcedureReturnAll(`
 			SELECT
@@ -736,7 +742,7 @@ async function filescanMovies(onlyNew, $t) {
     for (let i = 0; i < moviesSourcePaths.length; i++) {
       const movieSourcePath = moviesSourcePaths[i];
       logger.log(
-        `  scanning Source Path ${movieSourcePath.Path} (${movieSourcePath.Description})`
+        `[filescanMovies]   scanning Source Path ${movieSourcePath.Path} (${movieSourcePath.Description})`
       );
 
       if (movieSourcePath.checkRemovedFiles) {
@@ -762,9 +768,9 @@ async function filescanMovies(onlyNew, $t) {
 
     eventBus.scanInfoOff();
 
-    logger.log("### filescanMovies END");
+    logger.log("[filescanMovies] END");
   } catch (err) {
-    logger.log("filescanMovies ERROR:", err);
+    logger.log("[filescanMovies] ERROR:", err);
     throw err;
   } finally {
     eventBus.setProgressBar(-1); // off
@@ -777,7 +783,7 @@ async function filescanMoviesPath(
   movieSourcePath,
   scanPath
 ) {
-  logger.log("scan", scanPath);
+  logger.log("[filescanMoviesPath] scan", scanPath);
 
   try {
     const pathItems = await listPath(movieSourcePath.Path, scanPath);
@@ -792,7 +798,12 @@ async function filescanMoviesPath(
         );
 
         if (movieHave) {
-          logger.log("HAVE:", pathItem.fullPathLower, "movieHave:", movieHave);
+          logger.log(
+            "[filescanMoviesPath] HAVE:",
+            pathItem.fullPathLower,
+            "movieHave:",
+            movieHave
+          );
 
           const $Size = await getFileSize(pathItem);
 
@@ -859,7 +870,7 @@ const enmMovieTypes = {
  * @param {pathItem} pathItem
  */
 async function getMovieType(basePath, pathItem) {
-  logger.log("getMovieType pathItem:", pathItem);
+  logger.log("[getMovieType] pathItem:", pathItem);
 
   const lastDirLower = helpers
     .getLastDirectoryName(pathItem.fullDirectory)
@@ -874,7 +885,7 @@ async function getMovieType(basePath, pathItem) {
   if (lastDirLower.match(/^extra/)) {
     // file is inside an "extra" directory -> we should check the parent directory, if it is in itself DIRECTORYBASED
     logger.log(
-      'getMovieType file is inside "extra" directory, check the parent directory...'
+      '[getMovieType] file is inside "extra" directory, check the parent directory...'
     );
 
     if (
@@ -883,10 +894,10 @@ async function getMovieType(basePath, pathItem) {
         path.resolve(pathItem.fullDirectory, "..")
       )
     ) {
-      logger.log("getMovieType parent directory is directory-based");
+      logger.log("[getMovieType] parent directory is directory-based");
       return enmMovieTypes.DIRECTORYBASED;
     } else {
-      logger.log("getMovieType parent directory is NOT directory-based");
+      logger.log("[getMovieType] parent directory is NOT directory-based");
       return enmMovieTypes.FILEBASED;
     }
   }
@@ -906,11 +917,11 @@ async function getMovieType(basePath, pathItem) {
  */
 async function isDirectoryBased(basePath, directory) {
   try {
-    logger.log("isDirectoryBased directory:", directory);
+    logger.log("[isDirectoryBased] directory:", directory);
 
     const pathItems = await listPath(basePath, directory);
 
-    logger.log("isDirectoryBased pathItems:", pathItems);
+    logger.log("[isDirectoryBased] pathItems:", pathItems);
 
     let numMediaFiles = 0;
     let nfoFound = false;
@@ -940,7 +951,7 @@ async function isDirectoryBased(basePath, directory) {
 
     if (numMediaFiles < 3 && nfoFound) {
       logger.log(
-        "isDirectoryBased YES! numMediaFiles:",
+        "[isDirectoryBased] YES! numMediaFiles:",
         numMediaFiles,
         "nfoFound:",
         nfoFound
@@ -949,7 +960,7 @@ async function isDirectoryBased(basePath, directory) {
     }
 
     logger.log(
-      "isDirectoryBased NOPE! numMediaFiles:",
+      "[isDirectoryBased] NOPE! numMediaFiles:",
       numMediaFiles,
       "nfoFound:",
       nfoFound
@@ -975,7 +986,7 @@ async function isIgnoreFile(pathItem) {
     .toLowerCase();
 
   if (pathItem.isDirectory) {
-    logger.log("isIgnoreFile file is actually a directory, IGNORE");
+    logger.log("[isIgnoreFile] file is actually a directory, IGNORE");
     return true;
   }
 
@@ -985,22 +996,22 @@ async function isIgnoreFile(pathItem) {
     !nameLower.match(/part0*1\.rar/)
   ) {
     logger.log(
-      "isIgnoreFile file is .rar but it is not the first part, IGNORE"
+      "[isIgnoreFile] file is .rar but it is not the first part, IGNORE"
     );
     return true;
   }
 
   if (lastDirLower === "sample") {
-    logger.log('isIgnoreFile file is in a "sample" directory, IGNORE');
+    logger.log('[isIgnoreFile] file is in a "sample" directory, IGNORE');
     return true;
   }
 
   if (lastDirLower === "proof") {
-    logger.log('isIgnoreFile file is in a "proof" directory, IGNORE');
+    logger.log('[isIgnoreFile] file is in a "proof" directory, IGNORE');
     return true;
   }
 
-  logger.log("isIgnoreFile file is NOT to be ignored");
+  logger.log("[isIgnoreFile] file is NOT to be ignored");
   return false;
 }
 
@@ -1011,21 +1022,21 @@ async function isIgnoreFile(pathItem) {
  * @param {pathItem} pathItem
  */
 async function addMovie(movieSourcePath, pathItem) {
-  logger.log("addMovie pathItem.fullPath:", pathItem.fullPath);
+  logger.log("[addMovie] pathItem.fullPath:", pathItem.fullPath);
 
   const movieType = await getMovieType(movieSourcePath.Path, pathItem);
 
-  logger.log("addMovie movieType:", movieType);
+  logger.log("[addMovie] movieType:", movieType);
 
   if (
     movieType === enmMovieTypes.IGNORE ||
     movieType === enmMovieTypes.EXCEPTION
   ) {
-    logger.log("addMovie movieType is IGNORE or EXCEPTION, abort!");
+    logger.log("[addMovie] movieType is IGNORE or EXCEPTION, abort!");
     return;
   }
 
-  logger.log("addMovie adding:", pathItem.Name);
+  logger.log("[addMovie] adding:", pathItem.Name);
 
   rescanAddedMovies++;
 
@@ -1039,7 +1050,7 @@ async function addMovie(movieSourcePath, pathItem) {
     $Name = helpers.getMovieNameFromFileName(pathItem.Name);
   }
 
-  logger.log("addMovie $Name:", $Name);
+  logger.log("[addMovie] $Name:", $Name);
 
   const $Size = await getFileSize(pathItem);
 
@@ -1078,7 +1089,7 @@ async function addMovie(movieSourcePath, pathItem) {
     $DIRECTORYBASED: movieType === enmMovieTypes.DIRECTORYBASED,
   };
 
-  logger.log("addMovie query:", sqlQuery, "data:", sqlData);
+  logger.log("[addMovie] query:", sqlQuery, "data:", sqlData);
 
   await db.fireProcedure(sqlQuery, sqlData);
 }
@@ -1091,10 +1102,10 @@ async function addMovie(movieSourcePath, pathItem) {
  * @param {pathItem} pathItem
  */
 async function getFileSize(pathItem) {
-  logger.log("getFileSize pathItem.Name:", pathItem.Name);
+  logger.log("[getFileSize] pathItem.Name:", pathItem.Name);
 
   if (pathItem.ExtensionLower !== ".rar") {
-    logger.log("getFileSize not .rar, we use the file size:", pathItem.Size);
+    logger.log("[getFileSize] not .rar, we use the file size:", pathItem.Size);
 
     return pathItem.Size;
   }
@@ -1103,7 +1114,7 @@ async function getFileSize(pathItem) {
 
   commonNameLower = commonNameLower.replace(/\.part\d*$/, "");
 
-  logger.log("getFileSize got .rar, using common name:", commonNameLower);
+  logger.log("[getFileSize] got .rar, using common name:", commonNameLower);
 
   const pathItems = await listPath(
     pathItem.fullDirectory,
@@ -1179,14 +1190,14 @@ async function listPath(basePath, scanPath) {
     });
   }
 
-  logger.log("listPath arrResult:", arrResult);
+  logger.log("[listPath] arrResult:", arrResult);
 
   return arrResult;
 }
 
 async function applyMetaData(onlyNew, id_Movies) {
   // create Name, Name2 etc. from IMDBData for each movie, also apply possible metadata from duplicates
-  logger.log("applyMetaData onlyNew:", onlyNew, "id_Movies:", id_Movies);
+  logger.log("[applyMetaData] onlyNew:", onlyNew, "id_Movies:", id_Movies);
 
   const query = `
   SELECT
@@ -1206,11 +1217,11 @@ async function applyMetaData(onlyNew, id_Movies) {
   ${id_Movies ? "AND MOV.id_Movies = " + id_Movies : ""}
   `;
 
-  logger.log("applyMetaData query:", query);
+  logger.log("[applyMetaData] query:", query);
 
   const movies = await db.fireProcedureReturnAll(query, []);
 
-  logger.log("applyMetaData movies:", movies);
+  logger.log("[applyMetaData] movies:", movies);
 
   for (let i = 0; i < movies.length; i++) {
     if (doAbortRescan) {
@@ -1227,7 +1238,7 @@ async function applyMetaData(onlyNew, id_Movies) {
 
     const names = [];
 
-    logger.log("applyMetaData names from IMDB:", {
+    logger.log("[applyMetaData] names from IMDB:", {
       IMDB_localTitle: movie.IMDB_localTitle,
       IMDB_originalTitle: movie.IMDB_originalTitle,
       IMDB_primaryTitle: movie.IMDB_primaryTitle,
@@ -1235,7 +1246,7 @@ async function applyMetaData(onlyNew, id_Movies) {
 
     if (movie.IMDB_localTitle) {
       logger.log(
-        "applyMetaData names: we use IMDB_localTitle:",
+        "[applyMetaData] names: we use IMDB_localTitle:",
         movie.IMDB_localTitle
       );
       names.push(movie.IMDB_localTitle);
@@ -1252,7 +1263,7 @@ async function applyMetaData(onlyNew, id_Movies) {
           )))
     ) {
       logger.log(
-        "applyMetaData names: we use IMDB_primaryTitle:",
+        "[applyMetaData] names: we use IMDB_primaryTitle:",
         movie.IMDB_primaryTitle
       );
       names.push(movie.IMDB_primaryTitle);
@@ -1270,7 +1281,7 @@ async function applyMetaData(onlyNew, id_Movies) {
           )))
     ) {
       logger.log(
-        "applyMetaData names: we use IMDB_originalTitle:",
+        "[applyMetaData] names: we use IMDB_originalTitle:",
         movie.IMDB_originalTitle
       );
       names.push(movie.IMDB_originalTitle);
@@ -1284,7 +1295,7 @@ async function applyMetaData(onlyNew, id_Movies) {
       Name2 = names[1];
     }
 
-    logger.log("names:", {
+    logger.log("[applyMetaData] names:", {
       Name,
       Name2,
     });
@@ -1362,7 +1373,7 @@ async function applyMetaData(onlyNew, id_Movies) {
 
     // omit anything that has been (re-)defined by the user
     const definedByUser = getFieldsDefinedByUser(movie.DefinedByUser);
-    logger.log("applyMetaData definedByUser:", definedByUser);
+    logger.log("[applyMetaData] definedByUser:", definedByUser);
 
     const data = {
       $id_Movies: movie.id_Movies,
@@ -1380,20 +1391,22 @@ async function applyMetaData(onlyNew, id_Movies) {
       data.$Name = Name;
       query += "\n, Name = $Name";
     } else {
-      logger.log("applyMetaData omitting Name (already defined by the user)");
+      logger.log("[applyMetaData] omitting Name (already defined by the user)");
     }
     if (!definedByUser.find((item) => item === "Name2")) {
       data.$Name2 = Name2;
       query += "\n, Name2 = $Name2";
     } else {
-      logger.log("applyMetaData omitting Name2 (already defined by the user)");
+      logger.log(
+        "[applyMetaData] omitting Name2 (already defined by the user)"
+      );
     }
     if (!definedByUser.find((item) => item === "startYear")) {
       data.$startYear = startYear;
       query += "\n, startYear = $startYear";
     } else {
       logger.log(
-        "applyMetaData omitting startYear (already defined by the user)"
+        "[applyMetaData] omitting startYear (already defined by the user)"
       );
     }
     query += "\nWHERE id_Movies = $id_Movies";
@@ -1401,7 +1414,7 @@ async function applyMetaData(onlyNew, id_Movies) {
     await db.fireProcedure(query, data);
   }
 
-  logger.log("applying Metadata DONE");
+  logger.log("[applyMetaData] END");
 }
 
 async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
@@ -1452,7 +1465,7 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
 
   ensureMoviesFullPath(movies);
 
-  logger.log("scanErrors rescanMoviesMetadata movies:", movies);
+  logger.log("[rescanMoviesMetadata] movies:", movies);
 
   for (let i = 0; i < movies.length; i++) {
     if (doAbortRescan) {
@@ -1525,7 +1538,7 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
         await findReleaseAttributes(movie, onlyNew);
       } else {
         logger.log(
-          "rescanMoviesMetaData omitting Release Attribtues (already defined by the user)"
+          "[rescanMoviesMetadata] omitting Release Attribtues (already defined by the user)"
         );
       }
     }
@@ -1585,14 +1598,19 @@ async function applyMediaInfo(movie, onlyNew) {
   const mediainfo = await getSetting("MediainfoPath");
 
   if (!mediainfo) {
-    logger.log("mediainfo not set, aborting");
+    logger.log("[applyMediaInfo] mediainfo not set, aborting");
     return;
   }
 
-  logger.log("applyMediaInfo movie:", movie);
+  if (!(await existsAsync(movie.fullPath))) {
+    logger.log("[applyMediaInfo] file not found, skipping movie:", movie);
+    return;
+  }
+
+  logger.log("[applyMediaInfo] movie:", movie);
 
   const mi_task = `"${mediainfo}" --Output=XML "${movie.fullPath}"`;
-  logger.log("running mediainfo:", mi_task);
+  logger.log("[applyMediaInfo] running mediainfo:", mi_task);
 
   const audioLanguages = [];
   const subtitleLanguages = [];
@@ -1618,7 +1636,7 @@ async function applyMediaInfo(movie, onlyNew) {
 
     const miObj = await xml2js.parseStringPromise(stdout);
 
-    logger.log("miObj:", miObj);
+    logger.log("[applyMediaInfo] miObj:", miObj);
 
     let tracks = [];
 
@@ -1674,7 +1692,7 @@ async function applyMediaInfo(movie, onlyNew) {
 
           const matches = track.DURATION[0].match(/(\d+):(\d+):(\d+)/);
 
-          logger.log("DURATION matches:", matches);
+          logger.log("[applyMediaInfo] DURATION matches:", matches);
 
           let durationSeconds = 0;
 
@@ -1778,7 +1796,7 @@ async function applyMediaInfo(movie, onlyNew) {
       );
     }
 
-    logger.log("MI:", MI);
+    logger.log("[applyMediaInfo] MI:", MI);
 
     await db.fireProcedure(
       `UPDATE tbl_Movies
@@ -1821,7 +1839,7 @@ async function applyMediaInfo(movie, onlyNew) {
 async function findIMDBtconst(movie, onlyNew) {
   // find IMDB tconst
   // save IMDB_tconst to db
-  logger.log("findIMDBtconst START");
+  logger.log("[findIMDBtconst] START");
 
   if (onlyNew && movie.IMDB_Done) {
     return;
@@ -1895,11 +1913,11 @@ async function findIMDBtconst(movie, onlyNew) {
         if (tconstIncluded && tconst) {
           if (tconstIncluded !== tconst) {
             logger.log(
-              `tconst compare;mismatch;${tconst};${tconstIncluded};${movie.Filename}`
+              `[findIMDBtconst] tconst compare;mismatch;${tconst};${tconstIncluded};${movie.Filename}`
             );
           } else {
             logger.log(
-              `tconst compare;match;${tconst};${tconstIncluded};${movie.Filename}`
+              `[findIMDBtconst] tconst compare;match;${tconst};${tconstIncluded};${movie.Filename}`
             );
           }
         }
@@ -1952,31 +1970,31 @@ async function findIMDBtconst(movie, onlyNew) {
  * @param {movie} movie
  */
 async function findIMDBtconstIncluded(movie) {
-  logger.log("findIMDBtconstIncluded START");
+  logger.log("[findIMDBtconstIncluded] START");
   const name = movie.isDirectoryBased
     ? helpers.getLastDirectoryName(movie.fullDirectory)
     : movie.Filename;
 
-  logger.log("findIMDBtconstIncluded name:", name);
+  logger.log("[findIMDBtconstIncluded] name:", name);
 
   if (/tt\d{6,}/.test(name)) {
     const tconst = name.match(/(tt\d{6,})/)[1];
 
-    logger.log("findIMDBtconstIncluded tconst is included:", tconst);
+    logger.log("[findIMDBtconstIncluded] tconst is included:", tconst);
 
     return tconst;
   }
 
-  logger.log("findIMDBtconstIncluded tconst is NOT included");
+  logger.log("[findIMDBtconstIncluded] tconst is NOT included");
 
   return "";
 }
 
 async function findIMDBtconstInNFO(movie) {
-  logger.log("findIMDBtconstInNFO START");
+  logger.log("[findIMDBtconstInNFO] START");
 
   if (!movie.isDirectoryBased) {
-    logger.log("findIMDBtconstInNFO movie is not directory-based, abort.");
+    logger.log("[findIMDBtconstInNFO] movie is not directory-based, abort.");
     return;
   }
 
@@ -1991,7 +2009,7 @@ async function findIMDBtconstInNFO(movie) {
     searchPath = path.resolve(movie.fullDirectory, "..");
   }
 
-  logger.log("findIMDBtconstInNFO searching in", searchPath);
+  logger.log("[findIMDBtconstInNFO] searching in", searchPath);
 
   const pathItems = await listPath(searchPath, searchPath);
 
@@ -2000,30 +2018,30 @@ async function findIMDBtconstInNFO(movie) {
   );
 
   if (!nfoFile) {
-    logger.log("findIMDBtconstInNFO no .nfo file found, abort.");
+    logger.log("[findIMDBtconstInNFO] no .nfo file found, abort.");
   }
 
-  logger.log("findIMDBtconstInNFO .nfo file found:", nfoFile.Name);
+  logger.log("[findIMDBtconstInNFO] .nfo file found:", nfoFile.Name);
 
   const nfoContent = (await readFileAsync(nfoFile.fullPath)).toString();
 
-  // logger.log('findIMDBtconstInNFO content:', nfoContent);
+  // logger.log('[findIMDBtconstInNFO] content:', nfoContent);
 
   if (/tt\d{6,}/.test(nfoContent)) {
     const tconst = nfoContent.match(/(tt\d{6,})/)[1];
 
-    logger.log("findIMDBtconstInNFO tconst found:", tconst);
+    logger.log("[findIMDBtconstInNFO] tconst found:", tconst);
 
     return tconst;
   }
 
-  logger.log("findIMDBtconstInNFO tconst is NOT found");
+  logger.log("[findIMDBtconstInNFO] tconst is NOT found");
 
   return "";
 }
 
 async function findIMDBtconstByFileOrDirname(movie) {
-  logger.log("findIMDBtconstByFileOrDirname START");
+  logger.log("[findIMDBtconstByFileOrDirname] START");
 
   const arrYears = helpers.getYearsFromFileName(movie.Filename, false); // TODO: also directoryName (if movie.isDirectoryBased)
 
@@ -2037,24 +2055,22 @@ async function findIMDBtconstByFileOrDirname(movie) {
     .replace(/\[[^\]]*?\]/g, "")
     .trim();
 
-  logger.log("findIMDBtconstByFileOrDirname name:", name);
+  logger.log("[findIMDBtconstByFileOrDirname] name:", name);
 
-  logger.log("findIMDBtconstByFileOrDirname:", name);
-
-  logger.log("findIMDBtconstByFileOrDirname years:", arrYears);
+  logger.log("[findIMDBtconstByFileOrDirname] years:", arrYears);
 
   const arrName = name.split(" ");
 
   for (let i = arrName.length; i > 0; i--) {
     const searchTerm = arrName.slice(0, i).join(" ");
 
-    logger.log(`findIMDBtconstByFileOrDirname trying: ${searchTerm}`);
+    logger.log(`[findIMDBtconstByFileOrDirname] trying: ${searchTerm}`);
 
     const results = await scrapeIMDBSuggestion(searchTerm);
 
     if (results.length === 1) {
       // definitely found our optimum!
-      logger.log("findIMDBtconstByFileOrDirname OPTIMUM found!", results);
+      logger.log("[findIMDBtconstByFileOrDirname] OPTIMUM found!", results);
       return results[0].tconst;
     }
 
@@ -2080,7 +2096,7 @@ async function findIMDBtconstByFileOrDirname(movie) {
 }
 
 async function fetchIMDBMetaData($t, movie, onlyNew) {
-  logger.log("fetchIMDBdata movie:", movie);
+  logger.log("[fetchIMDBdata] movie:", movie);
 
   // fetch IMDB data from imdb.com (incl. images)
   // save IMDB data to db
@@ -2342,7 +2358,7 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
       }
     }
 
-    logger.log("IMDBdata:", IMDBdata);
+    logger.log("[fetchIMDBdata] IMDBdata:", IMDBdata);
 
     const genres = await db.fireProcedureReturnAll(
       "SELECT id_Genres, GenreID, Name FROM tbl_Genres",
@@ -2385,7 +2401,7 @@ async function saveIMDBData(
 
   const IMDB_genres = IMDBdata.$IMDB_genres || [];
   delete IMDBdata.$IMDB_genres;
-  logger.log("saveIMDBData IMDB_genres:", IMDB_genres);
+  logger.log("[saveIMDBData] IMDB_genres:", IMDB_genres);
 
   // consider IMDB_Done only if at least the imdb main page has been scraped and no errors occured during the process
   let sql = `IMDB_Done = ${
@@ -2408,7 +2424,7 @@ async function saveIMDBData(
   });
 
   logger.log(
-    "saveIMDBData payload:",
+    "[saveIMDBData] payload:",
     payload,
     "movie.scanErrors:",
     movie.scanErrors
@@ -2426,7 +2442,7 @@ async function saveIMDBData(
   );
 
   if (definedByUser.find((item) => item === "Genres")) {
-    logger.log("saveIMDBData omitting Genres (already defined by the user)");
+    logger.log("[saveIMDBData] omitting Genres (already defined by the user)");
   } else {
     await updateMovieGenres(movie.id_Movies, IMDB_genres);
   }
@@ -2489,7 +2505,7 @@ async function saveIMDBData(
     const movieCredit = movieCredits[i];
 
     if (!movieCredit.Found) {
-      // logger.log('removing credit', movieCredit);
+      // logger.log('[saveIMDBData] removing credit', movieCredit);
 
       await db.fireProcedure(
         "DELETE FROM tbl_Movies_IMDB_Credits WHERE id_Movies_IMDB_Credits = $id_Movies_IMDB_Credits",
@@ -2556,7 +2572,7 @@ async function saveIMDBData(
     const movieCompany = movieCompanies[i];
 
     if (!movieCompany.Found) {
-      // logger.log('removing company', movieCompany);
+      // logger.log('[saveIMDBData] removing company', movieCompany);
 
       await db.fireProcedure(
         "DELETE FROM tbl_Movies_IMDB_Companies WHERE id_Movies_IMDB_Companies = $id_Movies_IMDB_Companies",
@@ -2587,7 +2603,7 @@ async function saveIMDBData(
     }
 
     if (!$id_IMDB_Plot_Keywords) {
-      logger.error("unable to store plot keyword:", plotKeyword);
+      logger.error("[saveIMDBData] unable to store plot keyword:", plotKeyword);
     }
 
     const moviePlotKeyword = moviePlotKeywords.find(
@@ -2629,7 +2645,7 @@ async function saveIMDBData(
     const moviePlotKeyword = moviePlotKeywords[i];
 
     if (!moviePlotKeyword.Found) {
-      // logger.log('removing plot keyword', moviePlotKeyword);
+      // logger.log('[saveIMDBData] removing plot keyword', moviePlotKeyword);
 
       await db.fireProcedure(
         "DELETE FROM tbl_Movies_IMDB_Plot_Keywords WHERE id_Movies_IMDB_Plot_Keywords = $id_Movies_IMDB_Plot_Keywords",
@@ -2665,7 +2681,10 @@ async function saveIMDBData(
     }
 
     if (!$id_IMDB_Filming_Locations) {
-      logger.error("unable to store filming location:", filmingLocation);
+      logger.error(
+        "[saveIMDBData] unable to store filming location:",
+        filmingLocation
+      );
     }
 
     const movieFilmingLocation = movieFilmingLocations.find(
@@ -2710,7 +2729,7 @@ async function saveIMDBData(
     const movieFilmingLocation = movieFilmingLocations[i];
 
     if (!movieFilmingLocation.Found) {
-      // logger.log('removing filming location', movieFilmingLocation);
+      // logger.log('[saveIMDBData] removing filming location', movieFilmingLocation);
 
       await db.fireProcedure(
         "DELETE FROM tbl_Movies_IMDB_Filming_Locations WHERE id_Movies_IMDB_Filming_Locations = $id_Movies_IMDB_Filming_Locations",
@@ -2746,7 +2765,10 @@ function getPreferredLanguages() {
  */
 function generateFilterQuery(filters, arr_id_Movies) {
   let filterSourcePaths = "";
-  logger.log("filters.filterSourcePaths:", filters.filterSourcePaths);
+  logger.log(
+    "[generateFilterQuery] filters.filterSourcePaths:",
+    filters.filterSourcePaths
+  );
   if (
     filters.filterSourcePaths &&
     filters.filterSourcePaths.find((filter) => !filter.Selected)
@@ -2803,7 +2825,10 @@ function generateFilterQuery(filters, arr_id_Movies) {
   }
 
   let filterAgeRatings = "";
-  logger.log("filters.filterAgeRatings:", filters.filterAgeRatings);
+  logger.log(
+    "[generateFilterQuery] filters.filterAgeRatings:",
+    filters.filterAgeRatings
+  );
   if (
     filters.filterAgeRatings &&
     filters.filterAgeRatings.find((filter) => !filter.Selected)
@@ -2847,7 +2872,10 @@ function generateFilterQuery(filters, arr_id_Movies) {
   }
 
   let filterRatings = "";
-  logger.log("filters.filterRatings:", filters.filterRatings);
+  logger.log(
+    "[generateFilterQuery] filters.filterRatings:",
+    filters.filterRatings
+  );
   if (
     filters.filterRatings &&
     filters.filterRatings.find((filter) => !filter.Selected)
@@ -2958,7 +2986,10 @@ function generateFilterQuery(filters, arr_id_Movies) {
   }
 
   let filterPersons = "";
-  logger.log("filters.filterPersons:", filters.filterPersons);
+  logger.log(
+    "[generateFilterQuery] filters.filterPersons:",
+    filters.filterPersons
+  );
   if (
     filters.filterPersons &&
     ((!filters.filterSettings.filterPersonsAND &&
@@ -3212,7 +3243,7 @@ function generateFilterQuery(filters, arr_id_Movies) {
   }
 
   let filterYears = "";
-  logger.log("filters.filterYears:", filters.filterYears);
+  logger.log("[generateFilterQuery] filters.filterYears:", filters.filterYears);
   if (
     filters.filterYears &&
     filters.filterYears.find((filter) => !filter.Selected)
@@ -3248,7 +3279,10 @@ function generateFilterQuery(filters, arr_id_Movies) {
   }
 
   let filterQualities = "";
-  logger.log("filters.filterQualities:", filters.filterQualities);
+  logger.log(
+    "[generateFilterQuery] filters.filterQualities:",
+    filters.filterQualities
+  );
   if (
     filters.filterQualities &&
     filters.filterQualities.find((filter) => !filter.Selected)
@@ -3485,7 +3519,10 @@ function generateFilterQuery(filters, arr_id_Movies) {
   }
 
   let filterDataQuality = "";
-  logger.log("filters.filterDataQuality:", filters.filterDataQuality);
+  logger.log(
+    "[generateFilterQuery] filters.filterDataQuality:",
+    filters.filterDataQuality
+  );
 
   const getFilterDataQualityQuery = function (filterDataQualityName) {
     switch (filterDataQualityName) {
@@ -3561,20 +3598,22 @@ function generateFilterQuery(filters, arr_id_Movies) {
     filter_id_Movies += ")";
   }
 
-  // logger.log("fetchMedia filterSourcePaths:", filterSourcePaths);
-  // logger.log("fetchMedia filterGenres:", filterGenres);
-  // logger.log("fetchMedia filterAgeRatings:", filterAgeRatings);
-  // logger.log("fetchMedia filterRatings:", filterRatings);
-  // logger.log("fetchMedia filterLists:", filterLists);
-  // logger.log("fetchMedia filterParentalAdvisory:", filterParentalAdvisory);
-  // logger.log("fetchMedia filterPersons:", filterPersons);
-  // logger.log("fetchMedia filterCompanies:", filterCompanies);
-  // logger.log("fetchMedia filterIMDBPlotKeywords:", filterIMDBPlotKeywords);
-  // logger.log("fetchMedia filterIMDBPlotKeywords:", filterIMDBFilmingLocations);
-  // logger.log("fetchMedia filterAudioLanguages:", filterAudioLanguages);
-  // logger.log("fetchMedia filterReleaseAttributes:", filterReleaseAttributes);
-  // logger.log("fetchMedia filterDataQuality:", filterDataQuality);
-  // logger.log("fetchMedia filter_id_Movies:", filter_id_Movies);
+  /*
+  logger.log("[generateFilterQuery] filterSourcePaths:", filterSourcePaths);
+  logger.log("[generateFilterQuery] filterGenres:", filterGenres);
+  logger.log("[generateFilterQuery] filterAgeRatings:", filterAgeRatings);
+  logger.log("[generateFilterQuery] filterRatings:", filterRatings);
+  logger.log("[generateFilterQuery] filterLists:", filterLists);
+  logger.log("[generateFilterQuery] filterParentalAdvisory:", filterParentalAdvisory);
+  logger.log("[generateFilterQuery] filterPersons:", filterPersons);
+  logger.log("[generateFilterQuery] filterCompanies:", filterCompanies);
+  logger.log("[generateFilterQuery] filterIMDBPlotKeywords:", filterIMDBPlotKeywords);
+  logger.log("[generateFilterQuery] filterIMDBPlotKeywords:", filterIMDBFilmingLocations);
+  logger.log("[generateFilterQuery] filterAudioLanguages:", filterAudioLanguages);
+  logger.log("[generateFilterQuery] filterReleaseAttributes:", filterReleaseAttributes);
+  logger.log("[generateFilterQuery] filterDataQuality:", filterDataQuality);
+  logger.log("[generateFilterQuery] filter_id_Movies:", filter_id_Movies);
+  */
 
   return `
   ${filterSourcePaths}
@@ -3606,13 +3645,13 @@ async function fetchMedia(
   $t,
   filters
 ) {
-  logger.log("fetchMedia filters:", filters);
+  logger.log("[fetchMedia] filters:", filters);
 
   const filterQuery = generateFilterQuery(filters, arr_id_Movies);
 
   try {
     logger.log(
-      "shared.languagesAudioSubtitles:",
+      "[fetchMedia] shared.languagesAudioSubtitles:",
       shared.languagesAudioSubtitles
     );
 
@@ -3724,7 +3763,7 @@ async function fetchMedia(
 		${filterQuery}
 	`;
 
-    logger.log("fetchMedia query:", query);
+    logger.log("[fetchMedia] query:", query);
 
     const result = await db.fireProcedureReturnAll(query, { $MediaType });
 
@@ -3736,7 +3775,7 @@ async function fetchMedia(
     }
 
     result.forEach((item) => {
-      // logger.log(item.Name);
+      // logger.log("[fetchMedia] item.Name:", item.Name);
       item.IMDB_posterSmall_URL = item.IMDB_posterSmall_URL
         ? "local-resource://" +
           helpers.getDataPath(item.IMDB_posterSmall_URL).replace(/\\/g, "\\\\")
@@ -3915,7 +3954,7 @@ function generateLanguageArray(languages, maxLangDisplay) {
   });
 
   if (languages && result.length < languagesFiltered.length) {
-    // logger.log('overshot languagesFiltered:', languagesFiltered);
+    // logger.log('[generateLanguageArray] overshot languagesFiltered:', languagesFiltered);
 
     if (languagesFiltered.length - result.length < 2) {
       result.push(lastOvershotLanguage);
@@ -3923,7 +3962,7 @@ function generateLanguageArray(languages, maxLangDisplay) {
       result.push("+" + (languagesFiltered.length - result.length));
     }
 
-    // logger.log('result:', result);
+    // logger.log('[generateLanguageArray] result:', result);
   }
 
   if (!result) {
@@ -3955,7 +3994,7 @@ async function clearRating($id_Movies, isHandlingDuplicates) {
 }
 
 async function setRating($id_Movies, $Rating, isHandlingDuplicates) {
-  logger.log("setRating id_Movies:", $id_Movies, "Rating:", $Rating);
+  logger.log("[setRating] id_Movies:", $id_Movies, "Rating:", $Rating);
   try {
     await db.fireProcedure(
       `UPDATE tbl_Movies SET Rating = $Rating WHERE id_Movies = $id_Movies`,
@@ -4037,9 +4076,9 @@ async function launchMovie(movie) {
   }
 
   const task = `"${MediaplayerPath}" "${movie.fullPath}"`;
-  logger.log("launching:", task);
+  logger.log("[launchMovie] launching START task:", task);
   await execAsync(task);
-  logger.log("end launching:", task);
+  logger.log("[launchMovie] launching END task:", task);
 }
 
 async function fetchFilterValues($MediaType, loadFilterValuesFromStorage) {
@@ -4056,7 +4095,7 @@ async function fetchFilterValues($MediaType, loadFilterValuesFromStorage) {
 }
 
 async function fetchSortValues($MediaType) {
-  logger.log("fetchSortValues");
+  logger.log("[fetchSortValues] START");
 
   const result = await getSetting(`sortMediaType${$MediaType}`);
   if (!result) {
@@ -4065,13 +4104,13 @@ async function fetchSortValues($MediaType) {
 
   shared.sortField = JSON.parse(result).sortField;
 
-  logger.log("shared.sortField:", shared.sortField);
+  logger.log("[fetchSortValues] shared.sortField:", shared.sortField);
 
   return JSON.parse(result);
 }
 
 async function fetchFilterDataQuality($MediaType, loadFilterValuesFromStorage) {
-  logger.log("fetchFilterDataQuality MediaType:", $MediaType);
+  logger.log("[fetchFilterDataQuality] MediaType:", $MediaType);
   shared.loadingFilter = "filterDataQuality";
 
   const filterValues = await fetchFilterValues(
@@ -4079,7 +4118,7 @@ async function fetchFilterDataQuality($MediaType, loadFilterValuesFromStorage) {
     loadFilterValuesFromStorage
   );
 
-  logger.log("fetchFilterDataQuality filterValues:", filterValues);
+  logger.log("[fetchFilterDataQuality] filterValues:", filterValues);
 
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   delete currentFilters.filterDataQuality;
@@ -4191,19 +4230,22 @@ async function fetchFilterDataQuality($MediaType, loadFilterValuesFromStorage) {
     });
   }
 
-  logger.log("fetchFilterDataQuality result:", results);
+  logger.log(
+    "[fetchFilterDataQuality] fetchFilterDataQuality result:",
+    results
+  );
 
   shared.filters.filterDataQuality = results;
   shared.loadingFilter = "";
 }
 
 async function fetchFilterSourcePaths($MediaType) {
-  logger.log("fetchFilterSourcePaths MediaType:", $MediaType);
+  logger.log("[fetchFilterSourcePaths] MediaType:", $MediaType);
   shared.loadingFilter = "filterSourcePaths";
 
   const filterValues = await fetchFilterValues($MediaType);
 
-  logger.log("fetchFilterSourcePaths filterValues:", filterValues);
+  logger.log("[fetchFilterSourcePaths] filterValues:", filterValues);
 
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   delete currentFilters.filterSourcePaths;
@@ -4241,19 +4283,19 @@ async function fetchFilterSourcePaths($MediaType) {
     });
   }
 
-  logger.log("fetchFilterSourcePaths result:", results);
+  logger.log("[fetchFilterSourcePaths] result:", results);
 
   shared.filters.filterSourcePaths = results;
   shared.loadingFilter = "";
 }
 
 async function fetchFilterGenres($MediaType, $t) {
-  logger.log("fetchFilterGenres MediaType:", $MediaType);
+  logger.log("[fetchFilterGenres] MediaType:", $MediaType);
   shared.loadingFilter = "filterGenres";
 
   const filterValues = await fetchFilterValues($MediaType);
 
-  logger.log("fetchFilterGenres filterValues:", filterValues);
+  logger.log("[fetchFilterGenres] filterValues:", filterValues);
 
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   delete currentFilters.filterGenres;
@@ -4305,7 +4347,7 @@ async function fetchFilterGenres($MediaType, $t) {
     }
   });
 
-  logger.log("fetchFilterGenres resultsFiltered:", resultsFiltered);
+  logger.log("[fetchFilterGenres] resultsFiltered:", resultsFiltered);
 
   shared.filters.filterGenres = resultsFiltered.sort((a, b) =>
     helpers.compare(a.Name, b.Name, false)
@@ -4314,12 +4356,12 @@ async function fetchFilterGenres($MediaType, $t) {
 }
 
 async function fetchFilterAgeRatings($MediaType) {
-  logger.log("fetchFilterAgeRatings MediaType:", $MediaType);
+  logger.log("[fetchFilterAgeRatings] MediaType:", $MediaType);
   shared.loadingFilter = "filterAgeRatings";
 
   const filterValues = await fetchFilterValues($MediaType);
 
-  logger.log("fetchFilterAgeRatings filterValues:", filterValues);
+  logger.log("[fetchFilterAgeRatings] filterValues:", filterValues);
 
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   delete currentFilters.filterAgeRatings;
@@ -4395,19 +4437,19 @@ async function fetchFilterAgeRatings($MediaType) {
     });
   }
 
-  logger.log("fetchFilterAgeRatings resultsFiltered:", resultsFiltered);
+  logger.log("[fetchFilterAgeRatings] resultsFiltered:", resultsFiltered);
 
   shared.filters.filterAgeRatings = resultsFiltered;
   shared.loadingFilter = "";
 }
 
 async function fetchFilterRatings($MediaType) {
-  logger.log("fetchFilterRatings MediaType:", $MediaType);
+  logger.log("[fetchFilterRatings] MediaType:", $MediaType);
   shared.loadingFilter = "filterRatings";
 
   const filterValues = await fetchFilterValues($MediaType);
 
-  logger.log("fetchFilterRatings filterValues:", filterValues);
+  logger.log("[fetchFilterRatings] filterValues:", filterValues);
 
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   delete currentFilters.filterRatings;
@@ -4584,7 +4626,7 @@ async function fetchFilterRatings($MediaType) {
     });
   }
 
-  logger.log("fetchFilterRatings results:", results);
+  logger.log("[fetchFilterRatings] results:", results);
 
   shared.filters.filterRatings = results;
   shared.loadingFilter = "";
@@ -4625,14 +4667,14 @@ async function fetchFilterParentalAdvisory($MediaType) {
 
 async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category) {
   logger.log(
-    `fetchFilterParentalAdvisory${PA_Category} MediaType:`,
+    `[fetchFilterParentalAdvisory${PA_Category}] MediaType:`,
     $MediaType
   );
 
   const filterValues = await fetchFilterValues($MediaType);
 
   logger.log(
-    `fetchFilterParentalAdvisory${PA_Category} filterValues:`,
+    `[fetchFilterParentalAdvisory${PA_Category}] filterValues:`,
     filterValues
   );
 
@@ -4738,7 +4780,7 @@ async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category) {
     });
   }
 
-  logger.log(`fetchFilterParentalAdvisory${PA_Category} results:`, results);
+  logger.log(`[fetchFilterParentalAdvisory${PA_Category}] results:`, results);
 
   return results;
 }
@@ -4796,7 +4838,7 @@ async function fetchFilterPersons($MediaType, $t) {
     { $MediaType, $any: $t("<any other person>") }
   );
 
-  // logger.log('fetchFilterPersons QUERY:', )
+  // logger.log('[fetchFilterPersons] QUERY:', )
 
   if (filterValues && filterValues.filterPersons) {
     results.forEach((result) => {
@@ -4812,7 +4854,7 @@ async function fetchFilterPersons($MediaType, $t) {
     });
   }
 
-  logger.log("fetchFilterPersons result:", results);
+  logger.log("[fetchFilterPersons] result:", results);
 
   shared.filters.filterPersons = results;
   shared.loadingFilter = "";
@@ -4870,7 +4912,7 @@ async function fetchFilterCompanies($MediaType, $t) {
     { $MediaType, $any: $t("<any other company>") }
   );
 
-  // logger.log('fetchFilterCompanies QUERY:', )
+  // logger.log('[fetchFilterCompanies] QUERY:', )
 
   if (filterValues && filterValues.filterCompanies) {
     results.forEach((result) => {
@@ -4886,7 +4928,7 @@ async function fetchFilterCompanies($MediaType, $t) {
     });
   }
 
-  logger.log("fetchFilterCompanies result:", results);
+  logger.log("[fetchFilterCompanies] result:", results);
 
   shared.filters.filterCompanies = results;
   shared.loadingFilter = "";
@@ -4946,7 +4988,7 @@ async function fetchFilterIMDBPlotKeywords($MediaType, $t) {
     { $MediaType, $any: $t("<any other plot keyword>") }
   );
 
-  // logger.log('fetchFilterIMDBPlotKeywords QUERY:', )
+  // logger.log('[fetchFilterIMDBPlotKeywords] QUERY:', )
 
   if (filterValues && filterValues.filterIMDBPlotKeywords) {
     results.forEach((result) => {
@@ -4964,7 +5006,7 @@ async function fetchFilterIMDBPlotKeywords($MediaType, $t) {
     });
   }
 
-  logger.log("fetchFilterIMDBPlotKeywords result:", results);
+  logger.log("[fetchFilterIMDBPlotKeywords] result:", results);
 
   shared.filters.filterIMDBPlotKeywords = results;
   shared.loadingFilter = "";
@@ -5040,7 +5082,7 @@ async function fetchFilterIMDBFilmingLocations($MediaType, $t) {
     });
   }
 
-  logger.log("fetchFilterIMDBFilmingLocations result:", results);
+  logger.log("[fetchFilterIMDBFilmingLocations] result:", results);
 
   shared.filters.filterIMDBFilmingLocations = results;
   shared.loadingFilter = "";
@@ -5048,11 +5090,11 @@ async function fetchFilterIMDBFilmingLocations($MediaType, $t) {
 
 async function fetchFilterYears($MediaType) {
   shared.loadingFilter = "filterYears";
-  logger.log("fetchFilterYears MediaType:", $MediaType);
+  logger.log("[fetchFilterYears] MediaType:", $MediaType);
 
   const filterValues = await fetchFilterValues($MediaType);
 
-  logger.log("fetchFilterYears filterValues:", filterValues);
+  logger.log("[fetchFilterYears] filterValues:", filterValues);
 
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   delete currentFilters.filterYears;
@@ -5108,7 +5150,7 @@ async function fetchFilterYears($MediaType) {
     });
   }
 
-  logger.log("fetchFilterYears resultsFiltered:", resultsFiltered);
+  logger.log("[fetchFilterYears] resultsFiltered:", resultsFiltered);
 
   shared.filters.filterYears = resultsFiltered;
   shared.loadingFilter = "";
@@ -5116,11 +5158,11 @@ async function fetchFilterYears($MediaType) {
 
 async function fetchFilterQualities($MediaType) {
   shared.loadingFilter = "filterQualities";
-  logger.log("fetchFilterQualities MediaType:", $MediaType);
+  logger.log("[fetchFilterQualities] MediaType:", $MediaType);
 
   const filterValues = await fetchFilterValues($MediaType);
 
-  logger.log("fetchFilterQualities filterValues:", filterValues);
+  logger.log("[fetchFilterQualities] filterValues:", filterValues);
 
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   delete currentFilters.filterQualities;
@@ -5158,7 +5200,7 @@ async function fetchFilterQualities($MediaType) {
     });
   }
 
-  logger.log("fetchFilterQualities resultsFiltered:", resultsFiltered);
+  logger.log("[fetchFilterQualities] resultsFiltered:", resultsFiltered);
 
   shared.filters.filterQualities = resultsFiltered;
   shared.loadingFilter = "";
@@ -5243,7 +5285,7 @@ async function addToList($id_Lists, $id_Movies, isHandlingDuplicates) {
       shared.duplicatesHandling.actualDuplicate.addToList,
       shared.duplicatesHandling.metaDuplicate.addToList
     );
-    logger.log("duplicates:", duplicates);
+    logger.log("[addToList] duplicates:", duplicates);
 
     for (let i = 0; i < duplicates.length; i++) {
       await addToList($id_Lists, duplicates[i], true);
@@ -5252,7 +5294,12 @@ async function addToList($id_Lists, $id_Movies, isHandlingDuplicates) {
 }
 
 async function removeFromList($id_Lists, $id_Movies) {
-  logger.log("removeFromList $id_Lists:", $id_Lists, "$id_Movies:", $id_Movies);
+  logger.log(
+    "[removeFromList] $id_Lists:",
+    $id_Lists,
+    "$id_Movies:",
+    $id_Movies
+  );
   return await db.fireProcedureReturnScalar(
     `DELETE FROM tbl_Lists_Movies WHERE id_Lists = $id_Lists AND id_Movies = $id_Movies`,
     { $id_Lists, $id_Movies }
@@ -5327,7 +5374,7 @@ async function fetchFilterLists($MediaType, $t) {
     });
   }
 
-  logger.log("fetchFilterLists result:", results);
+  logger.log("[fetchFilterLists] result:", results);
 
   shared.filters.filterLists = results;
   shared.loadingFilter = "";
@@ -5337,11 +5384,11 @@ async function fetchFilterLanguages($MediaType, $LanguageType, $t) {
   shared.loadingFilter = `filter${helpers.uppercaseEachWord(
     $LanguageType
   )}Languages`;
-  logger.log("fetchFilterLanguages MediaType:", $MediaType);
+  logger.log("[fetchFilterLanguages] MediaType:", $MediaType);
 
   const filterValues = await fetchFilterValues($MediaType);
 
-  logger.log("fetchFilterLanguages filterValues:", filterValues);
+  logger.log("[fetchFilterLanguages] filterValues:", filterValues);
 
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   delete currentFilters[
@@ -5430,7 +5477,7 @@ async function fetchFilterLanguages($MediaType, $LanguageType, $t) {
     }
   });
 
-  logger.log("fetchFilterLanguages resultsFiltered:", resultsFiltered);
+  logger.log("[fetchFilterLanguages] resultsFiltered:", resultsFiltered);
 
   // Translate
   resultsFiltered.forEach((language) => {
@@ -5507,7 +5554,7 @@ async function fetchFilterMetacriticScore($MediaType) {
 //     { $MediaType }
 //   ), new Date().getFullYear());
 
-//   logger.log('ensureFilterReleaseYearsRange Min:', shared.filters.filterReleaseYearsMin);
+//   logger.log('[ensureFilterReleaseYearsRange] Min:', shared.filters.filterReleaseYearsMin);
 
 //   shared.filters.filterReleaseYearsMax = helpers.nz(await db.fireProcedureReturnScalar(
 //     `
@@ -5519,7 +5566,7 @@ async function fetchFilterMetacriticScore($MediaType) {
 //     { $MediaType }
 //   ), new Date().getFullYear());
 
-//   logger.log('ensureFilterReleaseYearsRange Max:', shared.filters.filterReleaseYearsMax);
+//   logger.log('[ensureFilterReleaseYearsRange] Max:', shared.filters.filterReleaseYearsMax);
 
 //   if (shared.isScanning) {
 //     // during rescan fuckups may happen
@@ -5546,7 +5593,7 @@ async function fetchFilterMetacriticScore($MediaType) {
 
 //   if (filterValues && filterValues.filterReleaseYears && filterValues.filterReleaseYears.length === 2 && filterValues.filterReleaseYearsMin == filterValues.filterReleaseYears[0] && filterValues.filterReleaseYearsMax == filterValues.filterReleaseYears[1]) {
 //     // the old setting already was the "ALL" range, no need to overwrite
-//     logger.log('fetchFilterReleaseYears: saved was the "ALL" range');
+//     logger.log('[fetchFilterReleaseYears] saved was the "ALL" range');
 //     return;
 //   }
 
@@ -5555,22 +5602,22 @@ async function fetchFilterMetacriticScore($MediaType) {
 //     filterValues.filterReleaseYears &&
 //     filterValues.filterReleaseYears.length > 0
 //   ) {
-//     logger.log('fetchFilterReleaseYears: saved was NOT the "ALL" range:', filterValues);
+//     logger.log('[fetchFilterReleaseYears] saved was NOT the "ALL" range:', filterValues);
 //     shared.filters.filterReleaseYears = [Math.max(filterValues.filterReleaseYears[0], shared.filters.filterReleaseYearsMin), Math.min(filterValues.filterReleaseYears[1], shared.filters.filterReleaseYearsMax)];
 //   }
 // }
 
 async function fetchFilterSettings($MediaType) {
-  logger.log("fetchFilterSettings START");
+  logger.log("[fetchFilterSettings] START");
   shared.loadingFilter = "filterSettings";
 
   const filterValues = await fetchFilterValues($MediaType);
 
-  logger.log("fetchFilterSettings filterValues:", filterValues);
+  logger.log("[fetchFilterSettings] filterValues:", filterValues);
 
   if (filterValues && filterValues.filterSettings) {
     logger.log(
-      "fetchFilterSettings filterValues.filterSettings:",
+      "[fetchFilterSettings] filterValues.filterSettings:",
       filterValues
     );
 
@@ -5858,7 +5905,7 @@ async function assignIMDB(
   $t
 ) {
   logger.log(
-    "assignIMDB $id_Movies:",
+    "[assignIMDB] $id_Movies:",
     $id_Movies,
     "$IMDB_tconst:",
     $IMDB_tconst,
@@ -5938,7 +5985,7 @@ async function loadSettingDuplicatesHandling() {
   try {
     const loadedSetting = await getSetting(`duplicatesHandling`);
 
-    logger.log("loadedSetting:", loadedSetting);
+    logger.log("[loadSettingDuplicatesHandling] loadedSetting:", loadedSetting);
 
     if (!loadedSetting) {
       return;
@@ -5979,7 +6026,7 @@ async function getMovieDuplicates(
   const result = [];
 
   if (!useActualDuplicates && !useMetaDuplicates) {
-    logger.log("getMovieDuplicates bailing out");
+    logger.log("[getMovieDuplicates] bailing out");
     return [];
   }
 
@@ -6124,7 +6171,8 @@ async function getIMDBRegions() {
 }
 
 async function addRegions(items) {
-  logger.log("TODO: store.addRegions", items);
+  // TODO: store.addRegions
+  logger.log("[addRegions] TODO: store.addRegions", items);
 }
 
 async function getFallbackRegion() {
@@ -6151,7 +6199,7 @@ async function getFallbackRegion() {
       shared.fallbackRegion = Object.assign(region, {
         locale: shared.currentLocale,
       });
-      logger.log("Fallback Region: set to", region);
+      logger.log("[getFallbackRegion] Fallback Region: set to", region);
     }
   });
 
@@ -6178,11 +6226,11 @@ async function getFallbackLanguage() {
   const languages = await getIMDBLanguages();
 
   if (!languages) {
-    logger.warn("unable to fetch languages, abort");
+    logger.warn("[getFallbackLanguage] unable to fetch languages, abort");
     return;
   }
 
-  logger.log("languages:", languages);
+  logger.log("[getFallbackLanguage] languages:", languages);
 
   let fallbackLanguage = languages.find((lang) => lang.code === uiLanguageCode);
 
@@ -6190,7 +6238,10 @@ async function getFallbackLanguage() {
     shared.fallbackLanguage = Object.assign(fallbackLanguage, {
       locale: shared.currentLocale,
     });
-    logger.log("Fallback Language: set to", shared.fallbackLanguage);
+    logger.log(
+      "[getFallbackLanguage] Fallback Language: set to",
+      shared.fallbackLanguage
+    );
   }
 }
 
@@ -6229,11 +6280,11 @@ async function getIMDBLanguages(regionCodes) {
   ORDER BY L.Name
 `;
 
-  logger.log("getIMDBLanguages sSQL: ", sSQL);
+  logger.log("[getIMDBLanguages] sSQL: ", sSQL);
 
   const languages = await db.fireProcedureReturnAll(sSQL);
 
-  logger.log("getIMDBLanguages:", languages);
+  logger.log("[getIMDBLanguages] languages:", languages);
 
   return languages;
 }
@@ -6248,7 +6299,7 @@ async function ensureLanguageMapping() {
       languageCodeNameMapping[language.Code] &&
       languageCodeNameMapping[language.Code] !== language.Name
     ) {
-      logger.log("ensureLanguageMapping Code-Name mismatch:", language);
+      logger.log("[ensureLanguageMapping] Code-Name mismatch:", language);
     }
     if (!languageCodeNameMapping[language.Code]) {
       languageCodeNameMapping[language.Code] = language.Name;
@@ -6258,7 +6309,7 @@ async function ensureLanguageMapping() {
       languageNameCodeMapping[language.Name] &&
       languageNameCodeMapping[language.Name] !== language.Code
     ) {
-      logger.log("ensureLanguageMapping Name-Code mismatch:", language);
+      logger.log("[ensureLanguageMapping] Name-Code mismatch:", language);
     }
     if (!languageNameCodeMapping[language.Name]) {
       languageNameCodeMapping[language.Name] = language.Code;
@@ -6266,11 +6317,11 @@ async function ensureLanguageMapping() {
   });
 
   logger.log(
-    "ensureLanguageMapping languageNameCodeMapping:",
+    "[ensureLanguageMapping] languageNameCodeMapping:",
     languageCodeNameMapping
   );
   logger.log(
-    "ensureLanguageMapping languageNameCodeMapping:",
+    "[ensureLanguageMapping] languageNameCodeMapping:",
     languageNameCodeMapping
   );
 }
@@ -6362,13 +6413,13 @@ async function findMissingSourcePaths() {
 
 async function loadLocalHistory(fileName) {
   try {
-    logger.log("loadLocalHistory fileName:", fileName);
+    logger.log("[loadLocalHistory] fileName:", fileName);
 
     const filePath = isBuild
       ? path.join(__dirname, "history", fileName)
       : helpers.getStaticPath(path.join("public", "history", fileName));
 
-    logger.log("loadLocalHistory filePath:", filePath);
+    logger.log("[loadLocalHistory] filePath:", filePath);
 
     const fileExists = await existsAsync(filePath);
 
@@ -6376,11 +6427,11 @@ async function loadLocalHistory(fileName) {
       return null;
     }
 
-    logger.log("loadLocalHistory path:", filePath);
+    logger.log("[loadLocalHistory] path:", filePath);
 
     const history = await readFileAsync(filePath);
 
-    logger.log("loadLocalHistory versionInfo:", history.toString());
+    logger.log("[loadLocalHistory] versionInfo:", history.toString());
 
     return history;
   } catch (e) {
@@ -6472,7 +6523,7 @@ async function fetchRatingDemographics($id_Movies) {
 }
 
 async function saveIMDBPersonData(data) {
-  logger.log("saveIMDBPersonData data:", data);
+  logger.log("[saveIMDBPersonData] data:", data);
 
   // return;
 
@@ -6504,7 +6555,7 @@ async function saveIMDBPersonData(data) {
 }
 
 async function fetchUILanguage() {
-  logger.log("fetchUILanguage START");
+  logger.log("[fetchUILanguage] START");
 
   let lang = await getSetting("uiLanguage");
   let fallbackLanguage = null;
@@ -6514,17 +6565,17 @@ async function fetchUILanguage() {
   }
 
   if (lang) {
-    logger.log(`fetchUILanguage got previously saved language: "${lang}"`);
+    logger.log(`[fetchUILanguage] got previously saved language: "${lang}"`);
   }
 
   if (!lang) {
     if (fallbackLanguage) {
       logger.log(
-        `fetchUILanguage no locale defined, fallback to "${fallbackLanguage}"`
+        `[fetchUILanguage] no locale defined, fallback to "${fallbackLanguage}"`
       );
       lang = fallbackLanguage;
     } else {
-      logger.log(`fetchUILanguage no locale defined, default to "en"`);
+      logger.log(`[fetchUILanguage] no locale defined, default to "en"`);
       lang = "en";
     }
   }
@@ -6536,12 +6587,12 @@ async function fetchUILanguage() {
   //   )
   // ) {
   //   logger.log(
-  //     `fetchUILanguage locale "${lang}" is not supported, fallback to "en"`
+  //     `[fetchUILanguage] locale "${lang}" is not supported, fallback to "en"`
   //   );
   //   lang = "en";
   // }
 
-  logger.log(`fetchUILanguage using "${lang}"`);
+  logger.log(`[fetchUILanguage] using "${lang}"`);
   return lang;
 }
 
@@ -6588,7 +6639,7 @@ async function loadFilterGroups() {
 }
 
 async function findReleaseAttributes(movie, onlyNew) {
-  logger.log("findReleaseAttributes movie:", movie);
+  logger.log("[findReleaseAttributes] movie:", movie);
 
   if (onlyNew && movie.IMDB_Done) {
     return;
@@ -6619,7 +6670,7 @@ async function findReleaseAttributes(movie, onlyNew) {
       " ";
   }
 
-  logger.log("findReleaseAttributes nameFiltered:", nameFiltered);
+  logger.log("[findReleaseAttributes] nameFiltered:", nameFiltered);
 
   const alreadyAvailableReleaseAttributes = await db.fireProcedureReturnAll(
     `
@@ -6634,7 +6685,7 @@ async function findReleaseAttributes(movie, onlyNew) {
   );
 
   logger.log(
-    "findReleaseAttributes alreadyAvailableReleaseAttributes:",
+    "[findReleaseAttributes] alreadyAvailableReleaseAttributes:",
     alreadyAvailableReleaseAttributes
   );
 
@@ -6659,7 +6710,7 @@ async function findReleaseAttributes(movie, onlyNew) {
     }
   });
 
-  logger.log("findReleaseAttributes foundSearchTerms:", foundSearchTerms);
+  logger.log("[findReleaseAttributes] foundSearchTerms:", foundSearchTerms);
 
   // save all newly found search terms
   for (let i = 0; i < foundSearchTerms.length; i++) {
@@ -6686,7 +6737,7 @@ async function findReleaseAttributes(movie, onlyNew) {
     alreadyAvailableReleaseAttributes.filter((ra) => !ra.foundAgain);
 
   logger.log(
-    "findReleaseAttributes deleteAvailableReleaseAttributes:",
+    "[findReleaseAttributes] deleteAvailableReleaseAttributes:",
     deleteAvailableReleaseAttributes
   );
 
@@ -6752,17 +6803,17 @@ function getReleaseAttributesHierarchy() {
 }
 
 async function fetchFilterReleaseAttributes($MediaType) {
-  logger.log("fetchFilterReleaseAttributes MediaType:", $MediaType);
+  logger.log("[fetchFilterReleaseAttributes] MediaType:", $MediaType);
   shared.loadingFilter = "filterReleaseAttributes";
 
   const filterValues = await fetchFilterValues($MediaType);
 
-  logger.log("fetchFilterReleaseAttributes filterValues:", filterValues);
+  logger.log("[fetchFilterReleaseAttributes] filterValues:", filterValues);
 
   const releaseAttributesHierarchy = getReleaseAttributesHierarchy();
 
   logger.log(
-    "fetchFilterReleaseAttributes releaseAttributesHierarchy:",
+    "[fetchFilterReleaseAttributes] releaseAttributesHierarchy:",
     releaseAttributesHierarchy
   );
 
@@ -6794,11 +6845,11 @@ async function fetchFilterReleaseAttributes($MediaType) {
     )
 `;
 
-    logger.log("fetchFilterReleaseAttributes sql:", sql);
+    logger.log("[fetchFilterReleaseAttributes] sql:", sql);
 
     const NumMovies = await db.fireProcedureReturnScalar(sql, { $MediaType });
 
-    logger.log("fetchFilterReleaseAttributes NumMovies:", NumMovies);
+    logger.log("[fetchFilterReleaseAttributes] NumMovies:", NumMovies);
 
     if (NumMovies) {
       results.push({
@@ -6855,7 +6906,7 @@ async function fetchFilterReleaseAttributes($MediaType) {
     });
   }
 
-  logger.log("fetchFilterReleaseAttributes results:", results);
+  logger.log("[fetchFilterReleaseAttributes] results:", results);
 
   shared.filters.filterReleaseAttributes = results;
 
@@ -6870,7 +6921,7 @@ function resetFilters(objFilter) {
   const before = JSON.stringify(objFilter);
 
   Object.keys(objFilter).forEach((key) => {
-    logger.log("resetFilters", key);
+    logger.log("[resetFilters] ", key);
 
     if (key === "Selected") {
       logger.log('  is "Selected" -> set to "true"');
@@ -6967,14 +7018,14 @@ async function ensureToolPath(executable, settingName) {
       toolpath = helpers.getStaticPath(
         path.join("bin", "win", "vlc", "vlc.exe")
       );
-      logger.log("ensureToolPath VLC path:", toolpath);
+      logger.log("[ensureToolPath] VLC path:", toolpath);
     }
     if (executable === "mediainfo") {
       // use ./bin/win/mediainfo-cli/MediaInfo.exe
       toolpath = helpers.getStaticPath(
         path.join("bin", "win", "mediainfo-cli", "MediaInfo.exe")
       );
-      logger.log("ensureToolPath MediaInfo CLI path:", toolpath);
+      logger.log("[ensureToolPath] MediaInfo CLI path:", toolpath);
     }
   }
 
@@ -7001,7 +7052,7 @@ async function ensureToolPath(executable, settingName) {
   }
 
   try {
-    logger.log("ensureToolPath lookupTask:", lookupTask);
+    logger.log("[ensureToolPath] lookupTask:", lookupTask);
 
     const { stdout, stderr } = await execAsync(lookupTask);
 
@@ -7010,17 +7061,17 @@ async function ensureToolPath(executable, settingName) {
       return;
     }
 
-    logger.log("ensureToolPath stdout:", stdout);
+    logger.log("[ensureToolPath] stdout:", stdout);
 
     // if (helpers.isWindows) {
     const arrStdOut = stdout.split("\n");
     for (let i = 0; i < arrStdOut.length; i++) {
       const path = arrStdOut[i].trim();
 
-      logger.log("ensureToolPath checking path:", path);
+      logger.log("[ensureToolPath] checking path:", path);
 
       if (await helpers.existsAsync(path)) {
-        logger.log("ensureToolPath path found at:", path);
+        logger.log("[ensureToolPath] path found at:", path);
         setSetting(settingName, path);
         return;
       }
@@ -7034,10 +7085,10 @@ async function ensureToolPath(executable, settingName) {
         for (let j = 0; j < arrLine.length; j++) {
           const path = arrLine[j].trim();
 
-          logger.log('ensureToolPath checking path:', path);
+          logger.log('[ensureToolPath] checking path:', path);
 
           if (await helpers.existsAsync(path)) {
-            logger.log('ensureToolPath path found at:', path);
+            logger.log('[ensureToolPath] path found at:', path);
             setSetting(settingName, path);
             return;
           }
@@ -7046,7 +7097,7 @@ async function ensureToolPath(executable, settingName) {
     }
     */
   } catch (err) {
-    logger.log("ensureToolPath tool not found or error:", err);
+    logger.log("[ensureToolPath] tool not found or error:", err);
   }
 }
 
@@ -7078,7 +7129,7 @@ function setLogLevel(level) {
   logger.setLevel(level);
 
   // eslint-disable-next-line no-console
-  console.log("logLevel set to", logger.getLevel());
+  console.log("[setLogLevel] logLevel set to", logger.getLevel());
 }
 
 function routeTo(router, route) {
@@ -7166,7 +7217,7 @@ async function updateMovieGenres($id_Movies, genres) {
     const movieGenre = movieGenres[i];
 
     if (!movieGenre.Found) {
-      // logger.log('removing genre', movieGenre);
+      // logger.log('[updateMovieGenres] removing genre', movieGenre);
 
       await db.fireProcedure(
         "DELETE FROM tbl_Movies_Genres WHERE id_Movies_Genres = $id_Movies_Genres",
@@ -7196,10 +7247,10 @@ async function updateMovieReleaseAttribues($id_Movies, searchTermsString) {
     )
   ).map((row) => row.Release_Attributes_searchTerm);
 
-  logger.log("updateMovieReleaseAttribues searchTerms:", searchTerms);
-  logger.log("updateMovieReleaseAttribues searchTermsHave:", searchTermsHave);
+  logger.log("[updateMovieReleaseAttribues] searchTerms:", searchTerms);
+  logger.log("[updateMovieReleaseAttribues] searchTermsHave:", searchTermsHave);
   logger.log(
-    "updateMovieReleaseAttribues searchTermsHaveDeleted:",
+    "[updateMovieReleaseAttribues] searchTermsHaveDeleted:",
     searchTermsHaveDeleted
   );
 
@@ -7208,7 +7259,7 @@ async function updateMovieReleaseAttribues($id_Movies, searchTermsString) {
     const $searchTermHave = searchTermsHave[i];
 
     if (!searchTerms.find((searchTerm) => searchTerm === $searchTermHave)) {
-      logger.log("updateMovieReleaseAttribues REMOVE:", $searchTermHave);
+      logger.log("[updateMovieReleaseAttribues] REMOVE:", $searchTermHave);
       await db.fireProcedure(
         `UPDATE tbl_Movies_Release_Attributes SET deleted = 1 WHERE id_Movies = $id_Movies AND Release_Attributes_searchTerm = $searchTermHave`,
         { $id_Movies, $searchTermHave }
@@ -7234,14 +7285,14 @@ async function updateMovieReleaseAttribues($id_Movies, searchTermsString) {
         )
       ) {
         // previously deleted searchTerm -> just UPDATE the record
-        logger.log("updateMovieReleaseAttribues UNDELETE:", $searchTerm);
+        logger.log("[updateMovieReleaseAttribues] UNDELETE:", $searchTerm);
         await db.fireProcedure(
           `UPDATE tbl_Movies_Release_Attributes SET deleted = 0 WHERE id_Movies = $id_Movies AND Release_Attributes_searchTerm = $searchTerm`,
           { $id_Movies, $searchTerm }
         );
       } else {
         // unknown searchTerm -> INSERT the record
-        logger.log("updateMovieReleaseAttribues INSERT:", $searchTerm);
+        logger.log("[updateMovieReleaseAttribues] INSERT:", $searchTerm);
         await db.fireProcedure(
           `
         INSERT INTO tbl_Movies_Release_Attributes (
@@ -7299,11 +7350,16 @@ async function verifyIMDBtconst($id_Movies) {
     FROM tbl_Movies WHERE id_Movies = $id_Movies
   `;
 
-  logger.log("verifyIMDBtconst query:", queryMovie, "$id_Movies:", $id_Movies);
+  logger.log(
+    "[verifyIMDBtconst] query:",
+    queryMovie,
+    "$id_Movies:",
+    $id_Movies
+  );
 
   const rowsMovie = await db.fireProcedureReturnAll(queryMovie, { $id_Movies });
 
-  logger.log("verifyIMDBtconst rowsMovie:", rowsMovie);
+  logger.log("[verifyIMDBtconst] rowsMovie:", rowsMovie);
 
   const movie = rowsMovie[0];
 
@@ -7313,11 +7369,11 @@ async function verifyIMDBtconst($id_Movies) {
   // TODO: compare runtimes (both must be non-null)
 
   logger.log(
-    "verifyIMDBtconst movie.IMDB_runtimeMinutes:",
+    "[verifyIMDBtconst] movie.IMDB_runtimeMinutes:",
     movie.IMDB_runtimeMinutes
   );
   logger.log(
-    "verifyIMDBtconst movie.MI_Duration_Seconds:",
+    "[verifyIMDBtconst] movie.MI_Duration_Seconds:",
     movie.MI_Duration_Seconds
   );
 
@@ -7328,7 +7384,7 @@ async function verifyIMDBtconst($id_Movies) {
       parseInt(movie.IMDB_runtimeMinutes) - MI_runtimeMinutes
     );
 
-    logger.log("verifyIMDBtconst diff:", diff);
+    logger.log("[verifyIMDBtconst] diff:", diff);
 
     if (diff > 4) {
       movie.scanErrors["IMDB link verification"] = {
@@ -7390,7 +7446,7 @@ async function verifyIMDBtconst($id_Movies) {
     );
   }
 
-  logger.log("verifyIMDBtconst movie:", movie);
+  logger.log("[verifyIMDBtconst] movie:", movie);
 }
 
 export {

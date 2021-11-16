@@ -169,7 +169,7 @@ export default {
 
         check.result = await check.checkFunction();
 
-        logger.log("check result:", check.result);
+        logger.log("[runChecks] check result:", check.result);
 
         if (check.result.status === imdbScraperTests.status.SUCCESS) {
           check.color = "green";

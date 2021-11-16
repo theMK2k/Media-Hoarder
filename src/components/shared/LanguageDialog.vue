@@ -139,23 +139,6 @@ export default {
       this.resetData();
     },
 
-    async scrapeData() {
-      logger.log("LanguageDialog SCRAPE!");
-      this.isScraping = true;
-
-      // try {
-
-      // } catch (err) {
-      //   logger.log(err);
-      //   eventBus.showSnackbar(
-      //     "error",
-      //     "an error occured while fetching data from the web"
-      //   );
-      // }
-
-      this.isScraping = false;
-    },
-
     onCloseClick() {
       this.$emit("close");
     },
@@ -219,7 +202,7 @@ export default {
           ];
         }
 
-        logger.log("filters:", filters);
+        logger.log("[toggleShowMovies] filters:", filters);
 
         const movies = (
           await store.fetchMedia("movies", null, true, this.$t, filters)

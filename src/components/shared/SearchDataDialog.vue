@@ -205,7 +205,7 @@ export default {
           `;
       }
 
-      logger.log("search query:", sql);
+      logger.log("[runSearch] search query:", sql);
 
       const items = await store.db.fireProcedureReturnAll(sql, []);
       this.sortItems(items);
@@ -216,7 +216,7 @@ export default {
 
     onItemClicked(item) {
       logger.log(
-        "onItemClicked this.searchMode:",
+        "[onItemClicked] this.searchMode:",
         this.searchMode,
         "item:",
         item
@@ -246,7 +246,7 @@ export default {
     },
 
     sortItems(items) {
-      logger.log("sortItems items:", items);
+      logger.log("[sortItems] items:", items);
       items.sort((a, b) => {
         const valA = this.sortByNumMovies ? a.NumMovies : a.name.toLowerCase();
         const valB = this.sortByNumMovies ? b.NumMovies : b.name.toLowerCase();
@@ -255,7 +255,7 @@ export default {
 
         return helpers.compare(valA, valB, reverse);
       });
-      logger.log("sortItems items (sorted):", items);
+      logger.log("[sortItems] items (sorted):", items);
     },
   },
 

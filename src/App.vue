@@ -2959,19 +2959,22 @@ export default {
   watch: {
     // LEARNING: there is a difference with "this" in name: function(){} and name: () => {}
     searchText: function (newValue, oldValue) {
-      logger.log("searchText old:", oldValue, "new:", newValue);
+      logger.log("[searchText] old:", oldValue, "new:", newValue);
       this.debouncedEventBusSearchTextChanged(newValue);
     },
 
     shared_uiLanguage: function (newValue, oldValue) {
-      logger.log("shared_uiLanguage changed from", oldValue, "to", newValue);
+      logger.log("[shared_uiLanguage] changed from", oldValue, "to", newValue);
 
       this.$i18n.locale = newValue;
       this.$root.$i18n.locale = newValue;
 
-      logger.log("this.$i18n:", this.$i18n);
-      logger.log("this.$i18n.locale:", this.$i18n.locale);
-      logger.log("this.$root.$i18n.locale:", this.$root.$i18n.locale);
+      logger.log("[shared_uiLanguage] this.$i18n:", this.$i18n);
+      logger.log("[shared_uiLanguage] this.$i18n.locale:", this.$i18n.locale);
+      logger.log(
+        "[shared_uiLanguage] this.$root.$i18n.locale:",
+        this.$root.$i18n.locale
+      );
 
       moment.locale(newValue);
     },
@@ -3600,7 +3603,7 @@ export default {
       filterItem,
       setAllFunction
     ) {
-      logger.log("filterCheckboxMousedown START");
+      logger.log("[filterCheckboxMousedown] START");
 
       this.isolateFilterItemTimeout = setTimeout(() => {
         if (
@@ -3618,7 +3621,7 @@ export default {
     },
 
     filterCheckboxMouseup: function () {
-      logger.log("filterCheckboxMouseup START");
+      logger.log("[filterCheckboxMouseup] START");
 
       if (this.isolateFilterItemTimeout) {
         // mouse button released earlier than the timeout
@@ -3629,7 +3632,7 @@ export default {
     },
 
     filtersChanged: function () {
-      logger.log("filtersChanged START this.$shared:", this.$shared);
+      logger.log("[filtersChanged] START this.$shared:", this.$shared);
       this.debouncedEventBusRefetchMedia();
     },
 
@@ -3666,7 +3669,7 @@ export default {
     },
 
     setAllAgeRatings: function (value, exclusionList) {
-      logger.log("setAllAgeRatings exclusionList:", exclusionList);
+      logger.log("[setAllAgeRatings] exclusionList:", exclusionList);
 
       this.$shared.filters.filterAgeRatings.forEach((ar) => {
         if (exclusionList && exclusionList.find((val) => ar.Age == val.Age)) {
@@ -3731,7 +3734,7 @@ export default {
     },
 
     setAllCompanies: function (value, exclusionList) {
-      logger.log("setAllCompanies:", { value, exclusionList });
+      logger.log("[setAllCompanies]", { value, exclusionList });
 
       this.$shared.filters.filterCompanies.forEach((sp) => {
         if (
@@ -3922,7 +3925,7 @@ export default {
     async deleteList() {
       (async () => {
         try {
-          logger.log("DELETE LIST");
+          logger.log("[deleteList] START");
 
           await store.db.fireProcedure(
             `DELETE FROM tbl_Lists WHERE id_Lists = $id_Lists`,
@@ -3931,7 +3934,7 @@ export default {
             }
           );
 
-          logger.log("DELETE LISTS MOVIES");
+          logger.log("[deleteList] delete list entries");
 
           await store.db.fireProcedure(
             `DELETE FROM tbl_Lists_Movies WHERE id_Lists NOT IN (SELECT id_Lists FROM tbl_Lists)`,
@@ -4051,7 +4054,12 @@ export default {
     onScanOptionsDialogOK({ radioGroup, performCheck }) {
       const onlyNew = radioGroup === 1; // radioGroup is the chosen method
 
-      logger.log("chosen Scan Option:", radioGroup, "onlyNew:", onlyNew);
+      logger.log(
+        "[onScanOptionsDialogOK] chosen Scan Option:",
+        radioGroup,
+        "onlyNew:",
+        onlyNew
+      );
 
       this.scanOptionsDialog.show = false;
 
@@ -4261,14 +4269,14 @@ export default {
 
     onKeyDown(e) {
       if (e.key === "F11") {
-        logger.log("toggleFullScreen requested");
+        logger.log("[onKeyDown] toggleFullScreen requested (F11)");
         this.toggleFullScreen();
       }
     },
 
     onFilterDragEnd() {
       logger.log(
-        "onFilterDragEnd this.editFilters.oldExpandedFilterGroups:",
+        "[onFilterDragEnd] this.editFilters.oldExpandedFilterGroups:",
         this.editFilters.oldExpandedFilterGroups
       );
     },
@@ -4315,7 +4323,7 @@ export default {
     }, 1000);
 
     eventBus.$on("showSnackbar", ({ color, textOrErrorObject, timeout }) => {
-      logger.debug("snackbar called:", textOrErrorObject);
+      logger.debug("[showSnackbar] snackbar called:", textOrErrorObject);
       this.snackbar.details = [];
       this.snackbar.color = color;
       this.snackbar.timeout = timeout;

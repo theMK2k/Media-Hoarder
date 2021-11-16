@@ -115,7 +115,7 @@ export default {
 
     onOKClick() {
       logger.log(
-        "this.items.filter(item => item.selected):",
+        "[onOKClick] this.items.filter(item => item.selected):",
         this.items.filter((item) => item.selected)
       );
       this.$emit(
@@ -146,7 +146,7 @@ export default {
             a.DisplayText > b.DisplayText ? 0 : -1
           );
 
-          logger.log("languages this.items:", this.items);
+          logger.log("[init] languages this.items:", this.items);
         } catch (e) {
           eventBus.showSnackbar("error", e);
         }

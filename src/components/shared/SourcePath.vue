@@ -74,7 +74,10 @@ export default {
     },
 
     async toggleCheckRemovedFiles() {
-      logger.log("checkRemovedFiles:", this.value.checkRemovedFiles);
+      logger.log(
+        "[toggleCheckRemovedFiles] checkRemovedFiles:",
+        this.value.checkRemovedFiles
+      );
       await store.db.fireProcedure(
         `UPDATE tbl_SourcePaths SET checkRemovedFiles = $checkRemovedFiles WHERE id_SourcePaths = $id_SourcePaths`,
         {

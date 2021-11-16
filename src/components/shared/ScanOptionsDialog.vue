@@ -264,7 +264,7 @@ export default {
 
       this.missingSourcePaths = await store.findMissingSourcePaths();
 
-      logger.log("this.missingSourcePaths:", this.missingSourcePaths);
+      logger.log("[init] this.missingSourcePaths:", this.missingSourcePaths);
 
       const mediaInfoPath = await store.getSetting("MediainfoPath");
 

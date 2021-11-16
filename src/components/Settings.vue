@@ -1121,7 +1121,7 @@ export default {
         defaultPath: this.MediaplayerPath || "",
       });
 
-      logger.log("path:", path);
+      logger.log("[browseMediaplayerPath] path:", path);
 
       if (path.canceled) {
         return;
@@ -1165,7 +1165,7 @@ export default {
         return;
       }
 
-      logger.log("folderposition:", folderposition);
+      logger.log("[addSource] folderposition:", folderposition);
 
       const chosenPath = folderposition.filePaths[0];
       const chosenPathLower = chosenPath.toLowerCase();
@@ -1200,7 +1200,7 @@ export default {
     },
 
     async onSourcePathEditPath(sourcePath) {
-      logger.log("onSourcePathEditPath sourcePath:", sourcePath);
+      logger.log("[onSourcePathEditPath] sourcePath:", sourcePath);
 
       const folderposition = await dialog.showOpenDialog({
         defaultPath: sourcePath.Path,
@@ -1211,7 +1211,7 @@ export default {
         return;
       }
 
-      logger.log("folderposition:", folderposition);
+      logger.log("[onSourcePathEditPath] folderposition:", folderposition);
 
       const chosenPath = folderposition.filePaths[0];
       const chosenPathLower = chosenPath.toLowerCase();
@@ -1327,7 +1327,7 @@ export default {
       try {
         const paths = await store.fetchSourcePaths();
         this.sourcePaths = paths;
-        logger.log(this.sourcePaths);
+        logger.log("[fetchSourcePaths] this.sourcePaths:", this.sourcePaths);
       } catch (err) {
         eventBus.showSnackbar("error", err);
       }
@@ -1459,7 +1459,7 @@ export default {
 
     updateMinimumWaitForSetAccess: function () {
       logger.log(
-        "updating minimumWaitForSetAccess setting:",
+        "[updateMinimumWaitForSetAccess] setting:",
         this.minimumWaitForSetAccess
       );
       store.setSetting("minimumWaitForSetAccess", this.minimumWaitForSetAccess);
@@ -1467,7 +1467,7 @@ export default {
 
     duplicatesHandlingChanged() {
       logger.log(
-        "$shared.duplicatesHandling:",
+        "[duplicatesHandlingChanged] $shared.duplicatesHandling:",
         this.$shared.duplicatesHandling
       );
       store.setSetting(
@@ -1646,7 +1646,7 @@ export default {
     },
 
     openRemoveTitleTypeDialog(titleType) {
-      logger.log("openRemoveTitleTypeDialog titleType:", titleType);
+      logger.log("[openRemoveTitleTypeDialog] titleType:", titleType);
 
       this.removeTitleTypeDialog.item = titleType;
       this.removeTitleTypeDialog.TitleType = titleType.TitleType;
@@ -1797,7 +1797,7 @@ export default {
 
   // ### LifeCycle Hooks ###
   async created() {
-    logger.groupCollapsed("[Initialize Settings]");
+    logger.group("[Initialize Settings]");
     this.$shared.imdbRatingDemographics.forEach((demographic) => {
       demographic.long_translated = this.$t(
         `RatingDemographics.${demographic.long}`
@@ -1805,7 +1805,7 @@ export default {
     });
 
     logger.log(
-      "this.$shared.imdbRatingDemographics:",
+      "[created] Settings this.$shared.imdbRatingDemographics:",
       this.$shared.imdbRatingDemographics
     );
 
@@ -1825,7 +1825,10 @@ export default {
 
     // await store.fetchLanguageSettings();
 
-    logger.log("this.$shared.regions:", this.$shared.regions);
+    logger.log(
+      "[created] Settings this.$shared.regions:",
+      this.$shared.regions
+    );
 
     const imdbTitleTypesWhitelist = await store.getSetting(
       "IMDBTitleTypeWhitelist"
@@ -1868,12 +1871,12 @@ export default {
     });
 
     logger.log(
-      "Settings.create this.availableLanguages:",
+      "[created] Settings this.availableLanguages:",
       this.availableLanguages
     );
 
     logger.log(
-      "this.$shared.releaseAttributes:",
+      "[created] Settings this.$shared.releaseAttributes:",
       this.$shared.releaseAttributes
     );
 

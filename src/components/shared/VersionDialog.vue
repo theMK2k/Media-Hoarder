@@ -182,7 +182,7 @@ export default {
     },
 
     async updateVersionInfo(infoPosition) {
-      logger.log("VersionDialog updateVersionInfo START");
+      logger.log("[updateVersionInfo] START");
 
       this.versionInfo = null;
 
@@ -191,10 +191,7 @@ export default {
       const fileName = this.history[infoPosition].description;
 
       try {
-        logger.log(
-          "VersionDialog updateVersionInfo loadLocalHistory fileName:",
-          fileName
-        );
+        logger.log("[updateVersionInfo] loadLocalHistory fileName:", fileName);
 
         const localVersionInfo = await store.loadLocalHistory(fileName);
 
@@ -202,13 +199,13 @@ export default {
           const localVersionInfoMD = localVersionInfo.toString();
 
           logger.log(
-            "VersionDialog updateVersionInfo loadLocalHistory localVersionInfoMD:",
+            "[updateVersionInfo] loadLocalHistory localVersionInfoMD:",
             localVersionInfoMD
           );
           this.versionInfo = marked(localVersionInfoMD);
         } else {
           logger.log(
-            "VersionDialog updateVersionInfo loadLocalHistory NO localVersionInfo found!"
+            "[updateVersionInfo] loadLocalHistory NO localVersionInfo found!"
           );
         }
       } catch (e) {
@@ -217,7 +214,7 @@ export default {
 
       if (!this.versionInfo) {
         try {
-          logger.log("VersionDialog updateVersionInfo fetchRemoteHistory");
+          logger.log("[updateVersionInfo] fetchRemoteHistory");
 
           const resRemoteVersionInfo = await fetch(
             `https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/public/history/${fileName}`
@@ -228,7 +225,7 @@ export default {
           const remoteVersionInfoText = remoteVersionInfo.toString();
 
           logger.log(
-            "VersionDialog updateVersionInfo fetchRemoteHistory remoteVersionInfoText:",
+            "[updateVersionInfo] fetchRemoteHistory remoteVersionInfoText:",
             remoteVersionInfoText
           );
 
@@ -242,7 +239,7 @@ export default {
     },
 
     async checkVersion() {
-      logger.log("VersionDialog checkVersion START");
+      logger.log("[checkVersion] START");
 
       this.isLoadingHistory = true;
 
@@ -251,10 +248,7 @@ export default {
 
         const objLocalHistory = JSON.parse(localVersionInfo);
 
-        logger.log(
-          "VersionDialog checkVersion objLocalHistory:",
-          objLocalHistory
-        );
+        logger.log("[checkVersion] objLocalHistory:", objLocalHistory);
 
         this.history = objLocalHistory;
         this.$shared.currentVersion = objLocalHistory[0].version;
@@ -268,7 +262,7 @@ export default {
 
         const remoteHistory = await resRemoteHistory.json();
 
-        logger.log("VersionDialog checkVersion remoteHistory:", remoteHistory);
+        logger.log("[checkVersion] remoteHistory:", remoteHistory);
 
         this.latestVersion = remoteHistory[0].version;
         this.latestName = remoteHistory[0].name;

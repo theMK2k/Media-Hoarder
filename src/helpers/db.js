@@ -22,7 +22,9 @@ let _db;
  */
 function getDb() {
   if (!_db) {
-    logger.error("Db has not been initialized. Please call init first.");
+    logger.error(
+      "[getDb] Db has not been initialized. Please call init first."
+    );
   }
 
   return _db;
@@ -35,7 +37,7 @@ function getDb() {
  */
 function initDbCB(callback) {
   if (_db) {
-    logger.warn("Trying to init DB again!");
+    logger.warn("[initDbCB] Trying to init DB again!");
     return callback(null, _db);
   }
 
@@ -122,7 +124,7 @@ function fireProcedureReturnAll(query, vars) {
 }
 
 function initSQLite(callback) {
-  logger.debug("Initializing SQLite");
+  logger.debug("[initSQLite] Initializing SQLite");
 
   if (!fs.existsSync(helpers.getDataPath("media-hoarder.db"))) {
     fs.copyFileSync(

@@ -131,7 +131,7 @@ export default {
     },
 
     initTextValue(value) {
-      logger.log("initTextValueLocal value:", value);
+      logger.log("[initTextValue] value:", value);
       this.textValueLocal = value;
     },
 

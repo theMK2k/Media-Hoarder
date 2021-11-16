@@ -170,7 +170,7 @@ export default {
     //       break;
     //     default:
     //       logger.error(
-    //         `Pagination.vue: unknown sort field "${this.$shared.sortField}"`
+    //         `[selectStyle] Pagination.vue: unknown sort field "${this.$shared.sortField}"`
     //       );
     //       break;
     //   }

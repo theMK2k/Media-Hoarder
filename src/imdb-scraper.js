@@ -36,7 +36,7 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
   try {
     // ## Fetch HTML
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}`;
-    logger.log("scrapeIMDBmainPageData url:", url);
+    logger.log("[scrapeIMDBmainPageData] url:", url);
 
     const response = await helpers.requestAsync(url);
 
@@ -100,12 +100,12 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
       $IMDB_rating = parseFloat(strRating);
 
       const matchVotes = html.match(/itemprop="ratingCount">(.*?)<\/span>/)[1];
-      logger.log("matchVotes:", matchVotes);
+      logger.log("[scrapeIMDBmainPageData] matchVotes:", matchVotes);
 
       const strVotes = html
         .match(/itemprop="ratingCount">(.*?)<\/span>/)[1]
         .replace(/,/g, "");
-      logger.log("strVotes:", strVotes);
+      logger.log("[scrapeIMDBmainPageData] strVotes:", strVotes);
       $IMDB_numVotes = parseInt(strVotes);
     }
 
@@ -115,7 +115,7 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
       jsonData.aggregateRating.ratingValue &&
       jsonData.aggregateRating.ratingCount
     ) {
-      logger.log({
+      logger.log("[scrapeIMDBmainPageData]", {
         ratingValue: jsonData.aggregateRating.ratingValue,
         ratingCount: jsonData.aggregateRating.ratingCount,
       });
@@ -232,7 +232,10 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
       }
     }
 
-    logger.log("$IMDB_Trailer_URL:", $IMDB_Trailer_URL);
+    logger.log(
+      "[scrapeIMDBmainPageData] $IMDB_Trailer_URL:",
+      $IMDB_Trailer_URL
+    );
 
     return {
       $IMDB_releaseType,
@@ -291,7 +294,7 @@ async function scrapeIMDBplotSummary(movie, shortSummary) {
     if (html.match(rxPlotSummary2)) rxPlotSummaryChosen = rxPlotSummary2;
 
     if (!rxPlotSummaryChosen) {
-      logger.log("scrapeIMDBplotSummary no regex matches!");
+      logger.log("[scrapeIMDBplotSummary] no regex matches!");
       return { $IMDB_plotSummaryFull };
     }
 
@@ -309,7 +312,7 @@ async function scrapeIMDBplotSummary(movie, shortSummary) {
       );
 
       if (plotSummaryFull.includes(shortSummaryClean)) {
-        logger.log("scrapeIMDBplotSummary matching full summary found!");
+        logger.log("[scrapeIMDBplotSummary] matching full summary found!");
         $IMDB_plotSummaryFull = plotSummaryFull;
       }
     }
@@ -373,14 +376,14 @@ async function scrapeIMDBposterURLs(posterMediaViewerURL) {
       };
     }
 
-    logger.warn("scrapeIMDBposterURLs NO URLs found!");
+    logger.warn("[scrapeIMDBposterURLs] NO URLs found!");
     throw new Error("IMDB Poster URLs cannot be found");
   }
 }
 
 async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
   logger.log(
-    "scrapeIMDBreleaseinfo movie:",
+    "[scrapeIMDBreleaseinfo] movie:",
     movie,
     "regions:",
     regions,
@@ -395,14 +398,14 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
   try {
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/releaseinfo`;
     logger.log(
-      "scrapeIMDBreleaseinfo url:",
+      "[scrapeIMDBreleaseinfo] url:",
       url,
       "allowedTitleTypes:",
       allowedTitleTypes
     );
     const response = await helpers.requestAsync(url);
     const html = response.body;
-    // logger.log('imdbReleaseinfoHTML', imdbReleaseinfoHTML);
+    // logger.log('[scrapeIMDBreleaseinfo] imdbReleaseinfoHTML', imdbReleaseinfoHTML);
 
     let $IMDB_originalTitle = null;
     const rxOriginalTitle =
@@ -410,14 +413,14 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
     if (rxOriginalTitle.test(html))
       $IMDB_originalTitle = html.match(rxOriginalTitle)[1];
 
-    logger.log("regions used:", regions);
+    logger.log("[scrapeIMDBreleaseinfo] regions used:", regions);
 
     let $IMDB_localTitle = null;
     if (regions) {
       for (let i = 0; i < regions.length; i++) {
         const region = regions[i].name;
 
-        logger.log("regions trying:", `"${region}"`);
+        logger.log("[scrapeIMDBreleaseinfo] regions trying:", `"${region}"`);
 
         if (!$IMDB_localTitle) {
           const rxLocalTitleFuzzy = new RegExp(
@@ -428,7 +431,10 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
           let match = null;
 
           while ((match = rxLocalTitleFuzzy.exec(html))) {
-            logger.log("regions: fuzzy match found for", region);
+            logger.log(
+              "[scrapeIMDBreleaseinfo] regions: fuzzy match found for",
+              region
+            );
 
             const titleTypes = match[1];
             const title = match[2];
@@ -443,10 +449,13 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
                 }
               });
 
-              logger.log("regions: local title match:", {
-                title,
-                arrTitleTypes,
-              });
+              logger.log(
+                "[scrapeIMDBreleaseinfo] regions: local title match:",
+                {
+                  title,
+                  arrTitleTypes,
+                }
+              );
 
               let allowed = 0;
               for (let i = 0; i < arrTitleTypes.length; i++) {
@@ -461,13 +470,16 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
 
               if (allowed !== arrTitleTypes.length) {
                 logger.log(
-                  "regions: skipped local title, some title types are not allowed"
+                  "[scrapeIMDBreleaseinfo] regions: skipped local title, some title types are not allowed"
                 );
                 continue;
               }
             }
 
-            logger.log("regions: using local title:", title);
+            logger.log(
+              "[scrapeIMDBreleaseinfo] regions: using local title:",
+              title
+            );
             $IMDB_localTitle = title;
             break;
           }
@@ -488,7 +500,7 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
       $IMDB_primaryTitle = html.match(rxPrimaryTitleYear)[1];
       const yearRange = html.match(rxPrimaryTitleYear)[2];
 
-      logger.log("yearRange:", yearRange);
+      logger.log("[scrapeIMDBreleaseinfo] yearRange:", yearRange);
       $IMDB_startYear = yearRange.match(/(\d\d\d\d)/)[1];
       if (/\d\d\d\d–\d\d\d\d/.test(yearRange)) {
         $IMDB_endYear = yearRange.match(/\d\d\d\d–(\d\d\d\d)/)[1];
@@ -537,7 +549,7 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
       $IMDB_endYear,
     };
 
-    logger.log("scrapeIMDBreleaseinfo result:", result);
+    logger.log("[scrapeIMDBreleaseinfo] scrapeIMDBreleaseinfo result:", result);
 
     return result;
   } catch (error) {
@@ -556,7 +568,7 @@ async function scrapeIMDBtechnicalData(movie) {
 
   try {
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/technical`;
-    logger.log("scrapeIMDBtechnicalData url:", url);
+    logger.log("[scrapeIMDBreleaseinfo] scrapeIMDBtechnicalData url:", url);
     const response = await helpers.requestAsync(url);
     const html = response.body;
 
@@ -605,7 +617,10 @@ async function scrapeIMDBParentalGuideData(
       cacheAgeRatings = await dbFireProcedureReturnAllCallback(
         `SELECT id_AgeRating, Country, Code, Age FROM tbl_AgeRating`
       );
-      logger.log("cacheAgeRatings:", cacheAgeRatings);
+      logger.log(
+        "[scrapeIMDBParentalGuideData] cacheAgeRatings:",
+        cacheAgeRatings
+      );
     }
 
     let regionCodes = [];
@@ -620,10 +635,13 @@ async function scrapeIMDBParentalGuideData(
       logger.error(e);
     }
 
-    logger.log("parentalguide AgeRating regionCodes:", regionCodes);
+    logger.log(
+      "[scrapeIMDBParentalGuideData] AgeRating regionCodes:",
+      regionCodes
+    );
 
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/parentalguide`;
-    logger.log("scrapeIMDBParentalGuideData url:", url);
+    logger.log("[scrapeIMDBParentalGuideData] url:", url);
     const response = await helpers.requestAsync(url);
     const html = response.body;
 
@@ -638,7 +656,7 @@ async function scrapeIMDBParentalGuideData(
       const Country = matchAgeRating[1];
       const Code = unescape(matchAgeRating[2]);
 
-      logger.log("parentalguide rating found:", Country, Code);
+      logger.log("[scrapeIMDBParentalGuideData] rating found:", Country, Code);
 
       const cachedRating = cacheAgeRatings.find(
         (cache) => cache.Country === Country && cache.Code === Code
@@ -647,11 +665,11 @@ async function scrapeIMDBParentalGuideData(
       let Age = null;
       if (cachedRating) {
         Age = cachedRating.Age;
-        logger.log("parentalguide Age (cached):", Age);
+        logger.log("[scrapeIMDBParentalGuideData] Age (cached):", Age);
       } else {
         if (/\d+/.test(Code)) {
           Age = parseInt(Code.match(/\d+/)[0]);
-          logger.log("parentalguide Age (parsed):", Age);
+          logger.log("[scrapeIMDBParentalGuideData] Age (parsed):", Age);
         }
 
         const definedPGs = [
@@ -683,12 +701,12 @@ async function scrapeIMDBParentalGuideData(
 
         if (foundPG) {
           Age = foundPG.Age;
-          logger.log("parentalguide Age (found):", Age);
+          logger.log("[scrapeIMDBParentalGuideData] Age (found):", Age);
         }
       }
 
       ageRatings.push({ Country, Code, Age });
-      logger.log("parentalguide ageRatings:", ageRatings);
+      logger.log("[scrapeIMDBParentalGuideData] ageRatings:", ageRatings);
     }
 
     let $IMDB_MinAge = null;
@@ -727,7 +745,10 @@ async function scrapeIMDBParentalGuideData(
         rating.Age != null &&
         regionCodes.find((regionCode) => regionCode === rating.Country)
       ) {
-        logger.log("parentalguide AgeRating regions FOUND:", rating);
+        logger.log(
+          "[scrapeIMDBParentalGuideData] AgeRating regions FOUND:",
+          rating
+        );
         $IMDB_id_AgeRating_Chosen_Country = rating.id_AgeRating;
       }
 
@@ -749,7 +770,7 @@ async function scrapeIMDBParentalGuideData(
       }
     }
 
-    logger.log("parentalguide found age ratings:", ageRatings);
+    logger.log("[scrapeIMDBParentalGuideData] found age ratings:", ageRatings);
 
     const rx_Parental_Advisory_Nudity =
       /<section id="advisory-nudity">[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>(.*?)<\/span>/;
@@ -882,7 +903,7 @@ async function scrapeIMDBFullCreditsData(movie) {
 
   try {
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/fullcredits`;
-    logger.log("scrapeIMDBFullCreditsData url:", url);
+    logger.log("[scrapeIMDBFullCreditsData] url:", url);
     const response = await helpers.requestAsync(url);
     const html = response.body;
 
@@ -959,7 +980,10 @@ async function scrapeIMDBFullCreditsData(movie) {
       )
         .split("(")[0]
         .trim();
-      logger.log("creditsCategory found:", creditsCategory);
+      logger.log(
+        "[scrapeIMDBFullCreditsData] creditsCategory found:",
+        creditsCategory
+      );
 
       const result = parseCreditsCategory(html, creditsCategory, credits);
 
@@ -986,7 +1010,7 @@ async function scrapeIMDBFullCreditsData(movie) {
       }
     }
 
-    logger.log("credits:", credits);
+    logger.log("[scrapeIMDBFullCreditsData] credits:", credits);
 
     let $IMDB_Top_Cast = topCast.length > 0 ? JSON.stringify(topCast) : null;
     let $IMDB_Top_Writers =
@@ -1021,7 +1045,7 @@ async function scrapeIMDBCompaniesData(movie) {
 
   try {
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/companycredits`;
-    logger.log("scrapeIMDBCompaniesData url:", url);
+    logger.log("[scrapeIMDBCompaniesData] url:", url);
     const response = await helpers.requestAsync(url);
     const html = response.body;
 
@@ -1041,7 +1065,10 @@ async function scrapeIMDBCompaniesData(movie) {
       const companiesCategoryID = ccMatch[1].trim();
       const companiesCategoryName = ccMatch[3].replace("Companies", "").trim();
 
-      logger.log(companiesCategoryID, companiesCategoryName);
+      logger.log("[scrapeIMDBCompaniesData]", {
+        companiesCategoryID,
+        companiesCategoryName,
+      });
 
       const result = parseCompaniesCategory(
         companiesCategoryName,
@@ -1058,8 +1085,11 @@ async function scrapeIMDBCompaniesData(movie) {
       }
     }
 
-    logger.log("companies:", companies);
-    logger.log("topProductionCompanies:", topProductionCompanies);
+    logger.log("[scrapeIMDBCompaniesData] companies:", companies);
+    logger.log(
+      "[scrapeIMDBCompaniesData] topProductionCompanies:",
+      topProductionCompanies
+    );
 
     return {
       topProductionCompanies: {
@@ -1149,7 +1179,7 @@ async function scrapeIMDBPersonData($IMDB_Person_ID, downloadFileCallback) {
   const response = await helpers.requestAsync(url);
   const html = response.body;
 
-  logger.log("scrapeIMDBPersonData url:", url);
+  logger.log("[scrapeIMDBPersonData] url:", url);
 
   const result = {
     $IMDB_Person_ID,
@@ -1161,7 +1191,7 @@ async function scrapeIMDBPersonData($IMDB_Person_ID, downloadFileCallback) {
   const rxShortBio = /<div class="name-trivia-bio-text">([\s\S]*?)<\/div>/;
 
   if (rxShortBio.test(html)) {
-    logger.log("bio found");
+    logger.log("[scrapeIMDBPersonData] bio found");
     result.$ShortBio = unescape(
       htmlToText
         .fromString(html.match(rxShortBio)[1], {
@@ -1173,7 +1203,7 @@ async function scrapeIMDBPersonData($IMDB_Person_ID, downloadFileCallback) {
         .trim()
     );
   } else {
-    logger.log("bio NOT found");
+    logger.log("[scrapeIMDBPersonData] bio NOT found");
   }
 
   const rxPhotoURL = /<img id="name-poster"[\s\S]*?src="(.*?)"/;
@@ -1196,7 +1226,9 @@ async function scrapeIMDBPersonData($IMDB_Person_ID, downloadFileCallback) {
     /<h4 class="li_group">Mini Bio[\s\S]*?(<div[\s\S]*?)<\/div>/;
 
   if (rxLongBio.test(htmlBio)) {
-    logger.log("LONG BIO FOUND!:", { longbio: htmlBio.match(rxLongBio)[1] });
+    logger.log("[scrapeIMDBPersonData] LONG BIO FOUND!:", {
+      longbio: htmlBio.match(rxLongBio)[1],
+    });
     result.$LongBio = unescape(
       htmlToText
         .fromString(htmlBio.match(rxLongBio)[1], {
@@ -1226,7 +1258,7 @@ async function scrapeIMDBAdvancedTitleSearch(title, titleTypes) {
           .reduce((prev, current) => prev + (prev ? "," : "") + current)
       : "");
 
-  logger.log("scrapeIMDBAdvancedTitleSearch url:", url);
+  logger.log("[scrapeIMDBAdvancedTitleSearch] url:", url);
 
   const response = await helpers.requestAsync(url);
   const html = response.body;
@@ -1234,7 +1266,7 @@ async function scrapeIMDBAdvancedTitleSearch(title, titleTypes) {
 
   const items = $(".lister-item.mode-advanced");
 
-  // logger.log('items:', items);
+  // logger.log('[scrapeIMDBAdvancedTitleSearch] items:', items);
 
   const results = [];
 
@@ -1245,7 +1277,7 @@ async function scrapeIMDBAdvancedTitleSearch(title, titleTypes) {
       tconst = tconst.match(/tt\d*/)[0];
     }
 
-    // logger.log('item:', $(this).html());
+    // logger.log('[scrapeIMDBAdvancedTitleSearch] item:', $(this).html());
     const imageURL = $($(item).find(".lister-item-image > a > img")).attr(
       "loadlate"
     );
@@ -1282,7 +1314,7 @@ async function scrapeIMDBAdvancedTitleSearch(title, titleTypes) {
     });
   });
 
-  logger.log("results:", results);
+  logger.log("[scrapeIMDBAdvancedTitleSearch] results:", results);
 
   return results;
 }
@@ -1298,7 +1330,7 @@ async function scrapeIMDBSuggestion(searchTerm) {
     searchTerm
   )}.json`;
 
-  logger.log("scrapeIMDBSuggestion url:", url);
+  logger.log("[scrapeIMDBSuggestion] url:", url);
 
   const response = await helpers.requestAsync(url);
 
@@ -1307,7 +1339,10 @@ async function scrapeIMDBSuggestion(searchTerm) {
   try {
     objResponse = JSON.parse(response.body);
   } catch (err) {
-    logger.error("failed parsing response body:", response.body);
+    logger.error(
+      "[scrapeIMDBSuggestion] failed parsing response body:",
+      response.body
+    );
   }
 
   const results = [];
@@ -1342,7 +1377,7 @@ async function scrapeIMDBFind(searchTerm, type) {
     type ? "&s=" + type : ""
   }`;
 
-  logger.log("scrapeIMDBAdvancedTitleSearch url:", url);
+  logger.log("[scrapeIMDBFind] url:", url);
 
   const response = await helpers.requestAsync(url);
   const html = response.body;
@@ -1350,7 +1385,7 @@ async function scrapeIMDBFind(searchTerm, type) {
 
   const items = $("tr.findResult");
 
-  logger.log("scrapeIMDBFind items:", items);
+  logger.log("[scrapeIMDBFind] items:", items);
 
   const results = [];
 
@@ -1401,7 +1436,7 @@ async function scrapeIMDBTrailerMediaURLs(trailerURL) {
 
     trailerURL = trailerURL.replace("/video/imdb/", "/videoplayer/");
 
-    logger.log("trailerURL:", trailerURL);
+    logger.log("[scrapeIMDBTrailerMediaURLs] trailerURL:", trailerURL);
 
     const response = await helpers.requestAsync({
       uri: trailerURL,
@@ -1413,7 +1448,7 @@ async function scrapeIMDBTrailerMediaURLs(trailerURL) {
 
     const html = response.body;
 
-    // logger.log('trailerURLs html:', html);
+    // logger.log('[scrapeIMDBTrailerMediaURLs] trailerURLs html:', html);
 
     // "definition":"auto","mimeType":"application\u002Fx-mpegURL","videoUrl":"https:\u002F\u002Fimdb-video.media-imdb.com\u002Fvi1499136537\u002Fhls-1563882933870-master.m3u8?Expires=1575383713&Signature=PXs6zzGNbbxUR5SKWcNIWg~iA2TYAgfao8VNfaelya7rlNgxYz9yeh3kLJdUYqHQOK57Tbk5abPzx2lMLZea3lLRmR9T17~MN4M4RAaYUZR5w69wnQKu2wzGv5n7qgm3IaXyVdO61L37fuecTvzz-tigaVaWDnViTr5tkpf7Pu4isE-qF9hd1xX~oXDk5A~z2TdGzII16faXnxIY~xs~7rbKMgKfTJUxGtUmjSGTKXqEIh-VqPG0p4gYaXOCB-HCu42hqxeb8ll2XFPiBTCogyoBj-r0CRYZhx9GQ7FbfCkE0t9bgJ16dhy8eb9tVwsaZ6wjMjoQxu-CiaLDelciqg__&Key-Pair-Id=APKAIFLZBVQZ24NQH3KA"
     const rxMediaURL =
@@ -1460,7 +1495,7 @@ async function scrapeIMDBplotKeywords(movie) {
     let plotKeywords = [];
 
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/keywords`;
-    logger.log("scrapeIMDBplotKeywords url:", url);
+    logger.log("[scrapeIMDBplotKeywords] url:", url);
 
     const response = await helpers.requestAsync(url);
     const html = response.body;
@@ -1489,7 +1524,7 @@ async function scrapeIMDBplotKeywords(movie) {
       });
     }
 
-    logger.log("plotKeywords:", plotKeywords);
+    logger.log("[scrapeIMDBplotKeywords] plotKeywords:", plotKeywords);
 
     return plotKeywords;
   } catch (error) {
@@ -1510,7 +1545,7 @@ async function scrapeIMDBFilmingLocations(movie) {
     let filmingLocations = [];
 
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/locations`;
-    logger.log("scrapeIMDBFilmingLocations url:", url);
+    logger.log("[scrapeIMDBFilmingLocations] url:", url);
 
     const response = await helpers.requestAsync(url);
     const html = response.body;
@@ -1554,7 +1589,10 @@ async function scrapeIMDBFilmingLocations(movie) {
       });
     }
 
-    logger.log("filmingLocations:", filmingLocations);
+    logger.log(
+      "[scrapeIMDBFilmingLocations] filmingLocations:",
+      filmingLocations
+    );
 
     return filmingLocations;
   } catch (error) {
@@ -1575,7 +1613,7 @@ async function scrapeIMDBRatingDemographics(movie) {
     let ratingDemographics = {};
 
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/ratings`;
-    logger.log("scrapeIMDBRatingDemographics url:", url);
+    logger.log("[scrapeIMDBRatingDemographics] url:", url);
 
     const response = await helpers.requestAsync(url);
     const html = response.body;
@@ -1618,7 +1656,10 @@ async function scrapeIMDBRatingDemographics(movie) {
     delete ratingDemographics[`$IMDB_rating_imdb_users`];
     delete ratingDemographics[`$IMDB_numVotes_imdb_users`];
 
-    logger.log("ratingDemographics:", ratingDemographics);
+    logger.log(
+      "[scrapeIMDBRatingDemographics] ratingDemographics:",
+      ratingDemographics
+    );
 
     return ratingDemographics;
   } catch (error) {

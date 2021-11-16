@@ -72,7 +72,7 @@
 <script>
 import * as store from "@/store";
 // import * as helpers from "@/helpers/helpers";
-const logger = require("../../helpers/logger");
+// const logger = require("../../helpers/logger");
 
 import { eventBus } from "@/main";
 
@@ -123,23 +123,6 @@ export default {
       });
 
       this.resetData();
-    },
-
-    async scrapeData() {
-      logger.log("VideoQualityDialog SCRAPE!");
-      this.isScraping = true;
-
-      // try {
-
-      // } catch (err) {
-      //   logger.log(err);
-      //   eventBus.showSnackbar(
-      //     "error",
-      //     "an error occured while fetching data from the web"
-      //   );
-      // }
-
-      this.isScraping = false;
     },
 
     onCloseClick() {

@@ -158,7 +158,7 @@ export default {
       }
 
       logger.log(
-        "this.$shared.filters.filterIMDBFilmingLocations:",
+        "[toggleShowMovies] this.$shared.filters.filterIMDBFilmingLocations:",
         this.$shared.filters.filterIMDBFilmingLocations
       );
 

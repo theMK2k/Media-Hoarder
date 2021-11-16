@@ -129,7 +129,7 @@ export default {
         $MaxAge: this.getMaxAge(Age_Rating),
       };
 
-      logger.log("payload:", payload);
+      logger.log("[init] payload:", payload);
 
       try {
         this.numMovies = await store.db.fireProcedureReturnScalar(
@@ -155,7 +155,7 @@ export default {
         logger.error(e);
       }
 
-      logger.log("numMovies:", this.numMovies);
+      logger.log("[init] numMovies:", this.numMovies);
     },
 
     onButtonClick(eventName) {
@@ -165,12 +165,6 @@ export default {
       });
 
       this.resetData();
-    },
-
-    async scrapeData() {
-      logger.log("VideoQualityDialog SCRAPE!");
-      this.isScraping = true;
-      this.isScraping = false;
     },
 
     onCloseClick() {
