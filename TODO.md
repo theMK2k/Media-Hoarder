@@ -2,13 +2,20 @@
 
 ## v1.0.0
 
+- [ ] refactor
+  - [ ] use find-imdb-tconst.js and remove functions from store
+  - [ ] find proper place for imdb-scraper.js, find-imdb-tconst.js
+  - [ ] identify other functions in store.js which don't really belong there
+  - [ ] provide util.promisified stuff in helpers.js and use it from there
 - [ ] allow imdbid in relink dialog
 - [ ] Test mediainfo and VLC in Linux/MacOS (we now use "" in the exec)
 
 ### Bugs
 
 - [CHECK] some log groups do not close before the next opens
-- [ ] write cli tests and optimize findIMDBtconst
+- [WIP] write cli tests and optimize findIMDBtconst
+  - [ ] as a second criteria take the runtime (MediaInfo vs. IMDB) into account if multiple results come up
+  - [ ] do a hybrid search to find imdb tconst (advanced title search, find etc.)
 - [ ] rescan re-links imdb using the builtin imdb id finder (see: Blender Sourcepath)
 - [ ] "Trace" Loglevel is not recognized when starting in PROD mode
 - [ ] items which have a scan error skew the next scan's time-per-item

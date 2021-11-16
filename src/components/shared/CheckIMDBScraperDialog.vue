@@ -105,7 +105,7 @@
 
 const logger = require("../../helpers/logger");
 
-const imdbScraperTests = require("@/imdb-scraper-tests");
+const imdbScraperTests = require("@/tests/imdb-scraper-tests");
 
 // import * as store from "@/store";
 

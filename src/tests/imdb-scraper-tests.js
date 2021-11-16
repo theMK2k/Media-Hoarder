@@ -1,4 +1,4 @@
-const imdbScraper = require("./imdb-scraper");
+const imdbScraper = require("../imdb-scraper");
 
 const status = {
   SUCCESS: 0,

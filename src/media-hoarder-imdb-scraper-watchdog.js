@@ -5,7 +5,7 @@ const nodemailer = require("nodemailer");
 
 const logger = require("./helpers/logger");
 const helpers = require("./helpers/helpers");
-const imdbScraperTests = require("./imdb-scraper-tests");
+const imdbScraperTests = require("./tests/imdb-scraper-tests");
 
 const cmdArguments = minimist(process.argv.slice(2));
 

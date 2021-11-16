@@ -13,6 +13,9 @@ const isWindows = process.platform === "win32";
 
 const writeFileAsync = util.promisify(fs.writeFile);
 const existsAsync = util.promisify(fs.exists);
+const readdirAsync = util.promisify(fs.readdir);
+const statAsync = util.promisify(fs.stat);
+const readFileAsync = util.promisify(fs.readFile);
 const requestretryAsync = util.promisify(requestretry);
 
 const isPORTABLE = false; // DON'T TOUCH! This is handled by set-portable.js
@@ -373,6 +376,48 @@ function compare(a, b, reverse) {
   return 0;
 }
 
+async function listPath(basePath, scanPath) {
+  if (!basePath || !scanPath) {
+    throw Error("listPath called without basePath!");
+  }
+
+  const readdirResult = await readdirAsync(scanPath, { withFileTypes: true });
+
+  const arrResult = [];
+
+  // logger.log('listPath result:', result);
+
+  for (let i = 0; i < readdirResult.length; i++) {
+    const dirent = readdirResult[i];
+
+    const fullPath = path.join(scanPath, dirent.name);
+
+    const stats = await statAsync(fullPath);
+
+    arrResult.push({
+      fullPath: fullPath,
+      fullDirectory: scanPath,
+      fullPathLower: fullPath.toLowerCase(),
+
+      relativePath: path.relative(basePath, fullPath),
+      relativeDirectory: path.relative(basePath, scanPath),
+      relativePathLower: path.relative(basePath, fullPath).toLowerCase(),
+
+      Name: dirent.name,
+      ExtensionLower: path.extname(dirent.name).toLowerCase(),
+      isFile: dirent.isFile(),
+      isDirectory: dirent.isDirectory(),
+      Size: stats.size,
+      file_created_at: stats.mtime,
+      stats,
+    });
+  }
+
+  logger.log("[listPath] arrResult:", arrResult);
+
+  return arrResult;
+}
+
 export {
   isWindows,
   isPORTABLE,
@@ -400,4 +445,6 @@ export {
   imdbScraperWatchdogUseDumps,
   isNullOrUndefined,
   compare,
+  listPath,
+  readFileAsync,
 };

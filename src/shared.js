@@ -3,7 +3,7 @@ import Vue from "vue";
 // const moment = require("moment");
 
 const helpers = require("./helpers/helpers");
-const imdbScraperTests = require("./imdb-scraper-tests");
+const imdbScraperTests = require("./tests/imdb-scraper-tests");
 
 const shared = new Vue({
   data: {
