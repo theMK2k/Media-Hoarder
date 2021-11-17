@@ -176,7 +176,7 @@ export async function findIMDBtconstByFileOrDirname(movie, returnAnalysisData) {
         stats.searchAPI =
           searchFunction === scrapeIMDBFind ? "find" : "suggestion";
         stats.choiceType = "fallback";
-        return results[0].tconst;
+        return returnAnalysisData ? stats : results[0].tconst;
       }
     }
   }
