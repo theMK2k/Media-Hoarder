@@ -1,4 +1,10 @@
+const fs = require("fs");
+const util = require("util");
+
 const minimist = require("minimist");
+
+const existsAsync = util.promisify(fs.exists);
+const readFileAsync = util.promisify(fs.readFile);
 
 const logger = require("../helpers/logger");
 const findIMDBtconst = require("../find-imdb-tconst");
@@ -35,4 +41,33 @@ logger.info(config);
     logger.info("stats:", stats);
     return;
   }
+
+  if (config.batch) {
+    await benchmark(config.batch);
+  }
 })();
+
+async function benchmark(filePath) {
+  if (!filePath) {
+    return logger.error(`filePath is missing!`);
+  }
+
+  const fileContent = await (await readFileAsync(filePath))
+    .toString()
+    .split("\n");
+
+  for (let line of fileContent) {
+    const name = line.trim();
+    if (!name) {
+      continue;
+    }
+    logger.log("processing:", name);
+    const stats = await findIMDBtconst.findIMDBtconstByFileOrDirname(
+      {
+        isDirectoryBased: false,
+        Filename: config.name,
+      },
+      true
+    );
+  }
+}
