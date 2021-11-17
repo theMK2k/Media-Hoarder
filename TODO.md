@@ -3,10 +3,11 @@
 ## v1.0.0
 
 - [ ] refactor
-  - [ ] use find-imdb-tconst.js and remove functions from store
+  - [x] use find-imdb-tconst.js and remove functions from store
   - [ ] find proper place for imdb-scraper.js, find-imdb-tconst.js
   - [ ] identify other functions in store.js which don't really belong there
-  - [ ] provide util.promisified stuff in helpers.js and use it from there
+  - [ ] provide util.promisified stuff in helpers.js and use it exclusively from there
+- [ ] allow unlinking in relink dialog
 - [ ] allow imdbid in relink dialog
 - [ ] Test mediainfo and VLC in Linux/MacOS (we now use "" in the exec)
 

@@ -1362,7 +1362,7 @@ async function scrapeIMDBSuggestion(searchTerm) {
   return results;
 }
 
-/**
+/** "Find" search, also support Unicode
  * @param  {string} searchTerm
  * @param  {string} [type]
  */
@@ -1385,7 +1385,7 @@ async function scrapeIMDBFind(searchTerm, type) {
 
   const items = $("tr.findResult");
 
-  logger.log("[scrapeIMDBFind] items:", items);
+  // logger.log("[scrapeIMDBFind] items:", items);
 
   const results = [];
 
@@ -1394,6 +1394,7 @@ async function scrapeIMDBFind(searchTerm, type) {
       tconst: null,
       type: null,
       title: null,
+      year: null,
       imageURL: null,
     };
 
@@ -1418,6 +1419,12 @@ async function scrapeIMDBFind(searchTerm, type) {
     }
 
     result.title = $($(item).find("td.result_text")).text().trim();
+
+    const attributes = $($(item).find("td.result_text")).html();
+    const rxYear = /<\/a>.*?\((\d\d\d\d)\)/;
+    if (rxYear.test(attributes)) {
+      result.year = parseInt(attributes.match(rxYear)[1]);
+    }
 
     // result.resultText = result.resultText.replace(/[\s\n]/g, " ");
     while (/\s\s/g.test(result.title)) {

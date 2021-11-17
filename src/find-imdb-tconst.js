@@ -2,7 +2,7 @@ const path = require("path");
 
 const logger = require("./helpers/logger");
 const helpers = require("./helpers/helpers");
-const { scrapeIMDBSuggestion } = require("./imdb-scraper");
+const { scrapeIMDBSuggestion, scrapeIMDBFind } = require("./imdb-scraper");
 /**
  * Extract the IMDB tconst if it is included in the file or directory name, e.g. A Movie (2009)[tt123456789]
  *
@@ -79,12 +79,25 @@ export async function findIMDBtconstInNFO(movie) {
   return "";
 }
 
-export async function findIMDBtconstByFileOrDirname(movie) {
+/**
+ * Find an IMDB tconst based on the movie's name (also checks possible release years contained in the name)
+ * @param {Object} movie
+ * @param {Boolean} returnAnalysisData
+ * @returns {String|Object}
+ */
+export async function findIMDBtconstByFileOrDirname(movie, returnAnalysisData) {
   logger.log("[findIMDBtconstByFileOrDirname] START");
+
+  const stats = {
+    fullName: null,
+    chosenName: null,
+    result: null,
+    searchAPI: null,
+    choiceType: null,
+  };
 
   const arrYears = helpers.getYearsFromFileName(movie.Filename, false); // TODO: also directoryName (if movie.isDirectoryBased)
 
-  // const name = helpers.getMovieNameFromFileName(movie.Filename).replace(/[()[]]/g, ' ');
   const name = (
     movie.isDirectoryBased
       ? helpers.getMovieNameFromDirectory(movie.fullDirectory)
@@ -93,6 +106,8 @@ export async function findIMDBtconstByFileOrDirname(movie) {
     .replace(/\([^)]*?\)/g, "")
     .replace(/\[[^\]]*?\]/g, "")
     .trim();
+
+  stats.fullName = name;
 
   logger.log("[findIMDBtconstByFileOrDirname] name:", name);
 
@@ -105,33 +120,64 @@ export async function findIMDBtconstByFileOrDirname(movie) {
 
     logger.log(`[findIMDBtconstByFileOrDirname] trying: "${searchTerm}"`);
 
-    const results = await scrapeIMDBSuggestion(searchTerm);
+    for (let searchFunction of [scrapeIMDBFind, scrapeIMDBSuggestion]) {
+      const results = await searchFunction(searchTerm);
 
-    logger.log(
-      `[findIMDBtconstByFileOrDirname] ${results.length} results found for "${searchTerm}"`
-    );
+      logger.log(
+        `[findIMDBtconstByFileOrDirname] ${results.length} results found for "${searchTerm}"`
+      );
 
-    if (results.length === 1) {
-      // definitely found our optimum!
-      logger.log("[findIMDBtconstByFileOrDirname] OPTIMUM found!", results);
-      return results[0].tconst;
-    }
+      if (results.length === 1) {
+        logger.log(
+          "[findIMDBtconstByFileOrDirname] OPTIMUM found :D",
+          results[0]
+        );
 
-    if (results.length > 0) {
-      // check for year match
-      for (let y = 0; y < arrYears.length; y++) {
-        for (let r = 0; r < results.length; r++) {
-          if (results[r].year) {
-            const year = parseInt(results[r].year);
-            if (arrYears[y] - year >= -1 && arrYears[y] - year <= 1) {
-              return results[r].tconst;
+        stats.chosenName = searchTerm;
+        stats.result = results[0];
+        stats.searchAPI =
+          searchFunction === scrapeIMDBFind ? "find" : "suggestion";
+        stats.choiceType = "optimum";
+
+        return returnAnalysisData ? stats : results[0].tconst;
+      }
+
+      if (results.length > 0) {
+        // check for year match
+        for (let y = 0; y < arrYears.length; y++) {
+          for (let r = 0; r < results.length; r++) {
+            if (results[r].year) {
+              const year = parseInt(results[r].year);
+              if (arrYears[y] - year >= -1 && arrYears[y] - year <= 1) {
+                logger.log(
+                  "[findIMDBtconstByFileOrDirname] result found by year :)",
+                  results[r]
+                );
+
+                stats.chosenName = searchTerm;
+                stats.result = results[r];
+                stats.searchAPI =
+                  searchFunction === scrapeIMDBFind ? "find" : "suggestion";
+                stats.choiceType = "yearmatch";
+                return returnAnalysisData ? stats : results[r].tconst;
+              }
             }
           }
         }
-      }
 
-      // just use the first mentioned
-      return results[0].tconst;
+        // just use the first mentioned
+        logger.log(
+          "[findIMDBtconstByFileOrDirname] just using the first result :(",
+          results[0]
+        );
+
+        stats.chosenName = searchTerm;
+        stats.result = results[0];
+        stats.searchAPI =
+          searchFunction === scrapeIMDBFind ? "find" : "suggestion";
+        stats.choiceType = "fallback";
+        return results[0].tconst;
+      }
     }
   }
 

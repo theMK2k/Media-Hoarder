@@ -284,7 +284,7 @@ async function requestAsync(options) {
 
   optionsDerived.timeout = 10000; // we set a 10s timeout
 
-  logger.log("[requestAsync] optionsDerived:", optionsDerived);
+  // logger.log("[requestAsync] optionsDerived:", optionsDerived);
 
   if (imdbScraperWatchdogUseDumps) {
     const filename = `${filenamify(
