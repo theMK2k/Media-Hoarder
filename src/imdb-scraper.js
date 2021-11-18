@@ -1,6 +1,7 @@
+const querystring = require("querystring");
+
 const cheerio = require("cheerio");
 const htmlToText = require("html-to-text");
-const urlencode = require("urlencode");
 
 const logger = require("./helpers/logger");
 const helpers = require("./helpers/helpers");
@@ -1327,7 +1328,7 @@ async function scrapeIMDBAdvancedTitleSearch(title, titleTypes) {
 async function scrapeIMDBSuggestion(searchTerm) {
   // only supports latin characters!
   // https://v2.sg.media-imdb.com/suggestion/d/Das%20Phantom%20Kommando%20(1985).json
-  const url = `https://v2.sg.media-imdb.com/suggestion/${searchTerm[0].toLowerCase()}/${urlencode(
+  const url = `https://v2.sg.media-imdb.com/suggestion/${searchTerm[0].toLowerCase()}/${querystring.escape(
     searchTerm
   )}.json`;
 
@@ -1374,7 +1375,7 @@ async function scrapeIMDBFind(searchTerm, type) {
   // People:   https://www.imdb.com/find?s=nm&q=laurence+fishburn
   // Company:  https://www.imdb.com/find?s=co&q=universal
   // Keyword:  https://www.imdb.com/find?s=kw&q=christmas
-  const url = `https://www.imdb.com/find?q=${urlencode(searchTerm)}${
+  const url = `https://www.imdb.com/find?q=${querystring.escape(searchTerm)}${
     type ? "&s=" + type : ""
   }`;
 
