@@ -16,7 +16,11 @@
 - [CHECK] some log groups do not close before the next opens
 - [WIP] write cli tests and optimize findIMDBtconst
   - [x] do a hybrid search to find imdb tconst (advanced title search, find etc.)
-  - [ ] check if scrapeIMDBSuggestion is still necessary
+  - [x] check if scrapeIMDBSuggestion is still necessary
+        -> suggestion is not necessary anymore
+  - [x] optimize scrapeIMDBFind by utilizing categories:
+    - Titles (movies, series, episodes): &s=tt
+      - filter "(TV Series)"
   - [ ] as a second criteria take the runtime (MediaInfo vs. IMDB) into account if multiple results come up
 - [ ] rescan re-links imdb using the builtin imdb id finder (see: Blender Sourcepath)
 - [ ] "Trace" Loglevel is not recognized when starting in PROD mode
@@ -29,11 +33,11 @@
 
 ### FR Translation v0.1
 
-- `"Audio Languages": "Langues"`: *is there a possibility to explicitly distinguish between Audio and Subtitle Languages?*
-- `"Find Filming Location": "Rechercher par Société de Production ",`: *incorrect translation*
-- `"Mediainfo CLI Path": "Chemin d'accès à Mediainfo CLI",`: *"ILC" instead of "CLI", really?* (multiple apply)
-- `"IMDB Rating Demographic": "Evaluations d'IMDB par tranche d'âge",`: *Demographic is not only specified by age (e.g. US/Non-US, Male/Female)*
-- [x] Tu/Toi vs. Vous/Votre: *we are not a banking app, so let's drop the formal "vous" and use informal "tu"* (multiple apply)
+- `"Audio Languages": "Langues"`: _is there a possibility to explicitly distinguish between Audio and Subtitle Languages?_
+- `"Find Filming Location": "Rechercher par Société de Production ",`: _incorrect translation_
+- `"Mediainfo CLI Path": "Chemin d'accès à Mediainfo CLI",`: _"ILC" instead of "CLI", really?_ (multiple apply)
+- `"IMDB Rating Demographic": "Evaluations d'IMDB par tranche d'âge",`: _Demographic is not only specified by age (e.g. US/Non-US, Male/Female)_
+- [x] Tu/Toi vs. Vous/Votre: _we are not a banking app, so let's drop the formal "vous" and use informal "tu"_ (multiple apply)
 
 - scrape = ?
 
@@ -47,7 +51,7 @@
 
 - [x] load message definitions from %workdir%/i18n (e.g. zh.json, fr.json etc.)
 - [x] provide selectable languages from actually loaded messages
-- [ ] include *.json export in Media Hoarder
+- [ ] include \*.json export in Media Hoarder
 - [ ] investigate external i18n sources - so that tranlastors can access their creation
 - [ ] dropdown of available (to be translated) languages
 - [ ] read available en.json ($fieldName, $expectedText)

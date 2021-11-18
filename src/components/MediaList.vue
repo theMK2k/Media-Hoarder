@@ -2730,8 +2730,6 @@ export default {
     },
 
     async completelyFetchMedia() {
-      logger.group("[Fetch Media Details]");
-
       try {
         const arr_id_Movies = [];
 
@@ -2746,6 +2744,8 @@ export default {
         if (arr_id_Movies.length === 0) {
           return;
         }
+
+        logger.group("[Fetch Media Details]");
 
         const result = await store.fetchMedia(
           this.mediatype,
