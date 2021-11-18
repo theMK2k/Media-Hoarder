@@ -96,90 +96,94 @@ export async function findIMDBtconstByFileOrDirname(movie, returnAnalysisData) {
     choiceType: null,
   };
 
-  const arrYears = helpers.getYearsFromFileName(movie.Filename, false); // TODO: also directoryName (if movie.isDirectoryBased)
+  try {
+    const arrYears = helpers.getYearsFromFileName(movie.Filename, false); // TODO: also directoryName (if movie.isDirectoryBased)
 
-  const name = (
-    movie.isDirectoryBased
-      ? helpers.getMovieNameFromDirectory(movie.fullDirectory)
-      : helpers.getMovieNameFromFileName(movie.Filename)
-  )
-    .replace(/\([^)]*?\)/g, "")
-    .replace(/\[[^\]]*?\]/g, "")
-    .trim();
+    const name = (
+      movie.isDirectoryBased
+        ? helpers.getMovieNameFromDirectory(movie.fullDirectory)
+        : helpers.getMovieNameFromFileName(movie.Filename)
+    )
+      .replace(/\([^)]*?\)/g, "")
+      .replace(/\[[^\]]*?\]/g, "")
+      .trim();
 
-  stats.fullName = name;
+    stats.fullName = name;
 
-  logger.log("[findIMDBtconstByFileOrDirname] name:", name);
+    logger.log("[findIMDBtconstByFileOrDirname] name:", name);
 
-  logger.log("[findIMDBtconstByFileOrDirname] years:", arrYears);
+    logger.log("[findIMDBtconstByFileOrDirname] years:", arrYears);
 
-  const arrName = name.split(" ");
+    const arrName = name.split(" ");
 
-  for (let i = arrName.length; i > 0; i--) {
-    const searchTerm = arrName.slice(0, i).join(" ");
+    for (let i = arrName.length; i > 0; i--) {
+      const searchTerm = arrName.slice(0, i).join(" ");
 
-    logger.log(`[findIMDBtconstByFileOrDirname] trying: "${searchTerm}"`);
+      logger.log(`[findIMDBtconstByFileOrDirname] trying: "${searchTerm}"`);
 
-    for (let searchFunction of [scrapeIMDBFind, scrapeIMDBSuggestion]) {
-      const results = await searchFunction(searchTerm);
+      for (let searchFunction of [scrapeIMDBFind, scrapeIMDBSuggestion]) {
+        const results = await searchFunction(searchTerm);
 
-      logger.log(
-        `[findIMDBtconstByFileOrDirname] ${results.length} results found for "${searchTerm}"`
-      );
-
-      if (results.length === 1) {
         logger.log(
-          "[findIMDBtconstByFileOrDirname] OPTIMUM found :D",
-          results[0]
+          `[findIMDBtconstByFileOrDirname] ${results.length} results found for "${searchTerm}"`
         );
 
-        stats.chosenName = searchTerm;
-        stats.result = results[0];
-        stats.searchAPI =
-          searchFunction === scrapeIMDBFind ? "find" : "suggestion";
-        stats.choiceType = "optimum";
+        if (results.length === 1) {
+          logger.log(
+            "[findIMDBtconstByFileOrDirname] OPTIMUM found :D",
+            results[0]
+          );
 
-        return returnAnalysisData ? stats : results[0].tconst;
-      }
+          stats.chosenName = searchTerm;
+          stats.result = results[0];
+          stats.searchAPI =
+            searchFunction === scrapeIMDBFind ? "find" : "suggestion";
+          stats.choiceType = "optimum";
 
-      if (results.length > 0) {
-        // check for year match
-        for (let y = 0; y < arrYears.length; y++) {
-          for (let r = 0; r < results.length; r++) {
-            if (results[r].year) {
-              const year = parseInt(results[r].year);
-              if (arrYears[y] - year >= -1 && arrYears[y] - year <= 1) {
-                logger.log(
-                  "[findIMDBtconstByFileOrDirname] result found by year :)",
-                  results[r]
-                );
+          return returnAnalysisData ? stats : results[0].tconst;
+        }
 
-                stats.chosenName = searchTerm;
-                stats.result = results[r];
-                stats.searchAPI =
-                  searchFunction === scrapeIMDBFind ? "find" : "suggestion";
-                stats.choiceType = "yearmatch";
-                return returnAnalysisData ? stats : results[r].tconst;
+        if (results.length > 0) {
+          // check for year match
+          for (let y = 0; y < arrYears.length; y++) {
+            for (let r = 0; r < results.length; r++) {
+              if (results[r].year) {
+                const year = parseInt(results[r].year);
+                if (arrYears[y] - year >= -1 && arrYears[y] - year <= 1) {
+                  logger.log(
+                    "[findIMDBtconstByFileOrDirname] result found by year :)",
+                    results[r]
+                  );
+
+                  stats.chosenName = searchTerm;
+                  stats.result = results[r];
+                  stats.searchAPI =
+                    searchFunction === scrapeIMDBFind ? "find" : "suggestion";
+                  stats.choiceType = "yearmatch";
+                  return returnAnalysisData ? stats : results[r].tconst;
+                }
               }
             }
           }
+
+          // just use the first mentioned
+          logger.log(
+            "[findIMDBtconstByFileOrDirname] just using the first result :(",
+            results[0]
+          );
+
+          stats.chosenName = searchTerm;
+          stats.result = results[0];
+          stats.searchAPI =
+            searchFunction === scrapeIMDBFind ? "find" : "suggestion";
+          stats.choiceType = "fallback";
+          return returnAnalysisData ? stats : results[0].tconst;
         }
-
-        // just use the first mentioned
-        logger.log(
-          "[findIMDBtconstByFileOrDirname] just using the first result :(",
-          results[0]
-        );
-
-        stats.chosenName = searchTerm;
-        stats.result = results[0];
-        stats.searchAPI =
-          searchFunction === scrapeIMDBFind ? "find" : "suggestion";
-        stats.choiceType = "fallback";
-        return returnAnalysisData ? stats : results[0].tconst;
       }
     }
+  } catch (err) {
+    logger.error(err);
   }
 
-  return "";
+  return returnAnalysisData ? stats : "";
 }
