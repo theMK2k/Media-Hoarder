@@ -15,8 +15,9 @@
 
 - [CHECK] some log groups do not close before the next opens
 - [WIP] write cli tests and optimize findIMDBtconst
+  - [x] do a hybrid search to find imdb tconst (advanced title search, find etc.)
+  - [ ] check if scrapeIMDBSuggestion is still necessary
   - [ ] as a second criteria take the runtime (MediaInfo vs. IMDB) into account if multiple results come up
-  - [ ] do a hybrid search to find imdb tconst (advanced title search, find etc.)
 - [ ] rescan re-links imdb using the builtin imdb id finder (see: Blender Sourcepath)
 - [ ] "Trace" Loglevel is not recognized when starting in PROD mode
 - [ ] items which have a scan error skew the next scan's time-per-item
