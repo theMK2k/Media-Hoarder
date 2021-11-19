@@ -1430,6 +1430,7 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
 				, MOV.RelativePath
 				, MOV.RelativeDirectory
 				, MOV.Filename
+        , MOV.MI_Duration_Seconds
 				, MOV.MI_Done
 				, MOV.IMDB_Done
         , MOV.IMDB_tconst
@@ -1907,7 +1908,12 @@ async function findIMDBtconst(movie, onlyNew) {
 
     if (!tconst) {
       // tconst not found yet, try to find it by searching imdb from the file/directory name
-      tconst = await findIMDBtconstByFileOrDirname(movie);
+      logger.log("[findIMDBtconst] movie:", movie);
+      tconst = await findIMDBtconstByFileOrDirname(movie, {
+        returnAnalysisData: false,
+        category: "title",
+        excludeTVSeries: true,
+      });
 
       if (
         shared.scanOptions

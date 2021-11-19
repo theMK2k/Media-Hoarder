@@ -24,7 +24,7 @@ All test sets below have 7,576 entries if not otherwise stated.
   - choiceType.yearmatch: 118 (52%)
   - resultType.title: 180 (79%)
   - resultType.name: 46 (20%)             REQ: [x] call API with category = title
-  - result_title.(TV Series): 80 (35%)
+  - result_title.(TV Series): 80 (35%)    REQ: [x] optionally filter "TV Series" (this excludes TV Series and Episodes but not TV Mini Series, which is good!)
   - result_title.(TV Episode): 34 (15%)
 
 ## Analysis of new features

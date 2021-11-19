@@ -13,6 +13,7 @@ const cmdArguments = minimist(process.argv.slice(2));
 const config = {
   name: cmdArguments.name,
   batch: cmdArguments.batch,
+  duration: cmdArguments.duration ? parseInt(cmdArguments.duration) : null,
 };
 
 logger.setLevel(0);
@@ -24,23 +25,33 @@ logger.info("         --name=<name>        find IMDB tconst for a single name");
 logger.info(
   "         --batch=<file.txt>   find IMDB tconst for multiple names defined in file.txt (also do a statistical analysis)"
 );
+logger.info(
+  "         --duration=<seconds> provide a duration in seconds for the movie"
+);
 
 logger.info(config);
 
 (async () => {
   if (config.name) {
+    const movie = {
+      isDirectoryBased: false,
+      Filename: config.name,
+    };
+    const options = {
+      returnAnalysisData: true,
+      category: "title",
+      excludeTVSeries: true,
+      MI_Duration_Seconds: config.duration,
+    };
+    const tconstIncluded = await findIMDBtconst.findIMDBtconstIncluded(movie);
     const stats = await findIMDBtconst.findIMDBtconstByFileOrDirname(
-      {
-        isDirectoryBased: false,
-        Filename: config.name,
-      },
-      {
-        returnAnalysisData: true,
-        category: "title",
-        filterTVSeries: true,
-        filterTVEpisodes: true,
-      }
+      movie,
+      options
     );
+    stats.tconstIncluded = tconstIncluded;
+
+    stats.isTconstCorrect =
+      tconstIncluded == (stats.result ? stats.result.tconst : "<none>");
 
     logger.info("stats:", stats);
     return;
@@ -82,8 +93,7 @@ async function benchmark(filePath) {
     const stats = await findIMDBtconst.findIMDBtconstByFileOrDirname(movie, {
       returnAnalysisData: true,
       category: "title",
-      filterTVSeries: true,
-      filterTVEpisodes: true,
+      excludeTVSeries: true,
     });
 
     stats.tconstIncluded = tconstIncluded;

@@ -1,8 +1,10 @@
+import { result } from "lodash";
+
 const path = require("path");
 
 const logger = require("./helpers/logger");
 const helpers = require("./helpers/helpers");
-const { scrapeIMDBSuggestion, scrapeIMDBFind } = require("./imdb-scraper");
+const { scrapeIMDBFind, scrapeIMDBtechnicalData } = require("./imdb-scraper");
 /**
  * Extract the IMDB tconst if it is included in the file or directory name, e.g. A Movie (2009)[tt123456789]
  *
@@ -92,8 +94,7 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
     options = {
       returnAnalysisData: false,
       category: "title",
-      filterTVSeries: true,
-      filterTVEpisodes: true,
+      excludeTVSeries: true, // filters out all titles containing "(TV Series)" in the title, still includes "(TV Mini Series)"
     };
   }
 
@@ -103,6 +104,12 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
     result: null,
     searchAPI: null,
     choiceType: null,
+
+    immediateOptimum: false,
+    yearmatch: false,
+    yearmatchexact: false,
+    excludedTVSeries: false,
+    excludedByRuntime: false,
   };
 
   try {
@@ -132,7 +139,8 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
 
       for (let searchFunction of [scrapeIMDBFind]) {
         // was: [scrapeIMDBFind, scrapeIMDBSuggestion], but scrapeIMDBSuggestion doesn't provide any benefit
-        const results = await searchFunction(
+
+        let results = await searchFunction(
           searchTerm,
           options.category === "title" ? "tt" : null
         );
@@ -140,6 +148,76 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
         logger.log(
           `[findIMDBtconstByFileOrDirname] ${results.length} results found for "${searchTerm}"`
         );
+
+        // filter by excluding "TV Series"
+        if (options.excludeTVSeries) {
+          while (
+            results.find((result) => result.title.includes("(TV Series)"))
+          ) {
+            results.splice(
+              results.findIndex((result) =>
+                result.title.includes("(TV Series)")
+              ),
+              1
+            );
+          }
+        }
+
+        // filter by year match
+        if (results.length > 1) {
+          const resultsYear = [];
+          for (let y = 0; y < arrYears.length; y++) {
+            for (let r = 0; r < results.length; r++) {
+              if (results[r].year) {
+                const year = parseInt(results[r].year);
+                if (arrYears[y] - year >= -1 && arrYears[y] - year <= 1) {
+                  // logger.log(
+                  //   "[findIMDBtconstByFileOrDirname] result found by year :)",
+                  //   results[r]
+                  // );
+
+                  stats.yearmatch = true;
+                  results[r].exactYear = arrYears[y] - year === 0;
+                  resultsYear.push(results[r]);
+
+                  // stats.chosenName = searchTerm;
+                  // stats.result = results[r];
+                  // stats.searchAPI =
+                  //   searchFunction === scrapeIMDBFind ? "find" : "suggestion";
+                  // stats.choiceType = "yearmatch";
+                  // return options.returnAnalysisData ? stats : results[r].tconst;
+                }
+              }
+            }
+          }
+
+          if (resultsYear.find((result) => result.exactYear)) {
+            stats.yearmatchexact = true;
+            const resultsYearExact = results.filter(
+              (result) => result.exactYear
+            );
+
+            results = resultsYearExact;
+          }
+        }
+
+        // TODO: filter by runtime, but only if there are less than 10 results left
+        if (
+          results.length > 1 &&
+          results.length < 10 &&
+          movie.MI_Duration_Seconds
+        ) {
+          const resultsRuntime = [];
+          for (result of results) {
+            const imdbData = await scrapeIMDBtechnicalData({
+              IMDB_tconst: result.tconst,
+            });
+
+            if (imdbData.$IMDB_runtimeMinutes) {
+              const runtimeSeconds = parseInt(imdbData.$IMDB_runtimeMinutes)  // TODO: go on here
+            }
+          }
+        }
 
         if (results.length === 1) {
           logger.log(
@@ -152,34 +230,13 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
           stats.searchAPI =
             searchFunction === scrapeIMDBFind ? "find" : "suggestion";
           stats.choiceType = "optimum";
+          stats.immediateOptimum = true;
 
           return options.returnAnalysisData ? stats : results[0].tconst;
         }
 
-        if (results.length > 0) {
-          // check for year match
-          for (let y = 0; y < arrYears.length; y++) {
-            for (let r = 0; r < results.length; r++) {
-              if (results[r].year) {
-                const year = parseInt(results[r].year);
-                if (arrYears[y] - year >= -1 && arrYears[y] - year <= 1) {
-                  logger.log(
-                    "[findIMDBtconstByFileOrDirname] result found by year :)",
-                    results[r]
-                  );
-
-                  stats.chosenName = searchTerm;
-                  stats.result = results[r];
-                  stats.searchAPI =
-                    searchFunction === scrapeIMDBFind ? "find" : "suggestion";
-                  stats.choiceType = "yearmatch";
-                  return options.returnAnalysisData ? stats : results[r].tconst;
-                }
-              }
-            }
-          }
-
-          // just use the first mentioned
+        if (results.length > 1) {
+          // just use the first in the list (we can't filter more)
           logger.log(
             "[findIMDBtconstByFileOrDirname] just using the first result :(",
             results[0]
