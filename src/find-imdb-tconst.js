@@ -82,11 +82,20 @@ export async function findIMDBtconstInNFO(movie) {
 /**
  * Find an IMDB tconst based on the movie's name (also checks possible release years contained in the name)
  * @param {Object} movie
- * @param {Boolean} returnAnalysisData
+ * @param {Object} options
  * @returns {String|Object}
  */
-export async function findIMDBtconstByFileOrDirname(movie, returnAnalysisData) {
+export async function findIMDBtconstByFileOrDirname(movie, options) {
   logger.log("[findIMDBtconstByFileOrDirname] START");
+
+  if (!options) {
+    options = {
+      returnAnalysisData: false,
+      category: "title",
+      filterTVSeries: true,
+      filterTVEpisodes: true,
+    };
+  }
 
   const stats = {
     fullName: null,
@@ -121,8 +130,12 @@ export async function findIMDBtconstByFileOrDirname(movie, returnAnalysisData) {
 
       logger.log(`[findIMDBtconstByFileOrDirname] trying: "${searchTerm}"`);
 
-      for (let searchFunction of [scrapeIMDBFind, scrapeIMDBSuggestion]) {
-        const results = await searchFunction(searchTerm);
+      for (let searchFunction of [scrapeIMDBFind]) {
+        // was: [scrapeIMDBFind, scrapeIMDBSuggestion], but scrapeIMDBSuggestion doesn't provide any benefit
+        const results = await searchFunction(
+          searchTerm,
+          options.category === "title" ? "tt" : null
+        );
 
         logger.log(
           `[findIMDBtconstByFileOrDirname] ${results.length} results found for "${searchTerm}"`
@@ -140,7 +153,7 @@ export async function findIMDBtconstByFileOrDirname(movie, returnAnalysisData) {
             searchFunction === scrapeIMDBFind ? "find" : "suggestion";
           stats.choiceType = "optimum";
 
-          return returnAnalysisData ? stats : results[0].tconst;
+          return options.returnAnalysisData ? stats : results[0].tconst;
         }
 
         if (results.length > 0) {
@@ -160,7 +173,7 @@ export async function findIMDBtconstByFileOrDirname(movie, returnAnalysisData) {
                   stats.searchAPI =
                     searchFunction === scrapeIMDBFind ? "find" : "suggestion";
                   stats.choiceType = "yearmatch";
-                  return returnAnalysisData ? stats : results[r].tconst;
+                  return options.returnAnalysisData ? stats : results[r].tconst;
                 }
               }
             }
@@ -177,7 +190,7 @@ export async function findIMDBtconstByFileOrDirname(movie, returnAnalysisData) {
           stats.searchAPI =
             searchFunction === scrapeIMDBFind ? "find" : "suggestion";
           stats.choiceType = "fallback";
-          return returnAnalysisData ? stats : results[0].tconst;
+          return options.returnAnalysisData ? stats : results[0].tconst;
         }
       }
     }
@@ -185,5 +198,5 @@ export async function findIMDBtconstByFileOrDirname(movie, returnAnalysisData) {
     logger.error(err);
   }
 
-  return returnAnalysisData ? stats : "";
+  return options.returnAnalysisData ? stats : "";
 }

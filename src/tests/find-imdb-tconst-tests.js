@@ -34,7 +34,12 @@ logger.info(config);
         isDirectoryBased: false,
         Filename: config.name,
       },
-      true
+      {
+        returnAnalysisData: true,
+        category: "title",
+        filterTVSeries: true,
+        filterTVEpisodes: true,
+      }
     );
 
     logger.info("stats:", stats);
@@ -74,10 +79,12 @@ async function benchmark(filePath) {
 
     logger.info(`${counter} / ${fileContent.length}`, name);
     const tconstIncluded = await findIMDBtconst.findIMDBtconstIncluded(movie);
-    const stats = await findIMDBtconst.findIMDBtconstByFileOrDirname(
-      movie,
-      true
-    );
+    const stats = await findIMDBtconst.findIMDBtconstByFileOrDirname(movie, {
+      returnAnalysisData: true,
+      category: "title",
+      filterTVSeries: true,
+      filterTVEpisodes: true,
+    });
 
     stats.tconstIncluded = tconstIncluded;
 

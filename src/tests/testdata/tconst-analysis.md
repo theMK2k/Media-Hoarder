@@ -14,7 +14,7 @@ All test sets below have 7,576 entries if not otherwise stated.
 ## Analysis of tconst-01-english-full
 
 - Hits: 7,349 (97%)
-  - API.find: 7,349 (100%)
+  - API.find: 7,349 (100%)                REQ: [x] don't use suggestion search
   - choiceType.optimum: 231 (3%)
   - choiceType.yearmatch: 7,118 (97%)
   - result_title.(TV Movie): 64 (1%)
@@ -23,6 +23,16 @@ All test sets below have 7,576 entries if not otherwise stated.
   - choiceType.fallback: 108 (48%)
   - choiceType.yearmatch: 118 (52%)
   - resultType.title: 180 (79%)
-  - resultType.name: 46 (20%)
+  - resultType.name: 46 (20%)             REQ: [x] call API with category = title
   - result_title.(TV Series): 80 (35%)
   - result_title.(TV Episode): 34 (15%)
+
+## Analysis of new features
+
+### Use category (title)
+
+- tconst-01-english-full-500: 12 Misses down to 9
+
+### Use category (title) and Filtering out (TV Series) and (TV Episode)
+
+- tconst-01-english-full-500: 
