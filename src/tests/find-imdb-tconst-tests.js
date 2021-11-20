@@ -36,12 +36,12 @@ logger.info(config);
     const movie = {
       isDirectoryBased: false,
       Filename: config.name,
+      MI_Duration_Seconds: config.duration,
     };
     const options = {
       returnAnalysisData: true,
       category: "title",
       excludeTVSeries: true,
-      MI_Duration_Seconds: config.duration,
     };
     const tconstIncluded = await findIMDBtconst.findIMDBtconstIncluded(movie);
     const stats = await findIMDBtconst.findIMDBtconstByFileOrDirname(
@@ -73,7 +73,7 @@ async function benchmark(filePath) {
 
   let counter = 0;
 
-  let resultTable = `fileName\tfullName\tchosenName\tresult_tconst\tresult_type\tresult_title\tresult_year\tsearchAPI\tchoiceType\ttconstIncluded\tisTconstCorrect\n`;
+  let resultTable = `fileName\tfullName\tchosenName\tresult_tconst\tresult_type\tresult_title\tresult_year\tsearchAPI\tchoiceType\ttconstIncluded\tnumResults\tnumResultsFiltered\tisTconstCorrect\n`;
 
   for (let line of fileContent) {
     counter++;
@@ -114,10 +114,12 @@ async function benchmark(filePath) {
       searchAPI: stats.searchAPI,
       choiceType: stats.choiceType,
       tconstIncluded: stats.tconstIncluded,
+      numResults: stats.numResults,
+      numResultsFiltered: stats.numResultsFiltered,
       isTconstCorrect: stats.isTconstCorrect,
     };
 
-    resultTable += `${statsFlattened.fileName}\t${statsFlattened.fullName}\t${statsFlattened.chosenName}\t${statsFlattened.result_tconst}\t${statsFlattened.result_type}\t${statsFlattened.result_title}\t${statsFlattened.result_year}\t${statsFlattened.searchAPI}\t${statsFlattened.choiceType}\t${statsFlattened.tconstIncluded}\t${statsFlattened.isTconstCorrect}\n`;
+    resultTable += `${statsFlattened.fileName}\t${statsFlattened.fullName}\t${statsFlattened.chosenName}\t${statsFlattened.result_tconst}\t${statsFlattened.result_type}\t${statsFlattened.result_title}\t${statsFlattened.result_year}\t${statsFlattened.searchAPI}\t${statsFlattened.choiceType}\t${statsFlattened.tconstIncluded}\t${statsFlattened.numResults}\t${statsFlattened.numResultsFiltered}\t${statsFlattened.isTconstCorrect}\n`;
   }
 
   const resultCSV = `tconst-benchmark-results-${new Date()

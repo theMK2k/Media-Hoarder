@@ -8,6 +8,17 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] write cli tests and optimize findIMDBtconst
+  - [x] do a hybrid search to find imdb tconst (advanced title search, find etc.)
+    - it turns out that the find API suffices
+  - [x] check if scrapeIMDBSuggestion is still necessary
+        -> suggestion is not necessary anymore
+  - [x] optimize scrapeIMDBFind by utilizing categories:
+    - [x] Titles (movies, series, episodes): &s=tt
+    - [x] optionally filter "(TV Series)": this exludes TV Series and Episodes but not TV Mini Series (which is good!)
+    - [x] filter losely by year
+    - [x] filter strictly by year
+    - [x] take the runtime (MediaInfo vs. IMDB) into account if multiple results come up
 - [x] Filters: "Select All", "Select None", "Search": use icons
 - [x] Layout: delete button in sidebar filters
 - [x] (My) List Dialog: preselection should be the last selected list

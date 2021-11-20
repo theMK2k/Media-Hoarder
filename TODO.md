@@ -14,16 +14,6 @@
 ### Bugs
 
 - [CHECK] some log groups do not close before the next opens
-- [WIP] write cli tests and optimize findIMDBtconst
-  - [x] do a hybrid search to find imdb tconst (advanced title search, find etc.)
-  - [x] check if scrapeIMDBSuggestion is still necessary
-        -> suggestion is not necessary anymore
-  - [ ] optimize scrapeIMDBFind by utilizing categories:
-    - [x] Titles (movies, series, episodes): &s=tt
-    - [x] optionally filter "(TV Series)": this exludes TV Series and Episodes but not TV Mini Series (which is good!)
-    - [ ] filter losely by year
-    - [ ] filter strictly by year
-    - [ ] as a second criteria take the runtime (MediaInfo vs. IMDB) into account if multiple results come up
 - [ ] rescan re-links imdb using the builtin imdb id finder (see: Blender Sourcepath)
 - [ ] "Trace" Loglevel is not recognized when starting in PROD mode
 - [ ] items which have a scan error skew the next scan's time-per-item
