@@ -147,6 +147,11 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
       );
       stats.numResults = results.length;
 
+      if (results.length === 0) {
+        // search revealed no results, continue for
+        continue;
+      }
+
       if (results.length === 1) {
         stats.immediateOptimum = true;
       }
@@ -209,13 +214,15 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
               ? Math.abs(movie.MI_Duration_Seconds - runtimeSeconds)
               : null;
 
-            if (result.runtimeDiff) {
+            if (result.runtimeDiff !== null) {
               stats.runtimematch = true;
             }
 
             if (result.runtimeDiff < movie.MI_Duration_Seconds * 0.02) {
               break; // the runtime matches at least to 98%, which is a window of 2 minutes if the movie has a runtime of 100 minutes
             }
+          } else {
+            result.runtimeDiff = null;
           }
         }
 

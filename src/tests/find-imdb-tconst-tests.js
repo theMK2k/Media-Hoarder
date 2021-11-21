@@ -7,6 +7,7 @@ const readFileAsync = util.promisify(fs.readFile);
 
 const logger = require("../helpers/logger");
 const findIMDBtconst = require("../find-imdb-tconst");
+const { scrapeIMDBtechnicalData } = require("../imdb-scraper");
 
 const cmdArguments = minimist(process.argv.slice(2));
 
@@ -90,16 +91,40 @@ async function benchmark(filePath) {
 
     logger.info(`${counter} / ${fileContent.length}`, name);
     const tconstIncluded = await findIMDBtconst.findIMDBtconstIncluded(movie);
-    const stats = await findIMDBtconst.findIMDBtconstByFileOrDirname(movie, {
+
+    let stats = await findIMDBtconst.findIMDBtconstByFileOrDirname(movie, {
       returnAnalysisData: true,
       category: "title",
       excludeTVSeries: true,
     });
 
     stats.tconstIncluded = tconstIncluded;
-
     stats.isTconstCorrect =
       tconstIncluded == (stats.result ? stats.result.tconst : "<none>");
+
+    if (!stats.isTconstCorrect && tconstIncluded) {
+      // 2nd try with runtime
+      const imdbData = await scrapeIMDBtechnicalData({
+        IMDB_tconst: tconstIncluded,
+      });
+      if (imdbData.$IMDB_runtimeMinutes) {
+        const runtimeSeconds = imdbData.$IMDB_runtimeMinutes
+          ? parseInt(imdbData.$IMDB_runtimeMinutes) * 60
+          : null;
+
+        movie.MI_Duration_Seconds = runtimeSeconds;
+
+        stats = await findIMDBtconst.findIMDBtconstByFileOrDirname(movie, {
+          returnAnalysisData: true,
+          category: "title",
+          excludeTVSeries: true,
+        });
+      }
+
+      stats.tconstIncluded = tconstIncluded;
+      stats.isTconstCorrect =
+        tconstIncluded == (stats.result ? stats.result.tconst : "<none>");
+    }
 
     logger.info("stats:", stats);
 

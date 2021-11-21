@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] some log groups do not close before the next opens
 - [x] write cli tests and optimize findIMDBtconst
   - [x] do a hybrid search to find imdb tconst (advanced title search, find etc.)
     - it turns out that the find API suffices

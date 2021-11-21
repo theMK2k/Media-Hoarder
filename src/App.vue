@@ -2958,8 +2958,8 @@ export default {
 
   watch: {
     // LEARNING: there is a difference with "this" in name: function(){} and name: () => {}
-    searchText: function (newValue, oldValue) {
-      logger.log("[searchText] old:", oldValue, "new:", newValue);
+    searchText: function (newValue) {
+      // logger.log("[searchText] old:", oldValue, "new:", newValue);
       this.debouncedEventBusSearchTextChanged(newValue);
     },
 

@@ -2,6 +2,8 @@
 
 ## v1.0.0
 
+- [ ] tconst tests:
+  - add --preloadRuntime option, so that for each movie the runtime gets loaded from IMDB and fed to the tconst scraper
 - [ ] refactor
   - [x] use find-imdb-tconst.js and remove functions from store
   - [ ] find proper place for imdb-scraper.js, find-imdb-tconst.js
@@ -13,7 +15,6 @@
 
 ### Bugs
 
-- [CHECK] some log groups do not close before the next opens
 - [ ] rescan re-links imdb using the builtin imdb id finder (see: Blender Sourcepath)
 - [ ] "Trace" Loglevel is not recognized when starting in PROD mode
 - [ ] items which have a scan error skew the next scan's time-per-item
