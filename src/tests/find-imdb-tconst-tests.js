@@ -74,7 +74,7 @@ async function benchmark(filePath) {
 
   let counter = 0;
 
-  let resultTable = `fileName\tfullName\tchosenName\tresult_tconst\tresult_type\tresult_title\tresult_year\tsearchAPI\tchoiceType\ttconstIncluded\tnumResults\tnumResultsFiltered\tisTconstCorrect\n`;
+  let resultTable = `fileName\tfullName\tchosenName\tresult_tconst\tresult_type\tresult_title\tresult_year\tsearchAPI\tchoiceType\ttconstIncluded\tnumResults\tnumResultsFiltered\truntimeDiff\tisTconstCorrect\n`;
 
   for (let line of fileContent) {
     counter++;
@@ -141,10 +141,11 @@ async function benchmark(filePath) {
       tconstIncluded: stats.tconstIncluded,
       numResults: stats.numResults,
       numResultsFiltered: stats.numResultsFiltered,
+      runtimeDiff: stats.runtimeDiff === -1337 ? "N/A" : stats.runtimeDiff,
       isTconstCorrect: stats.isTconstCorrect,
     };
 
-    resultTable += `${statsFlattened.fileName}\t${statsFlattened.fullName}\t${statsFlattened.chosenName}\t${statsFlattened.result_tconst}\t${statsFlattened.result_type}\t${statsFlattened.result_title}\t${statsFlattened.result_year}\t${statsFlattened.searchAPI}\t${statsFlattened.choiceType}\t${statsFlattened.tconstIncluded}\t${statsFlattened.numResults}\t${statsFlattened.numResultsFiltered}\t${statsFlattened.isTconstCorrect}\n`;
+    resultTable += `${statsFlattened.fileName}\t${statsFlattened.fullName}\t${statsFlattened.chosenName}\t${statsFlattened.result_tconst}\t${statsFlattened.result_type}\t${statsFlattened.result_title}\t${statsFlattened.result_year}\t${statsFlattened.searchAPI}\t${statsFlattened.choiceType}\t${statsFlattened.tconstIncluded}\t${statsFlattened.numResults}\t${statsFlattened.numResultsFiltered}\t${statsFlattened.runtimeDiff}\t${statsFlattened.isTconstCorrect}\n`;
   }
 
   const resultCSV = `tconst-benchmark-results-${new Date()

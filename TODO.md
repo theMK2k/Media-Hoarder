@@ -2,8 +2,7 @@
 
 ## v1.0.0
 
-- [ ] tconst tests:
-  - add --preloadRuntime option, so that for each movie the runtime gets loaded from IMDB and fed to the tconst scraper
+- [ ] tconst benchmark: find out if failed ones do have a large enough runtime diff
 - [ ] refactor
   - [x] use find-imdb-tconst.js and remove functions from store
   - [ ] find proper place for imdb-scraper.js, find-imdb-tconst.js

@@ -104,6 +104,7 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
     choiceType: null,
     numResults: null,
     numResultsFiltered: null,
+    runtimeDiff: -1337,
 
     immediateOptimum: false,
     yearmatch: false,
@@ -216,6 +217,12 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
 
             if (result.runtimeDiff !== null) {
               stats.runtimematch = true;
+              if (
+                stats.runtimeDiff === -1337 ||
+                stats.runtimeDiff > result.runtimeDiff
+              ) {
+                stats.runtimeDiff = result.runtimeDiff;
+              }
             }
 
             if (result.runtimeDiff < movie.MI_Duration_Seconds * 0.02) {
