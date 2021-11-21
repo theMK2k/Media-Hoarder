@@ -2,13 +2,11 @@
 
 ## v1.0.0
 
-- [ ] tconst benchmark: find out if failed ones do have a large enough runtime diff
-- [ ] refactor
-  - [x] use find-imdb-tconst.js and remove functions from store
-  - [ ] find proper place for imdb-scraper.js, find-imdb-tconst.js
-  - [ ] identify other functions in store.js which don't really belong there
-  - [ ] provide util.promisified stuff in helpers.js and use it exclusively from there
 - [ ] allow unlinking in relink dialog
+  - tbl_Movies.isUnlinkedIMDB (make use of this field, where appropriate)
+    - unlinked movies should not detect tconst automatically (also check handling of real duplicates!)
+    - on explicit rescan (at the movie): don't use it
+    - on fast/complete rescan of multiple movies: use it
 - [ ] allow imdbid in relink dialog
 - [ ] Test mediainfo and VLC in Linux/MacOS (we now use "" in the exec)
 
@@ -17,7 +15,7 @@
 - [ ] rescan re-links imdb using the builtin imdb id finder (see: Blender Sourcepath)
 - [ ] "Trace" Loglevel is not recognized when starting in PROD mode
 - [ ] items which have a scan error skew the next scan's time-per-item
-- [ ] first scanned item shows 1s of remaining time (better not show anything or guess)
+- [ ] first scanned item shows 1s of remaining time (better not show anything or guesstimate)
 
 ### Other
 
@@ -117,6 +115,11 @@
 
 ### Other (later)
 
+- [ ] refactor
+  - [x] use find-imdb-tconst.js and remove functions from store
+  - [ ] find proper place for imdb-scraper.js, find-imdb-tconst.js
+  - [ ] identify other functions in store.js which don't really belong there
+  - [ ] provide util.promisified stuff in helpers.js and use it exclusively from there
 - [ ] handle helpers.isPortable via env-var (get rid of set-portable.js)
 - [ ] add a new rescan method: "rescan entries with errors"
 - [ ] layout the app with css grid (see: <https://layout.bradwoods.io/customize>)

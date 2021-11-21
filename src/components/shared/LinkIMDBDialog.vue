@@ -9,9 +9,28 @@
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">
-          {{ $t("Link with IMDB entry") }}
+          <v-row style="margin: 0px">
+            {{ $t("Link with IMDB entry") }}
+            <v-spacer />
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <span v-on="on">
+                  <v-btn
+                    v-if="showUnlink"
+                    text
+                    color="error"
+                    v-on:click.stop="onUnlinkClick()"
+                    >{{ $t("UNLINK") }}</v-btn
+                  >
+                </span>
+              </template>
+              <span>{{
+                $t("Remove the link to the current IMDB entry for this medium_")
+              }}</span>
+            </v-tooltip>
+          </v-row>
         </div>
-        <v-row style="padding-left: 16px; margin-bottom: 8px">
+        <v-row style="padding-left: 16px; margin-bottom: 24px">
           <v-text-field
             :append-icon-cb="() => {}"
             v-bind:placeholder="`${$t('Enter a title')}...`"
@@ -151,7 +170,7 @@ const logger = require("../../helpers/logger");
 import { eventBus } from "@/main";
 
 export default {
-  props: ["show"],
+  props: ["show", "showUnlink"],
 
   data() {
     return {
@@ -326,6 +345,14 @@ export default {
       this.isLinking = true;
 
       this.$emit("selected", item.tconst);
+    },
+
+    onUnlinkClick() {
+      logger.log("[onUnlinkClick]");
+
+      this.isLinking = true;
+
+      this.$emit("unlink");
     },
 
     setItemHovered(item, section, value) {

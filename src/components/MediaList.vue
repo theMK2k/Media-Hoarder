@@ -1148,9 +1148,11 @@
     <mk-link-imdb-dialog
       ref="linkIMDBDialog"
       v-bind:show="linkIMDBDialog.show"
+      v-bind:showUnlink="linkIMDBDialog.showUnlink"
       v-bind:filePath="linkIMDBDialog.filePath"
       v-on:close="onLinkIMDBDialogClose"
       v-on:selected="onLinkIMDBDialogSelected"
+      v-on:unlink="onLinkIMDBDialogUnlink"
     ></mk-link-imdb-dialog>
 
     <mk-rating-demographics-dialog
@@ -1347,6 +1349,7 @@ export default {
 
     linkIMDBDialog: {
       show: false,
+      showUnlink: false,
       item: {},
     },
 
@@ -2558,6 +2561,7 @@ export default {
       this.$refs.linkIMDBDialog.init();
       this.linkIMDBDialog.filePath = item.fullPath;
       this.linkIMDBDialog.item = item;
+      this.linkIMDBDialog.showUnlink = !!item.IMDB_tconst;
       this.linkIMDBDialog.show = true;
     },
 
@@ -2586,6 +2590,26 @@ export default {
         this.onLinkIMDBDialogClose();
       } catch (err) {
         logger.log("[onLinkIMDBDialogSelected] error:", JSON.stringify(err));
+        eventBus.showSnackbar("error", err);
+      }
+    },
+
+    async onLinkIMDBDialogUnlink() {
+      try {
+        store.resetUserScanOptions();
+
+        await store.deleteIMDBData(this.linkIMDBDialog.item.id_Movies);
+
+        eventBus.refetchMedia(this.$shared.currentPage);
+
+        eventBus.showSnackbar(
+          "success",
+          this.$t("entry unlinked successfully")
+        );
+
+        this.onLinkIMDBDialogClose();
+      } catch (err) {
+        logger.log("[onLinkIMDBDialogUnlink] error:", JSON.stringify(err));
         eventBus.showSnackbar("error", err);
       }
     },

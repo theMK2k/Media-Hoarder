@@ -419,6 +419,9 @@ export default {
         );
       }
 
+      // /!\ Important /!\
+      // If new fields are added to this dialog, also enhance store.deleteIMDBData
+
       // store fields that have been (re-)defined by the user
       let definedByUser = await store.fetchMovieFieldsDefinedByUser(
         this.mediaItem.id_Movies

@@ -967,5 +967,8 @@
   "Find (Ad-Hoc)": "Suche (Ad-Hoc)",
   "Edit Filters": "Filter Bearbeiten",
   "Show/Hide this filter": "Diesen Filter Ein-/Ausblenden",
-  "IMDB ID": "IMDB ID"
+  "IMDB ID": "IMDB ID",
+  "UNLINK": "VERKNÜPFUNG ENTFERNEN",
+  "Remove the link to the current IMDB entry for this medium_": "Entfernt die Verknüpfung mit IMDB Daten für dieses Medium.",
+  "entry unlinked successfully": "Verknüpfung erfolgreich entfernt"
 }

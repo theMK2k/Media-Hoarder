@@ -891,5 +891,8 @@
   "Find (Ad-Hoc)": "Find (Ad-Hoc)",
   "Edit Filters": "Edit Filters",
   "Show/Hide this filter": "Show/Hide this filter",
-  "IMDB ID": "IMDB ID"
+  "IMDB ID": "IMDB ID",
+  "UNLINK": "UNLINK",
+  "Remove the link to the current IMDB entry for this medium_": "Remove the link to the current IMDB entry for this medium.",
+  "entry unlinked successfully": "entry unlinked successfully"
 }

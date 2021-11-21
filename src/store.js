@@ -2267,6 +2267,94 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
   }
 }
 
+/**
+ * Removes all IMDB Data from a certain movie
+ * @param {String} $id_Movies
+ */
+async function deleteIMDBData($id_Movies) {
+  const rowsMovie = await db.fireProcedureReturnAll(
+    "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
+    { $id_Movies }
+  );
+  const movie = rowsMovie[0];
+  movie.DefinedByUser = movie.DefinedByUser || "";
+
+  let colsMovieIMDB = "";
+  Object.keys(movie).forEach((col) => {
+    if (col.startsWith("IMDB")) {
+      colsMovieIMDB += `${colsMovieIMDB ? ", " : ""}${col} = NULL`;
+    }
+  });
+
+  const sqlMoviesIMDBCols = `UPDATE tbl_Movies SET ${colsMovieIMDB} WHERE id_Movies = $id_Movies`;
+  logger.log("[deleteIMDBData] sqlMoviesIMDBCols:", sqlMoviesIMDBCols);
+  await db.fireProcedure(sqlMoviesIMDBCols, { $id_Movies });
+
+  if (!movie.DefinedByUser.includes("|Name|")) {
+    const $Name = movie.isDirectoryBased
+      ? helpers.getMovieNameFromDirectory(
+          path.join(movie.SourcePath, movie.RelativeDirectory)
+        )
+      : helpers.getMovieNameFromFileName(movie.Filename);
+
+    const sqlMovieName = `UPDATE tbl_Movies SET Name = $Name WHERE id_Movies = $id_Movies`;
+    logger.log(
+      "[deleteIMDBData] sqlMovieNames $Name:",
+      $Name,
+      "sqlMovieNames:",
+      sqlMovieName
+    );
+    await db.fireProcedure(sqlMovieName, { $id_Movies, $Name });
+  }
+
+  if (!movie.DefinedByUser.includes("|Name2|")) {
+    const sqlMoviesName2 = `UPDATE tbl_Movies SET Name2 = NULL WHERE id_Movies = $id_Movies`;
+    logger.log("[deleteIMDBData] sqlMoviesName2:", sqlMoviesName2);
+    await db.fireProcedure(sqlMoviesName2, { $id_Movies });
+  }
+
+  if (!movie.DefinedByUser.includes("|plotSummaryFull|")) {
+    const sqlMoviePlotSummary = `UPDATE tbl_Movies SET plotSummary = NULL, plotSummaryFull = NULL WHERE id_Movies = $id_Movies`;
+    logger.log("[deleteIMDBData] sqlMoviePlotSummary:", sqlMoviePlotSummary);
+    await db.fireProcedure(sqlMoviePlotSummary, { $id_Movies });
+  }
+
+  if (!movie.DefinedByUser.includes("|startYear|")) {
+    const sqlMovieStartYear = `UPDATE tbl_Movies SET startYear = NULL WHERE id_Movies = $id_Movies`;
+    logger.log("[deleteIMDBData] sqlMovieStartYear:", sqlMovieStartYear);
+    await db.fireProcedure(sqlMovieStartYear, { $id_Movies });
+  }
+
+  if (!movie.DefinedByUser.includes("|Genres|")) {
+    const sqlMoviesGenres = `DELETE FROM tbl_Movies_Genres WHERE id_Movies = $id_Movies`;
+    logger.log("[deleteIMDBData] sqlMoviesGenres:", sqlMoviesGenres);
+    await db.fireProcedure(sqlMoviesGenres, { $id_Movies });
+  }
+
+  await db.fireProcedure(
+    "DELETE FROM tbl_Movies_IMDB_Companies WHERE id_Movies = $id_Movies",
+    { $id_Movies }
+  );
+  await db.fireProcedure(
+    "DELETE FROM tbl_Movies_IMDB_Credits WHERE id_Movies = $id_Movies",
+    { $id_Movies }
+  );
+  await db.fireProcedure(
+    "DELETE FROM tbl_Movies_IMDB_Filming_Locations WHERE id_Movies = $id_Movies",
+    { $id_Movies }
+  );
+  await db.fireProcedure(
+    "DELETE FROM tbl_Movies_IMDB_Plot_Keywords WHERE id_Movies = $id_Movies",
+    { $id_Movies }
+  );
+
+  // mark as "isUnlinkedIMDB" to prevent rescan doing a tconst detection
+  await db.fireProcedure(
+    "UPDATE tbl_Movies SET isUnlinkedIMDB = 1 WHERE id_Movies = $id_Movies",
+    { $id_Movies }
+  );
+}
+
 async function saveIMDBData(
   movie,
   IMDBdata,
@@ -2276,6 +2364,7 @@ async function saveIMDBData(
   plotKeywords,
   filmingLocations
 ) {
+  logger.log("[saveIMDBData] START");
   const definedByUser = getFieldsDefinedByUser(movie.DefinedByUser);
 
   const IMDB_genres = IMDBdata.$IMDB_genres || [];
@@ -7418,4 +7507,5 @@ export {
   updateMovieReleaseAttribues,
   fetchMovieFieldsDefinedByUser,
   getFieldsDefinedByUser,
+  deleteIMDBData,
 };
