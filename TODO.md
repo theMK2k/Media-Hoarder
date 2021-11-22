@@ -4,6 +4,7 @@
 
 - [WIP] Test mediainfo and VLC in Linux/MacOS (we now use "" in the exec)
 - [ ] MediaInfo: check if more info could be beneficial (audio types?)
+  - store media info object as MI_Object in tbl_Movies
 
 ### Bugs
 

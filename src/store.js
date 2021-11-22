@@ -1639,11 +1639,13 @@ async function applyMediaInfo(movie, onlyNew) {
       $MI_Aspect_Ratio: null,
       $MI_Audio_Languages: "",
       $MI_Subtitle_Languages: "",
+      $MI_Object: null,
     };
 
     const miObj = await xml2js.parseStringPromise(stdout);
+    MI.$MI_Object = JSON.stringify(miObj);
 
-    logger.log("[applyMediaInfo] miObj:", miObj);
+    // logger.log("[applyMediaInfo] miObj:", miObj);
 
     let tracks = [];
 
@@ -1816,6 +1818,7 @@ async function applyMediaInfo(movie, onlyNew) {
 				, MI_Aspect_Ratio = $MI_Aspect_Ratio
 				, MI_Audio_Languages = $MI_Audio_Languages
 				, MI_Subtitle_Languages = $MI_Subtitle_Languages
+        , MI_Object = $MI_Object
 			WHERE id_Movies = $id_Movies
 			`,
       MI
