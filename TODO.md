@@ -2,7 +2,8 @@
 
 ## v1.0.0
 
-- [ ] Test mediainfo and VLC in Linux/MacOS (we now use "" in the exec)
+- [WIP] Test mediainfo and VLC in Linux/MacOS (we now use "" in the exec)
+- [ ] MediaInfo: check if more info could be beneficial (audio types?)
 
 ### Bugs
 
