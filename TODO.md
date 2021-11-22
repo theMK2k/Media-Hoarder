@@ -2,13 +2,11 @@
 
 ## v1.0.0
 
-- [ ] allow imdbid in relink dialog
 - [ ] Test mediainfo and VLC in Linux/MacOS (we now use "" in the exec)
 
 ### Bugs
 
-- [ ] take tconst search into rescanETA account
-- [ ] items which have a scan error skew the next scan's time-per-item
+- nothing
 
 ### Other
 
@@ -108,6 +106,8 @@
 
 ### Other (later)
 
+- [ ] items which have a scan error skew the next scan's time-per-item
+- [ ] allow imdbid in relink dialog
 - [ ] refactor
   - [x] use find-imdb-tconst.js and remove functions from store
   - [ ] find proper place for imdb-scraper.js, find-imdb-tconst.js
