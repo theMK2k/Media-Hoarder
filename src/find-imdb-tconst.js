@@ -166,6 +166,17 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
             1
           );
         }
+        while (
+          results.find((result) => result.title.includes("(TV Episode)"))
+        ) {
+          stats.excludedTVSeries = true;
+          results.splice(
+            results.findIndex((result) =>
+              result.title.includes("(TV Episode)")
+            ),
+            1
+          );
+        }
       }
 
       // filter by year match
@@ -235,9 +246,23 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
 
         if (stats.runtimematch) {
           // sort results by runtimeDiff
+          logger.log(
+            "[findIMDBtconstByFileOrDirname] results before sort:",
+            JSON.stringify(results, null, 2)
+          );
+
           results.sort((a, b) => {
-            return b.runtimeDiff === null ? -1 : a.runtimeDiff - b.runtimeDiff;
+            return a.runtimeDiff === null
+              ? 1
+              : b.runtimeDiff === null
+              ? -1
+              : a.runtimeDiff - b.runtimeDiff;
           });
+
+          logger.log(
+            "[findIMDBtconstByFileOrDirname] runtime sorted results:",
+            results
+          );
 
           results = [results[0]]; // take the first
         }
