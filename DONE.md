@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [X] store media info object as MI_Object in tbl_Movies
 - [X] allow unlinking in relink dialog
   - tbl_Movies.isUnlinkedIMDB (make use of this field, where appropriate)
     - unlinked movies should not detect tconst automatically (also check handling of real duplicates!)
