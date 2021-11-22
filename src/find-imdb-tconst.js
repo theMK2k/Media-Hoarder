@@ -278,6 +278,7 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
         stats.choiceType = `fallback${coiceType}`;
       }
 
+      logger.log("[findIMDBtconstByFileOrDirname] stats:", stats);
       return options.returnAnalysisData ? stats : results[0].tconst;
     }
   } catch (err) {

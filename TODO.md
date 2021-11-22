@@ -2,20 +2,13 @@
 
 ## v1.0.0
 
-- [ ] allow unlinking in relink dialog
-  - tbl_Movies.isUnlinkedIMDB (make use of this field, where appropriate)
-    - unlinked movies should not detect tconst automatically (also check handling of real duplicates!)
-    - on explicit rescan (at the movie): don't use it
-    - on fast/complete rescan of multiple movies: use it
 - [ ] allow imdbid in relink dialog
 - [ ] Test mediainfo and VLC in Linux/MacOS (we now use "" in the exec)
 
 ### Bugs
 
-- [ ] rescan re-links imdb using the builtin imdb id finder (see: Blender Sourcepath)
-- [ ] "Trace" Loglevel is not recognized when starting in PROD mode
+- [ ] take tconst search into rescanETA account
 - [ ] items which have a scan error skew the next scan's time-per-item
-- [ ] first scanned item shows 1s of remaining time (better not show anything or guesstimate)
 
 ### Other
 

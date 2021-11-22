@@ -4316,6 +4316,7 @@ export default {
       this.scanInfo.header = this.scanInfo.headerOriginal.replace(
         "{remainingTimeDisplay}",
         this.scanInfo.rescanETA &&
+          this.scanInfo.rescanETA.show &&
           typeof this.scanInfo.rescanETA.timeRemaining === "number"
           ? `(${helpers.getTimeString(this.scanInfo.rescanETA.timeRemaining)})`
           : ""
@@ -4381,11 +4382,10 @@ export default {
         headerOriginal: headerOriginal,
         header: headerOriginal.replace(
           "{remainingTimeDisplay}",
-          this.scanInfo.rescanETA &&
-            typeof this.scanInfo.rescanETA.timeRemaining === "number"
-            ? `(${helpers.getTimeString(
-                this.scanInfo.rescanETA.timeRemaining
-              )})`
+          rescanETA &&
+            rescanETA.show &&
+            typeof rescanETA.timeRemaining === "number"
+            ? `(${helpers.getTimeString(rescanETA.timeRemaining)})`
             : ""
         ),
         details,

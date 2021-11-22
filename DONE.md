@@ -8,6 +8,12 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [X] allow unlinking in relink dialog
+  - tbl_Movies.isUnlinkedIMDB (make use of this field, where appropriate)
+    - unlinked movies should not detect tconst automatically (also check handling of real duplicates!)
+    - on explicit rescan (at the movie): don't use it
+    - on fast/complete rescan of multiple movies: use it
+- [X] first scanned item shows 1s of remaining time (better not show anything or guesstimate)
 - [x] some log groups do not close before the next opens
 - [x] write cli tests and optimize findIMDBtconst
   - [x] do a hybrid search to find imdb tconst (advanced title search, find etc.)

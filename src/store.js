@@ -58,6 +58,7 @@ const isBuild = process.env.NODE_ENV === "production";
 let rescanAddedMovies = 0;
 
 let rescanETA = {
+  show: false,
   counter: null,
   numItems: null,
   elapsedMS: null,
@@ -286,6 +287,7 @@ async function fetchSourcePaths() {
 
 async function rescan(onlyNew, $t) {
   rescanETA = {
+    show: false,
     counter: null,
     numItems: null,
     elapsedMS: null,
@@ -392,11 +394,6 @@ async function rescanHandleDuplicates() {
             )
           )[0]
         : null;
-
-    // relink IMDB is alread handled by findIMDBtconst
-    // if (shared.duplicatesHandling.actualDuplicate.relinkIMDB && currentMovie.IMDB_tconst && actualDuplicate.IMDB_tconst && currentMovie.IMDB_tconst !== actualDuplicate.IMDB_tconst) {
-    //   await assignIMDB($id_Movies, actualDuplicate.IMDB_tconst, true, true);
-    // }
 
     // addToList
     if (
@@ -1437,6 +1434,7 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
         , MOV.isDirectoryBased
         , SP.Path AS SourcePath
         , MOV.DefinedByUser
+        , MOV.isUnlinkedIMDB
       FROM tbl_Movies MOV
       INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
 			WHERE 
@@ -1464,6 +1462,7 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
     []
   );
 
+  rescanETA.show = false;
   rescanETA.numItems = movies.length;
   rescanETA.counter = 0;
   rescanETA.elapsedMS = 0;
@@ -1515,7 +1514,9 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
         rescanETA
       );
 
-      await findIMDBtconst(movie, onlyNew);
+      if (!movie.isUnlinkedIMDB) {
+        await findIMDBtconst(movie, onlyNew, rescanETA, $t);
+      }
     }
 
     if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData) {
@@ -1580,6 +1581,7 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
       )
     )})`;
     rescanETA.progressPercent = 100 * (rescanETA.counter / rescanETA.numItems);
+    rescanETA.show = true;
   }
 
   eventBus.scanInfoOff();
@@ -1841,7 +1843,7 @@ async function applyMediaInfo(movie, onlyNew) {
   }
 }
 
-async function findIMDBtconst(movie, onlyNew) {
+async function findIMDBtconst(movie, onlyNew, rescanETA, $t) {
   // find IMDB tconst
   // save IMDB_tconst to db
   logger.log("[findIMDBtconst] START");
@@ -1849,6 +1851,13 @@ async function findIMDBtconst(movie, onlyNew) {
   if (onlyNew && movie.IMDB_Done) {
     return;
   }
+
+  eventBus.scanInfoShow(
+    // TODO: here
+    `${$t("Rescanning Movies")} {remainingTimeDisplay}`,
+    `${movie.Name || movie.Filename} (${$t("detecting IMDB entry")})`,
+    rescanETA
+  );
 
   try {
     const scanErrorsString = await db.fireProcedureReturnScalar(
@@ -2358,7 +2367,7 @@ async function deleteIMDBData($id_Movies) {
 async function saveIMDBData(
   movie,
   IMDBdata,
-  genres,
+  genres, // TODO: still needed?
   credits,
   companies,
   plotKeywords,
@@ -2372,12 +2381,13 @@ async function saveIMDBData(
   logger.log("[saveIMDBData] IMDB_genres:", IMDB_genres);
 
   // consider IMDB_Done only if at least the imdb main page has been scraped and no errors occured during the process
-  let sql = `IMDB_Done = ${
-    !getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_mainPageData")
-      .enabled || Object.keys(movie.scanErrors).length > 0
-      ? "0"
-      : "1"
-  }, scanErrors = $scanErrors`;
+  let sql = `isUnlinkedIMDB = 0
+    , IMDB_Done = ${
+      !getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_mainPageData")
+        .enabled || Object.keys(movie.scanErrors).length > 0
+        ? "0"
+        : "1"
+    }, scanErrors = $scanErrors`;
   Object.keys(IMDBdata).forEach((key) => {
     sql += `, [${key.replace("$", "")}] = ${key}`;
   });
@@ -3643,6 +3653,7 @@ async function fetchMedia(
       , MOV.RelativePath
       , MOV.RelativeDirectory
       , MI_Duration_Formatted
+      , MI_Duration_Seconds
       , IMDB_runtimeMinutes
       , AR.Age
       , MOV.IMDB_MinAge
@@ -5881,11 +5892,19 @@ async function assignIMDB(
     movie
   );
 
+  // rescan IMDB Metadata
+  if (!noEventBus) {
+    eventBus.rescanStarted();
+  }
+
   if (!$IMDB_tconst && movie) {
-    $IMDB_tconst = await findIMDBtconst(movie, false);
+    $IMDB_tconst = await findIMDBtconst(movie, false, null, $t);
   }
 
   if (!$IMDB_tconst) {
+    if (!noEventBus) {
+      eventBus.rescanStopped();
+    }
     return;
   }
 
@@ -5893,11 +5912,6 @@ async function assignIMDB(
     `UPDATE tbl_Movies SET IMDB_tconst = $IMDB_tconst WHERE id_Movies = $id_Movies`,
     { $id_Movies, $IMDB_tconst }
   );
-
-  // rescan IMDB Metadata
-  if (!noEventBus) {
-    eventBus.rescanStarted();
-  }
 
   await rescanMoviesMetaData(false, $id_Movies, $t);
   await applyMetaData(false, $id_Movies);
