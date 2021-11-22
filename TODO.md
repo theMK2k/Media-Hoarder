@@ -3,7 +3,9 @@
 ## v1.0.0
 
 - [WIP] Test mediainfo and VLC in Linux/MacOS (we now use "" in the exec)
-
+  - Win: OK
+  - Linux: OK
+  - MacOS: ??
 
 ### Bugs
 
