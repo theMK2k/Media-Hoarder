@@ -1242,7 +1242,7 @@ export default {
     sortAbles: [
       {
         Field: "Name",
-        Description: "Name",
+        Description: "Title",
       },
       {
         Field: "IMDB_rating_default",
