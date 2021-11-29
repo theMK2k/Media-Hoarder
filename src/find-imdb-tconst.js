@@ -114,7 +114,12 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
   };
 
   try {
-    const arrYears = helpers.getYearsFromFileName(movie.Filename, false); // TODO: also directoryName (if movie.isDirectoryBased)
+    const arrYears = movie.isDirectoryBased
+      ? helpers.getYearsFromFileName(
+          helpers.getLastDirectoryName(movie.fullDirectory),
+          false
+        ) // TODO: test this!
+      : helpers.getYearsFromFileName(movie.Filename, false);
 
     const name = (
       movie.isDirectoryBased

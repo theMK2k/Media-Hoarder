@@ -7,6 +7,8 @@
   - Linux: OK
   - MacOS: ??
 
+- eliminate TODO/KILLME entries in code
+
 ### Bugs
 
 - nothing
