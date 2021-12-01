@@ -93,7 +93,12 @@ Object.keys(messages).forEach((key) => {
   }
 });
 
-// any other locale should have at least the keys, that "en" has
+/**
+ * check that
+ * - any other locale should have at least the keys, that "en" has
+ * - content does not include "_"
+ * @param {Object} messages
+ */
 function validateMessages(messages) {
   Object.keys(messages).forEach((locale) => {
     if (locale === "en") {
