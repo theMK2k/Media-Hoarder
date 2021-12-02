@@ -19,8 +19,8 @@
   "Scan Media": "Scanner Médias",
   "Cancel Scan": "Annuler Scan",
   "Filters": "Filtres",
-  "SET NONE": "NE RIEN SELECTIONNER",
-  "SET ALL": "TOUT SELECTIONNER",
+  "Clear Selection": "fr: Ne rien selectionner",
+  "Select All": "Tout selectionner",
   "Video Quality": "Qualité vidéo",
   "Audio Languages": "Langues audio",
   "Subtitle Languages": "Langue des sous-titres",
@@ -968,5 +968,6 @@
   "Find (Ad-Hoc)": "Rechercher (Ad-Hoc)",
   "Edit Filters": "fr: Edit Filters",
   "Show/Hide this filter": "fr: Show/Hide this filter",
-  "IMDB ID": "IMDB ID"
+  "IMDB ID": "IMDB ID",
+  "Reset Filters": "fr: Filter Zurücksetzen"
 }

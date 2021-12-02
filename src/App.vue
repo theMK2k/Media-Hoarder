@@ -80,17 +80,17 @@
           >
             {{ $t("Filters") }}
             <v-spacer></v-spacer>
-            <v-btn
-              v-if="filterHeaderHovered && !editFilters.isEditFilters"
-              text
-              v-on:click="onResetFilters"
-              >{{ $t("RESET") }}</v-btn
-            >
-
-            <v-tooltip
-              v-if="filterHeaderHovered && !editFilters.isEditFilters"
-              bottom
-            >
+            <v-tooltip v-if="!editFilters.isEditFilters" bottom>
+              <template v-slot:activator="{ on }">
+                <span v-on="on">
+                  <v-btn text v-on:click="onResetFilters"
+                    ><v-icon>mdi-restore</v-icon></v-btn
+                  >
+                </span>
+              </template>
+              <span>{{ $t("Reset Filters") }}</span>
+            </v-tooltip>
+            <v-tooltip v-if="!editFilters.isEditFilters" bottom>
               <template v-slot:activator="{ on }">
                 <span v-on="on">
                   <v-btn text v-on:click="onEditFilters"
@@ -216,7 +216,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET NONE") }}</span>
+                        <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -230,7 +230,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET ALL") }}</span>
+                        <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                     </v-row>
                     <v-checkbox
@@ -332,7 +332,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET NONE") }}</span>
+                        <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -346,7 +346,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET ALL") }}</span>
+                        <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                     </v-row>
                     <v-checkbox
@@ -455,7 +455,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET NONE") }}</span>
+                        <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -469,7 +469,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET ALL") }}</span>
+                        <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                     </v-row>
                     <v-checkbox
@@ -579,7 +579,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET NONE") }}</span>
+                        <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -593,7 +593,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET ALL") }}</span>
+                        <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                     </v-row>
                     <v-checkbox
@@ -709,7 +709,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET NONE") }}</span>
+                        <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -723,7 +723,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET ALL") }}</span>
+                        <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                     </v-row>
                     <v-switch
@@ -839,7 +839,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET NONE") }}</span>
+                        <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -853,7 +853,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET ALL") }}</span>
+                        <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                     </v-row>
                     <v-row
@@ -970,7 +970,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET NONE") }}</span>
+                        <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -984,7 +984,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET ALL") }}</span>
+                        <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                     </v-row>
                     <v-checkbox
@@ -1282,7 +1282,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET NONE") }}</span>
+                        <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -1296,7 +1296,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET ALL") }}</span>
+                        <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                     </v-row>
                     <v-switch
@@ -1403,7 +1403,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET NONE") }}</span>
+                        <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -1417,7 +1417,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET ALL") }}</span>
+                        <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                     </v-row>
                     <v-checkbox
@@ -1553,7 +1553,7 @@
                                   </v-btn>
                                 </span>
                               </template>
-                              <span>{{ $t("SET NONE") }}</span>
+                              <span>{{ $t("Clear Selection") }}</span>
                             </v-tooltip>
                             <v-tooltip bottom style="z-index: 21">
                               <template v-slot:activator="{ on }">
@@ -1571,7 +1571,7 @@
                                   </v-btn>
                                 </span>
                               </template>
-                              <span>{{ $t("SET ALL") }}</span>
+                              <span>{{ $t("Select All") }}</span>
                             </v-tooltip>
                           </v-row>
                           <v-row
@@ -1688,7 +1688,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET NONE") }}</span>
+                        <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -1702,7 +1702,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET ALL") }}</span>
+                        <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -1851,7 +1851,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET NONE") }}</span>
+                        <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -1865,7 +1865,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET ALL") }}</span>
+                        <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -2010,7 +2010,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET NONE") }}</span>
+                        <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -2024,7 +2024,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET ALL") }}</span>
+                        <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -2177,7 +2177,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET NONE") }}</span>
+                        <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -2191,7 +2191,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET ALL") }}</span>
+                        <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -2354,7 +2354,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET NONE") }}</span>
+                        <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -2368,7 +2368,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET ALL") }}</span>
+                        <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -2528,7 +2528,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET NONE") }}</span>
+                        <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -2542,7 +2542,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET ALL") }}</span>
+                        <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                     </v-row>
                     <v-switch

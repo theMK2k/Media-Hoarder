@@ -27,7 +27,7 @@
     - [x] filter losely by year
     - [x] filter strictly by year
     - [x] take the runtime (MediaInfo vs. IMDB) into account if multiple results come up
-- [x] Filters: "Select All", "Select None", "Search": use icons
+- [x] Filters: "Select All", "Clear Selection", "Search": use icons
 - [x] Layout: delete button in sidebar filters
 - [x] (My) List Dialog: preselection should be the last selected list
 - [x] languages from tbl_Movies_Languages are not taken into account for the Media List
@@ -41,7 +41,7 @@
 - [x] "long click" checkbox filter isolation
 - [x] Fix: Crash/White Screen on startup when malformed i18n file is present
 - [x] "Add to list" takes considerable time to finally show the list entry in the movie's entry
-- [x] App: filter item isolation (click a filter item where all other items are true: set all items false but the clicked one)
+- [x] App: filter item isolation (click a filter item where all other items are true: Select All items false but the clicked one)
 - [x] Search Data Dialog: do in-client sort by numMovies
 - [x] Search Data Dialog: use "*" as placeholder
 - [x] "load animate" only the filter that is currently loading
@@ -751,7 +751,7 @@ Dialog.vue
 - [x] person dialog: fix photo url
 - [x] (hot reload) search filter is active but not shown in search text box
 - [x] MediaList: disable "IMDB relink" button when scan is in progress
-- [x] IMDB Scraper: on a German IP, we still get the German title as Primary Title even though we set all languages to English
+- [x] IMDB Scraper: on a German IP, we still get the German title as Primary Title even though we Select All languages to English
   - [x] use "Accept-Language": "en" header on all calls to IMDB
 - [x] Linux version doesn't fetch data / endless loop? (in our test VM)
   - [x] test in livecd (successful, fetch from web is working as expected)

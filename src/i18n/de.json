@@ -18,8 +18,8 @@
   "Scan Media": "Medien Einlesen",
   "Cancel Scan": "Einlesen Abbrechen",
   "Filters": "Filter",
-  "SET NONE": "AUSWAHL AUFHEBEN",
-  "SET ALL": "ALLE AUSWÄHLEN",
+  "Clear Selection": "Auswahl Aufheben",
+  "Select All": "Alle Auswählen",
   "Video Quality": "Videoqualität",
   "Audio Languages": "Audiosprachen",
   "Subtitle Languages": "Untertitelsprachen",
@@ -970,5 +970,6 @@
   "IMDB ID": "IMDB ID",
   "UNLINK": "VERKNÜPFUNG ENTFERNEN",
   "Remove the link to the current IMDB entry for this medium_": "Entfernt die Verknüpfung mit IMDB Daten für dieses Medium.",
-  "entry unlinked successfully": "Verknüpfung erfolgreich entfernt"
+  "entry unlinked successfully": "Verknüpfung erfolgreich entfernt",
+  "Reset Filters": "Filter Zurücksetzen"
 }

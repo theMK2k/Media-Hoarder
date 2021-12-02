@@ -6915,7 +6915,7 @@ function resetFilters(objFilter) {
     }
 
     if (key === "filterSettings") {
-      logger.log('  is "filterSettings" -> set all of them to "false"');
+      logger.log('  is "filterSettings" -> Select All of them to "false"');
       Object.keys(objFilter[key]).forEach((subkey) => {
         objFilter[key][subkey] = false;
       });
