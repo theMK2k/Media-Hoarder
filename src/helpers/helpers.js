@@ -161,6 +161,8 @@ function cleanupDirectoryName(directory) {
 }
 
 function getYearsFromFileName(filename, includeEmptyString) {
+  logger.log("[getYearsFromFileName] filename:", filename);
+
   const maxYear = new Date().getFullYear() + 2;
 
   const arrYears = [];

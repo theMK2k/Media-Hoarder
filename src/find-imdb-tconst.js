@@ -86,7 +86,12 @@ export async function findIMDBtconstInNFO(movie) {
  * @returns {String|Object}
  */
 export async function findIMDBtconstByFileOrDirname(movie, options) {
-  logger.log("[findIMDBtconstByFileOrDirname] START movie:", movie);
+  logger.log(
+    "[findIMDBtconstByFileOrDirname] START movie.isDirectoryBased",
+    movie.isDirectoryBased,
+    "movie:",
+    movie
+  );
 
   if (!options) {
     options = {
