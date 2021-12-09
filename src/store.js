@@ -1859,7 +1859,6 @@ async function findIMDBtconst(movie, onlyNew, rescanETA, $t) {
   logger.log("[findIMDBtconst] KILLME1");
 
   eventBus.scanInfoShow(
-    // TODO: here
     `${$t("Rescanning Movies")} {remainingTimeDisplay}`,
     `${movie.Name || movie.Filename} (${$t("detecting IMDB entry")})`,
     rescanETA
@@ -2263,11 +2262,6 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
 
     logger.log("[fetchIMDBdata] IMDBdata:", IMDBdata);
 
-    const genres = await db.fireProcedureReturnAll(
-      "SELECT id_Genres, GenreID, Name FROM tbl_Genres",
-      []
-    );
-
     if (shared.scanOptions.rescanMoviesMetaData_saveIMDBData) {
       eventBus.scanInfoShow(
         $t("Rescanning Movies") + " {remainingTimeDisplay}",
@@ -2278,7 +2272,6 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
       await saveIMDBData(
         movie,
         IMDBdata,
-        genres,
         credits,
         companies,
         plotKeywords,
@@ -2382,7 +2375,6 @@ async function deleteIMDBData($id_Movies) {
 async function saveIMDBData(
   movie,
   IMDBdata,
-  genres, // TODO: still needed?
   credits,
   companies,
   plotKeywords,
@@ -6167,11 +6159,6 @@ async function getIMDBRegions() {
   return regions;
 }
 
-async function addRegions(items) {
-  // TODO: store.addRegions
-  logger.log("[addRegions] TODO: store.addRegions", items);
-}
-
 async function getFallbackRegion() {
   if (!shared.currentLocale) {
     return;
@@ -7344,6 +7331,8 @@ async function verifyIMDBtconst($id_Movies) {
     , IMDB_runtimeMinutes
     , IMDB_startYear
     , Filename
+    , isDirectoryBased
+    , RelativeDirectory
     FROM tbl_Movies WHERE id_Movies = $id_Movies
   `;
 
@@ -7363,8 +7352,7 @@ async function verifyIMDBtconst($id_Movies) {
   movie.scanErrors = movie.scanErrors ? JSON.parse(movie.scanErrors) : {};
   delete movie.scanErrors["IMDB link verification"];
 
-  // TODO: compare runtimes (both must be non-null)
-
+  // compare runtimes (both must be non-null)
   logger.log(
     "[verifyIMDBtconst] movie.IMDB_runtimeMinutes:",
     movie.IMDB_runtimeMinutes
@@ -7396,7 +7384,14 @@ async function verifyIMDBtconst($id_Movies) {
   }
 
   if (!movie.scanErrors["IMDB link verification"] && movie.IMDB_startYear) {
-    const arrYears = helpers.getYearsFromFileName(movie.Filename, false); // TODO: also directoryName (if movie.isDirectoryBased)
+    const arrYears = movie.isDirectoryBased
+      ? helpers.getYearsFromFileName(
+          helpers.getLastDirectoryName(movie.RelativeDirectory),
+          false
+        )
+      : helpers.getYearsFromFileName(movie.Filename, false);
+
+    logger.log("[verifyIMDBtconst] arrYears:", arrYears);
 
     let yearDiff = -1;
     let yearMovie = -1;
@@ -7508,7 +7503,6 @@ export {
   updateMovieAttribute,
   getIMDBRegions,
   getIMDBLanguages,
-  addRegions,
   fetchIMDBTitleTypes,
   getFallbackLanguage,
   fetchLanguageSettings,
