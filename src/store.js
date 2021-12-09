@@ -1849,11 +1849,14 @@ async function applyMediaInfo(movie, onlyNew) {
 async function findIMDBtconst(movie, onlyNew, rescanETA, $t) {
   // find IMDB tconst
   // save IMDB_tconst to db
-  logger.log("[findIMDBtconst] START");
+  logger.log("[findIMDBtconst] START movie:", movie);
 
   if (onlyNew && movie.IMDB_Done) {
+    logger.log("[findIMDBtconst] nothing to do, abort");
     return;
   }
+
+  logger.log("[findIMDBtconst] KILLME1");
 
   eventBus.scanInfoShow(
     // TODO: here
@@ -1862,11 +1865,15 @@ async function findIMDBtconst(movie, onlyNew, rescanETA, $t) {
     rescanETA
   );
 
+  logger.log("[findIMDBtconst] KILLME2");
+
   try {
     const scanErrorsString = await db.fireProcedureReturnScalar(
       `SELECT scanErrors FROM tbl_Movies WHERE id_Movies = $id_Movies`,
       { $id_Movies: movie.id_Movies }
     );
+
+    logger.log("[findIMDBtconst] KILLME3");
 
     movie.scanErrors = scanErrorsString ? JSON.parse(scanErrorsString) : {};
 
@@ -1877,6 +1884,7 @@ async function findIMDBtconst(movie, onlyNew, rescanETA, $t) {
 
     // find tconst by duplicate
     if (shared.duplicatesHandling.actualDuplicate.relinkIMDB) {
+      logger.log("[findIMDBtconst] trying by duplicate");
       const actualDuplicates = await getMovieDuplicates(
         movie.id_Movies,
         true,
@@ -1895,11 +1903,13 @@ async function findIMDBtconst(movie, onlyNew, rescanETA, $t) {
 
       if (actualDuplicate && actualDuplicate.IMDB_tconst) {
         tconst = actualDuplicate.IMDB_tconst;
+        logger.log("[findIMDBtconst] trying by duplicate - FOUND!");
       }
     }
 
     if (!tconst) {
       // tconst not found yet, maybe it's included in the file/directory name
+      logger.log("[findIMDBtconst] checking for file/directory name inclusion");
       tconstIncluded = await findIMDBtconstIncluded(movie);
       if (
         !shared.scanOptions
@@ -1911,6 +1921,7 @@ async function findIMDBtconst(movie, onlyNew, rescanETA, $t) {
 
     if (!tconst) {
       // tconst not found yet, try to find it in the .nfo file (if it exists)
+      logger.log("[findIMDBtconst] checking for .nfo file content");
       const tconstByNFO = await findIMDBtconstInNFO(movie);
 
       if (tconstByNFO) {
@@ -1920,6 +1931,7 @@ async function findIMDBtconst(movie, onlyNew, rescanETA, $t) {
 
     if (!tconst) {
       // tconst not found yet, try to find it by searching imdb from the file/directory name
+      logger.log("[findIMDBtconst] using file/directory name (search)");
       logger.log("[findIMDBtconst] movie:", movie);
       tconst = await findIMDBtconstByFileOrDirname(movie, {
         returnAnalysisData: false,

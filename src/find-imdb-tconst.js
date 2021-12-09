@@ -119,11 +119,15 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
   };
 
   try {
+    logger.log(
+      "[findIMDBtconstByFileOrDirname] movie.isDirectoryBased",
+      movie.isDirectoryBased
+    );
     const arrYears = movie.isDirectoryBased
       ? helpers.getYearsFromFileName(
           helpers.getLastDirectoryName(movie.fullDirectory),
           false
-        ) // TODO: test this!
+        )
       : helpers.getYearsFromFileName(movie.Filename, false);
 
     const name = (
@@ -213,6 +217,10 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
 
           results = resultsYearExact;
         }
+      }
+
+      if (results.length === 0) {
+        continue;
       }
 
       // filter by runtime, but only use the first 10 items due to traffic
