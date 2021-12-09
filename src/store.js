@@ -1856,23 +1856,17 @@ async function findIMDBtconst(movie, onlyNew, rescanETA, $t) {
     return;
   }
 
-  logger.log("[findIMDBtconst] KILLME1");
-
   eventBus.scanInfoShow(
     `${$t("Rescanning Movies")} {remainingTimeDisplay}`,
     `${movie.Name || movie.Filename} (${$t("detecting IMDB entry")})`,
     rescanETA
   );
 
-  logger.log("[findIMDBtconst] KILLME2");
-
   try {
     const scanErrorsString = await db.fireProcedureReturnScalar(
       `SELECT scanErrors FROM tbl_Movies WHERE id_Movies = $id_Movies`,
       { $id_Movies: movie.id_Movies }
     );
-
-    logger.log("[findIMDBtconst] KILLME3");
 
     movie.scanErrors = scanErrorsString ? JSON.parse(scanErrorsString) : {};
 
