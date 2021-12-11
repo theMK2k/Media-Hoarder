@@ -54,9 +54,9 @@ npm run electron:build-mac
 
 - [ ] on RPi run `npm run electron:build-rpi`
 
-## Create md5 checksum files
+## Create sha256 checksum files
 
-- [x] create md5 checksum files
+- [x] create sha256 checksum files
 
 ## Create Release on github
 

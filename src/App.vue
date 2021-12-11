@@ -4650,7 +4650,7 @@ h1 {
 }
 
 .mk-main-detail-row {
-  margin-top: 12px !important;
+  margin-top: 8px !important;
   margin-right: 6px !important;
   margin-bottom: 8px !important;
   margin-left: 4px !important;

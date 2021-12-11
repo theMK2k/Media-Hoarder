@@ -122,7 +122,10 @@
             v-bind:ripple="false"
             v-on:click="selectItem(item)"
           >
-            <v-list-item three-line style="padding-left: 0px">
+            <v-list-item
+              three-line
+              style="padding-left: 0px; padding-right: 0px"
+            >
               <div
                 v-on:mouseover="setItemHovered(item, 'avatar', true)"
                 v-on:mouseleave="setItemHovered(item, 'avatar', false)"
@@ -162,13 +165,13 @@
               </div>
               <v-list-item-content
                 class="align-self-start"
-                style="padding-top: 6px; padding-bottom: 6px"
+                style="padding: 0px"
               >
                 <v-col style="padding: 0px !important; margin-top: 16px">
-                  <v-row style="margin-right: 0px">
+                  <v-row style="margin: 0px">
                     <div
                       style="
-                        margin-left: 16px;
+                        margin-left: 4px;
                         max-width: -webkit-fill-available;
                       "
                     >
@@ -443,7 +446,7 @@
 
                   <v-row
                     v-if="item.plotSummary"
-                    style="margin: 16px 6px 8px 4px"
+                    style="margin: 4px 6px 8px 4px"
                   >
                     <div
                       v-show="!item.selected"
@@ -545,62 +548,53 @@
                       </span>
                     </div>
                   </v-row>
-
-                  <v-row
-                    v-if="
-                      item.scanErrors && Object.keys(item.scanErrors).length
-                    "
-                  >
-                    <v-alert
-                      type="warning"
-                      dense
-                      colored-border
-                      border="left"
-                      style="margin-left: 16px"
-                    >
-                      <span
-                        class="mk-clickable"
-                        v-on:click.stop="
-                          item.showScanErrors = !item.showScanErrors
-                        "
-                        >{{
-                          $t(
-                            "Errors were encountered during the scan, consider a re-scan_"
-                          )
-                        }}
-                      </span>
-                      <v-btn
-                        small
-                        text
-                        color="primary"
-                        v-on:click.stop="clearScanErrors(item)"
-                        >{{ $t("Clear this message") }}</v-btn
-                      >
-                      <v-row v-if="item.showScanErrors">
-                        <ul
-                          style="
-                            font-size: 0.875rem;
-                            margin-left: 4px;
-                            margin-top: 8px;
-                          "
-                        >
-                          <li
-                            v-for="(val, key) in item.scanErrors"
-                            v-bind:key="key"
-                            v-on:click.stop="
-                              item.showScanErrors = !item.showScanErrors
-                            "
-                          >
-                            {{ $t(key) }}:
-                            {{ val.message ? $t(val.message, val.data) : val }}
-                          </li>
-                        </ul>
-                      </v-row>
-                    </v-alert>
-                  </v-row>
                 </v-col>
               </v-list-item-content>
             </v-list-item>
+
+            <v-row
+              v-if="item.scanErrors && Object.keys(item.scanErrors).length"
+              style="margin: 8px"
+            >
+              <v-alert type="warning" dense colored-border border="left">
+                <span
+                  class="mk-clickable"
+                  v-on:click.stop="item.showScanErrors = !item.showScanErrors"
+                  >{{
+                    $t(
+                      "Errors were encountered during the scan, consider a re-scan_"
+                    )
+                  }}
+                </span>
+                <v-btn
+                  small
+                  text
+                  color="primary"
+                  v-on:click.stop="clearScanErrors(item)"
+                  >{{ $t("Clear this message") }}</v-btn
+                >
+                <v-row v-if="item.showScanErrors" style="margin: 0px">
+                  <ul
+                    style="
+                      font-size: 0.875rem;
+                      margin-left: 4px;
+                      margin-top: 8px;
+                    "
+                  >
+                    <li
+                      v-for="(val, key) in item.scanErrors"
+                      v-bind:key="key"
+                      v-on:click.stop="
+                        item.showScanErrors = !item.showScanErrors
+                      "
+                    >
+                      {{ $t(key) }}:
+                      {{ val.message ? $t(val.message, val.data) : val }}
+                    </li>
+                  </ul>
+                </v-row>
+              </v-alert>
+            </v-row>
 
             <v-col v-if="item.selected" style="min-width: 100%">
               <v-row class="mk-detail-row">
