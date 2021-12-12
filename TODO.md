@@ -2,12 +2,15 @@
 
 ## v1.0.0
 
-- [WIP] Test mediainfo and VLC in Linux/MacOS (we now use "" in the exec)
-  - Win: OK
-  - Linux: OK
-  - MacOS: ??
+- [ ] investigate why there are some sqlite autoindexes for some tables
 
-- eliminate TODO/KILLME entries in code
+- [ ] Test mediainfo and VLC in Linux/MacOS (we now use "" in the exec)
+
+  - [x] Win: OK
+  - [x] Linux: OK
+  - [ ] MacOS: ??
+
+- highlight filtered people, companies etc. (same as search highlight)
 
 ### Bugs
 
