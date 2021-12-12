@@ -960,7 +960,10 @@ async function scrapeIMDBFullCreditsData(movie) {
         }
 
         credits.push(entry);
-        if (topCast.length < topMax) {
+        if (
+          topCast.length < topMax &&
+          !topCast.find((tc) => tc.name === entry.name)
+        ) {
           topCast.push(entry);
         }
       }
@@ -991,21 +994,30 @@ async function scrapeIMDBFullCreditsData(movie) {
 
       if (creditsCategory === "Directed by") {
         result.forEach((entry) => {
-          if (topDirector.length < topMax) {
+          if (
+            topDirector.length < topMax &&
+            !topDirector.find((td) => td.name === entry.name)
+          ) {
             topDirector.push(entry);
           }
         });
       }
       if (creditsCategory === "Produced by") {
         result.forEach((entry) => {
-          if (topProducer.length < topMax) {
+          if (
+            topProducer.length < topMax &&
+            !topProducer.find((tp) => tp.name === entry.name)
+          ) {
             topProducer.push(entry);
           }
         });
       }
-      if (creditsCategory === "Writing Credits") {
+      if (creditsCategory.startsWith("Writing Credits")) {
         result.forEach((entry) => {
-          if (topWriter.length < topMax) {
+          if (
+            topWriter.length < topMax &&
+            !topWriter.find((tw) => tw.name === entry.name)
+          ) {
             topWriter.push(entry);
           }
         });

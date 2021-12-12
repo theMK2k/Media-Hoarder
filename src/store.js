@@ -111,7 +111,7 @@ dbsync.runSync(
         // After the DB is successfully initialized, we can initialize everything else
         await ensureLogLevel();
 
-        await createIndexes(db);
+        await manageIndexes(db);
 
         await loadSettingDuplicatesHandling();
 
@@ -167,105 +167,145 @@ dbsync.runSync(
   }
 );
 
-function generateIndexQuery(tableName, ColumnNames, isUnique) {
+function generateIndexQueryObject(tableName, ColumnNames, isUnique) {
   const columnNamesString = ColumnNames.reduce((prev, current) => {
     return prev + (prev ? ", " : "") + `${current}`;
   }, "");
 
-  return `CREATE ${
-    isUnique ? "UNIQUE " : ""
-  } INDEX IF NOT EXISTS main.IDX_${tableName}_${columnNamesString.replace(
-    /, /g,
-    "_"
-  )} ON ${tableName} (${columnNamesString})`;
+  const name = `IDX_${tableName}_${columnNamesString.replace(/, /g, "_")}`;
+
+  return {
+    name,
+    query: `CREATE ${
+      isUnique ? "UNIQUE " : ""
+    } INDEX IF NOT EXISTS main.${name} ON ${tableName} (${columnNamesString})`,
+  };
 }
 
-async function createIndexes(db) {
-  logger.log("[createIndexes] START");
+async function manageIndexes(db) {
+  logger.log("[manageIndexes] START");
 
+  // add indexes (if they don't exist already)
   const queries = [
-    generateIndexQuery("tbl_Genres", ["GenreID"], true),
-    generateIndexQuery("tbl_Movies", ["id_SourcePaths"], false),
-    generateIndexQuery("tbl_Movies", ["MI_Duration_Seconds"], false),
-    generateIndexQuery("tbl_Movies", ["MI_Quality"], false),
-    generateIndexQuery("tbl_Movies", ["MI_Aspect_Ratio"], false),
-    generateIndexQuery("tbl_Movies", ["IMDB_tconst"], false),
-    generateIndexQuery("tbl_Movies", ["IMDB_releaseType"], false),
-    generateIndexQuery("tbl_Movies", ["IMDB_startYear"], false),
-    generateIndexQuery("tbl_Movies", ["IMDB_runtimeMinutes"], false),
-    generateIndexQuery("tbl_Movies", ["IMDB_rating"], false),
-    generateIndexQuery("tbl_Movies", ["IMDB_numVotes"], false),
-    generateIndexQuery("tbl_Movies", ["IMDB_metacriticScore"], false),
-    generateIndexQuery("tbl_Movies", ["Extra_id_Movies_Owner"], false),
-    generateIndexQuery("tbl_Movies_Genres", ["id_Movies"], false),
-    generateIndexQuery("tbl_Movies_Genres", ["id_Genres"], false),
-    generateIndexQuery("tbl_Settings", ["Key"], true),
-    generateIndexQuery("tbl_SourcePaths", ["MediaType"], false),
-    generateIndexQuery("tbl_SourcePaths", ["Description"], false),
-    generateIndexQuery("tbl_Movies_IMDB_Credits", ["id_Movies"], false),
-    generateIndexQuery("tbl_Movies_IMDB_Credits", ["IMDB_Person_ID"], false),
-    generateIndexQuery(
+    generateIndexQueryObject("tbl_Genres", ["GenreID"], true),
+    generateIndexQueryObject("tbl_Movies", ["id_SourcePaths"], false),
+    generateIndexQueryObject("tbl_Movies", ["MI_Duration_Seconds"], false),
+    generateIndexQueryObject("tbl_Movies", ["MI_Quality"], false),
+    generateIndexQueryObject("tbl_Movies", ["MI_Aspect_Ratio"], false),
+    generateIndexQueryObject("tbl_Movies", ["IMDB_tconst"], false),
+    generateIndexQueryObject("tbl_Movies", ["IMDB_releaseType"], false),
+    generateIndexQueryObject("tbl_Movies", ["IMDB_startYear"], false),
+    generateIndexQueryObject("tbl_Movies", ["IMDB_runtimeMinutes"], false),
+    generateIndexQueryObject("tbl_Movies", ["IMDB_rating"], false),
+    generateIndexQueryObject("tbl_Movies", ["IMDB_numVotes"], false),
+    generateIndexQueryObject("tbl_Movies", ["IMDB_metacriticScore"], false),
+    generateIndexQueryObject("tbl_Movies", ["Extra_id_Movies_Owner"], false),
+    generateIndexQueryObject("tbl_Movies_Genres", ["id_Movies"], false),
+    generateIndexQueryObject("tbl_Movies_Genres", ["id_Genres"], false),
+    generateIndexQueryObject("tbl_Settings", ["Key"], true),
+    generateIndexQueryObject("tbl_SourcePaths", ["MediaType"], false),
+    generateIndexQueryObject("tbl_SourcePaths", ["Description"], false),
+    generateIndexQueryObject("tbl_Movies_IMDB_Credits", ["id_Movies"], false),
+    generateIndexQueryObject(
       "tbl_Movies_IMDB_Credits",
-      ["id_Movies", "Category", "IMDB_Person_ID"],
+      ["IMDB_Person_ID"],
+      false
+    ),
+    generateIndexQueryObject(
+      "tbl_Movies_IMDB_Credits",
+      ["id_Movies", "Category", "IMDB_Person_ID", "Credit"],
       true
     ),
-    generateIndexQuery("tbl_Movies_IMDB_Credits", ["Person_Name"], false),
-    generateIndexQuery("tbl_Movies_IMDB_Companies", ["id_Movies"], false),
-    generateIndexQuery("tbl_Movies_IMDB_Companies", ["IMDB_Company_ID"], false),
-    generateIndexQuery(
+    generateIndexQueryObject("tbl_Movies_IMDB_Credits", ["Person_Name"], false),
+    generateIndexQueryObject("tbl_Movies_IMDB_Companies", ["id_Movies"], false),
+    generateIndexQueryObject(
+      "tbl_Movies_IMDB_Companies",
+      ["IMDB_Company_ID"],
+      false
+    ),
+    generateIndexQueryObject(
       "tbl_Movies_IMDB_Companies",
       ["id_Movies", "Category", "IMDB_Company_ID"],
       true
     ),
-    generateIndexQuery("tbl_Movies_IMDB_Companies", ["Company_Name"], false),
-    generateIndexQuery("tbl_IMDB_Persons", ["IMDB_Person_ID"], true),
-    generateIndexQuery("tbl_Movies_Languages", ["Type"], false),
-    generateIndexQuery("tbl_Movies_Languages", ["Language"], false),
-    generateIndexQuery("tbl_Movies_Languages", ["id_Movies"], false),
-    generateIndexQuery(
+    generateIndexQueryObject(
+      "tbl_Movies_IMDB_Companies",
+      ["Company_Name"],
+      false
+    ),
+    generateIndexQueryObject("tbl_IMDB_Persons", ["IMDB_Person_ID"], true),
+    generateIndexQueryObject("tbl_Movies_Languages", ["Type"], false),
+    generateIndexQueryObject("tbl_Movies_Languages", ["Language"], false),
+    generateIndexQueryObject("tbl_Movies_Languages", ["id_Movies"], false),
+    generateIndexQueryObject(
       "tbl_Movies_Languages",
       ["id_Movies", "Type", "Language"],
       true
     ),
-    generateIndexQuery("tbl_IMDB_Plot_Keywords", ["Keyword"], true),
-    generateIndexQuery("tbl_Movies_IMDB_Plot_Keywords", ["id_Movies"], false),
-    generateIndexQuery(
+    generateIndexQueryObject("tbl_IMDB_Plot_Keywords", ["Keyword"], true),
+    generateIndexQueryObject(
+      "tbl_Movies_IMDB_Plot_Keywords",
+      ["id_Movies"],
+      false
+    ),
+    generateIndexQueryObject(
       "tbl_Movies_IMDB_Plot_Keywords",
       ["id_IMDB_Plot_Keywords"],
       false
     ),
-    generateIndexQuery(
+    generateIndexQueryObject(
       "tbl_Movies_IMDB_Plot_Keywords",
       ["id_Movies", "id_IMDB_Plot_Keywords"],
       true
     ),
-    generateIndexQuery("tbl_IMDB_Filming_Locations", ["Location"], true),
-    generateIndexQuery(
+    generateIndexQueryObject("tbl_IMDB_Filming_Locations", ["Location"], true),
+    generateIndexQueryObject(
       "tbl_Movies_IMDB_Filming_Locations",
       ["id_Movies"],
       false
     ),
-    generateIndexQuery(
+    generateIndexQueryObject(
       "tbl_Movies_IMDB_Filming_Locations",
       ["id_IMDB_Filming_Locations"],
       false
     ),
-    generateIndexQuery(
+    generateIndexQueryObject(
       "tbl_Movies_IMDB_Filming_Locations",
       ["id_Movies", "id_IMDB_Filming_Locations"],
       true
     ),
-    generateIndexQuery("tbl_Movies_Release_Attributes", ["id_Movies"], false),
+    generateIndexQueryObject(
+      "tbl_Movies_Release_Attributes",
+      ["id_Movies"],
+      false
+    ),
   ];
 
-  logger.log("[createIndexes] queries:", queries);
+  logger.log("[manageIndexes] queries:", queries);
 
   for (let i = 0; i < queries.length; i++) {
     logger.log(".");
-    await db.fireProcedure(queries[i]);
+    await db.fireProcedure(queries[i].query);
   }
 
-  logger.log("[createIndexes] index creation done");
+  logger.log("[manageIndexes] index creation done");
+
+  // remove indexes which should not be used anymore
+  const availableIndexes = await db.fireProcedureReturnAll(
+    `SELECT name FROM sqlite_master WHERE type = 'index'`
+  );
+
+  for (let availableIndex of availableIndexes) {
+    if (
+      availableIndex.name.startsWith("IDX") &&
+      !queries.find((query) => query.name === availableIndex.name)
+    ) {
+      logger.log("[manageIndexes] removing", availableIndex.name);
+      await db.fireProcedure(`DROP INDEX main.${availableIndex.name}`);
+    }
+  }
+
+  logger.log("[manageIndexes] index cleanup done");
 }
 
 async function fetchSourcePaths() {
@@ -2426,11 +2466,14 @@ async function saveIMDBData(
     await updateMovieGenres(movie.id_Movies, IMDB_genres);
   }
 
+  // Credits
+  logger.log("[saveIMDBData] credits:", credits);
+
   const movieCredits = await db.fireProcedureReturnAll(
     `
 	SELECT
 		id_Movies_IMDB_Credits
-		, id_Movies
+    , id_Movies
 		, Category			AS category
 		, IMDB_Person_ID	AS id
 		, Person_Name		AS name
@@ -2443,40 +2486,59 @@ async function saveIMDBData(
     const credit = credits[i];
 
     const movieCredit = movieCredits.find(
-      (mc) => mc.category === credit.category && mc.id === credit.id
+      (mc) =>
+        mc.category === credit.category &&
+        mc.id === credit.id &&
+        helpers.nz(mc.credit) == helpers.nz(credit.credit)
     );
 
+    // we can't use the INSERT ON CONFLICT UPDATE approach, because Credit can be NULL and ON CONFLICT doesn't fire with NULL
     if (movieCredit) {
       movieCredit.Found = true;
-    }
 
-    await db.fireProcedure(
-      `
-			INSERT INTO tbl_Movies_IMDB_Credits (
-				id_Movies
-				, Category
-				, IMDB_Person_ID
-				, Person_Name
-				, Credit
-			) VALUES (
-				$id_Movies
-				, $Category
-				, $IMDB_Person_ID
-				, $Person_Name
-				, $Credit
-			)
-			ON CONFLICT(id_Movies, Category, IMDB_Person_ID)
-			DO UPDATE SET
-				Person_Name = excluded.Person_Name
-				, Credit = excluded.Credit`,
-      {
-        $id_Movies: movie.id_Movies,
-        $Category: credit.category,
-        $IMDB_Person_ID: credit.id,
-        $Person_Name: credit.name,
-        $Credit: credit.credit,
-      }
-    );
+      await db.fireProcedure(
+        `
+        UPDATE tbl_Movies_IMDB_Credits SET
+          id_Movies = $id_Movies
+          , Category = $Category
+          , IMDB_Person_ID = $IMDB_Person_ID
+          , Person_Name = $Person_Name
+          , Credit = $Credit
+        WHERE id_Movies_IMDB_Credits = $id_Movies_IMDB_Credits`,
+        {
+          $id_Movies_IMDB_Credits: movieCredit.id_Movies_IMDB_Credits,
+          $id_Movies: movie.id_Movies,
+          $Category: credit.category,
+          $IMDB_Person_ID: credit.id,
+          $Person_Name: credit.name,
+          $Credit: credit.credit,
+        }
+      );
+    } else {
+      await db.fireProcedure(
+        `
+        INSERT INTO tbl_Movies_IMDB_Credits (
+          id_Movies
+          , Category
+          , IMDB_Person_ID
+          , Person_Name
+          , Credit
+        ) VALUES (
+          $id_Movies
+          , $Category
+          , $IMDB_Person_ID
+          , $Person_Name
+          , $Credit
+        )`,
+        {
+          $id_Movies: movie.id_Movies,
+          $Category: credit.category,
+          $IMDB_Person_ID: credit.id,
+          $Person_Name: credit.name,
+          $Credit: credit.credit,
+        }
+      );
+    }
   }
 
   // remove existing credits that are not available anymore (re-link to another imdb entry)

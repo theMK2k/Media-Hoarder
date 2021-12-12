@@ -8,13 +8,16 @@
 
 ### Road to Release (Win/Linux/Mac)
 
-- [X] store media info object as MI_Object in tbl_Movies
-- [X] allow unlinking in relink dialog
+- [x] optimize movie credits handling (duplicate person in different roles per category, e.g. Aaron Sorkin in Few Good Men)
+- [x] remove sqlite indexes that don't exist anymore
+- [x] eliminate TODO/KILLME entries in code
+- [x] store media info object as MI_Object in tbl_Movies
+- [x] allow unlinking in relink dialog
   - tbl_Movies.isUnlinkedIMDB (make use of this field, where appropriate)
     - unlinked movies should not detect tconst automatically (also check handling of real duplicates!)
     - on explicit rescan (at the movie): don't use it
     - on fast/complete rescan of multiple movies: use it
-- [X] first scanned item shows 1s of remaining time (better not show anything or guesstimate)
+- [x] first scanned item shows 1s of remaining time (better not show anything or guesstimate)
 - [x] some log groups do not close before the next opens
 - [x] write cli tests and optimize findIMDBtconst
   - [x] do a hybrid search to find imdb tconst (advanced title search, find etc.)
@@ -35,7 +38,7 @@
 - [x] Bottom Bar: show marquee or steps progress
 - [x] (electron) The remote module is deprecated. Use <https://github.com/electron/remote> instead.
 - [x] update ETA in scan message every second
-- [X] use logger.group/groupCollapsed, logger.groupEnd throughout the app
+- [x] use logger.group/groupCollapsed, logger.groupEnd throughout the app
 - [x] add IMDB ID to MediaList
 - [x] Highlight search results (Name, Name2, IMDB_plotSummary, fullPath, IMDB_tconst)
 - [x] "long click" checkbox filter isolation
@@ -43,7 +46,7 @@
 - [x] "Add to list" takes considerable time to finally show the list entry in the movie's entry
 - [x] App: filter item isolation (click a filter item where all other items are true: Select All items false but the clicked one)
 - [x] Search Data Dialog: do in-client sort by numMovies
-- [x] Search Data Dialog: use "*" as placeholder
+- [x] Search Data Dialog: use "\*" as placeholder
 - [x] "load animate" only the filter that is currently loading
   - [x] fetch the filter that has been modified first (added items, removed items)
   - [x] kill previously started fetching of filters (else we clash)
