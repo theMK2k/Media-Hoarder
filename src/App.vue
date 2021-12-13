@@ -154,6 +154,8 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
+                        'mk-search-highlight':
+                          filterSourcePathsTitle !== '(ALL)',
                       }"
                       style="display: flex; align-items: center"
                     >
@@ -162,6 +164,8 @@
                           v-show="$shared.loadingFilter !== 'filterSourcePaths'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
+                            'mk-search-highlight':
+                              filterSourcePathsTitle !== '(ALL)',
                           }"
                           >mdi-folder-outline</v-icon
                         >
