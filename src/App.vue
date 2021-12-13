@@ -4744,6 +4744,11 @@ div.v-messages {
   width: 30px;
 }
 
+.mk-search-highlight {
+  background-color: rgba(0, 0, 0, 0);
+  color: #ffc107 !important;
+}
+
 /* ### marked overrides ### */
 code {
   background-color: rgba(0, 0, 0, 0) !important;

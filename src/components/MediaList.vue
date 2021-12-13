@@ -280,6 +280,10 @@
                         <span v-if="item.MI_Quality">
                           <span
                             class="mk-clickable"
+                            v-bind:class="{
+                              'mk-search-highlight':
+                                filterQualitiesAppliedContains(item.MI_Quality),
+                            }"
                             v-on:click.stop="
                               onVideoQualityClicked(item.MI_Quality)
                             "
@@ -319,6 +323,10 @@
                             <span>{{ index > 0 ? ", " : " " }}</span>
                             <span
                               class="mk-clickable"
+                              v-bind:class="{
+                                'mk-search-highlight':
+                                  filterAudioLanguagesAppliedContains(lang),
+                              }"
                               v-on:click.stop="
                                 onLanguageClicked(lang, 'audio', item)
                               "
@@ -337,6 +345,10 @@
                             <span>{{ index > 0 ? ", " : " " }}</span>
                             <span
                               class="mk-clickable"
+                              v-bind:class="{
+                                'mk-search-highlight':
+                                  filterSubtitleLanguagesAppliedContains(lang),
+                              }"
                               v-on:click.stop="
                                 onLanguageClicked(lang, 'subtitle', item)
                               "
@@ -356,6 +368,12 @@
                             <span>{{ index > 0 ? ", " : " " }}</span>
                             <span
                               class="mk-clickable"
+                              v-bind:class="{
+                                'mk-search-highlight':
+                                  filterReleaseAttributesAppliedContains(
+                                    releaseAttribute
+                                  ),
+                              }"
                               v-on:click.stop="
                                 onShowReleaseAttributeDialog(
                                   releaseAttribute,
@@ -398,30 +416,8 @@
                       </div>
                       <v-row style="margin-top: 0px">
                         <div class="flex-grow-1"></div>
-                        <!-- <div
-                          style="
-                            margin-right: 26px;
-                            margin-top: 4px;
-                            padding: 0px !important;
-                          "
-                        >
-                          <v-icon
-                            small
-                            v-for="i in 5"
-                            v-bind:key="i"
-                            v-bind:color="
-                              item.Rating > i - 1
-                                ? 'amber'
-                                : item.Rating > 0
-                                ? 'white'
-                                : 'grey'
-                            "
-                            v-on:click.stop="changeRating(item, i)"
-                            >mdi-star</v-icon
-                          >
-                        </div> -->
+
                         <div v-on:click.stop="">
-                          <!-- prevents click event propagation from star-rating component -->
                           <star-rating
                             v-bind:increment="0.5"
                             v-bind:max-rating="5"
@@ -474,11 +470,15 @@
                       >
                       <span
                         v-for="(credit, i) in item.IMDB_Top_Directors"
-                        v-bind:key="credit.IMDB_Person_ID"
+                        v-bind:key="credit.id_Movies_IMDB_Credits"
                       >
                         <span v-if="i > 0">,&nbsp;</span>
                         <a
                           class="mk-clickable"
+                          v-bind:class="{
+                            'mk-search-highlight':
+                              filterPersonsAppliedContains(credit),
+                          }"
                           v-on:click.stop="onCreditClicked(credit)"
                           >{{ credit.name }}</a
                         >
@@ -496,11 +496,15 @@
                       >
                       <span
                         v-for="(credit, i) in item.IMDB_Top_Writers"
-                        v-bind:key="credit.IMDB_Person_ID"
+                        v-bind:key="credit.id_Movies_IMDB_Credits"
                       >
                         <span v-if="i > 0">,&nbsp;</span>
                         <a
                           class="mk-clickable"
+                          v-bind:class="{
+                            'mk-search-highlight':
+                              filterPersonsAppliedContains(credit),
+                          }"
                           v-on:click.stop="onCreditClicked(credit)"
                           >{{ credit.name }}</a
                         >
@@ -513,11 +517,15 @@
                       <strong class="CreditCategory">{{ $t("Cast") }}:</strong>
                       <span
                         v-for="(credit, i) in item.IMDB_Top_Cast"
-                        v-bind:key="credit.IMDB_Person_ID"
+                        v-bind:key="credit.id_Movies_IMDB_Credits"
                       >
                         <span v-if="i > 0">,&nbsp;</span>
                         <a
                           class="mk-clickable"
+                          v-bind:class="{
+                            'mk-search-highlight':
+                              filterPersonsAppliedContains(credit),
+                          }"
                           v-on:click.stop="onCreditClicked(credit)"
                           >{{ credit.name }}</a
                         >
@@ -542,6 +550,10 @@
                         <span v-if="i > 0">,&nbsp;</span>
                         <a
                           class="mk-clickable"
+                          v-bind:class="{
+                            'mk-search-highlight':
+                              filterCompaniesAppliedContains(company),
+                          }"
                           v-on:click.stop="onCompanyClicked(company)"
                           >{{ company.name }}</a
                         >
@@ -602,9 +614,16 @@
                   ><strong>{{ $t("Full Path") }}:</strong></v-col
                 >
                 <v-col class="detailContent">
-                  <word-highlighter v-bind:query="$shared.searchText || ''">
-                    {{ item.fullPath }}</word-highlighter
-                  ></v-col
+                  <word-highlighter
+                    v-bind:query="$shared.searchText || ''"
+                    v-bind:class="{
+                      'mk-search-highlight':
+                        filterSourcePathsApplied.length > 0,
+                    }"
+                    >{{ item.SourcePath }}{{ pathSeparator }}</word-highlighter
+                  ><word-highlighter v-bind:query="$shared.searchText || ''">{{
+                    item.RelativePath
+                  }}</word-highlighter></v-col
                 >
               </v-row>
               <v-row class="mk-detail-row">
@@ -774,6 +793,10 @@
                     <v-col sm="4" class="creditsLabel">
                       <a
                         class="mk-clickable"
+                        v-bind:class="{
+                          'mk-search-highlight':
+                            filterPersonsAppliedContains(credit),
+                        }"
                         v-on:click.stop="onCreditClicked(credit)"
                         >{{ credit.name }}</a
                       >
@@ -833,6 +856,10 @@
                     <v-col sm="4" class="creditsLabel">
                       <a
                         class="mk-clickable"
+                        v-bind:class="{
+                          'mk-search-highlight':
+                            filterCompaniesAppliedContains(company),
+                        }"
                         v-on:click.stop="onCompanyClicked(company)"
                         >{{ company.name }}</a
                       >
@@ -1177,6 +1204,8 @@
 </template>
 
 <script>
+const path = require("path");
+
 import StarRating from "vue-star-rating";
 import * as Humanize from "humanize-plus";
 
@@ -1395,6 +1424,10 @@ export default {
   props: ["mediatype"],
 
   computed: {
+    pathSeparator() {
+      return path.sep;
+    },
+
     notAvailableText() {
       // we can't use "<" or ">" in template without irritating the formatter/linter
       return this.$t("<not available>");
@@ -1494,6 +1527,7 @@ export default {
       if (this.$shared.searchText) {
         filtersList.push(this.$t("Search"));
       }
+
       if (
         this.$shared.filters.filterSourcePaths.find(
           (filter) => !filter.Selected
@@ -1501,6 +1535,7 @@ export default {
       ) {
         filtersList.push(this.$t("Source Paths"));
       }
+
       if (
         this.$shared.filters.filterGenres &&
         ((!this.$shared.filters.filterSettings.filterGenresAND &&
@@ -1518,16 +1553,19 @@ export default {
           }`
         );
       }
+
       if (
         this.$shared.filters.filterAgeRatings.find((filter) => !filter.Selected)
       ) {
         filtersList.push(this.$t("Age Ratings"));
       }
+
       if (
         this.$shared.filters.filterRatings.find((filter) => !filter.Selected)
       ) {
         filtersList.push(this.$t("My Ratings"));
       }
+
       if (this.$shared.filters.filterLists.find((filter) => !filter.Selected)) {
         filtersList.push(this.$t("My Lists"));
       }
@@ -1552,58 +1590,32 @@ export default {
         filtersList.push(this.$t("Content Advisories"));
       }
 
-      if (
-        this.$shared.filters.filterPersons &&
-        ((!this.$shared.filters.filterSettings.filterPersonsAND &&
-          this.$shared.filters.filterPersons.find(
-            (filter) => !filter.Selected
-          )) ||
-          (this.$shared.filters.filterSettings.filterPersonsAND &&
-            this.$shared.filters.filterPersons.find(
-              (filter) => filter.Selected && filter.IMDB_Person_ID
-            )))
-      ) {
+      if (this.filterPersonsApplied.length > 0) {
         filtersList.push(
           `${this.$t("People")}${
             this.$shared.filters.filterSettings.filterPersonsAND ? " ߷" : ""
           }`
         );
       }
+
       if (this.$shared.filters.filterYears.find((filter) => !filter.Selected)) {
         filtersList.push(this.$t("Release Years"));
       }
 
-      // if (
-      //   this.$shared.filters.filterReleaseYears[0] !=
-      //     this.$shared.filters.filterReleaseYearsMin ||
-      //   this.$shared.filters.filterReleaseYears[1] !=
-      //     this.$shared.filters.filterReleaseYearsMax ||
-      //   !this.$shared.filters.filterReleaseYearsNone
-      // ) {
-      //   filtersList.push(this.$t("Release Years"));
-      // }
       if (
         this.$shared.filters.filterQualities.find((filter) => !filter.Selected)
       ) {
         filtersList.push(this.$t("Video Quality"));
       }
-      if (
-        this.$shared.filters.filterCompanies &&
-        ((!this.$shared.filters.filterSettings.filterCompaniesAND &&
-          this.$shared.filters.filterCompanies.find(
-            (filter) => !filter.Selected
-          )) ||
-          (this.$shared.filters.filterSettings.filterCompaniesAND &&
-            this.$shared.filters.filterCompanies.find(
-              (filter) => filter.Selected && filter.id_Filter_Companies
-            )))
-      ) {
+
+      if (this.filterCompaniesApplied.length > 0) {
         filtersList.push(
           `${this.$t("Companies")}${
             this.$shared.filters.filterSettings.filterCompaniesAND ? " ߷" : ""
           }`
         );
       }
+
       if (
         this.$shared.filters.filterAudioLanguages.find(
           (filter) => !filter.Selected
@@ -1611,6 +1623,7 @@ export default {
       ) {
         filtersList.push(this.$t("Audio Languages"));
       }
+
       if (
         this.$shared.filters.filterSubtitleLanguages.find(
           (filter) => !filter.Selected
@@ -1658,6 +1671,7 @@ export default {
           }`
         );
       }
+
       if (
         this.$shared.filters.filterIMDBFilmingLocations &&
         ((!this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND &&
@@ -1678,6 +1692,7 @@ export default {
           }`
         );
       }
+
       if (
         this.$shared.filters.filterMetacriticScore[0] !== 0 ||
         this.$shared.filters.filterMetacriticScore[1] !== 100 ||
@@ -1759,6 +1774,143 @@ export default {
 
           return primarySort;
         });
+    },
+
+    /**
+     * Actually applied Persons filter
+     * @returns {Array} empty array if no filter applies (e.g. everything selected)
+     */
+    filterPersonsApplied() {
+      if (
+        this.$shared.filters.filterPersons &&
+        ((!this.$shared.filters.filterSettings.filterPersonsAND &&
+          this.$shared.filters.filterPersons.find(
+            (filter) => !filter.Selected
+          )) ||
+          (this.$shared.filters.filterSettings.filterPersonsAND &&
+            this.$shared.filters.filterPersons.find(
+              (filter) => filter.Selected && filter.IMDB_Person_ID
+            )))
+      ) {
+        return this.$shared.filters.filterPersons.filter(
+          (filter) => filter.Selected && filter.IMDB_Person_ID
+        );
+      }
+
+      return [];
+    },
+
+    /**
+     * Actually applied Companies filter
+     * @returns {Array} empty array if no filter applies (e.g. everything selected)
+     */
+    filterCompaniesApplied() {
+      if (
+        this.$shared.filters.filterCompanies &&
+        ((!this.$shared.filters.filterSettings.filterCompaniesAND &&
+          this.$shared.filters.filterCompanies.find(
+            (filter) => !filter.Selected
+          )) ||
+          (this.$shared.filters.filterSettings.filterCompaniesAND &&
+            this.$shared.filters.filterCompanies.find(
+              (filter) => filter.Selected && filter.id_Filter_Companies
+            )))
+      ) {
+        return this.$shared.filters.filterCompanies.filter(
+          (filter) => filter.Selected && filter.id_Filter_Companies
+        );
+      }
+
+      return [];
+    },
+
+    /**
+     * Actually applied SourcePaths filter
+     */
+    filterSourcePathsApplied() {
+      if (
+        this.$shared.filters.filterSourcePaths.find(
+          (filter) => !filter.Selected
+        )
+      ) {
+        return this.$shared.filters.filterSourcePaths.filter(
+          (filter) => filter.Selected
+        );
+      }
+
+      return [];
+    },
+
+    /**
+     * Actually applied Qualities filter
+     */
+    filterQualitiesApplied() {
+      if (
+        this.$shared.filters.filterQualities.find((filter) => !filter.Selected)
+      ) {
+        return this.$shared.filters.filterQualities.filter(
+          (filter) => filter.Selected
+        );
+      }
+
+      return [];
+    },
+
+    /**
+     * Actually applied AudioLanguages filter
+     */
+    filterAudioLanguagesApplied() {
+      if (
+        this.$shared.filters.filterAudioLanguages.find(
+          (filter) => !filter.Selected
+        )
+      ) {
+        return this.$shared.filters.filterAudioLanguages.filter(
+          (filter) => filter.Selected
+        );
+      }
+
+      return [];
+    },
+
+    /**
+     * Actually applied SubtitleLanguages filter
+     */
+    filterSubtitleLanguagesApplied() {
+      if (
+        this.$shared.filters.filterSubtitleLanguages.find(
+          (filter) => !filter.Selected
+        )
+      ) {
+        return this.$shared.filters.filterSubtitleLanguages.filter(
+          (filter) => filter.Selected
+        );
+      }
+
+      return [];
+    },
+
+    /**
+     * Actually applied ReleaseAttributes filter
+     */
+    filterReleaseAttributesApplied() {
+      if (
+        this.$shared.filters.filterReleaseAttributes &&
+        ((!this.$shared.filters.filterSettings.filterReleaseAttributesAND &&
+          this.$shared.filters.filterReleaseAttributes.find(
+            (filter) => !filter.Selected
+          )) ||
+          (this.$shared.filters.filterSettings.filterReleaseAttributesAND &&
+            this.$shared.filters.filterReleaseAttributes.find(
+              (filter) => filter.Selected && !filter.isAny
+            )))
+      ) {
+        return this.$shared.filters.filterReleaseAttributes.filter(
+          (filter) => filter.Selected && !filter.isAny
+        );
+      }
+
+      return [];
     },
   },
 
@@ -2860,6 +3012,42 @@ export default {
     async clearScanErrors(item) {
       await store.updateMediaRecordField(item.id_Movies, "scanErrors", null);
       item.scanErrors = null;
+    },
+
+    filterPersonsAppliedContains(person) {
+      return !!this.filterPersonsApplied.find(
+        (fp) => fp.IMDB_Person_ID === person.id
+      );
+    },
+
+    filterCompaniesAppliedContains(company) {
+      return !!this.filterCompaniesApplied.find(
+        (fc) => fc.Company_Name === company.name
+      );
+    },
+
+    filterQualitiesAppliedContains(quality) {
+      return !!this.filterQualitiesApplied.find(
+        (fq) => fq.MI_Quality === quality
+      );
+    },
+
+    filterAudioLanguagesAppliedContains(language) {
+      return !!this.filterAudioLanguagesApplied.find(
+        (fal) => fal.Language.toUpperCase() === language
+      );
+    },
+
+    filterSubtitleLanguagesAppliedContains(language) {
+      return !!this.filterSubtitleLanguagesApplied.find(
+        (fsl) => fsl.Language.toUpperCase() === language
+      );
+    },
+
+    filterReleaseAttributesAppliedContains(releaseAttribute) {
+      return !!this.filterReleaseAttributesApplied.find(
+        (fra) => fra.ReleaseAttribute === releaseAttribute
+      );
     },
   },
 

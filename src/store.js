@@ -225,7 +225,7 @@ async function manageIndexes(db) {
     ),
     generateIndexQueryObject(
       "tbl_Movies_IMDB_Companies",
-      ["id_Movies", "Category", "IMDB_Company_ID"],
+      ["id_Movies", "Category", "IMDB_Company_ID", "Role"],
       true
     ),
     generateIndexQueryObject(
@@ -2572,40 +2572,60 @@ async function saveIMDBData(
     const company = companies[i];
 
     const movieCompany = movieCompanies.find(
-      (mc) => mc.category === company.category && mc.id === company.id
+      (mc) =>
+        mc.category === company.category &&
+        mc.id === company.id &&
+        helpers.nz(mc.role) == helpers.nz(company.role)
     );
 
     if (movieCompany) {
       movieCompany.Found = true;
-    }
 
-    await db.fireProcedure(
-      `
-			INSERT INTO tbl_Movies_IMDB_Companies (
-				id_Movies
-				, Category
-				, IMDB_Company_ID
-				, Company_Name
-				, Role
-			) VALUES (
-				$id_Movies
-				, $Category
-				, $IMDB_Company_ID
-				, $Company_Name
-				, $Role
-			)
-			ON CONFLICT(id_Movies, Category, IMDB_Company_ID)
-			DO UPDATE SET
-				Company_Name = excluded.Company_Name
-				, Role = excluded.Role`,
-      {
-        $id_Movies: movie.id_Movies,
-        $Category: company.category,
-        $IMDB_Company_ID: company.id,
-        $Company_Name: company.name,
-        $Role: company.role,
-      }
-    );
+      // TODO: UPDATE stmt
+      await db.fireProcedure(
+        `
+        UPDATE tbl_Movies_IMDB_Companies SET
+          id_Movies = $id_Movies
+          , Category = $Category
+          , IMDB_Company_ID = $IMDB_Company_ID
+          , Company_Name = $Company_Name
+          , Role = $Role
+        WHERE id_Movies_IMDB_Companies = $id_Movies_IMDB_Companies
+        `,
+        {
+          $id_Movies_IMDB_Companies: movieCompany.id_Movies_IMDB_Companies,
+          $id_Movies: movie.id_Movies,
+          $Category: company.category,
+          $IMDB_Company_ID: company.id,
+          $Company_Name: company.name,
+          $Role: company.role,
+        }
+      );
+    } else {
+      await db.fireProcedure(
+        `
+        INSERT INTO tbl_Movies_IMDB_Companies (
+          id_Movies
+          , Category
+          , IMDB_Company_ID
+          , Company_Name
+          , Role
+        ) VALUES (
+          $id_Movies
+          , $Category
+          , $IMDB_Company_ID
+          , $Company_Name
+          , $Role
+        )`,
+        {
+          $id_Movies: movie.id_Movies,
+          $Category: company.category,
+          $IMDB_Company_ID: company.id,
+          $Company_Name: company.name,
+          $Role: company.role,
+        }
+      );
+    }
   }
 
   // remove existing companies that are not available anymore (re-link to another imdb entry)
@@ -3505,10 +3525,9 @@ function generateFilterQuery(filters, arr_id_Movies) {
           return (
             prev +
             (prev ? " INTERSECT " : "") +
-            `SELECT id_Movies FROM tbl_Movies_Release_Attributes WHERE Release_Attributes_searchTerm IN (${releaseAttributesHierarchy
+            `SELECT id_Movies FROM tbl_Movies_Release_Attributes WHERE deleted = 0 AND Release_Attributes_searchTerm IN (${releaseAttributesHierarchy
               .find((ra) => ra.displayAs === current)
-              .searchTerms.map((param) => param.replace(/'/g, "''"))
-              .reduce((prev2, current2) => {
+              .searchTerms.reduce((prev2, current2) => {
                 return (
                   prev2 + (prev2 ? ", " : "") + `${sqlString.escape(current2)}`
                 );
@@ -3526,7 +3545,7 @@ function generateFilterQuery(filters, arr_id_Movies) {
           (filter) => filter.Selected && filter.isAny
         )
       ) {
-        filterReleaseAttributes = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies_Release_Attributes) `;
+        filterReleaseAttributes = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies_Release_Attributes WHERE deleted = 0) `;
       } else {
         filterReleaseAttributes = `AND (1=0 `;
       }
@@ -3546,7 +3565,7 @@ function generateFilterQuery(filters, arr_id_Movies) {
           }
         });
 
-        filterReleaseAttributes += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_Release_Attributes WHERE Release_Attributes_searchTerm IN (`;
+        filterReleaseAttributes += `OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_Release_Attributes WHERE deleted = 0 AND Release_Attributes_searchTerm IN (`;
 
         filterReleaseAttributes += searchTerms.reduce((prev, current) => {
           return prev + (prev ? ", " : "") + `${sqlString.escape(current)}`;

@@ -1092,7 +1092,10 @@ async function scrapeIMDBCompaniesData(movie) {
 
       if (companiesCategoryName === "Production") {
         result.forEach((entry) => {
-          if (topProductionCompanies.length < topMax) {
+          if (
+            topProductionCompanies.length < topMax &&
+            !topProductionCompanies.find((tpc) => tpc.name === entry.name)
+          ) {
             topProductionCompanies.push(entry);
           }
         });
