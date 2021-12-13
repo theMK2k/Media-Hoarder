@@ -692,7 +692,14 @@
                       v-bind:key="index"
                     >
                       <span v-if="index > 0">,&nbsp;</span>
-                      <span>{{ list.Name }}</span>
+                      <span
+                        v-bind:class="{
+                          'mk-search-highlight': filterListsAppliedContains(
+                            list.Name
+                          ),
+                        }"
+                        >{{ list.Name }}</span
+                      >
                     </span>
                   </span>
                   <span v-if="!item.lists || item.lists.length === 0"
@@ -704,14 +711,17 @@
                     small
                     color="primary"
                     v-on:click.stop="addToList(item)"
+                    style="margin-top: -1px"
                     >{{ $t("Add") }}</v-btn
                   >
                   <v-btn
                     v-if="item.lists && item.lists.length > 0"
+                    class="mk-btn-small"
                     text
                     small
                     color="primary"
                     v-on:click.stop="removeFromList(item)"
+                    style="margin-top: -1px"
                     >{{ $t("Remove") }}</v-btn
                   >
                 </v-col>
@@ -1912,6 +1922,19 @@ export default {
 
       return [];
     },
+
+    /**
+     * Actually applied Lists filter
+     */
+    filterListsApplied() {
+      if (this.$shared.filters.filterLists.find((filter) => !filter.Selected)) {
+        return this.$shared.filters.filterLists.filter(
+          (filter) => filter.Selected
+        );
+      }
+
+      return [];
+    },
   },
 
   methods: {
@@ -3048,6 +3071,10 @@ export default {
       return !!this.filterReleaseAttributesApplied.find(
         (fra) => fra.ReleaseAttribute === releaseAttribute
       );
+    },
+
+    filterListsAppliedContains(listName) {
+      return !!this.filterListsApplied.find((fla) => fla.Name === listName);
     },
   },
 
