@@ -2,25 +2,11 @@
 
 ## v1.0.0
 
-- [WIP] highlight filtered people, companies etc. (same as search highlight)
-  - [x] People
-  - [x] Companies
-  - [x] SourcePaths
-  - [x] Video Quality
-  - [x] Audio Languages
-  - [x] Subtitle Languages
-  - [x] Release Attributes
-    - [x] defect: Lego Batman: The Movie - DC Super Heroes Unite fulfills "Director's Cut" filter
-    - [x] defect: "Director's Cut" filter with "all selected must apply" only shows 1, expected: 86
-  - [ ] My Lists
-  - [ ] Genres
-  - [ ] Age Ratings
-  - [ ] Content Advisories
-  - [ ] Release Years
-  - [ ] Plot Keywords
-  - [ ] Filming Locations
-
 - color active filters (sidebar) with mk-search-highlight class
+
+- [ ] calculation of numMovies for AND-connected filters should be different than OR-connected filters of the same category
+
+- see "Production", force two divs left and right (no overflow below the category)
 
 - defect: companies: duplicates in topcompanies; non-dupes in companies list?
 

@@ -189,11 +189,20 @@
                               v-bind:query="$shared.searchText || ''"
                             >
                               {{ item.Name }}
-                              {{ item.yearDisplay }}
+                            </word-highlighter>
+                            <span>
+                              <span
+                                v-bind:class="{
+                                  'mk-search-highlight':
+                                    filterYearsApplied.length > 0,
+                                }"
+                              >
+                                {{ item.yearDisplay }}
+                              </span>
                               <span v-show="item.NumExtras"
                                 >+{{ item.NumExtras }}</span
                               >
-                            </word-highlighter>
+                            </span>
                           </div>
 
                           <div>
@@ -294,6 +303,10 @@
                           |
                           <span
                             class="mk-clickable"
+                            v-bind:class="{
+                              'mk-search-highlight':
+                                filterAgeRatingsApplied.length > 0,
+                            }"
                             v-on:click.stop="onAgeRatingClicked(item.AgeRating)"
                             >{{ item.AgeRating }}</span
                           >
@@ -307,6 +320,10 @@
                             <span>{{ index > 0 ? ", " : "" }}</span>
                             <span
                               class="mk-clickable"
+                              v-bind:class="{
+                                'mk-search-highlight':
+                                  filterGenresAppliedContains(genre.translated),
+                              }"
                               v-on:click.stop="onGenreClicked(genre)"
                               >{{ genre.translated }}</span
                             >
@@ -538,26 +555,30 @@
                     class="mk-main-detail-row"
                   >
                     <div style="font-size: 0.875rem; font-weight: normal">
-                      <strong class="CreditCategory"
-                        >{{ $t("Production") }}:</strong
-                      >
-                      <span
-                        v-for="(
-                          company, i
-                        ) in item.IMDB_Top_Production_Companies"
-                        v-bind:key="i"
-                      >
-                        <span v-if="i > 0">,&nbsp;</span>
-                        <a
-                          class="mk-clickable"
-                          v-bind:class="{
-                            'mk-search-highlight':
-                              filterCompaniesAppliedContains(company),
-                          }"
-                          v-on:click.stop="onCompanyClicked(company)"
-                          >{{ company.name }}</a
+                      <div style="float: left; width: 100px; overflow: hidden">
+                        <strong class="CreditCategory"
+                          >{{ $t("Production") }}:</strong
                         >
-                      </span>
+                      </div>
+                      <div style="overflow: hidden">
+                        <span
+                          v-for="(
+                            company, i
+                          ) in item.IMDB_Top_Production_Companies"
+                          v-bind:key="i"
+                        >
+                          <span v-if="i > 0">,&nbsp;</span>
+                          <a
+                            class="mk-clickable"
+                            v-bind:class="{
+                              'mk-search-highlight':
+                                filterCompaniesAppliedContains(company),
+                            }"
+                            v-on:click.stop="onCompanyClicked(company)"
+                            >{{ company.name }}</a
+                          >
+                        </span>
+                      </div>
                     </div>
                   </v-row>
                 </v-col>
@@ -761,6 +782,9 @@
                   align-items: flex-end;
                 "
                 class="mk-clickable"
+                v-bind:class="{
+                  'mk-search-highlight': filterPersonsApplied.length > 0,
+                }"
                 v-on:click.stop="showCredits(item, !item.showCredits)"
               >
                 <span class="mk-item-detailcategory-header"
@@ -827,6 +851,9 @@
                   align-items: flex-end;
                 "
                 class="mk-clickable"
+                v-bind:class="{
+                  'mk-search-highlight': filterCompaniesApplied.length > 0,
+                }"
                 v-on:click.stop="showCompanies(item, !item.showCompanies)"
               >
                 <span class="mk-item-detailcategory-header"
@@ -882,7 +909,7 @@
                 </div>
               </div>
 
-              <!-- CONTENT ADVISORY -->
+              <!-- CONTENT/PARENTAL ADVISORIES -->
               <v-row
                 style="
                   padding-left: 16px;
@@ -890,6 +917,9 @@
                   align-items: flex-end;
                 "
                 class="mk-clickable"
+                v-bind:class="{
+                  'mk-search-highlight': !filterParentalAdvisoryApplied.None,
+                }"
                 v-on:click.stop="
                   showContentAdvisory(item, !item.showContentAdvisory)
                 "
@@ -925,11 +955,21 @@
                   <v-col sm="1" class="creditsContent">
                     <!-- <span v-if="company.role">...</span> -->
                   </v-col>
-                  <v-col class="creditsContent">{{
-                    contentAdvisorySeverityDisplayText(
-                      item[`IMDB_Parental_Advisory_${category.Name}`]
-                    )
-                  }}</v-col>
+                  <v-col
+                    class="creditsContent"
+                    v-bind:class="{
+                      'mk-search-highlight':
+                        filterParentalAdvisoryAppliedContains(
+                          category.Name,
+                          item[`IMDB_Parental_Advisory_${category.Name}`]
+                        ),
+                    }"
+                    >{{
+                      contentAdvisorySeverityDisplayText(
+                        item[`IMDB_Parental_Advisory_${category.Name}`]
+                      )
+                    }}</v-col
+                  >
                 </v-row>
               </div>
 
@@ -941,6 +981,10 @@
                   align-items: flex-end;
                 "
                 class="mk-clickable"
+                v-bind:class="{
+                  'mk-search-highlight':
+                    filterIMDBPlotKeywordsApplied.length > 0,
+                }"
                 v-on:click.stop="showPlotKeywords(item, !item.showPlotKeywords)"
               >
                 <span class="mk-item-detailcategory-header"
@@ -970,6 +1014,12 @@
                 >
                   <a
                     class="mk-clickable"
+                    v-bind:class="{
+                      'mk-search-highlight':
+                        filterIMDBPlotKeywordsAppliedContains(
+                          plotKeyword.Keyword
+                        ),
+                    }"
                     v-on:click.stop="onIMDBPlotKeywordClicked(plotKeyword)"
                     >{{ plotKeyword.Keyword }}</a
                   >
@@ -989,6 +1039,10 @@
                   align-items: flex-end;
                 "
                 class="mk-clickable"
+                v-bind:class="{
+                  'mk-search-highlight':
+                    filterIMDBFilmingLocationsApplied.length > 0,
+                }"
                 v-on:click.stop="
                   showFilmingLocations(item, !item.showFilmingLocations)
                 "
@@ -1022,6 +1076,12 @@
                 >
                   <a
                     class="mk-clickable"
+                    v-bind:class="{
+                      'mk-search-highlight':
+                        filterIMDBFilmingLocationsAppliedContains(
+                          filmingLocation.Location
+                        ),
+                    }"
                     v-on:click.stop="
                       onIMDBFilmingLocationClicked(filmingLocation)
                     "
@@ -1546,17 +1606,7 @@ export default {
         filtersList.push(this.$t("Source Paths"));
       }
 
-      if (
-        this.$shared.filters.filterGenres &&
-        ((!this.$shared.filters.filterSettings.filterGenresAND &&
-          this.$shared.filters.filterGenres.find(
-            (filter) => !filter.Selected
-          )) ||
-          (this.$shared.filters.filterSettings.filterGenresAND &&
-            this.$shared.filters.filterGenres.find(
-              (filter) => filter.Selected
-            )))
-      ) {
+      if (this.filterGenresApplied.length > 0) {
         filtersList.push(
           `${this.$t("Genres")}${
             this.$shared.filters.filterSettings.filterGenresAND ? " ߷" : ""
@@ -1580,23 +1630,7 @@ export default {
         filtersList.push(this.$t("My Lists"));
       }
 
-      if (
-        this.$shared.filters.filterParentalAdvisory.Nudity.find(
-          (filter) => !filter.Selected
-        ) ||
-        this.$shared.filters.filterParentalAdvisory.Violence.find(
-          (filter) => !filter.Selected
-        ) ||
-        this.$shared.filters.filterParentalAdvisory.Profanity.find(
-          (filter) => !filter.Selected
-        ) ||
-        this.$shared.filters.filterParentalAdvisory.Alcohol.find(
-          (filter) => !filter.Selected
-        ) ||
-        this.$shared.filters.filterParentalAdvisory.Frightening.find(
-          (filter) => !filter.Selected
-        )
-      ) {
+      if (!this.filterParentalAdvisoryApplied.None) {
         filtersList.push(this.$t("Content Advisories"));
       }
 
@@ -1662,17 +1696,7 @@ export default {
         );
       }
 
-      if (
-        this.$shared.filters.filterIMDBPlotKeywords &&
-        ((!this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND &&
-          this.$shared.filters.filterIMDBPlotKeywords.find(
-            (filter) => !filter.Selected
-          )) ||
-          (this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND &&
-            this.$shared.filters.filterIMDBPlotKeywords.find(
-              (filter) => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords
-            )))
-      ) {
+      if (this.filterIMDBPlotKeywordsApplied.length > 0) {
         filtersList.push(
           `${this.$t("Plot Keywords")}${
             this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND
@@ -1930,6 +1954,159 @@ export default {
       if (this.$shared.filters.filterLists.find((filter) => !filter.Selected)) {
         return this.$shared.filters.filterLists.filter(
           (filter) => filter.Selected
+        );
+      }
+
+      return [];
+    },
+
+    /**
+     * Actually applied Genres filter
+     */
+    filterGenresApplied() {
+      if (
+        this.$shared.filters.filterGenres &&
+        ((!this.$shared.filters.filterSettings.filterGenresAND &&
+          this.$shared.filters.filterGenres.find(
+            (filter) => !filter.Selected
+          )) ||
+          (this.$shared.filters.filterSettings.filterGenresAND &&
+            this.$shared.filters.filterGenres.find(
+              (filter) => filter.Selected
+            )))
+      ) {
+        return this.$shared.filters.filterGenres.filter(
+          (filter) => filter.Selected
+        );
+      }
+      return [];
+    },
+
+    filterAgeRatingsApplied() {
+      if (
+        this.$shared.filters.filterAgeRatings.find((filter) => !filter.Selected)
+      ) {
+        return this.$shared.filters.filterAgeRatings.filter(
+          (filter) => filter.Selected
+        );
+      }
+      return [];
+    },
+
+    filterYearsApplied() {
+      if (this.$shared.filters.filterYears.find((filter) => !filter.Selected)) {
+        return this.$shared.filters.filterYears.filter(
+          (filter) => !filter.Selected
+        );
+      }
+
+      return [];
+    },
+
+    filterParentalAdvisoryApplied() {
+      const result = {
+        None: true,
+        Nudity: [],
+        Violence: [],
+        Profanity: [],
+        Alcohol: [],
+        Frightening: [],
+      };
+
+      if (
+        this.$shared.filters.filterParentalAdvisory.Nudity.find(
+          (filter) => !filter.Selected
+        )
+      ) {
+        result.None = false;
+        result.Nudity =
+          this.$shared.filters.filterParentalAdvisory.Nudity.filter(
+            (filter) => filter.Selected
+          );
+      }
+      if (
+        this.$shared.filters.filterParentalAdvisory.Violence.find(
+          (filter) => !filter.Selected
+        )
+      ) {
+        result.None = false;
+        result.Violence =
+          this.$shared.filters.filterParentalAdvisory.Violence.filter(
+            (filter) => filter.Selected
+          );
+      }
+      if (
+        this.$shared.filters.filterParentalAdvisory.Profanity.find(
+          (filter) => !filter.Selected
+        )
+      ) {
+        result.None = false;
+        result.Profanity =
+          this.$shared.filters.filterParentalAdvisory.Profanity.filter(
+            (filter) => filter.Selected
+          );
+      }
+      if (
+        this.$shared.filters.filterParentalAdvisory.Alcohol.find(
+          (filter) => !filter.Selected
+        )
+      ) {
+        result.None = false;
+        result.Alcohol =
+          this.$shared.filters.filterParentalAdvisory.Alcohol.filter(
+            (filter) => filter.Selected
+          );
+      }
+      if (
+        this.$shared.filters.filterParentalAdvisory.Frightening.find(
+          (filter) => !filter.Selected
+        )
+      ) {
+        result.None = false;
+        result.Frightening =
+          this.$shared.filters.filterParentalAdvisory.Frightening.filter(
+            (filter) => filter.Selected
+          );
+      }
+
+      return result;
+    },
+
+    filterIMDBPlotKeywordsApplied() {
+      if (
+        this.$shared.filters.filterIMDBPlotKeywords &&
+        ((!this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND &&
+          this.$shared.filters.filterIMDBPlotKeywords.find(
+            (filter) => !filter.Selected
+          )) ||
+          (this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND &&
+            this.$shared.filters.filterIMDBPlotKeywords.find(
+              (filter) => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords
+            )))
+      ) {
+        return this.$shared.filters.filterIMDBPlotKeywords.filter(
+          (filter) => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords
+        );
+      }
+
+      return [];
+    },
+
+    filterIMDBFilmingLocationsApplied() {
+      if (
+        this.$shared.filters.filterIMDBFilmingLocations &&
+        ((!this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND &&
+          this.$shared.filters.filterIMDBFilmingLocations.find(
+            (filter) => !filter.Selected
+          )) ||
+          (this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND &&
+            this.$shared.filters.filterIMDBFilmingLocations.find(
+              (filter) =>
+                filter.Selected && filter.id_Filter_IMDB_Filming_Locations
+            )))
+      ) {
+        return this.$shared.filters.filterIMDBFilmingLocations.filter(
+          (filter) => filter.Selected && filter.id_Filter_IMDB_Filming_Locations
         );
       }
 
@@ -3075,6 +3252,34 @@ export default {
 
     filterListsAppliedContains(listName) {
       return !!this.filterListsApplied.find((fla) => fla.Name === listName);
+    },
+
+    filterGenresAppliedContains(genreName) {
+      return !!this.filterGenresApplied.find((fga) => fga.Name === genreName);
+    },
+
+    filterParentalAdvisoryAppliedContains(categoryName, severity) {
+      logger.log(
+        "[filterParentalAdvisoryAppliedContains] value:",
+        severity,
+        "this.filterParentalAdvisoryApplied:",
+        this.filterParentalAdvisoryApplied
+      );
+      return !!this.filterParentalAdvisoryApplied[categoryName].find(
+        (fpaa) => fpaa.Severity === severity
+      );
+    },
+
+    filterIMDBPlotKeywordsAppliedContains(plotKeyword) {
+      return !!this.filterIMDBPlotKeywordsApplied.find(
+        (fpka) => fpka.Keyword === plotKeyword
+      );
+    },
+
+    filterIMDBFilmingLocationsAppliedContains(location) {
+      return !!this.filterIMDBFilmingLocationsApplied.find(
+        (ffla) => ffla.Location === location
+      );
     },
   },
 

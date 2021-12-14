@@ -8,6 +8,26 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] highlight filtered people, companies etc. (same as search highlight)
+  - [x] People
+  - [x] Companies
+  - [x] SourcePaths
+  - [x] Video Quality
+  - [x] Audio Languages
+    - [ ] color the +7 if the language is behind it
+  - [x] Subtitle Languages
+    - [ ] color the +7 if the language is behind it
+  - [x] Release Attributes
+    - [x] defect: Lego Batman: The Movie - DC Super Heroes Unite fulfills "Director's Cut" filter
+    - [x] defect: "Director's Cut" filter with "all selected must apply" only shows 1, expected: 86
+  - [x] My Lists
+  - [x] Genres
+  - [x] Age Ratings
+  - [x] Content/Parental Advisories
+  - [x] Release Years
+  - [x] Plot Keywords
+  - [x] Filming Locations
+  - [x] ALL Categories: if there is a mk-clickable expandable section title, color it if the list is non-empty
 - [x] optimize movie credits handling (duplicate person in different roles per category, e.g. Aaron Sorkin in Few Good Men)
 - [x] remove sqlite indexes that don't exist anymore
 - [x] eliminate TODO/KILLME entries in code
