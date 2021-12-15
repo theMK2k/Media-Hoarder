@@ -4182,7 +4182,9 @@ async function fetchFilterDataQuality($MediaType, loadFilterValuesFromStorage) {
   logger.log("[fetchFilterDataQuality] filterValues:", filterValues);
 
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
-  delete currentFilters.filterDataQuality;
+  if (!shared.filters.filterSettings.filterDataQualityAND) {
+    delete currentFilters.filterDataQuality;
+  }
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
   const results = await db.fireProcedureReturnAll(
@@ -4359,7 +4361,9 @@ async function fetchFilterGenres($MediaType, $t) {
   logger.log("[fetchFilterGenres] filterValues:", filterValues);
 
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
-  delete currentFilters.filterGenres;
+  if (!shared.filters.filterGenresAND) {
+    delete currentFilters.filterSettings.filterGenres;
+  }
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
   const results = await db.fireProcedureReturnAll(
@@ -4383,7 +4387,7 @@ async function fetchFilterGenres($MediaType, $t) {
     { $MediaType }
   );
 
-  const resultsFiltered = results.filter((result) => result.NumMovies > 0);
+  const resultsFiltered = results; // results.filter((result) => result.NumMovies > 0); // we should not filter out, because "AND" can quickly result in an empty set
 
   if (filterValues && filterValues.filterGenres) {
     resultsFiltered.forEach((result) => {
@@ -4482,7 +4486,7 @@ async function fetchFilterAgeRatings($MediaType) {
     { $MediaType }
   );
 
-  const resultsFiltered = results.filter((result) => result.NumMovies > 0);
+  const resultsFiltered = results; // results.filter((result) => result.NumMovies > 0);  // we should not filter out, because "AND" can quickly result in an empty set
 
   if (filterValues && filterValues.filterAgeRatings) {
     resultsFiltered.forEach((result) => {
@@ -4851,7 +4855,9 @@ async function fetchFilterPersons($MediaType, $t) {
   const filterValues = await fetchFilterValues($MediaType);
 
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
-  delete currentFilters.filterPersons;
+  if (!shared.filters.filterSettings.filterPersonsAND) {
+    delete currentFilters.filterPersons;
+  }
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
   const results = await db.fireProcedureReturnAll(
@@ -4926,7 +4932,9 @@ async function fetchFilterCompanies($MediaType, $t) {
   const filterValues = await fetchFilterValues($MediaType);
 
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
-  delete currentFilters.filterCompanies;
+  if (!shared.filters.filterSettings.filterCompaniesAND) {
+    delete currentFilters.filterCompanies;
+  }
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
   const results = await db.fireProcedureReturnAll(
@@ -5000,7 +5008,9 @@ async function fetchFilterIMDBPlotKeywords($MediaType, $t) {
   const filterValues = await fetchFilterValues($MediaType);
 
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
-  delete currentFilters.filterIMDBPlotKeywords;
+  if (!shared.filters.filterSettings.filterIMDBPlotKeywordsAND) {
+    delete currentFilters.filterIMDBPlotKeywords;
+  }
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
   const results = await db.fireProcedureReturnAll(
@@ -5078,7 +5088,9 @@ async function fetchFilterIMDBFilmingLocations($MediaType, $t) {
   const filterValues = await fetchFilterValues($MediaType);
 
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
-  delete currentFilters.filterIMDBFilmingLocations;
+  if (!shared.filters.filterSettings.filterIMDBFilmingLocationsAND) {
+    delete currentFilters.filterIMDBFilmingLocations;
+  }
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
   const results = await db.fireProcedureReturnAll(
@@ -5191,7 +5203,7 @@ async function fetchFilterYears($MediaType) {
     { $MediaType }
   );
 
-  const resultsFiltered = results.filter((result) => result.NumMovies > 0);
+  const resultsFiltered = results; // results.filter((result) => result.NumMovies > 0); // we should not filter out, because "AND" can quickly result in an empty set
 
   results.forEach((result) => {
     result.startYear = parseInt(result.startYear);
@@ -5245,7 +5257,7 @@ async function fetchFilterQualities($MediaType) {
     { $MediaType }
   );
 
-  const resultsFiltered = results.filter((result) => result.NumMovies > 0);
+  const resultsFiltered = results; // results.filter((result) => result.NumMovies > 0);  // we should not filter out, because "AND" can quickly result in an empty set
 
   if (filterValues && filterValues.filterQualities) {
     resultsFiltered.forEach((result) => {
@@ -5505,7 +5517,7 @@ async function fetchFilterLanguages($MediaType, $LanguageType, $t) {
     { $MediaType, $LanguageType }
   );
 
-  const resultsFiltered = results.filter((result) => result.NumMovies > 0);
+  const resultsFiltered = results; //results.filter((result) => result.NumMovies > 0); // we should not filter out, because "AND" can quickly result in an empty set
 
   let filterValuesLanguages = null;
   if (filterValues) {
@@ -6879,7 +6891,9 @@ async function fetchFilterReleaseAttributes($MediaType) {
   let results = [];
 
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
-  delete currentFilters.filterReleaseAttributes;
+  if (!shared.filters.filterSettings.filterReleaseAttributesAND) {
+    delete currentFilters.filterReleaseAttributes;
+  }
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
   for (let i = 0; i < releaseAttributesHierarchy.length; i++) {

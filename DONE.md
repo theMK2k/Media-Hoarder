@@ -8,6 +8,19 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] Sidebar: colorize also the spinner
+- [x] reload the filters first that have been modified (e.g. change in genres reloads genres first)
+- [x] calculation of numMovies for AND-connected filters should be different than OR-connected filters of the same category
+  - [x] filterGenres
+  - [x] filterPersons
+  - [x] filterCompanies
+  - [x] filterIMDBPlotKeywords
+  - [x] filterIMDBFilmingLocations
+  - [x] filterReleaseAttributes
+  - [x] filterDataQuality
+- [x] colored active filters on the sidebar
+- [x] MediaList: move `*Applied` and `*AppliedContains` to $shared, so that App can also use them
+- [x] shared: introduce filter*Active (true|false), reuse this info in MediaList.filtersList and App
 - [x] highlight filtered people, companies etc. (same as search highlight)
   - [x] People
   - [x] Companies

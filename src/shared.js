@@ -161,6 +161,8 @@ const shared = new Vue({
       },
     ],
 
+    lastChangedFilter: null,
+
     sortField: null,
 
     currentPage: 1,
@@ -863,9 +865,416 @@ const shared = new Vue({
     ],
   },
 
-  computed: {},
+  computed: {
+    filterPersonsActive() {
+      return (
+        this.filters.filterPersons &&
+        ((!this.filters.filterSettings.filterPersonsAND &&
+          this.filters.filterPersons.find((filter) => !filter.Selected)) ||
+          (this.filters.filterSettings.filterPersonsAND &&
+            this.filters.filterPersons.find(
+              (filter) => filter.Selected && filter.IMDB_Person_ID
+            )))
+      );
+    },
+    filterPersonsApplied() {
+      if (
+        this.filters.filterPersons &&
+        ((!this.filters.filterSettings.filterPersonsAND &&
+          this.filters.filterPersons.find((filter) => !filter.Selected)) ||
+          (this.filters.filterSettings.filterPersonsAND &&
+            this.filters.filterPersons.find(
+              (filter) => filter.Selected && filter.IMDB_Person_ID
+            )))
+      ) {
+        return this.filters.filterPersons.filter(
+          (filter) => filter.Selected && filter.IMDB_Person_ID
+        );
+      }
 
-  methods: {},
+      return [];
+    },
+
+    filterCompaniesActive() {
+      return (
+        this.filters.filterCompanies &&
+        ((!this.filters.filterSettings.filterCompaniesAND &&
+          this.filters.filterCompanies.find((filter) => !filter.Selected)) ||
+          (this.filters.filterSettings.filterCompaniesAND &&
+            this.filters.filterCompanies.find(
+              (filter) => filter.Selected && filter.id_Filter_Companies
+            )))
+      );
+    },
+    filterCompaniesApplied() {
+      if (
+        this.filters.filterCompanies &&
+        ((!this.filters.filterSettings.filterCompaniesAND &&
+          this.filters.filterCompanies.find((filter) => !filter.Selected)) ||
+          (this.filters.filterSettings.filterCompaniesAND &&
+            this.filters.filterCompanies.find(
+              (filter) => filter.Selected && filter.id_Filter_Companies
+            )))
+      ) {
+        return this.filters.filterCompanies.filter(
+          (filter) => filter.Selected && filter.id_Filter_Companies
+        );
+      }
+
+      return [];
+    },
+
+    filterSourcePathsActive() {
+      return this.filters.filterSourcePaths.find((filter) => !filter.Selected);
+    },
+    filterSourcePathsApplied() {
+      if (this.filterSourcePathsActive) {
+        return this.filters.filterSourcePaths.filter(
+          (filter) => filter.Selected
+        );
+      }
+
+      return [];
+    },
+
+    filterQualitiesActive() {
+      return this.filters.filterQualities.find((filter) => !filter.Selected);
+    },
+    filterQualitiesApplied() {
+      if (this.filterQualitiesActive) {
+        return this.filters.filterQualities.filter((filter) => filter.Selected);
+      }
+
+      return [];
+    },
+
+    filterAudioLanguagesActive() {
+      return this.filters.filterAudioLanguages.find(
+        (filter) => !filter.Selected
+      );
+    },
+    filterAudioLanguagesApplied() {
+      if (this.filterAudioLanguagesActive) {
+        return this.filters.filterAudioLanguages.filter(
+          (filter) => filter.Selected
+        );
+      }
+
+      return [];
+    },
+
+    filterSubtitleLanguagesActive() {
+      return this.filters.filterSubtitleLanguages.find(
+        (filter) => !filter.Selected
+      );
+    },
+    filterSubtitleLanguagesApplied() {
+      if (this.filterSubtitleLanguagesActive) {
+        return this.filters.filterSubtitleLanguages.filter(
+          (filter) => filter.Selected
+        );
+      }
+
+      return [];
+    },
+
+    filterReleaseAttributesActive() {
+      return (
+        this.filters.filterReleaseAttributes &&
+        ((!this.filters.filterSettings.filterReleaseAttributesAND &&
+          this.filters.filterReleaseAttributes.find(
+            (filter) => !filter.Selected
+          )) ||
+          (this.filters.filterSettings.filterReleaseAttributesAND &&
+            this.filters.filterReleaseAttributes.find(
+              (filter) => filter.Selected && !filter.isAny
+            )))
+      );
+    },
+    filterReleaseAttributesApplied() {
+      if (this.filterReleaseAttributesActive) {
+        return this.filters.filterReleaseAttributes.filter(
+          (filter) => filter.Selected && !filter.isAny
+        );
+      }
+
+      return [];
+    },
+
+    filterListsActive() {
+      return this.filters.filterLists.find((filter) => !filter.Selected);
+    },
+    filterListsApplied() {
+      if (this.filterListsActive) {
+        return this.filters.filterLists.filter((filter) => filter.Selected);
+      }
+
+      return [];
+    },
+
+    filterGenresActive() {
+      return (
+        this.filters.filterGenres &&
+        ((!this.filters.filterSettings.filterGenresAND &&
+          this.filters.filterGenres.find((filter) => !filter.Selected)) ||
+          (this.filters.filterSettings.filterGenresAND &&
+            this.filters.filterGenres.find((filter) => filter.Selected)))
+      );
+    },
+    filterGenresApplied() {
+      if (this.filterGenresActive) {
+        return this.filters.filterGenres.filter((filter) => filter.Selected);
+      }
+      return [];
+    },
+
+    filterAgeRatingsActive() {
+      return this.filters.filterAgeRatings.find((filter) => !filter.Selected);
+    },
+    filterAgeRatingsApplied() {
+      if (this.filterAgeRatingsActive) {
+        return this.filters.filterAgeRatings.filter(
+          (filter) => filter.Selected
+        );
+      }
+      return [];
+    },
+
+    filterYearsActive() {
+      return this.filters.filterYears.find((filter) => !filter.Selected);
+    },
+    filterYearsApplied() {
+      if (this.filterYearsActive) {
+        return this.filters.filterYears.filter((filter) => !filter.Selected);
+      }
+
+      return [];
+    },
+
+    filterParentalAdvisoryActive() {
+      return !this.filterParentalAdvisoryApplied.None;
+    },
+    filterParentalAdvisoryApplied() {
+      const result = {
+        None: true,
+        Nudity: [],
+        Violence: [],
+        Profanity: [],
+        Alcohol: [],
+        Frightening: [],
+      };
+
+      if (
+        this.filters.filterParentalAdvisory.Nudity.find(
+          (filter) => !filter.Selected
+        )
+      ) {
+        result.None = false;
+        result.Nudity = this.filters.filterParentalAdvisory.Nudity.filter(
+          (filter) => filter.Selected
+        );
+      }
+      if (
+        this.filters.filterParentalAdvisory.Violence.find(
+          (filter) => !filter.Selected
+        )
+      ) {
+        result.None = false;
+        result.Violence = this.filters.filterParentalAdvisory.Violence.filter(
+          (filter) => filter.Selected
+        );
+      }
+      if (
+        this.filters.filterParentalAdvisory.Profanity.find(
+          (filter) => !filter.Selected
+        )
+      ) {
+        result.None = false;
+        result.Profanity = this.filters.filterParentalAdvisory.Profanity.filter(
+          (filter) => filter.Selected
+        );
+      }
+      if (
+        this.filters.filterParentalAdvisory.Alcohol.find(
+          (filter) => !filter.Selected
+        )
+      ) {
+        result.None = false;
+        result.Alcohol = this.filters.filterParentalAdvisory.Alcohol.filter(
+          (filter) => filter.Selected
+        );
+      }
+      if (
+        this.filters.filterParentalAdvisory.Frightening.find(
+          (filter) => !filter.Selected
+        )
+      ) {
+        result.None = false;
+        result.Frightening =
+          this.filters.filterParentalAdvisory.Frightening.filter(
+            (filter) => filter.Selected
+          );
+      }
+
+      return result;
+    },
+
+    filterIMDBPlotKeywordsActive() {
+      return (
+        this.filters.filterIMDBPlotKeywords &&
+        ((!this.filters.filterSettings.filterIMDBPlotKeywordsAND &&
+          this.filters.filterIMDBPlotKeywords.find(
+            (filter) => !filter.Selected
+          )) ||
+          (this.filters.filterSettings.filterIMDBPlotKeywordsAND &&
+            this.filters.filterIMDBPlotKeywords.find(
+              (filter) => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords
+            )))
+      );
+    },
+    filterIMDBPlotKeywordsApplied() {
+      if (this.filterIMDBPlotKeywordsActive) {
+        return this.filters.filterIMDBPlotKeywords.filter(
+          (filter) => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords
+        );
+      }
+
+      return [];
+    },
+
+    filterIMDBFilmingLocationsActive() {
+      return (
+        this.filters.filterIMDBFilmingLocations &&
+        ((!this.filters.filterSettings.filterIMDBFilmingLocationsAND &&
+          this.filters.filterIMDBFilmingLocations.find(
+            (filter) => !filter.Selected
+          )) ||
+          (this.filters.filterSettings.filterIMDBFilmingLocationsAND &&
+            this.filters.filterIMDBFilmingLocations.find(
+              (filter) =>
+                filter.Selected && filter.id_Filter_IMDB_Filming_Locations
+            )))
+      );
+    },
+    filterIMDBFilmingLocationsApplied() {
+      if (this.filterIMDBFilmingLocationsActive) {
+        return this.filters.filterIMDBFilmingLocations.filter(
+          (filter) => filter.Selected && filter.id_Filter_IMDB_Filming_Locations
+        );
+      }
+
+      return [];
+    },
+
+    filterRatingsActive() {
+      return this.filters.filterRatings.find((filter) => !filter.Selected);
+    },
+    filterRatingsApplied() {
+      if (this.filterRatingsActive) {
+        return this.filters.filterRatings.filter((filter) => !filter.Selected);
+      }
+
+      return [];
+    },
+
+    filterMetacriticScoreActive() {
+      return (
+        this.$shared.filters.filterMetacriticScore[0] !== 0 ||
+        this.$shared.filters.filterMetacriticScore[1] !== 100 ||
+        !this.$shared.filters.filterMetacriticScoreNone
+      );
+    },
+
+    filterIMDBRatingsActive() {
+      return (
+        this.$shared.filters.filterIMDBRating[0] !== 0 ||
+        this.$shared.filters.filterIMDBRating[1] !== 10 ||
+        !this.$shared.filters.filterIMDBRatingNone
+      );
+    },
+
+    filterDataQualityActive() {
+      return (
+        this.$shared.filters.filterDataQuality &&
+        ((!this.$shared.filters.filterSettings.filterDataQualityAND &&
+          this.$shared.filters.filterDataQuality.find(
+            (filter) => !filter.Selected
+          )) ||
+          (this.$shared.filters.filterSettings.filterDataQualityAND &&
+            this.$shared.filters.filterDataQuality.find(
+              (filter) => filter.Selected
+            )))
+      );
+    },
+  },
+
+  methods: {
+    filterPersonsAppliedContains(person) {
+      return !!this.$shared.filterPersonsApplied.find(
+        (fp) => fp.IMDB_Person_ID === person.id
+      );
+    },
+
+    filterCompaniesAppliedContains(company) {
+      return !!this.$shared.filterCompaniesApplied.find(
+        (fc) => fc.Company_Name === company.name
+      );
+    },
+
+    filterQualitiesAppliedContains(quality) {
+      return !!this.$shared.filterQualitiesApplied.find(
+        (fq) => fq.MI_Quality === quality
+      );
+    },
+
+    filterAudioLanguagesAppliedContains(language) {
+      return !!this.$shared.filterAudioLanguagesApplied.find(
+        (fal) => fal.Language.toUpperCase() === language
+      );
+    },
+
+    filterSubtitleLanguagesAppliedContains(language) {
+      return !!this.$shared.filterSubtitleLanguagesApplied.find(
+        (fsl) => fsl.Language.toUpperCase() === language
+      );
+    },
+
+    filterReleaseAttributesAppliedContains(releaseAttribute) {
+      return !!this.$shared.filterReleaseAttributesApplied.find(
+        (fra) => fra.ReleaseAttribute === releaseAttribute
+      );
+    },
+
+    filterListsAppliedContains(listName) {
+      return !!this.$shared.filterListsApplied.find(
+        (fla) => fla.Name === listName
+      );
+    },
+
+    filterGenresAppliedContains(genreName) {
+      return !!this.$shared.filterGenresApplied.find(
+        (fga) => fga.Name === genreName
+      );
+    },
+
+    filterParentalAdvisoryAppliedContains(categoryName, severity) {
+      return !!this.$shared.filterParentalAdvisoryApplied[categoryName].find(
+        (fpaa) => fpaa.Severity === severity
+      );
+    },
+
+    filterIMDBPlotKeywordsAppliedContains(plotKeyword) {
+      return !!this.$shared.filterIMDBPlotKeywordsApplied.find(
+        (fpka) => fpka.Keyword === plotKeyword
+      );
+    },
+
+    filterIMDBFilmingLocationsAppliedContains(location) {
+      return !!this.$shared.filterIMDBFilmingLocationsApplied.find(
+        (ffla) => ffla.Location === location
+      );
+    },
+  },
 });
 
 shared.install = function () {

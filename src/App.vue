@@ -154,8 +154,7 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
-                        'mk-search-highlight':
-                          filterSourcePathsTitle !== '(ALL)',
+                        'mk-search-highlight': $shared.filterSourcePathsActive,
                       }"
                       style="display: flex; align-items: center"
                     >
@@ -165,16 +164,19 @@
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
                             'mk-search-highlight':
-                              filterSourcePathsTitle !== '(ALL)',
+                              $shared.filterSourcePathsActive,
                           }"
                           >mdi-folder-outline</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
+                          v-bind:class="{
+                            'mk-search-highlight':
+                              $shared.filterSourcePathsActive,
+                          }"
                           v-show="$shared.loadingFilter === 'filterSourcePaths'"
                           v-bind:size="16"
                           v-bind:width="3"
-                          color="white"
                           indeterminate
                         >
                         </v-progress-circular>
@@ -248,10 +250,10 @@
                         ')'
                       "
                       v-model="sourcePath.Selected"
-                      v-on:mouseup="filterCheckboxMouseup"
+                      v-on:mouseup="filterCheckboxMouseup('filterSourcePaths')"
                       v-on:mousedown="
                         filterCheckboxMousedown(
-                          $shared.filters.filterSourcePaths,
+                          'filterSourcePaths',
                           sourcePath,
                           setAllSourcePaths
                         )
@@ -274,6 +276,7 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
+                        'mk-search-highlight': $shared.filterQualitiesActive,
                       }"
                       style="display: flex; align-items: center"
                     >
@@ -282,15 +285,20 @@
                           v-show="$shared.loadingFilter !== 'filterQualities'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
+                            'mk-search-highlight':
+                              $shared.filterQualitiesActive,
                           }"
                           >mdi-video-outline</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
+                          v-bind:class="{
+                            'mk-search-highlight':
+                              $shared.filterQualitiesActive,
+                          }"
                           v-show="$shared.loadingFilter === 'filterQualities'"
                           v-bind:size="16"
                           v-bind:width="3"
-                          color="white"
                           indeterminate
                         >
                         </v-progress-circular>
@@ -364,10 +372,10 @@
                         )
                       "
                       v-model="quality.Selected"
-                      v-on:mouseup="filterCheckboxMouseup"
+                      v-on:mouseup="filterCheckboxMouseup('filterQualities')"
                       v-on:mousedown="
                         filterCheckboxMousedown(
-                          $shared.filters.filterQualities,
+                          'filterQualities',
                           quality,
                           setAllQualities
                         )
@@ -392,6 +400,8 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
+                        'mk-search-highlight':
+                          $shared.filterAudioLanguagesActive,
                       }"
                       style="display: flex; align-items: center"
                     >
@@ -402,17 +412,22 @@
                           "
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
+                            'mk-search-highlight':
+                              $shared.filterAudioLanguagesActive,
                           }"
                           >mdi-comment-outline</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
+                          v-bind:class="{
+                            'mk-search-highlight':
+                              $shared.filterAudioLanguagesActive,
+                          }"
                           v-show="
                             $shared.loadingFilter === 'filterAudioLanguages'
                           "
                           v-bind:size="16"
                           v-bind:width="3"
-                          color="white"
                           indeterminate
                         >
                         </v-progress-circular>
@@ -488,10 +503,12 @@
                         ')'
                       "
                       v-model="audioLanguage.Selected"
-                      v-on:mouseup="filterCheckboxMouseup"
+                      v-on:mouseup="
+                        filterCheckboxMouseup('filterAudioLanguages')
+                      "
                       v-on:mousedown="
                         filterCheckboxMousedown(
-                          $shared.filters.filterAudioLanguages,
+                          'filterAudioLanguages',
                           audioLanguage,
                           setAllAudioLanguages
                         )
@@ -516,6 +533,8 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
+                        'mk-search-highlight':
+                          $shared.filterSubtitleLanguagesActive,
                       }"
                       style="display: flex; align-items: center"
                     >
@@ -526,17 +545,22 @@
                           "
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
+                            'mk-search-highlight':
+                              $shared.filterSubtitleLanguagesActive,
                           }"
                           >mdi-subtitles-outline</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
+                          v-bind:class="{
+                            'mk-search-highlight':
+                              $shared.filterSubtitleLanguagesActive,
+                          }"
                           v-show="
                             $shared.loadingFilter === 'filterSubtitleLanguages'
                           "
                           v-bind:size="16"
                           v-bind:width="3"
-                          color="white"
                           indeterminate
                         >
                         </v-progress-circular>
@@ -612,10 +636,12 @@
                         ')'
                       "
                       v-model="subtitleLanguage.Selected"
-                      v-on:mouseup="filterCheckboxMouseup"
+                      v-on:mouseup="
+                        filterCheckboxMouseup('filterSubtitleLanguages')
+                      "
                       v-on:mousedown="
                         filterCheckboxMousedown(
-                          $shared.filters.filterSubtitleLanguages,
+                          'filterSubtitleLanguages',
                           subtitleLanguage,
                           setAllSubtitleLanguages
                         )
@@ -640,6 +666,8 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
+                        'mk-search-highlight':
+                          $shared.filterReleaseAttributesActive,
                       }"
                       style="display: flex; align-items: center"
                     >
@@ -650,17 +678,22 @@
                           "
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
+                            'mk-search-highlight':
+                              $shared.filterReleaseAttributesActive,
                           }"
                           >mdi-package-variant</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
+                          v-bind:class="{
+                            'mk-search-highlight':
+                              $shared.filterReleaseAttributesActive,
+                          }"
                           v-show="
                             $shared.loadingFilter === 'filterReleaseAttributes'
                           "
                           v-bind:size="16"
                           v-bind:width="3"
-                          color="white"
                           indeterminate
                         >
                         </v-progress-circular>
@@ -742,7 +775,9 @@
                         $shared.filters.filterSettings
                           .filterReleaseAttributesAND
                       "
-                      v-on:click.native="filtersChanged"
+                      v-on:click.native="
+                        filtersChanged('filterReleaseAttributes')
+                      "
                     ></v-switch>
                     <v-checkbox
                       class="mk-filter-checkbox"
@@ -755,10 +790,12 @@
                         ')'
                       "
                       v-model="filterReleaseAttribute.Selected"
-                      v-on:mouseup="filterCheckboxMouseup"
+                      v-on:mouseup="
+                        filterCheckboxMouseup('filterReleaseAttributes')
+                      "
                       v-on:mousedown="
                         filterCheckboxMousedown(
-                          $shared.filters.filterReleaseAttributes,
+                          'filterReleaseAttributes',
                           filterReleaseAttribute,
                           setAllReleaseAttributes
                         )
@@ -781,6 +818,7 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
+                        'mk-search-highlight': $shared.filterListsActive,
                       }"
                       style="display: flex; align-items: center"
                     >
@@ -789,15 +827,18 @@
                           v-show="$shared.loadingFilter !== 'filterLists'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
+                            'mk-search-highlight': $shared.filterListsActive,
                           }"
                           >mdi-clipboard-list-outline</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
+                          v-bind:class="{
+                            'mk-search-highlight': $shared.filterListsActive,
+                          }"
                           v-show="$shared.loadingFilter === 'filterLists'"
                           v-bind:size="16"
                           v-bind:width="3"
-                          color="white"
                           indeterminate
                         >
                         </v-progress-circular>
@@ -868,10 +909,10 @@
                         class="mk-filter-checkbox mk-filter-removable"
                         v-bind:label="list.Name + ' (' + list.NumMovies + ')'"
                         v-model="list.Selected"
-                        v-on:mouseup="filterCheckboxMouseup"
+                        v-on:mouseup="filterCheckboxMouseup('filterLists')"
                         v-on:mousedown="
                           filterCheckboxMousedown(
-                            $shared.filters.filterLists,
+                            'filterLists',
                             list,
                             setAllLists
                           )
@@ -911,6 +952,7 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
+                        'mk-search-highlight': $shared.filterRatingsActive,
                       }"
                       style="display: flex; align-items: center"
                     >
@@ -919,15 +961,18 @@
                           v-show="$shared.loadingFilter !== 'filterRatings'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
+                            'mk-search-highlight': $shared.filterRatingsActive,
                           }"
                           >mdi-star-outline</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
+                          v-bind:class="{
+                            'mk-search-highlight': $shared.filterRatingsActive,
+                          }"
                           v-show="$shared.loadingFilter === 'filterRatings'"
                           v-bind:size="16"
                           v-bind:width="3"
-                          color="white"
                           indeterminate
                         >
                         </v-progress-circular>
@@ -999,10 +1044,10 @@
                         getFilterRatingLabel(rating.Rating, rating.NumMovies)
                       "
                       v-model="rating.Selected"
-                      v-on:mouseup="filterCheckboxMouseup"
+                      v-on:mouseup="filterCheckboxMouseup('filterRatings')"
                       v-on:mousedown="
                         filterCheckboxMousedown(
-                          $shared.filters.filterRatings,
+                          'filterRatings',
                           rating,
                           setAllRatings
                         )
@@ -1041,6 +1086,8 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
+                        'mk-search-highlight':
+                          $shared.filterMetacriticScoreActive,
                       }"
                       style="display: flex; align-items: center"
                     >
@@ -1051,17 +1098,22 @@
                           "
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
+                            'mk-search-highlight':
+                              $shared.filterMetacriticScoreActive,
                           }"
                           >mdi-numeric-10-box</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
+                          v-bind:class="{
+                            'mk-search-highlight':
+                              $shared.filterMetacriticScoreActive,
+                          }"
                           v-show="
                             $shared.loadingFilter === 'filterMetacriticScore'
                           "
                           v-bind:size="16"
                           v-bind:width="3"
-                          color="white"
                           indeterminate
                         >
                         </v-progress-circular>
@@ -1098,7 +1150,7 @@
                       :min="0"
                       hide-details
                       class="align-center"
-                      v-on:change="filtersChanged"
+                      v-on:change="filtersChanged('filterMetacriticScore')"
                     >
                       <template v-slot:prepend>{{
                         $shared.filters.filterMetacriticScore[0]
@@ -1112,7 +1164,9 @@
                         $t('include entries with no Metacritic score')
                       "
                       v-model="$shared.filters.filterMetacriticScoreNone"
-                      v-on:click.native="filtersChanged"
+                      v-on:click.native="
+                        filtersChanged('filterMetacriticScore')
+                      "
                       style="margin: 0px"
                       color="mk-dark-grey"
                     ></v-checkbox>
@@ -1134,6 +1188,7 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
+                        'mk-search-highlight': $shared.filterIMDBRatingsActive,
                       }"
                       style="display: flex; align-items: center"
                     >
@@ -1142,15 +1197,20 @@
                           v-show="$shared.loadingFilter !== 'filterIMDBRatings'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
+                            'mk-search-highlight':
+                              $shared.filterIMDBRatingsActive,
                           }"
                           >mdi-surround-sound-7-1</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
+                          v-bind:class="{
+                            'mk-search-highlight':
+                              $shared.filterIMDBRatingsActive,
+                          }"
                           v-show="$shared.loadingFilter === 'filterIMDBRatings'"
                           v-bind:size="16"
                           v-bind:width="3"
-                          color="white"
                           indeterminate
                         >
                         </v-progress-circular>
@@ -1186,7 +1246,7 @@
                       :min="0"
                       hide-details
                       class="align-center"
-                      v-on:change="filtersChanged"
+                      v-on:change="filtersChanged('filterIMDBRating')"
                     >
                       <template v-slot:prepend>{{
                         $shared.filters.filterIMDBRating[0]
@@ -1198,7 +1258,7 @@
                     <v-checkbox
                       v-bind:label="$t('include entries with no IMDB rating')"
                       v-model="$shared.filters.filterIMDBRatingNone"
-                      v-on:click.native="filtersChanged"
+                      v-on:click.native="filtersChanged('filterIMDBRating')"
                       style="margin: 0px"
                       color="mk-dark-grey"
                     ></v-checkbox>
@@ -1218,6 +1278,7 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
+                        'mk-search-highlight': $shared.filterGenresActive,
                       }"
                       style="display: flex; align-items: center"
                     >
@@ -1226,15 +1287,18 @@
                           v-show="$shared.loadingFilter !== 'filterGenres'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
+                            'mk-search-highlight': $shared.filterGenresActive,
                           }"
                           >mdi-drama-masks</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
+                          v-bind:class="{
+                            'mk-search-highlight': $shared.filterGenresActive,
+                          }"
                           v-show="$shared.loadingFilter === 'filterGenres'"
                           v-bind:size="16"
                           v-bind:width="3"
-                          color="white"
                           indeterminate
                         >
                         </v-progress-circular>
@@ -1311,7 +1375,7 @@
                       "
                       color="red"
                       v-model="$shared.filters.filterSettings.filterGenresAND"
-                      v-on:click.native="filtersChanged"
+                      v-on:click.native="filtersChanged('filterGenres')"
                     ></v-switch>
                     <v-checkbox
                       class="mk-filter-checkbox"
@@ -1319,10 +1383,10 @@
                       v-bind:key="genre.id_Genres"
                       v-bind:label="genre.Name + ' (' + genre.NumMovies + ')'"
                       v-model="genre.Selected"
-                      v-on:mouseup="filterCheckboxMouseup"
+                      v-on:mouseup="filterCheckboxMouseup('filterGenres')"
                       v-on:mousedown="
                         filterCheckboxMousedown(
-                          $shared.filters.filterGenres,
+                          'filterGenres',
                           genre,
                           setAllGenres
                         )
@@ -1345,6 +1409,7 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
+                        'mk-search-highlight': $shared.filterAgeRatingsActive,
                       }"
                       style="display: flex; align-items: center"
                     >
@@ -1353,15 +1418,20 @@
                           v-show="$shared.loadingFilter !== 'filterAgeRatings'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
+                            'mk-search-highlight':
+                              $shared.filterAgeRatingsActive,
                           }"
                           >mdi-human-female-boy</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
+                          v-bind:class="{
+                            'mk-search-highlight':
+                              $shared.filterAgeRatingsActive,
+                          }"
                           v-show="$shared.loadingFilter === 'filterAgeRatings'"
                           v-bind:size="16"
                           v-bind:width="3"
-                          color="white"
                           indeterminate
                         >
                         </v-progress-circular>
@@ -1437,10 +1507,10 @@
                         ')'
                       "
                       v-model="ageRating.Selected"
-                      v-on:mouseup="filterCheckboxMouseup"
+                      v-on:mouseup="filterCheckboxMouseup('filterAgeRatings')"
                       v-on:mousedown="
                         filterCheckboxMousedown(
-                          $shared.filters.filterAgeRatings,
+                          'filterAgeRatings',
                           ageRating,
                           setAllAgeRatings
                         )
@@ -1450,7 +1520,7 @@
                   </v-expansion-panel-content>
                 </v-expansion-panel>
 
-                <!-- FILTER GROUP: CONTENT ADVISORY -->
+                <!-- FILTER GROUP: PARENTAL/CONTENT ADVISORY -->
                 <v-expansion-panel
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterParentalAdvisory'"
@@ -1465,6 +1535,8 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
+                        'mk-search-highlight':
+                          $shared.filterParentalAdvisoryActive,
                       }"
                       style="display: flex; align-items: center"
                     >
@@ -1475,17 +1547,22 @@
                           "
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
+                            'mk-search-highlight':
+                              $shared.filterParentalAdvisoryActive,
                           }"
                           >mdi-movie-filter-outline</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
+                          v-bind:class="{
+                            'mk-search-highlight':
+                              $shared.filterParentalAdvisoryActive,
+                          }"
                           v-show="
                             $shared.loadingFilter === 'filterParentalAdvisory'
                           "
                           v-bind:size="16"
                           v-bind:width="3"
-                          color="white"
                           indeterminate
                         >
                         </v-progress-circular>
@@ -1531,6 +1608,12 @@
                       >
                         <v-expansion-panel-header
                           style="padding: 8px !important"
+                          v-bind:class="{
+                            'mk-search-highlight':
+                              $shared.filters.filterParentalAdvisory[
+                                category.Name
+                              ].find((filter) => !filter.Selected),
+                          }"
                           >{{
                             $t(`ParentalAdvisoryCategories.${category.Name}`)
                           }}
@@ -1592,12 +1675,12 @@
                                 ')'
                               "
                               v-model="paItem.Selected"
-                              v-on:mouseup="filterCheckboxMouseup"
+                              v-on:mouseup="
+                                filterCheckboxMouseup('filterParentalAdvisory')
+                              "
                               v-on:mousedown="
-                                filterCheckboxMousedown(
-                                  $shared.filters.filterParentalAdvisory[
-                                    category.Name
-                                  ],
+                                filterCheckboxMousedownParentalAdvisory(
+                                  category.Name,
                                   paItem,
                                   (x) => setAllParentalAdvisory(category, x)
                                 )
@@ -1624,6 +1707,7 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
+                        'mk-search-highlight': $shared.filterPersonsActive,
                       }"
                       style="display: flex; align-items: center"
                     >
@@ -1632,15 +1716,18 @@
                           v-show="$shared.loadingFilter !== 'filterPersons'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
+                            'mk-search-highlight': $shared.filterPersonsActive,
                           }"
                           >mdi-human-male-male</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
+                          v-bind:class="{
+                            'mk-search-highlight': $shared.filterPersonsActive,
+                          }"
                           v-show="$shared.loadingFilter === 'filterPersons'"
                           v-bind:size="16"
                           v-bind:width="3"
-                          color="white"
                           indeterminate
                         >
                         </v-progress-circular>
@@ -1731,7 +1818,7 @@
                       "
                       color="red"
                       v-model="$shared.filters.filterSettings.filterPersonsAND"
-                      v-on:click.native="filtersChanged"
+                      v-on:click.native="filtersChanged('filterPersons')"
                       style="margin-bottom: 8px; margin-left: -10px"
                     ></v-switch>
                     <v-row
@@ -1744,10 +1831,10 @@
                           person.Person_Name + ' (' + person.NumMovies + ')'
                         "
                         v-model="person.Selected"
-                        v-on:mouseup="filterCheckboxMouseup"
+                        v-on:mouseup="filterCheckboxMouseup('filterPersons')"
                         v-on:mousedown="
                           filterCheckboxMousedown(
-                            filterPersons,
+                            'filterPersons',
                             person,
                             setAllPersons
                           )
@@ -1787,6 +1874,7 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
+                        'mk-search-highlight': $shared.filterCompaniesActive,
                       }"
                       style="display: flex; align-items: center"
                     >
@@ -1795,15 +1883,20 @@
                           v-show="$shared.loadingFilter !== 'filterCompanies'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
+                            'mk-search-highlight':
+                              $shared.filterCompaniesActive,
                           }"
                           >mdi-factory</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
+                          v-bind:class="{
+                            'mk-search-highlight':
+                              $shared.filterCompaniesActive,
+                          }"
                           v-show="$shared.loadingFilter === 'filterCompanies'"
                           v-bind:size="16"
                           v-bind:width="3"
-                          color="white"
                           indeterminate
                         >
                         </v-progress-circular>
@@ -1896,7 +1989,7 @@
                       v-model="
                         $shared.filters.filterSettings.filterCompaniesAND
                       "
-                      v-on:click.native="filtersChanged"
+                      v-on:click.native="filtersChanged('filterCompanies')"
                       style="margin-bottom: 8px; margin-left: -10px"
                     ></v-switch>
                     <v-row
@@ -1909,10 +2002,10 @@
                           company.Company_Name + ' (' + company.NumMovies + ')'
                         "
                         v-model="company.Selected"
-                        v-on:mouseup="filterCheckboxMouseup"
+                        v-on:mouseup="filterCheckboxMouseup('filterCompanies')"
                         v-on:mousedown="
                           filterCheckboxMousedown(
-                            filterCompanies,
+                            'filterCompanies',
                             company,
                             setAllCompanies
                           )
@@ -1952,6 +2045,7 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
+                        'mk-search-highlight': $shared.filterYearsActive,
                       }"
                       style="display: flex; align-items: center"
                     >
@@ -1960,15 +2054,18 @@
                           v-show="$shared.loadingFilter !== 'filterYears'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
+                            'mk-search-highlight': $shared.filterYearsActive,
                           }"
                           >mdi-calendar-month-outline</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
+                          v-bind:class="{
+                            'mk-search-highlight': $shared.filterYearsActive,
+                          }"
                           v-show="$shared.loadingFilter === 'filterYears'"
                           v-bind:size="16"
                           v-bind:width="3"
-                          color="white"
                           indeterminate
                         >
                         </v-progress-circular>
@@ -2081,10 +2178,10 @@
                         getFilterYearLabel(year.startYear, year.NumMovies)
                       "
                       v-model="year.Selected"
-                      v-on:mouseup="filterCheckboxMouseup"
+                      v-on:mouseup="filterCheckboxMouseup('filterYears')"
                       v-on:mousedown="
                         filterCheckboxMousedown(
-                          $shared.filters.filterYears,
+                          'filterYears',
                           year,
                           setAllYears
                         )
@@ -2109,6 +2206,8 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
+                        'mk-search-highlight':
+                          $shared.filterIMDBPlotKeywordsActive,
                       }"
                       style="display: flex; align-items: center"
                     >
@@ -2119,17 +2218,22 @@
                           "
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
+                            'mk-search-highlight':
+                              $shared.filterIMDBPlotKeywordsActive,
                           }"
                           >mdi-book-open-outline</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
+                          v-bind:class="{
+                            'mk-search-highlight':
+                              $shared.filterIMDBPlotKeywordsActive,
+                          }"
                           v-show="
                             $shared.loadingFilter === 'filterIMDBPlotKeywords'
                           "
                           v-bind:size="16"
                           v-bind:width="3"
-                          color="white"
                           indeterminate
                         >
                         </v-progress-circular>
@@ -2222,7 +2326,9 @@
                       v-model="
                         $shared.filters.filterSettings.filterIMDBPlotKeywordsAND
                       "
-                      v-on:click.native="filtersChanged"
+                      v-on:click.native="
+                        filtersChanged('filterIMDBPlotKeywords')
+                      "
                       style="margin-bottom: 8px; margin-left: -10px"
                     ></v-switch>
                     <v-row
@@ -2238,10 +2344,12 @@
                           ')'
                         "
                         v-model="plotKeyword.Selected"
-                        v-on:mouseup="filterCheckboxMouseup"
+                        v-on:mouseup="
+                          filterCheckboxMouseup('filterIMDBPlotKeywords')
+                        "
                         v-on:mousedown="
                           filterCheckboxMousedown(
-                            filterIMDBPlotKeywords,
+                            'filterIMDBPlotKeywords',
                             plotKeyword,
                             setAllIMDBPlotKeywords
                           )
@@ -2283,6 +2391,8 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
+                        'mk-search-highlight':
+                          $shared.filterIMDBFilmingLocationsActive,
                       }"
                       style="display: flex; align-items: center"
                     >
@@ -2294,18 +2404,23 @@
                           "
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
+                            'mk-search-highlight':
+                              $shared.filterIMDBFilmingLocationsActive,
                           }"
                           >mdi-map-marker-outline</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
+                          v-bind:class="{
+                            'mk-search-highlight':
+                              $shared.filterIMDBFilmingLocationsActive,
+                          }"
                           v-show="
                             $shared.loadingFilter ===
                             'filterIMDBFilmingLocations'
                           "
                           v-bind:size="16"
                           v-bind:width="3"
-                          color="white"
                           indeterminate
                         >
                         </v-progress-circular>
@@ -2401,7 +2516,9 @@
                         $shared.filters.filterSettings
                           .filterIMDBFilmingLocationsAND
                       "
-                      v-on:click.native="filtersChanged"
+                      v-on:click.native="
+                        filtersChanged('filterIMDBFilmingLocations')
+                      "
                       style="margin-bottom: 8px; margin-left: -10px"
                     ></v-switch>
                     <v-row
@@ -2419,10 +2536,12 @@
                           ')'
                         "
                         v-model="filmingLocation.Selected"
-                        v-on:mouseup="filterCheckboxMouseup"
+                        v-on:mouseup="
+                          filterCheckboxMouseup('filterIMDBFilmingLocations')
+                        "
                         v-on:mousedown="
                           filterCheckboxMousedown(
-                            filterIMDBFilmingLocations,
+                            'filterIMDBFilmingLocations',
                             filmingLocation,
                             setAllIMDBFilmingLocations
                           )
@@ -2464,6 +2583,7 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
+                        'mk-search-highlight': $shared.filterDataQualityActive,
                       }"
                       style="display: flex; align-items: center"
                     >
@@ -2472,15 +2592,20 @@
                           v-show="$shared.loadingFilter !== 'filterDataQuality'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
+                            'mk-search-highlight':
+                              $shared.filterDataQualityActive,
                           }"
                           >mdi-check-box-outline</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
+                          v-bind:class="{
+                            'mk-search-highlight':
+                              $shared.filterDataQualityActive,
+                          }"
                           v-show="$shared.loadingFilter === 'filterDataQuality'"
                           v-bind:size="16"
                           v-bind:width="3"
-                          color="white"
                           indeterminate
                         >
                         </v-progress-circular>
@@ -2559,7 +2684,7 @@
                       v-model="
                         $shared.filters.filterSettings.filterDataQualityAND
                       "
-                      v-on:click.native="filtersChanged"
+                      v-on:click.native="filtersChanged('filterDataQuality')"
                       style="margin-bottom: 8px; margin-left: -10px"
                     ></v-switch>
                     <v-row
@@ -2576,10 +2701,12 @@
                           ')'
                         "
                         v-model="dataQuality.Selected"
-                        v-on:mouseup="filterCheckboxMouseup"
+                        v-on:mouseup="
+                          filterCheckboxMouseup('filterDataQuality')
+                        "
                         v-on:mousedown="
                           filterCheckboxMousedown(
-                            $shared.filters.filterDataQuality,
+                            'filterDataQuality',
                             dataQuality,
                             setAllDataQuality
                           )
@@ -3602,12 +3729,10 @@ export default {
       eventBus.refetchMedia(setPage);
     },
 
-    filterCheckboxMousedown: function (
-      filterCollection,
-      filterItem,
-      setAllFunction
-    ) {
+    filterCheckboxMousedown: function (filterName, filterItem, setAllFunction) {
       logger.log("[filterCheckboxMousedown] START");
+
+      const filterCollection = this.$shared.filters[filterName];
 
       this.isolateFilterItemTimeout = setTimeout(() => {
         if (
@@ -3620,11 +3745,36 @@ export default {
           // filterItem.Selected = true;
         }
 
-        this.filtersChanged();
+        this.filtersChanged(filterName);
       }, 1000);
     },
 
-    filterCheckboxMouseup: function () {
+    filterCheckboxMousedownParentalAdvisory: function (
+      categoryName,
+      filterItem,
+      setAllFunction
+    ) {
+      logger.log("[filterCheckboxMousedownParentalAdvisory] START");
+
+      const filterCollection =
+        this.$shared.filters.filterParentalAdvisory[categoryName];
+
+      this.isolateFilterItemTimeout = setTimeout(() => {
+        if (
+          filterCollection &&
+          filterItem &&
+          setAllFunction &&
+          filterCollection.length > 1
+        ) {
+          setAllFunction(false);
+          // filterItem.Selected = true;
+        }
+
+        this.filtersChanged("filterParentalAdvisory");
+      }, 1000);
+    },
+
+    filterCheckboxMouseup: function (filterName) {
       logger.log("[filterCheckboxMouseup] START");
 
       if (this.isolateFilterItemTimeout) {
@@ -3632,10 +3782,11 @@ export default {
         clearTimeout(this.isolateFilterItemTimeout); // cancel the timeout
         this.isolateFilterItemTimeout = null;
       }
-      this.filtersChanged();
+      this.filtersChanged(filterName);
     },
 
-    filtersChanged: function () {
+    filtersChanged: function (lastChangedFilter) {
+      this.$shared.lastChangedFilter = lastChangedFilter;
       logger.log("[filtersChanged] START this.$shared:", this.$shared);
       this.debouncedEventBusRefetchMedia();
     },
@@ -3653,7 +3804,7 @@ export default {
         sp.Selected = value;
       });
 
-      this.filtersChanged();
+      this.filtersChanged("filterSourcePaths");
     },
 
     setAllGenres: function (value, exclusionList) {
@@ -3669,7 +3820,7 @@ export default {
         genre.Selected = value;
       });
 
-      this.filtersChanged();
+      this.filtersChanged("filterGenres");
     },
 
     setAllAgeRatings: function (value, exclusionList) {
@@ -3684,7 +3835,7 @@ export default {
         ar.Selected = value;
       });
 
-      this.filtersChanged();
+      this.filtersChanged("filterAgeRatings");
     },
 
     setAllRatings: function (value) {
@@ -3692,7 +3843,7 @@ export default {
         rating.Selected = value;
       });
 
-      this.filtersChanged();
+      this.filtersChanged("filterRatings");
     },
 
     setAllYears: function (value) {
@@ -3700,7 +3851,7 @@ export default {
         year.Selected = value;
       });
 
-      this.filtersChanged();
+      this.filtersChanged("filterYears");
     },
 
     setAllLists: function (value) {
@@ -3708,7 +3859,7 @@ export default {
         list.Selected = value;
       });
 
-      this.filtersChanged();
+      this.filtersChanged("filterLists");
     },
 
     setAllParentalAdvisory: function (category, value) {
@@ -3718,7 +3869,7 @@ export default {
         }
       );
 
-      this.filtersChanged();
+      this.filtersChanged("filterParentalAdvisory");
     },
 
     setAllPersons: function (value, exclusionList) {
@@ -3734,7 +3885,7 @@ export default {
         sp.Selected = value;
       });
 
-      this.filtersChanged();
+      this.filtersChanged("filterPersons");
     },
 
     setAllCompanies: function (value, exclusionList) {
@@ -3752,7 +3903,7 @@ export default {
         sp.Selected = value;
       });
 
-      this.filtersChanged();
+      this.filtersChanged("filterCompanies");
     },
 
     setAllQualities: function (value, exclusionList) {
@@ -3768,7 +3919,7 @@ export default {
         quality.Selected = value;
       });
 
-      this.filtersChanged();
+      this.filtersChanged("filterQualities");
     },
 
     setAllAudioLanguages: function (value, exclusionList) {
@@ -3784,7 +3935,7 @@ export default {
         lang.Selected = value;
       });
 
-      this.filtersChanged();
+      this.filtersChanged("filterAudioLanguages");
     },
 
     setAllSubtitleLanguages: function (value, exclusionList) {
@@ -3800,7 +3951,7 @@ export default {
         lang.Selected = value;
       });
 
-      this.filtersChanged();
+      this.filtersChanged("filterSubtitleLanguages");
     },
 
     setAllReleaseAttributes: function (value, exclusionList) {
@@ -3816,7 +3967,7 @@ export default {
         ra.Selected = value;
       });
 
-      this.filtersChanged();
+      this.filtersChanged("filterReleaseAttributes");
     },
 
     setAllIMDBPlotKeywords: function (value, exclusionList) {
@@ -3832,7 +3983,7 @@ export default {
         pk.Selected = value;
       });
 
-      this.filtersChanged();
+      this.filtersChanged("filterIMDBPlotKeywords");
     },
 
     setAllIMDBFilmingLocations: function (value, exclusionList) {
@@ -3848,7 +3999,7 @@ export default {
         fl.Selected = value;
       });
 
-      this.filtersChanged();
+      this.filtersChanged("filterIMDBFilmingLocations");
     },
 
     setAllDataQuality: function (value, exclusionList) {
@@ -3861,7 +4012,7 @@ export default {
         dq.Selected = value;
       });
 
-      this.filtersChanged();
+      this.filtersChanged("filterDataQuality");
     },
 
     getFilterRatingLabel(rating, numMovies) {
@@ -4258,7 +4409,7 @@ export default {
         }
       });
 
-      this.filtersChanged();
+      this.filtersChanged("filterYears");
 
       this.yearsRangeInput.show = false;
     },

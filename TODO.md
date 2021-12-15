@@ -2,9 +2,9 @@
 
 ## v1.0.0
 
-- color active filters (sidebar) with mk-search-highlight class
-
-- [ ] calculation of numMovies for AND-connected filters should be different than OR-connected filters of the same category
+- sidebar: for each filter (where applicable) provide switchable icon with tooltip for sort mode (alphabetically or by number of movies)
+  - mdi-sort-alphabetical
+  - mdi-sort-numeric
 
 - see "Production", force two divs left and right (no overflow below the category)
 
@@ -17,6 +17,8 @@
   - [x] Win: OK
   - [x] Linux: OK
   - [ ] MacOS: ??
+
+- introduce Audio Codec (use Movie Manager to mass-scan a movie folder)
 
 ### Bugs
 
