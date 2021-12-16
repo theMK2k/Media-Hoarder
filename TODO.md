@@ -2,8 +2,6 @@
 
 ## v1.0.0
 
-- see "Production", force two divs left and right (no overflow below the category)
-
 - defect: companies: duplicates in topcompanies; non-dupes in companies list?
 
 - [ ] investigate why there are some sqlite autoindexes for some tables

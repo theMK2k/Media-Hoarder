@@ -360,7 +360,9 @@
 
                         <span v-if="item.SubtitleLanguages">
                           |
-                          <v-icon small>mdi-subtitles-outline</v-icon>
+                          <v-icon small style="margin-top: -4px"
+                            >mdi-subtitles-outline</v-icon
+                          >
                           <span
                             v-for="(lang, index) in item.SubtitleLanguages"
                             v-bind:key="lang"
@@ -417,7 +419,7 @@
                         class="headline mb-2"
                         style="
                           margin-right: 16px;
-                          margin-left: 16px;
+                          margin-left: 0px;
                           margin-bottom: 0px !important;
                         "
                         v-if="item.IMDB_rating_defaultDisplay"
@@ -439,7 +441,7 @@
                           >{{ item.IMDB_metacriticScore }}</span
                         >
                       </div>
-                      <v-row style="margin-top: 0px">
+                      <v-row style="margin: 0px -12px">
                         <div class="flex-grow-1"></div>
 
                         <div v-on:click.stop="">
@@ -490,24 +492,28 @@
                     class="mk-main-detail-row"
                   >
                     <div style="font-size: 0.875rem; font-weight: normal">
-                      <strong class="CreditCategory"
-                        >{{ $t("Directed by") }}:</strong
-                      >
-                      <span
-                        v-for="(credit, i) in item.IMDB_Top_Directors"
-                        v-bind:key="credit.id_Movies_IMDB_Credits"
-                      >
-                        <span v-if="i > 0">,&nbsp;</span>
-                        <a
-                          class="mk-clickable"
-                          v-bind:class="{
-                            'mk-search-highlight':
-                              $shared.filterPersonsAppliedContains(credit),
-                          }"
-                          v-on:click.stop="onCreditClicked(credit)"
-                          >{{ credit.name }}</a
+                      <div style="float: left; width: 100px; overflow: hidden">
+                        <strong class="CreditCategory"
+                          >{{ $t("Directed by") }}:</strong
                         >
-                      </span>
+                      </div>
+                      <div style="overflow: hidden">
+                        <span
+                          v-for="(credit, i) in item.IMDB_Top_Directors"
+                          v-bind:key="credit.id_Movies_IMDB_Credits"
+                        >
+                          <span v-if="i > 0">,&nbsp;</span>
+                          <a
+                            class="mk-clickable"
+                            v-bind:class="{
+                              'mk-search-highlight':
+                                $shared.filterPersonsAppliedContains(credit),
+                            }"
+                            v-on:click.stop="onCreditClicked(credit)"
+                            >{{ credit.name }}</a
+                          >
+                        </span>
+                      </div>
                     </div>
                   </v-row>
 
@@ -516,45 +522,55 @@
                     class="mk-main-detail-row"
                   >
                     <div style="font-size: 0.875rem; font-weight: normal">
-                      <strong class="CreditCategory"
-                        >{{ $t("Written by") }}:</strong
-                      >
-                      <span
-                        v-for="(credit, i) in item.IMDB_Top_Writers"
-                        v-bind:key="credit.id_Movies_IMDB_Credits"
-                      >
-                        <span v-if="i > 0">,&nbsp;</span>
-                        <a
-                          class="mk-clickable"
-                          v-bind:class="{
-                            'mk-search-highlight':
-                              $shared.filterPersonsAppliedContains(credit),
-                          }"
-                          v-on:click.stop="onCreditClicked(credit)"
-                          >{{ credit.name }}</a
+                      <div style="float: left; width: 100px; overflow: hidden">
+                        <strong class="CreditCategory"
+                          >{{ $t("Written by") }}:</strong
                         >
-                      </span>
+                      </div>
+                      <div style="overflow: hidden">
+                        <span
+                          v-for="(credit, i) in item.IMDB_Top_Writers"
+                          v-bind:key="credit.id_Movies_IMDB_Credits"
+                        >
+                          <span v-if="i > 0">,&nbsp;</span>
+                          <a
+                            class="mk-clickable"
+                            v-bind:class="{
+                              'mk-search-highlight':
+                                $shared.filterPersonsAppliedContains(credit),
+                            }"
+                            v-on:click.stop="onCreditClicked(credit)"
+                            >{{ credit.name }}</a
+                          >
+                        </span>
+                      </div>
                     </div>
                   </v-row>
 
                   <v-row v-if="item.IMDB_Top_Cast" class="mk-main-detail-row">
                     <div style="font-size: 0.875rem; font-weight: normal">
-                      <strong class="CreditCategory">{{ $t("Cast") }}:</strong>
-                      <span
-                        v-for="(credit, i) in item.IMDB_Top_Cast"
-                        v-bind:key="credit.id_Movies_IMDB_Credits"
-                      >
-                        <span v-if="i > 0">,&nbsp;</span>
-                        <a
-                          class="mk-clickable"
-                          v-bind:class="{
-                            'mk-search-highlight':
-                              $shared.filterPersonsAppliedContains(credit),
-                          }"
-                          v-on:click.stop="onCreditClicked(credit)"
-                          >{{ credit.name }}</a
+                      <div style="float: left; width: 100px; overflow: hidden">
+                        <strong class="CreditCategory"
+                          >{{ $t("Cast") }}:</strong
                         >
-                      </span>
+                      </div>
+                      <div style="overflow: hidden">
+                        <span
+                          v-for="(credit, i) in item.IMDB_Top_Cast"
+                          v-bind:key="credit.id_Movies_IMDB_Credits"
+                        >
+                          <span v-if="i > 0">,&nbsp;</span>
+                          <a
+                            class="mk-clickable"
+                            v-bind:class="{
+                              'mk-search-highlight':
+                                $shared.filterPersonsAppliedContains(credit),
+                            }"
+                            v-on:click.stop="onCreditClicked(credit)"
+                            >{{ credit.name }}</a
+                          >
+                        </span>
+                      </div>
                     </div>
                   </v-row>
 
