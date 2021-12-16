@@ -184,7 +184,13 @@
                       {{ $t("Source Paths") }} {{ filterSourcePathsTitle }}
                     </div>
                     <template v-slot:actions>
-                      <v-icon v-if="!editFilters.isEditFilters">
+                      <v-icon
+                        v-if="!editFilters.isEditFilters"
+                        v-bind:class="{
+                          'mk-search-highlight':
+                            $shared.filterSourcePathsActive,
+                        }"
+                      >
                         $expand
                       </v-icon>
                       <v-tooltip
@@ -335,7 +341,12 @@
                       {{ $t("Video Quality") }} {{ filterQualitiesTitle }}
                     </div>
                     <template v-slot:actions>
-                      <v-icon v-if="!editFilters.isEditFilters">
+                      <v-icon
+                        v-if="!editFilters.isEditFilters"
+                        v-bind:class="{
+                          'mk-search-highlight': $shared.filterQualitiesActive,
+                        }"
+                      >
                         $expand
                       </v-icon>
                       <v-tooltip
@@ -494,7 +505,13 @@
                       {{ filterAudioLanguagesTitle }}
                     </div>
                     <template v-slot:actions>
-                      <v-icon v-if="!editFilters.isEditFilters">
+                      <v-icon
+                        v-if="!editFilters.isEditFilters"
+                        v-bind:class="{
+                          'mk-search-highlight':
+                            $shared.filterAudioLanguagesActive,
+                        }"
+                      >
                         $expand
                       </v-icon>
                       <v-tooltip
@@ -627,7 +644,13 @@
                       {{ filterSubtitleLanguagesTitle }}
                     </div>
                     <template v-slot:actions>
-                      <v-icon v-if="!editFilters.isEditFilters">
+                      <v-icon
+                        v-if="!editFilters.isEditFilters"
+                        v-bind:class="{
+                          'mk-search-highlight':
+                            $shared.filterSubtitleLanguagesActive,
+                        }"
+                      >
                         $expand
                       </v-icon>
                       <v-tooltip
@@ -766,7 +789,13 @@
                       {{ filterReleaseAttributesTitle }}
                     </div>
                     <template v-slot:actions>
-                      <v-icon v-if="!editFilters.isEditFilters">
+                      <v-icon
+                        v-if="!editFilters.isEditFilters"
+                        v-bind:class="{
+                          'mk-search-highlight':
+                            $shared.filterReleaseAttributesActive,
+                        }"
+                      >
                         $expand
                       </v-icon>
                       <v-tooltip
@@ -904,7 +933,12 @@
                       {{ $t("My Lists") }} {{ filterListsTitle }}
                     </div>
                     <template v-slot:actions>
-                      <v-icon v-if="!editFilters.isEditFilters">
+                      <v-icon
+                        v-if="!editFilters.isEditFilters"
+                        v-bind:class="{
+                          'mk-search-highlight': $shared.filterListsActive,
+                        }"
+                      >
                         $expand
                       </v-icon>
                       <v-tooltip
@@ -1038,7 +1072,12 @@
                       {{ $t("My Ratings") }} {{ filterRatingsTitle }}
                     </div>
                     <template v-slot:actions>
-                      <v-icon v-if="!editFilters.isEditFilters">
+                      <v-icon
+                        v-if="!editFilters.isEditFilters"
+                        v-bind:class="{
+                          'mk-search-highlight': $shared.filterRatingsActive,
+                        }"
+                      >
                         $expand
                       </v-icon>
                       <v-tooltip
@@ -1180,7 +1219,13 @@
                       {{ filterMetacriticScoreTitle }}
                     </div>
                     <template v-slot:actions>
-                      <v-icon v-if="!editFilters.isEditFilters">
+                      <v-icon
+                        v-if="!editFilters.isEditFilters"
+                        v-bind:class="{
+                          'mk-search-highlight':
+                            $shared.filterMetacriticScoreActive,
+                        }"
+                      >
                         $expand
                       </v-icon>
                       <v-tooltip
@@ -1276,7 +1321,13 @@
                       {{ $t("IMDB Ratings") }} {{ filterIMDBRatingTitle }}
                     </div>
                     <template v-slot:actions>
-                      <v-icon v-if="!editFilters.isEditFilters">
+                      <v-icon
+                        v-if="!editFilters.isEditFilters"
+                        v-bind:class="{
+                          'mk-search-highlight':
+                            $shared.filterIMDBRatingsActive,
+                        }"
+                      >
                         $expand
                       </v-icon>
                       <v-tooltip
@@ -1370,7 +1421,12 @@
                       {{ filterGenresTitle }}
                     </div>
                     <template v-slot:actions>
-                      <v-icon v-if="!editFilters.isEditFilters">
+                      <v-icon
+                        v-if="!editFilters.isEditFilters"
+                        v-bind:class="{
+                          'mk-search-highlight': $shared.filterGenresActive,
+                        }"
+                      >
                         $expand
                       </v-icon>
                       <v-tooltip
@@ -1497,7 +1553,12 @@
                       {{ $t("Age Ratings") }} {{ filterAgeRatingsTitle }}
                     </div>
                     <template v-slot:actions>
-                      <v-icon v-if="!editFilters.isEditFilters">
+                      <v-icon
+                        v-if="!editFilters.isEditFilters"
+                        v-bind:class="{
+                          'mk-search-highlight': $shared.filterAgeRatingsActive,
+                        }"
+                      >
                         $expand
                       </v-icon>
                       <v-tooltip
@@ -1629,7 +1690,13 @@
                       {{ filterContentAdvisoryTitle }}
                     </div>
                     <template v-slot:actions>
-                      <v-icon v-if="!editFilters.isEditFilters">
+                      <v-icon
+                        v-if="!editFilters.isEditFilters"
+                        v-bind:class="{
+                          'mk-search-highlight':
+                            $shared.filterParentalAdvisoryActive,
+                        }"
+                      >
                         $expand
                       </v-icon>
                       <v-tooltip
@@ -1675,10 +1742,21 @@
                           >{{
                             $t(`ParentalAdvisoryCategories.${category.Name}`)
                           }}
-                          {{
-                            filterParentalAdvisoryCategoryTitle(category)
-                          }}</v-expansion-panel-header
-                        >
+                          {{ filterParentalAdvisoryCategoryTitle(category) }}
+                          <template v-slot:actions>
+                            <v-icon
+                              v-if="!editFilters.isEditFilters"
+                              v-bind:class="{
+                                'mk-search-highlight':
+                                  $shared.filters.filterParentalAdvisory[
+                                    category.Name
+                                  ].find((filter) => !filter.Selected),
+                              }"
+                            >
+                              $expand
+                            </v-icon>
+                          </template>
+                        </v-expansion-panel-header>
                         <v-expansion-panel-content>
                           <v-row style="margin-bottom: 8px">
                             <v-spacer />
@@ -1798,7 +1876,12 @@
                       }}
                       {{ filterPersonsTitle }}
                     </div>
-                    <template v-slot:actions>
+                    <template
+                      v-slot:actions
+                      v-bind:class="{
+                        'mk-search-highlight': $shared.filterPersonsActive,
+                      }"
+                    >
                       <v-icon v-if="!editFilters.isEditFilters">
                         $expand
                       </v-icon>
@@ -1968,7 +2051,12 @@
                       {{ filterCompaniesTitle }}
                     </div>
                     <template v-slot:actions>
-                      <v-icon v-if="!editFilters.isEditFilters">
+                      <v-icon
+                        v-if="!editFilters.isEditFilters"
+                        v-bind:class="{
+                          'mk-search-highlight': $shared.filterCompaniesActive,
+                        }"
+                      >
                         $expand
                       </v-icon>
                       <v-tooltip
@@ -2131,7 +2219,12 @@
                       {{ $t("Release Years") }} {{ filterYearsTitle }}
                     </div>
                     <template v-slot:actions>
-                      <v-icon v-if="!editFilters.isEditFilters">
+                      <v-icon
+                        v-if="!editFilters.isEditFilters"
+                        v-bind:class="{
+                          'mk-search-highlight': $shared.filterYearsActive,
+                        }"
+                      >
                         $expand
                       </v-icon>
                       <v-tooltip
@@ -2305,7 +2398,13 @@
                       {{ filterIMDBPlotKeywordsTitle }}
                     </div>
                     <template v-slot:actions>
-                      <v-icon v-if="!editFilters.isEditFilters">
+                      <v-icon
+                        v-if="!editFilters.isEditFilters"
+                        v-bind:class="{
+                          'mk-search-highlight':
+                            $shared.filterIMDBPlotKeywordsActive,
+                        }"
+                      >
                         $expand
                       </v-icon>
                       <v-tooltip
@@ -2493,7 +2592,13 @@
                       {{ filterIMDBFilmingLocationsTitle }}
                     </div>
                     <template v-slot:actions>
-                      <v-icon v-if="!editFilters.isEditFilters">
+                      <v-icon
+                        v-if="!editFilters.isEditFilters"
+                        v-bind:class="{
+                          'mk-search-highlight':
+                            $shared.filterIMDBFilmingLocationsActive,
+                        }"
+                      >
                         $expand
                       </v-icon>
                       <v-tooltip
@@ -2677,7 +2782,13 @@
                       {{ filterDataQualityTitle }}
                     </div>
                     <template v-slot:actions>
-                      <v-icon v-if="!editFilters.isEditFilters">
+                      <v-icon
+                        v-if="!editFilters.isEditFilters"
+                        v-bind:class="{
+                          'mk-search-highlight':
+                            $shared.filterDataQualityActive,
+                        }"
+                      >
                         $expand
                       </v-icon>
                       <v-tooltip

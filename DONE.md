@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] Sidebar: colorize also the caret
 - [x] Sidebar: colorize also the spinner
 - [x] reload the filters first that have been modified (e.g. change in genres reloads genres first)
 - [x] calculation of numMovies for AND-connected filters should be different than OR-connected filters of the same category
