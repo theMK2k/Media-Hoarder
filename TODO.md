@@ -14,7 +14,9 @@
   - [x] Linux: OK
   - [ ] MacOS: ??
 
-- introduce Audio Codec (use Movie Manager to mass-scan a movie folder)
+- introduce Audio Codec
+  - use Movie Manager to mass-scan a movie folder and find out the different audio codecs
+  - provide mapping (like release attributes)
 
 ### Bugs
 
