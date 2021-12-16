@@ -2,27 +2,6 @@
 
 ## v1.0.0
 
-- [ ] sidebar: for each filter (where applicable) provide switchable icon with tooltip for sort mode (alphabetically or by number of movies)
-  - [x] merge filterGroups after load, so that new features in code are still present
-  - [x] filterSourcePaths
-  - [x] filterQualities
-  - [ ] filterAudioLanguages
-  - [ ] filterSubtitleLanguages
-  - [ ] filterReleaseAttributes
-  - [ ] filterLists
-  - [ ] NOT filterRatings
-  - [ ] NOT filterMetacriticScore
-  - [ ] NOT filterIMDBRating
-  - [ ] filterGenres
-  - [ ] NOT filterAgeRatings
-  - [ ] NOT filterParentalAdvisory
-  - [ ] filterPersons
-  - [ ] filterCompanies
-  - [ ] filterYears
-  - [ ] filterIMDBPlotKeywords
-  - [ ] filterIMDBFilmingLocations
-  - [ ] NOT filterDataQuality
-
 - see "Production", force two divs left and right (no overflow below the category)
 
 - defect: companies: duplicates in topcompanies; non-dupes in companies list?

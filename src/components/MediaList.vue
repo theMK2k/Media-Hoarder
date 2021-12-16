@@ -2056,6 +2056,7 @@ export default {
 
             eventBus.showSnackbar("success", this.$t("item added to list"));
 
+            this.$shared.lastChangedFilter = "filterLists";
             await this.fetchFilters();
           }
 
@@ -2070,6 +2071,8 @@ export default {
               data.chosen_id_Lists,
               this.listDialog.movie.id_Movies
             );
+
+            this.$shared.lastChangedFilter = "filterLists";
 
             eventBus.refetchMedia(this.$shared.currentPage);
 

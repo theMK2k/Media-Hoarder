@@ -4289,7 +4289,9 @@ async function fetchFilterDataQuality($MediaType, loadFilterValuesFromStorage) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
+      result.NumMoviesFormatted = result.NumMovies.toLocaleString(
+        shared.uiLanguage
+      );
     });
   }
 
@@ -4401,7 +4403,9 @@ async function fetchFilterGenres($MediaType, $t) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
+      result.NumMoviesFormatted = result.NumMovies.toLocaleString(
+        shared.uiLanguage
+      );
     });
   }
 
@@ -4500,7 +4504,9 @@ async function fetchFilterAgeRatings($MediaType) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
+      result.NumMoviesFormatted = result.NumMovies.toLocaleString(
+        shared.uiLanguage
+      );
     });
   }
 
@@ -4689,7 +4695,9 @@ async function fetchFilterRatings($MediaType) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
+      result.NumMoviesFormatted = result.NumMovies.toLocaleString(
+        shared.uiLanguage
+      );
     });
   }
 
@@ -4843,7 +4851,9 @@ async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
+      result.NumMoviesFormatted = result.NumMovies.toLocaleString(
+        shared.uiLanguage
+      );
     });
   }
 
@@ -4919,7 +4929,9 @@ async function fetchFilterPersons($MediaType, $t) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
+      result.NumMoviesFormatted = result.NumMovies.toLocaleString(
+        shared.uiLanguage
+      );
     });
   }
 
@@ -4995,7 +5007,9 @@ async function fetchFilterCompanies($MediaType, $t) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
+      result.NumMoviesFormatted = result.NumMovies.toLocaleString(
+        shared.uiLanguage
+      );
     });
   }
 
@@ -5075,7 +5089,9 @@ async function fetchFilterIMDBPlotKeywords($MediaType, $t) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
+      result.NumMoviesFormatted = result.NumMovies.toLocaleString(
+        shared.uiLanguage
+      );
     });
   }
 
@@ -5153,7 +5169,9 @@ async function fetchFilterIMDBFilmingLocations($MediaType, $t) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
+      result.NumMoviesFormatted = result.NumMovies.toLocaleString(
+        shared.uiLanguage
+      );
     });
   }
 
@@ -5221,7 +5239,9 @@ async function fetchFilterYears($MediaType) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
+      result.NumMoviesFormatted = result.NumMovies.toLocaleString(
+        shared.uiLanguage
+      );
     });
   }
 
@@ -5447,7 +5467,9 @@ async function fetchFilterLists($MediaType, $t) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
+      result.NumMoviesFormatted = result.NumMovies.toLocaleString(
+        shared.uiLanguage
+      );
     });
   }
 
@@ -5543,7 +5565,9 @@ async function fetchFilterLanguages($MediaType, $LanguageType, $t) {
       }
     }
 
-    result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
+    result.NumMoviesFormatted = result.NumMovies.toLocaleString(
+      shared.uiLanguage
+    );
 
     result.DisplayText = result.Language;
     if (languageCodeNameMapping[result.Language]) {
@@ -6995,7 +7019,9 @@ async function fetchFilterReleaseAttributes($MediaType) {
         result.Selected = filterReleaseAttribute.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
+      result.NumMoviesFormatted = result.NumMovies.toLocaleString(
+        shared.uiLanguage
+      );
     });
   }
 

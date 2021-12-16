@@ -8,6 +8,26 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] sidebar: for each filter (where applicable) provide switchable icon with tooltip for sort mode (alphabetically or by number of movies)
+  - [x] merge filterGroups after load, so that new features in code are still present
+  - [x] filterSourcePaths
+  - [x] filterQualities
+  - [x] filterAudioLanguages
+  - [x] filterSubtitleLanguages
+  - [x] filterReleaseAttributes
+  - [x] filterLists
+  - [x] filterGenres
+  - [x] filterPersons
+  - [x] filterCompanies
+  - [x] filterYears
+  - [x] filterIMDBPlotKeywords
+  - [x] filterIMDBFilmingLocations
+  - [x] NOT filterRatings
+  - [x] NOT filterMetacriticScore
+  - [x] NOT filterIMDBRating
+  - [x] NOT filterAgeRatings
+  - [x] NOT filterParentalAdvisory
+  - [x] NOT filterDataQuality
 - [x] Sidebar: colorize also the caret
 - [x] Sidebar: colorize also the spinner
 - [x] reload the filters first that have been modified (e.g. change in genres reloads genres first)
