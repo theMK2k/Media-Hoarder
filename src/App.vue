@@ -214,6 +214,35 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
+                              v-on:click="switchFilterSort(filterGroup)"
+                            >
+                              <v-icon
+                                v-if="
+                                  filterGroup.sort ===
+                                  enmFilterSortModes.numMovies
+                                "
+                                >mdi-sort-numeric</v-icon
+                              >
+                              <v-icon v-else>mdi-sort-alphabetical</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{
+                          $t(
+                            `${
+                              filterGroup.sort === enmFilterSortModes.numMovies
+                                ? "Sorted by Number of Media"
+                                : "Sorted by Name"
+                            }`
+                          )
+                        }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
                               v-on:click="setAllSourcePaths(false)"
                             >
                               <v-icon
@@ -241,12 +270,12 @@
                     </v-row>
                     <v-checkbox
                       class="mk-filter-checkbox"
-                      v-for="sourcePath in $shared.filters.filterSourcePaths"
+                      v-for="sourcePath in filterSourcePaths"
                       v-bind:key="sourcePath.Description"
                       v-bind:label="
                         sourcePath.Description +
                         ' (' +
-                        sourcePath.NumMovies +
+                        sourcePath.NumMoviesFormatted +
                         ')'
                       "
                       v-model="sourcePath.Selected"
@@ -336,6 +365,35 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
+                              v-on:click="switchFilterSort(filterGroup)"
+                            >
+                              <v-icon
+                                v-if="
+                                  filterGroup.sort ===
+                                  enmFilterSortModes.numMovies
+                                "
+                                >mdi-sort-numeric</v-icon
+                              >
+                              <v-icon v-else>mdi-sort-alphabetical</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{
+                          $t(
+                            `${
+                              filterGroup.sort === enmFilterSortModes.numMovies
+                                ? "Sorted by Number of Media"
+                                : "Sorted by Name"
+                            }`
+                          )
+                        }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
                               v-on:click="setAllQualities(false)"
                             >
                               <v-icon
@@ -363,12 +421,12 @@
                     </v-row>
                     <v-checkbox
                       class="mk-filter-checkbox"
-                      v-for="quality in $shared.filters.filterQualities"
+                      v-for="quality in filterQualities"
                       v-bind:key="quality.MI_Quality"
                       v-bind:label="
                         getFilterQualityLabel(
                           quality.MI_Quality,
-                          quality.NumMovies
+                          quality.NumMoviesFormatted
                         )
                       "
                       v-model="quality.Selected"
@@ -2960,6 +3018,8 @@ import { shared } from "@/shared";
 import { eventBus } from "@/main";
 import * as helpers from "@/helpers/helpers";
 
+const { enmFilterSortModes } = require("./enums/enmFilterSortModes");
+
 import Dialog from "@/components/shared/Dialog.vue";
 import SearchDataDialog from "@/components/shared/SearchDataDialog.vue";
 import ScanOptionsDialog from "@/components/shared/ScanOptionsDialog.vue";
@@ -3112,12 +3172,34 @@ export default {
   },
 
   computed: {
+    enmFilterSortModes() {
+      return enmFilterSortModes;
+    },
+
     store() {
       return store;
     },
 
     isScanning() {
       return this.$shared.isScanning;
+    },
+
+    filterSourcePaths() {
+      const fg = this.$shared.filterGroups.find(
+        (fg) => fg.name === "filterSourcePaths"
+      );
+
+      logger.log("[filterSourcePaths] fg:", fg);
+
+      return this.$shared.filters.filterSourcePaths
+        .filter(() => true)
+        .sort((a, b) => {
+          if (fg.sort === enmFilterSortModes.numMovies) {
+            return helpers.compare(a.NumMovies, b.NumMovies, true);
+          } else {
+            return helpers.compare(a.Description, b.Description);
+          }
+        });
     },
 
     filterSourcePathsTitle() {
@@ -3269,6 +3351,21 @@ export default {
       );
     },
 
+    filterQualities() {
+      const fg = this.$shared.filterGroups.find(
+        (fg) => fg.name === "filterQualities"
+      );
+
+      return this.$shared.filters.filterQualities
+        .filter(() => true)
+        .sort((a, b) => {
+          if (fg.sort === enmFilterSortModes.numMovies) {
+            return helpers.compare(a.NumMovies, b.NumMovies, true);
+          } else {
+            return helpers.compare(a.MI_Quality, b.MI_Quality);
+          }
+        });
+    },
     filterQualitiesTitle() {
       if (
         !this.$shared.filters.filterQualities.find((filter) => !filter.Selected)
@@ -4343,10 +4440,7 @@ export default {
     },
 
     async onEditFiltersOK() {
-      await store.setSetting(
-        "filterGroups",
-        JSON.stringify(this.$shared.filterGroups)
-      );
+      await store.saveFilterGroups();
       this.editFilters.isEditFilters = false;
       this.expandedFilterGroups = JSON.parse(
         JSON.stringify(this.editFilters.oldExpandedFilterGroups)
@@ -4434,6 +4528,20 @@ export default {
         "[onFilterDragEnd] this.editFilters.oldExpandedFilterGroups:",
         this.editFilters.oldExpandedFilterGroups
       );
+    },
+
+    async switchFilterSort(filterGroup) {
+      filterGroup.sort =
+        filterGroup.sort === enmFilterSortModes.alphabetically
+          ? enmFilterSortModes.numMovies
+          : enmFilterSortModes.alphabetically;
+
+      // HACK: trigger UI update
+      const temp = this.$shared.filters[filterGroup.name];
+      this.$shared.filters[filterGroup.name] = null;
+      this.$shared.filters[filterGroup.name] = temp;
+
+      await store.saveFilterGroups();
     },
   },
 

@@ -972,5 +972,7 @@
   "Remove the link to the current IMDB entry for this medium_": "Entfernt die Verknüpfung mit IMDB Daten für dieses Medium.",
   "entry unlinked successfully": "Verknüpfung erfolgreich entfernt",
   "Reset Filters": "Filter Zurücksetzen",
-  "detecting IMDB entry": "ermittle IMDB Eintrag"
+  "detecting IMDB entry": "ermittle IMDB Eintrag",
+  "Sorted by Name": "Sorted by Name",
+  "Sorted by Number of Media": "Sorted by Number of Media"
 }

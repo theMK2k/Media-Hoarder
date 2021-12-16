@@ -5,6 +5,8 @@ import Vue from "vue";
 const helpers = require("./helpers/helpers");
 const imdbScraperTests = require("./tests/imdb-scraper-tests");
 
+const { enmFilterSortModes } = require("./enums/enmFilterSortModes");
+
 const shared = new Vue({
   data: {
     appName: "Media Hoarder",
@@ -28,26 +30,32 @@ const shared = new Vue({
       {
         name: "filterSourcePaths",
         visible: true,
+        sort: enmFilterSortModes.alphabetically,
       },
       {
         name: "filterQualities",
         visible: true,
+        sort: enmFilterSortModes.alphabetically,
       },
       {
         name: "filterAudioLanguages",
         visible: true,
+        sort: enmFilterSortModes.numMovies,
       },
       {
         name: "filterSubtitleLanguages",
         visible: true,
+        sort: enmFilterSortModes.numMovies,
       },
       {
         name: "filterReleaseAttributes",
         visible: true,
+        sort: enmFilterSortModes.alphabetically,
       },
       {
         name: "filterLists",
         visible: true,
+        sort: enmFilterSortModes.alphabetically,
       },
       {
         name: "filterRatings",
@@ -64,6 +72,7 @@ const shared = new Vue({
       {
         name: "filterGenres",
         visible: true,
+        sort: enmFilterSortModes.alphabetically,
       },
       {
         name: "filterAgeRatings",
@@ -76,22 +85,27 @@ const shared = new Vue({
       {
         name: "filterPersons",
         visible: true,
+        sort: enmFilterSortModes.alphabetically,
       },
       {
         name: "filterCompanies",
         visible: true,
+        sort: enmFilterSortModes.alphabetically,
       },
       {
         name: "filterYears",
         visible: true,
+        sort: enmFilterSortModes.alphabetically,
       },
       {
         name: "filterIMDBPlotKeywords",
         visible: true,
+        sort: enmFilterSortModes.alphabetically,
       },
       {
         name: "filterIMDBFilmingLocations",
         visible: true,
+        sort: enmFilterSortModes.alphabetically,
       },
       {
         name: "filterDataQuality",
@@ -1209,6 +1223,12 @@ const shared = new Vue({
   },
 
   methods: {
+    getFilterGroup(filterGroupName) {
+      return this.$shared.filterGroups.find(
+        (fg) => fg.name === filterGroupName
+      );
+    },
+
     filterPersonsAppliedContains(person) {
       return !!this.$shared.filterPersonsApplied.find(
         (fp) => fp.IMDB_Person_ID === person.id

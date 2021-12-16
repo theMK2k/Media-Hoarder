@@ -4342,7 +4342,9 @@ async function fetchFilterSourcePaths($MediaType) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
+      result.NumMoviesFormatted = result.NumMovies.toLocaleString(
+        shared.uiLanguage
+      );
     });
   }
 
@@ -5269,7 +5271,9 @@ async function fetchFilterQualities($MediaType) {
         result.Selected = filterValue.Selected;
       }
 
-      result.NumMovies = result.NumMovies.toLocaleString(shared.uiLanguage);
+      result.NumMoviesFormatted = result.NumMovies.toLocaleString(
+        shared.uiLanguage
+      );
     });
   }
 
@@ -6691,6 +6695,10 @@ async function loadReleaseAttributes() {
   }
 }
 
+async function saveFilterGroups() {
+  await setSetting("filterGroups", JSON.stringify(shared.filterGroups));
+}
+
 async function loadFilterGroups() {
   const savedFilterGroups = await getSetting("filterGroups");
   if (savedFilterGroups) {
@@ -6698,15 +6706,27 @@ async function loadFilterGroups() {
       JSON.stringify(shared.filterGroups)
     );
 
-    shared.filterGroups = JSON.parse(savedFilterGroups);
+    const filterGroups = JSON.parse(savedFilterGroups);
 
-    // merge with old shared.releaseAttribues
+    shared.filterGroups = [];
+
+    // merge and add
+    filterGroups.forEach((fg) => {
+      const fgo = oldSharedFilterGroups.find((fgo) => fgo.name === fg.name);
+      if (fgo) {
+        shared.filterGroups.push(Object.assign(fgo, fg));
+      }
+    });
+
+    // add missing filterGroups
     oldSharedFilterGroups.forEach((oldFG) => {
       if (!shared.filterGroups.find((fg) => fg.name === oldFG.name)) {
         shared.filterGroups.push(oldFG);
       }
     });
   }
+
+  logger.log("[loadFilterGroups] shared.filterGroups:", shared.filterGroups);
 }
 
 async function findReleaseAttributes(movie, onlyNew) {
@@ -7620,4 +7640,5 @@ export {
   fetchMovieFieldsDefinedByUser,
   getFieldsDefinedByUser,
   deleteIMDBData,
+  saveFilterGroups,
 };

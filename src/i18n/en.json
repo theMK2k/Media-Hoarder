@@ -894,5 +894,7 @@
   "Remove the link to the current IMDB entry for this medium_": "Remove the link to the current IMDB entry for this medium.",
   "entry unlinked successfully": "entry unlinked successfully",
   "Reset Filters": "Reset Filters",
-  "detecting IMDB entry": "detecting IMDB entry"
+  "detecting IMDB entry": "detecting IMDB entry",
+  "Sorted by Name": "Sorted by Name",
+  "Sorted by Number of Media": "Sorted by Number of Media"
 }
