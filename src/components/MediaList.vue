@@ -347,7 +347,9 @@
                               v-bind:class="{
                                 'mk-search-highlight':
                                   $shared.filterAudioLanguagesAppliedContains(
-                                    lang
+                                    lang,
+                                    item.AudioLanguages,
+                                    item.Audio_Languages
                                   ),
                               }"
                               v-on:click.stop="
@@ -373,7 +375,9 @@
                               v-bind:class="{
                                 'mk-search-highlight':
                                   $shared.filterSubtitleLanguagesAppliedContains(
-                                    lang
+                                    lang,
+                                    item.AudioLanguages,
+                                    item.Audio_Languages
                                   ),
                               }"
                               v-on:click.stop="

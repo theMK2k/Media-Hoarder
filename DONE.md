@@ -8,6 +8,9 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] highlight hidden filtered languages
+  - [x] Audio Languages: color the +7 if the language is behind it
+  - [x] Subtitle Languages: color the +7 if the language is behind it
 - [x] sidebar: for each filter (where applicable) provide switchable icon with tooltip for sort mode (alphabetically or by number of movies)
   - [x] merge filterGroups after load, so that new features in code are still present
   - [x] filterSourcePaths
@@ -48,9 +51,7 @@
   - [x] SourcePaths
   - [x] Video Quality
   - [x] Audio Languages
-    - [ ] color the +7 if the language is behind it
   - [x] Subtitle Languages
-    - [ ] color the +7 if the language is behind it
   - [x] Release Attributes
     - [x] defect: Lego Batman: The Movie - DC Super Heroes Unite fulfills "Director's Cut" filter
     - [x] defect: "Director's Cut" filter with "all selected must apply" only shows 1, expected: 86

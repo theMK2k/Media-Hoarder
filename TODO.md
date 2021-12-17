@@ -16,6 +16,62 @@
   - use Movie Manager to mass-scan a movie folder and find out the different audio codecs
   - provide mapping (like release attributes)
 
+KHLP F
+
+```text
+Audio Formats
+
+DTS	5730
+Vorbis	42
+AC-3	2459
+AAC	131
+E-AC-3	354
+MPEG Audio	319
+Opus	11
+PCM	8
+FLAC	5
+MLP FBA	9
+```
+
+```text
+Audio Codec IDs
+
+A_DTS	5701
+A_VORBIS	42
+A_AC3	2237
+A_AAC-2	63
+mp4a-40-2	67
+A_EAC3	334
+ec-3	21
+2000	199
+55	259
+ac-3	10
+A_OPUS	11
+134	5
+130	23
+A_MPEG/L3	1
+A_PCM/INT/LIT	8
+A_FLAC	5
+A_TRUEHD	9
+A_AAC-5	1
+129	9
+```
+
+```text
+Commercial Format
+
+Dolby Digital	2451
+Dolby Digital Plus	293
+HE-AAC	36
+DTS-HD Master Audio	145
+DTS-ES Matrix	101
+Dolby Digital Plus with Dolby Atmos	62
+DTS-ES Discrete	42
+DTS-HD High Resolution Audio	8
+Dolby TrueHD with Dolby Atmos	1
+Dolby TrueHD	8
+```
+
 ### Bugs
 
 - nothing
@@ -118,6 +174,8 @@
 
 ### Other (later)
 
+- [ ] apply shared.*AppliedContains to the media item once after completely fetching media
+  - huge refactoring as movie data must then contain the information if it is affected by the filter
 - [ ] items which have a scan error skew the next scan's time-per-item
 - [ ] allow imdbid in relink dialog
 - [ ] refactor

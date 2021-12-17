@@ -1247,10 +1247,46 @@ const shared = new Vue({
       );
     },
 
-    filterAudioLanguagesAppliedContains(language) {
-      return !!this.$shared.filterAudioLanguagesApplied.find(
-        (fal) => fal.Language.toUpperCase() === language
-      );
+    filterAudioLanguagesAppliedContains(
+      language,
+      arrVisibleLanguages,
+      allLanguages
+    ) {
+      if (!/\+\d/.test(language)) {
+        // language is not "+6" or similar
+        return !!this.$shared.filterAudioLanguagesApplied.find(
+          (fal) => fal.Language.toUpperCase() === language
+        );
+      } else {
+        // language is "+6" or similar, we have to check hidden languages
+        const allLanguagesUppercase = allLanguages
+          .toUpperCase()
+          .split(",")
+          .map((lang) => lang.trim());
+        arrVisibleLanguages.forEach((visibleLanguage) => {
+          while (
+            allLanguagesUppercase.find((lang) => lang === visibleLanguage)
+          ) {
+            allLanguagesUppercase.splice(
+              allLanguagesUppercase.findIndex(
+                (lang) => lang === visibleLanguage
+              ),
+              1
+            );
+          }
+        });
+
+        const arrFilterLanguages = this.$shared.filterAudioLanguagesApplied.map(
+          (fal) => fal.Language.toUpperCase()
+        );
+        for (let filterLanguage of arrFilterLanguages) {
+          if (allLanguagesUppercase.find((lang) => lang === filterLanguage)) {
+            return true;
+          }
+        }
+
+        return false;
+      }
     },
 
     filterSubtitleLanguagesAppliedContains(language) {
