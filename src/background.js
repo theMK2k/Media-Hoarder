@@ -29,6 +29,9 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
 
+// workaround for Electron renderer crash on reload because of sqlite3 (https://github.com/mapbox/node-sqlite3/issues/1370)
+app.allowRendererProcessReuse = false;
+
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } },
