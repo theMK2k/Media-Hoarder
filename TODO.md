@@ -5,16 +5,25 @@
 - [WIP] defect: companies: duplicates in topcompanies; non-dupes in companies list?
 - [ ] investigate why there are some sqlite autoindexes for some tables
 
-- [ ] introduce Audio Codec
-  - use Movie Manager to mass-scan a movie folder and find out the different audio codecs
-  - provide mapping (like release attributes)
+- [ ] introduce Audio Metadata
+  - [x] see below: use Movie Manager to mass-scan a movie folder and find out the different audio codecs
+  - [ ] provide mapping for Format (like release attributes)
+  - [x] assign codec infos to tbl_Movies_Languages (should allow multiple entries with same language now)
+    - Commercial Format (e.g. "Dolby Digital")
+    - Format (display mapped Format), (e.g. "AC3")
+    - Bitrate, Mode (e.g. "356kbit/s CBR)
+    - Channels (e.g. "6")
+    - SamplingRate (e.g. "48kHz")
+    - Default (e.g. "true")
+    - Forced (relevant for Subtitles) (e.g. "true")
+  - new Filters:
+    - Audio Formats (optionally for language X)
+    - Audio Formats (Commercial) (optionally for language X)
 
 - [ ] Test mediainfo and VLC in Linux/MacOS (we now use "" in the exec)
   - [x] Win: OK
   - [x] Linux: OK
   - [ ] MacOS: ??
-
-KHLP F
 
 ```text
 Audio Formats
