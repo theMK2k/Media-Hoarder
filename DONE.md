@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] (already fixed) companies: duplicates in topcompanies; non-dupes in companies list?
 - [x] on forced rescan also do MediaInfo
 - [x] highlight hidden filtered languages
   - [x] Audio Languages: color the +7 if the language is behind it

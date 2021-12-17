@@ -2,13 +2,13 @@
 
 ## v1.0.0
 
-- [WIP] defect: companies: duplicates in topcompanies; non-dupes in companies list?
 - [ ] investigate why there are some sqlite autoindexes for some tables
 
 - [ ] introduce Audio Metadata
   - [x] see below: use Movie Manager to mass-scan a movie folder and find out the different audio codecs
   - [ ] provide mapping for Format (like release attributes)
-  - [x] assign codec infos to tbl_Movies_Languages (should allow multiple entries with same language now)
+  - [x] assign codec infos to tbl_Movies_Languages (maybe rename to tbl_Movies_MI_Tracks?) should allow multiple entries with same language now)
+    - (Track) ID ()
     - Commercial Format (e.g. "Dolby Digital")
     - Format (display mapped Format), (e.g. "AC3")
     - Bitrate, Mode (e.g. "356kbit/s CBR)
