@@ -2,8 +2,6 @@
 
 ## v1.0.0
 
-- [ ] investigate why there are some sqlite autoindexes for some tables
-
 - [ ] introduce Audio Metadata
   - [x] see below: use Movie Manager to mass-scan a movie folder and find out the different audio codecs
   - [ ] provide mapping for Format (like release attributes)
