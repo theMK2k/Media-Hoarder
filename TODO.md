@@ -2,19 +2,17 @@
 
 ## v1.0.0
 
-- defect: companies: duplicates in topcompanies; non-dupes in companies list?
-
+- [WIP] defect: companies: duplicates in topcompanies; non-dupes in companies list?
 - [ ] investigate why there are some sqlite autoindexes for some tables
 
-- [ ] Test mediainfo and VLC in Linux/MacOS (we now use "" in the exec)
+- [ ] introduce Audio Codec
+  - use Movie Manager to mass-scan a movie folder and find out the different audio codecs
+  - provide mapping (like release attributes)
 
+- [ ] Test mediainfo and VLC in Linux/MacOS (we now use "" in the exec)
   - [x] Win: OK
   - [x] Linux: OK
   - [ ] MacOS: ??
-
-- introduce Audio Codec
-  - use Movie Manager to mass-scan a movie folder and find out the different audio codecs
-  - provide mapping (like release attributes)
 
 KHLP F
 

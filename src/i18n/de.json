@@ -836,7 +836,7 @@
   "Filter by this language": "Nach dieser Sprache Filtern",
   "Checks with exceptions detected!": "Prüfungen enthalten Ausnahmefehler!",
   "Ignore Exception - Scan Media Now": "Ignoriere die Ausnahmefehler - Jetzt Medien einlesen",
-  "Rescan IMDB meta data": "IMDB Metadaten erneut ermitteln",
+  "Rescan Meta Data": "Metadaten erneut ermitteln",
   "Errors were encountered during the scan, consider a re-scan_": "Beim Einlesen sind Fehler aufgetreten. Ein erneutes Einlesen sollte durchgeführt werden.",
   "Release Attributes": "Veröffentlichungsattribute",
   "Release Attribute": "Veröffentlichungsattribut",

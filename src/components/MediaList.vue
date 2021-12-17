@@ -231,7 +231,7 @@
                                   <v-icon
                                     v-show="item.nameHovered || item.selected"
                                     class="mk-clickable"
-                                    v-on:click.stop="onRescrapeIMDB(item)"
+                                    v-on:click.stop="onRescanItem(item)"
                                     style="margin-left: 8px"
                                     v-bind:disabled="isScanning"
                                     >mdi-reload-alert</v-icon
@@ -239,7 +239,7 @@
                                 </span>
                               </template>
                               <span>
-                                {{ $t("Rescan IMDB meta data") }}
+                                {{ $t("Rescan Meta Data") }}
                                 <span v-if="isScanning">
                                   <br />
                                   {{ $t("scan already in progress") }}
@@ -2652,11 +2652,13 @@ export default {
       }
     },
 
-    async onRescrapeIMDB(item) {
+    async onRescanItem(item) {
       try {
         store.resetUserScanOptions();
 
         await store.findReleaseAttributes(item, false);
+
+        await store.applyMediaInfo(item, false);
 
         await store.assignIMDB(
           item.id_Movies,
@@ -2674,7 +2676,7 @@ export default {
           this.$t("entry successfully rescanned")
         );
       } catch (err) {
-        logger.log("[onRescrapeIMDB] error:", JSON.stringify(err));
+        logger.log("[onRescanItem] error:", JSON.stringify(err));
         eventBus.showSnackbar("error", err);
       }
     },

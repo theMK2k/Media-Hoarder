@@ -3734,6 +3734,7 @@ async function fetchMedia(
       , IFNULL(MOV.plotSummary, IFNULL(MOV.IMDB_plotSummary_Translated, MOV.IMDB_plotSummary)) AS plotSummary
       , MOV.RelativePath
       , MOV.RelativeDirectory
+      , MI_Done
       , MI_Duration_Formatted
       , MI_Duration_Seconds
       , IMDB_runtimeMinutes
@@ -7667,4 +7668,5 @@ export {
   getFieldsDefinedByUser,
   deleteIMDBData,
   saveFilterGroups,
+  applyMediaInfo,
 };
