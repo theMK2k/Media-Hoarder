@@ -5,15 +5,8 @@
 - [ ] introduce Audio Metadata
   - [x] see below: use Movie Manager to mass-scan a movie folder and find out the different audio codecs
   - [ ] provide mapping for Format (like release attributes)
-  - [x] assign codec infos to tbl_Movies_Languages (maybe rename to tbl_Movies_MI_Tracks?) should allow multiple entries with same language now)
-    - (Track) ID ()
-    - Commercial Format (e.g. "Dolby Digital")
-    - Format (display mapped Format), (e.g. "AC3")
-    - Bitrate, Mode (e.g. "356kbit/s CBR)
-    - Channels (e.g. "6")
-    - SamplingRate (e.g. "48kHz")
-    - Default (e.g. "true")
-    - Forced (relevant for Subtitles) (e.g. "true")
+  - [x] new table tbl_Movies_MI_Tracks
+    - scan all media info data to find out which fields are populated by each track type
   - new Filters:
     - Audio Formats (optionally for language X)
     - Audio Formats (Commercial) (optionally for language X)
