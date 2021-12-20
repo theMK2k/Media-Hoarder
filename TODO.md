@@ -2,6 +2,10 @@
 
 ## v1.0.0
 
+- layout: "none provided"
+
+- defect: rescan with deselected IMDB options removes metadata (persons, companies, etc.)
+
 - [ ] introduce Audio Metadata
   - [x] see below: use Movie Manager to mass-scan a movie folder and find out the different audio codecs
   - [ ] provide mapping for Format (like release attributes)
@@ -19,8 +23,6 @@
         - BitRate
         - BitRate_Maximum
         - BitRate_Minimum
-        - BitRate_Nominal
-        - BufferSize
         - Channels
         - FileSize
         - FooterSize
@@ -47,7 +49,7 @@
         - VideoCount
         - Width
 
-      - Real fields:
+      - NUMERIC fields:
         - Delay
         - Delay_Original
         - DisplayAspectRatio

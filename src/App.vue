@@ -5429,7 +5429,12 @@ h1 {
 }
 
 .mk-item-detailcategory-content {
-  margin-bottom: 8px;
+  margin-top: -8px;
+  margin-bottom: 16px;
+}
+
+.mk-item-detailcategory-header-row {
+  margin: 0px 0px 0px 4px;
 }
 
 .mk-item-detailcategory-header {

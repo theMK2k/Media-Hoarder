@@ -1718,6 +1718,14 @@ async function applyMediaInfo(movie, onlyNew) {
         if (Object.keys(trackFields).find((fk) => fk === `$${key}`)) {
           trackFields[`$${key}`] = track[key][0];
 
+          if (key === "extra") {
+            try {
+              trackFields[`$${key}`] = JSON.stringify(track[key][0]);
+            } catch (err) {
+              logger.error(err);
+            }
+          }
+
           if (key === "Language") {
             if (languageNameCodeMapping[trackFields[`$${key}`]]) {
               trackFields[`$${key}`] =

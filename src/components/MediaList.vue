@@ -801,318 +801,306 @@
               </div>
 
               <!-- FULL CREDITS -->
-              <v-row
-                style="
-                  padding-left: 16px;
-                  padding-top: 4px;
-                  align-items: flex-end;
-                "
-                class="mk-clickable"
-                v-bind:class="{
-                  'mk-search-highlight': $shared.filterPersonsActive,
-                }"
-                v-on:click.stop="showCredits(item, !item.showCredits)"
-              >
-                <span class="mk-item-detailcategory-header"
-                  >{{
-                    $t("Credits") + (!item.showCredits ? " »" : "")
-                  }}&nbsp;</span
+              <div style="margin-top: 16px">
+                <v-row
+                  class="mk-item-detailcategory-header-row mk-clickable"
+                  v-bind:class="{
+                    'mk-search-highlight': $shared.filterPersonsActive,
+                  }"
+                  v-on:click.stop="showCredits(item, !item.showCredits)"
                 >
-              </v-row>
-
-              <div
-                class="mk-item-detailcategory-content"
-                v-if="item.showCredits"
-                v-on:click.stop="showCredits(item, false)"
-              >
-                <div
-                  v-if="!item.credits || item.credits.length === 0"
-                  style="margin-left: 24px"
-                >
-                  {{ $t("none provided") }}
-                </div>
+                  <span class="mk-item-detailcategory-header"
+                    >{{
+                      $t("Credits") + (!item.showCredits ? " »" : "")
+                    }}&nbsp;</span
+                  >
+                </v-row>
 
                 <div
-                  v-for="creditCategory in item.credits"
-                  v-bind:key="creditCategory.Category"
-                  style="margin-left: 24px"
+                  class="mk-item-detailcategory-content"
+                  v-if="item.showCredits"
+                  v-on:click.stop="showCredits(item, false)"
                 >
-                  <v-row style="margin-top: 12px">
-                    <strong>{{
-                      $t(`CreditCategories.${creditCategory.category}`)
-                    }}</strong>
+                  <v-row
+                    v-if="!item.credits || item.credits.length === 0"
+                    style="margin-top: 8px; margin-left: 16px"
+                  >
+                    {{ $t("none provided") }}
                   </v-row>
-                  <!--  v-on:mouseover="setItemHovered(credit, 'credit', true)"
+
+                  <div
+                    v-for="creditCategory in item.credits"
+                    v-bind:key="creditCategory.Category"
+                    style="margin-left: 24px"
+                  >
+                    <v-row style="margin-top: 12px">
+                      <strong>{{
+                        $t(`CreditCategories.${creditCategory.category}`)
+                      }}</strong>
+                    </v-row>
+                    <!--  v-on:mouseover="setItemHovered(credit, 'credit', true)"
                     v-on:mouseleave="setItemHovered(credit, 'credit', false)"
                   -->
-                  <v-row
-                    v-for="credit in creditCategory.items"
-                    v-bind:key="credit.id_Movies_IMDB_Credits"
-                    class="mk-highlightable-row"
-                  >
-                    <v-col sm="4" class="creditsLabel">
-                      <a
-                        class="mk-clickable"
-                        v-bind:class="{
-                          'mk-search-highlight':
-                            $shared.filterPersonsAppliedContains(credit),
-                        }"
-                        v-on:click.stop="onCreditClicked(credit)"
-                        >{{ credit.name }}</a
-                      >
-                    </v-col>
-                    <v-col sm="1" class="creditsContent">
-                      <span v-if="credit.credit">...</span>
-                    </v-col>
-                    <v-col class="creditsContent">{{ credit.credit }}</v-col>
-                  </v-row>
+                    <v-row
+                      v-for="credit in creditCategory.items"
+                      v-bind:key="credit.id_Movies_IMDB_Credits"
+                      class="mk-highlightable-row"
+                    >
+                      <v-col sm="4" class="creditsLabel">
+                        <a
+                          class="mk-clickable"
+                          v-bind:class="{
+                            'mk-search-highlight':
+                              $shared.filterPersonsAppliedContains(credit),
+                          }"
+                          v-on:click.stop="onCreditClicked(credit)"
+                          >{{ credit.name }}</a
+                        >
+                      </v-col>
+                      <v-col sm="1" class="creditsContent">
+                        <span v-if="credit.credit">...</span>
+                      </v-col>
+                      <v-col class="creditsContent">{{ credit.credit }}</v-col>
+                    </v-row>
+                  </div>
                 </div>
               </div>
 
               <!-- COMPANIES -->
-              <v-row
-                style="
-                  padding-left: 16px;
-                  padding-top: 4px;
-                  align-items: flex-end;
-                "
-                class="mk-clickable"
-                v-bind:class="{
-                  'mk-search-highlight': $shared.filterCompaniesActive,
-                }"
-                v-on:click.stop="showCompanies(item, !item.showCompanies)"
-              >
-                <span class="mk-item-detailcategory-header"
-                  >{{
-                    $t("Companies") + (!item.showCompanies ? " »" : "")
-                  }}&nbsp;</span
+              <div style="margin-top: 16px">
+                <v-row
+                  class="mk-item-detailcategory-header-row mk-clickable"
+                  v-bind:class="{
+                    'mk-search-highlight': $shared.filterCompaniesActive,
+                  }"
+                  v-on:click.stop="showCompanies(item, !item.showCompanies)"
                 >
-              </v-row>
-
-              <div
-                class="mk-item-detailcategory-content"
-                v-if="item.showCompanies"
-                v-on:click.stop="showCompanies(item, false)"
-              >
-                <div
-                  v-if="!item.companies || item.companies.length === 0"
-                  style="margin-left: 24px"
-                >
-                  {{ $t("none provided") }}
-                </div>
-
-                <div
-                  v-for="companyCategory in item.companies"
-                  v-bind:key="companyCategory.Category"
-                  style="margin-left: 24px"
-                >
-                  <v-row style="margin-top: 12px">
-                    <strong>{{
-                      $t(`CompanyCategories.${companyCategory.category}`)
-                    }}</strong>
-                  </v-row>
-                  <v-row
-                    v-for="company in companyCategory.items"
-                    v-bind:key="company.id_Movies_IMDB_Credits"
-                    class="mk-highlightable-row"
+                  <span class="mk-item-detailcategory-header"
+                    >{{
+                      $t("Companies") + (!item.showCompanies ? " »" : "")
+                    }}&nbsp;</span
                   >
-                    <v-col sm="4" class="creditsLabel">
-                      <a
-                        class="mk-clickable"
-                        v-bind:class="{
-                          'mk-search-highlight':
-                            $shared.filterCompaniesAppliedContains(company),
-                        }"
-                        v-on:click.stop="onCompanyClicked(company)"
-                        >{{ company.name }}</a
-                      >
-                    </v-col>
-                    <v-col sm="1" class="creditsContent">
-                      <!-- <span v-if="company.role">...</span> -->
-                    </v-col>
-                    <v-col class="creditsContent">{{ company.role }}</v-col>
+                </v-row>
+
+                <div
+                  class="mk-item-detailcategory-content"
+                  v-if="item.showCompanies"
+                  v-on:click.stop="showCompanies(item, false)"
+                >
+                  <v-row
+                    v-if="!item.companies || item.companies.length === 0"
+                    style="margin-top: 8px; margin-left: 16px"
+                  >
+                    {{ $t("none provided") }}
                   </v-row>
+
+                  <div
+                    v-for="companyCategory in item.companies"
+                    v-bind:key="companyCategory.Category"
+                    style="margin-left: 24px"
+                  >
+                    <v-row style="margin-top: 12px">
+                      <strong>{{
+                        $t(`CompanyCategories.${companyCategory.category}`)
+                      }}</strong>
+                    </v-row>
+                    <v-row
+                      v-for="company in companyCategory.items"
+                      v-bind:key="company.id_Movies_IMDB_Credits"
+                      class="mk-highlightable-row"
+                    >
+                      <v-col sm="4" class="creditsLabel">
+                        <a
+                          class="mk-clickable"
+                          v-bind:class="{
+                            'mk-search-highlight':
+                              $shared.filterCompaniesAppliedContains(company),
+                          }"
+                          v-on:click.stop="onCompanyClicked(company)"
+                          >{{ company.name }}</a
+                        >
+                      </v-col>
+                      <v-col sm="1" class="creditsContent">
+                        <!-- <span v-if="company.role">...</span> -->
+                      </v-col>
+                      <v-col class="creditsContent">{{ company.role }}</v-col>
+                    </v-row>
+                  </div>
                 </div>
               </div>
 
               <!-- CONTENT/PARENTAL ADVISORIES -->
-              <v-row
-                style="
-                  padding-left: 16px;
-                  padding-top: 4px;
-                  align-items: flex-end;
-                "
-                class="mk-clickable"
-                v-bind:class="{
-                  'mk-search-highlight': $shared.filterParentalAdvisoryActive,
-                }"
-                v-on:click.stop="
-                  showContentAdvisory(item, !item.showContentAdvisory)
-                "
-              >
-                <span class="mk-item-detailcategory-header"
-                  >{{
-                    $t("Content Advisory") +
-                    (!item.showContentAdvisory ? " »" : "")
-                  }}&nbsp;</span
-                >
-              </v-row>
-
-              <div
-                class="mk-item-detailcategory-content"
-                v-if="item.showContentAdvisory"
-                v-on:click.stop="showContentAdvisory(item, false)"
-                style="margin-left: 8px"
-              >
+              <div style="margin-top: 16px">
                 <v-row
-                  v-for="category in $shared.contentAdvisoryCategories"
-                  v-bind:key="category.Name"
-                  class="mk-highlightable-row"
-                  style="margin-top: 12px; margin-left: 6px"
+                  class="mk-item-detailcategory-header-row mk-clickable"
+                  v-bind:class="{
+                    'mk-search-highlight': $shared.filterParentalAdvisoryActive,
+                  }"
+                  v-on:click.stop="
+                    showContentAdvisory(item, !item.showContentAdvisory)
+                  "
                 >
-                  <v-col
-                    sm="4"
-                    class="creditsContent"
-                    style="padding-left: 12px"
+                  <span class="mk-item-detailcategory-header"
                     >{{
-                      $t(`ParentalAdvisoryCategories.${category.Name}`)
-                    }}</v-col
-                  >
-                  <v-col sm="1" class="creditsContent">
-                    <!-- <span v-if="company.role">...</span> -->
-                  </v-col>
-                  <v-col
-                    class="creditsContent"
-                    v-bind:class="{
-                      'mk-search-highlight':
-                        $shared.filterParentalAdvisoryAppliedContains(
-                          category.Name,
-                          item[`IMDB_Parental_Advisory_${category.Name}`]
-                        ),
-                    }"
-                    >{{
-                      contentAdvisorySeverityDisplayText(
-                        item[`IMDB_Parental_Advisory_${category.Name}`]
-                      )
-                    }}</v-col
+                      $t("Content Advisory") +
+                      (!item.showContentAdvisory ? " »" : "")
+                    }}&nbsp;</span
                   >
                 </v-row>
+
+                <div
+                  class="mk-item-detailcategory-content"
+                  v-if="item.showContentAdvisory"
+                  v-on:click.stop="showContentAdvisory(item, false)"
+                  style="margin-left: 8px"
+                >
+                  <v-row
+                    v-for="category in $shared.contentAdvisoryCategories"
+                    v-bind:key="category.Name"
+                    class="mk-highlightable-row"
+                    style="margin-top: 12px; margin-left: 6px"
+                  >
+                    <v-col
+                      sm="4"
+                      class="creditsContent"
+                      style="padding-left: 12px"
+                      >{{
+                        $t(`ParentalAdvisoryCategories.${category.Name}`)
+                      }}</v-col
+                    >
+                    <v-col sm="1" class="creditsContent">
+                      <!-- <span v-if="company.role">...</span> -->
+                    </v-col>
+                    <v-col
+                      class="creditsContent"
+                      v-bind:class="{
+                        'mk-search-highlight':
+                          $shared.filterParentalAdvisoryAppliedContains(
+                            category.Name,
+                            item[`IMDB_Parental_Advisory_${category.Name}`]
+                          ),
+                      }"
+                      >{{
+                        contentAdvisorySeverityDisplayText(
+                          item[`IMDB_Parental_Advisory_${category.Name}`]
+                        )
+                      }}</v-col
+                    >
+                  </v-row>
+                </div>
               </div>
 
               <!-- PLOT KEYWORDS -->
-              <v-row
-                style="
-                  padding-left: 16px;
-                  padding-top: 4px;
-                  align-items: flex-end;
-                "
-                class="mk-clickable"
-                v-bind:class="{
-                  'mk-search-highlight': $shared.filterIMDBPlotKeywordsActive,
-                }"
-                v-on:click.stop="showPlotKeywords(item, !item.showPlotKeywords)"
-              >
-                <span class="mk-item-detailcategory-header"
-                  >{{
-                    $t("Plot Keywords _Spoilers ahead!_") +
-                    (!item.showPlotKeywords ? " »" : "")
-                  }}&nbsp;</span
-                >
-              </v-row>
-
-              <div
-                class="mk-item-detailcategory-content"
-                v-if="item.showPlotKeywords"
-                v-on:click.stop="showPlotKeywords(item, false)"
-              >
-                <div
-                  v-if="!item.plotKeywords || item.plotKeywords.length === 0"
-                  style="margin-left: 24px"
-                >
-                  {{ $t("none provided") }}
-                </div>
-
+              <div style="margin-top: 16px">
                 <v-row
-                  v-for="plotKeyword in item.plotKeywords"
-                  v-bind:key="plotKeyword.Keyword"
-                  style="margin-top: 12px; margin-left: 24px"
+                  class="mk-item-detailcategory-header-row mk-clickable"
+                  v-bind:class="{
+                    'mk-search-highlight': $shared.filterIMDBPlotKeywordsActive,
+                  }"
+                  v-on:click.stop="
+                    showPlotKeywords(item, !item.showPlotKeywords)
+                  "
                 >
-                  <a
-                    class="mk-clickable"
-                    v-bind:class="{
-                      'mk-search-highlight':
-                        $shared.filterIMDBPlotKeywordsAppliedContains(
-                          plotKeyword.Keyword
-                        ),
-                    }"
-                    v-on:click.stop="onIMDBPlotKeywordClicked(plotKeyword)"
-                    >{{ plotKeyword.Keyword }}</a
+                  <span class="mk-item-detailcategory-header"
+                    >{{
+                      $t("Plot Keywords _Spoilers ahead!_") +
+                      (!item.showPlotKeywords ? " »" : "")
+                    }}&nbsp;</span
                   >
-
-                  <!-- <v-col sm="4" class="creditsLabel">{{ plotKeyword.Keyword }}</v-col>
-                  <v-col
-                    class="creditsContent"
-                  >{{ `${plotKeyword.NumVotes ? plotKeyword.NumRelevant + ' of ' + plotKeyword.NumVotes : 'no votes'}` }}</v-col>-->
                 </v-row>
+
+                <div
+                  class="mk-item-detailcategory-content"
+                  v-if="item.showPlotKeywords"
+                  v-on:click.stop="showPlotKeywords(item, false)"
+                >
+                  <v-row
+                    v-if="!item.plotKeywords || item.plotKeywords.length === 0"
+                    style="margin-top: 8px; margin-left: 16px"
+                  >
+                    {{ $t("none provided") }}
+                  </v-row>
+
+                  <v-row
+                    v-for="plotKeyword in item.plotKeywords"
+                    v-bind:key="plotKeyword.Keyword"
+                    style="margin-top: 12px; margin-left: 24px"
+                  >
+                    <a
+                      class="mk-clickable"
+                      v-bind:class="{
+                        'mk-search-highlight':
+                          $shared.filterIMDBPlotKeywordsAppliedContains(
+                            plotKeyword.Keyword
+                          ),
+                      }"
+                      v-on:click.stop="onIMDBPlotKeywordClicked(plotKeyword)"
+                      >{{ plotKeyword.Keyword }}</a
+                    >
+
+                    <!-- <v-col sm="4" class="creditsLabel">{{ plotKeyword.Keyword }}</v-col>
+                    <v-col
+                      class="creditsContent"
+                    >{{ `${plotKeyword.NumVotes ? plotKeyword.NumRelevant + ' of ' + plotKeyword.NumVotes : 'no votes'}` }}</v-col>-->
+                  </v-row>
+                </div>
               </div>
 
               <!-- FILMING LOCATIONS -->
-              <v-row
-                style="
-                  padding-left: 16px;
-                  padding-top: 4px;
-                  align-items: flex-end;
-                "
-                class="mk-clickable"
-                v-bind:class="{
-                  'mk-search-highlight':
-                    $shared.filterIMDBFilmingLocationsActive,
-                }"
-                v-on:click.stop="
-                  showFilmingLocations(item, !item.showFilmingLocations)
-                "
-              >
-                <span class="mk-item-detailcategory-header"
-                  >{{
-                    $t("Filming Locations") +
-                    (!item.showFilmingLocations ? " »" : "")
-                  }}&nbsp;</span
-                >
-              </v-row>
-
-              <div
-                style="margin-left: 36px"
-                v-if="item.showFilmingLocations"
-                v-on:click.stop="showFilmingLocations(item, false)"
-              >
-                <div
-                  v-if="
-                    !item.filmingLocations || item.filmingLocations.length === 0
-                  "
-                  style="margin-left: -12px"
-                >
-                  {{ $t("none provided") }}
-                </div>
-
+              <div style="margin-top: 16px">
                 <v-row
-                  v-for="filmingLocation in item.filmingLocations"
-                  v-bind:key="filmingLocation.id_IMDB_Filming_Locations"
-                  style="margin-top: 12px"
+                  class="mk-item-detailcategory-header-row mk-clickable"
+                  v-bind:class="{
+                    'mk-search-highlight':
+                      $shared.filterIMDBFilmingLocationsActive,
+                  }"
+                  v-on:click.stop="
+                    showFilmingLocations(item, !item.showFilmingLocations)
+                  "
                 >
-                  <a
-                    class="mk-clickable"
-                    v-bind:class="{
-                      'mk-search-highlight':
-                        $shared.filterIMDBFilmingLocationsAppliedContains(
-                          filmingLocation.Location
-                        ),
-                    }"
-                    v-on:click.stop="
-                      onIMDBFilmingLocationClicked(filmingLocation)
-                    "
-                    >{{ filmingLocation.Location }}</a
+                  <span class="mk-item-detailcategory-header"
+                    >{{
+                      $t("Filming Locations") +
+                      (!item.showFilmingLocations ? " »" : "")
+                    }}&nbsp;</span
                   >
                 </v-row>
+
+                <div
+                  class="mk-item-detailcategory-content"
+                  v-if="item.showFilmingLocations"
+                  v-on:click.stop="showFilmingLocations(item, false)"
+                >
+                  <v-row
+                    v-if="
+                      !item.filmingLocations ||
+                      item.filmingLocations.length === 0
+                    "
+                    style="margin-top: 8px; margin-left: 16px"
+                  >
+                    {{ $t("none provided") }}
+                  </v-row>
+
+                  <v-row
+                    v-for="filmingLocation in item.filmingLocations"
+                    v-bind:key="filmingLocation.id_IMDB_Filming_Locations"
+                    style="margin-top: 12px; margin-left: 24px"
+                  >
+                    <a
+                      class="mk-clickable"
+                      v-bind:class="{
+                        'mk-search-highlight':
+                          $shared.filterIMDBFilmingLocationsAppliedContains(
+                            filmingLocation.Location
+                          ),
+                      }"
+                      v-on:click.stop="
+                        onIMDBFilmingLocationClicked(filmingLocation)
+                      "
+                      >{{ filmingLocation.Location }}</a
+                    >
+                  </v-row>
+                </div>
               </div>
 
               <v-row style="margin-top: 16px">
