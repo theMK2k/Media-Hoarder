@@ -123,6 +123,7 @@
 
 ### Other (later)
 
+- [ ] IMDB Awards (Oscars etc.) as data and filter criteria
 - [ ] apply shared.\*AppliedContains to the media item once after completely fetching media
   - huge refactoring as movie data must then contain the information if it is affected by the filter
 - [ ] items which have a scan error skew the next scan's time-per-item
