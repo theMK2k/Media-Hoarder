@@ -5428,13 +5428,13 @@ h1 {
   cursor: grab !important;
 }
 
+.mk-item-detailcategory-header-row {
+  margin: 0px 0px 0px 4px;
+}
+
 .mk-item-detailcategory-content {
   margin-top: -8px;
   margin-bottom: 16px;
-}
-
-.mk-item-detailcategory-header-row {
-  margin: 0px 0px 0px 4px;
 }
 
 .mk-item-detailcategory-header {

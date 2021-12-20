@@ -867,7 +867,7 @@
               </div>
 
               <!-- COMPANIES -->
-              <div style="margin-top: 16px">
+              <div style="margin-top: 4px">
                 <v-row
                   class="mk-item-detailcategory-header-row mk-clickable"
                   v-bind:class="{
@@ -930,7 +930,7 @@
               </div>
 
               <!-- CONTENT/PARENTAL ADVISORIES -->
-              <div style="margin-top: 16px">
+              <div style="margin-top: 4px">
                 <v-row
                   class="mk-item-detailcategory-header-row mk-clickable"
                   v-bind:class="{
@@ -991,7 +991,7 @@
               </div>
 
               <!-- PLOT KEYWORDS -->
-              <div style="margin-top: 16px">
+              <div style="margin-top: 4px">
                 <v-row
                   class="mk-item-detailcategory-header-row mk-clickable"
                   v-bind:class="{
@@ -1047,7 +1047,7 @@
               </div>
 
               <!-- FILMING LOCATIONS -->
-              <div style="margin-top: 16px">
+              <div style="margin-top: 4px">
                 <v-row
                   class="mk-item-detailcategory-header-row mk-clickable"
                   v-bind:class="{
