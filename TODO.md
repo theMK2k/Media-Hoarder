@@ -2,8 +2,6 @@
 
 ## v1.0.0
 
-- layout: "none provided"
-
 - defect: rescan with deselected IMDB options removes metadata (persons, companies, etc.)
 
 - [ ] introduce Audio Metadata
