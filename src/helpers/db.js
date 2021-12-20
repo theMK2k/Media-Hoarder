@@ -164,6 +164,73 @@ function sqlitefireProcedureReturnAllCB(query, vars, callback) {
   });
 }
 
+/**
+ * Build an INSERT query based on @param data for table provided in @param tableName
+ * @param {string} tableName
+ * @param {string} primaryKeyName
+ * @param {Object} data e.g. {$column1: 'value1', $column2: 'value2'}
+ * @returns {string}
+ */
+function buildINSERTQuery(tableName, primaryKeyName, data) {
+  let query = `
+  INSERT INTO ${tableName} (
+    `;
+  let counter = 0;
+  Object.keys(data).forEach((key) => {
+    if (key.substring(1) === primaryKeyName) {
+      return;
+    }
+    query += `${
+      counter++
+        ? `
+    , `
+        : ""
+    } "${key.substring(1)}"`;
+  });
+  query += `) VALUES (`;
+  counter = 0;
+  Object.keys(data).forEach((key) => {
+    query += `${
+      counter++
+        ? `
+     , `
+        : ""
+    } ${key}`;
+  });
+  query += `)`;
+
+  return query;
+}
+
+/**
+ * Build an UPDATE query based on @param data for table provided in @param tableName
+ * @param {string} tableName
+ * @param {string} primaryKeyName
+ * @param {Object} data e.g. {$column1: 'value1', $column2: 'value2'}
+ * @returns {string}
+ */
+function buildUPDATEQuery(tableName, primaryKeyName, data) {
+  let query = `
+  UPDATE ${tableName} SET
+  `;
+  let counter = 0;
+  Object.keys(data).forEach((key) => {
+    if (key.substring(1) === primaryKeyName) {
+      return;
+    }
+    query += `${
+      counter++
+        ? `
+    , `
+        : ""
+    } "${key.substring(1)}" = ${key}`;
+  });
+  query += `
+  WHERE ${primaryKeyName} = $${primaryKeyName}`;
+
+  return query;
+}
+
 export {
   getDb,
   initDbCB,
@@ -173,4 +240,6 @@ export {
   fireProcedure,
   fireProcedureReturnScalar,
   fireProcedureReturnAll,
+  buildINSERTQuery,
+  buildUPDATEQuery,
 };
