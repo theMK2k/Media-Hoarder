@@ -8,7 +8,67 @@
 
 ### Road to Release (Win/Linux/Mac)
 
-- [x] remove MediaInfoObject from tbl_Movies
+- introduce Audio Metadata
+  - [x] see below: use Movie Manager to mass-scan a movie folder and find out the different audio codecs
+  - [x] new table tbl_Movies_MI_Tracks
+    - [x] scan all media info data to find out which fields are populated by each track type
+      - see: [data/devdocs/mediainfo/](data/devdocs/mediainfo/)
+    - [x] investigate how to enforce numeric values
+      - [x] does it suffice to set the fieldtype in the db? -> test with a SELECT query
+      -> plan: mass import and analyze later
+      - Integer fields:
+        - AlternateGroup?
+        - AudioCount
+        - BitDepth
+        - BitDepth_Detected
+        - BitRate
+        - BitRate_Maximum
+        - BitRate_Minimum
+        - Channels
+        - FileSize
+        - FooterSize
+        - FrameCount
+        - HeaderSize
+        - Height
+        - MenuCount
+        - MenuID
+        - MultiView_Count
+        - OverallBitRate
+        - OverallBitRate_Maximum
+        - Sampled_Height
+        - Sampled_Width
+        - SamplesPerFrame
+        - SamplingCount
+        - SamplingRate
+        - Source_FrameCount
+        - Source_StreamSize
+        - Stored_Height
+        - Stored_Width
+        - StreamOrder
+        - StreamSize
+        - TextCount
+        - VideoCount
+        - Width
+
+      - NUMERIC fields:
+        - Delay
+        - Delay_Original
+        - DisplayAspectRatio
+        - DisplayAspectRatio_Original
+        - Duration
+        - Duration_LastFrame
+        - FrameRate
+        - FrameRate_Maximum
+        - FrameRate_Minimum
+        - FrameRate_Original
+        - Interleave_Duration
+        - Interleave_Preload
+        - Interleave_VideoFrames
+        - PixelAspectRatio
+        - PixelAspectRatio_Original
+        - Source_Duration
+        - Source_StreamSize_Proportion
+        - StreamSize_Proportion- [x] remove MediaInfoObject from tbl_Movies
 - [x] (already fixed) companies: duplicates in topcompanies; non-dupes in companies list?
 - [x] on forced rescan also do MediaInfo
 - [x] highlight hidden filtered languages

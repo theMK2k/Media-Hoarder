@@ -2,71 +2,11 @@
 
 ## v1.0.0
 
-- defect: rescan with deselected IMDB options removes metadata (persons, companies, etc.)
+- [ ] defect: rescan with deselected IMDB options removes metadata (persons, companies, etc.)
 
 - [ ] introduce Audio Metadata
-  - [x] see below: use Movie Manager to mass-scan a movie folder and find out the different audio codecs
   - [ ] provide mapping for Format (like release attributes)
-  - [x] new table tbl_Movies_MI_Tracks
-    - [x] scan all media info data to find out which fields are populated by each track type
-      - see: [data/devdocs/mediainfo/](data/devdocs/mediainfo/)
-    - [WIP] investigate how to enforce numeric values
-      - does it suffice to set the fieldtype in the db? -> test with a SELECT query
-      -> plan: mass import and analyze later
-      - Integer fields:
-        - AlternateGroup?
-        - AudioCount
-        - BitDepth
-        - BitDepth_Detected
-        - BitRate
-        - BitRate_Maximum
-        - BitRate_Minimum
-        - Channels
-        - FileSize
-        - FooterSize
-        - FrameCount
-        - HeaderSize
-        - Height
-        - MenuCount
-        - MenuID
-        - MultiView_Count
-        - OverallBitRate
-        - OverallBitRate_Maximum
-        - Sampled_Height
-        - Sampled_Width
-        - SamplesPerFrame
-        - SamplingCount
-        - SamplingRate
-        - Source_FrameCount
-        - Source_StreamSize
-        - Stored_Height
-        - Stored_Width
-        - StreamOrder
-        - StreamSize
-        - TextCount
-        - VideoCount
-        - Width
-
-      - NUMERIC fields:
-        - Delay
-        - Delay_Original
-        - DisplayAspectRatio
-        - DisplayAspectRatio_Original
-        - Duration
-        - Duration_LastFrame
-        - FrameRate
-        - FrameRate_Maximum
-        - FrameRate_Minimum
-        - FrameRate_Original
-        - Interleave_Duration
-        - Interleave_Preload
-        - Interleave_VideoFrames
-        - PixelAspectRatio
-        - PixelAspectRatio_Original
-        - Source_Duration
-        - Source_StreamSize_Proportion
-        - StreamSize_Proportion
-
+  - show in MediaList (Video Codec/Format, Audio Codecs/Formats)
   - new Filters:
     - [ ] Audio Formats (optionally for language X)
     - [ ] Audio Formats (Commercial) (optionally for language X)
@@ -81,7 +21,7 @@
   - [x] Linux: OK
   - [ ] MacOS: ??
 
-### Bugs
+### Defects
 
 - nothing
 
