@@ -1,0 +1,68 @@
+Fieldname	numMovies	Example Content
+StreamOrder	9060	1
+ID	9122	2
+UniqueID	8467	2997387431
+Format	9123	DTS
+Format_Settings_Mode	6131	16
+Format_Settings_Endianness	8597	Big
+CodecID	9060	A_DTS
+Duration	9064	4764.362
+BitRate_Mode	8980	CBR
+BitRate	8979	768000
+Channels	9064	6
+ChannelPositions	8128	Front: L C R, Side: L R, LFE
+ChannelLayout	8128	C L R Ls Rs LFE
+SamplesPerFrame	8987	512
+SamplingRate	9064	48000
+SamplingCount	9064	228689376
+FrameRate	8987	93.750
+BitDepth	5790	24
+Compression_Mode	9114	Lossy
+Delay	8957	0.000
+Delay_Source	8957	Container
+StreamSize	8979	457378752
+StreamSize_Proportion	8979	0.07966
+Title	3363	5.1 DTS @ 755 kbps
+Language	8492	de
+Default	8539	Yes
+Forced	8467	Yes
+Format_Settings_Floor	42	1
+Encoded_Library	291	AO; aoTuV b5c [20081215] (based on Xiph.Org's libVorbis)
+Encoded_Library_Name	47	aoTuV
+Encoded_Library_Version	47	b5c
+Encoded_Library_Date	47	UTC 2008-12-15
+MuxingMode	148	Header stripping
+Format_Commercial_IfAny	3167	Dolby Digital
+FrameCount	3919	194213
+ServiceKind	2823	CM
+extra	2849	6-271.491.0271-27-272.790.535.467382.670.275.16746
+Format_Settings_SBR	48	No (Explicit)
+Format_AdditionalFeatures	496	LC
+ChannelPositions_Original	615	Front: L C R, Side: L R, LFE
+ChannelLayout_Original	615	C L R Ls Rs LFE
+BitRate_Maximum	39	99648
+Encoded_Date	45	UTC 2014-10-21 23:43:47
+Tagged_Date	43	UTC 2014-10-21 23:43:48
+AlternateGroup	72	1
+Alignment	458	Split
+Interleave_VideoFrames	458	1.00
+Interleave_Duration	458	0.042
+Interleave_Preload	442	0.500
+Channels_Original	232	7
+Format_Version	260	1
+Format_Profile	261	Layer 3
+Format_Settings_ModeExtension	217	MS Stereo
+Encoded_Library_Settings	225	-m j -V 4 -q 2 -lowpass 17.6 --abr 128
+BitRate_Nominal	62	140000
+BitRate_Minimum	42	128000
+Source_Duration	4	7087.958
+Source_FrameCount	3	332248
+Source_StreamSize	3	84945247
+Source_StreamSize_Proportion	3	0.04569
+MenuID	37	1
+OriginalSourceMedium_ID	14	4352
+Format_Settings_Sign	8	Signed
+BitDepth_Detected	5	24
+FirstPacketOrder	59	1
+Duration_LastFrame	1	-0.011
+Encoded_Application	2	VLC media player

@@ -1,0 +1,209 @@
+Fieldname	numMovies	Example Content
+UniqueID	4277	192503062109255373286008662619018597250
+VideoCount	5372	1
+AudioCount	5396	4
+TextCount	8869	7
+MenuCount	3279	1
+FileExtension	16593	mkv
+Format	11087	Matroska
+Format_Version	4830	2
+FileSize	16593	5741688948
+Duration	10682	4764.362
+OverallBitRate_Mode	688	VBR
+OverallBitRate	10682	9641062
+FrameRate	5371	23.976
+FrameCount	5365	114230
+StreamSize	16389	114272425
+IsStreamable	4887	Yes
+Encoded_Date	4262	UTC 2010-06-03 18:14:49
+File_Created_Date	16593	UTC 2020-02-22 08:31:30.655
+File_Created_Date_Local	16593	2020-02-22 09:31:30.655
+File_Modified_Date	16591	UTC 2010-06-10 15:40:13.000
+File_Modified_Date_Local	16591	2010-06-10 16:40:13.000
+Encoded_Application	5298	mkvmerge v3.3.0 ('Language') gebaut am Mar 24 2010 14:59:24
+Encoded_Library	5254	libebml v0.8.0 + libmatroska v0.9.0
+Title	904	...und dann kam Polly
+Movie	904	...und dann kam Polly
+Cover	83	Yes
+extra	5644	Cover.jpg
+Format_Profile	63	Base Media
+CodecID	57	isom
+CodecID_Compatible	57	isom/avc1
+HeaderSize	57	2958296
+DataSize	57	785651478
+FooterSize	57	57
+Tagged_Date	36	UTC 2014-10-21 23:43:39
+Interleaved	450	Yes
+Copyright	2	iNFOTv
+Comment	9	RARBG.COM - Brazil.1985.DC.1080p.BluRay.H264.AAC-RARBG
+Performer	5	Martin Brest
+Director	2	Martin Brest
+Actor	1	Al Pacino / Chris O'Donnell / Gabrielle Anwar / Philip Seymour Hoffman
+ScreenplayBy	1	Bo Goldman
+Producer	1	Martin Brest
+Genre	5	Drama
+ContentType	2	Short Film
+Recorded_Date	8	1992
+OriginalSourceForm_Name	1	Die Katze auf dem heiÃŸen Blechdach - SZ-Cinemathek Nr. 22 [DVD5] Untouched
+ID	33	0
+OverallBitRate_Maximum	33	48000000
+Subject	1	Serdar Somuncu - Der Hassprediger Hardcore Live
+Description	2	Encoded By RMTeam, http://RMZ.cr
+Album	1	The Hobbit: The Tolkien Edit
+EncodedBy	1	Sartre
+Released_Date	1	1980-12-25
+StreamOrder	5371	0
+ID	5373	1
+UniqueID	4830	1
+Format	5373	AVC
+Format_Profile	5360	High
+Format_Level	5360	4.1
+Format_Settings_CABAC	4871	Yes
+Format_Settings_RefFrames	4871	4
+CodecID	5371	V_MPEG4/ISO/AVC
+Duration	5371	4764.348
+BitRate	5304	7230000
+Width	5373	1920
+Height	5373	1040
+Sampled_Width	5371	1920
+Sampled_Height	5371	1040
+PixelAspectRatio	5373	1.000
+DisplayAspectRatio	5373	1.846
+FrameRate_Mode	4887	CFR
+FrameRate	5372	23.976
+FrameCount	5371	114230
+ColorSpace	5371	YUV
+ChromaSubsampling	5371	4:2:0
+BitDepth	5371	8
+ScanType	5325	Progressive
+Delay	5314	0.000
+StreamSize	5303	4176072749
+Title	1139	7 Mbps AVC MPEG-4
+Encoded_Library	5062	x264 - core 96 r1613M 81e75e9
+Encoded_Library_Name	5057	x264
+Encoded_Library_Version	5048	core 96 r1613M 81e75e9
+Encoded_Library_Settings	4599	cabac=1 / ref=4 / deblock=1:-1:-1 / analyse=0x3:0x113 / me=umh / subme=9 / psy=1 / fade_compensate=0.00 / psy_rd=1.30:0.00 / mixed_ref=1 / me_range=24 / chroma_me=1 / trellis=2 / 8x8dct=1 / cqm=0 / deadzone=21,11 / fast_pskip=1 / chroma_qp_offset=-2 / threads=6 / sliced_threads=0 / nr=0 / decimate=1 / interlaced=0 / constrained_intra=0 / bframes=5 / b_pyramid=2 / b_adapt=2 / b_bias=0 / direct=3 / weightb=1 / weightp=2 / keyint=250 / keyint_min=25 / scenecut=40 / intra_refresh=0 / rc_lookahead=80 / rc=2pass / mbtree=1 / bitrate=7230 / ratetol=1.0 / qcomp=0.80 / qpmin=10 / qpmax=51 / qpstep=4 / cplxblur=20.0 / qblur=0.5 / ip_ratio=1.40 / aq=1:0.70
+Language	2271	de
+Default	4830	No
+Forced	4830	No
+MuxingMode	132	Header stripping
+FrameRate_Mode_Original	90	VFR
+Stored_Height	2410	816
+colour_description_present	470	Yes
+colour_description_present_Source	470	Stream
+colour_range	475	Limited
+colour_range_Source	475	Stream
+colour_primaries_Source	469	Stream
+transfer_characteristics_Source	469	Stream
+matrix_coefficients	469	BT.709
+matrix_coefficients_Source	469	Stream
+BitRate_Maximum	309	9146920
+Rotation	57	0.000
+Encoded_Date	36	UTC 2014-10-21 23:43:39
+Tagged_Date	36	UTC 2014-10-21 23:43:48
+colour_primaries	423	BT.709
+extra	120	avcC
+Format_Tier	44	Main
+Stored_Width	85	1920
+transfer_characteristics	420	BT.709
+BitRate_Mode	369	VBR
+BufferSize	378	11600000
+FrameRate_Original	175	29.970
+Format_Settings_BVOP	452	2
+Format_Settings_QPel	449	No
+Format_Settings_GMC	449	0
+Format_Settings_Matrix	452	Default (H.263)
+Compression_Mode	457	Lossy
+Encoded_Library_Date	327	UTC 2008-12-04
+BitRate_Nominal	100	6951200
+Format_Settings_Matrix_Data	27	081010141014171717171B181B181B1E1D1C1C1D1E201F1E1D1E1F2022222323232322222626272727262628282A2A28282C2D2E2D2C323636323B3E3B484854 / 1113131515151717171719191919191B1B1B1B1B1B1D1C1D1E1D1C1D1F1D1E1F1F1E1D1F2120222622202125282E2E28252D363A362D3C48483C4A5A4A64647C
+FrameRate_Minimum	12	1.501
+FrameRate_Maximum	12	24.000
+Format_Settings_GOP	54	M=1, N=3
+ScanOrder	19	BFF
+Standard	43	NTSC
+Source_Duration	7	303.076
+Source_StreamSize	7	1298742853
+MenuID	34	1
+OriginalSourceMedium_ID	8	4113
+MultiView_Count	2	2
+MultiView_Layout	2	Side by Side (left eye first)
+DisplayAspectRatio_Original	30	2.348
+PixelAspectRatio_Original	24	1.091
+Format_Settings_PictureStructure	1	Frame
+Height_Original	2	1088
+Format_Version	5	2
+Height_Offset	1	0
+Delay_Original	1	0.000
+TimeCode_FirstFrame	1	00:00:00;00
+TimeCode_Source	1	Group of pictures header
+Gop_OpenClosed	1	Open
+Gop_OpenClosed_FirstFrame	1	Closed
+ScanType_Original	1	Progressive
+StreamOrder	9060	1
+ID	9122	2
+UniqueID	8467	2997387431
+Format	9123	DTS
+Format_Settings_Mode	6131	16
+Format_Settings_Endianness	8597	Big
+CodecID	9060	A_DTS
+Duration	9064	4764.362
+BitRate_Mode	8980	CBR
+BitRate	8979	768000
+Channels	9064	6
+ChannelPositions	8128	Front: L C R, Side: L R, LFE
+ChannelLayout	8128	C L R Ls Rs LFE
+SamplesPerFrame	8987	512
+SamplingRate	9064	48000
+SamplingCount	9064	228689376
+FrameRate	8987	93.750
+BitDepth	5790	24
+Compression_Mode	9114	Lossy
+Delay	8957	0.000
+Delay_Source	8957	Container
+StreamSize	8979	457378752
+StreamSize_Proportion	8979	0.07966
+Title	3363	5.1 DTS @ 755 kbps
+Language	8492	de
+Default	8539	Yes
+Forced	8467	Yes
+Format_Settings_Floor	42	1
+Encoded_Library	291	AO; aoTuV b5c [20081215] (based on Xiph.Org's libVorbis)
+Encoded_Library_Name	47	aoTuV
+Encoded_Library_Version	47	b5c
+Encoded_Library_Date	47	UTC 2008-12-15
+MuxingMode	148	Header stripping
+Format_Commercial_IfAny	3167	Dolby Digital
+FrameCount	3919	194213
+ServiceKind	2823	CM
+extra	2849	6-271.491.0271-27-272.790.535.467382.670.275.16746
+Format_Settings_SBR	48	No (Explicit)
+Format_AdditionalFeatures	496	LC
+ChannelPositions_Original	615	Front: L C R, Side: L R, LFE
+ChannelLayout_Original	615	C L R Ls Rs LFE
+BitRate_Maximum	39	99648
+Encoded_Date	45	UTC 2014-10-21 23:43:47
+Tagged_Date	43	UTC 2014-10-21 23:43:48
+AlternateGroup	72	1
+Alignment	458	Split
+Interleave_VideoFrames	458	1.00
+Interleave_Duration	458	0.042
+Interleave_Preload	442	0.500
+Channels_Original	232	7
+Format_Version	260	1
+Format_Profile	261	Layer 3
+Format_Settings_ModeExtension	217	MS Stereo
+Encoded_Library_Settings	225	-m j -V 4 -q 2 -lowpass 17.6 --abr 128
+BitRate_Nominal	62	140000
+BitRate_Minimum	42	128000
+Source_Duration	4	7087.958
+Source_FrameCount	3	332248
+Source_StreamSize	3	84945247
+Source_StreamSize_Proportion	3	0.04569
+MenuID	37	1
+OriginalSourceMedium_ID	14	4352
+Format_Settings_Sign	8	Signed
+BitDepth_Detected	5	24
+FirstPacketOrder	59	1
+Duration_LastFrame	1	-0.011
+Encoded_Application	2	VLC media player

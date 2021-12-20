@@ -1,0 +1,54 @@
+Fieldname	numMovies	Example Content
+UniqueID	4277	192503062109255373286008662619018597250
+VideoCount	5372	1
+AudioCount	5396	4
+TextCount	8869	7
+MenuCount	3279	1
+FileExtension	16593	mkv
+Format	11087	Matroska
+Format_Version	4830	2
+FileSize	16593	5741688948
+Duration	10682	4764.362
+OverallBitRate_Mode	688	VBR
+OverallBitRate	10682	9641062
+FrameRate	5371	23.976
+FrameCount	5365	114230
+StreamSize	16389	114272425
+IsStreamable	4887	Yes
+Encoded_Date	4262	UTC 2010-06-03 18:14:49
+File_Created_Date	16593	UTC 2020-02-22 08:31:30.655
+File_Created_Date_Local	16593	2020-02-22 09:31:30.655
+File_Modified_Date	16591	UTC 2010-06-10 15:40:13.000
+File_Modified_Date_Local	16591	2010-06-10 16:40:13.000
+Encoded_Application	5298	mkvmerge v3.3.0 ('Language') gebaut am Mar 24 2010 14:59:24
+Encoded_Library	5254	libebml v0.8.0 + libmatroska v0.9.0
+Title	904	...und dann kam Polly
+Movie	904	...und dann kam Polly
+Cover	83	Yes
+extra	5644	Cover.jpg
+Format_Profile	63	Base Media
+CodecID	57	isom
+CodecID_Compatible	57	isom/avc1
+HeaderSize	57	2958296
+DataSize	57	785651478
+FooterSize	57	57
+Tagged_Date	36	UTC 2014-10-21 23:43:39
+Interleaved	450	Yes
+Copyright	2	iNFOTv
+Comment	9	RARBG.COM - Brazil.1985.DC.1080p.BluRay.H264.AAC-RARBG
+Performer	5	Martin Brest
+Director	2	Martin Brest
+Actor	1	Al Pacino / Chris O'Donnell / Gabrielle Anwar / Philip Seymour Hoffman
+ScreenplayBy	1	Bo Goldman
+Producer	1	Martin Brest
+Genre	5	Drama
+ContentType	2	Short Film
+Recorded_Date	8	1992
+OriginalSourceForm_Name	1	Die Katze auf dem heiÃŸen Blechdach - SZ-Cinemathek Nr. 22 [DVD5] Untouched
+ID	33	0
+OverallBitRate_Maximum	33	48000000
+Subject	1	Serdar Somuncu - Der Hassprediger Hardcore Live
+Description	2	Encoded By RMTeam, http://RMZ.cr
+Album	1	The Hobbit: The Tolkien Edit
+EncodedBy	1	Sartre
+Released_Date	1	1980-12-25

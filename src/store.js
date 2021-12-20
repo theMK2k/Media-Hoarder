@@ -53,6 +53,8 @@ const {
 
 const definedError = require("@/helpers/defined-error");
 
+const mediainfoTrack = require("./object-definitions/mediainfo-track");
+
 const isBuild = process.env.NODE_ENV === "production";
 
 let rescanAddedMovies = 0;
@@ -279,6 +281,8 @@ async function manageIndexes(db) {
       ["id_Movies"],
       false
     ),
+    generateIndexQueryObject("tbl_Movies_MI_Tracks", ["id_Movies"], false),
+    generateIndexQueryObject("tbl_Movies_MI_Tracks", ["type"], false),
   ];
 
   logger.log("[manageIndexes] queries:", queries);
@@ -1679,11 +1683,9 @@ async function applyMediaInfo(movie, onlyNew) {
       $MI_Aspect_Ratio: null,
       $MI_Audio_Languages: "",
       $MI_Subtitle_Languages: "",
-      $MI_Object: null,
     };
 
     const miObj = await xml2js.parseStringPromise(stdout);
-    MI.$MI_Object = JSON.stringify(miObj);
 
     // logger.log("[applyMediaInfo] miObj:", miObj);
 
@@ -1700,6 +1702,41 @@ async function applyMediaInfo(movie, onlyNew) {
     }
 
     tracks.forEach((track) => {
+      // collect all track data into tbl_Movies_MI_Tracks
+      const trackFields = JSON.parse(JSON.stringify(mediainfoTrack));
+      trackFields.$id_Movies = movie.id_Movies;
+      trackFields.$type = track.$.type
+        ? track.$.type.toLowerCase()
+        : "<undefined>";
+      trackFields.$typeorder = Object.keys(track.$).find(
+        (key) => key === "typeorder"
+      )
+        ? track.$.typeorder
+        : null;
+
+      for (let key of Object.keys(track)) {
+        if (Object.keys(trackFields).find((fk) => fk === `$${key}`)) {
+          trackFields[`$${key}`] = track[key][0];
+
+          if (key === "Language") {
+            if (languageNameCodeMapping[trackFields[`$${key}`]]) {
+              trackFields[`$${key}`] =
+                languageNameCodeMapping[trackFields[`$${key}`]];
+            } else {
+              trackFields[`$${key}`] = helpers.uppercaseEachWord(
+                trackFields[`$${key}`]
+              );
+            }
+          }
+        } else {
+          if (!`$${key}` === "$$") {
+            logger.warn(`[applyMediaInfo] track key not found: "$${key}"`);
+          }
+        }
+      }
+      track.trackFields = trackFields;
+
+      // more specific analysis of track data
       if (track.$.type === "Video") {
         if (track.Duration && track.Duration.length > 0) {
           MI.$MI_Duration = track.Duration[0];
@@ -1847,6 +1884,7 @@ async function applyMediaInfo(movie, onlyNew) {
 
     logger.log("[applyMediaInfo] MI:", MI);
 
+    // store to db
     await db.fireProcedure(
       `UPDATE tbl_Movies
 				SET
@@ -1858,7 +1896,6 @@ async function applyMediaInfo(movie, onlyNew) {
 				, MI_Aspect_Ratio = $MI_Aspect_Ratio
 				, MI_Audio_Languages = $MI_Audio_Languages
 				, MI_Subtitle_Languages = $MI_Subtitle_Languages
-        , MI_Object = $MI_Object
 			WHERE id_Movies = $id_Movies
 			`,
       MI
@@ -1880,6 +1917,56 @@ async function applyMediaInfo(movie, onlyNew) {
 				`,
         { $id_Movies: movie.id_Movies, $Language: subtitleLanguages[i] }
       );
+    }
+
+    for (let track of tracks) {
+      const trackFields = track.trackFields;
+
+      const checkData = {
+        $id_Movies: trackFields.$id_Movies,
+        $type: trackFields.$type,
+      };
+      if (trackFields.$ID !== null) {
+        checkData.$ID = trackFields.$ID;
+      }
+      const checkQuery = `
+      SELECT id_Movies_MI_Tracks FROM tbl_Movies_MI_Tracks WHERE id_Movies = $id_Movies AND type = $type AND ${
+        trackFields.$ID !== null ? "ID = $ID" : "ID IS NULL"
+      }
+      `;
+
+      logger.log(
+        "[applyMediaInfo] checkQuery:",
+        checkQuery,
+        "checkData:",
+        checkData
+      );
+
+      const id_Movies_MI_Tracks = await db.fireProcedureReturnScalar(
+        checkQuery,
+        checkData
+      );
+
+      if (id_Movies_MI_Tracks) {
+        // UPDATE
+        trackFields.$id_Movies_MI_Tracks = id_Movies_MI_Tracks;
+        logger.log("[applyMediaInfo] updating track record:", trackFields);
+        const query = db.buildUPDATEQuery(
+          "tbl_Movies_MI_Tracks",
+          "id_Movies_MI_Tracks",
+          trackFields
+        );
+        await db.fireProcedure(query, trackFields);
+      } else {
+        // INSERT
+        logger.log("[applyMediaInfo] inserting new track record:", trackFields);
+        const query = db.buildINSERTQuery(
+          "tbl_Movies_MI_Tracks",
+          "id_Movies_MI_Tracks",
+          trackFields
+        );
+        await db.fireProcedure(query, trackFields);
+      }
     }
   } catch (err) {
     logger.error(err);
@@ -2406,6 +2493,21 @@ async function deleteIMDBData($id_Movies) {
   );
 }
 
+/**
+ * Based on movie.scanErrors, decide if the movie may set IMDB_Done to true
+ * @param {Object} movie
+ */
+function allowIMDBDone(movie) {
+  const scanErrors = JSON.parse(JSON.stringify(movie.scanErrors));
+
+  delete scanErrors["IMDB link verification"]; // IMDB link verification should not prevent IMDB_Done = true, else that movie would always be completely rescanned
+
+  return (
+    getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_mainPageData") &&
+    Object.keys(scanErrors).length === 0
+  );
+}
+
 async function saveIMDBData(
   movie,
   IMDBdata,
@@ -2424,10 +2526,7 @@ async function saveIMDBData(
   // consider IMDB_Done only if at least the imdb main page has been scraped and no errors occured during the process
   let sql = `isUnlinkedIMDB = 0
     , IMDB_Done = ${
-      !getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_mainPageData")
-        .enabled || Object.keys(movie.scanErrors).length > 0
-        ? "0"
-        : "1"
+      allowIMDBDone(movie) ? "1" : "0"
     }, scanErrors = $scanErrors`;
   Object.keys(IMDBdata).forEach((key) => {
     sql += `, [${key.replace("$", "")}] = ${key}`;
