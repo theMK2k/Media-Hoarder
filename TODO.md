@@ -3,6 +3,18 @@
 ## v1.0.0
 
 - [ ] defect: rescan with deselected IMDB options removes metadata (persons, companies, etc.)
+  - react to userScanOptions!
+  - rescanMoviesMetaData_fetchIMDBMetaData_mainPageData
+    - (fields)
+  - rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics
+  - rescanMoviesMetaData_fetchIMDBMetaData_plotSummary
+  - rescanMoviesMetaData_fetchIMDBMetaData_plotKeywords
+  - rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo
+  - rescanMoviesMetaData_fetchIMDBMetaData_technicalData
+  - rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData
+  - rescanMoviesMetaData_fetchIMDBMetaData_creditsData
+  - rescanMoviesMetaData_fetchIMDBMetaData_companiesData
+  - rescanMoviesMetaData_fetchIMDBMetaData_filmingLocations
 
 - [ ] introduce Audio Metadata
   - [ ] provide mapping for Format (like release attributes)
