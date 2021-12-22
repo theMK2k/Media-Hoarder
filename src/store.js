@@ -53,7 +53,8 @@ const {
 
 const definedError = require("@/helpers/defined-error");
 
-const mediainfoTrack = require("./object-definitions/mediainfo-track");
+const mediainfoTrackDefinition = require("./object-definitions/mediainfo-track");
+const imdbDataDefinition = require("./object-definitions/imdb-data");
 
 const isBuild = process.env.NODE_ENV === "production";
 
@@ -1703,7 +1704,7 @@ async function applyMediaInfo(movie, onlyNew) {
 
     tracks.forEach((track) => {
       // collect all track data into tbl_Movies_MI_Tracks
-      const trackFields = JSON.parse(JSON.stringify(mediainfoTrack));
+      const trackFields = JSON.parse(JSON.stringify(mediainfoTrackDefinition));
       trackFields.$id_Movies = movie.id_Movies;
       trackFields.$type = track.$.type
         ? track.$.type.toLowerCase()
@@ -2139,9 +2140,7 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
     return;
   }
 
-  let IMDBdata = {
-    collected: {},
-  };
+  let imdbData = JSON.parse(JSON.stringify(imdbDataDefinition));
 
   try {
     const scanErrorsString = await db.fireProcedureReturnScalar(
@@ -2163,12 +2162,12 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
           rescanETA
         );
 
-        IMDBdata.collected.mainPageData = await scrapeIMDBmainPageData(
+        imdbData.mainPageData = await scrapeIMDBmainPageData(
           movie,
           helpers.downloadFile
         );
-        IMDBdata = Object.assign(IMDBdata, IMDBdata.collected.mainPageData);
       } catch (error) {
+        imdbData.IMDB_Done = false;
         logger.error(error);
       }
     }
@@ -2189,13 +2188,9 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
           rescanETA
         );
 
-        IMDBdata.collected.ratingDemographics =
-          await scrapeIMDBRatingDemographics(movie);
-        IMDBdata = Object.assign(
-          IMDBdata,
-          IMDBdata.collected.ratingDemographics
-        );
+        imdbData.ratingDemographics = await scrapeIMDBRatingDemographics(movie);
       } catch (error) {
+        imdbData.IMDB_Done = false;
         logger.error(error);
       }
     }
@@ -2214,12 +2209,13 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
           rescanETA
         );
 
-        IMDBdata.collected.plotSummaryFull = await scrapeIMDBplotSummary(
+        imdbData.plotSummaryFull = await scrapeIMDBplotSummary(
           movie,
-          IMDBdata.$IMDB_plotSummary
+          imdbData.$IMDB_plotSummary
         );
-        IMDBdata = Object.assign(IMDBdata, IMDBdata.collected.plotSummaryFull);
+        imdbData = Object.assign(imdbData, imdbData.plotSummaryFull);
       } catch (error) {
+        imdbData.IMDB_Done = false;
         logger.error(error);
       }
     }
@@ -2238,8 +2234,9 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
           rescanETA
         );
 
-        IMDBdata.collected.plotKeywords = await scrapeIMDBplotKeywords(movie);
+        imdbData.plotKeywords = await scrapeIMDBplotKeywords(movie);
       } catch (error) {
+        imdbData.IMDB_Done = false;
         logger.error(error);
       }
     }
@@ -2261,13 +2258,13 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
           rescanETA
         );
 
-        IMDBdata.collected.releaseinfo = await scrapeIMDBreleaseinfo(
+        imdbData.releaseinfo = await scrapeIMDBreleaseinfo(
           movie,
           regions,
           allowedTitleTypes
         );
-        IMDBdata = Object.assign(IMDBdata, IMDBdata.collected.releaseinfo);
       } catch (error) {
+        imdbData.IMDB_Done = false;
         logger.error(error);
       }
     }
@@ -2286,9 +2283,9 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
           rescanETA
         );
 
-        IMDBdata.collected.technicalData = await scrapeIMDBtechnicalData(movie);
-        IMDBdata = Object.assign(IMDBdata, IMDBdata.collected.technicalData);
+        imdbData.technicalData = await scrapeIMDBtechnicalData(movie);
       } catch (error) {
+        imdbData.IMDB_Done = false;
         logger.error(error);
       }
     }
@@ -2311,19 +2308,15 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
           rescanETA
         );
 
-        IMDBdata.collected.parentalguideData =
-          await scrapeIMDBParentalGuideData(
-            movie,
-            regions,
-            db.fireProcedureReturnAll,
-            db.fireProcedure,
-            db.fireProcedureReturnScalar
-          );
-        IMDBdata = Object.assign(
-          IMDBdata,
-          IMDBdata.collected.parentalguideData
+        imdbData.parentalguideData = await scrapeIMDBParentalGuideData(
+          movie,
+          regions,
+          db.fireProcedureReturnAll,
+          db.fireProcedure,
+          db.fireProcedureReturnScalar
         );
       } catch (error) {
+        imdbData.IMDB_Done = false;
         logger.error(error);
       }
     }
@@ -2342,12 +2335,9 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
           rescanETA
         );
 
-        IMDBdata.collected.creditsData = await scrapeIMDBFullCreditsData(movie);
-        IMDBdata = Object.assign(
-          IMDBdata,
-          IMDBdata.collected.creditsData.topCredits
-        );
+        imdbData.creditsData = await scrapeIMDBFullCreditsData(movie);
       } catch (error) {
+        imdbData.IMDB_Done = false;
         logger.error(error);
       }
     }
@@ -2364,12 +2354,9 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
           rescanETA
         );
 
-        IMDBdata.collected.companiesData = await scrapeIMDBCompaniesData(movie);
-        IMDBdata = Object.assign(
-          IMDBdata,
-          IMDBdata.collected.companiesData.topProductionCompanies
-        );
+        imdbData.companiesData = await scrapeIMDBCompaniesData(movie);
       } catch (error) {
+        imdbData.IMDB_Done = false;
         logger.error(error);
       }
     }
@@ -2390,15 +2377,14 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
           rescanETA
         );
 
-        IMDBdata.collected.filmingLocations = await scrapeIMDBFilmingLocations(
-          movie
-        );
+        imdbData.filmingLocations = await scrapeIMDBFilmingLocations(movie);
       } catch (error) {
+        imdbData.IMDB_Done = false;
         logger.error(error);
       }
     }
 
-    logger.log("[fetchIMDBdata] IMDBdata:", IMDBdata);
+    logger.log("[fetchIMDBdata] imdbData:", imdbData);
 
     if (shared.scanOptions.rescanMoviesMetaData_saveIMDBData) {
       eventBus.scanInfoShow(
@@ -2407,7 +2393,7 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
         rescanETA
       );
 
-      await saveIMDBData(movie, IMDBdata);
+      await saveIMDBData(movie, imdbData);
     }
   } catch (err) {
     logger.error(err);
@@ -2503,69 +2489,83 @@ async function deleteIMDBData($id_Movies) {
   );
 }
 
-/**
- * Based on movie.scanErrors, decide if the movie may set IMDB_Done to true
- * @param {Object} movie
- */
-function allowIMDBDone(movie) {
-  const scanErrors = JSON.parse(JSON.stringify(movie.scanErrors));
-
-  delete scanErrors["IMDB link verification"]; // IMDB link verification should not prevent IMDB_Done = true, else that movie would always be completely rescanned
-
-  return (
-    getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_mainPageData") &&
-    Object.keys(scanErrors).length === 0
-  );
-}
-
-async function saveIMDBData(movie, IMDBdata) {
-  logger.log("[saveIMDBData] START");
+async function saveIMDBData(movie, imdbData) {
+  logger.log("[saveIMDBData] imdbData:", imdbData);
   const definedByUser = getFieldsDefinedByUser(movie.DefinedByUser);
 
-  if (!IMDBdata.collected || Object.keys(IMDBdata.collected).length === 0) {
-    logger.log("[saveIMDBData] nothing in IMDBdata.collected, nothing to save");
-    return;
-  }
+  let tbl_Movies_IMDB_Data = {};
 
-  const IMDB_genres = IMDBdata.$IMDB_genres || [];
-  delete IMDBdata.$IMDB_genres;
-  logger.log("[saveIMDBData] IMDB_genres:", IMDB_genres);
-
-  // consider IMDB_Done only if at least the imdb main page has been scraped and no errors occured during the process
-  let sql = `isUnlinkedIMDB = 0
-    , IMDB_Done = ${
-      allowIMDBDone(movie) ? "1" : "0"
-    }, scanErrors = $scanErrors`;
-  Object.keys(IMDBdata).forEach((key) => {
-    sql += `, [${key.replace("$", "")}] = ${key}`;
-  });
-  sql = `UPDATE tbl_Movies SET ${sql} WHERE id_Movies = $id_Movies`;
-
-  const payload = Object.assign(IMDBdata, {
-    $id_Movies: movie.id_Movies,
-    $scanErrors:
-      movie.scanErrors && Object.keys(movie.scanErrors).length > 0
-        ? JSON.stringify(movie.scanErrors)
-        : null,
-  });
-
-  logger.log(
-    "[saveIMDBData] payload:",
-    payload,
-    "movie.scanErrors:",
-    movie.scanErrors
+  tbl_Movies_IMDB_Data = Object.assign(
+    tbl_Movies_IMDB_Data,
+    imdbData.mainPageData || {}
+  );
+  tbl_Movies_IMDB_Data = Object.assign(
+    tbl_Movies_IMDB_Data,
+    imdbData.ratingDemographics || {}
+  );
+  tbl_Movies_IMDB_Data = Object.assign(
+    tbl_Movies_IMDB_Data,
+    imdbData.plotSummaryFull || {}
+  );
+  tbl_Movies_IMDB_Data = Object.assign(
+    tbl_Movies_IMDB_Data,
+    imdbData.releaseinfo || {}
+  );
+  tbl_Movies_IMDB_Data = Object.assign(
+    tbl_Movies_IMDB_Data,
+    imdbData.parentalguideData || {}
+  );
+  tbl_Movies_IMDB_Data = Object.assign(
+    tbl_Movies_IMDB_Data,
+    (imdbData.creditsData || {}).topCredits || {}
+  );
+  tbl_Movies_IMDB_Data = Object.assign(
+    tbl_Movies_IMDB_Data,
+    (imdbData.companiesData || {}).topProductionCompanies || {}
   );
 
+  const IMDB_genres = imdbData.$IMDB_genres || [];
+  delete imdbData.$IMDB_genres;
+  delete tbl_Movies_IMDB_Data.$IMDB_genres;
+  logger.log("[saveIMDBData] IMDB_genres:", IMDB_genres);
+
   await db.fireProcedure(
-    sql,
-    Object.assign(IMDBdata, {
+    `UPDATE tbl_Movies SET
+      isUnlinkedIMDB = 0  
+      , IMDB_Done = $IMDB_Done
+      , scanErrors = $scanErrors
+    WHERE id_Movies = $id_Movies
+  `,
+    {
       $id_Movies: movie.id_Movies,
+      $IMDB_Done: imdbData.IMDB_Done,
       $scanErrors:
         movie.scanErrors && Object.keys(movie.scanErrors).length > 0
           ? JSON.stringify(movie.scanErrors)
           : null,
-    })
+    }
   );
+
+  // update tbl_Movies
+  if (Object.keys(tbl_Movies_IMDB_Data).length > 0) {
+    tbl_Movies_IMDB_Data = Object.assign(tbl_Movies_IMDB_Data, {
+      $id_Movies: movie.id_Movies,
+    });
+    let query = db.buildUPDATEQuery(
+      "tbl_Movies",
+      "id_Movies",
+      tbl_Movies_IMDB_Data
+    );
+
+    logger.log(
+      "[saveIMDBData] update tbl_Movie query:",
+      query,
+      "data:",
+      tbl_Movies_IMDB_Data
+    );
+
+    await db.fireProcedure(query, tbl_Movies_IMDB_Data);
+  }
 
   if (definedByUser.find((item) => item === "Genres")) {
     logger.log("[saveIMDBData] omitting Genres (already defined by the user)");
@@ -2574,338 +2574,340 @@ async function saveIMDBData(movie, IMDBdata) {
   }
 
   // Credits
-  logger.log("[saveIMDBData] credits:", credits);
+  if (
+    shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_creditsData &&
+    getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_creditsData")
+      .enabled
+  ) {
+    logger.log("[saveIMDBData] credits:", imdbData.creditsData.credits);
 
-  const movieCredits = await db.fireProcedureReturnAll(
-    `
-	SELECT
-		id_Movies_IMDB_Credits
-    , id_Movies
-		, Category			AS category
-		, IMDB_Person_ID	AS id
-		, Person_Name		AS name
-		, Credit			AS credit
-	FROM tbl_Movies_IMDB_Credits WHERE id_Movies = $id_Movies`,
-    { $id_Movies: movie.id_Movies }
-  );
-
-  for (let i = 0; i < credits.length; i++) {
-    const credit = credits[i];
-
-    const movieCredit = movieCredits.find(
-      (mc) =>
-        mc.category === credit.category &&
-        mc.id === credit.id &&
-        helpers.nz(mc.credit) == helpers.nz(credit.credit)
+    const movieCredits = await db.fireProcedureReturnAll(
+      `
+    SELECT
+      id_Movies_IMDB_Credits
+      , id_Movies
+      , Category			AS category
+      , IMDB_Person_ID	AS id
+      , Person_Name		AS name
+      , Credit			AS credit
+    FROM tbl_Movies_IMDB_Credits WHERE id_Movies = $id_Movies`,
+      { $id_Movies: movie.id_Movies }
     );
 
-    // we can't use the INSERT ON CONFLICT UPDATE approach, because Credit can be NULL and ON CONFLICT doesn't fire with NULL
-    if (movieCredit) {
-      movieCredit.Found = true;
+    for (let credit of imdbData.creditsData.credits || []) {
+      const movieCredit = movieCredits.find(
+        (mc) =>
+          mc.category === credit.category &&
+          mc.id === credit.id &&
+          helpers.nz(mc.credit) == helpers.nz(credit.credit)
+      );
 
-      await db.fireProcedure(
-        `
-        UPDATE tbl_Movies_IMDB_Credits SET
-          id_Movies = $id_Movies
-          , Category = $Category
-          , IMDB_Person_ID = $IMDB_Person_ID
-          , Person_Name = $Person_Name
-          , Credit = $Credit
-        WHERE id_Movies_IMDB_Credits = $id_Movies_IMDB_Credits`,
-        {
-          $id_Movies_IMDB_Credits: movieCredit.id_Movies_IMDB_Credits,
-          $id_Movies: movie.id_Movies,
-          $Category: credit.category,
-          $IMDB_Person_ID: credit.id,
-          $Person_Name: credit.name,
-          $Credit: credit.credit,
-        }
-      );
-    } else {
-      await db.fireProcedure(
-        `
-        INSERT INTO tbl_Movies_IMDB_Credits (
-          id_Movies
-          , Category
-          , IMDB_Person_ID
-          , Person_Name
-          , Credit
-        ) VALUES (
-          $id_Movies
-          , $Category
-          , $IMDB_Person_ID
-          , $Person_Name
-          , $Credit
-        )`,
-        {
-          $id_Movies: movie.id_Movies,
-          $Category: credit.category,
-          $IMDB_Person_ID: credit.id,
-          $Person_Name: credit.name,
-          $Credit: credit.credit,
-        }
-      );
+      let creditData = {
+        $id_Movies: movie.id_Movies,
+        $Category: credit.category,
+        $IMDB_Person_ID: credit.id,
+        $Person_Name: credit.name,
+        $Credit: credit.credit,
+      };
+
+      // we can't use the INSERT ON CONFLICT UPDATE approach, because Credit can be NULL and ON CONFLICT doesn't fire with NULL
+      if (movieCredit) {
+        movieCredit.Found = true;
+
+        creditData.$id_Movies_IMDB_Credits = movieCredit.id_Movies_IMDB_Credits;
+
+        await db.fireProcedure(
+          db.buildUPDATEQuery(
+            "tbl_Movies_IMDB_Credits",
+            "id_Movies_IMDB_Credits",
+            creditData
+          ),
+          creditData
+        );
+      } else {
+        await db.fireProcedure(
+          db.buildINSERTQuery(
+            "tbl_Movies_IMDB_Credits",
+            "id_Movies_IMDB_Credits",
+            creditData
+          ),
+          creditData
+        );
+      }
+    }
+
+    // remove existing credits that are not available anymore (re-link to another imdb entry)
+    for (let movieCredit of movieCredits || []) {
+      if (!movieCredit.Found) {
+        // logger.log('[saveIMDBData] removing credit', movieCredit);
+
+        await db.fireProcedure(
+          "DELETE FROM tbl_Movies_IMDB_Credits WHERE id_Movies_IMDB_Credits = $id_Movies_IMDB_Credits",
+          { $id_Movies_IMDB_Credits: movieCredit.id_Movies_IMDB_Credits }
+        );
+      }
     }
   }
 
-  // remove existing credits that are not available anymore (re-link to another imdb entry)
-  for (let i = 0; i < movieCredits.length; i++) {
-    const movieCredit = movieCredits[i];
-
-    if (!movieCredit.Found) {
-      // logger.log('[saveIMDBData] removing credit', movieCredit);
-
-      await db.fireProcedure(
-        "DELETE FROM tbl_Movies_IMDB_Credits WHERE id_Movies_IMDB_Credits = $id_Movies_IMDB_Credits",
-        { $id_Movies_IMDB_Credits: movieCredit.id_Movies_IMDB_Credits }
-      );
-    }
-  }
-
-  const movieCompanies = await db.fireProcedureReturnAll(
-    `
-	SELECT
-		id_Movies_IMDB_Companies
-		, id_Movies
-		, Category			AS category
-		, IMDB_Company_ID	AS id
-		, Company_Name		AS name
-		, Role			AS role
-	FROM tbl_Movies_IMDB_Companies WHERE id_Movies = $id_Movies`,
-    { $id_Movies: movie.id_Movies }
-  );
-
-  for (let i = 0; i < companies.length; i++) {
-    const company = companies[i];
-
-    const movieCompany = movieCompanies.find(
-      (mc) =>
-        mc.category === company.category &&
-        mc.id === company.id &&
-        helpers.nz(mc.role) == helpers.nz(company.role)
+  // Companies
+  if (
+    shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_companiesData &&
+    getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_companiesData")
+      .enabled
+  ) {
+    const movieCompanies = await db.fireProcedureReturnAll(
+      `
+    SELECT
+      id_Movies_IMDB_Companies
+      , id_Movies
+      , Category			AS category
+      , IMDB_Company_ID	AS id
+      , Company_Name		AS name
+      , Role			AS role
+    FROM tbl_Movies_IMDB_Companies WHERE id_Movies = $id_Movies`,
+      { $id_Movies: movie.id_Movies }
     );
 
-    if (movieCompany) {
-      movieCompany.Found = true;
+    for (let company of imdbData.companiesData.companies) {
+      const movieCompany = movieCompanies.find(
+        (mc) =>
+          mc.category === company.category &&
+          mc.id === company.id &&
+          helpers.nz(mc.role) == helpers.nz(company.role)
+      );
 
-      // TODO: UPDATE stmt
-      await db.fireProcedure(
-        `
-        UPDATE tbl_Movies_IMDB_Companies SET
-          id_Movies = $id_Movies
-          , Category = $Category
-          , IMDB_Company_ID = $IMDB_Company_ID
-          , Company_Name = $Company_Name
-          , Role = $Role
-        WHERE id_Movies_IMDB_Companies = $id_Movies_IMDB_Companies
-        `,
-        {
-          $id_Movies_IMDB_Companies: movieCompany.id_Movies_IMDB_Companies,
-          $id_Movies: movie.id_Movies,
-          $Category: company.category,
-          $IMDB_Company_ID: company.id,
-          $Company_Name: company.name,
-          $Role: company.role,
-        }
-      );
-    } else {
-      await db.fireProcedure(
-        `
-        INSERT INTO tbl_Movies_IMDB_Companies (
-          id_Movies
-          , Category
-          , IMDB_Company_ID
-          , Company_Name
-          , Role
-        ) VALUES (
-          $id_Movies
-          , $Category
-          , $IMDB_Company_ID
-          , $Company_Name
-          , $Role
-        )`,
-        {
-          $id_Movies: movie.id_Movies,
-          $Category: company.category,
-          $IMDB_Company_ID: company.id,
-          $Company_Name: company.name,
-          $Role: company.role,
-        }
-      );
+      const companyData = {
+        $id_Movies: movie.id_Movies,
+        $Category: company.category,
+        $IMDB_Company_ID: company.id,
+        $Company_Name: company.name,
+        $Role: company.role,
+      };
+
+      if (movieCompany) {
+        movieCompany.Found = true;
+        companyData.$id_Movies_IMDB_Companies =
+          movieCompany.id_Movies_IMDB_Companies;
+
+        await db.fireProcedure(
+          db.buildUPDATEQuery(
+            "tbl_Movies_IMDB_Companies",
+            "id_Movies_IMDB_Companies",
+            companyData
+          ),
+          companyData
+        );
+      } else {
+        await db.fireProcedure(
+          `
+          INSERT INTO tbl_Movies_IMDB_Companies (
+            id_Movies
+            , Category
+            , IMDB_Company_ID
+            , Company_Name
+            , Role
+          ) VALUES (
+            $id_Movies
+            , $Category
+            , $IMDB_Company_ID
+            , $Company_Name
+            , $Role
+          )`,
+          {
+            $id_Movies: movie.id_Movies,
+            $Category: company.category,
+            $IMDB_Company_ID: company.id,
+            $Company_Name: company.name,
+            $Role: company.role,
+          }
+        );
+      }
+    }
+
+    // remove existing companies that are not available anymore (re-link to another imdb entry)
+    for (let i = 0; i < movieCompanies.length; i++) {
+      const movieCompany = movieCompanies[i];
+
+      if (!movieCompany.Found) {
+        // logger.log('[saveIMDBData] removing company', movieCompany);
+
+        await db.fireProcedure(
+          "DELETE FROM tbl_Movies_IMDB_Companies WHERE id_Movies_IMDB_Companies = $id_Movies_IMDB_Companies",
+          { $id_Movies_IMDB_Companies: movieCompany.id_Movies_IMDB_Companies }
+        );
+      }
     }
   }
 
-  // remove existing companies that are not available anymore (re-link to another imdb entry)
-  for (let i = 0; i < movieCompanies.length; i++) {
-    const movieCompany = movieCompanies[i];
+  if (
+    shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_plotKeywords &&
+    getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_plotKeywords")
+      .enabled
+  ) {
+    const moviePlotKeywords = await fetchMoviePlotKeywords(movie.id_Movies);
 
-    if (!movieCompany.Found) {
-      // logger.log('[saveIMDBData] removing company', movieCompany);
-
-      await db.fireProcedure(
-        "DELETE FROM tbl_Movies_IMDB_Companies WHERE id_Movies_IMDB_Companies = $id_Movies_IMDB_Companies",
-        { $id_Movies_IMDB_Companies: movieCompany.id_Movies_IMDB_Companies }
-      );
-    }
-  }
-
-  const moviePlotKeywords = await fetchMoviePlotKeywords(movie.id_Movies);
-
-  for (let i = 0; i < plotKeywords.length; i++) {
-    let plotKeyword = plotKeywords[i];
-
-    let $id_IMDB_Plot_Keywords = await db.fireProcedureReturnScalar(
-      `SELECT id_IMDB_Plot_Keywords FROM tbl_IMDB_Plot_Keywords WHERE Keyword = $Keyword`,
-      { $Keyword: plotKeyword.Keyword }
-    );
-
-    if (!$id_IMDB_Plot_Keywords) {
-      await db.fireProcedure(
-        `INSERT INTO tbl_IMDB_Plot_Keywords (Keyword) VALUES ($Keyword)`,
-        { $Keyword: plotKeyword.Keyword }
-      );
-      $id_IMDB_Plot_Keywords = await db.fireProcedureReturnScalar(
+    for (let plotKeyword of imdbData.plotKeywords || []) {
+      let $id_IMDB_Plot_Keywords = await db.fireProcedureReturnScalar(
         `SELECT id_IMDB_Plot_Keywords FROM tbl_IMDB_Plot_Keywords WHERE Keyword = $Keyword`,
         { $Keyword: plotKeyword.Keyword }
       );
-    }
 
-    if (!$id_IMDB_Plot_Keywords) {
-      logger.error("[saveIMDBData] unable to store plot keyword:", plotKeyword);
-    }
-
-    const moviePlotKeyword = moviePlotKeywords.find(
-      (pk) => pk.id_IMDB_Plot_Keywords === $id_IMDB_Plot_Keywords
-    );
-
-    if (moviePlotKeyword) {
-      moviePlotKeyword.Found = 1;
-    }
-
-    await db.fireProcedure(
-      `
-			INSERT INTO tbl_Movies_IMDB_Plot_Keywords (
-				id_Movies
-				, id_IMDB_Plot_Keywords
-				, NumVotes
-				, NumRelevant
-			) VALUES (
-				$id_Movies
-				, $id_IMDB_Plot_Keywords
-				, $NumVotes
-				, $NumRelevant
-			)
-			ON CONFLICT(id_Movies, id_IMDB_Plot_Keywords)
-			DO UPDATE SET
-				NumVotes = excluded.NumVotes
-				, NumRelevant = excluded.NumRelevant`,
-      {
-        $id_Movies: movie.id_Movies,
-        $id_IMDB_Plot_Keywords,
-        $NumVotes: plotKeyword.NumVotes,
-        $NumRelevant: plotKeyword.NumRelevant,
+      if (!$id_IMDB_Plot_Keywords) {
+        await db.fireProcedure(
+          `INSERT INTO tbl_IMDB_Plot_Keywords (Keyword) VALUES ($Keyword)`,
+          { $Keyword: plotKeyword.Keyword }
+        );
+        $id_IMDB_Plot_Keywords = await db.fireProcedureReturnScalar(
+          `SELECT id_IMDB_Plot_Keywords FROM tbl_IMDB_Plot_Keywords WHERE Keyword = $Keyword`,
+          { $Keyword: plotKeyword.Keyword }
+        );
       }
-    );
-  }
 
-  //remove existing plot keywords that are not available anymore (re-link to another imdb entry)
-  for (let i = 0; i < moviePlotKeywords.length; i++) {
-    const moviePlotKeyword = moviePlotKeywords[i];
+      if (!$id_IMDB_Plot_Keywords) {
+        logger.error(
+          "[saveIMDBData] unable to store plot keyword:",
+          plotKeyword
+        );
+      }
 
-    if (!moviePlotKeyword.Found) {
-      // logger.log('[saveIMDBData] removing plot keyword', moviePlotKeyword);
+      const moviePlotKeyword = moviePlotKeywords.find(
+        (pk) => pk.id_IMDB_Plot_Keywords === $id_IMDB_Plot_Keywords
+      );
+
+      if (moviePlotKeyword) {
+        moviePlotKeyword.Found = 1;
+      }
 
       await db.fireProcedure(
-        "DELETE FROM tbl_Movies_IMDB_Plot_Keywords WHERE id_Movies_IMDB_Plot_Keywords = $id_Movies_IMDB_Plot_Keywords",
+        `
+        INSERT INTO tbl_Movies_IMDB_Plot_Keywords (
+          id_Movies
+          , id_IMDB_Plot_Keywords
+          , NumVotes
+          , NumRelevant
+        ) VALUES (
+          $id_Movies
+          , $id_IMDB_Plot_Keywords
+          , $NumVotes
+          , $NumRelevant
+        )
+        ON CONFLICT(id_Movies, id_IMDB_Plot_Keywords)
+        DO UPDATE SET
+          NumVotes = excluded.NumVotes
+          , NumRelevant = excluded.NumRelevant`,
         {
-          $id_Movies_IMDB_Plot_Keywords:
-            moviePlotKeyword.id_Movies_IMDB_Plot_Keywords,
+          $id_Movies: movie.id_Movies,
+          $id_IMDB_Plot_Keywords,
+          $NumVotes: plotKeyword.NumVotes,
+          $NumRelevant: plotKeyword.NumRelevant,
         }
       );
     }
+
+    //remove existing plot keywords that are not available anymore (re-link to another imdb entry)
+    for (let i = 0; i < moviePlotKeywords.length; i++) {
+      const moviePlotKeyword = moviePlotKeywords[i];
+
+      if (!moviePlotKeyword.Found) {
+        // logger.log('[saveIMDBData] removing plot keyword', moviePlotKeyword);
+
+        await db.fireProcedure(
+          "DELETE FROM tbl_Movies_IMDB_Plot_Keywords WHERE id_Movies_IMDB_Plot_Keywords = $id_Movies_IMDB_Plot_Keywords",
+          {
+            $id_Movies_IMDB_Plot_Keywords:
+              moviePlotKeyword.id_Movies_IMDB_Plot_Keywords,
+          }
+        );
+      }
+    }
   }
 
-  const movieFilmingLocations = await fetchMovieFilmingLocations(
-    movie.id_Movies
-  );
-
-  for (let i = 0; i < filmingLocations.length; i++) {
-    let filmingLocation = filmingLocations[i];
-
-    let $id_IMDB_Filming_Locations = await db.fireProcedureReturnScalar(
-      `SELECT id_IMDB_Filming_Locations FROM tbl_IMDB_Filming_Locations WHERE Location = $Location`,
-      { $Location: filmingLocation.Location }
+  if (
+    shared.scanOptions
+      .rescanMoviesMetaData_fetchIMDBMetaData_filmingLocations &&
+    getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_filmingLocations")
+      .enabled
+  ) {
+    const movieFilmingLocations = await fetchMovieFilmingLocations(
+      movie.id_Movies
     );
 
-    if (!$id_IMDB_Filming_Locations) {
-      await db.fireProcedure(
-        `INSERT INTO tbl_IMDB_Filming_Locations (Location) VALUES ($Location)`,
-        { $Location: filmingLocation.Location }
-      );
-      $id_IMDB_Filming_Locations = await db.fireProcedureReturnScalar(
+    for (let filmingLocation of imdbData.filmingLocations || []) {
+      let $id_IMDB_Filming_Locations = await db.fireProcedureReturnScalar(
         `SELECT id_IMDB_Filming_Locations FROM tbl_IMDB_Filming_Locations WHERE Location = $Location`,
         { $Location: filmingLocation.Location }
       );
-    }
 
-    if (!$id_IMDB_Filming_Locations) {
-      logger.error(
-        "[saveIMDBData] unable to store filming location:",
-        filmingLocation
-      );
-    }
-
-    const movieFilmingLocation = movieFilmingLocations.find(
-      (fl) => fl.id_IMDB_Filming_Locations === $id_IMDB_Filming_Locations
-    );
-
-    if (movieFilmingLocation) {
-      movieFilmingLocation.Found = 1;
-    }
-
-    await db.fireProcedure(
-      `
-			INSERT INTO tbl_Movies_IMDB_Filming_Locations (
-				id_Movies
-				, id_IMDB_Filming_Locations
-        , Details
-        , NumVotes
-				, NumInteresting
-			) VALUES (
-				$id_Movies
-        , $id_IMDB_Filming_Locations
-        , $Details
-				, $NumVotes
-				, $NumInteresting
-			)
-			ON CONFLICT(id_Movies, id_IMDB_Filming_Locations)
-			DO UPDATE SET
-        Details = excluded.Details  
-        , NumVotes = excluded.NumVotes
-				, NumInteresting = excluded.NumInteresting`,
-      {
-        $id_Movies: movie.id_Movies,
-        $id_IMDB_Filming_Locations: $id_IMDB_Filming_Locations,
-        $NumVotes: filmingLocation.NumVotes,
-        $NumInteresting: filmingLocation.NumInteresting,
+      if (!$id_IMDB_Filming_Locations) {
+        await db.fireProcedure(
+          `INSERT INTO tbl_IMDB_Filming_Locations (Location) VALUES ($Location)`,
+          { $Location: filmingLocation.Location }
+        );
+        $id_IMDB_Filming_Locations = await db.fireProcedureReturnScalar(
+          `SELECT id_IMDB_Filming_Locations FROM tbl_IMDB_Filming_Locations WHERE Location = $Location`,
+          { $Location: filmingLocation.Location }
+        );
       }
-    );
-  }
 
-  // remove existing filming locations that are not available anymore (re-link to another imdb entry)
-  for (let i = 0; i < movieFilmingLocations.length; i++) {
-    const movieFilmingLocation = movieFilmingLocations[i];
+      if (!$id_IMDB_Filming_Locations) {
+        logger.error(
+          "[saveIMDBData] unable to store filming location:",
+          filmingLocation
+        );
+      }
 
-    if (!movieFilmingLocation.Found) {
-      // logger.log('[saveIMDBData] removing filming location', movieFilmingLocation);
+      const movieFilmingLocation = movieFilmingLocations.find(
+        (fl) => fl.id_IMDB_Filming_Locations === $id_IMDB_Filming_Locations
+      );
+
+      if (movieFilmingLocation) {
+        movieFilmingLocation.Found = 1;
+      }
 
       await db.fireProcedure(
-        "DELETE FROM tbl_Movies_IMDB_Filming_Locations WHERE id_Movies_IMDB_Filming_Locations = $id_Movies_IMDB_Filming_Locations",
+        `
+      INSERT INTO tbl_Movies_IMDB_Filming_Locations (
+        id_Movies
+        , id_IMDB_Filming_Locations
+        , Details
+        , NumVotes
+        , NumInteresting
+      ) VALUES (
+        $id_Movies
+        , $id_IMDB_Filming_Locations
+        , $Details
+        , $NumVotes
+        , $NumInteresting
+      )
+      ON CONFLICT(id_Movies, id_IMDB_Filming_Locations)
+      DO UPDATE SET
+        Details = excluded.Details  
+        , NumVotes = excluded.NumVotes
+        , NumInteresting = excluded.NumInteresting`,
         {
-          $id_Movies_IMDB_Filming_Locations:
-            movieFilmingLocation.id_Movies_IMDB_Filming_Locations,
+          $id_Movies: movie.id_Movies,
+          $id_IMDB_Filming_Locations: $id_IMDB_Filming_Locations,
+          $NumVotes: filmingLocation.NumVotes,
+          $NumInteresting: filmingLocation.NumInteresting,
         }
       );
+    }
+
+    // remove existing filming locations that are not available anymore (re-link to another imdb entry)
+    for (let i = 0; i < movieFilmingLocations.length; i++) {
+      const movieFilmingLocation = movieFilmingLocations[i];
+
+      if (!movieFilmingLocation.Found) {
+        // logger.log('[saveIMDBData] removing filming location', movieFilmingLocation);
+
+        await db.fireProcedure(
+          "DELETE FROM tbl_Movies_IMDB_Filming_Locations WHERE id_Movies_IMDB_Filming_Locations = $id_Movies_IMDB_Filming_Locations",
+          {
+            $id_Movies_IMDB_Filming_Locations:
+              movieFilmingLocation.id_Movies_IMDB_Filming_Locations,
+          }
+        );
+      }
     }
   }
 }

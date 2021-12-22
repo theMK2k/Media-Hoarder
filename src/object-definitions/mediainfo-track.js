@@ -1,4 +1,4 @@
-const mediainfoTrack = {
+const mediainfoTrackDefinition = {
   $id_Movies: null,
   $type: null,
   $typeorder: null,
@@ -159,4 +159,4 @@ const mediainfoTrack = {
   $Width: null,
 };
 
-module.exports = mediainfoTrack;
+module.exports = mediainfoTrackDefinition;

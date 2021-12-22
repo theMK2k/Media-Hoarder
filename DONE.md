@@ -69,6 +69,134 @@
         - Source_Duration
         - Source_StreamSize_Proportion
         - StreamSize_Proportion- [x] remove MediaInfoObject from tbl_Movies
+- [x] defect: rescan with deselected IMDB options removes metadata (persons, companies, etc.)
+
+  - react to userScanOptions!
+  - dont merge everything directly in IMDBdata with Object.assign, instead build up:
+    imdbData = {
+    mainPageData: null,
+    ratingDemographics: null,
+    plotSummaryFull: null,
+    plotKeywords: null,
+    releaseinfo: null,
+    technicalData: null,
+    parentalguideData: null,
+    creditsData: null,
+    companiesData: null,
+    filmingLocations: null,
+    }
+  - rescanMoviesMetaData_fetchIMDBMetaData_mainPageData
+    - scrapeIMDBmainPageData()
+    - imdbData.mainPageData:
+      {
+      $IMDB_releaseType: string;
+      $IMDB_genres: string[];
+      $IMDB_rating: number;
+      $IMDB_numVotes: number;
+      $IMDB_metacriticScore: number;
+      $IMDB_posterSmall_URL: string;
+      $IMDB_posterLarge_URL: string;
+      $IMDB_plotSummary: string;
+      $IMDB_Trailer_URL: any;
+      }
+  - rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics
+    - scrapeIMDBRatingDemographics()
+    - imdbData.ratingDemographics:
+
+    ```js
+        {
+          $IMDB_rating_*: number;  (except $IMDB_rating_imdb_users)
+          $IMDB_numVotes_*: number; (except $IMDB_numVotes_imdb_users)
+        }
+    ```
+
+  - rescanMoviesMetaData_fetchIMDBMetaData_plotSummary
+
+    - scrapeIMDBplotSummary()
+    - imdbData.plotSummaryFull:
+
+    ```js
+    {
+      $IMDB_plotSummaryFull: string;
+    }
+    ```
+
+  - rescanMoviesMetaData_fetchIMDBMetaData_plotKeywords
+
+    - WAS: plotkeywords (param in saveIMDBData)
+    - NOW: imdbData.plotKeywords (only if userScanOption is set)
+
+  - rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo
+
+    - scrapeIMDBreleaseinfo()
+    - imdbData.releaseinfo:
+
+    ```js
+    {
+      $IMDB_originalTitle: any;
+      $IMDB_localTitle: string;
+      $IMDB_primaryTitle: any;
+      $IMDB_startYear: any;
+      $IMDB_endYear: any;
+    }
+    ```
+
+  - rescanMoviesMetaData_fetchIMDBMetaData_technicalData
+
+    - scrapeIMDBtechnicalData()
+    - imdbData.technicalData: {
+      $IMDB_runtimeMinutes
+      }
+
+  - rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData
+
+    - scrapeIMDBParentalGuideData()
+    - imdbData.parentalguideData: {
+      $IMDB_MinAge
+      $IMDB_MaxAge
+      $IMDB_id_AgeRating_Chosen_Country
+      $IMDB_Parental_Advisory_Nudity
+      $IMDB_Parental_Advisory_Violence
+      $IMDB_Parental_Advisory_Profanity
+      $IMDB_Parental_Advisory_Alcohol
+      $IMDB_Parental_Advisory_Frightening
+      }
+
+  - rescanMoviesMetaData_fetchIMDBMetaData_creditsData
+
+    - scrapeIMDBFullCreditsData()
+    - imdbData.creditsData: {
+      topCredits: {
+      $IMDB_Top_Directors: string;
+      $IMDB_Top_Writers: string;
+      $IMDB_Top_Producers: string;
+      $IMDB_Top_Cast: string;
+      };
+      credits: {
+      category: string;
+      id: string;
+      name: string;
+      credit: any;
+      }[];  
+      }
+    - WAS: credits (param to saveIMDBdata)
+    - NOW: imdbData.creditsData.credits
+
+  - rescanMoviesMetaData_fetchIMDBMetaData_companiesData
+
+    - scrapeIMDBCompaniesData()
+    - imdbData.companiesData: {
+      topProductionCompanies: {
+      $IMDB_Top_Production_Companies: string;
+      };
+      companies: any[];  
+      }
+    - WAS: companies (param to saveIMDBdata)
+    - NOW: imdbData.companiesData.companies
+
+  - rescanMoviesMetaData_fetchIMDBMetaData_filmingLocations
+    - WAS: filmingLocations (param in saveIMDBData)
+    - NOW: imdbData.filmingLocations
 - [x] (already fixed) companies: duplicates in topcompanies; non-dupes in companies list?
 - [x] on forced rescan also do MediaInfo
 - [x] highlight hidden filtered languages
