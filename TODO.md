@@ -2,7 +2,17 @@
 
 ## v1.0.0
 
-- [ ] introduce Audio Metadata
+- [ ] more MediaInfo
+  - In quick info area:
+    - Video Format/Codec
+    - Audio Format/Codec
+    Example:
+    - current: 8K | 14-18+ | Action, Drama, Horror, Thriller | DE, EN | DE, EN, FR | BD
+    - new: 8K | 14-18+ | Action, Drama, Horror, Thriller | DE, EN | DE, EN, FR | x264 | EAC3, PCM | BD
+  -> maybe have the quick info area customizable?
+    - let user decide to hide certain fields
+    - let user re-arrange the fields
+
 
   - [ ] provide mapping for Format (like release attributes)
   - show in MediaList (Video Codec/Format, Audio Codecs/Formats)
