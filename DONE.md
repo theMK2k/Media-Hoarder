@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] Fix: "applying MediaInfo" doesn't show countdown timer
 - introduce Audio Metadata
   - [x] see below: use Movie Manager to mass-scan a movie folder and find out the different audio codecs
   - [x] new table tbl_Movies_MI_Tracks

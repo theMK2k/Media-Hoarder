@@ -1546,7 +1546,8 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
     if (!id_Movies && shared.scanOptions.rescanMoviesMetaData_applyMediaInfo) {
       eventBus.scanInfoShow(
         $t("Rescanning Movies") + " {remainingTimeDisplay}",
-        `${movie.Name || movie.Filename} (${$t("applying MediaInfo")})`
+        `${movie.Name || movie.Filename} (${$t("applying MediaInfo")})`,
+        rescanETA
       );
 
       await applyMediaInfo(movie, onlyNew);
