@@ -362,7 +362,7 @@
 
                         <span v-if="item.SubtitleLanguages">
                           |
-                          <v-icon small style="margin-top: -4px"
+                          <v-icon small style="margin-top: -3px"
                             >mdi-subtitles-outline</v-icon
                           >
                           <span
@@ -385,6 +385,60 @@
                               "
                               >{{ lang }}</span
                             >
+                          </span>
+                        </span>
+
+                        <span v-if="item.Video_Encoder_Display">
+                          |
+                          <span
+                            v-for="(
+                              videoEncoder, index
+                            ) in item.Video_Encoder_Display"
+                            v-bind:key="index"
+                          >
+                            <span>{{ index > 0 ? ", " : " " }}</span>
+                            <!--
+                                v-bind:class="{
+                                'mk-search-highlight':
+                                  $shared.filterReleaseAttributesAppliedContains(
+                                    releaseAttribute
+                                  ),
+                              }"
+                              v-on:click.stop="
+                                onShowReleaseAttributeDialog(
+                                  releaseAttribute,
+                                  item
+                                )
+                              "
+-->
+                            <span class="mk-clickable">{{ videoEncoder }}</span>
+                          </span>
+                        </span>
+
+                        <span v-if="item.Audio_Format_Display">
+                          |
+                          <span
+                            v-for="(
+                              audioFormat, index
+                            ) in item.Audio_Format_Display"
+                            v-bind:key="index"
+                          >
+                            <span>{{ index > 0 ? ", " : " " }}</span>
+                            <!--
+                                v-bind:class="{
+                                'mk-search-highlight':
+                                  $shared.filterReleaseAttributesAppliedContains(
+                                    releaseAttribute
+                                  ),
+                              }"
+                              v-on:click.stop="
+                                onShowReleaseAttributeDialog(
+                                  releaseAttribute,
+                                  item
+                                )
+                              "
+-->
+                            <span class="mk-clickable">{{ audioFormat }}</span>
                           </span>
                         </span>
 
@@ -1651,7 +1705,7 @@ export default {
         filtersList.push(this.$t("Release Years"));
       }
 
-      if (this.$shared.filters.filterQualitiesActive) {
+      if (this.$shared.filterQualitiesActive) {
         filtersList.push(this.$t("Video Quality"));
       }
 
@@ -1663,11 +1717,11 @@ export default {
         );
       }
 
-      if (this.$shared.filters.filterAudioLanguagesActive) {
+      if (this.$shared.filterAudioLanguagesActive) {
         filtersList.push(this.$t("Audio Languages"));
       }
 
-      if (this.$shared.filters.filterSubtitleLanguagesActive) {
+      if (this.$shared.filterSubtitleLanguagesActive) {
         filtersList.push(this.$t("Subtitle Languages"));
       }
 

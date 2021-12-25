@@ -3887,6 +3887,8 @@ async function fetchMedia(
         , NULL AS NumExtras
         , NULL AS scanErrors
         , NULL AS ReleaseAttributesSearchTerms
+        , NULL AS Video_Encoder
+        , NULL AS Audio_Format
       `
           : `
         , 1 AS isCompletelyFetched
@@ -3925,6 +3927,8 @@ async function fetchMedia(
         , (SELECT COUNT(1) FROM tbl_Movies MOVEXTRAS WHERE MOVEXTRAS.Extra_id_Movies_Owner = MOV.id_Movies) AS NumExtras
         , MOV.scanErrors
         , (SELECT GROUP_CONCAT(MRA.Release_Attributes_searchTerm, ';') FROM tbl_Movies_Release_Attributes MRA WHERE MRA.id_Movies = MOV.id_Movies AND MRA.deleted = 0) AS ReleaseAttributesSearchTerms
+        , (SELECT GROUP_CONCAT(Encoded_Library_Name, ';') FROM tbl_Movies_MI_Tracks MITVIDEO WHERE MITVIDEO.type = "video" AND MITVIDEO.id_Movies = MOV.id_Movies ORDER BY "Default" DESC) AS Video_Encoder
+        , (SELECT GROUP_CONCAT(Format, ';') FROM tbl_Movies_MI_Tracks MITAUDIO WHERE MITAUDIO.type = "audio" AND MITAUDIO.id_Movies = MOV.id_Movies ORDER BY "Default" DESC) AS Audio_Format
       `
       }
     FROM tbl_Movies MOV
@@ -4049,6 +4053,29 @@ async function fetchMedia(
         );
       } else {
         item.ReleaseAttributes = null;
+      }
+
+      if (item.Video_Encoder) {
+        // TODO: apply mapping
+        item.Video_Encoder_Display = item.Video_Encoder.split(";").map((ve) => {
+          return ve.split(" ")[0].trim();
+        });
+      } else {
+        item.Video_Encoder_Display = null;
+      }
+
+      if (item.Audio_Format) {
+        // TODO: apply mapping
+        item.Audio_Format_Display = item.Audio_Format.split(";").map((af) => {
+          return af.trim();
+        });
+        item.Audio_Format_Display = item.Audio_Format_Display.filter(
+          (value, index) => {
+            return item.Audio_Format_Display.indexOf(value) === index;
+          }
+        );
+      } else {
+        item.Audio_Format_Display = null;
       }
 
       // additional fields (prevent Recalculation of Pagination Items on mouseover)
