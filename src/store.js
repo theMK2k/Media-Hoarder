@@ -1744,6 +1744,12 @@ async function applyMediaInfo(movie, onlyNew) {
           }
         }
       }
+
+      if (trackFields.$Encoded_Library_Name) {
+        trackFields.$Encoded_Library_Name_Trimmed =
+          trackFields.$Encoded_Library_Name.split(" ")[0].trim();
+      }
+
       track.trackFields = trackFields;
 
       // more specific analysis of track data
@@ -3927,7 +3933,7 @@ async function fetchMedia(
         , (SELECT COUNT(1) FROM tbl_Movies MOVEXTRAS WHERE MOVEXTRAS.Extra_id_Movies_Owner = MOV.id_Movies) AS NumExtras
         , MOV.scanErrors
         , (SELECT GROUP_CONCAT(MRA.Release_Attributes_searchTerm, ';') FROM tbl_Movies_Release_Attributes MRA WHERE MRA.id_Movies = MOV.id_Movies AND MRA.deleted = 0) AS ReleaseAttributesSearchTerms
-        , (SELECT GROUP_CONCAT(Encoded_Library_Name, ';') FROM tbl_Movies_MI_Tracks MITVIDEO WHERE MITVIDEO.type = "video" AND MITVIDEO.id_Movies = MOV.id_Movies ORDER BY "Default" DESC) AS Video_Encoder
+        , (SELECT GROUP_CONCAT(Encoded_Library_Name_Trimmed, ';') FROM tbl_Movies_MI_Tracks MITVIDEO WHERE MITVIDEO.type = "video" AND MITVIDEO.id_Movies = MOV.id_Movies ORDER BY "Default" DESC) AS Video_Encoder
         , (SELECT GROUP_CONCAT(Format, ';') FROM tbl_Movies_MI_Tracks MITAUDIO WHERE MITAUDIO.type = "audio" AND MITAUDIO.id_Movies = MOV.id_Movies ORDER BY "Default" DESC) AS Audio_Format
       `
       }
@@ -4056,7 +4062,6 @@ async function fetchMedia(
       }
 
       if (item.Video_Encoder) {
-        // TODO: apply mapping
         item.Video_Encoder_Display = item.Video_Encoder.split(";").map((ve) => {
           return ve.split(" ")[0].trim();
         });
@@ -4065,7 +4070,6 @@ async function fetchMedia(
       }
 
       if (item.Audio_Format) {
-        // TODO: apply mapping
         item.Audio_Format_Display = item.Audio_Format.split(";").map((af) => {
           return af.trim();
         });

@@ -157,6 +157,7 @@ const mediainfoTrackDefinition = {
   $transfer_characteristics_Source: null,
   $VideoCount: null,
   $Width: null,
+  $Encoded_Library_Name_Trimmed: null,
 };
 
 module.exports = mediainfoTrackDefinition;

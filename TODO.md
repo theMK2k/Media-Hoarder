@@ -11,8 +11,8 @@
       Example:
     - current: 8K | 14-18+ | Action, Drama, Horror, Thriller | DE, EN | DE, EN, FR | BD
     - new: 8K | 14-18+ | Action, Drama, Horror, Thriller | DE, EN | DE, EN, FR | x264 | EAC3, PCM | BD
-      - video: tbl_Movies_MI_Tracks.Encoded_Library_Name (via mapping)
-      - audio: tbl_Movies_MI_Tracks.Format (mapping: "Format (CodecID)")
+      - video: tbl_Movies_MI_Tracks.Encoded_Library_Name_Trimmed
+      - audio: tbl_Movies_MI_Tracks.Format
       -> maybe have the quick info area customizable?
     - let user decide to hide certain fields
     - let user re-arrange the fields
