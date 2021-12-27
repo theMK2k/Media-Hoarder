@@ -397,21 +397,19 @@
                             v-bind:key="index"
                           >
                             <span>{{ index > 0 ? ", " : " " }}</span>
-                            <!--
-                                v-bind:class="{
+                            <span
+                              class="mk-clickable"
+                              v-bind:class="{
                                 'mk-search-highlight':
-                                  $shared.filterReleaseAttributesAppliedContains(
-                                    releaseAttribute
+                                  $shared.filterVideoEncodersAppliedContains(
+                                    videoEncoder
                                   ),
                               }"
                               v-on:click.stop="
-                                onShowReleaseAttributeDialog(
-                                  releaseAttribute,
-                                  item
-                                )
+                                onVideoEncoderClicked(videoEncoder, item)
                               "
--->
-                            <span class="mk-clickable">{{ videoEncoder }}</span>
+                              >{{ videoEncoder }}</span
+                            >
                           </span>
                         </span>
 
@@ -1247,6 +1245,13 @@
       v-on:close="onVideoQualityDialogClose"
     ></mk-video-quality-dialog>
 
+    <mk-video-encoder-dialog
+      ref="videoEncoderDialog"
+      v-bind:show="videoEncoderDialog.show"
+      v-bind:Video_Encoder="videoEncoderDialog.Video_Encoder"
+      v-on:close="onVideoEncoderDialogClose"
+    ></mk-video-encoder-dialog>
+
     <mk-genre-dialog
       ref="genreDialog"
       v-bind:show="genreDialog.show"
@@ -1355,6 +1360,7 @@ import ListDialog from "@/components/shared/ListDialog.vue";
 import PersonDialog from "@/components/shared/PersonDialog.vue";
 import CompanyDialog from "@/components/shared/CompanyDialog.vue";
 import VideoQualityDialog from "@/components/shared/VideoQualityDialog.vue";
+import VideoEncoderDialog from "@/components/shared/VideoEncoderDialog.vue";
 import GenreDialog from "@/components/shared/GenreDialog.vue";
 import LanguageDialog from "@/components/shared/LanguageDialog.vue";
 import AgeRatingDialog from "@/components/shared/AgeRatingDialog.vue";
@@ -1383,6 +1389,7 @@ export default {
     "mk-person-dialog": PersonDialog,
     "mk-company-dialog": CompanyDialog,
     "mk-video-quality-dialog": VideoQualityDialog,
+    "mk-video-encoder-dialog": VideoEncoderDialog,
     "mk-genre-dialog": GenreDialog,
     "mk-language-dialog": LanguageDialog,
     "mk-age-rating-dialog": AgeRatingDialog,
@@ -1456,6 +1463,11 @@ export default {
     videoQualityDialog: {
       show: false,
       Video_Quality: null,
+    },
+
+    videoEncoderDialog: {
+      show: false,
+      Video_Encoder: null,
     },
 
     genreDialog: {
@@ -2347,6 +2359,12 @@ export default {
                 this.loadFilterValuesFromStorage
               );
               break;
+            case "filterVideoEncoders":
+              await store.fetchFilterVideoEncoders(
+                this.mediatype,
+                this.loadFilterValuesFromStorage
+              );
+              break;
             default:
               throw new Error("Unsupported filter type:", filter.name);
           }
@@ -2405,6 +2423,15 @@ export default {
 
       this.videoQualityDialog.show = true;
       this.videoQualityDialog.Video_Quality = videoQuality;
+
+      return;
+    },
+
+    onVideoEncoderClicked(videoEncoder) {
+      logger.log("[onVideoEncoderClicked]:", videoEncoder);
+
+      this.videoEncoderDialog.show = true;
+      this.videoEncoderDialog.Video_Encoder = videoEncoder;
 
       return;
     },
@@ -2604,6 +2631,10 @@ export default {
 
     onVideoQualityDialogClose() {
       this.videoQualityDialog.show = false;
+    },
+
+    onVideoEncoderDialogClose() {
+      this.videoEncoderDialog.show = false;
     },
 
     onGenreDialogClose() {

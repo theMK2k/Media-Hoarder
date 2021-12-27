@@ -46,6 +46,17 @@
 
 - (re-)assign IMDB entry including embedded IMDB search dialog
 
+## Supported File Formats
+
+Media Hoarder currently supports the following file formats:
+
+File Extension|Format Name
+avi|Audio Video Interleave
+mp4|MPEG-4
+mkv|Matroska
+m2ts|Blu-ray Disc Audio-Video MPEG-2 Transport Stream
+rar|Roshal Archive (preferrably uncompressed)
+
 ## Documentation
 
 Document|Description

@@ -2,24 +2,38 @@
 
 ## v1.0.0
 
+- .iso handling?
+
+- defect: we lost lots of genres
+
+- defect: MediaInfo (video): use the highest res if multiple video streams are present (also in MovieManager)
+
+- in *Dialog click on "filter by this ..." should instantly update the movies then the filters
+  - check with filters that add to their list vs. filters already having the full list
+
+- i18n: no translation of `<not available>` in the following filters (correct in e.g. "years"):
+  - Audio Languages
+  - Subtitle Languages
+  - Release Attributes
+
+- investigate what's up with loadFilterValuesFromStorage in fetchFilters (seldomly used)
+  - do we need it in fetchFilterVideoEncoders? or all the others?
+
 - [ ] more MediaInfo
-
   - In quick info area:
-
-    - Video Format/Codec
-    - Audio Format/Codec
+    - [x] Video Encoder (x264, x265, XviD ...)
+    - [x] Audio Format/Codec
       Example:
     - current: 8K | 14-18+ | Action, Drama, Horror, Thriller | DE, EN | DE, EN, FR | BD
     - new: 8K | 14-18+ | Action, Drama, Horror, Thriller | DE, EN | DE, EN, FR | x264 | EAC3, PCM | BD
-      - video: tbl_Movies_MI_Tracks.Encoded_Library_Name_Trimmed
-      - audio: tbl_Movies_MI_Tracks.Format
-      -> maybe have the quick info area customizable?
-    - let user decide to hide certain fields
-    - let user re-arrange the fields
+      - [x] video: tbl_Movies_MI_Tracks
+        - Encoded_Library_Name_Trimmed (x264, x265, XviD)
+        - ?Format (AVC, HEVC)?
+      - [x] audio: tbl_Movies_MI_Tracks.Format
 
-  - [ ] provide mapping for Format (like release attributes)
-  - show in MediaList (Video Codec/Format, Audio Codecs/Formats)
-  - new Filters:
+  - show in MediaList Quick Info Area (Video Codec/Format, Audio Codecs/Formats)
+  - new Filters + Dialog:
+    - [x] Video Codec
     - [ ] Audio Formats (optionally for language X)
     - [ ] Audio Formats (Commercial) (optionally for language X)
 
@@ -55,6 +69,12 @@
 (last line: 105)
 
 ## LATER
+
+### Customizable Quick Info Area
+
+- [ ] have the quick info area customizable?
+  - [ ] let user decide to hide certain fields
+  - [ ] let user re-arrange the fields
 
 ### Find Inspiration from <https://github.com/whyboris/Video-Hub-App>
 

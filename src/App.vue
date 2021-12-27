@@ -249,7 +249,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllSourcePaths(false)"
+                              v-on:click="setAllFilterSourcePaths(false)"
                             >
                               <v-icon
                                 >mdi-checkbox-multiple-blank-outline</v-icon
@@ -265,7 +265,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllSourcePaths(true)"
+                              v-on:click="setAllFilterSourcePaths(true)"
                             >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
@@ -290,7 +290,7 @@
                         filterCheckboxMousedown(
                           'filterSourcePaths',
                           sourcePath,
-                          setAllSourcePaths
+                          setAllFilterSourcePaths
                         )
                       "
                       color="mk-dark-grey"
@@ -405,7 +405,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllQualities(false)"
+                              v-on:click="setAllFilterQualities(false)"
                             >
                               <v-icon
                                 >mdi-checkbox-multiple-blank-outline</v-icon
@@ -421,7 +421,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllQualities(true)"
+                              v-on:click="setAllFilterQualities(true)"
                             >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
@@ -446,7 +446,7 @@
                         filterCheckboxMousedown(
                           'filterQualities',
                           quality,
-                          setAllQualities
+                          setAllFilterQualities
                         )
                       "
                       color="mk-dark-grey"
@@ -570,7 +570,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllAudioLanguages(false)"
+                              v-on:click="setAllFilterAudioLanguages(false)"
                             >
                               <v-icon
                                 >mdi-checkbox-multiple-blank-outline</v-icon
@@ -586,7 +586,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllAudioLanguages(true)"
+                              v-on:click="setAllFilterAudioLanguages(true)"
                             >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
@@ -613,7 +613,7 @@
                         filterCheckboxMousedown(
                           'filterAudioLanguages',
                           audioLanguage,
-                          setAllAudioLanguages
+                          setAllFilterAudioLanguages
                         )
                       "
                       color="mk-dark-grey"
@@ -737,7 +737,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllSubtitleLanguages(false)"
+                              v-on:click="setAllFilterSubtitleLanguages(false)"
                             >
                               <v-icon
                                 >mdi-checkbox-multiple-blank-outline</v-icon
@@ -753,7 +753,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllSubtitleLanguages(true)"
+                              v-on:click="setAllFilterSubtitleLanguages(true)"
                             >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
@@ -780,7 +780,7 @@
                         filterCheckboxMousedown(
                           'filterSubtitleLanguages',
                           subtitleLanguage,
-                          setAllSubtitleLanguages
+                          setAllFilterSubtitleLanguages
                         )
                       "
                       color="mk-dark-grey"
@@ -910,7 +910,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllReleaseAttributes(false)"
+                              v-on:click="setAllFilterReleaseAttributes(false)"
                             >
                               <v-icon
                                 >mdi-checkbox-multiple-blank-outline</v-icon
@@ -926,7 +926,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllReleaseAttributes(true)"
+                              v-on:click="setAllFilterReleaseAttributes(true)"
                             >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
@@ -969,7 +969,7 @@
                         filterCheckboxMousedown(
                           'filterReleaseAttributes',
                           filterReleaseAttribute,
-                          setAllReleaseAttributes
+                          setAllFilterReleaseAttributes
                         )
                       "
                       color="mk-dark-grey"
@@ -1082,7 +1082,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllLists(false)"
+                              v-on:click="setAllFilterLists(false)"
                             >
                               <v-icon
                                 >mdi-checkbox-multiple-blank-outline</v-icon
@@ -1098,7 +1098,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllLists(true)"
+                              v-on:click="setAllFilterLists(true)"
                             >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
@@ -1122,7 +1122,7 @@
                           filterCheckboxMousedown(
                             'filterLists',
                             list,
-                            setAllLists
+                            setAllFilterLists
                           )
                         "
                         color="mk-dark-grey"
@@ -1224,7 +1224,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllRatings(false)"
+                              v-on:click="setAllFilterRatings(false)"
                             >
                               <v-icon
                                 >mdi-checkbox-multiple-blank-outline</v-icon
@@ -1240,7 +1240,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllRatings(true)"
+                              v-on:click="setAllFilterRatings(true)"
                             >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
@@ -1265,7 +1265,7 @@
                         filterCheckboxMousedown(
                           'filterRatings',
                           rating,
-                          setAllRatings
+                          setAllFilterRatings
                         )
                       "
                       color="mk-dark-grey"
@@ -1604,7 +1604,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllGenres(false)"
+                              v-on:click="setAllFilterGenres(false)"
                             >
                               <v-icon
                                 >mdi-checkbox-multiple-blank-outline</v-icon
@@ -1620,7 +1620,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllGenres(true)"
+                              v-on:click="setAllFilterGenres(true)"
                             >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
@@ -1652,7 +1652,7 @@
                         filterCheckboxMousedown(
                           'filterGenres',
                           genre,
-                          setAllGenres
+                          setAllFilterGenres
                         )
                       "
                       color="mk-dark-grey"
@@ -1738,7 +1738,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllAgeRatings(false)"
+                              v-on:click="setAllFilterAgeRatings(false)"
                             >
                               <v-icon
                                 >mdi-checkbox-multiple-blank-outline</v-icon
@@ -1754,7 +1754,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllAgeRatings(true)"
+                              v-on:click="setAllFilterAgeRatings(true)"
                             >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
@@ -1781,7 +1781,7 @@
                         filterCheckboxMousedown(
                           'filterAgeRatings',
                           ageRating,
-                          setAllAgeRatings
+                          setAllFilterAgeRatings
                         )
                       "
                       color="mk-dark-grey"
@@ -1917,7 +1917,10 @@
                                     class="mk-filter-action-btn"
                                     text
                                     v-on:click="
-                                      setAllParentalAdvisory(category, false)
+                                      setAllFilterParentalAdvisory(
+                                        category,
+                                        false
+                                      )
                                     "
                                   >
                                     <v-icon
@@ -1935,7 +1938,10 @@
                                     class="mk-filter-action-btn"
                                     text
                                     v-on:click="
-                                      setAllParentalAdvisory(category, true)
+                                      setAllFilterParentalAdvisory(
+                                        category,
+                                        true
+                                      )
                                     "
                                   >
                                     <v-icon
@@ -1968,7 +1974,8 @@
                                 filterCheckboxMousedownParentalAdvisory(
                                   category.Name,
                                   paItem,
-                                  (x) => setAllParentalAdvisory(category, x)
+                                  (x) =>
+                                    setAllFilterParentalAdvisory(category, x)
                                 )
                               "
                               color="mk-dark-grey"
@@ -2091,7 +2098,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllPersons(false)"
+                              v-on:click="setAllFilterPersons(false)"
                             >
                               <v-icon
                                 >mdi-checkbox-multiple-blank-outline</v-icon
@@ -2107,7 +2114,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllPersons(true)"
+                              v-on:click="setAllFilterPersons(true)"
                             >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
@@ -2159,7 +2166,7 @@
                           filterCheckboxMousedown(
                             'filterPersons',
                             person,
-                            setAllPersons
+                            setAllFilterPersons
                           )
                         "
                         color="mk-dark-grey"
@@ -2297,7 +2304,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllCompanies(false)"
+                              v-on:click="setAllFilterCompanies(false)"
                             >
                               <v-icon
                                 >mdi-checkbox-multiple-blank-outline</v-icon
@@ -2313,7 +2320,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllCompanies(true)"
+                              v-on:click="setAllFilterCompanies(true)"
                             >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
@@ -2367,7 +2374,7 @@
                           filterCheckboxMousedown(
                             'filterCompanies',
                             company,
-                            setAllCompanies
+                            setAllFilterCompanies
                           )
                         "
                         color="mk-dark-grey"
@@ -2497,7 +2504,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllYears(false)"
+                              v-on:click="setAllFilterYears(false)"
                             >
                               <v-icon
                                 >mdi-checkbox-multiple-blank-outline</v-icon
@@ -2513,7 +2520,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllYears(true)"
+                              v-on:click="setAllFilterYears(true)"
                             >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
@@ -2580,7 +2587,7 @@
                         filterCheckboxMousedown(
                           'filterYears',
                           year,
-                          setAllYears
+                          setAllFilterYears
                         )
                       "
                       color="mk-dark-grey"
@@ -2709,7 +2716,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllIMDBPlotKeywords(false)"
+                              v-on:click="setAllIFilterMDBPlotKeywords(false)"
                             >
                               <v-icon
                                 >mdi-checkbox-multiple-blank-outline</v-icon
@@ -2725,7 +2732,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllIMDBPlotKeywords(true)"
+                              v-on:click="setAllIFilterMDBPlotKeywords(true)"
                             >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
@@ -2783,7 +2790,7 @@
                           filterCheckboxMousedown(
                             'filterIMDBPlotKeywords',
                             plotKeyword,
-                            setAllIMDBPlotKeywords
+                            setAllIFilterMDBPlotKeywords
                           )
                         "
                         color="mk-dark-grey"
@@ -2932,7 +2939,9 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllIMDBFilmingLocations(false)"
+                              v-on:click="
+                                setAllFilterIMDBFilmingLocations(false)
+                              "
                             >
                               <v-icon
                                 >mdi-checkbox-multiple-blank-outline</v-icon
@@ -2948,7 +2957,9 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllIMDBFilmingLocations(true)"
+                              v-on:click="
+                                setAllFilterIMDBFilmingLocations(true)
+                              "
                             >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
@@ -3010,7 +3021,7 @@
                           filterCheckboxMousedown(
                             'filterIMDBFilmingLocations',
                             filmingLocation,
-                            setAllIMDBFilmingLocations
+                            setAllFilterIMDBFilmingLocations
                           )
                         "
                         color="mk-dark-grey"
@@ -3122,7 +3133,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllDataQuality(false)"
+                              v-on:click="setAllFilterDataQuality(false)"
                             >
                               <v-icon
                                 >mdi-checkbox-multiple-blank-outline</v-icon
@@ -3138,7 +3149,7 @@
                             <v-btn
                               class="mk-filter-action-btn"
                               text
-                              v-on:click="setAllDataQuality(true)"
+                              v-on:click="setAllFilterDataQuality(true)"
                             >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
@@ -3181,7 +3192,180 @@
                           filterCheckboxMousedown(
                             'filterDataQuality',
                             dataQuality,
-                            setAllDataQuality
+                            setAllFilterDataQuality
+                          )
+                        "
+                        color="mk-dark-grey"
+                      ></v-checkbox>
+                    </v-row>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+
+                <!-- FILTER VIDEO ENCODERS -->
+                <v-expansion-panel
+                  v-bind:readonly="editFilters.isEditFilters"
+                  v-if="filterGroup.name === 'filterVideoEncoders'"
+                  v-show="editFilters.isEditFilters || filterGroup.visible"
+                  style="padding: 0px !important; width: 316px"
+                  xxx-v-bind:disabled="
+                    $shared.loadingFilter === 'filterVideoEncoders'
+                  "
+                >
+                  <v-expansion-panel-header style="padding: 8px !important">
+                    <div
+                      v-bind:class="{
+                        'mk-grab': editFilters.isEditFilters,
+                        'mk-dark-grey': !filterGroup.visible,
+                        'mk-search-highlight':
+                          $shared.filterVideoEncodersActive,
+                      }"
+                      style="display: flex; align-items: center"
+                    >
+                      <span class="mk-filter-icon-container">
+                        <v-icon
+                          v-show="
+                            $shared.loadingFilter !== 'filterVideoEncoders'
+                          "
+                          v-bind:class="{
+                            'mk-dark-grey': !filterGroup.visible,
+                            'mk-search-highlight':
+                              $shared.filterVideoEncodersActive,
+                          }"
+                          >mdi-file-video-outline</v-icon
+                        >
+                        <v-progress-circular
+                          class="mk-filter-spinner"
+                          v-bind:class="{
+                            'mk-search-highlight':
+                              $shared.filterVideoEncodersActive,
+                          }"
+                          v-show="
+                            $shared.loadingFilter === 'filterVideoEncoders'
+                          "
+                          v-bind:size="16"
+                          v-bind:width="3"
+                          indeterminate
+                        >
+                        </v-progress-circular>
+                      </span>
+                      {{ $t("Video Encoder") }}
+                      {{ filterVideoEncodersTitle }}
+                    </div>
+                    <template v-slot:actions>
+                      <v-icon
+                        v-if="!editFilters.isEditFilters"
+                        v-bind:class="{
+                          'mk-search-highlight':
+                            $shared.filterVideoEncodersActive,
+                        }"
+                      >
+                        $expand
+                      </v-icon>
+                      <v-tooltip
+                        bottom
+                        v-if="editFilters.isEditFilters"
+                        style="z-index: 21"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-switch
+                              v-model="filterGroup.visible"
+                              dense
+                              style="margin-top: 0px"
+                            ></v-switch>
+                          </span>
+                        </template>
+                        <span>{{ $t("Show/Hide this filter") }}</span>
+                      </v-tooltip>
+                    </template>
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <v-row>
+                      <v-spacer />
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="switchFilterSort(filterGroup)"
+                            >
+                              <v-icon
+                                v-if="
+                                  filterGroup.sort ===
+                                  enmFilterSortModes.numMovies
+                                "
+                                >mdi-sort-numeric</v-icon
+                              >
+                              <v-icon v-else>mdi-sort-alphabetical</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{
+                          $t(
+                            `${
+                              filterGroup.sort === enmFilterSortModes.numMovies
+                                ? "Sorted by Number of Media"
+                                : "Sorted by Name"
+                            }`
+                          )
+                        }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllFilterVideoEncoders(false)"
+                            >
+                              <v-icon
+                                >mdi-checkbox-multiple-blank-outline</v-icon
+                              >
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("Clear Selection") }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllFilterVideoEncoders(true)"
+                            >
+                              <v-icon>mdi-check-box-multiple-outline</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("Select All") }}</span>
+                      </v-tooltip>
+                    </v-row>
+                    <v-row
+                      v-for="filterVideoEncoder in filterVideoEncoders"
+                      v-bind:key="filterVideoEncoder.Name"
+                    >
+                      <v-checkbox
+                        class="mk-filter-checkbox"
+                        v-bind:key="filterVideoEncoder.Name"
+                        v-bind:label="
+                          (filterVideoEncoder.Name === '<not available>'
+                            ? $t('<not available>')
+                            : filterVideoEncoder.Name) +
+                          ' (' +
+                          filterVideoEncoder.NumMoviesFormatted +
+                          ')'
+                        "
+                        v-model="filterVideoEncoder.Selected"
+                        v-on:mouseup="
+                          filterCheckboxMouseup('filterVideoEncoders')
+                        "
+                        v-on:mousedown="
+                          filterCheckboxMousedown(
+                            'filterVideoEncoders',
+                            filterVideoEncoder,
+                            setAllFilterVideoEncoders
                           )
                         "
                         color="mk-dark-grey"
@@ -3666,6 +3850,49 @@ export default {
         ).length +
         "/" +
         this.$shared.filters.filterDataQuality.length +
+        ")"
+      );
+    },
+
+    filterVideoEncoders() {
+      const fve = this.$shared.filterGroups.find(
+        (fve) => fve.name === "filterVideoEncoders"
+      );
+
+      return this.$shared.filters.filterVideoEncoders
+        .filter(() => true)
+        .sort((a, b) => {
+          if (fve.sort === enmFilterSortModes.numMovies) {
+            return helpers.compare(a.NumMovies, b.NumMovies, true);
+          } else {
+            return helpers.compare(a.Name, b.Name);
+          }
+        });
+    },
+    filterVideoEncodersTitle() {
+      if (
+        !this.$shared.filters.filterVideoEncoders.find(
+          (filter) => !filter.Selected
+        )
+      ) {
+        return `(${this.$t("ALL")})`;
+      }
+
+      if (
+        !this.$shared.filters.filterVideoEncoders.find(
+          (filter) => filter.Selected
+        )
+      ) {
+        return `(${this.$t("NONE")})`;
+      }
+
+      return (
+        "(" +
+        this.$shared.filters.filterVideoEncoders.filter(
+          (filter) => filter.Selected
+        ).length +
+        "/" +
+        this.$shared.filters.filterVideoEncoders.length +
         ")"
       );
     },
@@ -4416,7 +4643,7 @@ export default {
       this.debouncedEventBusRefetchMedia();
     },
 
-    setAllSourcePaths: function (value, exclusionList) {
+    setAllFilterSourcePaths: function (value, exclusionList) {
       this.$shared.filters.filterSourcePaths.forEach((sp) => {
         if (
           exclusionList &&
@@ -4432,7 +4659,7 @@ export default {
       this.filtersChanged("filterSourcePaths");
     },
 
-    setAllGenres: function (value, exclusionList) {
+    setAllFilterGenres: function (value, exclusionList) {
       this.$shared.filters.filterGenres.forEach((genre) => {
         if (
           exclusionList &&
@@ -4448,8 +4675,8 @@ export default {
       this.filtersChanged("filterGenres");
     },
 
-    setAllAgeRatings: function (value, exclusionList) {
-      logger.log("[setAllAgeRatings] exclusionList:", exclusionList);
+    setAllFilterAgeRatings: function (value, exclusionList) {
+      logger.log("[setAllFilterAgeRatings] exclusionList:", exclusionList);
 
       this.$shared.filters.filterAgeRatings.forEach((ar) => {
         if (exclusionList && exclusionList.find((val) => ar.Age == val.Age)) {
@@ -4463,7 +4690,7 @@ export default {
       this.filtersChanged("filterAgeRatings");
     },
 
-    setAllRatings: function (value) {
+    setAllFilterRatings: function (value) {
       this.$shared.filters.filterRatings.forEach((rating) => {
         rating.Selected = value;
       });
@@ -4471,7 +4698,7 @@ export default {
       this.filtersChanged("filterRatings");
     },
 
-    setAllYears: function (value) {
+    setAllFilterYears: function (value) {
       this.$shared.filters.filterYears.forEach((year) => {
         year.Selected = value;
       });
@@ -4479,7 +4706,7 @@ export default {
       this.filtersChanged("filterYears");
     },
 
-    setAllLists: function (value) {
+    setAllFilterLists: function (value) {
       this.$shared.filters.filterLists.forEach((list) => {
         list.Selected = value;
       });
@@ -4487,7 +4714,7 @@ export default {
       this.filtersChanged("filterLists");
     },
 
-    setAllParentalAdvisory: function (category, value) {
+    setAllFilterParentalAdvisory: function (category, value) {
       this.$shared.filters.filterParentalAdvisory[category.Name].forEach(
         (paItem) => {
           paItem.Selected = value;
@@ -4497,7 +4724,7 @@ export default {
       this.filtersChanged("filterParentalAdvisory");
     },
 
-    setAllPersons: function (value, exclusionList) {
+    setAllFilterPersons: function (value, exclusionList) {
       this.$shared.filters.filterPersons.forEach((sp) => {
         if (
           exclusionList &&
@@ -4513,8 +4740,8 @@ export default {
       this.filtersChanged("filterPersons");
     },
 
-    setAllCompanies: function (value, exclusionList) {
-      logger.log("[setAllCompanies]", { value, exclusionList });
+    setAllFilterCompanies: function (value, exclusionList) {
+      logger.log("[setAllFilterCompanies]", { value, exclusionList });
 
       this.$shared.filters.filterCompanies.forEach((sp) => {
         if (
@@ -4531,7 +4758,7 @@ export default {
       this.filtersChanged("filterCompanies");
     },
 
-    setAllQualities: function (value, exclusionList) {
+    setAllFilterQualities: function (value, exclusionList) {
       this.$shared.filters.filterQualities.forEach((quality) => {
         if (
           exclusionList &&
@@ -4547,7 +4774,7 @@ export default {
       this.filtersChanged("filterQualities");
     },
 
-    setAllAudioLanguages: function (value, exclusionList) {
+    setAllFilterAudioLanguages: function (value, exclusionList) {
       this.$shared.filters.filterAudioLanguages.forEach((lang) => {
         if (
           exclusionList &&
@@ -4563,7 +4790,7 @@ export default {
       this.filtersChanged("filterAudioLanguages");
     },
 
-    setAllSubtitleLanguages: function (value, exclusionList) {
+    setAllFilterSubtitleLanguages: function (value, exclusionList) {
       this.$shared.filters.filterSubtitleLanguages.forEach((lang) => {
         if (
           exclusionList &&
@@ -4579,7 +4806,7 @@ export default {
       this.filtersChanged("filterSubtitleLanguages");
     },
 
-    setAllReleaseAttributes: function (value, exclusionList) {
+    setAllFilterReleaseAttributes: function (value, exclusionList) {
       this.$shared.filters.filterReleaseAttributes.forEach((ra) => {
         if (
           exclusionList &&
@@ -4595,7 +4822,7 @@ export default {
       this.filtersChanged("filterReleaseAttributes");
     },
 
-    setAllIMDBPlotKeywords: function (value, exclusionList) {
+    setAllIFilterMDBPlotKeywords: function (value, exclusionList) {
       this.$shared.filters.filterIMDBPlotKeywords.forEach((pk) => {
         if (
           exclusionList &&
@@ -4611,7 +4838,7 @@ export default {
       this.filtersChanged("filterIMDBPlotKeywords");
     },
 
-    setAllIMDBFilmingLocations: function (value, exclusionList) {
+    setAllFilterIMDBFilmingLocations: function (value, exclusionList) {
       this.$shared.filters.filterIMDBFilmingLocations.forEach((fl) => {
         if (
           exclusionList &&
@@ -4627,7 +4854,7 @@ export default {
       this.filtersChanged("filterIMDBFilmingLocations");
     },
 
-    setAllDataQuality: function (value, exclusionList) {
+    setAllFilterDataQuality: function (value, exclusionList) {
       this.$shared.filters.filterDataQuality.forEach((dq) => {
         if (exclusionList && exclusionList.find((val) => dq.Name === val)) {
           dq.Selected = !value;
@@ -4638,6 +4865,19 @@ export default {
       });
 
       this.filtersChanged("filterDataQuality");
+    },
+
+    setAllFilterVideoEncoders: function (value, exclusionList) {
+      this.$shared.filters.filterVideoEncoders.forEach((dq) => {
+        if (exclusionList && exclusionList.find((val) => dq.Name === val)) {
+          dq.Selected = !value;
+          return;
+        }
+
+        dq.Selected = value;
+      });
+
+      this.filtersChanged("filterVideoEncoders");
     },
 
     getFilterRatingLabel(rating, numMovies) {
@@ -5216,28 +5456,31 @@ export default {
       }
 
       if (setFilter.filterCompanies) {
-        this.setAllCompanies(false, setFilter.filterCompanies);
+        this.setAllFilterCompanies(false, setFilter.filterCompanies);
         this.$shared.filterGroups.find(
           (fg) => fg.name === "filterCompanies"
         ).visible = true;
       }
 
       if (setFilter.filterPersons) {
-        this.setAllPersons(false, setFilter.filterPersons);
+        this.setAllFilterPersons(false, setFilter.filterPersons);
         this.$shared.filterGroups.find(
           (fg) => fg.name === "filterPersons"
         ).visible = true;
       }
 
       if (setFilter.filterIMDBPlotKeywords) {
-        this.setAllIMDBPlotKeywords(false, setFilter.filterIMDBPlotKeywords);
+        this.setAllIFilterMDBPlotKeywords(
+          false,
+          setFilter.filterIMDBPlotKeywords
+        );
         this.$shared.filterGroups.find(
           (fg) => fg.name === "filterIMDBPlotKeywords"
         ).visible = true;
       }
 
       if (setFilter.filterIMDBFilmingLocations) {
-        this.setAllIMDBFilmingLocations(
+        this.setAllFilterIMDBFilmingLocations(
           false,
           setFilter.filterIMDBFilmingLocations
         );
@@ -5247,42 +5490,55 @@ export default {
       }
 
       if (setFilter.filterQualities) {
-        this.setAllQualities(false, setFilter.filterQualities);
+        this.setAllFilterQualities(false, setFilter.filterQualities);
         this.$shared.filterGroups.find(
           (fg) => fg.name === "filterQualities"
         ).visible = true;
       }
 
+      if (setFilter.filterVideoEncoders) {
+        this.setAllFilterVideoEncoders(false, setFilter.filterVideoEncoders);
+        this.$shared.filterGroups.find(
+          (fg) => fg.name === "filterVideoEncoders"
+        ).visible = true;
+      }
+
       if (setFilter.filterAgeRatings) {
-        this.setAllAgeRatings(false, setFilter.filterAgeRatings);
+        this.setAllFilterAgeRatings(false, setFilter.filterAgeRatings);
         this.$shared.filterGroups.find(
           (fg) => fg.name === "filterAgeRatings"
         ).visible = true;
       }
 
       if (setFilter.filterGenres) {
-        this.setAllGenres(false, setFilter.filterGenres);
+        this.setAllFilterGenres(false, setFilter.filterGenres);
         this.$shared.filterGroups.find(
           (fg) => fg.name === "filterGenres"
         ).visible = true;
       }
 
       if (setFilter.filterAudioLanguages) {
-        this.setAllAudioLanguages(false, setFilter.filterAudioLanguages);
+        this.setAllFilterAudioLanguages(false, setFilter.filterAudioLanguages);
         this.$shared.filterGroups.find(
           (fg) => fg.name === "filterAudioLanguages"
         ).visible = true;
       }
 
       if (setFilter.filterSubtitleLanguages) {
-        this.setAllSubtitleLanguages(false, setFilter.filterSubtitleLanguages);
+        this.setAllFilterSubtitleLanguages(
+          false,
+          setFilter.filterSubtitleLanguages
+        );
         this.$shared.filterGroups.find(
           (fg) => fg.name === "filterSubtitleLanguages"
         ).visible = true;
       }
 
       if (setFilter.filterReleaseAttributes) {
-        this.setAllReleaseAttributes(false, setFilter.filterReleaseAttributes);
+        this.setAllFilterReleaseAttributes(
+          false,
+          setFilter.filterReleaseAttributes
+        );
         this.$shared.filterGroups.find(
           (fg) => fg.name === "filterReleaseAttributes"
         ).visible = true;

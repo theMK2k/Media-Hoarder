@@ -38,6 +38,11 @@ const shared = new Vue({
         sort: enmFilterSortModes.alphabetically,
       },
       {
+        name: "filterVideoEncoders",
+        visible: true,
+        sort: enmFilterSortModes.alphabetically,
+      },
+      {
         name: "filterAudioLanguages",
         visible: true,
         sort: enmFilterSortModes.numMovies,
@@ -116,6 +121,7 @@ const shared = new Vue({
     filters: {
       filterSourcePaths: [],
       filterQualities: [],
+      filterVideoEncoders: [],
       filterAudioLanguages: [],
       filterSubtitleLanguages: [],
       filterReleaseAttributes: [],
@@ -1220,6 +1226,21 @@ const shared = new Vue({
             )))
       );
     },
+
+    filterVideoEncodersActive() {
+      return this.filters.filterVideoEncoders.find(
+        (filter) => !filter.Selected
+      );
+    },
+    filterVideoEncodersApplied() {
+      if (this.filterVideoEncodersActive) {
+        return this.filters.filterVideoEncoders.filter(
+          (filter) => filter.Selected
+        );
+      }
+
+      return [];
+    },
   },
 
   methods: {
@@ -1244,6 +1265,12 @@ const shared = new Vue({
     filterQualitiesAppliedContains(quality) {
       return !!this.$shared.filterQualitiesApplied.find(
         (fq) => fq.MI_Quality === quality
+      );
+    },
+
+    filterVideoEncodersAppliedContains(videoEncoder) {
+      return !!this.$shared.filterVideoEncodersApplied.find(
+        (fve) => fve.Name === videoEncoder
       );
     },
 

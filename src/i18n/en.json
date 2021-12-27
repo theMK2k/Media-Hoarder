@@ -896,5 +896,7 @@
   "Reset Filters": "Reset Filters",
   "detecting IMDB entry": "detecting IMDB entry",
   "Sorted by Name": "Sorted by Name",
-  "Sorted by Number of Media": "Sorted by Number of Media"
+  "Sorted by Number of Media": "Sorted by Number of Media",
+  "Video Encoder": "Video Encoder",
+  "Filter by this video encoder": "Filter by this video encoder"
 }

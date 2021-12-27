@@ -974,5 +974,7 @@
   "Reset Filters": "Filter Zurücksetzen",
   "detecting IMDB entry": "ermittle IMDB Eintrag",
   "Sorted by Name": "Sorted by Name",
-  "Sorted by Number of Media": "Sorted by Number of Media"
+  "Sorted by Number of Media": "Sorted by Number of Media",
+  "Video Encoder": "Video Encoder",
+  "Filter by this video encoder": "Nach diesem Video Encoder filtern"
 }

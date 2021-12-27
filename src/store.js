@@ -3765,6 +3765,43 @@ function generateFilterQuery(filters, arr_id_Movies) {
     }
   }
 
+  let filterVideoEncoders = "";
+  if (
+    filters.filterVideoEncoders &&
+    filters.filterVideoEncoders.find((filter) => !filter.Selected)
+  ) {
+    filterVideoEncoders = `AND MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_MI_Tracks MITVIDEO WHERE MITVIDEO.type = "video" `;
+
+    if (
+      filters.filterVideoEncoders.find(
+        (filter) => filter.Selected && filter.Name.match(/^<.*?>$/)
+      )
+    ) {
+      filterVideoEncoders += `AND ((MITVIDEO.Encoded_Library_Name_Trimmed IS NULL) `;
+    } else {
+      filterVideoEncoders += `AND (1=0 `;
+    }
+
+    if (
+      filters.filterVideoEncoders.find(
+        (filter) => filter.Selected && !filter.Name.match(/^<.*?>$/)
+      )
+    ) {
+      filterVideoEncoders += `OR MITVIDEO.Encoded_Library_Name_Trimmed IN (`;
+
+      filterVideoEncoders += filters.filterVideoEncoders
+        .filter((filter) => filter.Selected && !filter.Name.match(/^<.*?>$/))
+        .map((filter) => filter.Name)
+        .reduce((prev, current) => {
+          return prev + (prev ? ", " : "") + `"${current}"`;
+        }, "");
+
+      filterVideoEncoders += ")";
+    }
+
+    filterVideoEncoders += "))";
+  }
+
   let filter_id_Movies = "";
   if (arr_id_Movies && arr_id_Movies.length) {
     filter_id_Movies = "AND MOV.id_Movies IN (";
@@ -3810,6 +3847,7 @@ function generateFilterQuery(filters, arr_id_Movies) {
   ${filterIMDBRating}
   ${filterReleaseAttributes}
   ${filterDataQuality}
+  ${filterVideoEncoders}
   ${filter_id_Movies}
 `;
 }
@@ -7174,6 +7212,66 @@ async function fetchFilterReleaseAttributes($MediaType) {
   shared.loadingFilter = "";
 }
 
+async function fetchFilterVideoEncoders($MediaType) {
+  logger.log("[fetchFilterVideoEncoders] MediaType:", $MediaType);
+  shared.loadingFilter = "filterVideoEncoders";
+
+  const filterValues = await fetchFilterValues($MediaType);
+
+  logger.log("[fetchFilterVideoEncoders] filterValues:", filterValues);
+
+  let results = [];
+
+  let currentFilters = JSON.parse(JSON.stringify(shared.filters));
+  delete currentFilters.filterVideoEncoders;
+  const additionalFilterQuery = generateFilterQuery(currentFilters);
+
+  const sql = `
+  SELECT 1 AS Selected
+  , IFNULL(Name, '<not available>') AS Name
+  , (
+    SELECT COUNT(1)
+    FROM tbl_Movies MOV
+    INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+    LEFT JOIN tbl_Movies_MI_Tracks MITVIDEO2 ON MITVIDEO2.type = "video" AND MOV.id_Movies = MITVIDEO2.id_Movies
+    WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+        AND MOV.Extra_id_Movies_Owner IS NULL
+        AND IFNULL(MITVIDEO2.Encoded_Library_Name_Trimmed, 'null') = IFNULL(SubQ.Name, 'null')
+        ${additionalFilterQuery}
+      ) AS NumMovies
+FROM (	SELECT DISTINCT
+  MITVIDEO.Encoded_Library_Name_Trimmed AS Name
+  FROM tbl_Movies_MI_Tracks MITVIDEO WHERE MITVIDEO.type = "video"
+) SubQ
+`;
+
+  logger.log("[fetchFilterVideoEncoders] sql:", sql);
+
+  results = await db.fireProcedureReturnAll(sql, { $MediaType });
+
+  if (filterValues && filterValues.filterVideoEncoders) {
+    results.forEach((result) => {
+      const filterVideoEncoder = filterValues.filterVideoEncoders.find(
+        (value) => value.Name == result.Name
+      );
+
+      if (filterVideoEncoder) {
+        result.Selected = filterVideoEncoder.Selected;
+      }
+
+      result.NumMoviesFormatted = result.NumMovies.toLocaleString(
+        shared.uiLanguage
+      );
+    });
+  }
+
+  logger.log("[fetchFilterVideoEncoders] results:", results);
+
+  shared.filters.filterVideoEncoders = results;
+
+  shared.loadingFilter = "";
+}
+
 function resetFilters(objFilter) {
   if (!objFilter) {
     objFilter = shared.filters;
@@ -7748,6 +7846,7 @@ export {
   fetchFilterMetacriticScore,
   fetchFilterReleaseAttributes,
   fetchFilterDataQuality,
+  fetchFilterVideoEncoders,
   abortRescan,
   resetAbortRescan,
   createList,
