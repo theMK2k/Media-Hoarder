@@ -422,21 +422,19 @@
                             v-bind:key="index"
                           >
                             <span>{{ index > 0 ? ", " : " " }}</span>
-                            <!--
-                                v-bind:class="{
+                            <span
+                              class="mk-clickable"
+                              v-bind:class="{
                                 'mk-search-highlight':
-                                  $shared.filterReleaseAttributesAppliedContains(
-                                    releaseAttribute
+                                  $shared.filterAudioFormatsAppliedContains(
+                                    audioFormat
                                   ),
                               }"
                               v-on:click.stop="
-                                onShowReleaseAttributeDialog(
-                                  releaseAttribute,
-                                  item
-                                )
+                                onAudioFormatClicked(audioFormat, item)
                               "
--->
-                            <span class="mk-clickable">{{ audioFormat }}</span>
+                              >{{ audioFormat }}</span
+                            >
                           </span>
                         </span>
 
@@ -1252,6 +1250,13 @@
       v-on:close="onVideoEncoderDialogClose"
     ></mk-video-encoder-dialog>
 
+    <mk-audio-format-dialog
+      ref="audioFormatDialog"
+      v-bind:show="audioFormatDialog.show"
+      v-bind:Audio_Format="audioFormatDialog.Audio_Format"
+      v-on:close="onAudioFormatDialogClose"
+    ></mk-audio-format-dialog>
+
     <mk-genre-dialog
       ref="genreDialog"
       v-bind:show="genreDialog.show"
@@ -1361,6 +1366,7 @@ import PersonDialog from "@/components/shared/PersonDialog.vue";
 import CompanyDialog from "@/components/shared/CompanyDialog.vue";
 import VideoQualityDialog from "@/components/shared/VideoQualityDialog.vue";
 import VideoEncoderDialog from "@/components/shared/VideoEncoderDialog.vue";
+import AudioFormatDialog from "@/components/shared/AudioFormatDialog.vue";
 import GenreDialog from "@/components/shared/GenreDialog.vue";
 import LanguageDialog from "@/components/shared/LanguageDialog.vue";
 import AgeRatingDialog from "@/components/shared/AgeRatingDialog.vue";
@@ -1390,6 +1396,7 @@ export default {
     "mk-company-dialog": CompanyDialog,
     "mk-video-quality-dialog": VideoQualityDialog,
     "mk-video-encoder-dialog": VideoEncoderDialog,
+    "mk-audio-format-dialog": AudioFormatDialog,
     "mk-genre-dialog": GenreDialog,
     "mk-language-dialog": LanguageDialog,
     "mk-age-rating-dialog": AgeRatingDialog,
@@ -1468,6 +1475,11 @@ export default {
     videoEncoderDialog: {
       show: false,
       Video_Encoder: null,
+    },
+
+    audioFormatDialog: {
+      show: false,
+      Audio_Format: null,
     },
 
     genreDialog: {
@@ -1721,6 +1733,10 @@ export default {
         filtersList.push(this.$t("Video Quality"));
       }
 
+      if (this.$shared.filterVideoEncodersActive) {
+        filtersList.push(this.$t("Video Encoders"));
+      }
+
       if (this.$shared.filterCompaniesActive) {
         filtersList.push(
           `${this.$t("Companies")}${
@@ -1731,6 +1747,10 @@ export default {
 
       if (this.$shared.filterAudioLanguagesActive) {
         filtersList.push(this.$t("Audio Languages"));
+      }
+
+      if (this.$shared.filterAudioFormatsActive) {
+        filtersList.push(this.$t("Audio Formats"));
       }
 
       if (this.$shared.filterSubtitleLanguagesActive) {
@@ -2365,6 +2385,12 @@ export default {
                 this.loadFilterValuesFromStorage
               );
               break;
+            case "filterAudioFormats":
+              await store.fetchFilterAudioFormats(
+                this.mediatype,
+                this.loadFilterValuesFromStorage
+              );
+              break;
             default:
               throw new Error("Unsupported filter type:", filter.name);
           }
@@ -2432,6 +2458,15 @@ export default {
 
       this.videoEncoderDialog.show = true;
       this.videoEncoderDialog.Video_Encoder = videoEncoder;
+
+      return;
+    },
+
+    onAudioFormatClicked(audioFormat) {
+      logger.log("[onAudioFormatClicked]:", audioFormat);
+
+      this.audioFormatDialog.show = true;
+      this.audioFormatDialog.Audio_Format = audioFormat;
 
       return;
     },
@@ -2635,6 +2670,10 @@ export default {
 
     onVideoEncoderDialogClose() {
       this.videoEncoderDialog.show = false;
+    },
+
+    onAudioFormatDialogClose() {
+      this.audioFormatDialog.show = false;
     },
 
     onGenreDialogClose() {

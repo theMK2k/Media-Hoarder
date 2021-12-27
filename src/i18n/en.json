@@ -897,6 +897,10 @@
   "detecting IMDB entry": "detecting IMDB entry",
   "Sorted by Name": "Sorted by Name",
   "Sorted by Number of Media": "Sorted by Number of Media",
+  "Video Encoders": "Video Encoders",
   "Video Encoder": "Video Encoder",
-  "Filter by this video encoder": "Filter by this video encoder"
+  "Filter by this video encoder": "Filter by this video encoder",
+  "Audio Formats": "Audio Formats",
+  "Audio Format": "Audio Format",
+  "Filter by this audio format": "Filter by this audio format"
 }

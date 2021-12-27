@@ -975,6 +975,10 @@
   "detecting IMDB entry": "ermittle IMDB Eintrag",
   "Sorted by Name": "Sorted by Name",
   "Sorted by Number of Media": "Sorted by Number of Media",
+  "Video Encoders": "Video Encoder",
   "Video Encoder": "Video Encoder",
-  "Filter by this video encoder": "Nach diesem Video Encoder filtern"
+  "Filter by this video encoder": "Nach diesem Video Encoder filtern",
+  "Audio Formats": "Audio Formate",
+  "Audio Format": "Audio Format",
+  "Filter by this audio format": "Nach diesem Audio Format filtern"
 }

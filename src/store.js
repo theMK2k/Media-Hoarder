@@ -3801,6 +3801,43 @@ function generateFilterQuery(filters, arr_id_Movies) {
     filterVideoEncoders += "))";
   }
 
+  let filterAudioFormats = "";
+  if (
+    filters.filterAudioFormats &&
+    filters.filterAudioFormats.find((filter) => !filter.Selected)
+  ) {
+    filterAudioFormats = `AND MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_MI_Tracks MITAUDIO WHERE MITAUDIO.type = "audio" `;
+
+    if (
+      filters.filterAudioFormats.find(
+        (filter) => filter.Selected && filter.Name.match(/^<.*?>$/)
+      )
+    ) {
+      filterAudioFormats += `AND ((MITAUDIO.Format IS NULL) `;
+    } else {
+      filterAudioFormats += `AND (1=0 `;
+    }
+
+    if (
+      filters.filterAudioFormats.find(
+        (filter) => filter.Selected && !filter.Name.match(/^<.*?>$/)
+      )
+    ) {
+      filterAudioFormats += `OR MITAUDIO.Format IN (`;
+
+      filterAudioFormats += filters.filterAudioFormats
+        .filter((filter) => filter.Selected && !filter.Name.match(/^<.*?>$/))
+        .map((filter) => filter.Name)
+        .reduce((prev, current) => {
+          return prev + (prev ? ", " : "") + `"${current}"`;
+        }, "");
+
+      filterAudioFormats += ")";
+    }
+
+    filterAudioFormats += "))";
+  }
+
   let filter_id_Movies = "";
   if (arr_id_Movies && arr_id_Movies.length) {
     filter_id_Movies = "AND MOV.id_Movies IN (";
@@ -3847,6 +3884,7 @@ function generateFilterQuery(filters, arr_id_Movies) {
   ${filterReleaseAttributes}
   ${filterDataQuality}
   ${filterVideoEncoders}
+  ${filterAudioFormats}
   ${filter_id_Movies}
 `;
 }
@@ -7271,6 +7309,66 @@ FROM (	SELECT DISTINCT
   shared.loadingFilter = "";
 }
 
+async function fetchFilterAudioFormats($MediaType) {
+  logger.log("[fetchFilterAudioFormats] MediaType:", $MediaType);
+  shared.loadingFilter = "filterAudioFormats";
+
+  const filterValues = await fetchFilterValues($MediaType);
+
+  logger.log("[fetchFilterAudioFormats] filterValues:", filterValues);
+
+  let results = [];
+
+  let currentFilters = JSON.parse(JSON.stringify(shared.filters));
+  delete currentFilters.filterAudioFormats;
+  const additionalFilterQuery = generateFilterQuery(currentFilters);
+
+  const sql = `
+  SELECT 1 AS Selected
+  , IFNULL(Name, '<not available>') AS Name
+  , (
+    SELECT COUNT(1)
+    FROM tbl_Movies MOV
+    INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+    LEFT JOIN tbl_Movies_MI_Tracks MITAUDIO2 ON MITAUDIO2.type = "audio" AND MOV.id_Movies = MITAUDIO2.id_Movies
+    WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+        AND MOV.Extra_id_Movies_Owner IS NULL
+        AND IFNULL(MITAUDIO2.Format, 'null') = IFNULL(SubQ.Name, 'null')
+        ${additionalFilterQuery}
+      ) AS NumMovies
+FROM (	SELECT DISTINCT
+  MITAUDIO.Format AS Name
+  FROM tbl_Movies_MI_Tracks MITAUDIO WHERE MITAUDIO.type = "audio"
+) SubQ
+`;
+
+  logger.log("[fetchFilterAudioFormats] sql:", sql);
+
+  results = await db.fireProcedureReturnAll(sql, { $MediaType });
+
+  if (filterValues && filterValues.filterAudioFormats) {
+    results.forEach((result) => {
+      const filterAudioFormat = filterValues.filterAudioFormats.find(
+        (value) => value.Name == result.Name
+      );
+
+      if (filterAudioFormat) {
+        result.Selected = filterAudioFormat.Selected;
+      }
+
+      result.NumMoviesFormatted = result.NumMovies.toLocaleString(
+        shared.uiLanguage
+      );
+    });
+  }
+
+  logger.log("[fetchFilterAudioFormats] results:", results);
+
+  shared.filters.filterAudioFormats = results;
+
+  shared.loadingFilter = "";
+}
+
 function resetFilters(objFilter) {
   if (!objFilter) {
     objFilter = shared.filters;
@@ -7846,6 +7944,7 @@ export {
   fetchFilterReleaseAttributes,
   fetchFilterDataQuality,
   fetchFilterVideoEncoders,
+  fetchFilterAudioFormats,
   abortRescan,
   resetAbortRescan,
   createList,

@@ -48,6 +48,11 @@ const shared = new Vue({
         sort: enmFilterSortModes.numMovies,
       },
       {
+        name: "filterAudioFormats",
+        visible: true,
+        sort: enmFilterSortModes.alphabetically,
+      },
+      {
         name: "filterSubtitleLanguages",
         visible: true,
         sort: enmFilterSortModes.numMovies,
@@ -123,6 +128,7 @@ const shared = new Vue({
       filterQualities: [],
       filterVideoEncoders: [],
       filterAudioLanguages: [],
+      filterAudioFormats: [],
       filterSubtitleLanguages: [],
       filterReleaseAttributes: [],
       filterLists: [],
@@ -1241,6 +1247,19 @@ const shared = new Vue({
 
       return [];
     },
+
+    filterAudioFormatsActive() {
+      return this.filters.filterAudioFormats.find((filter) => !filter.Selected);
+    },
+    filterAudioFormatsApplied() {
+      if (this.filterAudioFormatsActive) {
+        return this.filters.filterAudioFormats.filter(
+          (filter) => filter.Selected
+        );
+      }
+
+      return [];
+    },
   },
 
   methods: {
@@ -1314,6 +1333,12 @@ const shared = new Vue({
 
         return false;
       }
+    },
+
+    filterAudioFormatsAppliedContains(audioFormat) {
+      return !!this.$shared.filterAudioFormatsApplied.find(
+        (filter) => filter.Name === audioFormat
+      );
     },
 
     filterSubtitleLanguagesAppliedContains(language) {

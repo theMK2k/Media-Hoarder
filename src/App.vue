@@ -3248,7 +3248,7 @@
                         >
                         </v-progress-circular>
                       </span>
-                      {{ $t("Video Encoder") }}
+                      {{ $t("Video Encoders") }}
                       {{ filterVideoEncodersTitle }}
                     </div>
                     <template v-slot:actions>
@@ -3366,6 +3366,178 @@
                             'filterVideoEncoders',
                             filterVideoEncoder,
                             setAllFilterVideoEncoders
+                          )
+                        "
+                        color="mk-dark-grey"
+                      ></v-checkbox>
+                    </v-row>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+
+                <!-- FILTER AUDIO FORMATS -->
+                <v-expansion-panel
+                  v-bind:readonly="editFilters.isEditFilters"
+                  v-if="filterGroup.name === 'filterAudioFormats'"
+                  v-show="editFilters.isEditFilters || filterGroup.visible"
+                  style="padding: 0px !important; width: 316px"
+                  xxx-v-bind:disabled="
+                    $shared.loadingFilter === 'filterAudioFormats'
+                  "
+                >
+                  <v-expansion-panel-header style="padding: 8px !important">
+                    <div
+                      v-bind:class="{
+                        'mk-grab': editFilters.isEditFilters,
+                        'mk-dark-grey': !filterGroup.visible,
+                        'mk-search-highlight': $shared.filterAudioFormatsActive,
+                      }"
+                      style="display: flex; align-items: center"
+                    >
+                      <span class="mk-filter-icon-container">
+                        <v-icon
+                          v-show="
+                            $shared.loadingFilter !== 'filterAudioFormats'
+                          "
+                          v-bind:class="{
+                            'mk-dark-grey': !filterGroup.visible,
+                            'mk-search-highlight':
+                              $shared.filterAudioFormatsActive,
+                          }"
+                          >mdi-file-music-outline</v-icon
+                        >
+                        <v-progress-circular
+                          class="mk-filter-spinner"
+                          v-bind:class="{
+                            'mk-search-highlight':
+                              $shared.filterAudioFormatsActive,
+                          }"
+                          v-show="
+                            $shared.loadingFilter === 'filterAudioFormats'
+                          "
+                          v-bind:size="16"
+                          v-bind:width="3"
+                          indeterminate
+                        >
+                        </v-progress-circular>
+                      </span>
+                      {{ $t("Audio Formats") }}
+                      {{ filterAudioFormatsTitle }}
+                    </div>
+                    <template v-slot:actions>
+                      <v-icon
+                        v-if="!editFilters.isEditFilters"
+                        v-bind:class="{
+                          'mk-search-highlight':
+                            $shared.filterAudioFormatsActive,
+                        }"
+                      >
+                        $expand
+                      </v-icon>
+                      <v-tooltip
+                        bottom
+                        v-if="editFilters.isEditFilters"
+                        style="z-index: 21"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-switch
+                              v-model="filterGroup.visible"
+                              dense
+                              style="margin-top: 0px"
+                            ></v-switch>
+                          </span>
+                        </template>
+                        <span>{{ $t("Show/Hide this filter") }}</span>
+                      </v-tooltip>
+                    </template>
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <v-row>
+                      <v-spacer />
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="switchFilterSort(filterGroup)"
+                            >
+                              <v-icon
+                                v-if="
+                                  filterGroup.sort ===
+                                  enmFilterSortModes.numMovies
+                                "
+                                >mdi-sort-numeric</v-icon
+                              >
+                              <v-icon v-else>mdi-sort-alphabetical</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{
+                          $t(
+                            `${
+                              filterGroup.sort === enmFilterSortModes.numMovies
+                                ? "Sorted by Number of Media"
+                                : "Sorted by Name"
+                            }`
+                          )
+                        }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllFilterAudioFormats(false)"
+                            >
+                              <v-icon
+                                >mdi-checkbox-multiple-blank-outline</v-icon
+                              >
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("Clear Selection") }}</span>
+                      </v-tooltip>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllFilterAudioFormats(true)"
+                            >
+                              <v-icon>mdi-check-box-multiple-outline</v-icon>
+                            </v-btn>
+                          </span>
+                        </template>
+                        <span>{{ $t("Select All") }}</span>
+                      </v-tooltip>
+                    </v-row>
+                    <v-row
+                      v-for="filterAudioFormat in filterAudioFormats"
+                      v-bind:key="filterAudioFormat.Name"
+                    >
+                      <v-checkbox
+                        class="mk-filter-checkbox"
+                        v-bind:key="filterAudioFormat.Name"
+                        v-bind:label="
+                          (filterAudioFormat.Name === '<not available>'
+                            ? $t('<not available>')
+                            : filterAudioFormat.Name) +
+                          ' (' +
+                          filterAudioFormat.NumMoviesFormatted +
+                          ')'
+                        "
+                        v-model="filterAudioFormat.Selected"
+                        v-on:mouseup="
+                          filterCheckboxMouseup('filterAudioFormats')
+                        "
+                        v-on:mousedown="
+                          filterCheckboxMousedown(
+                            'filterAudioFormats',
+                            filterAudioFormat,
+                            setAllFilterAudioFormats
                           )
                         "
                         color="mk-dark-grey"
@@ -3893,6 +4065,49 @@ export default {
         ).length +
         "/" +
         this.$shared.filters.filterVideoEncoders.length +
+        ")"
+      );
+    },
+
+    filterAudioFormats() {
+      const fve = this.$shared.filterGroups.find(
+        (fve) => fve.name === "filterAudioFormats"
+      );
+
+      return this.$shared.filters.filterAudioFormats
+        .filter(() => true)
+        .sort((a, b) => {
+          if (fve.sort === enmFilterSortModes.numMovies) {
+            return helpers.compare(a.NumMovies, b.NumMovies, true);
+          } else {
+            return helpers.compare(a.Name, b.Name);
+          }
+        });
+    },
+    filterAudioFormatsTitle() {
+      if (
+        !this.$shared.filters.filterAudioFormats.find(
+          (filter) => !filter.Selected
+        )
+      ) {
+        return `(${this.$t("ALL")})`;
+      }
+
+      if (
+        !this.$shared.filters.filterAudioFormats.find(
+          (filter) => filter.Selected
+        )
+      ) {
+        return `(${this.$t("NONE")})`;
+      }
+
+      return (
+        "(" +
+        this.$shared.filters.filterAudioFormats.filter(
+          (filter) => filter.Selected
+        ).length +
+        "/" +
+        this.$shared.filters.filterAudioFormats.length +
         ")"
       );
     },
@@ -4880,6 +5095,19 @@ export default {
       this.filtersChanged("filterVideoEncoders");
     },
 
+    setAllFilterAudioFormats: function (value, exclusionList) {
+      this.$shared.filters.filterAudioFormats.forEach((dq) => {
+        if (exclusionList && exclusionList.find((val) => dq.Name === val)) {
+          dq.Selected = !value;
+          return;
+        }
+
+        dq.Selected = value;
+      });
+
+      this.filtersChanged("filterAudioFormats");
+    },
+
     getFilterRatingLabel(rating, numMovies) {
       let label = "";
 
@@ -5496,10 +5724,10 @@ export default {
         ).visible = true;
       }
 
-      if (setFilter.filterVideoEncoders) {
-        this.setAllFilterVideoEncoders(false, setFilter.filterVideoEncoders);
+      if (setFilter.filterAudioFormats) {
+        this.setAllFilterAudioFormats(false, setFilter.filterAudioFormats);
         this.$shared.filterGroups.find(
-          (fg) => fg.name === "filterVideoEncoders"
+          (fg) => fg.name === "filterAudioFormats"
         ).visible = true;
       }
 
