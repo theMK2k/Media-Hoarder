@@ -4,8 +4,6 @@
 
 - .iso handling?
 
-- defect: we lost lots of genres
-
 - defect: MediaInfo (video): use the highest res if multiple video streams are present (also in MovieManager)
 
 - in *Dialog click on "filter by this ..." should instantly update the movies then the filters

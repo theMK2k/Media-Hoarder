@@ -2531,8 +2531,7 @@ async function saveIMDBData(movie, imdbData) {
     (imdbData.companiesData || {}).topProductionCompanies || {}
   );
 
-  const IMDB_genres = imdbData.$IMDB_genres || [];
-  delete imdbData.$IMDB_genres;
+  const IMDB_genres = (imdbData.mainPageData || {}).$IMDB_genres || [];
   delete tbl_Movies_IMDB_Data.$IMDB_genres;
   logger.log("[saveIMDBData] IMDB_genres:", IMDB_genres);
 
