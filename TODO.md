@@ -12,31 +12,13 @@
   - check with filters that add to their list vs. filters already having the full list
   - maybe only explicitly reload the exact filter, then reload movies and implicitly reload all filters
 
-- i18n: no translation of `<not available>` in the following filters (correct in e.g. "years"):
+- i18n: no translation of `<not available>` in the following filters (correct in e.g. "audio formats, video encoders"):
   - Audio Languages
   - Subtitle Languages
   - Release Attributes
 
 - investigate what's up with loadFilterValuesFromStorage in fetchFilters (seldomly used)
   - do we need it in fetchFilterVideoEncoders? or all the others?
-
-- [ ] more MediaInfo
-  - In quick info area:
-    - [x] Video Encoder (x264, x265, XviD ...)
-    - [x] Audio Format/Codec
-      Example:
-    - current: 8K | 14-18+ | Action, Drama, Horror, Thriller | DE, EN | DE, EN, FR | BD
-    - new: 8K | 14-18+ | Action, Drama, Horror, Thriller | DE, EN | DE, EN, FR | x264 | EAC3, PCM | BD
-      - [x] video: tbl_Movies_MI_Tracks
-        - Encoded_Library_Name_Trimmed (x264, x265, XviD)
-        - ?Format (AVC, HEVC)?
-      - [x] audio: tbl_Movies_MI_Tracks.Format
-
-  - show in MediaList Quick Info Area (Video Codec/Format, Audio Codecs/Formats)
-  - new Filters + Dialog:
-    - [x] Video Codec
-    - [ ] Audio Formats (optionally for language X)
-    - [ ] Audio Formats (Commercial) (optionally for language X)
 
 - [ ] create a MediaInfo watchdog
 

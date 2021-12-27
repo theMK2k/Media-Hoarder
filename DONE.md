@@ -8,6 +8,22 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] more MediaInfo
+  - In quick info area:
+    - [x] Video Encoder (x264, x265, XviD ...)
+    - [x] Audio Format/Codec
+      Example:
+    - current: 8K | 14-18+ | Action, Drama, Horror, Thriller | DE, EN | DE, EN, FR | BD
+    - new: 8K | 14-18+ | Action, Drama, Horror, Thriller | DE, EN | DE, EN, FR | x264 | EAC3, PCM | BD
+      - [x] video: tbl_Movies_MI_Tracks
+        - Encoded_Library_Name_Trimmed (x264, x265, XviD)
+        - ?Format (AVC, HEVC)?
+      - [x] audio: tbl_Movies_MI_Tracks.Format
+
+  - show in MediaList Quick Info Area (Video Codec/Format, Audio Codecs/Formats)
+  - new Filters + Dialog:
+    - [x] Video Codec
+    - [x] Audio Formats
 - [x] Fix: "applying MediaInfo" doesn't show countdown timer
 - introduce Audio Metadata
   - [x] see below: use Movie Manager to mass-scan a movie folder and find out the different audio codecs
