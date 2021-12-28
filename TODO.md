@@ -2,10 +2,6 @@
 
 ## v1.0.0
 
-- !!!RESCAN the complete collection - IMDB Mainpage (Genres)
-
-- .iso handling?
-
 - defect: MediaInfo (video): use the highest res if multiple video streams are present (also in MovieManager)
 
 - in *Dialog click on "filter by this ..." should instantly update the movies then the filters
@@ -139,6 +135,7 @@
 
 ### Other (later)
 
+- [ ] .iso handling?
 - [ ] IMDB Awards (Oscars etc.) as data and filter criteria
 - [ ] apply shared.\*AppliedContains to the media item once after completely fetching media
   - huge refactoring as movie data must then contain the information if it is affected by the filter

@@ -48,9 +48,10 @@
 
 ## Supported File Formats
 
-Media Hoarder currently supports the following file formats:
+**Media Hoarder** currently supports the following file formats:
 
 File Extension|Format Name
+-|-
 avi|Audio Video Interleave
 mp4|MPEG-4
 mkv|Matroska
@@ -59,11 +60,13 @@ rar|Roshal Archive (preferrably uncompressed)
 
 ## Documentation
 
+The following linked documents provide some detailed information about some inner workings.
+
 Document|Description
 -|-
 [01-Media-Storage.md](docs/01-Media-Storage.md)|how **Media Hoarder** expects media files to be stored
 [02-IMDB-ID-Detection.md](docs/02-IMDB-ID-Detection.md)|in-depth talk about how **Media Hoarder** tries to find the correct IMDB entry for a movie
-[03-Parental-Guidance-Rating.md](docs/02-Parental-Guidance-Rating.md)|how **Media Hoarder** handles parental guidance / rating
+[03-Parental-Guidance-Rating.md](docs/03-Parental-Guidance-Rating.md)|how **Media Hoarder** handles parental guidance / rating
 
 ## Download and Install
 
