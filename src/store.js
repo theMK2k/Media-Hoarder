@@ -1703,6 +1703,8 @@ async function applyMediaInfo(movie, onlyNew) {
       });
     }
 
+    let bestQualityLevel = 0;
+
     tracks.forEach((track) => {
       // collect all track data into tbl_Movies_MI_Tracks
       const trackFields = JSON.parse(JSON.stringify(mediainfoTrackDefinition));
@@ -1754,103 +1756,27 @@ async function applyMediaInfo(movie, onlyNew) {
 
       // more specific analysis of track data
       if (track.$.type === "Video") {
-        if (track.Duration && track.Duration.length > 0) {
-          MI.$MI_Duration = track.Duration[0];
-
-          // eslint-disable-next-line no-unused-vars
-          let durationSeconds = 0;
-
-          if (
-            MI.$MI_Duration.includes("h") ||
-            MI.$MI_Duration.includes("mn") ||
-            MI.$MI_Duration.includes("s")
-          ) {
-            if (/(\d*)h/.test(MI.$MI_Duration)) {
-              durationSeconds +=
-                60 * 60 * parseInt(MI.$MI_Duration.match(/(\d*)h/)[1]);
-            }
-            if (/(\d*)mn/.test(MI.$MI_Duration)) {
-              durationSeconds +=
-                60 * parseInt(MI.$MI_Duration.match(/(\d*)mn/)[1]);
-            }
-            if (/(\d*)s/.test(MI.$MI_Duration)) {
-              durationSeconds += parseInt(MI.$MI_Duration.match(/(\d*)s/)[1]);
-            }
-          }
-
-          if (/^\d+/.test(MI.$MI_Duration) && /\d+$/.test(MI.$MI_Duration)) {
-            durationSeconds = parseInt(MI.$MI_Duration);
-          }
-
-          if (durationSeconds > 0) {
-            MI.$MI_Duration_Seconds = durationSeconds;
-
-            MI.$MI_Duration_Formatted = helpers.getTimeString(
-              MI.$MI_Duration_Seconds
-            );
-          }
-        } else if (track.DURATION && track.DURATION.length > 0) {
-          MI.$MI_Duration = track.DURATION[0];
-
-          const matches = track.DURATION[0].match(/(\d+):(\d+):(\d+)/);
-
-          logger.log("[applyMediaInfo] DURATION matches:", matches);
-
-          let durationSeconds = 0;
-
-          durationSeconds += 60 * 60 * +matches[1];
-          durationSeconds += 60 * +matches[2];
-          durationSeconds += +matches[3];
-
-          if (durationSeconds > 0) {
-            MI.$MI_Duration_Seconds = durationSeconds;
-
-            MI.$MI_Duration_Formatted = helpers.getTimeString(
-              MI.$MI_Duration_Seconds
-            );
-          }
-        }
-
-        if (track.Width && track.Width.length > 0) {
-          const width = track.Width[0].replace(/\s/g, "");
-          const iWidth = parseInt(width);
-
-          let height = 0;
-          if (track.Height && track.Height.length > 0) {
-            height = track.Height[0].replace(/\s/g, "");
-          }
-          const iHeight = parseInt(height);
-
-          const tolerance = 1.1; // tolerance level, so that e.g. 1085p is NOT UHD
-
-          MI.$MI_Quality = "SD";
-
-          if (iWidth * iHeight > 720 * 576 * tolerance) {
-            MI.$MI_Quality = "720p";
-          }
-          if (iWidth * iHeight > 1280 * 720 * tolerance) {
-            MI.$MI_Quality = "HD";
-          }
-          if (iWidth * iHeight > 1920 * 1080 * tolerance) {
-            MI.$MI_Quality = "UHD";
-          }
-          if (iWidth * iHeight > 3840 * 2160 * tolerance) {
-            MI.$MI_Quality = "4K";
-          }
-          if (iWidth * iHeight > 4096 * 2160 * tolerance) {
-            MI.$MI_Quality = "8K";
-          }
-        }
+        const durationAnalysis = analyzeMediaInfoVideoDuration(track);
 
         if (
-          track.Display_aspect_ratio &&
-          track.Display_aspect_ratio.length > 0
+          durationAnalysis.durationSeconds &&
+          (!MI.durationSeconds ||
+            MI.durationSeconds < durationAnalysis.durationSeconds)
         ) {
-          MI.$MI_Aspect_Ratio = track.Display_aspect_ratio[0];
+          MI.$MI_Duration = durationAnalysis.$MI_Duration;
+          MI.durationSeconds = durationAnalysis.durationSeconds;
         }
 
-        if (track.DisplayAspectRatio && track.DisplayAspectRatio.length > 0) {
-          MI.$MI_Aspect_Ratio = track.DisplayAspectRatio[0];
+        const videoResolutionAnalysis = analyzeMediaInfoVideoResolution(track);
+
+        if (
+          videoResolutionAnalysis.qualityLevel &&
+          videoResolutionAnalysis.qualityLevel > bestQualityLevel
+        ) {
+          bestQualityLevel = videoResolutionAnalysis.qualityLevel;
+
+          MI.$MI_Quality = videoResolutionAnalysis.$MI_Quality;
+          MI.$MI_Aspect_Ratio = videoResolutionAnalysis.$MI_Aspect_Ratio;
         }
       }
 
@@ -7911,6 +7837,133 @@ async function verifyIMDBtconst($id_Movies) {
   }
 
   logger.log("[verifyIMDBtconst] movie:", movie);
+}
+
+function analyzeMediaInfoVideoDuration(videoTrack) {
+  const result = {
+    $MI_Duration: null,
+    durationSeconds: null,
+  };
+
+  if (videoTrack.Duration && videoTrack.Duration.length > 0) {
+    result.$MI_Duration = videoTrack.Duration[0];
+
+    // eslint-disable-next-line no-unused-vars
+    let durationSeconds = 0;
+
+    if (
+      result.$MI_Duration.includes("h") ||
+      result.$MI_Duration.includes("mn") ||
+      result.$MI_Duration.includes("s")
+    ) {
+      if (/(\d*)h/.test(result.$MI_Duration)) {
+        durationSeconds +=
+          60 * 60 * parseInt(result.$MI_Duration.match(/(\d*)h/)[1]);
+      }
+      if (/(\d*)mn/.test(result.$MI_Duration)) {
+        durationSeconds +=
+          60 * parseInt(result.$MI_Duration.match(/(\d*)mn/)[1]);
+      }
+      if (/(\d*)s/.test(result.$MI_Duration)) {
+        durationSeconds += parseInt(result.$MI_Duration.match(/(\d*)s/)[1]);
+      }
+    }
+
+    if (/^\d+/.test(result.$MI_Duration) && /\d+$/.test(result.$MI_Duration)) {
+      durationSeconds = parseInt(result.$MI_Duration);
+    }
+
+    if (durationSeconds > 0) {
+      result.$MI_Duration_Seconds = durationSeconds;
+
+      result.$MI_Duration_Formatted = helpers.getTimeString(
+        result.$MI_Duration_Seconds
+      );
+    }
+  } else if (videoTrack.DURATION && videoTrack.DURATION.length > 0) {
+    result.$MI_Duration = videoTrack.DURATION[0];
+
+    const matches = videoTrack.DURATION[0].match(/(\d+):(\d+):(\d+)/);
+
+    logger.log("[applyMediaInfo] DURATION matches:", matches);
+
+    let durationSeconds = 0;
+
+    durationSeconds += 60 * 60 * +matches[1];
+    durationSeconds += 60 * +matches[2];
+    durationSeconds += +matches[3];
+
+    if (durationSeconds > 0) {
+      result.$MI_Duration_Seconds = durationSeconds;
+
+      result.$MI_Duration_Formatted = helpers.getTimeString(
+        result.$MI_Duration_Seconds
+      );
+    }
+  }
+
+  return result;
+}
+
+function analyzeMediaInfoVideoResolution(videoTrack) {
+  const result = {
+    $MI_Quality: null,
+    qualityLevel: null,
+    $MI_Aspect_Ratio: null,
+  };
+
+  if (videoTrack.Width && videoTrack.Width.length > 0) {
+    const width = videoTrack.Width[0].replace(/\s/g, "");
+    const iWidth = parseInt(width);
+
+    let height = 0;
+    if (videoTrack.Height && videoTrack.Height.length > 0) {
+      height = videoTrack.Height[0].replace(/\s/g, "");
+    }
+    const iHeight = parseInt(height);
+
+    const tolerance = 1.1; // tolerance level, so that e.g. 1085p is NOT UHD
+
+    result.$MI_Quality = "SD";
+    result.qualityLevel = 1;
+
+    if (iWidth * iHeight > 720 * 576 * tolerance) {
+      result.$MI_Quality = "720p";
+      result.qualityLevel = 2;
+    }
+    if (iWidth * iHeight > 1280 * 720 * tolerance) {
+      result.$MI_Quality = "HD";
+      result.qualityLevel = 3;
+    }
+    if (iWidth * iHeight > 1920 * 1080 * tolerance) {
+      result.$MI_Quality = "UHD";
+      result.qualityLevel = 4;
+    }
+    if (iWidth * iHeight > 3840 * 2160 * tolerance) {
+      result.$MI_Quality = "4K";
+      result.qualityLevel = 5;
+    }
+    if (iWidth * iHeight > 4096 * 2160 * tolerance) {
+      result.$MI_Quality = "8K";
+      result.qualityLevel = 6;
+    }
+  }
+
+  if (
+    videoTrack.Display_aspect_ratio &&
+    videoTrack.Display_aspect_ratio.length > 0
+  ) {
+    result.$MI_Aspect_Ratio = videoTrack.Display_aspect_ratio[0];
+  }
+
+  if (
+    videoTrack.DisplayAspectRatio &&
+    videoTrack.DisplayAspectRatio.length > 0
+  ) {
+    result.$MI_Aspect_Ratio = videoTrack.DisplayAspectRatio[0];
+  }
+
+  return result;
 }
 
 export {
