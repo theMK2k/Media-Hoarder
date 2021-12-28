@@ -829,7 +829,7 @@
                 <v-row
                   style="
                     padding-left: 16px;
-                    padding-top: 4px;
+                    padding-top: 8px;
                     align-items: flex-end;
                   "
                 >
