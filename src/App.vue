@@ -5724,6 +5724,13 @@ export default {
         ).visible = true;
       }
 
+      if (setFilter.filterVideoEncoders) {
+        this.setAllFilterVideoEncoders(false, setFilter.filterVideoEncoders);
+        this.$shared.filterGroups.find(
+          (fg) => fg.name === "filterVideoEncoders"
+        ).visible = true;
+      }
+
       if (setFilter.filterAudioFormats) {
         this.setAllFilterAudioFormats(false, setFilter.filterAudioFormats);
         this.$shared.filterGroups.find(

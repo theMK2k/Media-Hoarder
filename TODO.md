@@ -2,10 +2,6 @@
 
 ## v1.0.0
 
-- in *Dialog click on "filter by this ..." should instantly update the movies then the filters
-  - check with filters that add to their list vs. filters already having the full list
-  - maybe only explicitly reload the exact filter, then reload movies and implicitly reload all filters
-
 - i18n: no translation of `<not available>` in the following filters (correct in e.g. "audio formats, video encoders"):
   - Audio Languages
   - Subtitle Languages

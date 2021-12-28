@@ -139,7 +139,7 @@ export default {
 
       eventBus.plotKeywordDialogConfirm(setFilter);
 
-      eventBus.refetchFilters(setFilter);
+      eventBus.refetchSpecificFilter(setFilter);
 
       this.$emit("close");
     },

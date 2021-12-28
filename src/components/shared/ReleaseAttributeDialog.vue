@@ -146,7 +146,7 @@ export default {
         filterReleaseAttributes: [this.ReleaseAttribute],
       };
 
-      eventBus.refetchFilters(setFilter);
+      eventBus.refetchSpecificFilter(setFilter);
 
       this.$emit("close");
     },

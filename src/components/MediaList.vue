@@ -2190,8 +2190,9 @@ export default {
      * @param {Object} setFilter:
      *                 key has value null: the filter will be refetched early
      *                 key has values: the filter items will be enabled
+     * @param {Boolean} specificBySetFilter ONLY refetch the filter specified in setFilter
      */
-    async fetchFilters(setFilter) {
+    async fetchFilters(setFilter, specificBySetFilter) {
       logger.group("[Fetch Filters]");
 
       try {
@@ -2218,29 +2219,35 @@ export default {
             filterGroups.splice(index, 1); // remove the item in-place
             filterGroups = [item, ...filterGroups];
           });
+
+          if (specificBySetFilter) {
+            filterGroups = [filterGroups[0]];
+          }
         }
 
         // put the filter on top of the list that has been changed last
-        logger.log(
-          "[fetchFilters] this.$shared.lastChangedFilter:",
-          this.$shared.lastChangedFilter
-        );
-        logger.log("[fetchFilters] filterGroups before:", filterGroups);
-        if (this.$shared.lastChangedFilter) {
-          const index = filterGroups.findIndex(
-            (item) => item.name === this.$shared.lastChangedFilter
+        if (!specificBySetFilter) {
+          logger.log(
+            "[fetchFilters] this.$shared.lastChangedFilter:",
+            this.$shared.lastChangedFilter
           );
+          logger.log("[fetchFilters] filterGroups before:", filterGroups);
+          if (this.$shared.lastChangedFilter) {
+            const index = filterGroups.findIndex(
+              (item) => item.name === this.$shared.lastChangedFilter
+            );
 
-          logger.log("[fetchFilters] index:", index);
+            logger.log("[fetchFilters] index:", index);
 
-          const item = filterGroups[index];
+            const item = filterGroups[index];
 
-          logger.log("[fetchFilters] item:", item);
+            logger.log("[fetchFilters] item:", item);
 
-          filterGroups.splice(index, 1); // remove the item in-place
-          filterGroups = [item, ...filterGroups];
+            filterGroups.splice(index, 1); // remove the item in-place
+            filterGroups = [item, ...filterGroups];
+          }
+          this.$shared.lastChangedFilter = null; // we only need this once
         }
-        this.$shared.lastChangedFilter = null; // we only need this once
 
         logger.log("[fetchFilters] filterGroups:", filterGroups);
 
@@ -3063,6 +3070,10 @@ export default {
 
     eventBus.$on("refetchFilters", (setFilter) => {
       this.fetchFilters(setFilter);
+    });
+
+    eventBus.$on("refetchSpecificFilter", (setFilter) => {
+      this.fetchFilters(setFilter, true);
     });
 
     eventBus.$on("listDialogSetUseExistingLists", (value) => {

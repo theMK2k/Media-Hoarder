@@ -134,7 +134,7 @@ export default {
         filterGenres: [this.Genre],
       };
 
-      eventBus.refetchFilters(setFilter);
+      eventBus.refetchSpecificFilter(setFilter);
 
       this.$emit("close");
     },

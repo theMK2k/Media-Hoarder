@@ -7197,6 +7197,7 @@ async function fetchFilterVideoEncoders($MediaType) {
     FROM tbl_Movies MOV
     INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
     LEFT JOIN tbl_Movies_MI_Tracks MITVIDEO2 ON MITVIDEO2.type = "video" AND MOV.id_Movies = MITVIDEO2.id_Movies
+    LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
     WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
         AND MOV.Extra_id_Movies_Owner IS NULL
         AND IFNULL(MITVIDEO2.Encoded_Library_Name_Trimmed, 'null') = IFNULL(SubQ.Name, 'null')
@@ -7257,6 +7258,7 @@ async function fetchFilterAudioFormats($MediaType) {
     FROM tbl_Movies MOV
     INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
     LEFT JOIN tbl_Movies_MI_Tracks MITAUDIO2 ON MITAUDIO2.type = "audio" AND MOV.id_Movies = MITAUDIO2.id_Movies
+    LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
     WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
         AND MOV.Extra_id_Movies_Owner IS NULL
         AND IFNULL(MITAUDIO2.Format, 'null') = IFNULL(SubQ.Name, 'null')

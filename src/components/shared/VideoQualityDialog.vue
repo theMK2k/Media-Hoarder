@@ -135,7 +135,7 @@ export default {
         filterQualities: [this.Video_Quality],
       };
 
-      eventBus.refetchFilters(setFilter);
+      eventBus.refetchSpecificFilter(setFilter);
 
       this.$emit("close");
     },

@@ -281,7 +281,7 @@ export default {
 
       eventBus.personDialogConfirm(setFilter);
 
-      eventBus.refetchFilters(setFilter);
+      eventBus.refetchSpecificFilter(setFilter);
 
       this.$emit("close");
     },

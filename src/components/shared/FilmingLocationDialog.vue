@@ -142,7 +142,7 @@ export default {
 
       eventBus.filmingLocationDialogConfirm(setFilter);
 
-      eventBus.refetchFilters(setFilter);
+      eventBus.refetchSpecificFilter(setFilter);
 
       this.$emit("close");
     },

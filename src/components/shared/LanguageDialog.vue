@@ -156,7 +156,7 @@ export default {
         ];
       }
 
-      eventBus.refetchFilters(setFilter);
+      eventBus.refetchSpecificFilter(setFilter);
 
       this.$emit("close");
     },

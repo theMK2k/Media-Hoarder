@@ -148,7 +148,7 @@ export default {
 
       eventBus.companyDialogConfirm(setFilter);
 
-      eventBus.refetchFilters(setFilter);
+      eventBus.refetchSpecificFilter(setFilter);
 
       this.$emit("close");
     },

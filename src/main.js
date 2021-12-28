@@ -58,6 +58,10 @@ export const eventBus = new Vue({
       this.$emit("refetchFilters", setFilter);
     },
 
+    refetchSpecificFilter(setFilter) {
+      this.$emit("refetchSpecificFilter", setFilter);
+    },
+
     initListDialog() {
       this.$emit("initListDialog");
     },

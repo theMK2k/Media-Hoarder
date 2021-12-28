@@ -135,7 +135,7 @@ export default {
         filterVideoEncoders: [this.Video_Encoder],
       };
 
-      eventBus.refetchFilters(setFilter);
+      eventBus.refetchSpecificFilter(setFilter);
 
       this.$emit("close");
     },

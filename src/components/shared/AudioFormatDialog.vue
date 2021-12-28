@@ -135,7 +135,7 @@ export default {
         filterAudioFormats: [this.Audio_Format],
       };
 
-      eventBus.refetchFilters(setFilter);
+      eventBus.refetchSpecificFilter(setFilter);
 
       this.$emit("close");
     },
