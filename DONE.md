@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] Fix: MediaInfo (video): use the highest res if multiple video streams are present (also in MovieManager)
 - [x] more MediaInfo
   - In quick info area:
     - [x] Video Encoder (x264, x265, XviD ...)

@@ -2,8 +2,6 @@
 
 ## v1.0.0
 
-- defect: MediaInfo (video): use the highest res if multiple video streams are present (also in MovieManager)
-
 - in *Dialog click on "filter by this ..." should instantly update the movies then the filters
   - check with filters that add to their list vs. filters already having the full list
   - maybe only explicitly reload the exact filter, then reload movies and implicitly reload all filters
