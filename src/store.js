@@ -2353,7 +2353,7 @@ async function deleteIMDBData($id_Movies) {
     }
   });
 
-  const sqlMoviesIMDBCols = `UPDATE tbl_Movies SET ${colsMovieIMDB} WHERE id_Movies = $id_Movies`;
+  const sqlMoviesIMDBCols = `UPDATE tbl_Movies SET scanErrors = NULL, ${colsMovieIMDB} WHERE id_Movies = $id_Movies`;
   logger.log("[deleteIMDBData] sqlMoviesIMDBCols:", sqlMoviesIMDBCols);
   await db.fireProcedure(sqlMoviesIMDBCols, { $id_Movies });
 

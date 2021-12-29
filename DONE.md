@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] remove scanErrors when unlinking
 - [x] in *Dialog click on "filter by this ..." should only reload the one filter and then the movies
 - [x] Fix: MediaInfo (video): use the highest res if multiple video streams are present (also in MovieManager)
 - [x] more MediaInfo
