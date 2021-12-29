@@ -2,11 +2,6 @@
 
 ## v1.0.0
 
-- i18n: no translation of `<not available>` in the following filters (correct in e.g. "audio formats, video encoders"):
-  - Audio Languages
-  - Subtitle Languages
-  - Release Attributes
-
 - investigate what's up with loadFilterValuesFromStorage in fetchFilters (seldomly used)
   - do we need it in fetchFilterVideoEncoders? or all the others?
 

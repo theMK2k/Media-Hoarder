@@ -600,7 +600,9 @@
                       v-for="audioLanguage in filterAudioLanguages"
                       v-bind:key="audioLanguage.Language"
                       v-bind:label="
-                        audioLanguage.DisplayText +
+                        (audioLanguage.DisplayText === '<not available>'
+                          ? $t('<not available>')
+                          : audioLanguage.DisplayText) +
                         ' (' +
                         audioLanguage.NumMoviesFormatted +
                         ')'
@@ -767,7 +769,9 @@
                       v-for="subtitleLanguage in filterSubtitleLanguages"
                       v-bind:key="subtitleLanguage.Language"
                       v-bind:label="
-                        subtitleLanguage.DisplayText +
+                        (subtitleLanguage.DisplayText === '<not available>'
+                          ? $t('<not available>')
+                          : subtitleLanguage.DisplayText) +
                         ' (' +
                         subtitleLanguage.NumMoviesFormatted +
                         ')'
@@ -956,7 +960,10 @@
                       v-for="filterReleaseAttribute in filterReleaseAttributes"
                       v-bind:key="filterReleaseAttribute.ReleaseAttribute"
                       v-bind:label="
-                        filterReleaseAttribute.ReleaseAttribute +
+                        (filterReleaseAttribute.ReleaseAttribute ===
+                        '<not available>'
+                          ? $t('<not available>')
+                          : filterReleaseAttribute.ReleaseAttribute) +
                         ' (' +
                         filterReleaseAttribute.NumMoviesFormatted +
                         ')'
