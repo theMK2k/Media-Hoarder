@@ -81,12 +81,17 @@ async function fetchRemoteVersionLinks() {
 }
 
 async function getLocalMediaInfoVersion() {
-  const { stdout, stderr } = await execAsync(`mediainfo --version`);
+  try {
+    const { stdout, stderr } = await execAsync(`mediainfo --version`);
 
-  logger.log("[getLocalMediaInfoVersion] stdout:", stdout);
-  logger.log("[getLocalMediaInfoVersion] stderr:", stderr);
+    logger.log("[getLocalMediaInfoVersion] stdout:", stdout);
+    logger.log("[getLocalMediaInfoVersion] stderr:", stderr);
 
-  return null;
+    return null;
+  } catch (err) {
+    // ignore
+    return null;
+  }
 }
 
 (async () => {
