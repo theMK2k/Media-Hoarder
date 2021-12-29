@@ -1,0 +1,86 @@
+/**
+ * MediaInfo watchdog
+ * - only works on Debian 10 (Buster)
+ * - downloads and installs latest mediainfo CLI packs (if newer than already installed ones)
+ */
+
+const nodemailer = require("nodemailer");
+
+const logger = require("./helpers/logger");
+const helpers = require("./helpers/helpers");
+
+logger.setLevel(0);
+
+const baseURL = "https://mediaarea.net";
+
+async function fetchRemoteVersionLinks() {
+  const result = {
+    version: null,
+    mediainfoCLIDownloadLink: null,
+    libmediainfoDownloadLink: null,
+    libzenDownloadLink: null,
+  };
+
+  const response = await helpers.requestAsync({
+    url: "https://mediaarea.net/en/MediaInfo/Download/Debian",
+  });
+  const html = response.body;
+
+  // https://mediaarea.net/download/binary/mediainfo/21.09/mediainfo_21.09-1_amd64.Debian_10.deb
+  // https://mediaarea.net/download/binary/libmediainfo0/21.09/libmediainfo0v5_21.09-1_i386.Debian_10.deb
+  // https://mediaarea.net/download/binary/libzen0/0.4.39/libzen0v5_0.4.39-1_i386.Debian_10.deb
+
+  const rxVersion =
+    /<a href=".*?download\/binary\/mediainfo\/(\d+\.\d+)\/mediainfo_.*?_amd64.Debian_10.deb"/;
+
+  if (!rxVersion.test(html)) {
+    throw new Error("Cannot determine MediaInfo version");
+  }
+
+  result.version = html.match(rxVersion)[1];
+
+  const rxmediainfoCLIDownloadLink =
+    /<a href="(.*?download\/binary\/mediainfo\/\d+\.\d+\/mediainfo_.*?_amd64\.Debian_10\.deb)"/;
+
+  if (!rxmediainfoCLIDownloadLink.test(html)) {
+    throw new Error("Cannot determine MediaInfo CLI download link");
+  }
+
+  result.mediainfoCLIDownloadLink = `${baseURL}${html
+    .match(rxmediainfoCLIDownloadLink)[1]
+    .replace("//", "/")}`;
+
+  const rxlibmediainfoDownloadLink =
+    /<a href="(.*?download\/binary\/libmediainfo0\/\d+\.\d+\/libmediainfo.*?_amd64\.Debian_10\.deb)"/;
+
+  if (!rxlibmediainfoDownloadLink.test(html)) {
+    throw new Error("Cannot determine libmediainfo download link");
+  }
+
+  result.libmediainfoDownloadLink = `${baseURL}${html
+    .match(rxlibmediainfoDownloadLink)[1]
+    .replace("//", "/")}`;
+
+  const rxlibzenDownloadLink =
+    /<a href="(.*?download\/binary\/libzen0\/.*?\/libzen.*?_amd64.Debian_10.deb)"/;
+
+  if (!rxlibzenDownloadLink.test(html)) {
+    throw new Error("Cannot determine libzen download link");
+  }
+
+  result.libzenDownloadLink = `${baseURL}${html
+    .match(rxlibzenDownloadLink)[1]
+    .replace("//", "/")}`;
+
+  return result;
+}
+
+(async () => {
+  try {
+    const downloadLinks = await fetchRemoteVersionLinks();
+
+    logger.log("downloadLinks:", downloadLinks);
+  } catch (err) {
+    logger.error(err);
+  }
+})();

@@ -23,6 +23,7 @@
     "imdb-scraper-watchdog": "babel-node --presets es2015 ./src/media-hoarder-imdb-scraper-watchdog.js",
     "imdb-scraper-watchdog-local": "babel-node --presets es2015 ./src/media-hoarder-imdb-scraper-watchdog.js --useDumps --dumpScrapedHTML",
     "invokebuilder": "vue invoke electron-builder",
+    "mediainfo-watchdog": "babel-node --presets es2015 ./src/media-hoarder-mediainfo-watchdog.js",
     "move-test": "mv dist_electron/*.exe RELEASE/media-hoarder-VERSION-win-x64-setup.exe",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
