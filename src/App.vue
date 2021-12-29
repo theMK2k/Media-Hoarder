@@ -1479,15 +1479,20 @@
                       v-model="$shared.filters.filterIMDBRating"
                       :max="10"
                       :min="0"
+                      :step="0.1"
                       hide-details
                       class="align-center"
                       v-on:change="filtersChanged('filterIMDBRating')"
                     >
                       <template v-slot:prepend>{{
-                        $shared.filters.filterIMDBRating[0]
+                        $shared.filters.filterIMDBRating[0].toLocaleString(
+                          $shared.uiLanguage
+                        )
                       }}</template>
                       <template v-slot:append>{{
-                        $shared.filters.filterIMDBRating[1]
+                        $shared.filters.filterIMDBRating[1].toLocaleString(
+                          $shared.uiLanguage
+                        )
                       }}</template>
                     </v-range-slider>
                     <v-checkbox
@@ -4719,9 +4724,11 @@ export default {
         })`;
       }
 
-      return `(${this.$shared.filters.filterIMDBRating[0]} - ${
-        this.$shared.filters.filterIMDBRating[1]
-      }${this.$shared.filters.filterIMDBRatingNone ? "" : "*"})`;
+      return `(${this.$shared.filters.filterIMDBRating[0].toLocaleString(
+        this.$shared.uiLanguage
+      )} - ${this.$shared.filters.filterIMDBRating[1].toLocaleString(
+        this.$shared.uiLanguage
+      )}${this.$shared.filters.filterIMDBRatingNone ? "" : "*"})`;
     },
 
     filterContentAdvisoryTitle() {
