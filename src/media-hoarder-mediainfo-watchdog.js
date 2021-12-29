@@ -4,10 +4,15 @@
  * - downloads and installs latest mediainfo CLI packs (if newer than already installed ones)
  */
 
+const child_process = require("child_process");
+const util = require("util");
+
 const nodemailer = require("nodemailer");
 
 const logger = require("./helpers/logger");
 const helpers = require("./helpers/helpers");
+
+const execAsync = util.promisify(child_process.exec);
 
 logger.setLevel(0);
 
@@ -75,11 +80,23 @@ async function fetchRemoteVersionLinks() {
   return result;
 }
 
+async function getLocalMediaInfoVersion() {
+  const { stdout, stderr } = await execAsync(`mediainfo --version`);
+
+  logger.log("[getLocalMediaInfoVersion] stdout:", stdout);
+  logger.log("[getLocalMediaInfoVersion] stderr:", stderr);
+
+  return null;
+}
+
 (async () => {
   try {
     const downloadLinks = await fetchRemoteVersionLinks();
 
+    const localVersion = getLocalMediaInfoVersion();
+
     logger.log("downloadLinks:", downloadLinks);
+    logger.log("localVersion:", localVersion);
   } catch (err) {
     logger.error(err);
   }
