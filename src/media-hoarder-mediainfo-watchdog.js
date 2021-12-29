@@ -98,7 +98,7 @@ async function getLocalMediaInfoVersion() {
   try {
     const downloadLinks = await fetchRemoteVersionLinks();
 
-    const localVersion = getLocalMediaInfoVersion();
+    const localVersion = await getLocalMediaInfoVersion();
 
     logger.log("downloadLinks:", downloadLinks);
     logger.log("localVersion:", localVersion);
