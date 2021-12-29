@@ -2,9 +2,6 @@
 
 ## v1.0.0
 
-- investigate what's up with loadFilterValuesFromStorage in fetchFilters (seldomly used)
-  - do we need it in fetchFilterVideoEncoders? or all the others?
-
 - [ ] create a MediaInfo watchdog
 
   - autodownload latest mediainfo
