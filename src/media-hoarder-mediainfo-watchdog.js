@@ -102,7 +102,54 @@ async function getLocalMediaInfoVersion() {
 
     logger.log("downloadLinks:", downloadLinks);
     logger.log("localVersion:", localVersion);
+
+    if (
+      localVersion &&
+      downloadLinks &&
+      downloadLinks.version === localVersion
+    ) {
+      logger.log("Same version as installed MediaInfo CLI - abort.");
+      return process.exit(0);
+    }
+
+    logger.log("Remote version is newer");
+
+    if (localVersion) {
+      // TODO: apt-get remove packs
+      logger.log("TODO: remove old version");
+    }
+
+    // TODO: download packs
+    // TODO: install packs: libzen, libmediainfo, mediainfo
+    if (
+      !(await helpers.downloadFile(
+        downloadLinks.mediainfoCLIDownloadLink,
+        "/tmp/mediainfo.deb",
+        true
+      ))
+    ) {
+      throw new Error("Error while downloading MediaInfo CLI");
+    }
+    if (
+      !(await helpers.downloadFile(
+        downloadLinks.libmediainfoDownloadLink,
+        "/tmp/libmediainfo.deb",
+        true
+      ))
+    ) {
+      throw new Error("Error while downloading libMediaInfo");
+    }
+    if (
+      !(await helpers.downloadFile(
+        downloadLinks.libzenDownloadLink,
+        "/tmp/libzen.deb",
+        true
+      ))
+    ) {
+      throw new Error("Error while downloading libZen");
+    }
   } catch (err) {
     logger.error(err);
+    // TODO: mail the error out
   }
 })();
