@@ -5206,7 +5206,7 @@ async function fetchFilterIMDBPlotKeywords($MediaType, $t) {
 					SELECT COUNT(1) FROM (
             SELECT DISTINCT MPK.id_Movies
             FROM tbl_Movies_IMDB_Plot_Keywords MPK
-            INNER JOIN tbl_Movies MOV ON MPK.id_Movies = MOV.id_Movies
+            INNER JOIN tbl_Movies MOV ON MPK.id_Movies = MOV.id_Movies AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
             INNER JOIN tbl_SourcePaths SP2 ON MOV.id_SourcePaths = SP2.id_SourcePaths AND SP2.MediaType = $MediaType
             LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
             WHERE MPK.id_IMDB_Plot_Keywords IN (SELECT id_IMDB_Plot_Keywords FROM tbl_Filter_IMDB_Plot_Keywords WHERE id_IMDB_Plot_Keywords = FILTERPLOTKEYWORDS.id_IMDB_Plot_Keywords)
@@ -6360,6 +6360,9 @@ async function ensureMovieDeleted() {
   );
   await db.fireProcedure(
     "DELETE FROM tbl_Movies_Release_Attributes WHERE id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies)"
+  );
+  await db.fireProcedure(
+    "DELETE FROM tbl_IMDB_Plot_Keywords WHERE id_IMDB_Plot_Keywords NOT IN (SELECT id_IMDB_Plot_Keywords FROM tbl_Movies_IMDB_Plot_Keywords)"
   );
 }
 

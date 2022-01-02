@@ -622,7 +622,7 @@
   "Warning: the following source paths are currently not available and all entries will be removed! (check Settings)": "Warnung: die folgenden Quellpfade sind aktuell nicht erreichbar - alle darin befindlichen Einträge werden entfernt! (siehe Einstellungen)",
   "OK, I take the risk": "OK, ich kenne das Risiko",
   "Search___ (use '*' to list all)": "Suche... (verwende '*' um alle Einträge abzurufen)",
-  "Sort by number of movies": "Sortiere nach Anzahl Filme",
+  "Sort by number of media": "Sortiere nach Anzahl Medien",
   "seen in {count} of 20M+": "gefunden in {count} von 20Mio+",
   "note: the {label} title would be: _{title}_": "Hinweis: Der {label} Titel ist \"{title}\"",
   "e_g_": "z.B.",

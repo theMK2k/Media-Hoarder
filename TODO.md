@@ -2,6 +2,9 @@
 
 ## v1.0.0
 
+- defect: plot keyword dialog: number of movies does not match (probably due to duplicates in multiple source paths)
+- defect: plot keyword ex. "New Year'S Eve" (a defect from uppercaseEachWord?)
+
 - [ ] create a MediaInfo watchdog
 
   - autodownload latest mediainfo

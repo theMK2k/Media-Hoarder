@@ -16,6 +16,8 @@ const execAsync = util.promisify(child_process.exec);
 
 logger.setLevel(0);
 
+logger.log("new year's eve:", helpers.uppercaseEachWord("new year's eve"));
+
 const baseURL = "https://mediaarea.net";
 
 async function fetchRemoteVersionLinks() {

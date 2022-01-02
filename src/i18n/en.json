@@ -622,7 +622,7 @@
   "Warning: the following source paths are currently not available and all entries will be removed! (check Settings)": "Warning: the following source paths are currently not available and all entries will be removed! (check Settings)",
   "OK, I take the risk": "OK, I take the risk",
   "Search___ (use '*' to list all)": "Search... (use '*' to list all)",
-  "Sort by number of movies": "Sort by number of movies",
+  "Sort by number of media": "Sort by number of media",
   "seen in {count} of 20M+": "seen in {count} of 20M+",
   "note: the {label} title would be: _{title}_": "note: the {label} title would be: \"{title}\"",
   "e_g_": "e.g.",

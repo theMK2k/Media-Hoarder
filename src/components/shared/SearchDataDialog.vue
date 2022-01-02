@@ -30,7 +30,7 @@
       <v-card-text>
         <v-checkbox
           v-model="sortByNumMovies"
-          v-bind:label="$t('Sort by number of movies')"
+          v-bind:label="$t('Sort by number of media')"
           v-on:change="sortItems(items)"
           style="margin: 0px; margin-top: 12px"
           color="mk-dark-grey"

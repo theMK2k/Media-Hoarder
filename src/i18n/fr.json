@@ -623,7 +623,7 @@
   "Warning: the following source paths are currently not available and all entries will be removed! (check Settings)": "Attention: les chemins d'accès sources suivants sont actuellement indisponibles - toute entrée liée va être supprimée! (Vérifier les paramètres)",
   "OK, I take the risk": "Ok, j'ai pris connaissance du risque",
   "Search___ (use '*' to list all)": "Rechercher... (utiliser '*' pour tout inventorier)",
-  "Sort by number of movies": "Trier par nombre de film",
+  "Sort by number of media": "Trier par nombre de médias",
   "seen in {count} of 20M+": "Vu par {count} sur plus de 20 millions",
   "note: the {label} title would be: _{title}_": "Info: Le bandeau de titre {label} est \"{title}\"",
   "e_g_": "ex:",
