@@ -6,24 +6,6 @@ const htmlToText = require("html-to-text");
 const logger = require("./helpers/logger");
 const helpers = require("./helpers/helpers");
 
-function uppercaseEachWord(input) {
-  let isNewBeginning = true;
-  let text = input;
-
-  for (let i = 0; i < text.length; i++) {
-    if (/[\s\-,.:"'!§$%&/()=?*+~#;_]/.test(text[i])) {
-      isNewBeginning = true;
-    } else {
-      if (isNewBeginning) {
-        text = text.substr(0, i) + text[i].toUpperCase() + text.substr(i + 1);
-        isNewBeginning = false;
-      }
-    }
-  }
-
-  return text;
-}
-
 /**
  * scrape IMDB Main Page Data (e.g. https://www.imdb.com/title/tt4154796)
  * @param {Object} movie
@@ -1530,7 +1512,10 @@ async function scrapeIMDBplotKeywords(movie) {
     let match = null;
 
     while ((match = rxPlotKeywords.exec(html))) {
-      const Keyword = uppercaseEachWord(match[1].trim());
+      logger.log("[scrapeIMDBplotKeywords] keyword:", match[1].trim());
+      const Keyword = helpers.uppercaseEachWord(match[1].trim());
+      logger.log("[scrapeIMDBplotKeywords] keyword uppercased:", Keyword);
+
       const relevanceString = match[2].trim();
       let NumVotes = null;
       let NumRelevant = null;

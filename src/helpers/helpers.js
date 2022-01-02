@@ -90,6 +90,7 @@ function uppercaseEachWord(input) {
   for (let i = 0; i < text.length; i++) {
     if (/[\s\-,.:"!§$%&/()=?*+~#;_]/.test(text[i])) {
       isNewBeginning = true;
+      logger.log(`[uppercaseEachWord] new beginning: "${text[i]}"`);
     } else {
       if (isNewBeginning) {
         text = text.substr(0, i) + text[i].toUpperCase() + text.substr(i + 1);

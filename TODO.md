@@ -2,8 +2,6 @@
 
 ## v1.0.0
 
-- [investigate] defect: plot keyword ex. "New Year'S Eve" (a defect from uppercaseEachWord?)
-
 - [ ] create a MediaInfo watchdog
 
   - autodownload latest mediainfo
