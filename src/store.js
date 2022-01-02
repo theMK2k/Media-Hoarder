@@ -5032,7 +5032,7 @@ async function fetchFilterPersons($MediaType, $t) {
                 AND MOV.id_Movies NOT IN (
                   SELECT DISTINCT MC.id_Movies
                   FROM tbl_Movies_IMDB_Credits MC
-                  INNER JOIN tbl_Movies MOV2 ON MC.id_Movies = MOV2.id_Movies
+                  INNER JOIN tbl_Movies MOV2 ON MC.id_Movies = MOV2.id_Movies AND (MOV2.isRemoved IS NULL OR MOV2.isRemoved = 0) AND MOV2.Extra_id_Movies_Owner IS NULL
                   INNER JOIN tbl_SourcePaths SP2 ON MOV2.id_SourcePaths = SP2.id_SourcePaths AND SP2.MediaType = $MediaType
                   WHERE MC.IMDB_Person_ID IN (SELECT IMDB_Person_ID FROM tbl_Filter_Persons)
                 )
@@ -5110,7 +5110,7 @@ async function fetchFilterCompanies($MediaType, $t) {
                 AND MOV.id_Movies NOT IN (
                   SELECT DISTINCT MC.id_Movies
                   FROM tbl_Movies_IMDB_Companies MC
-                  INNER JOIN tbl_Movies MOV2 ON MC.id_Movies = MOV2.id_Movies
+                  INNER JOIN tbl_Movies MOV2 ON MC.id_Movies = MOV2.id_Movies AND (MOV2.isRemoved IS NULL OR MOV2.isRemoved = 0) AND MOV2.Extra_id_Movies_Owner IS NULL
                   INNER JOIN tbl_SourcePaths SP2 ON MOV2.id_SourcePaths = SP2.id_SourcePaths AND SP2.MediaType = $MediaType
                   WHERE MC.Company_Name IN (SELECT Company_Name FROM tbl_Filter_Companies)
                 )
@@ -5189,7 +5189,7 @@ async function fetchFilterIMDBPlotKeywords($MediaType, $t) {
                 AND MOV.id_Movies NOT IN (
                   SELECT DISTINCT MPK.id_Movies
                   FROM tbl_Movies_IMDB_Plot_Keywords MPK
-                  INNER JOIN tbl_Movies MOV2 ON MPK.id_Movies = MOV2.id_Movies
+                  INNER JOIN tbl_Movies MOV2 ON MPK.id_Movies = MOV2.id_Movies AND (MOV2.isRemoved IS NULL OR MOV2.isRemoved = 0) AND MOV2.Extra_id_Movies_Owner IS NULL
                   INNER JOIN tbl_SourcePaths SP2 ON MOV2.id_SourcePaths = SP2.id_SourcePaths AND SP2.MediaType = $MediaType
                   WHERE MPK.id_IMDB_Plot_Keywords IN (SELECT id_IMDB_Plot_Keywords FROM tbl_Filter_IMDB_Plot_Keywords)
                 )
@@ -5271,7 +5271,7 @@ async function fetchFilterIMDBFilmingLocations($MediaType, $t) {
                 AND MOV.id_Movies NOT IN (
                   SELECT DISTINCT MFL.id_Movies
                   FROM tbl_Movies_IMDB_Filming_Locations MFL
-                  INNER JOIN tbl_Movies MOV2 ON MFL.id_Movies = MOV2.id_Movies
+                  INNER JOIN tbl_Movies MOV2 ON MFL.id_Movies = MOV2.id_Movies AND (MOV2.isRemoved IS NULL OR MOV2.isRemoved = 0) AND MOV2.Extra_id_Movies_Owner IS NULL
                   INNER JOIN tbl_SourcePaths SP2 ON MOV2.id_SourcePaths = SP2.id_SourcePaths AND SP2.MediaType = $MediaType
                   WHERE MFL.id_IMDB_Filming_Locations IN (SELECT id_IMDB_Filming_Locations FROM tbl_Filter_IMDB_Filming_Locations)
                 )
@@ -5288,7 +5288,7 @@ async function fetchFilterIMDBFilmingLocations($MediaType, $t) {
 					SELECT COUNT(1) FROM (
             SELECT DISTINCT MFL.id_Movies
             FROM tbl_Movies_IMDB_Filming_Locations MFL
-            INNER JOIN tbl_Movies MOV ON MFL.id_Movies = MOV.id_Movies
+            INNER JOIN tbl_Movies MOV ON MFL.id_Movies = MOV.id_Movies AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
             INNER JOIN tbl_SourcePaths SP2 ON MOV.id_SourcePaths = SP2.id_SourcePaths AND SP2.MediaType = $MediaType
             LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
             WHERE MFL.id_IMDB_Filming_Locations IN (SELECT id_IMDB_Filming_Locations FROM tbl_Filter_IMDB_Filming_Locations WHERE id_IMDB_Filming_Locations = FILTERFILMINGLOCATIONS.id_IMDB_Filming_Locations)
