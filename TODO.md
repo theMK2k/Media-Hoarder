@@ -2,6 +2,8 @@
 
 ## v1.0.0
 
+- no runtime for movie "10103"
+
 - [ ] create a MediaInfo watchdog
 
   - autodownload latest mediainfo
