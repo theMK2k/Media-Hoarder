@@ -4,6 +4,8 @@
 
 - no runtime for movie "10103"
 
+- [ ] MediaInfo supports "--Output=JSON", better use this instead of the default XML Output
+
 - [ ] create a MediaInfo watchdog
 
   - autodownload latest mediainfo
