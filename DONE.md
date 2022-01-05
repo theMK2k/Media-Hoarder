@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] fix: missing metadata on scan (IMDB_runtimeMinutes, IMDB_plotSummaryFull, MI_Duration*)
 - [x] fix: plot keyword casing ex. "New Year'S Eve"
 - [x] fix: number of media in filters for persons, companies, keywords, filming locations
 - [x] higher resolution for IMDB Rating filtering (0.1 steps); correct local decimal character

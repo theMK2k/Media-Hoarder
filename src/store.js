@@ -1759,12 +1759,13 @@ async function applyMediaInfo(movie, onlyNew) {
         const durationAnalysis = analyzeMediaInfoVideoDuration(track);
 
         if (
-          durationAnalysis.durationSeconds &&
-          (!MI.durationSeconds ||
-            MI.durationSeconds < durationAnalysis.durationSeconds)
+          durationAnalysis.$MI_Duration_Seconds &&
+          (!MI.$MI_Duration_Seconds ||
+            MI.$MI_Duration_Seconds < durationAnalysis.$MI_Duration_Seconds)
         ) {
           MI.$MI_Duration = durationAnalysis.$MI_Duration;
-          MI.durationSeconds = durationAnalysis.durationSeconds;
+          MI.$MI_Duration_Seconds = durationAnalysis.$MI_Duration_Seconds;
+          MI.$MI_Duration_Formatted = durationAnalysis.$MI_Duration_Formatted;
         }
 
         const videoResolutionAnalysis = analyzeMediaInfoVideoResolution(track);
@@ -2144,9 +2145,8 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
 
         imdbData.plotSummaryFull = await scrapeIMDBplotSummary(
           movie,
-          imdbData.$IMDB_plotSummary
+          imdbData.mainPageData.$IMDB_plotSummary
         );
-        imdbData = Object.assign(imdbData, imdbData.plotSummaryFull);
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
@@ -2455,6 +2455,10 @@ async function saveIMDBData(movie, imdbData) {
   tbl_Movies_IMDB_Data = Object.assign(
     tbl_Movies_IMDB_Data,
     (imdbData.companiesData || {}).topProductionCompanies || {}
+  );
+  tbl_Movies_IMDB_Data = Object.assign(
+    tbl_Movies_IMDB_Data,
+    imdbData.technicalData || {}
   );
 
   const IMDB_genres = (imdbData.mainPageData || {}).$IMDB_genres || [];
@@ -7845,16 +7849,19 @@ async function verifyIMDBtconst($id_Movies) {
 }
 
 function analyzeMediaInfoVideoDuration(videoTrack) {
+  logger.log("[analyzeMediaInfoVideoDuration] videoTrack:", videoTrack);
+
   const result = {
     $MI_Duration: null,
-    durationSeconds: null,
+    $MI_Duration_Seconds: null,
+    $MI_Duration_Formatted: null,
   };
 
   if (videoTrack.Duration && videoTrack.Duration.length > 0) {
     result.$MI_Duration = videoTrack.Duration[0];
 
     // eslint-disable-next-line no-unused-vars
-    let durationSeconds = 0;
+    result.$MI_Duration_Seconds = 0;
 
     if (
       result.$MI_Duration.includes("h") ||
@@ -7862,28 +7869,22 @@ function analyzeMediaInfoVideoDuration(videoTrack) {
       result.$MI_Duration.includes("s")
     ) {
       if (/(\d*)h/.test(result.$MI_Duration)) {
-        durationSeconds +=
+        result.$MI_Duration_Seconds +=
           60 * 60 * parseInt(result.$MI_Duration.match(/(\d*)h/)[1]);
       }
       if (/(\d*)mn/.test(result.$MI_Duration)) {
-        durationSeconds +=
+        result.$MI_Duration_Seconds +=
           60 * parseInt(result.$MI_Duration.match(/(\d*)mn/)[1]);
       }
       if (/(\d*)s/.test(result.$MI_Duration)) {
-        durationSeconds += parseInt(result.$MI_Duration.match(/(\d*)s/)[1]);
+        result.$MI_Duration_Seconds += parseInt(
+          result.$MI_Duration.match(/(\d*)s/)[1]
+        );
       }
     }
 
     if (/^\d+/.test(result.$MI_Duration) && /\d+$/.test(result.$MI_Duration)) {
-      durationSeconds = parseInt(result.$MI_Duration);
-    }
-
-    if (durationSeconds > 0) {
-      result.$MI_Duration_Seconds = durationSeconds;
-
-      result.$MI_Duration_Formatted = helpers.getTimeString(
-        result.$MI_Duration_Seconds
-      );
+      result.$MI_Duration_Seconds = parseInt(result.$MI_Duration);
     }
   } else if (videoTrack.DURATION && videoTrack.DURATION.length > 0) {
     result.$MI_Duration = videoTrack.DURATION[0];
@@ -7892,19 +7893,17 @@ function analyzeMediaInfoVideoDuration(videoTrack) {
 
     logger.log("[applyMediaInfo] DURATION matches:", matches);
 
-    let durationSeconds = 0;
+    result.$MI_Duration_Seconds = 0;
 
-    durationSeconds += 60 * 60 * +matches[1];
-    durationSeconds += 60 * +matches[2];
-    durationSeconds += +matches[3];
+    result.$MI_Duration_Seconds += 60 * 60 * +matches[1];
+    result.$MI_Duration_Seconds += 60 * +matches[2];
+    result.$MI_Duration_Seconds += +matches[3];
+  }
 
-    if (durationSeconds > 0) {
-      result.$MI_Duration_Seconds = durationSeconds;
-
-      result.$MI_Duration_Formatted = helpers.getTimeString(
-        result.$MI_Duration_Seconds
-      );
-    }
+  if (result.$MI_Duration_Seconds > 0) {
+    result.$MI_Duration_Formatted = helpers.getTimeString(
+      result.$MI_Duration_Seconds
+    );
   }
 
   return result;

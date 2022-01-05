@@ -2,10 +2,6 @@
 
 ## v1.0.0
 
-- no runtime for movie "10103"
-
-- [ ] MediaInfo supports "--Output=JSON", better use this instead of the default XML Output
-
 - [ ] create a MediaInfo watchdog
 
   - autodownload latest mediainfo
@@ -125,6 +121,7 @@
 
 ### Other (later)
 
+- [ ] MediaInfo supports "--Output=JSON", better use this instead of the default XML Output
 - [ ] .iso handling?
 - [ ] IMDB Awards (Oscars etc.) as data and filter criteria
 - [ ] apply shared.\*AppliedContains to the media item once after completely fetching media
