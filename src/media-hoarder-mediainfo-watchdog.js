@@ -2,6 +2,8 @@
  * MediaInfo watchdog
  * - only works on Debian 10 (Buster)
  * - downloads and installs latest mediainfo CLI packs (if newer than already installed ones)
+ * - performs analysis on test data
+ * - checks against expected result
  */
 
 const child_process = require("child_process");
@@ -96,59 +98,95 @@ async function getLocalMediaInfoVersion() {
   }
 }
 
+async function checkAndDownloadMediaInfo() {
+  const downloadLinks = await fetchRemoteVersionLinks();
+
+  const localVersion = await getLocalMediaInfoVersion();
+
+  logger.log("downloadLinks:", downloadLinks);
+  logger.log("localVersion:", localVersion);
+
+  if (localVersion && downloadLinks && downloadLinks.version === localVersion) {
+    logger.log("Same version as installed MediaInfo CLI - abort.");
+    return false;
+  }
+
+  logger.log("Remote version is newer");
+
+  if (localVersion) {
+    // TODO: apt-get remove packs
+    logger.log("TODO: remove old version");
+  }
+
+  // TODO: download packs
+  // TODO: install packs: libzen, libmediainfo, mediainfo
+  if (
+    !(await helpers.downloadFile(
+      downloadLinks.mediainfoCLIDownloadLink,
+      "/tmp/mediainfo.deb",
+      true
+    ))
+  ) {
+    throw new Error("Error while downloading MediaInfo CLI");
+  }
+
+  if (
+    !(await helpers.downloadFile(
+      downloadLinks.libmediainfoDownloadLink,
+      "/tmp/libmediainfo.deb",
+      true
+    ))
+  ) {
+    throw new Error("Error while downloading libMediaInfo");
+  }
+
+  if (
+    !(await helpers.downloadFile(
+      downloadLinks.libzenDownloadLink,
+      "/tmp/libzen.deb",
+      true
+    ))
+  ) {
+    throw new Error("Error while downloading libZen");
+  }
+
+  return true;
+}
+
 (async () => {
   try {
-    const downloadLinks = await fetchRemoteVersionLinks();
+    logger.info("Syntax: media-hoarder-mediainfo-watchdog [options]");
+    logger.info("");
+    logger.info("options:");
+    logger.info(
+      "         --logLevel=<logLevel>                                log level, default: 2"
+    );
+    logger.info(
+      "         --dumpResults                                        dump media info analysis results to .json files"
+    );
+    logger.info(
+      "         --smtpHost=<host address>                            smtp host address, default: null"
+    );
+    logger.info(
+      "         --smtpPort=<port number>                             smtp port, default: null"
+    );
+    logger.info(
+      "         --smtpUser=<username>                                smtp authentication user, default: null"
+    );
+    logger.info(
+      "         --smtpPass=<password>                                smtp authentication password, default: null"
+    );
+    logger.info(
+      "         --smtpReceiver=<receiver mail address>               mail address for receiver of error/warning mails, default: null"
+    );
+    logger.info(
+      "         --smtpSendLevel=<level when mail is to be sent>      SUCCESS: 0, WARNING: 1, ERROR: 2, default: 2"
+    );
 
-    const localVersion = await getLocalMediaInfoVersion();
+    logger.info("");
 
-    logger.log("downloadLinks:", downloadLinks);
-    logger.log("localVersion:", localVersion);
-
-    if (
-      localVersion &&
-      downloadLinks &&
-      downloadLinks.version === localVersion
-    ) {
-      logger.log("Same version as installed MediaInfo CLI - abort.");
-      return process.exit(0);
-    }
-
-    logger.log("Remote version is newer");
-
-    if (localVersion) {
-      // TODO: apt-get remove packs
-      logger.log("TODO: remove old version");
-    }
-
-    // TODO: download packs
-    // TODO: install packs: libzen, libmediainfo, mediainfo
-    if (
-      !(await helpers.downloadFile(
-        downloadLinks.mediainfoCLIDownloadLink,
-        "/tmp/mediainfo.deb",
-        true
-      ))
-    ) {
-      throw new Error("Error while downloading MediaInfo CLI");
-    }
-    if (
-      !(await helpers.downloadFile(
-        downloadLinks.libmediainfoDownloadLink,
-        "/tmp/libmediainfo.deb",
-        true
-      ))
-    ) {
-      throw new Error("Error while downloading libMediaInfo");
-    }
-    if (
-      !(await helpers.downloadFile(
-        downloadLinks.libzenDownloadLink,
-        "/tmp/libzen.deb",
-        true
-      ))
-    ) {
-      throw new Error("Error while downloading libZen");
+    if (await checkAndDownloadMediaInfo()) {
+      process.exit(0);
     }
   } catch (err) {
     logger.error(err);

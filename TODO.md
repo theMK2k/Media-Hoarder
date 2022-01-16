@@ -2,6 +2,9 @@
 
 ## v1.0.0
 
+- [ ] optimize rescan
+  - when the only scanError is "IMDB link verification" then maybe we can do some shortcuts?
+
 - [ ] create a MediaInfo watchdog
 
   - autodownload latest mediainfo
