@@ -758,7 +758,7 @@ Features:
 
 - [x] -> create tbl_IMDB_Languages
 - [x] -> create tbl_IMDB_Regions
-- [x] -> Create tbl_IMDB_Regions_Languages (mapping)
+- [x] -> Create tbl_IMDB\"Regions\"Languages (mapping)
 - [x] -> "your chosen regions provide the following language options, please select the ones you prefer as Primary Title"
 
 - [x] provide whitelist management of title types

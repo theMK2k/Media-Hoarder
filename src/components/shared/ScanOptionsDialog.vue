@@ -58,7 +58,7 @@
             <li>
               <strong>{{
                 $t(
-                  "If a file is already known, don't gather any metadata _except the previous scan had errors_"
+                  "If a file is already known, don't gather any metadata (except the previous scan had errors)"
                 )
               }}</strong>
             </li>

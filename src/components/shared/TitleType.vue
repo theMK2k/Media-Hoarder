@@ -45,7 +45,7 @@
                 style="margin-bottom: 0px"
               >
                 {{
-                  $t("note: the {label} title would be: _{title}_", {
+                  $t("note: the {label} title would be: '{title}'", {
                     label: value.Example_Tertiary_Label,
                     title: value.Example_Tertiary_Title,
                   })

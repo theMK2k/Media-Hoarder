@@ -1053,7 +1053,7 @@
                 >
                   <span class="mk-item-detailcategory-header"
                     >{{
-                      $t("Plot Keywords _Spoilers ahead!_") +
+                      $t("Plot Keywords (Spoilers ahead!)") +
                       (!item.showPlotKeywords ? " »" : "")
                     }}&nbsp;</span
                   >
@@ -2987,7 +2987,7 @@ export default {
         eventBus.showSnackbar(
           "success",
           this.$t(
-            "Release Attribute _{ReleaseAttribute}_ successfully removed from selected movie_",
+            'Release Attribute "{ReleaseAttribute}" successfully removed from selected movie_',
             {
               ReleaseAttribute: this.releaseAttributeDialog.ReleaseAttribute,
             }

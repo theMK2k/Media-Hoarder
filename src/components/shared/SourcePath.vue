@@ -36,7 +36,7 @@
               dense
               v-model="value.checkRemovedFiles"
               color="mk-dark-grey"
-              v-bind:label="$t('remove missing entries on _re-_scan')"
+              v-bind:label="$t('remove missing entries on (re-)scan')"
               style="margin-top: 0px"
               v-on:click.native="toggleCheckRemovedFiles"
             ></v-checkbox>
@@ -90,14 +90,14 @@ export default {
         eventBus.showSnackbar(
           "success",
           this.$t(
-            "OK, during _re-_scan, any missing file in the source path will lead to removal of the entry"
+            "OK, during (re-)scan, any missing file in the source path will lead to removal of the entry"
           )
         );
       } else {
         eventBus.showSnackbar(
           "success",
           this.$t(
-            "OK, during _re-_scan, no entry removal is performed - regardless if the file is available or not"
+            "OK, during (re-)scan, no entry removal is performed - regardless if the file is available or not"
           )
         );
       }

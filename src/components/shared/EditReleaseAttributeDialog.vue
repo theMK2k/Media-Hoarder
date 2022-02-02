@@ -86,7 +86,7 @@ export default {
           return;
         }
         if (!this.displayAs) {
-          eventBus.showSnackbar("error", this.$t("_Display As_ is missing_"));
+          eventBus.showSnackbar("error", this.$t('"Display As" is missing_'));
           return;
         }
       }

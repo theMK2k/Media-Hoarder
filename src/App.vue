@@ -5210,7 +5210,7 @@ export default {
 
           eventBus.showSnackbar(
             "success",
-            `${this.$t("List {name} deleted_", {
+            `${this.$t("List '{name}' deleted_", {
               name: this.deleteDialog.ItemName,
             })}`
           );
@@ -5224,7 +5224,7 @@ export default {
       await store.deleteFilterPerson(person.id_Filter_Persons);
       eventBus.showSnackbar(
         "success",
-        `${this.$t("Person {name} removed_", {
+        `${this.$t("Person '{name}' removed_", {
           name: this.deleteDialog.ItemName,
         })}`
       );
@@ -5244,7 +5244,7 @@ export default {
       );
       eventBus.showSnackbar(
         "success",
-        `${this.$t("Plot Keyword {name} removed_", {
+        `${this.$t("Plot Keyword '{name}' removed_", {
           name: this.deleteDialog.ItemName,
         })}`
       );
@@ -5265,7 +5265,7 @@ export default {
       );
       eventBus.showSnackbar(
         "success",
-        `${this.$t("Filming Location {name} removed_", {
+        `${this.$t("Filming Location '{name}' removed_", {
           name: this.deleteDialog.ItemName,
         })}`
       );
@@ -5284,7 +5284,7 @@ export default {
       await store.deleteFilterCompany(filterCompany.id_Filter_Companies);
       eventBus.showSnackbar(
         "success",
-        `${this.$t("Company {name} removed_", {
+        `${this.$t("Company '{name}' removed_", {
           name: this.deleteDialog.ItemName,
         })}`
       );
@@ -5809,7 +5809,7 @@ export default {
         eventBus.showSnackbar(
           "success",
           `${this.$local_t(
-            "_Re-_scan finished_"
+            "(Re-)scan finished_"
           )} ${rescanAddedMovies} ${this.$local_t(
             "added"
           )}, ${rescanRemovedMovies} ${this.$local_t("removed")}.`

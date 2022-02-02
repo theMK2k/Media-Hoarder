@@ -25,7 +25,7 @@
           <v-card-text class="mk-light-grey">
             {{
               $t(
-                "{appName} needs the path to a media player of your choice for media playback_ We recommend the VLC media player, you can get it at_",
+                "{appName} needs the path to a media player of your choice for media playback_ We recommend the VLC media player, you can get it at:",
                 { appName: $shared.appName }
               )
             }}
@@ -65,7 +65,7 @@
           <v-card-text class="mk-light-grey">
             {{
               $t(
-                "{appName} needs the path to Mediainfo CLI in order to determine duration, video resolution and languages of your media_ You can get Mediainfo CLI at_",
+                "{appName} needs the path to Mediainfo CLI in order to determine duration, video resolution and languages of your media_ You can get Mediainfo CLI at:",
                 { appName: $shared.appName }
               )
             }}
@@ -122,7 +122,7 @@
 
           <v-card-text class="mk-light-grey">{{
             $t(
-              "{appName} provides the IMDB score and number of votes for each medium _where applicable__ By default these are the numbers of all IMDB users_ You can, however, decide if you wish to see those of a certain demographic, e_g_ by gender or age_",
+              "{appName} provides the IMDB score and number of votes for each medium (where applicable)_ By default these are the numbers of all IMDB users_ You can, however, decide if you wish to see those of a certain demographic, e_g_ by gender or age_",
               { appName: $shared.appName }
             )
           }}</v-card-text>
@@ -143,7 +143,7 @@
 
           <v-card-text class="mk-light-grey">{{
             $t(
-              "{appName} logs certain events during runtime_ You can view these logs by pressing the _Open DevTools_ button below_ With the log level you decide which event severity should be logged_",
+              "{appName} logs certain events during runtime_ You can view these logs by pressing the 'Open DevTools' button below_ With the log level you decide which event severity should be logged_",
               { appName: $shared.appName }
             )
           }}</v-card-text>
@@ -265,7 +265,7 @@
           <div style="margin-left: 16px">
             <p>
               {{
-                $t("With actual duplicates, {appName} should also", {
+                $t("With actual duplicates, {appName} should also___", {
                   appName: $shared.appName,
                 })
               }}
@@ -340,7 +340,7 @@
           <div style="margin-left: 16px">
             <p>
               {{
-                $t("With meta duplicates, {appName} should also", {
+                $t("With meta duplicates, {appName} should also___", {
                   appName: $shared.appName,
                 })
               }}
@@ -394,7 +394,7 @@
           <span v-if="$shared.regions.length === 0 && $shared.fallbackRegion"
             >{{
               $t(
-                "You currently don_t have a region set up_ {appName} will fall back to your system_s locale",
+                "You currently don't have a region set up_ {appName} will fall back to your system's locale",
                 { appName: $shared.appName }
               )
             }}: {{ $shared.fallbackRegion.name }}.</span
@@ -403,7 +403,7 @@
             v-if="$shared.regions.length === 0 && !$shared.fallbackRegion"
             >{{
               $t(
-                "You currently don_t have a region set up_ {appName} will fall back to the original title_",
+                "You currently don't have a region set up_ {appName} will fall back to the original title_",
                 { appName: $shared.appName }
               )
             }}</span
@@ -469,10 +469,10 @@
             }}
           </p>
           <p>
-            <strong>{{ $t("Important_") }}</strong>
+            <strong>{{ $t("Important:") }}</strong>
             {{
               $t(
-                "If you want, for example, to see THISLANGUAGE titles, you must also add the THISREGION region in _REGIONS__"
+                `If you want, for example, to see THISLANGUAGE titles, you must also add the THISREGION region in "Regions"_`
               )
             }}
           </p>
@@ -490,14 +490,14 @@
           <span v-if="$shared.fallbackLanguage"
             >{{
               $t(
-                "You currently don_t have a language for the Primary Title set up_ {appName} will fall back to your system_s locale",
+                "You currently don't have a language for the Primary Title set up_ {appName} will fall back to your system's locale",
                 { appName: $shared.appName }
               )
             }}: {{ $shared.fallbackLanguage.DisplayText }}.</span
           >
           <span v-if="!$shared.fallbackLanguage">{{
             $t(
-              "You currently don_t have a language for the Primary Title set up_ {appName} will fall back to the original title_",
+              "You currently don't have a language for the Primary Title set up_ {appName} will fall back to the original title_",
               { appName: $shared.appName }
             )
           }}</span>
@@ -570,14 +570,14 @@
           <span v-if="$shared.fallbackLanguage"
             >{{
               $t(
-                "You currently don_t have a language for Audio and Subtitles set up_ {appName} will fall back to your system_s locale",
+                "You currently don't have a language for Audio and Subtitles set up_ {appName} will fall back to your system's locale",
                 { appName: $shared.appName }
               )
             }}: {{ $shared.fallbackLanguage.DisplayText }}.</span
           >
           <span v-if="!$shared.fallbackLanguage">{{
             $t(
-              "You currently don_t have a language for Audio and Subtitles set up. {appName} will fall back to the original title_",
+              "You currently don't have a language for Audio and Subtitles set up_ {appName} will fall back to the original title_",
               { appName: $shared.appName }
             )
           }}</span>
@@ -631,7 +631,7 @@
           <p>
             {{
               $t(
-                "In _Regions_ you provided the regions to be used for the Primary Title_ However, many titles in IMDB have a special title type_ {appName} skips all special title types by default_ You can add title types here, so that they are actually used instead of being skipped_",
+                'In "Regions" you provided the regions to be used for the Primary Title_ However, many titles in IMDB have a special title type_ {appName} skips all special title types by default_ You can add title types here, so that they are actually used instead of being skipped_',
                 { appName: $shared.appName }
               )
             }}
@@ -750,7 +750,7 @@
       v-bind:title="$t('Edit Description')"
       v-bind:question="
         $t(
-          'Please provide a description for the source path {Path} _{MediaTypeUpper}_',
+          `Please provide a description for the source path {Path} ({MediaTypeUpper})`,
           {
             Path: sourcePathDescriptionDialog.Path,
             MediaTypeUpper: sourcePathDescriptionDialog.MediaTypeUpper,
@@ -769,7 +769,7 @@
       v-bind:title="$t('Remove Source Path')"
       v-bind:question="
         $t(
-          'Do you really want to remove the source path {Path} _{MediaTypeUpper}_ including all associated media_',
+          `Do you really want to remove the source path {Path} ({MediaTypeUpper}) including all associated media_`,
           {
             Path: removeSourcePathDialog.Path,
             MediaTypeUpper: removeSourcePathDialog.MediaTypeUpper,
@@ -793,7 +793,7 @@
       v-bind:show="removeRegionDialog.show"
       v-bind:title="$t('Remove Region')"
       v-bind:question="
-        $t('Do you really want to remove the region {Region}_', {
+        $t('Do you really want to remove the region {Region}?', {
           Region: removeRegionDialog.Region,
         })
       "
@@ -815,7 +815,7 @@
       v-bind:show="removeLanguageDialog.show"
       v-bind:title="$t('Remove Language')"
       v-bind:question="
-        $t('Do you really want to remove the language {Language}_', {
+        $t('Do you really want to remove the language {Language}?', {
           Language: removeLanguageDialog.Language,
         })
       "
@@ -836,7 +836,7 @@
       v-bind:show="removeTitleTypeDialog.show"
       v-bind:title="$t('Remove Title Type')"
       v-bind:question="
-        $t('Do you really want to remove the title type {TitleType}_', {
+        $t('Do you really want to remove the title type {TitleType}?', {
           TitleType: removeTitleTypeDialog.TitleType,
         })
       "
@@ -859,7 +859,7 @@
       v-bind:title="$t('Remove Release Attribute')"
       v-bind:question="
         $t(
-          'Do you really want to remove the release attribute {ReleaseAttribute}_',
+          'Do you really want to remove the release attribute {ReleaseAttribute}?',
           { ReleaseAttribute: removeReleaseAttributeDialog.ReleaseAttribute }
         )
       "
@@ -1115,7 +1115,7 @@ export default {
         : [{ name: this.$t("All Files"), extensions: ["*"] }];
 
       const path = await dialog.showOpenDialog({
-        title: this.$t("Path to your media player _e_g_ VLC_"),
+        title: this.$t("Path to your media player (e_g_ VLC)"),
         properties: ["openFile"],
         filters,
         defaultPath: this.MediaplayerPath || "",
@@ -1141,7 +1141,7 @@ export default {
         : [{ name: this.$t("All Files"), extensions: ["*"] }];
 
       const path = await dialog.showOpenDialog({
-        title: this.$t("Path to mediainfo _get it from mediaarea_net_"),
+        title: this.$t("Path to mediainfo (get it from mediaarea_net)"),
         properties: ["openFile"],
         filters,
         defaultPath: this.MediainfoPath || "",
@@ -1258,7 +1258,7 @@ export default {
       if (!(await helpers.existsAsync(result.textValue))) {
         eventBus.showSnackbar(
           "error",
-          this.$t(`The path _{path}_ cannot be found_`, {
+          this.$t(`The path "{path}" cannot be found_`, {
             path: result.textValue,
           })
         );
@@ -1274,7 +1274,7 @@ export default {
 
       eventBus.showSnackbar(
         "success",
-        this.$t(`Media Player path changed to _{path}__`, {
+        this.$t(`Media Player path changed to "{path}"_`, {
           path: result.textValue,
         })
       );
@@ -1293,7 +1293,7 @@ export default {
       if (!(await helpers.existsAsync(result.textValue))) {
         eventBus.showSnackbar(
           "error",
-          this.$t(`The path _{path}_ cannot be found_`, {
+          this.$t(`The path "{path}" cannot be found_`, {
             path: result.textValue,
           })
         );
@@ -1309,7 +1309,7 @@ export default {
 
       eventBus.showSnackbar(
         "success",
-        this.$t(`MediaInfo CLI path changed to _{path}__`, {
+        this.$t(`MediaInfo CLI path changed to "{path}"_`, {
           path: result.textValue,
         })
       );
@@ -1639,7 +1639,7 @@ export default {
 
       eventBus.showSnackbar(
         "success",
-        this.$t("Title Type _{TitleType}_ added_", {
+        this.$t(`Title Type "{TitleType}" added_`, {
           TitleType: titleType.TitleType,
         })
       );
@@ -1677,7 +1677,7 @@ export default {
 
       eventBus.showSnackbar(
         "success",
-        this.$t("Title Type _{TitleType}_ removed_", {
+        this.$t(`Title Type "{TitleType}" removed_`, {
           TitleType: titleType.TitleType,
         })
       );
