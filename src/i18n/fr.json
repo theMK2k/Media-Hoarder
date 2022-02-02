@@ -38,7 +38,7 @@
   "Plot Keywords": "Mots-Clés",
   "FIND": "RECHERCHER",
   "Delete List": "Supprimer la Liste",
-  "Do you really want to delete the list {name}?": "Voulez-vous vraiment supprimer la liste '{name}'?",
+  "Do you really want to delete the list '{name}'?": "Voulez-vous vraiment supprimer la liste '{name}'?",
   "YES DELETE": "OUI, SUPPRIMER",
   "Find Company": "Rechercher par Société de Production",
   "Find Plot Keyword": "Rechercher par Mot-Clé",

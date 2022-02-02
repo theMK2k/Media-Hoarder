@@ -1144,7 +1144,7 @@
                             list,
                             deleteList,
                             'Delete List',
-                            'Do you really want to delete the list {name}?',
+                            'Do you really want to delete the list '{name}'?',
                             list.Name
                           )
                         "

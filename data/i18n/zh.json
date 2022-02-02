@@ -37,7 +37,7 @@
   "Plot Keywords": "zh: Schlüsselwörter",
   "FIND": "zh: SUCHEN",
   "Delete List": "zh: Liste Löschen",
-  "Do you really want to delete the list {name}?": "zh: Soll die Liste '{name}' wirklich gelöscht werden?",
+  "Do you really want to delete the list '{name}'?": "zh: Soll die Liste '{name}' wirklich gelöscht werden?",
   "YES DELETE": "zh: JA, LÖSCHEN",
   "Find Company": "zh: Firma Suchen",
   "Find Plot Keyword": "zh: Schlüsselwort Suchen",

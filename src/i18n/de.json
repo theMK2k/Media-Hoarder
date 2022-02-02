@@ -37,7 +37,7 @@
   "Plot Keywords": "Schlüsselwörter",
   "FIND": "SUCHEN",
   "Delete List": "Liste Löschen",
-  "Do you really want to delete the list {name}?": "Soll die Liste '{name}' wirklich gelöscht werden?",
+  "Do you really want to delete the list '{name}'?": "Soll die Liste '{name}' wirklich gelöscht werden?",
   "YES DELETE": "JA, LÖSCHEN",
   "Find Company": "Firma Suchen",
   "Find Plot Keyword": "Schlüsselwort Suchen",
