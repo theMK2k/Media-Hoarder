@@ -9,7 +9,7 @@
 const child_process = require("child_process");
 const util = require("util");
 
-const nodemailer = require("nodemailer");
+// const nodemailer = require("nodemailer");
 
 const logger = require("./helpers/logger");
 const helpers = require("./helpers/helpers");
