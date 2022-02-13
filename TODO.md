@@ -2,19 +2,7 @@
 
 ## v1.0.0
 
-- [ ] optimize rescan
-  - when the only scanError is "IMDB link verification" then maybe we can do some shortcuts?
-
-- [ ] create a MediaInfo watchdog
-
-  - autodownload latest mediainfo
-  - check for expected fields (error on fail)
-  - check for new fields (warning on fail)
-
-- [ ] Test mediainfo and VLC in Linux/MacOS (we now use "" in the exec)
-  - [x] Win: OK
-  - [x] Linux: OK
-  - [ ] MacOS: ??
+- nothing
 
 ### Defects
 
@@ -123,6 +111,20 @@
 - page: 56 (God bless America)
 
 ### Other (later)
+
+- [ ] optimize rescan
+  - when the only scanError is "IMDB link verification" then maybe we can do some shortcuts?
+
+- [ ] create a MediaInfo watchdog
+
+  - autodownload latest mediainfo
+  - check for expected fields (error on fail)
+  - check for new fields (warning on fail)
+
+- [ ] Test mediainfo and VLC in Linux/MacOS (we now use "" in the exec)
+  - [x] Win: OK
+  - [x] Linux: OK
+  - [ ] MacOS: ??
 
 - [ ] MediaInfo supports "--Output=JSON", better use this instead of the default XML Output
 - [ ] .iso handling?
