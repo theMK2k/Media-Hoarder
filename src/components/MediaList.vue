@@ -1813,7 +1813,10 @@ export default {
 
           if (this.searchText) {
             const searchTextLower = this.searchText.toLowerCase();
-            isGood = item.SearchSpace.includes(searchTextLower);
+            const searchTextFiltered = /tt\d+/.test(searchTextLower)
+              ? searchTextLower.match(/tt\d+/)[0]
+              : searchTextLower;
+            isGood = item.SearchSpace.includes(searchTextFiltered);
           }
 
           return isGood;
