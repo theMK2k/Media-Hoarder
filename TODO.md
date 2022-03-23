@@ -12,19 +12,15 @@
 
 - nothing
 
-### FR Translation v0.1
-
-- `"Audio Languages": "Langues"`: _is there a possibility to explicitly distinguish between Audio and Subtitle Languages?_
-- `"Find Filming Location": "Rechercher par Société de Production ",`: _incorrect translation_
-- `"Mediainfo CLI Path": "Chemin d'accès à Mediainfo CLI",`: _"ILC" instead of "CLI", really?_ (multiple apply)
-- `"IMDB Rating Demographic": "Evaluations d'IMDB par tranche d'âge",`: _Demographic is not only specified by age (e.g. US/Non-US, Male/Female)_
-- [x] Tu/Toi vs. Vous/Votre: _we are not a banking app, so let's drop the formal "vous" and use informal "tu"_ (multiple apply)
-
-- scrape = ?
-
-(last line: 105)
-
 ## LATER
+
+### In-List File Management
+
+- for individual movies as well as for the whole (filtered) list
+- copy/move entries to
+  - another sourcepath
+  - a user-defined destination
+- delete entries
 
 ### Customizable Quick Info Area
 
