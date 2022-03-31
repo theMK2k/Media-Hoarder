@@ -108,6 +108,7 @@
 
 ### Other (later)
 
+- [ ] take a look at execa
 - [ ] optimize rescan
   - when the only scanError is "IMDB link verification" then maybe we can do some shortcuts?
 
