@@ -52,7 +52,7 @@
     "lodash": "4.17.21",
     "loglevel": "1.7.1",
     "marked": "3.0.4",
-    "minimist": "1.2.5",
+    "minimist": "1.2.6",
     "mkdirp": "1.0.4",
     "moment": "2.29.1",
     "os-locale": "4.0.0",
