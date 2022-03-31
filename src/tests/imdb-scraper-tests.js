@@ -1000,14 +1000,14 @@ async function testIMDBRatingDemographics() {
 
       if (key.includes("$IMDB_rating")) {
         if (
-          scrapeValue < expectedValue - 0.5 ||
-          scrapeValue > expectedValue + 0.5
+          scrapeValue < expectedValue - 1 ||
+          scrapeValue > expectedValue + 1
         ) {
           addSubLogEntry(
             testResult,
             `${key} mismatch
                   got:      ${scrapeValue}
-                  expected: ${expectedValue - 0.5}-${expectedValue + 0.5}`,
+                  expected: ${expectedValue - 1}-${expectedValue + 1}`,
             status.WARNING
           );
         }
