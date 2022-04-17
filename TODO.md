@@ -108,6 +108,7 @@
 
 ### Other (later)
 
+- [ ] have individual lists of "my lists" clickable, show dialog (analog to genres, people, companies etc.) and thus "filter by this list"
 - [ ] take a look at execa
 - [ ] optimize rescan
   - when the only scanError is "IMDB link verification" then maybe we can do some shortcuts?
