@@ -1651,7 +1651,7 @@ async function scrapeIMDBRatingDemographics(movie) {
         const ratingDemographicsMatch = ratingDemographicString.match(rxData);
 
         const strRating = ratingDemographicsMatch[1].trim().replace(",", ".");
-        const demographic = ratingDemographicsMatch[2].trim();
+        const demographic = ratingDemographicsMatch[2].trim().split("&")[0];
         const strNumVotes = ratingDemographicsMatch[3].trim().replace(/,/g, "");
 
         ratingDemographics[`$IMDB_rating_${demographic}`] =
