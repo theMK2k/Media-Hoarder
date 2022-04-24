@@ -57,7 +57,7 @@
     "moment": "2.29.2",
     "os-locale": "4.0.0",
     "request": "2.88.2",
-    "requestretry": "6.0.0",
+    "requestretry": "7.0.0",
     "roboto-fontface": "*",
     "semver": "7.3.5",
     "sqlite3": "5.0.2",
