@@ -95,14 +95,7 @@
                 </v-row>
                 <div v-if="showMovies" class="mk-clickable-white">
                   <div v-for="(movie, index) in movies" v-bind:key="index">
-                    <v-row
-                      style="
-                        margin-top: 8px;
-                        margin-left: 20px;
-                        margin-right: 6px;
-                        margin-bottom: 8px;
-                      "
-                    >
+                    <v-row class="mk-movie-list-row">
                       {{ movie.Name }}
                       {{ movie.Name2 ? " | " + movie.Name2 : "" }}
                       {{ movie.yearDisplay }}

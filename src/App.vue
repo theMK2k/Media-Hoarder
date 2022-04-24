@@ -2552,7 +2552,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("SET RANGE") }}</span>
+                        <span>{{ $t("Set Range") }}</span>
                       </v-tooltip>
                     </v-row>
                     <div v-if="yearsRangeInput.show">
@@ -2991,7 +2991,7 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t("Find Person") }}</span>
+                        <span>{{ $t("Find Filming Location") }}</span>
                       </v-tooltip>
                     </v-row>
                     <v-switch
@@ -5979,6 +5979,13 @@ h1 {
   width: 28px;
   height: 24px;
   display: inline-block;
+}
+
+.mk-movie-list-row {
+  margin-top: 8px;
+  margin-left: 20px;
+  margin-right: 6px;
+  margin-bottom: 0px;
 }
 
 /* ### Vuetify overrides ### */
