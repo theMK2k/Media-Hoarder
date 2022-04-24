@@ -1140,7 +1140,7 @@
                         v-if="list.id_Lists"
                         style="align-items: flex-start; padding-top: 4px"
                         v-on:click="
-                          showDeleteDialog(
+                          showDeleteFilterItemDialog(
                             list,
                             deleteList,
                             'Delete List',
@@ -2189,7 +2189,7 @@
                         style="align-items: flex-start; padding-top: 4px"
                         v-if="person.id_Filter_Persons"
                         v-on:click="
-                          showDeleteDialog(
+                          showDeleteFilterItemDialog(
                             person,
                             deletePerson,
                             'Remove Person',
@@ -2397,7 +2397,7 @@
                         style="align-items: flex-start; padding-top: 4px"
                         v-if="company.id_Filter_Companies"
                         v-on:click="
-                          showDeleteDialog(
+                          showDeleteFilterItemDialog(
                             company,
                             deleteCompany,
                             'Remove Company',
@@ -2813,7 +2813,7 @@
                         style="align-items: flex-start; padding-top: 4px"
                         v-if="plotKeyword.id_Filter_IMDB_Plot_Keywords"
                         v-on:click="
-                          showDeleteDialog(
+                          showDeleteFilterItemDialog(
                             plotKeyword,
                             deleteFilterIMDBPlotKeyword,
                             'Remove Plot Keyword',
@@ -3044,7 +3044,7 @@
                         style="align-items: flex-start; padding-top: 4px"
                         v-if="filmingLocation.id_Filter_IMDB_Filming_Locations"
                         v-on:click="
-                          showDeleteDialog(
+                          showDeleteFilterItemDialog(
                             filmingLocation,
                             deleteFilterIMDBFilmingLocation,
                             'Remove Filming Location',
@@ -3641,19 +3641,21 @@
           v-on:close="versionDialog.show = false"
         ></mk-version-dialog>
 
-        <mk-delete-dialog
-          v-bind:show="deleteDialog.show"
-          v-bind:title="$t(deleteDialog.Title)"
+        <mk-delete-filteritem-dialog
+          v-bind:show="deleteFilterItemDialog.show"
+          v-bind:title="$t(deleteFilterItemDialog.Title)"
           v-bind:question="
-            $t(deleteDialog.Message, { name: deleteDialog.ItemName })
+            $t(deleteFilterItemDialog.Message, {
+              name: deleteFilterItemDialog.ItemName,
+            })
           "
           v-bind:yes="$t('YES DELETE')"
           v-bind:no="$t('No')"
           yesColor="error"
           noColor="secondary"
-          v-on:yes="onDeleteDialogOK"
-          v-on:no="onDeleteDialogCancel"
-        ></mk-delete-dialog>
+          v-on:yes="onDeleteFilterItemDialogOK"
+          v-on:no="onDeleteFilterItemDialogCancel"
+        ></mk-delete-filteritem-dialog>
 
         <mk-search-companies-dialog
           ref="searchCompaniesDialog"
@@ -3812,7 +3814,7 @@ import CheckIMDBScraperDialog from "@/components/shared/CheckIMDBScraperDialog.v
 export default {
   components: {
     draggable,
-    "mk-delete-dialog": Dialog,
+    "mk-delete-filteritem-dialog": Dialog,
     "mk-search-companies-dialog": SearchDataDialog,
     "mk-search-persons-dialog": SearchDataDialog,
     "mk-search-plot-keywords-dialog": SearchDataDialog,
@@ -3865,7 +3867,7 @@ export default {
       details: [],
     },
 
-    deleteDialog: {
+    deleteFilterItemDialog: {
       show: false,
       item: null,
       deleteFunction: null,
@@ -5166,22 +5168,24 @@ export default {
       return `${quality} (${NumMovies})`;
     },
 
-    showDeleteDialog(item, deleteFunction, Title, Message, ItemName) {
-      this.deleteDialog.item = item;
-      this.deleteDialog.deleteFunction = deleteFunction;
-      this.deleteDialog.Title = Title;
-      this.deleteDialog.Message = Message;
-      this.deleteDialog.ItemName = ItemName;
-      this.deleteDialog.show = true;
+    showDeleteFilterItemDialog(item, deleteFunction, Title, Message, ItemName) {
+      this.deleteFilterItemDialog.item = item;
+      this.deleteFilterItemDialog.deleteFunction = deleteFunction;
+      this.deleteFilterItemDialog.Title = Title;
+      this.deleteFilterItemDialog.Message = Message;
+      this.deleteFilterItemDialog.ItemName = ItemName;
+      this.deleteFilterItemDialog.show = true;
     },
 
-    async onDeleteDialogOK() {
-      await this.deleteDialog.deleteFunction(this.deleteDialog.item);
-      this.deleteDialog.show = false;
+    async onDeleteFilterItemDialogOK() {
+      await this.deleteFilterItemDialog.deleteFunction(
+        this.deleteFilterItemDialog.item
+      );
+      this.deleteFilterItemDialog.show = false;
     },
 
-    onDeleteDialogCancel() {
-      this.deleteDialog.show = false;
+    onDeleteFilterItemDialogCancel() {
+      this.deleteFilterItemDialog.show = false;
     },
 
     async deleteList() {
@@ -5192,7 +5196,7 @@ export default {
           await store.db.fireProcedure(
             `DELETE FROM tbl_Lists WHERE id_Lists = $id_Lists`,
             {
-              $id_Lists: this.deleteDialog.item.id_Lists,
+              $id_Lists: this.deleteFilterItemDialog.item.id_Lists,
             }
           );
 
@@ -5211,7 +5215,7 @@ export default {
           eventBus.showSnackbar(
             "success",
             `${this.$t("List '{name}' deleted_", {
-              name: this.deleteDialog.ItemName,
+              name: this.deleteFilterItemDialog.ItemName,
             })}`
           );
         } catch (err) {
@@ -5225,7 +5229,7 @@ export default {
       eventBus.showSnackbar(
         "success",
         `${this.$t("Person '{name}' removed_", {
-          name: this.deleteDialog.ItemName,
+          name: this.deleteFilterItemDialog.ItemName,
         })}`
       );
       this.$shared.filters.filterPersons.splice(
@@ -5245,7 +5249,7 @@ export default {
       eventBus.showSnackbar(
         "success",
         `${this.$t("Plot Keyword '{name}' removed_", {
-          name: this.deleteDialog.ItemName,
+          name: this.deleteFilterItemDialog.ItemName,
         })}`
       );
       this.$shared.filters.filterIMDBPlotKeywords.splice(
@@ -5266,7 +5270,7 @@ export default {
       eventBus.showSnackbar(
         "success",
         `${this.$t("Filming Location '{name}' removed_", {
-          name: this.deleteDialog.ItemName,
+          name: this.deleteFilterItemDialog.ItemName,
         })}`
       );
       this.$shared.filters.filterIMDBFilmingLocations.splice(
@@ -5285,7 +5289,7 @@ export default {
       eventBus.showSnackbar(
         "success",
         `${this.$t("Company '{name}' removed_", {
-          name: this.deleteDialog.ItemName,
+          name: this.deleteFilterItemDialog.ItemName,
         })}`
       );
       this.$shared.filters.filterCompanies.splice(

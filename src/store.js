@@ -3715,6 +3715,7 @@ async function fetchMedia(
       , MOV.isDirectoryBased
       , SP.Path AS SourcePath
       , MOV.IMDB_tconst
+      , SP.id_SourcePaths
 
       ${
         minimumResultSet
@@ -7702,6 +7703,8 @@ async function verifyIMDBtconst($id_Movies) {
 export {
   db,
   doAbortRescan,
+  definedError,
+  existsAsync,
   fetchSourcePaths,
   rescan,
   fetchMedia,

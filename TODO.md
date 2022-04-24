@@ -2,7 +2,7 @@
 
 ## v1.0.0
 
-- nothing
+- [ ] check-versionpinning.sh (should prevent build)
 
 ### Defects
 
@@ -20,7 +20,6 @@
 - copy/move entries to
   - another sourcepath
   - a user-defined destination
-- delete entries
 
 ### Customizable Quick Info Area
 

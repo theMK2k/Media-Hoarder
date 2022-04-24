@@ -980,5 +980,9 @@
   "Filter by this video encoder": "Nach diesem Video Encoder filtern",
   "Audio Formats": "Audio Formate",
   "Audio Format": "Audio Format",
-  "Filter by this audio format": "Nach diesem Audio Format filtern"
+  "Filter by this audio format": "Nach diesem Audio Format filtern",
+  "Delete": "Löschen",
+  "Delete Media": "Medien Löschen",
+  "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete the media?": "Dieser Vorgang löscht '{ItemName}' und dessen Dateien auf Deiner Festplatte. Soll das Medium wirklich gelöscht werden?",
+  "Open Storage Location": "Speicherort Öffnen"
 }

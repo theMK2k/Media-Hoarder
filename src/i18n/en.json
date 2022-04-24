@@ -902,5 +902,10 @@
   "Filter by this video encoder": "Filter by this video encoder",
   "Audio Formats": "Audio Formats",
   "Audio Format": "Audio Format",
-  "Filter by this audio format": "Filter by this audio format"
+  "Filter by this audio format": "Filter by this audio format",
+  "Delete": "Delete",
+  "Delete Media": "Delete Media",
+  "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete the media?": "This will delete '{ItemName}' and all the files associated to it on your hard drive. Do you really want to delete the media?",
+  "Open Storage Location": "Open Storage Location",
+  "'{ItemName}' has been deleted_": "'{ItemName}' has been deleted."
 }

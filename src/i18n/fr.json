@@ -981,5 +981,6 @@
   "Filter by this video encoder": "fr: Nach diesem Video Encoder filtern",
   "Audio Formats": "fr: Audio Formate",
   "Audio Format": "fr: Audio Format",
-  "Filter by this audio format": "fr: Nach diesem Audio Format filtern"
+  "Filter by this audio format": "fr: Nach diesem Audio Format filtern",
+  "'{ItemName}' has been deleted_": "'{ItemName}' wurde gelöscht."
 }

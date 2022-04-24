@@ -268,6 +268,30 @@
                                 </span>
                               </span>
                             </v-tooltip>
+
+                            <v-tooltip bottom>
+                              <template v-slot:activator="{ on }">
+                                <span v-on="on">
+                                  <v-icon
+                                    v-show="item.nameHovered || item.selected"
+                                    class="mk-clickable-red"
+                                    v-on:click.stop="
+                                      onShowDeleteMediaDialog(item)
+                                    "
+                                    style="margin-left: 8px"
+                                    v-bind:disabled="isScanning"
+                                    >mdi-delete</v-icon
+                                  >
+                                </span>
+                              </template>
+                              <span>
+                                {{ $t("Delete") }}
+                                <span v-if="isScanning">
+                                  <br />
+                                  {{ $t("scan already in progress") }}
+                                </span>
+                              </span>
+                            </v-tooltip>
                           </div>
                         </div>
                       </v-list-item-title>
@@ -1347,11 +1371,32 @@
       v-on:ok="onEditMediaItemDialogOK"
     >
     </mk-edit-media-item-dialog>
+
+    <mk-delete-media-dialog
+      v-bind:show="deleteMediaDialog.show"
+      v-bind:title="$t(deleteMediaDialog.Title)"
+      v-bind:question="
+        $t(deleteMediaDialog.Message, { ItemName: deleteMediaDialog.ItemName })
+      "
+      v-bind:yes="$t('YES DELETE')"
+      v-bind:no="$t('No')"
+      v-bind:ok="$t('Open Storage Location')"
+      v-bind:loading="deleteMediaDialog.loading"
+      v-bind:alertText="deleteMediaDialog.alertText"
+      v-bind:alertType="deleteMediaDialog.alertType"
+      yesColor="error"
+      noColor="secondary"
+      v-on:yes="onDeleteMediaDialogYes"
+      v-on:no="onDeleteMediaDialogCancel"
+      v-on:ok="onDeleteMediaDialogOK"
+    ></mk-delete-media-dialog>
   </div>
 </template>
 
 <script>
 const path = require("path");
+
+const fs = require("fs-extra");
 
 import StarRating from "vue-star-rating";
 import * as Humanize from "humanize-plus";
@@ -1378,6 +1423,7 @@ import LinkIMDBDialog from "@/components/shared/LinkIMDBDialog.vue";
 import Pagination from "@/components/shared/Pagination.vue";
 import RatingDemographicsDialog from "@/components/shared/RatingDemographicsDialog";
 import ReleaseAttributeDialog from "@/components/shared/ReleaseAttributeDialog";
+import Dialog from "@/components/shared/Dialog.vue";
 
 const { shell } = require("@electron/remote");
 
@@ -1409,6 +1455,7 @@ export default {
     "mk-rating-demographics-dialog": RatingDemographicsDialog,
     "mk-release-attribute-dialog": ReleaseAttributeDialog,
     "mk-edit-media-item-dialog": EditMediaItemDialog,
+    "mk-delete-media-dialog": Dialog,
   },
 
   data: () => ({
@@ -1546,6 +1593,15 @@ export default {
       show: false,
       ReleaseAttribute: null,
       movie: null,
+    },
+
+    deleteMediaDialog: {
+      show: false,
+      item: null,
+      Title: null,
+      Message: null,
+      ItemName: null,
+      loading: false,
     },
 
     itemsPerPage: 20,
@@ -1906,27 +1962,27 @@ export default {
       })();
     },
 
-    selectItem(movie) {
+    async ensureMovieExtras(movie) {
+      if (!movie.extrasFetched) {
+        const { lists, extras } = await store.getMovieDetails(movie.id_Movies);
+
+        logger.log("[ensureMovieExtras] movie details:", { lists, extras });
+
+        this.$set(movie, "lists", lists);
+        this.$set(movie, "extras", extras);
+        this.$set(movie, "extrasFetched", true);
+      }
+    },
+
+    async selectItem(movie) {
       logger.log("[selectItem] movie:", movie);
-      (async () => {
-        if (movie.selected) {
-          movie.selected = false;
-        } else {
-          if (!movie.extrasFetched) {
-            const { lists, extras } = await store.getMovieDetails(
-              movie.id_Movies
-            );
+      if (movie.selected) {
+        movie.selected = false;
+      } else {
+        await this.ensureMovieExtras(movie);
 
-            logger.log("[selectItem] movie details:", { lists, extras });
-
-            this.$set(movie, "lists", lists);
-            this.$set(movie, "extras", extras);
-            this.$set(movie, "extrasFetched", true);
-          }
-
-          this.$set(movie, "selected", true);
-        }
-      })();
+        this.$set(movie, "selected", true);
+      }
     },
 
     async launch(movie) {
@@ -2978,6 +3034,20 @@ export default {
       this.releaseAttributeDialog.show = true;
     },
 
+    onShowDeleteMediaDialog(item) {
+      logger.log("[onShowDeleteMediaDialog] item:", item);
+
+      this.deleteMediaDialog.item = item;
+      this.deleteMediaDialog.Title = "Delete Media";
+      this.deleteMediaDialog.Message =
+        "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete the media?";
+      this.deleteMediaDialog.ItemName = item.Name;
+      this.deleteMediaDialog.alertType = null;
+      this.deleteMediaDialog.alertText = null;
+
+      this.deleteMediaDialog.show = true;
+    },
+
     async onReleaseAttributesDialogDelete() {
       try {
         await store.removeReleaseAttributeFromMovie(
@@ -3028,6 +3098,141 @@ export default {
     async clearScanErrors(item) {
       await store.updateMediaRecordField(item.id_Movies, "scanErrors", null);
       item.scanErrors = null;
+    },
+
+    async checkPathExistence(fullPath, dontThrowError) {
+      logger.log("[checkPathExistence] fullPath:", fullPath);
+      if (!(await store.existsAsync(fullPath))) {
+        logger.log("[checkPathExistence] NOT FOUND");
+        if (!dontThrowError) {
+          logger.log("[checkPathExistence] throwing error");
+          throw new Error(
+            this.$t('The path "{path}" cannot be found_', {
+              path: fullPath,
+            })
+          );
+        } else {
+          logger.log("[checkPathExistence] not throwing error");
+        }
+        return false;
+      }
+
+      return true;
+    },
+
+    async onDeleteMediaDialogYes() {
+      // TODO: try to delete files/directory according to item.isDirectoryBased
+      this.deleteMediaDialog.loading = true;
+
+      this.ensureMovieExtras(this.deleteMediaDialog.item);
+
+      logger.log(
+        "[onDeleteMediaDialogYes] item after ensureMovieExtras:",
+        this.deleteMediaDialog.item
+      );
+
+      try {
+        // based on SourcePath's checkRemovedFiles we either ignore non-existant files/dirs or we abort with error
+        const checkRemovedFiles = await store.db.fireProcedureReturnScalar(
+          `SELECT checkRemovedFiles FROM tbl_SourcePaths WHERE id_SourcePaths = $id_SourcePaths`,
+          { $id_SourcePaths: this.deleteMediaDialog.item.id_SourcePaths }
+        );
+        logger.log(
+          "[onDeleteMediaDialogYes] checkRemovedFiles:",
+          checkRemovedFiles
+        );
+
+        // check SourcePath existence if checkRemovedFiles is falsy; abort with error if it does not exist
+        await this.checkPathExistence(
+          this.deleteMediaDialog.item.SourcePath,
+          checkRemovedFiles
+        );
+
+        // delete extras
+        for (const extra of this.deleteMediaDialog.item.extras || []) {
+          if (
+            await this.checkPathExistence(extra.fullPath, checkRemovedFiles)
+          ) {
+            logger.log(
+              "[onDeleteMediaDialogYes] deleting extra file:",
+              extra.fullPath
+            );
+            await fs.rm(extra.fullPath);
+          }
+        }
+
+        if (this.deleteMediaDialog.item.isDirectoryBased) {
+          if (
+            await this.checkPathExistence(
+              this.deleteMediaDialog.item.fullDirectory,
+              checkRemovedFiles
+            )
+          ) {
+            logger.log(
+              "[onDeleteMediaDialogYes] deleting directory:",
+              this.deleteMediaDialog.item.fullDirectory
+            );
+            await fs.rm(this.deleteMediaDialog.item.fullDirectory, {
+              recursive: true,
+              force: true,
+            });
+          }
+        } else {
+          if (
+            await this.checkPathExistence(
+              this.deleteMediaDialog.item.fullPath,
+              checkRemovedFiles
+            )
+          ) {
+            logger.log(
+              "[onDeleteMediaDialogYes] deleting file:",
+              this.deleteMediaDialog.item.fullDirectory
+            );
+            await fs.rm(this.deleteMediaDialog.item.fullPath);
+          }
+        }
+
+        // remove media entries from DB (use isRemoved?)
+        for (const extra of this.deleteMediaDialog.item.extras || []) {
+          await store.db.fireProcedure(
+            `UPDATE tbl_Movies SET isRemoved = 1 WHERE id_Movies = $id_Movies`,
+            { $id_Movies: extra.id_Movies }
+          );
+        }
+        await store.db.fireProcedure(
+          `UPDATE tbl_Movies SET isRemoved = 1 WHERE id_Movies = $id_Movies`,
+          { $id_Movies: this.deleteMediaDialog.item.id_Movies }
+        );
+
+        eventBus.showSnackbar(
+          "success",
+          this.$t("'{ItemName}' has been deleted_", {
+            ItemName: this.deleteMediaDialog.item.Name,
+          })
+        );
+
+        eventBus.refetchMedia();
+
+        this.deleteMediaDialog.show = false;
+      } catch (err) {
+        this.deleteMediaDialog.alertType = "error";
+        this.deleteMediaDialog.alertText = err.message;
+      } finally {
+        this.deleteMediaDialog.loading = false;
+      }
+    },
+
+    async onDeleteMediaDialogOK() {
+      // open storage location based on item.isDirectoryBased
+      if (this.deleteMediaDialog.item.isDirectoryBased) {
+        shell.showItemInFolder(this.deleteMediaDialog.item.fullDirectory);
+      } else {
+        shell.showItemInFolder(this.deleteMediaDialog.item.fullPath);
+      }
+    },
+
+    async onDeleteMediaDialogCancel() {
+      this.deleteMediaDialog.show = false;
     },
   },
 

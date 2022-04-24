@@ -21,6 +21,14 @@
           v-bind:label="textValueCaption"
           v-model="textValueLocal"
         ></v-text-field>
+
+        <v-alert
+          v-if="alertText"
+          v-bind:type="alertType"
+          style="margin-top: 16px"
+        >
+          {{ alertText }}
+        </v-alert>
       </v-card-text>
 
       <v-card-actions>
@@ -46,12 +54,14 @@
           class="xs-fullwidth"
           v-if="cancel"
           v-bind:color="cancelColor"
+          v-bind:loading="loading"
           v-on:click.native="onButtonClick('cancel')"
           >{{ cancel }}</v-btn
         >
         <v-btn
           class="xs-fullwidth"
           v-if="no"
+          v-bind:loading="loading"
           v-bind:color="noColor"
           v-on:click.native="onButtonClick('no')"
           >{{ no }}</v-btn
@@ -63,6 +73,7 @@
             enterTextValue && !textValueEmptyAllowed && !textValueLocal
           "
           v-bind:color="yesColor ? yesColor : 'primary'"
+          v-bind:loading="loading"
           v-on:click.native="onButtonClick('yes')"
           >{{ yes }}</v-btn
         >
@@ -73,6 +84,7 @@
             enterTextValue && !textValueEmptyAllowed && !textValueLocal
           "
           v-bind:color="okColor ? okColor : 'primary'"
+          v-bind:loading="loading"
           v-on:click.native="onButtonClick('ok')"
           >{{ ok }}</v-btn
         >
@@ -106,6 +118,9 @@ export default {
     "enterTextValue",
     "textValueCaption",
     "textValueEmptyAllowed",
+    "loading",
+    "alertText",
+    "alertType",
   ],
 
   data() {

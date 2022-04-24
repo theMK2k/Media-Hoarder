@@ -8,8 +8,8 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] delete media from main list
 - [x] filter imdb tconst in search, so that a complete imdb.com url leads to search results
-
 - [x] fix: missing metadata on scan (IMDB_runtimeMinutes, IMDB_plotSummaryFull, MI_Duration*)
 - [x] fix: plot keyword casing ex. "New Year'S Eve"
 - [x] fix: number of media in filters for persons, companies, keywords, filming locations
