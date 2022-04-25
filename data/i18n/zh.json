@@ -917,7 +917,7 @@
   "(Re-)scan finished_": "zh: Einlesen abgeschlossen.",
   "added": "zh: hinzugefügt",
   "removed": "zh: entfernt",
-  "SET RANGE": "zh: BEREICH WÄHLEN",
+  "Set Range": "zh: Bereich Wählen",
   "Toggle Fullscreen (you can also use F11 on your keyboard)": "zh: Vollbild Umschalten (funktioniert auch mit F11)",
   "movie": "zh: Film",
   "movies": "zh: Filme",
@@ -980,5 +980,10 @@
   "Filter by this video encoder": "zh: Nach diesem Video Encoder filtern",
   "Audio Formats": "zh: Audio Formate",
   "Audio Format": "zh: Audio Format",
-  "Filter by this audio format": "zh: Nach diesem Audio Format filtern"
+  "Filter by this audio format": "zh: Nach diesem Audio Format filtern",
+  "Delete": "zh: Löschen",
+  "Delete Media": "zh: Medien Löschen",
+  "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete the media?": "zh: Dieser Vorgang löscht '{ItemName}' und dessen Dateien auf Deiner Festplatte. Soll das Medium wirklich gelöscht werden?",
+  "Open Storage Location": "zh: Speicherort Öffnen",
+  "'{ItemName}' has been deleted_": "zh: '{ItemName}' wurde gelöscht."
 }

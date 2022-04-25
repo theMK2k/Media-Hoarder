@@ -984,5 +984,6 @@
   "Delete": "Löschen",
   "Delete Media": "Medien Löschen",
   "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete the media?": "Dieser Vorgang löscht '{ItemName}' und dessen Dateien auf Deiner Festplatte. Soll das Medium wirklich gelöscht werden?",
-  "Open Storage Location": "Speicherort Öffnen"
+  "Open Storage Location": "Speicherort Öffnen",
+  "'{ItemName}' has been deleted_": "'{ItemName}' wurde gelöscht."
 }
