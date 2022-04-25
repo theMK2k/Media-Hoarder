@@ -2,7 +2,7 @@
 
 ## v1.0.0
 
-- [ ] check-versionpinning.sh (should prevent build)
+- nothing
 
 ### Defects
 

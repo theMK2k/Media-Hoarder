@@ -8,7 +8,10 @@
   >
     <v-card>
       <v-card-title>
-        <v-row class="headline" style="width: 100%; font-size: 1.17em">
+        <v-row
+          class="headline"
+          style="width: 100%; font-size: 1.17em; margin-left: 0px"
+        >
           <div
             class="headline mk-clickable"
             v-on:click="showQuote = !showQuote"
@@ -24,7 +27,12 @@
         <v-row
           v-if="showQuote"
           class="mk-clickable-dark-grey"
-          style="line-height: 1.5"
+          style="
+            line-height: 1.5;
+            margin-left: 0px;
+            margin-bottom: 0px;
+            word-break: initial;
+          "
           v-on:click="showQuote = false"
         >
           <i>{{ quote }}</i>
@@ -137,7 +145,8 @@
 <script>
 // import Vue from "vue";
 // import router from "@/router"; // workaround in order to access router.app.$t
-import * as marked from "marked";
+// import * as marked from "marked";
+import { marked } from "marked";
 
 const logger = require("../../helpers/logger");
 const semver = require("semver");
@@ -202,6 +211,7 @@ export default {
             "[updateVersionInfo] loadLocalHistory localVersionInfoMD:",
             localVersionInfoMD
           );
+
           this.versionInfo = marked(localVersionInfoMD);
         } else {
           logger.log(
@@ -209,7 +219,7 @@ export default {
           );
         }
       } catch (e) {
-        logger.log(e);
+        logger.error(e);
       }
 
       if (!this.versionInfo) {
@@ -229,9 +239,9 @@ export default {
             remoteVersionInfoText
           );
 
-          this.versionInfo = remoteVersionInfo;
+          this.versionInfo = marked(remoteVersionInfo);
         } catch (e) {
-          logger.log(e);
+          logger.error(e);
         }
       }
 
