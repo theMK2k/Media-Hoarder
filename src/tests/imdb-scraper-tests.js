@@ -62,7 +62,7 @@ async function testIMDBmainPageData() {
   try {
     const expected = {
       $IMDB_releaseType: "movie",
-      $IMDB_genres: ["action", "adventure", "drama", "sci-fi"],
+      $IMDB_genres: ["action", "adventure", "drama"],
       $IMDB_rating: 8.4,
       $IMDB_numVotes: 714190,
       $IMDB_metacriticScore: 78,
