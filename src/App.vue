@@ -5981,11 +5981,15 @@ h1 {
   display: inline-block;
 }
 
-.mk-movie-list-row {
+.mk-compact-movie-list-row {
   margin-top: 8px;
   margin-left: 20px;
   margin-right: 6px;
   margin-bottom: 0px;
+}
+
+.mk-compact-movie-list-title {
+  margin: 8px 6px 8px 0px;
 }
 
 /* ### Vuetify overrides ### */

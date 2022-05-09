@@ -56,8 +56,8 @@
             class="align-self-start"
             style="padding-top: 6px; padding-bottom: 6px"
           >
-            <v-col style="padding: 0px !important" sm="12">
-              <v-row style="margin: 0px 6px 8px 4px">
+            <v-col style="padding: 0px 0px 0px 4px !important" sm="12">
+              <v-row style="margin: 0px 6px 8px 0px">
                 <div
                   v-if="!showLongBio"
                   style="font-size: 0.875rem; font-weight: normal"
@@ -83,8 +83,7 @@
               <div v-on:click.stop="toggleShowMovies()">
                 <v-row
                   v-if="numMovies !== null"
-                  class="mk-clickable"
-                  style="margin: 8px 6px 8px 4px"
+                  class="mk-clickable mk-compact-movie-list-title"
                 >
                   {{
                     numMovies +
@@ -95,7 +94,7 @@
                 </v-row>
                 <div v-if="showMovies" class="mk-clickable-white">
                   <div v-for="(movie, index) in movies" v-bind:key="index">
-                    <v-row class="mk-movie-list-row">
+                    <v-row class="mk-compact-movie-list-row">
                       {{ movie.Name }}
                       {{ movie.Name2 ? " | " + movie.Name2 : "" }}
                       {{ movie.yearDisplay }}

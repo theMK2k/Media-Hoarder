@@ -19,29 +19,38 @@
       </v-card-title>
 
       <v-card-text>
-        <div v-on:click.stop="toggleShowMovies()">
-          <v-row
-            v-if="numMovies !== null"
-            class="mk-clickable"
-            style="margin: 8px 6px 8px 4px"
+        <v-list-item
+          three-line
+          style="padding-left: 0px; align-items: flex-start"
+        >
+          <v-list-item-content
+            class="align-self-start"
+            style="padding-top: 6px; padding-bottom: 6px"
           >
-            {{
-              numMovies +
-              " " +
-              $t(numMovies === 1 ? "movie" : "movies") +
-              (!showMovies ? " »" : "")
-            }}
-          </v-row>
-          <div v-if="showMovies" class="mk-clickable-white">
-            <div v-for="(movie, index) in movies" v-bind:key="index">
-              <v-row class="mk-movie-list-row">
-                {{ movie.Name }}
-                {{ movie.Name2 ? " | " + movie.Name2 : "" }}
-                {{ movie.yearDisplay }}
+            <div v-on:click.stop="toggleShowMovies()">
+              <v-row
+                v-if="numMovies !== null"
+                class="mk-clickable mk-compact-movie-list-title"
+              >
+                {{
+                  numMovies +
+                  " " +
+                  $t(numMovies === 1 ? "movie" : "movies") +
+                  (!showMovies ? " »" : "")
+                }}
               </v-row>
+              <div v-if="showMovies" class="mk-clickable-white">
+                <div v-for="(movie, index) in movies" v-bind:key="index">
+                  <v-row class="mk-compact-movie-list-row">
+                    {{ movie.Name }}
+                    {{ movie.Name2 ? " | " + movie.Name2 : "" }}
+                    {{ movie.yearDisplay }}
+                  </v-row>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </v-list-item-content>
+        </v-list-item>
       </v-card-text>
 
       <v-card-actions>
