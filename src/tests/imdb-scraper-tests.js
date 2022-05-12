@@ -62,7 +62,7 @@ async function testIMDBmainPageData() {
   try {
     const expected = {
       $IMDB_releaseType: "movie",
-      $IMDB_genres: ["action", "adventure", "drama"],
+      $IMDB_genres: ["action", "adventure", "drama", "sci-fi"],
       $IMDB_rating: 8.4,
       $IMDB_numVotes: 714190,
       $IMDB_metacriticScore: 78,
@@ -95,7 +95,31 @@ async function testIMDBmainPageData() {
       testResult,
       "$IMDB_releaseType"
     );
-    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_genres");
+
+    // Genres: at least 3 of the 4 expected genres should match
+    if (!scrapeResult.$IMDB_genres) {
+      addSubLogEntry(testResult, "$IMDB_genres missing", status.ERROR);
+    } else {
+      let counter = 0;
+      expected.$IMDB_genres.forEach((expectedGenre) => {
+        if (
+          scrapeResult.$IMDB_genres.find((genre) => expectedGenre === genre)
+        ) {
+          counter++;
+        }
+      });
+
+      if (counter < 3) {
+        addSubLogEntry(
+          testResult,
+          `$IMDB_genres mismatch too big
+    got:      ${JSON.stringify(scrapeResult.$IMDB_genres)}
+    expected: ${JSON.stringify(expected.$IMDB_genres)}
+    `,
+          status.WARNING
+        );
+      }
+    }
 
     if (!scrapeResult.$IMDB_rating) {
       addSubLogEntry(testResult, "$IMDB_rating missing", status.ERROR);
