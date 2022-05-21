@@ -23,8 +23,8 @@
     - Profanity
     - Alcohol, Drugs & Smoking
     - Frightening & Intense Scenes
-  - Individual Persons (e.g. Directors, Actors etc.)
-  - Individual Companies (e.g. Production, Visual Effects etc.)
+  - People (e.g. Directors, Actors etc.)
+  - Companies (e.g. Production, Visual Effects etc.)
   - Year of Release
 - Sort by
   - Name
