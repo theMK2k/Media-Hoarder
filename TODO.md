@@ -107,6 +107,10 @@
 
 ### Other (later)
 
+- [ ] investigate Linux "stores" (see: https://www.electron.build/configuration/linux.html)
+  - [ ] Linux Mint
+  - [ ] Flatpak <https://docs.flatpak.org/en/latest/electron.html>
+  - [ ] Snap <https://snapcraft.io/docs/electron-apps>
 - [ ] investigate scroll-snap <https://markodenic.com/css-tips/>
 - [ ] have individual lists of "my lists" clickable, show dialog (analog to genres, people, companies etc.) and thus "filter by this list"
 - [ ] optimize rescan

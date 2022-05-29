@@ -56,7 +56,7 @@ npm run electron:build-mac
 
 ## Create sha256 checksum files
 
-- [x] create sha256 checksum files
+- [ ] create sha256 checksum files
 
 ## Create Release on github
 
