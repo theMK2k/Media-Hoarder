@@ -1115,7 +1115,7 @@ async function addMovie(movieSourcePath, pathItem) {
     , $RelativeDirectory
     , $Filename
     , $Size
-    , $created_at
+    , $file_created_at
     , DATETIME('now')
     , 1
     , $DIRECTORYBASED
@@ -1128,7 +1128,7 @@ async function addMovie(movieSourcePath, pathItem) {
     $RelativeDirectory: pathItem.relativeDirectory,
     $Filename: pathItem.Name,
     $Size,
-    $file_created_at: pathItem.$file_created_at,
+    $file_created_at: pathItem.file_created_at,
     $DIRECTORYBASED: movieType === enmMovieTypes.DIRECTORYBASED,
   };
 

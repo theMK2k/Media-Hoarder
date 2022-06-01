@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] fix: "file created at" not always with value
 - [x] check-package.json.sh (should prevent build)
 - [x] delete media from main list
 - [x] filter imdb tconst in search, so that a complete imdb.com url leads to search results
