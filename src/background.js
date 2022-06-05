@@ -124,6 +124,12 @@ function createWindow() {
   win.on("closed", () => {
     win = null;
   });
+
+  // target="_blank" external links should be opened with the browser and not the app itself (see also VersionDialog.created())
+  win.webContents.on("new-window", function (e, url) {
+    e.preventDefault();
+    require("electron").shell.openExternal(url);
+  });
 }
 
 // allows us to use local files outside "public" folder as web ressource

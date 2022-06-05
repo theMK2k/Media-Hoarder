@@ -77,10 +77,10 @@
                 })
               }}
               <a
-                v-on:click.stop="
-                  openLink('https://github.com/theMK2k/Media-Hoarder/releases')
-                "
-                >https://github.com/theMK2k/Media-Hoarder/releases</a
+                href="https://media.hoarder.software/downloads"
+                target="_blank"
+                rel="noreferrer noopener nofollow"
+                >https://media.hoarder.software/downloads</a
               >
             </span>
             <span v-if="isUpToDate">{{ $t("you are up to date") }}</span>
@@ -91,7 +91,10 @@
 
           <div class="mk-light-grey">
             {{ $t("Visit") }}
-            <a v-on:click.stop="openLink('https://media.hoarder.software')"
+            <a
+              href="https://media.hoarder.software"
+              target="_blank"
+              rel="noreferrer noopener nofollow"
               >https://media.hoarder.software</a
             >
             {{ $t("for a better features overview_") }}
@@ -150,7 +153,6 @@ import { marked } from "marked";
 
 const logger = require("../../helpers/logger");
 const semver = require("semver");
-const { shell } = require("@electron/remote");
 
 import * as store from "@/store";
 
@@ -186,10 +188,6 @@ export default {
   },
 
   methods: {
-    openLink(link) {
-      shell.openExternal(link);
-    },
-
     async updateVersionInfo(infoPosition) {
       logger.log("[updateVersionInfo] START");
 
@@ -213,6 +211,7 @@ export default {
           );
 
           this.versionInfo = marked(localVersionInfoMD);
+          logger.log("[updateVersionInfo] this.versionInfo:", this.versionInfo);
         } else {
           logger.log(
             "[updateVersionInfo] loadLocalHistory NO localVersionInfo found!"
@@ -294,7 +293,27 @@ export default {
   },
 
   // ### Lifecycle Hooks ###
-  created() {},
+  created() {
+    // add target="_blank" to external links so that they are opened with the browser and not the app itself (see also background.js Ctrl+F "win.webContents")
+    const renderer = new marked.Renderer();
+    const linkRenderer = renderer.link;
+    renderer.link = (href, title, text) => {
+      const localLink = href.startsWith(
+        `${location.protocol}//${location.hostname}`
+      );
+      const html = linkRenderer.call(renderer, href, title, text);
+      return localLink
+        ? html
+        : html.replace(
+            /^<a /,
+            `<a target="_blank" rel="noreferrer noopener nofollow" `
+          );
+    };
+
+    marked.setOptions({
+      renderer: renderer,
+    });
+  },
 };
 </script>
 

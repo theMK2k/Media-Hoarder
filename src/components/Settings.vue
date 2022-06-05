@@ -29,7 +29,10 @@
                 { appName: $shared.appName }
               )
             }}
-            <a v-on:click="openURL('https://www.videolan.org/vlc/index.html')"
+            <a
+              href="https://www.videolan.org/vlc/index.html"
+              target="_blank"
+              rel="noreferrer noopener nofollow"
               >https://www.videolan.org/vlc/index.html</a
             >
           </v-card-text>
@@ -69,7 +72,10 @@
                 { appName: $shared.appName }
               )
             }}
-            <a v-on:click="openURL('https://mediaarea.net/en/MediaInfo')"
+            <a
+              href="https://mediaarea.net/en/MediaInfo"
+              target="_blank"
+              rel="noreferrer noopener nofollow"
               >https://mediaarea.net/en/MediaInfo</a
             >
           </v-card-text>
@@ -898,7 +904,7 @@
 </template>
 
 <script>
-const { dialog, BrowserWindow, shell } = require("@electron/remote");
+const { dialog, BrowserWindow } = require("@electron/remote");
 import * as _ from "lodash";
 import draggable from "vuedraggable";
 
@@ -1102,10 +1108,6 @@ export default {
   },
 
   methods: {
-    openURL(url) {
-      shell.openExternal(url);
-    },
-
     async browseMediaplayerPath() {
       const filters = helpers.isWindows
         ? [
