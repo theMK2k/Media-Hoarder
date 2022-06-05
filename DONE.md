@@ -8,6 +8,7 @@
 
 ### Road to Release (Win/Linux/Mac)
 
+- [x] make markdown links in history entries clickable
 - [x] fix: "file created at" not always with value
 - [x] check-package.json.sh (should prevent build)
 - [x] delete media from main list

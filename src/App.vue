@@ -5846,6 +5846,10 @@ h1 {
   margin-bottom: 16px;
 }
 
+a {
+  text-decoration: none;
+}
+
 .mk-light-grey {
   color: lightgrey !important;
 }
