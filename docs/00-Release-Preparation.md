@@ -4,8 +4,11 @@ This document describes the steps necessary to get a new release done.
 
 ## Precondition
 
+- [x] we are on release branch `release-x.y.z`
 - [x] Increase Version Number in [../package.json](../package.json)
 - [x] Copy contents of [../DONE.md](../DONE.md) into `public/history/version-x.y.z.md` and clean up (keep it tidy)
+- [x] Update history.json (create new entry on top of the others in the array)
+- [x] Test using `npm start` - it should show the new version incl. history
 - [x] git push
 
 ## Build Packs
@@ -16,9 +19,9 @@ This document describes the steps necessary to get a new release done.
 
 ```bash
 git pull
+git checkout release-x.y.z
 npm i
-npm run electron:build-win-setup
-npm run electron:build-win-portable
+./build-win.sh
 ```
 
 find properly named `*-portable.zip` and `*-setup.exe` in `RELEASE` directory
@@ -29,12 +32,12 @@ find properly named `*-portable.zip` and `*-setup.exe` in `RELEASE` directory
 
 ```bash
 git pull
+git checkout release-x.y.z
 npm i
-npm run electron:build-linux-setup
-npm run electron:build-linux-portable
+./build-linux.sh
 ```
 
-- find properly named `*.deb`, `*.AppImage` and `*-portable.zip` in `RELEASE` directory
+- find properly named `*.deb`, `*.rpm`, `*.snap`, `*.AppImage` and `*-portable.zip` in `RELEASE` directory
 
 ### Mac Build
 
@@ -43,9 +46,10 @@ npm run electron:build-linux-portable
 ```bash
 export APPLE_ID=%APPLE_ID%
 export APPLE_ID_PASSWORD=%APPLE_ID_PASSWORD%
+git checkout release-x.y.z
 git pull
 npm i
-npm run electron:build-mac
+./build-mac.sh
 ```
 
 - find properly named `*.dmg` in `RELEASE` directory
@@ -58,7 +62,7 @@ npm run electron:build-mac
 
 - [ ] create sha256 checksum files
 
-## Create Release on github
+## Create Release on GitHub
 
 - upload all files from Build Packs
 
@@ -67,9 +71,6 @@ npm run electron:build-mac
 - [ ] create new set of download locations
 - [ ] build and deploy website
 
-## FINALLY: update history.json and push
+## FINALLY
 
-- [x] Update history.json (create new entry on top of the others in the array)
-- [x] Test using `npm start` - it should show the new version incl. history
-- [x] remove any links in the history (enclose them in `inline code`)!
-- [x] git push
+- [ ] merge `release-x.y.z` branch into master (this makes history.json public)
