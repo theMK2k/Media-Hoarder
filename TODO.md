@@ -14,6 +14,18 @@
 
 ## LATER
 
+### Remove Noise from duplicate router push
+
+router.js
+
+```js
+// remove the noise from duplicated router pushs (https://stackoverflow.com/a/58439497/5627010)
+const originalPush = Router.prototype.push
+Router.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch((err) => err)
+}
+```
+
 ### In-List File Management
 
 - for individual movies as well as for the whole (filtered) list
@@ -30,6 +42,8 @@
 ### Find Inspiration from <https://github.com/whyboris/Video-Hub-App>
 
 ### Create i18n Editor
+
+- [ ] check out <https://crowdin.com/> which is free for opensource projects
 
 - [x] load message definitions from %workdir%/i18n (e.g. zh.json, fr.json etc.)
 - [x] provide selectable languages from actually loaded messages
@@ -114,6 +128,7 @@
 - [ ] investigate scroll-snap <https://markodenic.com/css-tips/>
 - [ ] have individual lists of "my lists" clickable, show dialog (analog to genres, people, companies etc.) and thus "filter by this list"
 - [ ] optimize rescan
+
   - when the only scanError is "IMDB link verification" then maybe we can do some shortcuts?
 
 - [ ] create a MediaInfo watchdog
@@ -123,6 +138,7 @@
   - check for new fields (warning on fail)
 
 - [ ] Test mediainfo and VLC in Linux/MacOS (we now use "" in the exec)
+
   - [x] Win: OK
   - [x] Linux: OK
   - [ ] MacOS: ??
