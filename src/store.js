@@ -2190,10 +2190,18 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
  */
 async function deleteIMDBData($id_Movies) {
   const rowsMovie = await db.fireProcedureReturnAll(
-    "SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies",
+    `SELECT
+      MOV.*
+      , SP.Path AS SourcePath
+    FROM tbl_Movies MOV
+    INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+    WHERE id_Movies = $id_Movies`,
     { $id_Movies }
   );
   const movie = rowsMovie[0];
+
+  logger.log("[deleteIMDBData] movie:", movie);
+
   movie.DefinedByUser = movie.DefinedByUser || "";
 
   let colsMovieIMDB = "";
