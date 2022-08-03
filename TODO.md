@@ -14,6 +14,10 @@
 
 ## LATER
 
+### Plugin System
+
+- check Shopware's Plugin System <https://www.youtube.com/watch?v=SlhFzRpneJI>
+
 ### Remove Noise from duplicate router push
 
 router.js

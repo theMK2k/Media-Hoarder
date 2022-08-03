@@ -807,6 +807,11 @@ const shared = new Vue({
         deleted: false,
       },
       {
+        searchTerm: "md",
+        displayAs: "MD",
+        deleted: false,
+      },
+      {
         searchTerm: "r5",
         displayAs: "R5",
         deleted: false,
