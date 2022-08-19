@@ -1,5 +1,7 @@
 #!/bin/sh
 
+rm ./RELEASE/*
+
 npm run electron:build-mac
 
 cd RELEASE
