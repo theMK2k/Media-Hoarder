@@ -131,9 +131,6 @@ Router.prototype.push = function push(location) {
   - [ ] Snap <https://snapcraft.io/docs/electron-apps>
 - [ ] investigate scroll-snap <https://markodenic.com/css-tips/>
 - [ ] have individual lists of "my lists" clickable, show dialog (analog to genres, people, companies etc.) and thus "filter by this list"
-- [ ] optimize rescan
-
-  - when the only scanError is "IMDB link verification" then maybe we can do some shortcuts?
 
 - [ ] create a MediaInfo watchdog
 

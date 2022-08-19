@@ -1461,7 +1461,8 @@ async function applyMetaData(onlyNew, id_Movies) {
 }
 
 async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
-  const movies = await db.fireProcedureReturnAll(
+  // NOTE: if WHERE clause gets enhanced, please also enhance the code below "Filter movies that only have..."
+  let movies = await db.fireProcedureReturnAll(
     `
 			SELECT
 				MOV.id_Movies
@@ -1477,6 +1478,7 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
         , SP.Path AS SourcePath
         , MOV.DefinedByUser
         , MOV.isUnlinkedIMDB
+        , MOV.scanErrors
       FROM tbl_Movies MOV
       INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
 			WHERE 
@@ -1503,6 +1505,35 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
 			`,
     []
   );
+
+  // Filter movies that only have one scanError and that is "IMDB link verification" - a rescan without new IMDB tconst will not help here
+  if (!id_Movies && onlyNew) {
+    movies = movies.filter((movie) => {
+      // there are other reasons why the movie should definitely be rescanned
+      if (movie.isNew || !movie.IMDB_Done || !movie.MI_Done) {
+        return true;
+      }
+
+      if (!movie.IMDB_tconst) {
+        return true;
+      }
+
+      if (!movie.scanErrors) {
+        return false;
+      }
+
+      const scanErrors = JSON.parse(movie.scanErrors);
+
+      if (
+        Object.keys(scanErrors).length === 1 &&
+        scanErrors["IMDB link verification"]
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+  }
 
   rescanETA.show = false;
   rescanETA.numItems = movies.length;
