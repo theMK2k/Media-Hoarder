@@ -74,17 +74,15 @@ Downloads are availbale at [releases](https://github.com/theMK2k/Media-Hoarder/r
 
 Currently **Media Hoarder** comes as:
 
-- Windows 7/8/10 x64 Setup
-- Windows 7/8/10 x64 "portable"
-- Linux x64 Setup
-- Linux x64 AppImage "portable"
-- MacOS X x64 .dmg
+- Windows 7/8/10 x64 Setup and Portable (.zip)
+- Linux x64 Setup (.deb, .appimage, .snap, .rpm) and Portable (.tar.gz)
+- MacOS X .dmg (Intel and Apple Silicon)
 
 ## For Developers: Getting started from source
 
 ### Install Node.js
 
-Visit <https://nodejs.org> and download/install it for your OS. **Media Hoarder** is developed with Node.js v14 but should be also compatible with newer versions.
+Visit <https://nodejs.org> and download/install it for your OS. **Media Hoarder** is developed with Node.js v14 but should also be compatible with newer versions.
 
 ### Install vue-cli
 
