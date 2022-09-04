@@ -750,12 +750,12 @@ async function testIMDBTrailerMediaURLs() {
 
     if (!scrapeResult.mediaURLs) {
       addSubLogEntry(testResult, "mediaURLs missing", status.ERROR);
-    } else if (scrapeResult.mediaURLs.length !== 0) {
+    } else if (scrapeResult.mediaURLs.length !== 5) {
       addSubLogEntry(
         testResult,
         `mediaURLs count mismatch
           got:      ${scrapeResult.mediaURLs.length} entries
-          expected: 0 entries`,
+          expected: 5 entries`,
         status.WARNING
       );
     }

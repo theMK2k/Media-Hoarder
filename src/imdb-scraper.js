@@ -207,7 +207,10 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
 
     if (jsonData.trailer && jsonData.trailer.embedUrl) {
       // V2
-      $IMDB_Trailer_URL = jsonData.trailer.embedUrl;
+      $IMDB_Trailer_URL = jsonData.trailer.embedUrl.replace(
+        "https://www.imdb.com",
+        ""
+      );
     } else {
       const rxTrailerUrl =
         /href="(\/video\/vi\d*)\?playlistId=tt\d*&amp;ref_=tt_ov_vi"[\s\S]*?aria-label="Watch {VideoTitle}"/;
@@ -1454,19 +1457,19 @@ async function scrapeIMDBTrailerMediaURLs(trailerURL) {
 
     const html = response.body;
 
-    // logger.log('[scrapeIMDBTrailerMediaURLs] trailerURLs html:', html);
+    // logger.log("[scrapeIMDBTrailerMediaURLs] trailerURLs html:", html);
 
-    // "definition":"auto","mimeType":"application\u002Fx-mpegURL","videoUrl":"https:\u002F\u002Fimdb-video.media-imdb.com\u002Fvi1499136537\u002Fhls-1563882933870-master.m3u8?Expires=1575383713&Signature=PXs6zzGNbbxUR5SKWcNIWg~iA2TYAgfao8VNfaelya7rlNgxYz9yeh3kLJdUYqHQOK57Tbk5abPzx2lMLZea3lLRmR9T17~MN4M4RAaYUZR5w69wnQKu2wzGv5n7qgm3IaXyVdO61L37fuecTvzz-tigaVaWDnViTr5tkpf7Pu4isE-qF9hd1xX~oXDk5A~z2TdGzII16faXnxIY~xs~7rbKMgKfTJUxGtUmjSGTKXqEIh-VqPG0p4gYaXOCB-HCu42hqxeb8ll2XFPiBTCogyoBj-r0CRYZhx9GQ7FbfCkE0t9bgJ16dhy8eb9tVwsaZ6wjMjoQxu-CiaLDelciqg__&Key-Pair-Id=APKAIFLZBVQZ24NQH3KA"
+    // "mimeType":"application/x-mpegurl","url":"https://imdb-video.media-imdb.com/vi3904176409/hls-1563415099186-master.m3u8?Expires=1662285123\u0026Signature=SytIHP0GmrooACG~4TQic~SvLmx1ZO5C19okQNOvTwVDtLW3AosKyf8imZlSwLiXH62XATzQycCANPHHLmV2thnTZC-ag6zO7Nf-iytjJUoeYPY7PzxUiebt3k8mSZWrgQUpo3DvAU3Mi7EcNRzhqUSKs4NI-8ghvEEMtfZmLDtjzY9R6Otomr8dHt5AqafMFJf4GZOEpW3rqP1sDl1GMkaRLJOFJwqS32xICFcYG0Eaok5Qm4Lo5TJWWwAi~eyuWZDh-25xMNDaMRpznuo~VhKHcNWpt7fO3JHIIfEl0AnOt0X~esP4vxcYronHDpahSfiO2hPmVozd~9Ii2HrXwA__\u0026Key-Pair-Id=APKAIFLZBVQZ24NQH3KA","displayName":{"value":"AUTO","language":"en-US","__typename":"LocalizedString"},"__typename":"PlaybackURL"
     const rxMediaURL =
-      /"definition":"(.*?)","mimeType":"(.*?)","videoUrl":"(.*?)"/g;
+      /"mimeType":"(.*?)","url":"(.*?)","displayName":{"value":"(.*?)"/g;
 
     let match = null;
 
     // eslint-disable-next-line no-cond-assign
     while ((match = rxMediaURL.exec(html))) {
-      const definition = match[1];
-      const mimeType = match[2].replace(/\\u002F/g, "/");
-      const mediaURL = match[3].replace(/\\u002F/g, "/");
+      const mimeType = match[1].replace(/\\u002F/g, "/");
+      const mediaURL = match[2].replace(/\\u002F/g, "/");
+      const definition = match[3];
 
       result.push({
         definition,

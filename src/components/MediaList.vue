@@ -2117,7 +2117,11 @@ export default {
     },
 
     showTrailer(item) {
-      this.videoPlayerDialog.videoURL = `https://www.imdb.com${item.IMDB_Trailer_URL}`;
+      const trailerURL = item.IMDB_Trailer_URL.replace(
+        "https://www.imdb.com",
+        ""
+      );
+      this.videoPlayerDialog.videoURL = `https://www.imdb.com${trailerURL}`;
       logger.log(
         "[showTrailer] this.videoPlayerDialog.videoURL:",
         this.videoPlayerDialog.videoURL
@@ -2127,18 +2131,26 @@ export default {
 
     async showTrailerLocal(item) {
       try {
+        const trailerURL = item.IMDB_Trailer_URL.replace(
+          "https://www.imdb.com",
+          ""
+        );
+
         const trailerMediaURLs = await scrapeIMDBTrailerMediaURLs(
-          `https://www.imdb.com${item.IMDB_Trailer_URL}`
+          `https://www.imdb.com${trailerURL}`
         );
 
         logger.log("[showTrailer] trailerMediaURLs:", trailerMediaURLs);
 
+        const dontUseLocalPlayer = true; // TODO: we can scrape mediaURLs, but we get a 403 Forbidden if we access them with our media player
+
         if (
+          dontUseLocalPlayer ||
           !trailerMediaURLs ||
           !trailerMediaURLs.mediaURLs ||
           trailerMediaURLs.mediaURLs.length == 0
         ) {
-          return this.showTrailer(item); // Fallback to the more general player
+          return this.showTrailer(item); // Fallback to the more general player showing the IMDB site
         }
 
         const trailerMediaURL = store.selectBestQualityMediaURL(
