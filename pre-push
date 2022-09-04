@@ -1,0 +1,4 @@
+#!/bin/sh
+
+./check-package.json.sh
+./check-killme.sh
