@@ -55,7 +55,7 @@
     "marked": "4.0.10",
     "minimist": "1.2.6",
     "mkdirp": "1.0.4",
-    "moment": "2.29.2",
+    "moment": "2.29.4",
     "os-locale": "4.0.0",
     "request": "2.88.2",
     "requestretry": "7.0.0",
