@@ -127,28 +127,12 @@
                               movie.IMDB_metacriticScore
                             )
                           "
-                          style="
-                            display: inline-block;
-                            text-align: center;
-                            padding: 3px;
-                            margin-top: -2px;
-                            margin-left: 4px;
-                            width: 24px;
-                            height: 20px;
-                          "
+                          class="mk-compact-movie-list-metacritic-block"
                           >{{ movie.IMDB_metacriticScore }}</span
                         >
                         <span
                           v-if="!movie.IMDB_metacriticScore"
-                          style="
-                            display: inline-block;
-                            text-align: center;
-                            padding: 3px;
-                            margin-top: -2px;
-                            margin-left: 4px;
-                            width: 24px;
-                            height: 20px;
-                          "
+                          class="mk-compact-movie-list-metacritic-block"
                         >
                           &nbsp;</span
                         >

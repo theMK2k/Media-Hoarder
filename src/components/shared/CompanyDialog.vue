@@ -41,10 +41,43 @@
               </v-row>
               <div v-if="showMovies" class="mk-clickable-white">
                 <div v-for="(movie, index) in movies" v-bind:key="index">
-                  <v-row class="mk-compact-movie-list-row">
+                  <v-row
+                    class="mk-compact-movie-list-row mk-highlightable-row"
+                    style="
+                      padding-top: 4px;
+                      padding-bottom: 2px;
+                      margin-top: 2px;
+                    "
+                  >
                     {{ movie.Name }}
                     {{ movie.Name2 ? " | " + movie.Name2 : "" }}
                     {{ movie.yearDisplay }}
+                    <v-spacer />
+                    <span>
+                      <span v-if="movie.IMDB_rating_defaultDisplay">
+                        <v-icon
+                          small
+                          color="amber"
+                          style="padding-bottom: 4px; width: 12px; height: 12px"
+                          >mdi-star</v-icon
+                        >
+                        {{ movie.IMDB_rating_defaultDisplay }}</span
+                      >
+                      <span
+                        v-if="movie.IMDB_metacriticScore"
+                        class="mk-compact-movie-list-metacritic-block"
+                        v-bind:class="
+                          helpers.getMetaCriticClass(movie.IMDB_metacriticScore)
+                        "
+                        >{{ movie.IMDB_metacriticScore }}</span
+                      >
+                      <span
+                        v-if="!movie.IMDB_metacriticScore"
+                        class="mk-compact-movie-list-metacritic-block"
+                      >
+                        &nbsp;</span
+                      >
+                    </span>
                   </v-row>
                 </div>
               </div>
@@ -85,6 +118,7 @@
 
 <script>
 import * as store from "@/store";
+import * as helpers from "@/helpers/helpers";
 // const logger = require("../../helpers/logger");
 
 const { shell } = require("@electron/remote");
@@ -104,6 +138,12 @@ export default {
       movies: [],
       showMovies: false,
     };
+  },
+
+  computed: {
+    helpers() {
+      return helpers;
+    },
   },
 
   watch: {
@@ -194,30 +234,29 @@ export default {
               },
             ],
           })
-        )
-          .sort((a, b) => {
-            if (a.startYear > b.startYear) {
-              return -1;
-            }
-            if (a.startYear < b.startYear) {
-              return 1;
-            }
-            if (a.Name.toLowerCase() < b.Name.toLowerCase()) {
-              return -1;
-            }
-            if (a.Name.toLowerCase() > b.Name.toLowerCase()) {
-              return 1;
-            }
+        ).sort((a, b) => {
+          if (a.startYear > b.startYear) {
+            return -1;
+          }
+          if (a.startYear < b.startYear) {
+            return 1;
+          }
+          if (a.Name.toLowerCase() < b.Name.toLowerCase()) {
+            return -1;
+          }
+          if (a.Name.toLowerCase() > b.Name.toLowerCase()) {
+            return 1;
+          }
 
-            return 0;
-          })
-          .map((item) => {
-            return {
-              Name: item.Name,
-              Name2: item.Name2,
-              yearDisplay: item.yearDisplay,
-            };
-          });
+          return 0;
+        });
+        // .map((item) => {
+        //   return {
+        //     Name: item.Name,
+        //     Name2: item.Name2,
+        //     yearDisplay: item.yearDisplay,
+        //   };
+        // });
 
         this.movies = movies.filter((item, index) => {
           return (

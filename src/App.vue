@@ -5994,6 +5994,16 @@ a {
   padding-right: 4px;
 }
 
+.mk-compact-movie-list-metacritic-block {
+  display: inline-block;
+  text-align: center;
+  padding: 3px;
+  margin-top: -2px;
+  margin-left: 4px;
+  width: 30px;
+  height: 20px;
+}
+
 .mk-compact-movie-list-title {
   margin: 8px 6px 8px 0px;
 }
