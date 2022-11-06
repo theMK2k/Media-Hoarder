@@ -41,44 +41,7 @@
               </v-row>
               <div v-if="showMovies" class="mk-clickable-white">
                 <div v-for="(movie, index) in movies" v-bind:key="index">
-                  <v-row
-                    class="mk-compact-movie-list-row mk-highlightable-row"
-                    style="
-                      padding-top: 4px;
-                      padding-bottom: 2px;
-                      margin-top: 2px;
-                    "
-                  >
-                    {{ movie.Name }}
-                    {{ movie.Name2 ? " | " + movie.Name2 : "" }}
-                    {{ movie.yearDisplay }}
-                    <v-spacer />
-                    <span>
-                      <span v-if="movie.IMDB_rating_defaultDisplay">
-                        <v-icon
-                          small
-                          color="amber"
-                          style="padding-bottom: 4px; width: 12px; height: 12px"
-                          >mdi-star</v-icon
-                        >
-                        {{ movie.IMDB_rating_defaultDisplay }}</span
-                      >
-                      <span
-                        v-if="movie.IMDB_metacriticScore"
-                        class="mk-compact-movie-list-metacritic-block"
-                        v-bind:class="
-                          helpers.getMetaCriticClass(movie.IMDB_metacriticScore)
-                        "
-                        >{{ movie.IMDB_metacriticScore }}</span
-                      >
-                      <span
-                        v-if="!movie.IMDB_metacriticScore"
-                        class="mk-compact-movie-list-metacritic-block"
-                      >
-                        &nbsp;</span
-                      >
-                    </span>
-                  </v-row>
+                  <mk-compact-movie-list-row v-bind:movie="movie" />
                 </div>
               </div>
             </div>
@@ -127,8 +90,14 @@ const sqlString = require("sqlstring-sqlite");
 
 import { eventBus } from "@/main";
 
+import CompactMovieListRow from "@/components/shared/CompactMovieListRow.vue";
+
 export default {
   props: ["show", "IMDB_Company_ID", "Company_Name"],
+
+  components: {
+    "mk-compact-movie-list-row": CompactMovieListRow,
+  },
 
   data() {
     return {

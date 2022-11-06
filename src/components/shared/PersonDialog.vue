@@ -94,50 +94,7 @@
                 </v-row>
                 <div v-if="showMovies" class="mk-clickable-white">
                   <div v-for="(movie, index) in movies" v-bind:key="index">
-                    <v-row
-                      class="mk-compact-movie-list-row mk-highlightable-row"
-                      style="
-                        padding-top: 4px;
-                        padding-bottom: 2px;
-                        margin-top: 2px;
-                      "
-                    >
-                      {{ movie.Name }}
-                      {{ movie.Name2 ? " | " + movie.Name2 : "" }}
-                      {{ movie.yearDisplay }}
-                      <v-spacer />
-                      <span>
-                        <span v-if="movie.IMDB_rating_defaultDisplay">
-                          <v-icon
-                            small
-                            color="amber"
-                            style="
-                              padding-bottom: 4px;
-                              width: 12px;
-                              height: 12px;
-                            "
-                            >mdi-star</v-icon
-                          >
-                          {{ movie.IMDB_rating_defaultDisplay }}</span
-                        >
-                        <span
-                          v-if="movie.IMDB_metacriticScore"
-                          v-bind:class="
-                            helpers.getMetaCriticClass(
-                              movie.IMDB_metacriticScore
-                            )
-                          "
-                          class="mk-compact-movie-list-metacritic-block"
-                          >{{ movie.IMDB_metacriticScore }}</span
-                        >
-                        <span
-                          v-if="!movie.IMDB_metacriticScore"
-                          class="mk-compact-movie-list-metacritic-block"
-                        >
-                          &nbsp;</span
-                        >
-                      </span>
-                    </v-row>
+                    <mk-compact-movie-list-row v-bind:movie="movie" />
                   </div>
                 </div>
               </div>
@@ -183,15 +140,21 @@
 <script>
 import * as store from "@/store";
 import * as helpers from "@/helpers/helpers";
-import { scrapeIMDBPersonData } from "@/imdb-scraper";
 const logger = require("../../helpers/logger");
-
 const { shell } = require("@electron/remote");
+
+import { scrapeIMDBPersonData } from "@/imdb-scraper";
 
 import { eventBus } from "@/main";
 
+import CompactMovieListRow from "@/components/shared/CompactMovieListRow.vue";
+
 export default {
   props: ["show", "IMDB_Person_ID", "Person_Name"],
+
+  components: {
+    "mk-compact-movie-list-row": CompactMovieListRow,
+  },
 
   data() {
     return {
