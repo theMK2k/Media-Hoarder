@@ -4,18 +4,18 @@ This document describes the steps necessary to get a new release done.
 
 ## Precondition
 
-- [x] we are on release branch `release-x.y.z`
-- [x] Increase Version Number in [../package.json](../package.json)
-- [x] Copy contents of [../DONE.md](../DONE.md) into `public/history/version-x.y.z.md` and clean up (keep it tidy)
-- [x] Update history.json (create new entry on top of the others in the array)
-- [x] Test using `npm start` - it should show the new version incl. history
-- [x] git push
+- [ ] we are on release branch `release-x.y.z`
+- [ ] Increase Version Number in [../package.json](../package.json)
+- [ ] Copy contents of [../DONE.md](../DONE.md) into `public/history/version-x.y.z.md` and clean up (keep it tidy)
+- [ ] Update history.json (create new entry on top of the others in the array)
+- [ ] Test using `npm start` - it should show the new version incl. history
+- [ ] git push
 
 ## Build Packs
 
 ### Windows Build
 
-- [x] in Windows run:
+- [ ] in Windows run:
 
 ```bash
 git pull
@@ -28,7 +28,7 @@ find properly named `*-portable.zip` and `*-setup.exe` in `RELEASE` directory
 
 ### Linux Build
 
-- [x] in Linux run:
+- [ ] in Linux run:
 
 ```bash
 git pull
@@ -41,7 +41,7 @@ npm i
 
 ### Mac Build
 
-- [x] in MacOS run:
+- [ ] in MacOS run:
 
 ```bash
 export APPLE_ID=%APPLE_ID%
