@@ -117,7 +117,7 @@ export default {
               , Company_Name AS name
 							, (SELECT COUNT(1) FROM (
 									SELECT DISTINCT
-										MC2.id_Movies
+										MOV.Name || ' ' || IFNULL(MOV.startYear, 'xxx')
                   FROM tbl_Movies_IMDB_Companies MC2
                   INNER JOIN tbl_Movies MOV ON MC2.id_Movies = MOV.id_Movies
 									WHERE MC2.Company_Name = MC.Company_Name
@@ -142,7 +142,7 @@ export default {
 							, IMDB_Person_ID AS id
 							, (SELECT COUNT(1) FROM (
 									SELECT DISTINCT
-										MC2.id_Movies
+										MOV.Name || ' ' || IFNULL(MOV.startYear, 'xxx')
                   FROM tbl_Movies_IMDB_Credits MC2
                   INNER JOIN tbl_Movies MOV ON MC2.id_Movies = MOV.id_Movies
                   WHERE MC2.IMDB_Person_ID = MC.IMDB_Person_ID
@@ -167,10 +167,14 @@ export default {
             , Keyword AS name
             , (
                 SELECT COUNT(1)
-                FROM tbl_Movies_IMDB_Plot_Keywords MPK
-                INNER JOIN tbl_Movies MOV ON MPK.id_Movies = MOV.id_Movies
-                WHERE PK.id_IMDB_Plot_Keywords = MPK.id_IMDB_Plot_Keywords
-               				AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+                FROM (
+                  SELECT DISTINCT
+                    MOV.Name || ' ' || IFNULL(MOV.startYear, 'xxx')
+                  FROM tbl_Movies_IMDB_Plot_Keywords MPK
+                  INNER JOIN tbl_Movies MOV ON MPK.id_Movies = MOV.id_Movies
+                  WHERE PK.id_IMDB_Plot_Keywords = MPK.id_IMDB_Plot_Keywords
+                        AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+                )
               ) AS NumMovies
           FROM tbl_IMDB_Plot_Keywords PK
           WHERE PK.Keyword LIKE '%${searchText}%'
@@ -189,11 +193,15 @@ export default {
             FL.id_IMDB_Filming_Locations AS id
             , Location AS name
             , (
-              SELECT COUNT(1)
-              FROM tbl_Movies_IMDB_Filming_Locations MFL
-              INNER JOIN tbl_Movies MOV ON MFL.id_Movies = MOV.id_Movies
-              WHERE FL.id_IMDB_Filming_Locations = MFL.id_IMDB_Filming_Locations
-             				AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+                SELECT COUNT(1)
+                FROM (
+                  SELECT DISTINCT
+                    MOV.Name || ' ' || IFNULL(MOV.startYear, 'xxx')
+                  FROM tbl_Movies_IMDB_Filming_Locations MFL
+                  INNER JOIN tbl_Movies MOV ON MFL.id_Movies = MOV.id_Movies
+                  WHERE FL.id_IMDB_Filming_Locations = MFL.id_IMDB_Filming_Locations
+                        AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+              )
             ) AS NumMovies
           FROM tbl_IMDB_Filming_Locations FL
           WHERE FL.Location LIKE '%${searchText}%'

@@ -2,7 +2,8 @@
 
 ## v1.1.0
 
-- nothing
+- [x] Search Data Dialog:
+  - fix numMovies
 
 ## v1.0.0
 

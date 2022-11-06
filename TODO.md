@@ -1,8 +1,10 @@
 # TODO
 
-## v1.0.0
+## NEXT Minor (v1.1.0)
 
-- nothing
+- [ ] Person Dialog:
+  - show imdb and metacritic scores
+  -> other dialogs?
 
 ### Defects
 
