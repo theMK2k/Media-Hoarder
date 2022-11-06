@@ -5987,9 +5987,11 @@ a {
 
 .mk-compact-movie-list-row {
   margin-top: 8px;
-  margin-left: 20px;
+  margin-left: 16px;
   margin-right: 6px;
   margin-bottom: 0px;
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
 .mk-compact-movie-list-title {
@@ -6007,6 +6009,17 @@ a {
 
 .v-list-item__title {
   font-size: 16px !important;
+}
+
+/* ### MetaCritic ### */
+.MetaCriticRed {
+  background-color: red;
+}
+.MetaCriticYellow {
+  background-color: #ffc107;
+}
+.MetaCriticGreen {
+  background-color: green;
 }
 
 /* ### Vuetify fixes ### */

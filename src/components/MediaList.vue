@@ -513,7 +513,9 @@
                         <span
                           v-if="item.IMDB_metacriticScore"
                           v-bind:class="
-                            getMetaCriticClass(item.IMDB_metacriticScore)
+                            helpers.getMetaCriticClass(
+                              item.IMDB_metacriticScore
+                            )
                           "
                           style="padding: 4px; margin-left: 4px"
                           >{{ item.IMDB_metacriticScore }}</span
@@ -1641,6 +1643,10 @@ export default {
   props: ["mediatype"],
 
   computed: {
+    helpers() {
+      return helpers;
+    },
+
     pathSeparator() {
       return path.sep;
     },
@@ -2026,19 +2032,6 @@ export default {
           this.$set(mov, "last_access_at", this.currentTime.toISOString());
         }
       });
-    },
-
-    getMetaCriticClass(IMDB_metacriticScore) {
-      const cssClasses = {};
-      if (IMDB_metacriticScore <= 39) {
-        cssClasses.MetaCriticRed = true;
-      } else if (IMDB_metacriticScore <= 60) {
-        cssClasses.MetaCriticYellow = true;
-      } else {
-        cssClasses.MetaCriticGreen = true;
-      }
-
-      return cssClasses;
     },
 
     copyInfo(movie) {
@@ -3372,16 +3365,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.MetaCriticRed {
-  background-color: red;
-}
-.MetaCriticYellow {
-  background-color: #ffc107;
-}
-.MetaCriticGreen {
-  background-color: green;
-}
-
 .CreditCategory {
   display: block;
   float: left;

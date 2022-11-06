@@ -421,6 +421,19 @@ async function listPath(basePath, scanPath) {
   return arrResult;
 }
 
+function getMetaCriticClass(IMDB_metacriticScore) {
+  const cssClasses = {};
+  if (IMDB_metacriticScore <= 39) {
+    cssClasses.MetaCriticRed = true;
+  } else if (IMDB_metacriticScore <= 60) {
+    cssClasses.MetaCriticYellow = true;
+  } else {
+    cssClasses.MetaCriticGreen = true;
+  }
+
+  return cssClasses;
+}
+
 export {
   isWindows,
   isPORTABLE,
@@ -450,4 +463,5 @@ export {
   compare,
   listPath,
   readFileAsync,
+  getMetaCriticClass,
 };
