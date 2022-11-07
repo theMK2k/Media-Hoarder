@@ -168,12 +168,6 @@ export default {
     };
   },
 
-  computed: {
-    helpers() {
-      return helpers;
-    },
-  },
-
   watch: {
     IMDB_Person_ID: function (newVal) {
       this.init(newVal);

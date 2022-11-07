@@ -5,8 +5,8 @@
 - [ ] Show IMDB and MetaCritic scores in compact movie lists (dialogs):
   - [x] Person Dialog
   - [x] Company Dialog
-  - [ ] Age Rating Dialog
-  - [ ] Audio Format Dialog
+  - [x] Age Rating Dialog
+  - [x] Audio Format Dialog
   - [ ] Filming Location Dialog
   - [ ] Genre Dialog
   - [ ] Language Dialog
