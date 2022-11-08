@@ -2,8 +2,20 @@
 
 ## v1.1.0
 
-- [x] Search Data Dialog:
-  - fix numMovies
+- [x] Search Data Dialog: fix numMovies
+- [x] Show IMDB and MetaCritic scores in compact movie lists (dialogs):
+  - [x] Person Dialog
+  - [x] Company Dialog
+  - [x] Age Rating Dialog
+  - [x] Audio Format Dialog
+  - [x] Filming Location Dialog
+  - [x] Genre Dialog
+  - [x] Language Dialog
+  - [x] Person Dialog
+  - [x] Plot Keyword Dialog
+  - [x] Release Attribute Dialog
+  - [x] Video Encoding Dialog
+  - [x] Video Quality Dialog
 
 ## v1.0.0
 
@@ -15,18 +27,20 @@
 - [x] check-package.json.sh (should prevent build)
 - [x] delete media from main list
 - [x] filter imdb tconst in search, so that a complete imdb.com url leads to search results
-- [x] fix: missing metadata on scan (IMDB_runtimeMinutes, IMDB_plotSummaryFull, MI_Duration*)
+- [x] fix: missing metadata on scan (IMDB_runtimeMinutes, IMDB_plotSummaryFull, MI_Duration\*)
 - [x] fix: plot keyword casing ex. "New Year'S Eve"
 - [x] fix: number of media in filters for persons, companies, keywords, filming locations
 - [x] higher resolution for IMDB Rating filtering (0.1 steps); correct local decimal character
 - [x] remove scanErrors when unlinking
-- [x] in *Dialog click on "filter by this ..." should only reload the one filter and then the movies
+- [x] in \*Dialog click on "filter by this ..." should only reload the one filter and then the movies
 - [x] Fix: MediaInfo (video): use the highest res if multiple video streams are present (also in MovieManager)
 - [x] more MediaInfo
+
   - In quick info area:
+
     - [x] Video Encoder (x264, x265, XviD ...)
     - [x] Audio Format/Codec
-      Example:
+          Example:
     - current: 8K | 14-18+ | Action, Drama, Horror, Thriller | DE, EN | DE, EN, FR | BD
     - new: 8K | 14-18+ | Action, Drama, Horror, Thriller | DE, EN | DE, EN, FR | x264 | EAC3, PCM | BD
       - [x] video: tbl_Movies_MI_Tracks
@@ -38,16 +52,21 @@
   - new Filters + Dialog:
     - [x] Video Codec
     - [x] Audio Formats
+
 - [x] Fix: "applying MediaInfo" doesn't show countdown timer
 - introduce Audio Metadata
+
   - [x] see below: use Movie Manager to mass-scan a movie folder and find out the different audio codecs
   - [x] new table tbl_Movies_MI_Tracks
+
     - [x] scan all media info data to find out which fields are populated by each track type
       - see: [data/devdocs/mediainfo/](data/devdocs/mediainfo/)
     - [x] investigate how to enforce numeric values
+
       - [x] does it suffice to set the fieldtype in the db? -> test with a SELECT query
-      -> plan: mass import and analyze later
+            -> plan: mass import and analyze later
       - Integer fields:
+
         - AlternateGroup?
         - AudioCount
         - BitDepth
@@ -100,6 +119,7 @@
         - Source_Duration
         - Source_StreamSize_Proportion
         - StreamSize_Proportion- [x] remove MediaInfoObject from tbl_Movies
+
 - [x] defect: rescan with deselected IMDB options removes metadata (persons, companies, etc.)
 
   - react to userScanOptions!
@@ -131,6 +151,7 @@
       $IMDB_Trailer_URL: any;
       }
   - rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics
+
     - scrapeIMDBRatingDemographics()
     - imdbData.ratingDemographics:
 
@@ -228,6 +249,7 @@
   - rescanMoviesMetaData_fetchIMDBMetaData_filmingLocations
     - WAS: filmingLocations (param in saveIMDBData)
     - NOW: imdbData.filmingLocations
+
 - [x] (already fixed) companies: duplicates in topcompanies; non-dupes in companies list?
 - [x] on forced rescan also do MediaInfo
 - [x] highlight hidden filtered languages
@@ -266,7 +288,7 @@
   - [x] filterDataQuality
 - [x] colored active filters on the sidebar
 - [x] MediaList: move `*Applied` and `*AppliedContains` to $shared, so that App can also use them
-- [x] shared: introduce filter*Active (true|false), reuse this info in MediaList.filtersList and App
+- [x] shared: introduce filter\*Active (true|false), reuse this info in MediaList.filtersList and App
 - [x] highlight filtered people, companies etc. (same as search highlight)
   - [x] People
   - [x] Companies

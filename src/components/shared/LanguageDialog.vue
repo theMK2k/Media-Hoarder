@@ -42,11 +42,7 @@
               </v-row>
               <div v-if="showMovies" class="mk-clickable-white">
                 <div v-for="(movie, index) in movies" v-bind:key="index">
-                  <v-row class="mk-compact-movie-list-row">
-                    {{ movie.Name }}
-                    {{ movie.Name2 ? " | " + movie.Name2 : "" }}
-                    {{ movie.yearDisplay }}
-                  </v-row>
+                  <mk-compact-movie-list-row v-bind:movie="movie" />
                 </div>
               </div>
             </div>
@@ -85,8 +81,14 @@ const { languageCodeNameMapping } = require("@/languages");
 
 import { eventBus } from "@/main";
 
+import CompactMovieListRow from "@/components/shared/CompactMovieListRow.vue";
+
 export default {
   props: ["show", "Type", "Code"],
+
+  components: {
+    "mk-compact-movie-list-row": CompactMovieListRow,
+  },
 
   data() {
     return {
@@ -213,30 +215,29 @@ export default {
 
         const movies = (
           await store.fetchMedia("movies", null, true, this.$t, filters)
-        )
-          .sort((a, b) => {
-            if (a.startYear > b.startYear) {
-              return -1;
-            }
-            if (a.startYear < b.startYear) {
-              return 1;
-            }
-            if (a.Name.toLowerCase() < b.Name.toLowerCase()) {
-              return -1;
-            }
-            if (a.Name.toLowerCase() > b.Name.toLowerCase()) {
-              return 1;
-            }
+        ).sort((a, b) => {
+          if (a.startYear > b.startYear) {
+            return -1;
+          }
+          if (a.startYear < b.startYear) {
+            return 1;
+          }
+          if (a.Name.toLowerCase() < b.Name.toLowerCase()) {
+            return -1;
+          }
+          if (a.Name.toLowerCase() > b.Name.toLowerCase()) {
+            return 1;
+          }
 
-            return 0;
-          })
-          .map((item) => {
-            return {
-              Name: item.Name,
-              Name2: item.Name2,
-              yearDisplay: item.yearDisplay,
-            };
-          });
+          return 0;
+        });
+        // .map((item) => {
+        //   return {
+        //     Name: item.Name,
+        //     Name2: item.Name2,
+        //     yearDisplay: item.yearDisplay,
+        //   };
+        // });
 
         this.movies = movies.filter((item, index) => {
           return (

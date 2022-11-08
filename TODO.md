@@ -2,19 +2,7 @@
 
 ## NEXT Minor (v1.1.0)
 
-- [ ] Show IMDB and MetaCritic scores in compact movie lists (dialogs):
-  - [x] Person Dialog
-  - [x] Company Dialog
-  - [x] Age Rating Dialog
-  - [x] Audio Format Dialog
-  - [ ] Filming Location Dialog
-  - [ ] Genre Dialog
-  - [ ] Language Dialog
-  - [ ] Person Dialog
-  - [ ] Plot Keyword Dialog
-  - [ ] Release Attribute Dialog
-  - [ ] Video Encoding Dialog
-  - [ ] Video Quality Dialog
+- nothing
 
 ### Defects
 
