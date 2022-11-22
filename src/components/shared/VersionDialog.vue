@@ -310,6 +310,30 @@ export default {
           );
     };
 
+    // insert a blank line after (un)ordered lists
+    const listRenderer = renderer.list;
+    renderer.list = (body, ordered, start) => {
+      const html = listRenderer.call(renderer, body, ordered, start);
+      return html
+        .replace(/<\/ul>/, `</ul><p />`)
+        .replace(/<\/ol>/, `</ol><p />`);
+    };
+
+    const headingRenderer = renderer.heading;
+    renderer.heading = (text, level, raw, slugger) => {
+      // remove level 1 header (this is already part of blog-articles.json)
+      if (level === 1) {
+        return "";
+      }
+
+      // don't render "##" as <h2>, instead render it as <h3>
+      if (level === 2) {
+        return headingRenderer.call(renderer, text, 3, raw, slugger);
+      }
+
+      return headingRenderer.call(renderer, text, level, raw, slugger);
+    };
+
     marked.setOptions({
       renderer: renderer,
     });
