@@ -285,6 +285,9 @@ async function requestAsync(options) {
     optionsDerived.headers["Accept-Language"] = "en";
   }
 
+  optionsDerived.headers["User-Agent"] =
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:106.0) Gecko/20100101 Firefox/106.0";
+
   optionsDerived.timeout = 10000; // we set a 10s timeout
 
   // logger.log("[requestAsync] optionsDerived:", optionsDerived);
