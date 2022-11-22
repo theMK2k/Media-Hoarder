@@ -1,7 +1,8 @@
 # DONE
 
-## v1.1.0
+## v1.0.1
 
+- [x] fix breaking IMDB captcha
 - [x] Search Data Dialog: fix numMovies
 - [x] Show IMDB and MetaCritic scores in compact movie lists (dialogs):
   - [x] Person Dialog
