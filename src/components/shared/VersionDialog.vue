@@ -104,24 +104,40 @@
             v-if="history && history.length > 0"
             style="font-size: 16px; margin-top: 16px"
           >
-            {{ $t("Version History") }}
-            <v-btn
-              text
-              class="xs-fullwidth"
-              style="margin-right: 8px"
-              v-bind:disabled="infoPosition + 1 >= history.length"
-              v-on:click="infoPosition++"
-              >&lt;</v-btn
+            <span
+              v-if="!showHistory"
+              class="mk-clickable"
+              v-on:click="showHistory = !showHistory"
+              style="font-size: 1.17em"
+              >{{ $t("Show Version History") }}</span
             >
-            v{{ history[infoPosition].version }} -
-            {{ history[infoPosition].name }}
-            <v-btn
-              text
-              class="xs-fullwidth"
-              v-bind:disabled="infoPosition === 0"
-              v-on:click="infoPosition--"
-              >&gt;</v-btn
+            <span
+              v-if="showHistory"
+              class="mk-clickable"
+              v-on:click="showHistory = !showHistory"
+              style="font-size: 1.17em"
+              >{{ $t("Version History") }}</span
             >
+            <span v-if="showHistory">
+              <v-btn
+                v-if="showHistory"
+                text
+                class="xs-fullwidth"
+                style="margin-right: 8px"
+                v-bind:disabled="infoPosition + 1 >= history.length"
+                v-on:click="infoPosition++"
+                >&lt;</v-btn
+              >
+              v{{ history[infoPosition].version }} -
+              {{ history[infoPosition].name }}
+              <v-btn
+                text
+                class="xs-fullwidth"
+                v-bind:disabled="infoPosition === 0"
+                v-on:click="infoPosition--"
+                >&gt;</v-btn
+              >
+            </span>
           </div>
 
           <div
@@ -138,7 +154,7 @@
         </div>
       </v-card-title>
 
-      <v-card-text v-if="!isLoadingVersionInfo">
+      <v-card-text v-if="!isLoadingVersionInfo && showHistory">
         <div v-html="versionInfo"></div>
       </v-card-text>
     </v-card>
@@ -173,6 +189,7 @@ export default {
       quote: null,
       quoteSource: null,
 
+      showHistory: false,
       history: [],
       latestVersion: null,
       latestName: null,
@@ -279,6 +296,7 @@ export default {
         if (semver.gt(this.latestVersion, this.$shared.currentVersion)) {
           this.history = remoteHistory;
           this.isNewVersionAvailable = true;
+          this.showHistory = true;
         } else {
           this.isUpToDate = true;
         }

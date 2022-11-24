@@ -1,6 +1,6 @@
 # TODO
 
-## NEXT Minor (v1.0.1)
+## NEXT Minor (current: v1.0.1)
 
 - nothing
 
