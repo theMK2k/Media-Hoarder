@@ -1,5 +1,9 @@
 # DONE
 
+## next
+
+- [x] UI: MediaList: small positioning correction for action icons in media items
+
 ## v1.0.1
 
 - [x] fix breaking IMDB captcha

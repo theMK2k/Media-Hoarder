@@ -215,7 +215,7 @@
                                     v-on:click.stop="
                                       onOpenEditMediaItemDialog(item)
                                     "
-                                    style="margin-left: 8px"
+                                    style="margin-left: 8px; margin-bottom: 3px"
                                     >mdi-pencil</v-icon
                                   >
                                 </span>
@@ -232,7 +232,7 @@
                                     v-show="item.nameHovered || item.selected"
                                     class="mk-clickable"
                                     v-on:click.stop="onRescanItem(item)"
-                                    style="margin-left: 8px"
+                                    style="margin-left: 8px; margin-bottom: 3px"
                                     v-bind:disabled="isScanning"
                                     >mdi-reload-alert</v-icon
                                   >
@@ -254,7 +254,7 @@
                                     v-show="item.nameHovered || item.selected"
                                     class="mk-clickable"
                                     v-on:click.stop="onOpenLinkIMDBDialog(item)"
-                                    style="margin-left: 8px"
+                                    style="margin-left: 8px; margin-bottom: 3px"
                                     v-bind:disabled="isScanning"
                                     >mdi-link</v-icon
                                   >
@@ -278,7 +278,7 @@
                                     v-on:click.stop="
                                       onShowDeleteMediaDialog(item)
                                     "
-                                    style="margin-left: 8px"
+                                    style="margin-left: 8px; margin-bottom: 3px"
                                     v-bind:disabled="isScanning"
                                     >mdi-delete</v-icon
                                   >
