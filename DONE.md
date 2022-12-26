@@ -1,7 +1,8 @@
 # DONE
 
-## next
+## next (v1.0.2?)
 
+- [x] PersonDialog: add button for (re-)fetching data from web
 - [x] UI: MediaList: small positioning correction for action icons in media items
 
 ## v1.0.1

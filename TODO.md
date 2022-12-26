@@ -1,8 +1,12 @@
 # TODO
 
+## NEXT Major
+
+- [ ] investigate chat-gpt interface (non-api, new browser window)
+
 ## NEXT Minor (current: v1.0.1)
 
-- nothing
+- [ ] async db funcs (initDb, syncSqlite)
 
 ### Defects
 
@@ -24,10 +28,10 @@ router.js
 
 ```js
 // remove the noise from duplicated router pushs (https://stackoverflow.com/a/58439497/5627010)
-const originalPush = Router.prototype.push
+const originalPush = Router.prototype.push;
 Router.prototype.push = function push(location) {
-  return originalPush.call(this, location).catch((err) => err)
-}
+  return originalPush.call(this, location).catch((err) => err);
+};
 ```
 
 ### In-List File Management

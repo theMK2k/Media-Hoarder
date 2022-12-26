@@ -7,8 +7,32 @@
     scrollable
   >
     <v-card dark flat v-bind:ripple="false">
-      <v-card-title>
+      <v-card-title
+        v-on:mouseover="isTitleHovered = true"
+        v-on:mouseleave="isTitleHovered = false"
+      >
         {{ Person_Name }}
+        <v-tooltip bottom v-if="isTitleHovered">
+          <template v-slot:activator="{ on }">
+            <span v-on="on">
+              <v-icon
+                class="mk-clickable"
+                v-on:click.stop="scrapeData()"
+                style="margin-left: 8px; margin-bottom: 3px"
+                v-bind:disabled="isScraping"
+                >mdi-reload-alert</v-icon
+              >
+            </span>
+          </template>
+          <span>
+            {{ $t("Rescan Meta Data") }}
+            <span v-if="isScraping">
+              <br />
+              {{ $t("scan already in progress") }}
+            </span>
+          </span>
+        </v-tooltip>
+
         <v-progress-linear
           v-if="isScraping || isLoadingMovies"
           color="red accent-0"
@@ -64,7 +88,11 @@
                   class="mk-clickable"
                   v-on:click.stop="showLongBio = true"
                 >
-                  {{ personData.ShortBio }}
+                  {{
+                    personData.ShortBio
+                      ? personData.ShortBio
+                      : personData.LongBio
+                  }}
                 </div>
                 <div
                   v-if="showLongBio"
@@ -158,6 +186,7 @@ export default {
 
   data() {
     return {
+      isTitleHovered: false,
       isScraping: false,
       personData: {},
       showLongBio: false,
