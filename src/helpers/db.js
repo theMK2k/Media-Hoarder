@@ -44,6 +44,18 @@ function initDbCB(callback) {
   initSQLite(callback);
 }
 
+async function initDb() {
+  return new Promise((resolve, reject) => {
+    initDbCB((err) => {
+      if (err) {
+        return reject(err);
+      }
+
+      return resolve();
+    });
+  });
+}
+
 /**
  * Fire a query to the database (callback)
  * The callback is only invoked with the error Object, i.e. the query won't provide a result
@@ -233,6 +245,7 @@ function buildUPDATEQuery(tableName, primaryKeyName, data) {
 
 export {
   getDb,
+  initDb,
   initDbCB,
   fireProcedureCB,
   fireProcedureReturnScalarCB,
