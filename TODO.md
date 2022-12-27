@@ -1,10 +1,6 @@
 # TODO
 
-## NEXT Major
-
-- [ ] investigate chat-gpt interface (non-api, new browser window)
-
-## NEXT Minor (current: v1.0.1)
+## NEXT Minor (current v1.1.0)
 
 - [ ] async db funcs (initDb, syncSqlite)
 

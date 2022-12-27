@@ -126,6 +126,10 @@ export const eventBus = new Vue({
       this.$emit("filmingLocationDialogConfirm", result);
     },
 
+    chatGPTDialogConfirm(result) {
+      this.$emit("chatGPTDialogConfirm", result);
+    },
+
     openVersionDialog() {
       this.$emit("openVersionDialog");
     },

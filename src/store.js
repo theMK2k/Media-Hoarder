@@ -2758,7 +2758,7 @@ function getPreferredLanguages() {
  * Generate an SQL query for the given filters
  * @param {Object} filters
  */
-function generateFilterQuery(filters, arr_id_Movies) {
+function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
   let filterSourcePaths = "";
   logger.log(
     "[generateFilterQuery] filters.filterSourcePaths:",
@@ -3666,6 +3666,15 @@ function generateFilterQuery(filters, arr_id_Movies) {
     filter_id_Movies += ")";
   }
 
+  let filter_IMDB_tconst = "";
+  if (arr_IMDB_tconst && arr_IMDB_tconst.length) {
+    filter_IMDB_tconst = "AND MOV.IMDB_tconst IN (";
+    filter_IMDB_tconst += arr_IMDB_tconst.reduce((prev, current) => {
+      return prev + (prev ? ", " : "") + `"${current}"`;
+    }, "");
+    filter_IMDB_tconst += ")";
+  }
+
   /*
   logger.log("[generateFilterQuery] filterSourcePaths:", filterSourcePaths);
   logger.log("[generateFilterQuery] filterGenres:", filterGenres);
@@ -3705,6 +3714,7 @@ function generateFilterQuery(filters, arr_id_Movies) {
   ${filterVideoEncoders}
   ${filterAudioFormats}
   ${filter_id_Movies}
+  ${filter_IMDB_tconst}
 `;
 }
 
@@ -3713,11 +3723,16 @@ async function fetchMedia(
   arr_id_Movies,
   minimumResultSet,
   $t,
-  filters
+  filters,
+  arr_IMDB_tconst
 ) {
   logger.log("[fetchMedia] filters:", filters);
 
-  const filterQuery = generateFilterQuery(filters, arr_id_Movies);
+  const filterQuery = generateFilterQuery(
+    filters,
+    arr_id_Movies,
+    arr_IMDB_tconst
+  );
 
   try {
     logger.log(
@@ -5366,12 +5381,16 @@ async function saveSortValues($MediaType) {
   await setSetting(`sortMediaType${$MediaType}`, sortValuesString);
 }
 
-async function createList($Name) {
+async function createList($Name, noErrorOnDuplicateName) {
   const id_Lists = await db.fireProcedureReturnScalar(
     `SELECT id_Lists FROM tbl_Lists WHERE Name = $Name`,
     { $Name }
   );
   if (id_Lists) {
+    if (noErrorOnDuplicateName) {
+      return id_Lists;
+    }
+
     throw definedError.create(
       "a list with the same name already exists",
       null,
@@ -5390,13 +5409,25 @@ async function createList($Name) {
   );
 }
 
-async function addToList($id_Lists, $id_Movies, isHandlingDuplicates) {
-  const id_Lists = await db.fireProcedureReturnScalar(
+/**
+ *
+ * @param {Integer} $id_Lists
+ * @param {Integer} $id_Movies
+ * @param {Boolean} isHandlingDuplicates if false, addToList will determine duplicates and add them to the list
+ * @returns
+ */
+async function addToList(
+  $id_Lists,
+  $id_Movies,
+  isHandlingDuplicates,
+  dontThrowErrorOnDuplicate
+) {
+  const id_Lists_Movies = await db.fireProcedureReturnScalar(
     `SELECT id_Lists_Movies FROM tbl_Lists_Movies WHERE id_Lists = $id_Lists AND id_Movies = $id_Movies`,
     { $id_Lists, $id_Movies }
   );
-  if (id_Lists) {
-    if (isHandlingDuplicates) {
+  if (id_Lists_Movies) {
+    if (isHandlingDuplicates || dontThrowErrorOnDuplicate) {
       return;
     }
 
@@ -5425,6 +5456,17 @@ async function addToList($id_Lists, $id_Movies, isHandlingDuplicates) {
       await addToList($id_Lists, duplicates[i], true);
     }
   }
+}
+
+/**
+ * Clears a list from all entries
+ * @param {Integer} $id_Lists
+ */
+async function clearList($id_Lists) {
+  return await db.fireProcedureReturnScalar(
+    `DELETE FROM tbl_Lists_Movies WHERE id_Lists = $id_Lists`,
+    { $id_Lists }
+  );
 }
 
 async function removeFromList($id_Lists, $id_Movies) {
@@ -7778,6 +7820,7 @@ export {
   createList,
   addToList,
   removeFromList,
+  clearList,
   fetchLists,
   getMovieDetails,
   setLastAccess,

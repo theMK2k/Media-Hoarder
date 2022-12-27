@@ -1,9 +1,10 @@
 # DONE
 
-## next (v1.0.2?)
+## v1.1.0
 
+- [x] AI Recommendations
 - [x] PersonDialog: add button for (re-)fetching data from web
-- [x] UI: MediaList: small positioning correction for action icons in media items
+- [x] UI: MediaList: minor positioning correction for action icons in media items
 
 ## v1.0.1
 

@@ -100,6 +100,16 @@
               </template>
               <span>{{ $t("Edit Filters") }}</span>
             </v-tooltip>
+            <v-tooltip v-if="!editFilters.isEditFilters" bottom>
+              <template v-slot:activator="{ on }">
+                <span v-on="on">
+                  <v-btn text v-on:click="onOpenChatGPTDialog"
+                    ><v-icon>mdi-robot</v-icon></v-btn
+                  >
+                </span>
+              </template>
+              <span>{{ $t("Let an AI recommend some movies") }}</span>
+            </v-tooltip>
 
             <v-btn
               v-if="editFilters.isEditFilters"
@@ -3704,6 +3714,13 @@
           v-on:ok="onCheckIMDBScraperDialogOK"
         ></mk-check-imdb-scraper-dialog>
 
+        <mk-chat-gpt-dialog
+          ref="chatGPTDialog"
+          v-bind:show="chatGPTDialog.show"
+          v-on:close="onChatGPTDialogClose"
+          v-on:ok="onChatGPTDialogOK"
+        ></mk-chat-gpt-dialog>
+
         <!-- BOTTOM BAR -->
         <v-bottom-navigation
           fixed
@@ -3810,6 +3827,7 @@ import SearchDataDialog from "@/components/shared/SearchDataDialog.vue";
 import ScanOptionsDialog from "@/components/shared/ScanOptionsDialog.vue";
 import VersionDialog from "@/components/shared/VersionDialog.vue";
 import CheckIMDBScraperDialog from "@/components/shared/CheckIMDBScraperDialog.vue";
+import ChatGPTDialog from "@/components/shared/ChatGPTDialog.vue";
 
 export default {
   components: {
@@ -3822,6 +3840,7 @@ export default {
     "mk-scan-options-dialog": ScanOptionsDialog,
     "mk-version-dialog": VersionDialog,
     "mk-check-imdb-scraper-dialog": CheckIMDBScraperDialog,
+    "mk-chat-gpt-dialog": ChatGPTDialog,
   },
 
   props: {
@@ -3922,6 +3941,10 @@ export default {
     checkIMDBScraperDialog: {
       show: false,
       settings: null,
+    },
+
+    chatGPTDialog: {
+      show: false,
     },
 
     yearsRangeInput: {
@@ -4871,6 +4894,7 @@ export default {
     filtersChanged: function (lastChangedFilter) {
       this.$shared.lastChangedFilter = lastChangedFilter;
       logger.log("[filtersChanged] START this.$shared:", this.$shared);
+      logger.log("[filtersChanged] emitting refetchMedia");
       this.debouncedEventBusRefetchMedia();
     },
 
@@ -4937,8 +4961,13 @@ export default {
       this.filtersChanged("filterYears");
     },
 
-    setAllFilterLists: function (value) {
+    setAllFilterLists: function (value, exclusionList) {
       this.$shared.filters.filterLists.forEach((list) => {
+        if (exclusionList && exclusionList.find((val) => list.Name === val)) {
+          list.Selected = !value;
+          return;
+        }
+
         list.Selected = value;
       });
 
@@ -4956,6 +4985,8 @@ export default {
     },
 
     setAllFilterPersons: function (value, exclusionList) {
+      logger.log("[setAllFilterPersons]", { value, exclusionList });
+
       this.$shared.filters.filterPersons.forEach((sp) => {
         if (
           exclusionList &&
@@ -5436,6 +5467,20 @@ export default {
       return;
     },
 
+    onOpenChatGPTDialog() {
+      this.$refs.chatGPTDialog.init();
+      this.chatGPTDialog.show = true;
+    },
+
+    onChatGPTDialogClose() {
+      this.chatGPTDialog.show = false;
+    },
+
+    onChatGPTDialogOK() {
+      // TODO: implement filtering
+      this.chatGPTDialog.show = false;
+    },
+
     onResetFilters() {
       store.resetFilters();
       this.filtersChanged();
@@ -5699,6 +5744,13 @@ export default {
     eventBus.$on("setFilter", (setFilter) => {
       if (!setFilter) {
         return;
+      }
+
+      if (setFilter.filterLists) {
+        this.setAllFilterLists(false, setFilter.filterLists);
+        this.$shared.filterGroups.find(
+          (fg) => fg.name === "filterLists"
+        ).visible = true;
       }
 
       if (setFilter.filterCompanies) {
