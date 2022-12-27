@@ -96,7 +96,6 @@ const helpers = require("../../helpers/helpers");
 import { eventBus } from "@/main";
 
 import CompactMovieListRow from "@/components/shared/CompactMovieListRow.vue";
-import { resolve } from "path";
 
 export default {
   props: ["show"],
@@ -113,6 +112,8 @@ export default {
       arr_IMDB_tconst: null,
       movies: null,
       listTitle: null,
+      browserWindow: null,
+      intervalUpdateFromBrowserwindow: null,
     };
   },
 
@@ -124,9 +125,17 @@ export default {
       this.movies = null;
       this.numMovies = null;
       this.title = null;
+      if (this.browserWindow) {
+        this.browserWindow.close();
+        this.browserWindow = null;
+      }
     },
 
     onCloseClick() {
+      clearInterval(this.intervalUpdateFromBrowserwindow);
+      if (this.browserWindow) {
+        this.browserWindow.close();
+      }
       this.$emit("close");
     },
 
@@ -208,54 +217,101 @@ export default {
     },
 
     async onStartConversation() {
-      const win = new BrowserWindow({
-        width: 500,
+      logger.log("[onStartConversation] START");
+
+      if (this.browserWindow) {
+        this.browserWindow.close();
+        this.browserWindow = null;
+      }
+
+      this.browserWindow = new BrowserWindow({
+        width: 760,
         height: 600,
         show: true,
       });
 
+      this.browserWindow.setMenu(null);
+
       if (helpers.isDevelopment) {
-        win.toggleDevTools();
+        this.browserWindow.toggleDevTools();
       }
 
-      win.on("close", async () => {
-        // TODO: find a more suitable way to read the innerHTML (maybe "close" is the wrong event)
+      let updateFromBrowserwindowRunning = false;
+      async function updateFromBrowserwindow(that) {
         // TODO: also read out "Movie Name X" and try to find them in our database
-        logger.log("[onStartConversation] win closing, win:", win);
-        logger.log(
-          "[onStartConversation] win closing, win.webContents:",
-          win.webContents
-        );
 
-        const content = await win.webContents.executeJavaScript(
-          "document.getElementsByTagName('body')[0].innerHTML"
-        );
-
-        logger.log("[onStartConversation] content:", content);
-
-        const rxIMDBtconst = /\d{7,}/g;
-
-        if (!rxIMDBtconst.test(content)) {
-          logger.log("[onStartConversation] NO MATCH, initializing");
-          this.init();
-          return resolve();
+        if (updateFromBrowserwindowRunning) {
+          return;
         }
 
-        const arr_IMDB_tconst = content.match(rxIMDBtconst).map((item) => {
-          return `tt${item}`;
-        });
+        try {
+          updateFromBrowserwindowRunning = true;
 
-        logger.log("[onStartConversation] imdbIDs:", arr_IMDB_tconst);
+          logger.log(
+            "[updateFromBrowserwindow] that.browserWindow:",
+            that.browserWindow
+          );
+          logger.log(
+            "[updateFromBrowserwindow] browserWindow closing, that.browserWindow.webContents:",
+            that.browserWindow.webContents
+          );
 
-        this.movies = await this.loadMovies(arr_IMDB_tconst, true);
-        this.numMovies = this.movies.length;
+          const content =
+            await that.browserWindow.webContents.executeJavaScript(
+              "document.getElementsByTagName('body')[0].innerHTML"
+            );
 
-        this.listTitle = "AI: " + content.match(/<h1 .*?>(.*?)<\/h1>/)[1];
+          logger.log("[onStartConversation] content:", content);
 
-        return resolve();
+          const rxIMDBtconst = /\d{7,}/g;
+
+          if (!rxIMDBtconst.test(content)) {
+            logger.log("[onStartConversation] NO MATCH, initializing");
+            that.init();
+            return;
+          }
+
+          const arr_IMDB_tconst = content.match(rxIMDBtconst).map((item) => {
+            return `tt${item}`;
+          });
+
+          logger.log("[onStartConversation] imdbIDs:", arr_IMDB_tconst);
+
+          that.movies = await that.loadMovies(arr_IMDB_tconst, true);
+          that.numMovies = that.movies.length;
+
+          that.listTitle = "AI: " + content.match(/<h1 .*?>(.*?)<\/h1>/)[1];
+
+          return;
+        } catch (err) {
+          console.error(err);
+        } finally {
+          updateFromBrowserwindowRunning = false;
+        }
+      }
+
+      if (this.intervalUpdateFromBrowserwindow) {
+        clearInterval(this.intervalUpdateFromBrowserwindow);
+        this.intervalUpdateFromBrowserwindow = null;
+      }
+
+      const that = this;
+
+      this.intervalUpdateFromBrowserwindow = setInterval(() => {
+        logger.log("[intervalUpdateFromBrowserwindow] tick");
+        if (that.browserWindow) {
+          logger.log("[browserWindow show event] run updateFromBrowserwindow");
+          return updateFromBrowserwindow(that);
+        }
+      }, 500);
+
+      this.browserWindow.on("close", async () => {
+        clearInterval(this.intervalUpdateFromBrowserwindow);
+        this.intervalUpdateFromBrowserwindow = null;
+        this.browserWindow = null;
       });
 
-      win.loadURL("https://chat.openai.com");
+      this.browserWindow.loadURL("https://chat.openai.com");
     },
   },
 
