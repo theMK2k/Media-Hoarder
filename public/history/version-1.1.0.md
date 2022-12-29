@@ -11,6 +11,10 @@ Examples:
 - _Provide a list of Oscar winning best motion picture between 2000 and 2010 and their IMDB ID_
 - _Provide a list of classic Sci-Fi movies that were not made by Hollywood and their IMDB ID_
 
+Read and discuss the blog post on the website: <https://media.hoarder.software/blog/ai-recommendations-with-chatgpt>
+
+Check this [short video](https://youtu.be/EqiChgd2iuo) which shows how to use AI recommendations in Media Hoarder.
+
 ## PersonDialog: add button for (re-)fetching data from imdb.com
 
 In order to fetch the latest data from imdb.com for a person (directors, actors, etc.) a button has been added to the person dialog title.
