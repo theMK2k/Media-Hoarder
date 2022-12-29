@@ -43,8 +43,13 @@
                 v-if="numMovies !== null"
                 class="mk-compact-movie-list-title"
               >
-                Result:
-                {{ numMovies + " " + $t(numMovies === 1 ? "movie" : "movies") }}
+                {{
+                  $t("Result") +
+                  ": " +
+                  numMovies +
+                  " " +
+                  $t(numMovies === 1 ? "movie" : "movies")
+                }}
               </v-row>
               <div class="mk-clickable-white">
                 <div v-for="(movie, index) in movies" v-bind:key="index">

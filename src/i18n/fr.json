@@ -635,6 +635,7 @@
   "Visit": "Visites",
   "for a better features overview_": "pour une meilleure vue d'ensemble des fonctions.",
   "Version History": "Historique de la version",
+  "Show Version History": "Afficher l'historique de la version",
   "GenreNames": {
     "Action": "Action",
     "Adventure": "Aventure",
@@ -986,5 +987,13 @@
   "Delete Media": "Supprimer le média",
   "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete the media?": "Cette action supprimera '{ItemName}' ainsi que tous les fichiers associés de votre disque dur. Voulez-vous vraiment supprimer ce média?",
   "Open Storage Location": "Ouvrir l'espace de stockage",
-  "'{ItemName}' has been deleted_": "'{ItemName}' supprimé avec succès"
+  "'{ItemName}' has been deleted_": "'{ItemName}' supprimé avec succès",
+  "Let an AI recommend some movies": "Laissez une IA vous recommander des films",
+  "AI Recommendations": "Recommandations sur l'IA",
+  "Click the button below and ask the AI to list movies according to your criteria_": "Cliquez sur le bouton ci-dessous et demandez à l'IA de lister les films en fonction de vos critères.",
+  "Always ask for IMDB IDs!": "Demandez toujours les ID IMDB!",
+  "Start Conversation": "Commencer la conversation",
+  "Create and filter by this list": "Créer et filtrer par cette liste",
+  "List Title": "Titre de la liste",
+  "Result": "Résultat"
 }

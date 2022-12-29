@@ -634,6 +634,7 @@
   "Visit": "Visit",
   "for a better features overview_": "for a better features overview.",
   "Version History": "Version History",
+  "Show Version History": "Show Version History",
   "GenreNames": {
     "Action": "Action",
     "Adventure": "Adventure",
@@ -907,5 +908,13 @@
   "Delete Media": "Delete Media",
   "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete the media?": "This will delete '{ItemName}' and all the files associated to it on your hard drive. Do you really want to delete the media?",
   "Open Storage Location": "Open Storage Location",
-  "'{ItemName}' has been deleted_": "'{ItemName}' has been deleted."
+  "'{ItemName}' has been deleted_": "'{ItemName}' has been deleted.",
+  "Let an AI recommend some movies": "Let an AI recommend some movies",
+  "AI Recommendations": "AI Recommendations",
+  "Click the button below and ask the AI to list movies according to your criteria_": "Click the button below and ask the AI to list movies according to your criteria.",
+  "Always ask for IMDB IDs!": "Always ask for IMDB IDs!",
+  "Start Conversation": "Start Conversation",
+  "Create and filter by this list": "Create and filter by this list",
+  "List Title": "List Title",
+  "Result": "Result"
 }
