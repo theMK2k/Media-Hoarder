@@ -181,7 +181,7 @@
                         v-on:mouseover="setItemHovered(item, 'name', true)"
                         v-on:mouseleave="setItemHovered(item, 'name', false)"
                       >
-                        <div style="display: flex">
+                        <div style="display: flex; min-height: 30px">
                           <div
                             style="overflow: hidden; text-overflow: ellipsis"
                           >
