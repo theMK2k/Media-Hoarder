@@ -1,5 +1,9 @@
 # DONE
 
+## v1.1.1
+
+- [x] The integration of ChatGPT to query AI suggestions has been significantly improved. There is no longer a dependency on IMDB IDs.
+
 ## v1.1.0
 
 - [x] AI Recommendations
