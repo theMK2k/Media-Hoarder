@@ -114,7 +114,8 @@ export default {
       isScraping: false,
       numMovies: null,
       isLoadingMovies: false,
-      arr_IMDB_tconst: null,
+      movieNamesAndYears: [], // { name: "Die Hard", year: 1987, imdb_tconst: "tt12345678", processed: true }
+      arr_IMDB_tconst: [],
       movies: null,
       listTitle: null,
       browserWindow: null,
@@ -126,7 +127,8 @@ export default {
 
   methods: {
     async init() {
-      this.arr_IMDB_tconst = null;
+      this.arr_IMDB_tconst = [];
+      this.movieNamesAndYears = [];
       this.movies = null;
       this.numMovies = null;
       this.title = null;
@@ -159,8 +161,6 @@ export default {
         filterLists: [this.listTitle],
       };
 
-      // eventBus.companyDialogConfirm(setFilter);
-
       eventBus.refetchSpecificFilter(setFilter);
 
       this.$emit("close");
@@ -170,8 +170,75 @@ export default {
       this.onCloseClick();
     },
 
-    async loadMovies(arr_IMDB_tconst, deduplicate) {
-      logger.log("[loadMovies] imdbIDs:", arr_IMDB_tconst);
+    async updateLists(arr_IMDB_tconst, movieNamesAndYears) {
+      arr_IMDB_tconst.forEach((imdb_tconst) => {
+        if (
+          this.arr_IMDB_tconst.find(
+            (imdb_tconst2) => imdb_tconst2 === imdb_tconst
+          )
+        ) {
+          return;
+        }
+
+        this.arr_IMDB_tconst.push(imdb_tconst);
+      });
+
+      movieNamesAndYears.forEach((movieNameAndYear) => {
+        if (
+          this.movieNamesAndYears.find(
+            (movieNameAndYear2) =>
+              movieNameAndYear2.name === movieNameAndYear.name &&
+              movieNameAndYear2.year === movieNameAndYear.year
+          )
+        ) {
+          return;
+        }
+
+        this.movieNamesAndYears.push(movieNameAndYear);
+      });
+
+      for (const movieNameAndYear of this.movieNamesAndYears.filter(
+        (item) => !item.processed
+      )) {
+        if (movieNameAndYear.name && movieNameAndYear.year) {
+          movieNameAndYear.imdb_tconst =
+            await store.db.fireProcedureReturnScalar(
+              `
+            SELECT
+              IMDB_tconst
+            FROM  tbl_Movies MOV
+            WHERE MOV.IMDB_startYear = $year
+                  AND (
+                        MOV.Name LIKE $name
+                    OR  MOV.Name2 LIKE $name
+                    OR MOV.IMDB_originalTitle LIKE $name
+                    OR MOV.IMDB_primaryTitle LIKE $name
+                    OR MOV.IMDB_localTitle LIKE $name
+                  )
+        `,
+              { $year: movieNameAndYear.year, $name: movieNameAndYear.name }
+            );
+
+          if (movieNameAndYear.imdb_tconst) {
+            if (
+              !this.arr_IMDB_tconst.find(
+                (imdb_tconst2) => imdb_tconst2 === movieNameAndYear.imdb_tconst
+              )
+            ) {
+              this.arr_IMDB_tconst.push(movieNameAndYear.imdb_tconst);
+            }
+          }
+        }
+
+        movieNameAndYear.processed = true;
+      }
+    },
+
+    async loadMovies(deduplicate) {
+      logger.log("[loadMovies] imdbIDs:", this.arr_IMDB_tconst);
+      if (this.arr_IMDB_tconst.length === 0) {
+        return [];
+      }
       this.isLoadingMovies = true;
       let movies = (
         await store.fetchMedia(
@@ -182,7 +249,7 @@ export default {
           {
             filterSettings: {},
           },
-          arr_IMDB_tconst
+          this.arr_IMDB_tconst
         )
       ).sort((a, b) => {
         if (a.startYear > b.startYear) {
@@ -269,23 +336,49 @@ export default {
           logger.log("[onStartConversation] content:", content);
 
           const rxIMDBtconst = /\d{7,}/g;
+          const rxMovieNameAndYear = /<li>.*?\(\d\d\d\d\)/g;
 
-          if (!rxIMDBtconst.test(content)) {
+          if (
+            !rxIMDBtconst.test(content) &&
+            !rxMovieNameAndYear.test(content)
+          ) {
             logger.log("[onStartConversation] NO MATCH, initializing");
             that.init();
             return;
           }
 
-          const arr_IMDB_tconst = content.match(rxIMDBtconst).map((item) => {
-            return `tt${item}`;
-          });
+          let arr_IMDB_tconst = [];
+          if (rxIMDBtconst.test(content)) {
+            arr_IMDB_tconst = content.match(rxIMDBtconst).map((item) => {
+              return `tt${item}`;
+            });
+          }
 
-          logger.log("[onStartConversation] imdbIDs:", arr_IMDB_tconst);
+          const movieNamesAndYears = [];
+          if (rxMovieNameAndYear.test(content)) {
+            content.match(rxMovieNameAndYear).forEach((hit) => {
+              const rxNameAndYear = /<li>(.*?)\((\d\d\d\d)\)/;
+              movieNamesAndYears.push({
+                name: hit.match(rxNameAndYear)[1].replace(/"/g, "").trim(),
+                year: +hit.match(rxNameAndYear)[2],
+              });
+            });
+          }
 
+          logger.log(
+            "[onStartConversation] imdbIDs:",
+            arr_IMDB_tconst,
+            "movieNamesAndYears:",
+            movieNamesAndYears
+          );
+
+          that.updateLists(arr_IMDB_tconst, movieNamesAndYears);
           that.movies = await that.loadMovies(arr_IMDB_tconst, true);
           that.numMovies = that.movies.length;
 
-          that.listTitle = "AI: " + content.match(/<h1 .*?>(.*?)<\/h1>/)[1];
+          if (/<h1 .*?>(.*?)<\/h1>/s.test(content)) {
+            that.listTitle = "AI: " + content.match(/<h1 .*?>(.*?)<\/h1>/s)[1];
+          }
 
           return;
         } catch (err) {
