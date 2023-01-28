@@ -1,5 +1,12 @@
 [
     {
+        "version": "1.1.1",
+        "name": "HAL 9000",
+        "quote": "I am putting myself to the fullest possible use, which is all I think that any conscious entity can ever hope to do.",
+        "quoteSource": "2001: A Space Odyssey (1968)",
+        "description": "version-1.1.1.md"
+    },
+    {
         "version": "1.1.0",
         "name": "HAL 9000",
         "quote": "I am putting myself to the fullest possible use, which is all I think that any conscious entity can ever hope to do.",

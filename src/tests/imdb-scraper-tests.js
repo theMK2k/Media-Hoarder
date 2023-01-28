@@ -1321,7 +1321,7 @@ async function testIMDBFind() {
           `query '${expectedValue.searchTerm}' [${expectedValue.type}] no response`,
           status.ERROR
         );
-        return;
+        return testResult;
       }
 
       if (scrapeResult.length === 0) {
@@ -1330,7 +1330,7 @@ async function testIMDBFind() {
           `query '${expectedValue.searchTerm}' [${expectedValue.type}] results missing`,
           status.ERROR
         );
-        return;
+        return testResult;
       }
 
       if (scrapeResult.length < expectedValue.numResults) {
