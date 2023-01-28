@@ -16,11 +16,11 @@ const config = {
   smtpUser: cmdArguments.smtpUser,
   smtpPass: cmdArguments.smtpPass,
   smtpSecure: cmdArguments.smtpPort == 465 ? true : false,
-  smtpSendLevel:
-    cmdArguments.smtpSendLevel != undefined ? +cmdArguments.smtpSendLevel : 2,
+  smtpSendLevel: cmdArguments.smtpSendLevel != undefined ? +cmdArguments.smtpSendLevel : 2,
   smtpReceiver: cmdArguments.smtpReceiver,
   dumpScrapedHTML: !!cmdArguments.dumpScrapedHTML,
   useDumps: !!cmdArguments.useDumps,
+  testmodule: cmdArguments.testmodule,
 };
 
 const status = {
@@ -50,53 +50,37 @@ const log = {
   logger.info("Syntax: media-hoarder-imdb-scraper-watchdog [options]");
   logger.info("");
   logger.info("options:");
-  logger.info(
-    "         --logLevel=<logLevel>                                log level, default: 2"
-  );
-  logger.info(
-    "         --dumpScrapedHTML                                    dump scraped html to file"
-  );
-  logger.info(
-    "         --useDumps                                           do not actually scrape but use previously dumped files"
-  );
-  logger.info(
-    "         --smtpHost=<host address>                            smtp host address, default: null"
-  );
-  logger.info(
-    "         --smtpPort=<port number>                             smtp port, default: null"
-  );
-  logger.info(
-    "         --smtpUser=<username>                                smtp authentication user, default: null"
-  );
-  logger.info(
-    "         --smtpPass=<password>                                smtp authentication password, default: null"
-  );
-  logger.info(
-    "         --smtpReceiver=<receiver mail address>               mail address for receiver of error/warning mails, default: null"
-  );
-  logger.info(
-    "         --smtpSendLevel=<level when mail is to be sent>      SUCCESS: 0, WARNING: 1, ERROR: 2, default: 2"
-  );
+  logger.info("         --logLevel=<logLevel>                                log level, default: 2");
+  logger.info("         --dumpScrapedHTML                                    dump scraped html to file");
+  logger.info("         --useDumps                                           do not actually scrape but use previously dumped files");
+  logger.info("         --smtpHost=<host address>                            smtp host address, default: null");
+  logger.info("         --smtpPort=<port number>                             smtp port, default: null");
+  logger.info("         --smtpUser=<username>                                smtp authentication user, default: null");
+  logger.info("         --smtpPass=<password>                                smtp authentication password, default: null");
+  logger.info("         --smtpReceiver=<receiver mail address>               mail address for receiver of error/warning mails, default: null");
+  logger.info("         --smtpSendLevel=<level when mail is to be sent>      SUCCESS: 0, WARNING: 1, ERROR: 2, default: 2");
+  logger.info('         --testmodule=<moduleName>                            a certain module to test, e.g. "testIMDBmainPageData"');
 
   logger.info("");
   logger.info("used config:", JSON.stringify(config, null, 2));
 
-  addLogEntry(await imdbScraperTests.testIMDBmainPageData());
-  addLogEntry(await imdbScraperTests.testIMDBmainPageData2());
-  addLogEntry(await imdbScraperTests.testIMDBplotSummary());
-  addLogEntry(await imdbScraperTests.testIMDBreleaseinfo());
-  addLogEntry(await imdbScraperTests.testIMDBtechnicalData());
-  addLogEntry(await imdbScraperTests.testIMDBParentalGuideData());
-  addLogEntry(await imdbScraperTests.testIMDBFullCreditsData());
-  addLogEntry(await imdbScraperTests.testIMDBCompaniesData());
-  addLogEntry(await imdbScraperTests.testIMDBPersonData());
-  addLogEntry(await imdbScraperTests.testIMDBTrailerMediaURLs());
-  addLogEntry(await imdbScraperTests.testIMDBplotKeywords());
-  addLogEntry(await imdbScraperTests.testIMDBFilmingLocations());
-  addLogEntry(await imdbScraperTests.testIMDBRatingDemographics());
-  addLogEntry(await imdbScraperTests.testIMDBSuggestion());
-  addLogEntry(await imdbScraperTests.testIMDBAdvancedTitleSearch());
-  addLogEntry(await imdbScraperTests.testIMDBFind());
+  if (!config.testmodule || config.testmodule === "testIMDBmainPageData") addLogEntry(await imdbScraperTests.testIMDBmainPageData());
+  if (!config.testmodule || config.testmodule === "testIMDBmainPageData2") addLogEntry(await imdbScraperTests.testIMDBmainPageData2());
+  if (!config.testmodule || config.testmodule === "testIMDBplotSummary") addLogEntry(await imdbScraperTests.testIMDBplotSummary());
+  if (!config.testmodule || config.testmodule === "testIMDBreleaseinfo") addLogEntry(await imdbScraperTests.testIMDBreleaseinfo());
+  if (!config.testmodule || config.testmodule === "testIMDBtechnicalData") addLogEntry(await imdbScraperTests.testIMDBtechnicalData());
+  if (!config.testmodule || config.testmodule === "testIMDBtechnicalData2") addLogEntry(await imdbScraperTests.testIMDBtechnicalData2());
+  if (!config.testmodule || config.testmodule === "testIMDBParentalGuideData") addLogEntry(await imdbScraperTests.testIMDBParentalGuideData());
+  if (!config.testmodule || config.testmodule === "testIMDBFullCreditsData") addLogEntry(await imdbScraperTests.testIMDBFullCreditsData());
+  if (!config.testmodule || config.testmodule === "testIMDBCompaniesData") addLogEntry(await imdbScraperTests.testIMDBCompaniesData());
+  if (!config.testmodule || config.testmodule === "testIMDBPersonData") addLogEntry(await imdbScraperTests.testIMDBPersonData());
+  if (!config.testmodule || config.testmodule === "testIMDBTrailerMediaURLs") addLogEntry(await imdbScraperTests.testIMDBTrailerMediaURLs());
+  if (!config.testmodule || config.testmodule === "testIMDBplotKeywords") addLogEntry(await imdbScraperTests.testIMDBplotKeywords());
+  if (!config.testmodule || config.testmodule === "testIMDBFilmingLocations") addLogEntry(await imdbScraperTests.testIMDBFilmingLocations());
+  if (!config.testmodule || config.testmodule === "testIMDBRatingDemographics") addLogEntry(await imdbScraperTests.testIMDBRatingDemographics());
+  if (!config.testmodule || config.testmodule === "testIMDBSuggestion") addLogEntry(await imdbScraperTests.testIMDBSuggestion());
+  if (!config.testmodule || config.testmodule === "testIMDBAdvancedTitleSearch") addLogEntry(await imdbScraperTests.testIMDBAdvancedTitleSearch());
+  if (!config.testmodule || config.testmodule === "testIMDBFind") addLogEntry(await imdbScraperTests.testIMDBFind());
 
   await checkSendMail();
 })();
@@ -134,12 +118,7 @@ function addLogEntry(testResult) {
 
 async function checkSendMail() {
   try {
-    logger.info(
-      "checkSendMail log.maxLevel:",
-      log.maxLevel,
-      "config.smtpSendLevel:",
-      config.smtpSendLevel
-    );
+    logger.info("checkSendMail log.maxLevel:", log.maxLevel, "config.smtpSendLevel:", config.smtpSendLevel);
 
     if (log.maxLevel < config.smtpSendLevel) {
       return;
@@ -175,13 +154,7 @@ async function checkSendMail() {
     await transporter.sendMail({
       from: '"Media Hoarder IMDB Scraper Watchdog" <imdb-scraper-watchdog@hoarder.software>', // sender address
       to: config.smtpReceiver, // "bar@example.com, baz@example.com", // list of receivers
-      subject: `IMDB Scraper Watchdog: ${
-        log.maxLevel === 2
-          ? "ERROR"
-          : log.maxLevel === 1
-          ? "WARNING"
-          : "SUCCESS"
-      }`, // Subject line
+      subject: `IMDB Scraper Watchdog: ${log.maxLevel === 2 ? "ERROR" : log.maxLevel === 1 ? "WARNING" : "SUCCESS"}`, // Subject line
       text: JSON.stringify(log.messages, null, 2),
     });
 

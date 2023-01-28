@@ -18,29 +18,12 @@ function addSubLogEntry(testResult, message, newStatus) {
 /*
  * Perform a default check: the item must be truthy and equal to the expected value
  */
-function performDefaultCheck(
-  scrapeResult,
-  expected,
-  testResult,
-  fieldName,
-  msgPrefix,
-  allowFalsy,
-  checkIncludes
-) {
+function performDefaultCheck(scrapeResult, expected, testResult, fieldName, msgPrefix, allowFalsy, checkIncludes) {
   if (!allowFalsy && !scrapeResult[fieldName]) {
-    addSubLogEntry(
-      testResult,
-      `${msgPrefix ? msgPrefix + " " : ""}${fieldName} missing`,
-      status.ERROR
-    );
+    addSubLogEntry(testResult, `${msgPrefix ? msgPrefix + " " : ""}${fieldName} missing`, status.ERROR);
   } else if (
-    (!checkIncludes &&
-      JSON.stringify(scrapeResult[fieldName]) !==
-        JSON.stringify(expected[fieldName])) ||
-    (checkIncludes &&
-      JSON.stringify(scrapeResult[fieldName]).includes(
-        JSON.stringify(expected[fieldName])
-      ))
+    (!checkIncludes && JSON.stringify(scrapeResult[fieldName]) !== JSON.stringify(expected[fieldName])) ||
+    (checkIncludes && JSON.stringify(scrapeResult[fieldName]).includes(JSON.stringify(expected[fieldName])))
   ) {
     addSubLogEntry(
       testResult,
@@ -77,24 +60,16 @@ async function testIMDBmainPageData() {
       IMDB_tconst: "tt4154796",
     };
 
-    const scrapeResult = await imdbScraper.scrapeIMDBmainPageData(
-      movie,
-      async () => {
-        return true;
-      }
-    );
+    const scrapeResult = await imdbScraper.scrapeIMDBmainPageData(movie, async () => {
+      return true;
+    });
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
       return;
     }
 
-    performDefaultCheck(
-      scrapeResult,
-      expected,
-      testResult,
-      "$IMDB_releaseType"
-    );
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_releaseType");
 
     // Genres: at least 3 of the 4 expected genres should match
     if (!scrapeResult.$IMDB_genres) {
@@ -102,9 +77,7 @@ async function testIMDBmainPageData() {
     } else {
       let counter = 0;
       expected.$IMDB_genres.forEach((expectedGenre) => {
-        if (
-          scrapeResult.$IMDB_genres.find((genre) => expectedGenre === genre)
-        ) {
+        if (scrapeResult.$IMDB_genres.find((genre) => expectedGenre === genre)) {
           counter++;
         }
       });
@@ -145,36 +118,11 @@ async function testIMDBmainPageData() {
       );
     }
 
-    performDefaultCheck(
-      scrapeResult,
-      expected,
-      testResult,
-      "$IMDB_metacriticScore"
-    );
-    performDefaultCheck(
-      scrapeResult,
-      expected,
-      testResult,
-      "$IMDB_posterSmall_URL"
-    );
-    performDefaultCheck(
-      scrapeResult,
-      expected,
-      testResult,
-      "$IMDB_posterLarge_URL"
-    );
-    performDefaultCheck(
-      scrapeResult,
-      expected,
-      testResult,
-      "$IMDB_plotSummary"
-    );
-    performDefaultCheck(
-      scrapeResult,
-      expected,
-      testResult,
-      "$IMDB_Trailer_URL"
-    );
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_metacriticScore");
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_posterSmall_URL");
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_posterLarge_URL");
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_plotSummary");
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_Trailer_URL");
   } catch (error) {
     testResult.status = status.EXCEPTION;
     testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
@@ -206,24 +154,16 @@ async function testIMDBmainPageData2() {
       IMDB_tconst: "tt0039822",
     };
 
-    const scrapeResult = await imdbScraper.scrapeIMDBmainPageData(
-      movie,
-      async () => {
-        return true;
-      }
-    );
+    const scrapeResult = await imdbScraper.scrapeIMDBmainPageData(movie, async () => {
+      return true;
+    });
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
       return;
     }
 
-    performDefaultCheck(
-      scrapeResult,
-      expected,
-      testResult,
-      "$IMDB_releaseType"
-    );
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_releaseType");
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_genres");
 
     if (!scrapeResult.$IMDB_rating) {
@@ -250,37 +190,12 @@ async function testIMDBmainPageData2() {
       );
     }
 
-    performDefaultCheck(
-      scrapeResult,
-      expected,
-      testResult,
-      "$IMDB_posterSmall_URL"
-    );
-    performDefaultCheck(
-      scrapeResult,
-      expected,
-      testResult,
-      "$IMDB_posterLarge_URL"
-    );
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_posterSmall_URL");
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_posterLarge_URL");
 
-    performDefaultCheck(
-      scrapeResult,
-      expected,
-      testResult,
-      "$IMDB_plotSummary",
-      null,
-      null,
-      true
-    );
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_plotSummary", null, null, true);
 
-    performDefaultCheck(
-      scrapeResult,
-      expected,
-      testResult,
-      "$IMDB_Trailer_URL",
-      null,
-      true
-    );
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_Trailer_URL", null, true);
   } catch (error) {
     testResult.status = status.EXCEPTION;
     testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
@@ -316,12 +231,7 @@ async function testIMDBplotSummary() {
       return;
     }
 
-    performDefaultCheck(
-      scrapeResult,
-      expected,
-      testResult,
-      "$IMDB_plotSummaryFull"
-    );
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_plotSummaryFull");
   } catch (error) {
     testResult.status = status.EXCEPTION;
     testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
@@ -350,30 +260,16 @@ async function testIMDBreleaseinfo() {
       IMDB_tconst: "tt0092455",
     };
 
-    const scrapeResult = await imdbScraper.scrapeIMDBreleaseinfo(
-      movie,
-      [{ name: "Germany" }],
-      []
-    );
+    const scrapeResult = await imdbScraper.scrapeIMDBreleaseinfo(movie, [{ name: "Germany" }], []);
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
       return;
     }
 
-    performDefaultCheck(
-      scrapeResult,
-      expected,
-      testResult,
-      "$IMDB_originalTitle"
-    );
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_originalTitle");
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_localTitle");
-    performDefaultCheck(
-      scrapeResult,
-      expected,
-      testResult,
-      "$IMDB_primaryTitle"
-    );
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_primaryTitle");
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_startYear");
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_endYear");
   } catch (error) {
@@ -407,12 +303,39 @@ async function testIMDBtechnicalData() {
       return;
     }
 
-    performDefaultCheck(
-      scrapeResult,
-      expected,
-      testResult,
-      "$IMDB_runtimeMinutes"
-    );
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_runtimeMinutes");
+  } catch (error) {
+    testResult.status = status.EXCEPTION;
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+  }
+
+  return testResult;
+}
+
+async function testIMDBtechnicalData2() {
+  const testResult = {
+    name: "IMDB Technical Data 2",
+    status: status.SUCCESS,
+    log: [],
+  };
+
+  try {
+    const expected = {
+      $IMDB_runtimeMinutes: "10",
+    };
+
+    const movie = {
+      IMDB_tconst: "tt2736746",
+    };
+
+    const scrapeResult = await imdbScraper.scrapeIMDBtechnicalData(movie);
+
+    if (!scrapeResult) {
+      addSubLogEntry(testResult, "no response", status.ERROR);
+      return;
+    }
+
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_runtimeMinutes");
   } catch (error) {
     testResult.status = status.EXCEPTION;
     testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
@@ -472,23 +395,11 @@ async function testIMDBParentalGuideData() {
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_MinAge");
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_MaxAge");
-    performDefaultCheck(
-      scrapeResult,
-      expected,
-      testResult,
-      "$IMDB_id_AgeRating_Chosen_Country"
-    );
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_id_AgeRating_Chosen_Country");
 
     if (isNaN(scrapeResult.$IMDB_Parental_Advisory_Nudity)) {
-      addSubLogEntry(
-        testResult,
-        "$IMDB_Parental_Advisory_Nudity missing",
-        status.ERROR
-      );
-    } else if (
-      scrapeResult.$IMDB_Parental_Advisory_Nudity !==
-      expected.$IMDB_Parental_Advisory_Nudity
-    ) {
+      addSubLogEntry(testResult, "$IMDB_Parental_Advisory_Nudity missing", status.ERROR);
+    } else if (scrapeResult.$IMDB_Parental_Advisory_Nudity !== expected.$IMDB_Parental_Advisory_Nudity) {
       addSubLogEntry(
         testResult,
         `$IMDB_Parental_Advisory_Nudity mismatch
@@ -498,30 +409,10 @@ async function testIMDBParentalGuideData() {
       );
     }
 
-    performDefaultCheck(
-      scrapeResult,
-      expected,
-      testResult,
-      "$IMDB_Parental_Advisory_Violence"
-    );
-    performDefaultCheck(
-      scrapeResult,
-      expected,
-      testResult,
-      "$IMDB_Parental_Advisory_Profanity"
-    );
-    performDefaultCheck(
-      scrapeResult,
-      expected,
-      testResult,
-      "$IMDB_Parental_Advisory_Alcohol"
-    );
-    performDefaultCheck(
-      scrapeResult,
-      expected,
-      testResult,
-      "$IMDB_Parental_Advisory_Frightening"
-    );
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_Parental_Advisory_Violence");
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_Parental_Advisory_Profanity");
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_Parental_Advisory_Alcohol");
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_Parental_Advisory_Frightening");
   } catch (error) {
     testResult.status = status.EXCEPTION;
     testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
@@ -584,10 +475,7 @@ async function testIMDBFullCreditsData() {
         );
       }
 
-      if (
-        JSON.stringify(scrapeResult.credits[0]) !==
-        JSON.stringify(expected.credits0)
-      ) {
+      if (JSON.stringify(scrapeResult.credits[0]) !== JSON.stringify(expected.credits0)) {
         addSubLogEntry(
           testResult,
           `credits[0] mismatch
@@ -638,12 +526,7 @@ async function testIMDBCompaniesData() {
       return;
     }
 
-    performDefaultCheck(
-      scrapeResult,
-      expected,
-      testResult,
-      "topProductionCompanies"
-    );
+    performDefaultCheck(scrapeResult, expected, testResult, "topProductionCompanies");
 
     if (!scrapeResult.companies) {
       addSubLogEntry(testResult, "companies missing", status.ERROR);
@@ -658,10 +541,7 @@ async function testIMDBCompaniesData() {
         );
       }
 
-      if (
-        JSON.stringify(scrapeResult.companies[1]) !==
-        JSON.stringify(expected.companies1)
-      ) {
+      if (JSON.stringify(scrapeResult.companies[1]) !== JSON.stringify(expected.companies1)) {
         addSubLogEntry(
           testResult,
           `companies[1] mismatch
@@ -701,10 +581,7 @@ async function testIMDBPersonData() {
         "This is a test biography for testing a const page with over 150 characters so I'm going to make this really long by typing really hard. I hope this does not break any other test but since this const page was not locked and there was no biography before this one I guess it should be alright. Typing this makes me feel like the \"good old\" days of writing essays in school, where 90% of the time I was just trying to make my sentences really long to meet the word requirement like I am doing now. There is no word count in this text box so I don't even know how far I am, so I pasted this to the word doc where they have word count and I found out I wasn't even at 100. That hit me hard in the heart and I couldn't take it. But what else could I do besides keep typing and making this really long. Ok I think I'm good with this length I'm just going to copy this paragraph three times.\n\nThis is a test biography for testing a const page with over 150 characters so I'm going to make this really long by typing really hard. I hope this does not break any other test but since this const page was not locked and there was no biography before this one I guess it should be alright. Typing this makes me feel like the \"good old\" days of writing essays in school, where 90% of the time I was just trying to make my sentences really long to meet the word requirement like I am doing now. There is no word count in this text box so I don't even know how far I am, so I pasted this to the word doc where they have word count and I found out I wasn't even at 100. That hit me hard in the heart and I couldn't take it. But what else could I do besides keep typing and making this really long. Ok I think I'm good with this length I'm just going to copy this paragraph three times.\n\nThis is a test biography for testing a const page with over 150 characters so I'm going to make this really long by typing really hard. I hope this does not break any other test but since this const page was not locked and there was no biography before this one I guess it should be alright. Typing this makes me feel like the \"good old\" days of writing essays in school, where 90% of the time I was just trying to make my sentences really long to meet the word requirement like I am doing now. There is no word count in this text box so I don't even know how far I am, so I pasted this to the word doc where they have word count and I found out I wasn't even at 100. That hit me hard in the heart and I couldn't take it. But what else could I do besides keep typing and making this really long. Ok I think I'm good with this length I'm just going to copy this paragraph three times.\n\n\n- IMDb Mini Biography By: jiajguo",
     };
 
-    const scrapeResult = await imdbScraper.scrapeIMDBPersonData(
-      "nm3380149",
-      downloadFileCallback
-    );
+    const scrapeResult = await imdbScraper.scrapeIMDBPersonData("nm3380149", downloadFileCallback);
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
@@ -739,9 +616,7 @@ async function testIMDBTrailerMediaURLs() {
     //     slateURL: null,
     // };
 
-    const scrapeResult = await imdbScraper.scrapeIMDBTrailerMediaURLs(
-      "https://www.imdb.com/video/imdb/vi2163260441"
-    );
+    const scrapeResult = await imdbScraper.scrapeIMDBTrailerMediaURLs("https://www.imdb.com/video/imdb/vi2163260441");
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
@@ -860,8 +735,7 @@ async function testIMDBFilmingLocations() {
   try {
     const expected = {
       locations0: {
-        Location:
-          "Durham Cathedral, The College, Durham, County Durham, England, UK",
+        Location: "Durham Cathedral, The College, Durham, County Durham, England, UK",
         Details: "Thor Meets His Mother In Asgard",
         NumInteresting: 60,
         NumVotes: 60,
@@ -990,12 +864,9 @@ async function testIMDBRatingDemographics() {
       IMDB_tconst: "tt4154796",
     };
 
-    const scrapeResult = await imdbScraper.scrapeIMDBRatingDemographics(
-      movie,
-      async () => {
-        return true;
-      }
-    );
+    const scrapeResult = await imdbScraper.scrapeIMDBRatingDemographics(movie, async () => {
+      return true;
+    });
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
@@ -1023,10 +894,7 @@ async function testIMDBRatingDemographics() {
       }
 
       if (key.includes("$IMDB_rating")) {
-        if (
-          scrapeValue < expectedValue - 1 ||
-          scrapeValue > expectedValue + 1
-        ) {
+        if (scrapeValue < expectedValue - 1 || scrapeValue > expectedValue + 1) {
           addSubLogEntry(
             testResult,
             `${key} mismatch
@@ -1062,8 +930,7 @@ async function testIMDBSuggestion() {
           title: "Forrest Gump",
           titleType: "feature",
           year: 1994,
-          imageURL:
-            "https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_.jpg",
+          imageURL: "https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_.jpg",
         },
       },
       // {
@@ -1076,27 +943,17 @@ async function testIMDBSuggestion() {
     for (let i = 0; i < expected.length; i++) {
       const expectedValue = expected[i];
 
-      const scrapeResult = await imdbScraper.scrapeIMDBSuggestion(
-        expectedValue.searchTerm
-      );
+      const scrapeResult = await imdbScraper.scrapeIMDBSuggestion(expectedValue.searchTerm);
 
       // console.log(scrapeResult);
 
       if (!scrapeResult) {
-        addSubLogEntry(
-          testResult,
-          `query '${expectedValue.searchTerm}' no response`,
-          status.ERROR
-        );
+        addSubLogEntry(testResult, `query '${expectedValue.searchTerm}' no response`, status.ERROR);
         return;
       }
 
       if (scrapeResult.length === 0) {
-        addSubLogEntry(
-          testResult,
-          `query '${expectedValue.searchTerm}' results missing`,
-          status.ERROR
-        );
+        addSubLogEntry(testResult, `query '${expectedValue.searchTerm}' results missing`, status.ERROR);
         return;
       }
 
@@ -1110,41 +967,11 @@ async function testIMDBSuggestion() {
         );
       }
 
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "tconst",
-        `query '${expectedValue.searchTerm}'`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "title",
-        `query '${expectedValue.searchTerm}'`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "titleType",
-        `query '${expectedValue.searchTerm}'`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "year",
-        `query '${expectedValue.searchTerm}'`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "imageURL",
-        `query '${expectedValue.searchTerm}'`
-      );
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "tconst", `query '${expectedValue.searchTerm}'`);
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "title", `query '${expectedValue.searchTerm}'`);
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "titleType", `query '${expectedValue.searchTerm}'`);
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "year", `query '${expectedValue.searchTerm}'`);
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "imageURL", `query '${expectedValue.searchTerm}'`);
     }
   } catch (error) {
     testResult.status = status.EXCEPTION;
@@ -1188,28 +1015,17 @@ async function testIMDBAdvancedTitleSearch() {
     for (let i = 0; i < expected.length; i++) {
       const expectedValue = expected[i];
 
-      const scrapeResult = await imdbScraper.scrapeIMDBAdvancedTitleSearch(
-        expectedValue.title,
-        expectedValue.titleTypes
-      );
+      const scrapeResult = await imdbScraper.scrapeIMDBAdvancedTitleSearch(expectedValue.title, expectedValue.titleTypes);
 
       // console.log(scrapeResult);
 
       if (!scrapeResult) {
-        addSubLogEntry(
-          testResult,
-          `query '${expectedValue.title}' [${expectedValue.titleTypes}] no response`,
-          status.ERROR
-        );
+        addSubLogEntry(testResult, `query '${expectedValue.title}' [${expectedValue.titleTypes}] no response`, status.ERROR);
         return;
       }
 
       if (scrapeResult.length === 0) {
-        addSubLogEntry(
-          testResult,
-          `query '${expectedValue.title}' [${expectedValue.titleTypes}] results missing`,
-          status.ERROR
-        );
+        addSubLogEntry(testResult, `query '${expectedValue.title}' [${expectedValue.titleTypes}] results missing`, status.ERROR);
         return;
       }
 
@@ -1223,27 +1039,9 @@ async function testIMDBAdvancedTitleSearch() {
         );
       }
 
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "tconst",
-        `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "title",
-        `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "imageURL",
-        `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
-      );
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "tconst", `query '${expectedValue.title}' [${expectedValue.titleTypes}]`);
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "title", `query '${expectedValue.title}' [${expectedValue.titleTypes}]`);
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "imageURL", `query '${expectedValue.title}' [${expectedValue.titleTypes}]`);
       performDefaultCheck(
         scrapeResult[0],
         expectedValue.result0,
@@ -1252,27 +1050,9 @@ async function testIMDBAdvancedTitleSearch() {
         `query '${expectedValue.title}' [${expectedValue.titleTypes}]`,
         true
       );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "runtime",
-        `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "genres",
-        `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "detailInfo",
-        `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
-      );
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "runtime", `query '${expectedValue.title}' [${expectedValue.titleTypes}]`);
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "genres", `query '${expectedValue.title}' [${expectedValue.titleTypes}]`);
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "detailInfo", `query '${expectedValue.title}' [${expectedValue.titleTypes}]`);
     }
   } catch (error) {
     testResult.status = status.EXCEPTION;
@@ -1308,28 +1088,17 @@ async function testIMDBFind() {
     for (let i = 0; i < expected.length; i++) {
       const expectedValue = expected[i];
 
-      const scrapeResult = await imdbScraper.scrapeIMDBFind(
-        expectedValue.searchTerm,
-        expectedValue.type
-      );
+      const scrapeResult = await imdbScraper.scrapeIMDBFind(expectedValue.searchTerm, expectedValue.type);
 
       // console.log(scrapeResult);
 
       if (!scrapeResult) {
-        addSubLogEntry(
-          testResult,
-          `query '${expectedValue.searchTerm}' [${expectedValue.type}] no response`,
-          status.ERROR
-        );
+        addSubLogEntry(testResult, `query '${expectedValue.searchTerm}' [${expectedValue.type}] no response`, status.ERROR);
         return testResult;
       }
 
       if (scrapeResult.length === 0) {
-        addSubLogEntry(
-          testResult,
-          `query '${expectedValue.searchTerm}' [${expectedValue.type}] results missing`,
-          status.ERROR
-        );
+        addSubLogEntry(testResult, `query '${expectedValue.searchTerm}' [${expectedValue.type}] results missing`, status.ERROR);
         return testResult;
       }
 
@@ -1343,34 +1112,10 @@ async function testIMDBFind() {
         );
       }
 
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "tconst",
-        `query '${expectedValue.searchTerm}' [${expectedValue.type}]`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "type",
-        `query '${expectedValue.searchTerm}' [${expectedValue.type}]`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "title",
-        `query '${expectedValue.searchTerm}' [${expectedValue.type}]`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "imageURL",
-        `query '${expectedValue.searchTerm}' [${expectedValue.type}]`
-      );
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "tconst", `query '${expectedValue.searchTerm}' [${expectedValue.type}]`);
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "type", `query '${expectedValue.searchTerm}' [${expectedValue.type}]`);
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "title", `query '${expectedValue.searchTerm}' [${expectedValue.type}]`);
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "imageURL", `query '${expectedValue.searchTerm}' [${expectedValue.type}]`);
     }
   } catch (error) {
     testResult.status = status.EXCEPTION;
@@ -1386,6 +1131,7 @@ export {
   testIMDBplotSummary,
   testIMDBreleaseinfo,
   testIMDBtechnicalData,
+  testIMDBtechnicalData2,
   testIMDBParentalGuideData,
   testIMDBFullCreditsData,
   testIMDBCompaniesData,
