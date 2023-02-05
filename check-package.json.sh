@@ -1,6 +1,6 @@
 #!/bin/sh
 check(){
-    egrep -Eqir "[\^\~]" ./package.json
+    egrep -Eqir "\"[\^\~]" ./package.json
 }
 
 printf "\033[1;33mchecking package.json...\n\e[0m"
