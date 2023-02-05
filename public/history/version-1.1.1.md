@@ -1,5 +1,16 @@
 # Media Hoarder v1.1.1 Changelog
 
-## Feature: AI Recommendations powered by ChatGPT
+## Improved: AI Recommendations powered by ChatGPT
 
 The integration of ChatGPT has been significantly improved. The dependency on IMDB IDs has been removed, so that you can ask the AI for lists of movies where the name and year suffices.
+
+Examples:
+
+- _Provide a list of christmas themed action movies_
+- _Provide a list of mind bending movies_
+- _Provide a list of Oscar winning best motion picture between 2000 and 2010_
+- _Provide a list of classic Sci-Fi movies that were not made by Hollywood_
+
+## IMDB Scraper updated
+
+A larger overhaul of how **Media Hoarder** fetches IMDB metadata was necessary and has been implemented.

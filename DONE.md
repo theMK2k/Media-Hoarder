@@ -4,6 +4,33 @@
 
 - [x] The integration of ChatGPT to query AI suggestions has been significantly improved. There is no longer a dependency on IMDB IDs.
 
+### Fix IMDB Scraper
+
+#### / (mainPageData)
+
+- [x] add $IMDB_startYear and $IMDB_endYear (we cannot provide them from /releaseinfo anymore)
+- [x] test V1, V2 and V3 mainPageData
+- [x] check calling functions!
+
+#### /releaseinfo
+
+- [x] implement V2 (`__NEXT_DATA__`)
+- [x] test V1
+- [x] we had to remove $IMDB_startYear and $IMDB_endYear, check calling functions!
+
+#### technicalData
+
+- [x] V2 (`__NEXT_DATA__`)
+
+#### companiesData
+
+- [x] implement V3 GQL-based
+- [x] dump/usedump: if filename exceeds 160 characters, make a hash of it and use this at the end of truncated filename
+
+#### personData
+
+#### plotSummary
+
 ## v1.1.0
 
 - [x] AI Recommendations
