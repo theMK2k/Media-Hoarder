@@ -282,6 +282,18 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
 }
 
 async function scrapeIMDBplotSummary(movie, shortSummary) {
+  const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/plotsummary`;
+  const response = await helpers.requestAsync(url);
+  const html = response.body;
+
+  if (/styleguide/.test(html)) {
+    return await scrapeIMDBplotSummaryV1(movie, shortSummary, html);
+  } else {
+    return await scrapeIMDBplotSummaryV2(movie, shortSummary, html);
+  }
+}
+
+async function scrapeIMDBplotSummaryV1(movie, shortSummary, html) {
   let $IMDB_plotSummaryFull = null;
 
   if (!shortSummary) {
@@ -293,12 +305,6 @@ async function scrapeIMDBplotSummary(movie, shortSummary) {
   }
 
   try {
-    const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/plotsummary`;
-
-    const response = await helpers.requestAsync(url);
-
-    const html = response.body;
-
     const shortSummaryClean = shortSummary.split("...")[0].trim();
 
     const rxPlotSummary = new RegExp(`<li class="ipl-zebra-list__item"[\\s\\S]*?<p>([\\s\\S]*?)</p>`, "g");
@@ -332,6 +338,36 @@ async function scrapeIMDBplotSummary(movie, shortSummary) {
         $IMDB_plotSummaryFull = plotSummaryFull;
       }
     }
+
+    return { $IMDB_plotSummaryFull };
+  } catch (error) {
+    logger.error(error);
+
+    if (movie.scanErrors) {
+      movie.scanErrors["IMDB Plot Summary"] = error.message;
+    }
+
+    throw error;
+  }
+}
+
+async function scrapeIMDBplotSummaryV2(movie, shortSummary, html) {
+  logger.log("[scrapeIMDBplotSummaryV2] START");
+
+  let $IMDB_plotSummaryFull = null;
+
+  if (!shortSummary) {
+    return { $IMDB_plotSummaryFull };
+  }
+
+  if (movie.scanErrors) {
+    delete movie.scanErrors["IMDB Plot Summary"];
+  }
+
+  try {
+    const jsonDataNext = JSON.parse(html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/)[1]);
+
+    const $IMDB_plotSummaryFull = _.get(jsonDataNext, "props.pageProps.contentData.entityMetadata.plot.plotText.plainText", null);
 
     return { $IMDB_plotSummaryFull };
   } catch (error) {
