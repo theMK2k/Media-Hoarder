@@ -23,12 +23,8 @@ logger.info("Syntax: find-imdb-tconst-tests [options]");
 logger.info("");
 logger.info("options:");
 logger.info("         --name=<name>        find IMDB tconst for a single name");
-logger.info(
-  "         --batch=<file.txt>   find IMDB tconst for multiple names defined in file.txt (also do a statistical analysis)"
-);
-logger.info(
-  "         --duration=<seconds> provide a duration in seconds for the movie"
-);
+logger.info("         --batch=<file.txt>   find IMDB tconst for multiple names defined in file.txt (also do a statistical analysis)");
+logger.info("         --duration=<seconds> provide a duration in seconds for the movie");
 
 logger.info(config);
 
@@ -45,14 +41,10 @@ logger.info(config);
       excludeTVSeries: true,
     };
     const tconstIncluded = await findIMDBtconst.findIMDBtconstIncluded(movie);
-    const stats = await findIMDBtconst.findIMDBtconstByFileOrDirname(
-      movie,
-      options
-    );
+    const stats = await findIMDBtconst.findIMDBtconstByFileOrDirname(movie, options);
     stats.tconstIncluded = tconstIncluded;
 
-    stats.isTconstCorrect =
-      tconstIncluded == (stats.result ? stats.result.tconst : "<none>");
+    stats.isTconstCorrect = tconstIncluded == (stats.result ? stats.result.tconst : "<none>");
 
     logger.info("stats:", stats);
     return;
@@ -68,9 +60,7 @@ async function benchmark(filePath) {
     return logger.error(`filePath is missing!`);
   }
 
-  const fileContent = await (await readFileAsync(filePath))
-    .toString()
-    .split("\n");
+  const fileContent = await (await readFileAsync(filePath)).toString().split("\n");
 
   let counter = 0;
 
@@ -99,8 +89,7 @@ async function benchmark(filePath) {
     });
 
     stats.tconstIncluded = tconstIncluded;
-    stats.isTconstCorrect =
-      tconstIncluded == (stats.result ? stats.result.tconst : "<none>");
+    stats.isTconstCorrect = tconstIncluded == (stats.result ? stats.result.tconst : "<none>");
 
     if (!stats.isTconstCorrect && tconstIncluded) {
       // 2nd try with runtime
@@ -108,9 +97,7 @@ async function benchmark(filePath) {
         IMDB_tconst: tconstIncluded,
       });
       if (imdbData.$IMDB_runtimeMinutes) {
-        const runtimeSeconds = imdbData.$IMDB_runtimeMinutes
-          ? parseInt(imdbData.$IMDB_runtimeMinutes) * 60
-          : null;
+        const runtimeSeconds = imdbData.$IMDB_runtimeMinutes ? parseInt(imdbData.$IMDB_runtimeMinutes) * 60 : null;
 
         movie.MI_Duration_Seconds = runtimeSeconds;
 
@@ -122,8 +109,7 @@ async function benchmark(filePath) {
       }
 
       stats.tconstIncluded = tconstIncluded;
-      stats.isTconstCorrect =
-        tconstIncluded == (stats.result ? stats.result.tconst : "<none>");
+      stats.isTconstCorrect = tconstIncluded == (stats.result ? stats.result.tconst : "<none>");
     }
 
     logger.info("stats:", stats);
@@ -148,10 +134,7 @@ async function benchmark(filePath) {
     resultTable += `${statsFlattened.fileName}\t${statsFlattened.fullName}\t${statsFlattened.chosenName}\t${statsFlattened.result_tconst}\t${statsFlattened.result_type}\t${statsFlattened.result_title}\t${statsFlattened.result_year}\t${statsFlattened.searchAPI}\t${statsFlattened.choiceType}\t${statsFlattened.tconstIncluded}\t${statsFlattened.numResults}\t${statsFlattened.numResultsFiltered}\t${statsFlattened.runtimeDiff}\t${statsFlattened.isTconstCorrect}\n`;
   }
 
-  const resultCSV = `tconst-benchmark-results-${new Date()
-    .toISOString()
-    .substr(0, 19)
-    .replace(/:/g, "")}.csv`;
+  const resultCSV = `tconst-benchmark-results-${new Date().toISOString().substr(0, 19).replace(/:/g, "")}.csv`;
 
   fs.writeFileSync(resultCSV, resultTable);
 

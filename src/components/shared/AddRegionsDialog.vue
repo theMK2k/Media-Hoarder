@@ -1,11 +1,5 @@
 <template>
-  <v-dialog
-    v-model="show"
-    persistent
-    max-width="1000px"
-    v-on:keydown.escape="onCancelClick"
-    scrollable
-  >
+  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onCancelClick" scrollable>
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">
@@ -34,19 +28,8 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn
-          class="xs-fullwidth"
-          color="secondary"
-          v-on:click.native="onCancelClick()"
-          >{{ $t("Cancel") }}</v-btn
-        >
-        <v-btn
-          v-bind:disabled="!canConfirm"
-          class="xs-fullwidth"
-          color="primary"
-          v-on:click.native="onOKClick()"
-          >{{ $t("OK") }}</v-btn
-        >
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCancelClick()">{{ $t("Cancel") }}</v-btn>
+        <v-btn v-bind:disabled="!canConfirm" class="xs-fullwidth" color="primary" v-on:click.native="onOKClick()">{{ $t("OK") }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -81,10 +64,7 @@ export default {
   computed: {
     filteredItems() {
       return this.items.filter((item) => {
-        if (
-          this.$shared.regions.findIndex((used) => used.code === item.code) !==
-          -1
-        ) {
+        if (this.$shared.regions.findIndex((used) => used.code === item.code) !== -1) {
           return false;
         }
 
@@ -92,9 +72,7 @@ export default {
           return true;
         }
 
-        return item.nameTranslated
-          .toLowerCase()
-          .includes(this.filter.toLowerCase());
+        return item.nameTranslated.toLowerCase().includes(this.filter.toLowerCase());
       });
     },
 
@@ -132,14 +110,10 @@ export default {
           this.items = await store.getIMDBRegions();
 
           this.items.forEach((item) => {
-            item.nameTranslated = this.$t(
-              `RegionNames.${item.name.replace(/[.']/g, "_")}`
-            );
+            item.nameTranslated = this.$t(`RegionNames.${item.name.replace(/[.']/g, "_")}`);
           });
 
-          this.items = this.items.sort((a, b) =>
-            a.nameTranslated > b.nameTranslated ? 0 : -1
-          );
+          this.items = this.items.sort((a, b) => (a.nameTranslated > b.nameTranslated ? 0 : -1));
 
           logger.log("[init] this.items:", this.items);
         } catch (e) {

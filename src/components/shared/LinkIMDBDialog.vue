@@ -1,11 +1,5 @@
 <template>
-  <v-dialog
-    v-model="show"
-    persistent
-    max-width="1000px"
-    v-on:keydown.escape="onCancelClick"
-    scrollable
-  >
+  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onCancelClick" scrollable>
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">
@@ -15,18 +9,10 @@
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
                 <span v-on="on">
-                  <v-btn
-                    v-if="showUnlink"
-                    text
-                    color="error"
-                    v-on:click.stop="onUnlinkClick()"
-                    >{{ $t("UNLINK") }}</v-btn
-                  >
+                  <v-btn v-if="showUnlink" text color="error" v-on:click.stop="onUnlinkClick()">{{ $t("UNLINK") }}</v-btn>
                 </span>
               </template>
-              <span>{{
-                $t("Remove the link to the current IMDB entry for this medium_")
-              }}</span>
+              <span>{{ $t("Remove the link to the current IMDB entry for this medium_") }}</span>
             </v-tooltip>
           </v-row>
         </div>
@@ -44,21 +30,12 @@
         </v-row>
 
         <v-expansion-panels>
-          <v-expansion-panel
-            style="padding: 0px !important; margin-bottom: 24px"
-          >
-            <v-expansion-panel-header style="padding: 16px !important"
-              >{{ $t("Media Types") }}
-              {{ titleTypesTitle() }}</v-expansion-panel-header
-            >
+          <v-expansion-panel style="padding: 0px !important; margin-bottom: 24px">
+            <v-expansion-panel-header style="padding: 16px !important">{{ $t("Media Types") }} {{ titleTypesTitle() }}</v-expansion-panel-header>
             <v-expansion-panel-content>
               <v-row style="margin-bottom: 8px">
-                <v-btn text v-on:click="setAllTitleTypes(false)">{{
-                  $t("NONE")
-                }}</v-btn>
-                <v-btn text v-on:click="setAllTitleTypes(true)">{{
-                  $t("ALL")
-                }}</v-btn>
+                <v-btn text v-on:click="setAllTitleTypes(false)">{{ $t("NONE") }}</v-btn>
+                <v-btn text v-on:click="setAllTitleTypes(true)">{{ $t("ALL") }}</v-btn>
               </v-row>
               <v-checkbox
                 v-for="titleType in titleTypes"
@@ -73,12 +50,7 @@
         </v-expansion-panels>
 
         <v-row>
-          <v-btn
-            text
-            v-bind:loading="isLoading"
-            v-on:click.native="onSearchClick"
-            >{{ $t("Search") }}</v-btn
-          >
+          <v-btn text v-bind:loading="isLoading" v-on:click.native="onSearchClick">{{ $t("Search") }}</v-btn>
         </v-row>
       </v-card-title>
 
@@ -95,50 +67,24 @@
             >
               <v-list-item three-line style="padding-left: 0px">
                 <div>
-                  <v-list-item-avatar
-                    tile
-                    style="margin: 6px; height: 100px; width: 80px"
-                  >
-                    <v-img
-                      contain
-                      v-if="item.imageURL"
-                      v-bind:src="item.imageURL"
-                      style="border-radius: 6px"
-                    ></v-img>
+                  <v-list-item-avatar tile style="margin: 6px; height: 100px; width: 80px">
+                    <v-img contain v-if="item.imageURL" v-bind:src="item.imageURL" style="border-radius: 6px"></v-img>
                   </v-list-item-avatar>
                 </div>
-                <v-list-item-content
-                  class="align-self-start"
-                  style="padding-top: 6px; padding-bottom: 6px"
-                >
+                <v-list-item-content class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
                   <v-col style="padding: 0px !important">
                     <v-row style="margin-bottom: 8px">
-                      <v-list-item-title
-                        style="
-                          margin-bottom: 4px !important;
-                          font-size: 16px;
-                          margin-left: 12px;
-                          margin-top: 8px;
-                        "
-                        >{{ item.title }}</v-list-item-title
-                      >
+                      <v-list-item-title style="margin-bottom: 4px !important; font-size: 16px; margin-left: 12px; margin-top: 8px">{{
+                        item.title
+                      }}</v-list-item-title>
                     </v-row>
 
-                    <v-list-item-subtitle
-                      v-if="item.detailInfo"
-                      style="margin-top: -8px; margin-bottom: 4px"
-                      >{{ item.detailInfo }}</v-list-item-subtitle
-                    >
+                    <v-list-item-subtitle v-if="item.detailInfo" style="margin-top: -8px; margin-bottom: 4px">{{ item.detailInfo }}</v-list-item-subtitle>
 
                     <v-row style="margin-top: 8px">
-                      <v-btn
-                        v-show="item.itemHovered || isLinking"
-                        text
-                        color="primary"
-                        v-bind:loading="isLinking"
-                        v-on:click.stop="onSelectClick(item)"
-                        >{{ $t("Select for linking") }}</v-btn
-                      >
+                      <v-btn v-show="item.itemHovered || isLinking" text color="primary" v-bind:loading="isLinking" v-on:click.stop="onSelectClick(item)">{{
+                        $t("Select for linking")
+                      }}</v-btn>
                     </v-row>
                   </v-col>
                 </v-list-item-content>
@@ -149,12 +95,7 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn
-          class="xs-fullwidth"
-          color="secondary"
-          v-on:click.native="onCancelClick()"
-          >{{ $t("Close") }}</v-btn
-        >
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCancelClick()">{{ $t("Close") }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -246,12 +187,7 @@ export default {
       this.isLoading = false;
       this.isLinking = false;
 
-      this.titleTypes.forEach(
-        (titleType) =>
-          (titleType.nameTranslated = this.$t(
-            `IMDBTitleTypes.${titleType.name}`
-          ))
-      );
+      this.titleTypes.forEach((titleType) => (titleType.nameTranslated = this.$t(`IMDBTitleTypes.${titleType.name}`)));
     },
 
     setAllTitleTypes(value) {
@@ -273,9 +209,7 @@ export default {
         return `(${this.$t("ALL")})`;
       }
 
-      return `(${
-        this.titleTypes.filter((titleType) => titleType.checked).length
-      }/${this.titleTypes.length})`;
+      return `(${this.titleTypes.filter((titleType) => titleType.checked).length}/${this.titleTypes.length})`;
     },
 
     async onSearchClick() {
@@ -292,10 +226,7 @@ export default {
       // 天気の子
       let advancedTitleSearchResults = null;
       try {
-        advancedTitleSearchResults = await scrapeIMDBAdvancedTitleSearch(
-          this.searchText,
-          this.titleTypes
-        );
+        advancedTitleSearchResults = await scrapeIMDBAdvancedTitleSearch(this.searchText, this.titleTypes);
       } catch (err) {
         //
       }
@@ -307,10 +238,7 @@ export default {
         logger.error(err);
       }
 
-      logger.log(
-        "[onSearchClick] advancedTitleSearchResults:",
-        advancedTitleSearchResults
-      );
+      logger.log("[onSearchClick] advancedTitleSearchResults:", advancedTitleSearchResults);
       logger.log("[onSearchClick] findResults:", findResults);
 
       this.searchResults = advancedTitleSearchResults || [];
@@ -320,11 +248,7 @@ export default {
           if (result.type !== "title") {
             return;
           }
-          if (
-            !this.searchResults.find(
-              (result2) => result.tconst === result2.tconst
-            )
-          ) {
+          if (!this.searchResults.find((result2) => result.tconst === result2.tconst)) {
             this.searchResults.push(result);
           }
         });

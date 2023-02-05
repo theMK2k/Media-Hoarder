@@ -1,11 +1,5 @@
 <template>
-  <v-dialog
-    v-model="show"
-    persistent
-    max-width="1000px"
-    v-on:keydown.escape="onCancelClick"
-    scrollable
-  >
+  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onCancelClick" scrollable>
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">
@@ -47,12 +41,7 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn
-          class="xs-fullwidth"
-          color="secondary"
-          v-on:click.native="onCancelClick()"
-          >{{ $t("Close") }}</v-btn
-        >
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCancelClick()">{{ $t("Close") }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -126,11 +115,7 @@ export default {
 					FROM tbl_Movies_IMDB_Companies MC
 					WHERE Company_Name LIKE '%${searchText}%'
           GROUP BY Company_Name
-          ${
-            this.sortByNumMovies
-              ? "ORDER BY NumMovies DESC"
-              : "ORDER BY name ASC"
-          }
+          ${this.sortByNumMovies ? "ORDER BY NumMovies DESC" : "ORDER BY name ASC"}
           `;
       }
 
@@ -151,11 +136,7 @@ export default {
 					FROM tbl_Movies_IMDB_Credits MC
 					WHERE Person_Name LIKE '%${searchText}%'
           GROUP BY IMDB_Person_ID
-          ${
-            this.sortByNumMovies
-              ? "ORDER BY NumMovies DESC"
-              : "ORDER BY name ASC"
-          }
+          ${this.sortByNumMovies ? "ORDER BY NumMovies DESC" : "ORDER BY name ASC"}
           `;
       }
 
@@ -178,11 +159,7 @@ export default {
               ) AS NumMovies
           FROM tbl_IMDB_Plot_Keywords PK
           WHERE PK.Keyword LIKE '%${searchText}%'
-          ${
-            this.sortByNumMovies
-              ? "ORDER BY NumMovies DESC"
-              : "ORDER BY Keyword ASC"
-          }
+          ${this.sortByNumMovies ? "ORDER BY NumMovies DESC" : "ORDER BY Keyword ASC"}
           `;
       }
 
@@ -205,11 +182,7 @@ export default {
             ) AS NumMovies
           FROM tbl_IMDB_Filming_Locations FL
           WHERE FL.Location LIKE '%${searchText}%'
-          ${
-            this.sortByNumMovies
-              ? "ORDER BY NumMovies DESC"
-              : "ORDER BY Location ASC"
-          }
+          ${this.sortByNumMovies ? "ORDER BY NumMovies DESC" : "ORDER BY Location ASC"}
           `;
       }
 
@@ -223,12 +196,7 @@ export default {
     },
 
     onItemClicked(item) {
-      logger.log(
-        "[onItemClicked] this.searchMode:",
-        this.searchMode,
-        "item:",
-        item
-      );
+      logger.log("[onItemClicked] this.searchMode:", this.searchMode, "item:", item);
 
       if (this.searchMode === "companies") {
         eventBus.showCompanyDialog(item);

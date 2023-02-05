@@ -24,42 +24,17 @@
 
           <v-card-text class="mk-light-grey">
             {{
-              $t(
-                "{appName} needs the path to a media player of your choice for media playback_ We recommend the VLC media player, you can get it at:",
-                { appName: $shared.appName }
-              )
+              $t("{appName} needs the path to a media player of your choice for media playback_ We recommend the VLC media player, you can get it at:", {
+                appName: $shared.appName,
+              })
             }}
-            <a
-              href="https://www.videolan.org/vlc/index.html"
-              target="_blank"
-              rel="noreferrer noopener nofollow"
-              >https://www.videolan.org/vlc/index.html</a
-            >
+            <a href="https://www.videolan.org/vlc/index.html" target="_blank" rel="noreferrer noopener nofollow">https://www.videolan.org/vlc/index.html</a>
           </v-card-text>
 
-          <v-text-field
-            readonly
-            v-bind:label="$t('Media Player Path')"
-            v-model="MediaplayerPath"
-            style="margin-left: 16px"
-          ></v-text-field>
+          <v-text-field readonly v-bind:label="$t('Media Player Path')" v-model="MediaplayerPath" style="margin-left: 16px"></v-text-field>
 
-          <v-btn
-            v-on:click="browseMediaplayerPath()"
-            text
-            small
-            color="primary"
-            style="margin-top: 16px"
-            >{{ $t("Browse") }}</v-btn
-          >
-          <v-btn
-            v-on:click="showEditMediaplayerPathDialog()"
-            text
-            small
-            color="primary"
-            style="margin-top: 16px"
-            >{{ $t("Edit") }}</v-btn
-          >
+          <v-btn v-on:click="browseMediaplayerPath()" text small color="primary" style="margin-top: 16px">{{ $t("Browse") }}</v-btn>
+          <v-btn v-on:click="showEditMediaplayerPathDialog()" text small color="primary" style="margin-top: 16px">{{ $t("Edit") }}</v-btn>
         </v-row>
 
         <v-row class="settings-row">
@@ -72,37 +47,13 @@
                 { appName: $shared.appName }
               )
             }}
-            <a
-              href="https://mediaarea.net/en/MediaInfo"
-              target="_blank"
-              rel="noreferrer noopener nofollow"
-              >https://mediaarea.net/en/MediaInfo</a
-            >
+            <a href="https://mediaarea.net/en/MediaInfo" target="_blank" rel="noreferrer noopener nofollow">https://mediaarea.net/en/MediaInfo</a>
           </v-card-text>
 
-          <v-text-field
-            readonly
-            v-bind:label="$t('Mediainfo CLI Path')"
-            v-model="MediainfoPath"
-            style="margin-left: 16px"
-          ></v-text-field>
+          <v-text-field readonly v-bind:label="$t('Mediainfo CLI Path')" v-model="MediainfoPath" style="margin-left: 16px"></v-text-field>
 
-          <v-btn
-            v-on:click="browseMediainfoPath()"
-            text
-            small
-            color="primary"
-            style="margin-top: 16px"
-            >{{ $t("Browse") }}</v-btn
-          >
-          <v-btn
-            v-on:click="showEditMediainfoPathDialog()"
-            text
-            small
-            color="primary"
-            style="margin-top: 16px"
-            >{{ $t("Edit") }}</v-btn
-          >
+          <v-btn v-on:click="browseMediainfoPath()" text small color="primary" style="margin-top: 16px">{{ $t("Browse") }}</v-btn>
+          <v-btn v-on:click="showEditMediainfoPathDialog()" text small color="primary" style="margin-top: 16px">{{ $t("Edit") }}</v-btn>
         </v-row>
 
         <v-row class="settings-row">
@@ -115,12 +66,7 @@
             )
           }}</v-card-text>
 
-          <v-text-field
-            type="number"
-            v-bind:label="$t('Last Access Grace Period')"
-            v-model="minimumWaitForSetAccess"
-            style="margin-left: 16px"
-          ></v-text-field>
+          <v-text-field type="number" v-bind:label="$t('Last Access Grace Period')" v-model="minimumWaitForSetAccess" style="margin-left: 16px"></v-text-field>
         </v-row>
 
         <v-row class="settings-row">
@@ -165,37 +111,17 @@
           ></v-select>
         </v-row>
 
-        <v-btn text small color="primary" v-on:click="openVersionDialog">{{
-          $t("Show Version Info")
-        }}</v-btn>
-        <v-btn
-          text
-          small
-          color="primary"
-          v-on:click="openCheckIMDBScraperDialog"
-          >{{ $t("Check IMDB Scraper") }}</v-btn
-        >
-        <v-btn text small color="primary" v-on:click="openDevTools">{{
-          $t("Open DevTools")
-        }}</v-btn>
+        <v-btn text small color="primary" v-on:click="openVersionDialog">{{ $t("Show Version Info") }}</v-btn>
+        <v-btn text small color="primary" v-on:click="openCheckIMDBScraperDialog">{{ $t("Check IMDB Scraper") }}</v-btn>
+        <v-btn text small color="primary" v-on:click="openDevTools">{{ $t("Open DevTools") }}</v-btn>
       </v-tab-item>
 
       <!-- MOVIES -->
       <v-tab-item style="padding: 8px">
         <h3>{{ $t("Movies") }} - {{ $t("Source Paths") }}</h3>
-        <v-alert
-          type="warning"
-          colored-border
-          border="left"
-          v-if="moviesSourcePaths.length == 0"
-          >{{ $t("no paths defined") }}</v-alert
-        >
+        <v-alert type="warning" colored-border border="left" v-if="moviesSourcePaths.length == 0">{{ $t("no paths defined") }}</v-alert>
 
-        <div
-          v-for="sourcePath in moviesSourcePaths"
-          v-bind:key="sourcePath.id_SourcePaths"
-          style="margin: 8px"
-        >
+        <div v-for="sourcePath in moviesSourcePaths" v-bind:key="sourcePath.id_SourcePaths" style="margin: 8px">
           <mk-sourcepath
             v-bind:value="sourcePath"
             v-on:edit-description="onSourcePathEditDescription"
@@ -204,9 +130,7 @@
           ></mk-sourcepath>
         </div>
 
-        <v-btn text small color="primary" v-on:click="addSource('movies')">{{
-          $t("Add Source Path")
-        }}</v-btn>
+        <v-btn text small color="primary" v-on:click="addSource('movies')">{{ $t("Add Source Path") }}</v-btn>
       </v-tab-item>
 
       <!-- SERIES -->
@@ -241,12 +165,7 @@
       <v-tab-item style="padding: 8px">
         <v-card-text class="mk-light-grey">
           <p>
-            {{
-              $t(
-                "These settings describe how {appName} should handle duplicates",
-                { appName: $shared.appName }
-              )
-            }}
+            {{ $t("These settings describe how {appName} should handle duplicates", { appName: $shared.appName }) }}
           </p>
           <p>{{ $t("You may have duplicates in the following scenarios") }}:</p>
           <ul>
@@ -261,11 +180,7 @@
           <h3>{{ $t("Actual Duplicates") }}</h3>
           <v-card-text>
             <p>
-              {{
-                $t(
-                  "An actual duplicate is identified by the same filename and filesize"
-                )
-              }}
+              {{ $t("An actual duplicate is identified by the same filename and filesize") }}
             </p>
           </v-card-text>
           <div style="margin-left: 16px">
@@ -306,9 +221,7 @@
               style="margin: 0px"
               color="mk-dark-grey"
               dense
-              v-model="
-                $shared.duplicatesHandling.actualDuplicate.updateSubTitle
-              "
+              v-model="$shared.duplicatesHandling.actualDuplicate.updateSubTitle"
               v-on:click.native="duplicatesHandlingChanged"
             ></v-checkbox>
             <v-checkbox
@@ -324,9 +237,7 @@
               style="margin: 0px"
               color="mk-dark-grey"
               dense
-              v-model="
-                $shared.duplicatesHandling.actualDuplicate.updateLastAccess
-              "
+              v-model="$shared.duplicatesHandling.actualDuplicate.updateLastAccess"
               v-on:click.native="duplicatesHandlingChanged"
             ></v-checkbox>
           </div>
@@ -336,11 +247,7 @@
           <h3>{{ $t("Meta Duplicates") }}</h3>
           <v-card-text class="mk-light-grey">
             <p>
-              {{
-                $t(
-                  "A meta duplicate is identified by having the same IMDB link_ This can happen if you have the same movie in different formats"
-                )
-              }}
+              {{ $t("A meta duplicate is identified by having the same IMDB link_ This can happen if you have the same movie in different formats") }}
             </p>
           </v-card-text>
           <div style="margin-left: 16px">
@@ -376,11 +283,7 @@
       <v-tab-item style="padding: 8px">
         <v-card-text class="mk-light-grey">
           <p>
-            {{
-              $t(
-                "The regions and their sequence defined here will be used for the Primary Title of the media as well as the age rating"
-              )
-            }}
+            {{ $t("The regions and their sequence defined here will be used for the Primary Title of the media as well as the age rating") }}
           </p>
           <p>
             {{
@@ -391,36 +294,17 @@
           </p>
         </v-card-text>
 
-        <v-alert
-          type="warning"
-          colored-border
-          border="left"
-          v-if="$shared.regions.length === 0"
-        >
+        <v-alert type="warning" colored-border border="left" v-if="$shared.regions.length === 0">
           <span v-if="$shared.regions.length === 0 && $shared.fallbackRegion"
-            >{{
-              $t(
-                "You currently don't have a region set up_ {appName} will fall back to your system's locale",
-                { appName: $shared.appName }
-              )
-            }}: {{ $shared.fallbackRegion.name }}.</span
+            >{{ $t("You currently don't have a region set up_ {appName} will fall back to your system's locale", { appName: $shared.appName }) }}:
+            {{ $shared.fallbackRegion.name }}.</span
           >
-          <span
-            v-if="$shared.regions.length === 0 && !$shared.fallbackRegion"
-            >{{
-              $t(
-                "You currently don't have a region set up_ {appName} will fall back to the original title_",
-                { appName: $shared.appName }
-              )
-            }}</span
-          >
+          <span v-if="$shared.regions.length === 0 && !$shared.fallbackRegion">{{
+            $t("You currently don't have a region set up_ {appName} will fall back to the original title_", { appName: $shared.appName })
+          }}</span>
         </v-alert>
 
-        <draggable
-          v-model="$shared.regions"
-          group="regions"
-          v-on:end="onRegionsDragEnd"
-        >
+        <draggable v-model="$shared.regions" group="regions" v-on:end="onRegionsDragEnd">
           <div v-for="region in $shared.regions" v-bind:key="region.code">
             <v-row style="margin: 8px">
               <v-card style="width: 100%">
@@ -428,11 +312,7 @@
                   <v-list-item-content>
                     <v-list-item-title>
                       {{ region.nameTranslated }}
-                      <v-icon
-                        class="mk-clickable-red"
-                        v-on:click="openRemoveRegionDialog(region)"
-                        >mdi-delete</v-icon
-                      >
+                      <v-icon class="mk-clickable-red" v-on:click="openRemoveRegionDialog(region)">mdi-delete</v-icon>
                     </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
@@ -441,9 +321,7 @@
           </div>
         </draggable>
 
-        <v-btn text small color="primary" v-on:click="openAddRegionsDialog">{{
-          $t("Add Regions")
-        }}</v-btn>
+        <v-btn text small color="primary" v-on:click="openAddRegionsDialog">{{ $t("Add Regions") }}</v-btn>
       </v-tab-item>
 
       <!-- LANGUAGES -->
@@ -468,72 +346,38 @@
 
         <v-card-text class="mk-light-grey">
           <p>
-            {{
-              $t(
-                "The languages and their sequence defined here will be used for the Primary Title of the media_"
-              )
-            }}
+            {{ $t("The languages and their sequence defined here will be used for the Primary Title of the media_") }}
           </p>
           <p>
             <strong>{{ $t("Important:") }}</strong>
-            {{
-              $t(
-                `If you want, for example, to see THISLANGUAGE titles, you must also add the THISREGION region in "Regions"_`
-              )
-            }}
+            {{ $t(`If you want, for example, to see THISLANGUAGE titles, you must also add the THISREGION region in "Regions"_`) }}
           </p>
         </v-card-text>
 
-        <v-alert
-          type="warning"
-          colored-border
-          border="left"
-          v-if="
-            !$shared.languagesPrimaryTitle ||
-            $shared.languagesPrimaryTitle.length === 0
-          "
-        >
+        <v-alert type="warning" colored-border border="left" v-if="!$shared.languagesPrimaryTitle || $shared.languagesPrimaryTitle.length === 0">
           <span v-if="$shared.fallbackLanguage"
             >{{
-              $t(
-                "You currently don't have a language for the Primary Title set up_ {appName} will fall back to your system's locale",
-                { appName: $shared.appName }
-              )
+              $t("You currently don't have a language for the Primary Title set up_ {appName} will fall back to your system's locale", {
+                appName: $shared.appName,
+              })
             }}: {{ $shared.fallbackLanguage.DisplayText }}.</span
           >
           <span v-if="!$shared.fallbackLanguage">{{
-            $t(
-              "You currently don't have a language for the Primary Title set up_ {appName} will fall back to the original title_",
-              { appName: $shared.appName }
-            )
+            $t("You currently don't have a language for the Primary Title set up_ {appName} will fall back to the original title_", {
+              appName: $shared.appName,
+            })
           }}</span>
         </v-alert>
 
-        <draggable
-          v-model="$shared.languagesPrimaryTitle"
-          group="languagesPrimaryTitle"
-          v-on:end="onLanguagesDragEnd('languagesPrimaryTitle')"
-        >
-          <div
-            v-for="language in $shared.languagesPrimaryTitle"
-            v-bind:key="language.code"
-          >
+        <draggable v-model="$shared.languagesPrimaryTitle" group="languagesPrimaryTitle" v-on:end="onLanguagesDragEnd('languagesPrimaryTitle')">
+          <div v-for="language in $shared.languagesPrimaryTitle" v-bind:key="language.code">
             <v-row style="margin: 8px">
               <v-card style="width: 100%">
                 <v-list-item two-line style="cursor: grab">
                   <v-list-item-content>
                     <v-list-item-title>
                       {{ language.DisplayText }}
-                      <v-icon
-                        class="mk-clickable-red"
-                        v-on:click="
-                          openRemoveLanguageDialog(
-                            language,
-                            'languagesPrimaryTitle'
-                          )
-                        "
-                        >mdi-delete</v-icon
-                      >
+                      <v-icon class="mk-clickable-red" v-on:click="openRemoveLanguageDialog(language, 'languagesPrimaryTitle')">mdi-delete</v-icon>
                     </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
@@ -542,13 +386,7 @@
           </div>
         </draggable>
 
-        <v-btn
-          text
-          small
-          color="primary"
-          v-on:click="openAddLanguagesDialog('languagesPrimaryTitle')"
-          >{{ $t("Add Languages") }}</v-btn
-        >
+        <v-btn text small color="primary" v-on:click="openAddLanguagesDialog('languagesPrimaryTitle')">{{ $t("Add Languages") }}</v-btn>
 
         <div style="height: 16px"></div>
 
@@ -556,64 +394,34 @@
 
         <v-card-text class="mk-light-grey">
           <p>
-            {{
-              $t(
-                "The languages and their sequence defined here will be used to show which audio and subtitle languages your media contain_"
-              )
-            }}
+            {{ $t("The languages and their sequence defined here will be used to show which audio and subtitle languages your media contain_") }}
           </p>
         </v-card-text>
 
-        <v-alert
-          type="warning"
-          colored-border
-          border="left"
-          v-if="
-            !$shared.languagesAudioSubtitles ||
-            $shared.languagesAudioSubtitles.length === 0
-          "
-        >
+        <v-alert type="warning" colored-border border="left" v-if="!$shared.languagesAudioSubtitles || $shared.languagesAudioSubtitles.length === 0">
           <span v-if="$shared.fallbackLanguage"
             >{{
-              $t(
-                "You currently don't have a language for Audio and Subtitles set up_ {appName} will fall back to your system's locale",
-                { appName: $shared.appName }
-              )
+              $t("You currently don't have a language for Audio and Subtitles set up_ {appName} will fall back to your system's locale", {
+                appName: $shared.appName,
+              })
             }}: {{ $shared.fallbackLanguage.DisplayText }}.</span
           >
           <span v-if="!$shared.fallbackLanguage">{{
-            $t(
-              "You currently don't have a language for Audio and Subtitles set up_ {appName} will fall back to the original title_",
-              { appName: $shared.appName }
-            )
+            $t("You currently don't have a language for Audio and Subtitles set up_ {appName} will fall back to the original title_", {
+              appName: $shared.appName,
+            })
           }}</span>
         </v-alert>
 
-        <draggable
-          v-model="$shared.languagesAudioSubtitles"
-          group="languagesAudioSubtitles"
-          v-on:end="onLanguagesDragEnd('languagesAudioSubtitles')"
-        >
-          <div
-            v-for="language in $shared.languagesAudioSubtitles"
-            v-bind:key="language.code"
-          >
+        <draggable v-model="$shared.languagesAudioSubtitles" group="languagesAudioSubtitles" v-on:end="onLanguagesDragEnd('languagesAudioSubtitles')">
+          <div v-for="language in $shared.languagesAudioSubtitles" v-bind:key="language.code">
             <v-row style="margin: 8px">
               <v-card style="width: 100%">
                 <v-list-item two-line style="cursor: grab">
                   <v-list-item-content>
                     <v-list-item-title>
                       {{ language.DisplayText }}
-                      <v-icon
-                        class="mk-clickable-red"
-                        v-on:click="
-                          openRemoveLanguageDialog(
-                            language,
-                            'languagesAudioSubtitles'
-                          )
-                        "
-                        >mdi-delete</v-icon
-                      >
+                      <v-icon class="mk-clickable-red" v-on:click="openRemoveLanguageDialog(language, 'languagesAudioSubtitles')">mdi-delete</v-icon>
                     </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
@@ -622,13 +430,7 @@
           </div>
         </draggable>
 
-        <v-btn
-          text
-          small
-          color="primary"
-          v-on:click="openAddLanguagesDialog('languagesAudioSubtitles')"
-          >{{ $t("Add Languages") }}</v-btn
-        >
+        <v-btn text small color="primary" v-on:click="openAddLanguagesDialog('languagesAudioSubtitles')">{{ $t("Add Languages") }}</v-btn>
       </v-tab-item>
 
       <!-- TITLE TYPES -->
@@ -644,12 +446,7 @@
           </p>
         </v-card-text>
 
-        <v-alert
-          colored-border
-          border="left"
-          v-if="$shared.imdbTitleTypesWhitelist.length === 0"
-          >{{ $t("No title types added, this is fine_") }}</v-alert
-        >
+        <v-alert colored-border border="left" v-if="$shared.imdbTitleTypesWhitelist.length === 0">{{ $t("No title types added, this is fine_") }}</v-alert>
 
         <mk-title-type
           v-for="item in $shared.imdbTitleTypesWhitelist"
@@ -659,32 +456,17 @@
           v-on:removeTitleType="openRemoveTitleTypeDialog"
         ></mk-title-type>
 
-        <v-btn
-          text
-          small
-          color="primary"
-          v-on:click="openAddTitleTypeDialog"
-          style="margin-top: 16px"
-          >{{ $t("Add Title Type") }}</v-btn
-        >
+        <v-btn text small color="primary" v-on:click="openAddTitleTypeDialog" style="margin-top: 16px">{{ $t("Add Title Type") }}</v-btn>
       </v-tab-item>
 
       <!-- RELEASE ATTRIBUTES -->
       <v-tab-item style="padding: 8px">
         <v-card-text class="mk-light-grey">
           <p>
-            {{
-              $t(
-                "Here you can set up which release attributes should be searched for in the file/directory names and how they should be displayed_"
-              )
-            }}
+            {{ $t("Here you can set up which release attributes should be searched for in the file/directory names and how they should be displayed_") }}
           </p>
           <p>
-            {{
-              $t(
-                "The search term is case insensitive and must contain whole words within the file/directory name_"
-              )
-            }}
+            {{ $t("The search term is case insensitive and must contain whole words within the file/directory name_") }}
           </p>
         </v-card-text>
 
@@ -708,45 +490,20 @@
           v-bind:items-per-page="1000"
         >
           <template v-slot:body="{ items }">
-            <draggable
-              v-bind:list="items"
-              tag="tbody"
-              v-on:end="onReleaseAttributesDragEnd"
-            >
-              <tr
-                v-for="(item, index) in items"
-                v-bind:key="index"
-                style="cursor: grab"
-              >
+            <draggable v-bind:list="items" tag="tbody" v-on:end="onReleaseAttributesDragEnd">
+              <tr v-for="(item, index) in items" v-bind:key="index" style="cursor: grab">
                 <td>{{ item.searchTerm }}</td>
                 <td>{{ item.displayAs }}</td>
                 <td>
-                  <v-icon
-                    small
-                    class="mr-2 mk-clickable"
-                    @click="onEditReleaseAttribute(item)"
-                    >mdi-pencil</v-icon
-                  >
-                  <v-icon
-                    small
-                    class="mr-2 mk-clickable-red"
-                    @click="openRemoveReleaseAttributeDialog(item)"
-                    >mdi-delete</v-icon
-                  >
+                  <v-icon small class="mr-2 mk-clickable" @click="onEditReleaseAttribute(item)">mdi-pencil</v-icon>
+                  <v-icon small class="mr-2 mk-clickable-red" @click="openRemoveReleaseAttributeDialog(item)">mdi-delete</v-icon>
                 </td>
               </tr></draggable
             >
           </template>
           <!-- <template v-slot:item.actions="{ item }"> </template> -->
         </v-data-table>
-        <v-btn
-          v-on:click="onAddReleaseAttribute()"
-          text
-          small
-          color="primary"
-          style="margin-top: 16px"
-          >{{ $t("Add") }}</v-btn
-        >
+        <v-btn v-on:click="onAddReleaseAttribute()" text small color="primary" style="margin-top: 16px">{{ $t("Add") }}</v-btn>
       </v-tab-item>
     </v-tabs>
 
@@ -755,13 +512,10 @@
       v-bind:show="sourcePathDescriptionDialog.show"
       v-bind:title="$t('Edit Description')"
       v-bind:question="
-        $t(
-          `Please provide a description for the source path {Path} ({MediaTypeUpper})`,
-          {
-            Path: sourcePathDescriptionDialog.Path,
-            MediaTypeUpper: sourcePathDescriptionDialog.MediaTypeUpper,
-          }
-        )
+        $t(`Please provide a description for the source path {Path} ({MediaTypeUpper})`, {
+          Path: sourcePathDescriptionDialog.Path,
+          MediaTypeUpper: sourcePathDescriptionDialog.MediaTypeUpper,
+        })
       "
       enterTextValue="true"
       v-bind:ok="$t('OK')"
@@ -774,13 +528,10 @@
       v-bind:show="removeSourcePathDialog.show"
       v-bind:title="$t('Remove Source Path')"
       v-bind:question="
-        $t(
-          `Do you really want to remove the source path {Path} ({MediaTypeUpper}) including all associated media_`,
-          {
-            Path: removeSourcePathDialog.Path,
-            MediaTypeUpper: removeSourcePathDialog.MediaTypeUpper,
-          }
-        )
+        $t(`Do you really want to remove the source path {Path} ({MediaTypeUpper}) including all associated media_`, {
+          Path: removeSourcePathDialog.Path,
+          MediaTypeUpper: removeSourcePathDialog.MediaTypeUpper,
+        })
       "
       v-bind:yes="$t('YES_ Remove')"
       v-bind:cancel="$t('Cancel')"
@@ -864,10 +615,7 @@
       v-bind:show="removeReleaseAttributeDialog.show"
       v-bind:title="$t('Remove Release Attribute')"
       v-bind:question="
-        $t(
-          'Do you really want to remove the release attribute {ReleaseAttribute}?',
-          { ReleaseAttribute: removeReleaseAttributeDialog.ReleaseAttribute }
-        )
+        $t('Do you really want to remove the release attribute {ReleaseAttribute}?', { ReleaseAttribute: removeReleaseAttributeDialog.ReleaseAttribute })
       "
       v-bind:yes="$t('YES_ Remove')"
       v-bind:cancel="$t('Cancel')"
@@ -1066,10 +814,7 @@ export default {
       (async () => {
         await store.setSetting("uiLanguage", newValue);
 
-        eventBus.showSnackbar(
-          "success",
-          this.$t("Application Language saved_")
-        );
+        eventBus.showSnackbar("success", this.$t("Application Language saved_"));
       })();
     },
 
@@ -1182,10 +927,7 @@ export default {
       });
 
       if (isAlreadyInUse) {
-        return eventBus.showSnackbar(
-          "error",
-          this.$t("The chosen path is already in use_")
-        );
+        return eventBus.showSnackbar("error", this.$t("The chosen path is already in use_"));
       }
 
       this.sourcePathDescriptionDialog.id_SourcePaths = null;
@@ -1194,9 +936,7 @@ export default {
       this.sourcePathDescriptionDialog.Path = chosenPath;
       this.sourcePathDescriptionDialog.Description = null;
 
-      this.$refs.sourcePathDescriptionDialog.initTextValue(
-        helpers.getDirectoryName(chosenPath)
-      );
+      this.$refs.sourcePathDescriptionDialog.initTextValue(helpers.getDirectoryName(chosenPath));
 
       this.sourcePathDescriptionDialog.show = true;
     },
@@ -1228,20 +968,14 @@ export default {
       });
 
       if (isAlreadyInUse) {
-        return eventBus.showSnackbar(
-          "error",
-          this.$t("The chosen path is already in use_")
-        );
+        return eventBus.showSnackbar("error", this.$t("The chosen path is already in use_"));
       }
 
       try {
-        await store.db.fireProcedure(
-          `UPDATE tbl_SourcePaths SET Path = $Path WHERE id_SourcePaths = $id_SourcePaths`,
-          {
-            $id_SourcePaths: sourcePath.id_SourcePaths,
-            $Path: chosenPath,
-          }
-        );
+        await store.db.fireProcedure(`UPDATE tbl_SourcePaths SET Path = $Path WHERE id_SourcePaths = $id_SourcePaths`, {
+          $id_SourcePaths: sourcePath.id_SourcePaths,
+          $Path: chosenPath,
+        });
 
         await this.fetchSourcePaths();
 
@@ -1336,26 +1070,20 @@ export default {
     },
 
     onSourcePathEditDescription(sourcePathItem) {
-      this.sourcePathDescriptionDialog.id_SourcePaths =
-        sourcePathItem.id_SourcePaths;
+      this.sourcePathDescriptionDialog.id_SourcePaths = sourcePathItem.id_SourcePaths;
       this.sourcePathDescriptionDialog.Path = sourcePathItem.Path;
-      this.sourcePathDescriptionDialog.MediaTypeUpper =
-        sourcePathItem.MediaType.toUpperCase();
+      this.sourcePathDescriptionDialog.MediaTypeUpper = sourcePathItem.MediaType.toUpperCase();
       this.sourcePathDescriptionDialog.Description = sourcePathItem.Description;
 
-      this.$refs.sourcePathDescriptionDialog.initTextValue(
-        sourcePathItem.Description
-      );
+      this.$refs.sourcePathDescriptionDialog.initTextValue(sourcePathItem.Description);
 
       this.sourcePathDescriptionDialog.show = true;
     },
 
     openRemoveSourcePathDialog(sourcePathItem) {
-      this.removeSourcePathDialog.id_SourcePaths =
-        sourcePathItem.id_SourcePaths;
+      this.removeSourcePathDialog.id_SourcePaths = sourcePathItem.id_SourcePaths;
       this.removeSourcePathDialog.Path = sourcePathItem.Path;
-      this.removeSourcePathDialog.MediaTypeUpper =
-        sourcePathItem.MediaType.toUpperCase();
+      this.removeSourcePathDialog.MediaTypeUpper = sourcePathItem.MediaType.toUpperCase();
 
       this.removeSourcePathDialog.show = true;
     },
@@ -1371,17 +1099,11 @@ export default {
 
           this.removeSourcePathDialog.show = false;
 
-          await store.db.fireProcedure(
-            `DELETE FROM tbl_SourcePaths WHERE id_SourcePaths = $id_SourcePaths`,
-            {
-              $id_SourcePaths: this.removeSourcePathDialog.id_SourcePaths,
-            }
-          );
+          await store.db.fireProcedure(`DELETE FROM tbl_SourcePaths WHERE id_SourcePaths = $id_SourcePaths`, {
+            $id_SourcePaths: this.removeSourcePathDialog.id_SourcePaths,
+          });
 
-          await store.db.fireProcedure(
-            `DELETE FROM tbl_Movies WHERE id_SourcePaths NOT IN (SELECT id_SourcePaths FROM tbl_SourcePaths)`,
-            []
-          );
+          await store.db.fireProcedure(`DELETE FROM tbl_Movies WHERE id_SourcePaths NOT IN (SELECT id_SourcePaths FROM tbl_SourcePaths)`, []);
 
           await store.ensureMovieDeleted();
 
@@ -1413,13 +1135,10 @@ export default {
     saveSourcePathDescriptionEdit(dialogResult) {
       (async () => {
         try {
-          await store.db.fireProcedure(
-            `UPDATE tbl_SourcePaths SET Description = $Description WHERE id_SourcePaths = $id_SourcePaths`,
-            {
-              $id_SourcePaths: this.sourcePathDescriptionDialog.id_SourcePaths,
-              $Description: dialogResult.textValue,
-            }
-          );
+          await store.db.fireProcedure(`UPDATE tbl_SourcePaths SET Description = $Description WHERE id_SourcePaths = $id_SourcePaths`, {
+            $id_SourcePaths: this.sourcePathDescriptionDialog.id_SourcePaths,
+            $Description: dialogResult.textValue,
+          });
 
           await this.fetchSourcePaths();
 
@@ -1448,9 +1167,7 @@ export default {
             "success",
             this.$t("{Path} added to {MediaTypeUpper} source directories_", {
               Path: this.sourcePathDescriptionDialog.Path,
-              MediaTypeUpper: this.$t(
-                this.sourcePathDescriptionDialog.MediaTypeUpper
-              ),
+              MediaTypeUpper: this.$t(this.sourcePathDescriptionDialog.MediaTypeUpper),
             })
           );
         } catch (err) {
@@ -1460,22 +1177,13 @@ export default {
     },
 
     updateMinimumWaitForSetAccess: function () {
-      logger.log(
-        "[updateMinimumWaitForSetAccess] setting:",
-        this.minimumWaitForSetAccess
-      );
+      logger.log("[updateMinimumWaitForSetAccess] setting:", this.minimumWaitForSetAccess);
       store.setSetting("minimumWaitForSetAccess", this.minimumWaitForSetAccess);
     },
 
     duplicatesHandlingChanged() {
-      logger.log(
-        "[duplicatesHandlingChanged] $shared.duplicatesHandling:",
-        this.$shared.duplicatesHandling
-      );
-      store.setSetting(
-        "duplicatesHandling",
-        JSON.stringify(this.$shared.duplicatesHandling)
-      );
+      logger.log("[duplicatesHandlingChanged] $shared.duplicatesHandling:", this.$shared.duplicatesHandling);
+      store.setSetting("duplicatesHandling", JSON.stringify(this.$shared.duplicatesHandling));
     },
 
     openAddRegionsDialog() {
@@ -1525,16 +1233,11 @@ export default {
 
     async onAddLanguagesDialogOK(result) {
       const languages =
-        this.addLanguagesDialog.languageType === "languagesPrimaryTitle"
-          ? this.$shared.languagesPrimaryTitle
-          : this.$shared.languagesAudioSubtitles;
+        this.addLanguagesDialog.languageType === "languagesPrimaryTitle" ? this.$shared.languagesPrimaryTitle : this.$shared.languagesAudioSubtitles;
 
       result.forEach((language) => languages.push(language));
 
-      await store.setSetting(
-        this.addLanguagesDialog.languageType,
-        JSON.stringify(languages)
-      );
+      await store.setSetting(this.addLanguagesDialog.languageType, JSON.stringify(languages));
 
       this.addLanguagesDialog.show = false;
     },
@@ -1548,10 +1251,7 @@ export default {
     },
 
     async removeLanguage(language, languageType) {
-      const languages =
-        languageType === "languagesPrimaryTitle"
-          ? this.$shared.languagesPrimaryTitle
-          : this.$shared.languagesAudioSubtitles;
+      const languages = languageType === "languagesPrimaryTitle" ? this.$shared.languagesPrimaryTitle : this.$shared.languagesAudioSubtitles;
 
       languages.splice(
         languages.findIndex((language2) => language2 === language),
@@ -1566,36 +1266,21 @@ export default {
 
     async onReleaseAttributesDragEnd() {
       // We use the internal data from the data table (they hold the current sequence but don't contain items marked as deleted)
-      const releaseAttributes = JSON.parse(
-        JSON.stringify(
-          this.$refs.releaseAttributesTable._data.internalCurrentItems
-        )
-      );
+      const releaseAttributes = JSON.parse(JSON.stringify(this.$refs.releaseAttributesTable._data.internalCurrentItems));
 
       this.$shared.releaseAttributes.forEach((ra) => {
-        if (
-          !releaseAttributes.find(
-            (ra2) =>
-              ra2.searchTerm === ra.searchTerm && ra2.displayAs === ra.displayAs
-          )
-        ) {
+        if (!releaseAttributes.find((ra2) => ra2.searchTerm === ra.searchTerm && ra2.displayAs === ra.displayAs)) {
           releaseAttributes.push(ra);
         }
       });
 
       this.$shared.releaseAttributes = releaseAttributes;
 
-      await store.setSetting(
-        "ReleaseAttributes",
-        JSON.stringify(releaseAttributes)
-      );
+      await store.setSetting("ReleaseAttributes", JSON.stringify(releaseAttributes));
     },
 
     async onLanguagesDragEnd(languageType) {
-      const languages =
-        languageType === "languagesPrimaryTitle"
-          ? this.$shared.languagesPrimaryTitle
-          : this.$shared.languagesAudioSubtitles;
+      const languages = languageType === "languagesPrimaryTitle" ? this.$shared.languagesPrimaryTitle : this.$shared.languagesAudioSubtitles;
 
       await store.setSetting(languageType, JSON.stringify(languages));
     },
@@ -1608,10 +1293,7 @@ export default {
     },
 
     onRemoveLanguageDialogOK() {
-      this.removeLanguage(
-        this.removeLanguageDialog.item,
-        this.removeLanguageDialog.type
-      );
+      this.removeLanguage(this.removeLanguageDialog.item, this.removeLanguageDialog.type);
       this.removeLanguageDialog.show = false;
       eventBus.showSnackbar("success", this.$t("Language removed_"));
     },
@@ -1634,10 +1316,7 @@ export default {
       this.$shared.imdbTitleTypesWhitelist.push(titleType);
       this.addTitleTypeDialog.show = false;
 
-      await store.setSetting(
-        "IMDBTitleTypeWhitelist",
-        JSON.stringify(this.$shared.imdbTitleTypesWhitelist)
-      );
+      await store.setSetting("IMDBTitleTypeWhitelist", JSON.stringify(this.$shared.imdbTitleTypesWhitelist));
 
       eventBus.showSnackbar(
         "success",
@@ -1666,16 +1345,11 @@ export default {
 
     async removeTitleType(titleType) {
       this.$shared.imdbTitleTypesWhitelist.splice(
-        this.$shared.imdbTitleTypesWhitelist.findIndex(
-          (item) => item.TitleType === titleType.TitleType
-        ),
+        this.$shared.imdbTitleTypesWhitelist.findIndex((item) => item.TitleType === titleType.TitleType),
         1
       );
 
-      await store.setSetting(
-        "IMDBTitleTypeWhitelist",
-        JSON.stringify(this.$shared.imdbTitleTypesWhitelist)
-      );
+      await store.setSetting("IMDBTitleTypeWhitelist", JSON.stringify(this.$shared.imdbTitleTypesWhitelist));
 
       eventBus.showSnackbar(
         "success",
@@ -1696,10 +1370,7 @@ export default {
     onEditReleaseAttribute(item) {
       this.editReleaseAttributeDialog.title = this.$t("Edit Release Attribute");
       this.editReleaseAttributeDialog.oldItem = item;
-      this.$refs.editReleaseAttributeDialog.init(
-        item.searchTerm,
-        item.displayAs
-      );
+      this.$refs.editReleaseAttributeDialog.init(item.searchTerm, item.displayAs);
       this.editReleaseAttributeDialog.show = true;
     },
 
@@ -1722,9 +1393,7 @@ export default {
         let foundItem = this.editReleaseAttributeDialog.oldItem;
 
         if (!foundItem) {
-          foundItem = this.$shared.releaseAttributes.find(
-            (item2) => item2.searchTerm === searchTerm && item2.deleted
-          );
+          foundItem = this.$shared.releaseAttributes.find((item2) => item2.searchTerm === searchTerm && item2.deleted);
         }
 
         if (!foundItem) {
@@ -1738,15 +1407,9 @@ export default {
           foundItem.deleted = false;
         }
 
-        await store.setSetting(
-          "ReleaseAttributes",
-          JSON.stringify(this.$shared.releaseAttributes)
-        );
+        await store.setSetting("ReleaseAttributes", JSON.stringify(this.$shared.releaseAttributes));
 
-        eventBus.showSnackbar(
-          "success",
-          this.$t("Release Attribute saved successfully_")
-        );
+        eventBus.showSnackbar("success", this.$t("Release Attribute saved successfully_"));
       } catch (e) {
         eventBus.showSnackbar("error", e);
       }
@@ -1773,20 +1436,14 @@ export default {
       try {
         item.deleted = true;
 
-        await store.setSetting(
-          "ReleaseAttributes",
-          JSON.stringify(this.$shared.releaseAttributes)
-        );
+        await store.setSetting("ReleaseAttributes", JSON.stringify(this.$shared.releaseAttributes));
 
         // HACK: update view
         const temp = this.$shared.releaseAttributes;
         this.$shared.releaseAttributes = null;
         this.$shared.releaseAttributes = temp;
 
-        eventBus.showSnackbar(
-          "success",
-          this.$t("Release Attribute removed successfully_")
-        );
+        eventBus.showSnackbar("success", this.$t("Release Attribute removed successfully_"));
       } catch (e) {
         eventBus.showSnackbar("error", e);
       }
@@ -1801,15 +1458,10 @@ export default {
   async created() {
     logger.group("[Initialize Settings]");
     this.$shared.imdbRatingDemographics.forEach((demographic) => {
-      demographic.long_translated = this.$t(
-        `RatingDemographics.${demographic.long}`
-      );
+      demographic.long_translated = this.$t(`RatingDemographics.${demographic.long}`);
     });
 
-    logger.log(
-      "[created] Settings this.$shared.imdbRatingDemographics:",
-      this.$shared.imdbRatingDemographics
-    );
+    logger.log("[created] Settings this.$shared.imdbRatingDemographics:", this.$shared.imdbRatingDemographics);
 
     await this.fetchSourcePaths();
 
@@ -1819,26 +1471,17 @@ export default {
       this.$shared.regions = JSON.parse(regions);
 
       this.$shared.regions.forEach((item) => {
-        item.nameTranslated = this.$t(
-          `RegionNames.${item.name.replace(/\./g, "_")}`
-        );
+        item.nameTranslated = this.$t(`RegionNames.${item.name.replace(/\./g, "_")}`);
       });
     }
 
     // await store.fetchLanguageSettings();
 
-    logger.log(
-      "[created] Settings this.$shared.regions:",
-      this.$shared.regions
-    );
+    logger.log("[created] Settings this.$shared.regions:", this.$shared.regions);
 
-    const imdbTitleTypesWhitelist = await store.getSetting(
-      "IMDBTitleTypeWhitelist"
-    );
+    const imdbTitleTypesWhitelist = await store.getSetting("IMDBTitleTypeWhitelist");
     if (imdbTitleTypesWhitelist) {
-      this.$shared.imdbTitleTypesWhitelist = JSON.parse(
-        imdbTitleTypesWhitelist
-      );
+      this.$shared.imdbTitleTypesWhitelist = JSON.parse(imdbTitleTypesWhitelist);
     }
 
     this.MediaplayerPath = await store.getSetting("MediaplayerPath");
@@ -1848,17 +1491,13 @@ export default {
     // translate language names
     if (this.$shared.languagesPrimaryTitle) {
       this.$shared.languagesPrimaryTitle.forEach((item) => {
-        item.nameTranslated = this.$t(
-          `LanguageNames.${item.name.replace(/\./g, "_")}`
-        );
+        item.nameTranslated = this.$t(`LanguageNames.${item.name.replace(/\./g, "_")}`);
         item.DisplayText = `${item.nameTranslated} (${item.code})`;
       });
     }
     if (this.$shared.languagesAudioSubtitles) {
       this.$shared.languagesAudioSubtitles.forEach((item) => {
-        item.nameTranslated = this.$t(
-          `LanguageNames.${item.name.replace(/\./g, "_")}`
-        );
+        item.nameTranslated = this.$t(`LanguageNames.${item.name.replace(/\./g, "_")}`);
         item.DisplayText = `${item.nameTranslated} (${item.code})`;
       });
     }
@@ -1866,27 +1505,16 @@ export default {
     this.availableLanguages = this.$i18n.availableLocales.map((locale) => {
       return {
         code: locale,
-        name: this.$i18n._vm.messages[locale].LanguageNames[
-          languageCodeNameMapping[helpers.uppercaseEachWord(locale)]
-        ],
+        name: this.$i18n._vm.messages[locale].LanguageNames[languageCodeNameMapping[helpers.uppercaseEachWord(locale)]],
       };
     });
 
-    logger.log(
-      "[created] Settings this.availableLanguages:",
-      this.availableLanguages
-    );
+    logger.log("[created] Settings this.availableLanguages:", this.availableLanguages);
 
-    logger.log(
-      "[created] Settings this.$shared.releaseAttributes:",
-      this.$shared.releaseAttributes
-    );
+    logger.log("[created] Settings this.$shared.releaseAttributes:", this.$shared.releaseAttributes);
 
     // lodash debounced functions
-    this.debouncedUpdateMinimumWaitForSetAccess = _.debounce(
-      this.updateMinimumWaitForSetAccess,
-      500
-    );
+    this.debouncedUpdateMinimumWaitForSetAccess = _.debounce(this.updateMinimumWaitForSetAccess, 500);
 
     logger.groupEnd();
   },

@@ -8,17 +8,9 @@
       v-bind:class="prevClass"
       v-bind:disabled="$shared.currentPage == 1"
       v-on:click="$shared.currentPage = 1"
-      style="
-        height: 38px !important;
-        width: 38px !important;
-        margin: 8px 8px 0px 0px !important;
-        display: inline-block;
-      "
+      style="height: 38px !important; width: 38px !important; margin: 8px 8px 0px 0px !important; display: inline-block"
     >
-      <i
-        aria-hidden="true"
-        class="v-icon notranslate mdi mdi-chevron-double-left theme--dark"
-      ></i>
+      <i aria-hidden="true" class="v-icon notranslate mdi mdi-chevron-double-left theme--dark"></i>
     </button>
     <button
       type="button"
@@ -26,17 +18,9 @@
       v-bind:class="prevClass"
       v-bind:disabled="$shared.currentPage == 1"
       v-on:click="onPrevClicked"
-      style="
-        height: 38px !important;
-        width: 38px !important;
-        margin: 8px 8px 0px 0px !important;
-        display: inline-block;
-      "
+      style="height: 38px !important; width: 38px !important; margin: 8px 8px 0px 0px !important; display: inline-block"
     >
-      <i
-        aria-hidden="true"
-        class="v-icon notranslate mdi mdi-chevron-left theme--dark"
-      ></i>
+      <i aria-hidden="true" class="v-icon notranslate mdi mdi-chevron-left theme--dark"></i>
     </button>
     <v-select
       class="mk-v-select-dynamic-width"
@@ -74,17 +58,9 @@
       v-bind:class="nextClass"
       v-bind:disabled="$shared.currentPage >= length"
       v-on:click="onNextClicked"
-      style="
-        height: 38px !important;
-        width: 38px !important;
-        margin: 8px 8px 0px 8px !important;
-        display: inline-block;
-      "
+      style="height: 38px !important; width: 38px !important; margin: 8px 8px 0px 8px !important; display: inline-block"
     >
-      <i
-        aria-hidden="true"
-        class="v-icon notranslate mdi mdi-chevron-right theme--dark"
-      ></i>
+      <i aria-hidden="true" class="v-icon notranslate mdi mdi-chevron-right theme--dark"></i>
     </button>
     <button
       type="button"
@@ -92,17 +68,9 @@
       v-bind:class="nextClass"
       v-bind:disabled="$shared.currentPage >= length"
       v-on:click="$shared.currentPage = length"
-      style="
-        height: 38px !important;
-        width: 38px !important;
-        margin: 8px 8px 0px 0px !important;
-        display: inline-block;
-      "
+      style="height: 38px !important; width: 38px !important; margin: 8px 8px 0px 0px !important; display: inline-block"
     >
-      <i
-        aria-hidden="true"
-        class="v-icon notranslate mdi mdi-chevron-double-right theme--dark"
-      ></i>
+      <i aria-hidden="true" class="v-icon notranslate mdi mdi-chevron-double-right theme--dark"></i>
     </button>
   </div>
 </template>
@@ -122,8 +90,7 @@ export default {
 
     nextClass() {
       return {
-        "v-pagination__navigation--disabled":
-          this.$shared.currentPage >= this.length,
+        "v-pagination__navigation--disabled": this.$shared.currentPage >= this.length,
       };
     },
 

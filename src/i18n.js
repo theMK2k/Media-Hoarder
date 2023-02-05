@@ -35,26 +35,17 @@ function loadLocaleMessages() {
     extraLocalesFiles.forEach((extraLocalesFile) => {
       const rx = /^([A-Za-z0-9-_]+)\.json$/;
       if (!rx.test(extraLocalesFile)) {
-        logger.log(
-          `[loadLocaleMessages] skipping locales file ${extraLocalesFile} as it doesn't match expected format`
-        );
+        logger.log(`[loadLocaleMessages] skipping locales file ${extraLocalesFile} as it doesn't match expected format`);
       }
 
       const locale = extraLocalesFile.match(rx)[1];
 
-      logger.log(
-        `[loadLocaleMessages] loadLocaleMessages using messages for ${locale} from ${extraLocalesFile} in i18n directory`
-      );
+      logger.log(`[loadLocaleMessages] loadLocaleMessages using messages for ${locale} from ${extraLocalesFile} in i18n directory`);
 
       try {
-        extraLocales[locale] = JSON.parse(
-          fs.readFileSync(path.join(extraLocalesPath, extraLocalesFile))
-        );
+        extraLocales[locale] = JSON.parse(fs.readFileSync(path.join(extraLocalesPath, extraLocalesFile)));
       } catch (err) {
-        logger.error(
-          `[loadLocaleMessages] ERROR while opening '${extraLocalesFile}:`,
-          err
-        );
+        logger.error(`[loadLocaleMessages] ERROR while opening '${extraLocalesFile}:`, err);
       }
     });
 
@@ -109,16 +100,12 @@ function validateMessages(messages) {
       Object.keys(en).forEach((key) => {
         if (typeof en[key] === "string") {
           if (en[key].includes("_")) {
-            logger.warn(
-              `[validateMessages] Locale en contains underscore in key '${key}'`
-            );
+            logger.warn(`[validateMessages] Locale en contains underscore in key '${key}'`);
           }
         }
 
         if (other[key] === undefined) {
-          logger.warn(
-            `[validateMessages] Locale ${locale} is missing key '${key}'!`
-          );
+          logger.warn(`[validateMessages] Locale ${locale} is missing key '${key}'!`);
           return;
         }
 
@@ -128,9 +115,7 @@ function validateMessages(messages) {
 
         if (typeof other[key] === "string") {
           if (other[key].includes("_")) {
-            logger.warn(
-              `[validateMessages] Locale ${locale} contains underscore in key '${key}'`
-            );
+            logger.warn(`[validateMessages] Locale ${locale} contains underscore in key '${key}'`);
           }
         }
       });

@@ -1,44 +1,24 @@
 <template>
   <v-app>
     <!-- SIDEBAR -->
-    <v-navigation-drawer
-      v-model="$shared.sidenav"
-      app
-      clipped
-      style="z-index: 20"
-      v-bind:width="320"
-    >
+    <v-navigation-drawer v-model="$shared.sidenav" app clipped style="z-index: 20" v-bind:width="320">
       <!-- SIDEBAR OVERLAY -->
       <v-overlay style="z-index: 1000" v-bind:value="showSidebarLoadingOverlay">
         <div style="text-align: center">
-          <v-progress-circular
-            indeterminate
-            color="red"
-            size="70"
-            width="7"
-          ></v-progress-circular>
+          <v-progress-circular indeterminate color="red" size="70" width="7"></v-progress-circular>
         </div>
       </v-overlay>
 
       <v-list dense>
-        <v-list-item
-          v-on:click="onRescan"
-          v-bind:disabled="store.doAbortRescan"
-        >
+        <v-list-item v-on:click="onRescan" v-bind:disabled="store.doAbortRescan">
           <v-list-item-action>
             <v-icon v-show="!isScanning">mdi-reload-alert</v-icon>
             <v-icon v-show="isScanning">mdi-cancel</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title v-show="!isScanning">{{
-              $t("Scan Media")
-            }}</v-list-item-title>
-            <v-list-item-title v-show="isScanning && !store.doAbortRescan">{{
-              $t("Cancel Scan")
-            }}</v-list-item-title>
-            <v-list-item-title v-show="isScanning && store.doAbortRescan">{{
-              $t("Cancelling___")
-            }}</v-list-item-title>
+            <v-list-item-title v-show="!isScanning">{{ $t("Scan Media") }}</v-list-item-title>
+            <v-list-item-title v-show="isScanning && !store.doAbortRescan">{{ $t("Cancel Scan") }}</v-list-item-title>
+            <v-list-item-title v-show="isScanning && store.doAbortRescan">{{ $t("Cancelling___") }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
@@ -54,18 +34,12 @@
         <v-divider></v-divider>
 
         <!-- Movies, Series -->
-        <v-list-item
-          v-for="appSection in appSections"
-          :key="appSection.text"
-          v-bind:to="sectionRoute(appSection.id)"
-        >
+        <v-list-item v-for="appSection in appSections" :key="appSection.text" v-bind:to="sectionRoute(appSection.id)">
           <v-list-item-action>
             <v-icon>{{ appSection.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>{{
-              $t(`${appSection.text}`)
-            }}</v-list-item-title>
+            <v-list-item-title>{{ $t(`${appSection.text}`) }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
@@ -83,9 +57,7 @@
             <v-tooltip v-if="!editFilters.isEditFilters" bottom>
               <template v-slot:activator="{ on }">
                 <span v-on="on">
-                  <v-btn text v-on:click="onResetFilters"
-                    ><v-icon>mdi-restore</v-icon></v-btn
-                  >
+                  <v-btn text v-on:click="onResetFilters"><v-icon>mdi-restore</v-icon></v-btn>
                 </span>
               </template>
               <span>{{ $t("Reset Filters") }}</span>
@@ -93,9 +65,7 @@
             <v-tooltip v-if="!editFilters.isEditFilters" bottom>
               <template v-slot:activator="{ on }">
                 <span v-on="on">
-                  <v-btn text v-on:click="onEditFilters"
-                    ><v-icon>mdi-pencil</v-icon></v-btn
-                  >
+                  <v-btn text v-on:click="onEditFilters"><v-icon>mdi-pencil</v-icon></v-btn>
                 </span>
               </template>
               <span>{{ $t("Edit Filters") }}</span>
@@ -103,32 +73,16 @@
             <v-tooltip v-if="!editFilters.isEditFilters" bottom>
               <template v-slot:activator="{ on }">
                 <span v-on="on">
-                  <v-btn text v-on:click="onOpenChatGPTDialog"
-                    ><v-icon>mdi-robot</v-icon></v-btn
-                  >
+                  <v-btn text v-on:click="onOpenChatGPTDialog"><v-icon>mdi-robot</v-icon></v-btn>
                 </span>
               </template>
               <span>{{ $t("Let an AI recommend some movies") }}</span>
             </v-tooltip>
 
-            <v-btn
-              v-if="editFilters.isEditFilters"
-              text
-              color="primary"
-              v-on:click="onEditFiltersOK"
-              >{{ $t("OK") }}</v-btn
-            >
-            <v-btn
-              v-if="editFilters.isEditFilters"
-              text
-              v-on:click="onEditFiltersCancel"
-              >{{ $t("Cancel") }}</v-btn
-            >
+            <v-btn v-if="editFilters.isEditFilters" text color="primary" v-on:click="onEditFiltersOK">{{ $t("OK") }}</v-btn>
+            <v-btn v-if="editFilters.isEditFilters" text v-on:click="onEditFiltersCancel">{{ $t("Cancel") }}</v-btn>
           </v-subheader>
-          <div
-            v-if="!$shared.isLoadingFilter"
-            style="height: 3px; width: 100%"
-          ></div>
+          <div v-if="!$shared.isLoadingFilter" style="height: 3px; width: 100%"></div>
           <v-progress-linear
             v-if="$shared.isLoadingFilter"
             v-model="$shared.loadingFilterProgress"
@@ -139,16 +93,8 @@
           ></v-progress-linear>
 
           <v-expansion-panels accordion multiple v-model="expandedFilterGroups">
-            <draggable
-              v-model="$shared.filterGroups"
-              group="filters"
-              v-on:end="onFilterDragEnd"
-              v-bind:disabled="!editFilters.isEditFilters"
-            >
-              <div
-                v-for="filterGroup in $shared.filterGroups"
-                v-bind:key="filterGroup.name"
-              >
+            <draggable v-model="$shared.filterGroups" group="filters" v-on:end="onFilterDragEnd" v-bind:disabled="!editFilters.isEditFilters">
+              <div v-for="filterGroup in $shared.filterGroups" v-bind:key="filterGroup.name">
                 <!-- FILTER SOURCE PATHS -->
                 <v-expansion-panel
                   v-bind:readonly="editFilters.isEditFilters"
@@ -173,16 +119,14 @@
                           v-show="$shared.loadingFilter !== 'filterSourcePaths'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
-                            'mk-search-highlight':
-                              $shared.filterSourcePathsActive,
+                            'mk-search-highlight': $shared.filterSourcePathsActive,
                           }"
                           >mdi-folder-outline</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
                           v-bind:class="{
-                            'mk-search-highlight':
-                              $shared.filterSourcePathsActive,
+                            'mk-search-highlight': $shared.filterSourcePathsActive,
                           }"
                           v-show="$shared.loadingFilter === 'filterSourcePaths'"
                           v-bind:size="16"
@@ -197,24 +141,15 @@
                       <v-icon
                         v-if="!editFilters.isEditFilters"
                         v-bind:class="{
-                          'mk-search-highlight':
-                            $shared.filterSourcePathsActive,
+                          'mk-search-highlight': $shared.filterSourcePathsActive,
                         }"
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip
-                        bottom
-                        v-if="editFilters.isEditFilters"
-                        style="z-index: 21"
-                      >
+                      <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-switch
-                              v-model="filterGroup.visible"
-                              dense
-                              style="margin-top: 0px"
-                            ></v-switch>
+                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -227,43 +162,19 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="switchFilterSort(filterGroup)"
-                            >
-                              <v-icon
-                                v-if="
-                                  filterGroup.sort ===
-                                  enmFilterSortModes.numMovies
-                                "
-                                >mdi-sort-numeric</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                              <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{
-                          $t(
-                            `${
-                              filterGroup.sort === enmFilterSortModes.numMovies
-                                ? "Sorted by Number of Media"
-                                : "Sorted by Name"
-                            }`
-                          )
-                        }}</span>
+                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterSourcePaths(false)"
-                            >
-                              <v-icon
-                                >mdi-checkbox-multiple-blank-outline</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterSourcePaths(false)">
+                              <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
                         </template>
@@ -272,11 +183,7 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterSourcePaths(true)"
-                            >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterSourcePaths(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -288,21 +195,10 @@
                       class="mk-filter-checkbox"
                       v-for="sourcePath in filterSourcePaths"
                       v-bind:key="sourcePath.Description"
-                      v-bind:label="
-                        sourcePath.Description +
-                        ' (' +
-                        sourcePath.NumMoviesFormatted +
-                        ')'
-                      "
+                      v-bind:label="sourcePath.Description + ' (' + sourcePath.NumMoviesFormatted + ')'"
                       v-model="sourcePath.Selected"
                       v-on:mouseup="filterCheckboxMouseup('filterSourcePaths')"
-                      v-on:mousedown="
-                        filterCheckboxMousedown(
-                          'filterSourcePaths',
-                          sourcePath,
-                          setAllFilterSourcePaths
-                        )
-                      "
+                      v-on:mousedown="filterCheckboxMousedown('filterSourcePaths', sourcePath, setAllFilterSourcePaths)"
                       color="mk-dark-grey"
                     ></v-checkbox>
                   </v-expansion-panel-content>
@@ -330,16 +226,14 @@
                           v-show="$shared.loadingFilter !== 'filterQualities'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
-                            'mk-search-highlight':
-                              $shared.filterQualitiesActive,
+                            'mk-search-highlight': $shared.filterQualitiesActive,
                           }"
                           >mdi-video-outline</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
                           v-bind:class="{
-                            'mk-search-highlight':
-                              $shared.filterQualitiesActive,
+                            'mk-search-highlight': $shared.filterQualitiesActive,
                           }"
                           v-show="$shared.loadingFilter === 'filterQualities'"
                           v-bind:size="16"
@@ -359,18 +253,10 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip
-                        bottom
-                        v-if="editFilters.isEditFilters"
-                        style="z-index: 21"
-                      >
+                      <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-switch
-                              v-model="filterGroup.visible"
-                              dense
-                              style="margin-top: 0px"
-                            ></v-switch>
+                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -383,43 +269,19 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="switchFilterSort(filterGroup)"
-                            >
-                              <v-icon
-                                v-if="
-                                  filterGroup.sort ===
-                                  enmFilterSortModes.numMovies
-                                "
-                                >mdi-sort-numeric</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                              <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{
-                          $t(
-                            `${
-                              filterGroup.sort === enmFilterSortModes.numMovies
-                                ? "Sorted by Number of Media"
-                                : "Sorted by Name"
-                            }`
-                          )
-                        }}</span>
+                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterQualities(false)"
-                            >
-                              <v-icon
-                                >mdi-checkbox-multiple-blank-outline</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterQualities(false)">
+                              <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
                         </template>
@@ -428,11 +290,7 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterQualities(true)"
-                            >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterQualities(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -444,21 +302,10 @@
                       class="mk-filter-checkbox"
                       v-for="quality in filterQualities"
                       v-bind:key="quality.MI_Quality"
-                      v-bind:label="
-                        getFilterQualityLabel(
-                          quality.MI_Quality,
-                          quality.NumMoviesFormatted
-                        )
-                      "
+                      v-bind:label="getFilterQualityLabel(quality.MI_Quality, quality.NumMoviesFormatted)"
                       v-model="quality.Selected"
                       v-on:mouseup="filterCheckboxMouseup('filterQualities')"
-                      v-on:mousedown="
-                        filterCheckboxMousedown(
-                          'filterQualities',
-                          quality,
-                          setAllFilterQualities
-                        )
-                      "
+                      v-on:mousedown="filterCheckboxMousedown('filterQualities', quality, setAllFilterQualities)"
                       color="mk-dark-grey"
                     ></v-checkbox>
                   </v-expansion-panel-content>
@@ -479,32 +326,25 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
-                        'mk-search-highlight':
-                          $shared.filterAudioLanguagesActive,
+                        'mk-search-highlight': $shared.filterAudioLanguagesActive,
                       }"
                       style="display: flex; align-items: center"
                     >
                       <span class="mk-filter-icon-container">
                         <v-icon
-                          v-show="
-                            $shared.loadingFilter !== 'filterAudioLanguages'
-                          "
+                          v-show="$shared.loadingFilter !== 'filterAudioLanguages'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
-                            'mk-search-highlight':
-                              $shared.filterAudioLanguagesActive,
+                            'mk-search-highlight': $shared.filterAudioLanguagesActive,
                           }"
                           >mdi-comment-outline</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
                           v-bind:class="{
-                            'mk-search-highlight':
-                              $shared.filterAudioLanguagesActive,
+                            'mk-search-highlight': $shared.filterAudioLanguagesActive,
                           }"
-                          v-show="
-                            $shared.loadingFilter === 'filterAudioLanguages'
-                          "
+                          v-show="$shared.loadingFilter === 'filterAudioLanguages'"
                           v-bind:size="16"
                           v-bind:width="3"
                           indeterminate
@@ -518,24 +358,15 @@
                       <v-icon
                         v-if="!editFilters.isEditFilters"
                         v-bind:class="{
-                          'mk-search-highlight':
-                            $shared.filterAudioLanguagesActive,
+                          'mk-search-highlight': $shared.filterAudioLanguagesActive,
                         }"
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip
-                        bottom
-                        v-if="editFilters.isEditFilters"
-                        style="z-index: 21"
-                      >
+                      <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-switch
-                              v-model="filterGroup.visible"
-                              dense
-                              style="margin-top: 0px"
-                            ></v-switch>
+                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -548,43 +379,19 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="switchFilterSort(filterGroup)"
-                            >
-                              <v-icon
-                                v-if="
-                                  filterGroup.sort ===
-                                  enmFilterSortModes.numMovies
-                                "
-                                >mdi-sort-numeric</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                              <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{
-                          $t(
-                            `${
-                              filterGroup.sort === enmFilterSortModes.numMovies
-                                ? "Sorted by Number of Media"
-                                : "Sorted by Name"
-                            }`
-                          )
-                        }}</span>
+                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterAudioLanguages(false)"
-                            >
-                              <v-icon
-                                >mdi-checkbox-multiple-blank-outline</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterAudioLanguages(false)">
+                              <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
                         </template>
@@ -593,11 +400,7 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterAudioLanguages(true)"
-                            >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterAudioLanguages(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -610,24 +413,14 @@
                       v-for="audioLanguage in filterAudioLanguages"
                       v-bind:key="audioLanguage.Language"
                       v-bind:label="
-                        (audioLanguage.DisplayText === '<not available>'
-                          ? $t('<not available>')
-                          : audioLanguage.DisplayText) +
+                        (audioLanguage.DisplayText === '<not available>' ? $t('<not available>') : audioLanguage.DisplayText) +
                         ' (' +
                         audioLanguage.NumMoviesFormatted +
                         ')'
                       "
                       v-model="audioLanguage.Selected"
-                      v-on:mouseup="
-                        filterCheckboxMouseup('filterAudioLanguages')
-                      "
-                      v-on:mousedown="
-                        filterCheckboxMousedown(
-                          'filterAudioLanguages',
-                          audioLanguage,
-                          setAllFilterAudioLanguages
-                        )
-                      "
+                      v-on:mouseup="filterCheckboxMouseup('filterAudioLanguages')"
+                      v-on:mousedown="filterCheckboxMousedown('filterAudioLanguages', audioLanguage, setAllFilterAudioLanguages)"
                       color="mk-dark-grey"
                     ></v-checkbox>
                   </v-expansion-panel-content>
@@ -648,32 +441,25 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
-                        'mk-search-highlight':
-                          $shared.filterSubtitleLanguagesActive,
+                        'mk-search-highlight': $shared.filterSubtitleLanguagesActive,
                       }"
                       style="display: flex; align-items: center"
                     >
                       <span class="mk-filter-icon-container">
                         <v-icon
-                          v-show="
-                            $shared.loadingFilter !== 'filterSubtitleLanguages'
-                          "
+                          v-show="$shared.loadingFilter !== 'filterSubtitleLanguages'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
-                            'mk-search-highlight':
-                              $shared.filterSubtitleLanguagesActive,
+                            'mk-search-highlight': $shared.filterSubtitleLanguagesActive,
                           }"
                           >mdi-subtitles-outline</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
                           v-bind:class="{
-                            'mk-search-highlight':
-                              $shared.filterSubtitleLanguagesActive,
+                            'mk-search-highlight': $shared.filterSubtitleLanguagesActive,
                           }"
-                          v-show="
-                            $shared.loadingFilter === 'filterSubtitleLanguages'
-                          "
+                          v-show="$shared.loadingFilter === 'filterSubtitleLanguages'"
                           v-bind:size="16"
                           v-bind:width="3"
                           indeterminate
@@ -687,24 +473,15 @@
                       <v-icon
                         v-if="!editFilters.isEditFilters"
                         v-bind:class="{
-                          'mk-search-highlight':
-                            $shared.filterSubtitleLanguagesActive,
+                          'mk-search-highlight': $shared.filterSubtitleLanguagesActive,
                         }"
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip
-                        bottom
-                        v-if="editFilters.isEditFilters"
-                        style="z-index: 21"
-                      >
+                      <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-switch
-                              v-model="filterGroup.visible"
-                              dense
-                              style="margin-top: 0px"
-                            ></v-switch>
+                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -717,43 +494,19 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="switchFilterSort(filterGroup)"
-                            >
-                              <v-icon
-                                v-if="
-                                  filterGroup.sort ===
-                                  enmFilterSortModes.numMovies
-                                "
-                                >mdi-sort-numeric</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                              <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{
-                          $t(
-                            `${
-                              filterGroup.sort === enmFilterSortModes.numMovies
-                                ? "Sorted by Number of Media"
-                                : "Sorted by Name"
-                            }`
-                          )
-                        }}</span>
+                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterSubtitleLanguages(false)"
-                            >
-                              <v-icon
-                                >mdi-checkbox-multiple-blank-outline</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterSubtitleLanguages(false)">
+                              <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
                         </template>
@@ -762,11 +515,7 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterSubtitleLanguages(true)"
-                            >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterSubtitleLanguages(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -779,24 +528,14 @@
                       v-for="subtitleLanguage in filterSubtitleLanguages"
                       v-bind:key="subtitleLanguage.Language"
                       v-bind:label="
-                        (subtitleLanguage.DisplayText === '<not available>'
-                          ? $t('<not available>')
-                          : subtitleLanguage.DisplayText) +
+                        (subtitleLanguage.DisplayText === '<not available>' ? $t('<not available>') : subtitleLanguage.DisplayText) +
                         ' (' +
                         subtitleLanguage.NumMoviesFormatted +
                         ')'
                       "
                       v-model="subtitleLanguage.Selected"
-                      v-on:mouseup="
-                        filterCheckboxMouseup('filterSubtitleLanguages')
-                      "
-                      v-on:mousedown="
-                        filterCheckboxMousedown(
-                          'filterSubtitleLanguages',
-                          subtitleLanguage,
-                          setAllFilterSubtitleLanguages
-                        )
-                      "
+                      v-on:mouseup="filterCheckboxMouseup('filterSubtitleLanguages')"
+                      v-on:mousedown="filterCheckboxMousedown('filterSubtitleLanguages', subtitleLanguage, setAllFilterSubtitleLanguages)"
                       color="mk-dark-grey"
                     ></v-checkbox>
                   </v-expansion-panel-content>
@@ -817,32 +556,25 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
-                        'mk-search-highlight':
-                          $shared.filterReleaseAttributesActive,
+                        'mk-search-highlight': $shared.filterReleaseAttributesActive,
                       }"
                       style="display: flex; align-items: center"
                     >
                       <span class="mk-filter-icon-container">
                         <v-icon
-                          v-show="
-                            $shared.loadingFilter !== 'filterReleaseAttributes'
-                          "
+                          v-show="$shared.loadingFilter !== 'filterReleaseAttributes'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
-                            'mk-search-highlight':
-                              $shared.filterReleaseAttributesActive,
+                            'mk-search-highlight': $shared.filterReleaseAttributesActive,
                           }"
                           >mdi-package-variant</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
                           v-bind:class="{
-                            'mk-search-highlight':
-                              $shared.filterReleaseAttributesActive,
+                            'mk-search-highlight': $shared.filterReleaseAttributesActive,
                           }"
-                          v-show="
-                            $shared.loadingFilter === 'filterReleaseAttributes'
-                          "
+                          v-show="$shared.loadingFilter === 'filterReleaseAttributes'"
                           v-bind:size="16"
                           v-bind:width="3"
                           indeterminate
@@ -850,36 +582,22 @@
                         </v-progress-circular>
                       </span>
                       {{ $t("Release Attributes") }}
-                      {{
-                        $shared.filters.filterSettings
-                          .filterReleaseAttributesAND
-                          ? "߷"
-                          : ""
-                      }}
+                      {{ $shared.filters.filterSettings.filterReleaseAttributesAND ? "߷" : "" }}
                       {{ filterReleaseAttributesTitle }}
                     </div>
                     <template v-slot:actions>
                       <v-icon
                         v-if="!editFilters.isEditFilters"
                         v-bind:class="{
-                          'mk-search-highlight':
-                            $shared.filterReleaseAttributesActive,
+                          'mk-search-highlight': $shared.filterReleaseAttributesActive,
                         }"
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip
-                        bottom
-                        v-if="editFilters.isEditFilters"
-                        style="z-index: 21"
-                      >
+                      <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-switch
-                              v-model="filterGroup.visible"
-                              dense
-                              style="margin-top: 0px"
-                            ></v-switch>
+                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -892,43 +610,19 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="switchFilterSort(filterGroup)"
-                            >
-                              <v-icon
-                                v-if="
-                                  filterGroup.sort ===
-                                  enmFilterSortModes.numMovies
-                                "
-                                >mdi-sort-numeric</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                              <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{
-                          $t(
-                            `${
-                              filterGroup.sort === enmFilterSortModes.numMovies
-                                ? "Sorted by Number of Media"
-                                : "Sorted by Name"
-                            }`
-                          )
-                        }}</span>
+                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterReleaseAttributes(false)"
-                            >
-                              <v-icon
-                                >mdi-checkbox-multiple-blank-outline</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterReleaseAttributes(false)">
+                              <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
                         </template>
@@ -937,11 +631,7 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterReleaseAttributes(true)"
-                            >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterReleaseAttributes(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -950,45 +640,24 @@
                       </v-tooltip>
                     </v-row>
                     <v-switch
-                      v-bind:label="
-                        $shared.filters.filterSettings
-                          .filterReleaseAttributesAND
-                          ? $t('all selected must apply')
-                          : $t('one selected must apply')
-                      "
+                      v-bind:label="$shared.filters.filterSettings.filterReleaseAttributesAND ? $t('all selected must apply') : $t('one selected must apply')"
                       color="red"
-                      v-model="
-                        $shared.filters.filterSettings
-                          .filterReleaseAttributesAND
-                      "
-                      v-on:click.native="
-                        filtersChanged('filterReleaseAttributes')
-                      "
+                      v-model="$shared.filters.filterSettings.filterReleaseAttributesAND"
+                      v-on:click.native="filtersChanged('filterReleaseAttributes')"
                     ></v-switch>
                     <v-checkbox
                       class="mk-filter-checkbox"
                       v-for="filterReleaseAttribute in filterReleaseAttributes"
                       v-bind:key="filterReleaseAttribute.ReleaseAttribute"
                       v-bind:label="
-                        (filterReleaseAttribute.ReleaseAttribute ===
-                        '<not available>'
-                          ? $t('<not available>')
-                          : filterReleaseAttribute.ReleaseAttribute) +
+                        (filterReleaseAttribute.ReleaseAttribute === '<not available>' ? $t('<not available>') : filterReleaseAttribute.ReleaseAttribute) +
                         ' (' +
                         filterReleaseAttribute.NumMoviesFormatted +
                         ')'
                       "
                       v-model="filterReleaseAttribute.Selected"
-                      v-on:mouseup="
-                        filterCheckboxMouseup('filterReleaseAttributes')
-                      "
-                      v-on:mousedown="
-                        filterCheckboxMousedown(
-                          'filterReleaseAttributes',
-                          filterReleaseAttribute,
-                          setAllFilterReleaseAttributes
-                        )
-                      "
+                      v-on:mouseup="filterCheckboxMouseup('filterReleaseAttributes')"
+                      v-on:mousedown="filterCheckboxMousedown('filterReleaseAttributes', filterReleaseAttribute, setAllFilterReleaseAttributes)"
                       color="mk-dark-grey"
                     ></v-checkbox>
                   </v-expansion-panel-content>
@@ -1043,18 +712,10 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip
-                        bottom
-                        v-if="editFilters.isEditFilters"
-                        style="z-index: 21"
-                      >
+                      <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-switch
-                              v-model="filterGroup.visible"
-                              dense
-                              style="margin-top: 0px"
-                            ></v-switch>
+                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -1067,43 +728,19 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="switchFilterSort(filterGroup)"
-                            >
-                              <v-icon
-                                v-if="
-                                  filterGroup.sort ===
-                                  enmFilterSortModes.numMovies
-                                "
-                                >mdi-sort-numeric</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                              <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{
-                          $t(
-                            `${
-                              filterGroup.sort === enmFilterSortModes.numMovies
-                                ? "Sorted by Number of Media"
-                                : "Sorted by Name"
-                            }`
-                          )
-                        }}</span>
+                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterLists(false)"
-                            >
-                              <v-icon
-                                >mdi-checkbox-multiple-blank-outline</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterLists(false)">
+                              <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
                         </template>
@@ -1112,11 +749,7 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterLists(true)"
-                            >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterLists(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -1124,24 +757,13 @@
                         <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                     </v-row>
-                    <v-row
-                      v-for="list in filterLists"
-                      v-bind:key="list.id_Lists"
-                    >
+                    <v-row v-for="list in filterLists" v-bind:key="list.id_Lists">
                       <v-checkbox
                         class="mk-filter-checkbox mk-filter-removable"
-                        v-bind:label="
-                          list.Name + ' (' + list.NumMoviesFormatted + ')'
-                        "
+                        v-bind:label="list.Name + ' (' + list.NumMoviesFormatted + ')'"
                         v-model="list.Selected"
                         v-on:mouseup="filterCheckboxMouseup('filterLists')"
-                        v-on:mousedown="
-                          filterCheckboxMousedown(
-                            'filterLists',
-                            list,
-                            setAllFilterLists
-                          )
-                        "
+                        v-on:mousedown="filterCheckboxMousedown('filterLists', list, setAllFilterLists)"
                         color="mk-dark-grey"
                       ></v-checkbox>
                       <v-spacer></v-spacer>
@@ -1149,15 +771,7 @@
                         class="mk-clickable-red"
                         v-if="list.id_Lists"
                         style="align-items: flex-start; padding-top: 4px"
-                        v-on:click="
-                          showDeleteFilterItemDialog(
-                            list,
-                            deleteList,
-                            'Delete List',
-                            `Do you really want to delete the list '{name}'?`,
-                            list.Name
-                          )
-                        "
+                        v-on:click="showDeleteFilterItemDialog(list, deleteList, 'Delete List', `Do you really want to delete the list '{name}'?`, list.Name)"
                         >mdi-delete</v-icon
                       >
                     </v-row>
@@ -1213,18 +827,10 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip
-                        bottom
-                        v-if="editFilters.isEditFilters"
-                        style="z-index: 21"
-                      >
+                      <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-switch
-                              v-model="filterGroup.visible"
-                              dense
-                              style="margin-top: 0px"
-                            ></v-switch>
+                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -1238,14 +844,8 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterRatings(false)"
-                            >
-                              <v-icon
-                                >mdi-checkbox-multiple-blank-outline</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterRatings(false)">
+                              <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
                         </template>
@@ -1254,11 +854,7 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterRatings(true)"
-                            >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterRatings(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -1270,34 +866,13 @@
                       class="mk-filter-checkbox"
                       v-for="rating in $shared.filters.filterRatings"
                       v-bind:key="rating.Rating"
-                      v-bind:label="
-                        getFilterRatingLabel(
-                          rating.Rating,
-                          rating.NumMoviesFormatted
-                        )
-                      "
+                      v-bind:label="getFilterRatingLabel(rating.Rating, rating.NumMoviesFormatted)"
                       v-model="rating.Selected"
                       v-on:mouseup="filterCheckboxMouseup('filterRatings')"
-                      v-on:mousedown="
-                        filterCheckboxMousedown(
-                          'filterRatings',
-                          rating,
-                          setAllFilterRatings
-                        )
-                      "
+                      v-on:mousedown="filterCheckboxMousedown('filterRatings', rating, setAllFilterRatings)"
                       color="mk-dark-grey"
                     >
-                      <v-icon
-                        small
-                        v-for="i in 5"
-                        v-bind:key="i"
-                        v-bind:color="
-                          rating.Rating > i - 1
-                            ? 'amber'
-                            : rating.Rating > 0
-                            ? 'white'
-                            : 'grey'
-                        "
+                      <v-icon small v-for="i in 5" v-bind:key="i" v-bind:color="rating.Rating > i - 1 ? 'amber' : rating.Rating > 0 ? 'white' : 'grey'"
                         >mdi-star</v-icon
                       >
                     </v-checkbox>
@@ -1319,32 +894,25 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
-                        'mk-search-highlight':
-                          $shared.filterMetacriticScoreActive,
+                        'mk-search-highlight': $shared.filterMetacriticScoreActive,
                       }"
                       style="display: flex; align-items: center"
                     >
                       <span class="mk-filter-icon-container">
                         <v-icon
-                          v-show="
-                            $shared.loadingFilter !== 'filterMetacriticScore'
-                          "
+                          v-show="$shared.loadingFilter !== 'filterMetacriticScore'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
-                            'mk-search-highlight':
-                              $shared.filterMetacriticScoreActive,
+                            'mk-search-highlight': $shared.filterMetacriticScoreActive,
                           }"
                           >mdi-numeric-10-box</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
                           v-bind:class="{
-                            'mk-search-highlight':
-                              $shared.filterMetacriticScoreActive,
+                            'mk-search-highlight': $shared.filterMetacriticScoreActive,
                           }"
-                          v-show="
-                            $shared.loadingFilter === 'filterMetacriticScore'
-                          "
+                          v-show="$shared.loadingFilter === 'filterMetacriticScore'"
                           v-bind:size="16"
                           v-bind:width="3"
                           indeterminate
@@ -1358,24 +926,15 @@
                       <v-icon
                         v-if="!editFilters.isEditFilters"
                         v-bind:class="{
-                          'mk-search-highlight':
-                            $shared.filterMetacriticScoreActive,
+                          'mk-search-highlight': $shared.filterMetacriticScoreActive,
                         }"
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip
-                        bottom
-                        v-if="editFilters.isEditFilters"
-                        style="z-index: 21"
-                      >
+                      <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-switch
-                              v-model="filterGroup.visible"
-                              dense
-                              style="margin-top: 0px"
-                            ></v-switch>
+                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -1391,21 +950,13 @@
                       class="align-center"
                       v-on:change="filtersChanged('filterMetacriticScore')"
                     >
-                      <template v-slot:prepend>{{
-                        $shared.filters.filterMetacriticScore[0]
-                      }}</template>
-                      <template v-slot:append>{{
-                        $shared.filters.filterMetacriticScore[1]
-                      }}</template>
+                      <template v-slot:prepend>{{ $shared.filters.filterMetacriticScore[0] }}</template>
+                      <template v-slot:append>{{ $shared.filters.filterMetacriticScore[1] }}</template>
                     </v-range-slider>
                     <v-checkbox
-                      v-bind:label="
-                        $t('include entries with no Metacritic score')
-                      "
+                      v-bind:label="$t('include entries with no Metacritic score')"
                       v-model="$shared.filters.filterMetacriticScoreNone"
-                      v-on:click.native="
-                        filtersChanged('filterMetacriticScore')
-                      "
+                      v-on:click.native="filtersChanged('filterMetacriticScore')"
                       style="margin: 0px"
                       color="mk-dark-grey"
                     ></v-checkbox>
@@ -1436,16 +987,14 @@
                           v-show="$shared.loadingFilter !== 'filterIMDBRatings'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
-                            'mk-search-highlight':
-                              $shared.filterIMDBRatingsActive,
+                            'mk-search-highlight': $shared.filterIMDBRatingsActive,
                           }"
                           >mdi-surround-sound-7-1</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
                           v-bind:class="{
-                            'mk-search-highlight':
-                              $shared.filterIMDBRatingsActive,
+                            'mk-search-highlight': $shared.filterIMDBRatingsActive,
                           }"
                           v-show="$shared.loadingFilter === 'filterIMDBRatings'"
                           v-bind:size="16"
@@ -1460,24 +1009,15 @@
                       <v-icon
                         v-if="!editFilters.isEditFilters"
                         v-bind:class="{
-                          'mk-search-highlight':
-                            $shared.filterIMDBRatingsActive,
+                          'mk-search-highlight': $shared.filterIMDBRatingsActive,
                         }"
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip
-                        bottom
-                        v-if="editFilters.isEditFilters"
-                        style="z-index: 21"
-                      >
+                      <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-switch
-                              v-model="filterGroup.visible"
-                              dense
-                              style="margin-top: 0px"
-                            ></v-switch>
+                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -1494,16 +1034,8 @@
                       class="align-center"
                       v-on:change="filtersChanged('filterIMDBRating')"
                     >
-                      <template v-slot:prepend>{{
-                        $shared.filters.filterIMDBRating[0].toLocaleString(
-                          $shared.uiLanguage
-                        )
-                      }}</template>
-                      <template v-slot:append>{{
-                        $shared.filters.filterIMDBRating[1].toLocaleString(
-                          $shared.uiLanguage
-                        )
-                      }}</template>
+                      <template v-slot:prepend>{{ $shared.filters.filterIMDBRating[0].toLocaleString($shared.uiLanguage) }}</template>
+                      <template v-slot:append>{{ $shared.filters.filterIMDBRating[1].toLocaleString($shared.uiLanguage) }}</template>
                     </v-range-slider>
                     <v-checkbox
                       v-bind:label="$t('include entries with no IMDB rating')"
@@ -1554,11 +1086,7 @@
                         </v-progress-circular>
                       </span>
                       {{ $t("Genres") }}
-                      {{
-                        $shared.filters.filterSettings.filterGenresAND
-                          ? "߷"
-                          : ""
-                      }}
+                      {{ $shared.filters.filterSettings.filterGenresAND ? "߷" : "" }}
                       {{ filterGenresTitle }}
                     </div>
                     <template v-slot:actions>
@@ -1570,18 +1098,10 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip
-                        bottom
-                        v-if="editFilters.isEditFilters"
-                        style="z-index: 21"
-                      >
+                      <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-switch
-                              v-model="filterGroup.visible"
-                              dense
-                              style="margin-top: 0px"
-                            ></v-switch>
+                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -1594,43 +1114,19 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="switchFilterSort(filterGroup)"
-                            >
-                              <v-icon
-                                v-if="
-                                  filterGroup.sort ===
-                                  enmFilterSortModes.numMovies
-                                "
-                                >mdi-sort-numeric</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                              <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{
-                          $t(
-                            `${
-                              filterGroup.sort === enmFilterSortModes.numMovies
-                                ? "Sorted by Number of Media"
-                                : "Sorted by Name"
-                            }`
-                          )
-                        }}</span>
+                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterGenres(false)"
-                            >
-                              <v-icon
-                                >mdi-checkbox-multiple-blank-outline</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterGenres(false)">
+                              <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
                         </template>
@@ -1639,11 +1135,7 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterGenres(true)"
-                            >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterGenres(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -1652,11 +1144,7 @@
                       </v-tooltip>
                     </v-row>
                     <v-switch
-                      v-bind:label="
-                        $shared.filters.filterSettings.filterGenresAND
-                          ? $t('all selected must apply')
-                          : $t('one selected must apply')
-                      "
+                      v-bind:label="$shared.filters.filterSettings.filterGenresAND ? $t('all selected must apply') : $t('one selected must apply')"
                       color="red"
                       v-model="$shared.filters.filterSettings.filterGenresAND"
                       v-on:click.native="filtersChanged('filterGenres')"
@@ -1665,18 +1153,10 @@
                       class="mk-filter-checkbox"
                       v-for="genre in filterGenres"
                       v-bind:key="genre.id_Genres"
-                      v-bind:label="
-                        genre.Name + ' (' + genre.NumMoviesFormatted + ')'
-                      "
+                      v-bind:label="genre.Name + ' (' + genre.NumMoviesFormatted + ')'"
                       v-model="genre.Selected"
                       v-on:mouseup="filterCheckboxMouseup('filterGenres')"
-                      v-on:mousedown="
-                        filterCheckboxMousedown(
-                          'filterGenres',
-                          genre,
-                          setAllFilterGenres
-                        )
-                      "
+                      v-on:mousedown="filterCheckboxMousedown('filterGenres', genre, setAllFilterGenres)"
                       color="mk-dark-grey"
                     ></v-checkbox>
                   </v-expansion-panel-content>
@@ -1704,16 +1184,14 @@
                           v-show="$shared.loadingFilter !== 'filterAgeRatings'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
-                            'mk-search-highlight':
-                              $shared.filterAgeRatingsActive,
+                            'mk-search-highlight': $shared.filterAgeRatingsActive,
                           }"
                           >mdi-human-female-boy</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
                           v-bind:class="{
-                            'mk-search-highlight':
-                              $shared.filterAgeRatingsActive,
+                            'mk-search-highlight': $shared.filterAgeRatingsActive,
                           }"
                           v-show="$shared.loadingFilter === 'filterAgeRatings'"
                           v-bind:size="16"
@@ -1733,18 +1211,10 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip
-                        bottom
-                        v-if="editFilters.isEditFilters"
-                        style="z-index: 21"
-                      >
+                      <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-switch
-                              v-model="filterGroup.visible"
-                              dense
-                              style="margin-top: 0px"
-                            ></v-switch>
+                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -1757,14 +1227,8 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterAgeRatings(false)"
-                            >
-                              <v-icon
-                                >mdi-checkbox-multiple-blank-outline</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterAgeRatings(false)">
+                              <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
                         </template>
@@ -1773,11 +1237,7 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterAgeRatings(true)"
-                            >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterAgeRatings(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -1789,23 +1249,10 @@
                       class="mk-filter-checkbox"
                       v-for="ageRating in $shared.filters.filterAgeRatings"
                       v-bind:key="ageRating.Age"
-                      v-bind:label="
-                        (ageRating.Age === -1
-                          ? `<${$t('undetermined')}>`
-                          : ageRating.Age) +
-                        ' (' +
-                        ageRating.NumMoviesFormatted +
-                        ')'
-                      "
+                      v-bind:label="(ageRating.Age === -1 ? `<${$t('undetermined')}>` : ageRating.Age) + ' (' + ageRating.NumMoviesFormatted + ')'"
                       v-model="ageRating.Selected"
                       v-on:mouseup="filterCheckboxMouseup('filterAgeRatings')"
-                      v-on:mousedown="
-                        filterCheckboxMousedown(
-                          'filterAgeRatings',
-                          ageRating,
-                          setAllFilterAgeRatings
-                        )
-                      "
+                      v-on:mousedown="filterCheckboxMousedown('filterAgeRatings', ageRating, setAllFilterAgeRatings)"
                       color="mk-dark-grey"
                     ></v-checkbox>
                   </v-expansion-panel-content>
@@ -1826,32 +1273,25 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
-                        'mk-search-highlight':
-                          $shared.filterParentalAdvisoryActive,
+                        'mk-search-highlight': $shared.filterParentalAdvisoryActive,
                       }"
                       style="display: flex; align-items: center"
                     >
                       <span class="mk-filter-icon-container">
                         <v-icon
-                          v-show="
-                            $shared.loadingFilter !== 'filterParentalAdvisory'
-                          "
+                          v-show="$shared.loadingFilter !== 'filterParentalAdvisory'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
-                            'mk-search-highlight':
-                              $shared.filterParentalAdvisoryActive,
+                            'mk-search-highlight': $shared.filterParentalAdvisoryActive,
                           }"
                           >mdi-movie-filter-outline</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
                           v-bind:class="{
-                            'mk-search-highlight':
-                              $shared.filterParentalAdvisoryActive,
+                            'mk-search-highlight': $shared.filterParentalAdvisoryActive,
                           }"
-                          v-show="
-                            $shared.loadingFilter === 'filterParentalAdvisory'
-                          "
+                          v-show="$shared.loadingFilter === 'filterParentalAdvisory'"
                           v-bind:size="16"
                           v-bind:width="3"
                           indeterminate
@@ -1865,24 +1305,15 @@
                       <v-icon
                         v-if="!editFilters.isEditFilters"
                         v-bind:class="{
-                          'mk-search-highlight':
-                            $shared.filterParentalAdvisoryActive,
+                          'mk-search-highlight': $shared.filterParentalAdvisoryActive,
                         }"
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip
-                        bottom
-                        v-if="editFilters.isEditFilters"
-                        style="z-index: 21"
-                      >
+                      <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-switch
-                              v-model="filterGroup.visible"
-                              dense
-                              style="margin-top: 0px"
-                            ></v-switch>
+                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -1894,35 +1325,21 @@
                       <v-expansion-panel
                         v-for="category in filterParentalAdvisoryCategories"
                         v-bind:key="category.Name"
-                        v-show="
-                          $shared.filters.filterParentalAdvisory[
-                            category.Name
-                          ] &&
-                          $shared.filters.filterParentalAdvisory[category.Name]
-                            .length > 0
-                        "
+                        v-show="$shared.filters.filterParentalAdvisory[category.Name] && $shared.filters.filterParentalAdvisory[category.Name].length > 0"
                         style="padding: 0px !important; width: 316px"
                       >
                         <v-expansion-panel-header
                           style="padding: 8px !important"
                           v-bind:class="{
-                            'mk-search-highlight':
-                              $shared.filters.filterParentalAdvisory[
-                                category.Name
-                              ].find((filter) => !filter.Selected),
+                            'mk-search-highlight': $shared.filters.filterParentalAdvisory[category.Name].find((filter) => !filter.Selected),
                           }"
-                          >{{
-                            $t(`ParentalAdvisoryCategories.${category.Name}`)
-                          }}
+                          >{{ $t(`ParentalAdvisoryCategories.${category.Name}`) }}
                           {{ filterParentalAdvisoryCategoryTitle(category) }}
                           <template v-slot:actions>
                             <v-icon
                               v-if="!editFilters.isEditFilters"
                               v-bind:class="{
-                                'mk-search-highlight':
-                                  $shared.filters.filterParentalAdvisory[
-                                    category.Name
-                                  ].find((filter) => !filter.Selected),
+                                'mk-search-highlight': $shared.filters.filterParentalAdvisory[category.Name].find((filter) => !filter.Selected),
                               }"
                             >
                               $expand
@@ -1935,19 +1352,8 @@
                             <v-tooltip bottom style="z-index: 21">
                               <template v-slot:activator="{ on }">
                                 <span v-on="on">
-                                  <v-btn
-                                    class="mk-filter-action-btn"
-                                    text
-                                    v-on:click="
-                                      setAllFilterParentalAdvisory(
-                                        category,
-                                        false
-                                      )
-                                    "
-                                  >
-                                    <v-icon
-                                      >mdi-checkbox-multiple-blank-outline</v-icon
-                                    >
+                                  <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterParentalAdvisory(category, false)">
+                                    <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                                   </v-btn>
                                 </span>
                               </template>
@@ -1956,50 +1362,21 @@
                             <v-tooltip bottom style="z-index: 21">
                               <template v-slot:activator="{ on }">
                                 <span v-on="on">
-                                  <v-btn
-                                    class="mk-filter-action-btn"
-                                    text
-                                    v-on:click="
-                                      setAllFilterParentalAdvisory(
-                                        category,
-                                        true
-                                      )
-                                    "
-                                  >
-                                    <v-icon
-                                      >mdi-check-box-multiple-outline</v-icon
-                                    >
+                                  <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterParentalAdvisory(category, true)">
+                                    <v-icon>mdi-check-box-multiple-outline</v-icon>
                                   </v-btn>
                                 </span>
                               </template>
                               <span>{{ $t("Select All") }}</span>
                             </v-tooltip>
                           </v-row>
-                          <v-row
-                            v-for="paItem in $shared.filters
-                              .filterParentalAdvisory[category.Name]"
-                            v-bind:key="paItem.Severity"
-                          >
+                          <v-row v-for="paItem in $shared.filters.filterParentalAdvisory[category.Name]" v-bind:key="paItem.Severity">
                             <v-checkbox
                               class="mk-filter-checkbox"
-                              v-bind:label="
-                                $t(`${paItem.DisplayText}`) +
-                                ' (' +
-                                paItem.NumMoviesFormatted +
-                                ')'
-                              "
+                              v-bind:label="$t(`${paItem.DisplayText}`) + ' (' + paItem.NumMoviesFormatted + ')'"
                               v-model="paItem.Selected"
-                              v-on:mouseup="
-                                filterCheckboxMouseup('filterParentalAdvisory')
-                              "
-                              v-on:mousedown="
-                                filterCheckboxMousedownParentalAdvisory(
-                                  category.Name,
-                                  paItem,
-                                  (x) =>
-                                    setAllFilterParentalAdvisory(category, x)
-                                )
-                              "
+                              v-on:mouseup="filterCheckboxMouseup('filterParentalAdvisory')"
+                              v-on:mousedown="filterCheckboxMousedownParentalAdvisory(category.Name, paItem, (x) => setAllFilterParentalAdvisory(category, x))"
                               color="mk-dark-grey"
                             ></v-checkbox>
                           </v-row>
@@ -2048,11 +1425,7 @@
                         </v-progress-circular>
                       </span>
                       {{ $t("People") }}
-                      {{
-                        $shared.filters.filterSettings.filterPersonsAND
-                          ? "߷"
-                          : ""
-                      }}
+                      {{ $shared.filters.filterSettings.filterPersonsAND ? "߷" : "" }}
                       {{ filterPersonsTitle }}
                     </div>
                     <template v-slot:actions>
@@ -2064,18 +1437,10 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip
-                        bottom
-                        v-if="editFilters.isEditFilters"
-                        style="z-index: 21"
-                      >
+                      <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-switch
-                              v-model="filterGroup.visible"
-                              dense
-                              style="margin-top: 0px"
-                            ></v-switch>
+                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -2088,43 +1453,19 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="switchFilterSort(filterGroup)"
-                            >
-                              <v-icon
-                                v-if="
-                                  filterGroup.sort ===
-                                  enmFilterSortModes.numMovies
-                                "
-                                >mdi-sort-numeric</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                              <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{
-                          $t(
-                            `${
-                              filterGroup.sort === enmFilterSortModes.numMovies
-                                ? "Sorted by Number of Media"
-                                : "Sorted by Name"
-                            }`
-                          )
-                        }}</span>
+                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterPersons(false)"
-                            >
-                              <v-icon
-                                >mdi-checkbox-multiple-blank-outline</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterPersons(false)">
+                              <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
                         </template>
@@ -2133,11 +1474,7 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterPersons(true)"
-                            >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterPersons(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2147,11 +1484,7 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="addPerson()"
-                            >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="addPerson()">
                               <v-icon>mdi-magnify</v-icon>
                             </v-btn>
                           </span>
@@ -2160,37 +1493,19 @@
                       </v-tooltip>
                     </v-row>
                     <v-switch
-                      v-bind:label="
-                        $shared.filters.filterSettings.filterPersonsAND
-                          ? $t('all selected must apply')
-                          : $t('one selected must apply')
-                      "
+                      v-bind:label="$shared.filters.filterSettings.filterPersonsAND ? $t('all selected must apply') : $t('one selected must apply')"
                       color="red"
                       v-model="$shared.filters.filterSettings.filterPersonsAND"
                       v-on:click.native="filtersChanged('filterPersons')"
                       style="margin-bottom: 8px; margin-left: -10px"
                     ></v-switch>
-                    <v-row
-                      v-for="person in filterPersons"
-                      v-bind:key="person.IMDB_Person_ID"
-                    >
+                    <v-row v-for="person in filterPersons" v-bind:key="person.IMDB_Person_ID">
                       <v-checkbox
                         class="mk-filter-checkbox mk-filter-removable"
-                        v-bind:label="
-                          person.Person_Name +
-                          ' (' +
-                          person.NumMoviesFormatted +
-                          ')'
-                        "
+                        v-bind:label="person.Person_Name + ' (' + person.NumMoviesFormatted + ')'"
                         v-model="person.Selected"
                         v-on:mouseup="filterCheckboxMouseup('filterPersons')"
-                        v-on:mousedown="
-                          filterCheckboxMousedown(
-                            'filterPersons',
-                            person,
-                            setAllFilterPersons
-                          )
-                        "
+                        v-on:mousedown="filterCheckboxMousedown('filterPersons', person, setAllFilterPersons)"
                         color="mk-dark-grey"
                       ></v-checkbox>
                       <v-spacer></v-spacer>
@@ -2235,16 +1550,14 @@
                           v-show="$shared.loadingFilter !== 'filterCompanies'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
-                            'mk-search-highlight':
-                              $shared.filterCompaniesActive,
+                            'mk-search-highlight': $shared.filterCompaniesActive,
                           }"
                           >mdi-factory</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
                           v-bind:class="{
-                            'mk-search-highlight':
-                              $shared.filterCompaniesActive,
+                            'mk-search-highlight': $shared.filterCompaniesActive,
                           }"
                           v-show="$shared.loadingFilter === 'filterCompanies'"
                           v-bind:size="16"
@@ -2254,11 +1567,7 @@
                         </v-progress-circular>
                       </span>
                       {{ $t("Companies") }}
-                      {{
-                        $shared.filters.filterSettings.filterCompaniesAND
-                          ? "߷"
-                          : ""
-                      }}
+                      {{ $shared.filters.filterSettings.filterCompaniesAND ? "߷" : "" }}
                       {{ filterCompaniesTitle }}
                     </div>
                     <template v-slot:actions>
@@ -2270,18 +1579,10 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip
-                        bottom
-                        v-if="editFilters.isEditFilters"
-                        style="z-index: 21"
-                      >
+                      <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-switch
-                              v-model="filterGroup.visible"
-                              dense
-                              style="margin-top: 0px"
-                            ></v-switch>
+                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -2294,43 +1595,19 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="switchFilterSort(filterGroup)"
-                            >
-                              <v-icon
-                                v-if="
-                                  filterGroup.sort ===
-                                  enmFilterSortModes.numMovies
-                                "
-                                >mdi-sort-numeric</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                              <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{
-                          $t(
-                            `${
-                              filterGroup.sort === enmFilterSortModes.numMovies
-                                ? "Sorted by Number of Media"
-                                : "Sorted by Name"
-                            }`
-                          )
-                        }}</span>
+                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterCompanies(false)"
-                            >
-                              <v-icon
-                                >mdi-checkbox-multiple-blank-outline</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterCompanies(false)">
+                              <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
                         </template>
@@ -2339,11 +1616,7 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterCompanies(true)"
-                            >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterCompanies(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2353,11 +1626,7 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="addCompany()"
-                            >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="addCompany()">
                               <v-icon>mdi-magnify</v-icon>
                             </v-btn>
                           </span>
@@ -2366,39 +1635,19 @@
                       </v-tooltip>
                     </v-row>
                     <v-switch
-                      v-bind:label="
-                        $shared.filters.filterSettings.filterCompaniesAND
-                          ? $t('all selected must apply')
-                          : $t('one selected must apply')
-                      "
+                      v-bind:label="$shared.filters.filterSettings.filterCompaniesAND ? $t('all selected must apply') : $t('one selected must apply')"
                       color="red"
-                      v-model="
-                        $shared.filters.filterSettings.filterCompaniesAND
-                      "
+                      v-model="$shared.filters.filterSettings.filterCompaniesAND"
                       v-on:click.native="filtersChanged('filterCompanies')"
                       style="margin-bottom: 8px; margin-left: -10px"
                     ></v-switch>
-                    <v-row
-                      v-for="company in filterCompanies"
-                      v-bind:key="company.Company_Name"
-                    >
+                    <v-row v-for="company in filterCompanies" v-bind:key="company.Company_Name">
                       <v-checkbox
                         class="mk-filter-checkbox mk-filter-removable"
-                        v-bind:label="
-                          company.Company_Name +
-                          ' (' +
-                          company.NumMoviesFormatted +
-                          ')'
-                        "
+                        v-bind:label="company.Company_Name + ' (' + company.NumMoviesFormatted + ')'"
                         v-model="company.Selected"
                         v-on:mouseup="filterCheckboxMouseup('filterCompanies')"
-                        v-on:mousedown="
-                          filterCheckboxMousedown(
-                            'filterCompanies',
-                            company,
-                            setAllFilterCompanies
-                          )
-                        "
+                        v-on:mousedown="filterCheckboxMousedown('filterCompanies', company, setAllFilterCompanies)"
                         color="mk-dark-grey"
                       ></v-checkbox>
                       <v-spacer></v-spacer>
@@ -2470,18 +1719,10 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip
-                        bottom
-                        v-if="editFilters.isEditFilters"
-                        style="z-index: 21"
-                      >
+                      <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-switch
-                              v-model="filterGroup.visible"
-                              dense
-                              style="margin-top: 0px"
-                            ></v-switch>
+                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -2494,43 +1735,19 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="switchFilterSort(filterGroup)"
-                            >
-                              <v-icon
-                                v-if="
-                                  filterGroup.sort ===
-                                  enmFilterSortModes.numMovies
-                                "
-                                >mdi-sort-numeric</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                              <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{
-                          $t(
-                            `${
-                              filterGroup.sort === enmFilterSortModes.numMovies
-                                ? "Sorted by Number of Media"
-                                : "Sorted by Name"
-                            }`
-                          )
-                        }}</span>
+                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterYears(false)"
-                            >
-                              <v-icon
-                                >mdi-checkbox-multiple-blank-outline</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterYears(false)">
+                              <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
                         </template>
@@ -2539,11 +1756,7 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterYears(true)"
-                            >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterYears(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2553,11 +1766,7 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="showYearsRangeInput()"
-                            >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="showYearsRangeInput()">
                               <v-icon>mdi-arrow-expand-horizontal</v-icon>
                             </v-btn>
                           </span>
@@ -2567,29 +1776,15 @@
                     </v-row>
                     <div v-if="yearsRangeInput.show">
                       <v-row v-if="yearsRangeInput.show">
-                        <v-range-slider
-                          v-model="yearsRangeInput.range"
-                          :max="yearsRangeInput.max"
-                          :min="yearsRangeInput.min"
-                          hide-details
-                          class="align-center"
-                        >
-                          <template v-slot:prepend>{{
-                            yearsRangeInput.range[0]
-                          }}</template>
-                          <template v-slot:append>{{
-                            yearsRangeInput.range[1]
-                          }}</template>
+                        <v-range-slider v-model="yearsRangeInput.range" :max="yearsRangeInput.max" :min="yearsRangeInput.min" hide-details class="align-center">
+                          <template v-slot:prepend>{{ yearsRangeInput.range[0] }}</template>
+                          <template v-slot:append>{{ yearsRangeInput.range[1] }}</template>
                         </v-range-slider>
                       </v-row>
                       <v-row>
                         <v-spacer></v-spacer>
-                        <v-btn text v-on:click="onYearsRangeInputCancel">{{
-                          $t("Cancel")
-                        }}</v-btn>
-                        <v-btn text v-on:click="onYearsRangeInputOK">{{
-                          $t("OK")
-                        }}</v-btn>
+                        <v-btn text v-on:click="onYearsRangeInputCancel">{{ $t("Cancel") }}</v-btn>
+                        <v-btn text v-on:click="onYearsRangeInputOK">{{ $t("OK") }}</v-btn>
                       </v-row>
                     </div>
 
@@ -2597,21 +1792,10 @@
                       class="mk-filter-checkbox"
                       v-for="year in filterYears"
                       v-bind:key="year.startYear"
-                      v-bind:label="
-                        getFilterYearLabel(
-                          year.startYear,
-                          year.NumMoviesFormatted
-                        )
-                      "
+                      v-bind:label="getFilterYearLabel(year.startYear, year.NumMoviesFormatted)"
                       v-model="year.Selected"
                       v-on:mouseup="filterCheckboxMouseup('filterYears')"
-                      v-on:mousedown="
-                        filterCheckboxMousedown(
-                          'filterYears',
-                          year,
-                          setAllFilterYears
-                        )
-                      "
+                      v-on:mousedown="filterCheckboxMousedown('filterYears', year, setAllFilterYears)"
                       color="mk-dark-grey"
                     ></v-checkbox>
                   </v-expansion-panel-content>
@@ -2632,32 +1816,25 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
-                        'mk-search-highlight':
-                          $shared.filterIMDBPlotKeywordsActive,
+                        'mk-search-highlight': $shared.filterIMDBPlotKeywordsActive,
                       }"
                       style="display: flex; align-items: center"
                     >
                       <span class="mk-filter-icon-container">
                         <v-icon
-                          v-show="
-                            $shared.loadingFilter !== 'filterIMDBPlotKeywords'
-                          "
+                          v-show="$shared.loadingFilter !== 'filterIMDBPlotKeywords'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
-                            'mk-search-highlight':
-                              $shared.filterIMDBPlotKeywordsActive,
+                            'mk-search-highlight': $shared.filterIMDBPlotKeywordsActive,
                           }"
                           >mdi-book-open-outline</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
                           v-bind:class="{
-                            'mk-search-highlight':
-                              $shared.filterIMDBPlotKeywordsActive,
+                            'mk-search-highlight': $shared.filterIMDBPlotKeywordsActive,
                           }"
-                          v-show="
-                            $shared.loadingFilter === 'filterIMDBPlotKeywords'
-                          "
+                          v-show="$shared.loadingFilter === 'filterIMDBPlotKeywords'"
                           v-bind:size="16"
                           v-bind:width="3"
                           indeterminate
@@ -2665,35 +1842,22 @@
                         </v-progress-circular>
                       </span>
                       {{ $t("Plot Keywords") }}
-                      {{
-                        $shared.filters.filterSettings.filterIMDBPlotKeywordsAND
-                          ? "߷"
-                          : ""
-                      }}
+                      {{ $shared.filters.filterSettings.filterIMDBPlotKeywordsAND ? "߷" : "" }}
                       {{ filterIMDBPlotKeywordsTitle }}
                     </div>
                     <template v-slot:actions>
                       <v-icon
                         v-if="!editFilters.isEditFilters"
                         v-bind:class="{
-                          'mk-search-highlight':
-                            $shared.filterIMDBPlotKeywordsActive,
+                          'mk-search-highlight': $shared.filterIMDBPlotKeywordsActive,
                         }"
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip
-                        bottom
-                        v-if="editFilters.isEditFilters"
-                        style="z-index: 21"
-                      >
+                      <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-switch
-                              v-model="filterGroup.visible"
-                              dense
-                              style="margin-top: 0px"
-                            ></v-switch>
+                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -2706,43 +1870,19 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="switchFilterSort(filterGroup)"
-                            >
-                              <v-icon
-                                v-if="
-                                  filterGroup.sort ===
-                                  enmFilterSortModes.numMovies
-                                "
-                                >mdi-sort-numeric</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                              <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{
-                          $t(
-                            `${
-                              filterGroup.sort === enmFilterSortModes.numMovies
-                                ? "Sorted by Number of Media"
-                                : "Sorted by Name"
-                            }`
-                          )
-                        }}</span>
+                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllIFilterMDBPlotKeywords(false)"
-                            >
-                              <v-icon
-                                >mdi-checkbox-multiple-blank-outline</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllIFilterMDBPlotKeywords(false)">
+                              <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
                         </template>
@@ -2751,11 +1891,7 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllIFilterMDBPlotKeywords(true)"
-                            >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllIFilterMDBPlotKeywords(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2765,11 +1901,7 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="addIMDBPlotKeyword()"
-                            >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="addIMDBPlotKeyword()">
                               <v-icon>mdi-magnify</v-icon>
                             </v-btn>
                           </span>
@@ -2778,43 +1910,19 @@
                       </v-tooltip>
                     </v-row>
                     <v-switch
-                      v-bind:label="
-                        $shared.filters.filterSettings.filterIMDBPlotKeywordsAND
-                          ? $t('all selected must apply')
-                          : $t('one selected must apply')
-                      "
+                      v-bind:label="$shared.filters.filterSettings.filterIMDBPlotKeywordsAND ? $t('all selected must apply') : $t('one selected must apply')"
                       color="red"
-                      v-model="
-                        $shared.filters.filterSettings.filterIMDBPlotKeywordsAND
-                      "
-                      v-on:click.native="
-                        filtersChanged('filterIMDBPlotKeywords')
-                      "
+                      v-model="$shared.filters.filterSettings.filterIMDBPlotKeywordsAND"
+                      v-on:click.native="filtersChanged('filterIMDBPlotKeywords')"
                       style="margin-bottom: 8px; margin-left: -10px"
                     ></v-switch>
-                    <v-row
-                      v-for="plotKeyword in filterIMDBPlotKeywords"
-                      v-bind:key="plotKeyword.id_Filter_IMDB_Plot_Keywords"
-                    >
+                    <v-row v-for="plotKeyword in filterIMDBPlotKeywords" v-bind:key="plotKeyword.id_Filter_IMDB_Plot_Keywords">
                       <v-checkbox
                         class="mk-filter-checkbox mk-filter-removable"
-                        v-bind:label="
-                          plotKeyword.Keyword +
-                          ' (' +
-                          plotKeyword.NumMoviesFormatted +
-                          ')'
-                        "
+                        v-bind:label="plotKeyword.Keyword + ' (' + plotKeyword.NumMoviesFormatted + ')'"
                         v-model="plotKeyword.Selected"
-                        v-on:mouseup="
-                          filterCheckboxMouseup('filterIMDBPlotKeywords')
-                        "
-                        v-on:mousedown="
-                          filterCheckboxMousedown(
-                            'filterIMDBPlotKeywords',
-                            plotKeyword,
-                            setAllIFilterMDBPlotKeywords
-                          )
-                        "
+                        v-on:mouseup="filterCheckboxMouseup('filterIMDBPlotKeywords')"
+                        v-on:mousedown="filterCheckboxMousedown('filterIMDBPlotKeywords', plotKeyword, setAllIFilterMDBPlotKeywords)"
                         color="mk-dark-grey"
                       ></v-checkbox>
                       <v-spacer></v-spacer>
@@ -2852,34 +1960,25 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
-                        'mk-search-highlight':
-                          $shared.filterIMDBFilmingLocationsActive,
+                        'mk-search-highlight': $shared.filterIMDBFilmingLocationsActive,
                       }"
                       style="display: flex; align-items: center"
                     >
                       <span class="mk-filter-icon-container">
                         <v-icon
-                          v-show="
-                            $shared.loadingFilter !==
-                            'filterIMDBFilmingLocations'
-                          "
+                          v-show="$shared.loadingFilter !== 'filterIMDBFilmingLocations'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
-                            'mk-search-highlight':
-                              $shared.filterIMDBFilmingLocationsActive,
+                            'mk-search-highlight': $shared.filterIMDBFilmingLocationsActive,
                           }"
                           >mdi-map-marker-outline</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
                           v-bind:class="{
-                            'mk-search-highlight':
-                              $shared.filterIMDBFilmingLocationsActive,
+                            'mk-search-highlight': $shared.filterIMDBFilmingLocationsActive,
                           }"
-                          v-show="
-                            $shared.loadingFilter ===
-                            'filterIMDBFilmingLocations'
-                          "
+                          v-show="$shared.loadingFilter === 'filterIMDBFilmingLocations'"
                           v-bind:size="16"
                           v-bind:width="3"
                           indeterminate
@@ -2887,36 +1986,22 @@
                         </v-progress-circular>
                       </span>
                       {{ $t("Filming Locations") }}
-                      {{
-                        $shared.filters.filterSettings
-                          .filterIMDBFilmingLocationsAND
-                          ? "߷"
-                          : ""
-                      }}
+                      {{ $shared.filters.filterSettings.filterIMDBFilmingLocationsAND ? "߷" : "" }}
                       {{ filterIMDBFilmingLocationsTitle }}
                     </div>
                     <template v-slot:actions>
                       <v-icon
                         v-if="!editFilters.isEditFilters"
                         v-bind:class="{
-                          'mk-search-highlight':
-                            $shared.filterIMDBFilmingLocationsActive,
+                          'mk-search-highlight': $shared.filterIMDBFilmingLocationsActive,
                         }"
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip
-                        bottom
-                        v-if="editFilters.isEditFilters"
-                        style="z-index: 21"
-                      >
+                      <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-switch
-                              v-model="filterGroup.visible"
-                              dense
-                              style="margin-top: 0px"
-                            ></v-switch>
+                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -2929,45 +2014,19 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="switchFilterSort(filterGroup)"
-                            >
-                              <v-icon
-                                v-if="
-                                  filterGroup.sort ===
-                                  enmFilterSortModes.numMovies
-                                "
-                                >mdi-sort-numeric</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                              <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{
-                          $t(
-                            `${
-                              filterGroup.sort === enmFilterSortModes.numMovies
-                                ? "Sorted by Number of Media"
-                                : "Sorted by Name"
-                            }`
-                          )
-                        }}</span>
+                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="
-                                setAllFilterIMDBFilmingLocations(false)
-                              "
-                            >
-                              <v-icon
-                                >mdi-checkbox-multiple-blank-outline</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterIMDBFilmingLocations(false)">
+                              <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
                         </template>
@@ -2976,13 +2035,7 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="
-                                setAllFilterIMDBFilmingLocations(true)
-                              "
-                            >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterIMDBFilmingLocations(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2992,11 +2045,7 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="addIMDBFilmingLocation()"
-                            >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="addIMDBFilmingLocation()">
                               <v-icon>mdi-magnify</v-icon>
                             </v-btn>
                           </span>
@@ -3006,46 +2055,20 @@
                     </v-row>
                     <v-switch
                       v-bind:label="
-                        $shared.filters.filterSettings
-                          .filterIMDBFilmingLocationsAND
-                          ? $t('all selected must apply')
-                          : $t('one selected must apply')
+                        $shared.filters.filterSettings.filterIMDBFilmingLocationsAND ? $t('all selected must apply') : $t('one selected must apply')
                       "
                       color="red"
-                      v-model="
-                        $shared.filters.filterSettings
-                          .filterIMDBFilmingLocationsAND
-                      "
-                      v-on:click.native="
-                        filtersChanged('filterIMDBFilmingLocations')
-                      "
+                      v-model="$shared.filters.filterSettings.filterIMDBFilmingLocationsAND"
+                      v-on:click.native="filtersChanged('filterIMDBFilmingLocations')"
                       style="margin-bottom: 8px; margin-left: -10px"
                     ></v-switch>
-                    <v-row
-                      v-for="filmingLocation in filterIMDBFilmingLocations"
-                      v-bind:key="
-                        filmingLocation.id_Filter_IMDB_Filming_Locations
-                      "
-                    >
+                    <v-row v-for="filmingLocation in filterIMDBFilmingLocations" v-bind:key="filmingLocation.id_Filter_IMDB_Filming_Locations">
                       <v-checkbox
                         class="mk-filter-checkbox mk-filter-removable"
-                        v-bind:label="
-                          filmingLocation.Location +
-                          ' (' +
-                          filmingLocation.NumMoviesFormatted +
-                          ')'
-                        "
+                        v-bind:label="filmingLocation.Location + ' (' + filmingLocation.NumMoviesFormatted + ')'"
                         v-model="filmingLocation.Selected"
-                        v-on:mouseup="
-                          filterCheckboxMouseup('filterIMDBFilmingLocations')
-                        "
-                        v-on:mousedown="
-                          filterCheckboxMousedown(
-                            'filterIMDBFilmingLocations',
-                            filmingLocation,
-                            setAllFilterIMDBFilmingLocations
-                          )
-                        "
+                        v-on:mouseup="filterCheckboxMouseup('filterIMDBFilmingLocations')"
+                        v-on:mousedown="filterCheckboxMousedown('filterIMDBFilmingLocations', filmingLocation, setAllFilterIMDBFilmingLocations)"
                         color="mk-dark-grey"
                       ></v-checkbox>
                       <v-spacer></v-spacer>
@@ -3092,16 +2115,14 @@
                           v-show="$shared.loadingFilter !== 'filterDataQuality'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
-                            'mk-search-highlight':
-                              $shared.filterDataQualityActive,
+                            'mk-search-highlight': $shared.filterDataQualityActive,
                           }"
                           >mdi-check-box-outline</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
                           v-bind:class="{
-                            'mk-search-highlight':
-                              $shared.filterDataQualityActive,
+                            'mk-search-highlight': $shared.filterDataQualityActive,
                           }"
                           v-show="$shared.loadingFilter === 'filterDataQuality'"
                           v-bind:size="16"
@@ -3111,35 +2132,22 @@
                         </v-progress-circular>
                       </span>
                       {{ $t("Data Quality") }}
-                      {{
-                        $shared.filters.filterSettings.filterDataQualityAND
-                          ? "߷"
-                          : ""
-                      }}
+                      {{ $shared.filters.filterSettings.filterDataQualityAND ? "߷" : "" }}
                       {{ filterDataQualityTitle }}
                     </div>
                     <template v-slot:actions>
                       <v-icon
                         v-if="!editFilters.isEditFilters"
                         v-bind:class="{
-                          'mk-search-highlight':
-                            $shared.filterDataQualityActive,
+                          'mk-search-highlight': $shared.filterDataQualityActive,
                         }"
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip
-                        bottom
-                        v-if="editFilters.isEditFilters"
-                        style="z-index: 21"
-                      >
+                      <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-switch
-                              v-model="filterGroup.visible"
-                              dense
-                              style="margin-top: 0px"
-                            ></v-switch>
+                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -3152,14 +2160,8 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterDataQuality(false)"
-                            >
-                              <v-icon
-                                >mdi-checkbox-multiple-blank-outline</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterDataQuality(false)">
+                              <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
                         </template>
@@ -3168,11 +2170,7 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterDataQuality(true)"
-                            >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterDataQuality(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -3181,42 +2179,20 @@
                       </v-tooltip>
                     </v-row>
                     <v-switch
-                      v-bind:label="
-                        $shared.filters.filterSettings.filterDataQualityAND
-                          ? $t('all selected must apply')
-                          : $t('one selected must apply')
-                      "
+                      v-bind:label="$shared.filters.filterSettings.filterDataQualityAND ? $t('all selected must apply') : $t('one selected must apply')"
                       color="red"
-                      v-model="
-                        $shared.filters.filterSettings.filterDataQualityAND
-                      "
+                      v-model="$shared.filters.filterSettings.filterDataQualityAND"
                       v-on:click.native="filtersChanged('filterDataQuality')"
                       style="margin-bottom: 8px; margin-left: -10px"
                     ></v-switch>
-                    <v-row
-                      v-for="dataQuality in $shared.filters.filterDataQuality"
-                      v-bind:key="dataQuality.Name"
-                    >
+                    <v-row v-for="dataQuality in $shared.filters.filterDataQuality" v-bind:key="dataQuality.Name">
                       <v-checkbox
                         class="mk-filter-checkbox"
                         v-bind:key="dataQuality.Name"
-                        v-bind:label="
-                          $t(dataQuality.DisplayText) +
-                          ' (' +
-                          dataQuality.NumMoviesFormatted +
-                          ')'
-                        "
+                        v-bind:label="$t(dataQuality.DisplayText) + ' (' + dataQuality.NumMoviesFormatted + ')'"
                         v-model="dataQuality.Selected"
-                        v-on:mouseup="
-                          filterCheckboxMouseup('filterDataQuality')
-                        "
-                        v-on:mousedown="
-                          filterCheckboxMousedown(
-                            'filterDataQuality',
-                            dataQuality,
-                            setAllFilterDataQuality
-                          )
-                        "
+                        v-on:mouseup="filterCheckboxMouseup('filterDataQuality')"
+                        v-on:mousedown="filterCheckboxMousedown('filterDataQuality', dataQuality, setAllFilterDataQuality)"
                         color="mk-dark-grey"
                       ></v-checkbox>
                     </v-row>
@@ -3238,32 +2214,25 @@
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
-                        'mk-search-highlight':
-                          $shared.filterVideoEncodersActive,
+                        'mk-search-highlight': $shared.filterVideoEncodersActive,
                       }"
                       style="display: flex; align-items: center"
                     >
                       <span class="mk-filter-icon-container">
                         <v-icon
-                          v-show="
-                            $shared.loadingFilter !== 'filterVideoEncoders'
-                          "
+                          v-show="$shared.loadingFilter !== 'filterVideoEncoders'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
-                            'mk-search-highlight':
-                              $shared.filterVideoEncodersActive,
+                            'mk-search-highlight': $shared.filterVideoEncodersActive,
                           }"
                           >mdi-file-video-outline</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
                           v-bind:class="{
-                            'mk-search-highlight':
-                              $shared.filterVideoEncodersActive,
+                            'mk-search-highlight': $shared.filterVideoEncodersActive,
                           }"
-                          v-show="
-                            $shared.loadingFilter === 'filterVideoEncoders'
-                          "
+                          v-show="$shared.loadingFilter === 'filterVideoEncoders'"
                           v-bind:size="16"
                           v-bind:width="3"
                           indeterminate
@@ -3277,24 +2246,15 @@
                       <v-icon
                         v-if="!editFilters.isEditFilters"
                         v-bind:class="{
-                          'mk-search-highlight':
-                            $shared.filterVideoEncodersActive,
+                          'mk-search-highlight': $shared.filterVideoEncodersActive,
                         }"
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip
-                        bottom
-                        v-if="editFilters.isEditFilters"
-                        style="z-index: 21"
-                      >
+                      <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-switch
-                              v-model="filterGroup.visible"
-                              dense
-                              style="margin-top: 0px"
-                            ></v-switch>
+                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -3307,43 +2267,19 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="switchFilterSort(filterGroup)"
-                            >
-                              <v-icon
-                                v-if="
-                                  filterGroup.sort ===
-                                  enmFilterSortModes.numMovies
-                                "
-                                >mdi-sort-numeric</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                              <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{
-                          $t(
-                            `${
-                              filterGroup.sort === enmFilterSortModes.numMovies
-                                ? "Sorted by Number of Media"
-                                : "Sorted by Name"
-                            }`
-                          )
-                        }}</span>
+                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterVideoEncoders(false)"
-                            >
-                              <v-icon
-                                >mdi-checkbox-multiple-blank-outline</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterVideoEncoders(false)">
+                              <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
                         </template>
@@ -3352,11 +2288,7 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterVideoEncoders(true)"
-                            >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterVideoEncoders(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -3364,32 +2296,19 @@
                         <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                     </v-row>
-                    <v-row
-                      v-for="filterVideoEncoder in filterVideoEncoders"
-                      v-bind:key="filterVideoEncoder.Name"
-                    >
+                    <v-row v-for="filterVideoEncoder in filterVideoEncoders" v-bind:key="filterVideoEncoder.Name">
                       <v-checkbox
                         class="mk-filter-checkbox"
                         v-bind:key="filterVideoEncoder.Name"
                         v-bind:label="
-                          (filterVideoEncoder.Name === '<not available>'
-                            ? $t('<not available>')
-                            : filterVideoEncoder.Name) +
+                          (filterVideoEncoder.Name === '<not available>' ? $t('<not available>') : filterVideoEncoder.Name) +
                           ' (' +
                           filterVideoEncoder.NumMoviesFormatted +
                           ')'
                         "
                         v-model="filterVideoEncoder.Selected"
-                        v-on:mouseup="
-                          filterCheckboxMouseup('filterVideoEncoders')
-                        "
-                        v-on:mousedown="
-                          filterCheckboxMousedown(
-                            'filterVideoEncoders',
-                            filterVideoEncoder,
-                            setAllFilterVideoEncoders
-                          )
-                        "
+                        v-on:mouseup="filterCheckboxMouseup('filterVideoEncoders')"
+                        v-on:mousedown="filterCheckboxMousedown('filterVideoEncoders', filterVideoEncoder, setAllFilterVideoEncoders)"
                         color="mk-dark-grey"
                       ></v-checkbox>
                     </v-row>
@@ -3417,25 +2336,19 @@
                     >
                       <span class="mk-filter-icon-container">
                         <v-icon
-                          v-show="
-                            $shared.loadingFilter !== 'filterAudioFormats'
-                          "
+                          v-show="$shared.loadingFilter !== 'filterAudioFormats'"
                           v-bind:class="{
                             'mk-dark-grey': !filterGroup.visible,
-                            'mk-search-highlight':
-                              $shared.filterAudioFormatsActive,
+                            'mk-search-highlight': $shared.filterAudioFormatsActive,
                           }"
                           >mdi-file-music-outline</v-icon
                         >
                         <v-progress-circular
                           class="mk-filter-spinner"
                           v-bind:class="{
-                            'mk-search-highlight':
-                              $shared.filterAudioFormatsActive,
+                            'mk-search-highlight': $shared.filterAudioFormatsActive,
                           }"
-                          v-show="
-                            $shared.loadingFilter === 'filterAudioFormats'
-                          "
+                          v-show="$shared.loadingFilter === 'filterAudioFormats'"
                           v-bind:size="16"
                           v-bind:width="3"
                           indeterminate
@@ -3449,24 +2362,15 @@
                       <v-icon
                         v-if="!editFilters.isEditFilters"
                         v-bind:class="{
-                          'mk-search-highlight':
-                            $shared.filterAudioFormatsActive,
+                          'mk-search-highlight': $shared.filterAudioFormatsActive,
                         }"
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip
-                        bottom
-                        v-if="editFilters.isEditFilters"
-                        style="z-index: 21"
-                      >
+                      <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-switch
-                              v-model="filterGroup.visible"
-                              dense
-                              style="margin-top: 0px"
-                            ></v-switch>
+                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -3479,43 +2383,19 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="switchFilterSort(filterGroup)"
-                            >
-                              <v-icon
-                                v-if="
-                                  filterGroup.sort ===
-                                  enmFilterSortModes.numMovies
-                                "
-                                >mdi-sort-numeric</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                              <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{
-                          $t(
-                            `${
-                              filterGroup.sort === enmFilterSortModes.numMovies
-                                ? "Sorted by Number of Media"
-                                : "Sorted by Name"
-                            }`
-                          )
-                        }}</span>
+                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterAudioFormats(false)"
-                            >
-                              <v-icon
-                                >mdi-checkbox-multiple-blank-outline</v-icon
-                              >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterAudioFormats(false)">
+                              <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
                         </template>
@@ -3524,11 +2404,7 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn
-                              class="mk-filter-action-btn"
-                              text
-                              v-on:click="setAllFilterAudioFormats(true)"
-                            >
+                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterAudioFormats(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -3536,32 +2412,19 @@
                         <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                     </v-row>
-                    <v-row
-                      v-for="filterAudioFormat in filterAudioFormats"
-                      v-bind:key="filterAudioFormat.Name"
-                    >
+                    <v-row v-for="filterAudioFormat in filterAudioFormats" v-bind:key="filterAudioFormat.Name">
                       <v-checkbox
                         class="mk-filter-checkbox"
                         v-bind:key="filterAudioFormat.Name"
                         v-bind:label="
-                          (filterAudioFormat.Name === '<not available>'
-                            ? $t('<not available>')
-                            : filterAudioFormat.Name) +
+                          (filterAudioFormat.Name === '<not available>' ? $t('<not available>') : filterAudioFormat.Name) +
                           ' (' +
                           filterAudioFormat.NumMoviesFormatted +
                           ')'
                         "
                         v-model="filterAudioFormat.Selected"
-                        v-on:mouseup="
-                          filterCheckboxMouseup('filterAudioFormats')
-                        "
-                        v-on:mousedown="
-                          filterCheckboxMousedown(
-                            'filterAudioFormats',
-                            filterAudioFormat,
-                            setAllFilterAudioFormats
-                          )
-                        "
+                        v-on:mouseup="filterCheckboxMouseup('filterAudioFormats')"
+                        v-on:mousedown="filterCheckboxMousedown('filterAudioFormats', filterAudioFormat, setAllFilterAudioFormats)"
                         color="mk-dark-grey"
                       ></v-checkbox>
                     </v-row>
@@ -3585,9 +2448,7 @@
 
     <!-- TOP BAR -->
     <v-app-bar app clipped-left color="red" dense>
-      <v-app-bar-nav-icon
-        @click.stop="$shared.sidenav = !$shared.sidenav"
-      ></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon @click.stop="$shared.sidenav = !$shared.sidenav"></v-app-bar-nav-icon>
       <v-toolbar-title class="mr-12 align-center mk-noshrink">
         <span class="title">
           {{ $shared.appName }}
@@ -3597,11 +2458,7 @@
       </v-toolbar-title>
       <!-- <div class="flex-grow-1"></div> -->
       <v-spacer></v-spacer>
-      <v-row
-        align-content="end"
-        justify="end"
-        style="text-align: right !important"
-      >
+      <v-row align-content="end" justify="end" style="text-align: right !important">
         <v-text-field
           :append-icon-cb="() => {}"
           v-show="currentRoute && currentRoute.name === 'medialist'"
@@ -3618,38 +2475,22 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <span v-on="on">
-            <v-btn
-              text
-              style="margin-left: 16px; margin-right: -8px"
-              v-on:click="toggleFullScreen"
-            >
+            <v-btn text style="margin-left: 16px; margin-right: -8px" v-on:click="toggleFullScreen">
               <v-icon v-show="isFullScreen">mdi-fullscreen-exit</v-icon>
               <v-icon v-show="!isFullScreen">mdi-fullscreen</v-icon>
             </v-btn>
           </span>
         </template>
-        <span>{{
-          $t("Toggle Fullscreen (you can also use F11 on your keyboard)")
-        }}</span>
+        <span>{{ $t("Toggle Fullscreen (you can also use F11 on your keyboard)") }}</span>
       </v-tooltip>
     </v-app-bar>
 
     <!-- CONTENT -->
     <v-main>
-      <v-container
-        style="
-          display: flex;
-          max-width: 100% !important;
-          padding: 0px !important;
-        "
-      >
+      <v-container style="display: flex; max-width: 100% !important; padding: 0px !important">
         <router-view></router-view>
 
-        <mk-version-dialog
-          ref="versionDialog"
-          v-bind:show="versionDialog.show"
-          v-on:close="versionDialog.show = false"
-        ></mk-version-dialog>
+        <mk-version-dialog ref="versionDialog" v-bind:show="versionDialog.show" v-on:close="versionDialog.show = false"></mk-version-dialog>
 
         <mk-delete-filteritem-dialog
           v-bind:show="deleteFilterItemDialog.show"
@@ -3722,24 +2563,13 @@
         ></mk-chat-gpt-dialog>
 
         <!-- BOTTOM BAR -->
-        <v-bottom-navigation
-          fixed
-          dark
-          v-show="scanInfo.show"
-          style="height: auto; padding: 4px 8px 4px 8px; z-index: 100"
-        >
-          <v-row
-            align-content="start"
-            justify="start"
-            style="margin-top: 0px; margin-bottom: 0px; max-width: 100%"
-          >
+        <v-bottom-navigation fixed dark v-show="scanInfo.show" style="height: auto; padding: 4px 8px 4px 8px; z-index: 100">
+          <v-row align-content="start" justify="start" style="margin-top: 0px; margin-bottom: 0px; max-width: 100%">
             <v-progress-linear
               v-if="true"
               color="white accent-0"
               v-bind:indeterminate="!scanInfo.rescanETA"
-              v-bind:value="
-                scanInfo.rescanETA ? scanInfo.rescanETA.progressPercent : 0
-              "
+              v-bind:value="scanInfo.rescanETA ? scanInfo.rescanETA.progressPercent : 0"
               rounded
               height="3"
               style="margin-bottom: 4px"
@@ -3753,12 +2583,7 @@
               </p>
             </div>
             <!-- <div class="flex-grow-1"></div> -->
-            <v-btn
-              text
-              v-on:click="cancelRescan"
-              v-bind:disabled="store.doAbortRescan"
-              style="flex: 0 0 80px"
-            >
+            <v-btn text v-on:click="cancelRescan" v-bind:disabled="store.doAbortRescan" style="flex: 0 0 80px">
               <v-icon v-if="!store.doAbortRescan">mdi-cancel</v-icon>
               <span v-if="store.doAbortRescan">{{ $t("Cancelling___") }}</span>
             </v-btn>
@@ -3768,23 +2593,13 @@
     </v-main>
 
     <!-- SNACK BAR -->
-    <v-snackbar
-      v-model="snackbar.show"
-      :color="snackbar.color"
-      :timeout="snackbar.timeout"
-    >
+    <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
       <div>
-        <strong v-if="snackbar.details && snackbar.details.length > 0">{{
-          snackbar.text
-        }}</strong>
+        <strong v-if="snackbar.details && snackbar.details.length > 0">{{ snackbar.text }}</strong>
         <div v-if="!snackbar.details || snackbar.details.length === 0">
           {{ snackbar.text }}
         </div>
-        <div
-          v-for="(snackbardetail, index) in snackbar.details"
-          v-bind:key="index"
-          style="padding-left: 8px"
-        >
+        <div v-for="(snackbardetail, index) in snackbar.details" v-bind:key="index" style="padding-left: 8px">
           {{ snackbardetail }}
         </div>
       </div>
@@ -3796,12 +2611,7 @@
     <v-overlay style="z-index: 1000" v-bind:value="showLoadingOverlay">
       <div style="text-align: center">
         <!-- <p style="text-shadow: 0 0 4px #FFFFFF; margin: 0px">loading</p> -->
-        <v-progress-circular
-          indeterminate
-          color="red"
-          size="70"
-          width="7"
-        ></v-progress-circular>
+        <v-progress-circular indeterminate color="red" size="70" width="7"></v-progress-circular>
       </div>
     </v-overlay>
   </v-app>
@@ -3970,10 +2780,7 @@ export default {
 
       logger.log("[shared_uiLanguage] this.$i18n:", this.$i18n);
       logger.log("[shared_uiLanguage] this.$i18n.locale:", this.$i18n.locale);
-      logger.log(
-        "[shared_uiLanguage] this.$root.$i18n.locale:",
-        this.$root.$i18n.locale
-      );
+      logger.log("[shared_uiLanguage] this.$root.$i18n.locale:", this.$root.$i18n.locale);
 
       moment.locale(newValue);
     },
@@ -3993,9 +2800,7 @@ export default {
     },
 
     filterSourcePaths() {
-      const fg = this.$shared.filterGroups.find(
-        (fg) => fg.name === "filterSourcePaths"
-      );
+      const fg = this.$shared.filterGroups.find((fg) => fg.name === "filterSourcePaths");
 
       return this.$shared.filters.filterSourcePaths
         .filter(() => true)
@@ -4008,65 +2813,35 @@ export default {
         });
     },
     filterSourcePathsTitle() {
-      if (
-        !this.$shared.filters.filterSourcePaths.find(
-          (filter) => !filter.Selected
-        )
-      ) {
+      if (!this.$shared.filters.filterSourcePaths.find((filter) => !filter.Selected)) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (
-        !this.$shared.filters.filterSourcePaths.find(
-          (filter) => filter.Selected
-        )
-      ) {
+      if (!this.$shared.filters.filterSourcePaths.find((filter) => filter.Selected)) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
-        "(" +
-        this.$shared.filters.filterSourcePaths.filter(
-          (filter) => filter.Selected
-        ).length +
-        "/" +
-        this.$shared.filters.filterSourcePaths.length +
-        ")"
+        "(" + this.$shared.filters.filterSourcePaths.filter((filter) => filter.Selected).length + "/" + this.$shared.filters.filterSourcePaths.length + ")"
       );
     },
 
     filterDataQualityTitle() {
-      if (
-        !this.$shared.filters.filterDataQuality.find(
-          (filter) => !filter.Selected
-        )
-      ) {
+      if (!this.$shared.filters.filterDataQuality.find((filter) => !filter.Selected)) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (
-        !this.$shared.filters.filterDataQuality.find(
-          (filter) => filter.Selected
-        )
-      ) {
+      if (!this.$shared.filters.filterDataQuality.find((filter) => filter.Selected)) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
-        "(" +
-        this.$shared.filters.filterDataQuality.filter(
-          (filter) => filter.Selected
-        ).length +
-        "/" +
-        this.$shared.filters.filterDataQuality.length +
-        ")"
+        "(" + this.$shared.filters.filterDataQuality.filter((filter) => filter.Selected).length + "/" + this.$shared.filters.filterDataQuality.length + ")"
       );
     },
 
     filterVideoEncoders() {
-      const fve = this.$shared.filterGroups.find(
-        (fve) => fve.name === "filterVideoEncoders"
-      );
+      const fve = this.$shared.filterGroups.find((fve) => fve.name === "filterVideoEncoders");
 
       return this.$shared.filters.filterVideoEncoders
         .filter(() => true)
@@ -4079,37 +2854,21 @@ export default {
         });
     },
     filterVideoEncodersTitle() {
-      if (
-        !this.$shared.filters.filterVideoEncoders.find(
-          (filter) => !filter.Selected
-        )
-      ) {
+      if (!this.$shared.filters.filterVideoEncoders.find((filter) => !filter.Selected)) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (
-        !this.$shared.filters.filterVideoEncoders.find(
-          (filter) => filter.Selected
-        )
-      ) {
+      if (!this.$shared.filters.filterVideoEncoders.find((filter) => filter.Selected)) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
-        "(" +
-        this.$shared.filters.filterVideoEncoders.filter(
-          (filter) => filter.Selected
-        ).length +
-        "/" +
-        this.$shared.filters.filterVideoEncoders.length +
-        ")"
+        "(" + this.$shared.filters.filterVideoEncoders.filter((filter) => filter.Selected).length + "/" + this.$shared.filters.filterVideoEncoders.length + ")"
       );
     },
 
     filterAudioFormats() {
-      const fve = this.$shared.filterGroups.find(
-        (fve) => fve.name === "filterAudioFormats"
-      );
+      const fve = this.$shared.filterGroups.find((fve) => fve.name === "filterAudioFormats");
 
       return this.$shared.filters.filterAudioFormats
         .filter(() => true)
@@ -4122,37 +2881,21 @@ export default {
         });
     },
     filterAudioFormatsTitle() {
-      if (
-        !this.$shared.filters.filterAudioFormats.find(
-          (filter) => !filter.Selected
-        )
-      ) {
+      if (!this.$shared.filters.filterAudioFormats.find((filter) => !filter.Selected)) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (
-        !this.$shared.filters.filterAudioFormats.find(
-          (filter) => filter.Selected
-        )
-      ) {
+      if (!this.$shared.filters.filterAudioFormats.find((filter) => filter.Selected)) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
-        "(" +
-        this.$shared.filters.filterAudioFormats.filter(
-          (filter) => filter.Selected
-        ).length +
-        "/" +
-        this.$shared.filters.filterAudioFormats.length +
-        ")"
+        "(" + this.$shared.filters.filterAudioFormats.filter((filter) => filter.Selected).length + "/" + this.$shared.filters.filterAudioFormats.length + ")"
       );
     },
 
     filterGenres() {
-      const fg = this.$shared.filterGroups.find(
-        (fg) => fg.name === "filterGenres"
-      );
+      const fg = this.$shared.filterGroups.find((fg) => fg.name === "filterGenres");
 
       return this.$shared.filters.filterGenres
         .filter(() => true)
@@ -4165,81 +2908,43 @@ export default {
         });
     },
     filterGenresTitle() {
-      if (
-        !this.$shared.filters.filterGenres.find((filter) => !filter.Selected)
-      ) {
+      if (!this.$shared.filters.filterGenres.find((filter) => !filter.Selected)) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (
-        !this.$shared.filters.filterGenres.find((filter) => filter.Selected)
-      ) {
+      if (!this.$shared.filters.filterGenres.find((filter) => filter.Selected)) {
         return `(${this.$t("NONE")})`;
       }
 
-      return (
-        "(" +
-        this.$shared.filters.filterGenres.filter((filter) => filter.Selected)
-          .length +
-        "/" +
-        this.$shared.filters.filterGenres.length +
-        ")"
-      );
+      return "(" + this.$shared.filters.filterGenres.filter((filter) => filter.Selected).length + "/" + this.$shared.filters.filterGenres.length + ")";
     },
 
     filterAgeRatingsTitle() {
-      if (
-        !this.$shared.filters.filterAgeRatings.find(
-          (filter) => !filter.Selected
-        )
-      ) {
+      if (!this.$shared.filters.filterAgeRatings.find((filter) => !filter.Selected)) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (
-        !this.$shared.filters.filterAgeRatings.find((filter) => filter.Selected)
-      ) {
+      if (!this.$shared.filters.filterAgeRatings.find((filter) => filter.Selected)) {
         return `(${this.$t("NONE")})`;
       }
 
-      return (
-        "(" +
-        this.$shared.filters.filterAgeRatings.filter(
-          (filter) => filter.Selected
-        ).length +
-        "/" +
-        this.$shared.filters.filterAgeRatings.length +
-        ")"
-      );
+      return "(" + this.$shared.filters.filterAgeRatings.filter((filter) => filter.Selected).length + "/" + this.$shared.filters.filterAgeRatings.length + ")";
     },
 
     filterRatingsTitle() {
-      if (
-        !this.$shared.filters.filterRatings.find((filter) => !filter.Selected)
-      ) {
+      if (!this.$shared.filters.filterRatings.find((filter) => !filter.Selected)) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (
-        !this.$shared.filters.filterRatings.find((filter) => filter.Selected)
-      ) {
+      if (!this.$shared.filters.filterRatings.find((filter) => filter.Selected)) {
         return `(${this.$t("NONE")})`;
       }
 
-      return (
-        "(" +
-        this.$shared.filters.filterRatings.filter((filter) => filter.Selected)
-          .length +
-        "/" +
-        this.$shared.filters.filterRatings.length +
-        ")"
-      );
+      return "(" + this.$shared.filters.filterRatings.filter((filter) => filter.Selected).length + "/" + this.$shared.filters.filterRatings.length + ")";
     },
 
     filterYears() {
-      const fg = this.$shared.filterGroups.find(
-        (fg) => fg.name === "filterYears"
-      );
+      const fg = this.$shared.filterGroups.find((fg) => fg.name === "filterYears");
 
       return this.$shared.filters.filterYears
         .filter(() => true)
@@ -4252,9 +2957,7 @@ export default {
         });
     },
     filterYearsTitle() {
-      if (
-        !this.$shared.filters.filterYears.find((filter) => !filter.Selected)
-      ) {
+      if (!this.$shared.filters.filterYears.find((filter) => !filter.Selected)) {
         return `(${this.$t("ALL")})`;
       }
 
@@ -4262,20 +2965,11 @@ export default {
         return `(${this.$t("NONE")})`;
       }
 
-      return (
-        "(" +
-        this.$shared.filters.filterYears.filter((filter) => filter.Selected)
-          .length +
-        "/" +
-        this.$shared.filters.filterYears.length +
-        ")"
-      );
+      return "(" + this.$shared.filters.filterYears.filter((filter) => filter.Selected).length + "/" + this.$shared.filters.filterYears.length + ")";
     },
 
     filterQualities() {
-      const fg = this.$shared.filterGroups.find(
-        (fg) => fg.name === "filterQualities"
-      );
+      const fg = this.$shared.filterGroups.find((fg) => fg.name === "filterQualities");
 
       return this.$shared.filters.filterQualities
         .filter(() => true)
@@ -4288,32 +2982,19 @@ export default {
         });
     },
     filterQualitiesTitle() {
-      if (
-        !this.$shared.filters.filterQualities.find((filter) => !filter.Selected)
-      ) {
+      if (!this.$shared.filters.filterQualities.find((filter) => !filter.Selected)) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (
-        !this.$shared.filters.filterQualities.find((filter) => filter.Selected)
-      ) {
+      if (!this.$shared.filters.filterQualities.find((filter) => filter.Selected)) {
         return `(${this.$t("NONE")})`;
       }
 
-      return (
-        "(" +
-        this.$shared.filters.filterQualities.filter((filter) => filter.Selected)
-          .length +
-        "/" +
-        this.$shared.filters.filterQualities.length +
-        ")"
-      );
+      return "(" + this.$shared.filters.filterQualities.filter((filter) => filter.Selected).length + "/" + this.$shared.filters.filterQualities.length + ")";
     },
 
     filterLists() {
-      const fg = this.$shared.filterGroups.find(
-        (fg) => fg.name === "filterLists"
-      );
+      const fg = this.$shared.filterGroups.find((fg) => fg.name === "filterLists");
 
       return this.$shared.filters.filterLists
         .filter(() => true)
@@ -4326,9 +3007,7 @@ export default {
         });
     },
     filterListsTitle() {
-      if (
-        !this.$shared.filters.filterLists.find((filter) => !filter.Selected)
-      ) {
+      if (!this.$shared.filters.filterLists.find((filter) => !filter.Selected)) {
         return `(${this.$t("ALL")})`;
       }
 
@@ -4336,27 +3015,14 @@ export default {
         return `(${this.$t("NONE")})`;
       }
 
-      return (
-        "(" +
-        this.$shared.filters.filterLists.filter((filter) => filter.Selected)
-          .length +
-        "/" +
-        this.$shared.filters.filterLists.length +
-        ")"
-      );
+      return "(" + this.$shared.filters.filterLists.filter((filter) => filter.Selected).length + "/" + this.$shared.filters.filterLists.length + ")";
     },
 
     filterPersons() {
-      const fg = this.$shared.filterGroups.find(
-        (fg) => fg.name === "filterPersons"
-      );
+      const fg = this.$shared.filterGroups.find((fg) => fg.name === "filterPersons");
 
       return this.$shared.filters.filterPersons
-        .filter(
-          (fp) =>
-            !this.$shared.filters.filterSettings.filterPersonsAND ||
-            fp.IMDB_Person_ID
-        )
+        .filter((fp) => !this.$shared.filters.filterSettings.filterPersonsAND || fp.IMDB_Person_ID)
         .sort((a, b) => {
           if (fg.sort === enmFilterSortModes.numMovies) {
             return helpers.compare(a.NumMovies, b.NumMovies, true);
@@ -4368,10 +3034,7 @@ export default {
     filterPersonsTitle() {
       if (
         !this.$shared.filters.filterPersons.find(
-          (filter) =>
-            !filter.Selected &&
-            (!this.$shared.filters.filterSettings.filterPersonsAND ||
-              filter.IMDB_Person_ID)
+          (filter) => !filter.Selected && (!this.$shared.filters.filterSettings.filterPersonsAND || filter.IMDB_Person_ID)
         )
       ) {
         return `(${this.$t("ALL")})`;
@@ -4379,10 +3042,7 @@ export default {
 
       if (
         !this.$shared.filters.filterPersons.find(
-          (filter) =>
-            filter.Selected &&
-            (!this.$shared.filters.filterSettings.filterPersonsAND ||
-              filter.IMDB_Person_ID)
+          (filter) => filter.Selected && (!this.$shared.filters.filterSettings.filterPersonsAND || filter.IMDB_Person_ID)
         )
       ) {
         return `(${this.$t("NONE")})`;
@@ -4391,32 +3051,19 @@ export default {
       return (
         "(" +
         this.$shared.filters.filterPersons.filter(
-          (filter) =>
-            filter.Selected &&
-            (!this.$shared.filters.filterSettings.filterPersonsAND ||
-              filter.IMDB_Person_ID)
+          (filter) => filter.Selected && (!this.$shared.filters.filterSettings.filterPersonsAND || filter.IMDB_Person_ID)
         ).length +
         "/" +
-        this.$shared.filters.filterPersons.filter(
-          (filter) =>
-            !this.$shared.filters.filterSettings.filterPersonsAND ||
-            filter.IMDB_Person_ID
-        ).length +
+        this.$shared.filters.filterPersons.filter((filter) => !this.$shared.filters.filterSettings.filterPersonsAND || filter.IMDB_Person_ID).length +
         ")"
       );
     },
 
     filterCompanies() {
-      const fg = this.$shared.filterGroups.find(
-        (fg) => fg.name === "filterCompanies"
-      );
+      const fg = this.$shared.filterGroups.find((fg) => fg.name === "filterCompanies");
 
       return this.$shared.filters.filterCompanies
-        .filter(
-          (fp) =>
-            !this.$shared.filters.filterSettings.filterCompaniesAND ||
-            fp.id_Filter_Companies
-        )
+        .filter((fp) => !this.$shared.filters.filterSettings.filterCompaniesAND || fp.id_Filter_Companies)
         .sort((a, b) => {
           if (fg.sort === enmFilterSortModes.numMovies) {
             return helpers.compare(a.NumMovies, b.NumMovies, true);
@@ -4428,10 +3075,7 @@ export default {
     filterCompaniesTitle() {
       if (
         !this.$shared.filters.filterCompanies.find(
-          (filter) =>
-            !filter.Selected &&
-            (!this.$shared.filters.filterSettings.filterCompaniesAND ||
-              filter.id_Filter_Companies)
+          (filter) => !filter.Selected && (!this.$shared.filters.filterSettings.filterCompaniesAND || filter.id_Filter_Companies)
         )
       ) {
         return `(${this.$t("ALL")})`;
@@ -4439,10 +3083,7 @@ export default {
 
       if (
         !this.$shared.filters.filterCompanies.find(
-          (filter) =>
-            filter.Selected &&
-            (!this.$shared.filters.filterSettings.filterCompaniesAND ||
-              filter.id_Filter_Companies)
+          (filter) => filter.Selected && (!this.$shared.filters.filterSettings.filterCompaniesAND || filter.id_Filter_Companies)
         )
       ) {
         return `(${this.$t("NONE")})`;
@@ -4451,32 +3092,19 @@ export default {
       return (
         "(" +
         this.$shared.filters.filterCompanies.filter(
-          (filter) =>
-            filter.Selected &&
-            (!this.$shared.filters.filterSettings.filterCompaniesAND ||
-              filter.id_Filter_Companies)
+          (filter) => filter.Selected && (!this.$shared.filters.filterSettings.filterCompaniesAND || filter.id_Filter_Companies)
         ).length +
         "/" +
-        this.$shared.filters.filterCompanies.filter(
-          (filter) =>
-            !this.$shared.filters.filterSettings.filterCompaniesAND ||
-            filter.id_Filter_Companies
-        ).length +
+        this.$shared.filters.filterCompanies.filter((filter) => !this.$shared.filters.filterSettings.filterCompaniesAND || filter.id_Filter_Companies).length +
         ")"
       );
     },
 
     filterIMDBPlotKeywords() {
-      const fg = this.$shared.filterGroups.find(
-        (fg) => fg.name === "filterIMDBPlotKeywords"
-      );
+      const fg = this.$shared.filterGroups.find((fg) => fg.name === "filterIMDBPlotKeywords");
 
       return this.$shared.filters.filterIMDBPlotKeywords
-        .filter(
-          (fp) =>
-            !this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND ||
-            fp.id_Filter_IMDB_Plot_Keywords
-        )
+        .filter((fp) => !this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND || fp.id_Filter_IMDB_Plot_Keywords)
         .sort((a, b) => {
           if (fg.sort === enmFilterSortModes.numMovies) {
             return helpers.compare(a.NumMovies, b.NumMovies, true);
@@ -4488,10 +3116,7 @@ export default {
     filterIMDBPlotKeywordsTitle() {
       if (
         !this.$shared.filters.filterIMDBPlotKeywords.find(
-          (filter) =>
-            !filter.Selected &&
-            (!this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND ||
-              filter.id_Filter_IMDB_Plot_Keywords)
+          (filter) => !filter.Selected && (!this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND || filter.id_Filter_IMDB_Plot_Keywords)
         )
       ) {
         return `(${this.$t("ALL")})`;
@@ -4499,10 +3124,7 @@ export default {
 
       if (
         !this.$shared.filters.filterIMDBPlotKeywords.find(
-          (filter) =>
-            filter.Selected &&
-            (!this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND ||
-              filter.id_Filter_IMDB_Plot_Keywords)
+          (filter) => filter.Selected && (!this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND || filter.id_Filter_IMDB_Plot_Keywords)
         )
       ) {
         return `(${this.$t("NONE")})`;
@@ -4511,33 +3133,21 @@ export default {
       return (
         "(" +
         this.$shared.filters.filterIMDBPlotKeywords.filter(
-          (filter) =>
-            filter.Selected &&
-            (!this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND ||
-              filter.id_Filter_IMDB_Plot_Keywords)
+          (filter) => filter.Selected && (!this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND || filter.id_Filter_IMDB_Plot_Keywords)
         ).length +
         "/" +
         this.$shared.filters.filterIMDBPlotKeywords.filter(
-          (filter) =>
-            !this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND ||
-            filter.id_Filter_IMDB_Plot_Keywords
+          (filter) => !this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND || filter.id_Filter_IMDB_Plot_Keywords
         ).length +
         ")"
       );
     },
 
     filterIMDBFilmingLocations() {
-      const fg = this.$shared.filterGroups.find(
-        (fg) => fg.name === "filterIMDBFilmingLocations"
-      );
+      const fg = this.$shared.filterGroups.find((fg) => fg.name === "filterIMDBFilmingLocations");
 
       return this.$shared.filters.filterIMDBFilmingLocations
-        .filter(
-          (fl) =>
-            !this.$shared.filters.filterSettings
-              .filterIMDBFilmingLocationsAND ||
-            fl.id_Filter_IMDB_Filming_Locations
-        )
+        .filter((fl) => !this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND || fl.id_Filter_IMDB_Filming_Locations)
         .sort((a, b) => {
           if (fg.sort === enmFilterSortModes.numMovies) {
             return helpers.compare(a.NumMovies, b.NumMovies, true);
@@ -4549,11 +3159,7 @@ export default {
     filterIMDBFilmingLocationsTitle() {
       if (
         !this.$shared.filters.filterIMDBFilmingLocations.find(
-          (filter) =>
-            !filter.Selected &&
-            (!this.$shared.filters.filterSettings
-              .filterIMDBFilmingLocationsAND ||
-              filter.id_Filter_IMDB_Filming_Locations)
+          (filter) => !filter.Selected && (!this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND || filter.id_Filter_IMDB_Filming_Locations)
         )
       ) {
         return `(${this.$t("ALL")})`;
@@ -4561,11 +3167,7 @@ export default {
 
       if (
         !this.$shared.filters.filterIMDBFilmingLocations.find(
-          (filter) =>
-            filter.Selected &&
-            (!this.$shared.filters.filterSettings
-              .filterIMDBFilmingLocationsAND ||
-              filter.id_Filter_IMDB_Filming_Locations)
+          (filter) => filter.Selected && (!this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND || filter.id_Filter_IMDB_Filming_Locations)
         )
       ) {
         return `(${this.$t("NONE")})`;
@@ -4574,34 +3176,21 @@ export default {
       return (
         "(" +
         this.$shared.filters.filterIMDBFilmingLocations.filter(
-          (filter) =>
-            filter.Selected &&
-            (!this.$shared.filters.filterSettings
-              .filterIMDBFilmingLocationsAND ||
-              filter.id_Filter_IMDB_Filming_Locations)
+          (filter) => filter.Selected && (!this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND || filter.id_Filter_IMDB_Filming_Locations)
         ).length +
         "/" +
         this.$shared.filters.filterIMDBFilmingLocations.filter(
-          (filter) =>
-            !this.$shared.filters.filterSettings
-              .filterIMDBFilmingLocationsAND ||
-            filter.id_Filter_IMDB_Filming_Locations
+          (filter) => !this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND || filter.id_Filter_IMDB_Filming_Locations
         ).length +
         ")"
       );
     },
 
     filterReleaseAttributes() {
-      const fg = this.$shared.filterGroups.find(
-        (fg) => fg.name === "filterReleaseAttributes"
-      );
+      const fg = this.$shared.filterGroups.find((fg) => fg.name === "filterReleaseAttributes");
 
       return this.$shared.filters.filterReleaseAttributes
-        .filter(
-          (fra) =>
-            !this.$shared.filters.filterSettings.filterReleaseAttributesAND ||
-            !fra.isAny
-        )
+        .filter((fra) => !this.$shared.filters.filterSettings.filterReleaseAttributesAND || !fra.isAny)
         .sort((a, b) => {
           if (fg.sort === enmFilterSortModes.numMovies) {
             return helpers.compare(a.NumMovies, b.NumMovies, true);
@@ -4611,27 +3200,17 @@ export default {
         });
     },
     filterReleaseAttributesTitle() {
-      if (
-        !this.$shared.filters.filterReleaseAttributes.find(
-          (filter) => !filter.Selected
-        )
-      ) {
+      if (!this.$shared.filters.filterReleaseAttributes.find((filter) => !filter.Selected)) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (
-        !this.$shared.filters.filterReleaseAttributes.find(
-          (filter) => filter.Selected
-        )
-      ) {
+      if (!this.$shared.filters.filterReleaseAttributes.find((filter) => filter.Selected)) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
         "(" +
-        this.$shared.filters.filterReleaseAttributes.filter(
-          (filter) => filter.Selected
-        ).length +
+        this.$shared.filters.filterReleaseAttributes.filter((filter) => filter.Selected).length +
         "/" +
         this.$shared.filters.filterReleaseAttributes.length +
         ")"
@@ -4639,9 +3218,7 @@ export default {
     },
 
     filterAudioLanguages() {
-      const fg = this.$shared.filterGroups.find(
-        (fg) => fg.name === "filterAudioLanguages"
-      );
+      const fg = this.$shared.filterGroups.find((fg) => fg.name === "filterAudioLanguages");
 
       return this.$shared.filters.filterAudioLanguages
         .filter(() => true)
@@ -4654,27 +3231,17 @@ export default {
         });
     },
     filterAudioLanguagesTitle() {
-      if (
-        !this.$shared.filters.filterAudioLanguages.find(
-          (filter) => !filter.Selected
-        )
-      ) {
+      if (!this.$shared.filters.filterAudioLanguages.find((filter) => !filter.Selected)) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (
-        !this.$shared.filters.filterAudioLanguages.find(
-          (filter) => filter.Selected
-        )
-      ) {
+      if (!this.$shared.filters.filterAudioLanguages.find((filter) => filter.Selected)) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
         "(" +
-        this.$shared.filters.filterAudioLanguages.filter(
-          (filter) => filter.Selected
-        ).length +
+        this.$shared.filters.filterAudioLanguages.filter((filter) => filter.Selected).length +
         "/" +
         this.$shared.filters.filterAudioLanguages.length +
         ")"
@@ -4682,9 +3249,7 @@ export default {
     },
 
     filterSubtitleLanguages() {
-      const fg = this.$shared.filterGroups.find(
-        (fg) => fg.name === "filterSubtitleLanguages"
-      );
+      const fg = this.$shared.filterGroups.find((fg) => fg.name === "filterSubtitleLanguages");
 
       return this.$shared.filters.filterSubtitleLanguages
         .filter(() => true)
@@ -4697,27 +3262,17 @@ export default {
         });
     },
     filterSubtitleLanguagesTitle() {
-      if (
-        !this.$shared.filters.filterSubtitleLanguages.find(
-          (filter) => !filter.Selected
-        )
-      ) {
+      if (!this.$shared.filters.filterSubtitleLanguages.find((filter) => !filter.Selected)) {
         return `(${this.$t("ALL")})`;
       }
 
-      if (
-        !this.$shared.filters.filterSubtitleLanguages.find(
-          (filter) => filter.Selected
-        )
-      ) {
+      if (!this.$shared.filters.filterSubtitleLanguages.find((filter) => filter.Selected)) {
         return `(${this.$t("NONE")})`;
       }
 
       return (
         "(" +
-        this.$shared.filters.filterSubtitleLanguages.filter(
-          (filter) => filter.Selected
-        ).length +
+        this.$shared.filters.filterSubtitleLanguages.filter((filter) => filter.Selected).length +
         "/" +
         this.$shared.filters.filterSubtitleLanguages.length +
         ")"
@@ -4725,55 +3280,37 @@ export default {
     },
 
     filterMetacriticScoreTitle() {
-      if (
-        this.$shared.filters.filterMetacriticScore[0] == 0 &&
-        this.$shared.filters.filterMetacriticScore[1] == 100
-      ) {
-        return `(${this.$t("ALL")}${
-          this.$shared.filters.filterMetacriticScoreNone ? "" : "*"
-        })`;
+      if (this.$shared.filters.filterMetacriticScore[0] == 0 && this.$shared.filters.filterMetacriticScore[1] == 100) {
+        return `(${this.$t("ALL")}${this.$shared.filters.filterMetacriticScoreNone ? "" : "*"})`;
       }
 
-      return `(${this.$shared.filters.filterMetacriticScore[0]} - ${
-        this.$shared.filters.filterMetacriticScore[1]
-      }${this.$shared.filters.filterMetacriticScoreNone ? "" : "*"})`;
+      return `(${this.$shared.filters.filterMetacriticScore[0]} - ${this.$shared.filters.filterMetacriticScore[1]}${
+        this.$shared.filters.filterMetacriticScoreNone ? "" : "*"
+      })`;
     },
 
     filterIMDBRatingTitle() {
-      if (
-        this.$shared.filters.filterIMDBRating[0] == 0 &&
-        this.$shared.filters.filterIMDBRating[1] == 10
-      ) {
-        return `(${this.$t("ALL")}${
-          this.$shared.filters.filterIMDBRatingNone ? "" : "*"
-        })`;
+      if (this.$shared.filters.filterIMDBRating[0] == 0 && this.$shared.filters.filterIMDBRating[1] == 10) {
+        return `(${this.$t("ALL")}${this.$shared.filters.filterIMDBRatingNone ? "" : "*"})`;
       }
 
-      return `(${this.$shared.filters.filterIMDBRating[0].toLocaleString(
-        this.$shared.uiLanguage
-      )} - ${this.$shared.filters.filterIMDBRating[1].toLocaleString(
+      return `(${this.$shared.filters.filterIMDBRating[0].toLocaleString(this.$shared.uiLanguage)} - ${this.$shared.filters.filterIMDBRating[1].toLocaleString(
         this.$shared.uiLanguage
       )}${this.$shared.filters.filterIMDBRatingNone ? "" : "*"})`;
     },
 
     filterContentAdvisoryTitle() {
       if (
-        !Object.keys(this.$shared.filters.filterParentalAdvisory).find(
-          (category) =>
-            this.$shared.filters.filterParentalAdvisory[category].find(
-              (filter) => !filter.Selected
-            )
+        !Object.keys(this.$shared.filters.filterParentalAdvisory).find((category) =>
+          this.$shared.filters.filterParentalAdvisory[category].find((filter) => !filter.Selected)
         )
       ) {
         return `(${this.$t("ALL")})`;
       }
 
       if (
-        !Object.keys(this.$shared.filters.filterParentalAdvisory).find(
-          (category) =>
-            this.$shared.filters.filterParentalAdvisory[category].find(
-              (filter) => filter.Selected
-            )
+        !Object.keys(this.$shared.filters.filterParentalAdvisory).find((category) =>
+          this.$shared.filters.filterParentalAdvisory[category].find((filter) => filter.Selected)
         )
       ) {
         return `(${this.$t("NONE")})`;
@@ -4781,16 +3318,13 @@ export default {
 
       let numSelected = 0;
       let numAll = 0;
-      Object.keys(this.$shared.filters.filterParentalAdvisory).find(
-        (category) =>
-          this.$shared.filters.filterParentalAdvisory[category].forEach(
-            (filter) => {
-              numAll++;
-              if (filter.Selected) {
-                numSelected++;
-              }
-            }
-          )
+      Object.keys(this.$shared.filters.filterParentalAdvisory).find((category) =>
+        this.$shared.filters.filterParentalAdvisory[category].forEach((filter) => {
+          numAll++;
+          if (filter.Selected) {
+            numSelected++;
+          }
+        })
       );
 
       return `(${numSelected}/${numAll})`;
@@ -4841,12 +3375,7 @@ export default {
       const filterCollection = this.$shared.filters[filterName];
 
       this.isolateFilterItemTimeout = setTimeout(() => {
-        if (
-          filterCollection &&
-          filterItem &&
-          setAllFunction &&
-          filterCollection.length > 1
-        ) {
+        if (filterCollection && filterItem && setAllFunction && filterCollection.length > 1) {
           setAllFunction(false);
           // filterItem.Selected = true;
         }
@@ -4855,23 +3384,13 @@ export default {
       }, 1000);
     },
 
-    filterCheckboxMousedownParentalAdvisory: function (
-      categoryName,
-      filterItem,
-      setAllFunction
-    ) {
+    filterCheckboxMousedownParentalAdvisory: function (categoryName, filterItem, setAllFunction) {
       logger.log("[filterCheckboxMousedownParentalAdvisory] START");
 
-      const filterCollection =
-        this.$shared.filters.filterParentalAdvisory[categoryName];
+      const filterCollection = this.$shared.filters.filterParentalAdvisory[categoryName];
 
       this.isolateFilterItemTimeout = setTimeout(() => {
-        if (
-          filterCollection &&
-          filterItem &&
-          setAllFunction &&
-          filterCollection.length > 1
-        ) {
+        if (filterCollection && filterItem && setAllFunction && filterCollection.length > 1) {
           setAllFunction(false);
           // filterItem.Selected = true;
         }
@@ -4900,10 +3419,7 @@ export default {
 
     setAllFilterSourcePaths: function (value, exclusionList) {
       this.$shared.filters.filterSourcePaths.forEach((sp) => {
-        if (
-          exclusionList &&
-          exclusionList.find((val) => sp.Description === val.Description)
-        ) {
+        if (exclusionList && exclusionList.find((val) => sp.Description === val.Description)) {
           sp.Selected = !value;
           return;
         }
@@ -4916,10 +3432,7 @@ export default {
 
     setAllFilterGenres: function (value, exclusionList) {
       this.$shared.filters.filterGenres.forEach((genre) => {
-        if (
-          exclusionList &&
-          exclusionList.find((val) => genre.Name === val.translated)
-        ) {
+        if (exclusionList && exclusionList.find((val) => genre.Name === val.translated)) {
           genre.Selected = !value;
           return;
         }
@@ -4975,11 +3488,9 @@ export default {
     },
 
     setAllFilterParentalAdvisory: function (category, value) {
-      this.$shared.filters.filterParentalAdvisory[category.Name].forEach(
-        (paItem) => {
-          paItem.Selected = value;
-        }
-      );
+      this.$shared.filters.filterParentalAdvisory[category.Name].forEach((paItem) => {
+        paItem.Selected = value;
+      });
 
       this.filtersChanged("filterParentalAdvisory");
     },
@@ -4988,10 +3499,7 @@ export default {
       logger.log("[setAllFilterPersons]", { value, exclusionList });
 
       this.$shared.filters.filterPersons.forEach((sp) => {
-        if (
-          exclusionList &&
-          exclusionList.find((val) => sp.IMDB_Person_ID === val)
-        ) {
+        if (exclusionList && exclusionList.find((val) => sp.IMDB_Person_ID === val)) {
           sp.Selected = !value;
           return;
         }
@@ -5006,10 +3514,7 @@ export default {
       logger.log("[setAllFilterCompanies]", { value, exclusionList });
 
       this.$shared.filters.filterCompanies.forEach((sp) => {
-        if (
-          exclusionList &&
-          exclusionList.find((val) => sp.Company_Name === val)
-        ) {
+        if (exclusionList && exclusionList.find((val) => sp.Company_Name === val)) {
           sp.Selected = !value;
           return;
         }
@@ -5022,10 +3527,7 @@ export default {
 
     setAllFilterQualities: function (value, exclusionList) {
       this.$shared.filters.filterQualities.forEach((quality) => {
-        if (
-          exclusionList &&
-          exclusionList.find((val) => quality.MI_Quality === val)
-        ) {
+        if (exclusionList && exclusionList.find((val) => quality.MI_Quality === val)) {
           quality.Selected = !value;
           return;
         }
@@ -5038,10 +3540,7 @@ export default {
 
     setAllFilterAudioLanguages: function (value, exclusionList) {
       this.$shared.filters.filterAudioLanguages.forEach((lang) => {
-        if (
-          exclusionList &&
-          exclusionList.find((val) => lang.Language === val)
-        ) {
+        if (exclusionList && exclusionList.find((val) => lang.Language === val)) {
           lang.Selected = !value;
           return;
         }
@@ -5054,10 +3553,7 @@ export default {
 
     setAllFilterSubtitleLanguages: function (value, exclusionList) {
       this.$shared.filters.filterSubtitleLanguages.forEach((lang) => {
-        if (
-          exclusionList &&
-          exclusionList.find((val) => lang.Language === val)
-        ) {
+        if (exclusionList && exclusionList.find((val) => lang.Language === val)) {
           lang.Selected = !value;
           return;
         }
@@ -5070,10 +3566,7 @@ export default {
 
     setAllFilterReleaseAttributes: function (value, exclusionList) {
       this.$shared.filters.filterReleaseAttributes.forEach((ra) => {
-        if (
-          exclusionList &&
-          exclusionList.find((val) => ra.ReleaseAttribute === val)
-        ) {
+        if (exclusionList && exclusionList.find((val) => ra.ReleaseAttribute === val)) {
           ra.Selected = !value;
           return;
         }
@@ -5086,10 +3579,7 @@ export default {
 
     setAllIFilterMDBPlotKeywords: function (value, exclusionList) {
       this.$shared.filters.filterIMDBPlotKeywords.forEach((pk) => {
-        if (
-          exclusionList &&
-          exclusionList.find((val) => pk.id_IMDB_Plot_Keywords === val)
-        ) {
+        if (exclusionList && exclusionList.find((val) => pk.id_IMDB_Plot_Keywords === val)) {
           pk.Selected = !value;
           return;
         }
@@ -5102,10 +3592,7 @@ export default {
 
     setAllFilterIMDBFilmingLocations: function (value, exclusionList) {
       this.$shared.filters.filterIMDBFilmingLocations.forEach((fl) => {
-        if (
-          exclusionList &&
-          exclusionList.find((val) => fl.id_IMDB_Filming_Locations === val)
-        ) {
+        if (exclusionList && exclusionList.find((val) => fl.id_IMDB_Filming_Locations === val)) {
           fl.Selected = !value;
           return;
         }
@@ -5209,9 +3696,7 @@ export default {
     },
 
     async onDeleteFilterItemDialogOK() {
-      await this.deleteFilterItemDialog.deleteFunction(
-        this.deleteFilterItemDialog.item
-      );
+      await this.deleteFilterItemDialog.deleteFunction(this.deleteFilterItemDialog.item);
       this.deleteFilterItemDialog.show = false;
     },
 
@@ -5224,19 +3709,13 @@ export default {
         try {
           logger.log("[deleteList] START");
 
-          await store.db.fireProcedure(
-            `DELETE FROM tbl_Lists WHERE id_Lists = $id_Lists`,
-            {
-              $id_Lists: this.deleteFilterItemDialog.item.id_Lists,
-            }
-          );
+          await store.db.fireProcedure(`DELETE FROM tbl_Lists WHERE id_Lists = $id_Lists`, {
+            $id_Lists: this.deleteFilterItemDialog.item.id_Lists,
+          });
 
           logger.log("[deleteList] delete list entries");
 
-          await store.db.fireProcedure(
-            `DELETE FROM tbl_Lists_Movies WHERE id_Lists NOT IN (SELECT id_Lists FROM tbl_Lists)`,
-            []
-          );
+          await store.db.fireProcedure(`DELETE FROM tbl_Lists_Movies WHERE id_Lists NOT IN (SELECT id_Lists FROM tbl_Lists)`, []);
 
           // eventBus.refetchFilters({ filterLists: null });
           eventBus.refetchMedia(this.$shared.currentPage, null, {
@@ -5264,19 +3743,14 @@ export default {
         })}`
       );
       this.$shared.filters.filterPersons.splice(
-        this.$shared.filters.filterPersons.findIndex(
-          (filterPerson) =>
-            filterPerson.id_Filter_Persons === person.id_Filter_Persons
-        ),
+        this.$shared.filters.filterPersons.findIndex((filterPerson) => filterPerson.id_Filter_Persons === person.id_Filter_Persons),
         1
       );
       eventBus.refetchMedia({ filterPersons: null });
     },
 
     async deleteFilterIMDBPlotKeyword(filterIMDBPlotKeyword) {
-      await store.deleteFilterIMDBPlotKeyword(
-        filterIMDBPlotKeyword.id_Filter_IMDB_Plot_Keywords
-      );
+      await store.deleteFilterIMDBPlotKeyword(filterIMDBPlotKeyword.id_Filter_IMDB_Plot_Keywords);
       eventBus.showSnackbar(
         "success",
         `${this.$t("Plot Keyword '{name}' removed_", {
@@ -5285,9 +3759,7 @@ export default {
       );
       this.$shared.filters.filterIMDBPlotKeywords.splice(
         this.$shared.filters.filterIMDBPlotKeywords.findIndex(
-          (plotKeyword) =>
-            plotKeyword.id_Filter_IMDB_Plot_Keywords ===
-            filterIMDBPlotKeyword.id_Filter_IMDB_Plot_Keywords
+          (plotKeyword) => plotKeyword.id_Filter_IMDB_Plot_Keywords === filterIMDBPlotKeyword.id_Filter_IMDB_Plot_Keywords
         ),
         1
       );
@@ -5295,9 +3767,7 @@ export default {
     },
 
     async deleteFilterIMDBFilmingLocation(filterIMDBFilmingLocation) {
-      await store.deleteFilterIMDBFilmingLocation(
-        filterIMDBFilmingLocation.id_Filter_IMDB_Filming_Locations
-      );
+      await store.deleteFilterIMDBFilmingLocation(filterIMDBFilmingLocation.id_Filter_IMDB_Filming_Locations);
       eventBus.showSnackbar(
         "success",
         `${this.$t("Filming Location '{name}' removed_", {
@@ -5306,9 +3776,7 @@ export default {
       );
       this.$shared.filters.filterIMDBFilmingLocations.splice(
         this.$shared.filters.filterIMDBFilmingLocations.findIndex(
-          (filmingLocation) =>
-            filmingLocation.id_Filter_IMDB_Filming_Locations ===
-            filterIMDBFilmingLocation.id_Filter_IMDB_Filming_Locations
+          (filmingLocation) => filmingLocation.id_Filter_IMDB_Filming_Locations === filterIMDBFilmingLocation.id_Filter_IMDB_Filming_Locations
         ),
         1
       );
@@ -5324,10 +3792,7 @@ export default {
         })}`
       );
       this.$shared.filters.filterCompanies.splice(
-        this.$shared.filters.filterCompanies.findIndex(
-          (company) =>
-            company.id_Filter_Companies === filterCompany.id_Filter_Companies
-        ),
+        this.$shared.filters.filterCompanies.findIndex((company) => company.id_Filter_Companies === filterCompany.id_Filter_Companies),
         1
       );
       eventBus.refetchMedia({ filterCompanies: null });
@@ -5351,12 +3816,7 @@ export default {
     onScanOptionsDialogOK({ radioGroup, performCheck }) {
       const onlyNew = radioGroup === 1; // radioGroup is the chosen method
 
-      logger.log(
-        "[onScanOptionsDialogOK] chosen Scan Option:",
-        radioGroup,
-        "onlyNew:",
-        onlyNew
-      );
+      logger.log("[onScanOptionsDialogOK] chosen Scan Option:", radioGroup, "onlyNew:", onlyNew);
 
       this.scanOptionsDialog.show = false;
 
@@ -5377,25 +3837,15 @@ export default {
     },
 
     filterParentalAdvisoryCategoryTitle(category) {
-      if (
-        !this.$shared.filters.filterParentalAdvisory[category.Name].find(
-          (filter) => !filter.Selected
-        )
-      ) {
+      if (!this.$shared.filters.filterParentalAdvisory[category.Name].find((filter) => !filter.Selected)) {
         return `(${this.$t("ALL")})`;
       }
-      if (
-        !this.$shared.filters.filterParentalAdvisory[category.Name].find(
-          (filter) => filter.Selected
-        )
-      ) {
+      if (!this.$shared.filters.filterParentalAdvisory[category.Name].find((filter) => filter.Selected)) {
         return `(${this.$t("NONE")})`;
       }
       return (
         "(" +
-        this.$shared.filters.filterParentalAdvisory[category.Name].filter(
-          (filter) => filter.Selected
-        ).length +
+        this.$shared.filters.filterParentalAdvisory[category.Name].filter((filter) => filter.Selected).length +
         "/" +
         this.$shared.filters.filterParentalAdvisory[category.Name].length +
         ")"
@@ -5487,12 +3937,8 @@ export default {
     },
 
     onEditFilters() {
-      this.editFilters.oldExpandedFilterGroups = JSON.parse(
-        JSON.stringify(this.expandedFilterGroups)
-      );
-      this.editFilters.oldFilterGroups = JSON.parse(
-        JSON.stringify(this.$shared.filterGroups)
-      );
+      this.editFilters.oldExpandedFilterGroups = JSON.parse(JSON.stringify(this.expandedFilterGroups));
+      this.editFilters.oldFilterGroups = JSON.parse(JSON.stringify(this.$shared.filterGroups));
 
       this.expandedFilterGroups = [];
       this.editFilters.isEditFilters = true;
@@ -5501,19 +3947,13 @@ export default {
     async onEditFiltersOK() {
       await store.saveFilterGroups();
       this.editFilters.isEditFilters = false;
-      this.expandedFilterGroups = JSON.parse(
-        JSON.stringify(this.editFilters.oldExpandedFilterGroups)
-      );
+      this.expandedFilterGroups = JSON.parse(JSON.stringify(this.editFilters.oldExpandedFilterGroups));
     },
 
     async onEditFiltersCancel() {
       this.editFilters.isEditFilters = false;
-      this.expandedFilterGroups = JSON.parse(
-        JSON.stringify(this.editFilters.oldExpandedFilterGroups)
-      );
-      this.$shared.filterGroups = JSON.parse(
-        JSON.stringify(this.editFilters.oldFilterGroups)
-      );
+      this.expandedFilterGroups = JSON.parse(JSON.stringify(this.editFilters.oldExpandedFilterGroups));
+      this.$shared.filterGroups = JSON.parse(JSON.stringify(this.editFilters.oldFilterGroups));
     },
 
     showYearsRangeInput() {
@@ -5552,10 +3992,7 @@ export default {
           return;
         }
 
-        if (
-          year.startYear >= this.yearsRangeInput.range[0] &&
-          year.startYear <= this.yearsRangeInput.range[1]
-        ) {
+        if (year.startYear >= this.yearsRangeInput.range[0] && year.startYear <= this.yearsRangeInput.range[1]) {
           year.Selected = true;
         } else {
           year.Selected = false;
@@ -5570,9 +4007,7 @@ export default {
     toggleFullScreen() {
       this.isFullScreen = !remote.getCurrentWindow().isFullScreen();
 
-      remote
-        .getCurrentWindow()
-        .setFullScreen(!remote.getCurrentWindow().isFullScreen());
+      remote.getCurrentWindow().setFullScreen(!remote.getCurrentWindow().isFullScreen());
     },
 
     onKeyDown(e) {
@@ -5583,17 +4018,11 @@ export default {
     },
 
     onFilterDragEnd() {
-      logger.log(
-        "[onFilterDragEnd] this.editFilters.oldExpandedFilterGroups:",
-        this.editFilters.oldExpandedFilterGroups
-      );
+      logger.log("[onFilterDragEnd] this.editFilters.oldExpandedFilterGroups:", this.editFilters.oldExpandedFilterGroups);
     },
 
     async switchFilterSort(filterGroup) {
-      filterGroup.sort =
-        filterGroup.sort === enmFilterSortModes.alphabetically
-          ? enmFilterSortModes.numMovies
-          : enmFilterSortModes.alphabetically;
+      filterGroup.sort = filterGroup.sort === enmFilterSortModes.alphabetically ? enmFilterSortModes.numMovies : enmFilterSortModes.alphabetically;
 
       // HACK: trigger UI update
       const temp = this.$shared.filters[filterGroup.name];
@@ -5631,15 +4060,10 @@ export default {
       if (!this.scanInfo.rescanETA) {
         return;
       }
-      this.scanInfo.rescanETA.timeRemaining = Math.max(
-        this.scanInfo.rescanETA.timeRemaining - 1,
-        0
-      );
+      this.scanInfo.rescanETA.timeRemaining = Math.max(this.scanInfo.rescanETA.timeRemaining - 1, 0);
       this.scanInfo.header = this.scanInfo.headerOriginal.replace(
         "{remainingTimeDisplay}",
-        this.scanInfo.rescanETA &&
-          this.scanInfo.rescanETA.show &&
-          typeof this.scanInfo.rescanETA.timeRemaining === "number"
+        this.scanInfo.rescanETA && this.scanInfo.rescanETA.show && typeof this.scanInfo.rescanETA.timeRemaining === "number"
           ? `(${helpers.getTimeString(this.scanInfo.rescanETA.timeRemaining)})`
           : ""
       );
@@ -5651,16 +4075,10 @@ export default {
       this.snackbar.color = color;
       this.snackbar.timeout = timeout;
 
-      if (
-        typeof textOrErrorObject === "string" ||
-        textOrErrorObject instanceof String
-      ) {
+      if (typeof textOrErrorObject === "string" || textOrErrorObject instanceof String) {
         this.snackbar.text = textOrErrorObject;
       } else if (textOrErrorObject.translateMe) {
-        this.snackbar.text = this.$t(
-          textOrErrorObject.translateMe.text,
-          textOrErrorObject.translateMe.payload
-        );
+        this.snackbar.text = this.$t(textOrErrorObject.translateMe.text, textOrErrorObject.translateMe.payload);
       } else if (textOrErrorObject.syscall && textOrErrorObject.code) {
         // fetch error
         this.snackbar.text =
@@ -5676,10 +4094,7 @@ export default {
         // our self-defined error object with message and optional details
         this.snackbar.text = textOrErrorObject.error.message;
 
-        if (
-          typeof textOrErrorObject.error.details === "string" ||
-          textOrErrorObject.error.details instanceof String
-        ) {
+        if (typeof textOrErrorObject.error.details === "string" || textOrErrorObject.error.details instanceof String) {
           this.snackbar.details.push(textOrErrorObject.error.details);
         } else {
           if (Array.isArray(textOrErrorObject.error.details)) {
@@ -5704,11 +4119,7 @@ export default {
         headerOriginal: headerOriginal,
         header: headerOriginal.replace(
           "{remainingTimeDisplay}",
-          rescanETA &&
-            rescanETA.show &&
-            typeof rescanETA.timeRemaining === "number"
-            ? `(${helpers.getTimeString(rescanETA.timeRemaining)})`
-            : ""
+          rescanETA && rescanETA.show && typeof rescanETA.timeRemaining === "number" ? `(${helpers.getTimeString(rescanETA.timeRemaining)})` : ""
         ),
         details,
         show: true,
@@ -5748,105 +4159,67 @@ export default {
 
       if (setFilter.filterLists) {
         this.setAllFilterLists(false, setFilter.filterLists);
-        this.$shared.filterGroups.find(
-          (fg) => fg.name === "filterLists"
-        ).visible = true;
+        this.$shared.filterGroups.find((fg) => fg.name === "filterLists").visible = true;
       }
 
       if (setFilter.filterCompanies) {
         this.setAllFilterCompanies(false, setFilter.filterCompanies);
-        this.$shared.filterGroups.find(
-          (fg) => fg.name === "filterCompanies"
-        ).visible = true;
+        this.$shared.filterGroups.find((fg) => fg.name === "filterCompanies").visible = true;
       }
 
       if (setFilter.filterPersons) {
         this.setAllFilterPersons(false, setFilter.filterPersons);
-        this.$shared.filterGroups.find(
-          (fg) => fg.name === "filterPersons"
-        ).visible = true;
+        this.$shared.filterGroups.find((fg) => fg.name === "filterPersons").visible = true;
       }
 
       if (setFilter.filterIMDBPlotKeywords) {
-        this.setAllIFilterMDBPlotKeywords(
-          false,
-          setFilter.filterIMDBPlotKeywords
-        );
-        this.$shared.filterGroups.find(
-          (fg) => fg.name === "filterIMDBPlotKeywords"
-        ).visible = true;
+        this.setAllIFilterMDBPlotKeywords(false, setFilter.filterIMDBPlotKeywords);
+        this.$shared.filterGroups.find((fg) => fg.name === "filterIMDBPlotKeywords").visible = true;
       }
 
       if (setFilter.filterIMDBFilmingLocations) {
-        this.setAllFilterIMDBFilmingLocations(
-          false,
-          setFilter.filterIMDBFilmingLocations
-        );
-        this.$shared.filterGroups.find(
-          (fg) => fg.name === "filterIMDBFilmingLocations"
-        ).visible = true;
+        this.setAllFilterIMDBFilmingLocations(false, setFilter.filterIMDBFilmingLocations);
+        this.$shared.filterGroups.find((fg) => fg.name === "filterIMDBFilmingLocations").visible = true;
       }
 
       if (setFilter.filterQualities) {
         this.setAllFilterQualities(false, setFilter.filterQualities);
-        this.$shared.filterGroups.find(
-          (fg) => fg.name === "filterQualities"
-        ).visible = true;
+        this.$shared.filterGroups.find((fg) => fg.name === "filterQualities").visible = true;
       }
 
       if (setFilter.filterVideoEncoders) {
         this.setAllFilterVideoEncoders(false, setFilter.filterVideoEncoders);
-        this.$shared.filterGroups.find(
-          (fg) => fg.name === "filterVideoEncoders"
-        ).visible = true;
+        this.$shared.filterGroups.find((fg) => fg.name === "filterVideoEncoders").visible = true;
       }
 
       if (setFilter.filterAudioFormats) {
         this.setAllFilterAudioFormats(false, setFilter.filterAudioFormats);
-        this.$shared.filterGroups.find(
-          (fg) => fg.name === "filterAudioFormats"
-        ).visible = true;
+        this.$shared.filterGroups.find((fg) => fg.name === "filterAudioFormats").visible = true;
       }
 
       if (setFilter.filterAgeRatings) {
         this.setAllFilterAgeRatings(false, setFilter.filterAgeRatings);
-        this.$shared.filterGroups.find(
-          (fg) => fg.name === "filterAgeRatings"
-        ).visible = true;
+        this.$shared.filterGroups.find((fg) => fg.name === "filterAgeRatings").visible = true;
       }
 
       if (setFilter.filterGenres) {
         this.setAllFilterGenres(false, setFilter.filterGenres);
-        this.$shared.filterGroups.find(
-          (fg) => fg.name === "filterGenres"
-        ).visible = true;
+        this.$shared.filterGroups.find((fg) => fg.name === "filterGenres").visible = true;
       }
 
       if (setFilter.filterAudioLanguages) {
         this.setAllFilterAudioLanguages(false, setFilter.filterAudioLanguages);
-        this.$shared.filterGroups.find(
-          (fg) => fg.name === "filterAudioLanguages"
-        ).visible = true;
+        this.$shared.filterGroups.find((fg) => fg.name === "filterAudioLanguages").visible = true;
       }
 
       if (setFilter.filterSubtitleLanguages) {
-        this.setAllFilterSubtitleLanguages(
-          false,
-          setFilter.filterSubtitleLanguages
-        );
-        this.$shared.filterGroups.find(
-          (fg) => fg.name === "filterSubtitleLanguages"
-        ).visible = true;
+        this.setAllFilterSubtitleLanguages(false, setFilter.filterSubtitleLanguages);
+        this.$shared.filterGroups.find((fg) => fg.name === "filterSubtitleLanguages").visible = true;
       }
 
       if (setFilter.filterReleaseAttributes) {
-        this.setAllFilterReleaseAttributes(
-          false,
-          setFilter.filterReleaseAttributes
-        );
-        this.$shared.filterGroups.find(
-          (fg) => fg.name === "filterReleaseAttributes"
-        ).visible = true;
+        this.setAllFilterReleaseAttributes(false, setFilter.filterReleaseAttributes);
+        this.$shared.filterGroups.find((fg) => fg.name === "filterReleaseAttributes").visible = true;
       }
     });
 
@@ -5859,30 +4232,17 @@ export default {
       this.showCheckIMDBScraperDialog(settings);
     });
 
-    eventBus.$on(
-      "rescanFinished",
-      ({ rescanAddedMovies, rescanRemovedMovies }) => {
-        eventBus.showSnackbar(
-          "success",
-          `${this.$local_t(
-            "(Re-)scan finished_"
-          )} ${rescanAddedMovies} ${this.$local_t(
-            "added"
-          )}, ${rescanRemovedMovies} ${this.$local_t("removed")}.`
-        );
-      }
-    );
+    eventBus.$on("rescanFinished", ({ rescanAddedMovies, rescanRemovedMovies }) => {
+      eventBus.showSnackbar(
+        "success",
+        `${this.$local_t("(Re-)scan finished_")} ${rescanAddedMovies} ${this.$local_t("added")}, ${rescanRemovedMovies} ${this.$local_t("removed")}.`
+      );
+    });
 
     // lodash debounced functions
-    this.debouncedEventBusSearchTextChanged = _.debounce(
-      this.eventBusSearchTextChanged,
-      500
-    );
+    this.debouncedEventBusSearchTextChanged = _.debounce(this.eventBusSearchTextChanged, 500);
 
-    this.debouncedEventBusRefetchMedia = _.debounce(
-      this.eventBusRefetchMedia,
-      1000
-    );
+    this.debouncedEventBusRefetchMedia = _.debounce(this.eventBusRefetchMedia, 1000);
   },
 
   beforeDestroy() {

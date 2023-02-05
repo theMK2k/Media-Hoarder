@@ -33,9 +33,7 @@ let win;
 app.allowRendererProcessReuse = false;
 
 // Scheme must be registered before the app is ready
-protocol.registerSchemesAsPrivileged([
-  { scheme: "app", privileges: { secure: true, standard: true } },
-]);
+protocol.registerSchemesAsPrivileged([{ scheme: "app", privileges: { secure: true, standard: true } }]);
 
 function createWindow() {
   // Load the previous state with fallback to defaults
@@ -70,9 +68,7 @@ function createWindow() {
   try {
     const easyListPath = helpers.getStaticPath("data/easylist.txt");
     console.log("instantiating adBlock with:", easyListPath);
-    const adBlocker = ElectronBlocker.parse(
-      fs.readFileSync(easyListPath, "utf-8")
-    );
+    const adBlocker = ElectronBlocker.parse(fs.readFileSync(easyListPath, "utf-8"));
     adBlocker.enableBlockingInSession(session.defaultSession);
     adBlocker.on("request-blocked", (request) => {
       console.log("blocked", request.tabId, request.url);
@@ -142,10 +138,7 @@ function registerLocalResourceProtocol() {
     try {
       return callback(decodedUrl);
     } catch (error) {
-      console.error(
-        "ERROR: registerLocalResourceProtocol: Could not get file path:",
-        error
-      );
+      console.error("ERROR: registerLocalResourceProtocol: Could not get file path:", error);
     }
   });
 }

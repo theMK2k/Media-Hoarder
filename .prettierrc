@@ -1,6 +1,5 @@
 {
   "trailingComma": "es5",
   "tabWidth": 2,
-  "printWidth": 160,
-  "maxLineLength": 160
+  "printWidth": 160
 }

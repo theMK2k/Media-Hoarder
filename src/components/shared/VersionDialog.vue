@@ -1,21 +1,9 @@
 <template>
-  <v-dialog
-    v-model="show"
-    persistent
-    max-width="1000px"
-    transition="fab-transition"
-    scrollable
-  >
+  <v-dialog v-model="show" persistent max-width="1000px" transition="fab-transition" scrollable>
     <v-card>
       <v-card-title>
-        <v-row
-          class="headline"
-          style="width: 100%; font-size: 1.17em; margin-left: 0px"
-        >
-          <div
-            class="headline mk-clickable"
-            v-on:click="showQuote = !showQuote"
-          >
+        <v-row class="headline" style="width: 100%; font-size: 1.17em; margin-left: 0px">
+          <div class="headline mk-clickable" v-on:click="showQuote = !showQuote">
             {{ $shared.appName }} v{{ $shared.currentVersion }} -
             {{ $shared.currentName }}
           </div>
@@ -27,12 +15,7 @@
         <v-row
           v-if="showQuote"
           class="mk-clickable-dark-grey"
-          style="
-            line-height: 1.5;
-            margin-left: 0px;
-            margin-bottom: 0px;
-            word-break: initial;
-          "
+          style="line-height: 1.5; margin-left: 0px; margin-bottom: 0px; word-break: initial"
           v-on:click="showQuote = false"
         >
           <i>{{ quote }}</i>
@@ -43,32 +26,19 @@
         <div class="v-card__text" style="padding: 0px">
           <div v-if="isLoadingHistory" style="margin-bottom: 16px">
             {{ $t("Checking for Updates") }}
-            <v-progress-linear
-              color="red accent-0"
-              indeterminate
-              rounded
-              height="6"
-            ></v-progress-linear>
+            <v-progress-linear color="red accent-0" indeterminate rounded height="6"></v-progress-linear>
           </div>
 
           <v-alert
             v-if="!isLoadingHistory"
-            v-bind:type="
-              isNewVersionAvailable
-                ? 'info'
-                : isUpToDate
-                ? 'success'
-                : 'warning'
-            "
+            v-bind:type="isNewVersionAvailable ? 'info' : isUpToDate ? 'success' : 'warning'"
             colored-border
             border="left"
             dense
             style="margin-top: 12px"
           >
             <span v-if="isNewVersionAvailable">
-              <strong>{{
-                `${$shared.appName} v${latestVersion} - ${latestName}`
-              }}</strong>
+              <strong>{{ `${$shared.appName} v${latestVersion} - ${latestName}` }}</strong>
               {{
                 $t("is available_ Get it at", {
                   appName: $shared.appName,
@@ -76,48 +46,23 @@
                   latestName: latestName,
                 })
               }}
-              <a
-                href="https://media.hoarder.software/downloads"
-                target="_blank"
-                rel="noreferrer noopener nofollow"
-                >https://media.hoarder.software/downloads</a
-              >
+              <a href="https://media.hoarder.software/downloads" target="_blank" rel="noreferrer noopener nofollow">https://media.hoarder.software/downloads</a>
             </span>
             <span v-if="isUpToDate">{{ $t("you are up to date") }}</span>
-            <span v-if="!isNewVersionAvailable && !isUpToDate">{{
-              $t("unable to determine if you are up to date")
-            }}</span>
+            <span v-if="!isNewVersionAvailable && !isUpToDate">{{ $t("unable to determine if you are up to date") }}</span>
           </v-alert>
 
           <div class="mk-light-grey">
             {{ $t("Visit") }}
-            <a
-              href="https://media.hoarder.software"
-              target="_blank"
-              rel="noreferrer noopener nofollow"
-              >https://media.hoarder.software</a
-            >
+            <a href="https://media.hoarder.software" target="_blank" rel="noreferrer noopener nofollow">https://media.hoarder.software</a>
             {{ $t("for a better features overview_") }}
           </div>
 
-          <div
-            v-if="history && history.length > 0"
-            style="font-size: 16px; margin-top: 16px"
-          >
-            <span
-              v-if="!showHistory"
-              class="mk-clickable"
-              v-on:click="showHistory = !showHistory"
-              style="font-size: 1.17em"
-              >{{ $t("Show Version History") }}</span
-            >
-            <span
-              v-if="showHistory"
-              class="mk-clickable"
-              v-on:click="showHistory = !showHistory"
-              style="font-size: 1.17em"
-              >{{ $t("Version History") }}</span
-            >
+          <div v-if="history && history.length > 0" style="font-size: 16px; margin-top: 16px">
+            <span v-if="!showHistory" class="mk-clickable" v-on:click="showHistory = !showHistory" style="font-size: 1.17em">{{
+              $t("Show Version History")
+            }}</span>
+            <span v-if="showHistory" class="mk-clickable" v-on:click="showHistory = !showHistory" style="font-size: 1.17em">{{ $t("Version History") }}</span>
             <span v-if="showHistory">
               <v-btn
                 v-if="showHistory"
@@ -130,26 +75,12 @@
               >
               v{{ history[infoPosition].version }} -
               {{ history[infoPosition].name }}
-              <v-btn
-                text
-                class="xs-fullwidth"
-                v-bind:disabled="infoPosition === 0"
-                v-on:click="infoPosition--"
-                >&gt;</v-btn
-              >
+              <v-btn text class="xs-fullwidth" v-bind:disabled="infoPosition === 0" v-on:click="infoPosition--">&gt;</v-btn>
             </span>
           </div>
 
-          <div
-            v-if="isLoadingVersionInfo"
-            style="margin-left: 24px; margin-right: 24px; margin-bottom: 16px"
-          >
-            <v-progress-linear
-              color="red accent-0"
-              indeterminate
-              rounded
-              height="6"
-            ></v-progress-linear>
+          <div v-if="isLoadingVersionInfo" style="margin-left: 24px; margin-right: 24px; margin-bottom: 16px">
+            <v-progress-linear color="red accent-0" indeterminate rounded height="6"></v-progress-linear>
           </div>
         </div>
       </v-card-title>
@@ -222,17 +153,12 @@ export default {
         if (localVersionInfo) {
           const localVersionInfoMD = localVersionInfo.toString();
 
-          logger.log(
-            "[updateVersionInfo] loadLocalHistory localVersionInfoMD:",
-            localVersionInfoMD
-          );
+          logger.log("[updateVersionInfo] loadLocalHistory localVersionInfoMD:", localVersionInfoMD);
 
           this.versionInfo = marked(localVersionInfoMD);
           logger.log("[updateVersionInfo] this.versionInfo:", this.versionInfo);
         } else {
-          logger.log(
-            "[updateVersionInfo] loadLocalHistory NO localVersionInfo found!"
-          );
+          logger.log("[updateVersionInfo] loadLocalHistory NO localVersionInfo found!");
         }
       } catch (e) {
         logger.error(e);
@@ -242,18 +168,13 @@ export default {
         try {
           logger.log("[updateVersionInfo] fetchRemoteHistory");
 
-          const resRemoteVersionInfo = await fetch(
-            `https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/public/history/${fileName}`
-          );
+          const resRemoteVersionInfo = await fetch(`https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/public/history/${fileName}`);
 
           const remoteVersionInfo = await resRemoteVersionInfo.text();
 
           const remoteVersionInfoText = remoteVersionInfo.toString();
 
-          logger.log(
-            "[updateVersionInfo] fetchRemoteHistory remoteVersionInfoText:",
-            remoteVersionInfoText
-          );
+          logger.log("[updateVersionInfo] fetchRemoteHistory remoteVersionInfoText:", remoteVersionInfoText);
 
           this.versionInfo = marked(remoteVersionInfo);
         } catch (e) {
@@ -282,9 +203,7 @@ export default {
         this.quote = objLocalHistory[0].quote;
         this.quoteSource = objLocalHistory[0].quoteSource;
 
-        const resRemoteHistory = await fetch(
-          "https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/public/history/history.json"
-        );
+        const resRemoteHistory = await fetch("https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/public/history/history.json");
 
         const remoteHistory = await resRemoteHistory.json();
 
@@ -316,25 +235,16 @@ export default {
     const renderer = new marked.Renderer();
     const linkRenderer = renderer.link;
     renderer.link = (href, title, text) => {
-      const localLink = href.startsWith(
-        `${location.protocol}//${location.hostname}`
-      );
+      const localLink = href.startsWith(`${location.protocol}//${location.hostname}`);
       const html = linkRenderer.call(renderer, href, title, text);
-      return localLink
-        ? html
-        : html.replace(
-            /^<a /,
-            `<a target="_blank" rel="noreferrer noopener nofollow" `
-          );
+      return localLink ? html : html.replace(/^<a /, `<a target="_blank" rel="noreferrer noopener nofollow" `);
     };
 
     // insert a blank line after (un)ordered lists
     const listRenderer = renderer.list;
     renderer.list = (body, ordered, start) => {
       const html = listRenderer.call(renderer, body, ordered, start);
-      return html
-        .replace(/<\/ul>/, `</ul><p />`)
-        .replace(/<\/ol>/, `</ol><p />`);
+      return html.replace(/<\/ul>/, `</ul><p />`).replace(/<\/ol>/, `</ol><p />`);
     };
 
     const headingRenderer = renderer.heading;

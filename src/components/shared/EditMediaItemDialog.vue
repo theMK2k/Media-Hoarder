@@ -1,12 +1,5 @@
 <template>
-  <v-dialog
-    v-if="mediaItem"
-    v-model="show"
-    persistent
-    max-width="1000px"
-    v-on:keydown.escape="onEscapePressed"
-    scrollable
-  >
+  <v-dialog v-if="mediaItem" v-model="show" persistent max-width="1000px" v-on:keydown.escape="onEscapePressed" scrollable>
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         {{ $t(caption) }}: {{ mediaItemBackup.Name }}
@@ -15,37 +8,19 @@
 
       <v-card-text>
         <!-- Primary Title -->
-        <v-text-field
-          v-bind:label="$t('Primary Title')"
-          v-model="mediaItem.Name"
-        ></v-text-field>
+        <v-text-field v-bind:label="$t('Primary Title')" v-model="mediaItem.Name"></v-text-field>
 
         <!-- Secondary Title -->
-        <v-text-field
-          v-bind:label="$t('Secondary Title')"
-          v-model="mediaItem.Name2"
-        ></v-text-field>
+        <v-text-field v-bind:label="$t('Secondary Title')" v-model="mediaItem.Name2"></v-text-field>
 
         <!-- Release Year -->
-        <v-text-field
-          v-bind:label="$t('Release Year')"
-          v-model="mediaItem.startYear"
-        ></v-text-field>
+        <v-text-field v-bind:label="$t('Release Year')" v-model="mediaItem.startYear"></v-text-field>
 
         <!-- Video Quality -->
-        <v-select
-          v-bind:label="$t('Video Quality')"
-          v-bind:items="$shared.videoQualities.map((item) => item.name)"
-          v-model="mediaItem.MI_Quality"
-        >
-        </v-select>
+        <v-select v-bind:label="$t('Video Quality')" v-bind:items="$shared.videoQualities.map((item) => item.name)" v-model="mediaItem.MI_Quality"> </v-select>
 
         <!-- Description -->
-        <v-textarea
-          v-bind:label="$t('Description')"
-          v-model="mediaItem.plotSummaryFull"
-        >
-        </v-textarea>
+        <v-textarea v-bind:label="$t('Description')" v-model="mediaItem.plotSummaryFull"> </v-textarea>
 
         <!-- Genres -->
         <div>
@@ -84,12 +59,7 @@
                   color="primary"
                   text
                   small
-                  style="
-                    margin-left: 12px;
-                    margin-right: 4px;
-                    margin-bottom: 4px;
-                    margin-top: 8px;
-                  "
+                  style="margin-left: 12px; margin-right: 4px; margin-bottom: 4px; margin-top: 8px"
                   v-on="on"
                   v-on:click="onShowAddGenreDialog"
                   >{{ $t("Add Genre") }}</v-btn
@@ -100,23 +70,12 @@
                   {{ $t("Add Genre") }}
                 </v-card-title>
                 <v-card-text>
-                  <v-select
-                    v-bind:items="genres"
-                    v-model="selectedGenre"
-                    item-text="Name"
-                    item-value="GenreID"
-                  ></v-select>
+                  <v-select v-bind:items="genres" v-model="selectedGenre" item-text="Name" item-value="GenreID"></v-select>
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn
-                    color="secondary"
-                    v-on:click.stop="showAddGenreDialog = false"
-                    >{{ $t("Cancel") }}</v-btn
-                  >
-                  <v-btn color="primary" v-on:click.stop="onAddGenreDialogOK">{{
-                    $t("OK")
-                  }}</v-btn>
+                  <v-btn color="secondary" v-on:click.stop="showAddGenreDialog = false">{{ $t("Cancel") }}</v-btn>
+                  <v-btn color="primary" v-on:click.stop="onAddGenreDialogOK">{{ $t("OK") }}</v-btn>
                 </v-card-actions>
               </v-card>
             </v-menu>
@@ -160,12 +119,7 @@
                   color="primary"
                   text
                   small
-                  style="
-                    margin-left: 12px;
-                    margin-right: 4px;
-                    margin-bottom: 4px;
-                    margin-top: 8px;
-                  "
+                  style="margin-left: 12px; margin-right: 4px; margin-bottom: 4px; margin-top: 8px"
                   v-on="on"
                   v-on:click="onShowAddReleaseAttributeDialog"
                   >{{ $t("Add Release Attribute") }}</v-btn
@@ -176,25 +130,12 @@
                   {{ $t("Add Release Attribute") }}
                 </v-card-title>
                 <v-card-text>
-                  <v-select
-                    v-bind:items="releaseAttributes"
-                    v-model="selectedReleaseAttribute"
-                    item-text="displayAs"
-                    item-value="searchTerm"
-                  ></v-select>
+                  <v-select v-bind:items="releaseAttributes" v-model="selectedReleaseAttribute" item-text="displayAs" item-value="searchTerm"></v-select>
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn
-                    color="secondary"
-                    v-on:click.stop="showAddReleaseAttributeDialog = false"
-                    >{{ $t("Cancel") }}</v-btn
-                  >
-                  <v-btn
-                    color="primary"
-                    v-on:click.stop="onAddReleaseAttributeDialogOK"
-                    >{{ $t("OK") }}</v-btn
-                  >
+                  <v-btn color="secondary" v-on:click.stop="showAddReleaseAttributeDialog = false">{{ $t("Cancel") }}</v-btn>
+                  <v-btn color="primary" v-on:click.stop="onAddReleaseAttributeDialogOK">{{ $t("OK") }}</v-btn>
                 </v-card-actions>
               </v-card>
             </v-menu>
@@ -203,21 +144,8 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn
-          class="xs-fullwidth"
-          color="secondary"
-          v-on:click.native="onCancelClick"
-          style="margin-left: 8px"
-          >{{ $t("Cancel") }}</v-btn
-        >
-        <v-btn
-          class="xs-fullwidth"
-          color="primary"
-          v-on:click.stop="onOKClick"
-          style="margin-left: 8px"
-        >
-          OK
-        </v-btn>
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCancelClick" style="margin-left: 8px">{{ $t("Cancel") }}</v-btn>
+        <v-btn class="xs-fullwidth" color="primary" v-on:click.stop="onOKClick" style="margin-left: 8px"> OK </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -250,18 +178,13 @@ export default {
     mediaItem(newValue) {
       logger.log("[mediaItem] changed:", newValue);
 
-      this.mediaItemBackup = newValue
-        ? JSON.parse(JSON.stringify(newValue))
-        : {};
+      this.mediaItemBackup = newValue ? JSON.parse(JSON.stringify(newValue)) : {};
     },
   },
 
   computed: {
     i18nCurrentMessages() {
-      logger.log(
-        "[i18nCurrentMessages] this.$i18n.messages[this.$i18n.locale]:",
-        this.$i18n.messages[this.$i18n.locale]
-      );
+      logger.log("[i18nCurrentMessages] this.$i18n.messages[this.$i18n.locale]:", this.$i18n.messages[this.$i18n.locale]);
       let messages = this.$i18n.messages[this.$i18n.locale];
       return messages || this.$i18n.messages["en"];
     },
@@ -275,11 +198,7 @@ export default {
           };
         })
         .sort((a, b) => helpers.compare(a.Name, b.Name, false))
-        .filter(
-          (item) =>
-            !this.mediaItem.Genres ||
-            !this.mediaItem.Genres.find((genre) => genre.name === item.GenreID)
-        );
+        .filter((item) => !this.mediaItem.Genres || !this.mediaItem.Genres.find((genre) => genre.name === item.GenreID));
     },
 
     arrayReleaseAttributesSearchTerms() {
@@ -287,29 +206,22 @@ export default {
         return [];
       }
 
-      return this.mediaItem.ReleaseAttributesSearchTerms.split(";").filter(
-        (item) => !!item
-      );
+      return this.mediaItem.ReleaseAttributesSearchTerms.split(";").filter((item) => !!item);
     },
 
     releaseAttributes() {
-      const raHave = this.arrayReleaseAttributesSearchTerms.map(
-        (searchTerm) => {
-          return {
-            searchTerm,
-            displayAs: this.getReleaseAttribute(searchTerm),
-            deleted: false,
-            sort: null,
-          };
-        }
-      );
+      const raHave = this.arrayReleaseAttributesSearchTerms.map((searchTerm) => {
+        return {
+          searchTerm,
+          displayAs: this.getReleaseAttribute(searchTerm),
+          deleted: false,
+          sort: null,
+        };
+      });
 
       return this.$shared.releaseAttributes
         .filter((item) => {
-          return (
-            !item.deleted &&
-            !raHave.find((have) => have.displayAs === item.displayAs)
-          );
+          return !item.deleted && !raHave.find((have) => have.displayAs === item.displayAs);
         })
         .map((item) => {
           return {
@@ -326,22 +238,14 @@ export default {
     async onOKClick() {
       // Check some fields
       if (!this.mediaItem.Name) {
-        return eventBus.showSnackbar(
-          "error",
-          this.$t("Primary Title is missing_")
-        );
+        return eventBus.showSnackbar("error", this.$t("Primary Title is missing_"));
       }
-      if (
-        this.mediaItem.startYear &&
-        !/\d\d\d\d/.test(this.mediaItem.startYear)
-      ) {
+      if (this.mediaItem.startYear && !/\d\d\d\d/.test(this.mediaItem.startYear)) {
         return eventBus.showSnackbar("error", this.$t("Year is malformed_"));
       }
 
       let hasChanges = false;
-      const diff = deepDiffMapper.prune(
-        deepDiffMapper.map(this.mediaItem, this.mediaItemBackup)
-      );
+      const diff = deepDiffMapper.prune(deepDiffMapper.map(this.mediaItem, this.mediaItemBackup));
 
       logger.log("[onOKClick] diff:", diff);
       logger.log("[onOKClick] Object.keys(diff):", Object.keys(diff));
@@ -352,35 +256,19 @@ export default {
       }
 
       if (Object.keys(diff).find((key) => key === "Name")) {
-        await store.updateMediaRecordField(
-          this.mediaItem.id_Movies,
-          "Name",
-          this.mediaItem.Name
-        );
+        await store.updateMediaRecordField(this.mediaItem.id_Movies, "Name", this.mediaItem.Name);
       }
 
       if (Object.keys(diff).find((key) => key === "Name2")) {
-        await store.updateMediaRecordField(
-          this.mediaItem.id_Movies,
-          "Name2",
-          this.mediaItem.Name2
-        );
+        await store.updateMediaRecordField(this.mediaItem.id_Movies, "Name2", this.mediaItem.Name2);
       }
 
       if (Object.keys(diff).find((key) => key === "startYear")) {
-        await store.updateMediaRecordField(
-          this.mediaItem.id_Movies,
-          "startYear",
-          this.mediaItem.startYear
-        );
+        await store.updateMediaRecordField(this.mediaItem.id_Movies, "startYear", this.mediaItem.startYear);
       }
 
       if (Object.keys(diff).find((key) => key === "MI_Quality")) {
-        await store.updateMediaRecordField(
-          this.mediaItem.id_Movies,
-          "MI_Quality",
-          this.mediaItem.MI_Quality
-        );
+        await store.updateMediaRecordField(this.mediaItem.id_Movies, "MI_Quality", this.mediaItem.MI_Quality);
       }
 
       if (Object.keys(diff).find((key) => key === "Genres")) {
@@ -390,13 +278,8 @@ export default {
         );
       }
 
-      if (
-        Object.keys(diff).find((key) => key === "ReleaseAttributesSearchTerms")
-      ) {
-        await store.updateMovieReleaseAttribues(
-          this.mediaItem.id_Movies,
-          this.mediaItem.ReleaseAttributesSearchTerms
-        );
+      if (Object.keys(diff).find((key) => key === "ReleaseAttributesSearchTerms")) {
+        await store.updateMovieReleaseAttribues(this.mediaItem.id_Movies, this.mediaItem.ReleaseAttributesSearchTerms);
       }
 
       if (Object.keys(diff).find((key) => key === "plotSummaryFull")) {
@@ -407,25 +290,15 @@ export default {
           omission: " ...",
         });
 
-        await store.updateMediaRecordField(
-          this.mediaItem.id_Movies,
-          "plotSummary",
-          plotSummary
-        );
-        await store.updateMediaRecordField(
-          this.mediaItem.id_Movies,
-          "plotSummaryFull",
-          plotSummaryFull
-        );
+        await store.updateMediaRecordField(this.mediaItem.id_Movies, "plotSummary", plotSummary);
+        await store.updateMediaRecordField(this.mediaItem.id_Movies, "plotSummaryFull", plotSummaryFull);
       }
 
       // /!\ Important /!\
       // If new fields are added to this dialog, also enhance store.deleteIMDBData
 
       // store fields that have been (re-)defined by the user
-      let definedByUser = await store.fetchMovieFieldsDefinedByUser(
-        this.mediaItem.id_Movies
-      );
+      let definedByUser = await store.fetchMovieFieldsDefinedByUser(this.mediaItem.id_Movies);
       const definedByUserOld = JSON.stringify(definedByUser);
 
       logger.log("[onOKClick] definedByUser (from db):", definedByUser);
@@ -439,11 +312,7 @@ export default {
       logger.log("[onOKClick] definedByUser (new):", definedByUser);
 
       if (definedByUserOld !== JSON.stringify(definedByUser)) {
-        await store.updateMediaRecordField(
-          this.mediaItem.id_Movies,
-          "DefinedByUser",
-          definedByUser.map((item) => `|${item}|`).join(",")
-        );
+        await store.updateMediaRecordField(this.mediaItem.id_Movies, "DefinedByUser", definedByUser.map((item) => `|${item}|`).join(","));
       }
 
       this.$emit("ok", hasChanges);
@@ -458,10 +327,7 @@ export default {
     },
 
     onRemoveGenre(index) {
-      logger.log(
-        "[onRemoveGenre] genre array (before):",
-        this.mediaItem.Genres
-      );
+      logger.log("[onRemoveGenre] genre array (before):", this.mediaItem.Genres);
 
       this.mediaItem.Genres.splice(index, 1);
 
@@ -469,8 +335,7 @@ export default {
     },
 
     onShowAddGenreDialog() {
-      this.selectedGenre =
-        this.genres.length > 0 ? this.genres[0].GenreID : null;
+      this.selectedGenre = this.genres.length > 0 ? this.genres[0].GenreID : null;
     },
 
     onAddGenreDialogOK() {
@@ -481,9 +346,7 @@ export default {
 
         this.mediaItem.Genres.push({
           name: this.selectedGenre,
-          translated: this.genres.find(
-            (genre) => genre.GenreID === this.selectedGenre
-          ).Name,
+          translated: this.genres.find((genre) => genre.GenreID === this.selectedGenre).Name,
         });
       }
 
@@ -492,13 +355,8 @@ export default {
 
     getReleaseAttribute(searchTerm) {
       logger.log("[getReleaseAttribute] searchTerm:", searchTerm);
-      logger.log(
-        "[getReleaseAttribute] EditMediaItemDialog this.$shared.releaseAttributes",
-        this.$shared.releaseAttributes
-      );
-      return this.$shared.releaseAttributes.find(
-        (ra) => ra.searchTerm === searchTerm
-      ).displayAs;
+      logger.log("[getReleaseAttribute] EditMediaItemDialog this.$shared.releaseAttributes", this.$shared.releaseAttributes);
+      return this.$shared.releaseAttributes.find((ra) => ra.searchTerm === searchTerm).displayAs;
     },
 
     onRemoveReleaseAttribute(index) {
@@ -515,18 +373,13 @@ export default {
     },
 
     onShowAddReleaseAttributeDialog() {
-      this.selectedReleaseAttribute =
-        this.releaseAttributes.length > 0
-          ? this.releaseAttributes[0].searchTerm
-          : null;
+      this.selectedReleaseAttribute = this.releaseAttributes.length > 0 ? this.releaseAttributes[0].searchTerm : null;
     },
 
     onAddReleaseAttributeDialogOK() {
       if (this.selectedReleaseAttribute) {
         this.mediaItem.ReleaseAttributesSearchTerms =
-          (this.mediaItem.ReleaseAttributesSearchTerms
-            ? this.mediaItem.ReleaseAttributesSearchTerms + ";"
-            : "") + this.selectedReleaseAttribute;
+          (this.mediaItem.ReleaseAttributesSearchTerms ? this.mediaItem.ReleaseAttributesSearchTerms + ";" : "") + this.selectedReleaseAttribute;
       }
 
       this.showAddReleaseAttributeDialog = false;

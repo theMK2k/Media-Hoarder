@@ -1,8 +1,5 @@
 <template>
-  <div
-    style="display: flex; flex-direction: column; width: 100%"
-    ref="mainContainer"
-  >
+  <div style="display: flex; flex-direction: column; width: 100%" ref="mainContainer">
     <v-row
       style="
         margin-bottom: 0px;
@@ -20,11 +17,7 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <span v-on="on">
-            <v-btn
-              text
-              v-on:click="$router.go(-1)"
-              style="padding: 0px; margin-top: 6px; margin-left: 0px"
-            >
+            <v-btn text v-on:click="$router.go(-1)" style="padding: 0px; margin-top: 6px; margin-left: 0px">
               <v-icon>mdi-arrow-left</v-icon>
             </v-btn>
           </span>
@@ -34,11 +27,7 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <span v-on="on">
-            <v-btn
-              text
-              v-on:click="onReload"
-              style="padding: 0px; margin-top: 6px; margin-left: 0px"
-            >
+            <v-btn text v-on:click="onReload" style="padding: 0px; margin-top: 6px; margin-left: 0px">
               <v-icon>mdi-reload</v-icon>
             </v-btn>
           </span>
@@ -46,9 +35,7 @@
         <span>{{ $t("Reload List") }}</span>
       </v-tooltip>
       <h1 style="margin-bottom: 0px; margin-top: 0px">
-        {{ $t(mediatype.toUpperCase()) }} ({{
-          itemsFiltered.length.toLocaleString($shared.uiLanguage)
-        }})
+        {{ $t(mediatype.toUpperCase()) }} ({{ itemsFiltered.length.toLocaleString($shared.uiLanguage) }})
         <v-tooltip bottom v-if="filtersList.length > 0">
           <template v-slot:activator="{ on }">
             <span v-on="on">*</span>
@@ -73,18 +60,11 @@
         item-value="Field"
         v-model="$shared.sortField"
         v-bind:label="$t('Sort')"
-        style="
-          margin-left: 8px;
-          margin-top: 8px;
-          max-width: 320px;
-          height: 40px;
-        "
+        style="margin-left: 8px; margin-top: 8px; max-width: 320px; height: 40px"
         v-on:change="onSortChanged"
       >
         <template v-slot:selection="{ item }">
-          <span class="grey--text caption" style="margin-right: 8px">{{
-            $t("Sort by")
-          }}</span>
+          <span class="grey--text caption" style="margin-right: 8px">{{ $t("Sort by") }}</span>
           <span>{{ $t(item.Description) }}</span>
         </template>
       </v-select>
@@ -92,11 +72,7 @@
       <v-spacer></v-spacer>
 
       <div v-if="numPages">
-        <mk-pagination
-          v-bind:length="numPages"
-          v-bind:pages="paginationItems"
-          v-model="$shared.currentPage"
-        ></mk-pagination>
+        <mk-pagination v-bind:length="numPages" v-bind:pages="paginationItems" v-model="$shared.currentPage"></mk-pagination>
       </div>
 
       <!-- workaround - else the mk-pagination would fuck off to the right when sidenav is shown -->
@@ -109,72 +85,31 @@
     </v-row>
 
     <!-- mk-scrollcontainer -->
-    <v-container
-      class="pa-2"
-      style="max-width: 100% !important; margin-top: 60px"
-    >
+    <v-container class="pa-2" style="max-width: 100% !important; margin-top: 60px">
       <v-row v-for="(item, i) in itemsFilteredPaginated" v-bind:key="i">
         <v-col style="padding-bottom: 0px">
-          <v-card
-            dark
-            flat
-            hover
-            v-bind:ripple="false"
-            v-on:click="selectItem(item)"
-          >
-            <v-list-item
-              three-line
-              style="padding-left: 0px; padding-right: 0px"
-            >
-              <div
-                v-on:mouseover="setItemHovered(item, 'avatar', true)"
-                v-on:mouseleave="setItemHovered(item, 'avatar', false)"
-              >
-                <v-list-item-avatar
-                  tile
-                  style="margin: 6px; height: 190px; width: 130px"
-                  v-on:click.stop="launch(item)"
-                >
+          <v-card dark flat hover v-bind:ripple="false" v-on:click="selectItem(item)">
+            <v-list-item three-line style="padding-left: 0px; padding-right: 0px">
+              <div v-on:mouseover="setItemHovered(item, 'avatar', true)" v-on:mouseleave="setItemHovered(item, 'avatar', false)">
+                <v-list-item-avatar tile style="margin: 6px; height: 190px; width: 130px" v-on:click.stop="launch(item)">
                   <img
                     v-show="item.avatarHovered"
-                    style="
-                      height: 190px;
-                      width: 130px;
-                      position: absolute;
-                      z-index: 1;
-                      opacity: 0.5;
-                      border-radius: 6px;
-                    "
+                    style="height: 190px; width: 130px; position: absolute; z-index: 1; opacity: 0.5; border-radius: 6px"
                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAACWCAYAAAAVKkwgAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAXYSURBVHhe7dx/TNR1HMfxu+OH44cBGpACZ1JkNWor15orfgSJm2nR+tPNidEfNv/gD1s2FAbh0uUfbTT7sdVyYf9Q8586ySUTJdO2pDVlCdHgvCuUwQHHyf3i7PP58j12FBHIhfd5fV+PjX2/fO87/3nu3vf5fv0eZpPJZBU/BMqibwkUA4NjYHAMDI6BwTEwOAYGx8DgGBgcA4NjYHAMDI6BwTEwOAYGx8DgGBgcA4NjYHAMDI6BwTEwOAYGx8DgGBgcA4NjYHAMDI6BwTEwOAYGx8DgGBgcA4NjYHAMDI6BwTEwOAYGx8DgGBgcA4NjYHAMDI6BwTEwuDjxkza9q4bz7edKs7OyPZ0XOm/ph2geSv296BuOwYNZmVnVoVDI1z/Qf+S5zWXH7dftQf1lmoOSI9pisazIX59f19vdY2v7uu0p/TDNQanAAX9gQm49Hk/H1NTUeGJi4oYtmyu+HLkx/N7+N/ZnaifRLEoFHh0bc8itCFsQFxd3j3bQZJrKSM94uanh7fa+X3971ZpnjdePk4Cwio4T7+YJGZxj+58gLpNE3FS5FYuvSY7t2SACh4nFV5K+y7GtgwocgWNbp1TgQMDvk1uzoB2YB8f2NKUCj7hcN/XdBY9co49t1BE9F0OObSMFNuTYNlTgsL+P7UONTR0Dvf2vI45tQwaOoI1tETzFarW+Kcb26bPfnX1Wfw2CUoGHh4fH5VYsohO0A1EQMbZvibH9QElR8YnRm67mhrqGNdoJilMqsP26XQssRH2Uindxsr4bTEtLe/HAW7VnEMa20Uf0XOKRxjYDzwFpbDPwPBDGNgMvjLJjW6nArV+1DsmtGKHhd9ayUXVsK/XQnXTbFxrQd+82+bBfvAjucTgc7xeVFX8ciw8AckTfOSXGNgMvgQpjm4GjILzaDt0OydX2Czk5Ocu+Rvg3DBxd4s0cCjqdzpj51oVygQOBgPbobCyRI1puLWZLotvt/lY7GCOUW0X7J3zfJyQk5Oq/3lVikeUWn8Mr5b7X6+2+cPGHhvIt5Re1F2MER/QdEO/YSbmRcUXkkZ7entoNhQ9vj7W4EgMvkojrE4sq+cBAaGho6Piu6qoSEbclVr8Ex8ALJN6pHrkVcVd4PJ7OTz77tCIrN7uu5YuW8H9hxiTlPoN9bm+7vObUf/3fyZsZ4etdscDr/6nrcuOmok1ntBcVoOIqWrsfvUyCMq6IPG63248UlRVXqBRX4oieg76IkuJdLlfrgfqDZesK7j926cdL2oP3KmHgCHIcy61cRE1OTnZ9c8pWueq+1fsOv3t4OadGVDGwoC+g5GVPajAYHLpy9UpNcnpK5bbKbV3TZ6jL8IHl/WMRNkWM5YDzD2fzS69Uljz25OMn9ZeVp1xgEWJM310S8e9MX/aYLfFj42O2Dz76sCJ3fd5RW5tNO45CucBihC7pujPiczbF7/df6zh/bkd6ZsaevTV7+7UTwBhmROsr45nLnr7f++oKHn1oa+nzpZ3TZ2AyRGARN3x7UX47omVXddUzDz5SYIi/sQUdWF8dz9xe/PxEy9Z712bWxvrtxWiCDBz+nJWrY3l78fLPXXtSV63csXP3zmvaCQaiXGCfz/dfNx20z1m5SnY4HUfl7cWNT2+06a8ZjnKBxbvTr+/Ooi+ipHjXqOtk0zuHyvPyrc0q3l6MJuVHdMRlT5LX6/1Fu72YvbqmvrH+T+0Eg1M2sAg7LDYztxevdnfvS0pL3o5wezGalA1sNpvl52xgcHDwWNVru8sKnyhs1V+iCMoGdk+4T8vbi2vWrT1ipMuexVLuiQ5aHOUXWTQ/BgbHwOAYGBwDg2NgcAwMjoHBMTA4BgbHwOAYGBwDg2NgcAwMjoHBMTA4BgbHwOAYGBwDg2NgcAwMjoHBMTA4BgbHwOAYGBwDg2NgcAwMjoHBMTA4BgbHwOAYGBwDg2NgcAwMjoHBMTA4BgbHwOAYGBwDg2NgcAwMjoHBMTA4BgbHwOAYGJrJ9BeV/2YuhRswVQAAAABJRU5ErkJggg=="
                   />
 
-                  <v-img
-                    contain
-                    v-if="item.IMDB_posterSmall_URL"
-                    v-bind:src="item.IMDB_posterSmall_URL"
-                    style="border-radius: 6px"
-                  ></v-img>
-                  <v-icon v-if="!item.IMDB_posterSmall_URL" disabled x-large>
-                    mdi-filmstrip
-                  </v-icon>
+                  <v-img contain v-if="item.IMDB_posterSmall_URL" v-bind:src="item.IMDB_posterSmall_URL" style="border-radius: 6px"></v-img>
+                  <v-icon v-if="!item.IMDB_posterSmall_URL" disabled x-large> mdi-filmstrip </v-icon>
 
                   <div class="duration-overlay-container" v-if="item.Duration">
                     <span class="duration-overlay">{{ item.Duration }}</span>
                   </div>
                 </v-list-item-avatar>
               </div>
-              <v-list-item-content
-                class="align-self-start"
-                style="padding: 0px"
-              >
+              <v-list-item-content class="align-self-start" style="padding: 0px">
                 <v-col style="padding: 0px !important; margin-top: 16px">
                   <v-row style="margin: 0px">
-                    <div
-                      style="
-                        margin-left: 4px;
-                        max-width: -webkit-fill-available;
-                      "
-                    >
+                    <div style="margin-left: 4px; max-width: -webkit-fill-available">
                       <v-list-item-title
                         class="headline mb-2"
                         style="margin-bottom: 0px !important"
@@ -182,26 +117,19 @@
                         v-on:mouseleave="setItemHovered(item, 'name', false)"
                       >
                         <div style="display: flex; min-height: 30px">
-                          <div
-                            style="overflow: hidden; text-overflow: ellipsis"
-                          >
-                            <word-highlighter
-                              v-bind:query="$shared.searchText || ''"
-                            >
+                          <div style="overflow: hidden; text-overflow: ellipsis">
+                            <word-highlighter v-bind:query="$shared.searchText || ''">
                               {{ item.Name }}
                             </word-highlighter>
                             <span>
                               <span
                                 v-bind:class="{
-                                  'mk-search-highlight':
-                                    $shared.filterYearsActive,
+                                  'mk-search-highlight': $shared.filterYearsActive,
                                 }"
                               >
                                 {{ item.yearDisplay }}
                               </span>
-                              <span v-show="item.NumExtras"
-                                >+{{ item.NumExtras }}</span
-                              >
+                              <span v-show="item.NumExtras">+{{ item.NumExtras }}</span>
                             </span>
                           </div>
 
@@ -212,17 +140,13 @@
                                   <v-icon
                                     v-show="item.nameHovered || item.selected"
                                     class="mk-clickable"
-                                    v-on:click.stop="
-                                      onOpenEditMediaItemDialog(item)
-                                    "
+                                    v-on:click.stop="onOpenEditMediaItemDialog(item)"
                                     style="margin-left: 8px; margin-bottom: 3px"
                                     >mdi-pencil</v-icon
                                   >
                                 </span>
                               </template>
-                              <span style="margin-left: ">{{
-                                $t("Edit Movie")
-                              }}</span>
+                              <span style="margin-left: ">{{ $t("Edit Movie") }}</span>
                             </v-tooltip>
 
                             <v-tooltip bottom>
@@ -275,9 +199,7 @@
                                   <v-icon
                                     v-show="item.nameHovered || item.selected"
                                     class="mk-clickable-red"
-                                    v-on:click.stop="
-                                      onShowDeleteMediaDialog(item)
-                                    "
+                                    v-on:click.stop="onShowDeleteMediaDialog(item)"
                                     style="margin-left: 8px; margin-bottom: 3px"
                                     v-bind:disabled="isScanning"
                                     >mdi-delete</v-icon
@@ -302,9 +224,7 @@
                         v-on:mouseleave="setItemHovered(item, 'name2', false)"
                       >
                         <!-- v-if="item.Name2 || item.selected" -->
-                        <word-highlighter
-                          v-bind:query="$shared.searchText || ''"
-                        >
+                        <word-highlighter v-bind:query="$shared.searchText || ''">
                           {{ item.Name2 }}
                         </word-highlighter>
                       </v-list-item-subtitle>
@@ -314,14 +234,9 @@
                           <span
                             class="mk-clickable"
                             v-bind:class="{
-                              'mk-search-highlight':
-                                $shared.filterQualitiesAppliedContains(
-                                  item.MI_Quality
-                                ),
+                              'mk-search-highlight': $shared.filterQualitiesAppliedContains(item.MI_Quality),
                             }"
-                            v-on:click.stop="
-                              onVideoQualityClicked(item.MI_Quality)
-                            "
+                            v-on:click.stop="onVideoQualityClicked(item.MI_Quality)"
                             >{{ item.MI_Quality }}</span
                           >
                         </span>
@@ -330,8 +245,7 @@
                           <span
                             class="mk-clickable"
                             v-bind:class="{
-                              'mk-search-highlight':
-                                $shared.filterAgeRatingsActive,
+                              'mk-search-highlight': $shared.filterAgeRatingsActive,
                             }"
                             v-on:click.stop="onAgeRatingClicked(item.AgeRating)"
                             >{{ item.AgeRating }}</span
@@ -339,18 +253,12 @@
                         </span>
                         <span v-if="item.Genres">
                           |
-                          <span
-                            v-for="(genre, index) in item.Genres"
-                            v-bind:key="genre.name"
-                          >
+                          <span v-for="(genre, index) in item.Genres" v-bind:key="genre.name">
                             <span>{{ index > 0 ? ", " : "" }}</span>
                             <span
                               class="mk-clickable"
                               v-bind:class="{
-                                'mk-search-highlight':
-                                  $shared.filterGenresAppliedContains(
-                                    genre.translated
-                                  ),
+                                'mk-search-highlight': $shared.filterGenresAppliedContains(genre.translated),
                               }"
                               v-on:click.stop="onGenreClicked(genre)"
                               >{{ genre.translated }}</span
@@ -361,24 +269,14 @@
                         <span v-if="item.AudioLanguages">
                           |
                           <v-icon small>mdi-comment-outline</v-icon>
-                          <span
-                            v-for="(lang, index) in item.AudioLanguages"
-                            v-bind:key="lang"
-                          >
+                          <span v-for="(lang, index) in item.AudioLanguages" v-bind:key="lang">
                             <span>{{ index > 0 ? ", " : " " }}</span>
                             <span
                               class="mk-clickable"
                               v-bind:class="{
-                                'mk-search-highlight':
-                                  $shared.filterAudioLanguagesAppliedContains(
-                                    lang,
-                                    item.AudioLanguages,
-                                    item.Audio_Languages
-                                  ),
+                                'mk-search-highlight': $shared.filterAudioLanguagesAppliedContains(lang, item.AudioLanguages, item.Audio_Languages),
                               }"
-                              v-on:click.stop="
-                                onLanguageClicked(lang, 'audio', item)
-                              "
+                              v-on:click.stop="onLanguageClicked(lang, 'audio', item)"
                               >{{ lang }}</span
                             >
                           </span>
@@ -386,27 +284,15 @@
 
                         <span v-if="item.SubtitleLanguages">
                           |
-                          <v-icon small style="margin-top: -3px"
-                            >mdi-subtitles-outline</v-icon
-                          >
-                          <span
-                            v-for="(lang, index) in item.SubtitleLanguages"
-                            v-bind:key="lang"
-                          >
+                          <v-icon small style="margin-top: -3px">mdi-subtitles-outline</v-icon>
+                          <span v-for="(lang, index) in item.SubtitleLanguages" v-bind:key="lang">
                             <span>{{ index > 0 ? ", " : " " }}</span>
                             <span
                               class="mk-clickable"
                               v-bind:class="{
-                                'mk-search-highlight':
-                                  $shared.filterSubtitleLanguagesAppliedContains(
-                                    lang,
-                                    item.AudioLanguages,
-                                    item.Audio_Languages
-                                  ),
+                                'mk-search-highlight': $shared.filterSubtitleLanguagesAppliedContains(lang, item.AudioLanguages, item.Audio_Languages),
                               }"
-                              v-on:click.stop="
-                                onLanguageClicked(lang, 'subtitle', item)
-                              "
+                              v-on:click.stop="onLanguageClicked(lang, 'subtitle', item)"
                               >{{ lang }}</span
                             >
                           </span>
@@ -414,24 +300,14 @@
 
                         <span v-if="item.Video_Encoder_Display">
                           |
-                          <span
-                            v-for="(
-                              videoEncoder, index
-                            ) in item.Video_Encoder_Display"
-                            v-bind:key="index"
-                          >
+                          <span v-for="(videoEncoder, index) in item.Video_Encoder_Display" v-bind:key="index">
                             <span>{{ index > 0 ? ", " : " " }}</span>
                             <span
                               class="mk-clickable"
                               v-bind:class="{
-                                'mk-search-highlight':
-                                  $shared.filterVideoEncodersAppliedContains(
-                                    videoEncoder
-                                  ),
+                                'mk-search-highlight': $shared.filterVideoEncodersAppliedContains(videoEncoder),
                               }"
-                              v-on:click.stop="
-                                onVideoEncoderClicked(videoEncoder, item)
-                              "
+                              v-on:click.stop="onVideoEncoderClicked(videoEncoder, item)"
                               >{{ videoEncoder }}</span
                             >
                           </span>
@@ -439,24 +315,14 @@
 
                         <span v-if="item.Audio_Format_Display">
                           |
-                          <span
-                            v-for="(
-                              audioFormat, index
-                            ) in item.Audio_Format_Display"
-                            v-bind:key="index"
-                          >
+                          <span v-for="(audioFormat, index) in item.Audio_Format_Display" v-bind:key="index">
                             <span>{{ index > 0 ? ", " : " " }}</span>
                             <span
                               class="mk-clickable"
                               v-bind:class="{
-                                'mk-search-highlight':
-                                  $shared.filterAudioFormatsAppliedContains(
-                                    audioFormat
-                                  ),
+                                'mk-search-highlight': $shared.filterAudioFormatsAppliedContains(audioFormat),
                               }"
-                              v-on:click.stop="
-                                onAudioFormatClicked(audioFormat, item)
-                              "
+                              v-on:click.stop="onAudioFormatClicked(audioFormat, item)"
                               >{{ audioFormat }}</span
                             >
                           </span>
@@ -464,27 +330,14 @@
 
                         <span v-if="item.ReleaseAttributes">
                           |
-                          <span
-                            v-for="(
-                              releaseAttribute, index
-                            ) in item.ReleaseAttributes"
-                            v-bind:key="releaseAttribute"
-                          >
+                          <span v-for="(releaseAttribute, index) in item.ReleaseAttributes" v-bind:key="releaseAttribute">
                             <span>{{ index > 0 ? ", " : " " }}</span>
                             <span
                               class="mk-clickable"
                               v-bind:class="{
-                                'mk-search-highlight':
-                                  $shared.filterReleaseAttributesAppliedContains(
-                                    releaseAttribute
-                                  ),
+                                'mk-search-highlight': $shared.filterReleaseAttributesAppliedContains(releaseAttribute),
                               }"
-                              v-on:click.stop="
-                                onShowReleaseAttributeDialog(
-                                  releaseAttribute,
-                                  item
-                                )
-                              "
+                              v-on:click.stop="onShowReleaseAttributeDialog(releaseAttribute, item)"
                               >{{ releaseAttribute }}</span
                             >
                           </span>
@@ -495,28 +348,14 @@
                     <div>
                       <div
                         class="headline mb-2"
-                        style="
-                          margin-right: 16px;
-                          margin-left: 0px;
-                          margin-bottom: 0px !important;
-                        "
+                        style="margin-right: 16px; margin-left: 0px; margin-bottom: 0px !important"
                         v-if="item.IMDB_rating_defaultDisplay"
                       >
-                        <v-icon small color="amber" style="padding-bottom: 4px"
-                          >mdi-star</v-icon
-                        >
-                        <a
-                          class="headline mb-2 mk-clickable"
-                          v-on:click.stop="onShowRatingDemographicsDialog(item)"
-                          >{{ item.IMDB_rating_defaultDisplay }}</a
-                        >
+                        <v-icon small color="amber" style="padding-bottom: 4px">mdi-star</v-icon>
+                        <a class="headline mb-2 mk-clickable" v-on:click.stop="onShowRatingDemographicsDialog(item)">{{ item.IMDB_rating_defaultDisplay }}</a>
                         <span
                           v-if="item.IMDB_metacriticScore"
-                          v-bind:class="
-                            helpers.getMetaCriticClass(
-                              item.IMDB_metacriticScore
-                            )
-                          "
+                          v-bind:class="helpers.getMetaCriticClass(item.IMDB_metacriticScore)"
                           style="padding: 4px; margin-left: 4px"
                           >{{ item.IMDB_metacriticScore }}</span
                         >
@@ -535,10 +374,7 @@
                             inactive-color="grey"
                             active-color="#ffc107"
                             style="margin-right: 26px; padding: 0px !important"
-                            v-bind:star-points="[
-                              7, 3, 6, 6, 2, 6, 5, 8, 4, 12, 7, 10, 10, 12, 9,
-                              8, 12, 6, 8, 6,
-                            ]"
+                            v-bind:star-points="[7, 3, 6, 6, 2, 6, 5, 8, 4, 12, 7, 10, 10, 12, 9, 8, 12, 6, 8, 6]"
                             v-bind:glow="1"
                             v-on:rating-selected="changeRating(item)"
                           ></star-rating>
@@ -547,47 +383,29 @@
                     </div>
                   </v-row>
 
-                  <v-row
-                    v-if="item.plotSummary"
-                    style="margin: 4px 6px 8px 4px"
-                  >
-                    <div
-                      v-show="!item.selected"
-                      style="font-size: 0.875rem; font-weight: normal"
-                    >
+                  <v-row v-if="item.plotSummary" style="margin: 4px 6px 8px 4px">
+                    <div v-show="!item.selected" style="font-size: 0.875rem; font-weight: normal">
                       <word-highlighter v-bind:query="$shared.searchText || ''">
                         {{ item.plotSummary }}
                       </word-highlighter>
                     </div>
-                    <div
-                      v-show="item.selected"
-                      style="font-size: 0.875rem; font-weight: normal"
-                    >
+                    <div v-show="item.selected" style="font-size: 0.875rem; font-weight: normal">
                       {{ item.plotSummaryFull || item.plotSummary }}
                     </div>
                   </v-row>
 
-                  <v-row
-                    v-if="item.IMDB_Top_Directors"
-                    class="mk-main-detail-row"
-                  >
+                  <v-row v-if="item.IMDB_Top_Directors" class="mk-main-detail-row">
                     <div style="font-size: 0.875rem; font-weight: normal">
                       <div style="float: left; width: 100px; overflow: hidden">
-                        <strong class="CreditCategory"
-                          >{{ $t("Directed by") }}:</strong
-                        >
+                        <strong class="CreditCategory">{{ $t("Directed by") }}:</strong>
                       </div>
                       <div style="overflow: hidden">
-                        <span
-                          v-for="(credit, i) in item.IMDB_Top_Directors"
-                          v-bind:key="credit.id_Movies_IMDB_Credits"
-                        >
+                        <span v-for="(credit, i) in item.IMDB_Top_Directors" v-bind:key="credit.id_Movies_IMDB_Credits">
                           <span v-if="i > 0">,&nbsp;</span>
                           <a
                             class="mk-clickable"
                             v-bind:class="{
-                              'mk-search-highlight':
-                                $shared.filterPersonsAppliedContains(credit),
+                              'mk-search-highlight': $shared.filterPersonsAppliedContains(credit),
                             }"
                             v-on:click.stop="onCreditClicked(credit)"
                             >{{ credit.name }}</a
@@ -597,27 +415,18 @@
                     </div>
                   </v-row>
 
-                  <v-row
-                    v-if="item.IMDB_Top_Writers"
-                    class="mk-main-detail-row"
-                  >
+                  <v-row v-if="item.IMDB_Top_Writers" class="mk-main-detail-row">
                     <div style="font-size: 0.875rem; font-weight: normal">
                       <div style="float: left; width: 100px; overflow: hidden">
-                        <strong class="CreditCategory"
-                          >{{ $t("Written by") }}:</strong
-                        >
+                        <strong class="CreditCategory">{{ $t("Written by") }}:</strong>
                       </div>
                       <div style="overflow: hidden">
-                        <span
-                          v-for="(credit, i) in item.IMDB_Top_Writers"
-                          v-bind:key="credit.id_Movies_IMDB_Credits"
-                        >
+                        <span v-for="(credit, i) in item.IMDB_Top_Writers" v-bind:key="credit.id_Movies_IMDB_Credits">
                           <span v-if="i > 0">,&nbsp;</span>
                           <a
                             class="mk-clickable"
                             v-bind:class="{
-                              'mk-search-highlight':
-                                $shared.filterPersonsAppliedContains(credit),
+                              'mk-search-highlight': $shared.filterPersonsAppliedContains(credit),
                             }"
                             v-on:click.stop="onCreditClicked(credit)"
                             >{{ credit.name }}</a
@@ -630,21 +439,15 @@
                   <v-row v-if="item.IMDB_Top_Cast" class="mk-main-detail-row">
                     <div style="font-size: 0.875rem; font-weight: normal">
                       <div style="float: left; width: 100px; overflow: hidden">
-                        <strong class="CreditCategory"
-                          >{{ $t("Cast") }}:</strong
-                        >
+                        <strong class="CreditCategory">{{ $t("Cast") }}:</strong>
                       </div>
                       <div style="overflow: hidden">
-                        <span
-                          v-for="(credit, i) in item.IMDB_Top_Cast"
-                          v-bind:key="credit.id_Movies_IMDB_Credits"
-                        >
+                        <span v-for="(credit, i) in item.IMDB_Top_Cast" v-bind:key="credit.id_Movies_IMDB_Credits">
                           <span v-if="i > 0">,&nbsp;</span>
                           <a
                             class="mk-clickable"
                             v-bind:class="{
-                              'mk-search-highlight':
-                                $shared.filterPersonsAppliedContains(credit),
+                              'mk-search-highlight': $shared.filterPersonsAppliedContains(credit),
                             }"
                             v-on:click.stop="onCreditClicked(credit)"
                             >{{ credit.name }}</a
@@ -654,29 +457,18 @@
                     </div>
                   </v-row>
 
-                  <v-row
-                    v-if="item.IMDB_Top_Production_Companies"
-                    class="mk-main-detail-row"
-                  >
+                  <v-row v-if="item.IMDB_Top_Production_Companies" class="mk-main-detail-row">
                     <div style="font-size: 0.875rem; font-weight: normal">
                       <div style="float: left; width: 100px; overflow: hidden">
-                        <strong class="CreditCategory"
-                          >{{ $t("Production") }}:</strong
-                        >
+                        <strong class="CreditCategory">{{ $t("Production") }}:</strong>
                       </div>
                       <div style="overflow: hidden">
-                        <span
-                          v-for="(
-                            company, i
-                          ) in item.IMDB_Top_Production_Companies"
-                          v-bind:key="i"
-                        >
+                        <span v-for="(company, i) in item.IMDB_Top_Production_Companies" v-bind:key="i">
                           <span v-if="i > 0">,&nbsp;</span>
                           <a
                             class="mk-clickable"
                             v-bind:class="{
-                              'mk-search-highlight':
-                                $shared.filterCompaniesAppliedContains(company),
+                              'mk-search-highlight': $shared.filterCompaniesAppliedContains(company),
                             }"
                             v-on:click.stop="onCompanyClicked(company)"
                             >{{ company.name }}</a
@@ -689,42 +481,15 @@
               </v-list-item-content>
             </v-list-item>
 
-            <v-row
-              v-if="item.scanErrors && Object.keys(item.scanErrors).length"
-              style="margin: 8px"
-            >
+            <v-row v-if="item.scanErrors && Object.keys(item.scanErrors).length" style="margin: 8px">
               <v-alert type="warning" dense colored-border border="left">
-                <span
-                  class="mk-clickable"
-                  v-on:click.stop="item.showScanErrors = !item.showScanErrors"
-                  >{{
-                    $t(
-                      "Errors were encountered during the scan, consider a re-scan_"
-                    )
-                  }}
+                <span class="mk-clickable" v-on:click.stop="item.showScanErrors = !item.showScanErrors"
+                  >{{ $t("Errors were encountered during the scan, consider a re-scan_") }}
                 </span>
-                <v-btn
-                  small
-                  text
-                  color="primary"
-                  v-on:click.stop="clearScanErrors(item)"
-                  >{{ $t("Clear this message") }}</v-btn
-                >
+                <v-btn small text color="primary" v-on:click.stop="clearScanErrors(item)">{{ $t("Clear this message") }}</v-btn>
                 <v-row v-if="item.showScanErrors" style="margin: 0px">
-                  <ul
-                    style="
-                      font-size: 0.875rem;
-                      margin-left: 4px;
-                      margin-top: 8px;
-                    "
-                  >
-                    <li
-                      v-for="(val, key) in item.scanErrors"
-                      v-bind:key="key"
-                      v-on:click.stop="
-                        item.showScanErrors = !item.showScanErrors
-                      "
-                    >
+                  <ul style="font-size: 0.875rem; margin-left: 4px; margin-top: 8px">
+                    <li v-for="(val, key) in item.scanErrors" v-bind:key="key" v-on:click.stop="item.showScanErrors = !item.showScanErrors">
                       {{ $t(key) }}:
                       {{ val.message ? $t(val.message, val.data) : val }}
                     </li>
@@ -745,9 +510,7 @@
                       'mk-search-highlight': $shared.filterSourcePathsActive,
                     }"
                     >{{ item.SourcePath }}{{ pathSeparator }}</word-highlighter
-                  ><word-highlighter v-bind:query="$shared.searchText || ''">{{
-                    item.RelativePath
-                  }}</word-highlighter></v-col
+                  ><word-highlighter v-bind:query="$shared.searchText || ''">{{ item.RelativePath }}</word-highlighter></v-col
                 >
               </v-row>
               <v-row class="mk-detail-row">
@@ -780,19 +543,14 @@
                 <v-col class="detailLabel"
                   ><strong>{{ $t("Size") }}:</strong></v-col
                 >
-                <v-col v-if="item.Size" class="detailContent">{{
-                  Humanize().fileSize(item.Size)
-                }}</v-col>
+                <v-col v-if="item.Size" class="detailContent">{{ Humanize().fileSize(item.Size) }}</v-col>
               </v-row>
               <v-row class="mk-detail-row">
                 <v-col class="detailLabel"
                   ><strong>{{ $t("File Created at") }}:</strong></v-col
                 >
                 <v-col v-if="item.file_created_at" class="detailContent">{{
-                  moment()
-                    .utc(parseInt(item.file_created_at))
-                    .local()
-                    .format("YYYY-MM-DD HH:mm:ss")
+                  moment().utc(parseInt(item.file_created_at)).local().format("YYYY-MM-DD HH:mm:ss")
                 }}</v-col>
               </v-row>
               <v-row class="mk-detail-row">
@@ -811,32 +569,18 @@
                 >
                 <v-col class="detailContent">
                   <span v-if="item.lists && item.lists.length > 0">
-                    <span
-                      v-for="(list, index) in item.lists"
-                      v-bind:key="index"
-                    >
+                    <span v-for="(list, index) in item.lists" v-bind:key="index">
                       <span v-if="index > 0">,&nbsp;</span>
                       <span
                         v-bind:class="{
-                          'mk-search-highlight':
-                            $shared.filterListsAppliedContains(list.Name),
+                          'mk-search-highlight': $shared.filterListsAppliedContains(list.Name),
                         }"
                         >{{ list.Name }}</span
                       >
                     </span>
                   </span>
-                  <span v-if="!item.lists || item.lists.length === 0"
-                    >&lt;{{ $t("not in any list") }}&gt;</span
-                  >
-                  <v-btn
-                    class="mk-btn-small"
-                    text
-                    small
-                    color="primary"
-                    v-on:click.stop="addToList(item)"
-                    style="margin-top: -1px"
-                    >{{ $t("Add") }}</v-btn
-                  >
+                  <span v-if="!item.lists || item.lists.length === 0">&lt;{{ $t("not in any list") }}&gt;</span>
+                  <v-btn class="mk-btn-small" text small color="primary" v-on:click.stop="addToList(item)" style="margin-top: -1px">{{ $t("Add") }}</v-btn>
                   <v-btn
                     v-if="item.lists && item.lists.length > 0"
                     class="mk-btn-small"
@@ -852,13 +596,7 @@
 
               <!-- Extras -->
               <div v-if="item.NumExtras">
-                <v-row
-                  style="
-                    padding-left: 16px;
-                    padding-top: 8px;
-                    align-items: flex-end;
-                  "
-                >
+                <v-row style="padding-left: 16px; padding-top: 8px; align-items: flex-end">
                   <span style="font-size: 20px">{{ $t("Extras") }}&nbsp;</span>
                 </v-row>
 
@@ -866,11 +604,7 @@
                   v-for="extra in item.extras"
                   v-bind:key="extra.fullPath"
                   class="mk-clickable"
-                  style="
-                    padding-left: 24px;
-                    padding-top: 4px;
-                    align-items: flex-end;
-                  "
+                  style="padding-left: 24px; padding-top: 4px; align-items: flex-end"
                   v-on:click.stop="launch(extra)"
                   >{{ extra.Name }}</v-row
                 >
@@ -885,49 +619,27 @@
                   }"
                   v-on:click.stop="showCredits(item, !item.showCredits)"
                 >
-                  <span class="mk-item-detailcategory-header"
-                    >{{
-                      $t("Credits") + (!item.showCredits ? " »" : "")
-                    }}&nbsp;</span
-                  >
+                  <span class="mk-item-detailcategory-header">{{ $t("Credits") + (!item.showCredits ? " »" : "") }}&nbsp;</span>
                 </v-row>
 
-                <div
-                  class="mk-item-detailcategory-content"
-                  v-if="item.showCredits"
-                  v-on:click.stop="showCredits(item, false)"
-                >
-                  <v-row
-                    v-if="!item.credits || item.credits.length === 0"
-                    style="margin-top: 8px; margin-left: 16px"
-                  >
+                <div class="mk-item-detailcategory-content" v-if="item.showCredits" v-on:click.stop="showCredits(item, false)">
+                  <v-row v-if="!item.credits || item.credits.length === 0" style="margin-top: 8px; margin-left: 16px">
                     {{ $t("none provided") }}
                   </v-row>
 
-                  <div
-                    v-for="creditCategory in item.credits"
-                    v-bind:key="creditCategory.Category"
-                    style="margin-left: 24px"
-                  >
+                  <div v-for="creditCategory in item.credits" v-bind:key="creditCategory.Category" style="margin-left: 24px">
                     <v-row style="margin-top: 12px">
-                      <strong>{{
-                        $t(`CreditCategories.${creditCategory.category}`)
-                      }}</strong>
+                      <strong>{{ $t(`CreditCategories.${creditCategory.category}`) }}</strong>
                     </v-row>
                     <!--  v-on:mouseover="setItemHovered(credit, 'credit', true)"
                     v-on:mouseleave="setItemHovered(credit, 'credit', false)"
                   -->
-                    <v-row
-                      v-for="credit in creditCategory.items"
-                      v-bind:key="credit.id_Movies_IMDB_Credits"
-                      class="mk-highlightable-row"
-                    >
+                    <v-row v-for="credit in creditCategory.items" v-bind:key="credit.id_Movies_IMDB_Credits" class="mk-highlightable-row">
                       <v-col sm="4" class="creditsLabel">
                         <a
                           class="mk-clickable"
                           v-bind:class="{
-                            'mk-search-highlight':
-                              $shared.filterPersonsAppliedContains(credit),
+                            'mk-search-highlight': $shared.filterPersonsAppliedContains(credit),
                           }"
                           v-on:click.stop="onCreditClicked(credit)"
                           >{{ credit.name }}</a
@@ -951,46 +663,24 @@
                   }"
                   v-on:click.stop="showCompanies(item, !item.showCompanies)"
                 >
-                  <span class="mk-item-detailcategory-header"
-                    >{{
-                      $t("Companies") + (!item.showCompanies ? " »" : "")
-                    }}&nbsp;</span
-                  >
+                  <span class="mk-item-detailcategory-header">{{ $t("Companies") + (!item.showCompanies ? " »" : "") }}&nbsp;</span>
                 </v-row>
 
-                <div
-                  class="mk-item-detailcategory-content"
-                  v-if="item.showCompanies"
-                  v-on:click.stop="showCompanies(item, false)"
-                >
-                  <v-row
-                    v-if="!item.companies || item.companies.length === 0"
-                    style="margin-top: 8px; margin-left: 16px"
-                  >
+                <div class="mk-item-detailcategory-content" v-if="item.showCompanies" v-on:click.stop="showCompanies(item, false)">
+                  <v-row v-if="!item.companies || item.companies.length === 0" style="margin-top: 8px; margin-left: 16px">
                     {{ $t("none provided") }}
                   </v-row>
 
-                  <div
-                    v-for="companyCategory in item.companies"
-                    v-bind:key="companyCategory.Category"
-                    style="margin-left: 24px"
-                  >
+                  <div v-for="companyCategory in item.companies" v-bind:key="companyCategory.Category" style="margin-left: 24px">
                     <v-row style="margin-top: 12px">
-                      <strong>{{
-                        $t(`CompanyCategories.${companyCategory.category}`)
-                      }}</strong>
+                      <strong>{{ $t(`CompanyCategories.${companyCategory.category}`) }}</strong>
                     </v-row>
-                    <v-row
-                      v-for="company in companyCategory.items"
-                      v-bind:key="company.id_Movies_IMDB_Credits"
-                      class="mk-highlightable-row"
-                    >
+                    <v-row v-for="company in companyCategory.items" v-bind:key="company.id_Movies_IMDB_Credits" class="mk-highlightable-row">
                       <v-col sm="4" class="creditsLabel">
                         <a
                           class="mk-clickable"
                           v-bind:class="{
-                            'mk-search-highlight':
-                              $shared.filterCompaniesAppliedContains(company),
+                            'mk-search-highlight': $shared.filterCompaniesAppliedContains(company),
                           }"
                           v-on:click.stop="onCompanyClicked(company)"
                           >{{ company.name }}</a
@@ -1012,16 +702,9 @@
                   v-bind:class="{
                     'mk-search-highlight': $shared.filterParentalAdvisoryActive,
                   }"
-                  v-on:click.stop="
-                    showContentAdvisory(item, !item.showContentAdvisory)
-                  "
+                  v-on:click.stop="showContentAdvisory(item, !item.showContentAdvisory)"
                 >
-                  <span class="mk-item-detailcategory-header"
-                    >{{
-                      $t("Content Advisory") +
-                      (!item.showContentAdvisory ? " »" : "")
-                    }}&nbsp;</span
-                  >
+                  <span class="mk-item-detailcategory-header">{{ $t("Content Advisory") + (!item.showContentAdvisory ? " »" : "") }}&nbsp;</span>
                 </v-row>
 
                 <div
@@ -1036,31 +719,16 @@
                     class="mk-highlightable-row"
                     style="margin-top: 12px; margin-left: 6px"
                   >
-                    <v-col
-                      sm="4"
-                      class="creditsContent"
-                      style="padding-left: 12px"
-                      >{{
-                        $t(`ParentalAdvisoryCategories.${category.Name}`)
-                      }}</v-col
-                    >
+                    <v-col sm="4" class="creditsContent" style="padding-left: 12px">{{ $t(`ParentalAdvisoryCategories.${category.Name}`) }}</v-col>
                     <v-col sm="1" class="creditsContent">
                       <!-- <span v-if="company.role">...</span> -->
                     </v-col>
                     <v-col
                       class="creditsContent"
                       v-bind:class="{
-                        'mk-search-highlight':
-                          $shared.filterParentalAdvisoryAppliedContains(
-                            category.Name,
-                            item[`IMDB_Parental_Advisory_${category.Name}`]
-                          ),
+                        'mk-search-highlight': $shared.filterParentalAdvisoryAppliedContains(category.Name, item[`IMDB_Parental_Advisory_${category.Name}`]),
                       }"
-                      >{{
-                        contentAdvisorySeverityDisplayText(
-                          item[`IMDB_Parental_Advisory_${category.Name}`]
-                        )
-                      }}</v-col
+                      >{{ contentAdvisorySeverityDisplayText(item[`IMDB_Parental_Advisory_${category.Name}`]) }}</v-col
                     >
                   </v-row>
                 </div>
@@ -1073,42 +741,21 @@
                   v-bind:class="{
                     'mk-search-highlight': $shared.filterIMDBPlotKeywordsActive,
                   }"
-                  v-on:click.stop="
-                    showPlotKeywords(item, !item.showPlotKeywords)
-                  "
+                  v-on:click.stop="showPlotKeywords(item, !item.showPlotKeywords)"
                 >
-                  <span class="mk-item-detailcategory-header"
-                    >{{
-                      $t("Plot Keywords (Spoilers ahead!)") +
-                      (!item.showPlotKeywords ? " »" : "")
-                    }}&nbsp;</span
-                  >
+                  <span class="mk-item-detailcategory-header">{{ $t("Plot Keywords (Spoilers ahead!)") + (!item.showPlotKeywords ? " »" : "") }}&nbsp;</span>
                 </v-row>
 
-                <div
-                  class="mk-item-detailcategory-content"
-                  v-if="item.showPlotKeywords"
-                  v-on:click.stop="showPlotKeywords(item, false)"
-                >
-                  <v-row
-                    v-if="!item.plotKeywords || item.plotKeywords.length === 0"
-                    style="margin-top: 8px; margin-left: 16px"
-                  >
+                <div class="mk-item-detailcategory-content" v-if="item.showPlotKeywords" v-on:click.stop="showPlotKeywords(item, false)">
+                  <v-row v-if="!item.plotKeywords || item.plotKeywords.length === 0" style="margin-top: 8px; margin-left: 16px">
                     {{ $t("none provided") }}
                   </v-row>
 
-                  <v-row
-                    v-for="plotKeyword in item.plotKeywords"
-                    v-bind:key="plotKeyword.Keyword"
-                    style="margin-top: 12px; margin-left: 24px"
-                  >
+                  <v-row v-for="plotKeyword in item.plotKeywords" v-bind:key="plotKeyword.Keyword" style="margin-top: 12px; margin-left: 24px">
                     <a
                       class="mk-clickable"
                       v-bind:class="{
-                        'mk-search-highlight':
-                          $shared.filterIMDBPlotKeywordsAppliedContains(
-                            plotKeyword.Keyword
-                          ),
+                        'mk-search-highlight': $shared.filterIMDBPlotKeywordsAppliedContains(plotKeyword.Keyword),
                       }"
                       v-on:click.stop="onIMDBPlotKeywordClicked(plotKeyword)"
                       >{{ plotKeyword.Keyword }}</a
@@ -1127,33 +774,15 @@
                 <v-row
                   class="mk-item-detailcategory-header-row mk-clickable"
                   v-bind:class="{
-                    'mk-search-highlight':
-                      $shared.filterIMDBFilmingLocationsActive,
+                    'mk-search-highlight': $shared.filterIMDBFilmingLocationsActive,
                   }"
-                  v-on:click.stop="
-                    showFilmingLocations(item, !item.showFilmingLocations)
-                  "
+                  v-on:click.stop="showFilmingLocations(item, !item.showFilmingLocations)"
                 >
-                  <span class="mk-item-detailcategory-header"
-                    >{{
-                      $t("Filming Locations") +
-                      (!item.showFilmingLocations ? " »" : "")
-                    }}&nbsp;</span
-                  >
+                  <span class="mk-item-detailcategory-header">{{ $t("Filming Locations") + (!item.showFilmingLocations ? " »" : "") }}&nbsp;</span>
                 </v-row>
 
-                <div
-                  class="mk-item-detailcategory-content"
-                  v-if="item.showFilmingLocations"
-                  v-on:click.stop="showFilmingLocations(item, false)"
-                >
-                  <v-row
-                    v-if="
-                      !item.filmingLocations ||
-                      item.filmingLocations.length === 0
-                    "
-                    style="margin-top: 8px; margin-left: 16px"
-                  >
+                <div class="mk-item-detailcategory-content" v-if="item.showFilmingLocations" v-on:click.stop="showFilmingLocations(item, false)">
+                  <v-row v-if="!item.filmingLocations || item.filmingLocations.length === 0" style="margin-top: 8px; margin-left: 16px">
                     {{ $t("none provided") }}
                   </v-row>
 
@@ -1165,14 +794,9 @@
                     <a
                       class="mk-clickable"
                       v-bind:class="{
-                        'mk-search-highlight':
-                          $shared.filterIMDBFilmingLocationsAppliedContains(
-                            filmingLocation.Location
-                          ),
+                        'mk-search-highlight': $shared.filterIMDBFilmingLocationsAppliedContains(filmingLocation.Location),
                       }"
-                      v-on:click.stop="
-                        onIMDBFilmingLocationClicked(filmingLocation)
-                      "
+                      v-on:click.stop="onIMDBFilmingLocationClicked(filmingLocation)"
                       >{{ filmingLocation.Location }}</a
                     >
                   </v-row>
@@ -1180,38 +804,15 @@
               </div>
 
               <v-row style="margin-top: 16px">
-                <v-btn text color="primary" v-on:click.stop="copyInfo(item)">{{
-                  $t("Copy Info")
-                }}</v-btn>
-                <v-btn
-                  v-if="item.IMDB_Trailer_URL"
-                  text
-                  color="primary"
-                  v-on:click.stop="showTrailerLocal(item)"
-                  >{{ $t("Trailer") }}</v-btn
-                >
-                <v-btn
-                  text
-                  v-bind:disabled="!item.IMDB_tconst"
-                  color="primary"
-                  v-on:click.stop="openIMDB(item)"
-                >
+                <v-btn text color="primary" v-on:click.stop="copyInfo(item)">{{ $t("Copy Info") }}</v-btn>
+                <v-btn v-if="item.IMDB_Trailer_URL" text color="primary" v-on:click.stop="showTrailerLocal(item)">{{ $t("Trailer") }}</v-btn>
+                <v-btn text v-bind:disabled="!item.IMDB_tconst" color="primary" v-on:click.stop="openIMDB(item)">
                   <v-icon small>mdi-web</v-icon>&nbsp;IMDB
                 </v-btn>
-                <v-btn
-                  text
-                  v-bind:disabled="!item.IMDB_tconst"
-                  color="primary"
-                  v-on:click.stop="openLetterboxd(item)"
-                >
+                <v-btn text v-bind:disabled="!item.IMDB_tconst" color="primary" v-on:click.stop="openLetterboxd(item)">
                   <v-icon small>mdi-web</v-icon>&nbsp;Letterboxd
                 </v-btn>
-                <v-btn
-                  text
-                  v-bind:disabled="!item.IMDB_tconst"
-                  color="primary"
-                  v-on:click.stop="openMovieChat(item)"
-                >
+                <v-btn text v-bind:disabled="!item.IMDB_tconst" color="primary" v-on:click.stop="openMovieChat(item)">
                   <v-icon small>mdi-web</v-icon>&nbsp;MovieChat
                 </v-btn>
               </v-row>
@@ -1224,12 +825,7 @@
         <v-spacer></v-spacer>
         <div v-if="numPages" style="margin-right: 4px">
           <!-- <v-pagination v-bind:length="numPages" v-model="$shared.currentPage" total-visible="7"></v-pagination> -->
-          <mk-pagination
-            v-bind:length="numPages"
-            v-bind:pages="paginationItems"
-            v-model="$shared.currentPage"
-            style="margin-right: 4px"
-          ></mk-pagination>
+          <mk-pagination v-bind:length="numPages" v-bind:pages="paginationItems" v-model="$shared.currentPage" style="margin-right: 4px"></mk-pagination>
         </div>
       </v-row>
     </v-container>
@@ -1283,12 +879,7 @@
       v-on:close="onAudioFormatDialogClose"
     ></mk-audio-format-dialog>
 
-    <mk-genre-dialog
-      ref="genreDialog"
-      v-bind:show="genreDialog.show"
-      v-bind:Genre="genreDialog.Genre"
-      v-on:close="onGenreDialogClose"
-    ></mk-genre-dialog>
+    <mk-genre-dialog ref="genreDialog" v-bind:show="genreDialog.show" v-bind:Genre="genreDialog.Genre" v-on:close="onGenreDialogClose"></mk-genre-dialog>
 
     <mk-language-dialog
       ref="languageDialog"
@@ -1317,9 +908,7 @@
     <mk-filming-location-dialog
       ref="filmingLocationDialog"
       v-bind:show="filmingLocationDialog.show"
-      v-bind:id_IMDB_Filming_Locations="
-        filmingLocationDialog.id_IMDB_Filming_Locations
-      "
+      v-bind:id_IMDB_Filming_Locations="filmingLocationDialog.id_IMDB_Filming_Locations"
       v-bind:Location="filmingLocationDialog.Location"
       v-on:close="onFilmingLocationDialogClose"
     ></mk-filming-location-dialog>
@@ -1377,9 +966,7 @@
     <mk-delete-media-dialog
       v-bind:show="deleteMediaDialog.show"
       v-bind:title="$t(deleteMediaDialog.Title)"
-      v-bind:question="
-        $t(deleteMediaDialog.Message, { ItemName: deleteMediaDialog.ItemName })
-      "
+      v-bind:question="$t(deleteMediaDialog.Message, { ItemName: deleteMediaDialog.ItemName })"
       v-bind:yes="$t('YES DELETE')"
       v-bind:no="$t('No')"
       v-bind:ok="$t('Open Storage Location')"
@@ -1699,22 +1286,16 @@ export default {
             detailInfo = currentItem.startYear;
             break;
           case "created_at":
-            detailInfo = currentItem.created_at
-              ? currentItem.created_at.replace(/\d+:\d+:\d+/, "")
-              : "";
+            detailInfo = currentItem.created_at ? currentItem.created_at.replace(/\d+:\d+:\d+/, "") : "";
             break;
           case "last_access_at":
-            detailInfo = currentItem.last_access_at
-              ? currentItem.last_access_at.replace(/\d+:\d+:\d+/, "")
-              : "";
+            detailInfo = currentItem.last_access_at ? currentItem.last_access_at.replace(/\d+:\d+:\d+/, "") : "";
             break;
         }
 
         result.push({
           page,
-          displayText: `${page} / ${this.numPages}${
-            detailInfo ? " | " + detailInfo : ""
-          }`,
+          displayText: `${page} / ${this.numPages}${detailInfo ? " | " + detailInfo : ""}`,
           numPages: this.numPages,
           detailInfo,
         });
@@ -1736,10 +1317,7 @@ export default {
     },
 
     itemsFilteredPaginated() {
-      return this.itemsFiltered.slice(
-        (this.$shared.currentPage - 1) * this.itemsPerPage,
-        this.$shared.currentPage * this.itemsPerPage
-      );
+      return this.itemsFiltered.slice((this.$shared.currentPage - 1) * this.itemsPerPage, this.$shared.currentPage * this.itemsPerPage);
     },
 
     filtersList() {
@@ -1756,11 +1334,7 @@ export default {
       }
 
       if (this.$shared.filterGenresActive) {
-        filtersList.push(
-          `${this.$t("Genres")}${
-            this.$shared.filters.filterSettings.filterGenresAND ? " ߷" : ""
-          }`
-        );
+        filtersList.push(`${this.$t("Genres")}${this.$shared.filters.filterSettings.filterGenresAND ? " ߷" : ""}`);
       }
 
       if (this.$shared.filterAgeRatingsActive) {
@@ -1780,11 +1354,7 @@ export default {
       }
 
       if (this.$shared.filterPersonsActive) {
-        filtersList.push(
-          `${this.$t("People")}${
-            this.$shared.filters.filterSettings.filterPersonsAND ? " ߷" : ""
-          }`
-        );
+        filtersList.push(`${this.$t("People")}${this.$shared.filters.filterSettings.filterPersonsAND ? " ߷" : ""}`);
       }
 
       if (this.$shared.filterYearsActive) {
@@ -1800,11 +1370,7 @@ export default {
       }
 
       if (this.$shared.filterCompaniesActive) {
-        filtersList.push(
-          `${this.$t("Companies")}${
-            this.$shared.filters.filterSettings.filterCompaniesAND ? " ߷" : ""
-          }`
-        );
+        filtersList.push(`${this.$t("Companies")}${this.$shared.filters.filterSettings.filterCompaniesAND ? " ߷" : ""}`);
       }
 
       if (this.$shared.filterAudioLanguagesActive) {
@@ -1820,33 +1386,15 @@ export default {
       }
 
       if (this.$shared.filterReleaseAttributesActive) {
-        filtersList.push(
-          `${this.$t("Release Attributes")}${
-            this.$shared.filters.filterSettings.filterReleaseAttributesAND
-              ? " ߷"
-              : ""
-          }`
-        );
+        filtersList.push(`${this.$t("Release Attributes")}${this.$shared.filters.filterSettings.filterReleaseAttributesAND ? " ߷" : ""}`);
       }
 
       if (this.$shared.filterIMDBPlotKeywordsActive) {
-        filtersList.push(
-          `${this.$t("Plot Keywords")}${
-            this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND
-              ? " ߷"
-              : ""
-          }`
-        );
+        filtersList.push(`${this.$t("Plot Keywords")}${this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND ? " ߷" : ""}`);
       }
 
       if (this.$shared.filterIMDBFilmingLocationsActive) {
-        filtersList.push(
-          `${this.$t("Filming Locations")}${
-            this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND
-              ? " ߷"
-              : ""
-          }`
-        );
+        filtersList.push(`${this.$t("Filming Locations")}${this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND ? " ߷" : ""}`);
       }
 
       if (this.$shared.filterMetacriticScoreActive) {
@@ -1858,11 +1406,7 @@ export default {
       }
 
       if (this.$shared.filterDataQualityActive) {
-        filtersList.push(
-          `${this.$t("Data Quality")}${
-            this.$shared.filters.filterSettings.filterDataQualityAND ? " ߷" : ""
-          }`
-        );
+        filtersList.push(`${this.$t("Data Quality")}${this.$shared.filters.filterSettings.filterDataQualityAND ? " ߷" : ""}`);
       }
 
       return filtersList;
@@ -1875,9 +1419,7 @@ export default {
 
           if (this.searchText) {
             const searchTextLower = this.searchText.toLowerCase();
-            const searchTextFiltered = /tt\d+/.test(searchTextLower)
-              ? searchTextLower.match(/tt\d+/)[0]
-              : searchTextLower;
+            const searchTextFiltered = /tt\d+/.test(searchTextLower) ? searchTextLower.match(/tt\d+/)[0] : searchTextLower;
             isGood = item.SearchSpace.includes(searchTextFiltered);
           }
 
@@ -1889,14 +1431,12 @@ export default {
           }
 
           const valA =
-            typeof a[this.$shared.sortField] === "string" ||
-            a[this.$shared.sortField] instanceof String
+            typeof a[this.$shared.sortField] === "string" || a[this.$shared.sortField] instanceof String
               ? a[this.$shared.sortField].toLowerCase()
               : a[this.$shared.sortField];
 
           const valB =
-            typeof b[this.$shared.sortField] === "string" ||
-            b[this.$shared.sortField] instanceof String
+            typeof b[this.$shared.sortField] === "string" || b[this.$shared.sortField] instanceof String
               ? b[this.$shared.sortField].toLowerCase()
               : b[this.$shared.sortField];
 
@@ -1906,11 +1446,7 @@ export default {
 
           if (!primarySort) {
             // equal by primary sort -> sort by Name
-            return helpers.compare(
-              a.Name.toLowerCase(),
-              b.Name.toLowerCase(),
-              false
-            );
+            return helpers.compare(a.Name.toLowerCase(), b.Name.toLowerCase(), false);
           }
 
           return primarySort;
@@ -1928,12 +1464,7 @@ export default {
     },
 
     changeRating(movie) {
-      logger.log(
-        "[changeRating] movie:",
-        movie,
-        " movie.Rating:",
-        movie.Rating
-      );
+      logger.log("[changeRating] movie:", movie, " movie.Rating:", movie.Rating);
 
       const rating = movie.Rating;
 
@@ -1942,11 +1473,7 @@ export default {
           const arr_id_Movies = await store.clearRating(movie.id_Movies);
 
           this.items.forEach((movie) => {
-            if (
-              arr_id_Movies.findIndex(
-                (id_Movies) => movie.id_Movies === id_Movies
-              ) !== -1
-            ) {
+            if (arr_id_Movies.findIndex((id_Movies) => movie.id_Movies === id_Movies) !== -1) {
               movie.Rating = null;
             }
           });
@@ -1954,11 +1481,7 @@ export default {
           const arr_id_Movies = await store.setRating(movie.id_Movies, rating);
 
           this.items.forEach((movie2) => {
-            if (
-              arr_id_Movies.findIndex(
-                (id_Movies) => movie2.id_Movies === id_Movies
-              ) !== -1
-            ) {
+            if (arr_id_Movies.findIndex((id_Movies) => movie2.id_Movies === id_Movies) !== -1) {
               movie2.Rating = rating;
             }
           });
@@ -2023,11 +1546,7 @@ export default {
       await this.updateCurrentTime();
 
       this.items.forEach((mov) => {
-        if (
-          arr_id_Movies.findIndex(
-            (id_Movies) => mov.id_Movies === id_Movies
-          ) !== -1
-        ) {
+        if (arr_id_Movies.findIndex((id_Movies) => mov.id_Movies === id_Movies) !== -1) {
           this.$set(mov, "lastAccessMoment", this.currentTime.clone());
           this.$set(mov, "last_access_at", this.currentTime.toISOString());
         }
@@ -2086,11 +1605,7 @@ export default {
           eventBus.listDialogSetChosenMethod("useExistingLists");
 
           let last_chosen_id_Lists = this.listDialog.lastChosenListID;
-          if (
-            !this.listDialog.lists.find(
-              (list) => list.id_Lists === last_chosen_id_Lists
-            )
-          ) {
+          if (!this.listDialog.lists.find((list) => list.id_Lists === last_chosen_id_Lists)) {
             last_chosen_id_Lists = this.listDialog.lists[0].id_Lists;
           }
 
@@ -2110,50 +1625,29 @@ export default {
     },
 
     showTrailer(item) {
-      const trailerURL = item.IMDB_Trailer_URL.replace(
-        "https://www.imdb.com",
-        ""
-      );
+      const trailerURL = item.IMDB_Trailer_URL.replace("https://www.imdb.com", "");
       this.videoPlayerDialog.videoURL = `https://www.imdb.com${trailerURL}`;
-      logger.log(
-        "[showTrailer] this.videoPlayerDialog.videoURL:",
-        this.videoPlayerDialog.videoURL
-      );
+      logger.log("[showTrailer] this.videoPlayerDialog.videoURL:", this.videoPlayerDialog.videoURL);
       this.videoPlayerDialog.show = true;
     },
 
     async showTrailerLocal(item) {
       try {
-        const trailerURL = item.IMDB_Trailer_URL.replace(
-          "https://www.imdb.com",
-          ""
-        );
+        const trailerURL = item.IMDB_Trailer_URL.replace("https://www.imdb.com", "");
 
-        const trailerMediaURLs = await scrapeIMDBTrailerMediaURLs(
-          `https://www.imdb.com${trailerURL}`
-        );
+        const trailerMediaURLs = await scrapeIMDBTrailerMediaURLs(`https://www.imdb.com${trailerURL}`);
 
         logger.log("[showTrailer] trailerMediaURLs:", trailerMediaURLs);
 
         const dontUseLocalPlayer = true; // TODO: we can scrape mediaURLs, but we get a 403 Forbidden if we access them with our media player
 
-        if (
-          dontUseLocalPlayer ||
-          !trailerMediaURLs ||
-          !trailerMediaURLs.mediaURLs ||
-          trailerMediaURLs.mediaURLs.length == 0
-        ) {
+        if (dontUseLocalPlayer || !trailerMediaURLs || !trailerMediaURLs.mediaURLs || trailerMediaURLs.mediaURLs.length == 0) {
           return this.showTrailer(item); // Fallback to the more general player showing the IMDB site
         }
 
-        const trailerMediaURL = store.selectBestQualityMediaURL(
-          trailerMediaURLs.mediaURLs
-        );
+        const trailerMediaURL = store.selectBestQualityMediaURL(trailerMediaURLs.mediaURLs);
 
-        logger.log(
-          "[showTrailerLocal] selected best quality trailerMediaURL:",
-          trailerMediaURL
-        );
+        logger.log("[showTrailerLocal] selected best quality trailerMediaURL:", trailerMediaURL);
 
         this.localVideoPlayerDialog.videoURL = trailerMediaURL.mediaURL;
         this.localVideoPlayerDialog.mimeType = trailerMediaURL.mimeType;
@@ -2198,15 +1692,9 @@ export default {
               data.chosen_id_Lists = await store.createList(data.newListName);
             }
 
-            await store.addToList(
-              data.chosen_id_Lists,
-              this.listDialog.movie.id_Movies,
-              false
-            );
+            await store.addToList(data.chosen_id_Lists, this.listDialog.movie.id_Movies, false);
 
-            const { lists } = await store.getMovieDetails(
-              this.listDialog.movie.id_Movies
-            );
+            const { lists } = await store.getMovieDetails(this.listDialog.movie.id_Movies);
 
             this.$set(this.listDialog.movie, "lists", lists);
 
@@ -2225,10 +1713,7 @@ export default {
               return;
             }
 
-            await store.removeFromList(
-              data.chosen_id_Lists,
-              this.listDialog.movie.id_Movies
-            );
+            await store.removeFromList(data.chosen_id_Lists, this.listDialog.movie.id_Movies);
 
             this.$shared.lastChangedFilter = "filterLists";
 
@@ -2266,17 +1751,13 @@ export default {
 
         this.$shared.isLoadingFilter = true;
 
-        let filterGroups = JSON.parse(
-          JSON.stringify(this.$shared.filterGroups)
-        );
+        let filterGroups = JSON.parse(JSON.stringify(this.$shared.filterGroups));
 
         // put any filter in setFilter on top of the list (filters in setFilter are ones provided by dialogs, e.g. GenreDialog)
         logger.log("[fetchFilters] setFilter:", setFilter);
         if (setFilter) {
           Object.keys(setFilter).forEach((filtername) => {
-            const index = filterGroups.findIndex(
-              (item) => item.name === filtername
-            );
+            const index = filterGroups.findIndex((item) => item.name === filtername);
 
             const item = filterGroups[index];
 
@@ -2291,15 +1772,10 @@ export default {
 
         // put the filter on top of the list that has been changed last
         if (!specificBySetFilter) {
-          logger.log(
-            "[fetchFilters] this.$shared.lastChangedFilter:",
-            this.$shared.lastChangedFilter
-          );
+          logger.log("[fetchFilters] this.$shared.lastChangedFilter:", this.$shared.lastChangedFilter);
           logger.log("[fetchFilters] filterGroups before:", filterGroups);
           if (this.$shared.lastChangedFilter) {
-            const index = filterGroups.findIndex(
-              (item) => item.name === this.$shared.lastChangedFilter
-            );
+            const index = filterGroups.findIndex((item) => item.name === this.$shared.lastChangedFilter);
 
             logger.log("[fetchFilters] index:", index);
 
@@ -2326,141 +1802,68 @@ export default {
 
           switch (filter.name) {
             case "filterSettings":
-              await store.fetchFilterSettings(
-                this.mediatype,
-                this.loadFilterValuesFromStorage
-              );
+              await store.fetchFilterSettings(this.mediatype, this.loadFilterValuesFromStorage);
               break;
             case "filterSourcePaths":
-              await store.fetchFilterSourcePaths(
-                this.mediatype,
-                this.loadFilterValuesFromStorage
-              );
+              await store.fetchFilterSourcePaths(this.mediatype, this.loadFilterValuesFromStorage);
               break;
             case "filterGenres":
-              await store.fetchFilterGenres(
-                this.mediatype,
-                this.$local_t,
-                this.loadFilterValuesFromStorage
-              );
+              await store.fetchFilterGenres(this.mediatype, this.$local_t, this.loadFilterValuesFromStorage);
               break;
             case "filterAgeRatings":
-              await store.fetchFilterAgeRatings(
-                this.mediatype,
-                this.loadFilterValuesFromStorage
-              );
+              await store.fetchFilterAgeRatings(this.mediatype, this.loadFilterValuesFromStorage);
               break;
             case "filterRatings":
-              await store.fetchFilterRatings(
-                this.mediatype,
-                this.loadFilterValuesFromStorage
-              );
+              await store.fetchFilterRatings(this.mediatype, this.loadFilterValuesFromStorage);
               break;
             case "filterLists":
-              await store.fetchFilterLists(
-                this.mediatype,
-                this.$local_t,
-                this.loadFilterValuesFromStorage
-              );
+              await store.fetchFilterLists(this.mediatype, this.$local_t, this.loadFilterValuesFromStorage);
               break;
             case "filterParentalAdvisory":
-              await store.fetchFilterParentalAdvisory(
-                this.mediatype,
-                this.loadFilterValuesFromStorage
-              );
+              await store.fetchFilterParentalAdvisory(this.mediatype, this.loadFilterValuesFromStorage);
               break;
             case "filterPersons":
-              await store.fetchFilterPersons(
-                this.mediatype,
-                this.$local_t,
-                this.loadFilterValuesFromStorage
-              );
+              await store.fetchFilterPersons(this.mediatype, this.$local_t, this.loadFilterValuesFromStorage);
               break;
             case "filterCompanies":
-              await store.fetchFilterCompanies(
-                this.mediatype,
-                this.$local_t,
-                this.loadFilterValuesFromStorage
-              );
+              await store.fetchFilterCompanies(this.mediatype, this.$local_t, this.loadFilterValuesFromStorage);
               break;
             case "filterIMDBPlotKeywords":
-              await store.fetchFilterIMDBPlotKeywords(
-                this.mediatype,
-                this.$local_t,
-                this.loadFilterValuesFromStorage
-              );
+              await store.fetchFilterIMDBPlotKeywords(this.mediatype, this.$local_t, this.loadFilterValuesFromStorage);
               break;
             case "filterIMDBFilmingLocations":
-              await store.fetchFilterIMDBFilmingLocations(
-                this.mediatype,
-                this.$local_t,
-                this.loadFilterValuesFromStorage
-              );
+              await store.fetchFilterIMDBFilmingLocations(this.mediatype, this.$local_t, this.loadFilterValuesFromStorage);
               break;
             case "filterYears":
               // await store.fetchFilterReleaseYears(this.mediatype, this.loadFilterValuesFromStorage);
-              await store.fetchFilterYears(
-                this.mediatype,
-                this.loadFilterValuesFromStorage
-              );
+              await store.fetchFilterYears(this.mediatype, this.loadFilterValuesFromStorage);
               break;
             case "filterQualities":
-              await store.fetchFilterQualities(
-                this.mediatype,
-                this.loadFilterValuesFromStorage
-              );
+              await store.fetchFilterQualities(this.mediatype, this.loadFilterValuesFromStorage);
               break;
             case "filterAudioLanguages":
-              await store.fetchFilterLanguages(
-                this.mediatype,
-                "audio",
-                this.$local_t,
-                this.loadFilterValuesFromStorage
-              );
+              await store.fetchFilterLanguages(this.mediatype, "audio", this.$local_t, this.loadFilterValuesFromStorage);
               break;
             case "filterSubtitleLanguages":
-              await store.fetchFilterLanguages(
-                this.mediatype,
-                "subtitle",
-                this.$local_t,
-                this.loadFilterValuesFromStorage
-              );
+              await store.fetchFilterLanguages(this.mediatype, "subtitle", this.$local_t, this.loadFilterValuesFromStorage);
               break;
             case "filterIMDBRating":
-              await store.fetchFilterIMDBRating(
-                this.mediatype,
-                this.loadFilterValuesFromStorage
-              );
+              await store.fetchFilterIMDBRating(this.mediatype, this.loadFilterValuesFromStorage);
               break;
             case "filterMetacriticScore":
-              await store.fetchFilterMetacriticScore(
-                this.mediatype,
-                this.loadFilterValuesFromStorage
-              );
+              await store.fetchFilterMetacriticScore(this.mediatype, this.loadFilterValuesFromStorage);
               break;
             case "filterReleaseAttributes":
-              await store.fetchFilterReleaseAttributes(
-                this.mediatype,
-                this.loadFilterValuesFromStorage
-              );
+              await store.fetchFilterReleaseAttributes(this.mediatype, this.loadFilterValuesFromStorage);
               break;
             case "filterDataQuality":
-              await store.fetchFilterDataQuality(
-                this.mediatype,
-                this.loadFilterValuesFromStorage
-              );
+              await store.fetchFilterDataQuality(this.mediatype, this.loadFilterValuesFromStorage);
               break;
             case "filterVideoEncoders":
-              await store.fetchFilterVideoEncoders(
-                this.mediatype,
-                this.loadFilterValuesFromStorage
-              );
+              await store.fetchFilterVideoEncoders(this.mediatype, this.loadFilterValuesFromStorage);
               break;
             case "filterAudioFormats":
-              await store.fetchFilterAudioFormats(
-                this.mediatype,
-                this.loadFilterValuesFromStorage
-              );
+              await store.fetchFilterAudioFormats(this.mediatype, this.loadFilterValuesFromStorage);
               break;
             default:
               throw new Error("Unsupported filter type:", filter.name);
@@ -2570,15 +1973,9 @@ export default {
 
     async expandLanguages(item, type) {
       if (type === "audio") {
-        item.AudioLanguages = store.generateLanguageArray(
-          item.MI_Audio_Languages,
-          9999
-        );
+        item.AudioLanguages = store.generateLanguageArray(item.MI_Audio_Languages, 9999);
       } else {
-        item.SubtitleLanguages = store.generateLanguageArray(
-          item.MI_Subtitle_Languages,
-          9999
-        );
+        item.SubtitleLanguages = store.generateLanguageArray(item.MI_Subtitle_Languages, 9999);
       }
     },
 
@@ -2595,8 +1992,7 @@ export default {
       logger.log("[onPlotKeywordClicked]:", plotKeyword);
 
       this.plotKeywordDialog.show = true;
-      this.plotKeywordDialog.id_IMDB_Plot_Keywords =
-        plotKeyword.id_IMDB_Plot_Keywords;
+      this.plotKeywordDialog.id_IMDB_Plot_Keywords = plotKeyword.id_IMDB_Plot_Keywords;
       this.plotKeywordDialog.Keyword = plotKeyword.Keyword;
 
       return;
@@ -2606,8 +2002,7 @@ export default {
       logger.log("[onIMDBFilmingLocationClicked]:", filmingLocation);
 
       this.filmingLocationDialog.show = true;
-      this.filmingLocationDialog.id_IMDB_Filming_Locations =
-        filmingLocation.id_IMDB_Filming_Locations;
+      this.filmingLocationDialog.id_IMDB_Filming_Locations = filmingLocation.id_IMDB_Filming_Locations;
       this.filmingLocationDialog.Location = filmingLocation.Location;
 
       return;
@@ -2623,9 +2018,7 @@ export default {
       }
 
       return this.$t("{duration} ago", {
-        timespan: moment
-          .duration(movie.lastAccessMoment.diff(this.currentTime))
-          .humanize(),
+        timespan: moment.duration(movie.lastAccessMoment.diff(this.currentTime)).humanize(),
       });
     },
 
@@ -2639,9 +2032,7 @@ export default {
       }
 
       return this.$t("{duration} ago", {
-        timespan: moment
-          .duration(movie.createdMoment.diff(this.currentTime))
-          .humanize(),
+        timespan: moment.duration(movie.createdMoment.diff(this.currentTime)).humanize(),
       });
     },
 
@@ -2654,10 +2045,7 @@ export default {
         movie.lastAccessMoment = moment(movie.last_access_at);
       }
 
-      return moment
-        .utc(movie.lastAccessMoment)
-        .local()
-        .format("YYYY-MM-DD HH:mm:ss");
+      return moment.utc(movie.lastAccessMoment).local().format("YYYY-MM-DD HH:mm:ss");
     },
 
     async updateCurrentTime() {
@@ -2673,10 +2061,7 @@ export default {
         movie.createdMoment = moment(movie.created_at);
       }
 
-      return moment
-        .utc(movie.createdMoment)
-        .local()
-        .format("YYYY-MM-DD HH:mm:ss");
+      return moment.utc(movie.createdMoment).local().format("YYYY-MM-DD HH:mm:ss");
     },
 
     openIMDB(movie) {
@@ -2684,9 +2069,7 @@ export default {
     },
 
     openLetterboxd(movie) {
-      shell.openExternal(
-        `https://www.letterboxd.com/imdb/${movie.IMDB_tconst}/`
-      );
+      shell.openExternal(`https://www.letterboxd.com/imdb/${movie.IMDB_tconst}/`);
     },
 
     openMovieChat(movie) {
@@ -2795,14 +2178,7 @@ export default {
       try {
         store.resetUserScanOptions();
 
-        await store.assignIMDB(
-          this.linkIMDBDialog.item.id_Movies,
-          tconst,
-          false,
-          false,
-          null,
-          this.$local_t
-        );
+        await store.assignIMDB(this.linkIMDBDialog.item.id_Movies, tconst, false, false, null, this.$local_t);
 
         eventBus.refetchMedia(this.$shared.currentPage);
 
@@ -2823,10 +2199,7 @@ export default {
 
         eventBus.refetchMedia(this.$shared.currentPage);
 
-        eventBus.showSnackbar(
-          "success",
-          this.$t("entry unlinked successfully")
-        );
+        eventBus.showSnackbar("success", this.$t("entry unlinked successfully"));
 
         this.onLinkIMDBDialogClose();
       } catch (err) {
@@ -2843,21 +2216,11 @@ export default {
 
         await store.applyMediaInfo(item, false);
 
-        await store.assignIMDB(
-          item.id_Movies,
-          item.IMDB_tconst,
-          null,
-          null,
-          item,
-          this.$local_t
-        );
+        await store.assignIMDB(item.id_Movies, item.IMDB_tconst, null, null, item, this.$local_t);
 
         eventBus.refetchMedia(this.$shared.currentPage, this.$local_t);
 
-        eventBus.showSnackbar(
-          "success",
-          this.$t("entry successfully rescanned")
-        );
+        eventBus.showSnackbar("success", this.$t("entry successfully rescanned"));
       } catch (err) {
         logger.log("[onRescanItem] error:", JSON.stringify(err));
         eventBus.showSnackbar("error", err);
@@ -2873,10 +2236,8 @@ export default {
       this.editItemDialog.show = false;
 
       const useActualDuplicates =
-        (this.editItemDialog.attributeName == "Name" &&
-          this.$shared.duplicatesHandling.actualDuplicate.updateTitle) ||
-        (this.editItemDialog.attributeName == "Name2" &&
-          this.$shared.duplicatesHandling.actualDuplicate.updateSubTitle);
+        (this.editItemDialog.attributeName == "Name" && this.$shared.duplicatesHandling.actualDuplicate.updateTitle) ||
+        (this.editItemDialog.attributeName == "Name2" && this.$shared.duplicatesHandling.actualDuplicate.updateSubTitle);
 
       const arr_id_Movies = await store.updateMovieAttribute(
         this.editItemDialog.item.id_Movies,
@@ -2887,11 +2248,7 @@ export default {
       );
 
       this.items.forEach((mov) => {
-        if (
-          arr_id_Movies.findIndex(
-            (id_Movies) => mov.id_Movies === id_Movies
-          ) !== -1
-        ) {
+        if (arr_id_Movies.findIndex((id_Movies) => mov.id_Movies === id_Movies) !== -1) {
           this.$set(mov, this.editItemDialog.attributeName, result.textValue);
         }
       });
@@ -2933,9 +2290,7 @@ export default {
       }
 
       if (!movie.plotKeywords) {
-        const plotKeywords = await store.fetchMoviePlotKeywords(
-          movie.id_Movies
-        );
+        const plotKeywords = await store.fetchMoviePlotKeywords(movie.id_Movies);
 
         logger.log("[showPlotKeywords] plotKeywords:", plotKeywords);
 
@@ -2952,14 +2307,9 @@ export default {
       }
 
       if (!movie.filmingLocations) {
-        const filmingLocations = await store.fetchMovieFilmingLocations(
-          movie.id_Movies
-        );
+        const filmingLocations = await store.fetchMovieFilmingLocations(movie.id_Movies);
 
-        logger.log(
-          "[showFilmingLocations] filmingLocations:",
-          filmingLocations
-        );
+        logger.log("[showFilmingLocations] filmingLocations:", filmingLocations);
 
         this.$set(movie, "filmingLocations", filmingLocations);
       }
@@ -2994,13 +2344,7 @@ export default {
 
         logger.group("[Fetch Media Details]");
 
-        const result = await store.fetchMedia(
-          this.mediatype,
-          arr_id_Movies,
-          false,
-          this.$local_t,
-          this.$shared.filters
-        );
+        const result = await store.fetchMedia(this.mediatype, arr_id_Movies, false, this.$local_t, this.$shared.filters);
 
         logger.log("[completelyFetchMedia] result:", result);
 
@@ -3055,21 +2399,15 @@ export default {
 
     async onReleaseAttributesDialogDelete() {
       try {
-        await store.removeReleaseAttributeFromMovie(
-          this.releaseAttributeDialog.movie.id_Movies,
-          this.releaseAttributeDialog.ReleaseAttribute
-        );
+        await store.removeReleaseAttributeFromMovie(this.releaseAttributeDialog.movie.id_Movies, this.releaseAttributeDialog.ReleaseAttribute);
 
         eventBus.refetchMedia();
 
         eventBus.showSnackbar(
           "success",
-          this.$t(
-            'Release Attribute "{ReleaseAttribute}" successfully removed from selected movie_',
-            {
-              ReleaseAttribute: this.releaseAttributeDialog.ReleaseAttribute,
-            }
-          )
+          this.$t('Release Attribute "{ReleaseAttribute}" successfully removed from selected movie_', {
+            ReleaseAttribute: this.releaseAttributeDialog.ReleaseAttribute,
+          })
         );
       } catch (error) {
         eventBus.showSnackbar("error", error);
@@ -3091,10 +2429,7 @@ export default {
       this.editMediaItemDialog.show = false;
 
       if (hasChanges) {
-        eventBus.showSnackbar(
-          "success",
-          this.$t("Your changes have been saved_")
-        );
+        eventBus.showSnackbar("success", this.$t("Your changes have been saved_"));
 
         this.onReload();
       }
@@ -3131,10 +2466,7 @@ export default {
 
       this.ensureMovieExtras(this.deleteMediaDialog.item);
 
-      logger.log(
-        "[onDeleteMediaDialogYes] item after ensureMovieExtras:",
-        this.deleteMediaDialog.item
-      );
+      logger.log("[onDeleteMediaDialogYes] item after ensureMovieExtras:", this.deleteMediaDialog.item);
 
       try {
         // based on SourcePath's checkRemovedFiles we either ignore non-existant files/dirs or we abort with error
@@ -3142,72 +2474,39 @@ export default {
           `SELECT checkRemovedFiles FROM tbl_SourcePaths WHERE id_SourcePaths = $id_SourcePaths`,
           { $id_SourcePaths: this.deleteMediaDialog.item.id_SourcePaths }
         );
-        logger.log(
-          "[onDeleteMediaDialogYes] checkRemovedFiles:",
-          checkRemovedFiles
-        );
+        logger.log("[onDeleteMediaDialogYes] checkRemovedFiles:", checkRemovedFiles);
 
         // check SourcePath existence if checkRemovedFiles is falsy; abort with error if it does not exist
-        await this.checkPathExistence(
-          this.deleteMediaDialog.item.SourcePath,
-          checkRemovedFiles
-        );
+        await this.checkPathExistence(this.deleteMediaDialog.item.SourcePath, checkRemovedFiles);
 
         // delete extras
         for (const extra of this.deleteMediaDialog.item.extras || []) {
-          if (
-            await this.checkPathExistence(extra.fullPath, checkRemovedFiles)
-          ) {
-            logger.log(
-              "[onDeleteMediaDialogYes] deleting extra file:",
-              extra.fullPath
-            );
+          if (await this.checkPathExistence(extra.fullPath, checkRemovedFiles)) {
+            logger.log("[onDeleteMediaDialogYes] deleting extra file:", extra.fullPath);
             await fs.rm(extra.fullPath);
           }
         }
 
         if (this.deleteMediaDialog.item.isDirectoryBased) {
-          if (
-            await this.checkPathExistence(
-              this.deleteMediaDialog.item.fullDirectory,
-              checkRemovedFiles
-            )
-          ) {
-            logger.log(
-              "[onDeleteMediaDialogYes] deleting directory:",
-              this.deleteMediaDialog.item.fullDirectory
-            );
+          if (await this.checkPathExistence(this.deleteMediaDialog.item.fullDirectory, checkRemovedFiles)) {
+            logger.log("[onDeleteMediaDialogYes] deleting directory:", this.deleteMediaDialog.item.fullDirectory);
             await fs.rm(this.deleteMediaDialog.item.fullDirectory, {
               recursive: true,
               force: true,
             });
           }
         } else {
-          if (
-            await this.checkPathExistence(
-              this.deleteMediaDialog.item.fullPath,
-              checkRemovedFiles
-            )
-          ) {
-            logger.log(
-              "[onDeleteMediaDialogYes] deleting file:",
-              this.deleteMediaDialog.item.fullDirectory
-            );
+          if (await this.checkPathExistence(this.deleteMediaDialog.item.fullPath, checkRemovedFiles)) {
+            logger.log("[onDeleteMediaDialogYes] deleting file:", this.deleteMediaDialog.item.fullDirectory);
             await fs.rm(this.deleteMediaDialog.item.fullPath);
           }
         }
 
         // remove media entries from DB (use isRemoved?)
         for (const extra of this.deleteMediaDialog.item.extras || []) {
-          await store.db.fireProcedure(
-            `UPDATE tbl_Movies SET isRemoved = 1 WHERE id_Movies = $id_Movies`,
-            { $id_Movies: extra.id_Movies }
-          );
+          await store.db.fireProcedure(`UPDATE tbl_Movies SET isRemoved = 1 WHERE id_Movies = $id_Movies`, { $id_Movies: extra.id_Movies });
         }
-        await store.db.fireProcedure(
-          `UPDATE tbl_Movies SET isRemoved = 1 WHERE id_Movies = $id_Movies`,
-          { $id_Movies: this.deleteMediaDialog.item.id_Movies }
-        );
+        await store.db.fireProcedure(`UPDATE tbl_Movies SET isRemoved = 1 WHERE id_Movies = $id_Movies`, { $id_Movies: this.deleteMediaDialog.item.id_Movies });
 
         eventBus.showSnackbar(
           "success",
@@ -3258,16 +2557,9 @@ export default {
         eventBus.showLoadingOverlay(true);
 
         this.items = [];
-        this.items = await store.fetchMedia(
-          this.mediatype,
-          null,
-          true,
-          $t,
-          this.$shared.filters
-        );
+        this.items = await store.fetchMedia(this.mediatype, null, true, $t, this.$shared.filters);
 
-        this.$shared.currentPage =
-          setPage && setPage <= this.numPages ? setPage : 1;
+        this.$shared.currentPage = setPage && setPage <= this.numPages ? setPage : 1;
         store.saveCurrentPage(this.mediatype);
 
         await this.completelyFetchMedia();
@@ -3315,19 +2607,16 @@ export default {
       this.onCompanyClicked(value);
     });
 
-    eventBus.$on(
-      "rescanFinished",
-      ({ rescanAddedMovies, rescanRemovedMovies }) => {
-        if (rescanAddedMovies || rescanRemovedMovies) {
-          (async () => {
-            // // Reset after Rescan -> else we get fuckups with filterYears' range
-            // store.resetFilters();
-            // await store.saveFilterValues(this.mediatype);
-            this.onReload();
-          })();
-        }
+    eventBus.$on("rescanFinished", ({ rescanAddedMovies, rescanRemovedMovies }) => {
+      if (rescanAddedMovies || rescanRemovedMovies) {
+        (async () => {
+          // // Reset after Rescan -> else we get fuckups with filterYears' range
+          // store.resetFilters();
+          // await store.saveFilterValues(this.mediatype);
+          this.onReload();
+        })();
       }
-    );
+    });
     (async () => {
       eventBus.refetchMedia();
 
@@ -3472,8 +2761,7 @@ export default {
   padding-top: 2px;
   position: absolute;
   right: 0px;
-  text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px,
-    #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+  text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
 }
 
 .duration-overlay {

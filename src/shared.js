@@ -370,20 +370,17 @@ const shared = new Vue({
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_mainPageData",
         enabled: true,
-        description:
-          "Main Page (Genres, Rating/Votes, Metacritic Score, Poster, Plot Summary, Trailer URL)",
+        description: "Main Page (Genres, Rating/Votes, Metacritic Score, Poster, Plot Summary, Trailer URL)",
       },
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics",
         enabled: true,
-        description:
-          "Ratings (Rating by Demographics, e_g_ Ages, Male/Female, US/Non-US)",
+        description: "Ratings (Rating by Demographics, e_g_ Ages, Male/Female, US/Non-US)",
       },
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_plotSummary",
         enabled: true,
-        description:
-          "Full Plot Summary (Main Page only contains an extract of the full summary)",
+        description: "Full Plot Summary (Main Page only contains an extract of the full summary)",
       },
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_plotKeywords",
@@ -393,8 +390,7 @@ const shared = new Vue({
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo",
         enabled: true,
-        description:
-          "Release Info (Title, Localized Title, Original Title, Year)",
+        description: "Release Info (Title, Localized Title, Original Title, Year)",
       },
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_technicalData",
@@ -404,8 +400,7 @@ const shared = new Vue({
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData",
         enabled: true,
-        description:
-          "Parental Guide (Age Rating, Levels of: Nudity, Violence, Profanity, Alcohol & Drugs, Frightening Scenes)",
+        description: "Parental Guide (Age Rating, Levels of: Nudity, Violence, Profanity, Alcohol & Drugs, Frightening Scenes)",
       },
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_creditsData",
@@ -427,8 +422,7 @@ const shared = new Vue({
     imdbScraperChecks: [
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_mainPageData",
-        description:
-          "Main Page (Genres, Rating/Votes, Metacritic Score, Poster, Plot Summary, Trailer URL)",
+        description: "Main Page (Genres, Rating/Votes, Metacritic Score, Poster, Plot Summary, Trailer URL)",
         enabled: true,
         checkFunction: imdbScraperTests.testIMDBmainPageData,
         icon: null,
@@ -438,8 +432,7 @@ const shared = new Vue({
       },
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics",
-        description:
-          "Ratings (Rating by Demographics, e_g_ Ages, Male/Female, US/Non-US)",
+        description: "Ratings (Rating by Demographics, e_g_ Ages, Male/Female, US/Non-US)",
         enabled: true,
         checkFunction: imdbScraperTests.testIMDBRatingDemographics,
         icon: null,
@@ -449,8 +442,7 @@ const shared = new Vue({
       },
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_plotSummary",
-        description:
-          "Full Plot Summary (Main Page only contains an extract of the full summary)",
+        description: "Full Plot Summary (Main Page only contains an extract of the full summary)",
         enabled: true,
         checkFunction: imdbScraperTests.testIMDBplotSummary,
         icon: null,
@@ -470,8 +462,7 @@ const shared = new Vue({
       },
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo",
-        description:
-          "Release Info (Title, Localized Title, Original Title, Year)",
+        description: "Release Info (Title, Localized Title, Original Title, Year)",
         enabled: true,
         checkFunction: imdbScraperTests.testIMDBreleaseinfo,
         icon: null,
@@ -491,8 +482,7 @@ const shared = new Vue({
       },
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_parentalguideData",
-        description:
-          "Parental Guide (Age Rating, Levels of: Nudity, Violence, Profanity, Alcohol & Drugs, Frightening Scenes)",
+        description: "Parental Guide (Age Rating, Levels of: Nudity, Violence, Profanity, Alcohol & Drugs, Frightening Scenes)",
         enabled: true,
         checkFunction: imdbScraperTests.testIMDBParentalGuideData,
         icon: null,
@@ -570,6 +560,8 @@ const shared = new Vue({
         isRunning: false,
         result: null,
       },
+      /*
+      // currently disabled we don't use the "Find" search
       {
         key: "adhoc_FindSearch",
         description: "Find (Ad-Hoc)",
@@ -580,6 +572,7 @@ const shared = new Vue({
         isRunning: false,
         result: null,
       },
+      */
     ],
 
     supportedLanguages: [
@@ -900,27 +893,17 @@ const shared = new Vue({
     filterPersonsActive() {
       return (
         this.filters.filterPersons &&
-        ((!this.filters.filterSettings.filterPersonsAND &&
-          this.filters.filterPersons.find((filter) => !filter.Selected)) ||
-          (this.filters.filterSettings.filterPersonsAND &&
-            this.filters.filterPersons.find(
-              (filter) => filter.Selected && filter.IMDB_Person_ID
-            )))
+        ((!this.filters.filterSettings.filterPersonsAND && this.filters.filterPersons.find((filter) => !filter.Selected)) ||
+          (this.filters.filterSettings.filterPersonsAND && this.filters.filterPersons.find((filter) => filter.Selected && filter.IMDB_Person_ID)))
       );
     },
     filterPersonsApplied() {
       if (
         this.filters.filterPersons &&
-        ((!this.filters.filterSettings.filterPersonsAND &&
-          this.filters.filterPersons.find((filter) => !filter.Selected)) ||
-          (this.filters.filterSettings.filterPersonsAND &&
-            this.filters.filterPersons.find(
-              (filter) => filter.Selected && filter.IMDB_Person_ID
-            )))
+        ((!this.filters.filterSettings.filterPersonsAND && this.filters.filterPersons.find((filter) => !filter.Selected)) ||
+          (this.filters.filterSettings.filterPersonsAND && this.filters.filterPersons.find((filter) => filter.Selected && filter.IMDB_Person_ID)))
       ) {
-        return this.filters.filterPersons.filter(
-          (filter) => filter.Selected && filter.IMDB_Person_ID
-        );
+        return this.filters.filterPersons.filter((filter) => filter.Selected && filter.IMDB_Person_ID);
       }
 
       return [];
@@ -929,27 +912,17 @@ const shared = new Vue({
     filterCompaniesActive() {
       return (
         this.filters.filterCompanies &&
-        ((!this.filters.filterSettings.filterCompaniesAND &&
-          this.filters.filterCompanies.find((filter) => !filter.Selected)) ||
-          (this.filters.filterSettings.filterCompaniesAND &&
-            this.filters.filterCompanies.find(
-              (filter) => filter.Selected && filter.id_Filter_Companies
-            )))
+        ((!this.filters.filterSettings.filterCompaniesAND && this.filters.filterCompanies.find((filter) => !filter.Selected)) ||
+          (this.filters.filterSettings.filterCompaniesAND && this.filters.filterCompanies.find((filter) => filter.Selected && filter.id_Filter_Companies)))
       );
     },
     filterCompaniesApplied() {
       if (
         this.filters.filterCompanies &&
-        ((!this.filters.filterSettings.filterCompaniesAND &&
-          this.filters.filterCompanies.find((filter) => !filter.Selected)) ||
-          (this.filters.filterSettings.filterCompaniesAND &&
-            this.filters.filterCompanies.find(
-              (filter) => filter.Selected && filter.id_Filter_Companies
-            )))
+        ((!this.filters.filterSettings.filterCompaniesAND && this.filters.filterCompanies.find((filter) => !filter.Selected)) ||
+          (this.filters.filterSettings.filterCompaniesAND && this.filters.filterCompanies.find((filter) => filter.Selected && filter.id_Filter_Companies)))
       ) {
-        return this.filters.filterCompanies.filter(
-          (filter) => filter.Selected && filter.id_Filter_Companies
-        );
+        return this.filters.filterCompanies.filter((filter) => filter.Selected && filter.id_Filter_Companies);
       }
 
       return [];
@@ -960,9 +933,7 @@ const shared = new Vue({
     },
     filterSourcePathsApplied() {
       if (this.filterSourcePathsActive) {
-        return this.filters.filterSourcePaths.filter(
-          (filter) => filter.Selected
-        );
+        return this.filters.filterSourcePaths.filter((filter) => filter.Selected);
       }
 
       return [];
@@ -980,30 +951,22 @@ const shared = new Vue({
     },
 
     filterAudioLanguagesActive() {
-      return this.filters.filterAudioLanguages.find(
-        (filter) => !filter.Selected
-      );
+      return this.filters.filterAudioLanguages.find((filter) => !filter.Selected);
     },
     filterAudioLanguagesApplied() {
       if (this.filterAudioLanguagesActive) {
-        return this.filters.filterAudioLanguages.filter(
-          (filter) => filter.Selected
-        );
+        return this.filters.filterAudioLanguages.filter((filter) => filter.Selected);
       }
 
       return [];
     },
 
     filterSubtitleLanguagesActive() {
-      return this.filters.filterSubtitleLanguages.find(
-        (filter) => !filter.Selected
-      );
+      return this.filters.filterSubtitleLanguages.find((filter) => !filter.Selected);
     },
     filterSubtitleLanguagesApplied() {
       if (this.filterSubtitleLanguagesActive) {
-        return this.filters.filterSubtitleLanguages.filter(
-          (filter) => filter.Selected
-        );
+        return this.filters.filterSubtitleLanguages.filter((filter) => filter.Selected);
       }
 
       return [];
@@ -1012,21 +975,13 @@ const shared = new Vue({
     filterReleaseAttributesActive() {
       return (
         this.filters.filterReleaseAttributes &&
-        ((!this.filters.filterSettings.filterReleaseAttributesAND &&
-          this.filters.filterReleaseAttributes.find(
-            (filter) => !filter.Selected
-          )) ||
-          (this.filters.filterSettings.filterReleaseAttributesAND &&
-            this.filters.filterReleaseAttributes.find(
-              (filter) => filter.Selected && !filter.isAny
-            )))
+        ((!this.filters.filterSettings.filterReleaseAttributesAND && this.filters.filterReleaseAttributes.find((filter) => !filter.Selected)) ||
+          (this.filters.filterSettings.filterReleaseAttributesAND && this.filters.filterReleaseAttributes.find((filter) => filter.Selected && !filter.isAny)))
       );
     },
     filterReleaseAttributesApplied() {
       if (this.filterReleaseAttributesActive) {
-        return this.filters.filterReleaseAttributes.filter(
-          (filter) => filter.Selected && !filter.isAny
-        );
+        return this.filters.filterReleaseAttributes.filter((filter) => filter.Selected && !filter.isAny);
       }
 
       return [];
@@ -1046,10 +1001,8 @@ const shared = new Vue({
     filterGenresActive() {
       return (
         this.filters.filterGenres &&
-        ((!this.filters.filterSettings.filterGenresAND &&
-          this.filters.filterGenres.find((filter) => !filter.Selected)) ||
-          (this.filters.filterSettings.filterGenresAND &&
-            this.filters.filterGenres.find((filter) => filter.Selected)))
+        ((!this.filters.filterSettings.filterGenresAND && this.filters.filterGenres.find((filter) => !filter.Selected)) ||
+          (this.filters.filterSettings.filterGenresAND && this.filters.filterGenres.find((filter) => filter.Selected)))
       );
     },
     filterGenresApplied() {
@@ -1064,9 +1017,7 @@ const shared = new Vue({
     },
     filterAgeRatingsApplied() {
       if (this.filterAgeRatingsActive) {
-        return this.filters.filterAgeRatings.filter(
-          (filter) => filter.Selected
-        );
+        return this.filters.filterAgeRatings.filter((filter) => filter.Selected);
       }
       return [];
     },
@@ -1095,56 +1046,25 @@ const shared = new Vue({
         Frightening: [],
       };
 
-      if (
-        this.filters.filterParentalAdvisory.Nudity.find(
-          (filter) => !filter.Selected
-        )
-      ) {
+      if (this.filters.filterParentalAdvisory.Nudity.find((filter) => !filter.Selected)) {
         result.None = false;
-        result.Nudity = this.filters.filterParentalAdvisory.Nudity.filter(
-          (filter) => filter.Selected
-        );
+        result.Nudity = this.filters.filterParentalAdvisory.Nudity.filter((filter) => filter.Selected);
       }
-      if (
-        this.filters.filterParentalAdvisory.Violence.find(
-          (filter) => !filter.Selected
-        )
-      ) {
+      if (this.filters.filterParentalAdvisory.Violence.find((filter) => !filter.Selected)) {
         result.None = false;
-        result.Violence = this.filters.filterParentalAdvisory.Violence.filter(
-          (filter) => filter.Selected
-        );
+        result.Violence = this.filters.filterParentalAdvisory.Violence.filter((filter) => filter.Selected);
       }
-      if (
-        this.filters.filterParentalAdvisory.Profanity.find(
-          (filter) => !filter.Selected
-        )
-      ) {
+      if (this.filters.filterParentalAdvisory.Profanity.find((filter) => !filter.Selected)) {
         result.None = false;
-        result.Profanity = this.filters.filterParentalAdvisory.Profanity.filter(
-          (filter) => filter.Selected
-        );
+        result.Profanity = this.filters.filterParentalAdvisory.Profanity.filter((filter) => filter.Selected);
       }
-      if (
-        this.filters.filterParentalAdvisory.Alcohol.find(
-          (filter) => !filter.Selected
-        )
-      ) {
+      if (this.filters.filterParentalAdvisory.Alcohol.find((filter) => !filter.Selected)) {
         result.None = false;
-        result.Alcohol = this.filters.filterParentalAdvisory.Alcohol.filter(
-          (filter) => filter.Selected
-        );
+        result.Alcohol = this.filters.filterParentalAdvisory.Alcohol.filter((filter) => filter.Selected);
       }
-      if (
-        this.filters.filterParentalAdvisory.Frightening.find(
-          (filter) => !filter.Selected
-        )
-      ) {
+      if (this.filters.filterParentalAdvisory.Frightening.find((filter) => !filter.Selected)) {
         result.None = false;
-        result.Frightening =
-          this.filters.filterParentalAdvisory.Frightening.filter(
-            (filter) => filter.Selected
-          );
+        result.Frightening = this.filters.filterParentalAdvisory.Frightening.filter((filter) => filter.Selected);
       }
 
       return result;
@@ -1153,21 +1073,14 @@ const shared = new Vue({
     filterIMDBPlotKeywordsActive() {
       return (
         this.filters.filterIMDBPlotKeywords &&
-        ((!this.filters.filterSettings.filterIMDBPlotKeywordsAND &&
-          this.filters.filterIMDBPlotKeywords.find(
-            (filter) => !filter.Selected
-          )) ||
+        ((!this.filters.filterSettings.filterIMDBPlotKeywordsAND && this.filters.filterIMDBPlotKeywords.find((filter) => !filter.Selected)) ||
           (this.filters.filterSettings.filterIMDBPlotKeywordsAND &&
-            this.filters.filterIMDBPlotKeywords.find(
-              (filter) => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords
-            )))
+            this.filters.filterIMDBPlotKeywords.find((filter) => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords)))
       );
     },
     filterIMDBPlotKeywordsApplied() {
       if (this.filterIMDBPlotKeywordsActive) {
-        return this.filters.filterIMDBPlotKeywords.filter(
-          (filter) => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords
-        );
+        return this.filters.filterIMDBPlotKeywords.filter((filter) => filter.Selected && filter.id_Filter_IMDB_Plot_Keywords);
       }
 
       return [];
@@ -1176,22 +1089,14 @@ const shared = new Vue({
     filterIMDBFilmingLocationsActive() {
       return (
         this.filters.filterIMDBFilmingLocations &&
-        ((!this.filters.filterSettings.filterIMDBFilmingLocationsAND &&
-          this.filters.filterIMDBFilmingLocations.find(
-            (filter) => !filter.Selected
-          )) ||
+        ((!this.filters.filterSettings.filterIMDBFilmingLocationsAND && this.filters.filterIMDBFilmingLocations.find((filter) => !filter.Selected)) ||
           (this.filters.filterSettings.filterIMDBFilmingLocationsAND &&
-            this.filters.filterIMDBFilmingLocations.find(
-              (filter) =>
-                filter.Selected && filter.id_Filter_IMDB_Filming_Locations
-            )))
+            this.filters.filterIMDBFilmingLocations.find((filter) => filter.Selected && filter.id_Filter_IMDB_Filming_Locations)))
       );
     },
     filterIMDBFilmingLocationsApplied() {
       if (this.filterIMDBFilmingLocationsActive) {
-        return this.filters.filterIMDBFilmingLocations.filter(
-          (filter) => filter.Selected && filter.id_Filter_IMDB_Filming_Locations
-        );
+        return this.filters.filterIMDBFilmingLocations.filter((filter) => filter.Selected && filter.id_Filter_IMDB_Filming_Locations);
       }
 
       return [];
@@ -1217,37 +1122,23 @@ const shared = new Vue({
     },
 
     filterIMDBRatingsActive() {
-      return (
-        this.$shared.filters.filterIMDBRating[0] !== 0 ||
-        this.$shared.filters.filterIMDBRating[1] !== 10 ||
-        !this.$shared.filters.filterIMDBRatingNone
-      );
+      return this.$shared.filters.filterIMDBRating[0] !== 0 || this.$shared.filters.filterIMDBRating[1] !== 10 || !this.$shared.filters.filterIMDBRatingNone;
     },
 
     filterDataQualityActive() {
       return (
         this.$shared.filters.filterDataQuality &&
-        ((!this.$shared.filters.filterSettings.filterDataQualityAND &&
-          this.$shared.filters.filterDataQuality.find(
-            (filter) => !filter.Selected
-          )) ||
-          (this.$shared.filters.filterSettings.filterDataQualityAND &&
-            this.$shared.filters.filterDataQuality.find(
-              (filter) => filter.Selected
-            )))
+        ((!this.$shared.filters.filterSettings.filterDataQualityAND && this.$shared.filters.filterDataQuality.find((filter) => !filter.Selected)) ||
+          (this.$shared.filters.filterSettings.filterDataQualityAND && this.$shared.filters.filterDataQuality.find((filter) => filter.Selected)))
       );
     },
 
     filterVideoEncodersActive() {
-      return this.filters.filterVideoEncoders.find(
-        (filter) => !filter.Selected
-      );
+      return this.filters.filterVideoEncoders.find((filter) => !filter.Selected);
     },
     filterVideoEncodersApplied() {
       if (this.filterVideoEncodersActive) {
-        return this.filters.filterVideoEncoders.filter(
-          (filter) => filter.Selected
-        );
+        return this.filters.filterVideoEncoders.filter((filter) => filter.Selected);
       }
 
       return [];
@@ -1258,9 +1149,7 @@ const shared = new Vue({
     },
     filterAudioFormatsApplied() {
       if (this.filterAudioFormatsActive) {
-        return this.filters.filterAudioFormats.filter(
-          (filter) => filter.Selected
-        );
+        return this.filters.filterAudioFormats.filter((filter) => filter.Selected);
       }
 
       return [];
@@ -1269,45 +1158,29 @@ const shared = new Vue({
 
   methods: {
     getFilterGroup(filterGroupName) {
-      return this.$shared.filterGroups.find(
-        (fg) => fg.name === filterGroupName
-      );
+      return this.$shared.filterGroups.find((fg) => fg.name === filterGroupName);
     },
 
     filterPersonsAppliedContains(person) {
-      return !!this.$shared.filterPersonsApplied.find(
-        (fp) => fp.IMDB_Person_ID === person.id
-      );
+      return !!this.$shared.filterPersonsApplied.find((fp) => fp.IMDB_Person_ID === person.id);
     },
 
     filterCompaniesAppliedContains(company) {
-      return !!this.$shared.filterCompaniesApplied.find(
-        (fc) => fc.Company_Name === company.name
-      );
+      return !!this.$shared.filterCompaniesApplied.find((fc) => fc.Company_Name === company.name);
     },
 
     filterQualitiesAppliedContains(quality) {
-      return !!this.$shared.filterQualitiesApplied.find(
-        (fq) => fq.MI_Quality === quality
-      );
+      return !!this.$shared.filterQualitiesApplied.find((fq) => fq.MI_Quality === quality);
     },
 
     filterVideoEncodersAppliedContains(videoEncoder) {
-      return !!this.$shared.filterVideoEncodersApplied.find(
-        (fve) => fve.Name === videoEncoder
-      );
+      return !!this.$shared.filterVideoEncodersApplied.find((fve) => fve.Name === videoEncoder);
     },
 
-    filterAudioLanguagesAppliedContains(
-      language,
-      arrVisibleLanguages,
-      allLanguages
-    ) {
+    filterAudioLanguagesAppliedContains(language, arrVisibleLanguages, allLanguages) {
       if (!/\+\d/.test(language)) {
         // language is not "+6" or similar
-        return !!this.$shared.filterAudioLanguagesApplied.find(
-          (fal) => fal.Language.toUpperCase() === language
-        );
+        return !!this.$shared.filterAudioLanguagesApplied.find((fal) => fal.Language.toUpperCase() === language);
       } else {
         // language is "+6" or similar, we have to check hidden languages
         const allLanguagesUppercase = allLanguages
@@ -1315,21 +1188,15 @@ const shared = new Vue({
           .split(",")
           .map((lang) => lang.trim());
         arrVisibleLanguages.forEach((visibleLanguage) => {
-          while (
-            allLanguagesUppercase.find((lang) => lang === visibleLanguage)
-          ) {
+          while (allLanguagesUppercase.find((lang) => lang === visibleLanguage)) {
             allLanguagesUppercase.splice(
-              allLanguagesUppercase.findIndex(
-                (lang) => lang === visibleLanguage
-              ),
+              allLanguagesUppercase.findIndex((lang) => lang === visibleLanguage),
               1
             );
           }
         });
 
-        const arrFilterLanguages = this.$shared.filterAudioLanguagesApplied.map(
-          (fal) => fal.Language.toUpperCase()
-        );
+        const arrFilterLanguages = this.$shared.filterAudioLanguagesApplied.map((fal) => fal.Language.toUpperCase());
         for (let filterLanguage of arrFilterLanguages) {
           if (allLanguagesUppercase.find((lang) => lang === filterLanguage)) {
             return true;
@@ -1341,51 +1208,35 @@ const shared = new Vue({
     },
 
     filterAudioFormatsAppliedContains(audioFormat) {
-      return !!this.$shared.filterAudioFormatsApplied.find(
-        (filter) => filter.Name === audioFormat
-      );
+      return !!this.$shared.filterAudioFormatsApplied.find((filter) => filter.Name === audioFormat);
     },
 
     filterSubtitleLanguagesAppliedContains(language) {
-      return !!this.$shared.filterSubtitleLanguagesApplied.find(
-        (fsl) => fsl.Language.toUpperCase() === language
-      );
+      return !!this.$shared.filterSubtitleLanguagesApplied.find((fsl) => fsl.Language.toUpperCase() === language);
     },
 
     filterReleaseAttributesAppliedContains(releaseAttribute) {
-      return !!this.$shared.filterReleaseAttributesApplied.find(
-        (fra) => fra.ReleaseAttribute === releaseAttribute
-      );
+      return !!this.$shared.filterReleaseAttributesApplied.find((fra) => fra.ReleaseAttribute === releaseAttribute);
     },
 
     filterListsAppliedContains(listName) {
-      return !!this.$shared.filterListsApplied.find(
-        (fla) => fla.Name === listName
-      );
+      return !!this.$shared.filterListsApplied.find((fla) => fla.Name === listName);
     },
 
     filterGenresAppliedContains(genreName) {
-      return !!this.$shared.filterGenresApplied.find(
-        (fga) => fga.Name === genreName
-      );
+      return !!this.$shared.filterGenresApplied.find((fga) => fga.Name === genreName);
     },
 
     filterParentalAdvisoryAppliedContains(categoryName, severity) {
-      return !!this.$shared.filterParentalAdvisoryApplied[categoryName].find(
-        (fpaa) => fpaa.Severity === severity
-      );
+      return !!this.$shared.filterParentalAdvisoryApplied[categoryName].find((fpaa) => fpaa.Severity === severity);
     },
 
     filterIMDBPlotKeywordsAppliedContains(plotKeyword) {
-      return !!this.$shared.filterIMDBPlotKeywordsApplied.find(
-        (fpka) => fpka.Keyword === plotKeyword
-      );
+      return !!this.$shared.filterIMDBPlotKeywordsApplied.find((fpka) => fpka.Keyword === plotKeyword);
     },
 
     filterIMDBFilmingLocationsAppliedContains(location) {
-      return !!this.$shared.filterIMDBFilmingLocationsApplied.find(
-        (ffla) => ffla.Location === location
-      );
+      return !!this.$shared.filterIMDBFilmingLocationsApplied.find((ffla) => ffla.Location === location);
     },
   },
 });

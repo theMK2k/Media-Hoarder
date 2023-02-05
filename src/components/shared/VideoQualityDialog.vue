@@ -1,44 +1,18 @@
 <template>
-  <v-dialog
-    v-model="show"
-    persistent
-    max-width="1000px"
-    v-on:keydown.escape="onEscapePressed"
-    scrollable
-  >
+  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onEscapePressed" scrollable>
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         {{ $t("Video Quality") }}:
         {{ Video_Quality }}
-        <v-progress-linear
-          v-if="isScraping"
-          color="red accent-0"
-          indeterminate
-          rounded
-          height="3"
-        ></v-progress-linear>
+        <v-progress-linear v-if="isScraping" color="red accent-0" indeterminate rounded height="3"></v-progress-linear>
       </v-card-title>
 
       <v-card-text>
-        <v-list-item
-          three-line
-          style="padding-left: 0px; align-items: flex-start"
-        >
-          <v-list-item-content
-            class="align-self-start"
-            style="padding-top: 6px; padding-bottom: 6px"
-          >
+        <v-list-item three-line style="padding-left: 0px; align-items: flex-start">
+          <v-list-item-content class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
             <div v-on:click.stop="toggleShowMovies()">
-              <v-row
-                v-if="numMovies !== null"
-                class="mk-clickable mk-compact-movie-list-title"
-              >
-                {{
-                  numMovies +
-                  " " +
-                  $t(numMovies === 1 ? "movie" : "movies") +
-                  (!showMovies ? " »" : "")
-                }}
+              <v-row v-if="numMovies !== null" class="mk-clickable mk-compact-movie-list-title">
+                {{ numMovies + " " + $t(numMovies === 1 ? "movie" : "movies") + (!showMovies ? " »" : "") }}
               </v-row>
               <div v-if="showMovies" class="mk-clickable-white">
                 <div v-for="(movie, index) in movies" v-bind:key="index">
@@ -51,20 +25,8 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn
-          class="xs-fullwidth"
-          color="secondary"
-          v-on:click.native="onCloseClick"
-          style="margin-left: 8px"
-          >{{ $t("Close") }}</v-btn
-        >
-        <v-btn
-          v-if="numMovies !== null"
-          class="xs-fullwidth"
-          color="primary"
-          v-on:click.native="onFilterClick"
-          style="margin-left: 8px"
-        >
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCloseClick" style="margin-left: 8px">{{ $t("Close") }}</v-btn>
+        <v-btn v-if="numMovies !== null" class="xs-fullwidth" color="primary" v-on:click.native="onFilterClick" style="margin-left: 8px">
           {{ $t("Filter by this video quality") }}
         </v-btn>
       </v-card-actions>
@@ -199,10 +161,7 @@ export default {
         this.movies = movies.filter((item, index) => {
           return (
             movies.findIndex((item2) => {
-              return (
-                `${item2.Name} ${item2.yearDisplay}` ===
-                `${item.Name} ${item.yearDisplay}`
-              );
+              return `${item2.Name} ${item2.yearDisplay}` === `${item.Name} ${item.yearDisplay}`;
             }) === index
           );
         });

@@ -15,9 +15,7 @@ logger.setLevel(0);
 const cmdArguments = minimist(process.argv.slice(2));
 
 if (!cmdArguments.portable) {
-  logger.error(
-    "set-portable ERROR: Command Line Parameter --portable=[true,false] missing!"
-  );
+  logger.error("set-portable ERROR: Command Line Parameter --portable=[true,false] missing!");
   exit(1);
 }
 
@@ -26,16 +24,10 @@ const isPORTABLE = cmdArguments.portable === "true";
 let content = fs.readFileSync("./src/helpers/helpers.js", "utf8");
 
 if (isPORTABLE) {
-  content = content.replace(
-    /const isPORTABLE = false/,
-    "const isPORTABLE = true"
-  );
+  content = content.replace(/const isPORTABLE = false/, "const isPORTABLE = true");
   logger.log("Media Hoarder set to PORTABLE");
 } else {
-  content = content.replace(
-    /const isPORTABLE = true/,
-    "const isPORTABLE = false"
-  );
+  content = content.replace(/const isPORTABLE = true/, "const isPORTABLE = false");
   logger.log("Media Hoarder set to non-PORTABLE");
 }
 

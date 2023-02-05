@@ -1,10 +1,5 @@
 <template>
-  <v-dialog
-    v-model="show"
-    persistent
-    max-width="100%"
-    v-on:keydown.escape="onEscapePressed"
-  >
+  <v-dialog v-model="show" persistent max-width="100%" v-on:keydown.escape="onEscapePressed">
     <!--  style="min-height: 600px!important" -->
     <v-card dark flat v-bind:ripple="false">
       <!--
@@ -21,25 +16,13 @@
         data-setup="{}"
         v-bind:poster="slateURL"
         autoplay
-        style="
-          width: 100%;
-          min-height: 600px !important;
-          background-color: black;
-          border-color: black;
-          outline-color: black;
-        "
+        style="width: 100%; min-height: 600px !important; background-color: black; border-color: black; outline-color: black"
       >
         <source v-bind:src="videoURL" v-bind:type="mimeType" />
       </video>
       <v-col sm="12">
         <v-row style="margin-top: 8px">
-          <v-btn
-            class="xs-fullwidth"
-            color="secondary"
-            v-on:click.native="onCloseClick"
-            style="margin-left: 8px"
-            >{{ $t("Close") }}</v-btn
-          >
+          <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCloseClick" style="margin-left: 8px">{{ $t("Close") }}</v-btn>
         </v-row>
       </v-col>
     </v-card>

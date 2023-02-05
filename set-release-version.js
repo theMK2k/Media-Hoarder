@@ -24,8 +24,5 @@ for (let i = 0; i < files.length; i++) {
     continue;
   }
 
-  fs.renameSync(
-    `RELEASE/${file}`,
-    `RELEASE/${file.replace("-VERSION-", `-${version}-`)}`
-  );
+  fs.renameSync(`RELEASE/${file}`, `RELEASE/${file.replace("-VERSION-", `-${version}-`)}`);
 }

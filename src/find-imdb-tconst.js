@@ -10,9 +10,7 @@ const { scrapeIMDBFind, scrapeIMDBtechnicalData } = require("./imdb-scraper");
  */
 export async function findIMDBtconstIncluded(movie) {
   logger.log("[findIMDBtconstIncluded] START");
-  const name = movie.isDirectoryBased
-    ? helpers.getLastDirectoryName(movie.fullDirectory)
-    : movie.Filename;
+  const name = movie.isDirectoryBased ? helpers.getLastDirectoryName(movie.fullDirectory) : movie.Filename;
 
   logger.log("[findIMDBtconstIncluded] name:", name);
 
@@ -39,9 +37,7 @@ export async function findIMDBtconstInNFO(movie) {
 
   let searchPath = movie.fullDirectory;
 
-  const lastDirectoryNameLower = helpers
-    .getLastDirectoryName(movie.fullDirectory)
-    .toLowerCase();
+  const lastDirectoryNameLower = helpers.getLastDirectoryName(movie.fullDirectory).toLowerCase();
 
   if (lastDirectoryNameLower.match(/^extra/)) {
     // we are inside a sub-directory and need to search the parent directory
@@ -52,9 +48,7 @@ export async function findIMDBtconstInNFO(movie) {
 
   const pathItems = await helpers.listPath(searchPath, searchPath);
 
-  const nfoFile = pathItems.find(
-    (pathItem) => pathItem.ExtensionLower === ".nfo"
-  );
+  const nfoFile = pathItems.find((pathItem) => pathItem.ExtensionLower === ".nfo");
 
   if (!nfoFile) {
     logger.log("[findIMDBtconstInNFO] no .nfo file found, abort.");
@@ -86,12 +80,7 @@ export async function findIMDBtconstInNFO(movie) {
  * @returns {String|Object}
  */
 export async function findIMDBtconstByFileOrDirname(movie, options) {
-  logger.log(
-    "[findIMDBtconstByFileOrDirname] START movie.isDirectoryBased",
-    movie.isDirectoryBased,
-    "movie:",
-    movie
-  );
+  logger.log("[findIMDBtconstByFileOrDirname] START movie.isDirectoryBased", movie.isDirectoryBased, "movie:", movie);
 
   if (!options) {
     options = {
@@ -119,22 +108,12 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
   };
 
   try {
-    logger.log(
-      "[findIMDBtconstByFileOrDirname] movie.isDirectoryBased",
-      movie.isDirectoryBased
-    );
+    logger.log("[findIMDBtconstByFileOrDirname] movie.isDirectoryBased", movie.isDirectoryBased);
     const arrYears = movie.isDirectoryBased
-      ? helpers.getYearsFromFileName(
-          helpers.getLastDirectoryName(movie.fullDirectory),
-          false
-        )
+      ? helpers.getYearsFromFileName(helpers.getLastDirectoryName(movie.fullDirectory), false)
       : helpers.getYearsFromFileName(movie.Filename, false);
 
-    const name = (
-      movie.isDirectoryBased
-        ? helpers.getMovieNameFromDirectory(movie.fullDirectory)
-        : helpers.getMovieNameFromFileName(movie.Filename)
-    )
+    const name = (movie.isDirectoryBased ? helpers.getMovieNameFromDirectory(movie.fullDirectory) : helpers.getMovieNameFromFileName(movie.Filename))
       .replace(/\([^)]*?\)/g, "")
       .replace(/\[[^\]]*?\]/g, "")
       .trim();
@@ -152,14 +131,9 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
 
       logger.log(`[findIMDBtconstByFileOrDirname] trying: "${searchTerm}"`);
 
-      let results = await scrapeIMDBFind(
-        searchTerm,
-        options.category === "title" ? "tt" : null
-      );
+      let results = await scrapeIMDBFind(searchTerm, options.category === "title" ? "tt" : null);
 
-      logger.log(
-        `[findIMDBtconstByFileOrDirname] ${results.length} results found for "${searchTerm}"`
-      );
+      logger.log(`[findIMDBtconstByFileOrDirname] ${results.length} results found for "${searchTerm}"`);
       stats.numResults = results.length;
 
       if (results.length === 0) {
@@ -180,14 +154,10 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
             1
           );
         }
-        while (
-          results.find((result) => result.title.includes("(TV Episode)"))
-        ) {
+        while (results.find((result) => result.title.includes("(TV Episode)"))) {
           stats.excludedTVSeries = true;
           results.splice(
-            results.findIndex((result) =>
-              result.title.includes("(TV Episode)")
-            ),
+            results.findIndex((result) => result.title.includes("(TV Episode)")),
             1
           );
         }
@@ -236,20 +206,13 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
           });
 
           if (imdbData.$IMDB_runtimeMinutes) {
-            const runtimeSeconds = imdbData.$IMDB_runtimeMinutes
-              ? parseInt(imdbData.$IMDB_runtimeMinutes) * 60
-              : null;
+            const runtimeSeconds = imdbData.$IMDB_runtimeMinutes ? parseInt(imdbData.$IMDB_runtimeMinutes) * 60 : null;
 
-            result.runtimeDiff = runtimeSeconds
-              ? Math.abs(movie.MI_Duration_Seconds - runtimeSeconds)
-              : null;
+            result.runtimeDiff = runtimeSeconds ? Math.abs(movie.MI_Duration_Seconds - runtimeSeconds) : null;
 
             if (result.runtimeDiff !== null) {
               stats.runtimematch = true;
-              if (
-                stats.runtimeDiff === -1337 ||
-                stats.runtimeDiff > result.runtimeDiff
-              ) {
+              if (stats.runtimeDiff === -1337 || stats.runtimeDiff > result.runtimeDiff) {
                 stats.runtimeDiff = result.runtimeDiff;
               }
             }
@@ -264,35 +227,21 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
 
         if (stats.runtimematch) {
           // sort results by runtimeDiff
-          logger.log(
-            "[findIMDBtconstByFileOrDirname] results before sort:",
-            JSON.stringify(results, null, 2)
-          );
+          logger.log("[findIMDBtconstByFileOrDirname] results before sort:", JSON.stringify(results, null, 2));
 
           results.sort((a, b) => {
-            return a.runtimeDiff === null
-              ? 1
-              : b.runtimeDiff === null
-              ? -1
-              : a.runtimeDiff - b.runtimeDiff;
+            return a.runtimeDiff === null ? 1 : b.runtimeDiff === null ? -1 : a.runtimeDiff - b.runtimeDiff;
           });
 
-          logger.log(
-            "[findIMDBtconstByFileOrDirname] runtime sorted results:",
-            results
-          );
+          logger.log("[findIMDBtconstByFileOrDirname] runtime sorted results:", results);
 
           results = [results[0]]; // take the first
         }
       }
 
-      const coiceType = `${stats.immediateOptimum ? "|immediateOptimum" : ""}${
-        stats.yearmatch
-          ? `|year${stats.yearmatchexact ? "(exact)" : "(losely)"}`
-          : ""
-      }${stats.excludedTVSeries ? "|excludedTVSeries" : ""}${
-        stats.runtimematch ? "|runtime" : ""
-      }`;
+      const coiceType = `${stats.immediateOptimum ? "|immediateOptimum" : ""}${stats.yearmatch ? `|year${stats.yearmatchexact ? "(exact)" : "(losely)"}` : ""}${
+        stats.excludedTVSeries ? "|excludedTVSeries" : ""
+      }${stats.runtimematch ? "|runtime" : ""}`;
 
       stats.numResultsFiltered = results.length;
       stats.chosenName = searchTerm;
@@ -306,18 +255,12 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
       }
 
       if (results.length === 1) {
-        logger.log(
-          "[findIMDBtconstByFileOrDirname] OPTIMUM found :D",
-          results[0]
-        );
+        logger.log("[findIMDBtconstByFileOrDirname] OPTIMUM found :D", results[0]);
         stats.choiceType = `optimum${coiceType}`;
       }
 
       if (results.length > 1) {
-        logger.log(
-          "[findIMDBtconstByFileOrDirname] just using the first result :(",
-          results[0]
-        );
+        logger.log("[findIMDBtconstByFileOrDirname] just using the first result :(", results[0]);
         stats.choiceType = `fallback${coiceType}`;
       }
 

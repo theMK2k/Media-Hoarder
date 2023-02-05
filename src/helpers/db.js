@@ -22,9 +22,7 @@ let _db;
  */
 function getDb() {
   if (!_db) {
-    logger.error(
-      "[getDb] Db has not been initialized. Please call init first."
-    );
+    logger.error("[getDb] Db has not been initialized. Please call init first.");
   }
 
   return _db;
@@ -139,10 +137,7 @@ function initSQLite(callback) {
   logger.debug("[initSQLite] Initializing SQLite");
 
   if (!fs.existsSync(helpers.getDataPath("media-hoarder.db"))) {
-    fs.copyFileSync(
-      helpers.getStaticPath("data/media-hoarder.db_initial"),
-      helpers.getDataPath("media-hoarder.db")
-    );
+    fs.copyFileSync(helpers.getStaticPath("data/media-hoarder.db_initial"), helpers.getDataPath("media-hoarder.db"));
   }
 
   _db = new sqlite3.Database(helpers.getDataPath("media-hoarder.db"), (err) => {

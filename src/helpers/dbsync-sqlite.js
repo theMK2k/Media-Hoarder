@@ -10,36 +10,17 @@ const dryRun = false; // if true, don't actually run sqlStatements
 let templateDb = null;
 let workingDb = null;
 
-function runSync(
-  templateDBPath,
-  workingDBPath,
-  { doCreateTables, doCreateColumns, doCopyContent },
-  callback
-) {
+function runSync(templateDBPath, workingDBPath, { doCreateTables, doCreateColumns, doCopyContent }, callback) {
   logger.debug("[runSync] Syncing DB...");
 
   logger.debug("[runSync] Template DB Path:", templateDBPath);
   logger.debug("[runSync] Working DB Path :", workingDBPath);
 
   if (!fs.existsSync(templateDBPath)) {
-    return callback(
-      definedError.create(
-        "templateDBPath not found: " + templateDBPath,
-        null,
-        "SYNCERR",
-        null
-      )
-    );
+    return callback(definedError.create("templateDBPath not found: " + templateDBPath, null, "SYNCERR", null));
   }
   if (!fs.existsSync(workingDBPath)) {
-    return callback(
-      definedError.create(
-        "workingDBPath not found: " + workingDBPath,
-        null,
-        "SYNCWARN",
-        null
-      )
-    );
+    return callback(definedError.create("workingDBPath not found: " + workingDBPath, null, "SYNCWARN", null));
   }
 
   templateDb = new sqlite3.Database(templateDBPath, (err) => {
@@ -152,9 +133,7 @@ function syncTables(doCreateTables, callback) {
             }
           });
 
-          logger.debug(
-            "[syncTables]  found " + (sqlStatements.length - 1) + " new tables"
-          );
+          logger.debug("[syncTables]  found " + (sqlStatements.length - 1) + " new tables");
 
           async.mapSeries(sqlStatements, runQuery, (err) => {
             return callback(err);
@@ -206,9 +185,7 @@ function syncColumns(doCreateColumns, callback) {
             }
           });
 
-          logger.debug(
-            "[syncColumns]  analyzing " + (analyzeTables.length - 1) + " tables"
-          );
+          logger.debug("[syncColumns]  analyzing " + (analyzeTables.length - 1) + " tables");
 
           async.mapSeries(analyzeTables, syncColumnsTable, (err) => {
             return callback(err);
@@ -253,10 +230,7 @@ function syncColumnsTable(table, callback) {
           return;
         }
 
-        logger.debug(
-          "[syncColumnsTable]  found missing column:",
-          colTemplate.name
-        );
+        logger.debug("[syncColumnsTable]  found missing column:", colTemplate.name);
         numMissingCols++;
 
         sqlStatements.push({
@@ -269,16 +243,12 @@ function syncColumnsTable(table, callback) {
             "] " +
             colTemplate.type +
             (colTemplate.notnull ? " NOT NULL" : "") +
-            (colTemplate["dflt_value"] !== null
-              ? " DEFAULT " + colTemplate["dflt_value"]
-              : ""),
+            (colTemplate["dflt_value"] !== null ? " DEFAULT " + colTemplate["dflt_value"] : ""),
           params: [],
         });
       });
 
-      logger.debug(
-        "[syncColumnsTable]  found " + numMissingCols + " missing column/s"
-      );
+      logger.debug("[syncColumnsTable]  found " + numMissingCols + " missing column/s");
 
       async.mapSeries(sqlStatements, runQuery, (err) => {
         return callback(err);
@@ -354,83 +324,71 @@ function syncContentTable(tableName, callback) {
       return callback(null);
     }
 
-    templateDb.all(
-      `pragma table_info(${tableName})`,
-      [],
-      (err, colsTemplate) => {
+    templateDb.all(`pragma table_info(${tableName})`, [], (err, colsTemplate) => {
+      if (err) {
+        logger.error("[syncContentTable]  ERROR:", err);
+        return callback(err);
+      }
+
+      workingDb.all(`pragma table_info(${tableName})`, [], (err, colsWorking) => {
         if (err) {
           logger.error("[syncContentTable]  ERROR:", err);
           return callback(err);
         }
 
-        workingDb.all(
-          `pragma table_info(${tableName})`,
-          [],
-          (err, colsWorking) => {
-            if (err) {
-              logger.error("[syncContentTable]  ERROR:", err);
-              return callback(err);
-            }
+        let numPK = 0;
+        let pkColumnName = "";
 
-            let numPK = 0;
-            let pkColumnName = "";
-
-            colsTemplate.forEach((colTemplate) => {
-              if (colTemplate.pk === 1) {
-                numPK++;
-                pkColumnName = colTemplate.name;
-              }
-            });
-
-            if (numPK === 0) {
-              logger.debug("[syncContentTable]    ERROR: no PK column found!");
-              return callback({ error: "no PK column found!" });
-            }
-
-            if (numPK > 1) {
-              logger.debug(
-                "[syncContentTable]    ERROR: multiple PK columns found!"
-              );
-              return callback({ error: "multiple PK columns found!" });
-            }
-
-            logger.debug("[syncContentTable]    PK column name:", pkColumnName);
-
-            if (
-              !colsWorking.find((colWorking) => {
-                return colWorking.name === pkColumnName;
-              })
-            ) {
-              logger.debug(
-                "[syncContentTable]    ERROR: PK column not found in working DB"
-              );
-              return callback({ error: "PK column not found in working DB" });
-            }
-
-            const colsToAnalyze = [];
-            colsTemplate.forEach((colTemplate) => {
-              if (
-                colsWorking.find((colWorking) => {
-                  return colWorking.name === colTemplate.name;
-                })
-              ) {
-                colsToAnalyze.push(colTemplate.name);
-              }
-            });
-
-            contentTemplate.forEach((content) => {
-              content._colsToAnalyze = colsToAnalyze;
-              content._tableName = tableName;
-              content._pkColumnName = pkColumnName;
-            });
-
-            async.mapSeries(contentTemplate, syncContentTableRow, (err) => {
-              return callback(err);
-            });
+        colsTemplate.forEach((colTemplate) => {
+          if (colTemplate.pk === 1) {
+            numPK++;
+            pkColumnName = colTemplate.name;
           }
-        );
-      }
-    );
+        });
+
+        if (numPK === 0) {
+          logger.debug("[syncContentTable]    ERROR: no PK column found!");
+          return callback({ error: "no PK column found!" });
+        }
+
+        if (numPK > 1) {
+          logger.debug("[syncContentTable]    ERROR: multiple PK columns found!");
+          return callback({ error: "multiple PK columns found!" });
+        }
+
+        logger.debug("[syncContentTable]    PK column name:", pkColumnName);
+
+        if (
+          !colsWorking.find((colWorking) => {
+            return colWorking.name === pkColumnName;
+          })
+        ) {
+          logger.debug("[syncContentTable]    ERROR: PK column not found in working DB");
+          return callback({ error: "PK column not found in working DB" });
+        }
+
+        const colsToAnalyze = [];
+        colsTemplate.forEach((colTemplate) => {
+          if (
+            colsWorking.find((colWorking) => {
+              return colWorking.name === colTemplate.name;
+            })
+          ) {
+            colsToAnalyze.push(colTemplate.name);
+          }
+        });
+
+        contentTemplate.forEach((content) => {
+          content._colsToAnalyze = colsToAnalyze;
+          content._tableName = tableName;
+          content._pkColumnName = pkColumnName;
+        });
+
+        async.mapSeries(contentTemplate, syncContentTableRow, (err) => {
+          return callback(err);
+        });
+      });
+    });
   });
 }
 
@@ -462,8 +420,7 @@ function syncContentTableRow(content, callback) {
         params["$" + col] = content[col];
       });
 
-      statement =
-        insertStatement + "(" + colNames + ") VALUES (" + colValues + ")";
+      statement = insertStatement + "(" + colNames + ") VALUES (" + colValues + ")";
     }
 
     if (row.count === 1) {
@@ -483,13 +440,7 @@ function syncContentTableRow(content, callback) {
         params["$" + col] = content[col];
       });
 
-      statement =
-        updateStatement +
-        columns +
-        " WHERE [" +
-        content._pkColumnName +
-        "] = $" +
-        content._pkColumnName;
+      statement = updateStatement + columns + " WHERE [" + content._pkColumnName + "] = $" + content._pkColumnName;
       params["$" + content._pkColumnName] = content[content._pkColumnName];
     }
 

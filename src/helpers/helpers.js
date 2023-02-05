@@ -4,7 +4,7 @@ const fs = require("fs");
 const requestretry = require("requestretry");
 const os = require("os");
 const filenamify = require("filenamify");
-const xxhash = require("@node-rs/xxhash");
+const hash = require("string-hash-64");
 
 const logger = require("./logger");
 
@@ -256,7 +256,7 @@ function filenamifyExt(input) {
   let filename = filenamify(input, { maxLength: 10000 });
 
   if (filename.length > 160) {
-    filename = filename.substr(0, 141) + "-" + xxhash.xxh64(filename).toString(16);
+    filename = filename.substr(0, 141) + "-" + hash(filename).toString(16);
   }
 
   return filename;

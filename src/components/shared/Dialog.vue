@@ -1,11 +1,5 @@
 <template>
-  <v-dialog
-    v-model="show"
-    persistent
-    max-width="1000px"
-    v-on:keydown.escape="onEscapePressed"
-    v-on:keydown.enter="onEnterPressed"
-  >
+  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onEscapePressed" v-on:keydown.enter="onEnterPressed">
     <v-card>
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">
@@ -15,18 +9,9 @@
 
       <v-card-text>
         {{ question }}
-        <v-text-field
-          autofocus
-          v-if="enterTextValue"
-          v-bind:label="textValueCaption"
-          v-model="textValueLocal"
-        ></v-text-field>
+        <v-text-field autofocus v-if="enterTextValue" v-bind:label="textValueCaption" v-model="textValueLocal"></v-text-field>
 
-        <v-alert
-          v-if="alertText"
-          v-bind:type="alertType"
-          style="margin-top: 16px"
-        >
+        <v-alert v-if="alertText" v-bind:type="alertType" style="margin-top: 16px">
           {{ alertText }}
         </v-alert>
       </v-card-text>
@@ -35,43 +20,21 @@
         <!-- <v-row> -->
         <div v-if="dontAskAgain">
           <v-row>
-            <v-checkbox
-              v-model="dontAskAgainValue"
-              style="margin: 3px"
-              hide-details
-            ></v-checkbox>
-            <span
-              style="padding: 8px 8px; cursor: pointer"
-              v-on:click="dontAskAgainValue = !dontAskAgainValue"
-              >{{ dontAskAgain }}</span
-            >
+            <v-checkbox v-model="dontAskAgainValue" style="margin: 3px" hide-details></v-checkbox>
+            <span style="padding: 8px 8px; cursor: pointer" v-on:click="dontAskAgainValue = !dontAskAgainValue">{{ dontAskAgain }}</span>
           </v-row>
         </div>
 
         <!-- <v-spacer></v-spacer> -->
 
-        <v-btn
-          class="xs-fullwidth"
-          v-if="cancel"
-          v-bind:color="cancelColor"
-          v-bind:loading="loading"
-          v-on:click.native="onButtonClick('cancel')"
-          >{{ cancel }}</v-btn
-        >
-        <v-btn
-          class="xs-fullwidth"
-          v-if="no"
-          v-bind:loading="loading"
-          v-bind:color="noColor"
-          v-on:click.native="onButtonClick('no')"
-          >{{ no }}</v-btn
-        >
+        <v-btn class="xs-fullwidth" v-if="cancel" v-bind:color="cancelColor" v-bind:loading="loading" v-on:click.native="onButtonClick('cancel')">{{
+          cancel
+        }}</v-btn>
+        <v-btn class="xs-fullwidth" v-if="no" v-bind:loading="loading" v-bind:color="noColor" v-on:click.native="onButtonClick('no')">{{ no }}</v-btn>
         <v-btn
           class="xs-fullwidth"
           v-if="yes"
-          v-bind:disabled="
-            enterTextValue && !textValueEmptyAllowed && !textValueLocal
-          "
+          v-bind:disabled="enterTextValue && !textValueEmptyAllowed && !textValueLocal"
           v-bind:color="yesColor ? yesColor : 'primary'"
           v-bind:loading="loading"
           v-on:click.native="onButtonClick('yes')"
@@ -80,9 +43,7 @@
         <v-btn
           class="xs-fullwidth"
           v-if="ok"
-          v-bind:disabled="
-            enterTextValue && !textValueEmptyAllowed && !textValueLocal
-          "
+          v-bind:disabled="enterTextValue && !textValueEmptyAllowed && !textValueLocal"
           v-bind:color="okColor ? okColor : 'primary'"
           v-bind:loading="loading"
           v-on:click.native="onButtonClick('ok')"
@@ -151,11 +112,7 @@ export default {
     },
 
     onEnterPressed() {
-      if (
-        this.enterTextValue &&
-        !this.textValueEmptyAllowed &&
-        !this.textValueLocal
-      ) {
+      if (this.enterTextValue && !this.textValueEmptyAllowed && !this.textValueLocal) {
         return;
       }
 

@@ -1,11 +1,5 @@
 <template>
-  <v-dialog
-    v-model="show"
-    persistent
-    max-width="1000px"
-    v-on:keydown.escape="onEscapePressed"
-    v-on:keydown.enter="onEnterPressed"
-  >
+  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onEscapePressed" v-on:keydown.enter="onEnterPressed">
     <v-card>
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">
@@ -20,12 +14,7 @@
             <!-- LISTS COMBOBOX -->
             <v-row v-if="allowUseExistingLists">
               <v-col cols="12" sm="4">
-                <v-radio
-                  value="useExistingLists"
-                  v-bind:label="`${$t('Existing List')}:`"
-                  color="mk-dark-grey"
-                  style="margin-left: 8px"
-                ></v-radio>
+                <v-radio value="useExistingLists" v-bind:label="`${$t('Existing List')}:`" color="mk-dark-grey" style="margin-left: 8px"></v-radio>
               </v-col>
               <v-col cols="12" sm="7">
                 <v-select
@@ -43,12 +32,7 @@
             <!-- NEW LIST TEXT INPUT -->
             <v-row v-if="allowCreateNewList">
               <v-col cols="12" sm="4">
-                <v-radio
-                  value="createNewList"
-                  v-bind:label="`${$t('New List')}:`"
-                  color="mk-dark-grey"
-                  style="margin-left: 8px"
-                ></v-radio>
+                <v-radio value="createNewList" v-bind:label="`${$t('New List')}:`" color="mk-dark-grey" style="margin-left: 8px"></v-radio>
               </v-col>
               <v-col cols="12" sm="7">
                 <v-text-field
@@ -64,19 +48,8 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn
-          class="xs-fullwidth"
-          color="secondary"
-          v-on:click.native="onButtonClick('cancel')"
-          >{{ $t("Cancel") }}</v-btn
-        >
-        <v-btn
-          v-bind:disabled="!canConfirm"
-          class="xs-fullwidth"
-          color="primary"
-          v-on:click.native="onButtonClick('ok')"
-          >{{ $t("OK") }}</v-btn
-        >
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onButtonClick('cancel')">{{ $t("Cancel") }}</v-btn>
+        <v-btn v-bind:disabled="!canConfirm" class="xs-fullwidth" color="primary" v-on:click.native="onButtonClick('ok')">{{ $t("OK") }}</v-btn>
         <!-- v-bind:disabled="enterTextValue && !textValueEmptyAllowed && !textValueLocal" -->
         <!-- </v-row> -->
       </v-card-actions>
@@ -92,14 +65,7 @@ const logger = require("../../helpers/logger");
 import { eventBus } from "@/main";
 
 export default {
-  props: [
-    "show",
-    "title",
-    "movie",
-    "lists",
-    "allowUseExistingLists",
-    "allowCreateNewList",
-  ],
+  props: ["show", "title", "movie", "lists", "allowUseExistingLists", "allowCreateNewList"],
 
   data() {
     return {
@@ -117,9 +83,7 @@ export default {
     canConfirm() {
       return (
         (this.chosenMethod == "useExistingLists" && this.chosen_id_Lists > 0) ||
-        (this.chosenMethod == "createNewList" &&
-          this.newListName &&
-          this.newListName.trim().length > 0)
+        (this.chosenMethod == "createNewList" && this.newListName && this.newListName.trim().length > 0)
       );
     },
   },

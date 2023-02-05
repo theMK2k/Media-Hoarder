@@ -1,11 +1,5 @@
 <template>
-  <v-dialog
-    v-model="show"
-    persistent
-    max-width="1000px"
-    v-on:keydown.escape="onEscapePressed"
-    scrollable
-  >
+  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onEscapePressed" scrollable>
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         {{ $t("AI Recommendations") }}
@@ -13,43 +7,19 @@
 
       <v-card-text>
         <p>
-          {{
-            $t(
-              "Click the button below and ask the AI to list movies according to your criteria_"
-            )
-          }}
+          {{ $t("Click the button below and ask the AI to list movies according to your criteria_") }}
           <strong>{{ $t("Always ask for IMDB IDs!") }}</strong>
         </p>
 
-        <v-btn
-          class="xs-fullwidth"
-          color="primary"
-          v-on:click.native="onStartConversation"
-          style="margin-left: 8px"
-        >
+        <v-btn class="xs-fullwidth" color="primary" v-on:click.native="onStartConversation" style="margin-left: 8px">
           {{ $t("Start Conversation") }}
         </v-btn>
 
-        <v-list-item
-          three-line
-          style="padding-left: 0px; align-items: flex-start"
-        >
-          <v-list-item-content
-            class="align-self-start"
-            style="padding-top: 6px; padding-bottom: 6px"
-          >
+        <v-list-item three-line style="padding-left: 0px; align-items: flex-start">
+          <v-list-item-content class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
             <div>
-              <v-row
-                v-if="numMovies !== null"
-                class="mk-compact-movie-list-title"
-              >
-                {{
-                  $t("Result") +
-                  ": " +
-                  numMovies +
-                  " " +
-                  $t(numMovies === 1 ? "movie" : "movies")
-                }}
+              <v-row v-if="numMovies !== null" class="mk-compact-movie-list-title">
+                {{ $t("Result") + ": " + numMovies + " " + $t(numMovies === 1 ? "movie" : "movies") }}
               </v-row>
               <div class="mk-clickable-white">
                 <div v-for="(movie, index) in movies" v-bind:key="index">
@@ -62,13 +32,7 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn
-          class="xs-fullwidth"
-          color="secondary"
-          v-on:click.native="onCloseClick"
-          style="margin-left: 8px"
-          >{{ $t("Close") }}</v-btn
-        >
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCloseClick" style="margin-left: 8px">{{ $t("Close") }}</v-btn>
         <v-btn
           v-if="numMovies > 0"
           v-bind:disabled="!listTitle"
@@ -79,12 +43,7 @@
         >
           {{ $t("Create and filter by this list") }}
         </v-btn>
-        <v-text-field
-          v-if="numMovies"
-          v-bind:label="$t('List Title')"
-          v-model="listTitle"
-          style="margin-left: 16px"
-        ></v-text-field>
+        <v-text-field v-if="numMovies" v-bind:label="$t('List Title')" v-model="listTitle" style="margin-left: 16px"></v-text-field>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -172,11 +131,7 @@ export default {
 
     async updateLists(arr_IMDB_tconst, movieNamesAndYears) {
       arr_IMDB_tconst.forEach((imdb_tconst) => {
-        if (
-          this.arr_IMDB_tconst.find(
-            (imdb_tconst2) => imdb_tconst2 === imdb_tconst
-          )
-        ) {
+        if (this.arr_IMDB_tconst.find((imdb_tconst2) => imdb_tconst2 === imdb_tconst)) {
           return;
         }
 
@@ -186,9 +141,7 @@ export default {
       movieNamesAndYears.forEach((movieNameAndYear) => {
         if (
           this.movieNamesAndYears.find(
-            (movieNameAndYear2) =>
-              movieNameAndYear2.name === movieNameAndYear.name &&
-              movieNameAndYear2.year === movieNameAndYear.year
+            (movieNameAndYear2) => movieNameAndYear2.name === movieNameAndYear.name && movieNameAndYear2.year === movieNameAndYear.year
           )
         ) {
           return;
@@ -197,13 +150,10 @@ export default {
         this.movieNamesAndYears.push(movieNameAndYear);
       });
 
-      for (const movieNameAndYear of this.movieNamesAndYears.filter(
-        (item) => !item.processed
-      )) {
+      for (const movieNameAndYear of this.movieNamesAndYears.filter((item) => !item.processed)) {
         if (movieNameAndYear.name && movieNameAndYear.year) {
-          movieNameAndYear.imdb_tconst =
-            await store.db.fireProcedureReturnScalar(
-              `
+          movieNameAndYear.imdb_tconst = await store.db.fireProcedureReturnScalar(
+            `
             SELECT
               IMDB_tconst
             FROM  tbl_Movies MOV
@@ -216,15 +166,11 @@ export default {
                     OR MOV.IMDB_localTitle LIKE $name
                   )
         `,
-              { $year: movieNameAndYear.year, $name: movieNameAndYear.name }
-            );
+            { $year: movieNameAndYear.year, $name: movieNameAndYear.name }
+          );
 
           if (movieNameAndYear.imdb_tconst) {
-            if (
-              !this.arr_IMDB_tconst.find(
-                (imdb_tconst2) => imdb_tconst2 === movieNameAndYear.imdb_tconst
-              )
-            ) {
+            if (!this.arr_IMDB_tconst.find((imdb_tconst2) => imdb_tconst2 === movieNameAndYear.imdb_tconst)) {
               this.arr_IMDB_tconst.push(movieNameAndYear.imdb_tconst);
             }
           }
@@ -272,10 +218,7 @@ export default {
         movies = movies.filter((item, index) => {
           return (
             movies.findIndex((item2) => {
-              return (
-                `${item2.Name} ${item2.yearDisplay}` ===
-                `${item.Name} ${item.yearDisplay}`
-              );
+              return `${item2.Name} ${item2.yearDisplay}` === `${item.Name} ${item.yearDisplay}`;
             }) === index
           );
         });
@@ -319,29 +262,17 @@ export default {
         try {
           updateFromBrowserwindowRunning = true;
 
-          logger.log(
-            "[updateFromBrowserwindow] that.browserWindow:",
-            that.browserWindow
-          );
-          logger.log(
-            "[updateFromBrowserwindow] browserWindow closing, that.browserWindow.webContents:",
-            that.browserWindow.webContents
-          );
+          logger.log("[updateFromBrowserwindow] that.browserWindow:", that.browserWindow);
+          logger.log("[updateFromBrowserwindow] browserWindow closing, that.browserWindow.webContents:", that.browserWindow.webContents);
 
-          const content =
-            await that.browserWindow.webContents.executeJavaScript(
-              "document.getElementsByTagName('body')[0].innerHTML"
-            );
+          const content = await that.browserWindow.webContents.executeJavaScript("document.getElementsByTagName('body')[0].innerHTML");
 
           logger.log("[onStartConversation] content:", content);
 
           const rxIMDBtconst = /\d{7,}/g;
           const rxMovieNameAndYear = /<li>.*?\(\d\d\d\d\)/g;
 
-          if (
-            !rxIMDBtconst.test(content) &&
-            !rxMovieNameAndYear.test(content)
-          ) {
+          if (!rxIMDBtconst.test(content) && !rxMovieNameAndYear.test(content)) {
             logger.log("[onStartConversation] NO MATCH, initializing");
             that.init();
             return;
@@ -365,12 +296,7 @@ export default {
             });
           }
 
-          logger.log(
-            "[onStartConversation] imdbIDs:",
-            arr_IMDB_tconst,
-            "movieNamesAndYears:",
-            movieNamesAndYears
-          );
+          logger.log("[onStartConversation] imdbIDs:", arr_IMDB_tconst, "movieNamesAndYears:", movieNamesAndYears);
 
           that.updateLists(arr_IMDB_tconst, movieNamesAndYears);
           that.movies = await that.loadMovies(arr_IMDB_tconst, true);

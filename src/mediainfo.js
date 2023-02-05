@@ -70,14 +70,8 @@ async function analyzeMediaInfoData(miObj, id_Movies) {
     // collect all track data into tbl_Movies_MI_Tracks
     const trackFields = JSON.parse(JSON.stringify(mediainfoTrackDefinition));
     trackFields.$id_Movies = id_Movies;
-    trackFields.$type = track.$.type
-      ? track.$.type.toLowerCase()
-      : "<undefined>";
-    trackFields.$typeorder = Object.keys(track.$).find(
-      (key) => key === "typeorder"
-    )
-      ? track.$.typeorder
-      : null;
+    trackFields.$type = track.$.type ? track.$.type.toLowerCase() : "<undefined>";
+    trackFields.$typeorder = Object.keys(track.$).find((key) => key === "typeorder") ? track.$.typeorder : null;
 
     for (let key of Object.keys(track)) {
       if (Object.keys(trackFields).find((fk) => fk === `$${key}`)) {
@@ -93,12 +87,9 @@ async function analyzeMediaInfoData(miObj, id_Movies) {
 
         if (key === "Language") {
           if (languageNameCodeMapping[trackFields[`$${key}`]]) {
-            trackFields[`$${key}`] =
-              languageNameCodeMapping[trackFields[`$${key}`]];
+            trackFields[`$${key}`] = languageNameCodeMapping[trackFields[`$${key}`]];
           } else {
-            trackFields[`$${key}`] = helpers.uppercaseEachWord(
-              trackFields[`$${key}`]
-            );
+            trackFields[`$${key}`] = helpers.uppercaseEachWord(trackFields[`$${key}`]);
           }
         }
       } else {
@@ -109,8 +100,7 @@ async function analyzeMediaInfoData(miObj, id_Movies) {
     }
 
     if (trackFields.$Encoded_Library_Name) {
-      trackFields.$Encoded_Library_Name_Trimmed =
-        trackFields.$Encoded_Library_Name.split(" ")[0].trim();
+      trackFields.$Encoded_Library_Name_Trimmed = trackFields.$Encoded_Library_Name.split(" ")[0].trim();
     }
 
     track.trackFields = trackFields;
@@ -119,11 +109,7 @@ async function analyzeMediaInfoData(miObj, id_Movies) {
     if (track.$.type === "Video") {
       const durationAnalysis = analyzeMediaInfoVideoDuration(track);
 
-      if (
-        durationAnalysis.$MI_Duration_Seconds &&
-        (!MI.$MI_Duration_Seconds ||
-          MI.$MI_Duration_Seconds < durationAnalysis.$MI_Duration_Seconds)
-      ) {
+      if (durationAnalysis.$MI_Duration_Seconds && (!MI.$MI_Duration_Seconds || MI.$MI_Duration_Seconds < durationAnalysis.$MI_Duration_Seconds)) {
         MI.$MI_Duration = durationAnalysis.$MI_Duration;
         MI.$MI_Duration_Seconds = durationAnalysis.$MI_Duration_Seconds;
         MI.$MI_Duration_Formatted = durationAnalysis.$MI_Duration_Formatted;
@@ -131,10 +117,7 @@ async function analyzeMediaInfoData(miObj, id_Movies) {
 
       const videoResolutionAnalysis = analyzeMediaInfoVideoResolution(track);
 
-      if (
-        videoResolutionAnalysis.qualityLevel &&
-        videoResolutionAnalysis.qualityLevel > bestQualityLevel
-      ) {
+      if (videoResolutionAnalysis.qualityLevel && videoResolutionAnalysis.qualityLevel > bestQualityLevel) {
         bestQualityLevel = videoResolutionAnalysis.qualityLevel;
 
         MI.$MI_Quality = videoResolutionAnalysis.$MI_Quality;
@@ -175,15 +158,11 @@ async function analyzeMediaInfoData(miObj, id_Movies) {
   });
 
   if (audioLanguages.length > 0) {
-    MI.$MI_Audio_Languages = audioLanguages.reduce(
-      (prev, current) => prev + (prev ? ", " : "") + current
-    );
+    MI.$MI_Audio_Languages = audioLanguages.reduce((prev, current) => prev + (prev ? ", " : "") + current);
   }
 
   if (subtitleLanguages.length > 0) {
-    MI.$MI_Subtitle_Languages = subtitleLanguages.reduce(
-      (prev, current) => prev + (prev ? ", " : "") + current
-    );
+    MI.$MI_Subtitle_Languages = subtitleLanguages.reduce((prev, current) => prev + (prev ? ", " : "") + current);
   }
 
   return { MI, tracks, audioLanguages, subtitleLanguages };
@@ -204,23 +183,15 @@ function analyzeMediaInfoVideoDuration(videoTrack) {
     // eslint-disable-next-line no-unused-vars
     result.$MI_Duration_Seconds = 0;
 
-    if (
-      result.$MI_Duration.includes("h") ||
-      result.$MI_Duration.includes("mn") ||
-      result.$MI_Duration.includes("s")
-    ) {
+    if (result.$MI_Duration.includes("h") || result.$MI_Duration.includes("mn") || result.$MI_Duration.includes("s")) {
       if (/(\d*)h/.test(result.$MI_Duration)) {
-        result.$MI_Duration_Seconds +=
-          60 * 60 * parseInt(result.$MI_Duration.match(/(\d*)h/)[1]);
+        result.$MI_Duration_Seconds += 60 * 60 * parseInt(result.$MI_Duration.match(/(\d*)h/)[1]);
       }
       if (/(\d*)mn/.test(result.$MI_Duration)) {
-        result.$MI_Duration_Seconds +=
-          60 * parseInt(result.$MI_Duration.match(/(\d*)mn/)[1]);
+        result.$MI_Duration_Seconds += 60 * parseInt(result.$MI_Duration.match(/(\d*)mn/)[1]);
       }
       if (/(\d*)s/.test(result.$MI_Duration)) {
-        result.$MI_Duration_Seconds += parseInt(
-          result.$MI_Duration.match(/(\d*)s/)[1]
-        );
+        result.$MI_Duration_Seconds += parseInt(result.$MI_Duration.match(/(\d*)s/)[1]);
       }
     }
 
@@ -242,9 +213,7 @@ function analyzeMediaInfoVideoDuration(videoTrack) {
   }
 
   if (result.$MI_Duration_Seconds > 0) {
-    result.$MI_Duration_Formatted = helpers.getTimeString(
-      result.$MI_Duration_Seconds
-    );
+    result.$MI_Duration_Formatted = helpers.getTimeString(result.$MI_Duration_Seconds);
   }
 
   return result;
@@ -294,17 +263,11 @@ function analyzeMediaInfoVideoResolution(videoTrack) {
     }
   }
 
-  if (
-    videoTrack.Display_aspect_ratio &&
-    videoTrack.Display_aspect_ratio.length > 0
-  ) {
+  if (videoTrack.Display_aspect_ratio && videoTrack.Display_aspect_ratio.length > 0) {
     result.$MI_Aspect_Ratio = videoTrack.Display_aspect_ratio[0];
   }
 
-  if (
-    videoTrack.DisplayAspectRatio &&
-    videoTrack.DisplayAspectRatio.length > 0
-  ) {
+  if (videoTrack.DisplayAspectRatio && videoTrack.DisplayAspectRatio.length > 0) {
     result.$MI_Aspect_Ratio = videoTrack.DisplayAspectRatio[0];
   }
 

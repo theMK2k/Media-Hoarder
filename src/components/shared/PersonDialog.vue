@@ -1,25 +1,12 @@
 <template>
-  <v-dialog
-    v-model="show"
-    persistent
-    max-width="1000px"
-    v-on:keydown.escape="onEscapePressed"
-    scrollable
-  >
+  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onEscapePressed" scrollable>
     <v-card dark flat v-bind:ripple="false">
-      <v-card-title
-        v-on:mouseover="isTitleHovered = true"
-        v-on:mouseleave="isTitleHovered = false"
-      >
+      <v-card-title v-on:mouseover="isTitleHovered = true" v-on:mouseleave="isTitleHovered = false">
         {{ Person_Name }}
         <v-tooltip bottom v-if="isTitleHovered">
           <template v-slot:activator="{ on }">
             <span v-on="on">
-              <v-icon
-                class="mk-clickable"
-                v-on:click.stop="scrapeData()"
-                style="margin-left: 8px; margin-bottom: 3px"
-                v-bind:disabled="isScraping"
+              <v-icon class="mk-clickable" v-on:click.stop="scrapeData()" style="margin-left: 8px; margin-bottom: 3px" v-bind:disabled="isScraping"
                 >mdi-reload-alert</v-icon
               >
             </span>
@@ -33,92 +20,34 @@
           </span>
         </v-tooltip>
 
-        <v-progress-linear
-          v-if="isScraping || isLoadingMovies"
-          color="red accent-0"
-          indeterminate
-          rounded
-          height="3"
-        ></v-progress-linear>
+        <v-progress-linear v-if="isScraping || isLoadingMovies" color="red accent-0" indeterminate rounded height="3"></v-progress-linear>
       </v-card-title>
 
       <v-card-text>
-        <v-list-item
-          three-line
-          style="padding-left: 0px; align-items: flex-start"
-        >
+        <v-list-item three-line style="padding-left: 0px; align-items: flex-start">
           <div>
-            <v-list-item-avatar
-              tile
-              style="margin: 6px; height: 150px; width: 120px"
-            >
+            <v-list-item-avatar tile style="margin: 6px; height: 150px; width: 120px">
               <!-- v-if="!isScraping" -->
-              <v-img
-                v-if="personData.Photo_URL"
-                contain
-                v-bind:src="personData.Photo_URL"
-                style="border-radius: 6px"
-              ></v-img>
-              <v-icon
-                v-if="!personData.Photo_URL && !isScraping"
-                disabled
-                x-large
-                loading
-              >
-                mdi-account-outline
-              </v-icon>
-              <v-progress-circular
-                v-if="isScraping"
-                indeterminate
-                color="grey"
-                size="32"
-                width="5"
-              ></v-progress-circular>
+              <v-img v-if="personData.Photo_URL" contain v-bind:src="personData.Photo_URL" style="border-radius: 6px"></v-img>
+              <v-icon v-if="!personData.Photo_URL && !isScraping" disabled x-large loading> mdi-account-outline </v-icon>
+              <v-progress-circular v-if="isScraping" indeterminate color="grey" size="32" width="5"></v-progress-circular>
             </v-list-item-avatar>
           </div>
-          <v-list-item-content
-            class="align-self-start"
-            style="padding-top: 6px; padding-bottom: 6px"
-          >
+          <v-list-item-content class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
             <v-col style="padding: 0px 0px 0px 4px !important" sm="12">
               <v-row style="margin: 0px 6px 8px 0px">
-                <div
-                  v-if="!showLongBio"
-                  style="font-size: 0.875rem; font-weight: normal"
-                  class="mk-clickable"
-                  v-on:click.stop="showLongBio = true"
-                >
-                  {{
-                    personData.ShortBio
-                      ? personData.ShortBio
-                      : personData.LongBio
-                  }}
+                <div v-if="!showLongBio" style="font-size: 0.875rem; font-weight: normal" class="mk-clickable" v-on:click.stop="showLongBio = true">
+                  {{ personData.ShortBio ? personData.ShortBio : personData.LongBio }}
                 </div>
-                <div
-                  v-if="showLongBio"
-                  style="font-size: 0.875rem; font-weight: normal"
-                  class="mk-clickable-white"
-                  v-on:click.stop="showLongBio = false"
-                >
-                  <p
-                    v-for="(line, index) in personData.LongBio.split('\n')"
-                    v-bind:key="index"
-                  >
+                <div v-if="showLongBio" style="font-size: 0.875rem; font-weight: normal" class="mk-clickable-white" v-on:click.stop="showLongBio = false">
+                  <p v-for="(line, index) in personData.LongBio.split('\n')" v-bind:key="index">
                     {{ line }}
                   </p>
                 </div>
               </v-row>
               <div v-on:click.stop="toggleShowMovies()">
-                <v-row
-                  v-if="numMovies !== null"
-                  class="mk-clickable mk-compact-movie-list-title"
-                >
-                  {{
-                    numMovies +
-                    " " +
-                    $t(numMovies === 1 ? "movie" : "movies") +
-                    (!showMovies ? " »" : "")
-                  }}
+                <v-row v-if="numMovies !== null" class="mk-clickable mk-compact-movie-list-title">
+                  {{ numMovies + " " + $t(numMovies === 1 ? "movie" : "movies") + (!showMovies ? " »" : "") }}
                 </v-row>
                 <div v-if="showMovies" class="mk-clickable-white">
                   <div v-for="(movie, index) in movies" v-bind:key="index">
@@ -134,28 +63,9 @@
       <v-card-actions>
         <v-col sm="12">
           <v-row style="margin-top: 8px">
-            <v-btn
-              class="xs-fullwidth"
-              color="secondary"
-              v-on:click.native="onCloseClick"
-              style="margin-left: 8px"
-              >{{ $t("Close") }}</v-btn
-            >
-            <v-btn
-              class="xs-fullwidth"
-              color="primary"
-              v-on:click.stop="openIMDB()"
-              style="margin-left: 8px"
-            >
-              <v-icon small>mdi-web</v-icon>&nbsp;IMDB
-            </v-btn>
-            <v-btn
-              v-if="numMovies !== null"
-              class="xs-fullwidth"
-              color="primary"
-              v-on:click.native="onFilterClick"
-              style="margin-left: 8px"
-            >
+            <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCloseClick" style="margin-left: 8px">{{ $t("Close") }}</v-btn>
+            <v-btn class="xs-fullwidth" color="primary" v-on:click.stop="openIMDB()" style="margin-left: 8px"> <v-icon small>mdi-web</v-icon>&nbsp;IMDB </v-btn>
+            <v-btn v-if="numMovies !== null" class="xs-fullwidth" color="primary" v-on:click.native="onFilterClick" style="margin-left: 8px">
               {{ $t("Filter by this person") }}
             </v-btn>
           </v-row>
@@ -218,10 +128,7 @@ export default {
       this.isScraping = true;
 
       try {
-        const personData = await scrapeIMDBPersonData(
-          this.IMDB_Person_ID,
-          helpers.downloadFile
-        );
+        const personData = await scrapeIMDBPersonData(this.IMDB_Person_ID, helpers.downloadFile);
 
         store.saveIMDBPersonData(personData);
 
@@ -229,10 +136,7 @@ export default {
 
         this.personData = {
           IMDB_Person_ID: personData.$IMDB_Person_ID,
-          Photo_URL: personData.$Photo_URL
-            ? "local-resource://" +
-              helpers.getDataPath(personData.$Photo_URL).replace(/\\/g, "\\\\")
-            : personData.$Photo_URL,
+          Photo_URL: personData.$Photo_URL ? "local-resource://" + helpers.getDataPath(personData.$Photo_URL).replace(/\\/g, "\\\\") : personData.$Photo_URL,
           ShortBio: personData.$ShortBio,
           LongBio: personData.$LongBio,
         };
@@ -281,10 +185,7 @@ export default {
 
       personData = personData[0];
 
-      personData.Photo_URL = personData.Photo_URL
-        ? "local-resource://" +
-          helpers.getDataPath(personData.Photo_URL).replace(/\\/g, "\\\\")
-        : null;
+      personData.Photo_URL = personData.Photo_URL ? "local-resource://" + helpers.getDataPath(personData.Photo_URL).replace(/\\/g, "\\\\") : null;
 
       this.personData = personData;
 
@@ -370,10 +271,7 @@ export default {
         this.movies = movies.filter((item, index) => {
           return (
             movies.findIndex((item2) => {
-              return (
-                `${item2.Name} ${item2.yearDisplay}` ===
-                `${item.Name} ${item.yearDisplay}`
-              );
+              return `${item2.Name} ${item2.yearDisplay}` === `${item.Name} ${item.yearDisplay}`;
             }) === index
           );
         });

@@ -1,44 +1,18 @@
 <template>
-  <v-dialog
-    v-model="show"
-    persistent
-    max-width="1000px"
-    v-on:keydown.escape="onEscapePressed"
-    scrollable
-  >
+  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onEscapePressed" scrollable>
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         {{ $t("Filming Location") }}:
         {{ Location }}
       </v-card-title>
-      <v-progress-linear
-        v-if="isScraping || isLoadingMovies"
-        color="red accent-0"
-        indeterminate
-        rounded
-        height="3"
-      ></v-progress-linear>
+      <v-progress-linear v-if="isScraping || isLoadingMovies" color="red accent-0" indeterminate rounded height="3"></v-progress-linear>
 
       <v-card-text>
-        <v-list-item
-          three-line
-          style="padding-left: 0px; align-items: flex-start"
-        >
-          <v-list-item-content
-            class="align-self-start"
-            style="padding-top: 6px; padding-bottom: 6px"
-          >
+        <v-list-item three-line style="padding-left: 0px; align-items: flex-start">
+          <v-list-item-content class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
             <div v-on:click.stop="toggleShowMovies()">
-              <v-row
-                v-if="numMovies !== null"
-                class="mk-clickable mk-compact-movie-list-title"
-              >
-                {{
-                  numMovies +
-                  " " +
-                  $t(numMovies === 1 ? "movie" : "movies") +
-                  (!showMovies ? " »" : "")
-                }}
+              <v-row v-if="numMovies !== null" class="mk-clickable mk-compact-movie-list-title">
+                {{ numMovies + " " + $t(numMovies === 1 ? "movie" : "movies") + (!showMovies ? " »" : "") }}
               </v-row>
               <div v-if="showMovies" class="mk-clickable-white">
                 <div v-for="(movie, index) in movies" v-bind:key="index">
@@ -51,20 +25,8 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn
-          class="xs-fullwidth"
-          color="secondary"
-          v-on:click.native="onCloseClick"
-          style="margin-left: 8px"
-          >{{ $t("Close") }}</v-btn
-        >
-        <v-btn
-          v-if="numMovies"
-          class="xs-fullwidth"
-          color="primary"
-          v-on:click.native="onFilterClick"
-          style="margin-left: 8px"
-        >
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCloseClick" style="margin-left: 8px">{{ $t("Close") }}</v-btn>
+        <v-btn v-if="numMovies" class="xs-fullwidth" color="primary" v-on:click.native="onFilterClick" style="margin-left: 8px">
           {{ $t("Filter by this filming location") }}
         </v-btn>
       </v-card-actions>
@@ -140,10 +102,7 @@ export default {
     },
 
     async onFilterClick() {
-      await store.addFilterIMDBFilmingLocation(
-        this.id_IMDB_Filming_Locations,
-        this.Location
-      );
+      await store.addFilterIMDBFilmingLocation(this.id_IMDB_Filming_Locations, this.Location);
 
       const setFilter = {
         filterIMDBFilmingLocations: [this.id_IMDB_Filming_Locations],
@@ -166,10 +125,7 @@ export default {
         return;
       }
 
-      logger.log(
-        "[toggleShowMovies] this.$shared.filters.filterIMDBFilmingLocations:",
-        this.$shared.filters.filterIMDBFilmingLocations
-      );
+      logger.log("[toggleShowMovies] this.$shared.filters.filterIMDBFilmingLocations:", this.$shared.filters.filterIMDBFilmingLocations);
 
       if (!this.movies.length > 0) {
         this.isLoadingMovies = true;
@@ -215,10 +171,7 @@ export default {
         this.movies = movies.filter((item, index) => {
           return (
             movies.findIndex((item2) => {
-              return (
-                `${item2.Name} ${item2.yearDisplay}` ===
-                `${item.Name} ${item.yearDisplay}`
-              );
+              return `${item2.Name} ${item2.yearDisplay}` === `${item.Name} ${item.yearDisplay}`;
             }) === index
           );
         });
