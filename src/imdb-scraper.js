@@ -1618,7 +1618,7 @@ async function scrapeIMDBSuggestion(searchTerm) {
   return results;
 }
 
-/** "Find" search, also support Unicode
+/** "Find" search, also supports Unicode
  * @param  {string} searchTerm
  * @param  {string} [type]
  */

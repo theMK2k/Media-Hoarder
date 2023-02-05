@@ -81,7 +81,8 @@ const log = {
   if (!config.testmodule || config.testmodule === "testIMDBRatingDemographics") addLogEntry(await imdbScraperTests.testIMDBRatingDemographics());
   if (!config.testmodule || config.testmodule === "testIMDBSuggestion") addLogEntry(await imdbScraperTests.testIMDBSuggestion());
   if (!config.testmodule || config.testmodule === "testIMDBAdvancedTitleSearch") addLogEntry(await imdbScraperTests.testIMDBAdvancedTitleSearch());
-  if (!config.testmodule || config.testmodule === "testIMDBFind") addLogEntry(await imdbScraperTests.testIMDBFind());
+  // TODO: we currently don't use scrapeIMDBfind, but it also has V3 (GraphQL) interfaces
+  // if (!config.testmodule || config.testmodule === "testIMDBFind") addLogEntry(await imdbScraperTests.testIMDBFind());
 
   await checkSendMail();
 })();
