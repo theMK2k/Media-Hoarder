@@ -36,6 +36,7 @@ function performDefaultCheck(scrapeResult, expected, testResult, fieldName, msgP
 }
 
 async function testIMDBmainPageData() {
+  // Avengers: Endgame (2019)
   const testResult = {
     name: "IMDB Main Page Data",
     status: status.SUCCESS,
@@ -54,6 +55,8 @@ async function testIMDBmainPageData() {
       $IMDB_plotSummary:
         "After the devastating events of Avengers: Infinity War (2018), the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe.",
       $IMDB_Trailer_URL: "/video/imdb/vi2163260441",
+      $IMDB_startYear: 2019,
+      $IMDB_endYear: null,
     };
 
     const movie = {
@@ -123,6 +126,8 @@ async function testIMDBmainPageData() {
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_posterLarge_URL");
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_plotSummary");
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_Trailer_URL");
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_startYear", null, true);
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_endYear", null, true);
   } catch (error) {
     testResult.status = status.EXCEPTION;
     testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
@@ -132,6 +137,7 @@ async function testIMDBmainPageData() {
 }
 
 async function testIMDBmainPageData2() {
+  // Le Silence de la Mer (1949)
   const testResult = {
     name: "IMDB Main Page Data 2",
     status: status.SUCCESS,
@@ -148,6 +154,8 @@ async function testIMDBmainPageData2() {
       $IMDB_posterLarge_URL: "extras/tt0039822_posterLarge.jpg",
       $IMDB_plotSummary: "1941 in a small town in Nazi occupied France",
       $IMDB_Trailer_URL: null,
+      $IMDB_startYear: 1949,
+      $IMDB_endYear: null,
     };
 
     const movie = {
@@ -196,6 +204,88 @@ async function testIMDBmainPageData2() {
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_plotSummary", null, null, true);
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_Trailer_URL", null, true);
+
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_startYear", null, true);
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_endYear", null, true);
+  } catch (error) {
+    testResult.status = status.EXCEPTION;
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+  }
+
+  return testResult;
+}
+
+async function testIMDBmainPageData3() {
+  // Star Trek: The Next Generation (1987–1994)
+  const testResult = {
+    name: "IMDB Main Page Data 3",
+    status: status.SUCCESS,
+    log: [],
+  };
+
+  try {
+    const expected = {
+      $IMDB_releaseType: "tvSeries",
+      $IMDB_genres: ["action", "adventure", "sci-fi"],
+      $IMDB_rating: 8.7,
+      $IMDB_numVotes: 123000,
+      $IMDB_posterSmall_URL: "extras/tt0092455_posterSmall.jpg",
+      $IMDB_posterLarge_URL: "extras/tt0092455_posterLarge.jpg",
+      $IMDB_plotSummary: "Set almost 100 years after Captain Kirk's 5-year mission, a new generation of Starfleet officers sets off in the U.S.S. Enterprise-D",
+      $IMDB_Trailer_URL: "/video/imdb/vi71221529",
+      $IMDB_startYear: 1987,
+      $IMDB_endYear: 1994,
+    };
+
+    const movie = {
+      IMDB_tconst: "tt0092455",
+    };
+
+    const scrapeResult = await imdbScraper.scrapeIMDBmainPageData(movie, async () => {
+      return true;
+    });
+
+    if (!scrapeResult) {
+      addSubLogEntry(testResult, "no response", status.ERROR);
+      return;
+    }
+
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_releaseType");
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_genres");
+
+    if (!scrapeResult.$IMDB_rating) {
+      addSubLogEntry(testResult, "$IMDB_rating missing", status.ERROR);
+    } else if (scrapeResult.$IMDB_rating < 7) {
+      addSubLogEntry(
+        testResult,
+        `$IMDB_rating unexpected value
+    got:      "${scrapeResult.$IMDB_rating}"
+    expected: > 7`,
+        status.WARNING
+      );
+    }
+
+    if (!scrapeResult.$IMDB_numVotes) {
+      addSubLogEntry(testResult, "$IMDB_numVotes missing", status.ERROR);
+    } else if (scrapeResult.$IMDB_numVotes < expected.$IMDB_numVotes) {
+      addSubLogEntry(
+        testResult,
+        `$IMDB_numVotes not lower than expected value
+    got:      "${scrapeResult.$IMDB_numVotes}"
+    expected: "${expected.$IMDB_numVotes}"`,
+        status.WARNING
+      );
+    }
+
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_posterSmall_URL");
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_posterLarge_URL");
+
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_plotSummary", null, null, true);
+
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_Trailer_URL", null, true);
+
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_startYear", null, true);
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_endYear", null, true);
   } catch (error) {
     testResult.status = status.EXCEPTION;
     testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
@@ -252,8 +342,6 @@ async function testIMDBreleaseinfo() {
       $IMDB_originalTitle: "Star Trek: The Next Generation",
       $IMDB_localTitle: "Raumschiff Enterprise: Das nächste Jahrhundert",
       $IMDB_primaryTitle: "Star Trek: The Next Generation",
-      $IMDB_startYear: "1987",
-      $IMDB_endYear: "1994",
     };
 
     const movie = {
@@ -270,8 +358,6 @@ async function testIMDBreleaseinfo() {
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_originalTitle");
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_localTitle");
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_primaryTitle");
-    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_startYear");
-    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_endYear");
   } catch (error) {
     testResult.status = status.EXCEPTION;
     testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
@@ -1128,6 +1214,7 @@ async function testIMDBFind() {
 export {
   testIMDBmainPageData,
   testIMDBmainPageData2,
+  testIMDBmainPageData3,
   testIMDBplotSummary,
   testIMDBreleaseinfo,
   testIMDBtechnicalData,

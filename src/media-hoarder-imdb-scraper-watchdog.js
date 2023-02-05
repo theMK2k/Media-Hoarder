@@ -66,6 +66,7 @@ const log = {
 
   if (!config.testmodule || config.testmodule === "testIMDBmainPageData") addLogEntry(await imdbScraperTests.testIMDBmainPageData());
   if (!config.testmodule || config.testmodule === "testIMDBmainPageData2") addLogEntry(await imdbScraperTests.testIMDBmainPageData2());
+  if (!config.testmodule || config.testmodule === "testIMDBmainPageData3") addLogEntry(await imdbScraperTests.testIMDBmainPageData3());
   if (!config.testmodule || config.testmodule === "testIMDBplotSummary") addLogEntry(await imdbScraperTests.testIMDBplotSummary());
   if (!config.testmodule || config.testmodule === "testIMDBreleaseinfo") addLogEntry(await imdbScraperTests.testIMDBreleaseinfo());
   if (!config.testmodule || config.testmodule === "testIMDBtechnicalData") addLogEntry(await imdbScraperTests.testIMDBtechnicalData());

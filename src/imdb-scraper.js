@@ -1,10 +1,29 @@
 const querystring = require("querystring");
 
+const _ = require("lodash");
 const cheerio = require("cheerio");
 const htmlToText = require("html-to-text");
 
 const logger = require("./helpers/logger");
 const helpers = require("./helpers/helpers");
+
+const graphQLqueries = {
+  akaTitles: ($IMDB_tconst) =>
+    `https://caching.graphql.imdb.com/?operationName=TitleAkasPaginated&variables={"const":"$IMDB_tconst","first":1000,"locale":"en-GB","originalTitleText":1}&extensions={"persistedQuery":{"sha256Hash":"180f0f5df1b03c9ee78b1f410d65928ec22e7aca590e5321fbb6a6c39b802695","version":1}}`.replace(
+      "$IMDB_tconst",
+      $IMDB_tconst
+    ),
+  /**
+   *
+   * @param {*} $IMDB_tconst
+   * @param {*} $IMDB_Companies_Category ["production", "distribution", "specialEffects", "miscellaneous"]
+   * @returns
+   */
+  companies: ($IMDB_tconst, $IMDB_Companies_Category) =>
+    `https://caching.graphql.imdb.com/?operationName=TitleCompanyCreditsPagination&variables={"const":"$IMDB_tconst","filter":{"categories":["$IMDB_Companies_Category"]},"first":1000,"locale":"en-GB","originalTitleText":false}&extensions={"persistedQuery":{"sha256Hash":"ef3c062fb3a177f606d2734b42b876a929139eb6c86a582c177a95886a1a9a12","version":1}}`
+      .replace("$IMDB_tconst", $IMDB_tconst)
+      .replace("$IMDB_Companies_Category", $IMDB_Companies_Category),
+};
 
 /**
  * scrape IMDB Main Page Data (e.g. https://www.imdb.com/title/tt4154796)
@@ -29,34 +48,42 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
     // V2: we partially use the application/ld+json data, too
     const jsonData = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
 
-    // V3?
-    // const jsonDataNext = JSON.parse(
-    //   html.match(
-    //     /<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/
-    //   )[1]
-    // );
+    // logger.log("[scrapeIMDBmainPageData] jsonData:", jsonData);
+
+    // V3: we partially use the __NEXT_DATA__ data, too
+    const jsonDataNext = JSON.parse((html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/) || [null, "{}"])[1]);
+
+    logger.log("[scrapeIMDBmainPageData] jsonDataNext:", logger.inspectObject(jsonDataNext));
 
     // ## Release Type
-    let $IMDB_releaseType = "movie";
-    /*
-        short			-- tt0000006 -> "/search/title?genres=short"
-        tvMovie 		-- tt9915546 -> ">TV Movie" 
-        tvEpisode		-- tt8709982 -> ">Episode"
-        tvShort			-- tt9861332 -> ">TV Short"
-        tvMiniSeries	-- tt8916384 -> ">TV Mini-Series"
-        tvSpecial		-- tt8019378 -> ">TV Special"
-        video			-- tt8650100 -> ">Video"
-        videoGame		-- tt8848200 -> ">Video game"
-        */
 
-    if (/\/search\/title\?genres=short/.test(html)) $IMDB_releaseType = "";
-    if (/>TV Movie/.test(html)) $IMDB_releaseType = "tvMovie";
-    if (/>Episode/.test(html)) $IMDB_releaseType = "tvEpisode";
-    if (/>TV Short/.test(html)) $IMDB_releaseType = "tvShort";
-    if (/>TV Mini-Series/.test(html)) $IMDB_releaseType = "tvMiniSeries";
-    if (/>TV Special/.test(html)) $IMDB_releaseType = "tvSpecial";
-    if (/>Video\s/.test(html)) $IMDB_releaseType = "video";
-    if (/>Video game/.test(html)) $IMDB_releaseType = "videoGame";
+    // V3
+    let $IMDB_releaseType = _.get(jsonDataNext, "props.pageProps.aboveTheFoldData.titleType.id", null);
+
+    if (!$IMDB_releaseType) {
+      // V1
+      $IMDB_releaseType = "movie";
+      /*
+          short			-- tt0000006 -> "/search/title?genres=short"
+          tvMovie 		-- tt9915546 -> ">TV Movie" 
+          tvEpisode		-- tt8709982 -> ">Episode"
+          tvShort			-- tt9861332 -> ">TV Short"
+          tvMiniSeries	-- tt8916384 -> ">TV Mini-Series"
+          tvSpecial		-- tt8019378 -> ">TV Special"
+          video			-- tt8650100 -> ">Video"
+          videoGame		-- tt8848200 -> ">Video game"
+      */
+
+      if (/\/search\/title\?genres=short/.test(html)) $IMDB_releaseType = "";
+      if (/"presentation">TV Movie</.test(html)) $IMDB_releaseType = "tvMovie";
+      if (/"presentation">TV Series</.test(html)) $IMDB_releaseType = "tvSeries";
+      if (/"presentation">Episode/.test(html)) $IMDB_releaseType = "tvEpisode";
+      if (/"presentation">TV Short/.test(html)) $IMDB_releaseType = "tvShort";
+      if (/"presentation">TV Mini-Series/.test(html)) $IMDB_releaseType = "tvMiniSeries";
+      if (/"presentation">TV Special/.test(html)) $IMDB_releaseType = "tvSpecial";
+      if (/"presentation">Video\s/.test(html)) $IMDB_releaseType = "video";
+      if (/"presentation">Video game/.test(html)) $IMDB_releaseType = "videoGame";
+    }
 
     // ## Genres
     const $IMDB_genres = [];
@@ -196,6 +223,40 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
 
     logger.log("[scrapeIMDBmainPageData] $IMDB_Trailer_URL:", $IMDB_Trailer_URL);
 
+    // V3
+    let $IMDB_startYear = _.get(jsonDataNext, "props.pageProps.aboveTheFoldData.releaseYear.year", null);
+    let $IMDB_endYear = _.get(jsonDataNext, "props.pageProps.aboveTheFoldData.releaseYear.endYear", null);
+
+    if (!$IMDB_startYear) {
+      // V1
+      // <title>Star Trek: The Next Generation (TV Series 1987â€“1994) - Release info - IMDb</title>
+      const rxYearRange = /<title>[\s\S]*?\((.*?)\)[\s\S]*?<\/title>/;
+      const yearRange = unescape(
+        htmlToText
+          .fromString(html.match(rxYearRange)[1], {
+            wordwrap: null,
+            ignoreImage: true,
+            ignoreHref: true,
+          })
+          .replace("–", "-")
+          .replace("â€“", "-")
+          .trim()
+      );
+      logger.log("[scrapeIMDBmainPageData] yearRange:", yearRange);
+
+      const yearRangeSplit = yearRange.split("-");
+      $IMDB_startYear = +yearRangeSplit[0].match(/\d+/)[0];
+      if (yearRange.includes("-")) {
+        if (yearRangeSplit[1].match(/\d+/)) {
+          $IMDB_endYear = +yearRangeSplit[1].match(/\d+/)[0];
+        }
+      } else {
+        if (["tvSeries", "tvMiniSeries"].includes($IMDB_releaseType === "tvSeries")) {
+          $IMDB_endYear = $IMDB_startYear;
+        }
+      }
+    }
+
     return {
       $IMDB_releaseType,
       $IMDB_genres,
@@ -206,6 +267,8 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
       $IMDB_posterLarge_URL,
       $IMDB_plotSummary,
       $IMDB_Trailer_URL,
+      $IMDB_startYear,
+      $IMDB_endYear,
     };
   } catch (error) {
     logger.error(error);
@@ -345,18 +408,49 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
     const html = response.body;
     // logger.log('[scrapeIMDBreleaseinfo] imdbReleaseinfoHTML', imdbReleaseinfoHTML);
 
+    const version = /aka-item__name/.test(html) ? 1 : 2;
+
+    logger.log(`[scrapeIMDBreleaseinfo] using V${version} scraping method`);
+
+    const result =
+      version === 1
+        ? await scrapeIMDBreleaseinfoV1(movie, regions, allowedTitleTypes, html)
+        : await scrapeIMDBreleaseinfoV2(movie, regions, allowedTitleTypes, html);
+
+    // const result = {
+    //   $IMDB_originalTitle,
+    //   $IMDB_localTitle,
+    //   $IMDB_primaryTitle,
+    //   $IMDB_startYear,
+    //   $IMDB_endYear,
+    // };
+
+    logger.log("[scrapeIMDBreleaseinfo] scrapeIMDBreleaseinfo result:", result);
+
+    return result;
+  } catch (error) {
+    if (movie.scanErrors) {
+      movie.scanErrors["IMDB Release Info"] = error.message;
+    }
+
+    throw error;
+  }
+}
+
+async function scrapeIMDBreleaseinfoV1(movie, regions, allowedTitleTypes, html) {
+  try {
     let $IMDB_originalTitle = null;
     const rxOriginalTitle = /td class="aka-item__name"> \(original title\)<\/td>[\s\S]*?<td class="aka-item__title">(.*?)<\/td>/;
     if (rxOriginalTitle.test(html)) $IMDB_originalTitle = html.match(rxOriginalTitle)[1];
 
-    logger.log("[scrapeIMDBreleaseinfo] regions used:", regions);
+    logger.log("[scrapeIMDBreleaseinfoV1] regions used:", regions);
 
     let $IMDB_localTitle = null;
     if (regions) {
       for (let i = 0; i < regions.length; i++) {
         const region = regions[i].name;
 
-        logger.log("[scrapeIMDBreleaseinfo] regions trying:", `"${region}"`);
+        logger.log("[scrapeIMDBreleaseinfoV1] regions trying:", `"${region}"`);
 
         if (!$IMDB_localTitle) {
           const rxLocalTitleFuzzy = new RegExp(`td class="aka-item__name">${region}(.*?)</td>[\\s\\S]*?<td class="aka-item__title">(.*?)</td>`, "g");
@@ -364,7 +458,7 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
           let match = null;
 
           while ((match = rxLocalTitleFuzzy.exec(html))) {
-            logger.log("[scrapeIMDBreleaseinfo] regions: fuzzy match found for", region);
+            logger.log("[scrapeIMDBreleaseinfoV1] regions: fuzzy match found for", region);
 
             const titleTypes = match[1];
             const title = match[2];
@@ -379,7 +473,7 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
                 }
               });
 
-              logger.log("[scrapeIMDBreleaseinfo] regions: local title match:", {
+              logger.log("[scrapeIMDBreleaseinfoV1] regions: local title match:", {
                 title,
                 arrTitleTypes,
               });
@@ -394,12 +488,12 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
               }
 
               if (allowed !== arrTitleTypes.length) {
-                logger.log("[scrapeIMDBreleaseinfo] regions: skipped local title, some title types are not allowed");
+                logger.log("[scrapeIMDBreleaseinfoV1] regions: skipped local title, some title types are not allowed");
                 continue;
               }
             }
 
-            logger.log("[scrapeIMDBreleaseinfo] regions: using local title:", title);
+            logger.log("[scrapeIMDBreleaseinfoV1] regions: using local title:", title);
             $IMDB_localTitle = title;
             break;
           }
@@ -419,12 +513,14 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
       $IMDB_primaryTitle = html.match(rxPrimaryTitleYear)[1];
       const yearRange = html.match(rxPrimaryTitleYear)[2];
 
-      logger.log("[scrapeIMDBreleaseinfo] yearRange:", yearRange);
+      logger.log("[scrapeIMDBreleaseinfoV1] yearRange:", yearRange);
       $IMDB_startYear = yearRange.match(/(\d\d\d\d)/)[1];
       if (/\d\d\d\d–\d\d\d\d/.test(yearRange)) {
         $IMDB_endYear = yearRange.match(/\d\d\d\d–(\d\d\d\d)/)[1];
       }
     }
+
+    logger.log("[scrapeIMDBreleaseinfoV1] years:", { $IMDB_startYear, $IMDB_endYear });
 
     if ($IMDB_originalTitle) {
       $IMDB_originalTitle = unescape(
@@ -464,14 +560,109 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
       $IMDB_originalTitle,
       $IMDB_localTitle,
       $IMDB_primaryTitle,
-      $IMDB_startYear,
-      $IMDB_endYear,
+
+      // we cannot provide the year range, because V2 doesn't provide it - we provide it from the main page
+      // $IMDB_startYear,
+      // $IMDB_endYear,
     };
 
-    logger.log("[scrapeIMDBreleaseinfo] scrapeIMDBreleaseinfo result:", result);
+    logger.log("[scrapeIMDBreleaseinfoV1] result:", result);
 
     return result;
   } catch (error) {
+    if (movie.scanErrors) {
+      movie.scanErrors["IMDB Release Info"] = error.message;
+    }
+
+    throw error;
+  }
+}
+
+async function scrapeIMDBreleaseinfoV2(movie, regions, allowedTitleTypes, html) {
+  try {
+    const jsonDataNext = JSON.parse(html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/)[1]);
+
+    // logger.log("[scrapeIMDBreleaseinfoV2] jsonDataNext:", logger.inspectObject(jsonDataNext));
+
+    // ### Original Title
+    let $IMDB_originalTitle = null;
+    const akas = _.get(jsonDataNext, "props.pageProps.contentData.categories", []).find((category) => {
+      return category.id === "akas";
+    });
+    if (akas) {
+      const originalTitleObj = akas.section.items.find((item) => {
+        return item.rowTitle.toLowerCase() === "(original title)";
+      });
+
+      if (originalTitleObj) {
+        $IMDB_originalTitle = originalTitleObj.listContent[0].text;
+      }
+    }
+
+    const gqlAkaTitles = JSON.parse(
+      (await helpers.requestAsync({ uri: graphQLqueries.akaTitles(movie.IMDB_tconst), headers: { "content-type": "application/json" } })).body
+    );
+
+    // logger.log("[scrapeIMDBreleaseinfoV2] gqlAkaTitles:", logger.inspectObject(gqlAkaTitles));
+
+    const gqlAkaTitlesEdges = _.get(gqlAkaTitles, "data.title.akas.edges", []);
+
+    // ### Local Title
+    let $IMDB_localTitle = null;
+    if (regions) {
+      for (const region of regions) {
+        logger.log("[scrapeIMDBreleaseinfoV2] regions trying:", `"${region.name}"`);
+
+        if (!$IMDB_localTitle) {
+          const regionAkaTitles = gqlAkaTitlesEdges.filter((node) => {
+            return ((node.node || {}).country || {}).text === region.name;
+          });
+
+          for (const regionAkaTitle of regionAkaTitles) {
+            const title = _.get(regionAkaTitle, "node.displayableProperty.value.plainText", null);
+            logger.log(`[scrapeIMDBreleaseinfoV2] regions: found aka title candidate: "${title}"`);
+
+            if (!title) {
+              logger.log("[scrapeIMDBreleaseinfoV2] skip; no title found in regionAkaTitle:", logger.inspectObject(regionAkaTitle));
+              continue;
+            }
+
+            const titleTypes = (regionAkaTitle.qualifiersInMarkdownList || []).map((qualifier) => {
+              return qualifier.plainText;
+            });
+
+            const numAllowed = titleTypes.filter((titleType) => {
+              return allowedTitleTypes.includes(titleType);
+            }).length;
+
+            if (numAllowed !== titleTypes.length) {
+              logger.log("[scrapeIMDBreleaseinfoV2] regions: skipped local title, some title types are not allowed", { numAllowed, titleTypes });
+              continue;
+            }
+
+            logger.log("[scrapeIMDBreleaseinfoV2] regions: using local title:", title);
+            $IMDB_localTitle = regionAkaTitle.node.displayableProperty.value.plainText;
+            break;
+          }
+        }
+      }
+    }
+
+    // ### Local Title
+    let $IMDB_primaryTitle = _.get(jsonDataNext, "props.pageProps.contentData.parentDisplayText", null);
+
+    const result = {
+      $IMDB_originalTitle,
+      $IMDB_localTitle,
+      $IMDB_primaryTitle,
+    };
+
+    logger.log("[scrapeIMDBreleaseinfoV2] result:", result);
+
+    return result;
+  } catch (error) {
+    logger.error(error);
+
     if (movie.scanErrors) {
       movie.scanErrors["IMDB Release Info"] = error.message;
     }
@@ -924,7 +1115,117 @@ async function scrapeIMDBFullCreditsData(movie) {
   }
 }
 
+function getGQLCompaniesData(gqlCompanies, category) {
+  const topMax = 5;
+  const companies = [];
+  const topCompanies = [];
+
+  if (gqlCompanies && gqlCompanies.data && gqlCompanies.data.title && gqlCompanies.data.title.companyCredits) {
+    gqlCompanies.data.title.companyCredits.edges.forEach((edge) => {
+      const node = edge.node;
+      const entry = {
+        category: category,
+        id: node.company.id,
+        name: _.get(node, "displayableProperty.value.plainText", null),
+        role: null,
+      };
+
+      const roles = [];
+
+      if (node.yearsInvolved && node.yearsInvolved.year) {
+        roles.push(
+          `(${node.yearsInvolved.year}${
+            node.yearsInvolved.endYear && node.yearsInvolved.year !== node.yearsInvolved.endYear ? `-${node.yearsInvolved.endYear}` : ""
+          })`
+        );
+      }
+
+      if (node.countries && node.countries.length > 0) {
+        let countries = "";
+
+        node.countries.forEach((country) => {
+          countries = `${countries ? ", " : ""}${country.text}`;
+        });
+
+        roles.push(`(${countries})`);
+      }
+
+      if (node.attributes && node.attributes.length > 0) {
+        let attributes = "";
+
+        node.attributes.forEach((attribute) => {
+          attributes = `${attributes ? ", " : ""}${attribute.text}`;
+        });
+
+        roles.push(`(${attributes})`);
+      }
+
+      entry.role = roles.join(" ");
+
+      companies.push(entry);
+
+      if (topCompanies.length < topMax && !topCompanies.find((tc) => tc.name === entry.name)) {
+        topCompanies.push(entry);
+      }
+    });
+  }
+
+  return { companies, topCompanies };
+}
+
+/**
+ * Scrape companies from JSON provided by GraphQL
+ * @param {Object} movie
+ */
 async function scrapeIMDBCompaniesData(movie) {
+  if (movie.scanErrors) {
+    delete movie.scanErrors["IMDB Companies"];
+  }
+
+  try {
+    const gqlCompaniesProduction = JSON.parse(
+      (await helpers.requestAsync({ uri: graphQLqueries.companies(movie.IMDB_tconst, "production"), headers: { "content-type": "application/json" } })).body
+    );
+    const { companies: companiesProduction, topCompanies: topCompaniesProduction } = getGQLCompaniesData(gqlCompaniesProduction, "Production");
+
+    const gqlCompaniesDistribution = JSON.parse(
+      (await helpers.requestAsync({ uri: graphQLqueries.companies(movie.IMDB_tconst, "distribution"), headers: { "content-type": "application/json" } })).body
+    );
+    const { companies: companiesDistribution } = getGQLCompaniesData(gqlCompaniesDistribution, "Distribution");
+
+    const gqlCompaniesSpecialEffects = JSON.parse(
+      (await helpers.requestAsync({ uri: graphQLqueries.companies(movie.IMDB_tconst, "specialEffects"), headers: { "content-type": "application/json" } })).body
+    );
+    const { companies: companiesSpecialEffects } = getGQLCompaniesData(gqlCompaniesSpecialEffects, "Special Effects");
+
+    const gqlCompaniesOther = JSON.parse(
+      (await helpers.requestAsync({ uri: graphQLqueries.companies(movie.IMDB_tconst, "miscellaneous"), headers: { "content-type": "application/json" } })).body
+    );
+    const { companies: companiesOther } = getGQLCompaniesData(gqlCompaniesOther, "Other");
+
+    return {
+      topProductionCompanies: {
+        $IMDB_Top_Production_Companies: topCompaniesProduction.length > 0 ? JSON.stringify(topCompaniesProduction) : null,
+      },
+      companies: [...companiesProduction, ...companiesDistribution, ...companiesSpecialEffects, ...companiesOther],
+    };
+  } catch (error) {
+    logger.error(error);
+
+    if (movie.scanErrors) {
+      movie.scanErrors["IMDB Companies"] = error.message;
+    }
+
+    throw error;
+  }
+}
+
+/**
+ * Deprecated: scrape companies from HTML
+ * @param {Object} movie
+ * @returns
+ */
+async function scrapeIMDBCompaniesDataV1(movie) {
   if (movie.scanErrors) {
     delete movie.scanErrors["IMDB Companies"];
   }
@@ -1535,6 +1836,7 @@ export {
   scrapeIMDBplotSummary,
   scrapeIMDBposterURLs,
   scrapeIMDBCompaniesData,
+  scrapeIMDBCompaniesDataV1,
   scrapeIMDBFullCreditsData,
   scrapeIMDBParentalGuideData,
   scrapeIMDBreleaseinfo,

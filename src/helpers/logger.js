@@ -1,3 +1,5 @@
+const util = require("util");
+
 const logger = require("loglevel");
 
 logger.group = (label) => {
@@ -10,6 +12,10 @@ logger.group = (label) => {
 
 logger.groupEnd = () => {
   console.groupEnd();
+};
+
+logger.inspectObject = (obj) => {
+  return util.inspect(obj, { showHidden: false, depth: null, colors: true });
 };
 
 module.exports = logger;

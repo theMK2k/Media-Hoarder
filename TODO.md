@@ -5,6 +5,43 @@
 - [ ] WIN: update VLC, mediainfo-cli (and test)
 - [ ] async db funcs (initDb, syncSqlite)
 
+### Fix IMDB Scraper
+
+#### / (mainPageData)
+
+- [x] add $IMDB_startYear and $IMDB_endYear (we cannot provide them from /releaseinfo anymore)
+- [x] test V1, V2 and V3 mainPageData
+- [x] check calling functions!
+- [ ] later: properly differentiate V1, V2 and V3 mainPageData handling
+
+#### /releaseinfo
+
+- [x] implement V2 (`__NEXT_DATA__`)
+- [x] test V1
+- [x] we had to remove $IMDB_startYear and $IMDB_endYear, check calling functions!
+
+#### technicalData
+
+- [x] V2 (`__NEXT_DATA__`)
+
+#### companiesData
+
+- [x] implement V3 GQL-based
+- [x] dump/usedump: if filename exceeds 160 characters, make a hash of it and use this at the end of truncated filename
+
+#### personData
+
+#### plotSummary
+
+#### Possibly revive the Trailer Player
+
+See: `https!www.imdb.com!title!tt0092455.html`
+
+- `1434659454657-dx9ykf-1563755266528.mp4`
+- `1434659454657-dx9ykf-1607015032699.mp4`
+- `1434659607842-pgv4ql-1563755266528.mp4`
+- `1434659607842-pgv4ql-1607015032699.mp4`
+
 ### Defects
 
 - nothing

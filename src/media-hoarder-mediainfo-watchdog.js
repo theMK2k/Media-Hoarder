@@ -39,8 +39,7 @@ async function fetchRemoteVersionLinks() {
   // https://mediaarea.net/download/binary/libmediainfo0/21.09/libmediainfo0v5_21.09-1_i386.Debian_10.deb
   // https://mediaarea.net/download/binary/libzen0/0.4.39/libzen0v5_0.4.39-1_i386.Debian_10.deb
 
-  const rxVersion =
-    /<a href=".*?download\/binary\/mediainfo\/(\d+\.\d+)\/mediainfo_.*?_amd64.Debian_10.deb"/;
+  const rxVersion = /<a href=".*?download\/binary\/mediainfo\/(\d+\.\d+)\/mediainfo_.*?_amd64.Debian_10.deb"/;
 
   if (!rxVersion.test(html)) {
     throw new Error("Cannot determine MediaInfo version");
@@ -48,38 +47,29 @@ async function fetchRemoteVersionLinks() {
 
   result.version = html.match(rxVersion)[1];
 
-  const rxmediainfoCLIDownloadLink =
-    /<a href="(.*?download\/binary\/mediainfo\/\d+\.\d+\/mediainfo_.*?_amd64\.Debian_10\.deb)"/;
+  const rxmediainfoCLIDownloadLink = /<a href="(.*?download\/binary\/mediainfo\/\d+\.\d+\/mediainfo_.*?_amd64\.Debian_10\.deb)"/;
 
   if (!rxmediainfoCLIDownloadLink.test(html)) {
     throw new Error("Cannot determine MediaInfo CLI download link");
   }
 
-  result.mediainfoCLIDownloadLink = `${baseURL}${html
-    .match(rxmediainfoCLIDownloadLink)[1]
-    .replace("//", "/")}`;
+  result.mediainfoCLIDownloadLink = `${baseURL}${html.match(rxmediainfoCLIDownloadLink)[1].replace("//", "/")}`;
 
-  const rxlibmediainfoDownloadLink =
-    /<a href="(.*?download\/binary\/libmediainfo0\/\d+\.\d+\/libmediainfo.*?_amd64\.Debian_10\.deb)"/;
+  const rxlibmediainfoDownloadLink = /<a href="(.*?download\/binary\/libmediainfo0\/\d+\.\d+\/libmediainfo.*?_amd64\.Debian_10\.deb)"/;
 
   if (!rxlibmediainfoDownloadLink.test(html)) {
     throw new Error("Cannot determine libmediainfo download link");
   }
 
-  result.libmediainfoDownloadLink = `${baseURL}${html
-    .match(rxlibmediainfoDownloadLink)[1]
-    .replace("//", "/")}`;
+  result.libmediainfoDownloadLink = `${baseURL}${html.match(rxlibmediainfoDownloadLink)[1].replace("//", "/")}`;
 
-  const rxlibzenDownloadLink =
-    /<a href="(.*?download\/binary\/libzen0\/.*?\/libzen.*?_amd64.Debian_10.deb)"/;
+  const rxlibzenDownloadLink = /<a href="(.*?download\/binary\/libzen0\/.*?\/libzen.*?_amd64.Debian_10.deb)"/;
 
   if (!rxlibzenDownloadLink.test(html)) {
     throw new Error("Cannot determine libzen download link");
   }
 
-  result.libzenDownloadLink = `${baseURL}${html
-    .match(rxlibzenDownloadLink)[1]
-    .replace("//", "/")}`;
+  result.libzenDownloadLink = `${baseURL}${html.match(rxlibzenDownloadLink)[1].replace("//", "/")}`;
 
   return result;
 }
@@ -120,33 +110,15 @@ async function checkAndDownloadMediaInfo() {
 
   // TODO: download packs
   // TODO: install packs: libzen, libmediainfo, mediainfo
-  if (
-    !(await helpers.downloadFile(
-      downloadLinks.mediainfoCLIDownloadLink,
-      "/tmp/mediainfo.deb",
-      true
-    ))
-  ) {
+  if (!(await helpers.downloadFile(downloadLinks.mediainfoCLIDownloadLink, "/tmp/mediainfo.deb", true))) {
     throw new Error("Error while downloading MediaInfo CLI");
   }
 
-  if (
-    !(await helpers.downloadFile(
-      downloadLinks.libmediainfoDownloadLink,
-      "/tmp/libmediainfo.deb",
-      true
-    ))
-  ) {
+  if (!(await helpers.downloadFile(downloadLinks.libmediainfoDownloadLink, "/tmp/libmediainfo.deb", true))) {
     throw new Error("Error while downloading libMediaInfo");
   }
 
-  if (
-    !(await helpers.downloadFile(
-      downloadLinks.libzenDownloadLink,
-      "/tmp/libzen.deb",
-      true
-    ))
-  ) {
+  if (!(await helpers.downloadFile(downloadLinks.libzenDownloadLink, "/tmp/libzen.deb", true))) {
     throw new Error("Error while downloading libZen");
   }
 
@@ -158,30 +130,14 @@ async function checkAndDownloadMediaInfo() {
     logger.info("Syntax: media-hoarder-mediainfo-watchdog [options]");
     logger.info("");
     logger.info("options:");
-    logger.info(
-      "         --logLevel=<logLevel>                                log level, default: 2"
-    );
-    logger.info(
-      "         --dumpResults                                        dump media info analysis results to .json files"
-    );
-    logger.info(
-      "         --smtpHost=<host address>                            smtp host address, default: null"
-    );
-    logger.info(
-      "         --smtpPort=<port number>                             smtp port, default: null"
-    );
-    logger.info(
-      "         --smtpUser=<username>                                smtp authentication user, default: null"
-    );
-    logger.info(
-      "         --smtpPass=<password>                                smtp authentication password, default: null"
-    );
-    logger.info(
-      "         --smtpReceiver=<receiver mail address>               mail address for receiver of error/warning mails, default: null"
-    );
-    logger.info(
-      "         --smtpSendLevel=<level when mail is to be sent>      SUCCESS: 0, WARNING: 1, ERROR: 2, default: 2"
-    );
+    logger.info("         --logLevel=<logLevel>                                log level, default: 2");
+    logger.info("         --dumpResults                                        dump media info analysis results to .json files");
+    logger.info("         --smtpHost=<host address>                            smtp host address, default: null");
+    logger.info("         --smtpPort=<port number>                             smtp port, default: null");
+    logger.info("         --smtpUser=<username>                                smtp authentication user, default: null");
+    logger.info("         --smtpPass=<password>                                smtp authentication password, default: null");
+    logger.info("         --smtpReceiver=<receiver mail address>               mail address for receiver of error/warning mails, default: null");
+    logger.info("         --smtpSendLevel=<level when mail is to be sent>      SUCCESS: 0, WARNING: 1, ERROR: 2, default: 2");
 
     logger.info("");
 

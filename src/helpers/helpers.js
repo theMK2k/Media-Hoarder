@@ -4,6 +4,7 @@ const fs = require("fs");
 const requestretry = require("requestretry");
 const os = require("os");
 const filenamify = require("filenamify");
+const xxhash = require("@node-rs/xxhash");
 
 const logger = require("./logger");
 
@@ -251,6 +252,16 @@ function requestRetryStrategy(err, response, body, options) {
   };
 }
 
+function filenamifyExt(input) {
+  let filename = filenamify(input, { maxLength: 10000 });
+
+  if (filename.length > 160) {
+    filename = filename.substr(0, 141) + "-" + xxhash.xxh64(filename).toString(16);
+  }
+
+  return filename;
+}
+
 async function requestAsync(options) {
   let optionsDerived = {};
 
@@ -285,25 +296,17 @@ async function requestAsync(options) {
     optionsDerived.headers["Accept-Language"] = "en";
   }
 
-  optionsDerived.headers["User-Agent"] =
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:106.0) Gecko/20100101 Firefox/106.0";
+  optionsDerived.headers["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:106.0) Gecko/20100101 Firefox/106.0";
 
   optionsDerived.timeout = 10000; // we set a 10s timeout
 
   // logger.log("[requestAsync] optionsDerived:", optionsDerived);
 
   if (imdbScraperWatchdogUseDumps) {
-    const filename = `${filenamify(
-      optionsDerived.url ? optionsDerived.url : optionsDerived.uri
-    )}.html`;
+    const filename = `${filenamifyExt(optionsDerived.url ? optionsDerived.url : optionsDerived.uri)}.html`;
     if (fs.existsSync(filename)) {
       return {
-        body: fs.readFileSync(
-          `${filenamify(
-            optionsDerived.url ? optionsDerived.url : optionsDerived.uri
-          )}.html`,
-          "UTF8"
-        ),
+        body: fs.readFileSync(`${filenamifyExt(optionsDerived.url ? optionsDerived.url : optionsDerived.uri)}.html`, "UTF8"),
       };
     }
   }
@@ -312,9 +315,7 @@ async function requestAsync(options) {
   const response = await requestretryAsync(optionsDerived);
 
   if (requestAsyncDumpToFile) {
-    const filename = `${filenamify(
-      optionsDerived.url ? optionsDerived.url : optionsDerived.uri
-    )}.html`;
+    const filename = `${filenamifyExt(optionsDerived.url ? optionsDerived.url : optionsDerived.uri)}.html`;
     logger.log("[requestAsync] dumping to", filename);
     await writeFileAsync(`./${filename}`, response.body);
   }
@@ -467,4 +468,5 @@ export {
   listPath,
   readFileAsync,
   getMetaCriticClass,
+  filenamifyExt,
 };
