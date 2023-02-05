@@ -53,7 +53,7 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
     // V3: we partially use the __NEXT_DATA__ data, too
     const jsonDataNext = JSON.parse((html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/) || [null, "{}"])[1]);
 
-    logger.log("[scrapeIMDBmainPageData] jsonDataNext:", logger.inspectObject(jsonDataNext));
+    // logger.log("[scrapeIMDBmainPageData] jsonDataNext:", logger.inspectObject(jsonDataNext));
 
     // ## Release Type
 
@@ -1353,6 +1353,19 @@ async function scrapeIMDBPersonData($IMDB_Person_ID, downloadFileCallback) {
 
   logger.log("[scrapeIMDBPersonData] url:", url);
 
+  // check if V1(+2) or V3
+  if (/styleguide/.test(html)) {
+    // V1+2
+    return await scrapeIMDBPersonDataV1($IMDB_Person_ID, downloadFileCallback, html);
+  } else {
+    // V3
+    return await scrapeIMDBPersonDataV3($IMDB_Person_ID, downloadFileCallback, html);
+  }
+}
+
+async function scrapeIMDBPersonDataV1($IMDB_Person_ID, downloadFileCallback, html) {
+  logger.log("[scrapeIMDBPersonDataV1] START");
+
   const result = {
     $IMDB_Person_ID,
     $Photo_URL: null,
@@ -1409,6 +1422,49 @@ async function scrapeIMDBPersonData($IMDB_Person_ID, downloadFileCallback) {
         })
         .trim()
     );
+  }
+
+  return result;
+}
+
+async function scrapeIMDBPersonDataV3($IMDB_Person_ID, downloadFileCallback, html) {
+  logger.log("[scrapeIMDBPersonDataV3] START");
+
+  const result = {
+    $IMDB_Person_ID,
+    $Photo_URL: null,
+    $ShortBio: null,
+    $LongBio: null,
+  };
+
+  const jsonDataNext = JSON.parse((html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/) || [null, "{}"])[1]);
+
+  // logger.log("[scrapeIMDBPersonDataV3] jsonDataNext:", logger.inspectObject(jsonDataNext));
+  result.$LongBio = _.get(jsonDataNext, "props.pageProps.aboveTheFold.bio.text.plaidHtml", null);
+  result.$LongBio = unescape(
+    htmlToText
+      .fromString(result.$LongBio, {
+        wordwrap: null,
+        ignoreImage: true,
+        ignoreHref: true,
+      })
+      .trim()
+  );
+  result.$ShortBio = _.truncate(result.$LongBio, {
+    length: 356,
+    separator: " ",
+    omission: " ...  »",
+  });
+
+  const photoURL = _.get(jsonDataNext, "props.pageProps.aboveTheFold.primaryImage.url", null);
+
+  if (photoURL) {
+    const photoPath = `extras/${$IMDB_Person_ID}_poster.jpg`;
+    const success = await downloadFileCallback(photoURL, photoPath, false);
+
+    if (success) {
+      result.$Photo_URL = photoPath;
+    }
   }
 
   return result;
