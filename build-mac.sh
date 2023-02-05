@@ -2,6 +2,8 @@
 
 rm ./RELEASE/*
 
+npx browserslist@latest --update-db
+
 npm run electron:build-mac
 
 cd RELEASE
