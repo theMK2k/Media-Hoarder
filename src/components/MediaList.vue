@@ -95,9 +95,19 @@
           </template>
 
           <v-list style="margin-top: 2px; margin-right: 2px">
-            <v-list-item v-on:click="rescanCurrentListDialog.show = true">
+            <!-- <v-list-item v-if="!isScanning" v-bind:disabled="isScanning" v-on:click="rescanCurrentListDialog.show = true">
               {{ $t("Rescan Meta Data") }}
-            </v-list-item>
+            </v-list-item> -->
+            <v-tooltip left v-bind:disabled="!isScanning">
+              <template v-slot:activator="{ on }">
+                <span v-on="on">
+                  <v-list-item v-bind:disabled="isScanning" v-on:click="rescanCurrentListDialog.show = true">
+                    {{ $t("Rescan Meta Data") }}
+                  </v-list-item>
+                </span>
+              </template>
+              {{ $t("scan already in progress") }}
+            </v-tooltip>
           </v-list>
         </v-menu>
       </div>
@@ -2223,7 +2233,11 @@ export default {
       try {
         store.resetUserScanOptions();
 
-        await store.assignIMDB(this.linkIMDBDialog.item.id_Movies, tconst, false, false, null, this.$local_t);
+        eventBus.rescanStarted();
+
+        await store.assignIMDB(this.linkIMDBDialog.item.id_Movies, tconst, false, null, this.$local_t);
+
+        eventBus.rescanStopped();
 
         eventBus.refetchMedia(this.$shared.currentPage);
 

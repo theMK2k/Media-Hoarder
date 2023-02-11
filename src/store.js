@@ -295,7 +295,7 @@ async function rescanItems(items, $t) {
 
     await applyMediaInfo(item, false);
 
-    await assignIMDB(item.id_Movies, item.IMDB_tconst, null, null, item, $t);
+    await assignIMDB(item.id_Movies, item.IMDB_tconst, null, item, $t);
 
     rescanETA.endTime = new Date().getTime();
     rescanETA.elapsedMS += rescanETA.endTime - rescanETA.startTime;
@@ -5086,22 +5086,14 @@ async function deleteFilterCompany($id_Filter_Companies) {
   return await db.fireProcedureReturnScalar(`DELETE FROM tbl_Filter_Companies WHERE id_Filter_Companies = $id_Filter_Companies`, { $id_Filter_Companies });
 }
 
-async function assignIMDB($id_Movies, $IMDB_tconst, isHandlingDuplicates, noEventBus, movie, $t) {
+async function assignIMDB($id_Movies, $IMDB_tconst, isHandlingDuplicates, movie, $t) {
   logger.log("[assignIMDB] $id_Movies:", $id_Movies, "$IMDB_tconst:", $IMDB_tconst, "movie:", movie);
-
-  // rescan IMDB Metadata
-  if (!noEventBus) {
-    eventBus.rescanStarted();
-  }
 
   if (!$IMDB_tconst && movie) {
     $IMDB_tconst = await findIMDBtconst(movie, false, null, $t);
   }
 
   if (!$IMDB_tconst) {
-    if (!noEventBus) {
-      eventBus.rescanStopped();
-    }
     return;
   }
 
@@ -5117,11 +5109,7 @@ async function assignIMDB($id_Movies, $IMDB_tconst, isHandlingDuplicates, noEven
   const duplicates = await getMovieDuplicates($id_Movies, shared.duplicatesHandling.actualDuplicate.relinkIMDB, false);
 
   for (let i = 0; i < duplicates.length; i++) {
-    await assignIMDB(duplicates[i], $IMDB_tconst, true, false, null, $t);
-  }
-
-  if (!noEventBus) {
-    eventBus.rescanStopped();
+    await assignIMDB(duplicates[i], $IMDB_tconst, true, null, $t);
   }
 }
 
