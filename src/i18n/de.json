@@ -741,44 +741,10 @@
     "Special Effects": "Spezialeffekte"
   },
   "moment": {
-    "months": [
-      "Januar",
-      "Februar",
-      "März",
-      "April",
-      "Mai",
-      "Juni",
-      "Juli",
-      "August",
-      "September",
-      "Oktober",
-      "November",
-      "Dezember"
-    ],
-    "monthsShort": [
-      "Jan",
-      "Feb",
-      "Mär",
-      "Apr",
-      "Mai",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Okt",
-      "Nov",
-      "Dez"
-    ],
+    "months": ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
+    "monthsShort": ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
     "monthsParseExact": true,
-    "weekdays": [
-      "Sonntag",
-      "Montag",
-      "Dienstag",
-      "Mittwoch",
-      "Donnerstag",
-      "Freitag",
-      "Samstag"
-    ],
+    "weekdays": ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
     "weekdaysShort": ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
     "weekdaysMin": ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
     "weekdaysParseExact": true,
@@ -856,6 +822,7 @@
   "Remove this release attribute for the current movie": "Dieses Veröffentlichungsattribut für den aktuellen Film entfernen",
   "Release Attribute \"{ReleaseAttribute}\" successfully removed from selected movie_": "Veröffentlichungsattribut \"{ReleaseAttribute}\" erfolgreich für den ausgewählten Film entfernt.",
   "entry successfully rescanned": "Eintrag erfolgreich neu eingelesen",
+  "entries successfully rescanned": "Einträge erfolgreich neu eingelesen",
   "Remove Region": "Region Entfernen",
   "Do you really want to remove the region {Region}?": "Soll die Region {Region} wirklich entfernt werden?",
   "Region removed_": "Region wurde entfernt.",
@@ -994,5 +961,8 @@
   "Start Conversation": "Konversation Starten",
   "Create and filter by this list": "Erstelle und filtere nach dieser Liste",
   "List Title": "Titel der Liste",
-  "Result": "Ergebnis"
+  "Result": "Ergebnis",
+  "Rescan metadata of the current list": "Metadaten der aktuellen Liste erneut ermitteln",
+  "Do you want to rescan the metadata for each entry in the current list?": "Sollen die Metadaten für die aktuellen Liste erneut ermittelt werden?",
+  "List Actions": "Listenaktionen"
 }

@@ -71,8 +71,35 @@
 
       <v-spacer></v-spacer>
 
-      <div v-if="numPages">
+      <!-- TOP PAGINATION -->
+      <div v-if="numPages" style="display: flex; align-items: flex-start">
         <mk-pagination v-bind:length="numPages" v-bind:pages="paginationItems" v-model="$shared.currentPage"></mk-pagination>
+
+        <!-- LIST MENU -->
+        <v-menu bottom right offset-y>
+          <template v-slot:activator="{ on: menu, attrs }">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on: tooltip }">
+                <button
+                  type="button"
+                  class="v-pagination__navigation"
+                  v-bind="attrs"
+                  v-on="{ ...tooltip, ...menu }"
+                  style="height: 38px !important; width: 38px !important; margin: 10px 8px 0px 0px !important; background-color: #424242"
+                >
+                  <i aria-hidden="true" class="v-icon notranslate mdi mdi-dots-vertical theme--dark"></i>
+                </button>
+              </template>
+              <span>{{ $t("List Actions") }}</span>
+            </v-tooltip>
+          </template>
+
+          <v-list style="margin-top: 2px; margin-right: 2px">
+            <v-list-item v-on:click="rescanCurrentListDialog.show = true">
+              {{ $t("Rescan Meta Data") }}
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </div>
 
       <!-- workaround - else the mk-pagination would fuck off to the right when sidenav is shown -->
@@ -155,7 +182,7 @@
                                   <v-icon
                                     v-show="item.nameHovered || item.selected"
                                     class="mk-clickable"
-                                    v-on:click.stop="onRescanItem(item)"
+                                    v-on:click.stop="onRescanItems([item])"
                                     style="margin-left: 8px; margin-bottom: 3px"
                                     v-bind:disabled="isScanning"
                                     >mdi-reload-alert</v-icon
@@ -821,6 +848,7 @@
         </v-col>
       </v-row>
 
+      <!-- BOTTOM PAGINATION -->
       <v-row style="margin-bottom: 0px">
         <v-spacer></v-spacer>
         <div v-if="numPages" style="margin-right: 4px">
@@ -979,6 +1007,18 @@
       v-on:no="onDeleteMediaDialogCancel"
       v-on:ok="onDeleteMediaDialogOK"
     ></mk-delete-media-dialog>
+
+    <mk-rescan-current-list-dialog
+      v-bind:show="rescanCurrentListDialog.show"
+      v-bind:title="$t('Rescan metadata of the current list')"
+      v-bind:question="$t('Do you want to rescan the metadata for each entry in the current list?')"
+      v-bind:cancel="$t('Cancel')"
+      v-bind:ok="$t('Rescan Meta Data')"
+      okColor="primary"
+      cancelColor="secondary"
+      v-on:ok="onRescanCurrentListDialogOK"
+      v-on:cancel="rescanCurrentListDialog.show = false"
+    ></mk-rescan-current-list-dialog>
   </div>
 </template>
 
@@ -1045,6 +1085,7 @@ export default {
     "mk-release-attribute-dialog": ReleaseAttributeDialog,
     "mk-edit-media-item-dialog": EditMediaItemDialog,
     "mk-delete-media-dialog": Dialog,
+    "mk-rescan-current-list-dialog": Dialog,
   },
 
   data: () => ({
@@ -1191,6 +1232,10 @@ export default {
       Message: null,
       ItemName: null,
       loading: false,
+    },
+
+    rescanCurrentListDialog: {
+      show: false,
     },
 
     itemsPerPage: 20,
@@ -1639,7 +1684,7 @@ export default {
 
         logger.log("[showTrailer] trailerMediaURLs:", trailerMediaURLs);
 
-        const dontUseLocalPlayer = true; // TODO: we can scrape mediaURLs, but we get a 403 Forbidden if we access them with our media player
+        const dontUseLocalPlayer = false; // TODO: we can scrape mediaURLs, but we get a 403 Forbidden if we access them with our media player
 
         if (dontUseLocalPlayer || !trailerMediaURLs || !trailerMediaURLs.mediaURLs || trailerMediaURLs.mediaURLs.length == 0) {
           return this.showTrailer(item); // Fallback to the more general player showing the IMDB site
@@ -2208,19 +2253,13 @@ export default {
       }
     },
 
-    async onRescanItem(item) {
+    async onRescanItems(items) {
       try {
-        store.resetUserScanOptions();
-
-        await store.findReleaseAttributes(item, false);
-
-        await store.applyMediaInfo(item, false);
-
-        await store.assignIMDB(item.id_Movies, item.IMDB_tconst, null, null, item, this.$local_t);
+        await store.rescanItems(items, this.$local_t);
 
         eventBus.refetchMedia(this.$shared.currentPage, this.$local_t);
 
-        eventBus.showSnackbar("success", this.$t("entry successfully rescanned"));
+        eventBus.showSnackbar("success", this.$t(`${items.length === 1 ? "entry" : "entries"} successfully rescanned`));
       } catch (err) {
         logger.log("[onRescanItem] error:", JSON.stringify(err));
         eventBus.showSnackbar("error", err);
@@ -2537,6 +2576,13 @@ export default {
 
     async onDeleteMediaDialogCancel() {
       this.deleteMediaDialog.show = false;
+    },
+
+    async onRescanCurrentListDialogOK() {
+      this.rescanCurrentListDialog.show = false;
+
+      // TODO: properly handle array for the rescan (total time etc.)
+      this.onRescanItems(this.items);
     },
   },
 

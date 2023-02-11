@@ -223,6 +223,7 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
 
     logger.log("[scrapeIMDBmainPageData] $IMDB_Trailer_URL:", $IMDB_Trailer_URL);
 
+    // ## Year Range
     // V3
     let $IMDB_startYear = _.get(jsonDataNext, "props.pageProps.aboveTheFoldData.releaseYear.year", null);
     let $IMDB_endYear = _.get(jsonDataNext, "props.pageProps.aboveTheFoldData.releaseYear.endYear", null);
@@ -1718,7 +1719,7 @@ async function scrapeIMDBTrailerMediaURLs(trailerURL) {
     // eslint-disable-next-line no-cond-assign
     while ((match = rxMediaURL.exec(html))) {
       const mimeType = match[1].replace(/\\u002F/g, "/");
-      const mediaURL = match[2].replace(/\\u002F/g, "/");
+      const mediaURL = match[2].replace(/\\u002F/g, "/").replace(/\\u0026/g, "&");
       const definition = match[3];
 
       result.push({

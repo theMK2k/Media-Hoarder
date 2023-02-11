@@ -778,6 +778,7 @@
   "Remove this release attribute for the current movie": "Remove this release attribute for the current movie",
   "Release Attribute \"{ReleaseAttribute}\" successfully removed from selected movie_": "Release Attribute \"{ReleaseAttribute}\" successfully removed from selected movie.",
   "entry successfully rescanned": "entry successfully rescanned",
+  "entries successfully rescanned": "entries successfully rescanned",
   "Remove Region": "Remove Region",
   "Region removed_": "Region removed.",
   "Do you really want to remove the region {Region}?": "Do you really want to remove the region {Region}?",
@@ -916,5 +917,8 @@
   "Start Conversation": "Start Conversation",
   "Create and filter by this list": "Create and filter by this list",
   "List Title": "List Title",
-  "Result": "Result"
+  "Result": "Result",
+  "Rescan metadata of the current list": "Rescan metadata of the current list",
+  "Do you want to rescan the metadata for each entry in the current list?": "Do you want to rescan the metadata for each entry in the current list?",
+  "List Actions": "List Actions"
 }

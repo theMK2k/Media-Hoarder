@@ -2,20 +2,14 @@
 
 ## NEXT Minor (current v1.1.0)
 
+- [WIP] Media List: "rescan this list" (operations on the currently shown list w/ menu)
+  - [X] onListActionsRescanMetaData - show dialog before rescan
+  - [WIP] properly handle array for the rescan (total time etc.)
 - [ ] WIN: update VLC, mediainfo-cli (and test)
 - [ ] async db funcs (initDb, syncSqlite)
 - [ ] wget easylist.txt upon build
 
 - [ ] later: properly differentiate V1, V2 and V3 mainPageData handling
-
-### Possibly revive the Trailer Player
-
-See: `https!www.imdb.com!title!tt0092455.html`
-
-- `1434659454657-dx9ykf-1563755266528.mp4`
-- `1434659454657-dx9ykf-1607015032699.mp4`
-- `1434659607842-pgv4ql-1563755266528.mp4`
-- `1434659607842-pgv4ql-1607015032699.mp4`
 
 ### Defects
 

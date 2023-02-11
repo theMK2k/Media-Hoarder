@@ -3,6 +3,7 @@
 ## v1.1.1
 
 - [x] The integration of ChatGPT to query AI suggestions has been significantly improved. There is no longer a dependency on IMDB IDs.
+- [x] Improved Trailer experience with embedded player
 
 ### Fix IMDB Scraper
 
@@ -30,6 +31,8 @@
 #### personData
 
 #### plotSummary
+
+### Other
 
 ## v1.1.0
 

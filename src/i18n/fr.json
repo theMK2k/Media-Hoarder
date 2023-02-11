@@ -857,6 +857,7 @@
   "Remove this release attribute for the current movie": "Supprimer cette caractéristique de version pour le film actuel",
   "Release Attribute \"{ReleaseAttribute}\" successfully removed from selected movie_": "Caractéristique de version \"{ReleaseAttribute}\" du film sélectionné supprimée avec succès.",
   "entry successfully rescanned": "Nouvelles recherche d'entrée effectuée avec succès",
+  "entries successfully rescanned": "Nouvelles recherche d'entrées effectuée avec succès",
   "Remove Region": "Supprimer région",
   "Do you really want to remove the region {Region}?": "Voulez-vous vraiment supprimer la région {Region} ?",
   "Region removed_": "Région supprimée.",
@@ -995,5 +996,8 @@
   "Start Conversation": "Commencer la conversation",
   "Create and filter by this list": "Créer et filtrer par cette liste",
   "List Title": "Titre de la liste",
-  "Result": "Résultat"
+  "Result": "Résultat",
+  "Rescan metadata of the current list": "Rescan des métadonnées de la liste courante",
+  "Do you want to rescan the metadata for each entry in the current list?": "Voulez-vous rescanner les métadonnées pour chaque entrée de la liste actuelle?",
+  "List Actions": "Actions pour la liste"
 }

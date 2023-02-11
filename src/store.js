@@ -255,6 +255,66 @@ async function fetchSourcePaths() {
   return result;
 }
 
+/**
+ * Rescan meta data of the given items
+ * @param {Array} items the items to rescan
+ * @param {object} $t the i18n translate function
+ */
+async function rescanItems(items, $t) {
+  rescanETA = {
+    show: false,
+    counter: 0,
+    numItems: items.length,
+    elapsedMS: 0,
+    averageMS: null,
+    startTime: null,
+    endTime: null,
+    timeRemaining: null,
+    displayETA: "",
+    progressPercent: 0,
+  };
+
+  resetUserScanOptions(); // user scan options (which apply to the standard rescan by source paths) don't apply here
+
+  shared.isScanning = true;
+  eventBus.rescanStarted();
+
+  for (const item of items) {
+    if (doAbortRescan) {
+      break;
+    }
+
+    rescanETA.counter++;
+    rescanETA.startTime = new Date().getTime();
+
+    eventBus.scanInfoShow($t("Rescanning Movies") + " {remainingTimeDisplay}", `${item.Name || item.Filename}`, rescanETA);
+
+    eventBus.setProgressBar(rescanETA.counter / rescanETA.numItems); // absolute progress
+
+    await findReleaseAttributes(item, false);
+
+    await applyMediaInfo(item, false);
+
+    await assignIMDB(item.id_Movies, item.IMDB_tconst, null, null, item, $t);
+
+    rescanETA.endTime = new Date().getTime();
+    rescanETA.elapsedMS += rescanETA.endTime - rescanETA.startTime;
+    rescanETA.averageMS = rescanETA.elapsedMS / rescanETA.counter;
+    rescanETA.timeRemaining = Math.round(((rescanETA.numItems - rescanETA.counter) * rescanETA.averageMS) / 1000);
+    rescanETA.displayETA = ` (${helpers.getTimeString(Math.round(((rescanETA.numItems - rescanETA.counter) * rescanETA.averageMS) / 1000))})`;
+    rescanETA.progressPercent = 100 * (rescanETA.counter / rescanETA.numItems);
+    rescanETA.show = true;
+  }
+
+  eventBus.scanInfoOff();
+  eventBus.setProgressBar(-1); // off
+}
+
+/**
+ * Rescan media based on the given source paths
+ * @param {boolean} onlyNew if true, only new media will be scanned
+ * @param {object} $t the i18n translate function
+ */
 async function rescan(onlyNew, $t) {
   rescanETA = {
     show: false,
@@ -366,16 +426,14 @@ async function rescanHandleDuplicates() {
 }
 
 /**
- * Create for each entry in movies:
+ * Create
  * - fullPath from joining SourcePath and RelativePath
  * - fullDirectory from joining SourcePath and RelativeDirectory
  * @param {*} movies
  */
-function ensureMoviesFullPath(movies) {
-  movies.forEach((movie) => {
-    movie.fullPath = path.join(movie.SourcePath, movie.RelativePath);
-    movie.fullDirectory = path.join(movie.SourcePath, movie.RelativeDirectory);
-  });
+function ensureMovieFullPath(movie) {
+  movie.fullPath = path.join(movie.SourcePath, movie.RelativePath);
+  movie.fullDirectory = path.join(movie.SourcePath, movie.RelativeDirectory);
 }
 
 async function mergeExtras(onlyNew) {
@@ -409,7 +467,9 @@ async function mergeExtras(onlyNew) {
 		${onlyNew ? "AND MOV.isNew = 1" : ""}
   `);
 
-  ensureMoviesFullPath(children);
+  children.forEach((movie) => {
+    ensureMovieFullPath(movie);
+  });
 
   logger.log("[mergeExtras] Extra children (from db):", children);
 
@@ -1234,7 +1294,9 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
   rescanETA.counter = 0;
   rescanETA.elapsedMS = 0;
 
-  ensureMoviesFullPath(movies);
+  movies.forEach((movie) => {
+    ensureMovieFullPath(movie);
+  });
 
   logger.log("[rescanMoviesMetadata] movies:", movies);
 
@@ -1248,69 +1310,11 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
 
     const movie = movies[i];
 
-    const IMDB_tconst_before = movie.IMDB_tconst;
-
-    const definedByUser = getFieldsDefinedByUser(movie.DefinedByUser);
-
     if (shared.scanOptions.rescanMoviesMetaData_maxEntries && i > shared.scanOptions.rescanMoviesMetaData_maxEntries) {
       break;
     }
 
-    // eventBus.scanInfoOff();
-    eventBus.scanInfoShow($t("Rescanning Movies") + " {remainingTimeDisplay}", `${movie.Name || movie.Filename}`, rescanETA);
-
-    eventBus.setProgressBar((i + 1) / movies.length); // absolute progress
-
-    // MediaInfo
-    if (!id_Movies && shared.scanOptions.rescanMoviesMetaData_applyMediaInfo) {
-      eventBus.scanInfoShow($t("Rescanning Movies") + " {remainingTimeDisplay}", `${movie.Name || movie.Filename} (${$t("applying MediaInfo")})`, rescanETA);
-
-      await applyMediaInfo(movie, onlyNew);
-    }
-
-    if (!id_Movies && shared.scanOptions.rescanMoviesMetaData_findIMDBtconst) {
-      eventBus.scanInfoShow($t("Rescanning Movies") + " {remainingTimeDisplay}", `${movie.Name || movie.Filename} (${$t("determining IMDB ID")})`, rescanETA);
-
-      if (!movie.isUnlinkedIMDB) {
-        await findIMDBtconst(movie, onlyNew, rescanETA, $t);
-      }
-    }
-
-    if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData) {
-      eventBus.scanInfoShow(
-        $t("Rescanning Movies") + " {remainingTimeDisplay}",
-        `${movie.Name || movie.Filename} (${$t("scraping IMDB metadata")})`,
-        rescanETA
-      );
-
-      await fetchIMDBMetaData($t, movie, onlyNew);
-    }
-
-    if (shared.scanOptions.rescanMoviesMetaData_findReleaseAttributes) {
-      if (!definedByUser.find((item) => item === "ReleaseAttributesSearchTerms")) {
-        eventBus.scanInfoShow(
-          $t("Rescanning Movies") + " {remainingTimeDisplay}",
-          `${movie.Name || movie.Filename} (${$t("finding release attributes")})`,
-          rescanETA
-        );
-
-        await findReleaseAttributes(movie, onlyNew);
-      } else {
-        logger.log("[rescanMoviesMetadata] omitting Release Attribtues (already defined by the user)");
-      }
-    }
-
-    if (shared.scanOptions.applyMetaData) {
-      eventBus.scanInfoShow($t("Rescanning Movies") + " {remainingTimeDisplay}", `${movie.Name || movie.Filename} (${$t("applying metadata")})`, rescanETA);
-
-      await applyMetaData(false, movie.id_Movies);
-    }
-
-    if (shared.scanOptions.checkIMDBtconst && IMDB_tconst_before !== movie.IMDB_tconst) {
-      eventBus.scanInfoShow($t("Rescanning Movies") + " {remainingTimeDisplay}", `${movie.Name || movie.Filename} (${$t("checking IMDB link")})`, rescanETA);
-
-      await verifyIMDBtconst(movie.id_Movies, $t);
-    }
+    await rescanMovieMetaData(onlyNew, movie, $t, !id_Movies, !id_Movies);
 
     rescanETA.endTime = new Date().getTime();
     rescanETA.elapsedMS += rescanETA.endTime - rescanETA.startTime;
@@ -1323,6 +1327,69 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
 
   eventBus.scanInfoOff();
   eventBus.setProgressBar(-1); // off
+}
+
+/**
+ * Rescan the metadata (MediaInfo, IMDB) for the given movie
+ * @param {boolean} onlyNew
+ * @param {Object} movie
+ * @param {Object} $t
+ */
+async function rescanMovieMetaData(onlyNew, movie, $t, optRescanMediaInfo, optFindIMDBtconst) {
+  // eventBus.scanInfoOff();
+  eventBus.scanInfoShow($t("Rescanning Movies") + " {remainingTimeDisplay}", `${movie.Name || movie.Filename}`, rescanETA);
+
+  eventBus.setProgressBar(rescanETA.counter / rescanETA.numItems); // absolute progress
+
+  const definedByUser = getFieldsDefinedByUser(movie.DefinedByUser);
+  const IMDB_tconst_before = movie.IMDB_tconst;
+
+  // MediaInfo
+  if (optRescanMediaInfo && shared.scanOptions.rescanMoviesMetaData_applyMediaInfo) {
+    eventBus.scanInfoShow($t("Rescanning Movies") + " {remainingTimeDisplay}", `${movie.Name || movie.Filename} (${$t("applying MediaInfo")})`, rescanETA);
+
+    await applyMediaInfo(movie, onlyNew);
+  }
+
+  if (optFindIMDBtconst && shared.scanOptions.rescanMoviesMetaData_findIMDBtconst) {
+    eventBus.scanInfoShow($t("Rescanning Movies") + " {remainingTimeDisplay}", `${movie.Name || movie.Filename} (${$t("determining IMDB ID")})`, rescanETA);
+
+    if (!movie.isUnlinkedIMDB) {
+      await findIMDBtconst(movie, onlyNew, rescanETA, $t);
+    }
+  }
+
+  if (shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData) {
+    eventBus.scanInfoShow($t("Rescanning Movies") + " {remainingTimeDisplay}", `${movie.Name || movie.Filename} (${$t("scraping IMDB metadata")})`, rescanETA);
+
+    await fetchIMDBMetaData($t, movie, onlyNew);
+  }
+
+  if (shared.scanOptions.rescanMoviesMetaData_findReleaseAttributes) {
+    if (!definedByUser.find((item) => item === "ReleaseAttributesSearchTerms")) {
+      eventBus.scanInfoShow(
+        $t("Rescanning Movies") + " {remainingTimeDisplay}",
+        `${movie.Name || movie.Filename} (${$t("finding release attributes")})`,
+        rescanETA
+      );
+
+      await findReleaseAttributes(movie, onlyNew);
+    } else {
+      logger.log("[rescanMoviesMetadata] omitting Release Attribtues (already defined by the user)");
+    }
+  }
+
+  if (shared.scanOptions.applyMetaData) {
+    eventBus.scanInfoShow($t("Rescanning Movies") + " {remainingTimeDisplay}", `${movie.Name || movie.Filename} (${$t("applying metadata")})`, rescanETA);
+
+    await applyMetaData(false, movie.id_Movies);
+  }
+
+  if (shared.scanOptions.checkIMDBtconst && IMDB_tconst_before !== movie.IMDB_tconst) {
+    eventBus.scanInfoShow($t("Rescanning Movies") + " {remainingTimeDisplay}", `${movie.Name || movie.Filename} (${$t("checking IMDB link")})`, rescanETA);
+
+    await verifyIMDBtconst(movie.id_Movies, $t);
+  }
 }
 
 /**
@@ -3013,7 +3080,9 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
 
     const result = await db.fireProcedureReturnAll(query, { $MediaType });
 
-    ensureMoviesFullPath(result);
+    result.forEach((movie) => {
+      ensureMovieFullPath(movie);
+    });
 
     if (result && result.length > 0) {
       saveFilterValues($MediaType);
@@ -4793,7 +4862,9 @@ async function getMovieDetails($id_Movies) {
     { $id_Movies }
   );
 
-  ensureMoviesFullPath(extras);
+  extras.forEach((movie) => {
+    ensureMovieFullPath(movie);
+  });
 
   return {
     lists,
@@ -6521,6 +6592,7 @@ export {
   existsAsync,
   fetchSourcePaths,
   rescan,
+  rescanItems,
   fetchMedia,
   clearRating,
   setRating,
