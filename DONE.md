@@ -4,6 +4,10 @@
 
 - [x] The integration of ChatGPT to query AI suggestions has been significantly improved. There is no longer a dependency on IMDB IDs.
 - [x] Improved Trailer experience with embedded player
+- [x] Media List: "rescan this list" (operations on the currently shown list w/ menu)
+  - [x] onListActionsRescanMetaData - show dialog before rescan
+  - [x] properly handle array for the rescan (total time etc.)
+  - [x] after cancel: set isScanning to false
 
 ### Fix IMDB Scraper
 

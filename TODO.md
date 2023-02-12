@@ -2,15 +2,11 @@
 
 ## NEXT Minor (current v1.1.0)
 
-- [WIP] Media List: "rescan this list" (operations on the currently shown list w/ menu)
-  - [X] onListActionsRescanMetaData - show dialog before rescan
-  - [X] properly handle array for the rescan (total time etc.)
-  - [ ] after cancel: set isScanning to false
 - [ ] WIN: update VLC, mediainfo-cli (and test)
-- [ ] async db funcs (initDb, syncSqlite)
-- [ ] wget easylist.txt upon build
+- [ ] curl/wget easylist.txt automatically before build <https://easylist.to/easylist/easylist.txt>
 
 - [ ] later: properly differentiate V1, V2 and V3 mainPageData handling
+- [ ] later: async db funcs (initDb, syncSqlite)
 
 ### Defects
 
