@@ -4,7 +4,8 @@
 
 - [WIP] Media List: "rescan this list" (operations on the currently shown list w/ menu)
   - [X] onListActionsRescanMetaData - show dialog before rescan
-  - [WIP] properly handle array for the rescan (total time etc.)
+  - [X] properly handle array for the rescan (total time etc.)
+  - [ ] after cancel: set isScanning to false
 - [ ] WIN: update VLC, mediainfo-cli (and test)
 - [ ] async db funcs (initDb, syncSqlite)
 - [ ] wget easylist.txt upon build

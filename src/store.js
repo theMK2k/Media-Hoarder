@@ -306,6 +306,8 @@ async function rescanItems(items, $t) {
     rescanETA.show = true;
   }
 
+  eventBus.rescanStopped();
+
   eventBus.scanInfoOff();
   eventBus.setProgressBar(-1); // off
 }
@@ -1289,10 +1291,12 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
     });
   }
 
-  rescanETA.show = false;
-  rescanETA.numItems = movies.length;
-  rescanETA.counter = 0;
-  rescanETA.elapsedMS = 0;
+  if (!id_Movies) {
+    rescanETA.show = false;
+    rescanETA.numItems = movies.length;
+    rescanETA.counter = 0;
+    rescanETA.elapsedMS = 0;
+  }
 
   movies.forEach((movie) => {
     ensureMovieFullPath(movie);
@@ -1305,8 +1309,10 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
       break;
     }
 
-    rescanETA.counter++;
-    rescanETA.startTime = new Date().getTime();
+    if (!id_Movies) {
+      rescanETA.counter++;
+      rescanETA.startTime = new Date().getTime();
+    }
 
     const movie = movies[i];
 
@@ -1316,13 +1322,15 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
 
     await rescanMovieMetaData(onlyNew, movie, $t, !id_Movies, !id_Movies);
 
-    rescanETA.endTime = new Date().getTime();
-    rescanETA.elapsedMS += rescanETA.endTime - rescanETA.startTime;
-    rescanETA.averageMS = rescanETA.elapsedMS / rescanETA.counter;
-    rescanETA.timeRemaining = Math.round(((rescanETA.numItems - rescanETA.counter) * rescanETA.averageMS) / 1000);
-    rescanETA.displayETA = ` (${helpers.getTimeString(Math.round(((rescanETA.numItems - rescanETA.counter) * rescanETA.averageMS) / 1000))})`;
-    rescanETA.progressPercent = 100 * (rescanETA.counter / rescanETA.numItems);
-    rescanETA.show = true;
+    if (!id_Movies) {
+      rescanETA.endTime = new Date().getTime();
+      rescanETA.elapsedMS += rescanETA.endTime - rescanETA.startTime;
+      rescanETA.averageMS = rescanETA.elapsedMS / rescanETA.counter;
+      rescanETA.timeRemaining = Math.round(((rescanETA.numItems - rescanETA.counter) * rescanETA.averageMS) / 1000);
+      rescanETA.displayETA = ` (${helpers.getTimeString(Math.round(((rescanETA.numItems - rescanETA.counter) * rescanETA.averageMS) / 1000))})`;
+      rescanETA.progressPercent = 100 * (rescanETA.counter / rescanETA.numItems);
+      rescanETA.show = true;
+    }
   }
 
   eventBus.scanInfoOff();
@@ -1499,7 +1507,7 @@ async function applyMediaInfo(movie, onlyNew) {
   }
 }
 
-async function findIMDBtconst(movie, onlyNew, rescanETA, $t) {
+async function findIMDBtconst(movie, onlyNew, $t) {
   // find IMDB tconst
   // save IMDB_tconst to db
   logger.log("[findIMDBtconst] START movie:", movie);
@@ -5090,7 +5098,7 @@ async function assignIMDB($id_Movies, $IMDB_tconst, isHandlingDuplicates, movie,
   logger.log("[assignIMDB] $id_Movies:", $id_Movies, "$IMDB_tconst:", $IMDB_tconst, "movie:", movie);
 
   if (!$IMDB_tconst && movie) {
-    $IMDB_tconst = await findIMDBtconst(movie, false, null, $t);
+    $IMDB_tconst = await findIMDBtconst(movie, false, $t);
   }
 
   if (!$IMDB_tconst) {
