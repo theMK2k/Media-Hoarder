@@ -13,4 +13,9 @@ Examples:
 
 ## IMDB Scraper updated
 
-A larger overhaul of how **Media Hoarder** fetches IMDB metadata was necessary and has been implemented.
+A larger overhaul of how **Media Hoarder** scrapes IMDB metadata was necessary and has been implemented.
+
+## Other Improvements and Fixes
+
+- the embedded trailer player has been improved, it doesn't load the imdb.com site's complete frame but directly plays the video
+- Windows: distribution of VLC and MediaInfo CLI upated to their latest versions (VLC: 3.0.18, MediaInfo: v22.12)
