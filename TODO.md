@@ -2,6 +2,7 @@
 
 ## NEXT Minor (current v1.1.0)
 
+- nothing
 
 ### Defects
 
