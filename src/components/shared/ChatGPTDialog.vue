@@ -91,10 +91,6 @@ export default {
       this.movies = null;
       this.numMovies = null;
       this.title = null;
-      if (this.browserWindow) {
-        this.browserWindow.close();
-        this.browserWindow = null;
-      }
     },
 
     onCloseClick() {
