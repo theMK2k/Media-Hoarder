@@ -1,4 +1,4 @@
-# Media Hoarder v1.1.1 Changelog
+# Media Hoarder v1.2.0 Changelog
 
 ## Improved: AI Recommendations powered by ChatGPT
 

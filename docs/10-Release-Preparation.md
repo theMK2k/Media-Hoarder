@@ -15,7 +15,7 @@ This document describes the steps necessary to get a new release done.
 
 ### Windows Build
 
-- [ ] in Windows run:
+- [WIP] in Windows run:
 
 ```bash
 git pull

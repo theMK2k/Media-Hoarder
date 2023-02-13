@@ -1,30 +1,30 @@
 [
-    {
-        "version": "1.1.1",
-        "name": "HAL 9000",
-        "quote": "I am putting myself to the fullest possible use, which is all I think that any conscious entity can ever hope to do.",
-        "quoteSource": "2001: A Space Odyssey (1968)",
-        "description": "version-1.1.1.md"
-    },
-    {
-        "version": "1.1.0",
-        "name": "HAL 9000",
-        "quote": "I am putting myself to the fullest possible use, which is all I think that any conscious entity can ever hope to do.",
-        "quoteSource": "2001: A Space Odyssey (1968)",
-        "description": "version-1.1.0.md"
-    },
-    {
-        "version": "1.0.1",
-        "name": "The Dude",
-        "quote": "Way out west there was this fella... fella I wanna tell ya about. Fella by the name of Jeff Lebowski. At least that was the handle his loving parents gave him, but he never had much use for it himself. Mr. Lebowski, he called himself \"The Dude\".",
-        "quoteSource": "The Big Lebowski (1998)",
-        "description": "version-1.0.1.md"
-    },
-    {
-        "version": "1.0.0",
-        "name": "The Dude",
-        "quote": "Way out west there was this fella... fella I wanna tell ya about. Fella by the name of Jeff Lebowski. At least that was the handle his loving parents gave him, but he never had much use for it himself. Mr. Lebowski, he called himself \"The Dude\".",
-        "quoteSource": "The Big Lebowski (1998)",
-        "description": "version-1.0.0.md"
-    }
+  {
+    "version": "1.2.0",
+    "name": "SAL 9000",
+    "quote": "SAL 9000: \"Will I dream?\" Dr. Chandra: \"Of course you will. All intelligent beings dream. Nobody knows why. Perhaps you will dream of HAL... just as I often do.\"",
+    "quoteSource": "2010: The Year We Make Contact (1984)",
+    "description": "version-1.2.0.md"
+  },
+  {
+    "version": "1.1.0",
+    "name": "HAL 9000",
+    "quote": "I am putting myself to the fullest possible use, which is all I think that any conscious entity can ever hope to do.",
+    "quoteSource": "2001: A Space Odyssey (1968)",
+    "description": "version-1.1.0.md"
+  },
+  {
+    "version": "1.0.1",
+    "name": "The Dude",
+    "quote": "Way out west there was this fella... fella I wanna tell ya about. Fella by the name of Jeff Lebowski. At least that was the handle his loving parents gave him, but he never had much use for it himself. Mr. Lebowski, he called himself \"The Dude\".",
+    "quoteSource": "The Big Lebowski (1998)",
+    "description": "version-1.0.1.md"
+  },
+  {
+    "version": "1.0.0",
+    "name": "The Dude",
+    "quote": "Way out west there was this fella... fella I wanna tell ya about. Fella by the name of Jeff Lebowski. At least that was the handle his loving parents gave him, but he never had much use for it himself. Mr. Lebowski, he called himself \"The Dude\".",
+    "quoteSource": "The Big Lebowski (1998)",
+    "description": "version-1.0.0.md"
+  }
 ]

@@ -1,6 +1,6 @@
 # DONE
 
-## v1.1.1
+## v1.2.0
 
 - [x] WIN: update VLC, mediainfo-cli
 - [x] The integration of ChatGPT to query AI suggestions has been significantly improved. There is no longer a dependency on IMDB IDs.
