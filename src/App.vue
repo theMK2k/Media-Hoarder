@@ -2568,7 +2568,7 @@
             <v-progress-linear
               v-if="true"
               color="white accent-0"
-              v-bind:indeterminate="!scanInfo.rescanETA"
+              v-bind:indeterminate="!scanInfo.rescanETA || !scanInfo.rescanETA.progressPercent"
               v-bind:value="scanInfo.rescanETA ? scanInfo.rescanETA.progressPercent : 0"
               rounded
               height="3"
