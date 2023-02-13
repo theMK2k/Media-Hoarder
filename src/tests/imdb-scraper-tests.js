@@ -294,6 +294,54 @@ async function testIMDBmainPageData3() {
   return testResult;
 }
 
+async function testIMDBmainPageData4() {
+  // An American Werewolf in London (no year, no summary)
+  const testResult = {
+    name: "IMDB Main Page Data 4",
+    status: status.SUCCESS,
+    log: [],
+  };
+
+  try {
+    const expected = {
+      $IMDB_releaseType: "movie",
+      $IMDB_genres: ["comedy", "fantasy", "horror"],
+      $IMDB_plotSummary: null,
+      $IMDB_Trailer_URL: null,
+      $IMDB_startYear: null,
+      $IMDB_endYear: null,
+    };
+
+    const movie = {
+      IMDB_tconst: "tt1465834",
+    };
+
+    const scrapeResult = await imdbScraper.scrapeIMDBmainPageData(movie, async () => {
+      return true;
+    });
+
+    if (!scrapeResult) {
+      addSubLogEntry(testResult, "no response", status.ERROR);
+      return;
+    }
+
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_releaseType");
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_genres");
+
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_plotSummary", null, null, true);
+
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_Trailer_URL", null, true);
+
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_startYear", null, true);
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_endYear", null, true);
+  } catch (error) {
+    testResult.status = status.EXCEPTION;
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+  }
+
+  return testResult;
+}
+
 async function testIMDBplotSummary() {
   const testResult = {
     name: "IMDB Plot Summary",
@@ -1215,6 +1263,7 @@ export {
   testIMDBmainPageData,
   testIMDBmainPageData2,
   testIMDBmainPageData3,
+  testIMDBmainPageData4,
   testIMDBplotSummary,
   testIMDBreleaseinfo,
   testIMDBtechnicalData,

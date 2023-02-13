@@ -1363,7 +1363,7 @@ async function rescanMovieMetaData(onlyNew, movie, $t, optRescanMediaInfo, optFi
     eventBus.scanInfoShow($t("Rescanning Movies") + " {remainingTimeDisplay}", `${movie.Name || movie.Filename} (${$t("determining IMDB ID")})`, rescanETA);
 
     if (!movie.isUnlinkedIMDB) {
-      await findIMDBtconst(movie, onlyNew, rescanETA, $t);
+      await findIMDBtconst(movie, onlyNew, $t);
     }
   }
 

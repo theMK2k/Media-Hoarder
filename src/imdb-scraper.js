@@ -231,29 +231,31 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
     if (!$IMDB_startYear) {
       // V1
       // <title>Star Trek: The Next Generation (TV Series 1987â€“1994) - Release info - IMDb</title>
-      const rxYearRange = /<title>[\s\S]*?\((.*?)\)[\s\S]*?<\/title>/;
-      const yearRange = unescape(
-        htmlToText
-          .fromString(html.match(rxYearRange)[1], {
-            wordwrap: null,
-            ignoreImage: true,
-            ignoreHref: true,
-          })
-          .replace("–", "-")
-          .replace("â€“", "-")
-          .trim()
-      );
-      logger.log("[scrapeIMDBmainPageData] yearRange:", yearRange);
+      const rxYearRange = /<title>[\s\S]{0,20}\((.*?)\)[\s\S]{0,20}<\/title>/;
+      if (rxYearRange.test(html)) {
+        const yearRange = unescape(
+          htmlToText
+            .fromString(html.match(rxYearRange)[1], {
+              wordwrap: null,
+              ignoreImage: true,
+              ignoreHref: true,
+            })
+            .replace("–", "-")
+            .replace("â€“", "-")
+            .trim()
+        );
+        logger.log("[scrapeIMDBmainPageData] yearRange:", yearRange);
 
-      const yearRangeSplit = yearRange.split("-");
-      $IMDB_startYear = +yearRangeSplit[0].match(/\d+/)[0];
-      if (yearRange.includes("-")) {
-        if (yearRangeSplit[1].match(/\d+/)) {
-          $IMDB_endYear = +yearRangeSplit[1].match(/\d+/)[0];
-        }
-      } else {
-        if (["tvSeries", "tvMiniSeries"].includes($IMDB_releaseType === "tvSeries")) {
-          $IMDB_endYear = $IMDB_startYear;
+        const yearRangeSplit = yearRange.split("-");
+        $IMDB_startYear = +yearRangeSplit[0].match(/\d+/)[0];
+        if (yearRange.includes("-")) {
+          if (yearRangeSplit[1].match(/\d+/)) {
+            $IMDB_endYear = +yearRangeSplit[1].match(/\d+/)[0];
+          }
+        } else {
+          if (["tvSeries", "tvMiniSeries"].includes($IMDB_releaseType === "tvSeries")) {
+            $IMDB_endYear = $IMDB_startYear;
+          }
         }
       }
     }
@@ -1169,29 +1171,29 @@ function getGQLCompaniesData(gqlCompanies, category) {
 
       const roles = [];
 
+      let yearsInvolved = "";
       if (node.yearsInvolved && node.yearsInvolved.year) {
-        roles.push(
-          `(${node.yearsInvolved.year}${
-            node.yearsInvolved.endYear && node.yearsInvolved.year !== node.yearsInvolved.endYear ? `-${node.yearsInvolved.endYear}` : ""
-          })`
-        );
+        yearsInvolved = `${node.yearsInvolved.year}${
+          node.yearsInvolved.endYear && node.yearsInvolved.year !== node.yearsInvolved.endYear ? `-${node.yearsInvolved.endYear}` : ""
+        }`;
       }
 
+      let countries = "";
       if (node.countries && node.countries.length > 0) {
-        let countries = "";
-
         node.countries.forEach((country) => {
           countries = `${countries ? ", " : ""}${country.text}`;
         });
+      }
 
-        roles.push(`(${countries})`);
+      if (yearsInvolved || countries) {
+        roles.push(`(${countries}${countries && yearsInvolved ? ", " : ""}${yearsInvolved})`);
       }
 
       if (node.attributes && node.attributes.length > 0) {
         let attributes = "";
 
         node.attributes.forEach((attribute) => {
-          attributes = `${attributes ? ", " : ""}${attribute.text}`;
+          attributes = `${attributes ? `${attributes}, ` : ""}${attribute.text}`;
         });
 
         roles.push(`(${attributes})`);
@@ -1765,9 +1767,9 @@ async function scrapeIMDBplotKeywords(movie) {
     let match = null;
 
     while ((match = rxPlotKeywords.exec(html))) {
-      logger.log("[scrapeIMDBplotKeywords] keyword:", match[1].trim());
+      // logger.log("[scrapeIMDBplotKeywords] keyword:", match[1].trim());
       const Keyword = helpers.uppercaseEachWord(match[1].trim());
-      logger.log("[scrapeIMDBplotKeywords] keyword uppercased:", Keyword);
+      // logger.log("[scrapeIMDBplotKeywords] keyword uppercased:", Keyword);
 
       const relevanceString = match[2].trim();
       let NumVotes = null;
