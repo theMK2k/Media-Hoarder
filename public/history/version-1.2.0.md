@@ -15,6 +15,12 @@ Examples:
 
 A larger overhaul of how **Media Hoarder** scrapes IMDB metadata was necessary and has been implemented.
 
+## List Actions
+
+Perform actions on the current list (filtered or not). Currently the available actions only involve rescan of IMDB metadata but there is more to come in the future.
+
+Access the list actions menu on the top right of the screen.
+
 ## Other Improvements and Fixes
 
 - the embedded trailer player has been improved, it doesn't load the imdb.com site's complete frame but directly plays the video
