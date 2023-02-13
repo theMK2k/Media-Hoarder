@@ -4,6 +4,8 @@ rm ./RELEASE/*
 
 npx browserslist@latest --update-db
 
+npm i
+
 npm run electron:build-linux-portable; npm run electron:build-linux-setup
 
 cd RELEASE
