@@ -2,6 +2,7 @@
 
 ## v1.1.1
 
+- [x] WIN: update VLC, mediainfo-cli
 - [x] The integration of ChatGPT to query AI suggestions has been significantly improved. There is no longer a dependency on IMDB IDs.
 - [x] Improved Trailer experience with embedded player
 - [x] Media List: "rescan this list" (operations on the currently shown list w/ menu)

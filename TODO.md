@@ -2,11 +2,6 @@
 
 ## NEXT Minor (current v1.1.0)
 
-- [ ] WIN: update VLC, mediainfo-cli (and test)
-- [ ] curl/wget easylist.txt automatically before build <https://easylist.to/easylist/easylist.txt>
-
-- [ ] later: properly differentiate V1, V2 and V3 mainPageData handling
-- [ ] later: async db funcs (initDb, syncSqlite)
 
 ### Defects
 
@@ -17,6 +12,10 @@
 - nothing
 
 ## LATER
+
+- [ ] curl/wget easylist.txt automatically before build <https://easylist.to/easylist/easylist.txt>
+- [ ] later: properly differentiate V1, V2 and V3 mainPageData handling
+- [ ] later: async db funcs (initDb, syncSqlite)
 
 ### Plugin System
 

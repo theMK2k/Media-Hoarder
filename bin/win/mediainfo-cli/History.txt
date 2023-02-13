@@ -12,6 +12,189 @@ Known bugs
 - Languages (other than english and French) : not all words are translated, I need translators!
 - Others? https://sourceforge.net/p/mediainfo/_list/tickets
 
+Version 22.12, 2022-12-22
+-------------
++ WebVTT: more information (duration, start/end timestamp, count of lines...)
++ MP4/MOV: support of FLAC
++ MP4/MOV: support of LanguageIETF
++ ProRes: parse FFmpeg glbl atom for getting color range
++ AVI/WAV: detection of character set
++ WAV: display MD5 of raw content
++ FLAC: display MD5 of unencoded content
++ USAC: trace of UsacFrame() up to after preroll
++ MOV/MP4: option for parsing only the header, no parsing of any frame
++ MXF: option for parsing only the header, no parsing of any frame
+x MXF: quicker parsing when fast parsing is requested
+x I662, WAV: fix false-positive detection of DTS in PCM
+x I1637, MPEG-Audio: proper support of Helix MP3 encoder detection and encoder settings
+x I661, MXF: fix UKDPP FpaPass value sometimes not outputted
+x S1182, Teletext subtitle: prioritize subtitle metadata other overs
+x Matroska: Better handling in case of buggy AVC stream
+x 22.2 audio: Fix name of 1 channel (Tll --> Tsl)
+x AAC: fix wrong parsing of some bitstreams
+x Fix crash with stdin input and ctrl-c
+x Fix memory leak in JSON output
+
+Version 22.09, 2022-10-04
+-------------
++ Italian language update
++ USAC: IOD and sampling rate coherency checking
++ ADM: support of nested objects and complementary objects
++ AC-4: Display of Custom downmix targets
++ IAB: Parsing of IAB bitstream and ADM-like output
++ Frame rate: store FrameRate_Num/Den also for integer values
++ MPEG-4/MOV: support of time codes >30 fps
++ MOV/MPEG-4: List of QuickTime time code discontinuities
++ Dolby Vision: add info about more profiles
+x Text streams: show stream frame rate if not same as container frame rate
+x CDP: fix rounding of frame rate
+x SCC: fix of CEA-608 FirstDisplay_Delay_Frames
+x SCC: fix TimeCode_Last
+x MPEG-4/MOV: last time code value for all kind of QuickTime time codes
+x MOV/MPEG-4: Fix frame count for NDF non-integer frame rates
+x JSON: fix invalid output in some corner cases
+x Several other parsing bug/crash fixes (thanks to fuzzing by users)
+
+Version 22.06, 2022-06-23
+-------------
++ MXF: FFV1 support
++ Dolby Vision: add info about more profiles
++ AAC: check of missing ID_END and incoherent count of channels
++ NSV: better handling of buggy StarDiva agenda negative timestamps
++ Text: Show text frame rate
++ Text: frame rate precise numerator/denominator also for text streams
++ CDP: readout of display aspect ratio
++ MPEG-4/MOV: support of time codes >30 fps
++ TTML: Support of more timeExpression flavors
+x ADM: correctly map Dolby binaural render mode to track UID
+x Dolby Audio Metadata: first frame of action in HH:MM:SS:FF format
+x Dolby Vision: profiles and levels in decimal rather than in hexadecimal
+x MXF: fix of Dolby Vision Metadata not displayed if HDR10 metadata is present
+x MPEG-4/MOV: avoid buggy frame rates by taking frame rate from stts atom
+x CDP: better catching of wrong line21_field value
+x NSV: better handling of invalid frames
+x MXF: Include frame count in SDTI and SystemScheme1 time codes to time stamp conversion
+x TTML: do not show frame rate if it is from MediaInfo options
+x DV: timecode trace in HH:MM:SS:FF format
+
+Version 22.03, 2022-03-31
+-------------
++ NSV (Nullsoft Video): full featured support
++ NSV: support of proprietary StarDiva metadata (by reverse engineering)
++ HEVC: CEA-608/708 support
++ Dolby Audio Metadata: First frame of action, binaural render modes
++ Dolby Audio Metadata: 5.1 and 5.1.x downmix, 5.1 to 2.0 downmix, associated video frame rate, trim modes
++ MOV/MP4, TTML, SCC, MXF TC: time code of last frame
++ EIA-608: first displayed caption type
++ EIA-608: Maximum count of lines per event and total count of lines
++ EIA-608: duration of the visible content
++ TTML: Total count of lines
++ TTML: Maximum count of lines per event (including overlapping times)
++ TTML: Frame count, display aspect ratio
++ TTML: Support of timestamps in frames
++ SCC: Delay
++ Matroska: Encoding settings metadata support
++ MOV/MP4: Gamma metadata output
++ MPEG-4/MOV: difference between audio Center and Mono when possible
++ MP4/MOV: Support of dec3 atom in wave atom
++ MPEG-4/MOV: show both values in case of chan atom ChannelLayoutTag / ChannelDescriptions mismatch
++ MP4/MOV: Support of dec3 atom in wave atom
++ MXF: better support of AVC streams without SPS/PPS
++ ADM: display channel index of trackUIDs
+x WAV: fix freeze with 32-bit PCM
+x DPX: fix regression with DPX files more than 64 MB
+x Dolby E: fix crash with some invalid streams
+x E-AC-3: service kind was not correctly handled
+x EXR: fix of bad handling of files with long names in attributes
+x TTML: correct handling of 29.97 DF time codes
+x AV1: fix of the parsing of some streams, especially the ones with HDR metadata
+x WebVTT: was not correctly handling WebVTT header with comment
+x Matroska: fix false positive detection of bad CRC32
+x Several other parsing bug/crash fixes
+
+Version 21.09, 2021-09-17
+-------------
++ Graph view for 3D audio streams (thanks to graphviz)
++ ADM: full featured support (programmes, content, objects, pack formats...)
++ ADM: in WAV (axml, bxml), MXF
++ S-ADM in AES3: support of Levels A1 and AX1
++ MOV/MP4: support of Dolby Vision Metadata XML
++ MXF: detection of IAB
++ SMPTE ST 337 (AES3): support of subframe mode
++ HEVC: CEA-608/708 caption support
++ MP4/QuickTime: Android slow motion real frame rate
++ JSON output: add creatingLibrary field
+x MPEG-4: read too much data with some predecessor definitions
+x EBUCore: fix of fields order and types
+
+Version 21.03, 2021-03-26
+-------------
++ WAV: ADM profile detection of Dolby Atmos Master or MPEG-H
++ SMPTE ST 337: support of AC-4
++ AC-3/AC-4: show top layer channels after Lw/Rw, as it becomes the defacto standard layout
++ Dolby Surround EX and Pro Logic IIz detection
++ Matroska: add DV support
++ CLI: read from stdin
++ DV: remove check of zeroed bytes in timecode, considered again as valid timecode
++ TIFF; add support of compression codes 7 and 8
++ WAV: show bext (BWF) version in verbose mode / XML / JSON
++ MXF: detection fo DCI P3 mastering display color primaries
++ Options: add software version to text output
++ Options: add report creation timestamp to text output
++ macOS: native build for Apple Silicon (arm64)
+x HDR: mastering max. luminance precision was wrong
+x WM: fix EncodingTime parsing
+x MOV/MP4: skip XMP huge atoms, fix
+x MPEG-TS: fix inverted supplementary_audio_descriptor mix_type values
+x AAC: fix File_Aac::is_intensity according to ISO/IEC 14496-3:2009
+x I1353, MP4: Skip user data Xtra and free atoms
+x FFV1: fix crash with some bitstreams parsing
+x TIFF: fix division by 0
+x RF64: fix the WAV malformed chunk size test
+x Supported platforms: this is the last version compatible with Windows XP, macOS 10.5-10.9, RHEL/CentOS 6
+
+Version 20.09, 2020-10-09
+-------------
++ Dolby ED2: full featured support (presentations, presentation targets, beds, objects)
++ MKV: support of Dolby Vision metadata
++ MXF: detection of Dolby E hidden in PCM tracks having more than 2 channels
++ WAV: detection of Dolby E hidden in PCM tracks having more than 2 channels
++ CineForm: display of color space (including Bayer), bit depth
+x WAV: more precise sample count
+x SMPTE ST 337: catch of streams starting later than usual (probing increased from 4 to 16 PCM "frames")
+x PNG: detection of additional alpha plane in color space
+x MXF: detection of additional alpha plane in color space
+x AVI: detection of additional alpha plane in color space
+x MPEG Audio: was wrongly flagging Xing info tag as CBR
+x VorbisTag: does not skip DISCID
+x Miscellaneous bug/crash fixes
+
+Version 20.08, 2020-08-11
+-------------
++ MPEG-H 3D Audio full featured support (group presets, switch groups, groups, signal groups)
++ MP4/MOV: support of more metadata locations
++ JSON and XML outputs: authorize "complete" output
++ MPEG-4: support of TrueHD
++ WM: show legacy value of performer if not same as modern one
++ WAV: trace of adtl (Associated Data List) chunk
+x URL encoding detection fix for URL having a query part (issue with e.g. pre-signed AWS S3 URLs)
+x Don't try to seek to the end (false positive range related error with HTTP)
+x DPX: don't load the whole file in RAM
+x Opus: fix wrong channel mapping
+x Miscellaneous other bug fixes
+
+Version 20.03, 2020-04-03
+-------------
++ AC-4 full featured support (presentations, groups, substreams)
++ MPEG-H 3D Audio basic support
++ MPEG-TS: audio preselection descriptor support
++ Dolby Vision v2 detection
++ MPEG-4: support of colr/nclx (color information) box
+x URL encoding option fixes, permitting to use URL encoded or non URL encoded links
+x AAC: fix SBR frequency when in ADIF
+x DPX: ColorimetricSpecification and TransferCharacteristic were inverted
+x Several crash and memory leaks fixes
+
 Version 19.09, 2019-09-10
 -------------
 + AC-4: basic detection, raw, in MP4 or TS

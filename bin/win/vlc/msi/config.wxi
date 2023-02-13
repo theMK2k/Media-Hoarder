@@ -9,16 +9,17 @@
 
     <?define VerMajor = "3" ?>
     <?define VerMinor = "0" ?>
-    <?define VerPatch = "14" ?>
+    <?define VerPatch = "18" ?>
+    <?define VerExtra = "0" ?>
     <?define Version = "$(var.VerMajor).$(var.VerMinor).$(var.VerPatch)" ?>
-    <?define VersionLong = "$(var.Version).0" ?>
+    <?define VersionLong = "$(var.Version).$(var.VerExtra)" ?>
 
-    <?define SourceDir = "vlc-3.0.14" ?>
+    <?define SourceDir = "vlc-3.0.18" ?>
     <!--<?define PluginsPath = "$(var.BinPath)\plugins" ?>
     <?define LocalePath = "$(var.BinPath)\locale" ?>
     <?define SdkPath = "$(var.BinPath)\sdk" ?>-->
 
-    <?define Platform= "x86" ?>
+    <?define Platform= "x64" ?>
 
     <?if $(var.Platform) = "x64" ?>
         <?define Win64 = "yes" ?>
