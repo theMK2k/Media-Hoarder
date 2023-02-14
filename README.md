@@ -4,6 +4,7 @@
 
 ## Features
 
+- Start a conversation with ChatGPT and apply the results to your media <https://www.youtube.com/watch?v=EqiChgd2iuo>
 - Tons of metadata from imdb.com including poster images
 - Metadata from mediainfo analysis
 - Filter by:
