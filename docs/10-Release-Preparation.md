@@ -9,7 +9,7 @@ This document describes the steps necessary to get a new release done.
 - [x] create `public/history/version-x.y.z.md` from info in [../DONE.md](../DONE.md) 
 - [x] Update history.json (create new entry on top of the others in the array)
 - [x] Test using `npm start` - it should show the new version incl. history
-- [x] git push
+- [ ] git push
 
 ## Build Packs
 
