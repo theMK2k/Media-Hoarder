@@ -957,7 +957,7 @@
   "Let an AI recommend some movies": "Lass eine KI Filme vorschlagen",
   "AI Recommendations": "KI-Empfehlungen",
   "Click the button below and ask the AI to list movies according to your criteria_": "Klicke auf die Schaltfläche unten und bitte die KI, Filme nach Deinen Kriterien aufzulisten.",
-  "Always ask for IMDB IDs!": "Frage immer nach IMDB IDs!",
+  "It is recommended to also ask for the release year_": "Es ist hilfreich nach dem Erscheinungsjahr zu fragen.",
   "Start Conversation": "Konversation Starten",
   "Create and filter by this list": "Erstelle und filtere nach dieser Liste",
   "List Title": "Titel der Liste",

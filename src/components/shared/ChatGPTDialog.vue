@@ -8,7 +8,7 @@
       <v-card-text>
         <p>
           {{ $t("Click the button below and ask the AI to list movies according to your criteria_") }}
-          <strong>{{ $t("Always ask for IMDB IDs!") }}</strong>
+          <strong>{{ $t("It is recommended to also ask for the release year_") }}</strong>
         </p>
 
         <v-btn class="xs-fullwidth" color="primary" v-on:click.native="onStartConversation" style="margin-left: 8px">
@@ -126,6 +126,8 @@ export default {
     },
 
     async updateLists(arr_IMDB_tconst, movieNamesAndYears) {
+      logger.log("[updateLists] movieNamesAndYears:", movieNamesAndYears);
+
       arr_IMDB_tconst.forEach((imdb_tconst) => {
         if (this.arr_IMDB_tconst.find((imdb_tconst2) => imdb_tconst2 === imdb_tconst)) {
           return;
@@ -164,6 +166,39 @@ export default {
         `,
             { $year: movieNameAndYear.year, $name: movieNameAndYear.name }
           );
+
+          if (movieNameAndYear.imdb_tconst) {
+            if (!this.arr_IMDB_tconst.find((imdb_tconst2) => imdb_tconst2 === movieNameAndYear.imdb_tconst)) {
+              this.arr_IMDB_tconst.push(movieNameAndYear.imdb_tconst);
+            }
+          }
+        }
+        if (movieNameAndYear.name && !movieNameAndYear.year) {
+          movieNameAndYear.imdb_tconst = null;
+          const imdb_tconst_candidates = await store.db.fireProcedureReturnAll(
+            `
+            SELECT DISTINCT
+              IMDB_tconst
+            FROM  tbl_Movies MOV
+            WHERE (
+                        MOV.Name LIKE $name
+                    OR  MOV.Name2 LIKE $name
+                    OR MOV.IMDB_originalTitle LIKE $name
+                    OR MOV.IMDB_primaryTitle LIKE $name
+                    OR MOV.IMDB_localTitle LIKE $name
+                  )
+        `,
+            { $name: movieNameAndYear.name }
+          );
+
+          logger.log("[updateLists] movieNameAndYear.name:", movieNameAndYear.name, " imdb_tconst_candidates:", imdb_tconst_candidates);
+
+          if (imdb_tconst_candidates.length === 1) {
+            logger.log("[updateLists] we found a single candidate!");
+            movieNameAndYear.imdb_tconst = imdb_tconst_candidates[0].IMDB_tconst;
+          } else {
+            logger.log("[updateLists] not a singular candidate found, abort!");
+          }
 
           if (movieNameAndYear.imdb_tconst) {
             if (!this.arr_IMDB_tconst.find((imdb_tconst2) => imdb_tconst2 === movieNameAndYear.imdb_tconst)) {
@@ -267,8 +302,9 @@ export default {
 
           const rxIMDBtconst = /\d{7,}/g;
           const rxMovieNameAndYear = /<li>.*?\(\d\d\d\d\)/g;
+          const rxMovieName = /<li>.*?<\/li>/g;
 
-          if (!rxIMDBtconst.test(content) && !rxMovieNameAndYear.test(content)) {
+          if (!rxIMDBtconst.test(content) && !rxMovieNameAndYear.test(content) && !rxMovieName.test(content)) {
             logger.log("[onStartConversation] NO MATCH, initializing");
             that.init();
             return;
@@ -290,6 +326,18 @@ export default {
                 year: +hit.match(rxNameAndYear)[2],
               });
             });
+          }
+
+          if (!movieNamesAndYears.length) {
+            if (rxMovieName.test(content)) {
+              content.match(rxMovieName).forEach((hit) => {
+                const rxName = /<li>(.*?)<\/li>/;
+                movieNamesAndYears.push({
+                  name: hit.match(rxName)[1].replace(/"/g, "").trim(),
+                  year: null,
+                });
+              });
+            }
           }
 
           logger.log("[onStartConversation] imdbIDs:", arr_IMDB_tconst, "movieNamesAndYears:", movieNamesAndYears);
