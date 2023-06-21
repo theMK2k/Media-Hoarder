@@ -13,16 +13,21 @@ const graphQLqueries = {
       "$IMDB_tconst",
       $IMDB_tconst
     ),
-  /**
-   *
-   * @param {*} $IMDB_tconst
-   * @param {*} $IMDB_Companies_Category ["production", "distribution", "specialEffects", "miscellaneous"]
-   * @returns
-   */
   companies: ($IMDB_tconst, $IMDB_Companies_Category) =>
     `https://caching.graphql.imdb.com/?operationName=TitleCompanyCreditsPagination&variables={"const":"$IMDB_tconst","filter":{"categories":["$IMDB_Companies_Category"]},"first":1000,"locale":"en-GB","originalTitleText":false}&extensions={"persistedQuery":{"sha256Hash":"ef3c062fb3a177f606d2734b42b876a929139eb6c86a582c177a95886a1a9a12","version":1}}`
       .replace("$IMDB_tconst", $IMDB_tconst)
       .replace("$IMDB_Companies_Category", $IMDB_Companies_Category),
+
+  plotKeywords: ($IMDB_tconst) =>
+    `https://caching.graphql.imdb.com/?operationName=TitleKeywordsPagination&variables={"const":"$IMDB_tconst","first":1000,"locale":"en-GB","originalTitleText":false}&extensions={"persistedQuery":{"sha256Hash":"182e5ae91fea29ab8a47155a0170066beefcabe0a62f817c8af24886965faebe","version":1}}`.replace(
+      "$IMDB_tconst",
+      $IMDB_tconst
+    ),
+  filmingLocations: ($IMDB_tconst) =>
+    `https://caching.graphql.imdb.com/?operationName=TitleFilmingLocationsPaginated&variables={"const":"$IMDB_tconst","first":1000,"locale":"en-GB","originalTitleText":false}&extensions={"persistedQuery":{"sha256Hash":"5e1b7378425e70f1d8220f92e9be1d471bdbbab659274c32a895b2f3ffc51214","version":1}}`.replace(
+      "$IMDB_tconst",
+      $IMDB_tconst
+    ),
 };
 
 /**
@@ -454,7 +459,7 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
     const result =
       version === 1
         ? await scrapeIMDBreleaseinfoV1(movie, regions, allowedTitleTypes, html)
-        : await scrapeIMDBreleaseinfoV2(movie, regions, allowedTitleTypes, html);
+        : await scrapeIMDBreleaseinfoV3(movie, regions, allowedTitleTypes, html);
 
     // const result = {
     //   $IMDB_originalTitle,
@@ -617,11 +622,11 @@ async function scrapeIMDBreleaseinfoV1(movie, regions, allowedTitleTypes, html) 
   }
 }
 
-async function scrapeIMDBreleaseinfoV2(movie, regions, allowedTitleTypes, html) {
+async function scrapeIMDBreleaseinfoV3(movie, regions, allowedTitleTypes, html) {
   try {
     const jsonDataNext = JSON.parse(html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/)[1]);
 
-    // logger.log("[scrapeIMDBreleaseinfoV2] jsonDataNext:", logger.inspectObject(jsonDataNext));
+    // logger.log("[scrapeIMDBreleaseinfoV3] jsonDataNext:", logger.inspectObject(jsonDataNext));
 
     // ### Original Title
     let $IMDB_originalTitle = null;
@@ -1216,7 +1221,7 @@ function getGQLCompaniesData(gqlCompanies, category) {
  * Scrape companies from JSON provided by GraphQL
  * @param {Object} movie
  */
-async function scrapeIMDBCompaniesData(movie) {
+async function scrapeIMDBCompaniesDataV3(movie) {
   if (movie.scanErrors) {
     delete movie.scanErrors["IMDB Companies"];
   }
@@ -1748,6 +1753,47 @@ async function scrapeIMDBTrailerMediaURLs(trailerURL) {
   }
 }
 
+async function scrapeIMDBplotKeywordsV3(movie) {
+  if (movie.scanErrors) {
+    delete movie.scanErrors["IMDB Plot Keywords"];
+  }
+
+  try {
+    const plotKeywords = [];
+
+    const gqlPlotKeywords = JSON.parse(
+      (await helpers.requestAsync({ uri: graphQLqueries.plotKeywords(movie.IMDB_tconst), headers: { "content-type": "application/json" } })).body
+    );
+
+    // logger.log("[scrapeIMDBreleaseinfoV2] gqlAkaTitles:", logger.inspectObject(gqlAkaTitles));
+
+    const gqlPlotKeywordsEdges = _.get(gqlPlotKeywords, "data.title.keywords.edges", []);
+
+    gqlPlotKeywordsEdges.forEach((edge) => {
+      plotKeywords.push({
+        Keyword: helpers.uppercaseEachWord(edge.node.keyword.text.text.trim()),
+        NumVotes: edge.node.interestScore.usersVoted,
+        NumRelevant: edge.node.interestScore.usersInterested,
+      });
+    });
+
+    return plotKeywords;
+  } catch (error) {
+    logger.error(error);
+
+    if (movie.scanErrors) {
+      movie.scanErrors["IMDB Release Info"] = error.message;
+    }
+
+    throw error;
+  }
+}
+
+/**
+ * deprecated, use scrapeIMDBplotKeywordsV3 instead
+ * @param {*} movie
+ * @returns
+ */
 async function scrapeIMDBplotKeywords(movie) {
   if (movie.scanErrors) {
     delete movie.scanErrors["IMDB Plot Keywords"];
@@ -1794,6 +1840,41 @@ async function scrapeIMDBplotKeywords(movie) {
   } catch (error) {
     if (movie.scanErrors) {
       movie.scanErrors["IMDB Plot Keywords"] = error.message;
+    }
+
+    throw error;
+  }
+}
+
+async function scrapeIMDBFilmingLocationsV3(movie) {
+  if (movie.scanErrors) {
+    delete movie.scanErrors["IMDB Filming Locations"];
+  }
+
+  try {
+    let filmingLocations = [];
+
+    const gqlLocations = JSON.parse(
+      (await helpers.requestAsync({ uri: graphQLqueries.filmingLocations(movie.IMDB_tconst), headers: { "content-type": "application/json" } })).body
+    );
+
+    const gqlLocationsEdges = _.get(gqlLocations, "data.title.filmingLocations.edges", []);
+
+    gqlLocationsEdges.forEach((edge) => {
+      filmingLocations.push({
+        Location: edge.node.text,
+        Details: _.get(edge, "node.displayableProperty.qualifiersInMarkdownList[0].markdown", null),
+        NumInteresting: edge.node.interestScore.usersInterested,
+        NumVotes: edge.node.interestScore.usersVoted,
+      });
+    });
+
+    logger.log("[scrapeIMDBFilmingLocationsV3] filmingLocations:", filmingLocations);
+
+    return filmingLocations;
+  } catch (error) {
+    if (movie.scanErrors) {
+      movie.scanErrors["IMDB Filming Locations"] = error.message;
     }
 
     throw error;
@@ -1926,11 +2007,18 @@ async function scrapeIMDBRatingDemographics(movie) {
   }
 }
 
+const deprecated = {
+  scrapeIMDBplotKeywords,
+  scrapeIMDBFilmingLocations,
+  scrapeIMDBRatingDemographics,
+};
+
 export {
+  deprecated,
   scrapeIMDBmainPageData,
   scrapeIMDBplotSummary,
   scrapeIMDBposterURLs,
-  scrapeIMDBCompaniesData,
+  scrapeIMDBCompaniesDataV3 as scrapeIMDBCompaniesData,
   scrapeIMDBCompaniesDataV1,
   scrapeIMDBFullCreditsData,
   scrapeIMDBParentalGuideData,
@@ -1941,7 +2029,6 @@ export {
   scrapeIMDBSuggestion,
   scrapeIMDBFind,
   scrapeIMDBTrailerMediaURLs,
-  scrapeIMDBplotKeywords,
-  scrapeIMDBFilmingLocations,
-  scrapeIMDBRatingDemographics,
+  scrapeIMDBplotKeywordsV3,
+  scrapeIMDBFilmingLocationsV3,
 };

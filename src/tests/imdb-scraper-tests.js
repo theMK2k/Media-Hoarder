@@ -802,7 +802,7 @@ async function testIMDBplotKeywords() {
       IMDB_tconst: "tt1375666",
     };
 
-    const scrapeResult = await imdbScraper.scrapeIMDBplotKeywords(movie);
+    const scrapeResult = await imdbScraper.scrapeIMDBplotKeywordsV3(movie);
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
@@ -880,7 +880,7 @@ async function testIMDBFilmingLocations() {
       IMDB_tconst: "tt4154796",
     };
 
-    const scrapeResult = await imdbScraper.scrapeIMDBFilmingLocations(movie);
+    const scrapeResult = await imdbScraper.scrapeIMDBFilmingLocationsV3(movie);
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);

@@ -37,9 +37,8 @@ const {
   scrapeIMDBParentalGuideData,
   scrapeIMDBreleaseinfo,
   scrapeIMDBtechnicalData,
-  scrapeIMDBplotKeywords,
-  scrapeIMDBFilmingLocations,
-  scrapeIMDBRatingDemographics,
+  scrapeIMDBplotKeywordsV3,
+  scrapeIMDBFilmingLocationsV3,
 } = require("./imdb-scraper");
 
 const definedError = require("@/helpers/defined-error");
@@ -1668,23 +1667,24 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
       }
     }
 
-    if (
-      shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics &&
-      getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics").enabled
-    ) {
-      try {
-        eventBus.scanInfoShow(
-          $t("Rescanning Movies") + " {remainingTimeDisplay}",
-          `${movie.Name || movie.Filename} (${$t("scraping IMDB Rating Demographics")})`,
-          rescanETA
-        );
+    // #rip-rating-demographics
+    // if (
+    //   shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics &&
+    //   getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics").enabled
+    // ) {
+    //   try {
+    //     eventBus.scanInfoShow(
+    //       $t("Rescanning Movies") + " {remainingTimeDisplay}",
+    //       `${movie.Name || movie.Filename} (${$t("scraping IMDB Rating Demographics")})`,
+    //       rescanETA
+    //     );
 
-        imdbData.ratingDemographics = await scrapeIMDBRatingDemographics(movie);
-      } catch (error) {
-        imdbData.IMDB_Done = false;
-        logger.error(error);
-      }
-    }
+    //     imdbData.ratingDemographics = await scrapeIMDBRatingDemographics(movie);
+    //   } catch (error) {
+    //     imdbData.IMDB_Done = false;
+    //     logger.error(error);
+    //   }
+    // }
 
     if (
       shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_plotSummary &&
@@ -1715,7 +1715,7 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
           rescanETA
         );
 
-        imdbData.plotKeywords = await scrapeIMDBplotKeywords(movie);
+        imdbData.plotKeywords = await scrapeIMDBplotKeywordsV3(movie);
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
@@ -1834,7 +1834,7 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
           rescanETA
         );
 
-        imdbData.filmingLocations = await scrapeIMDBFilmingLocations(movie);
+        imdbData.filmingLocations = await scrapeIMDBFilmingLocationsV3(movie);
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);

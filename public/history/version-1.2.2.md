@@ -1,4 +1,4 @@
-# Media Hoarder v1.2.0 - v1.2.1 Changelog
+# Media Hoarder v1.2.0 - v1.2.2 Changelog
 
 ## Improved: AI Recommendations powered by ChatGPT
 
@@ -17,11 +17,31 @@ Examples:
 
 A larger overhaul of how **Media Hoarder** scrapes IMDB metadata was necessary and has been implemented.
 
+**Since v1.2.2**:
+
+- IMDB Plot Keywords updated
+- IMDB Filming Locations updated
+
+Unfortunately IMDB axed the rating demographics which provided ratings and number of votes for:
+
+- genders
+- US/non-US
+- age ranges
+
+At least the ratings by age ranges were quite helpful in order to find out if a movie targets a more mature demographic.
+
+But, oh well, now they are gone and **Media Hoarder** had to remove that feature. We'll keep an eye out if the rating demographics return in a similar fashion.
+
 ## List Actions
 
-Perform actions on the current list (filtered or not). Currently the available actions only involve rescan of IMDB metadata but there is more to come in the future.
+Perform actions on the current list (filtered and sorted as is).
 
 Access the list actions menu on the top right of the screen.
+
+Currently the available actions involve:
+
+- rescan of IMDB metadata
+- **(v.1.2.2)** copy info - _copies informations about the complete filtered and sorted list including your rating, title and imdb link_
 
 ## Other Improvements and Fixes
 
