@@ -79,7 +79,8 @@ const log = {
   if (!config.testmodule || config.testmodule === "testIMDBTrailerMediaURLs") addLogEntry(await imdbScraperTests.testIMDBTrailerMediaURLs());
   if (!config.testmodule || config.testmodule === "testIMDBplotKeywords") addLogEntry(await imdbScraperTests.testIMDBplotKeywords());
   if (!config.testmodule || config.testmodule === "testIMDBFilmingLocations") addLogEntry(await imdbScraperTests.testIMDBFilmingLocations());
-  if (!config.testmodule || config.testmodule === "testIMDBRatingDemographics") addLogEntry(await imdbScraperTests.testIMDBRatingDemographics());
+  // #rip-rating-demographics
+  // if (!config.testmodule || config.testmodule === "testIMDBRatingDemographics") addLogEntry(await imdbScraperTests.testIMDBRatingDemographics());
   if (!config.testmodule || config.testmodule === "testIMDBSuggestion") addLogEntry(await imdbScraperTests.testIMDBSuggestion());
   if (!config.testmodule || config.testmodule === "testIMDBAdvancedTitleSearch") addLogEntry(await imdbScraperTests.testIMDBAdvancedTitleSearch());
   // TODO: we currently don't use scrapeIMDBfind, but it also has V3 (GraphQL) interfaces

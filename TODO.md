@@ -1,8 +1,20 @@
 # TODO
 
-## NEXT Minor (current v1.2.0)
+## NEXT Minor (current v1.2.1)
 
-- nothing
+- [ ] #rip-rating-demographics (see <https://www.imdb.com/title/tt4154796/ratings>)
+  - [x] remove rating demographics (also: don't utilize chosen default demographic)
+  - [x] remove tests (watchdog, in-ui)
+  - [x] remove during scrape
+  - [x] remove on-click dialog in MediaList
+  - [x] test with scan
+
+- [ ] imdb scraper: v3 plotkeywords
+- [ ] imdb scraper: v3 locations
+
+- [ ] Settings: sort list of source paths by name
+
+- edit movie: define audio / subtitle languages
 
 ### Defects
 
@@ -14,9 +26,12 @@
 
 ## LATER
 
+- [ ] new filter: min. IMDB votes
+- [ ] "IMDB score comparison game" (in context of the current list?)
 - [ ] curl/wget easylist.txt automatically before build <https://easylist.to/easylist/easylist.txt>
 - [ ] later: properly differentiate V1, V2 and V3 mainPageData handling
 - [ ] later: async db funcs (initDb, syncSqlite)
+- [ ] add "play random media" functionality to the List Actions menu
 
 ### Plugin System
 

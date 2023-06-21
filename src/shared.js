@@ -343,7 +343,8 @@ const shared = new Vue({
 
       rescanMoviesMetaData_fetchIMDBMetaData: true,
       rescanMoviesMetaData_fetchIMDBMetaData_mainPageData: true,
-      rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics: true,
+      // #rip-rating-demographcis
+      // rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics: false,
       rescanMoviesMetaData_fetchIMDBMetaData_plotSummary: true,
       rescanMoviesMetaData_fetchIMDBMetaData_plotKeywords: true,
       rescanMoviesMetaData_fetchIMDBMetaData_releaseinfo: true,
@@ -372,11 +373,12 @@ const shared = new Vue({
         enabled: true,
         description: "Main Page (Genres, Rating/Votes, Metacritic Score, Poster, Plot Summary, Trailer URL)",
       },
-      {
-        key: "rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics",
-        enabled: true,
-        description: "Ratings (Rating by Demographics, e_g_ Ages, Male/Female, US/Non-US)",
-      },
+      // #rip-rating-demographics
+      // {
+      //   key: "rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics",
+      //   enabled: true,
+      //   description: "Ratings (Rating by Demographics, e_g_ Ages, Male/Female, US/Non-US)",
+      // },
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_plotSummary",
         enabled: true,
@@ -430,16 +432,17 @@ const shared = new Vue({
         isRunning: false,
         result: null,
       },
-      {
-        key: "rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics",
-        description: "Ratings (Rating by Demographics, e_g_ Ages, Male/Female, US/Non-US)",
-        enabled: true,
-        checkFunction: imdbScraperTests.testIMDBRatingDemographics,
-        icon: null,
-        color: null,
-        isRunning: false,
-        result: null,
-      },
+      // #rip-rating-demographics
+      // {
+      //   key: "rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics",
+      //   description: "Ratings (Rating by Demographics, e_g_ Ages, Male/Female, US/Non-US)",
+      //   enabled: true,
+      //   checkFunction: imdbScraperTests.testIMDBRatingDemographics,
+      //   icon: null,
+      //   color: null,
+      //   isRunning: false,
+      //   result: null,
+      // },
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_plotSummary",
         description: "Full Plot Summary (Main Page only contains an extract of the full summary)",

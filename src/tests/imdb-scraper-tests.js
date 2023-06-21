@@ -948,6 +948,9 @@ async function testIMDBFilmingLocations() {
   return testResult;
 }
 
+/**
+ * #rip-rating-demographics
+ */
 async function testIMDBRatingDemographics() {
   const testResult = {
     name: "IMDB Rating Demographics",

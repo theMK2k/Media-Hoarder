@@ -2978,13 +2978,15 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
 			MOV.id_Movies
 			, MOV.Name
       , MOV.Name2
-			, MOV.IMDB_rating${shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""} AS IMDB_rating_default
+			-- #rip-rating-demographics, MOV.IMDB_rating${shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""} AS IMDB_rating_default
+      , MOV.IMDB_rating AS IMDB_rating_default
 			, MOV.IMDB_metacriticScore
 			, IFNULL(MOV.Rating, 0) AS Rating
 			, MOV.startYear
 			, MOV.created_at
 			, MOV.last_access_at
-      , MOV.IMDB_numVotes${shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""} AS IMDB_numVotes_default
+      -- #rip-rating-demographics, MOV.IMDB_numVotes${shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""} AS IMDB_numVotes_default
+      , MOV.IMDB_numVotes AS IMDB_numVotes_default
       , IFNULL(MOV.plotSummary, IFNULL(MOV.IMDB_plotSummary_Translated, MOV.IMDB_plotSummary)) AS plotSummary
       , MOV.RelativePath
       , MOV.RelativeDirectory
