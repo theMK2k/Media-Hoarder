@@ -72,6 +72,7 @@ const log = {
   if (!config.testmodule || config.testmodule === "testIMDBreleaseinfo") addLogEntry(await imdbScraperTests.testIMDBreleaseinfo());
   if (!config.testmodule || config.testmodule === "testIMDBtechnicalData") addLogEntry(await imdbScraperTests.testIMDBtechnicalData());
   if (!config.testmodule || config.testmodule === "testIMDBtechnicalData2") addLogEntry(await imdbScraperTests.testIMDBtechnicalData2());
+  if (!config.testmodule || config.testmodule === "testIMDBtechnicalData3") addLogEntry(await imdbScraperTests.testIMDBtechnicalData3());
   if (!config.testmodule || config.testmodule === "testIMDBParentalGuideData") addLogEntry(await imdbScraperTests.testIMDBParentalGuideData());
   if (!config.testmodule || config.testmodule === "testIMDBFullCreditsData") addLogEntry(await imdbScraperTests.testIMDBFullCreditsData());
   if (!config.testmodule || config.testmodule === "testIMDBCompaniesData") addLogEntry(await imdbScraperTests.testIMDBCompaniesData());

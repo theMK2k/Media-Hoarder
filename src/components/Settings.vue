@@ -842,9 +842,13 @@ export default {
     },
 
     moviesSourcePaths() {
-      return this.sourcePaths.filter((sourcePath) => {
-        return sourcePath.MediaType === "movies";
-      });
+      return this.sourcePaths
+        .filter((sourcePath) => {
+          return sourcePath.MediaType === "movies";
+        })
+        .sort((a, b) => {
+          return helpers.compare(a.Description, b.Description, false);
+        });
     },
 
     imdbRatingDemographic() {

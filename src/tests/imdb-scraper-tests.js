@@ -473,6 +473,40 @@ async function testIMDBtechnicalData2() {
   } catch (error) {
     testResult.status = status.EXCEPTION;
     testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    console.error(error);
+  }
+
+  return testResult;
+}
+
+async function testIMDBtechnicalData3() {
+  const testResult = {
+    name: "IMDB Technical Data 3",
+    status: status.SUCCESS,
+    log: [],
+  };
+
+  try {
+    const expected = {
+      $IMDB_runtimeMinutes: "181",
+    };
+
+    const movie = {
+      IMDB_tconst: "tt4154796",
+    };
+
+    const scrapeResult = await imdbScraper.scrapeIMDBtechnicalData(movie);
+
+    if (!scrapeResult) {
+      addSubLogEntry(testResult, "no response", status.ERROR);
+      return;
+    }
+
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_runtimeMinutes");
+  } catch (error) {
+    testResult.status = status.EXCEPTION;
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    console.error(error);
   }
 
   return testResult;
@@ -1271,6 +1305,7 @@ export {
   testIMDBreleaseinfo,
   testIMDBtechnicalData,
   testIMDBtechnicalData2,
+  testIMDBtechnicalData3,
   testIMDBParentalGuideData,
   testIMDBFullCreditsData,
   testIMDBCompaniesData,

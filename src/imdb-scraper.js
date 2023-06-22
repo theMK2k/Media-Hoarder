@@ -738,10 +738,16 @@ async function scrapeIMDBtechnicalData(movie) {
 
       const runtimeData = jsonData.props.pageProps.contentData.section.items.find((item) => item.id === "runtime");
 
-      if (runtimeData.listContent[0].subText) {
-        $IMDB_runtimeMinutes = runtimeData.listContent[0].subText.match(/\((\d+) min\)/)[1];
-      } else {
-        $IMDB_runtimeMinutes = runtimeData.listContent[0].text.match(/(\d+)m/)[1];
+      if (runtimeData.listContent && runtimeData.listContent[0]) {
+        // we expect .text = "3h 1m" and .subText = "(181 min)" (e.g. https://www.imdb.com/title/tt4154796/technical/)
+        // sometimes this is not the case: .text = "48m" and .subtext ="(DVD) (United States)" (see: https://www.imdb.com/title/tt0888817/technical/, https://www.imdb.com/title/tt1329665/technical/)
+        // -> we should go with .text and interpret "2h 1m" as 121 minutes, while the hour-part is optional and not rely on .subtext being "(xy min)"
+        const runtime = runtimeData.listContent[0].text;
+
+        const hours = /(\d+)h/.test(runtime) ? +runtime.match(/(\d+)h/)[1] : 0;
+        const minutes = /(\d+)m/.test(runtime) ? +runtime.match(/(\d+)m/)[1] : 0;
+
+        $IMDB_runtimeMinutes = (hours * 60 + minutes).toString() || null;
       }
     } else if (rxRuntimeValue.test(html)) {
       // v1

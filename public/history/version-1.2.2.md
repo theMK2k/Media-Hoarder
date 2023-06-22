@@ -41,9 +41,11 @@ Access the list actions menu on the top right of the screen.
 Currently the available actions involve:
 
 - rescan of IMDB metadata
-- **(v.1.2.2)** copy info - _copies informations about the complete filtered and sorted list including your rating, title and imdb link_
+- **(v1.2.2)** copy info - _copies informations about the complete filtered and sorted list including your rating, title and imdb link_
 
 ## Other Improvements and Fixes
 
 - the embedded trailer player has been improved, it doesn't load the imdb.com site's complete frame but directly plays the video
 - Windows: distribution of VLC and MediaInfo CLI upated to their latest versions (VLC: 3.0.18, MediaInfo: v22.12)
+- **(v1.2.2)** enhanced IMDB scraper checks
+- **(v1.2.2)** Settings - Movies: source paths are now ordered by their given name
