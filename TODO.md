@@ -1,18 +1,6 @@
 # TODO
 
-## NEXT Minor (current v1.2.1)
-
-- [ ] #rip-rating-demographics (see <https://www.imdb.com/title/tt4154796/ratings>)
-  - [x] remove rating demographics (also: don't utilize chosen default demographic)
-  - [x] remove tests (watchdog, in-ui)
-  - [x] remove during scrape
-  - [x] remove on-click dialog in MediaList
-  - [x] test with scan
-
-- [ ] imdb scraper: v3 plotkeywords
-- [ ] imdb scraper: v3 locations
-
-- [ ] Settings: sort list of source paths by name
+## NEXT Minor (current v1.2.2)
 
 - edit movie: define audio / subtitle languages
 
