@@ -108,6 +108,9 @@
               </template>
               {{ $t("scan already in progress") }}
             </v-tooltip>
+            <v-list-item v-on:click="copyInfo(itemsFiltered)">
+              {{ $t("Copy Info") }}
+            </v-list-item>
           </v-list>
         </v-menu>
       </div>
@@ -389,7 +392,11 @@
                         v-if="item.IMDB_rating_defaultDisplay"
                       >
                         <v-icon small color="amber" style="padding-bottom: 4px">mdi-star</v-icon>
-                        <a class="headline mb-2 mk-clickable" v-on:click.stop="onShowRatingDemographicsDialog(item)">{{ item.IMDB_rating_defaultDisplay }}</a>
+                        <!--
+                          #rip-rating-demographics
+                          <a class="headline mb-2 mk-clickable" v-on:click.stop="onShowRatingDemographicsDialog(item)">{{ item.IMDB_rating_defaultDisplay }}</a>
+                        -->
+                        <span class="headline mb-2">{{ item.IMDB_rating_defaultDisplay }}</span>
                         <span
                           v-if="item.IMDB_metacriticScore"
                           v-bind:class="helpers.getMetaCriticClass(item.IMDB_metacriticScore)"
@@ -841,7 +848,7 @@
               </div>
 
               <v-row style="margin-top: 16px">
-                <v-btn text color="primary" v-on:click.stop="copyInfo(item)">{{ $t("Copy Info") }}</v-btn>
+                <v-btn text color="primary" v-on:click.stop="copyInfo([item])">{{ $t("Copy Info") }}</v-btn>
                 <v-btn v-if="item.IMDB_Trailer_URL" text color="primary" v-on:click.stop="showTrailerLocal(item)">{{ $t("Trailer") }}</v-btn>
                 <v-btn text v-bind:disabled="!item.IMDB_tconst" color="primary" v-on:click.stop="openIMDB(item)">
                   <v-icon small>mdi-web</v-icon>&nbsp;IMDB
@@ -1608,30 +1615,36 @@ export default {
       });
     },
 
-    copyInfo(movie) {
+    copyInfo(movies) {
       const el = document.createElement("textarea");
 
       let info = "";
 
-      if (movie.Rating) {
-        info += helpers.getStarRatingString(movie.Rating);
-        info += " ";
-      }
-
-      info += movie.Name;
-
-      if (movie.startYear) {
-        info += ` (${movie.startYear}`;
-
-        if (movie.endYear) {
-          info += `-${movie.endYear}`;
+      for (const movie of movies) {
+        if (info) {
+          info += "\n\n";
         }
 
-        info += ")";
-      }
+        if (movie.Rating) {
+          info += helpers.getStarRatingString(movie.Rating);
+          info += " ";
+        }
 
-      if (movie.IMDB_tconst) {
-        info += `\nhttps://www.imdb.com/title/${movie.IMDB_tconst}`;
+        info += movie.Name;
+
+        if (movie.startYear) {
+          info += ` (${movie.startYear}`;
+
+          if (movie.endYear) {
+            info += `-${movie.endYear}`;
+          }
+
+          info += ")";
+        }
+
+        if (movie.IMDB_tconst) {
+          info += `\nhttps://www.imdb.com/title/${movie.IMDB_tconst}`;
+        }
       }
 
       el.value = info;
@@ -2598,6 +2611,8 @@ export default {
       // TODO: properly handle array for the rescan (total time etc.)
       this.onRescanItems(this.items);
     },
+
+    async onListActionCopyInfo() {},
   },
 
   // ### LifeCycle Hooks ###

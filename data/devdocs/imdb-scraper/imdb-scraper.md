@@ -13,3 +13,7 @@ The V1 imdb dumps were creted on 2020-12-12. The dump filenames do not contain a
 ## V2 (2021-06-08)
 
 The V2 imdb dumps were created on 2021-06-08. The dump filenames contain a `-v2` suffix.
+
+## V3 (2022-2023)
+
+The V3 imdb dumps show that IMDB are now piece-by-piece switching over to a graphql API.

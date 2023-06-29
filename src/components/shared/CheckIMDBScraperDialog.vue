@@ -115,12 +115,19 @@ export default {
     async runChecks() {
       this.isRunning = true;
 
-      for (let i = 0; i < this.imdbScraperChecksFiltered.length; i++) {
-        const check = this.imdbScraperChecksFiltered[i];
-
+      // for (let i = 0; i < this.imdbScraperChecksFiltered.length; i++) {
+      for (const check of this.imdbScraperChecksFiltered) {
         check.isRunning = true;
 
-        check.result = await check.checkFunction();
+        let result = null;
+        for (const checkFunction of check.checkFunctions) {
+          result = await checkFunction();
+
+          if (result.status !== imdbScraperTests.status.SUCCESS) {
+            break;
+          }
+        }
+        check.result = result;
 
         logger.log("[runChecks] check result:", check.result);
 

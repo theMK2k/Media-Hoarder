@@ -37,9 +37,8 @@ const {
   scrapeIMDBParentalGuideData,
   scrapeIMDBreleaseinfo,
   scrapeIMDBtechnicalData,
-  scrapeIMDBplotKeywords,
-  scrapeIMDBFilmingLocations,
-  scrapeIMDBRatingDemographics,
+  scrapeIMDBplotKeywordsV3,
+  scrapeIMDBFilmingLocationsV3,
 } = require("./imdb-scraper");
 
 const definedError = require("@/helpers/defined-error");
@@ -1668,23 +1667,24 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
       }
     }
 
-    if (
-      shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics &&
-      getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics").enabled
-    ) {
-      try {
-        eventBus.scanInfoShow(
-          $t("Rescanning Movies") + " {remainingTimeDisplay}",
-          `${movie.Name || movie.Filename} (${$t("scraping IMDB Rating Demographics")})`,
-          rescanETA
-        );
+    // #rip-rating-demographics
+    // if (
+    //   shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics &&
+    //   getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_ratingDemographics").enabled
+    // ) {
+    //   try {
+    //     eventBus.scanInfoShow(
+    //       $t("Rescanning Movies") + " {remainingTimeDisplay}",
+    //       `${movie.Name || movie.Filename} (${$t("scraping IMDB Rating Demographics")})`,
+    //       rescanETA
+    //     );
 
-        imdbData.ratingDemographics = await scrapeIMDBRatingDemographics(movie);
-      } catch (error) {
-        imdbData.IMDB_Done = false;
-        logger.error(error);
-      }
-    }
+    //     imdbData.ratingDemographics = await scrapeIMDBRatingDemographics(movie);
+    //   } catch (error) {
+    //     imdbData.IMDB_Done = false;
+    //     logger.error(error);
+    //   }
+    // }
 
     if (
       shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_plotSummary &&
@@ -1715,7 +1715,7 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
           rescanETA
         );
 
-        imdbData.plotKeywords = await scrapeIMDBplotKeywords(movie);
+        imdbData.plotKeywords = await scrapeIMDBplotKeywordsV3(movie);
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
@@ -1834,7 +1834,7 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
           rescanETA
         );
 
-        imdbData.filmingLocations = await scrapeIMDBFilmingLocations(movie);
+        imdbData.filmingLocations = await scrapeIMDBFilmingLocationsV3(movie);
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
@@ -2978,13 +2978,15 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
 			MOV.id_Movies
 			, MOV.Name
       , MOV.Name2
-			, MOV.IMDB_rating${shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""} AS IMDB_rating_default
+			-- #rip-rating-demographics, MOV.IMDB_rating${shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""} AS IMDB_rating_default
+      , MOV.IMDB_rating AS IMDB_rating_default
 			, MOV.IMDB_metacriticScore
 			, IFNULL(MOV.Rating, 0) AS Rating
 			, MOV.startYear
 			, MOV.created_at
 			, MOV.last_access_at
-      , MOV.IMDB_numVotes${shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""} AS IMDB_numVotes_default
+      -- #rip-rating-demographics, MOV.IMDB_numVotes${shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""} AS IMDB_numVotes_default
+      , MOV.IMDB_numVotes AS IMDB_numVotes_default
       , IFNULL(MOV.plotSummary, IFNULL(MOV.IMDB_plotSummary_Translated, MOV.IMDB_plotSummary)) AS plotSummary
       , MOV.RelativePath
       , MOV.RelativeDirectory

@@ -69,26 +69,34 @@
           <v-text-field type="number" v-bind:label="$t('Last Access Grace Period')" v-model="minimumWaitForSetAccess" style="margin-left: 16px"></v-text-field>
         </v-row>
 
-        <v-row class="settings-row">
-          <h3>{{ $t("IMDB Rating Demographic") }}</h3>
-
-          <v-card-text class="mk-light-grey">{{
-            $t(
-              "{appName} provides the IMDB score and number of votes for each medium (where applicable)_ By default these are the numbers of all IMDB users_ You can, however, decide if you wish to see those of a certain demographic, e_g_ by gender or age_",
-              { appName: $shared.appName }
-            )
-          }}</v-card-text>
-
-          <v-select
-            class="mk-v-select-dynamic-width"
-            v-bind:label="$t('IMDB Rating Demographic')"
-            item-text="long_translated"
-            item-value="code"
-            v-model="$shared.imdbRatingDemographic"
-            v-bind:items="$shared.imdbRatingDemographics"
-            style="margin-left: 16px"
-          ></v-select>
-        </v-row>
+        <!--
+          #rip-rating-demographics
+          
+          since v1.3.0 we unfortunately have to disable this feature as imdb.com doesn't offer the rating demographics by gender, US/non-US and age anymore
+          we keep the source commented-out however, if at some point in the future imdb.com decides to bring this feature back (find all occurences of #rip-rating-demographics in the code)
+        -->
+        <!--
+          <v-row class="settings-row">
+            <h3>{{ $t("IMDB Rating Demographic") }}</h3>
+  
+            <v-card-text class="mk-light-grey">{{
+              $t(
+                "{appName} provides the IMDB score and number of votes for each medium (where applicable)_ By default these are the numbers of all IMDB users_ You can, however, decide if you wish to see those of a certain demographic, e_g_ by gender or age_",
+                { appName: $shared.appName }
+              )
+            }}</v-card-text>
+  
+            <v-select
+              class="mk-v-select-dynamic-width"
+              v-bind:label="$t('IMDB Rating Demographic')"
+              item-text="long_translated"
+              item-value="code"
+              v-model="$shared.imdbRatingDemographic"
+              v-bind:items="$shared.imdbRatingDemographics"
+              style="margin-left: 16px"
+            ></v-select>
+          </v-row>
+        -->
 
         <v-row class="settings-row">
           <h3>{{ $t("Log Level") }}</h3>
@@ -834,9 +842,13 @@ export default {
     },
 
     moviesSourcePaths() {
-      return this.sourcePaths.filter((sourcePath) => {
-        return sourcePath.MediaType === "movies";
-      });
+      return this.sourcePaths
+        .filter((sourcePath) => {
+          return sourcePath.MediaType === "movies";
+        })
+        .sort((a, b) => {
+          return helpers.compare(a.Description, b.Description, false);
+        });
     },
 
     imdbRatingDemographic() {
