@@ -4,11 +4,11 @@ This document describes the steps necessary to get a new release done.
 
 ## Precondition
 
-- [x] we are on release branch `release-next` or `release-x.y.z`
-- [x] Increase Version Number in [../package.json](../package.json)
-- [x] create `public/history/version-x.y.z.md` from info in [../DONE.md](../DONE.md) 
-- [x] Update history.json (create new entry on top of the others in the array)
-- [x] Test using `npm start` - it should show the new version incl. history
+- [ ] we are on release branch `release-next` or `release-x.y.z`
+- [ ] Increase Version Number in [../package.json](../package.json)
+- [ ] create `public/history/version-x.y.z.md` from info in [../DONE.md](../DONE.md) 
+- [ ] Update history.json (create new entry on top of the others in the array)
+- [ ] Test using `npm start` - it should show the new version incl. history
 - [ ] git push
 
 ## Build Packs
@@ -19,7 +19,7 @@ This document describes the steps necessary to get a new release done.
 
 ```bash
 git pull
-git checkout release-x.y.z
+git checkout release-next
 npm i
 ./build-win.sh
 ```
@@ -32,7 +32,7 @@ find properly named `*-portable.zip` and `*-setup.exe` in `RELEASE` directory
 
 ```bash
 git pull
-git checkout release-x.y.z
+git checkout release-next
 npm i
 ./build-linux.sh
 ```
@@ -46,7 +46,7 @@ npm i
 ```bash
 export APPLE_ID=%APPLE_ID%
 export APPLE_ID_PASSWORD=%APPLE_ID_PASSWORD%
-git checkout release-x.y.z
+git checkout release-next
 git pull
 npm i
 ./build-mac.sh
@@ -73,4 +73,4 @@ npm i
 
 ## FINALLY
 
-- [ ] merge `release-x.y.z` branch into master (this makes history.json public)
+- [ ] merge `release-next` branch into master (this makes history.json public)
