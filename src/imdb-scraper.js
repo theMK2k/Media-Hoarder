@@ -13,6 +13,8 @@ const graphQLqueries = {
       "$IMDB_tconst",
       $IMDB_tconst
     ),
+
+  // see https://www.imdb.com/title/tt4154796/companycredits/
   companies: ($IMDB_tconst, $IMDB_Companies_Category) =>
     `https://caching.graphql.imdb.com/?operationName=TitleCompanyCreditsPagination&variables={"const":"$IMDB_tconst","filter":{"categories":["$IMDB_Companies_Category"]},"first":1000,"locale":"en-GB","originalTitleText":false}&extensions={"persistedQuery":{"sha256Hash":"ef3c062fb3a177f606d2734b42b876a929139eb6c86a582c177a95886a1a9a12","version":1}}`
       .replace("$IMDB_tconst", $IMDB_tconst)
