@@ -2,10 +2,6 @@
 
 ## NEXT Minor (current v1.2.2)
 
-- FAIL: check if REMASTERED! persists after moving the file to a new location
-  - TODO: persist release attributes when moving a file!
-    -> tbl_Movies.DefinedByUser contains "ReleaseAttributesSearchTerms"
-  
 - edit movie: define audio / subtitle languages
 
 ### Defects

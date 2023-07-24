@@ -1056,8 +1056,12 @@ async function listPath(basePath, scanPath) {
   return arrResult;
 }
 
+/**
+ * Create Name, Name2 etc. from IMDBData for each movie, also apply possible metadata from duplicates
+ * @param {*} onlyNew
+ * @param {*} id_Movies
+ */
 async function applyMetaData(onlyNew, id_Movies) {
-  // create Name, Name2 etc. from IMDBData for each movie, also apply possible metadata from duplicates
   logger.log("[applyMetaData] onlyNew:", onlyNew, "id_Movies:", id_Movies);
 
   const query = `
@@ -1155,7 +1159,7 @@ async function applyMetaData(onlyNew, id_Movies) {
     const startYear = movie.IMDB_startYear;
     const endYear = movie.IMDB_endYear;
 
-    const duplicates = await getMovieDuplicates(movie.id_Movies, true, false, true);
+    const duplicates = await getMovieDuplicates(movie.id_Movies, true, false, true); // actual duplicates
     const duplicate =
       duplicates.length > 0
         ? (await db.fireProcedureReturnAll("SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies", { $id_Movies: duplicates[0] }))[0]
@@ -1175,11 +1179,23 @@ async function applyMetaData(onlyNew, id_Movies) {
       $last_access_at = duplicate.last_access_at;
     }
 
+    let $plotSummaryFull = null;
+    let $plotSummary = null;
+
+    if (duplicate && shared.duplicatesHandling.actualDuplicate.updateDescription) {
+      $plotSummaryFull = duplicate.plotSummaryFull;
+      $plotSummary = _.truncate(duplicate.plotSummaryFull, {
+        length: 400,
+        separator: " ",
+        omission: " ...",
+      });
+    }
+
     let $Rating = null;
     if (duplicate && shared.duplicatesHandling.actualDuplicate.updateRating) {
       $Rating = duplicate.Rating;
     } else if (shared.duplicatesHandling.metaDuplicate.updateRating) {
-      const metaDuplicates = await getMovieDuplicates(movie.id_Movies, false, true, true);
+      const metaDuplicates = await getMovieDuplicates(movie.id_Movies, false, true, true); // meta duplicates
       const metaDuplicate =
         metaDuplicates.length > 0
           ? (await db.fireProcedureReturnAll("SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies", { $id_Movies: metaDuplicates[0] }))[0]
@@ -1206,6 +1222,13 @@ async function applyMetaData(onlyNew, id_Movies) {
       , endYear = $endYear
       , Rating = $Rating`;
 
+    if ($plotSummaryFull) {
+      // $plotSummaryFull can only be truthy if a duplicate entry is found and it contains a plotSummaryFull
+      data.$plotSummaryFull = $plotSummaryFull;
+      data.$plotSummary = $plotSummary;
+      query += "\n, plotSummaryFull = $plotSummaryFull";
+      query += "\n, plotSummary = $plotSummary";
+    }
     if (!definedByUser.find((item) => item === "Name")) {
       data.$Name = Name;
       query += "\n, Name = $Name";
@@ -1227,6 +1250,24 @@ async function applyMetaData(onlyNew, id_Movies) {
     query += "\nWHERE id_Movies = $id_Movies";
 
     await db.fireProcedure(query, data);
+
+    if (duplicate && shared.duplicatesHandling.actualDuplicate.updateReleaseAttributes) {
+      // use actual duplicate's release attributes
+      await db.fireProcedure(`DELETE FROM tbl_Movies_Release_Attributes WHERE id_Movies = $id_Movies`, { $id_Movies: movie.id_Movies });
+      await db.fireProcedure(
+        `INSERT INTO tbl_Movies_Release_Attributes (
+            id_Movies
+            , Release_Attributes_searchTerm
+            , deleted
+          )
+          SELECT
+            $id_Movies AS id_Movies
+            , Release_Attributes_searchTerm
+            , deleted
+          FROM tbl_Movies_Release_Attributes WHERE id_Movies = $id_Movies_Duplicate`,
+        { $id_Movies: movie.id_Movies, $id_Movies_Duplicate: duplicate.id_Movies }
+      );
+    }
   }
 
   logger.log("[applyMetaData] END");

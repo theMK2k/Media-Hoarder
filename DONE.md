@@ -1,5 +1,11 @@
 # DONE
 
+## v1.2.3
+
+- [x] take over release attributes and description / plotSummary when moving a file
+  - [x] add shared.duplicatesHandling.updateDescription
+  - [x] add shared.duplicatesHandling.updateReleaseAttributes
+
 ## v1.2.2
 
 - [x] #rip-rating-demographics (see <https://www.imdb.com/title/tt4154796/ratings>)

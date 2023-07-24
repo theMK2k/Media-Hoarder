@@ -248,6 +248,22 @@
               v-model="$shared.duplicatesHandling.actualDuplicate.updateLastAccess"
               v-on:click.native="duplicatesHandlingChanged"
             ></v-checkbox>
+            <v-checkbox
+              v-bind:label="$t('update description')"
+              style="margin: 0px"
+              color="mk-dark-grey"
+              dense
+              v-model="$shared.duplicatesHandling.actualDuplicate.updateDescription"
+              v-on:click.native="duplicatesHandlingChanged"
+            ></v-checkbox>
+            <v-checkbox
+              v-bind:label="$t('update release attributes')"
+              style="margin: 0px"
+              color="mk-dark-grey"
+              dense
+              v-model="$shared.duplicatesHandling.actualDuplicate.updateReleaseAttributes"
+              v-on:click.native="duplicatesHandlingChanged"
+            ></v-checkbox>
           </div>
         </v-card>
 

@@ -1,5 +1,12 @@
 [
   {
+    "version": "1.2.3",
+    "name": "SAL 9000",
+    "quote": "SAL 9000: \"Will I dream?\" Dr. Chandra: \"Of course you will. All intelligent beings dream. Nobody knows why. Perhaps you will dream of HAL... just as I often do.\"",
+    "quoteSource": "2010: The Year We Make Contact (1984)",
+    "description": "version-1.2.3.md"
+  },
+  {
     "version": "1.2.2",
     "name": "SAL 9000",
     "quote": "SAL 9000: \"Will I dream?\" Dr. Chandra: \"Of course you will. All intelligent beings dream. Nobody knows why. Perhaps you will dream of HAL... just as I often do.\"",

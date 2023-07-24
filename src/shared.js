@@ -201,6 +201,8 @@ const shared = new Vue({
         updateSubTitle: true,
         updateRating: true,
         updateLastAccess: true,
+        updateDescription: true,
+        updateReleaseAttributes: true,
       },
       metaDuplicate: {
         addToList: true,
