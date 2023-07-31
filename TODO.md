@@ -3,6 +3,11 @@
 ## NEXT Minor (current v1.2.2)
 
 - edit movie: define audio / subtitle languages
+- new list action: "start trailer rotation"
+  - generate a list of distinct movies with available trailers
+  - show trailer dialog beginning with the first (mark as seen)
+    - show [1/123]
+    - provide <prev>, <next>, <select movie> buttons
 
 ### Defects
 

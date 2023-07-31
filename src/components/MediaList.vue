@@ -111,6 +111,12 @@
             <v-list-item v-on:click="copyInfo(itemsFiltered)">
               {{ $t("Copy Info") }}
             </v-list-item>
+            <v-list-item v-on:click="startTrailerRotation(itemsFiltered, false)">
+              {{ $t("Start Trailer Rotation (Ordered)") }}
+            </v-list-item>
+            <v-list-item v-on:click="startTrailerRotation(itemsFiltered, true)">
+              {{ $t("Start Trailer Rotation (Randomized)") }}
+            </v-list-item>
           </v-list>
         </v-menu>
       </div>
@@ -965,12 +971,16 @@
     ></mk-video-player-dialog>
 
     <mk-local-video-player-dialog
-      v-if="localVideoPlayerDialog.instantiated"
       v-bind:show="localVideoPlayerDialog.show"
+      v-bind:showActualPlayer="localVideoPlayerDialog.showActualPlayer"
       v-bind:videoURL="localVideoPlayerDialog.videoURL"
       v-bind:slateURL="localVideoPlayerDialog.slate"
       v-bind:mimeType="localVideoPlayerDialog.mimeType"
+      v-bind:trailerRotation="localVideoPlayerDialog.trailerRotation"
       v-on:close="onLocalVideoPlayerDialogClose"
+      v-on:trailer-rotation-previous="onLocalVideoPlayerDialogTrailerRotationPrevious"
+      v-on:trailer-rotation-next="onLocalVideoPlayerDialogTrailerRotationNext"
+      v-on:trailer-rotation-select-movie="onLocalVideoPlayerDialogTrailerRotationSelectMovie"
     ></mk-local-video-player-dialog>
 
     <mk-link-imdb-dialog
@@ -1210,11 +1220,17 @@ export default {
     },
 
     localVideoPlayerDialog: {
-      instantiated: false,
+      showActualPlayer: false,
       show: false,
       videoURL: null,
       slateURL: null,
       mimeType: null,
+
+      trailerRotation: {
+        remaining: [],
+        current: null,
+        history: [],
+      },
     },
 
     editItemDialog: {
@@ -1699,7 +1715,7 @@ export default {
       this.videoPlayerDialog.show = true;
     },
 
-    async showTrailerLocal(item) {
+    async showTrailerLocal(item, trailerRotation) {
       try {
         const trailerURL = item.IMDB_Trailer_URL.replace("https://www.imdb.com", "");
 
@@ -1717,11 +1733,15 @@ export default {
 
         logger.log("[showTrailerLocal] selected best quality trailerMediaURL:", trailerMediaURL);
 
+        this.localVideoPlayerDialog.trailerRotation = trailerRotation;
         this.localVideoPlayerDialog.videoURL = trailerMediaURL.mediaURL;
         this.localVideoPlayerDialog.mimeType = trailerMediaURL.mimeType;
         this.localVideoPlayerDialog.slateURL = trailerMediaURLs.slateURL;
-        this.localVideoPlayerDialog.instantiated = true;
-        this.localVideoPlayerDialog.show = true;
+        this.localVideoPlayerDialog.showActualPlayer = false;
+        window.requestAnimationFrame(() => {
+          this.localVideoPlayerDialog.showActualPlayer = true;
+          this.localVideoPlayerDialog.show = true;
+        });
       } catch (err) {
         eventBus.showSnackbar("error", err);
       }
@@ -2225,8 +2245,85 @@ export default {
     onLocalVideoPlayerDialogClose() {
       this.localVideoPlayerDialog.show = false;
       setTimeout(() => {
-        this.localVideoPlayerDialog.instantiated = false;
+        this.localVideoPlayerDialog.showActualPlayer = false;
       }, 250);
+    },
+
+    async startTrailerRotation(movies, randomizeMovies) {
+      let moviesWithTrailers = movies.filter((movie) => movie.IMDB_Trailer_URL);
+
+      if (!moviesWithTrailers || moviesWithTrailers.length === 0) {
+        eventBus.showSnackbar("warning", this.$t("the list does not contain any movies with trailers"));
+        return;
+      }
+
+      logger.log("[startTrailerRotation] number of moviesWithTrailers before deduplication:", moviesWithTrailers.length);
+
+      // deduplicate trailerURLs
+      moviesWithTrailers = moviesWithTrailers.filter(
+        (trailerURL, index, self) => self.findIndex((t) => t.IMDB_Trailer_URL === trailerURL.IMDB_Trailer_URL) === index
+      );
+
+      logger.log("[startTrailerRotation] number of moviesWithTrailers after deduplication:", moviesWithTrailers.length);
+
+      if (randomizeMovies) {
+        moviesWithTrailers = helpers.randomizeArray(moviesWithTrailers);
+      }
+
+      const current = moviesWithTrailers.shift();
+
+      this.localVideoPlayerDialog.trailerRotation = {
+        remaining: moviesWithTrailers,
+        current,
+        history: [],
+      };
+
+      // show trailer player (local or remote)
+      await this.showTrailerLocal(current, this.localVideoPlayerDialog.trailerRotation);
+    },
+
+    async onLocalVideoPlayerDialogTrailerRotationPrevious() {
+      const { remaining, current, history } = this.localVideoPlayerDialog.trailerRotation;
+
+      if (history.length === 0) {
+        return;
+      }
+
+      const previous = history.pop();
+
+      remaining.unshift(current);
+
+      this.localVideoPlayerDialog.trailerRotation = {
+        remaining,
+        current: previous,
+        history,
+      };
+
+      await this.showTrailerLocal(previous, this.localVideoPlayerDialog.trailerRotation);
+    },
+
+    async onLocalVideoPlayerDialogTrailerRotationNext() {
+      const { remaining, current, history } = this.localVideoPlayerDialog.trailerRotation;
+
+      if (remaining.length === 0) {
+        return;
+      }
+
+      history.push(current);
+
+      const new_current = remaining.shift();
+
+      this.localVideoPlayerDialog.trailerRotation = {
+        remaining,
+        current: new_current,
+        history,
+      };
+
+      await this.showTrailerLocal(new_current, this.localVideoPlayerDialog.trailerRotation);
+    },
+
+    async onLocalVideoPlayerDialogTrailerRotationSelectMovie() {
+      // TODO!
     },
 
     onOpenLinkIMDBDialog(item) {

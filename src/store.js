@@ -3042,6 +3042,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
       , SP.Path AS SourcePath
       , MOV.IMDB_tconst
       , SP.id_SourcePaths
+      , MOV.IMDB_Trailer_URL
 
       ${
         minimumResultSet
@@ -3071,7 +3072,6 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
         , NULL AS IMDB_Top_Producers
         , NULL AS IMDB_Top_Cast
         , NULL AS IMDB_Top_Production_Companies
-        , NULL AS IMDB_Trailer_URL
         , NULL AS NumExtras
         , NULL AS scanErrors
         , NULL AS ReleaseAttributesSearchTerms
@@ -3111,7 +3111,6 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
         , MOV.IMDB_Top_Producers
         , MOV.IMDB_Top_Cast
         , MOV.IMDB_Top_Production_Companies
-        , MOV.IMDB_Trailer_URL
         , (SELECT COUNT(1) FROM tbl_Movies MOVEXTRAS WHERE MOVEXTRAS.Extra_id_Movies_Owner = MOV.id_Movies) AS NumExtras
         , MOV.scanErrors
         , (SELECT GROUP_CONCAT(MRA.Release_Attributes_searchTerm, ';') FROM tbl_Movies_Release_Attributes MRA WHERE MRA.id_Movies = MOV.id_Movies AND MRA.deleted = 0) AS ReleaseAttributesSearchTerms

@@ -9,6 +9,7 @@
       -->
       <!--  style="min-height: 600px!important" -->
       <video
+        v-if="showActualPlayer"
         id="mk-video-player"
         class="video-js"
         controls
@@ -21,8 +22,46 @@
         <source v-bind:src="videoURL" v-bind:type="mimeType" />
       </video>
       <v-col sm="12">
+        <v-list-item-content v-if="trailerRotation" class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
+          <v-row class="mk-compact-movie-list-title"> {{ $t("Trailer Rotation") }}: </v-row>
+          <div>
+            <mk-compact-movie-list-row v-bind:movie="trailerRotation.current" />
+          </div>
+        </v-list-item-content>
+
         <v-row style="margin-top: 8px">
-          <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCloseClick" style="margin-left: 8px">{{ $t("Close") }}</v-btn>
+          <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="$emit('close')" style="margin-left: 8px">{{ $t("Close") }}</v-btn>
+          <v-spacer></v-spacer>
+          <div v-if="trailerRotation" style="margin-right: 8px; padding-bottom: 16px">
+            <v-pagination v-if="false"></v-pagination>
+            <!-- we have to use this, else we don't get v-pagination* classes -->
+            <button
+              type="button"
+              class="v-pagination__navigation"
+              v-bind:class="prevClass"
+              v-bind:disabled="trailerRotation.history.length == 0"
+              v-on:click="$emit('trailer-rotation-previous')"
+              style="height: 38px !important; width: 38px !important; margin: 8px 8px 0px 0px !important; display: inline-block"
+            >
+              <i aria-hidden="true" class="v-icon notranslate mdi mdi-chevron-left theme--dark"></i>
+            </button>
+
+            {{ trailerRotation.history.length + 1 }} / {{ trailerRotation.history.length + trailerRotation.remaining.length + 1 }}
+
+            <button
+              type="button"
+              class="v-pagination__navigation"
+              v-bind:class="nextClass"
+              v-bind:disabled="trailerRotation.remaining.length == 0"
+              v-on:click="$emit('trailer-rotation-next')"
+              style="height: 38px !important; width: 38px !important; margin: 8px 8px 0px 8px !important; display: inline-block"
+            >
+              <i aria-hidden="true" class="v-icon notranslate mdi mdi-chevron-right theme--dark"></i>
+            </button>
+            <v-btn class="xs-fullwidth" color="primary" v-on:click.native="$emit('trailer-rotation-select-movie')" style="margin-left: 8px">{{
+              $t("Select this Movie")
+            }}</v-btn>
+          </div>
         </v-row>
       </v-col>
     </v-card>
@@ -34,15 +73,30 @@
 const videojs = require("video.js");
 
 // import { eventBus } from "@/main";
+import CompactMovieListRow from "@/components/shared/CompactMovieListRow.vue";
 
 export default {
-  props: ["show", "videoURL", "mimeType", "slateURL"],
+  components: {
+    "mk-compact-movie-list-row": CompactMovieListRow,
+  },
 
-  methods: {
-    onCloseClick() {
-      this.$emit("close");
+  props: ["show", "videoURL", "mimeType", "slateURL", "trailerRotation", "showActualPlayer"],
+
+  computed: {
+    prevClass() {
+      return {
+        "v-pagination__navigation--disabled": this.trailerRotation.history.length == 0,
+      };
     },
 
+    nextClass() {
+      return {
+        "v-pagination__navigation--disabled": this.trailerRotation.remaining.length == 0,
+      };
+    },
+  },
+
+  methods: {
     init() {
       const options = {};
       videojs("mk-video-player", options, function onPlayerReady() {
@@ -59,7 +113,7 @@ export default {
     },
 
     onEscapePressed() {
-      this.onCloseClick();
+      this.$emit("close");
     },
   },
 
