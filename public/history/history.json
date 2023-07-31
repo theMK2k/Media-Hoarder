@@ -1,5 +1,12 @@
 [
   {
+    "version": "1.3.0",
+    "name": "TODO",
+    "quote": "TODO",
+    "quoteSource": "TODO",
+    "description": "version-1.3.0.md"
+  },
+  {
     "version": "1.2.3",
     "name": "SAL 9000",
     "quote": "SAL 9000: \"Will I dream?\" Dr. Chandra: \"Of course you will. All intelligent beings dream. Nobody knows why. Perhaps you will dream of HAL... just as I often do.\"",
