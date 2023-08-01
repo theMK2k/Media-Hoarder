@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="100%" v-on:keydown.escape="onEscapePressed">
+  <v-dialog v-model="show" persistent fullscreen max-width="100%" v-on:keydown.escape="onEscapePressed">
     <!--  style="min-height: 600px!important" -->
     <v-card dark flat v-bind:ripple="false">
       <!--
@@ -11,28 +11,28 @@
       <video
         v-if="showActualPlayer"
         id="mk-video-player"
-        class="video-js"
         controls
         preload="auto"
         data-setup="{}"
         v-bind:poster="slateURL"
         autoplay
-        style="width: 100%; min-height: 600px !important; background-color: black; border-color: black; outline-color: black"
+        style="width: 100%; max-height: calc(100vh - 140px); background-color: black; border-color: black; outline-color: black"
       >
+        <!-- style="width: 100%; min-height: 600px !important; background-color: black; border-color: black; outline-color: black" -->
         <source v-bind:src="videoURL" v-bind:type="mimeType" />
       </video>
-      <v-col sm="12">
-        <v-list-item-content v-if="trailerRotation" class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
+      <div>
+        <v-list-item-content v-if="trailerRotation" class="align-self-start" style="padding-top: 6px; padding-bottom: 6px; padding-left: 8px">
           <v-row class="mk-compact-movie-list-title"> {{ $t("Trailer Rotation") }}: </v-row>
           <div>
             <mk-compact-movie-list-row v-bind:movie="trailerRotation.current" />
           </div>
         </v-list-item-content>
 
-        <v-row style="margin-top: 8px">
+        <v-row style="max-width: 100%; margin-top: 8px; padding-left: 8px">
           <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="$emit('close')" style="margin-left: 8px">{{ $t("Close") }}</v-btn>
           <v-spacer></v-spacer>
-          <div v-if="trailerRotation" style="margin-right: 8px; padding-bottom: 16px">
+          <div v-if="trailerRotation" style="padding-right: 8px">
             <v-pagination v-if="false"></v-pagination>
             <!-- we have to use this, else we don't get v-pagination* classes -->
             <button
@@ -41,7 +41,7 @@
               v-bind:class="prevClass"
               v-bind:disabled="trailerRotation.history.length == 0"
               v-on:click="$emit('trailer-rotation-previous')"
-              style="height: 38px !important; width: 38px !important; margin: 8px 8px 0px 0px !important; display: inline-block"
+              style="height: 38px !important; width: 38px !important; margin: 0px 8px 0px 0px !important; display: inline-block"
             >
               <i aria-hidden="true" class="v-icon notranslate mdi mdi-chevron-left theme--dark"></i>
             </button>
@@ -54,16 +54,16 @@
               v-bind:class="nextClass"
               v-bind:disabled="trailerRotation.remaining.length == 0"
               v-on:click="$emit('trailer-rotation-next')"
-              style="height: 38px !important; width: 38px !important; margin: 8px 8px 0px 8px !important; display: inline-block"
+              style="height: 38px !important; width: 38px !important; margin: 0px 0px 0px 8px !important; display: inline-block"
             >
               <i aria-hidden="true" class="v-icon notranslate mdi mdi-chevron-right theme--dark"></i>
             </button>
-            <v-btn class="xs-fullwidth" color="primary" v-on:click.native="$emit('trailer-rotation-select-movie')" style="margin-left: 8px">{{
-              $t("Select this Movie")
+            <v-btn class="xs-fullwidth" color="primary" v-on:click.native="$emit('trailer-rotation-add-movie-to-list')" style="margin-left: 8px">{{
+              $t("Add Movie to List")
             }}</v-btn>
           </div>
         </v-row>
-      </v-col>
+      </div>
     </v-card>
   </v-dialog>
 </template>

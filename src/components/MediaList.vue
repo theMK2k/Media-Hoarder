@@ -980,7 +980,7 @@
       v-on:close="onLocalVideoPlayerDialogClose"
       v-on:trailer-rotation-previous="onLocalVideoPlayerDialogTrailerRotationPrevious"
       v-on:trailer-rotation-next="onLocalVideoPlayerDialogTrailerRotationNext"
-      v-on:trailer-rotation-select-movie="onLocalVideoPlayerDialogTrailerRotationSelectMovie"
+      v-on:trailer-rotation-add-movie-to-list="onLocalVideoPlayerDialogTrailerRotationAddMovieToList"
     ></mk-local-video-player-dialog>
 
     <mk-link-imdb-dialog
@@ -2322,8 +2322,8 @@ export default {
       await this.showTrailerLocal(new_current, this.localVideoPlayerDialog.trailerRotation);
     },
 
-    async onLocalVideoPlayerDialogTrailerRotationSelectMovie() {
-      // TODO!
+    async onLocalVideoPlayerDialogTrailerRotationAddMovieToList() {
+      await this.addToList(this.localVideoPlayerDialog.trailerRotation.current);
     },
 
     onOpenLinkIMDBDialog(item) {
