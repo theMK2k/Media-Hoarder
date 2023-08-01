@@ -7,7 +7,8 @@
   - generate a list of distinct movies with available trailers
   - show trailer dialog beginning with the first (mark as seen)
     - show [1/123]
-    - provide <prev>, <next>, <select movie> buttons
+    - provide "prev", "next", "add movie to list" buttons
+- implement trailer rotation in non-local player dialog
 
 ### Defects
 
