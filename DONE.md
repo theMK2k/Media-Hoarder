@@ -1,5 +1,14 @@
 # DONE
 
+## v1.3.0
+
+- [x] new list action: "start trailer rotation"
+  - generate a list of distinct movies with available trailers from the current list
+  - show trailer dialog beginning with the first
+    - show [1/123]
+    - provide "prev", "next", "add movie to list" buttons
+
+
 ## v1.2.3
 
 - [x] take over release attributes and description / plotSummary when moving a file

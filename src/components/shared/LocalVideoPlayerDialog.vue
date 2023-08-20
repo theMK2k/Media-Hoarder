@@ -1,7 +1,26 @@
 <template>
   <v-dialog v-model="show" persistent fullscreen max-width="100%" v-on:keydown.escape="onEscapePressed">
     <!--  style="min-height: 600px!important" -->
-    <v-card dark flat v-bind:ripple="false">
+    <v-card
+      dark
+      flat
+      v-bind:ripple="false"
+      style="
+        background-color: black;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-flex-direction: column;
+        flex-direction: column;
+        -webkit-flex-wrap: nowrap;
+        flex-wrap: nowrap;
+        -webkit-justify-content: center;
+        justify-content: center;
+        -webkit-align-content: stretch;
+        align-content: stretch;
+        -webkit-align-items: flex-start;
+        align-items: flex-start;
+      "
+    >
       <!--
       <p>videoURL: {{ videoURL }}</p>
       <p>mimeType: {{ mimeType }}</p>
@@ -16,12 +35,24 @@
         data-setup="{}"
         v-bind:poster="slateURL"
         autoplay
-        style="width: 100%; max-height: calc(100vh - 140px); background-color: black; border-color: black; outline-color: black"
+        style="
+          width: 100%;
+          max-height: calc(100vh - 140px);
+          background-color: black;
+          border-color: black;
+          outline-color: black;
+          -webkit-order: 0;
+          order: 0;
+          -webkit-flex: 1 1 auto;
+          flex: 1 1 auto;
+          -webkit-align-self: stretch;
+          align-self: stretch;
+        "
       >
         <!-- style="width: 100%; min-height: 600px !important; background-color: black; border-color: black; outline-color: black" -->
         <source v-bind:src="videoURL" v-bind:type="mimeType" />
       </video>
-      <div>
+      <div v-bind:style="controlsStyle" v-on:mouseover="controlsHovered = true" v-on:mouseleave="controlsHovered = false">
         <v-list-item-content v-if="trailerRotation" class="align-self-start" style="padding-top: 6px; padding-bottom: 6px; padding-left: 8px">
           <v-row class="mk-compact-movie-list-title"> {{ $t("Trailer Rotation") }}: </v-row>
           <div>
@@ -82,6 +113,10 @@ export default {
 
   props: ["show", "videoURL", "mimeType", "slateURL", "trailerRotation", "showActualPlayer"],
 
+  data: () => ({
+    controlsHovered: false,
+  }),
+
   computed: {
     prevClass() {
       return {
@@ -92,6 +127,20 @@ export default {
     nextClass() {
       return {
         "v-pagination__navigation--disabled": this.trailerRotation.remaining.length == 0,
+      };
+    },
+
+    controlsStyle() {
+      return {
+        "-webkit-order": 0,
+        order: 0,
+        "-webkit-flex": "0 1 auto",
+        flex: "0 1 auto",
+        "-webkit-align-self": "stretch",
+        "align-self": "stretch",
+
+        transition: this.controlsHovered ? "opacity 200ms ease-in-out" : "opacity 1000ms ease-in-out",
+        opacity: this.controlsHovered ? 1 : 0,
       };
     },
   },

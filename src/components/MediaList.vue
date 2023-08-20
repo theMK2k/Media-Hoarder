@@ -855,7 +855,7 @@
 
               <v-row style="margin-top: 16px">
                 <v-btn text color="primary" v-on:click.stop="copyInfo([item])">{{ $t("Copy Info") }}</v-btn>
-                <v-btn v-if="item.IMDB_Trailer_URL" text color="primary" v-on:click.stop="showTrailerLocal(item)">{{ $t("Trailer") }}</v-btn>
+                <v-btn v-if="item.IMDB_Trailer_URL" text color="primary" v-on:click.stop="showTrailer(item)">{{ $t("Trailer") }}</v-btn>
                 <v-btn text v-bind:disabled="!item.IMDB_tconst" color="primary" v-on:click.stop="openIMDB(item)">
                   <v-icon small>mdi-web</v-icon>&nbsp;IMDB
                 </v-btn>
@@ -966,8 +966,13 @@
 
     <mk-video-player-dialog
       v-bind:show="videoPlayerDialog.show"
+      v-bind:showActualPlayer="videoPlayerDialog.showActualPlayer"
       v-bind:src="videoPlayerDialog.videoURL"
+      v-bind:trailerRotation="trailerRotation"
       v-on:close="onVideoPlayerDialogClose"
+      v-on:trailer-rotation-previous="onTrailerRotationPrevious"
+      v-on:trailer-rotation-next="onTrailerRotationNext"
+      v-on:trailer-rotation-add-movie-to-list="onTrailerRotationAddMovieToList"
     ></mk-video-player-dialog>
 
     <mk-local-video-player-dialog
@@ -976,11 +981,11 @@
       v-bind:videoURL="localVideoPlayerDialog.videoURL"
       v-bind:slateURL="localVideoPlayerDialog.slate"
       v-bind:mimeType="localVideoPlayerDialog.mimeType"
-      v-bind:trailerRotation="localVideoPlayerDialog.trailerRotation"
+      v-bind:trailerRotation="trailerRotation"
       v-on:close="onLocalVideoPlayerDialogClose"
-      v-on:trailer-rotation-previous="onLocalVideoPlayerDialogTrailerRotationPrevious"
-      v-on:trailer-rotation-next="onLocalVideoPlayerDialogTrailerRotationNext"
-      v-on:trailer-rotation-add-movie-to-list="onLocalVideoPlayerDialogTrailerRotationAddMovieToList"
+      v-on:trailer-rotation-previous="onTrailerRotationPrevious"
+      v-on:trailer-rotation-next="onTrailerRotationNext"
+      v-on:trailer-rotation-add-movie-to-list="onTrailerRotationAddMovieToList"
     ></mk-local-video-player-dialog>
 
     <mk-link-imdb-dialog
@@ -1056,6 +1061,7 @@ const fs = require("fs-extra");
 
 import StarRating from "vue-star-rating";
 import * as Humanize from "humanize-plus";
+import * as _ from "lodash";
 
 import * as store from "@/store";
 import { eventBus } from "@/main";
@@ -1216,6 +1222,7 @@ export default {
 
     videoPlayerDialog: {
       show: false,
+      showActualPlayer: false,
       videoURL: null,
     },
 
@@ -1225,12 +1232,12 @@ export default {
       videoURL: null,
       slateURL: null,
       mimeType: null,
+    },
 
-      trailerRotation: {
-        remaining: [],
-        current: null,
-        history: [],
-      },
+    trailerRotation: {
+      remaining: [],
+      current: null,
+      history: [],
     },
 
     editItemDialog: {
@@ -1708,14 +1715,21 @@ export default {
       })();
     },
 
-    showTrailer(item) {
+    showTrailerGeneral(item) {
+      // Fallback to a general dialog showing the site in an iframe
       const trailerURL = item.IMDB_Trailer_URL.replace("https://www.imdb.com", "");
       this.videoPlayerDialog.videoURL = `https://www.imdb.com${trailerURL}`;
-      logger.log("[showTrailer] this.videoPlayerDialog.videoURL:", this.videoPlayerDialog.videoURL);
-      this.videoPlayerDialog.show = true;
+      logger.log("[showTrailerGeneral] this.videoPlayerDialog.videoURL:", this.videoPlayerDialog.videoURL);
+
+      this.videoPlayerDialog.showActualPlayer = false;
+
+      window.requestAnimationFrame(() => {
+        this.videoPlayerDialog.showActualPlayer = true;
+        this.videoPlayerDialog.show = true;
+      });
     },
 
-    async showTrailerLocal(item, trailerRotation) {
+    async showTrailer(item, trailerRotation) {
       try {
         const trailerURL = item.IMDB_Trailer_URL.replace("https://www.imdb.com", "");
 
@@ -1725,19 +1739,23 @@ export default {
 
         const dontUseLocalPlayer = false; // TODO: we can scrape mediaURLs, but we get a 403 Forbidden if we access them with our media player
 
+        this.trailerRotation = trailerRotation;
+
         if (dontUseLocalPlayer || !trailerMediaURLs || !trailerMediaURLs.mediaURLs || trailerMediaURLs.mediaURLs.length == 0) {
-          return this.showTrailer(item); // Fallback to the more general player showing the IMDB site
+          // Fallback to the more general player showing the IMDB site
+          return this.showTrailerGeneral(item);
         }
 
+        // We can show the local player and feed it an actual media URL (e.g. url to an mp4 file)
         const trailerMediaURL = store.selectBestQualityMediaURL(trailerMediaURLs.mediaURLs);
 
-        logger.log("[showTrailerLocal] selected best quality trailerMediaURL:", trailerMediaURL);
+        logger.log("[showTrailer] selected best quality trailerMediaURL:", trailerMediaURL);
 
-        this.localVideoPlayerDialog.trailerRotation = trailerRotation;
         this.localVideoPlayerDialog.videoURL = trailerMediaURL.mediaURL;
         this.localVideoPlayerDialog.mimeType = trailerMediaURL.mimeType;
         this.localVideoPlayerDialog.slateURL = trailerMediaURLs.slateURL;
         this.localVideoPlayerDialog.showActualPlayer = false;
+
         window.requestAnimationFrame(() => {
           this.localVideoPlayerDialog.showActualPlayer = true;
           this.localVideoPlayerDialog.show = true;
@@ -2272,18 +2290,18 @@ export default {
 
       const current = moviesWithTrailers.shift();
 
-      this.localVideoPlayerDialog.trailerRotation = {
+      this.trailerRotation = {
         remaining: moviesWithTrailers,
         current,
         history: [],
       };
 
       // show trailer player (local or remote)
-      await this.showTrailerLocal(current, this.localVideoPlayerDialog.trailerRotation);
+      await this.showTrailer(current, this.trailerRotation);
     },
 
-    async onLocalVideoPlayerDialogTrailerRotationPrevious() {
-      const { remaining, current, history } = this.localVideoPlayerDialog.trailerRotation;
+    async onTrailerRotationPrevious() {
+      const { remaining, current, history } = this.trailerRotation;
 
       if (history.length === 0) {
         return;
@@ -2293,17 +2311,17 @@ export default {
 
       remaining.unshift(current);
 
-      this.localVideoPlayerDialog.trailerRotation = {
+      this.trailerRotation = {
         remaining,
         current: previous,
         history,
       };
 
-      await this.showTrailerLocal(previous, this.localVideoPlayerDialog.trailerRotation);
+      await this.debouncedShowTrailer(previous, this.trailerRotation);
     },
 
-    async onLocalVideoPlayerDialogTrailerRotationNext() {
-      const { remaining, current, history } = this.localVideoPlayerDialog.trailerRotation;
+    async onTrailerRotationNext() {
+      const { remaining, current, history } = this.trailerRotation;
 
       if (remaining.length === 0) {
         return;
@@ -2313,17 +2331,17 @@ export default {
 
       const new_current = remaining.shift();
 
-      this.localVideoPlayerDialog.trailerRotation = {
+      this.trailerRotation = {
         remaining,
         current: new_current,
         history,
       };
 
-      await this.showTrailerLocal(new_current, this.localVideoPlayerDialog.trailerRotation);
+      this.debouncedShowTrailer(new_current, this.trailerRotation);
     },
 
-    async onLocalVideoPlayerDialogTrailerRotationAddMovieToList() {
-      await this.addToList(this.localVideoPlayerDialog.trailerRotation.current);
+    async onTrailerRotationAddMovieToList() {
+      await this.addToList(this.trailerRotation.current);
     },
 
     onOpenLinkIMDBDialog(item) {
@@ -2806,6 +2824,9 @@ export default {
     setInterval(() => {
       this.updateCurrentTime();
     }, 10000);
+
+    // lodash debounced functions
+    this.debouncedShowTrailer = _.debounce(this.showTrailer, 500);
   },
 
   beforeDestroy() {
