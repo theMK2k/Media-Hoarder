@@ -111,11 +111,11 @@
             <v-list-item v-on:click="copyInfo(itemsFiltered)">
               {{ $t("Copy Info") }}
             </v-list-item>
-            <v-list-item v-on:click="startTrailerRotation(itemsFiltered, false)">
-              {{ $t("Start Trailer Rotation (Ordered)") }}
+            <v-list-item v-on:click="startTrailerShow(itemsFiltered, false)">
+              {{ $t("Start Trailer Show (Ordered)") }}
             </v-list-item>
-            <v-list-item v-on:click="startTrailerRotation(itemsFiltered, true)">
-              {{ $t("Start Trailer Rotation (Randomized)") }}
+            <v-list-item v-on:click="startTrailerShow(itemsFiltered, true)">
+              {{ $t("Start Trailer Show (Randomized)") }}
             </v-list-item>
           </v-list>
         </v-menu>
@@ -968,12 +968,12 @@
       v-bind:show="videoPlayerDialog.show"
       v-bind:showActualPlayer="videoPlayerDialog.showActualPlayer"
       v-bind:src="videoPlayerDialog.videoURL"
-      v-bind:trailerRotation="trailerRotation"
+      v-bind:trailerShow="trailerShow"
       v-on:close="onVideoPlayerDialogClose"
-      v-on:trailer-rotation-previous="onTrailerRotationPrevious"
-      v-on:trailer-rotation-next="onTrailerRotationNext"
-      v-on:trailer-rotation-add-movie-to-list="onTrailerRotationAddMovieToList"
-      v-on:trailer-rotation-close-and-search-movie="onTrailerRotationCloseAndSearchMovie"
+      v-on:trailer-show-previous="onTrailerShowPrevious"
+      v-on:trailer-show-next="onTrailerShowNext"
+      v-on:trailer-show-add-movie-to-list="onTrailerShowAddMovieToList"
+      v-on:trailer-show-close-and-search-movie="onTrailerShowCloseAndSearchMovie"
     ></mk-video-player-dialog>
 
     <mk-local-video-player-dialog
@@ -982,12 +982,12 @@
       v-bind:videoURL="localVideoPlayerDialog.videoURL"
       v-bind:slateURL="localVideoPlayerDialog.slate"
       v-bind:mimeType="localVideoPlayerDialog.mimeType"
-      v-bind:trailerRotation="trailerRotation"
+      v-bind:trailerShow="trailerShow"
       v-on:close="onLocalVideoPlayerDialogClose"
-      v-on:trailer-rotation-previous="onTrailerRotationPrevious"
-      v-on:trailer-rotation-next="onTrailerRotationNext"
-      v-on:trailer-rotation-add-movie-to-list="onTrailerRotationAddMovieToList"
-      v-on:trailer-rotation-close-and-search-movie="onTrailerRotationCloseAndSearchMovie"
+      v-on:trailer-show-previous="onTrailerShowPrevious"
+      v-on:trailer-show-next="onTrailerShowNext"
+      v-on:trailer-show-add-movie-to-list="onTrailerShowAddMovieToList"
+      v-on:trailer-show-close-and-search-movie="onTrailerShowCloseAndSearchMovie"
     ></mk-local-video-player-dialog>
 
     <mk-link-imdb-dialog
@@ -1236,7 +1236,7 @@ export default {
       mimeType: null,
     },
 
-    trailerRotation: {
+    trailerShow: {
       remaining: [],
       current: null,
       history: [],
@@ -1731,7 +1731,7 @@ export default {
       });
     },
 
-    async showTrailer(item, trailerRotation) {
+    async showTrailer(item, trailerShow) {
       try {
         const trailerURL = item.IMDB_Trailer_URL.replace("https://www.imdb.com", "");
 
@@ -1741,7 +1741,7 @@ export default {
 
         const dontUseLocalPlayer = false; // TODO: we can scrape mediaURLs, but we get a 403 Forbidden if we access them with our media player
 
-        this.trailerRotation = trailerRotation;
+        this.trailerShow = trailerShow;
 
         if (dontUseLocalPlayer || !trailerMediaURLs || !trailerMediaURLs.mediaURLs || trailerMediaURLs.mediaURLs.length == 0) {
           // Fallback to the more general player showing the IMDB site
@@ -2272,7 +2272,7 @@ export default {
       }, 250);
     },
 
-    async startTrailerRotation(movies, randomizeMovies) {
+    async startTrailerShow(movies, randomizeMovies) {
       let moviesWithTrailers = movies.filter((movie) => movie.IMDB_Trailer_URL);
 
       if (!moviesWithTrailers || moviesWithTrailers.length === 0) {
@@ -2280,14 +2280,14 @@ export default {
         return;
       }
 
-      logger.log("[startTrailerRotation] number of moviesWithTrailers before deduplication:", moviesWithTrailers.length);
+      logger.log("[startTrailerShow] number of moviesWithTrailers before deduplication:", moviesWithTrailers.length);
 
       // deduplicate trailerURLs
       moviesWithTrailers = moviesWithTrailers.filter(
         (trailerURL, index, self) => self.findIndex((t) => t.IMDB_Trailer_URL === trailerURL.IMDB_Trailer_URL) === index
       );
 
-      logger.log("[startTrailerRotation] number of moviesWithTrailers after deduplication:", moviesWithTrailers.length);
+      logger.log("[startTrailerShow] number of moviesWithTrailers after deduplication:", moviesWithTrailers.length);
 
       if (randomizeMovies) {
         moviesWithTrailers = helpers.randomizeArray(moviesWithTrailers);
@@ -2295,18 +2295,18 @@ export default {
 
       const current = moviesWithTrailers.shift();
 
-      this.trailerRotation = {
+      this.trailerShow = {
         remaining: moviesWithTrailers,
         current,
         history: [],
       };
 
       // show trailer player (local or remote)
-      await this.showTrailer(current, this.trailerRotation);
+      await this.showTrailer(current, this.trailerShow);
     },
 
-    async onTrailerRotationPrevious() {
-      const { remaining, current, history } = this.trailerRotation;
+    async onTrailerShowPrevious() {
+      const { remaining, current, history } = this.trailerShow;
 
       if (history.length === 0) {
         return;
@@ -2316,17 +2316,17 @@ export default {
 
       remaining.unshift(current);
 
-      this.trailerRotation = {
+      this.trailerShow = {
         remaining,
         current: previous,
         history,
       };
 
-      await this.debouncedShowTrailer(previous, this.trailerRotation);
+      await this.debouncedShowTrailer(previous, this.trailerShow);
     },
 
-    async onTrailerRotationNext() {
-      const { remaining, current, history } = this.trailerRotation;
+    async onTrailerShowNext() {
+      const { remaining, current, history } = this.trailerShow;
 
       if (remaining.length === 0) {
         return;
@@ -2336,28 +2336,28 @@ export default {
 
       const new_current = remaining.shift();
 
-      this.trailerRotation = {
+      this.trailerShow = {
         remaining,
         current: new_current,
         history,
       };
 
-      this.debouncedShowTrailer(new_current, this.trailerRotation);
+      this.debouncedShowTrailer(new_current, this.trailerShow);
     },
 
-    async onTrailerRotationAddMovieToList() {
-      await this.addToList(this.trailerRotation.current);
+    async onTrailerShowAddMovieToList() {
+      await this.addToList(this.trailerShow.current);
     },
 
-    async onTrailerRotationCloseAndSearchMovie() {
+    async onTrailerShowCloseAndSearchMovie() {
       if (this.videoPlayerDialog.show) {
         await this.onVideoPlayerDialogClose();
       } else {
         await this.onLocalVideoPlayerDialogClose();
       }
 
-      logger.log("[onTrailerRotationCloseAndSearchMovie] this.trailerRotation.current.IMDB_tconst:", this.trailerRotation.current.IMDB_tconst);
-      eventBus.setSearchText(`${this.trailerRotation.current.Name} [${this.trailerRotation.current.IMDB_tconst}]`);
+      logger.log("[onTrailerShowCloseAndSearchMovie] this.trailerShow.current.IMDB_tconst:", this.trailerShow.current.IMDB_tconst);
+      eventBus.setSearchText(`${this.trailerShow.current.Name} [${this.trailerShow.current.IMDB_tconst}]`);
     },
 
     onOpenLinkIMDBDialog(item) {
