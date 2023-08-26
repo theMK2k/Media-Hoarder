@@ -6,6 +6,7 @@
       flat
       v-bind:ripple="false"
       style="
+        border-radius: 0px;
         background-color: black;
         display: -webkit-flex;
         display: flex;

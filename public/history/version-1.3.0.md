@@ -16,3 +16,9 @@ These actions will start a trailer rotation of the underlying list of movies, ei
 ## Trailer Dialog
 
 The trailer dialog has been updated for a better watching experience and uses the maximum available screen space including full screen if you choose.
+
+## Other Improvements and Fixes
+
+- IMDB Scraper Updates
+  - Metacritic Score
+  - Trailer Media URLs

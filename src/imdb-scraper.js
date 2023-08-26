@@ -152,6 +152,13 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
       $IMDB_metacriticScore = parseInt(html.match(rxMetacriticScoreV2)[1]);
     }
 
+    // V2.1
+    // <span class="sc-b0901df4-0 gzyNKq metacritic-score-box" style="background-color:#54A72A">78</span>
+    const rxMetacriticScoreV21 = /<span class=".*?metacritic-score-box[\s\S]*?>(\d+)<\/span>/;
+    if (rxMetacriticScoreV21.test(html)) {
+      $IMDB_metacriticScore = parseInt(html.match(rxMetacriticScoreV21)[1]);
+    }
+
     // ## Poster
     let $IMDB_posterSmall_URL = null;
     let $IMDB_posterLarge_URL = null;
@@ -1707,37 +1714,62 @@ async function scrapeIMDBFind(searchTerm, type) {
   return results;
 }
 
-async function scrapeIMDBTrailerMediaURLs(trailerURL) {
+async function scrapeIMDBTrailerMediaURLsV3(html) {
   try {
-    const result = [];
+    logger.log("[scrapeIMDBTrailerMediaURLsV3] START");
 
-    trailerURL = trailerURL.replace("/video/imdb/", "/videoplayer/");
+    // V3: we partially use the __NEXT_DATA__ data, too
+    const jsonDataNext = JSON.parse((html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/) || [null, "{}"])[1]);
 
-    logger.log("[scrapeIMDBTrailerMediaURLs] trailerURL:", trailerURL);
+    // logger.log("[scrapeIMDBTrailerMediaURLsV3] jsonDataNext:", logger.inspectObject(jsonDataNext));
 
-    const response = await helpers.requestAsync({
-      uri: trailerURL,
-      headers: {
-        "user-agent": "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
-      },
+    // V3
+    let mediaURLs = _.get(jsonDataNext, "props.pageProps.videoPlaybackData.video.playbackURLs", []).map((playbackURL) => {
+      return {
+        definition: playbackURL.displayName.value,
+        mimeType: playbackURL.mimeType,
+        mediaURL: playbackURL.url,
+      };
     });
+    logger.log("[scrapeIMDBTrailerMediaURLsV3] mediaURLs:", logger.inspectObject(mediaURLs));
 
-    const html = response.body;
+    const result = {
+      mediaURLs,
+      slateURL: null, // no slate url in V3
+    };
+
+    return result;
+  } catch (err) {
+    logger.error(err);
+    throw err;
+  }
+}
+
+async function scrapeIMDBTrailerMediaURLsV1(html) {
+  try {
+    logger.log("[scrapeIMDBTrailerMediaURLsV1] START");
+
+    const mediaURLs = [];
 
     // logger.log("[scrapeIMDBTrailerMediaURLs] trailerURLs html:", html);
 
+    // OLD: mimeType, url, displayName
     // "mimeType":"application/x-mpegurl","url":"https://imdb-video.media-imdb.com/vi3904176409/hls-1563415099186-master.m3u8?Expires=1662285123\u0026Signature=SytIHP0GmrooACG~4TQic~SvLmx1ZO5C19okQNOvTwVDtLW3AosKyf8imZlSwLiXH62XATzQycCANPHHLmV2thnTZC-ag6zO7Nf-iytjJUoeYPY7PzxUiebt3k8mSZWrgQUpo3DvAU3Mi7EcNRzhqUSKs4NI-8ghvEEMtfZmLDtjzY9R6Otomr8dHt5AqafMFJf4GZOEpW3rqP1sDl1GMkaRLJOFJwqS32xICFcYG0Eaok5Qm4Lo5TJWWwAi~eyuWZDh-25xMNDaMRpznuo~VhKHcNWpt7fO3JHIIfEl0AnOt0X~esP4vxcYronHDpahSfiO2hPmVozd~9Ii2HrXwA__\u0026Key-Pair-Id=APKAIFLZBVQZ24NQH3KA","displayName":{"value":"AUTO","language":"en-US","__typename":"LocalizedString"},"__typename":"PlaybackURL"
-    const rxMediaURL = /"mimeType":"(.*?)","url":"(.*?)","displayName":{"value":"(.*?)"/g;
+    // const rxMediaURL = /"mimeType":"(.*?)","url":"(.*?)","displayName":{"value":"(.*?)"/g;
+
+    // NEW: displayName, mimeType, url
+    // "displayName":{"value":"AUTO","language":"en-US","__typename":"LocalizedString"},"mimeType":"application/x-mpegurl","url":"https://imdb-video.media-imdb.com/vi2163260441/hls-1556354704370-master.m3u8?Expires=1693139566\u0026Signature=cIIoIbiGpnNaoSbMdXih4BsbXDpPsZMPS4dTbbSdi5lfm7~LnYCej58t50RtboMZ2IL0a2PouTjkJpJoBf0Q9UHFnPESx9sDahiLim5qrv6xQTL8wrYIR8pH5gYRzEuHa~vxDxBkq9~qHsvUrDy9uk~JGmYkMoKHnn9V5KV4aohDRVabb7-YyqMh2vDF2XFPB2051mGVyVpTYdeATjuQKOfBTM0oxELXfCJz1u8~S9cO9HfeOvKqvxOGAgLRL~hh8JtEctOwEYjrVwAuCKGViNDvFhsBPmMz~xCtfi0zzWqMjvDcseK2KSy~7gTnxKAKCdBF3UQuorFtA8wlgQJclw__\u0026Key-Pair-Id=APKAIFLZBVQZ24NQH3KA"
+    const rxMediaURL = /"displayName":{"value":"(.*?)".*?},"mimeType":"(.*?)","url":"(.*?)"/g;
 
     let match = null;
 
     // eslint-disable-next-line no-cond-assign
     while ((match = rxMediaURL.exec(html))) {
-      const mimeType = match[1].replace(/\\u002F/g, "/");
-      const mediaURL = match[2].replace(/\\u002F/g, "/").replace(/\\u0026/g, "&");
-      const definition = match[3];
+      const definition = match[1];
+      const mimeType = match[2].replace(/\\u002F/g, "/");
+      const mediaURL = match[3].replace(/\\u002F/g, "/").replace(/\\u0026/g, "&");
 
-      result.push({
+      mediaURLs.push({
         definition,
         mimeType,
         mediaURL,
@@ -1751,10 +1783,44 @@ async function scrapeIMDBTrailerMediaURLs(trailerURL) {
       slateURL = html.match(rxSlate)[1].replace(/\\u002F/g, "/");
     }
 
-    return {
-      mediaURLs: result,
+    const result = {
+      mediaURLs,
       slateURL,
     };
+
+    logger.log("[scrapeIMDBTrailerMediaURLsV1] result:", result);
+
+    return result;
+  } catch (err) {
+    logger.error(err);
+    throw err;
+  }
+}
+
+async function scrapeIMDBTrailerMediaURLs(trailerURL) {
+  try {
+    trailerURL = trailerURL.replace("/video/imdb/", "/videoplayer/");
+
+    logger.log("[scrapeIMDBTrailerMediaURLs] trailerURL:", trailerURL);
+
+    const response = await helpers.requestAsync({
+      uri: trailerURL,
+      headers: {
+        "user-agent": "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
+      },
+    });
+
+    const html = response.body;
+
+    let result = await scrapeIMDBTrailerMediaURLsV3(html);
+    logger.debug("[scrapeIMDBTrailerMediaURLs] V3 result:", result);
+
+    if (!result || !result.mediaURLs || result.mediaURLs.length === 0) {
+      // Fallbac to V1
+      result = await scrapeIMDBTrailerMediaURLsV1(html);
+    }
+
+    return result;
   } catch (err) {
     logger.error(err);
     throw err;

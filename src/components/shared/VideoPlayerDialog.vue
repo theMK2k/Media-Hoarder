@@ -6,6 +6,7 @@
       flat
       v-bind:ripple="false"
       style="
+        border-radius: 0px;
         background-color: black;
         display: -webkit-flex;
         display: flex;
@@ -50,7 +51,7 @@
         </v-list-item-content>
 
         <v-row style="max-width: 100%; margin-top: 8px; padding-left: 8px">
-          <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="$emit('close')" style="margin-left: 8px">{{ $t("Close") }}</v-btn>
+          <v-btn class="xs-fullwidth" outlined color="secondary" v-on:click.native="$emit('close')" style="margin-left: 8px">{{ $t("Close") }}</v-btn>
           <v-spacer></v-spacer>
           <div v-if="trailerRotation" style="padding-right: 8px">
             <v-pagination v-if="false"></v-pagination>
@@ -78,12 +79,17 @@
             >
               <i aria-hidden="true" class="v-icon notranslate mdi mdi-chevron-right theme--dark"></i>
             </button>
-            <v-btn class="xs-fullwidth" color="primary" v-on:click.native="$emit('trailer-rotation-add-movie-to-list')" style="margin-left: 8px">{{
+            <v-btn class="xs-fullwidth" outlined color="primary" v-on:click.native="$emit('trailer-rotation-add-movie-to-list')" style="margin-left: 8px">{{
               $t("Add Movie to List")
             }}</v-btn>
-            <v-btn class="xs-fullwidth" color="primary" v-on:click.native="$emit('trailer-rotation-close-and-search-movie')" style="margin-left: 8px">{{
-              $t("Close and Search Movie")
-            }}</v-btn>
+            <v-btn
+              class="xs-fullwidth"
+              outlined
+              color="primary"
+              v-on:click.native="$emit('trailer-rotation-close-and-search-movie')"
+              style="margin-left: 8px"
+              >{{ $t("Close and Search Movie") }}</v-btn
+            >
           </div>
         </v-row>
       </div>

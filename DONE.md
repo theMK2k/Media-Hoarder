@@ -10,6 +10,9 @@
   - [x] implement trailer rotation in non-local player dialog
   - [x] load next trailer in trailer rotation when previous ended
   - [x] "Close and Show this Movie"
+- imdb scraper fixes
+  - metacritic score (V2.1)
+  - trailer urls (V3)
 
 ## v1.2.3
 
