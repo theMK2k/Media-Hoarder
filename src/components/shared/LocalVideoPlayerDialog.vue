@@ -63,7 +63,7 @@
         </v-list-item-content>
 
         <v-row style="max-width: 100%; margin-top: 8px; padding-left: 8px">
-          <v-btn class="xs-fullwidth" outlined color="secondary" v-on:click.native="$emit('close')" style="margin-left: 8px">{{ $t("Close") }}</v-btn>
+          <v-btn class="xs-fullwidth" outlined color="white" v-on:click.native="$emit('close')" style="margin-left: 8px">{{ $t("Close") }}</v-btn>
           <v-spacer></v-spacer>
           <div v-if="trailerShow" style="padding-right: 8px">
             <v-pagination v-if="false"></v-pagination>
