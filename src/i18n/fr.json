@@ -967,10 +967,10 @@
   "Do you want to rescan the metadata for each entry in the current list?": "Voulez-vous rescanner les métadonnées pour chaque entrée de la liste actuelle?",
   "List Actions": "Actions pour la liste",
 
-  "Start Trailer Rotation (Ordered)": "fr: Starte Trailer Rotation (Sortiert)",
-  "Start Trailer Rotation (Randomized)": "fr: Starte Trailer Rotation (Zufällig)",
+  "Start Trailer Show (Ordered)": "fr: Starte Trailer Show (Sortiert)",
+  "Start Trailer Show (Randomized)": "fr: Starte Trailer Show (Zufällig)",
 
-  "Trailer Rotation": "fr: Trailer Rotation",
+  "Trailer Show": "fr: Trailer Show",
   "Add Movie to List": "fr: Film zu Liste Hinzufügen",
   "Close and Search Movie": "fr: Schließen und Film Suchen"
 }

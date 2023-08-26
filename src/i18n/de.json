@@ -966,10 +966,10 @@
   "Do you want to rescan the metadata for each entry in the current list?": "Sollen die Metadaten für die aktuellen Liste erneut ermittelt werden?",
   "List Actions": "Listenaktionen",
 
-  "Start Trailer Rotation (Ordered)": "Starte Trailer Rotation (Sortiert)",
-  "Start Trailer Rotation (Randomized)": "Starte Trailer Rotation (Zufällig)",
+  "Start Trailer Show (Ordered)": "Starte Trailer Show (Sortiert)",
+  "Start Trailer Show (Randomized)": "Starte Trailer Show (Zufällig)",
 
-  "Trailer Rotation": "Trailer Rotation",
+  "Trailer Show": "Trailer Show",
   "Add Movie to List": "Film zu Liste Hinzufügen",
   "Close and Search Movie": "Schließen und Film Suchen"
 }

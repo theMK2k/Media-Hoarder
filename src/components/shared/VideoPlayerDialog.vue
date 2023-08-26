@@ -43,50 +43,50 @@
         "
       ></webview>
       <div v-bind:style="controlsStyle" v-on:mouseover="controlsHovered = true" v-on:mouseleave="controlsHovered = false">
-        <v-list-item-content v-if="trailerRotation" class="align-self-start" style="padding-top: 6px; padding-bottom: 6px; padding-left: 8px">
-          <v-row class="mk-compact-movie-list-title"> {{ $t("Trailer Rotation") }}: </v-row>
+        <v-list-item-content v-if="trailerShow" class="align-self-start" style="padding-top: 6px; padding-bottom: 6px; padding-left: 8px">
+          <v-row class="mk-compact-movie-list-title"> {{ $t("Trailer Show") }}: </v-row>
           <div>
-            <mk-compact-movie-list-row v-bind:movie="trailerRotation.current" />
+            <mk-compact-movie-list-row v-bind:movie="trailerShow.current" />
           </div>
         </v-list-item-content>
 
         <v-row style="max-width: 100%; margin-top: 8px; padding-left: 8px">
           <v-btn class="xs-fullwidth" outlined color="secondary" v-on:click.native="$emit('close')" style="margin-left: 8px">{{ $t("Close") }}</v-btn>
           <v-spacer></v-spacer>
-          <div v-if="trailerRotation" style="padding-right: 8px">
+          <div v-if="trailerShow" style="padding-right: 8px">
             <v-pagination v-if="false"></v-pagination>
             <!-- we have to use this, else we don't get v-pagination* classes -->
             <button
               type="button"
               class="v-pagination__navigation"
               v-bind:class="prevClass"
-              v-bind:disabled="trailerRotation.history.length == 0"
-              v-on:click="$emit('trailer-rotation-previous')"
+              v-bind:disabled="trailerShow.history.length == 0"
+              v-on:click="$emit('trailer-show-previous')"
               style="height: 38px !important; width: 38px !important; margin: 0px 8px 0px 0px !important; display: inline-block"
             >
               <i aria-hidden="true" class="v-icon notranslate mdi mdi-chevron-left theme--dark"></i>
             </button>
 
-            {{ trailerRotation.history.length + 1 }} / {{ trailerRotation.history.length + trailerRotation.remaining.length + 1 }}
+            {{ trailerShow.history.length + 1 }} / {{ trailerShow.history.length + trailerShow.remaining.length + 1 }}
 
             <button
               type="button"
               class="v-pagination__navigation"
               v-bind:class="nextClass"
-              v-bind:disabled="trailerRotation.remaining.length == 0"
-              v-on:click="$emit('trailer-rotation-next')"
+              v-bind:disabled="trailerShow.remaining.length == 0"
+              v-on:click="$emit('trailer-show-next')"
               style="height: 38px !important; width: 38px !important; margin: 0px 0px 0px 8px !important; display: inline-block"
             >
               <i aria-hidden="true" class="v-icon notranslate mdi mdi-chevron-right theme--dark"></i>
             </button>
-            <v-btn class="xs-fullwidth" outlined color="primary" v-on:click.native="$emit('trailer-rotation-add-movie-to-list')" style="margin-left: 8px">{{
+            <v-btn class="xs-fullwidth" outlined color="primary" v-on:click.native="$emit('trailer-show-add-movie-to-list')" style="margin-left: 8px">{{
               $t("Add Movie to List")
             }}</v-btn>
             <v-btn
               class="xs-fullwidth"
               outlined
               color="primary"
-              v-on:click.native="$emit('trailer-rotation-close-and-search-movie')"
+              v-on:click.native="$emit('trailer-show-close-and-search-movie')"
               style="margin-left: 8px"
               >{{ $t("Close and Search Movie") }}</v-btn
             >
@@ -108,7 +108,7 @@ export default {
     "mk-compact-movie-list-row": CompactMovieListRow,
   },
 
-  props: ["show", "src", "trailerRotation", "showActualPlayer"],
+  props: ["show", "src", "trailerShow", "showActualPlayer"],
 
   data: () => ({
     controlsHovered: false,
@@ -117,13 +117,13 @@ export default {
   computed: {
     prevClass() {
       return {
-        "v-pagination__navigation--disabled": this.trailerRotation.history.length == 0,
+        "v-pagination__navigation--disabled": this.trailerShow.history.length == 0,
       };
     },
 
     nextClass() {
       return {
-        "v-pagination__navigation--disabled": this.trailerRotation.remaining.length == 0,
+        "v-pagination__navigation--disabled": this.trailerShow.remaining.length == 0,
       };
     },
 

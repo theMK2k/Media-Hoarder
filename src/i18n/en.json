@@ -921,10 +921,10 @@
   "Rescan metadata of the current list": "Rescan metadata of the current list",
   "Do you want to rescan the metadata for each entry in the current list?": "Do you want to rescan the metadata for each entry in the current list?",
   "List Actions": "List Actions",
-  "Start Trailer Rotation (Ordered)": "Start Trailer Rotation (Ordered)",
-  "Start Trailer Rotation (Randomized)": "Start Trailer Rotation (Randomized)",
+  "Start Trailer Show (Ordered)": "Start Trailer Show (Ordered)",
+  "Start Trailer Show (Randomized)": "Start Trailer Show (Randomized)",
   
-  "Trailer Rotation": "Trailer Rotation",
+  "Trailer Show": "Trailer Show",
   "Add Movie to List": "Add Movie to List",
   "Close and Search Movie": "Close and Search Movie"
 }

@@ -2,13 +2,13 @@
 
 ## v1.3.0
 
-- [x] new list action: "start trailer rotation"
+- [x] new list action: "Start Trailer Show"
   - generate a list of distinct movies with available trailers from the current list
   - show trailer dialog beginning with the first
     - show [1/123]
     - provide "prev", "next", "add movie to list" buttons
-  - [x] implement trailer rotation in non-local player dialog
-  - [x] load next trailer in trailer rotation when previous ended
+  - [x] implement trailer show in non-local player dialog
+  - [x] load next trailer in trailer show when previous ended
   - [x] "Close and Show this Movie"
 - imdb scraper fixes
   - metacritic score (V2.1)
