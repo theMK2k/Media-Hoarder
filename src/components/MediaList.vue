@@ -973,6 +973,7 @@
       v-on:trailer-rotation-previous="onTrailerRotationPrevious"
       v-on:trailer-rotation-next="onTrailerRotationNext"
       v-on:trailer-rotation-add-movie-to-list="onTrailerRotationAddMovieToList"
+      v-on:trailer-rotation-close-and-search-movie="onTrailerRotationCloseAndSearchMovie"
     ></mk-video-player-dialog>
 
     <mk-local-video-player-dialog
@@ -986,6 +987,7 @@
       v-on:trailer-rotation-previous="onTrailerRotationPrevious"
       v-on:trailer-rotation-next="onTrailerRotationNext"
       v-on:trailer-rotation-add-movie-to-list="onTrailerRotationAddMovieToList"
+      v-on:trailer-rotation-close-and-search-movie="onTrailerRotationCloseAndSearchMovie"
     ></mk-local-video-player-dialog>
 
     <mk-link-imdb-dialog
@@ -1227,8 +1229,8 @@ export default {
     },
 
     localVideoPlayerDialog: {
-      showActualPlayer: false,
       show: false,
+      showActualPlayer: false,
       videoURL: null,
       slateURL: null,
       mimeType: null,
@@ -2258,6 +2260,9 @@ export default {
 
     onVideoPlayerDialogClose() {
       this.videoPlayerDialog.show = false;
+      setTimeout(() => {
+        this.videoPlayerDialog.showActualPlayer = false;
+      }, 250);
     },
 
     onLocalVideoPlayerDialogClose() {
@@ -2342,6 +2347,17 @@ export default {
 
     async onTrailerRotationAddMovieToList() {
       await this.addToList(this.trailerRotation.current);
+    },
+
+    async onTrailerRotationCloseAndSearchMovie() {
+      if (this.videoPlayerDialog.show) {
+        await this.onVideoPlayerDialogClose();
+      } else {
+        await this.onLocalVideoPlayerDialogClose();
+      }
+
+      logger.log("[onTrailerRotationCloseAndSearchMovie] this.trailerRotation.current.IMDB_tconst:", this.trailerRotation.current.IMDB_tconst);
+      eventBus.setSearchText(`${this.trailerRotation.current.Name} [${this.trailerRotation.current.IMDB_tconst}]`);
     },
 
     onOpenLinkIMDBDialog(item) {

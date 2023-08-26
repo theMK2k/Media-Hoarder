@@ -7,7 +7,9 @@
   - show trailer dialog beginning with the first
     - show [1/123]
     - provide "prev", "next", "add movie to list" buttons
-
+  - [x] implement trailer rotation in non-local player dialog
+  - [x] load next trailer in trailer rotation when previous ended
+  - [x] "Close and Show this Movie"
 
 ## v1.2.3
 

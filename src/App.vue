@@ -4239,6 +4239,10 @@ export default {
       );
     });
 
+    eventBus.$on("setSearchText", (value) => {
+      this.searchText = value;
+    });
+
     // lodash debounced functions
     this.debouncedEventBusSearchTextChanged = _.debounce(this.eventBusSearchTextChanged, 500);
 

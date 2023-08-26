@@ -964,5 +964,12 @@
   "Result": "Ergebnis",
   "Rescan metadata of the current list": "Metadaten der aktuellen Liste erneut ermitteln",
   "Do you want to rescan the metadata for each entry in the current list?": "Sollen die Metadaten für die aktuellen Liste erneut ermittelt werden?",
-  "List Actions": "Listenaktionen"
+  "List Actions": "Listenaktionen",
+
+  "Start Trailer Rotation (Ordered)": "Starte Trailer Rotation (Sortiert)",
+  "Start Trailer Rotation (Randomized)": "Starte Trailer Rotation (Zufällig)",
+
+  "Trailer Rotation": "Trailer Rotation",
+  "Add Movie to List": "Film zu Liste Hinzufügen",
+  "Close and Search Movie": "Schließen und Film Suchen"
 }

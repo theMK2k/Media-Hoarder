@@ -48,6 +48,7 @@
           -webkit-align-self: stretch;
           align-self: stretch;
         "
+        v-on:ended="onVideoEnded"
       >
         <!-- style="width: 100%; min-height: 600px !important; background-color: black; border-color: black; outline-color: black" -->
         <source v-bind:src="videoURL" v-bind:type="mimeType" />
@@ -92,6 +93,9 @@
             <v-btn class="xs-fullwidth" color="primary" v-on:click.native="$emit('trailer-rotation-add-movie-to-list')" style="margin-left: 8px">{{
               $t("Add Movie to List")
             }}</v-btn>
+            <v-btn class="xs-fullwidth" color="primary" v-on:click.native="$emit('trailer-rotation-close-and-search-movie')" style="margin-left: 8px">{{
+              $t("Close and Search Movie")
+            }}</v-btn>
           </div>
         </v-row>
       </div>
@@ -100,8 +104,9 @@
 </template>
 
 <script>
+// const videojs = require("video.js");
+
 // const logger = require("../../helpers/logger");
-const videojs = require("video.js");
 
 // import { eventBus } from "@/main";
 import CompactMovieListRow from "@/components/shared/CompactMovieListRow.vue";
@@ -146,9 +151,13 @@ export default {
   },
 
   methods: {
+    /* init isn't even called anyways
     init() {
       const options = {};
-      videojs("mk-video-player", options, function onPlayerReady() {
+
+      console.log("[videojs] init");
+
+      const videoplayer = videojs("mk-video-player", options, function onPlayerReady() {
         videojs.log("Your player is ready!");
 
         // In this context, `this` is the player that was created by Video.js.
@@ -156,13 +165,25 @@ export default {
 
         // How about an event listener?
         this.on("ended", function () {
-          videojs.log("Awww...over so soon?!");
+          console.log("[videojs] ended event triggered");
         });
+      });
+
+      videoplayer.on("ended", () => {
+        console.log("[videojs] ended event triggered (outside)");
       });
     },
 
     onEscapePressed() {
       this.$emit("close");
+    },
+    */
+
+    onVideoEnded() {
+      console.log("[video] ended event triggered (outside)");
+      if (this.trailerRotation && this.trailerRotation.remaining.length !== 0) {
+        this.$emit("trailer-rotation-next");
+      }
     },
   },
 

@@ -2,7 +2,7 @@
 
 ## NEXT Minor (current v1.3.0)
 
-- implement trailer rotation in non-local player dialog
+- [ ] remove rounded corners in LocalVideoPlayerDialog
 - edit movie: define audio / subtitle languages
 
 ### Defects

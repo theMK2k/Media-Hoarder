@@ -138,6 +138,10 @@ export const eventBus = new Vue({
       this.$emit("openCheckIMDBScraperDialog", settings);
     },
 
+    setSearchText(value) {
+      this.$emit("setSearchText", value);
+    },
+
     setProgressBar(value) {
       // value 0.00 - 1.00: absolute progress
       // value > 1.00: marquee

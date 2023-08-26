@@ -81,6 +81,9 @@
             <v-btn class="xs-fullwidth" color="primary" v-on:click.native="$emit('trailer-rotation-add-movie-to-list')" style="margin-left: 8px">{{
               $t("Add Movie to List")
             }}</v-btn>
+            <v-btn class="xs-fullwidth" color="primary" v-on:click.native="$emit('trailer-rotation-close-and-search-movie')" style="margin-left: 8px">{{
+              $t("Close and Search Movie")
+            }}</v-btn>
           </div>
         </v-row>
       </div>

@@ -538,7 +538,7 @@
     "South Africa": "Afrique du Sud",
     "Zambia": "Zambie",
     "Zaire": "Zaire",
-    "Zimbabwe": "Zimbabwe", 
+    "Zimbabwe": "Zimbabwe",
     "World-wide": "Mondial"
   },
   "Close": "Fermer",
@@ -742,44 +742,10 @@
     "Special Effects": "Effets spéciaux"
   },
   "moment": {
-    "months": [
-      "Janvier",
-      "Février",
-      "Mars",
-      "Avril",
-      "Mai",
-      "Juin",
-      "Juillet",
-      "Aout",
-      "Septembre",
-      "Octobre",
-      "Novembre",
-      "Décembre"
-    ],
-    "monthsShort": [
-      "Jan",
-      "Fev",
-      "Mar",
-      "Avr",
-      "Mai",
-      "Jui",
-      "Jul",
-      "Aou",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec"
-    ],
+    "months": ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Décembre"],
+    "monthsShort": ["Jan", "Fev", "Mar", "Avr", "Mai", "Jui", "Jul", "Aou", "Sep", "Oct", "Nov", "Dec"],
     "monthsParseExact": true,
-    "weekdays": [
-      "Dimanche",
-      "Lundi",
-      "Mardi",
-      "Mercredi",
-      "Jeudi",
-      "Vendredi",
-      "Samedi"
-    ],
+    "weekdays": ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
     "weekdaysShort": ["Di", "Lu", "Ma", "Me", "Je", "Ve", "Sa"],
     "weekdaysMin": ["Di", "Lu", "Ma", "Me", "Je", "ve", "Sa"],
     "weekdaysParseExact": true,
@@ -999,5 +965,12 @@
   "Result": "Résultat",
   "Rescan metadata of the current list": "Rescan des métadonnées de la liste courante",
   "Do you want to rescan the metadata for each entry in the current list?": "Voulez-vous rescanner les métadonnées pour chaque entrée de la liste actuelle?",
-  "List Actions": "Actions pour la liste"
+  "List Actions": "Actions pour la liste",
+
+  "Start Trailer Rotation (Ordered)": "fr: Starte Trailer Rotation (Sortiert)",
+  "Start Trailer Rotation (Randomized)": "fr: Starte Trailer Rotation (Zufällig)",
+
+  "Trailer Rotation": "fr: Trailer Rotation",
+  "Add Movie to List": "fr: Film zu Liste Hinzufügen",
+  "Close and Search Movie": "fr: Schließen und Film Suchen"
 }
