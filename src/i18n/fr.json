@@ -966,11 +966,9 @@
   "Rescan metadata of the current list": "Rescan des métadonnées de la liste courante",
   "Do you want to rescan the metadata for each entry in the current list?": "Voulez-vous rescanner les métadonnées pour chaque entrée de la liste actuelle?",
   "List Actions": "Actions pour la liste",
-
-  "Start Trailer Show (Ordered)": "fr: Starte Trailer Show (Sortiert)",
-  "Start Trailer Show (Randomized)": "fr: Starte Trailer Show (Zufällig)",
-
-  "Trailer Show": "fr: Trailer Show",
-  "Add Movie to List": "fr: Film zu Liste Hinzufügen",
-  "Close and Search Movie": "fr: Schließen und Film Suchen"
+  "Start Trailer Show (Ordered)": "Démarrer le show des bandes-annonces (trié)",
+  "Start Trailer Show (Randomized)": "Démarrer le show des bandes-annonces (aléatoire)",
+  "Trailer Show": "Show des Bandes-Annonces",
+  "Add Movie to List": "Ajouter un film à une liste",
+  "Close and Search Movie": "Fermer et rechercher le film"
 }

@@ -2,7 +2,12 @@
 
 ## NEXT Minor (current v1.3.0)
 
-- [ ] remove rounded corners in LocalVideoPlayerDialog
+- [ ] IMDB Scraper: analyze video URLs in "Videos" section and find a better suited Trailer URL than the one primarily shown in the main page (which is oftentimes an IMDB special)
+  - or simply use:
+    - <https://www.imdb.com/title/tt0088247/videogallery/content_type-trailer/?sort=date&sortDir=desc>
+    - <https://www.imdb.com/title/tt4154796/videogallery/content_type-trailer/?sortDir=desc&sort=duration>
+    - the trailers are also labeled!
+
 - edit movie: define audio / subtitle languages
 
 ### Defects

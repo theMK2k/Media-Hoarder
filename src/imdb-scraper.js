@@ -1810,13 +1810,21 @@ async function scrapeIMDBTrailerMediaURLs(trailerURL) {
       },
     });
 
+    logger.log("[scrapeIMDBTrailerMediaURLs] response.statusCode:", response.statusCode);
+
+    if (response.statusCode !== 200) {
+      return {
+        errorcode: response.statusCode,
+      };
+    }
+
     const html = response.body;
 
     let result = await scrapeIMDBTrailerMediaURLsV3(html);
     logger.debug("[scrapeIMDBTrailerMediaURLs] V3 result:", result);
 
     if (!result || !result.mediaURLs || result.mediaURLs.length === 0) {
-      // Fallbac to V1
+      // Fallback to V1
       result = await scrapeIMDBTrailerMediaURLsV1(html);
     }
 

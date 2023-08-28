@@ -13,6 +13,9 @@
 - imdb scraper fixes
   - metacritic score (V2.1)
   - trailer urls (V3)
+- [x] re-scrape IMDB Main Page if Trailer URL is 404
+- [x] remove rounded corners in LocalVideoPlayerDialog
+- [x] ensure both video player dialog types are closed before the next opens
 
 ## v1.2.3
 

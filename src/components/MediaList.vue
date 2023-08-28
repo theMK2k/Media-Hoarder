@@ -1067,7 +1067,7 @@ import * as _ from "lodash";
 
 import * as store from "@/store";
 import { eventBus } from "@/main";
-import { scrapeIMDBTrailerMediaURLs } from "@/imdb-scraper";
+import { scrapeIMDBTrailerMediaURLs, scrapeIMDBmainPageData } from "@/imdb-scraper";
 import WordHighlighter from "vue-word-highlighter";
 import EditMediaItemDialog from "@/components/shared/EditMediaItemDialog.vue";
 import ListDialog from "@/components/shared/ListDialog.vue";
@@ -1725,6 +1725,10 @@ export default {
 
       this.videoPlayerDialog.showActualPlayer = false;
 
+      // also close the local player if it is open
+      this.localVideoPlayerDialog.show = false;
+      this.localVideoPlayerDialog.showActualPlayer = false;
+
       window.requestAnimationFrame(() => {
         this.videoPlayerDialog.showActualPlayer = true;
         this.videoPlayerDialog.show = true;
@@ -1733,9 +1737,20 @@ export default {
 
     async showTrailer(item, trailerShow) {
       try {
-        const trailerURL = item.IMDB_Trailer_URL.replace("https://www.imdb.com", "");
+        let trailerMediaURLs = await scrapeIMDBTrailerMediaURLs(`https://www.imdb.com${item.IMDB_Trailer_URL.replace("https://www.imdb.com", "")}`);
 
-        const trailerMediaURLs = await scrapeIMDBTrailerMediaURLs(`https://www.imdb.com${trailerURL}`);
+        if (trailerMediaURLs.errorcode === 404) {
+          console.log("[showTrailer] IMDB_Trailer_URL yields 404, rescraping IMDB Main Page data...");
+          const newIMDBMainPageData = await scrapeIMDBmainPageData(item, async () => {
+            return false;
+          });
+
+          if (newIMDBMainPageData.$IMDB_Trailer_URL) {
+            await store.updateMediaRecordField(item.id_Movies, "IMDB_Trailer_URL", newIMDBMainPageData.$IMDB_Trailer_URL);
+            item.IMDB_Trailer_URL = newIMDBMainPageData.$IMDB_Trailer_URL;
+            trailerMediaURLs = await scrapeIMDBTrailerMediaURLs(`https://www.imdb.com${item.IMDB_Trailer_URL.replace("https://www.imdb.com", "")}`);
+          }
+        }
 
         logger.log("[showTrailer] trailerMediaURLs:", trailerMediaURLs);
 
@@ -1757,6 +1772,10 @@ export default {
         this.localVideoPlayerDialog.mimeType = trailerMediaURL.mimeType;
         this.localVideoPlayerDialog.slateURL = trailerMediaURLs.slateURL;
         this.localVideoPlayerDialog.showActualPlayer = false;
+
+        // also close the general player if it is open
+        this.videoPlayerDialog.show = false;
+        this.videoPlayerDialog.showActualPlayer = false;
 
         window.requestAnimationFrame(() => {
           this.localVideoPlayerDialog.showActualPlayer = true;
