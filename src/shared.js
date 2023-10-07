@@ -1012,7 +1012,8 @@ const shared = new Vue({
       return (
         this.filters.filterGenres &&
         ((!this.filters.filterSettings.filterGenresAND && this.filters.filterGenres.find((filter) => !filter.Selected)) ||
-          (this.filters.filterSettings.filterGenresAND && this.filters.filterGenres.find((filter) => filter.Selected)))
+          (this.filters.filterSettings.filterGenresAND && this.filters.filterGenres.find((filter) => filter.Selected)) ||
+          this.filters.filterGenres.find((filter) => filter.Selected && filter.Excluded))
       );
     },
     filterGenresApplied() {

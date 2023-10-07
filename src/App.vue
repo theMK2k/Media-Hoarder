@@ -1156,12 +1156,19 @@
                         v-model="genre.Selected"
                         v-on:mouseup="filterCheckboxMouseup('filterGenres')"
                         v-on:mousedown="filterCheckboxMousedown('filterGenres', genre, setAllFilterGenres)"
-                        color="mk-dark-grey"
+                        v-bind:color="genre.Excluded ? 'red' : 'mk-dark-grey'"
                       ></v-checkbox>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-switch color="red" v-model="genre.Excluded" hide-details></v-switch>
+                            <v-switch
+                              color="red"
+                              dense
+                              style="margin-top: 0px"
+                              v-model="genre.Excluded"
+                              hide-details
+                              v-on:change="filtersChanged('filterGenres')"
+                            ></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Exclude this genre") }}</span>

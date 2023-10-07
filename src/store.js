@@ -2333,29 +2333,65 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
   let filterGenres = "";
   if (
     filters.filterGenres &&
-    ((!filters.filterSettings.filterGenresAND && filters.filterGenres.find((filter) => !filter.Selected)) ||
-      (filters.filterSettings.filterGenresAND && filters.filterGenres.find((filter) => filter.Selected)))
+    ((!filters.filterSettings.filterGenresAND && filters.filterGenres.find((filter) => !filter.Selected && !filter.Excluded)) ||
+      (filters.filterSettings.filterGenresAND && filters.filterGenres.find((filter) => filter.Selected && !filter.Excluded)) ||
+      filters.filterGenres.find((filter) => filter.Selected && filter.Excluded))
   ) {
-    const filterGenresList = filters.filterGenres.filter((filter) => filter.Selected).map((filter) => filter.id_Genres);
+    // ### INCLUSIVE Genres (selected and not excluded) ###
+    if (
+      (!filters.filterSettings.filterGenresAND && filters.filterGenres.find((filter) => !filter.Selected && !filter.Excluded)) ||
+      (filters.filterSettings.filterGenresAND && filters.filterGenres.find((filter) => filter.Selected && !filter.Excluded))
+    ) {
+      const filterGenresListInclusive = filters.filterGenres.filter((filter) => filter.Selected && !filter.Excluded).map((filter) => filter.id_Genres);
 
-    if (filters.filterSettings.filterGenresAND) {
-      // use INTERSECT for AND-filter
-      filterGenres = "AND MOV.id_Movies IN (";
+      logger.debug("[generateFilterQuery] filterGenresListInclusive:", filterGenresListInclusive);
 
-      filterGenres += filterGenresList.reduce((prev, current) => {
-        return prev + (prev ? " INTERSECT " : "") + `SELECT id_Movies FROM tbl_Movies_Genres WHERE id_Genres = ${current}`;
-      }, "");
+      if (filters.filterSettings.filterGenresAND) {
+        // AND-filter: use INTERSECT
+        filterGenres += "AND MOV.id_Movies IN (";
 
-      filterGenres += ")";
-    } else {
-      // OR-filter
-      filterGenres = "AND MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_Genres WHERE id_Genres IN (";
+        filterGenres += filterGenresListInclusive.reduce((prev, current) => {
+          return prev + (prev ? " INTERSECT " : "") + `SELECT id_Movies FROM tbl_Movies_Genres WHERE id_Genres = ${current}`;
+        }, "");
 
-      filterGenres += filterGenresList.reduce((prev, current) => {
-        return prev + (prev ? ", " : "") + current;
-      }, "");
+        filterGenres += ")";
+      } else {
+        // OR-filter
+        filterGenres = "AND MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_Genres WHERE id_Genres IN (";
 
-      filterGenres += "))";
+        filterGenres += filterGenresListInclusive.reduce((prev, current) => {
+          return prev + (prev ? ", " : "") + current;
+        }, "");
+
+        filterGenres += "))";
+      }
+    }
+
+    // ### EXCLUDING Genres (selected and excluded) ###
+    if (filters.filterGenres.find((filter) => filter.Selected && filter.Excluded)) {
+      const filterGenresListExclusive = filters.filterGenres.filter((filter) => filter.Selected && filter.Excluded).map((filter) => filter.id_Genres);
+
+      logger.debug("[generateFilterQuery] filterGenresListExclusive:", filterGenresListExclusive);
+
+      if (filters.filterSettings.filterGenresAND) {
+        // AND-filter: use INTERSECT
+        filterGenres += " AND MOV.id_Movies NOT IN (";
+
+        filterGenres += filterGenresListExclusive.reduce((prev, current) => {
+          return prev + (prev ? " INTERSECT " : "") + `SELECT id_Movies FROM tbl_Movies_Genres WHERE id_Genres = ${current}`;
+        }, "");
+
+        filterGenres += ")";
+      } else {
+        // OR-filter
+        filterGenres += " AND MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies_Genres WHERE id_Genres IN (";
+
+        filterGenres += filterGenresListExclusive.reduce((prev, current) => {
+          return prev + (prev ? ", " : "") + current;
+        }, "");
+
+        filterGenres += "))";
+      }
     }
   }
 
@@ -3678,20 +3714,21 @@ async function fetchFilterGenres($MediaType, $t) {
         result.Selected = filterValue.Selected;
         result.Excluded = !!filterValue.Excluded;
       }
-
-      result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
     });
   }
 
-  // Translate
-  resultsFiltered.forEach((resultFiltered) => {
-    const genreNameTranslated = $t(`GenreNames.${resultFiltered.Name}`);
+  // Format and Translate
+  resultsFiltered.forEach((result) => {
+    result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
+
+    const genreNameTranslated = $t(`GenreNames.${result.Name}`);
 
     if (genreNameTranslated && !genreNameTranslated.includes(".")) {
-      resultFiltered.Name = genreNameTranslated;
+      result.Name = genreNameTranslated;
     }
   });
 
+  logger.log("[fetchFilterGenres] filterValues:", filterValues);
   logger.log("[fetchFilterGenres] resultsFiltered:", resultsFiltered);
 
   shared.filters.filterGenres = resultsFiltered.sort((a, b) => helpers.compare(a.Name, b.Name, false));
@@ -4524,6 +4561,8 @@ function saveFilterValues($MediaType) {
   const filterValues = shared.filters;
 
   const filterValuesString = JSON.stringify(filterValues);
+
+  logger.log("[saveFilterValues] filterValues:", filterValues);
 
   setSetting(`filtersMediaType_${$MediaType}`, filterValuesString);
 }
