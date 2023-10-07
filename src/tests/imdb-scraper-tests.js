@@ -226,7 +226,7 @@ async function testIMDBmainPageData3() {
   try {
     const expected = {
       $IMDB_releaseType: "tvSeries",
-      $IMDB_genres: ["action", "adventure", "sci-fi"],
+      $IMDB_genres: ["action", "adventure", "drama"],
       $IMDB_rating: 8.7,
       $IMDB_numVotes: 123000,
       $IMDB_posterSmall_URL: "extras/tt0092455_posterSmall.jpg",
@@ -387,13 +387,13 @@ async function testIMDBreleaseinfo() {
 
   try {
     const expected = {
-      $IMDB_originalTitle: "Star Trek: The Next Generation",
-      $IMDB_localTitle: "Raumschiff Enterprise: Das nächste Jahrhundert",
-      $IMDB_primaryTitle: "Star Trek: The Next Generation",
+      $IMDB_originalTitle: "Star Wars",
+      $IMDB_localTitle: "Star Wars: Episode IV - Eine neue Hoffnung",
+      $IMDB_primaryTitle: "Star Wars: Episode IV - A New Hope",
     };
 
     const movie = {
-      IMDB_tconst: "tt0092455",
+      IMDB_tconst: "tt0076759",
     };
 
     const scrapeResult = await imdbScraper.scrapeIMDBreleaseinfo(movie, [{ name: "Germany" }], []);

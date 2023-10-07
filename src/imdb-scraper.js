@@ -26,7 +26,8 @@ const graphQLqueries = {
       $IMDB_tconst
     ),
   filmingLocations: ($IMDB_tconst) =>
-    `https://caching.graphql.imdb.com/?operationName=TitleFilmingLocationsPaginated&variables={"const":"$IMDB_tconst","first":1000,"locale":"en-GB","originalTitleText":false}&extensions={"persistedQuery":{"sha256Hash":"5e1b7378425e70f1d8220f92e9be1d471bdbbab659274c32a895b2f3ffc51214","version":1}}`.replace(
+    /*`https://caching.graphql.imdb.com/?operationName=TitleFilmingLocationsPaginated&variables={"const":"$IMDB_tconst","first":1000,"locale":"en-GB","originalTitleText":false}&extensions={"persistedQuery":{"sha256Hash":"5e1b7378425e70f1d8220f92e9be1d471bdbbab659274c32a895b2f3ffc51214","version":1}}`*/
+    `https://caching.graphql.imdb.com/?operationName=TitleFilmingLocationsPaginated&variables={"const":"$IMDB_tconst","first":1000,"locale":"en-GB","originalTitleText":false}&extensions={"persistedQuery":{"sha256Hash":"f8e058a92242ae7940109b6669584768279c3e874ad37d0a792ad24f43627501","version":1}}`.replace(
       "$IMDB_tconst",
       $IMDB_tconst
     ),
