@@ -1149,16 +1149,24 @@
                       v-model="$shared.filters.filterSettings.filterGenresAND"
                       v-on:click.native="filtersChanged('filterGenres')"
                     ></v-switch>
-                    <v-checkbox
-                      class="mk-filter-checkbox"
-                      v-for="genre in filterGenres"
-                      v-bind:key="genre.id_Genres"
-                      v-bind:label="genre.Name + ' (' + genre.NumMoviesFormatted + ')'"
-                      v-model="genre.Selected"
-                      v-on:mouseup="filterCheckboxMouseup('filterGenres')"
-                      v-on:mousedown="filterCheckboxMousedown('filterGenres', genre, setAllFilterGenres)"
-                      color="mk-dark-grey"
-                    ></v-checkbox>
+                    <div v-for="genre in filterGenres" v-bind:key="genre.id_Genres" style="display: flex; justify-content: space-between">
+                      <v-checkbox
+                        class="mk-filter-checkbox"
+                        v-bind:label="genre.Name + ' (' + genre.NumMoviesFormatted + ')'"
+                        v-model="genre.Selected"
+                        v-on:mouseup="filterCheckboxMouseup('filterGenres')"
+                        v-on:mousedown="filterCheckboxMousedown('filterGenres', genre, setAllFilterGenres)"
+                        color="mk-dark-grey"
+                      ></v-checkbox>
+                      <v-tooltip bottom style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-switch color="red" v-model="genre.Excluded" hide-details></v-switch>
+                          </span>
+                        </template>
+                        <span>{{ $t("Exclude this genre") }}</span>
+                      </v-tooltip>
+                    </div>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
 

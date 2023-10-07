@@ -3653,6 +3653,7 @@ async function fetchFilterGenres($MediaType, $t) {
 			, GenreID
 			, Name
 			, 1 AS Selected
+      , 0 AS Excluded
 			, (
 				SELECT COUNT(1)
 				FROM tbl_Movies_Genres MG
@@ -3675,6 +3676,7 @@ async function fetchFilterGenres($MediaType, $t) {
 
       if (filterValue) {
         result.Selected = filterValue.Selected;
+        result.Excluded = !!filterValue.Excluded;
       }
 
       result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
