@@ -11,6 +11,8 @@ Examples:
 - _Provide a list of Oscar winning best motion picture between 2000 and 2010_
 - _Provide a list of classic Sci-Fi movies that were not made by Hollywood_
 
+Watch this [short video](https://www.youtube.com/watch?v=Pi2vfPpOEGQ) to learn how it works.
+
 **Note (v1.2.1)**: in v1.2.0 we relied on a release year being returned by ChatGPT, which is not always the case. So our ChatGPT parser has been updated to also try finding movies without a given release year.
 
 ## IMDB Scraper updated

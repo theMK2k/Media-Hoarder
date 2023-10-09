@@ -1,4 +1,16 @@
-# Media Hoarder v1.3.0 Changelog
+# Media Hoarder v1.3.1 Changelog
+
+## Excluding Genres Filter (since v1.3.1)
+
+With v1.3.1 it is now possible to filter e.g.:
+
+- "Action without Horror"
+- "Comedy without Drama"
+- "Anything without Family, Music OR Musical"
+
+For this, the genres filters have a new option "Exclude this genre".
+
+Watch this [very short video](https://www.youtube.com/watch?v=Ejcjo6OMRt4) to learn how to use it.
 
 ## Last MacOS signed release?
 
@@ -24,3 +36,5 @@ The trailer dialog has been updated for a better watching experience and uses th
 - IMDB Scraper Updates
   - Metacritic Score
   - Trailer Media URLs
+  - (v1.3.1) Filming Locations
+  - (v1.3.1) Original Title

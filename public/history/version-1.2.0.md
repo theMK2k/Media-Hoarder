@@ -11,6 +11,8 @@ Examples:
 - _Provide a list of Oscar winning best motion picture between 2000 and 2010_
 - _Provide a list of classic Sci-Fi movies that were not made by Hollywood_
 
+Watch this [short video](https://www.youtube.com/watch?v=Pi2vfPpOEGQ) to learn how it works.
+
 ## IMDB Scraper updated
 
 A larger overhaul of how **Media Hoarder** scrapes IMDB metadata was necessary and has been implemented.
