@@ -6193,6 +6193,12 @@ function resetFilters(objFilter) {
       return;
     }
 
+    if (key === "Excluded") {
+      logger.log('  is "Excluded" -> set to "false"');
+      objFilter[key] = false;
+      return;
+    }
+
     if (key === "filterSettings") {
       logger.log('  is "filterSettings" -> Select All of them to "false"');
       Object.keys(objFilter[key]).forEach((subkey) => {
