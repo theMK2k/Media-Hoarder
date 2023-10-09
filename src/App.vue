@@ -2923,15 +2923,30 @@ export default {
         });
     },
     filterGenresTitle() {
-      if (!this.$shared.filters.filterGenres.find((filter) => !filter.Selected)) {
-        return `(${this.$t("ALL")})`;
+      let result = "(";
+
+      if (!this.$shared.filters.filterGenres.find((filter) => !filter.Selected && !filter.Excluded)) {
+        result += this.$t("ALL");
+        if (this.$shared.filters.filterGenres.find((filter) => filter.Selected && filter.Excluded)) {
+          result += " - " + this.$shared.filters.filterGenres.filter((filter) => filter.Selected && filter.Excluded).length;
+        }
+      } else if (!this.$shared.filters.filterGenres.find((filter) => filter.Selected && !filter.Excluded)) {
+        result += this.$t("NONE");
+        if (this.$shared.filters.filterGenres.find((filter) => filter.Selected && filter.Excluded)) {
+          result += " - " + this.$shared.filters.filterGenres.filter((filter) => filter.Selected && filter.Excluded).length;
+        }
+      } else {
+        result += this.$shared.filters.filterGenres.filter((filter) => filter.Selected).length;
+        if (this.$shared.filters.filterGenres.find((filter) => filter.Selected && filter.Excluded)) {
+          result += " - " + this.$shared.filters.filterGenres.filter((filter) => filter.Selected && filter.Excluded).length;
+        }
+
+        result += " / " + this.$shared.filters.filterGenres.length;
       }
 
-      if (!this.$shared.filters.filterGenres.find((filter) => filter.Selected)) {
-        return `(${this.$t("NONE")})`;
-      }
+      result += ")";
 
-      return "(" + this.$shared.filters.filterGenres.filter((filter) => filter.Selected).length + "/" + this.$shared.filters.filterGenres.length + ")";
+      return result;
     },
 
     filterAgeRatingsTitle() {
