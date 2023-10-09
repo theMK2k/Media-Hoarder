@@ -12,9 +12,9 @@ For this, the genres filters have a new option "Exclude this genre".
 
 Watch this [very short video](https://www.youtube.com/watch?v=Ejcjo6OMRt4) to learn how to use it.
 
-## Last MacOS signed release?
+## Last MacOS signed release!
 
-Media Hoarder has been released as an officially signed application until now. Apple still wants to receive 99USD per year no matter if you want to provide a **free piece of software** or not. This is unbearable and I won't put any more money into Apple's mouth. I'm unsure if Media Hoarder can still be used without being signed, let's see... so for the time being, v1.3.0 will be the last signed MacOS release of Media Hoarder.
+Media Hoarder has been released as an officially signed application until now. Apple still wants to receive 99USD per year no matter if you want to provide a **free piece of software** or not. This is unbearable and I won't put any more money into Apple's mouth. I'm unsure if Media Hoarder can still be used without being signed, let's see... so for the time being, v1.3.0 is the last signed MacOS release of Media Hoarder.
 
 ## Trailer Show
 
