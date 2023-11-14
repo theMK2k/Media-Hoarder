@@ -50,7 +50,7 @@ const graphQLqueries = {
   /**
    * API called when using https://www.imdb.com/find/
    */
-  findPageSearch: (searchTerm) => graphqlURLs.findPageSearch.replace("$searchTerm", searchTerm),
+  findPageSearch: (searchTerm) => graphqlURLs.findPageSearch.replace("$searchTerm", encodeURIComponent(searchTerm)),
 };
 
 /**
@@ -1730,8 +1730,8 @@ async function scrapeIMDBSuggestion(searchTerm) {
   return results;
 }
 
-/** "Find" search, also supports Unicode
- * This is the actual site shown
+/**
+ * DEPRECATED: "Find" search, also supports Unicode using the HTML
  * @param  {string} searchTerm
  * @param  {string} [type]
  */
@@ -1802,6 +1802,69 @@ async function scrapeIMDBFind(searchTerm, type) {
   });
 
   return results;
+}
+
+/**
+ * GraphQL based find page search, supports Unicode!
+ * @param {*} title
+ * @param {*} titleTypes
+ * @returns
+ */
+async function scrapeIMDBFindPageSearchV3(title, titleTypes) {
+  logger.log("[scrapeIMDBFindPageSearchV3] START", { title, titleTypes });
+
+  try {
+    const uri = graphQLqueries.findPageSearch(title);
+
+    logger.log("[scrapeIMDBFindPageSearchV3] uri:", uri);
+
+    const gqlTitles = JSON.parse((await helpers.requestAsync({ uri, headers: { "content-type": "application/json" } })).body);
+
+    logger.log("[scrapeIMDBFindPageSearchV3] gqlTitles:", gqlTitles);
+
+    const results =
+      gqlTitles && gqlTitles.data && gqlTitles.data.results
+        ? gqlTitles.data.results.edges.map((edge) => {
+            return {
+              type: _.get(edge.node, "entity.__typename", null),
+              tconst: _.get(edge.node, "entity.id", null),
+              title: _.get(edge.node, "entity.titleText.text", null),
+              year: _.get(edge.node, "entity.releaseYear.year", null),
+              imageURL: _.get(edge.node, "entity.primaryImage.url", null),
+              ageRating: null,
+              runtimeSeconds: null,
+              genres: null,
+              rating: null,
+              numVotes: null,
+            };
+          })
+        : [];
+
+    // results.forEach((result) => {
+    //   let detailInfo = "";
+    //   if (result.ageRating) {
+    //     detailInfo += result.ageRating;
+    //   }
+
+    //   result.runtime = helpers.getTimeStringMinutes(result.runtimeSeconds);
+
+    //   if (result.runtime) {
+    //     detailInfo += (detailInfo ? " | " : "") + result.runtime;
+    //   }
+    //   if (result.genres) {
+    //     detailInfo += (detailInfo ? " | " : "") + result.genres;
+    //   }
+
+    //   result.detailInfo = detailInfo;
+    // });
+
+    logger.log("[scrapeIMDBFindPageSearchV3] results[0]:", results[0]);
+
+    return results;
+  } catch (error) {
+    logger.error("[scrapeIMDBFindPageSearchV3] ERROR:", error);
+    return [];
+  }
 }
 
 async function scrapeIMDBTrailerMediaURLsV3(html) {
@@ -2201,6 +2264,7 @@ export {
   scrapeIMDBAdvancedTitleSearchV3,
   scrapeIMDBSuggestion,
   scrapeIMDBFind,
+  scrapeIMDBFindPageSearchV3,
   scrapeIMDBTrailerMediaURLs,
   scrapeIMDBplotKeywordsV3,
   scrapeIMDBFilmingLocationsV3,

@@ -77,9 +77,9 @@
                 <v-list-item-content class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
                   <v-col style="padding: 0px !important">
                     <v-row style="margin-bottom: 8px">
-                      <v-list-item-title style="margin-bottom: 4px !important; font-size: 16px; margin-left: 12px; margin-top: 8px">{{
-                        item.title
-                      }}</v-list-item-title>
+                      <v-list-item-title style="margin-bottom: 4px !important; font-size: 16px; margin-left: 12px; margin-top: 8px"
+                        >{{ item.title }} <span v-if="item.year">({{ item.year }})</span></v-list-item-title
+                      >
                     </v-row>
 
                     <v-list-item-subtitle v-if="item.detailInfo" style="margin-top: -8px; margin-bottom: 4px">{{ item.detailInfo }}</v-list-item-subtitle>
@@ -106,7 +106,7 @@
 
 <script>
 // import * as store from "@/store";
-import { scrapeIMDBAdvancedTitleSearchV3, scrapeIMDBFind } from "@/imdb-scraper";
+import { scrapeIMDBAdvancedTitleSearchV3, scrapeIMDBFindPageSearchV3 } from "@/imdb-scraper";
 
 // import * as helpers from "@/helpers/helpers";
 const logger = require("../../helpers/logger");
@@ -239,7 +239,7 @@ export default {
 
       let findResults = null;
       try {
-        findResults = await scrapeIMDBFind(this.searchText, null);
+        findResults = await scrapeIMDBFindPageSearchV3(this.searchText, null);
       } catch (err) {
         logger.error(err);
       }
@@ -251,7 +251,7 @@ export default {
 
       if (findResults) {
         findResults.forEach((result) => {
-          if (result.type !== "title") {
+          if (result.type !== "Title") {
             return;
           }
           if (!this.searchResults.find((result2) => result.tconst === result2.tconst)) {

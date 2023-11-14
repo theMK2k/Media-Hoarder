@@ -1181,11 +1181,6 @@ async function testIMDBAdvancedTitleSearch() {
           detailInfo: "PG-13 | 142 min | Drama, Romance",
         },
       },
-      // {
-      //   searchTerm: `天気の子`,
-      //   numResults: 666,
-      //   result0: {},
-      // },
     ];
 
     for (let i = 0; i < expected.length; i++) {
@@ -1236,7 +1231,7 @@ async function testIMDBAdvancedTitleSearch() {
   return testResult;
 }
 
-async function testIMDBFind() {
+async function testIMDBFindPageSearch() {
   const testResult = {
     name: "IMDB Find",
     status: status.SUCCESS,
@@ -1251,10 +1246,9 @@ async function testIMDBFind() {
         numResults: 1,
         result0: {
           tconst: "tt9426210",
-          title: 'Weathering with You (2019) aka "天気の子"',
-          type: "title",
-          imageURL:
-            "https://m.media-amazon.com/images/M/MV5BNzE4ZDEzOGUtYWFjNC00ODczLTljOGQtZGNjNzhjNjdjNjgzXkEyXkFqcGdeQXVyNzE5ODMwNzI@._V1_UX32_CR0,0,32,44_AL_.jpg",
+          title: "Weathering with You",
+          year: 2019,
+          imageURL: "https://m.media-amazon.com/images/M/MV5BNzE4ZDEzOGUtYWFjNC00ODczLTljOGQtZGNjNzhjNjdjNjgzXkEyXkFqcGdeQXVyNzE5ODMwNzI@._V1_.jpg",
         },
       },
     ];
@@ -1262,7 +1256,7 @@ async function testIMDBFind() {
     for (let i = 0; i < expected.length; i++) {
       const expectedValue = expected[i];
 
-      const scrapeResult = await imdbScraper.scrapeIMDBFind(expectedValue.searchTerm, expectedValue.type);
+      const scrapeResult = await imdbScraper.scrapeIMDBFindPageSearchV3(expectedValue.searchTerm, expectedValue.type);
 
       // console.log(scrapeResult);
 
@@ -1287,8 +1281,8 @@ async function testIMDBFind() {
       }
 
       performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "tconst", `query '${expectedValue.searchTerm}' [${expectedValue.type}]`);
-      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "type", `query '${expectedValue.searchTerm}' [${expectedValue.type}]`);
       performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "title", `query '${expectedValue.searchTerm}' [${expectedValue.type}]`);
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "year", `query '${expectedValue.searchTerm}' [${expectedValue.type}]`);
       performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "imageURL", `query '${expectedValue.searchTerm}' [${expectedValue.type}]`);
     }
   } catch (error) {
@@ -1319,6 +1313,6 @@ export {
   testIMDBRatingDemographics,
   testIMDBSuggestion,
   testIMDBAdvancedTitleSearch,
-  testIMDBFind,
+  testIMDBFindPageSearch,
   status,
 };
