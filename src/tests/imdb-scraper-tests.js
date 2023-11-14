@@ -1,5 +1,7 @@
 const imdbScraper = require("../imdb-scraper");
 
+// const logger = require("../helpers/logger");
+
 const status = {
   SUCCESS: 0,
   WARNING: 1,
@@ -69,7 +71,7 @@ async function testIMDBmainPageData() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_releaseType");
@@ -168,7 +170,7 @@ async function testIMDBmainPageData2() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_releaseType");
@@ -247,7 +249,7 @@ async function testIMDBmainPageData3() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_releaseType");
@@ -322,7 +324,7 @@ async function testIMDBmainPageData4() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_releaseType");
@@ -366,7 +368,7 @@ async function testIMDBplotSummary() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_plotSummaryFull");
@@ -400,7 +402,7 @@ async function testIMDBreleaseinfo() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_originalTitle");
@@ -434,7 +436,7 @@ async function testIMDBtechnicalData() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_runtimeMinutes");
@@ -466,7 +468,7 @@ async function testIMDBtechnicalData2() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_runtimeMinutes");
@@ -499,7 +501,7 @@ async function testIMDBtechnicalData3() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_runtimeMinutes");
@@ -558,7 +560,7 @@ async function testIMDBParentalGuideData() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_MinAge");
@@ -625,7 +627,7 @@ async function testIMDBFullCreditsData() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "topCredits");
@@ -691,7 +693,7 @@ async function testIMDBCompaniesData() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "topProductionCompanies");
@@ -753,7 +755,7 @@ async function testIMDBPersonData() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_Person_ID");
@@ -788,7 +790,7 @@ async function testIMDBTrailerMediaURLs() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     if (!scrapeResult.mediaURLs) {
@@ -840,7 +842,7 @@ async function testIMDBplotKeywords() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     if (scrapeResult.length === 0) {
@@ -918,7 +920,7 @@ async function testIMDBFilmingLocations() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     if (scrapeResult.length === 0) {
@@ -1041,7 +1043,7 @@ async function testIMDBRatingDemographics() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     Object.keys(expected).forEach((key) => {
@@ -1120,12 +1122,12 @@ async function testIMDBSuggestion() {
 
       if (!scrapeResult) {
         addSubLogEntry(testResult, `query '${expectedValue.searchTerm}' no response`, status.ERROR);
-        return;
+        return testResult;
       }
 
       if (scrapeResult.length === 0) {
         addSubLogEntry(testResult, `query '${expectedValue.searchTerm}' results missing`, status.ERROR);
-        return;
+        return testResult;
       }
 
       if (scrapeResult.length < expectedValue.numResults) {
@@ -1167,12 +1169,15 @@ async function testIMDBAdvancedTitleSearch() {
         numResults: 32,
         result0: {
           tconst: "tt0109830",
-          title: "Forrest Gump (1994) ",
-          imageURL:
-            "https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_UY98_CR0,0,67,98_AL_.jpg",
+          title: "Forrest Gump",
+          year: 1994,
+          imageURL: "https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_.jpg",
           ageRating: "PG-13",
-          runtime: "142 min",
+          runtimeSeconds: 8520,
           genres: "Drama, Romance",
+          rating: 8.8,
+          numVotes: 1850000,
+          runtime: "142 min",
           detailInfo: "PG-13 | 142 min | Drama, Romance",
         },
       },
@@ -1186,18 +1191,16 @@ async function testIMDBAdvancedTitleSearch() {
     for (let i = 0; i < expected.length; i++) {
       const expectedValue = expected[i];
 
-      const scrapeResult = await imdbScraper.scrapeIMDBAdvancedTitleSearch(expectedValue.title, expectedValue.titleTypes);
-
-      // console.log(scrapeResult);
+      const scrapeResult = await imdbScraper.scrapeIMDBAdvancedTitleSearchV3(expectedValue.title, expectedValue.titleTypes);
 
       if (!scrapeResult) {
         addSubLogEntry(testResult, `query '${expectedValue.title}' [${expectedValue.titleTypes}] no response`, status.ERROR);
-        return;
+        return testResult;
       }
 
       if (scrapeResult.length === 0) {
         addSubLogEntry(testResult, `query '${expectedValue.title}' [${expectedValue.titleTypes}] results missing`, status.ERROR);
-        return;
+        return testResult;
       }
 
       if (scrapeResult.length < expectedValue.numResults) {

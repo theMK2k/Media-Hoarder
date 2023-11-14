@@ -16,7 +16,8 @@
             </v-tooltip>
           </v-row>
         </div>
-        <v-row style="padding-left: 16px; margin-bottom: 24px">
+
+        <v-row style="padding-left: 16px; margin-top: 16px; margin-bottom: 24px; width: 100%">
           <v-text-field
             :append-icon-cb="() => {}"
             v-bind:placeholder="`${$t('Enter a title')}...`"
@@ -29,6 +30,7 @@
           ></v-text-field>
         </v-row>
 
+        <!--
         <v-expansion-panels>
           <v-expansion-panel style="padding: 0px !important; margin-bottom: 24px">
             <v-expansion-panel-header style="padding: 16px !important">{{ $t("Media Types") }} {{ titleTypesTitle() }}</v-expansion-panel-header>
@@ -48,6 +50,7 @@
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
+      -->
 
         <v-row>
           <v-btn text v-bind:loading="isLoading" v-on:click.native="onSearchClick">{{ $t("Search") }}</v-btn>
@@ -103,7 +106,7 @@
 
 <script>
 // import * as store from "@/store";
-import { scrapeIMDBAdvancedTitleSearch, scrapeIMDBFind } from "@/imdb-scraper";
+import { scrapeIMDBAdvancedTitleSearchV3, scrapeIMDBFind } from "@/imdb-scraper";
 
 // import * as helpers from "@/helpers/helpers";
 const logger = require("../../helpers/logger");
@@ -212,6 +215,9 @@ export default {
       return `(${this.titleTypes.filter((titleType) => titleType.checked).length}/${this.titleTypes.length})`;
     },
 
+    /**
+     * We merge the results of the advanced title search and the find search
+     */
     async onSearchClick() {
       logger.log("[onSearchClick] START");
 
@@ -226,9 +232,9 @@ export default {
       // 天気の子
       let advancedTitleSearchResults = null;
       try {
-        advancedTitleSearchResults = await scrapeIMDBAdvancedTitleSearch(this.searchText, this.titleTypes);
+        advancedTitleSearchResults = await scrapeIMDBAdvancedTitleSearchV3(this.searchText, this.titleTypes);
       } catch (err) {
-        //
+        logger.error("[onSearchClick] ERROR:", err);
       }
 
       let findResults = null;
