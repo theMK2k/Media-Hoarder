@@ -7,30 +7,50 @@ const htmlToText = require("html-to-text");
 const logger = require("./helpers/logger");
 const helpers = require("./helpers/helpers");
 
+let graphqlURLs = require("./data/imdb-graphql-urls.json");
+
 const graphQLqueries = {
-  akaTitles: ($IMDB_tconst) =>
-    `https://caching.graphql.imdb.com/?operationName=TitleAkasPaginated&variables={"const":"$IMDB_tconst","first":1000,"locale":"en-GB","originalTitleText":1}&extensions={"persistedQuery":{"sha256Hash":"180f0f5df1b03c9ee78b1f410d65928ec22e7aca590e5321fbb6a6c39b802695","version":1}}`.replace(
-      "$IMDB_tconst",
-      $IMDB_tconst
-    ),
+  /**
+   *
+   * @param {string} $IMDB_tconst
+   * @returns
+   */
+  akaTitles: ($IMDB_tconst) => graphqlURLs.akaTitles.replace("$IMDB_tconst", $IMDB_tconst),
 
-  // see https://www.imdb.com/title/tt4154796/companycredits/
+  /**
+   * see https://www.imdb.com/title/tt4154796/companycredits/
+   * @param {string} $IMDB_tconst
+   * @param {string} $IMDB_Companies_Category
+   * @returns
+   */
   companies: ($IMDB_tconst, $IMDB_Companies_Category) =>
-    `https://caching.graphql.imdb.com/?operationName=TitleCompanyCreditsPagination&variables={"const":"$IMDB_tconst","filter":{"categories":["$IMDB_Companies_Category"]},"first":1000,"locale":"en-GB","originalTitleText":false}&extensions={"persistedQuery":{"sha256Hash":"ef3c062fb3a177f606d2734b42b876a929139eb6c86a582c177a95886a1a9a12","version":1}}`
-      .replace("$IMDB_tconst", $IMDB_tconst)
-      .replace("$IMDB_Companies_Category", $IMDB_Companies_Category),
+    graphqlURLs.companies.replace("$IMDB_tconst", $IMDB_tconst).replace("$IMDB_Companies_Category", $IMDB_Companies_Category),
 
-  plotKeywords: ($IMDB_tconst) =>
-    `https://caching.graphql.imdb.com/?operationName=TitleKeywordsPagination&variables={"const":"$IMDB_tconst","first":1000,"locale":"en-GB","originalTitleText":false}&extensions={"persistedQuery":{"sha256Hash":"182e5ae91fea29ab8a47155a0170066beefcabe0a62f817c8af24886965faebe","version":1}}`.replace(
-      "$IMDB_tconst",
-      $IMDB_tconst
-    ),
-  filmingLocations: ($IMDB_tconst) =>
-    /*`https://caching.graphql.imdb.com/?operationName=TitleFilmingLocationsPaginated&variables={"const":"$IMDB_tconst","first":1000,"locale":"en-GB","originalTitleText":false}&extensions={"persistedQuery":{"sha256Hash":"5e1b7378425e70f1d8220f92e9be1d471bdbbab659274c32a895b2f3ffc51214","version":1}}`*/
-    `https://caching.graphql.imdb.com/?operationName=TitleFilmingLocationsPaginated&variables={"const":"$IMDB_tconst","first":1000,"locale":"en-GB","originalTitleText":false}&extensions={"persistedQuery":{"sha256Hash":"f8e058a92242ae7940109b6669584768279c3e874ad37d0a792ad24f43627501","version":1}}`.replace(
-      "$IMDB_tconst",
-      $IMDB_tconst
-    ),
+  /**
+   *
+   * @param {string} $IMDB_tconst
+   * @returns
+   */
+  plotKeywords: ($IMDB_tconst) => graphqlURLs.plotKeywords.replace("$IMDB_tconst", $IMDB_tconst),
+
+  /**
+   *
+   * @param {string} $IMDB_tconst
+   * @returns
+   */
+  filmingLocations: ($IMDB_tconst) => graphqlURLs.filmingLocations.replace("$IMDB_tconst", $IMDB_tconst),
+
+  /**
+   * see https://www.imdb.com/search/title/
+   * @param {string} searchTerm
+   * @returns
+   */
+  advancedTitleSearch: (searchTerm) => graphqlURLs.advancedTitleSearch.replace("$searchTerm", encodeURIComponent(searchTerm)),
+
+  /**
+   * API called when using https://www.imdb.com/find/
+   */
+  findPageSearch: (searchTerm) => graphqlURLs.findPageSearch.replace("$searchTerm", searchTerm),
 };
 
 /**
@@ -1530,11 +1550,17 @@ async function scrapeIMDBPersonDataV3($IMDB_Person_ID, downloadFileCallback, htm
   return result;
 }
 
+/**
+ * DEPRECATED: use scrapeIMDBPersonDataV3 instead
+ * @param {*} title
+ * @param {*} titleTypes
+ * @returns
+ */
 async function scrapeIMDBAdvancedTitleSearch(title, titleTypes) {
   // only supports latin characters!
-  // https://www.imdb.com/search/title/?title=Gnothi Seauton&view=advanced
-  // optional: &title_type=feature,tv_movie,tv_series,tv_episode,tv_special,tv_miniseries,documentary,short,video,tv_short
-  //
+  // Web UI: https://www.imdb.com/search/title/
+  // DEPRECATED: https://www.imdb.com/search/title/?title=Gnothi Seauton&view=advanced
+  //             optional: &title_type=feature,tv_movie,tv_series,tv_episode,tv_special,tv_miniseries,documentary,short,video,tv_short
   const url =
     `https://www.imdb.com/search/title/?title=${title}` +
     (titleTypes.find((titleType) => !titleType.checked)
@@ -1605,6 +1631,68 @@ async function scrapeIMDBAdvancedTitleSearch(title, titleTypes) {
 }
 
 /**
+ * GraphQL based advanced title search (does not support unicode!)
+ * @param {*} title
+ * @param {*} titleTypes
+ * @returns
+ */
+async function scrapeIMDBAdvancedTitleSearchV3(title, titleTypes) {
+  logger.log("[scrapeIMDBAdvancedTitleSearchV3] START", { title, titleTypes });
+
+  try {
+    const uri = graphQLqueries.advancedTitleSearch(title, titleTypes);
+
+    logger.log("[scrapeIMDBAdvancedTitleSearchV3] uri:", uri);
+
+    const gqlTitles = JSON.parse((await helpers.requestAsync({ uri, headers: { "content-type": "application/json" } })).body);
+
+    logger.log("[scrapeIMDBAdvancedTitleSearchV3] gqlTitles:", gqlTitles);
+
+    const results =
+      gqlTitles && gqlTitles.data && gqlTitles.data.advancedTitleSearch
+        ? gqlTitles.data.advancedTitleSearch.edges.map((edge) => {
+            return {
+              tconst: _.get(edge.node.title, "id", null),
+              title: _.get(edge.node.title, "titleText.text", null),
+              year: _.get(edge.node.title, "releaseYear.year", null),
+              imageURL: _.get(edge.node.title, "primaryImage.url", null),
+              ageRating: _.get(edge.node.title, "certificate.rating", null),
+              runtimeSeconds: _.get(edge.node.title, "runtime.seconds", null),
+              genres: (_.get(edge.node.title, "titleGenres.genres", null) || []).map((genre) => genre.genre.text).join(", "),
+              rating: _.get(edge.node.title, "ratingsSummary.aggregateRating", null),
+              numVotes: _.get(edge.node.title, "ratingsSummary.voteCount", null),
+            };
+          })
+        : [];
+
+    results.forEach((result) => {
+      let detailInfo = "";
+      if (result.ageRating) {
+        detailInfo += result.ageRating;
+      }
+
+      result.runtime = helpers.getTimeStringMinutes(result.runtimeSeconds);
+
+      if (result.runtime) {
+        detailInfo += (detailInfo ? " | " : "") + result.runtime;
+      }
+      if (result.genres) {
+        detailInfo += (detailInfo ? " | " : "") + result.genres;
+      }
+
+      result.detailInfo = detailInfo;
+    });
+
+    logger.log("[scrapeIMDBAdvancedTitleSearchV3] results[0]:", results[0]);
+
+    return results;
+  } catch (error) {
+    logger.error("[scrapeIMDBAdvancedTitleSearchV3] ERROR:", error);
+    return [];
+  }
+}
+
+/**
  * IMPORTANT: this only supports latin characters!
  * @param {string} searchTerm
  */
@@ -1643,17 +1731,18 @@ async function scrapeIMDBSuggestion(searchTerm) {
 }
 
 /** "Find" search, also supports Unicode
+ * This is the actual site shown
  * @param  {string} searchTerm
  * @param  {string} [type]
  */
 async function scrapeIMDBFind(searchTerm, type) {
-  // ALL:      https://www.imdb.com/find?q=天気の子
-  // Titles:   https://www.imdb.com/find?s=tt&q=天気の子
-  // Episodes: https://www.imdb.com/find?s=ep&q=start%26over
-  // People:   https://www.imdb.com/find?s=nm&q=laurence+fishburn
-  // Company:  https://www.imdb.com/find?s=co&q=universal
-  // Keyword:  https://www.imdb.com/find?s=kw&q=christmas
-  const url = `https://www.imdb.com/find?q=${querystring.escape(searchTerm)}${type ? "&s=" + type : ""}`;
+  // ALL:      https://www.imdb.com/find/?q=天気の子
+  // Titles:   https://www.imdb.com/find/?s=tt&q=天気の子
+  // Episodes: https://www.imdb.com/find/?s=ep&q=start%26over
+  // People:   https://www.imdb.com/find/?s=nm&q=laurence+fishburn
+  // Company:  https://www.imdb.com/find/?s=co&q=universal
+  // Keyword:  https://www.imdb.com/find/?s=kw&q=christmas
+  const url = `https://www.imdb.com/find/?q=${querystring.escape(searchTerm)}${type ? "&s=" + type : ""}`;
 
   logger.log("[scrapeIMDBFind] url:", url);
 
@@ -2109,6 +2198,7 @@ export {
   scrapeIMDBtechnicalData,
   scrapeIMDBPersonData,
   scrapeIMDBAdvancedTitleSearch,
+  scrapeIMDBAdvancedTitleSearchV3,
   scrapeIMDBSuggestion,
   scrapeIMDBFind,
   scrapeIMDBTrailerMediaURLs,

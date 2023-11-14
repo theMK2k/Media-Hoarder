@@ -225,7 +225,7 @@ async function manageIndexes(db) {
   logger.log("[manageIndexes] index creation done");
 
   // remove indexes which should not be used anymore
-  const availableIndexes = await db.fireProcedureReturnAll(`SELECT name FROM sqlite_master WHERE type = 'index'`);
+  const availableIndexes = await db.fireProcedureReturnAll(/* sql */ `SELECT name FROM sqlite_master WHERE type = 'index'`);
 
   for (let availableIndex of availableIndexes) {
     if (availableIndex.name.startsWith("IDX") && !queries.find((query) => query.name === availableIndex.name)) {
@@ -239,7 +239,7 @@ async function manageIndexes(db) {
 
 async function fetchSourcePaths() {
   const result = await db.fireProcedureReturnAll(
-    `
+    /* sql */ `
 			SELECT 
 			id_SourcePaths
 			, MediaType
@@ -247,7 +247,8 @@ async function fetchSourcePaths() {
 			, Description
 			, created_at
 			, checkRemovedFiles
-		FROM tbl_SourcePaths`,
+		FROM tbl_SourcePaths
+    `,
     []
   );
 
@@ -449,7 +450,7 @@ async function mergeExtras(onlyNew) {
 
   // removed: 		AND Extra_id_Movies_Owner IS NULL
   //              because on rescan we also want to re-merge extras
-  const children = await db.fireProcedureReturnAll(`
+  const children = await db.fireProcedureReturnAll(/* sql */ `
 	SELECT
 		MOV.id_Movies
 		, MOV.RelativePath
@@ -505,7 +506,7 @@ async function mergeExtraDirectoryBased(movie) {
   logger.log("[mergeExtraDirectoryBased] $ParentDirectory:", $ParentDirectory);
 
   let possibleParents = await db.fireProcedureReturnAll(
-    `
+    /*sql*/ `
 		SELECT
 			id_Movies
 			, RelativePath
@@ -3050,7 +3051,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
   try {
     logger.log("[fetchMedia] shared.languagesAudioSubtitles:", shared.languagesAudioSubtitles);
 
-    const query = `
+    const query = /*sql*/ `
 		SELECT
 			MOV.id_Movies
 			, MOV.Name
@@ -3082,7 +3083,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
 
       ${
         minimumResultSet
-          ? `
+          ? /*sql*/ `
         , 0 AS isCompletelyFetched
         , NULL AS Filename
         , NULL AS Size
@@ -3114,7 +3115,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
         , NULL AS Video_Encoder
         , NULL AS Audio_Format
       `
-          : `
+          : /*sql*/ `
         , 1 AS isCompletelyFetched
         , MOV.Filename
         , MOV.Size
@@ -3511,7 +3512,7 @@ async function fetchFilterDataQuality($MediaType, loadFilterValuesFromStorage) {
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
   const results = await db.fireProcedureReturnAll(
-    `
+    /*sql*/ `
       SELECT
         1 AS Selected
         , '<noAnomalies>' AS Name

@@ -1,5 +1,13 @@
 # DONE
 
+## v1.3.2
+
+- [x] Fix: IMDB Advanced Title Search
+
+## v1.3.1
+
+- [x] excluded genre filters option (e.g. "not Horror")
+
 ## v1.3.0
 
 - [x] new list action: "Start Trailer Show"
