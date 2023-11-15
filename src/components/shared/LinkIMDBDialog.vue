@@ -63,9 +63,15 @@
         <div v-if="searchResults.length > 0">
           <!-- Top Pagination -->
           <div v-if="Math.ceil(searchResults.length / searchResultsPerPage) > 1" style="margin-bottom: 24px; color: white">
-            <v-btn small v-bind:disabled="currentPage == 1" v-on:click="onPrevClicked">&lt;</v-btn>
+            <v-btn small v-bind:disabled="currentPage == 1" v-on:click="onPrevClicked" style="margin-right: 16px">&lt;</v-btn>
             {{ currentPage }} / {{ Math.ceil(searchResults.length / searchResultsPerPage) }}
-            <v-btn small v-bind:disabled="currentPage >= Math.ceil(searchResults.length / searchResultsPerPage)" v-on:click="onNextClicked">&gt;</v-btn>
+            <v-btn
+              small
+              v-bind:disabled="currentPage >= Math.ceil(searchResults.length / searchResultsPerPage)"
+              v-on:click="onNextClicked"
+              style="margin-left: 16px"
+              >&gt;</v-btn
+            >
           </div>
 
           <!-- Result Items -->
@@ -108,10 +114,16 @@
           </v-row>
 
           <!-- Bottom Pagination -->
-          <div v-if="Math.ceil(searchResults.length / searchResultsPerPage) > 1" style="margin-top: 24px; color: white">
-            <v-btn small v-bind:disabled="currentPage == 1" v-on:click="onPrevClicked">&lt;</v-btn>
+          <div v-if="Math.ceil(searchResults.length / searchResultsPerPage) > 1" style="margin-top: 16px; margin-bottom: 24px; color: white">
+            <v-btn small v-bind:disabled="currentPage == 1" v-on:click="onPrevClicked" style="margin-right: 16px">&lt;</v-btn>
             {{ currentPage }} / {{ Math.ceil(searchResults.length / searchResultsPerPage) }}
-            <v-btn small v-bind:disabled="currentPage >= Math.ceil(searchResults.length / searchResultsPerPage)" v-on:click="onNextClicked">&gt;</v-btn>
+            <v-btn
+              small
+              v-bind:disabled="currentPage >= Math.ceil(searchResults.length / searchResultsPerPage)"
+              v-on:click="onNextClicked"
+              style="margin-left: 16px"
+              >&gt;</v-btn
+            >
           </div>
         </div>
       </v-card-text>
