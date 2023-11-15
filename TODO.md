@@ -4,13 +4,11 @@
 
 ## NEXT Major
 
-## NEXT Minor (current v1.3.0)
-
-- [ ] Fix IMDB Find Page Search
-
-- [ ] Fix: subdirectory called "extras" is not assigned to the main movie (the files are provided as main movies themselves)
+## NEXT Minor (current v1.3.2)
 
 - [ ] use imdb-graphql-urls.json (also try to fetch them from master in github, this way we can update the urls if imdb changes them - without creating a new release)
+- [ ] Fix: subdirectory called "extras" is not assigned to the main movie (the files are provided as main movies themselves)
+
 - [ ] Trailer Show - trailer dialog is open, when adding to list the scrollbar appears on the side, also the trailer dialog seems to wiggle a bit when the add-to-list dialog closes
 - [ ] IMDB Scraper: analyze video URLs in "Videos" section and find a better suited Trailer URL than the one primarily shown in the main page (which is oftentimes an IMDB special)
 

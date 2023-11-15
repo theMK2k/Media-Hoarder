@@ -2,7 +2,10 @@
 
 ## v1.3.2
 
-- [x] Fix: IMDB Advanced Title Search
+- [x] Link IMDB Dialog:
+  - [x] with paginated search results (20 per page)
+  - [x] Fix: IMDB Advanced Title Search
+  - [x] Fix: IMDB Find Page Search
 
 ## v1.3.1
 

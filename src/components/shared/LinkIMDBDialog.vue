@@ -52,49 +52,68 @@
         </v-expansion-panels>
       -->
 
-        <v-row>
+        <v-row style="margin-bottom: 16px">
           <v-btn text v-bind:loading="isLoading" v-on:click.native="onSearchClick">{{ $t("Search") }}</v-btn>
         </v-row>
       </v-card-title>
 
-      <v-card-text style="padding-right: 28px; padding-top: 16px">
-        <v-row v-for="(item, i) in searchResults" :key="i">
-          <v-col style="padding: 2px; margin-left: 16px">
-            <v-card
-              dark
-              flat
-              hover
-              v-bind:ripple="false"
-              v-on:mouseover="setItemHovered(item, 'item', true)"
-              v-on:mouseleave="setItemHovered(item, 'item', false)"
-            >
-              <v-list-item three-line style="padding-left: 0px">
-                <div>
-                  <v-list-item-avatar tile style="margin: 6px; height: 100px; width: 80px">
-                    <v-img contain v-if="item.imageURL" v-bind:src="item.imageURL" style="border-radius: 6px"></v-img>
-                  </v-list-item-avatar>
-                </div>
-                <v-list-item-content class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
-                  <v-col style="padding: 0px !important">
-                    <v-row style="margin-bottom: 8px">
-                      <v-list-item-title style="margin-bottom: 4px !important; font-size: 16px; margin-left: 12px; margin-top: 8px"
-                        >{{ item.title }} <span v-if="item.year">({{ item.year }})</span></v-list-item-title
-                      >
-                    </v-row>
+      <!-- Results -->
+      <v-card-text v-if="firstSearchCompleted" style="padding-right: 28px">
+        <div v-if="searchResults.length === 0">{{ $t("No results") }}</div>
+        <div v-if="searchResults.length > 0">
+          <!-- Top Pagination -->
+          <div style="margin-bottom: 24px; color: white">
+            <v-btn small v-bind:disabled="currentPage == 1" v-on:click="onPrevClicked">&lt;</v-btn>
+            {{ currentPage }} / {{ Math.ceil(searchResults.length / searchResultsPerPage) }}
+            <v-btn small v-bind:disabled="currentPage >= Math.ceil(searchResults.length / searchResultsPerPage)" v-on:click="onNextClicked">&gt;</v-btn>
+          </div>
 
-                    <v-list-item-subtitle v-if="item.detailInfo" style="margin-top: -8px; margin-bottom: 4px">{{ item.detailInfo }}</v-list-item-subtitle>
+          <!-- Result Items -->
+          <v-row v-for="(item, i) in searchResultsPaginated" :key="i">
+            <v-col style="padding: 2px; margin-left: 16px">
+              <v-card
+                dark
+                flat
+                hover
+                v-bind:ripple="false"
+                v-on:mouseover="setItemHovered(item, 'item', true)"
+                v-on:mouseleave="setItemHovered(item, 'item', false)"
+              >
+                <v-list-item three-line style="padding-left: 0px">
+                  <div>
+                    <v-list-item-avatar tile style="margin: 6px; height: 100px; width: 80px">
+                      <v-img contain v-if="item.imageURL" v-bind:src="item.imageURL" style="border-radius: 6px"></v-img>
+                    </v-list-item-avatar>
+                  </div>
+                  <v-list-item-content class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
+                    <v-col style="padding: 0px !important">
+                      <v-row style="margin-bottom: 8px">
+                        <v-list-item-title style="margin-bottom: 4px !important; font-size: 16px; margin-left: 12px; margin-top: 8px"
+                          >{{ item.title }} <span v-if="item.year">({{ item.year }})</span></v-list-item-title
+                        >
+                      </v-row>
 
-                    <v-row style="margin-top: 8px">
-                      <v-btn v-show="item.itemHovered || isLinking" text color="primary" v-bind:loading="isLinking" v-on:click.stop="onSelectClick(item)">{{
-                        $t("Select for linking")
-                      }}</v-btn>
-                    </v-row>
-                  </v-col>
-                </v-list-item-content>
-              </v-list-item>
-            </v-card>
-          </v-col>
-        </v-row>
+                      <v-list-item-subtitle v-if="item.detailInfo" style="margin-top: -8px; margin-bottom: 4px">{{ item.detailInfo }}</v-list-item-subtitle>
+
+                      <v-row style="margin-top: 8px">
+                        <v-btn v-show="item.itemHovered || isLinking" text color="primary" v-bind:loading="isLinking" v-on:click.stop="onSelectClick(item)">{{
+                          $t("Select for linking")
+                        }}</v-btn>
+                      </v-row>
+                    </v-col>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-card>
+            </v-col>
+          </v-row>
+
+          <!-- Bottom Pagination -->
+          <div style="margin-top: 24px; color: white">
+            <v-btn small v-bind:disabled="currentPage == 1" v-on:click="onPrevClicked">&lt;</v-btn>
+            {{ currentPage }} / {{ Math.ceil(searchResults.length / searchResultsPerPage) }}
+            <v-btn small v-bind:disabled="currentPage >= Math.ceil(searchResults.length / searchResultsPerPage)" v-on:click="onNextClicked">&gt;</v-btn>
+          </div>
+        </div>
       </v-card-text>
 
       <v-card-actions>
@@ -118,7 +137,10 @@ export default {
 
   data() {
     return {
-      items: [],
+      firstSearchCompleted: false,
+      searchResultsPerPage: 20,
+      currentPage: 1,
+      searchResults: [],
       searchText: "",
       showTitleTypes: false,
       isLoading: false,
@@ -176,9 +198,13 @@ export default {
           checked: true,
         },
       ],
-
-      searchResults: [],
     };
+  },
+
+  computed: {
+    searchResultsPaginated() {
+      return this.searchResults.slice((this.currentPage - 1) * this.searchResultsPerPage, this.currentPage * this.searchResultsPerPage);
+    },
   },
 
   methods: {
@@ -222,6 +248,7 @@ export default {
       logger.log("[onSearchClick] START");
 
       this.isLoading = true;
+      this.currentPage = 1;
 
       if (!this.searchText) {
         eventBus.showSnackbar("error", this.$t("title is missing"));
@@ -261,6 +288,7 @@ export default {
       }
 
       this.isLoading = false;
+      this.firstSearchCompleted = true;
     },
 
     onSelectClick(item) {
@@ -287,6 +315,18 @@ export default {
 
     setItemHovered(item, section, value) {
       this.$set(item, `${section}Hovered`, value);
+    },
+
+    onPrevClicked() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    },
+
+    onNextClicked() {
+      if (this.currentPage < Math.ceil(this.searchResults.length / this.searchResultsPerPage)) {
+        this.currentPage++;
+      }
     },
   },
 
