@@ -536,7 +536,7 @@ async function testIMDBParentalGuideData() {
 
   try {
     const expected = {
-      $IMDB_MinAge: 7,
+      $IMDB_MinAge: 6,
       $IMDB_MaxAge: 16,
       $IMDB_id_AgeRating_Chosen_Country: 1337, // yeah, we made this up
       $IMDB_Parental_Advisory_Nudity: 0,
