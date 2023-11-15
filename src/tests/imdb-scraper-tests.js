@@ -41,6 +41,7 @@ async function testIMDBmainPageData() {
   // Avengers: Endgame (2019)
   const testResult = {
     name: "IMDB Main Page Data",
+    functionName: "testIMDBmainPageData",
     status: status.SUCCESS,
     log: [],
   };
@@ -142,6 +143,7 @@ async function testIMDBmainPageData2() {
   // Le Silence de la Mer (1949)
   const testResult = {
     name: "IMDB Main Page Data 2",
+    functionName: "testIMDBmainPageData2",
     status: status.SUCCESS,
     log: [],
   };
@@ -221,6 +223,7 @@ async function testIMDBmainPageData3() {
   // Star Trek: The Next Generation (1987–1994)
   const testResult = {
     name: "IMDB Main Page Data 3",
+    functionName: "testIMDBmainPageData3",
     status: status.SUCCESS,
     log: [],
   };
@@ -300,6 +303,7 @@ async function testIMDBmainPageData4() {
   // An American Werewolf in London (no year, no summary)
   const testResult = {
     name: "IMDB Main Page Data 4",
+    functionName: "testIMDBmainPageData4",
     status: status.SUCCESS,
     log: [],
   };
@@ -347,6 +351,7 @@ async function testIMDBmainPageData4() {
 async function testIMDBplotSummary() {
   const testResult = {
     name: "IMDB Plot Summary",
+    functionName: "testIMDBplotSummary",
     status: status.SUCCESS,
     log: [],
   };
@@ -383,6 +388,7 @@ async function testIMDBplotSummary() {
 async function testIMDBreleaseinfo() {
   const testResult = {
     name: "IMDB Release Info",
+    functionName: "testIMDBreleaseinfo",
     status: status.SUCCESS,
     log: [],
   };
@@ -419,6 +425,7 @@ async function testIMDBreleaseinfo() {
 async function testIMDBtechnicalData() {
   const testResult = {
     name: "IMDB Technical Data",
+    functionName: "testIMDBtechnicalData",
     status: status.SUCCESS,
     log: [],
   };
@@ -451,6 +458,7 @@ async function testIMDBtechnicalData() {
 async function testIMDBtechnicalData2() {
   const testResult = {
     name: "IMDB Technical Data 2",
+    functionName: "testIMDBtechnicalData2",
     status: status.SUCCESS,
     log: [],
   };
@@ -484,6 +492,7 @@ async function testIMDBtechnicalData2() {
 async function testIMDBtechnicalData3() {
   const testResult = {
     name: "IMDB Technical Data 3",
+    functionName: "testIMDBtechnicalData3",
     status: status.SUCCESS,
     log: [],
   };
@@ -517,6 +526,7 @@ async function testIMDBtechnicalData3() {
 async function testIMDBParentalGuideData() {
   const testResult = {
     name: "IMDB Parental Guide Data",
+    functionName: "testIMDBParentalGuideData",
     status: status.SUCCESS,
     log: [],
   };
@@ -594,6 +604,7 @@ async function testIMDBParentalGuideData() {
 async function testIMDBFullCreditsData() {
   const testResult = {
     name: "IMDB Full Credits Data",
+    functionName: "testIMDBFullCreditsData",
     status: status.SUCCESS,
     log: [],
   };
@@ -666,6 +677,7 @@ async function testIMDBFullCreditsData() {
 async function testIMDBCompaniesData() {
   const testResult = {
     name: "IMDB Companies Data",
+    functionName: "testIMDBCompaniesData",
     status: status.SUCCESS,
     log: [],
   };
@@ -732,6 +744,7 @@ async function testIMDBCompaniesData() {
 async function testIMDBPersonData() {
   const testResult = {
     name: "IMDB Person Data",
+    functionName: "testIMDBPersonData",
     status: status.SUCCESS,
     log: [],
   };
@@ -776,6 +789,7 @@ async function testIMDBTrailerMediaURLs() {
 
   const testResult = {
     name: "IMDB Trailer Media URLs",
+    functionName: "testIMDBTrailerMediaURLs",
     status: status.SUCCESS,
     log: [],
   };
@@ -825,6 +839,7 @@ async function testIMDBTrailerMediaURLs() {
 async function testIMDBplotKeywords() {
   const testResult = {
     name: "IMDB Plot Keywords",
+    functionName: "testIMDBplotKeywords",
     status: status.SUCCESS,
     log: [],
   };
@@ -898,6 +913,7 @@ async function testIMDBplotKeywords() {
 async function testIMDBFilmingLocations() {
   const testResult = {
     name: "IMDB Filming Locations",
+    functionName: "testIMDBFilmingLocations",
     status: status.SUCCESS,
     log: [],
   };
@@ -990,6 +1006,7 @@ async function testIMDBFilmingLocations() {
 async function testIMDBRatingDemographics() {
   const testResult = {
     name: "IMDB Rating Demographics",
+    functionName: "testIMDBRatingDemographics",
     status: status.SUCCESS,
     log: [],
   };
@@ -1089,6 +1106,7 @@ async function testIMDBRatingDemographics() {
 async function testIMDBSuggestion() {
   const testResult = {
     name: "IMDB Search",
+    functionName: "testIMDBSuggestion",
     status: status.SUCCESS,
     log: [],
   };
@@ -1157,6 +1175,7 @@ async function testIMDBSuggestion() {
 async function testIMDBAdvancedTitleSearch() {
   const testResult = {
     name: "IMDB Advanced Title Search",
+    functionName: "testIMDBAdvancedTitleSearch",
     status: status.SUCCESS,
     log: [],
   };
@@ -1234,6 +1253,7 @@ async function testIMDBAdvancedTitleSearch() {
 async function testIMDBFindPageSearch() {
   const testResult = {
     name: "IMDB Find",
+    functionName: "testIMDBFindPageSearch",
     status: status.SUCCESS,
     log: [],
   };

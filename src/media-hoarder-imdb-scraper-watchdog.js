@@ -100,7 +100,7 @@ function addLogEntry(testResult) {
         : testResult.status === status.ERROR
         ? chalk.red("FAIL")
         : chalk.red("EXCEPTION")
-    }${chalk.white("]")} ${testResult.name}`,
+    }${chalk.white("]")} ${testResult.name} (${testResult.functionName})`,
   };
 
   log.messages.push(messageEntry);
