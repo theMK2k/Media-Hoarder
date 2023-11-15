@@ -62,7 +62,7 @@
         <div v-if="searchResults.length === 0">{{ $t("No results") }}</div>
         <div v-if="searchResults.length > 0">
           <!-- Top Pagination -->
-          <div style="margin-bottom: 24px; color: white">
+          <div v-if="Math.ceil(searchResults.length / searchResultsPerPage) > 1" style="margin-bottom: 24px; color: white">
             <v-btn small v-bind:disabled="currentPage == 1" v-on:click="onPrevClicked">&lt;</v-btn>
             {{ currentPage }} / {{ Math.ceil(searchResults.length / searchResultsPerPage) }}
             <v-btn small v-bind:disabled="currentPage >= Math.ceil(searchResults.length / searchResultsPerPage)" v-on:click="onNextClicked">&gt;</v-btn>
@@ -108,7 +108,7 @@
           </v-row>
 
           <!-- Bottom Pagination -->
-          <div style="margin-top: 24px; color: white">
+          <div v-if="Math.ceil(searchResults.length / searchResultsPerPage) > 1" style="margin-top: 24px; color: white">
             <v-btn small v-bind:disabled="currentPage == 1" v-on:click="onPrevClicked">&lt;</v-btn>
             {{ currentPage }} / {{ Math.ceil(searchResults.length / searchResultsPerPage) }}
             <v-btn small v-bind:disabled="currentPage >= Math.ceil(searchResults.length / searchResultsPerPage)" v-on:click="onNextClicked">&gt;</v-btn>
