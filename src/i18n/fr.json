@@ -94,6 +94,8 @@
   "update secondary title": "mettre à jour le titre secondaire",
   "update rating": "mettre à jour l'évaluation",
   "update last access": "mettre à jour depuis le dernier accès",
+  "update description": "mettre à jour la description",
+  "update release attributes": "mettre à jour les caractéristiques de la version",
   "Meta Duplicates": "Meta-Doublons",
   "A meta duplicate is identified by having the same IMDB link_ This can happen if you have the same movie in different formats": "Un meta-doublon est identifié comme ayant le même lien IMDB. Cela peut arriver si vous avez le même film dans différents formats.",
   "With meta duplicates, {appName} should also___": "Avec les méta-doublons, {appName} doit aussi...",

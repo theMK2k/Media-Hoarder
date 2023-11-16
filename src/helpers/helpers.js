@@ -59,6 +59,11 @@ function getStaticPath(relativePath) {
   /* eslint-enable no-undef */
 }
 
+/**
+ * Get a time string from a given runtime in seconds, e.g. 1:23:45
+ * @param {number} runtimeSeconds
+ * @returns
+ */
 function getTimeString(runtimeSeconds) {
   let result = "";
 
@@ -76,6 +81,23 @@ function getTimeString(runtimeSeconds) {
 
   const seconds = runtimeSeconds % 60;
   result += seconds < 10 ? "0" + seconds : seconds;
+
+  return result;
+}
+
+/**
+ * Get a minute-based time string from a given runtime in seconds, e.g. 123 min
+ * @param {number} runtimeSeconds
+ */
+function getTimeStringMinutes(runtimeSeconds) {
+  let result = "";
+
+  if (typeof runtimeSeconds !== "number") {
+    return "";
+  }
+
+  const minutes = Math.floor(runtimeSeconds / 60);
+  result += `${minutes} min`;
 
   return result;
 }
@@ -314,6 +336,8 @@ async function requestAsync(options) {
   // return requestretryAsync(optionsDerived);
   const response = await requestretryAsync(optionsDerived);
 
+  logger.log("[requestAsync] response:", response);
+
   if (requestAsyncDumpToFile) {
     const filename = `${filenamifyExt(optionsDerived.url ? optionsDerived.url : optionsDerived.uri)}.html`;
     logger.log("[requestAsync] dumping to", filename);
@@ -455,6 +479,7 @@ export {
   getDataPath,
   getStaticPath,
   getTimeString,
+  getTimeStringMinutes,
   uppercaseEachWord,
   getMovieNameFromFileName,
   getMovieNameFromDirectory,

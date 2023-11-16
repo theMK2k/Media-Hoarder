@@ -4,12 +4,14 @@
 
 ## NEXT Major
 
-- [ ] excluded genre filters option (e.g. "not Horror")
+## NEXT Minor (current v1.3.2)
 
-## NEXT Minor (current v1.3.0)
+- [ ] use imdb-graphql-urls.json (also try to fetch them from master in github, this way we can update the urls if imdb changes them - without creating a new release)
+- [ ] Fix: subdirectory called "extras" is not assigned to the main movie (the files are provided as main movies themselves)
 
 - [ ] Trailer Show - trailer dialog is open, when adding to list the scrollbar appears on the side, also the trailer dialog seems to wiggle a bit when the add-to-list dialog closes
 - [ ] IMDB Scraper: analyze video URLs in "Videos" section and find a better suited Trailer URL than the one primarily shown in the main page (which is oftentimes an IMDB special)
+
   - or simply use:
     - <https://www.imdb.com/title/tt0088247/videogallery/content_type-trailer/?sort=date&sortDir=desc>
     - <https://www.imdb.com/title/tt4154796/videogallery/content_type-trailer/?sortDir=desc&sort=duration>
@@ -27,6 +29,8 @@
 
 ## LATER
 
+- [ ] include find-imdb-tconst-tests in imdb scraper watchdog
+- [ ] fix file/dirbased name when IMDB tconst detection has no result: if the medium is directory-based, then show the directory name and not the file-based name
 - [ ] new filter: min. IMDB votes
 - [ ] "IMDB score comparison game" (in context of the current list?)
 - [ ] curl/wget easylist.txt automatically before build <https://easylist.to/easylist/easylist.txt>

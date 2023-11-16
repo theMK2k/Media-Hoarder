@@ -84,13 +84,13 @@ const log = {
   // if (!config.testmodule || config.testmodule === "testIMDBRatingDemographics") addLogEntry(await imdbScraperTests.testIMDBRatingDemographics());
   if (!config.testmodule || config.testmodule === "testIMDBSuggestion") addLogEntry(await imdbScraperTests.testIMDBSuggestion());
   if (!config.testmodule || config.testmodule === "testIMDBAdvancedTitleSearch") addLogEntry(await imdbScraperTests.testIMDBAdvancedTitleSearch());
-  // TODO: we currently don't use scrapeIMDBfind, but it also has V3 (GraphQL) interfaces
-  // if (!config.testmodule || config.testmodule === "testIMDBFind") addLogEntry(await imdbScraperTests.testIMDBFind());
+  if (!config.testmodule || config.testmodule === "testIMDBFindPageSearch") addLogEntry(await imdbScraperTests.testIMDBFindPageSearch());
 
   await checkSendMail();
 })();
 
 function addLogEntry(testResult) {
+  logger.log("[addLogEntry] testResult:", testResult);
   const messageEntry = {
     message: `${chalk.white("[")}${
       testResult.status === status.SUCCESS
@@ -100,7 +100,7 @@ function addLogEntry(testResult) {
         : testResult.status === status.ERROR
         ? chalk.red("FAIL")
         : chalk.red("EXCEPTION")
-    }${chalk.white("]")} ${testResult.name}`,
+    }${chalk.white("]")} ${testResult.name} (${testResult.functionName})`,
   };
 
   log.messages.push(messageEntry);

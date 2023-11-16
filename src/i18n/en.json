@@ -93,6 +93,8 @@
   "update secondary title": "update secondary title",
   "update rating": "update rating",
   "update last access": "update last access",
+  "update description": "update description",
+  "update release attributes": "update release attributes",
   "Meta Duplicates": "Meta Duplicates",
   "A meta duplicate is identified by having the same IMDB link_ This can happen if you have the same movie in different formats": "A meta duplicate is identified by having the same IMDB link. This can happen if you have the same movie in different formats (e.g. SD, HD, 4k).",
   "With meta duplicates, {appName} should also___": "With meta duplicates, {appName} should also...",

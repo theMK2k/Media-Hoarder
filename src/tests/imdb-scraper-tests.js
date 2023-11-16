@@ -1,5 +1,7 @@
 const imdbScraper = require("../imdb-scraper");
 
+// const logger = require("../helpers/logger");
+
 const status = {
   SUCCESS: 0,
   WARNING: 1,
@@ -39,6 +41,7 @@ async function testIMDBmainPageData() {
   // Avengers: Endgame (2019)
   const testResult = {
     name: "IMDB Main Page Data",
+    functionName: "testIMDBmainPageData",
     status: status.SUCCESS,
     log: [],
   };
@@ -69,7 +72,7 @@ async function testIMDBmainPageData() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_releaseType");
@@ -140,6 +143,7 @@ async function testIMDBmainPageData2() {
   // Le Silence de la Mer (1949)
   const testResult = {
     name: "IMDB Main Page Data 2",
+    functionName: "testIMDBmainPageData2",
     status: status.SUCCESS,
     log: [],
   };
@@ -168,7 +172,7 @@ async function testIMDBmainPageData2() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_releaseType");
@@ -219,6 +223,7 @@ async function testIMDBmainPageData3() {
   // Star Trek: The Next Generation (1987–1994)
   const testResult = {
     name: "IMDB Main Page Data 3",
+    functionName: "testIMDBmainPageData3",
     status: status.SUCCESS,
     log: [],
   };
@@ -247,7 +252,7 @@ async function testIMDBmainPageData3() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_releaseType");
@@ -298,6 +303,7 @@ async function testIMDBmainPageData4() {
   // An American Werewolf in London (no year, no summary)
   const testResult = {
     name: "IMDB Main Page Data 4",
+    functionName: "testIMDBmainPageData4",
     status: status.SUCCESS,
     log: [],
   };
@@ -322,7 +328,7 @@ async function testIMDBmainPageData4() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_releaseType");
@@ -345,6 +351,7 @@ async function testIMDBmainPageData4() {
 async function testIMDBplotSummary() {
   const testResult = {
     name: "IMDB Plot Summary",
+    functionName: "testIMDBplotSummary",
     status: status.SUCCESS,
     log: [],
   };
@@ -366,7 +373,7 @@ async function testIMDBplotSummary() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_plotSummaryFull");
@@ -381,6 +388,7 @@ async function testIMDBplotSummary() {
 async function testIMDBreleaseinfo() {
   const testResult = {
     name: "IMDB Release Info",
+    functionName: "testIMDBreleaseinfo",
     status: status.SUCCESS,
     log: [],
   };
@@ -400,7 +408,7 @@ async function testIMDBreleaseinfo() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_originalTitle");
@@ -417,6 +425,7 @@ async function testIMDBreleaseinfo() {
 async function testIMDBtechnicalData() {
   const testResult = {
     name: "IMDB Technical Data",
+    functionName: "testIMDBtechnicalData",
     status: status.SUCCESS,
     log: [],
   };
@@ -434,7 +443,7 @@ async function testIMDBtechnicalData() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_runtimeMinutes");
@@ -449,6 +458,7 @@ async function testIMDBtechnicalData() {
 async function testIMDBtechnicalData2() {
   const testResult = {
     name: "IMDB Technical Data 2",
+    functionName: "testIMDBtechnicalData2",
     status: status.SUCCESS,
     log: [],
   };
@@ -466,7 +476,7 @@ async function testIMDBtechnicalData2() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_runtimeMinutes");
@@ -482,6 +492,7 @@ async function testIMDBtechnicalData2() {
 async function testIMDBtechnicalData3() {
   const testResult = {
     name: "IMDB Technical Data 3",
+    functionName: "testIMDBtechnicalData3",
     status: status.SUCCESS,
     log: [],
   };
@@ -499,7 +510,7 @@ async function testIMDBtechnicalData3() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_runtimeMinutes");
@@ -515,6 +526,7 @@ async function testIMDBtechnicalData3() {
 async function testIMDBParentalGuideData() {
   const testResult = {
     name: "IMDB Parental Guide Data",
+    functionName: "testIMDBParentalGuideData",
     status: status.SUCCESS,
     log: [],
   };
@@ -534,7 +546,7 @@ async function testIMDBParentalGuideData() {
 
   try {
     const expected = {
-      $IMDB_MinAge: 7,
+      $IMDB_MinAge: 6,
       $IMDB_MaxAge: 16,
       $IMDB_id_AgeRating_Chosen_Country: 1337, // yeah, we made this up
       $IMDB_Parental_Advisory_Nudity: 0,
@@ -558,7 +570,7 @@ async function testIMDBParentalGuideData() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_MinAge");
@@ -592,6 +604,7 @@ async function testIMDBParentalGuideData() {
 async function testIMDBFullCreditsData() {
   const testResult = {
     name: "IMDB Full Credits Data",
+    functionName: "testIMDBFullCreditsData",
     status: status.SUCCESS,
     log: [],
   };
@@ -625,7 +638,7 @@ async function testIMDBFullCreditsData() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "topCredits");
@@ -664,6 +677,7 @@ async function testIMDBFullCreditsData() {
 async function testIMDBCompaniesData() {
   const testResult = {
     name: "IMDB Companies Data",
+    functionName: "testIMDBCompaniesData",
     status: status.SUCCESS,
     log: [],
   };
@@ -687,11 +701,11 @@ async function testIMDBCompaniesData() {
       IMDB_tconst: "tt4154796",
     };
 
-    const scrapeResult = await imdbScraper.scrapeIMDBCompaniesData(movie);
+    const scrapeResult = await imdbScraper.scrapeIMDBCompaniesDataV3(movie);
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "topProductionCompanies");
@@ -730,6 +744,7 @@ async function testIMDBCompaniesData() {
 async function testIMDBPersonData() {
   const testResult = {
     name: "IMDB Person Data",
+    functionName: "testIMDBPersonData",
     status: status.SUCCESS,
     log: [],
   };
@@ -753,7 +768,7 @@ async function testIMDBPersonData() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_Person_ID");
@@ -774,6 +789,7 @@ async function testIMDBTrailerMediaURLs() {
 
   const testResult = {
     name: "IMDB Trailer Media URLs",
+    functionName: "testIMDBTrailerMediaURLs",
     status: status.SUCCESS,
     log: [],
   };
@@ -788,7 +804,7 @@ async function testIMDBTrailerMediaURLs() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     if (!scrapeResult.mediaURLs) {
@@ -823,6 +839,7 @@ async function testIMDBTrailerMediaURLs() {
 async function testIMDBplotKeywords() {
   const testResult = {
     name: "IMDB Plot Keywords",
+    functionName: "testIMDBplotKeywords",
     status: status.SUCCESS,
     log: [],
   };
@@ -840,7 +857,7 @@ async function testIMDBplotKeywords() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     if (scrapeResult.length === 0) {
@@ -896,6 +913,7 @@ async function testIMDBplotKeywords() {
 async function testIMDBFilmingLocations() {
   const testResult = {
     name: "IMDB Filming Locations",
+    functionName: "testIMDBFilmingLocations",
     status: status.SUCCESS,
     log: [],
   };
@@ -918,7 +936,7 @@ async function testIMDBFilmingLocations() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     if (scrapeResult.length === 0) {
@@ -988,6 +1006,7 @@ async function testIMDBFilmingLocations() {
 async function testIMDBRatingDemographics() {
   const testResult = {
     name: "IMDB Rating Demographics",
+    functionName: "testIMDBRatingDemographics",
     status: status.SUCCESS,
     log: [],
   };
@@ -1041,7 +1060,7 @@ async function testIMDBRatingDemographics() {
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
-      return;
+      return testResult;
     }
 
     Object.keys(expected).forEach((key) => {
@@ -1087,6 +1106,7 @@ async function testIMDBRatingDemographics() {
 async function testIMDBSuggestion() {
   const testResult = {
     name: "IMDB Search",
+    functionName: "testIMDBSuggestion",
     status: status.SUCCESS,
     log: [],
   };
@@ -1120,12 +1140,12 @@ async function testIMDBSuggestion() {
 
       if (!scrapeResult) {
         addSubLogEntry(testResult, `query '${expectedValue.searchTerm}' no response`, status.ERROR);
-        return;
+        return testResult;
       }
 
       if (scrapeResult.length === 0) {
         addSubLogEntry(testResult, `query '${expectedValue.searchTerm}' results missing`, status.ERROR);
-        return;
+        return testResult;
       }
 
       if (scrapeResult.length < expectedValue.numResults) {
@@ -1155,6 +1175,7 @@ async function testIMDBSuggestion() {
 async function testIMDBAdvancedTitleSearch() {
   const testResult = {
     name: "IMDB Advanced Title Search",
+    functionName: "testIMDBAdvancedTitleSearch",
     status: status.SUCCESS,
     log: [],
   };
@@ -1167,37 +1188,33 @@ async function testIMDBAdvancedTitleSearch() {
         numResults: 32,
         result0: {
           tconst: "tt0109830",
-          title: "Forrest Gump (1994) ",
-          imageURL:
-            "https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_UY98_CR0,0,67,98_AL_.jpg",
+          title: "Forrest Gump",
+          year: 1994,
+          imageURL: "https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_.jpg",
           ageRating: "PG-13",
-          runtime: "142 min",
+          runtimeSeconds: 8520,
           genres: "Drama, Romance",
+          rating: 8.8,
+          numVotes: 1850000,
+          runtime: "142 min",
           detailInfo: "PG-13 | 142 min | Drama, Romance",
         },
       },
-      // {
-      //   searchTerm: `天気の子`,
-      //   numResults: 666,
-      //   result0: {},
-      // },
     ];
 
     for (let i = 0; i < expected.length; i++) {
       const expectedValue = expected[i];
 
-      const scrapeResult = await imdbScraper.scrapeIMDBAdvancedTitleSearch(expectedValue.title, expectedValue.titleTypes);
-
-      // console.log(scrapeResult);
+      const scrapeResult = await imdbScraper.scrapeIMDBAdvancedTitleSearchV3(expectedValue.title, expectedValue.titleTypes);
 
       if (!scrapeResult) {
         addSubLogEntry(testResult, `query '${expectedValue.title}' [${expectedValue.titleTypes}] no response`, status.ERROR);
-        return;
+        return testResult;
       }
 
       if (scrapeResult.length === 0) {
         addSubLogEntry(testResult, `query '${expectedValue.title}' [${expectedValue.titleTypes}] results missing`, status.ERROR);
-        return;
+        return testResult;
       }
 
       if (scrapeResult.length < expectedValue.numResults) {
@@ -1233,9 +1250,10 @@ async function testIMDBAdvancedTitleSearch() {
   return testResult;
 }
 
-async function testIMDBFind() {
+async function testIMDBFindPageSearch() {
   const testResult = {
     name: "IMDB Find",
+    functionName: "testIMDBFindPageSearch",
     status: status.SUCCESS,
     log: [],
   };
@@ -1248,10 +1266,9 @@ async function testIMDBFind() {
         numResults: 1,
         result0: {
           tconst: "tt9426210",
-          title: 'Weathering with You (2019) aka "天気の子"',
-          type: "title",
-          imageURL:
-            "https://m.media-amazon.com/images/M/MV5BNzE4ZDEzOGUtYWFjNC00ODczLTljOGQtZGNjNzhjNjdjNjgzXkEyXkFqcGdeQXVyNzE5ODMwNzI@._V1_UX32_CR0,0,32,44_AL_.jpg",
+          title: "Weathering with You",
+          year: 2019,
+          imageURL: "https://m.media-amazon.com/images/M/MV5BNzE4ZDEzOGUtYWFjNC00ODczLTljOGQtZGNjNzhjNjdjNjgzXkEyXkFqcGdeQXVyNzE5ODMwNzI@._V1_.jpg",
         },
       },
     ];
@@ -1259,7 +1276,7 @@ async function testIMDBFind() {
     for (let i = 0; i < expected.length; i++) {
       const expectedValue = expected[i];
 
-      const scrapeResult = await imdbScraper.scrapeIMDBFind(expectedValue.searchTerm, expectedValue.type);
+      const scrapeResult = await imdbScraper.scrapeIMDBFindPageSearchV3(expectedValue.searchTerm, expectedValue.type);
 
       // console.log(scrapeResult);
 
@@ -1284,8 +1301,8 @@ async function testIMDBFind() {
       }
 
       performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "tconst", `query '${expectedValue.searchTerm}' [${expectedValue.type}]`);
-      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "type", `query '${expectedValue.searchTerm}' [${expectedValue.type}]`);
       performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "title", `query '${expectedValue.searchTerm}' [${expectedValue.type}]`);
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "year", `query '${expectedValue.searchTerm}' [${expectedValue.type}]`);
       performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "imageURL", `query '${expectedValue.searchTerm}' [${expectedValue.type}]`);
     }
   } catch (error) {
@@ -1316,6 +1333,6 @@ export {
   testIMDBRatingDemographics,
   testIMDBSuggestion,
   testIMDBAdvancedTitleSearch,
-  testIMDBFind,
+  testIMDBFindPageSearch,
   status,
 };

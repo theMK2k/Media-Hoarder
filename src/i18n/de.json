@@ -93,6 +93,8 @@
   "update secondary title": "den Sekundärtitel übernehmen",
   "update rating": "die eigene Bewertung übernehmen",
   "update last access": "den letzten Zugriff übernehmen",
+  "update description": "die Beschreibung übernehmen",
+  "update release attributes": "die Veröffentlichungsattribute übernehmen",
   "Meta Duplicates": "Meta-Duplikate",
   "A meta duplicate is identified by having the same IMDB link_ This can happen if you have the same movie in different formats": "Ein Meta-Duplikat wird durch die Verknüpfung zum selben IMDB Eintrag identifiziert. Dies kommt vor, wenn man z.B. einen Film in unterschiedlichen Formaten (SD, HD oder 4k) vorliegen hat.",
   "With meta duplicates, {appName} should also___": "Bei Meta-Duplikaten soll {appName} auch...",
