@@ -2247,6 +2247,7 @@ const deprecated = {
   scrapeIMDBFilmingLocations,
   scrapeIMDBRatingDemographics,
   scrapeIMDBFind,
+  scrapeIMDBCompaniesDataV1,
 };
 
 export {
@@ -2254,8 +2255,7 @@ export {
   scrapeIMDBmainPageData,
   scrapeIMDBplotSummary,
   scrapeIMDBposterURLs,
-  scrapeIMDBCompaniesDataV3 as scrapeIMDBCompaniesData,
-  scrapeIMDBCompaniesDataV1,
+  scrapeIMDBCompaniesDataV3,
   scrapeIMDBFullCreditsData,
   scrapeIMDBParentalGuideData,
   scrapeIMDBreleaseinfo,

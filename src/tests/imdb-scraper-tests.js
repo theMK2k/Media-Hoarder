@@ -701,7 +701,7 @@ async function testIMDBCompaniesData() {
       IMDB_tconst: "tt4154796",
     };
 
-    const scrapeResult = await imdbScraper.scrapeIMDBCompaniesData(movie);
+    const scrapeResult = await imdbScraper.scrapeIMDBCompaniesDataV3(movie);
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);

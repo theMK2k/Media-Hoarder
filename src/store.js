@@ -32,7 +32,7 @@ const { shared } = require("./shared");
 const {
   scrapeIMDBmainPageData,
   scrapeIMDBplotSummary,
-  scrapeIMDBCompaniesData,
+  scrapeIMDBCompaniesDataV3,
   scrapeIMDBFullCreditsData,
   scrapeIMDBParentalGuideData,
   scrapeIMDBreleaseinfo,
@@ -1858,7 +1858,7 @@ async function fetchIMDBMetaData($t, movie, onlyNew) {
           rescanETA
         );
 
-        imdbData.companiesData = await scrapeIMDBCompaniesData(movie);
+        imdbData.companiesData = await scrapeIMDBCompaniesDataV3(movie);
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
