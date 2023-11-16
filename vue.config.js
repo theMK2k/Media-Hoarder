@@ -18,7 +18,7 @@ module.exports = {
           category: "AudioVideo",
           extraResources: ["bin/linux"],
         },
-        afterSign: "@oshell/vue-cli-plugin-electron-builder-notarize",
+        // afterSign: "@oshell/vue-cli-plugin-electron-builder-notarize",
         mac: {
           hardenedRuntime: true,
           entitlements: "./entitlements.plist",
