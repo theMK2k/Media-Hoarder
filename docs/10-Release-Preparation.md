@@ -58,10 +58,6 @@ npm i
 
 - [ ] on RPi run `npm run electron:build-rpi`
 
-## Create sha256 checksum files
-
-- [ ] create sha256 checksum files
-
 ## Create Release on GitHub
 
 - upload all files from Build Packs
@@ -70,6 +66,7 @@ npm i
 
 - [ ] create new set of download locations
 - [ ] build and deploy website
+  - `./create-and-deploy-everything.sh`
 
 ## FINALLY
 
