@@ -34,6 +34,7 @@ The trailer dialog has been updated for a better watching experience and uses th
 ## Other Improvements and Fixes
 
 - (v1.3.2) Link IMDB Dialog has now paginated search results with 20 per page, IMDB searches had to be updated (see below)
+- (v1.3.2) Updated IMDB detection while scanning media
 - IMDB Scraper Updates
   - Metacritic Score
   - Trailer Media URLs

@@ -1301,7 +1301,7 @@ async function scrapeIMDBCompaniesDataV3(movie) {
 }
 
 /**
- * Deprecated: scrape companies from HTML
+ * DEPRECATED: scrape companies from HTML
  * @param {Object} movie
  * @returns
  */
@@ -2025,7 +2025,7 @@ async function scrapeIMDBplotKeywordsV3(movie) {
 }
 
 /**
- * deprecated, use scrapeIMDBplotKeywordsV3 instead
+ * DEPRECATED: use scrapeIMDBplotKeywordsV3 instead
  * @param {*} movie
  * @returns
  */
@@ -2246,6 +2246,7 @@ const deprecated = {
   scrapeIMDBplotKeywords,
   scrapeIMDBFilmingLocations,
   scrapeIMDBRatingDemographics,
+  scrapeIMDBFind,
 };
 
 export {
@@ -2263,7 +2264,6 @@ export {
   scrapeIMDBAdvancedTitleSearch,
   scrapeIMDBAdvancedTitleSearchV3,
   scrapeIMDBSuggestion,
-  scrapeIMDBFind,
   scrapeIMDBFindPageSearchV3,
   scrapeIMDBTrailerMediaURLs,
   scrapeIMDBplotKeywordsV3,

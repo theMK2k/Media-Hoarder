@@ -29,6 +29,8 @@
 
 ## LATER
 
+- [ ] include find-imdb-tconst-tests in imdb scraper watchdog
+- [ ] fix file/dirbased name when IMDB tconst detection has no result: if the medium is directory-based, then show the directory name and not the file-based name
 - [ ] new filter: min. IMDB votes
 - [ ] "IMDB score comparison game" (in context of the current list?)
 - [ ] curl/wget easylist.txt automatically before build <https://easylist.to/easylist/easylist.txt>

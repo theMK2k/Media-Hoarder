@@ -6,6 +6,7 @@
   - [x] with paginated search results (20 per page)
   - [x] Fix: IMDB Advanced Title Search
   - [x] Fix: IMDB Find Page Search
+- [x] updated IMDB detection
 
 ## v1.3.1
 
