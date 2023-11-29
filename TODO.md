@@ -2,7 +2,24 @@
 
 - Provide Screenshots in README.md
 
-## NEXT Major
+## NEXT Major (v1.4.0)
+
+### TV Series Support
+
+- check sqlite version for json support - _The JSON functions and operators are built into SQLite by default, as of SQLite version 3.38.0 (2022-02-22)._
+- specs see [data/devdocs/series.md](data/devdocs/series.md), [docs/01-Media-Storage.md](01-Media-Storage.md)
+- incl. IMDB Rating heatmap like <https://whattowatchon.tv>
+- Dialogs: most of them do not utilize mediaType
+- Series / Episode detection in directory/filenames, examples:
+  - "S01E01" - the default
+  - "Ep01" - as seen with some anime stuff
+  - "S01.Ep.01"
+  - "E01" - episode without season - assume S01
+  - "1x5" - same as S01E05
+  - "S01E01E02" - multiple episodes
+  - "S01E01-E03" - multiple episodes
+  - "S01E01E02E03" - multiple episodes
+  - "S01E01-03" - multiple episodes
 
 ## NEXT Minor (current v1.3.2)
 
@@ -93,21 +110,6 @@ Router.prototype.push = function push(location) {
  * @param {string} myParam
  */
 ```
-
-### TV Series Support
-
-- incl. IMDB Rating heatmap like <https://whattowatchon.tv>
-- Dialogs: most of them do not utilize mediaType
-- Series / Episode detection in directory/filenames, examples:
-  - "S01E01" - the default
-  - "Ep01" - as seen with some anime stuff
-  - "S01.Ep.01"
-  - "E01" - episode without season - assume S01
-  - "1x5" - same as S01E05
-  - "S01E01E02" - multiple episodes
-  - "S01E01-E03" - multiple episodes
-  - "S01E01E02E03" - multiple episodes
-  - "S01E01-03" - multiple episodes
 
 ### Memory Leak (multiple reloads of medialist)
 
