@@ -928,5 +928,6 @@
   "Trailer Show": "Trailer Show",
   "Add Movie to List": "Add Movie to List",
   "Close and Search Movie": "Close and Search Movie",
-  "Exclude this genre": "Exclude this genre"
+  "Exclude this genre": "Exclude this genre",
+  "Organize your source paths so that each subdirectory of them contains exactly one series_": "Organize your source paths so that each subdirectory of them contains exactly one series."
 }

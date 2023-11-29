@@ -10,7 +10,7 @@
     <v-tabs color="white">
       <v-tab>{{ $t("General") }}</v-tab>
       <v-tab>{{ $t("Movies") }}</v-tab>
-      <!-- <v-tab>{{$t("Series")}}</v-tab> -->
+      <v-tab>{{ $t("Series") }}</v-tab>
       <v-tab>{{ $t("Duplicates") }}</v-tab>
       <v-tab>{{ $t("Regions") }}</v-tab>
       <v-tab>{{ $t("Languages") }}</v-tab>
@@ -142,21 +142,16 @@
       </v-tab-item>
 
       <!-- SERIES -->
-      <!-- not yet implemented
       <v-tab-item style="padding: 8px">
-        <h3>{{$t("Series")}} - {{$t("Source Paths")}}</h3>
-        <v-alert
-          type="warning"
-          colored-border
-          border="left"
-          v-if="tvSourcePaths.length == 0"
-        >{{$t("no paths defined")}}</v-alert>
+        <h3>{{ $t("Series") }} - {{ $t("Source Paths") }}</h3>
+        <v-alert type="warning" colored-border border="left" v-if="tvSourcePaths.length == 0">{{ $t("no paths defined") }}</v-alert>
 
-        <div
-          v-for="sourcePath in tvSourcePaths"
-          v-bind:key="sourcePath.id_SourcePaths"
-          style="margin: 8px"
-        >
+        <p style="color: lightgray">
+          <strong>{{ $t("Important:") }}</strong>
+          {{ $t("Organize your source paths so that each subdirectory of them contains exactly one series_") }}
+        </p>
+
+        <div v-for="sourcePath in tvSourcePaths" v-bind:key="sourcePath.id_SourcePaths" style="margin: 8px">
           <mk-sourcepath
             v-bind:value="sourcePath"
             v-on:edit-description="onSourcePathEditDescription"
@@ -165,9 +160,8 @@
           ></mk-sourcepath>
         </div>
 
-        <v-btn text small color="primary" v-on:click="addSource('series')">{{$t("Add Source Path")}}</v-btn>
+        <v-btn text small color="primary" v-on:click="addSource('series')">{{ $t("Add Source Path") }}</v-btn>
       </v-tab-item>
-      -->
 
       <!-- DUPLICATES -->
       <v-tab-item style="padding: 8px">

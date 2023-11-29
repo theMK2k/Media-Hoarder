@@ -973,5 +973,6 @@
   "Trailer Show": "Show des Bandes-Annonces",
   "Add Movie to List": "Ajouter un film à une liste",
   "Close and Search Movie": "Fermer et rechercher le film",
-  "Exclude this genre": "Exclure ce genre"
+  "Exclude this genre": "Exclure ce genre",
+  "Organize your source paths so that each subdirectory of them contains exactly one series_": "Organise tes chemins d'accès source de manière à ce que chaque sous-répertoire de ceux-ci contienne exactement une série."
 }

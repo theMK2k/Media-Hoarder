@@ -972,5 +972,6 @@
   "Trailer Show": "Trailer Show",
   "Add Movie to List": "Film zu Liste Hinzufügen",
   "Close and Search Movie": "Schließen und Film Suchen",
-  "Exclude this genre": "Dieses Genre ausschließen"
+  "Exclude this genre": "Dieses Genre ausschließen",
+  "Organize your source paths so that each subdirectory of them contains exactly one series_": "Organisiere Deine Quellpfade so, dass jedes Unterverzeichnis von ihnen genau eine Serie enthält."
 }
