@@ -1,5 +1,9 @@
 # DONE
 
+## v1.4.0
+
+- [x] Windows: update bundled VLC to 3.0.20
+
 ## v1.3.2
 
 - [x] Link IMDB Dialog:
