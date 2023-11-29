@@ -63,7 +63,7 @@
     "requestretry": "7.0.0",
     "roboto-fontface": "*",
     "semver": "7.3.5",
-    "sqlite3": "5.0.5",
+    "sqlite3": "5.1.6",
     "sqlstring-sqlite": "0.1.1",
     "string-hash-64": "1.0.3",
     "video.js": "7.15.4",
