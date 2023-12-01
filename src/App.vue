@@ -2614,7 +2614,7 @@
         <div v-if="!snackbar.details || snackbar.details.length === 0">
           {{ snackbar.text }}
         </div>
-        <div v-for="(snackbardetail, index) in snackbar.details" v-bind:key="index" style="padding-left: 8px">
+        <div v-for="(snackbardetail, index) in snackbarDetailsFiltered" v-bind:key="index" style="padding-left: 8px">
           {{ snackbardetail }}
         </div>
       </div>
@@ -3366,6 +3366,10 @@ export default {
 
     currentRoute() {
       return this.$route;
+    },
+
+    snackbarDetailsFiltered() {
+      return this.snackbar.details.filter((detail) => detail !== null && detail !== undefined);
     },
   },
 
@@ -4260,13 +4264,6 @@ export default {
 
     eventBus.$on("openCheckIMDBScraperDialog", (settings) => {
       this.showCheckIMDBScraperDialog(settings);
-    });
-
-    eventBus.$on("rescanFinished", ({ rescanAddedMovies, rescanRemovedMovies }) => {
-      eventBus.showSnackbar(
-        "success",
-        `${this.$local_t("(Re-)scan finished_")} ${rescanAddedMovies} ${this.$local_t("added")}, ${rescanRemovedMovies} ${this.$local_t("removed")}.`
-      );
     });
 
     eventBus.$on("setSearchText", (value) => {

@@ -2832,8 +2832,8 @@ export default {
       this.onCompanyClicked(value);
     });
 
-    eventBus.$on("rescanFinished", ({ rescanAddedMovies, rescanRemovedMovies }) => {
-      if (rescanAddedMovies || rescanRemovedMovies) {
+    eventBus.$on("rescanFinished", ({ hasChanges }) => {
+      if (hasChanges) {
         (async () => {
           // // Reset after Rescan -> else we get fuckups with filterYears' range
           // store.resetFilters();

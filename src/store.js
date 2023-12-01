@@ -49,14 +49,22 @@ const isBuild = process.env.NODE_ENV === "production";
 
 const rescanStats = {
   addedMovies: 0,
+  removedMovies: 0,
   addedSeries: 0,
-  addedEpisodes: 0,
-  addedEpisodesSeries: 0,
+  addedSeriesEpisodes: 0,
+  updatedSeries: 0,
+  updatedSeriesEpisodes: 0,
+  removedSeries: 0,
+  removedSeriesEpisodes: 0,
   reset: function () {
     this.addedMovies = 0;
+    this.removedMovies = 0;
     this.addedSeries = 0;
-    this.addedEpisodes = 0;
-    this.addedEpisodesSeries = 0;
+    this.addedSeriesEpisodes = 0;
+    this.updatedSeries = 0;
+    this.updatedSeriesEpisodes = 0;
+    this.removedSeries = 0;
+    this.removedSeriesEpisodes = 0;
   },
 };
 
@@ -365,16 +373,59 @@ async function rescan(onlyNew, $t) {
   // delete all removed entries
   logger.log("[rescan] Cleanup START");
 
-  const rescanRemovedMovies = await db.fireProcedureReturnScalar(`SELECT COUNT(1) FROM tbl_Movies WHERE isRemoved = 1`);
+  rescanStats.removedMovies = await db.fireProcedureReturnScalar(`
+    SELECT COUNT(1)
+    FROM tbl_Movies MOV
+    INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+    WHERE MediaType = 'movies'
+          AND MOV.isRemoved = 1
+  `);
 
-  await db.fireProcedure(`DELETE FROM tbl_Movies WHERE isRemoved = 1`, []);
+  rescanStats.removedSeries = await db.fireProcedureReturnScalar(`
+    SELECT COUNT(1)
+    FROM tbl_Movies MOV
+    INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+    WHERE MediaType = 'series'
+          AND MOV.isRemoved = 1
+          AND Extra_id_Movies_Owner IS NULL
+  `);
+
+  rescanStats.removedSeriesEpisodes = await db.fireProcedureReturnScalar(`
+    SELECT COUNT(1)
+    FROM tbl_Movies MOV
+    INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+    WHERE MediaType = 'series'
+          AND MOV.isRemoved = 1
+          AND Extra_id_Movies_Owner IS NOT NULL`);
+
+  await db.fireProcedure(`DELETE FROM tbl_Movies WHERE isRemoved = 1`, []); // movies, series and episodes
+
   await ensureMovieDeleted();
   logger.log("[rescan] CLEANUP END");
 
   shared.isScanning = false;
   doAbortRescan = false;
+
+  const hasChanges =
+    !rescanStats.addedMovies && !rescanStats.removedMovies && !rescanStats.addedSeries && !rescanStats.updatedSeries && !rescanStats.removedSeries;
+
   eventBus.rescanStopped();
-  eventBus.rescanFinished({ rescanAddedMovies: rescanStats.addedMovies, rescanRemovedMovies });
+  eventBus.rescanFinished({ hasChanges });
+  eventBus.showSnackbar("success", {
+    error: {
+      message: "rescan finished",
+      details: [
+        !rescanStats.addedMovies && !rescanStats.removedMovies && !rescanStats.addedSeries && !rescanStats.updatedSeries && !rescanStats.removedSeries
+          ? "nothing changed"
+          : null,
+        rescanStats.addedMovies ? `movies added: ${rescanStats.addedMovies}` : null,
+        rescanStats.removedMovies ? `movies removed: ${rescanStats.removedMovies}` : null,
+        rescanStats.addedSeries ? `series added: ${rescanStats.addedSeries} (${rescanStats.addedSeriesEpisodes} episodes)` : null,
+        rescanStats.updatedSeries ? `series updated: ${rescanStats.updatedSeries} (${rescanStats.updatedSeriesEpisodes} episodes)` : null,
+        rescanStats.removedSeries ? `series removed: ${rescanStats.removedSeries} (${rescanStats.removedSeriesEpisodes} episodes)` : null,
+      ],
+    },
+  });
 }
 
 async function rescanHandleDuplicates() {
@@ -835,6 +886,10 @@ async function filescanSeries(onlyNew, $t) {
         logger.log("[filescanSeries] processing", seriesDir);
 
         const series_id_Movies = await upsertSeries(seriesSourcePath, seriesDir, seriesHave);
+
+        await db.fireProcedure(`UPDATE tbl_Movies SET isRemoved = 0 WHERE id_Movies = $id_Movies`, {
+          $id_Movies: series_id_Movies,
+        });
 
         if (!series_id_Movies) {
           logger.error("[filescanSeries] series_id_Movies is null, aborting");
