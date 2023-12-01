@@ -3,6 +3,7 @@
 ## v1.4.0
 
 - [x] Windows: update bundled VLC to 3.0.20
+- [x] Windows: update bundled Mediainfo CLI to 23.11
 
 ## v1.3.2
 
