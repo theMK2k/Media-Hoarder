@@ -58,7 +58,7 @@ async function analyzeMediaInfoData(miObj, id_Movies) {
     tracks = miObj.File.track;
   } else if (miObj.MediaInfo && miObj.MediaInfo.media) {
     miObj.MediaInfo.media.forEach((media) => {
-      media.track.forEach((track) => {
+      (media.track || []).forEach((track) => {
         tracks.push(track);
       });
     });
