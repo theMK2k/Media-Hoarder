@@ -470,6 +470,67 @@ function randomizeArray(arr) {
   return arr;
 }
 
+/**
+ * Get a series episode's season and episode numbers from its name
+ * @param {string} name
+ */
+function getSeriesEpisodeSeasonAndEpisodeNumbersFromName(name) {
+  const result = { $Series_Season: null, $Series_Episodes_First: null, $Series_Episodes_Complete: null, $Series_Bonus_Number: null };
+
+  let hasMatched = false;
+
+  // match [S01]E01[E02E04] (with or without leading zeros), if season is omitted, use 1
+  const rxS_E_ = /(s\d+)?([eb]p?\d+)+/i;
+  if (rxS_E_.test(name)) {
+    hasMatched = true;
+
+    const isolated = name.match(rxS_E_)[0];
+
+    result.$Series_Season = isolated.match(/(s(\d+))?/i)[2];
+    if (result.$Series_Season == undefined) {
+      result.$Series_Season = 1;
+    } else {
+      result.$Series_Season = +result.$Series_Season;
+    }
+
+    if (/(s\d+)?(b\d+)+/i.test(isolated)) {
+      // a bonus / extra
+      result.$Series_Bonus_Number = +isolated.match(/b(\d+)/i)[1];
+    } else {
+      // a regular episode
+      result.$Series_Episodes_Complete = isolated.match(/ep?\d+/gi).map((item) => +item.toLowerCase().replace("ep", "").replace("e", ""));
+      result.$Series_Episodes_First = result.$Series_Episodes_Complete[0];
+    }
+  }
+
+  // match [S01]E[P]01-E[P]04 or S01E[P]01-04 (with or without leading zeros), if season is omitted, use 1
+  const rxS_Erange = /s(\d+)e(\d+)-e?(\d+)/i;
+  if (rxS_Erange.test(name)) {
+    hasMatched = true;
+
+    const matches = name.match(rxS_Erange);
+
+    result.$Series_Season = +matches[1];
+    const min = +matches[2];
+    const max = +matches[3];
+
+    result.$Series_Episodes_Complete = Array.from({ length: max - min + 1 }, (_, i) => i + min);
+    result.$Series_Episodes_First = result.$Series_Episodes_Complete[0];
+  }
+
+  // match 1x5 if we have no previous matches
+  const rx_x_ = /(\d+)x(\d+)/i;
+  if (!hasMatched && rx_x_.test(name)) {
+    hasMatched = true;
+
+    result.$Series_Season = +name.match(rx_x_)[1];
+    result.$Series_Episodes_Complete = [+name.match(rx_x_)[2]];
+    result.$Series_Episodes_First = result.$Series_Episodes_Complete[0];
+  }
+
+  return result;
+}
+
 export {
   isWindows,
   isPORTABLE,
@@ -503,4 +564,5 @@ export {
   getMetaCriticClass,
   filenamifyExt,
   randomizeArray,
+  getSeriesEpisodeSeasonAndEpisodeNumbersFromName,
 };

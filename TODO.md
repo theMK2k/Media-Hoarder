@@ -10,16 +10,15 @@
 - specs see [data/devdocs/series.md](data/devdocs/series.md), [docs/01-Media-Storage.md](01-Media-Storage.md)
 - incl. IMDB Rating heatmap like <https://whattowatchon.tv>
 - Dialogs: most of them do not utilize mediaType
-- Series / Episode detection in directory/filenames, examples:
-  - "S01E01" - the default
-  - "Ep01" - as seen with some anime stuff
-  - "S01.Ep.01"
-  - "E01" - episode without season - assume S01
-  - "1x5" - same as S01E05
-  - "S01E01E02" - multiple episodes
-  - "S01E01-E03" - multiple episodes
-  - "S01E01E02E03" - multiple episodes
-  - "S01E01-03" - multiple episodes
+- [x] Series / Episode detection in directory/filenames, examples:
+  - [x] "S01E01" - the default
+  - [x] "Ep01" - as seen with some anime stuff
+  - [x] "E01" - episode without season - assume S01
+  - [x] "1x5" - same as S01E05
+  - [x] "S01E01E02" - multiple episodes
+  - [x] "S01E01-E03" - multiple episodes
+  - [x] "S01E01E02E03" - multiple episodes
+  - [x] "S01E01-03" - multiple episodes
 
 ## NEXT Minor (current v1.3.2)
 

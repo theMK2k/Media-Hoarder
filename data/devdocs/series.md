@@ -61,7 +61,7 @@ Date-based series (e.g. talk shows, sports events)
 ## Re-Scanning
 
 - Build up the series' entries
-- Build up the episodes entries
+- Build up the episodes entries (linked to the series entry)
 - scan for metadata
   - detect tconst for series
   - detect tconst for episodes

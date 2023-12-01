@@ -839,6 +839,7 @@
   "entries": "Einträge",
   "scan already in progress": "Einlesen läuft bereits",
   "Rescanning Movies": "Filme Einlesen",
+  "Rescanning Series": "Serien Einlesen",
   "Rescan started": "Einlesen gestartet",
   "{appName} needs the path to a media player of your choice for media playback_ We recommend the VLC media player, you can get it at:": "{appName} benötigt den Pfad zu einem Mediaplayer Deiner Wahl für die Medienwiedergabe. Wir empfehlen den VLC Media Player:",
   "{appName} needs the path to Mediainfo CLI in order to determine duration, video resolution and languages of your media_ You can get Mediainfo CLI at:": "{appName} benötigt den Pfad zu Mediainfo CLI, um Lauflänge, Auflösung und Sprachen Deiner Medien zu ermitteln. Du kannst Mediainfo CLI hier herunterladen:",

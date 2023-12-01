@@ -52,6 +52,7 @@ export async function findIMDBtconstInNFO(movie) {
 
   if (!nfoFile) {
     logger.log("[findIMDBtconstInNFO] no .nfo file found, abort.");
+    return "";
   }
 
   logger.log("[findIMDBtconstInNFO] .nfo file found:", nfoFile.Name);

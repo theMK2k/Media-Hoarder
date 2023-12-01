@@ -47,7 +47,18 @@ const imdbDataDefinition = require("./object-definitions/imdb-data");
 
 const isBuild = process.env.NODE_ENV === "production";
 
-let rescanAddedMovies = 0;
+const rescanStats = {
+  addedMovies: 0,
+  addedSeries: 0,
+  addedEpisodes: 0,
+  addedEpisodesSeries: 0,
+  reset: function () {
+    this.addedMovies = 0;
+    this.addedSeries = 0;
+    this.addedEpisodes = 0;
+    this.addedEpisodesSeries = 0;
+  },
+};
 
 let rescanETA = {
   show: false,
@@ -331,7 +342,7 @@ async function rescan(onlyNew, $t) {
     progressPercent: 0,
   };
 
-  rescanAddedMovies = 0;
+  rescanStats.reset();
 
   shared.isScanning = true;
   eventBus.rescanStarted();
@@ -340,11 +351,13 @@ async function rescan(onlyNew, $t) {
 
   if (shared.scanOptions.mergeExtras) await mergeExtras(onlyNew);
 
+  if (shared.scanOptions.filescanSeries) await filescanSeries(onlyNew, $t);
+
   if (shared.scanOptions.rescanMoviesMetaData) await rescanMoviesMetaData(onlyNew, null, $t);
 
-  // await rescanSeries();								// TODO: Series support
+  // TODO:   if (shared.scanOptions.rescanSeriesMetaData) await rescanSeriesMetaData(onlyNew, null, $t);
 
-  if (shared.scanOptions.handleDuplicates) await rescanHandleDuplicates();
+  if (shared.scanOptions.handleDuplicates) await rescanHandleDuplicates(); // TODO: series?
 
   // clear isNew flag from all entries
   await db.fireProcedure(`UPDATE tbl_Movies SET isNew = 0`, []);
@@ -361,7 +374,7 @@ async function rescan(onlyNew, $t) {
   shared.isScanning = false;
   doAbortRescan = false;
   eventBus.rescanStopped();
-  eventBus.rescanFinished({ rescanAddedMovies, rescanRemovedMovies });
+  eventBus.rescanFinished({ rescanAddedMovies: rescanStats.addedMovies, rescanRemovedMovies });
 }
 
 async function rescanHandleDuplicates() {
@@ -637,6 +650,7 @@ async function assignExtra(parent, child, $extraname) {
   return;
 }
 
+// ### Scan MOVIES ###
 async function filescanMovies(onlyNew, $t) {
   logger.log("[filescanMovies] START");
 
@@ -652,6 +666,7 @@ async function filescanMovies(onlyNew, $t) {
         , LOWER(SP.Path) AS tmp_SourcePathLower
       FROM tbl_Movies MOV
       INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+      WHERE SP.MediaType = 'movies'
   		`);
 
     moviesHave.forEach((movie) => {
@@ -670,13 +685,14 @@ async function filescanMovies(onlyNew, $t) {
 			FROM tbl_SourcePaths
 			WHERE MediaType = 'movies'
 			${shared.scanOptions.filescanMovies_id_SourcePaths_IN ? "AND id_SourcePaths IN " + shared.scanOptions.filescanMovies_id_SourcePaths_IN : ""}
-		`);
+		  `);
 
     for (let i = 0; i < moviesSourcePaths.length; i++) {
       const movieSourcePath = moviesSourcePaths[i];
       logger.log(`[filescanMovies]   scanning Source Path ${movieSourcePath.Path} (${movieSourcePath.Description})`);
 
       if (movieSourcePath.checkRemovedFiles) {
+        // assume that all movies are removed, so we can later mark the ones which are still there as not removed
         await db.fireProcedure(`UPDATE tbl_Movies SET isRemoved = 1 WHERE id_SourcePaths = $id_SourcePaths`, {
           $id_SourcePaths: movieSourcePath.id_SourcePaths,
         });
@@ -751,6 +767,227 @@ async function filescanMoviesPath(onlyNew, moviesHave, movieSourcePath, scanPath
   }
 }
 
+// ### Scan SERIES ###
+
+/**
+ * This is the main entry point for rescanning series files
+ * IMPORTANT: as direct sub-directories of the source paths, Media Hoarder expects directories named after the series, e.g. "Game of Thrones"
+ *            anything within the sub-directories is expected to belong to the series itself, e.g. "Season 01\Game of Thrones S01E01.mkv" - these files/directories will be handled like movies (file- or directory-based)
+ * @param {*} onlyNew
+ * @param {*} $t
+ */
+async function filescanSeries(onlyNew, $t) {
+  logger.log("[filescanSeries] START");
+
+  eventBus.scanInfoShow($t("Rescanning Series"), $t("Rescan started"));
+
+  eventBus.setProgressBar(2); // marquee
+
+  try {
+    const seriesHave = await db.fireProcedureReturnAll(`
+      SELECT
+        MOV.id_Movies
+        , LOWER(MOV.RelativePath) AS tmp_PathLower
+        , LOWER(SP.Path) AS tmp_SourcePathLower
+      FROM tbl_Movies MOV
+      INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+      WHERE SP.MediaType = 'series'
+  		`);
+
+    seriesHave.forEach((seriesItem) => {
+      seriesItem.fullPathLower = path.join(seriesItem.tmp_SourcePathLower, seriesItem.tmp_PathLower).toLowerCase(); // we need to lowercase in code again, because some special characters aren't lowercased properly by SQLite, e.g. "Ä" -> "ä"
+    });
+
+    logger.log("[filescanSeries] seriesHave:", seriesHave); // #relpath: is this correct??
+
+    const seriesSourcePaths = await db.fireProcedureReturnAll(`
+			SELECT
+				id_SourcePaths
+				, MediaType
+				, Path
+				, Description
+				, checkRemovedFiles
+			FROM tbl_SourcePaths
+			WHERE MediaType = 'series'
+			${shared.scanOptions.filescanMovies_id_SourcePaths_IN ? "AND id_SourcePaths IN " + shared.scanOptions.filescanMovies_id_SourcePaths_IN : ""}
+		  `);
+
+    for (let i = 0; i < seriesSourcePaths.length; i++) {
+      const seriesSourcePath = seriesSourcePaths[i];
+      logger.log(`[filescanSeries]   scanning Source Path ${seriesSourcePath.Path} (${seriesSourcePath.Description})`);
+
+      if (seriesSourcePath.checkRemovedFiles) {
+        // assume that all series/episodes of the source path are removed, so we can later mark the ones which are still there as not removed
+        await db.fireProcedure(`UPDATE tbl_Movies SET isRemoved = 1 WHERE id_SourcePaths = $id_SourcePaths`, {
+          $id_SourcePaths: seriesSourcePath.id_SourcePaths,
+        });
+      }
+
+      currentScanInfoHeader = `${$t("Rescanning Series")} - ${seriesSourcePath.Description}`;
+
+      eventBus.scanInfoShow(currentScanInfoHeader, "");
+
+      const seriesDirs = (await listPath(seriesSourcePath.Path, seriesSourcePath.Path)).filter((item) => item.isDirectory);
+
+      logger.log("[filescanSeries] seriesDirs:", seriesDirs);
+
+      for (const seriesDir of seriesDirs) {
+        logger.log("[filescanSeries] processing", seriesDir);
+
+        const series_id_Movies = await upsertSeries(seriesSourcePath, seriesDir, seriesHave);
+
+        if (!series_id_Movies) {
+          logger.error("[filescanSeries] series_id_Movies is null, aborting");
+        }
+
+        logger.log("[filescanSeries] series_id_Movies:", series_id_Movies);
+        logger.log("[filescanSeries] rescanStats:", rescanStats);
+
+        await filescanSeriesEpisodesPath(series_id_Movies, onlyNew, seriesHave, seriesSourcePath, seriesDir.fullPath);
+      }
+    }
+
+    eventBus.scanInfoOff();
+
+    logger.log("[filescanSeries] END");
+  } catch (err) {
+    logger.log("[filescanSeries] ERROR:", err);
+    throw err;
+  } finally {
+    eventBus.setProgressBar(-1); // off
+  }
+}
+
+/**
+ * Upsert a Series
+ *
+ * @param {*} seriesSourcePath
+ * @param {pathItem} seriesDirectory
+ * @returns {Promise} id_Movies (the id of the inserted or existing series entry in tbl_Movies)
+ */
+async function upsertSeries(seriesSourcePath, seriesDirectory, seriesHave) {
+  logger.log("[upsertSeries] pathItem.fullPath:", seriesDirectory.fullPath);
+
+  const seriesHaveItem = seriesHave.find((have) => have.fullPathLower === seriesDirectory.fullPathLower);
+
+  if (seriesHaveItem) {
+    logger.log("[filescanSeries] HAVE:", seriesDirectory.fullPathLower, "seriesHaveFlag:", seriesHaveItem);
+    return seriesHaveItem.id_Movies;
+  }
+
+  logger.log("[upsertSeries] adding:", seriesDirectory.Name);
+
+  rescanStats.addedSeries++;
+
+  // currentScanInfoHeader
+  eventBus.scanInfoShow(currentScanInfoHeader, `adding ${seriesDirectory.Name}`);
+
+  const $Name = helpers.getMovieNameFromDirectory(seriesDirectory.fullDirectory);
+
+  logger.log("[upsertSeries] $Name:", $Name);
+
+  const sqlQuery = `INSERT INTO tbl_Movies (
+    id_SourcePaths
+    , Name
+    , RelativePath
+    , RelativeDirectory
+    , Filename
+    , file_created_at
+    , created_at
+    , isNew
+    , isDirectoryBased
+  ) VALUES (
+    $id_SourcePaths
+    , $Name
+    , $RelativePath
+    , $RelativeDirectory
+    , $Filename
+    , $file_created_at
+    , DATETIME('now')
+    , 1
+    , $DIRECTORYBASED
+  )`;
+
+  const sqlData = {
+    $id_SourcePaths: seriesSourcePath.id_SourcePaths,
+    $Name,
+    $RelativePath: seriesDirectory.relativePath,
+    $RelativeDirectory: seriesDirectory.relativeDirectory,
+    $Filename: seriesDirectory.Name,
+    $file_created_at: seriesDirectory.file_created_at,
+    $DIRECTORYBASED: true,
+  };
+
+  logger.log("[upsertSeries] query:", sqlQuery, "data:", sqlData);
+
+  await db.fireProcedure(sqlQuery, sqlData);
+
+  return await db.fireProcedureReturnScalar(`SELECT id_Movies FROM tbl_Movies WHERE id_SourcePaths = $id_SourcePaths AND RelativePath = $RelativePath`, {
+    $id_SourcePaths: seriesSourcePath.id_SourcePaths,
+    $RelativePath: seriesDirectory.relativePath,
+  });
+}
+
+/**
+ * Scan the given path for series episodes
+ * @param {*} series_id_Movies the id of the series entry in tbl_Movies
+ * @param {*} onlyNew
+ * @param {*} moviesHave
+ * @param {*} seriesSourcePath
+ * @param {*} scanPath
+ * @returns
+ */
+async function filescanSeriesEpisodesPath(series_id_Movies, onlyNew, moviesHave, seriesSourcePath, scanPath) {
+  logger.log("[filescanSeriesEpisodesPath] scan", scanPath);
+
+  try {
+    const pathItems = await listPath(seriesSourcePath.Path, scanPath);
+
+    // add files
+    for (let i = 0; i < pathItems.length; i++) {
+      const pathItem = pathItems[i];
+
+      if (pathItem.isFile) {
+        const movieHave = moviesHave.find((have) => have.fullPathLower === pathItem.fullPathLower);
+
+        if (movieHave) {
+          logger.log("[filescanSeriesEpisodesPath] HAVE:", pathItem.fullPathLower, "movieHave:", movieHave);
+
+          const $Size = await getFileSize(pathItem);
+
+          await db.fireProcedure(`UPDATE tbl_Movies SET isRemoved = 0, Size = $Size, file_created_at = $file_created_at WHERE id_Movies = $id_Movies`, {
+            $id_Movies: movieHave.id_Movies,
+            $Size,
+            $file_created_at: pathItem.file_created_at,
+          });
+          continue;
+        }
+
+        if (
+          ![".avi", ".mp4", ".mkv", ".m2ts", ".rar"].find((ext) => {
+            return ext === pathItem.ExtensionLower;
+          })
+        ) {
+          continue;
+        }
+
+        await addSeriesEpisode(series_id_Movies, seriesSourcePath, pathItem);
+      }
+    }
+
+    // recurse directories
+    for (let i = 0; i < pathItems.length; i++) {
+      const pathItem = pathItems[i];
+
+      if (pathItem.isDirectory) {
+        await filescanSeriesEpisodesPath(series_id_Movies, onlyNew, moviesHave, seriesSourcePath, pathItem.fullPath);
+      }
+    }
+  } catch (err) {
+    return;
+  }
+}
+
 const enmMovieTypes = {
   IGNORE: 0,
   DIRECTORYBASED: 1,
@@ -784,7 +1021,7 @@ async function getMovieType(basePath, pathItem) {
 
   // check for DIRECTORYBASED
   if (lastDirLower.match(/^extra/)) {
-    // file is inside an "extra" directory -> we should check the parent directory, if it is in itself DIRECTORYBASED
+    // file is inside an "extra" directory -> we should check the parent directory, if it is itself DIRECTORYBASED
     logger.log('[getMovieType] file is inside "extra" directory, check the parent directory...');
 
     if (await isDirectoryBased(basePath, path.resolve(pathItem.fullDirectory, ".."))) {
@@ -911,7 +1148,7 @@ async function addMovie(movieSourcePath, pathItem) {
 
   logger.log("[addMovie] adding:", pathItem.Name);
 
-  rescanAddedMovies++;
+  rescanStats.addedMovies++;
 
   // currentScanInfoHeader
   eventBus.scanInfoShow(currentScanInfoHeader, `adding ${pathItem.Name}`);
@@ -963,6 +1200,100 @@ async function addMovie(movieSourcePath, pathItem) {
   };
 
   logger.log("[addMovie] query:", sqlQuery, "data:", sqlData);
+
+  await db.fireProcedure(sqlQuery, sqlData);
+}
+
+/**
+ * Add Episode for a series to the database
+ *
+ * @param {*} seriesSourcePath
+ * @param {pathItem} pathItem
+ */
+async function addSeriesEpisode(series_id_Movies, seriesSourcePath, pathItem) {
+  logger.log("[addSeriesEpisode] pathItem.fullPath:", pathItem.fullPath);
+
+  const movieType = await getMovieType(seriesSourcePath.Path, pathItem);
+
+  logger.log("[addSeriesEpisode] movieType:", movieType);
+
+  if (movieType === enmMovieTypes.IGNORE || movieType === enmMovieTypes.EXCEPTION) {
+    logger.log("[addSeriesEpisode] movieType is IGNORE or EXCEPTION, abort!");
+    return;
+  }
+
+  logger.log("[addSeriesEpisode] adding:", pathItem.Name);
+
+  rescanStats.addedMovies++;
+
+  // currentScanInfoHeader
+  eventBus.scanInfoShow(currentScanInfoHeader, `adding ${pathItem.Name}`);
+
+  let $Name = null;
+  if (movieType === enmMovieTypes.DIRECTORYBASED) {
+    $Name = helpers.getMovieNameFromDirectory(pathItem.fullDirectory);
+  } else {
+    $Name = helpers.getMovieNameFromFileName(pathItem.Name);
+  }
+
+  logger.log("[addSeriesEpisode] $Name:", $Name);
+
+  const $Size = await getFileSize(pathItem);
+
+  const { $Series_Season, $Series_Episodes_First, $Series_Episodes_Complete, $Series_Bonus_Number } =
+    helpers.getSeriesEpisodeSeasonAndEpisodeNumbersFromName($Name);
+
+  const sqlQuery = `INSERT INTO tbl_Movies (
+    id_SourcePaths
+    , Name
+    , RelativePath
+    , RelativeDirectory
+    , Filename
+    , Size
+    , file_created_at
+    , created_at
+    , isNew
+    , isDirectoryBased
+    , Series_id_Movies_Owner
+    , Series_Season
+    , Series_Episodes_First
+    , Series_Episodes_Complete
+    , Series_Bonus_Number
+  ) VALUES (
+    $id_SourcePaths
+    , $Name
+    , $RelativePath
+    , $RelativeDirectory
+    , $Filename
+    , $Size
+    , $file_created_at
+    , DATETIME('now')
+    , 1
+    , $DIRECTORYBASED
+    , $series_id_Movies
+    , $Series_Season
+    , $Series_Episodes_First
+    , $Series_Episodes_Complete
+    , $Series_Bonus_Number
+  )`;
+
+  const sqlData = {
+    $id_SourcePaths: seriesSourcePath.id_SourcePaths,
+    $Name,
+    $RelativePath: pathItem.relativePath,
+    $RelativeDirectory: pathItem.relativeDirectory,
+    $Filename: pathItem.Name,
+    $Size,
+    $file_created_at: pathItem.file_created_at,
+    $DIRECTORYBASED: movieType === enmMovieTypes.DIRECTORYBASED,
+    $series_id_Movies: series_id_Movies,
+    $Series_Season,
+    $Series_Episodes_First,
+    $Series_Episodes_Complete: $Series_Episodes_Complete ? JSON.stringify($Series_Episodes_Complete) : null,
+    $Series_Bonus_Number,
+  };
+
+  logger.log("[addSeriesEpisode] query:", sqlQuery, "data:", sqlData);
 
   await db.fireProcedure(sqlQuery, sqlData);
 }

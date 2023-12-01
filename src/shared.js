@@ -333,6 +333,8 @@ const shared = new Vue({
       filescanMovies: true,
       // filescanMovies_id_SourcePaths_IN: '(5, 10)',											// only scan certain SourcePaths
 
+      filescanSeries: true,
+
       rescanMoviesMetaData: true,
 
       // rescanMoviesMetaData_id_SourcePaths_IN: '(5, 10)',								// only rescan metadata in certain SourcePaths
