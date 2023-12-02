@@ -3,6 +3,7 @@
  *
  * Database interface and functions for sqlite access and management
  */
+const LOG_ALL_DB = false; // set to true to log all db queries
 const logger = require("./logger");
 const fs = require("fs");
 const sqlite3 = require("sqlite3").verbose();
@@ -98,6 +99,7 @@ function fireProcedureReturnAllCB(query, vars, callback) {
  * @param {object} vars
  */
 function fireProcedure(query, vars) {
+  if (LOG_ALL_DB) logger.log("[fireProcedure] query: ", query, " vars: ", vars);
   return new Promise((resolve, reject) => {
     sqliteFireProcedureCB(query, vars, (err) => {
       if (err) {
@@ -110,6 +112,7 @@ function fireProcedure(query, vars) {
 }
 
 function fireProcedureReturnScalar(query, vars) {
+  if (LOG_ALL_DB) logger.log("[fireProcedureReturnScalar] query: ", query, " vars: ", vars);
   return new Promise((resolve, reject) => {
     sqlitefireProcedureReturnScalarCB(query, vars, (err, result) => {
       if (err) {
@@ -122,6 +125,7 @@ function fireProcedureReturnScalar(query, vars) {
 }
 
 function fireProcedureReturnAll(query, vars) {
+  if (LOG_ALL_DB) logger.log("[fireProcedureReturnAll] query: ", query, " vars: ", vars);
   return new Promise((resolve, reject) => {
     sqlitefireProcedureReturnAllCB(query, vars, (err, result) => {
       if (err) {
