@@ -411,21 +411,25 @@ async function rescan(onlyNew, $t) {
 
   eventBus.rescanStopped();
   eventBus.rescanFinished({ hasChanges });
-  eventBus.showSnackbar("success", {
-    error: {
-      message: "rescan finished",
-      details: [
-        !rescanStats.addedMovies && !rescanStats.removedMovies && !rescanStats.addedSeries && !rescanStats.updatedSeries && !rescanStats.removedSeries
-          ? "nothing changed"
-          : null,
-        rescanStats.addedMovies ? `movies added: ${rescanStats.addedMovies}` : null,
-        rescanStats.removedMovies ? `movies removed: ${rescanStats.removedMovies}` : null,
-        rescanStats.addedSeries ? `series added: ${rescanStats.addedSeries} (${rescanStats.addedSeriesEpisodes} episodes)` : null,
-        rescanStats.updatedSeries ? `series updated: ${rescanStats.updatedSeries} (${rescanStats.updatedSeriesEpisodes} episodes)` : null,
-        rescanStats.removedSeries ? `series removed: ${rescanStats.removedSeries} (${rescanStats.removedSeriesEpisodes} episodes)` : null,
-      ],
+  eventBus.showSnackbar(
+    "success",
+    {
+      info: {
+        message: "rescan finished",
+        details: [
+          !rescanStats.addedMovies && !rescanStats.removedMovies && !rescanStats.addedSeries && !rescanStats.updatedSeries && !rescanStats.removedSeries
+            ? "nothing changed"
+            : null,
+          rescanStats.addedMovies ? `movies added: ${rescanStats.addedMovies}` : null,
+          rescanStats.removedMovies ? `movies removed: ${rescanStats.removedMovies}` : null,
+          rescanStats.addedSeries ? `series added: ${rescanStats.addedSeries} (${rescanStats.addedSeriesEpisodes} episodes)` : null,
+          rescanStats.updatedSeries ? `series updated: ${rescanStats.updatedSeries} (${rescanStats.updatedSeriesEpisodes} episodes)` : null,
+          rescanStats.removedSeries ? `series removed: ${rescanStats.removedSeries} (${rescanStats.removedSeriesEpisodes} episodes)` : null,
+        ],
+      },
     },
-  });
+    0
+  );
 }
 
 async function rescanHandleDuplicates() {
@@ -1662,53 +1666,64 @@ async function applyMetaData(onlyNew, id_Movies) {
 
 async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
   // NOTE: if WHERE clause gets enhanced, please also enhance the code below "Filter movies that only have..."
-  let movies = await db.fireProcedureReturnAll(
-    `
-			SELECT
-				MOV.id_Movies
-				, MOV.id_SourcePaths
-				, MOV.RelativePath
-				, MOV.RelativeDirectory
-				, MOV.Filename
-        , MOV.MI_Duration_Seconds
-				, MOV.MI_Done
-				, MOV.IMDB_Done
-        , MOV.IMDB_tconst
-        , MOV.isDirectoryBased
-        , SP.Path AS SourcePath
-        , MOV.DefinedByUser
-        , MOV.isUnlinkedIMDB
-        , MOV.scanErrors
-      FROM tbl_Movies MOV
-      INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
-			WHERE 
-        (isRemoved IS NULL OR isRemoved = 0)
-        AND Extra_id_Movies_Owner IS NULL
-				${onlyNew ? "AND (isNew = 1 OR scanErrors IS NOT NULL OR IFNULL(IMDB_Done, 0) = 0 OR IFNULL(MI_Done, 0) = 0)" : ""}
-				${shared.scanOptions.rescanMoviesMetaData_id_SourcePaths_IN ? "AND id_SourcePaths IN " + shared.scanOptions.rescanMoviesMetaData_id_SourcePaths_IN : ""}
-				${shared.scanOptions.rescanMoviesMetaData_id_Movies ? "AND id_Movies = " + shared.scanOptions.rescanMoviesMetaData_id_Movies : ""}
-				${id_Movies ? "AND id_Movies = " + id_Movies : ""}
-			`,
-    []
-  );
+  const query = `
+  SELECT
+    MOV.id_Movies
+    , MOV.id_SourcePaths
+    , MOV.RelativePath
+    , MOV.RelativeDirectory
+    , MOV.Filename
+    , MOV.MI_Duration_Seconds
+    , MOV.MI_Done
+    , MOV.IMDB_Done
+    , MOV.IMDB_tconst
+    , MOV.isDirectoryBased
+    , SP.Path AS SourcePath
+    , MOV.DefinedByUser
+    , MOV.isUnlinkedIMDB
+    , MOV.scanErrors
+    , SP.MediaType
+    , MOV.Series_id_Movies_Owner
+  FROM tbl_Movies MOV
+  INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+  WHERE 
+    (isRemoved IS NULL OR isRemoved = 0)
+    AND SP.MediaType = $MediaType
+    AND Extra_id_Movies_Owner IS NULL
+    ${onlyNew ? "AND (isNew = 1 OR scanErrors IS NOT NULL OR IFNULL(IMDB_Done, 0) = 0 OR IFNULL(MI_Done, 0) = 0)" : ""}
+    ${shared.scanOptions.rescanMoviesMetaData_id_SourcePaths_IN ? "AND id_SourcePaths IN " + shared.scanOptions.rescanMoviesMetaData_id_SourcePaths_IN : ""}
+    ${shared.scanOptions.rescanMoviesMetaData_id_Movies ? "AND id_Movies = " + shared.scanOptions.rescanMoviesMetaData_id_Movies : ""}
+    ${id_Movies ? "AND id_Movies = " + id_Movies : ""}
+  `;
 
-  // Filter movies that only have one scanError and that is "IMDB link verification" - a rescan without new IMDB tconst will not help here
+  const movies = await db.fireProcedureReturnAll(query, {
+    $MediaType: "movies",
+  });
+  const series = await db.fireProcedureReturnAll(query, {
+    $MediaType: "series",
+  });
+
+  let mediaItems = movies.concat(series);
+
+  // TODO: Series - we now work with SP.MediaType and MOV.Series_id_Movies_Owner
+
+  // Filter mediaItems that only have one scanError and that is "IMDB link verification" - a rescan without new IMDB tconst will not help here
   if (!id_Movies && onlyNew) {
-    movies = movies.filter((movie) => {
-      // there are other reasons why the movie should definitely be rescanned
-      if (movie.isNew || !movie.IMDB_Done || !movie.MI_Done) {
+    mediaItems = mediaItems.filter((mediaItem) => {
+      // there are other reasons why the mediaItem should definitely be rescanned
+      if (mediaItem.isNew || !mediaItem.IMDB_Done || !mediaItem.MI_Done) {
         return true;
       }
 
-      if (!movie.IMDB_tconst) {
+      if (!mediaItem.IMDB_tconst) {
         return true;
       }
 
-      if (!movie.scanErrors) {
+      if (!mediaItem.scanErrors) {
         return false;
       }
 
-      const scanErrors = JSON.parse(movie.scanErrors);
+      const scanErrors = JSON.parse(mediaItem.scanErrors);
 
       if (Object.keys(scanErrors).length === 1 && scanErrors["IMDB link verification"]) {
         return false;
@@ -1720,18 +1735,18 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
 
   if (!id_Movies) {
     rescanETA.show = false;
-    rescanETA.numItems = movies.length;
+    rescanETA.numItems = mediaItems.length;
     rescanETA.counter = 0;
     rescanETA.elapsedMS = 0;
   }
 
-  movies.forEach((movie) => {
+  mediaItems.forEach((movie) => {
     ensureMovieFullPath(movie);
   });
 
-  logger.log("[rescanMoviesMetadata] movies:", movies);
+  logger.log("[rescanMoviesMetadata] movies:", mediaItems);
 
-  for (let i = 0; i < movies.length; i++) {
+  for (let i = 0; i < mediaItems.length; i++) {
     if (doAbortRescan) {
       break;
     }
@@ -1741,7 +1756,7 @@ async function rescanMoviesMetaData(onlyNew, id_Movies, $t) {
       rescanETA.startTime = new Date().getTime();
     }
 
-    const movie = movies[i];
+    const movie = mediaItems[i];
 
     if (shared.scanOptions.rescanMoviesMetaData_maxEntries && i > shared.scanOptions.rescanMoviesMetaData_maxEntries) {
       break;
@@ -1835,9 +1850,14 @@ async function rescanMovieMetaData(onlyNew, movie, $t, optRescanMediaInfo, optFi
  * @returns
  */
 async function applyMediaInfo(movie, onlyNew) {
-  // run mediainfo on movie file
+  // run mediainfo on movie file, series or episode
   // parse mediainfo result and save to db
   if (onlyNew && movie.MI_Done) {
+    return;
+  }
+
+  if (movie.MediaType == "series" && !movie.Series_id_Movies_Owner) {
+    logger.log("[applyMediaInfo] series doesn't need media info, aborting");
     return;
   }
 
@@ -1939,12 +1959,22 @@ async function findIMDBtconst(movie, onlyNew, $t) {
   // save IMDB_tconst to db
   logger.log("[findIMDBtconst] START movie:", movie);
 
+  const isMovie = movie.MediaType === "movie";
+  const isSeries = movie.MediaType === "series" && !movie.Series_id_Movies_Owner;
+  const isSeriesEpisode = movie.MediaType === "series" && movie.Series_id_Movies_Owner;
+
+  logger.log("[findIMDBtconst] ", { isMovie, isSeries, isSeriesEpisode });
+
   if (onlyNew && movie.IMDB_Done) {
     logger.log("[findIMDBtconst] nothing to do, abort");
     return;
   }
 
-  eventBus.scanInfoShow(`${$t("Rescanning Movies")} {remainingTimeDisplay}`, `${movie.Name || movie.Filename} (${$t("detecting IMDB entry")})`, rescanETA);
+  eventBus.scanInfoShow(
+    `${isMovie ? $t("Rescanning Movies") : $t("Rescanning Series")} {remainingTimeDisplay}`,
+    `${movie.Name || movie.Filename} (${$t("detecting IMDB entry")})`,
+    rescanETA
+  );
 
   try {
     const scanErrorsString = await db.fireProcedureReturnScalar(`SELECT scanErrors FROM tbl_Movies WHERE id_Movies = $id_Movies`, {
@@ -3437,7 +3467,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
   try {
     logger.log("[fetchMedia] shared.languagesAudioSubtitles:", shared.languagesAudioSubtitles);
 
-    const query = /*sql*/ `
+    const query = `
 		SELECT
 			MOV.id_Movies
 			, MOV.Name
@@ -3466,10 +3496,12 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
       , MOV.IMDB_tconst
       , SP.id_SourcePaths
       , MOV.IMDB_Trailer_URL
+      , SP.MediaType
+      , MOV.Series_id_Movies_Owner
 
       ${
         minimumResultSet
-          ? /*sql*/ `
+          ? `
         , 0 AS isCompletelyFetched
         , NULL AS Filename
         , NULL AS Size
@@ -3501,7 +3533,7 @@ async function fetchMedia($MediaType, arr_id_Movies, minimumResultSet, $t, filte
         , NULL AS Video_Encoder
         , NULL AS Audio_Format
       `
-          : /*sql*/ `
+          : `
         , 1 AS isCompletelyFetched
         , MOV.Filename
         , MOV.Size

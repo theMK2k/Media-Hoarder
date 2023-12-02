@@ -4124,15 +4124,17 @@ export default {
       } else if (textOrErrorObject.errno && textOrErrorObject.code) {
         // SQLite error
         this.snackbar.text = `SQLite error: ${textOrErrorObject.code} (${textOrErrorObject.errno})`;
-      } else if (textOrErrorObject.error) {
-        // our self-defined error object with message and optional details
-        this.snackbar.text = textOrErrorObject.error.message;
+      } else if (textOrErrorObject.error || textOrErrorObject.info) {
+        // our self-defined error or info object with message and optional details
+        const obj = textOrErrorObject.error || textOrErrorObject.info;
 
-        if (typeof textOrErrorObject.error.details === "string" || textOrErrorObject.error.details instanceof String) {
-          this.snackbar.details.push(textOrErrorObject.error.details);
+        this.snackbar.text = obj.message;
+
+        if (typeof obj.details === "string" || obj.details instanceof String) {
+          this.snackbar.details.push(obj.details);
         } else {
-          if (Array.isArray(textOrErrorObject.error.details)) {
-            textOrErrorObject.error.details.forEach((detail) => {
+          if (Array.isArray(obj.details)) {
+            obj.details.forEach((detail) => {
               if (typeof detail === "string" || detail instanceof String) {
                 this.snackbar.details.push(detail);
               }

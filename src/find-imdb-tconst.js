@@ -3,6 +3,7 @@ const path = require("path");
 const logger = require("./helpers/logger");
 const helpers = require("./helpers/helpers");
 const { scrapeIMDBFindPageSearchV3, scrapeIMDBtechnicalData } = require("./imdb-scraper");
+
 /**
  * Extract the IMDB tconst if it is included in the file or directory name, e.g. A Movie (2009)[tt123456789]
  *

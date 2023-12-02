@@ -4,6 +4,8 @@
 
 ## NEXT Major (v1.4.0)
 
+- i18n: rescan finished snackbar
+
 ### TV Series Support
 
 - check sqlite version for json support - _The JSON functions and operators are built into SQLite by default, as of SQLite version 3.38.0 (2022-02-22)._

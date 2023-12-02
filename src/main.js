@@ -34,7 +34,7 @@ export const eventBus = new Vue({
     },
 
     showSnackbar(color, textOrErrorObject, timeout) {
-      timeout = timeout || 6000; // 6s default timeout
+      timeout = isNaN(timeout) ? 6000 : timeout; // 6s default timeout
       this.$emit("showSnackbar", { color, textOrErrorObject, timeout });
     },
 
