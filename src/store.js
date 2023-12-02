@@ -889,7 +889,7 @@ async function filescanSeries(onlyNew, $t) {
       for (const seriesDir of seriesDirs) {
         logger.log("[filescanSeries] processing", seriesDir);
 
-        const series_id_Movies = await upsertSeries(seriesSourcePath, seriesDir, seriesHave);
+        const { isAdded, series_id_Movies } = await upsertSeries(seriesSourcePath, seriesDir, seriesHave);
 
         await db.fireProcedure(`UPDATE tbl_Movies SET isRemoved = 0 WHERE id_Movies = $id_Movies`, {
           $id_Movies: series_id_Movies,
@@ -902,7 +902,15 @@ async function filescanSeries(onlyNew, $t) {
         logger.log("[filescanSeries] series_id_Movies:", series_id_Movies);
         logger.log("[filescanSeries] rescanStats:", rescanStats);
 
-        await filescanSeriesEpisodesPath(series_id_Movies, onlyNew, seriesHave, seriesSourcePath, seriesDir.fullPath);
+        const hasChanges = await filescanSeriesEpisodesPath(series_id_Movies, onlyNew, seriesHave, seriesSourcePath, seriesDir.fullPath);
+
+        if (hasChanges) {
+          if (isAdded) {
+            rescanStats.addedSeriesEpisodes++;
+          } else {
+            rescanStats.updatedSeries++;
+          }
+        }
       }
     }
 
@@ -922,7 +930,7 @@ async function filescanSeries(onlyNew, $t) {
  *
  * @param {*} seriesSourcePath
  * @param {pathItem} seriesDirectory
- * @returns {Promise} id_Movies (the id of the inserted or existing series entry in tbl_Movies)
+ * @returns {Promise} { isAdded, series_id_Movies (the id of the inserted or existing series entry in tbl_Movies)
  */
 async function upsertSeries(seriesSourcePath, seriesDirectory, seriesHave) {
   logger.log("[upsertSeries] pathItem.fullPath:", seriesDirectory.fullPath);
@@ -931,7 +939,7 @@ async function upsertSeries(seriesSourcePath, seriesDirectory, seriesHave) {
 
   if (seriesHaveItem) {
     logger.log("[filescanSeries] HAVE:", seriesDirectory.fullPathLower, "seriesHaveFlag:", seriesHaveItem);
-    return seriesHaveItem.id_Movies;
+    return { isAdded: false, series_id_Movies: seriesHaveItem.id_Movies };
   }
 
   logger.log("[upsertSeries] adding:", seriesDirectory.Name);
@@ -981,23 +989,32 @@ async function upsertSeries(seriesSourcePath, seriesDirectory, seriesHave) {
 
   await db.fireProcedure(sqlQuery, sqlData);
 
-  return await db.fireProcedureReturnScalar(`SELECT id_Movies FROM tbl_Movies WHERE id_SourcePaths = $id_SourcePaths AND RelativePath = $RelativePath`, {
-    $id_SourcePaths: seriesSourcePath.id_SourcePaths,
-    $RelativePath: seriesDirectory.relativePath,
-  });
+  const series_id_Movies = await db.fireProcedureReturnScalar(
+    `SELECT id_Movies FROM tbl_Movies WHERE id_SourcePaths = $id_SourcePaths AND RelativePath = $RelativePath`,
+    {
+      $id_SourcePaths: seriesSourcePath.id_SourcePaths,
+      $RelativePath: seriesDirectory.relativePath,
+    }
+  );
+
+  return { isAdded: true, series_id_Movies };
 }
 
 /**
- * Scan the given path for series episodes
+ * Scan the given path for a series' episodes
  * @param {*} series_id_Movies the id of the series entry in tbl_Movies
  * @param {*} onlyNew
- * @param {*} moviesHave
+ * @param {*} seriesHave
  * @param {*} seriesSourcePath
  * @param {*} scanPath
- * @returns
+ * @returns true if at least one episode has been added, false otherwise
  */
-async function filescanSeriesEpisodesPath(series_id_Movies, onlyNew, moviesHave, seriesSourcePath, scanPath) {
+async function filescanSeriesEpisodesPath(series_id_Movies, onlyNew, seriesHave, seriesSourcePath, scanPath) {
   logger.log("[filescanSeriesEpisodesPath] scan", scanPath);
+
+  const seriesHaveItem = seriesHave.find((have) => have.id_Movies === series_id_Movies);
+
+  let hasChanges = false;
 
   try {
     const pathItems = await listPath(seriesSourcePath.Path, scanPath);
@@ -1007,15 +1024,15 @@ async function filescanSeriesEpisodesPath(series_id_Movies, onlyNew, moviesHave,
       const pathItem = pathItems[i];
 
       if (pathItem.isFile) {
-        const movieHave = moviesHave.find((have) => have.fullPathLower === pathItem.fullPathLower);
+        const episodeHave = seriesHave.find((have) => have.fullPathLower === pathItem.fullPathLower);
 
-        if (movieHave) {
-          logger.log("[filescanSeriesEpisodesPath] HAVE:", pathItem.fullPathLower, "movieHave:", movieHave);
+        if (episodeHave) {
+          logger.log("[filescanSeriesEpisodesPath] HAVE:", pathItem.fullPathLower, "movieHave:", episodeHave);
 
           const $Size = await getFileSize(pathItem);
 
           await db.fireProcedure(`UPDATE tbl_Movies SET isRemoved = 0, Size = $Size, file_created_at = $file_created_at WHERE id_Movies = $id_Movies`, {
-            $id_Movies: movieHave.id_Movies,
+            $id_Movies: episodeHave.id_Movies,
             $Size,
             $file_created_at: pathItem.file_created_at,
           });
@@ -1030,7 +1047,8 @@ async function filescanSeriesEpisodesPath(series_id_Movies, onlyNew, moviesHave,
           continue;
         }
 
-        await addSeriesEpisode(series_id_Movies, seriesSourcePath, pathItem);
+        await addSeriesEpisode(series_id_Movies, seriesSourcePath, pathItem, !!seriesHaveItem);
+        hasChanges = true;
       }
     }
 
@@ -1039,12 +1057,14 @@ async function filescanSeriesEpisodesPath(series_id_Movies, onlyNew, moviesHave,
       const pathItem = pathItems[i];
 
       if (pathItem.isDirectory) {
-        await filescanSeriesEpisodesPath(series_id_Movies, onlyNew, moviesHave, seriesSourcePath, pathItem.fullPath);
+        hasChanges = (await filescanSeriesEpisodesPath(series_id_Movies, onlyNew, seriesHave, seriesSourcePath, pathItem.fullPath)) || hasChanges;
       }
     }
   } catch (err) {
-    return;
+    logger.error("[filescanSeriesEpisodesPath] ERROR:", err);
   }
+
+  return hasChanges;
 }
 
 const enmMovieTypes = {
@@ -1269,7 +1289,7 @@ async function addMovie(movieSourcePath, pathItem) {
  * @param {*} seriesSourcePath
  * @param {pathItem} pathItem
  */
-async function addSeriesEpisode(series_id_Movies, seriesSourcePath, pathItem) {
+async function addSeriesEpisode(series_id_Movies, seriesSourcePath, pathItem, isSeriesHave) {
   logger.log("[addSeriesEpisode] pathItem.fullPath:", pathItem.fullPath);
 
   const movieType = await getMovieType(seriesSourcePath.Path, pathItem);
@@ -1283,7 +1303,11 @@ async function addSeriesEpisode(series_id_Movies, seriesSourcePath, pathItem) {
 
   logger.log("[addSeriesEpisode] adding:", pathItem.Name);
 
-  rescanStats.addedMovies++;
+  if (isSeriesHave) {
+    rescanStats.updatedSeriesEpisodes++;
+  } else {
+    rescanStats.addedSeriesEpisodes++;
+  }
 
   // currentScanInfoHeader
   eventBus.scanInfoShow(currentScanInfoHeader, `adding ${pathItem.Name}`);
