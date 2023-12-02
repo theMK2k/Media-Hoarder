@@ -448,9 +448,8 @@ async function rescanHandleDuplicates() {
   for (let i = 0; i < arrNewMovies.length; i++) {
     const $id_Movies = arrNewMovies[i];
 
-    const currentMovie = (await db.fireProcedureReturnAll("SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies", { $id_Movies }))[0];
-
-    logger.log("[rescan] currentMovie:", currentMovie);
+    // const currentMovie = (await db.fireProcedureReturnAll("SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies", { $id_Movies }))[0];
+    // logger.log("[rescan] currentMovie:", currentMovie);
 
     const actualDuplicates = await getMovieDuplicates($id_Movies, true, false, true);
     const metaDuplicates = await getMovieDuplicates($id_Movies, false, true, true);
@@ -1483,6 +1482,7 @@ async function applyMetaData(onlyNew, id_Movies) {
   SELECT
     MOV.id_Movies
     , MOV.Filename
+    , MOV.RelativeDirectory
     , IFNULL(MOV.IMDB_localTitle, '') AS IMDB_localTitle
     , IFNULL(MOV.IMDB_originalTitle, '') AS IMDB_originalTitle
     , IFNULL(MOV.IMDB_primaryTitle, '') AS IMDB_primaryTitle
@@ -1490,6 +1490,7 @@ async function applyMetaData(onlyNew, id_Movies) {
     , MOV.IMDB_endYear
     , SP.MediaType
     , MOV.DefinedByUser
+    , MOV.isDirectoryBased
   FROM tbl_Movies MOV
   INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
   WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
@@ -1562,7 +1563,11 @@ async function applyMetaData(onlyNew, id_Movies) {
     });
 
     if (!Name) {
-      Name = helpers.getMovieNameFromFileName(movie.Filename);
+      if (movie.isDirectoryBased) {
+        Name = helpers.getMovieNameFromDirectory(movie.RelativeDirectory);
+      } else {
+        Name = helpers.getMovieNameFromFileName(movie.Filename);
+      }
     }
 
     const rxMultiPart = /\s(\d)_(\d)/;
