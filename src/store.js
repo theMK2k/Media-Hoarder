@@ -3806,6 +3806,9 @@ async function fetchMedia(
       , MOV.IMDB_Trailer_URL
       , SP.MediaType
       , MOV.Series_id_Movies_Owner
+      , MOV.Series_Season
+      , MOV.Series_Episodes_First
+      , MOV.Series_Bonus_Number
 
       ${
         minimumResultSet
@@ -3840,6 +3843,8 @@ async function fetchMedia(
         , NULL AS ReleaseAttributesSearchTerms
         , NULL AS Video_Encoder
         , NULL AS Audio_Format
+        , MOV.Series_Episodes_Complete
+
       `
           : `
         , 1 AS isCompletelyFetched
@@ -3879,6 +3884,7 @@ async function fetchMedia(
         , (SELECT GROUP_CONCAT(MRA.Release_Attributes_searchTerm, ';') FROM tbl_Movies_Release_Attributes MRA WHERE MRA.id_Movies = MOV.id_Movies AND MRA.deleted = 0) AS ReleaseAttributesSearchTerms
         , (SELECT GROUP_CONCAT(Encoded_Library_Name_Trimmed, ';') FROM tbl_Movies_MI_Tracks MITVIDEO WHERE MITVIDEO.type = "video" AND MITVIDEO.id_Movies = MOV.id_Movies ORDER BY "Default" DESC) AS Video_Encoder
         , (SELECT GROUP_CONCAT(Format, ';') FROM tbl_Movies_MI_Tracks MITAUDIO WHERE MITAUDIO.type = "audio" AND MITAUDIO.id_Movies = MOV.id_Movies ORDER BY "Default" DESC) AS Audio_Format
+        , MOV.Series_Episodes_Complete
       `
       }
     FROM tbl_Movies MOV
@@ -4012,6 +4018,43 @@ async function fetchMedia(
         });
       } else {
         item.Audio_Format_Display = null;
+      }
+
+      if (item.Series_Season != null) {
+        item.Series_Season_Displaytext = `S${`${item.Series_Season < 10 ? "0" : ""}${item.Series_Season}`}`;
+      }
+
+      if (item.Series_Episodes_Complete) {
+        logger.log("[fetchMedia Series_Episodes_Complete] has value!");
+        const episodes = JSON.parse(item.Series_Episodes_Complete);
+
+        logger.log("[fetchMedia Series_Episodes_Complete] episodes:", episodes);
+
+        if (episodes.length == 1) {
+          logger.log("[fetchMedia Series_Episodes_Complete] just one episode");
+          item.Series_Episodes_Displaytext = `E${`${episodes[0] < 10 ? "0" : ""}${episodes[0]}`}`;
+          logger.log(
+            "[fetchMedia Series_Episodes_Complete] item.Series_Episodes_Displaytext:",
+            item.Series_Episodes_Displaytext
+          );
+        } else if (episodes.length > 1) {
+          const minEpisode = Math.min(...episodes);
+          const maxEpisode = Math.max(...episodes);
+
+          if (maxEpisode - minEpisode + 1 == episodes.length) {
+            item.Series_Episodes_Displaytext = `E${`${minEpisode < 10 ? "0" : ""}${minEpisode}`}-E${`${
+              maxEpisode < 10 ? "0" : ""
+            }${maxEpisode}`}`;
+          } else {
+            item.Series_Episodes_Displaytext = `${episodes
+              .map((episode) => `E${`${episode < 10 ? "0" : ""}${episode}`}`)
+              .join(", ")}`;
+          }
+          logger.log(
+            "[fetchMedia Series_Episodes_Complete] item.Series_Episodes_Displaytext:",
+            item.Series_Episodes_Displaytext
+          );
+        }
       }
 
       // additional fields (prevent Recalculation of Pagination Items on mouseover)

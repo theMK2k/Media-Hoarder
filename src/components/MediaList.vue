@@ -476,6 +476,10 @@
                       >
                         <div style="display: flex; min-height: 30px">
                           <div style="overflow: hidden; text-overflow: ellipsis">
+                            <span v-if="Series_id_Movies_Owner" style="font-weight: 400; color: lightgray">
+                              {{ item.Series_Season_Displaytext
+                              }}{{ `${item.Series_Season_Displaytext ? "." : ""}${item.Series_Episodes_Displaytext}` }}
+                            </span>
                             <word-highlighter v-bind:query="$shared.searchText || ''">
                               {{ item.Name }}
                             </word-highlighter>
