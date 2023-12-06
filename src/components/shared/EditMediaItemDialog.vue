@@ -1,5 +1,12 @@
 <template>
-  <v-dialog v-if="mediaItem" v-model="show" persistent max-width="1000px" v-on:keydown.escape="onEscapePressed" scrollable>
+  <v-dialog
+    v-if="mediaItem"
+    v-model="show"
+    persistent
+    max-width="1000px"
+    v-on:keydown.escape="onEscapePressed"
+    scrollable
+  >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         {{ $t(caption) }}: {{ mediaItemBackup.Name }}
@@ -17,7 +24,12 @@
         <v-text-field v-bind:label="$t('Release Year')" v-model="mediaItem.startYear"></v-text-field>
 
         <!-- Video Quality -->
-        <v-select v-bind:label="$t('Video Quality')" v-bind:items="$shared.videoQualities.map((item) => item.name)" v-model="mediaItem.MI_Quality"> </v-select>
+        <v-select
+          v-bind:label="$t('Video Quality')"
+          v-bind:items="$shared.videoQualities.map((item) => item.name)"
+          v-model="mediaItem.MI_Quality"
+        >
+        </v-select>
 
         <!-- Description -->
         <v-textarea v-bind:label="$t('Description')" v-model="mediaItem.plotSummaryFull"> </v-textarea>
@@ -70,7 +82,12 @@
                   {{ $t("Add Genre") }}
                 </v-card-title>
                 <v-card-text>
-                  <v-select v-bind:items="genres" v-model="selectedGenre" item-text="Name" item-value="GenreID"></v-select>
+                  <v-select
+                    v-bind:items="genres"
+                    v-model="selectedGenre"
+                    item-text="Name"
+                    item-value="GenreID"
+                  ></v-select>
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
@@ -130,11 +147,18 @@
                   {{ $t("Add Release Attribute") }}
                 </v-card-title>
                 <v-card-text>
-                  <v-select v-bind:items="releaseAttributes" v-model="selectedReleaseAttribute" item-text="displayAs" item-value="searchTerm"></v-select>
+                  <v-select
+                    v-bind:items="releaseAttributes"
+                    v-model="selectedReleaseAttribute"
+                    item-text="displayAs"
+                    item-value="searchTerm"
+                  ></v-select>
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="secondary" v-on:click.stop="showAddReleaseAttributeDialog = false">{{ $t("Cancel") }}</v-btn>
+                  <v-btn color="secondary" v-on:click.stop="showAddReleaseAttributeDialog = false">{{
+                    $t("Cancel")
+                  }}</v-btn>
                   <v-btn color="primary" v-on:click.stop="onAddReleaseAttributeDialogOK">{{ $t("OK") }}</v-btn>
                 </v-card-actions>
               </v-card>
@@ -144,7 +168,9 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCancelClick" style="margin-left: 8px">{{ $t("Cancel") }}</v-btn>
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCancelClick" style="margin-left: 8px">{{
+          $t("Cancel")
+        }}</v-btn>
         <v-btn class="xs-fullwidth" color="primary" v-on:click.stop="onOKClick" style="margin-left: 8px"> OK </v-btn>
       </v-card-actions>
     </v-card>
@@ -184,7 +210,10 @@ export default {
 
   computed: {
     i18nCurrentMessages() {
-      logger.log("[i18nCurrentMessages] this.$i18n.messages[this.$i18n.locale]:", this.$i18n.messages[this.$i18n.locale]);
+      logger.log(
+        "[i18nCurrentMessages] this.$i18n.messages[this.$i18n.locale]:",
+        this.$i18n.messages[this.$i18n.locale]
+      );
       let messages = this.$i18n.messages[this.$i18n.locale];
       return messages || this.$i18n.messages["en"];
     },
@@ -198,7 +227,9 @@ export default {
           };
         })
         .sort((a, b) => helpers.compare(a.Name, b.Name, false))
-        .filter((item) => !this.mediaItem.Genres || !this.mediaItem.Genres.find((genre) => genre.name === item.GenreID));
+        .filter(
+          (item) => !this.mediaItem.Genres || !this.mediaItem.Genres.find((genre) => genre.name === item.GenreID)
+        );
     },
 
     arrayReleaseAttributesSearchTerms() {
@@ -312,7 +343,11 @@ export default {
       logger.log("[onOKClick] definedByUser (new):", definedByUser);
 
       if (definedByUserOld !== JSON.stringify(definedByUser)) {
-        await store.updateMediaRecordField(this.mediaItem.id_Movies, "DefinedByUser", definedByUser.map((item) => `|${item}|`).join(","));
+        await store.updateMediaRecordField(
+          this.mediaItem.id_Movies,
+          "DefinedByUser",
+          definedByUser.map((item) => `|${item}|`).join(",")
+        );
       }
 
       this.$emit("ok", hasChanges);
@@ -355,7 +390,10 @@ export default {
 
     getReleaseAttribute(searchTerm) {
       logger.log("[getReleaseAttribute] searchTerm:", searchTerm);
-      logger.log("[getReleaseAttribute] EditMediaItemDialog this.$shared.releaseAttributes", this.$shared.releaseAttributes);
+      logger.log(
+        "[getReleaseAttribute] EditMediaItemDialog this.$shared.releaseAttributes",
+        this.$shared.releaseAttributes
+      );
       return this.$shared.releaseAttributes.find((ra) => ra.searchTerm === searchTerm).displayAs;
     },
 
@@ -379,7 +417,8 @@ export default {
     onAddReleaseAttributeDialogOK() {
       if (this.selectedReleaseAttribute) {
         this.mediaItem.ReleaseAttributesSearchTerms =
-          (this.mediaItem.ReleaseAttributesSearchTerms ? this.mediaItem.ReleaseAttributesSearchTerms + ";" : "") + this.selectedReleaseAttribute;
+          (this.mediaItem.ReleaseAttributesSearchTerms ? this.mediaItem.ReleaseAttributesSearchTerms + ";" : "") +
+          this.selectedReleaseAttribute;
       }
 
       this.showAddReleaseAttributeDialog = false;

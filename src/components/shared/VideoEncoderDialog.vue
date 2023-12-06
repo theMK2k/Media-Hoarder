@@ -25,8 +25,16 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCloseClick" style="margin-left: 8px">{{ $t("Close") }}</v-btn>
-        <v-btn v-if="numMovies !== null" class="xs-fullwidth" color="primary" v-on:click.native="onFilterClick" style="margin-left: 8px">
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCloseClick" style="margin-left: 8px">{{
+          $t("Close")
+        }}</v-btn>
+        <v-btn
+          v-if="numMovies !== null"
+          class="xs-fullwidth"
+          color="primary"
+          v-on:click.native="onFilterClick"
+          style="margin-left: 8px"
+        >
           {{ $t("Filter by this video encoder") }}
         </v-btn>
       </v-card-actions>

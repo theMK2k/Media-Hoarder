@@ -67,3 +67,13 @@ Date-based series (e.g. talk shows, sports events)
   - detect tconst for episodes
   - provide imdb metadata for series and each episode
     - Note: multi-episodes must be combined somehow
+
+### Find tconst
+
+If series' tconst is known: `https://www.imdb.com/_next/data/mL3DhTZq8DGH0MM-Gmy98/title/tt7678620/episodes.json?season=2&tconst=tt7678620`
+
+OR: `https://caching.graphql.imdb.com/?operationName=TitleEpisodesSubPagePagination&variables={"after":"","const":"tt7678620","filter":{"includeSeasons":["2"]},"first":9999,"locale":"en-GB","originalTitleText":false,"returnUrl":"https://www.imdb.com/close_me"}&extensions={"persistedQuery":{"sha256Hash":"ecdbd1a3df08b6a3903b16662bc636e6cbaf6a6e4fcbf64496ab4da46b8038e2","version":1}}`
+
+-> lists first 50 episodes
+
+click on "more": `https://caching.graphql.imdb.com/?operationName=TitleEpisodesSubPagePagination&variables={"after":"dHQxMzQyOTkwOA==","const":"tt7678620","filter":{"includeSeasons":["2"]},"first":50,"locale":"en-GB","originalTitleText":false,"returnUrl":"https://www.imdb.com/close_me"}&extensions={"persistedQuery":{"sha256Hash":"ecdbd1a3df08b6a3903b16662bc636e6cbaf6a6e4fcbf64496ab4da46b8038e2","version":1}}`

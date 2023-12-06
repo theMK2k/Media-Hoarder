@@ -24,17 +24,31 @@
 
           <v-card-text class="mk-light-grey">
             {{
-              $t("{appName} needs the path to a media player of your choice for media playback_ We recommend the VLC media player, you can get it at:", {
-                appName: $shared.appName,
-              })
+              $t(
+                "{appName} needs the path to a media player of your choice for media playback_ We recommend the VLC media player, you can get it at:",
+                {
+                  appName: $shared.appName,
+                }
+              )
             }}
-            <a href="https://www.videolan.org/vlc/index.html" target="_blank" rel="noreferrer noopener nofollow">https://www.videolan.org/vlc/index.html</a>
+            <a href="https://www.videolan.org/vlc/index.html" target="_blank" rel="noreferrer noopener nofollow"
+              >https://www.videolan.org/vlc/index.html</a
+            >
           </v-card-text>
 
-          <v-text-field readonly v-bind:label="$t('Media Player Path')" v-model="MediaplayerPath" style="margin-left: 16px"></v-text-field>
+          <v-text-field
+            readonly
+            v-bind:label="$t('Media Player Path')"
+            v-model="MediaplayerPath"
+            style="margin-left: 16px"
+          ></v-text-field>
 
-          <v-btn v-on:click="browseMediaplayerPath()" text small color="primary" style="margin-top: 16px">{{ $t("Browse") }}</v-btn>
-          <v-btn v-on:click="showEditMediaplayerPathDialog()" text small color="primary" style="margin-top: 16px">{{ $t("Edit") }}</v-btn>
+          <v-btn v-on:click="browseMediaplayerPath()" text small color="primary" style="margin-top: 16px">{{
+            $t("Browse")
+          }}</v-btn>
+          <v-btn v-on:click="showEditMediaplayerPathDialog()" text small color="primary" style="margin-top: 16px">{{
+            $t("Edit")
+          }}</v-btn>
         </v-row>
 
         <v-row class="settings-row">
@@ -47,13 +61,24 @@
                 { appName: $shared.appName }
               )
             }}
-            <a href="https://mediaarea.net/en/MediaInfo" target="_blank" rel="noreferrer noopener nofollow">https://mediaarea.net/en/MediaInfo</a>
+            <a href="https://mediaarea.net/en/MediaInfo" target="_blank" rel="noreferrer noopener nofollow"
+              >https://mediaarea.net/en/MediaInfo</a
+            >
           </v-card-text>
 
-          <v-text-field readonly v-bind:label="$t('Mediainfo CLI Path')" v-model="MediainfoPath" style="margin-left: 16px"></v-text-field>
+          <v-text-field
+            readonly
+            v-bind:label="$t('Mediainfo CLI Path')"
+            v-model="MediainfoPath"
+            style="margin-left: 16px"
+          ></v-text-field>
 
-          <v-btn v-on:click="browseMediainfoPath()" text small color="primary" style="margin-top: 16px">{{ $t("Browse") }}</v-btn>
-          <v-btn v-on:click="showEditMediainfoPathDialog()" text small color="primary" style="margin-top: 16px">{{ $t("Edit") }}</v-btn>
+          <v-btn v-on:click="browseMediainfoPath()" text small color="primary" style="margin-top: 16px">{{
+            $t("Browse")
+          }}</v-btn>
+          <v-btn v-on:click="showEditMediainfoPathDialog()" text small color="primary" style="margin-top: 16px">{{
+            $t("Edit")
+          }}</v-btn>
         </v-row>
 
         <v-row class="settings-row">
@@ -66,7 +91,12 @@
             )
           }}</v-card-text>
 
-          <v-text-field type="number" v-bind:label="$t('Last Access Grace Period')" v-model="minimumWaitForSetAccess" style="margin-left: 16px"></v-text-field>
+          <v-text-field
+            type="number"
+            v-bind:label="$t('Last Access Grace Period')"
+            v-model="minimumWaitForSetAccess"
+            style="margin-left: 16px"
+          ></v-text-field>
         </v-row>
 
         <!--
@@ -127,7 +157,9 @@
       <!-- MOVIES -->
       <v-tab-item style="padding: 8px">
         <h3>{{ $t("Movies") }} - {{ $t("Source Paths") }}</h3>
-        <v-alert type="warning" colored-border border="left" v-if="moviesSourcePaths.length == 0">{{ $t("no paths defined") }}</v-alert>
+        <v-alert type="warning" colored-border border="left" v-if="moviesSourcePaths.length == 0">{{
+          $t("no paths defined")
+        }}</v-alert>
 
         <div v-for="sourcePath in moviesSourcePaths" v-bind:key="sourcePath.id_SourcePaths" style="margin: 8px">
           <mk-sourcepath
@@ -144,7 +176,9 @@
       <!-- SERIES -->
       <v-tab-item style="padding: 8px">
         <h3>{{ $t("Series") }} - {{ $t("Source Paths") }}</h3>
-        <v-alert type="warning" colored-border border="left" v-if="tvSourcePaths.length == 0">{{ $t("no paths defined") }}</v-alert>
+        <v-alert type="warning" colored-border border="left" v-if="tvSourcePaths.length == 0">{{
+          $t("no paths defined")
+        }}</v-alert>
 
         <p style="color: lightgray">
           <strong>{{ $t("Important:") }}</strong>
@@ -265,7 +299,11 @@
           <h3>{{ $t("Meta Duplicates") }}</h3>
           <v-card-text class="mk-light-grey">
             <p>
-              {{ $t("A meta duplicate is identified by having the same IMDB link_ This can happen if you have the same movie in different formats") }}
+              {{
+                $t(
+                  "A meta duplicate is identified by having the same IMDB link_ This can happen if you have the same movie in different formats"
+                )
+              }}
             </p>
           </v-card-text>
           <div style="margin-left: 16px">
@@ -301,7 +339,11 @@
       <v-tab-item style="padding: 8px">
         <v-card-text class="mk-light-grey">
           <p>
-            {{ $t("The regions and their sequence defined here will be used for the Primary Title of the media as well as the age rating") }}
+            {{
+              $t(
+                "The regions and their sequence defined here will be used for the Primary Title of the media as well as the age rating"
+              )
+            }}
           </p>
           <p>
             {{
@@ -314,11 +356,16 @@
 
         <v-alert type="warning" colored-border border="left" v-if="$shared.regions.length === 0">
           <span v-if="$shared.regions.length === 0 && $shared.fallbackRegion"
-            >{{ $t("You currently don't have a region set up_ {appName} will fall back to your system's locale", { appName: $shared.appName }) }}:
-            {{ $shared.fallbackRegion.name }}.</span
+            >{{
+              $t("You currently don't have a region set up_ {appName} will fall back to your system's locale", {
+                appName: $shared.appName,
+              })
+            }}: {{ $shared.fallbackRegion.name }}.</span
           >
           <span v-if="$shared.regions.length === 0 && !$shared.fallbackRegion">{{
-            $t("You currently don't have a region set up_ {appName} will fall back to the original title_", { appName: $shared.appName })
+            $t("You currently don't have a region set up_ {appName} will fall back to the original title_", {
+              appName: $shared.appName,
+            })
           }}</span>
         </v-alert>
 
@@ -368,26 +415,45 @@
           </p>
           <p>
             <strong>{{ $t("Important:") }}</strong>
-            {{ $t(`If you want, for example, to see THISLANGUAGE titles, you must also add the THISREGION region in "Regions"_`) }}
+            {{
+              $t(
+                `If you want, for example, to see THISLANGUAGE titles, you must also add the THISREGION region in "Regions"_`
+              )
+            }}
           </p>
         </v-card-text>
 
-        <v-alert type="warning" colored-border border="left" v-if="!$shared.languagesPrimaryTitle || $shared.languagesPrimaryTitle.length === 0">
+        <v-alert
+          type="warning"
+          colored-border
+          border="left"
+          v-if="!$shared.languagesPrimaryTitle || $shared.languagesPrimaryTitle.length === 0"
+        >
           <span v-if="$shared.fallbackLanguage"
             >{{
-              $t("You currently don't have a language for the Primary Title set up_ {appName} will fall back to your system's locale", {
-                appName: $shared.appName,
-              })
+              $t(
+                "You currently don't have a language for the Primary Title set up_ {appName} will fall back to your system's locale",
+                {
+                  appName: $shared.appName,
+                }
+              )
             }}: {{ $shared.fallbackLanguage.DisplayText }}.</span
           >
           <span v-if="!$shared.fallbackLanguage">{{
-            $t("You currently don't have a language for the Primary Title set up_ {appName} will fall back to the original title_", {
-              appName: $shared.appName,
-            })
+            $t(
+              "You currently don't have a language for the Primary Title set up_ {appName} will fall back to the original title_",
+              {
+                appName: $shared.appName,
+              }
+            )
           }}</span>
         </v-alert>
 
-        <draggable v-model="$shared.languagesPrimaryTitle" group="languagesPrimaryTitle" v-on:end="onLanguagesDragEnd('languagesPrimaryTitle')">
+        <draggable
+          v-model="$shared.languagesPrimaryTitle"
+          group="languagesPrimaryTitle"
+          v-on:end="onLanguagesDragEnd('languagesPrimaryTitle')"
+        >
           <div v-for="language in $shared.languagesPrimaryTitle" v-bind:key="language.code">
             <v-row style="margin: 8px">
               <v-card style="width: 100%">
@@ -395,7 +461,11 @@
                   <v-list-item-content>
                     <v-list-item-title>
                       {{ language.DisplayText }}
-                      <v-icon class="mk-clickable-red" v-on:click="openRemoveLanguageDialog(language, 'languagesPrimaryTitle')">mdi-delete</v-icon>
+                      <v-icon
+                        class="mk-clickable-red"
+                        v-on:click="openRemoveLanguageDialog(language, 'languagesPrimaryTitle')"
+                        >mdi-delete</v-icon
+                      >
                     </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
@@ -404,7 +474,9 @@
           </div>
         </draggable>
 
-        <v-btn text small color="primary" v-on:click="openAddLanguagesDialog('languagesPrimaryTitle')">{{ $t("Add Languages") }}</v-btn>
+        <v-btn text small color="primary" v-on:click="openAddLanguagesDialog('languagesPrimaryTitle')">{{
+          $t("Add Languages")
+        }}</v-btn>
 
         <div style="height: 16px"></div>
 
@@ -412,26 +484,45 @@
 
         <v-card-text class="mk-light-grey">
           <p>
-            {{ $t("The languages and their sequence defined here will be used to show which audio and subtitle languages your media contain_") }}
+            {{
+              $t(
+                "The languages and their sequence defined here will be used to show which audio and subtitle languages your media contain_"
+              )
+            }}
           </p>
         </v-card-text>
 
-        <v-alert type="warning" colored-border border="left" v-if="!$shared.languagesAudioSubtitles || $shared.languagesAudioSubtitles.length === 0">
+        <v-alert
+          type="warning"
+          colored-border
+          border="left"
+          v-if="!$shared.languagesAudioSubtitles || $shared.languagesAudioSubtitles.length === 0"
+        >
           <span v-if="$shared.fallbackLanguage"
             >{{
-              $t("You currently don't have a language for Audio and Subtitles set up_ {appName} will fall back to your system's locale", {
-                appName: $shared.appName,
-              })
+              $t(
+                "You currently don't have a language for Audio and Subtitles set up_ {appName} will fall back to your system's locale",
+                {
+                  appName: $shared.appName,
+                }
+              )
             }}: {{ $shared.fallbackLanguage.DisplayText }}.</span
           >
           <span v-if="!$shared.fallbackLanguage">{{
-            $t("You currently don't have a language for Audio and Subtitles set up_ {appName} will fall back to the original title_", {
-              appName: $shared.appName,
-            })
+            $t(
+              "You currently don't have a language for Audio and Subtitles set up_ {appName} will fall back to the original title_",
+              {
+                appName: $shared.appName,
+              }
+            )
           }}</span>
         </v-alert>
 
-        <draggable v-model="$shared.languagesAudioSubtitles" group="languagesAudioSubtitles" v-on:end="onLanguagesDragEnd('languagesAudioSubtitles')">
+        <draggable
+          v-model="$shared.languagesAudioSubtitles"
+          group="languagesAudioSubtitles"
+          v-on:end="onLanguagesDragEnd('languagesAudioSubtitles')"
+        >
           <div v-for="language in $shared.languagesAudioSubtitles" v-bind:key="language.code">
             <v-row style="margin: 8px">
               <v-card style="width: 100%">
@@ -439,7 +530,11 @@
                   <v-list-item-content>
                     <v-list-item-title>
                       {{ language.DisplayText }}
-                      <v-icon class="mk-clickable-red" v-on:click="openRemoveLanguageDialog(language, 'languagesAudioSubtitles')">mdi-delete</v-icon>
+                      <v-icon
+                        class="mk-clickable-red"
+                        v-on:click="openRemoveLanguageDialog(language, 'languagesAudioSubtitles')"
+                        >mdi-delete</v-icon
+                      >
                     </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
@@ -448,7 +543,9 @@
           </div>
         </draggable>
 
-        <v-btn text small color="primary" v-on:click="openAddLanguagesDialog('languagesAudioSubtitles')">{{ $t("Add Languages") }}</v-btn>
+        <v-btn text small color="primary" v-on:click="openAddLanguagesDialog('languagesAudioSubtitles')">{{
+          $t("Add Languages")
+        }}</v-btn>
       </v-tab-item>
 
       <!-- TITLE TYPES -->
@@ -464,7 +561,9 @@
           </p>
         </v-card-text>
 
-        <v-alert colored-border border="left" v-if="$shared.imdbTitleTypesWhitelist.length === 0">{{ $t("No title types added, this is fine_") }}</v-alert>
+        <v-alert colored-border border="left" v-if="$shared.imdbTitleTypesWhitelist.length === 0">{{
+          $t("No title types added, this is fine_")
+        }}</v-alert>
 
         <mk-title-type
           v-for="item in $shared.imdbTitleTypesWhitelist"
@@ -474,14 +573,20 @@
           v-on:removeTitleType="openRemoveTitleTypeDialog"
         ></mk-title-type>
 
-        <v-btn text small color="primary" v-on:click="openAddTitleTypeDialog" style="margin-top: 16px">{{ $t("Add Title Type") }}</v-btn>
+        <v-btn text small color="primary" v-on:click="openAddTitleTypeDialog" style="margin-top: 16px">{{
+          $t("Add Title Type")
+        }}</v-btn>
       </v-tab-item>
 
       <!-- RELEASE ATTRIBUTES -->
       <v-tab-item style="padding: 8px">
         <v-card-text class="mk-light-grey">
           <p>
-            {{ $t("Here you can set up which release attributes should be searched for in the file/directory names and how they should be displayed_") }}
+            {{
+              $t(
+                "Here you can set up which release attributes should be searched for in the file/directory names and how they should be displayed_"
+              )
+            }}
           </p>
           <p>
             {{ $t("The search term is case insensitive and must contain whole words within the file/directory name_") }}
@@ -514,14 +619,18 @@
                 <td>{{ item.displayAs }}</td>
                 <td>
                   <v-icon small class="mr-2 mk-clickable" @click="onEditReleaseAttribute(item)">mdi-pencil</v-icon>
-                  <v-icon small class="mr-2 mk-clickable-red" @click="openRemoveReleaseAttributeDialog(item)">mdi-delete</v-icon>
+                  <v-icon small class="mr-2 mk-clickable-red" @click="openRemoveReleaseAttributeDialog(item)"
+                    >mdi-delete</v-icon
+                  >
                 </td>
               </tr></draggable
             >
           </template>
           <!-- <template v-slot:item.actions="{ item }"> </template> -->
         </v-data-table>
-        <v-btn v-on:click="onAddReleaseAttribute()" text small color="primary" style="margin-top: 16px">{{ $t("Add") }}</v-btn>
+        <v-btn v-on:click="onAddReleaseAttribute()" text small color="primary" style="margin-top: 16px">{{
+          $t("Add")
+        }}</v-btn>
       </v-tab-item>
     </v-tabs>
 
@@ -633,7 +742,9 @@
       v-bind:show="removeReleaseAttributeDialog.show"
       v-bind:title="$t('Remove Release Attribute')"
       v-bind:question="
-        $t('Do you really want to remove the release attribute {ReleaseAttribute}?', { ReleaseAttribute: removeReleaseAttributeDialog.ReleaseAttribute })
+        $t('Do you really want to remove the release attribute {ReleaseAttribute}?', {
+          ReleaseAttribute: removeReleaseAttributeDialog.ReleaseAttribute,
+        })
       "
       v-bind:yes="$t('YES_ Remove')"
       v-bind:cancel="$t('Cancel')"
@@ -1125,7 +1236,10 @@ export default {
             $id_SourcePaths: this.removeSourcePathDialog.id_SourcePaths,
           });
 
-          await store.db.fireProcedure(`DELETE FROM tbl_Movies WHERE id_SourcePaths NOT IN (SELECT id_SourcePaths FROM tbl_SourcePaths)`, []);
+          await store.db.fireProcedure(
+            `DELETE FROM tbl_Movies WHERE id_SourcePaths NOT IN (SELECT id_SourcePaths FROM tbl_SourcePaths)`,
+            []
+          );
 
           await store.ensureMovieDeleted();
 
@@ -1157,10 +1271,13 @@ export default {
     saveSourcePathDescriptionEdit(dialogResult) {
       (async () => {
         try {
-          await store.db.fireProcedure(`UPDATE tbl_SourcePaths SET Description = $Description WHERE id_SourcePaths = $id_SourcePaths`, {
-            $id_SourcePaths: this.sourcePathDescriptionDialog.id_SourcePaths,
-            $Description: dialogResult.textValue,
-          });
+          await store.db.fireProcedure(
+            `UPDATE tbl_SourcePaths SET Description = $Description WHERE id_SourcePaths = $id_SourcePaths`,
+            {
+              $id_SourcePaths: this.sourcePathDescriptionDialog.id_SourcePaths,
+              $Description: dialogResult.textValue,
+            }
+          );
 
           await this.fetchSourcePaths();
 
@@ -1255,7 +1372,9 @@ export default {
 
     async onAddLanguagesDialogOK(result) {
       const languages =
-        this.addLanguagesDialog.languageType === "languagesPrimaryTitle" ? this.$shared.languagesPrimaryTitle : this.$shared.languagesAudioSubtitles;
+        this.addLanguagesDialog.languageType === "languagesPrimaryTitle"
+          ? this.$shared.languagesPrimaryTitle
+          : this.$shared.languagesAudioSubtitles;
 
       result.forEach((language) => languages.push(language));
 
@@ -1273,7 +1392,10 @@ export default {
     },
 
     async removeLanguage(language, languageType) {
-      const languages = languageType === "languagesPrimaryTitle" ? this.$shared.languagesPrimaryTitle : this.$shared.languagesAudioSubtitles;
+      const languages =
+        languageType === "languagesPrimaryTitle"
+          ? this.$shared.languagesPrimaryTitle
+          : this.$shared.languagesAudioSubtitles;
 
       languages.splice(
         languages.findIndex((language2) => language2 === language),
@@ -1288,7 +1410,9 @@ export default {
 
     async onReleaseAttributesDragEnd() {
       // We use the internal data from the data table (they hold the current sequence but don't contain items marked as deleted)
-      const releaseAttributes = JSON.parse(JSON.stringify(this.$refs.releaseAttributesTable._data.internalCurrentItems));
+      const releaseAttributes = JSON.parse(
+        JSON.stringify(this.$refs.releaseAttributesTable._data.internalCurrentItems)
+      );
 
       this.$shared.releaseAttributes.forEach((ra) => {
         if (!releaseAttributes.find((ra2) => ra2.searchTerm === ra.searchTerm && ra2.displayAs === ra.displayAs)) {
@@ -1302,7 +1426,10 @@ export default {
     },
 
     async onLanguagesDragEnd(languageType) {
-      const languages = languageType === "languagesPrimaryTitle" ? this.$shared.languagesPrimaryTitle : this.$shared.languagesAudioSubtitles;
+      const languages =
+        languageType === "languagesPrimaryTitle"
+          ? this.$shared.languagesPrimaryTitle
+          : this.$shared.languagesAudioSubtitles;
 
       await store.setSetting(languageType, JSON.stringify(languages));
     },

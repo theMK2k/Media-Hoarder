@@ -24,7 +24,9 @@ const graphQLqueries = {
    * @returns
    */
   companies: ($IMDB_tconst, $IMDB_Companies_Category) =>
-    graphqlURLs.companies.replace("$IMDB_tconst", $IMDB_tconst).replace("$IMDB_Companies_Category", $IMDB_Companies_Category),
+    graphqlURLs.companies
+      .replace("$IMDB_tconst", $IMDB_tconst)
+      .replace("$IMDB_Companies_Category", $IMDB_Companies_Category),
 
   /**
    *
@@ -45,7 +47,8 @@ const graphQLqueries = {
    * @param {string} searchTerm
    * @returns
    */
-  advancedTitleSearch: (searchTerm) => graphqlURLs.advancedTitleSearch.replace("$searchTerm", encodeURIComponent(searchTerm)),
+  advancedTitleSearch: (searchTerm) =>
+    graphqlURLs.advancedTitleSearch.replace("$searchTerm", encodeURIComponent(searchTerm)),
 
   /**
    * API called when using https://www.imdb.com/find/
@@ -79,7 +82,9 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
     // logger.log("[scrapeIMDBmainPageData] jsonData:", jsonData);
 
     // V3: we partially use the __NEXT_DATA__ data, too
-    const jsonDataNext = JSON.parse((html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/) || [null, "{}"])[1]);
+    const jsonDataNext = JSON.parse(
+      (html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/) || [null, "{}"])[1]
+    );
 
     // logger.log("[scrapeIMDBmainPageData] jsonDataNext:", logger.inspectObject(jsonDataNext));
 
@@ -190,7 +195,8 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
     if (!rxPosterMediaViewerURL.test(html)) {
       // V2
       // <a class="ipc-lockup-overlay ipc-focusable" href="/title/tt4154796/mediaviewer/rm2775147008/?ref_=tt_ov_i" aria-label="View {Title} Poster">
-      rxPosterMediaViewerURL = /<a class="ipc-lockup-overlay ipc-focusable" href="(\/title\/.*?\/mediaviewer\/.*?\/.*?)" aria-label=".*?Poster">/;
+      rxPosterMediaViewerURL =
+        /<a class="ipc-lockup-overlay ipc-focusable" href="(\/title\/.*?\/mediaviewer\/.*?\/.*?)" aria-label=".*?Poster">/;
     }
 
     if (rxPosterMediaViewerURL.test(html)) {
@@ -250,7 +256,8 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
       // V2
       $IMDB_Trailer_URL = jsonData.trailer.embedUrl.replace("https://www.imdb.com", "");
     } else {
-      const rxTrailerUrl = /href="(\/video\/vi\d*)\?playlistId=tt\d*&amp;ref_=tt_ov_vi"[\s\S]*?aria-label="Watch {VideoTitle}"/;
+      const rxTrailerUrl =
+        /href="(\/video\/vi\d*)\?playlistId=tt\d*&amp;ref_=tt_ov_vi"[\s\S]*?aria-label="Watch {VideoTitle}"/;
       if (rxTrailerUrl.test(html)) {
         $IMDB_Trailer_URL = html.match(rxTrailerUrl)[1];
       }
@@ -403,9 +410,15 @@ async function scrapeIMDBplotSummaryV2(movie, shortSummary, html) {
   }
 
   try {
-    const jsonDataNext = JSON.parse(html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/)[1]);
+    const jsonDataNext = JSON.parse(
+      html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/)[1]
+    );
 
-    const $IMDB_plotSummaryFull = _.get(jsonDataNext, "props.pageProps.contentData.entityMetadata.plot.plotText.plainText", null);
+    const $IMDB_plotSummaryFull = _.get(
+      jsonDataNext,
+      "props.pageProps.contentData.entityMetadata.plot.plotText.plainText",
+      null
+    );
 
     return { $IMDB_plotSummaryFull };
   } catch (error) {
@@ -514,7 +527,8 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
 async function scrapeIMDBreleaseinfoV1(movie, regions, allowedTitleTypes, html) {
   try {
     let $IMDB_originalTitle = null;
-    const rxOriginalTitle = /td class="aka-item__name"> \(original title\)<\/td>[\s\S]*?<td class="aka-item__title">(.*?)<\/td>/;
+    const rxOriginalTitle =
+      /td class="aka-item__name"> \(original title\)<\/td>[\s\S]*?<td class="aka-item__title">(.*?)<\/td>/;
     if (rxOriginalTitle.test(html)) $IMDB_originalTitle = html.match(rxOriginalTitle)[1];
 
     logger.log("[scrapeIMDBreleaseinfoV1] regions used:", regions);
@@ -527,7 +541,10 @@ async function scrapeIMDBreleaseinfoV1(movie, regions, allowedTitleTypes, html) 
         logger.log("[scrapeIMDBreleaseinfoV1] regions trying:", `"${region}"`);
 
         if (!$IMDB_localTitle) {
-          const rxLocalTitleFuzzy = new RegExp(`td class="aka-item__name">${region}(.*?)</td>[\\s\\S]*?<td class="aka-item__title">(.*?)</td>`, "g");
+          const rxLocalTitleFuzzy = new RegExp(
+            `td class="aka-item__name">${region}(.*?)</td>[\\s\\S]*?<td class="aka-item__title">(.*?)</td>`,
+            "g"
+          );
 
           let match = null;
 
@@ -582,7 +599,8 @@ async function scrapeIMDBreleaseinfoV1(movie, regions, allowedTitleTypes, html) 
     let $IMDB_primaryTitle = null;
     let $IMDB_startYear = null;
     let $IMDB_endYear = null;
-    const rxPrimaryTitleYear = /ref_=ttrel_rel_tt"[\s\S]itemprop='url'>(.*?)<\/a>\s*?<span class="nobr">[\s\S]*?\((\d\d\d\d.*?)\)/;
+    const rxPrimaryTitleYear =
+      /ref_=ttrel_rel_tt"[\s\S]itemprop='url'>(.*?)<\/a>\s*?<span class="nobr">[\s\S]*?\((\d\d\d\d.*?)\)/;
     if (rxPrimaryTitleYear.test(html)) {
       $IMDB_primaryTitle = html.match(rxPrimaryTitleYear)[1];
       const yearRange = html.match(rxPrimaryTitleYear)[2];
@@ -654,7 +672,9 @@ async function scrapeIMDBreleaseinfoV1(movie, regions, allowedTitleTypes, html) 
 
 async function scrapeIMDBreleaseinfoV3(movie, regions, allowedTitleTypes, html) {
   try {
-    const jsonDataNext = JSON.parse(html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/)[1]);
+    const jsonDataNext = JSON.parse(
+      html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/)[1]
+    );
 
     // logger.log("[scrapeIMDBreleaseinfoV3] jsonDataNext:", logger.inspectObject(jsonDataNext));
 
@@ -674,7 +694,12 @@ async function scrapeIMDBreleaseinfoV3(movie, regions, allowedTitleTypes, html) 
     }
 
     const gqlAkaTitles = JSON.parse(
-      (await helpers.requestAsync({ uri: graphQLqueries.akaTitles(movie.IMDB_tconst), headers: { "content-type": "application/json" } })).body
+      (
+        await helpers.requestAsync({
+          uri: graphQLqueries.akaTitles(movie.IMDB_tconst),
+          headers: { "content-type": "application/json" },
+        })
+      ).body
     );
 
     // logger.log("[scrapeIMDBreleaseinfoV2] gqlAkaTitles:", logger.inspectObject(gqlAkaTitles));
@@ -697,7 +722,10 @@ async function scrapeIMDBreleaseinfoV3(movie, regions, allowedTitleTypes, html) 
             logger.log(`[scrapeIMDBreleaseinfoV2] regions: found aka title candidate: "${title}"`);
 
             if (!title) {
-              logger.log("[scrapeIMDBreleaseinfoV2] skip; no title found in regionAkaTitle:", logger.inspectObject(regionAkaTitle));
+              logger.log(
+                "[scrapeIMDBreleaseinfoV2] skip; no title found in regionAkaTitle:",
+                logger.inspectObject(regionAkaTitle)
+              );
               continue;
             }
 
@@ -710,7 +738,10 @@ async function scrapeIMDBreleaseinfoV3(movie, regions, allowedTitleTypes, html) 
             }).length;
 
             if (numAllowed !== titleTypes.length) {
-              logger.log("[scrapeIMDBreleaseinfoV2] regions: skipped local title, some title types are not allowed", { numAllowed, titleTypes });
+              logger.log("[scrapeIMDBreleaseinfoV2] regions: skipped local title, some title types are not allowed", {
+                numAllowed,
+                titleTypes,
+              });
               continue;
             }
 
@@ -808,14 +839,22 @@ async function scrapeIMDBtechnicalData(movie) {
 
 let cacheAgeRatings = null;
 
-async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturnAllCallback, dbFireProcedureCallback, dbFireProcedureReturnScalarCallback) {
+async function scrapeIMDBParentalGuideData(
+  movie,
+  regions,
+  dbFireProcedureReturnAllCallback,
+  dbFireProcedureCallback,
+  dbFireProcedureReturnScalarCallback
+) {
   if (movie.scanErrors) {
     delete movie.scanErrors["IMDB Parental Guide"];
   }
 
   try {
     if (!cacheAgeRatings) {
-      cacheAgeRatings = await dbFireProcedureReturnAllCallback(`SELECT id_AgeRating, Country, Code, Age FROM tbl_AgeRating`);
+      cacheAgeRatings = await dbFireProcedureReturnAllCallback(
+        `SELECT id_AgeRating, Country, Code, Age FROM tbl_AgeRating`
+      );
       logger.log("[scrapeIMDBParentalGuideData] cacheAgeRatings:", cacheAgeRatings);
     }
 
@@ -904,7 +943,9 @@ async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturn
 
     for (let i = 0; i < ageRatings.length; i++) {
       const rating = ageRatings[i];
-      const cachedRating = cacheAgeRatings.find((cache) => cache.Country === rating.Country && cache.Code === rating.Code);
+      const cachedRating = cacheAgeRatings.find(
+        (cache) => cache.Country === rating.Country && cache.Code === rating.Code
+      );
 
       if (!cachedRating) {
         await dbFireProcedureCallback(`INSERT INTO tbl_AgeRating (Country, Code, Age) VALUES ($Country, $Code, $Age)`, {
@@ -912,10 +953,13 @@ async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturn
           $Code: rating.Code,
           $Age: rating.Age,
         });
-        rating.id_AgeRating = await dbFireProcedureReturnScalarCallback(`SELECT id_AgeRating FROM tbl_AgeRating WHERE Country = $Country AND Code = $Code`, {
-          $Country: rating.Country,
-          $Code: rating.Code,
-        });
+        rating.id_AgeRating = await dbFireProcedureReturnScalarCallback(
+          `SELECT id_AgeRating FROM tbl_AgeRating WHERE Country = $Country AND Code = $Code`,
+          {
+            $Country: rating.Country,
+            $Code: rating.Code,
+          }
+        );
 
         cacheAgeRatings.push({
           id_AgeRating: rating.id_AgeRating,
@@ -927,7 +971,11 @@ async function scrapeIMDBParentalGuideData(movie, regions, dbFireProcedureReturn
         rating.id_AgeRating = cachedRating.id_AgeRating;
       }
 
-      if (rating.id_AgeRating && rating.Age != null && regionCodes.find((regionCode) => regionCode === rating.Country)) {
+      if (
+        rating.id_AgeRating &&
+        rating.Age != null &&
+        regionCodes.find((regionCode) => regionCode === rating.Country)
+      ) {
         logger.log("[scrapeIMDBParentalGuideData] AgeRating regions FOUND:", rating);
         $IMDB_id_AgeRating_Chosen_Country = rating.id_AgeRating;
       }
@@ -1215,7 +1263,9 @@ function getGQLCompaniesData(gqlCompanies, category) {
       let yearsInvolved = "";
       if (node.yearsInvolved && node.yearsInvolved.year) {
         yearsInvolved = `${node.yearsInvolved.year}${
-          node.yearsInvolved.endYear && node.yearsInvolved.year !== node.yearsInvolved.endYear ? `-${node.yearsInvolved.endYear}` : ""
+          node.yearsInvolved.endYear && node.yearsInvolved.year !== node.yearsInvolved.endYear
+            ? `-${node.yearsInvolved.endYear}`
+            : ""
         }`;
       }
 
@@ -1264,28 +1314,52 @@ async function scrapeIMDBCompaniesDataV3(movie) {
 
   try {
     const gqlCompaniesProduction = JSON.parse(
-      (await helpers.requestAsync({ uri: graphQLqueries.companies(movie.IMDB_tconst, "production"), headers: { "content-type": "application/json" } })).body
+      (
+        await helpers.requestAsync({
+          uri: graphQLqueries.companies(movie.IMDB_tconst, "production"),
+          headers: { "content-type": "application/json" },
+        })
+      ).body
     );
-    const { companies: companiesProduction, topCompanies: topCompaniesProduction } = getGQLCompaniesData(gqlCompaniesProduction, "Production");
+    const { companies: companiesProduction, topCompanies: topCompaniesProduction } = getGQLCompaniesData(
+      gqlCompaniesProduction,
+      "Production"
+    );
 
     const gqlCompaniesDistribution = JSON.parse(
-      (await helpers.requestAsync({ uri: graphQLqueries.companies(movie.IMDB_tconst, "distribution"), headers: { "content-type": "application/json" } })).body
+      (
+        await helpers.requestAsync({
+          uri: graphQLqueries.companies(movie.IMDB_tconst, "distribution"),
+          headers: { "content-type": "application/json" },
+        })
+      ).body
     );
     const { companies: companiesDistribution } = getGQLCompaniesData(gqlCompaniesDistribution, "Distribution");
 
     const gqlCompaniesSpecialEffects = JSON.parse(
-      (await helpers.requestAsync({ uri: graphQLqueries.companies(movie.IMDB_tconst, "specialEffects"), headers: { "content-type": "application/json" } })).body
+      (
+        await helpers.requestAsync({
+          uri: graphQLqueries.companies(movie.IMDB_tconst, "specialEffects"),
+          headers: { "content-type": "application/json" },
+        })
+      ).body
     );
     const { companies: companiesSpecialEffects } = getGQLCompaniesData(gqlCompaniesSpecialEffects, "Special Effects");
 
     const gqlCompaniesOther = JSON.parse(
-      (await helpers.requestAsync({ uri: graphQLqueries.companies(movie.IMDB_tconst, "miscellaneous"), headers: { "content-type": "application/json" } })).body
+      (
+        await helpers.requestAsync({
+          uri: graphQLqueries.companies(movie.IMDB_tconst, "miscellaneous"),
+          headers: { "content-type": "application/json" },
+        })
+      ).body
     );
     const { companies: companiesOther } = getGQLCompaniesData(gqlCompaniesOther, "Other");
 
     return {
       topProductionCompanies: {
-        $IMDB_Top_Production_Companies: topCompaniesProduction.length > 0 ? JSON.stringify(topCompaniesProduction) : null,
+        $IMDB_Top_Production_Companies:
+          topCompaniesProduction.length > 0 ? JSON.stringify(topCompaniesProduction) : null,
       },
       companies: [...companiesProduction, ...companiesDistribution, ...companiesSpecialEffects, ...companiesOther],
     };
@@ -1322,7 +1396,8 @@ async function scrapeIMDBCompaniesDataV1(movie) {
 
     const companies = [];
 
-    const rx_companiesCategories = /<h4 class="dataHeaderWithBorder" id="(.*?)" name="(.*?)">(.*?)<\/h4>[\s\S]*?<\/ul>/g;
+    const rx_companiesCategories =
+      /<h4 class="dataHeaderWithBorder" id="(.*?)" name="(.*?)">(.*?)<\/h4>[\s\S]*?<\/ul>/g;
 
     let ccMatch = null;
 
@@ -1340,7 +1415,10 @@ async function scrapeIMDBCompaniesDataV1(movie) {
 
       if (companiesCategoryName === "Production") {
         result.forEach((entry) => {
-          if (topProductionCompanies.length < topMax && !topProductionCompanies.find((tpc) => tpc.name === entry.name)) {
+          if (
+            topProductionCompanies.length < topMax &&
+            !topProductionCompanies.find((tpc) => tpc.name === entry.name)
+          ) {
             topProductionCompanies.push(entry);
           }
         });
@@ -1352,7 +1430,8 @@ async function scrapeIMDBCompaniesDataV1(movie) {
 
     return {
       topProductionCompanies: {
-        $IMDB_Top_Production_Companies: topProductionCompanies.length > 0 ? JSON.stringify(topProductionCompanies) : null,
+        $IMDB_Top_Production_Companies:
+          topProductionCompanies.length > 0 ? JSON.stringify(topProductionCompanies) : null,
       },
       companies,
     };
@@ -1517,7 +1596,9 @@ async function scrapeIMDBPersonDataV3($IMDB_Person_ID, downloadFileCallback, htm
     $LongBio: null,
   };
 
-  const jsonDataNext = JSON.parse((html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/) || [null, "{}"])[1]);
+  const jsonDataNext = JSON.parse(
+    (html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/) || [null, "{}"])[1]
+  );
 
   // logger.log("[scrapeIMDBPersonDataV3] jsonDataNext:", logger.inspectObject(jsonDataNext));
   result.$LongBio = _.get(jsonDataNext, "props.pageProps.aboveTheFold.bio.text.plaidHtml", null);
@@ -1644,7 +1725,9 @@ async function scrapeIMDBAdvancedTitleSearchV3(title, titleTypes) {
 
     logger.log("[scrapeIMDBAdvancedTitleSearchV3] uri:", uri);
 
-    const gqlTitles = JSON.parse((await helpers.requestAsync({ uri, headers: { "content-type": "application/json" } })).body);
+    const gqlTitles = JSON.parse(
+      (await helpers.requestAsync({ uri, headers: { "content-type": "application/json" } })).body
+    );
 
     logger.log("[scrapeIMDBAdvancedTitleSearchV3] gqlTitles:", gqlTitles);
 
@@ -1658,7 +1741,9 @@ async function scrapeIMDBAdvancedTitleSearchV3(title, titleTypes) {
               imageURL: _.get(edge.node.title, "primaryImage.url", null),
               ageRating: _.get(edge.node.title, "certificate.rating", null),
               runtimeSeconds: _.get(edge.node.title, "runtime.seconds", null),
-              genres: (_.get(edge.node.title, "titleGenres.genres", null) || []).map((genre) => genre.genre.text).join(", "),
+              genres: (_.get(edge.node.title, "titleGenres.genres", null) || [])
+                .map((genre) => genre.genre.text)
+                .join(", "),
               rating: _.get(edge.node.title, "ratingsSummary.aggregateRating", null),
               numVotes: _.get(edge.node.title, "ratingsSummary.voteCount", null),
             };
@@ -1699,7 +1784,9 @@ async function scrapeIMDBAdvancedTitleSearchV3(title, titleTypes) {
 async function scrapeIMDBSuggestion(searchTerm) {
   // only supports latin characters!
   // https://v2.sg.media-imdb.com/suggestion/d/Das%20Phantom%20Kommando%20(1985).json
-  const url = `https://v2.sg.media-imdb.com/suggestion/${searchTerm[0].toLowerCase()}/${querystring.escape(searchTerm)}.json`;
+  const url = `https://v2.sg.media-imdb.com/suggestion/${searchTerm[0].toLowerCase()}/${querystring.escape(
+    searchTerm
+  )}.json`;
 
   logger.log("[scrapeIMDBSuggestion] url:", url);
 
@@ -1818,7 +1905,9 @@ async function scrapeIMDBFindPageSearchV3(title, titleTypes) {
 
     logger.log("[scrapeIMDBFindPageSearchV3] uri:", uri);
 
-    const gqlTitles = JSON.parse((await helpers.requestAsync({ uri, headers: { "content-type": "application/json" } })).body);
+    const gqlTitles = JSON.parse(
+      (await helpers.requestAsync({ uri, headers: { "content-type": "application/json" } })).body
+    );
 
     logger.log("[scrapeIMDBFindPageSearchV3] gqlTitles:", gqlTitles);
 
@@ -1872,18 +1961,22 @@ async function scrapeIMDBTrailerMediaURLsV3(html) {
     logger.log("[scrapeIMDBTrailerMediaURLsV3] START");
 
     // V3: we partially use the __NEXT_DATA__ data, too
-    const jsonDataNext = JSON.parse((html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/) || [null, "{}"])[1]);
+    const jsonDataNext = JSON.parse(
+      (html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/) || [null, "{}"])[1]
+    );
 
     // logger.log("[scrapeIMDBTrailerMediaURLsV3] jsonDataNext:", logger.inspectObject(jsonDataNext));
 
     // V3
-    let mediaURLs = _.get(jsonDataNext, "props.pageProps.videoPlaybackData.video.playbackURLs", []).map((playbackURL) => {
-      return {
-        definition: playbackURL.displayName.value,
-        mimeType: playbackURL.mimeType,
-        mediaURL: playbackURL.url,
-      };
-    });
+    let mediaURLs = _.get(jsonDataNext, "props.pageProps.videoPlaybackData.video.playbackURLs", []).map(
+      (playbackURL) => {
+        return {
+          definition: playbackURL.displayName.value,
+          mimeType: playbackURL.mimeType,
+          mediaURL: playbackURL.url,
+        };
+      }
+    );
     logger.log("[scrapeIMDBTrailerMediaURLsV3] mediaURLs:", logger.inspectObject(mediaURLs));
 
     const result = {
@@ -1959,7 +2052,8 @@ async function scrapeIMDBTrailerMediaURLs(trailerURL) {
     const response = await helpers.requestAsync({
       uri: trailerURL,
       headers: {
-        "user-agent": "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
+        "user-agent":
+          "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
       },
     });
 
@@ -1997,7 +2091,12 @@ async function scrapeIMDBplotKeywordsV3(movie) {
     const plotKeywords = [];
 
     const gqlPlotKeywords = JSON.parse(
-      (await helpers.requestAsync({ uri: graphQLqueries.plotKeywords(movie.IMDB_tconst), headers: { "content-type": "application/json" } })).body
+      (
+        await helpers.requestAsync({
+          uri: graphQLqueries.plotKeywords(movie.IMDB_tconst),
+          headers: { "content-type": "application/json" },
+        })
+      ).body
     );
 
     // logger.log("[scrapeIMDBreleaseinfoV2] gqlAkaTitles:", logger.inspectObject(gqlAkaTitles));
@@ -2090,7 +2189,12 @@ async function scrapeIMDBFilmingLocationsV3(movie) {
     let filmingLocations = [];
 
     const gqlLocations = JSON.parse(
-      (await helpers.requestAsync({ uri: graphQLqueries.filmingLocations(movie.IMDB_tconst), headers: { "content-type": "application/json" } })).body
+      (
+        await helpers.requestAsync({
+          uri: graphQLqueries.filmingLocations(movie.IMDB_tconst),
+          headers: { "content-type": "application/json" },
+        })
+      ).body
     );
 
     const gqlLocationsEdges = _.get(gqlLocations, "data.title.filmingLocations.edges", []);
@@ -2212,7 +2316,8 @@ async function scrapeIMDBRatingDemographics(movie) {
     while ((match = rxRatingDemographics.exec(html))) {
       const ratingDemographicString = match[0];
 
-      const rxData = /<div class="bigcell">([\s\S]*?)<\/div>[\s\S]*?<div class="smallcell">[\s\S]*?\/ratings\?demo=(.*?)">([\s\S]*?)<\/a>/;
+      const rxData =
+        /<div class="bigcell">([\s\S]*?)<\/div>[\s\S]*?<div class="smallcell">[\s\S]*?\/ratings\?demo=(.*?)">([\s\S]*?)<\/a>/;
 
       if (rxData.test(ratingDemographicString)) {
         const ratingDemographicsMatch = ratingDemographicString.match(rxData);

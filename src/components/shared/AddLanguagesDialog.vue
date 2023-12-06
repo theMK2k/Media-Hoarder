@@ -29,7 +29,9 @@
 
       <v-card-actions>
         <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCancelClick()">{{ $t("Cancel") }}</v-btn>
-        <v-btn v-bind:disabled="!canConfirm" class="xs-fullwidth" color="primary" v-on:click.native="onOKClick()">{{ $t("OK") }}</v-btn>
+        <v-btn v-bind:disabled="!canConfirm" class="xs-fullwidth" color="primary" v-on:click.native="onOKClick()">{{
+          $t("OK")
+        }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -63,7 +65,9 @@ export default {
 
   computed: {
     languages() {
-      return this.languageType === "languagesPrimaryTitle" ? this.$shared.languagesPrimaryTitle : this.$shared.languagesAudioSubtitles;
+      return this.languageType === "languagesPrimaryTitle"
+        ? this.$shared.languagesPrimaryTitle
+        : this.$shared.languagesAudioSubtitles;
     },
 
     filteredItems() {

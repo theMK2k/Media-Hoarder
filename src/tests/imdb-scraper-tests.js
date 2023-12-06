@@ -236,7 +236,8 @@ async function testIMDBmainPageData3() {
       $IMDB_numVotes: 123000,
       $IMDB_posterSmall_URL: "extras/tt0092455_posterSmall.jpg",
       $IMDB_posterLarge_URL: "extras/tt0092455_posterLarge.jpg",
-      $IMDB_plotSummary: "Set almost 100 years after Captain Kirk's 5-year mission, a new generation of Starfleet officers sets off in the U.S.S. Enterprise-D",
+      $IMDB_plotSummary:
+        "Set almost 100 years after Captain Kirk's 5-year mission, a new generation of Starfleet officers sets off in the U.S.S. Enterprise-D",
       $IMDB_Trailer_URL: "/video/imdb/vi71221529",
       $IMDB_startYear: 1987,
       $IMDB_endYear: 1994,
@@ -1121,7 +1122,8 @@ async function testIMDBSuggestion() {
           title: "Forrest Gump",
           titleType: "feature",
           year: 1994,
-          imageURL: "https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_.jpg",
+          imageURL:
+            "https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_.jpg",
         },
       },
       // {
@@ -1158,11 +1160,41 @@ async function testIMDBSuggestion() {
         );
       }
 
-      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "tconst", `query '${expectedValue.searchTerm}'`);
-      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "title", `query '${expectedValue.searchTerm}'`);
-      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "titleType", `query '${expectedValue.searchTerm}'`);
-      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "year", `query '${expectedValue.searchTerm}'`);
-      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "imageURL", `query '${expectedValue.searchTerm}'`);
+      performDefaultCheck(
+        scrapeResult[0],
+        expectedValue.result0,
+        testResult,
+        "tconst",
+        `query '${expectedValue.searchTerm}'`
+      );
+      performDefaultCheck(
+        scrapeResult[0],
+        expectedValue.result0,
+        testResult,
+        "title",
+        `query '${expectedValue.searchTerm}'`
+      );
+      performDefaultCheck(
+        scrapeResult[0],
+        expectedValue.result0,
+        testResult,
+        "titleType",
+        `query '${expectedValue.searchTerm}'`
+      );
+      performDefaultCheck(
+        scrapeResult[0],
+        expectedValue.result0,
+        testResult,
+        "year",
+        `query '${expectedValue.searchTerm}'`
+      );
+      performDefaultCheck(
+        scrapeResult[0],
+        expectedValue.result0,
+        testResult,
+        "imageURL",
+        `query '${expectedValue.searchTerm}'`
+      );
     }
   } catch (error) {
     testResult.status = status.EXCEPTION;
@@ -1190,7 +1222,8 @@ async function testIMDBAdvancedTitleSearch() {
           tconst: "tt0109830",
           title: "Forrest Gump",
           year: 1994,
-          imageURL: "https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_.jpg",
+          imageURL:
+            "https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_.jpg",
           ageRating: "PG-13",
           runtimeSeconds: 8520,
           genres: "Drama, Romance",
@@ -1205,15 +1238,26 @@ async function testIMDBAdvancedTitleSearch() {
     for (let i = 0; i < expected.length; i++) {
       const expectedValue = expected[i];
 
-      const scrapeResult = await imdbScraper.scrapeIMDBAdvancedTitleSearchV3(expectedValue.title, expectedValue.titleTypes);
+      const scrapeResult = await imdbScraper.scrapeIMDBAdvancedTitleSearchV3(
+        expectedValue.title,
+        expectedValue.titleTypes
+      );
 
       if (!scrapeResult) {
-        addSubLogEntry(testResult, `query '${expectedValue.title}' [${expectedValue.titleTypes}] no response`, status.ERROR);
+        addSubLogEntry(
+          testResult,
+          `query '${expectedValue.title}' [${expectedValue.titleTypes}] no response`,
+          status.ERROR
+        );
         return testResult;
       }
 
       if (scrapeResult.length === 0) {
-        addSubLogEntry(testResult, `query '${expectedValue.title}' [${expectedValue.titleTypes}] results missing`, status.ERROR);
+        addSubLogEntry(
+          testResult,
+          `query '${expectedValue.title}' [${expectedValue.titleTypes}] results missing`,
+          status.ERROR
+        );
         return testResult;
       }
 
@@ -1227,9 +1271,27 @@ async function testIMDBAdvancedTitleSearch() {
         );
       }
 
-      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "tconst", `query '${expectedValue.title}' [${expectedValue.titleTypes}]`);
-      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "title", `query '${expectedValue.title}' [${expectedValue.titleTypes}]`);
-      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "imageURL", `query '${expectedValue.title}' [${expectedValue.titleTypes}]`);
+      performDefaultCheck(
+        scrapeResult[0],
+        expectedValue.result0,
+        testResult,
+        "tconst",
+        `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
+      );
+      performDefaultCheck(
+        scrapeResult[0],
+        expectedValue.result0,
+        testResult,
+        "title",
+        `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
+      );
+      performDefaultCheck(
+        scrapeResult[0],
+        expectedValue.result0,
+        testResult,
+        "imageURL",
+        `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
+      );
       performDefaultCheck(
         scrapeResult[0],
         expectedValue.result0,
@@ -1238,9 +1300,27 @@ async function testIMDBAdvancedTitleSearch() {
         `query '${expectedValue.title}' [${expectedValue.titleTypes}]`,
         true
       );
-      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "runtime", `query '${expectedValue.title}' [${expectedValue.titleTypes}]`);
-      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "genres", `query '${expectedValue.title}' [${expectedValue.titleTypes}]`);
-      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "detailInfo", `query '${expectedValue.title}' [${expectedValue.titleTypes}]`);
+      performDefaultCheck(
+        scrapeResult[0],
+        expectedValue.result0,
+        testResult,
+        "runtime",
+        `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
+      );
+      performDefaultCheck(
+        scrapeResult[0],
+        expectedValue.result0,
+        testResult,
+        "genres",
+        `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
+      );
+      performDefaultCheck(
+        scrapeResult[0],
+        expectedValue.result0,
+        testResult,
+        "detailInfo",
+        `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
+      );
     }
   } catch (error) {
     testResult.status = status.EXCEPTION;
@@ -1268,7 +1348,8 @@ async function testIMDBFindPageSearch() {
           tconst: "tt9426210",
           title: "Weathering with You",
           year: 2019,
-          imageURL: "https://m.media-amazon.com/images/M/MV5BNzE4ZDEzOGUtYWFjNC00ODczLTljOGQtZGNjNzhjNjdjNjgzXkEyXkFqcGdeQXVyNzE5ODMwNzI@._V1_.jpg",
+          imageURL:
+            "https://m.media-amazon.com/images/M/MV5BNzE4ZDEzOGUtYWFjNC00ODczLTljOGQtZGNjNzhjNjdjNjgzXkEyXkFqcGdeQXVyNzE5ODMwNzI@._V1_.jpg",
         },
       },
     ];
@@ -1281,12 +1362,20 @@ async function testIMDBFindPageSearch() {
       // console.log(scrapeResult);
 
       if (!scrapeResult) {
-        addSubLogEntry(testResult, `query '${expectedValue.searchTerm}' [${expectedValue.type}] no response`, status.ERROR);
+        addSubLogEntry(
+          testResult,
+          `query '${expectedValue.searchTerm}' [${expectedValue.type}] no response`,
+          status.ERROR
+        );
         return testResult;
       }
 
       if (scrapeResult.length === 0) {
-        addSubLogEntry(testResult, `query '${expectedValue.searchTerm}' [${expectedValue.type}] results missing`, status.ERROR);
+        addSubLogEntry(
+          testResult,
+          `query '${expectedValue.searchTerm}' [${expectedValue.type}] results missing`,
+          status.ERROR
+        );
         return testResult;
       }
 
@@ -1300,10 +1389,34 @@ async function testIMDBFindPageSearch() {
         );
       }
 
-      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "tconst", `query '${expectedValue.searchTerm}' [${expectedValue.type}]`);
-      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "title", `query '${expectedValue.searchTerm}' [${expectedValue.type}]`);
-      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "year", `query '${expectedValue.searchTerm}' [${expectedValue.type}]`);
-      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "imageURL", `query '${expectedValue.searchTerm}' [${expectedValue.type}]`);
+      performDefaultCheck(
+        scrapeResult[0],
+        expectedValue.result0,
+        testResult,
+        "tconst",
+        `query '${expectedValue.searchTerm}' [${expectedValue.type}]`
+      );
+      performDefaultCheck(
+        scrapeResult[0],
+        expectedValue.result0,
+        testResult,
+        "title",
+        `query '${expectedValue.searchTerm}' [${expectedValue.type}]`
+      );
+      performDefaultCheck(
+        scrapeResult[0],
+        expectedValue.result0,
+        testResult,
+        "year",
+        `query '${expectedValue.searchTerm}' [${expectedValue.type}]`
+      );
+      performDefaultCheck(
+        scrapeResult[0],
+        expectedValue.result0,
+        testResult,
+        "imageURL",
+        `query '${expectedValue.searchTerm}' [${expectedValue.type}]`
+      );
     }
   } catch (error) {
     testResult.status = status.EXCEPTION;

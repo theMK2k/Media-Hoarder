@@ -10,7 +10,6 @@
 
 - check sqlite version for json support - _The JSON functions and operators are built into SQLite by default, as of SQLite version 3.38.0 (2022-02-22)._
 - specs see [data/devdocs/series.md](data/devdocs/series.md), [docs/01-Media-Storage.md](01-Media-Storage.md)
-- incl. IMDB Rating heatmap like <https://whattowatchon.tv>
 - Dialogs: most of them do not utilize mediaType
 - [x] Series / Episode detection in directory/filenames, examples:
   - [x] "S01E01" - the default
@@ -21,6 +20,14 @@
   - [x] "S01E01-E03" - multiple episodes
   - [x] "S01E01E02E03" - multiple episodes
   - [x] "S01E01-03" - multiple episodes
+- [ ] MVP:
+  - [x] find IMDB tconst and provide metadata for the series (not the episodes)
+  - [ ] provide series in a different route
+    - [ ] when scanning a series, prefer imdb type "tv series" over "movie" and others
+  - TODO: check tconst detection with movies, too (we changed some fullDirectory to fullPath)
+- [ ] IMDB Rating heatmap like <https://whattowatchon.tv>
+- [ ] new symbol for "activating" a series and changing the screen to its eposiodes
+
 
 ## NEXT Minor (current v1.3.2)
 

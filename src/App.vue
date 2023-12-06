@@ -34,7 +34,12 @@
         <v-divider></v-divider>
 
         <!-- Movies, Series -->
-        <v-list-item v-for="appSection in appSections" :key="appSection.text" v-bind:to="sectionRoute(appSection.id)">
+        <v-list-item
+          v-bind:class="appSectionClass(appSection.id)"
+          v-for="appSection in appSections"
+          :key="appSection.text"
+          v-on:click="navigateTo(appSection.id)"
+        >
           <v-list-item-action>
             <v-icon>{{ appSection.icon }}</v-icon>
           </v-list-item-action>
@@ -79,7 +84,9 @@
               <span>{{ $t("Let an AI recommend some movies") }}</span>
             </v-tooltip>
 
-            <v-btn v-if="editFilters.isEditFilters" text color="primary" v-on:click="onEditFiltersOK">{{ $t("OK") }}</v-btn>
+            <v-btn v-if="editFilters.isEditFilters" text color="primary" v-on:click="onEditFiltersOK">{{
+              $t("OK")
+            }}</v-btn>
             <v-btn v-if="editFilters.isEditFilters" text v-on:click="onEditFiltersCancel">{{ $t("Cancel") }}</v-btn>
           </v-subheader>
           <div v-if="!$shared.isLoadingFilter" style="height: 3px; width: 100%"></div>
@@ -93,7 +100,12 @@
           ></v-progress-linear>
 
           <v-expansion-panels accordion multiple v-model="expandedFilterGroups">
-            <draggable v-model="$shared.filterGroups" group="filters" v-on:end="onFilterDragEnd" v-bind:disabled="!editFilters.isEditFilters">
+            <draggable
+              v-model="$shared.filterGroups"
+              group="filters"
+              v-on:end="onFilterDragEnd"
+              v-bind:disabled="!editFilters.isEditFilters"
+            >
               <div v-for="filterGroup in $shared.filterGroups" v-bind:key="filterGroup.name">
                 <!-- FILTER SOURCE PATHS -->
                 <v-expansion-panel
@@ -168,7 +180,15 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
+                        <span>{{
+                          $t(
+                            `${
+                              filterGroup.sort === enmFilterSortModes.numMovies
+                                ? "Sorted by Number of Media"
+                                : "Sorted by Name"
+                            }`
+                          )
+                        }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -275,7 +295,15 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
+                        <span>{{
+                          $t(
+                            `${
+                              filterGroup.sort === enmFilterSortModes.numMovies
+                                ? "Sorted by Number of Media"
+                                : "Sorted by Name"
+                            }`
+                          )
+                        }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -385,7 +413,15 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
+                        <span>{{
+                          $t(
+                            `${
+                              filterGroup.sort === enmFilterSortModes.numMovies
+                                ? "Sorted by Number of Media"
+                                : "Sorted by Name"
+                            }`
+                          )
+                        }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -413,14 +449,18 @@
                       v-for="audioLanguage in filterAudioLanguages"
                       v-bind:key="audioLanguage.Language"
                       v-bind:label="
-                        (audioLanguage.DisplayText === '<not available>' ? $t('<not available>') : audioLanguage.DisplayText) +
+                        (audioLanguage.DisplayText === '<not available>'
+                          ? $t('<not available>')
+                          : audioLanguage.DisplayText) +
                         ' (' +
                         audioLanguage.NumMoviesFormatted +
                         ')'
                       "
                       v-model="audioLanguage.Selected"
                       v-on:mouseup="filterCheckboxMouseup('filterAudioLanguages')"
-                      v-on:mousedown="filterCheckboxMousedown('filterAudioLanguages', audioLanguage, setAllFilterAudioLanguages)"
+                      v-on:mousedown="
+                        filterCheckboxMousedown('filterAudioLanguages', audioLanguage, setAllFilterAudioLanguages)
+                      "
                       color="mk-dark-grey"
                     ></v-checkbox>
                   </v-expansion-panel-content>
@@ -500,7 +540,15 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
+                        <span>{{
+                          $t(
+                            `${
+                              filterGroup.sort === enmFilterSortModes.numMovies
+                                ? "Sorted by Number of Media"
+                                : "Sorted by Name"
+                            }`
+                          )
+                        }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -528,14 +576,22 @@
                       v-for="subtitleLanguage in filterSubtitleLanguages"
                       v-bind:key="subtitleLanguage.Language"
                       v-bind:label="
-                        (subtitleLanguage.DisplayText === '<not available>' ? $t('<not available>') : subtitleLanguage.DisplayText) +
+                        (subtitleLanguage.DisplayText === '<not available>'
+                          ? $t('<not available>')
+                          : subtitleLanguage.DisplayText) +
                         ' (' +
                         subtitleLanguage.NumMoviesFormatted +
                         ')'
                       "
                       v-model="subtitleLanguage.Selected"
                       v-on:mouseup="filterCheckboxMouseup('filterSubtitleLanguages')"
-                      v-on:mousedown="filterCheckboxMousedown('filterSubtitleLanguages', subtitleLanguage, setAllFilterSubtitleLanguages)"
+                      v-on:mousedown="
+                        filterCheckboxMousedown(
+                          'filterSubtitleLanguages',
+                          subtitleLanguage,
+                          setAllFilterSubtitleLanguages
+                        )
+                      "
                       color="mk-dark-grey"
                     ></v-checkbox>
                   </v-expansion-panel-content>
@@ -616,7 +672,15 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
+                        <span>{{
+                          $t(
+                            `${
+                              filterGroup.sort === enmFilterSortModes.numMovies
+                                ? "Sorted by Number of Media"
+                                : "Sorted by Name"
+                            }`
+                          )
+                        }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -640,7 +704,11 @@
                       </v-tooltip>
                     </v-row>
                     <v-switch
-                      v-bind:label="$shared.filters.filterSettings.filterReleaseAttributesAND ? $t('all selected must apply') : $t('one selected must apply')"
+                      v-bind:label="
+                        $shared.filters.filterSettings.filterReleaseAttributesAND
+                          ? $t('all selected must apply')
+                          : $t('one selected must apply')
+                      "
                       color="red"
                       v-model="$shared.filters.filterSettings.filterReleaseAttributesAND"
                       v-on:click.native="filtersChanged('filterReleaseAttributes')"
@@ -650,14 +718,22 @@
                       v-for="filterReleaseAttribute in filterReleaseAttributes"
                       v-bind:key="filterReleaseAttribute.ReleaseAttribute"
                       v-bind:label="
-                        (filterReleaseAttribute.ReleaseAttribute === '<not available>' ? $t('<not available>') : filterReleaseAttribute.ReleaseAttribute) +
+                        (filterReleaseAttribute.ReleaseAttribute === '<not available>'
+                          ? $t('<not available>')
+                          : filterReleaseAttribute.ReleaseAttribute) +
                         ' (' +
                         filterReleaseAttribute.NumMoviesFormatted +
                         ')'
                       "
                       v-model="filterReleaseAttribute.Selected"
                       v-on:mouseup="filterCheckboxMouseup('filterReleaseAttributes')"
-                      v-on:mousedown="filterCheckboxMousedown('filterReleaseAttributes', filterReleaseAttribute, setAllFilterReleaseAttributes)"
+                      v-on:mousedown="
+                        filterCheckboxMousedown(
+                          'filterReleaseAttributes',
+                          filterReleaseAttribute,
+                          setAllFilterReleaseAttributes
+                        )
+                      "
                       color="mk-dark-grey"
                     ></v-checkbox>
                   </v-expansion-panel-content>
@@ -734,7 +810,15 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
+                        <span>{{
+                          $t(
+                            `${
+                              filterGroup.sort === enmFilterSortModes.numMovies
+                                ? "Sorted by Number of Media"
+                                : "Sorted by Name"
+                            }`
+                          )
+                        }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -771,7 +855,15 @@
                         class="mk-clickable-red"
                         v-if="list.id_Lists"
                         style="align-items: flex-start; padding-top: 4px"
-                        v-on:click="showDeleteFilterItemDialog(list, deleteList, 'Delete List', `Do you really want to delete the list '{name}'?`, list.Name)"
+                        v-on:click="
+                          showDeleteFilterItemDialog(
+                            list,
+                            deleteList,
+                            'Delete List',
+                            `Do you really want to delete the list '{name}'?`,
+                            list.Name
+                          )
+                        "
                         >mdi-delete</v-icon
                       >
                     </v-row>
@@ -872,7 +964,11 @@
                       v-on:mousedown="filterCheckboxMousedown('filterRatings', rating, setAllFilterRatings)"
                       color="mk-dark-grey"
                     >
-                      <v-icon small v-for="i in 5" v-bind:key="i" v-bind:color="rating.Rating > i - 1 ? 'amber' : rating.Rating > 0 ? 'white' : 'grey'"
+                      <v-icon
+                        small
+                        v-for="i in 5"
+                        v-bind:key="i"
+                        v-bind:color="rating.Rating > i - 1 ? 'amber' : rating.Rating > 0 ? 'white' : 'grey'"
                         >mdi-star</v-icon
                       >
                     </v-checkbox>
@@ -1034,8 +1130,12 @@
                       class="align-center"
                       v-on:change="filtersChanged('filterIMDBRating')"
                     >
-                      <template v-slot:prepend>{{ $shared.filters.filterIMDBRating[0].toLocaleString($shared.uiLanguage) }}</template>
-                      <template v-slot:append>{{ $shared.filters.filterIMDBRating[1].toLocaleString($shared.uiLanguage) }}</template>
+                      <template v-slot:prepend>{{
+                        $shared.filters.filterIMDBRating[0].toLocaleString($shared.uiLanguage)
+                      }}</template>
+                      <template v-slot:append>{{
+                        $shared.filters.filterIMDBRating[1].toLocaleString($shared.uiLanguage)
+                      }}</template>
                     </v-range-slider>
                     <v-checkbox
                       v-bind:label="$t('include entries with no IMDB rating')"
@@ -1120,7 +1220,15 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
+                        <span>{{
+                          $t(
+                            `${
+                              filterGroup.sort === enmFilterSortModes.numMovies
+                                ? "Sorted by Number of Media"
+                                : "Sorted by Name"
+                            }`
+                          )
+                        }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -1144,12 +1252,20 @@
                       </v-tooltip>
                     </v-row>
                     <v-switch
-                      v-bind:label="$shared.filters.filterSettings.filterGenresAND ? $t('all selected must apply') : $t('one selected must apply')"
+                      v-bind:label="
+                        $shared.filters.filterSettings.filterGenresAND
+                          ? $t('all selected must apply')
+                          : $t('one selected must apply')
+                      "
                       color="red"
                       v-model="$shared.filters.filterSettings.filterGenresAND"
                       v-on:click.native="filtersChanged('filterGenres')"
                     ></v-switch>
-                    <div v-for="genre in filterGenres" v-bind:key="genre.id_Genres" style="display: flex; justify-content: space-between">
+                    <div
+                      v-for="genre in filterGenres"
+                      v-bind:key="genre.id_Genres"
+                      style="display: flex; justify-content: space-between"
+                    >
                       <v-checkbox
                         class="mk-filter-checkbox"
                         v-bind:label="genre.Name + ' (' + genre.NumMoviesFormatted + ')'"
@@ -1264,7 +1380,12 @@
                       class="mk-filter-checkbox"
                       v-for="ageRating in $shared.filters.filterAgeRatings"
                       v-bind:key="ageRating.Age"
-                      v-bind:label="(ageRating.Age === -1 ? `<${$t('undetermined')}>` : ageRating.Age) + ' (' + ageRating.NumMoviesFormatted + ')'"
+                      v-bind:label="
+                        (ageRating.Age === -1 ? `<${$t('undetermined')}>` : ageRating.Age) +
+                        ' (' +
+                        ageRating.NumMoviesFormatted +
+                        ')'
+                      "
                       v-model="ageRating.Selected"
                       v-on:mouseup="filterCheckboxMouseup('filterAgeRatings')"
                       v-on:mousedown="filterCheckboxMousedown('filterAgeRatings', ageRating, setAllFilterAgeRatings)"
@@ -1340,13 +1461,18 @@
                       <v-expansion-panel
                         v-for="category in filterParentalAdvisoryCategories"
                         v-bind:key="category.Name"
-                        v-show="$shared.filters.filterParentalAdvisory[category.Name] && $shared.filters.filterParentalAdvisory[category.Name].length > 0"
+                        v-show="
+                          $shared.filters.filterParentalAdvisory[category.Name] &&
+                          $shared.filters.filterParentalAdvisory[category.Name].length > 0
+                        "
                         style="padding: 0px !important; width: 316px"
                       >
                         <v-expansion-panel-header
                           style="padding: 8px !important"
                           v-bind:class="{
-                            'mk-search-highlight': $shared.filters.filterParentalAdvisory[category.Name].find((filter) => !filter.Selected),
+                            'mk-search-highlight': $shared.filters.filterParentalAdvisory[category.Name].find(
+                              (filter) => !filter.Selected
+                            ),
                           }"
                           >{{ $t(`ParentalAdvisoryCategories.${category.Name}`) }}
                           {{ filterParentalAdvisoryCategoryTitle(category) }}
@@ -1354,7 +1480,9 @@
                             <v-icon
                               v-if="!editFilters.isEditFilters"
                               v-bind:class="{
-                                'mk-search-highlight': $shared.filters.filterParentalAdvisory[category.Name].find((filter) => !filter.Selected),
+                                'mk-search-highlight': $shared.filters.filterParentalAdvisory[category.Name].find(
+                                  (filter) => !filter.Selected
+                                ),
                               }"
                             >
                               $expand
@@ -1367,7 +1495,11 @@
                             <v-tooltip bottom style="z-index: 21">
                               <template v-slot:activator="{ on }">
                                 <span v-on="on">
-                                  <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterParentalAdvisory(category, false)">
+                                  <v-btn
+                                    class="mk-filter-action-btn"
+                                    text
+                                    v-on:click="setAllFilterParentalAdvisory(category, false)"
+                                  >
                                     <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                                   </v-btn>
                                 </span>
@@ -1377,7 +1509,11 @@
                             <v-tooltip bottom style="z-index: 21">
                               <template v-slot:activator="{ on }">
                                 <span v-on="on">
-                                  <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterParentalAdvisory(category, true)">
+                                  <v-btn
+                                    class="mk-filter-action-btn"
+                                    text
+                                    v-on:click="setAllFilterParentalAdvisory(category, true)"
+                                  >
                                     <v-icon>mdi-check-box-multiple-outline</v-icon>
                                   </v-btn>
                                 </span>
@@ -1385,13 +1521,20 @@
                               <span>{{ $t("Select All") }}</span>
                             </v-tooltip>
                           </v-row>
-                          <v-row v-for="paItem in $shared.filters.filterParentalAdvisory[category.Name]" v-bind:key="paItem.Severity">
+                          <v-row
+                            v-for="paItem in $shared.filters.filterParentalAdvisory[category.Name]"
+                            v-bind:key="paItem.Severity"
+                          >
                             <v-checkbox
                               class="mk-filter-checkbox"
                               v-bind:label="$t(`${paItem.DisplayText}`) + ' (' + paItem.NumMoviesFormatted + ')'"
                               v-model="paItem.Selected"
                               v-on:mouseup="filterCheckboxMouseup('filterParentalAdvisory')"
-                              v-on:mousedown="filterCheckboxMousedownParentalAdvisory(category.Name, paItem, (x) => setAllFilterParentalAdvisory(category, x))"
+                              v-on:mousedown="
+                                filterCheckboxMousedownParentalAdvisory(category.Name, paItem, (x) =>
+                                  setAllFilterParentalAdvisory(category, x)
+                                )
+                              "
                               color="mk-dark-grey"
                             ></v-checkbox>
                           </v-row>
@@ -1474,7 +1617,15 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
+                        <span>{{
+                          $t(
+                            `${
+                              filterGroup.sort === enmFilterSortModes.numMovies
+                                ? "Sorted by Number of Media"
+                                : "Sorted by Name"
+                            }`
+                          )
+                        }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -1508,7 +1659,11 @@
                       </v-tooltip>
                     </v-row>
                     <v-switch
-                      v-bind:label="$shared.filters.filterSettings.filterPersonsAND ? $t('all selected must apply') : $t('one selected must apply')"
+                      v-bind:label="
+                        $shared.filters.filterSettings.filterPersonsAND
+                          ? $t('all selected must apply')
+                          : $t('one selected must apply')
+                      "
                       color="red"
                       v-model="$shared.filters.filterSettings.filterPersonsAND"
                       v-on:click.native="filtersChanged('filterPersons')"
@@ -1616,7 +1771,15 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
+                        <span>{{
+                          $t(
+                            `${
+                              filterGroup.sort === enmFilterSortModes.numMovies
+                                ? "Sorted by Number of Media"
+                                : "Sorted by Name"
+                            }`
+                          )
+                        }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -1650,7 +1813,11 @@
                       </v-tooltip>
                     </v-row>
                     <v-switch
-                      v-bind:label="$shared.filters.filterSettings.filterCompaniesAND ? $t('all selected must apply') : $t('one selected must apply')"
+                      v-bind:label="
+                        $shared.filters.filterSettings.filterCompaniesAND
+                          ? $t('all selected must apply')
+                          : $t('one selected must apply')
+                      "
                       color="red"
                       v-model="$shared.filters.filterSettings.filterCompaniesAND"
                       v-on:click.native="filtersChanged('filterCompanies')"
@@ -1756,7 +1923,15 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
+                        <span>{{
+                          $t(
+                            `${
+                              filterGroup.sort === enmFilterSortModes.numMovies
+                                ? "Sorted by Number of Media"
+                                : "Sorted by Name"
+                            }`
+                          )
+                        }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -1791,7 +1966,13 @@
                     </v-row>
                     <div v-if="yearsRangeInput.show">
                       <v-row v-if="yearsRangeInput.show">
-                        <v-range-slider v-model="yearsRangeInput.range" :max="yearsRangeInput.max" :min="yearsRangeInput.min" hide-details class="align-center">
+                        <v-range-slider
+                          v-model="yearsRangeInput.range"
+                          :max="yearsRangeInput.max"
+                          :min="yearsRangeInput.min"
+                          hide-details
+                          class="align-center"
+                        >
                           <template v-slot:prepend>{{ yearsRangeInput.range[0] }}</template>
                           <template v-slot:append>{{ yearsRangeInput.range[1] }}</template>
                         </v-range-slider>
@@ -1891,7 +2072,15 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
+                        <span>{{
+                          $t(
+                            `${
+                              filterGroup.sort === enmFilterSortModes.numMovies
+                                ? "Sorted by Number of Media"
+                                : "Sorted by Name"
+                            }`
+                          )
+                        }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -1925,19 +2114,28 @@
                       </v-tooltip>
                     </v-row>
                     <v-switch
-                      v-bind:label="$shared.filters.filterSettings.filterIMDBPlotKeywordsAND ? $t('all selected must apply') : $t('one selected must apply')"
+                      v-bind:label="
+                        $shared.filters.filterSettings.filterIMDBPlotKeywordsAND
+                          ? $t('all selected must apply')
+                          : $t('one selected must apply')
+                      "
                       color="red"
                       v-model="$shared.filters.filterSettings.filterIMDBPlotKeywordsAND"
                       v-on:click.native="filtersChanged('filterIMDBPlotKeywords')"
                       style="margin-bottom: 8px; margin-left: -10px"
                     ></v-switch>
-                    <v-row v-for="plotKeyword in filterIMDBPlotKeywords" v-bind:key="plotKeyword.id_Filter_IMDB_Plot_Keywords">
+                    <v-row
+                      v-for="plotKeyword in filterIMDBPlotKeywords"
+                      v-bind:key="plotKeyword.id_Filter_IMDB_Plot_Keywords"
+                    >
                       <v-checkbox
                         class="mk-filter-checkbox mk-filter-removable"
                         v-bind:label="plotKeyword.Keyword + ' (' + plotKeyword.NumMoviesFormatted + ')'"
                         v-model="plotKeyword.Selected"
                         v-on:mouseup="filterCheckboxMouseup('filterIMDBPlotKeywords')"
-                        v-on:mousedown="filterCheckboxMousedown('filterIMDBPlotKeywords', plotKeyword, setAllIFilterMDBPlotKeywords)"
+                        v-on:mousedown="
+                          filterCheckboxMousedown('filterIMDBPlotKeywords', plotKeyword, setAllIFilterMDBPlotKeywords)
+                        "
                         color="mk-dark-grey"
                       ></v-checkbox>
                       <v-spacer></v-spacer>
@@ -2035,12 +2233,24 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
+                        <span>{{
+                          $t(
+                            `${
+                              filterGroup.sort === enmFilterSortModes.numMovies
+                                ? "Sorted by Number of Media"
+                                : "Sorted by Name"
+                            }`
+                          )
+                        }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterIMDBFilmingLocations(false)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllFilterIMDBFilmingLocations(false)"
+                            >
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2050,7 +2260,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
                           <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterIMDBFilmingLocations(true)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              text
+                              v-on:click="setAllFilterIMDBFilmingLocations(true)"
+                            >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2070,20 +2284,31 @@
                     </v-row>
                     <v-switch
                       v-bind:label="
-                        $shared.filters.filterSettings.filterIMDBFilmingLocationsAND ? $t('all selected must apply') : $t('one selected must apply')
+                        $shared.filters.filterSettings.filterIMDBFilmingLocationsAND
+                          ? $t('all selected must apply')
+                          : $t('one selected must apply')
                       "
                       color="red"
                       v-model="$shared.filters.filterSettings.filterIMDBFilmingLocationsAND"
                       v-on:click.native="filtersChanged('filterIMDBFilmingLocations')"
                       style="margin-bottom: 8px; margin-left: -10px"
                     ></v-switch>
-                    <v-row v-for="filmingLocation in filterIMDBFilmingLocations" v-bind:key="filmingLocation.id_Filter_IMDB_Filming_Locations">
+                    <v-row
+                      v-for="filmingLocation in filterIMDBFilmingLocations"
+                      v-bind:key="filmingLocation.id_Filter_IMDB_Filming_Locations"
+                    >
                       <v-checkbox
                         class="mk-filter-checkbox mk-filter-removable"
                         v-bind:label="filmingLocation.Location + ' (' + filmingLocation.NumMoviesFormatted + ')'"
                         v-model="filmingLocation.Selected"
                         v-on:mouseup="filterCheckboxMouseup('filterIMDBFilmingLocations')"
-                        v-on:mousedown="filterCheckboxMousedown('filterIMDBFilmingLocations', filmingLocation, setAllFilterIMDBFilmingLocations)"
+                        v-on:mousedown="
+                          filterCheckboxMousedown(
+                            'filterIMDBFilmingLocations',
+                            filmingLocation,
+                            setAllFilterIMDBFilmingLocations
+                          )
+                        "
                         color="mk-dark-grey"
                       ></v-checkbox>
                       <v-spacer></v-spacer>
@@ -2194,7 +2419,11 @@
                       </v-tooltip>
                     </v-row>
                     <v-switch
-                      v-bind:label="$shared.filters.filterSettings.filterDataQualityAND ? $t('all selected must apply') : $t('one selected must apply')"
+                      v-bind:label="
+                        $shared.filters.filterSettings.filterDataQualityAND
+                          ? $t('all selected must apply')
+                          : $t('one selected must apply')
+                      "
                       color="red"
                       v-model="$shared.filters.filterSettings.filterDataQualityAND"
                       v-on:click.native="filtersChanged('filterDataQuality')"
@@ -2207,7 +2436,9 @@
                         v-bind:label="$t(dataQuality.DisplayText) + ' (' + dataQuality.NumMoviesFormatted + ')'"
                         v-model="dataQuality.Selected"
                         v-on:mouseup="filterCheckboxMouseup('filterDataQuality')"
-                        v-on:mousedown="filterCheckboxMousedown('filterDataQuality', dataQuality, setAllFilterDataQuality)"
+                        v-on:mousedown="
+                          filterCheckboxMousedown('filterDataQuality', dataQuality, setAllFilterDataQuality)
+                        "
                         color="mk-dark-grey"
                       ></v-checkbox>
                     </v-row>
@@ -2288,7 +2519,15 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
+                        <span>{{
+                          $t(
+                            `${
+                              filterGroup.sort === enmFilterSortModes.numMovies
+                                ? "Sorted by Number of Media"
+                                : "Sorted by Name"
+                            }`
+                          )
+                        }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -2316,14 +2555,18 @@
                         class="mk-filter-checkbox"
                         v-bind:key="filterVideoEncoder.Name"
                         v-bind:label="
-                          (filterVideoEncoder.Name === '<not available>' ? $t('<not available>') : filterVideoEncoder.Name) +
+                          (filterVideoEncoder.Name === '<not available>'
+                            ? $t('<not available>')
+                            : filterVideoEncoder.Name) +
                           ' (' +
                           filterVideoEncoder.NumMoviesFormatted +
                           ')'
                         "
                         v-model="filterVideoEncoder.Selected"
                         v-on:mouseup="filterCheckboxMouseup('filterVideoEncoders')"
-                        v-on:mousedown="filterCheckboxMousedown('filterVideoEncoders', filterVideoEncoder, setAllFilterVideoEncoders)"
+                        v-on:mousedown="
+                          filterCheckboxMousedown('filterVideoEncoders', filterVideoEncoder, setAllFilterVideoEncoders)
+                        "
                         color="mk-dark-grey"
                       ></v-checkbox>
                     </v-row>
@@ -2404,7 +2647,15 @@
                             </v-btn>
                           </span>
                         </template>
-                        <span>{{ $t(`${filterGroup.sort === enmFilterSortModes.numMovies ? "Sorted by Number of Media" : "Sorted by Name"}`) }}</span>
+                        <span>{{
+                          $t(
+                            `${
+                              filterGroup.sort === enmFilterSortModes.numMovies
+                                ? "Sorted by Number of Media"
+                                : "Sorted by Name"
+                            }`
+                          )
+                        }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ on }">
@@ -2432,14 +2683,18 @@
                         class="mk-filter-checkbox"
                         v-bind:key="filterAudioFormat.Name"
                         v-bind:label="
-                          (filterAudioFormat.Name === '<not available>' ? $t('<not available>') : filterAudioFormat.Name) +
+                          (filterAudioFormat.Name === '<not available>'
+                            ? $t('<not available>')
+                            : filterAudioFormat.Name) +
                           ' (' +
                           filterAudioFormat.NumMoviesFormatted +
                           ')'
                         "
                         v-model="filterAudioFormat.Selected"
                         v-on:mouseup="filterCheckboxMouseup('filterAudioFormats')"
-                        v-on:mousedown="filterCheckboxMousedown('filterAudioFormats', filterAudioFormat, setAllFilterAudioFormats)"
+                        v-on:mousedown="
+                          filterCheckboxMousedown('filterAudioFormats', filterAudioFormat, setAllFilterAudioFormats)
+                        "
                         color="mk-dark-grey"
                       ></v-checkbox>
                     </v-row>
@@ -2505,7 +2760,11 @@
       <v-container style="display: flex; max-width: 100% !important; padding: 0px !important">
         <router-view></router-view>
 
-        <mk-version-dialog ref="versionDialog" v-bind:show="versionDialog.show" v-on:close="versionDialog.show = false"></mk-version-dialog>
+        <mk-version-dialog
+          ref="versionDialog"
+          v-bind:show="versionDialog.show"
+          v-on:close="versionDialog.show = false"
+        ></mk-version-dialog>
 
         <mk-delete-filteritem-dialog
           v-bind:show="deleteFilterItemDialog.show"
@@ -2578,7 +2837,12 @@
         ></mk-chat-gpt-dialog>
 
         <!-- BOTTOM BAR -->
-        <v-bottom-navigation fixed dark v-show="scanInfo.show" style="height: auto; padding: 4px 8px 4px 8px; z-index: 100">
+        <v-bottom-navigation
+          fixed
+          dark
+          v-show="scanInfo.show"
+          style="height: auto; padding: 4px 8px 4px 8px; z-index: 100"
+        >
           <v-row align-content="start" justify="start" style="margin-top: 0px; margin-bottom: 0px; max-width: 100%">
             <v-progress-linear
               v-if="true"
@@ -2686,7 +2950,7 @@ export default {
     searchText: null,
     appSections: [
       { icon: "mdi-movie", text: "Movies", id: "movies" },
-      // not yet implemented: { icon: "mdi-television", text: "Series", id: "series" }
+      { icon: "mdi-television", text: "Series", id: "series" },
     ],
 
     scanInfo: {
@@ -2837,7 +3101,11 @@ export default {
       }
 
       return (
-        "(" + this.$shared.filters.filterSourcePaths.filter((filter) => filter.Selected).length + "/" + this.$shared.filters.filterSourcePaths.length + ")"
+        "(" +
+        this.$shared.filters.filterSourcePaths.filter((filter) => filter.Selected).length +
+        "/" +
+        this.$shared.filters.filterSourcePaths.length +
+        ")"
       );
     },
 
@@ -2851,7 +3119,11 @@ export default {
       }
 
       return (
-        "(" + this.$shared.filters.filterDataQuality.filter((filter) => filter.Selected).length + "/" + this.$shared.filters.filterDataQuality.length + ")"
+        "(" +
+        this.$shared.filters.filterDataQuality.filter((filter) => filter.Selected).length +
+        "/" +
+        this.$shared.filters.filterDataQuality.length +
+        ")"
       );
     },
 
@@ -2878,7 +3150,11 @@ export default {
       }
 
       return (
-        "(" + this.$shared.filters.filterVideoEncoders.filter((filter) => filter.Selected).length + "/" + this.$shared.filters.filterVideoEncoders.length + ")"
+        "(" +
+        this.$shared.filters.filterVideoEncoders.filter((filter) => filter.Selected).length +
+        "/" +
+        this.$shared.filters.filterVideoEncoders.length +
+        ")"
       );
     },
 
@@ -2905,7 +3181,11 @@ export default {
       }
 
       return (
-        "(" + this.$shared.filters.filterAudioFormats.filter((filter) => filter.Selected).length + "/" + this.$shared.filters.filterAudioFormats.length + ")"
+        "(" +
+        this.$shared.filters.filterAudioFormats.filter((filter) => filter.Selected).length +
+        "/" +
+        this.$shared.filters.filterAudioFormats.length +
+        ")"
       );
     },
 
@@ -2928,17 +3208,20 @@ export default {
       if (!this.$shared.filters.filterGenres.find((filter) => !filter.Selected && !filter.Excluded)) {
         result += this.$t("ALL");
         if (this.$shared.filters.filterGenres.find((filter) => filter.Selected && filter.Excluded)) {
-          result += " - " + this.$shared.filters.filterGenres.filter((filter) => filter.Selected && filter.Excluded).length;
+          result +=
+            " - " + this.$shared.filters.filterGenres.filter((filter) => filter.Selected && filter.Excluded).length;
         }
       } else if (!this.$shared.filters.filterGenres.find((filter) => filter.Selected && !filter.Excluded)) {
         result += this.$t("NONE");
         if (this.$shared.filters.filterGenres.find((filter) => filter.Selected && filter.Excluded)) {
-          result += " - " + this.$shared.filters.filterGenres.filter((filter) => filter.Selected && filter.Excluded).length;
+          result +=
+            " - " + this.$shared.filters.filterGenres.filter((filter) => filter.Selected && filter.Excluded).length;
         }
       } else {
         result += this.$shared.filters.filterGenres.filter((filter) => filter.Selected).length;
         if (this.$shared.filters.filterGenres.find((filter) => filter.Selected && filter.Excluded)) {
-          result += " - " + this.$shared.filters.filterGenres.filter((filter) => filter.Selected && filter.Excluded).length;
+          result +=
+            " - " + this.$shared.filters.filterGenres.filter((filter) => filter.Selected && filter.Excluded).length;
         }
 
         result += " / " + this.$shared.filters.filterGenres.length;
@@ -2958,7 +3241,13 @@ export default {
         return `(${this.$t("NONE")})`;
       }
 
-      return "(" + this.$shared.filters.filterAgeRatings.filter((filter) => filter.Selected).length + "/" + this.$shared.filters.filterAgeRatings.length + ")";
+      return (
+        "(" +
+        this.$shared.filters.filterAgeRatings.filter((filter) => filter.Selected).length +
+        "/" +
+        this.$shared.filters.filterAgeRatings.length +
+        ")"
+      );
     },
 
     filterRatingsTitle() {
@@ -2970,7 +3259,13 @@ export default {
         return `(${this.$t("NONE")})`;
       }
 
-      return "(" + this.$shared.filters.filterRatings.filter((filter) => filter.Selected).length + "/" + this.$shared.filters.filterRatings.length + ")";
+      return (
+        "(" +
+        this.$shared.filters.filterRatings.filter((filter) => filter.Selected).length +
+        "/" +
+        this.$shared.filters.filterRatings.length +
+        ")"
+      );
     },
 
     filterYears() {
@@ -2995,7 +3290,13 @@ export default {
         return `(${this.$t("NONE")})`;
       }
 
-      return "(" + this.$shared.filters.filterYears.filter((filter) => filter.Selected).length + "/" + this.$shared.filters.filterYears.length + ")";
+      return (
+        "(" +
+        this.$shared.filters.filterYears.filter((filter) => filter.Selected).length +
+        "/" +
+        this.$shared.filters.filterYears.length +
+        ")"
+      );
     },
 
     filterQualities() {
@@ -3020,7 +3321,13 @@ export default {
         return `(${this.$t("NONE")})`;
       }
 
-      return "(" + this.$shared.filters.filterQualities.filter((filter) => filter.Selected).length + "/" + this.$shared.filters.filterQualities.length + ")";
+      return (
+        "(" +
+        this.$shared.filters.filterQualities.filter((filter) => filter.Selected).length +
+        "/" +
+        this.$shared.filters.filterQualities.length +
+        ")"
+      );
     },
 
     filterLists() {
@@ -3045,7 +3352,13 @@ export default {
         return `(${this.$t("NONE")})`;
       }
 
-      return "(" + this.$shared.filters.filterLists.filter((filter) => filter.Selected).length + "/" + this.$shared.filters.filterLists.length + ")";
+      return (
+        "(" +
+        this.$shared.filters.filterLists.filter((filter) => filter.Selected).length +
+        "/" +
+        this.$shared.filters.filterLists.length +
+        ")"
+      );
     },
 
     filterPersons() {
@@ -3064,7 +3377,8 @@ export default {
     filterPersonsTitle() {
       if (
         !this.$shared.filters.filterPersons.find(
-          (filter) => !filter.Selected && (!this.$shared.filters.filterSettings.filterPersonsAND || filter.IMDB_Person_ID)
+          (filter) =>
+            !filter.Selected && (!this.$shared.filters.filterSettings.filterPersonsAND || filter.IMDB_Person_ID)
         )
       ) {
         return `(${this.$t("ALL")})`;
@@ -3072,7 +3386,8 @@ export default {
 
       if (
         !this.$shared.filters.filterPersons.find(
-          (filter) => filter.Selected && (!this.$shared.filters.filterSettings.filterPersonsAND || filter.IMDB_Person_ID)
+          (filter) =>
+            filter.Selected && (!this.$shared.filters.filterSettings.filterPersonsAND || filter.IMDB_Person_ID)
         )
       ) {
         return `(${this.$t("NONE")})`;
@@ -3081,10 +3396,13 @@ export default {
       return (
         "(" +
         this.$shared.filters.filterPersons.filter(
-          (filter) => filter.Selected && (!this.$shared.filters.filterSettings.filterPersonsAND || filter.IMDB_Person_ID)
+          (filter) =>
+            filter.Selected && (!this.$shared.filters.filterSettings.filterPersonsAND || filter.IMDB_Person_ID)
         ).length +
         "/" +
-        this.$shared.filters.filterPersons.filter((filter) => !this.$shared.filters.filterSettings.filterPersonsAND || filter.IMDB_Person_ID).length +
+        this.$shared.filters.filterPersons.filter(
+          (filter) => !this.$shared.filters.filterSettings.filterPersonsAND || filter.IMDB_Person_ID
+        ).length +
         ")"
       );
     },
@@ -3105,7 +3423,8 @@ export default {
     filterCompaniesTitle() {
       if (
         !this.$shared.filters.filterCompanies.find(
-          (filter) => !filter.Selected && (!this.$shared.filters.filterSettings.filterCompaniesAND || filter.id_Filter_Companies)
+          (filter) =>
+            !filter.Selected && (!this.$shared.filters.filterSettings.filterCompaniesAND || filter.id_Filter_Companies)
         )
       ) {
         return `(${this.$t("ALL")})`;
@@ -3113,7 +3432,8 @@ export default {
 
       if (
         !this.$shared.filters.filterCompanies.find(
-          (filter) => filter.Selected && (!this.$shared.filters.filterSettings.filterCompaniesAND || filter.id_Filter_Companies)
+          (filter) =>
+            filter.Selected && (!this.$shared.filters.filterSettings.filterCompaniesAND || filter.id_Filter_Companies)
         )
       ) {
         return `(${this.$t("NONE")})`;
@@ -3122,10 +3442,13 @@ export default {
       return (
         "(" +
         this.$shared.filters.filterCompanies.filter(
-          (filter) => filter.Selected && (!this.$shared.filters.filterSettings.filterCompaniesAND || filter.id_Filter_Companies)
+          (filter) =>
+            filter.Selected && (!this.$shared.filters.filterSettings.filterCompaniesAND || filter.id_Filter_Companies)
         ).length +
         "/" +
-        this.$shared.filters.filterCompanies.filter((filter) => !this.$shared.filters.filterSettings.filterCompaniesAND || filter.id_Filter_Companies).length +
+        this.$shared.filters.filterCompanies.filter(
+          (filter) => !this.$shared.filters.filterSettings.filterCompaniesAND || filter.id_Filter_Companies
+        ).length +
         ")"
       );
     },
@@ -3134,7 +3457,9 @@ export default {
       const fg = this.$shared.filterGroups.find((fg) => fg.name === "filterIMDBPlotKeywords");
 
       return this.$shared.filters.filterIMDBPlotKeywords
-        .filter((fp) => !this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND || fp.id_Filter_IMDB_Plot_Keywords)
+        .filter(
+          (fp) => !this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND || fp.id_Filter_IMDB_Plot_Keywords
+        )
         .sort((a, b) => {
           if (fg.sort === enmFilterSortModes.numMovies) {
             return helpers.compare(a.NumMovies, b.NumMovies, true);
@@ -3146,7 +3471,9 @@ export default {
     filterIMDBPlotKeywordsTitle() {
       if (
         !this.$shared.filters.filterIMDBPlotKeywords.find(
-          (filter) => !filter.Selected && (!this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND || filter.id_Filter_IMDB_Plot_Keywords)
+          (filter) =>
+            !filter.Selected &&
+            (!this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND || filter.id_Filter_IMDB_Plot_Keywords)
         )
       ) {
         return `(${this.$t("ALL")})`;
@@ -3154,7 +3481,9 @@ export default {
 
       if (
         !this.$shared.filters.filterIMDBPlotKeywords.find(
-          (filter) => filter.Selected && (!this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND || filter.id_Filter_IMDB_Plot_Keywords)
+          (filter) =>
+            filter.Selected &&
+            (!this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND || filter.id_Filter_IMDB_Plot_Keywords)
         )
       ) {
         return `(${this.$t("NONE")})`;
@@ -3163,11 +3492,14 @@ export default {
       return (
         "(" +
         this.$shared.filters.filterIMDBPlotKeywords.filter(
-          (filter) => filter.Selected && (!this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND || filter.id_Filter_IMDB_Plot_Keywords)
+          (filter) =>
+            filter.Selected &&
+            (!this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND || filter.id_Filter_IMDB_Plot_Keywords)
         ).length +
         "/" +
         this.$shared.filters.filterIMDBPlotKeywords.filter(
-          (filter) => !this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND || filter.id_Filter_IMDB_Plot_Keywords
+          (filter) =>
+            !this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND || filter.id_Filter_IMDB_Plot_Keywords
         ).length +
         ")"
       );
@@ -3177,7 +3509,10 @@ export default {
       const fg = this.$shared.filterGroups.find((fg) => fg.name === "filterIMDBFilmingLocations");
 
       return this.$shared.filters.filterIMDBFilmingLocations
-        .filter((fl) => !this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND || fl.id_Filter_IMDB_Filming_Locations)
+        .filter(
+          (fl) =>
+            !this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND || fl.id_Filter_IMDB_Filming_Locations
+        )
         .sort((a, b) => {
           if (fg.sort === enmFilterSortModes.numMovies) {
             return helpers.compare(a.NumMovies, b.NumMovies, true);
@@ -3189,7 +3524,10 @@ export default {
     filterIMDBFilmingLocationsTitle() {
       if (
         !this.$shared.filters.filterIMDBFilmingLocations.find(
-          (filter) => !filter.Selected && (!this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND || filter.id_Filter_IMDB_Filming_Locations)
+          (filter) =>
+            !filter.Selected &&
+            (!this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND ||
+              filter.id_Filter_IMDB_Filming_Locations)
         )
       ) {
         return `(${this.$t("ALL")})`;
@@ -3197,7 +3535,10 @@ export default {
 
       if (
         !this.$shared.filters.filterIMDBFilmingLocations.find(
-          (filter) => filter.Selected && (!this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND || filter.id_Filter_IMDB_Filming_Locations)
+          (filter) =>
+            filter.Selected &&
+            (!this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND ||
+              filter.id_Filter_IMDB_Filming_Locations)
         )
       ) {
         return `(${this.$t("NONE")})`;
@@ -3206,11 +3547,16 @@ export default {
       return (
         "(" +
         this.$shared.filters.filterIMDBFilmingLocations.filter(
-          (filter) => filter.Selected && (!this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND || filter.id_Filter_IMDB_Filming_Locations)
+          (filter) =>
+            filter.Selected &&
+            (!this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND ||
+              filter.id_Filter_IMDB_Filming_Locations)
         ).length +
         "/" +
         this.$shared.filters.filterIMDBFilmingLocations.filter(
-          (filter) => !this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND || filter.id_Filter_IMDB_Filming_Locations
+          (filter) =>
+            !this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND ||
+            filter.id_Filter_IMDB_Filming_Locations
         ).length +
         ")"
       );
@@ -3324,9 +3670,11 @@ export default {
         return `(${this.$t("ALL")}${this.$shared.filters.filterIMDBRatingNone ? "" : "*"})`;
       }
 
-      return `(${this.$shared.filters.filterIMDBRating[0].toLocaleString(this.$shared.uiLanguage)} - ${this.$shared.filters.filterIMDBRating[1].toLocaleString(
+      return `(${this.$shared.filters.filterIMDBRating[0].toLocaleString(
         this.$shared.uiLanguage
-      )}${this.$shared.filters.filterIMDBRatingNone ? "" : "*"})`;
+      )} - ${this.$shared.filters.filterIMDBRating[1].toLocaleString(this.$shared.uiLanguage)}${
+        this.$shared.filters.filterIMDBRatingNone ? "" : "*"
+      })`;
     },
 
     filterContentAdvisoryTitle() {
@@ -3378,13 +3726,23 @@ export default {
       return this.$t(key, payload);
     },
 
-    sectionRoute(itemid) {
+    appSectionClass(itemId) {
+      if (this.$route.path === `/medialist/${itemId}`) {
+        return {
+          "v-list-item--active": true,
+        };
+      }
+
+      return {};
+    },
+
+    navigateTo(itemid) {
       if (itemid == "movies") {
-        return "/medialist/movies";
+        return store.routeTo(this.$router, "/medialist/movies");
       }
 
       if (itemid == "series") {
-        return "/medialist/series";
+        return store.routeTo(this.$router, "/medialist/series");
       }
 
       return "";
@@ -3749,7 +4107,10 @@ export default {
 
           logger.log("[deleteList] delete list entries");
 
-          await store.db.fireProcedure(`DELETE FROM tbl_Lists_Movies WHERE id_Lists NOT IN (SELECT id_Lists FROM tbl_Lists)`, []);
+          await store.db.fireProcedure(
+            `DELETE FROM tbl_Lists_Movies WHERE id_Lists NOT IN (SELECT id_Lists FROM tbl_Lists)`,
+            []
+          );
 
           // eventBus.refetchFilters({ filterLists: null });
           eventBus.refetchMedia(this.$shared.currentPage, null, {
@@ -3777,7 +4138,9 @@ export default {
         })}`
       );
       this.$shared.filters.filterPersons.splice(
-        this.$shared.filters.filterPersons.findIndex((filterPerson) => filterPerson.id_Filter_Persons === person.id_Filter_Persons),
+        this.$shared.filters.filterPersons.findIndex(
+          (filterPerson) => filterPerson.id_Filter_Persons === person.id_Filter_Persons
+        ),
         1
       );
       eventBus.refetchMedia({ filterPersons: null });
@@ -3793,7 +4156,8 @@ export default {
       );
       this.$shared.filters.filterIMDBPlotKeywords.splice(
         this.$shared.filters.filterIMDBPlotKeywords.findIndex(
-          (plotKeyword) => plotKeyword.id_Filter_IMDB_Plot_Keywords === filterIMDBPlotKeyword.id_Filter_IMDB_Plot_Keywords
+          (plotKeyword) =>
+            plotKeyword.id_Filter_IMDB_Plot_Keywords === filterIMDBPlotKeyword.id_Filter_IMDB_Plot_Keywords
         ),
         1
       );
@@ -3810,7 +4174,9 @@ export default {
       );
       this.$shared.filters.filterIMDBFilmingLocations.splice(
         this.$shared.filters.filterIMDBFilmingLocations.findIndex(
-          (filmingLocation) => filmingLocation.id_Filter_IMDB_Filming_Locations === filterIMDBFilmingLocation.id_Filter_IMDB_Filming_Locations
+          (filmingLocation) =>
+            filmingLocation.id_Filter_IMDB_Filming_Locations ===
+            filterIMDBFilmingLocation.id_Filter_IMDB_Filming_Locations
         ),
         1
       );
@@ -3826,7 +4192,9 @@ export default {
         })}`
       );
       this.$shared.filters.filterCompanies.splice(
-        this.$shared.filters.filterCompanies.findIndex((company) => company.id_Filter_Companies === filterCompany.id_Filter_Companies),
+        this.$shared.filters.filterCompanies.findIndex(
+          (company) => company.id_Filter_Companies === filterCompany.id_Filter_Companies
+        ),
         1
       );
       eventBus.refetchMedia({ filterCompanies: null });
@@ -4052,11 +4420,17 @@ export default {
     },
 
     onFilterDragEnd() {
-      logger.log("[onFilterDragEnd] this.editFilters.oldExpandedFilterGroups:", this.editFilters.oldExpandedFilterGroups);
+      logger.log(
+        "[onFilterDragEnd] this.editFilters.oldExpandedFilterGroups:",
+        this.editFilters.oldExpandedFilterGroups
+      );
     },
 
     async switchFilterSort(filterGroup) {
-      filterGroup.sort = filterGroup.sort === enmFilterSortModes.alphabetically ? enmFilterSortModes.numMovies : enmFilterSortModes.alphabetically;
+      filterGroup.sort =
+        filterGroup.sort === enmFilterSortModes.alphabetically
+          ? enmFilterSortModes.numMovies
+          : enmFilterSortModes.alphabetically;
 
       // HACK: trigger UI update
       const temp = this.$shared.filters[filterGroup.name];
@@ -4097,7 +4471,9 @@ export default {
       this.scanInfo.rescanETA.timeRemaining = Math.max(this.scanInfo.rescanETA.timeRemaining - 1, 0);
       this.scanInfo.header = this.scanInfo.headerOriginal.replace(
         "{remainingTimeDisplay}",
-        this.scanInfo.rescanETA && this.scanInfo.rescanETA.show && typeof this.scanInfo.rescanETA.timeRemaining === "number"
+        this.scanInfo.rescanETA &&
+          this.scanInfo.rescanETA.show &&
+          typeof this.scanInfo.rescanETA.timeRemaining === "number"
           ? `(${helpers.getTimeString(this.scanInfo.rescanETA.timeRemaining)})`
           : ""
       );
@@ -4155,7 +4531,9 @@ export default {
         headerOriginal: headerOriginal,
         header: headerOriginal.replace(
           "{remainingTimeDisplay}",
-          rescanETA && rescanETA.show && typeof rescanETA.timeRemaining === "number" ? `(${helpers.getTimeString(rescanETA.timeRemaining)})` : ""
+          rescanETA && rescanETA.show && typeof rescanETA.timeRemaining === "number"
+            ? `(${helpers.getTimeString(rescanETA.timeRemaining)})`
+            : ""
         ),
         details,
         show: true,

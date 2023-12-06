@@ -6,7 +6,9 @@
           {{ $t("IMDB Scraper Check") }}
           <v-spacer></v-spacer>
 
-          <v-btn text v-on:click="onRunChecksPressed" v-bind:loading="isRunning" v-if="!settings">{{ $t("Run Checks") }}</v-btn>
+          <v-btn text v-on:click="onRunChecksPressed" v-bind:loading="isRunning" v-if="!settings">{{
+            $t("Run Checks")
+          }}</v-btn>
           <v-btn text v-if="!settings" v-bind:disabled="isRunning" v-on:click="$emit('close')">{{ $t("Close") }}</v-btn>
         </v-row>
       </v-card-title>
@@ -40,10 +42,18 @@
         </v-row>
 
         <div v-if="!isRunning" style="margin-left: -14px">
-          <v-alert type="success" colored-border border="left" v-if="checkResult === 0">{{ $t("All checks successful!") }}</v-alert>
-          <v-alert type="warning" colored-border border="left" v-if="checkResult === 1">{{ $t("Checks with warning detected!") }}</v-alert>
-          <v-alert type="error" colored-border border="left" v-if="checkResult === 2">{{ $t("Checks with error detected!") }}</v-alert>
-          <v-alert type="error" colored-border border="left" v-if="checkResult === 3">{{ $t("Checks with exceptions detected!") }}</v-alert>
+          <v-alert type="success" colored-border border="left" v-if="checkResult === 0">{{
+            $t("All checks successful!")
+          }}</v-alert>
+          <v-alert type="warning" colored-border border="left" v-if="checkResult === 1">{{
+            $t("Checks with warning detected!")
+          }}</v-alert>
+          <v-alert type="error" colored-border border="left" v-if="checkResult === 2">{{
+            $t("Checks with error detected!")
+          }}</v-alert>
+          <v-alert type="error" colored-border border="left" v-if="checkResult === 3">{{
+            $t("Checks with exceptions detected!")
+          }}</v-alert>
         </div>
       </v-card-text>
 
@@ -94,7 +104,9 @@ export default {
 
       this.$shared.imdbScraperChecks.forEach((check) => {
         check.enabled = this.settings
-          ? this.settings.userScanOptions.find((userScanOption) => userScanOption.key === check.key && userScanOption.enabled)
+          ? this.settings.userScanOptions.find(
+              (userScanOption) => userScanOption.key === check.key && userScanOption.enabled
+            )
           : true;
         check.icon = null;
         check.color = null;

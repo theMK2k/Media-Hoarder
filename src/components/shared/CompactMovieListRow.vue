@@ -1,5 +1,8 @@
 <template>
-  <v-row class="mk-compact-movie-list-row mk-highlightable-row" style="padding-top: 4px; padding-bottom: 2px; margin-top: 2px">
+  <v-row
+    class="mk-compact-movie-list-row mk-highlightable-row"
+    style="padding-top: 4px; padding-bottom: 2px; margin-top: 2px"
+  >
     {{ movie.Name }}
     {{ movie.Name2 ? " | " + movie.Name2 : "" }}
     {{ movie.yearDisplay }}

@@ -1,5 +1,11 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onEscapePressed" v-on:keydown.enter="onEnterPressed">
+  <v-dialog
+    v-model="show"
+    persistent
+    max-width="1000px"
+    v-on:keydown.escape="onEscapePressed"
+    v-on:keydown.enter="onEnterPressed"
+  >
     <v-card>
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">
@@ -13,7 +19,9 @@
       </div>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onButtonClick('cancel')">{{ $t("Cancel") }}</v-btn>
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onButtonClick('cancel')">{{
+          $t("Cancel")
+        }}</v-btn>
         <v-btn class="xs-fullwidth" color="primary" v-on:click.native="onButtonClick('ok')">{{ $t("OK") }}</v-btn>
         <!-- v-bind:disabled="enterTextValue && !textValueEmptyAllowed && !textValueLocal" -->
         <!-- </v-row> -->

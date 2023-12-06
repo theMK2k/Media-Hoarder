@@ -35,12 +35,16 @@ function loadLocaleMessages() {
     extraLocalesFiles.forEach((extraLocalesFile) => {
       const rx = /^([A-Za-z0-9-_]+)\.json$/;
       if (!rx.test(extraLocalesFile)) {
-        logger.log(`[loadLocaleMessages] skipping locales file ${extraLocalesFile} as it doesn't match expected format`);
+        logger.log(
+          `[loadLocaleMessages] skipping locales file ${extraLocalesFile} as it doesn't match expected format`
+        );
       }
 
       const locale = extraLocalesFile.match(rx)[1];
 
-      logger.log(`[loadLocaleMessages] loadLocaleMessages using messages for ${locale} from ${extraLocalesFile} in i18n directory`);
+      logger.log(
+        `[loadLocaleMessages] loadLocaleMessages using messages for ${locale} from ${extraLocalesFile} in i18n directory`
+      );
 
       try {
         extraLocales[locale] = JSON.parse(fs.readFileSync(path.join(extraLocalesPath, extraLocalesFile)));

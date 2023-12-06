@@ -46,23 +46,39 @@
                   latestName: latestName,
                 })
               }}
-              <a href="https://media.hoarder.software/downloads" target="_blank" rel="noreferrer noopener nofollow">https://media.hoarder.software/downloads</a>
+              <a href="https://media.hoarder.software/downloads" target="_blank" rel="noreferrer noopener nofollow"
+                >https://media.hoarder.software/downloads</a
+              >
             </span>
             <span v-if="isUpToDate">{{ $t("you are up to date") }}</span>
-            <span v-if="!isNewVersionAvailable && !isUpToDate">{{ $t("unable to determine if you are up to date") }}</span>
+            <span v-if="!isNewVersionAvailable && !isUpToDate">{{
+              $t("unable to determine if you are up to date")
+            }}</span>
           </v-alert>
 
           <div class="mk-light-grey">
             {{ $t("Visit") }}
-            <a href="https://media.hoarder.software" target="_blank" rel="noreferrer noopener nofollow">https://media.hoarder.software</a>
+            <a href="https://media.hoarder.software" target="_blank" rel="noreferrer noopener nofollow"
+              >https://media.hoarder.software</a
+            >
             {{ $t("for a better features overview_") }}
           </div>
 
           <div v-if="history && history.length > 0" style="font-size: 16px; margin-top: 16px">
-            <span v-if="!showHistory" class="mk-clickable" v-on:click="showHistory = !showHistory" style="font-size: 1.17em">{{
-              $t("Show Version History")
-            }}</span>
-            <span v-if="showHistory" class="mk-clickable" v-on:click="showHistory = !showHistory" style="font-size: 1.17em">{{ $t("Version History") }}</span>
+            <span
+              v-if="!showHistory"
+              class="mk-clickable"
+              v-on:click="showHistory = !showHistory"
+              style="font-size: 1.17em"
+              >{{ $t("Show Version History") }}</span
+            >
+            <span
+              v-if="showHistory"
+              class="mk-clickable"
+              v-on:click="showHistory = !showHistory"
+              style="font-size: 1.17em"
+              >{{ $t("Version History") }}</span
+            >
             <span v-if="showHistory">
               <v-btn
                 v-if="showHistory"
@@ -75,7 +91,9 @@
               >
               v{{ history[infoPosition].version }} -
               {{ history[infoPosition].name }}
-              <v-btn text class="xs-fullwidth" v-bind:disabled="infoPosition === 0" v-on:click="infoPosition--">&gt;</v-btn>
+              <v-btn text class="xs-fullwidth" v-bind:disabled="infoPosition === 0" v-on:click="infoPosition--"
+                >&gt;</v-btn
+              >
             </span>
           </div>
 
@@ -168,7 +186,9 @@ export default {
         try {
           logger.log("[updateVersionInfo] fetchRemoteHistory");
 
-          const resRemoteVersionInfo = await fetch(`https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/public/history/${fileName}`);
+          const resRemoteVersionInfo = await fetch(
+            `https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/public/history/${fileName}`
+          );
 
           const remoteVersionInfo = await resRemoteVersionInfo.text();
 
@@ -203,7 +223,9 @@ export default {
         this.quote = objLocalHistory[0].quote;
         this.quoteSource = objLocalHistory[0].quoteSource;
 
-        const resRemoteHistory = await fetch("https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/public/history/history.json");
+        const resRemoteHistory = await fetch(
+          "https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/public/history/history.json"
+        );
 
         const remoteHistory = await resRemoteHistory.json();
 

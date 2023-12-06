@@ -141,6 +141,11 @@ function getMovieNameFromFileName(filename) {
   return filenameFiltered;
 }
 
+/**
+ *
+ * @param {*} directory
+ * @returns
+ */
 function getLastDirectoryName(directory) {
   const arrDirectory = directory.split(path.sep);
   return arrDirectory[arrDirectory.length - 1];
@@ -318,7 +323,8 @@ async function requestAsync(options) {
     optionsDerived.headers["Accept-Language"] = "en";
   }
 
-  optionsDerived.headers["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:106.0) Gecko/20100101 Firefox/106.0";
+  optionsDerived.headers["User-Agent"] =
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:106.0) Gecko/20100101 Firefox/106.0";
 
   optionsDerived.timeout = 10000; // we set a 10s timeout
 
@@ -328,7 +334,10 @@ async function requestAsync(options) {
     const filename = `${filenamifyExt(optionsDerived.url ? optionsDerived.url : optionsDerived.uri)}.html`;
     if (fs.existsSync(filename)) {
       return {
-        body: fs.readFileSync(`${filenamifyExt(optionsDerived.url ? optionsDerived.url : optionsDerived.uri)}.html`, "UTF8"),
+        body: fs.readFileSync(
+          `${filenamifyExt(optionsDerived.url ? optionsDerived.url : optionsDerived.uri)}.html`,
+          "UTF8"
+        ),
       };
     }
   }
@@ -475,7 +484,12 @@ function randomizeArray(arr) {
  * @param {string} name
  */
 function getSeriesEpisodeSeasonAndEpisodeNumbersFromName(name) {
-  const result = { $Series_Season: null, $Series_Episodes_First: null, $Series_Episodes_Complete: null, $Series_Bonus_Number: null };
+  const result = {
+    $Series_Season: null,
+    $Series_Episodes_First: null,
+    $Series_Episodes_Complete: null,
+    $Series_Bonus_Number: null,
+  };
 
   let hasMatched = false;
 
@@ -498,7 +512,9 @@ function getSeriesEpisodeSeasonAndEpisodeNumbersFromName(name) {
       result.$Series_Bonus_Number = +isolated.match(/b(\d+)/i)[1];
     } else {
       // a regular episode
-      result.$Series_Episodes_Complete = isolated.match(/ep?\d+/gi).map((item) => +item.toLowerCase().replace("ep", "").replace("e", ""));
+      result.$Series_Episodes_Complete = isolated
+        .match(/ep?\d+/gi)
+        .map((item) => +item.toLowerCase().replace("ep", "").replace("e", ""));
       result.$Series_Episodes_First = result.$Series_Episodes_Complete[0];
     }
   }

@@ -20,9 +20,23 @@
               </v-card-title>
 
               <v-card-text class="mk-light-grey">
-                <p v-if="item.fetchNumMovies && !item.isFetchingNumMovies">
+                <p v-if="item.id === 'movies' && item.fetchNumMovies && !item.isFetchingNumMovies">
                   {{ item.numMovies }}
                   {{ item.numMovies == 1 ? $t("entry") : $t("entries") }}
+                </p>
+                <p
+                  v-if="item.id === 'series' && item.fetchNumMovies && !item.isFetchingNumMovies"
+                  style="margin-bottom: 0px"
+                >
+                  {{ item.numSeries }}
+                  {{ item.numSeries == 1 ? $t("series_singular") : $t("series_plural") }}
+                </p>
+                <p
+                  v-if="item.id === 'series' && item.fetchNumMovies && !item.isFetchingNumMovies"
+                  style="margin-bottom: 0px"
+                >
+                  {{ item.numEpisodes }}
+                  {{ item.numEpisodes == 1 ? $t("episode") : $t("episodes") }}
                 </p>
               </v-card-text>
             </div>
@@ -56,15 +70,16 @@ export default {
         numMovies: null,
         isFetchingNumMovies: true,
       },
-      /* not yet implemented
       {
         icon: "mdi-television",
         text: "Series",
         id: "series",
         fetchNumMovies: true,
         numMovies: null,
+        numSeries: null,
+        numEpisodes: null,
+        isFetchingNumMovies: true,
       },
-      */
     ],
   }),
 
@@ -94,7 +109,14 @@ export default {
 
           if (item.fetchNumMovies) {
             item.isFetchingNumMovies = true;
-            item.numMovies = await store.fetchNumMovies(item.id);
+            if (item.id == "movies") {
+              item.numMovies = await store.fetchNumMovies(item.id);
+            }
+            if (item.id == "series") {
+              const { numSeries, numEpisodes } = await store.fetchNumSeriesAndEpisodes(item.id);
+              item.numSeries = numSeries;
+              item.numEpisodes = numEpisodes;
+            }
             item.isFetchingNumMovies = false;
           }
         }

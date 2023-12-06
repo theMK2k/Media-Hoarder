@@ -53,7 +53,12 @@ module.exports = function (options) {
   }
 
   function windowWithinBounds(bounds) {
-    return state.x >= bounds.x && state.y >= bounds.y && state.x + 100 <= bounds.x + bounds.width && state.y + 100 <= bounds.y + bounds.height;
+    return (
+      state.x >= bounds.x &&
+      state.y >= bounds.y &&
+      state.x + 100 <= bounds.x + bounds.width &&
+      state.y + 100 <= bounds.y + bounds.height
+    );
   }
 
   function ensureWindowVisibleOnSomeDisplay() {

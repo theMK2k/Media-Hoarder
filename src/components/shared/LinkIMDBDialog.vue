@@ -9,7 +9,9 @@
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
                 <span v-on="on">
-                  <v-btn v-if="showUnlink" text color="error" v-on:click.stop="onUnlinkClick()">{{ $t("UNLINK") }}</v-btn>
+                  <v-btn v-if="showUnlink" text color="error" v-on:click.stop="onUnlinkClick()">{{
+                    $t("UNLINK")
+                  }}</v-btn>
                 </span>
               </template>
               <span>{{ $t("Remove the link to the current IMDB entry for this medium_") }}</span>
@@ -62,8 +64,13 @@
         <div v-if="searchResults.length === 0">{{ $t("No results") }}</div>
         <div v-if="searchResults.length > 0">
           <!-- Top Pagination -->
-          <div v-if="Math.ceil(searchResults.length / searchResultsPerPage) > 1" style="margin-bottom: 24px; color: white">
-            <v-btn small v-bind:disabled="currentPage == 1" v-on:click="onPrevClicked" style="margin-right: 16px">&lt;</v-btn>
+          <div
+            v-if="Math.ceil(searchResults.length / searchResultsPerPage) > 1"
+            style="margin-bottom: 24px; color: white"
+          >
+            <v-btn small v-bind:disabled="currentPage == 1" v-on:click="onPrevClicked" style="margin-right: 16px"
+              >&lt;</v-btn
+            >
             {{ currentPage }} / {{ Math.ceil(searchResults.length / searchResultsPerPage) }}
             <v-btn
               small
@@ -94,17 +101,25 @@
                   <v-list-item-content class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
                     <v-col style="padding: 0px !important">
                       <v-row style="margin-bottom: 8px">
-                        <v-list-item-title style="margin-bottom: 4px !important; font-size: 16px; margin-left: 12px; margin-top: 8px"
+                        <v-list-item-title
+                          style="margin-bottom: 4px !important; font-size: 16px; margin-left: 12px; margin-top: 8px"
                           >{{ item.title }} <span v-if="item.year">({{ item.year }})</span></v-list-item-title
                         >
                       </v-row>
 
-                      <v-list-item-subtitle v-if="item.detailInfo" style="margin-top: -8px; margin-bottom: 4px">{{ item.detailInfo }}</v-list-item-subtitle>
+                      <v-list-item-subtitle v-if="item.detailInfo" style="margin-top: -8px; margin-bottom: 4px">{{
+                        item.detailInfo
+                      }}</v-list-item-subtitle>
 
                       <v-row style="margin-top: 8px">
-                        <v-btn v-show="item.itemHovered || isLinking" text color="primary" v-bind:loading="isLinking" v-on:click.stop="onSelectClick(item)">{{
-                          $t("Select for linking")
-                        }}</v-btn>
+                        <v-btn
+                          v-show="item.itemHovered || isLinking"
+                          text
+                          color="primary"
+                          v-bind:loading="isLinking"
+                          v-on:click.stop="onSelectClick(item)"
+                          >{{ $t("Select for linking") }}</v-btn
+                        >
                       </v-row>
                     </v-col>
                   </v-list-item-content>
@@ -114,8 +129,13 @@
           </v-row>
 
           <!-- Bottom Pagination -->
-          <div v-if="Math.ceil(searchResults.length / searchResultsPerPage) > 1" style="margin-top: 16px; margin-bottom: 24px; color: white">
-            <v-btn small v-bind:disabled="currentPage == 1" v-on:click="onPrevClicked" style="margin-right: 16px">&lt;</v-btn>
+          <div
+            v-if="Math.ceil(searchResults.length / searchResultsPerPage) > 1"
+            style="margin-top: 16px; margin-bottom: 24px; color: white"
+          >
+            <v-btn small v-bind:disabled="currentPage == 1" v-on:click="onPrevClicked" style="margin-right: 16px"
+              >&lt;</v-btn
+            >
             {{ currentPage }} / {{ Math.ceil(searchResults.length / searchResultsPerPage) }}
             <v-btn
               small
@@ -215,7 +235,10 @@ export default {
 
   computed: {
     searchResultsPaginated() {
-      return this.searchResults.slice((this.currentPage - 1) * this.searchResultsPerPage, this.currentPage * this.searchResultsPerPage);
+      return this.searchResults.slice(
+        (this.currentPage - 1) * this.searchResultsPerPage,
+        this.currentPage * this.searchResultsPerPage
+      );
     },
   },
 

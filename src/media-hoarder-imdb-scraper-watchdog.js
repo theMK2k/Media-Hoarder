@@ -52,39 +52,68 @@ const log = {
   logger.info("options:");
   logger.info("         --logLevel=<logLevel>                                log level, default: 2");
   logger.info("         --dumpScrapedHTML                                    dump scraped html to file");
-  logger.info("         --useDumps                                           do not actually scrape but use previously dumped files");
+  logger.info(
+    "         --useDumps                                           do not actually scrape but use previously dumped files"
+  );
   logger.info("         --smtpHost=<host address>                            smtp host address, default: null");
   logger.info("         --smtpPort=<port number>                             smtp port, default: null");
   logger.info("         --smtpUser=<username>                                smtp authentication user, default: null");
-  logger.info("         --smtpPass=<password>                                smtp authentication password, default: null");
-  logger.info("         --smtpReceiver=<receiver mail address>               mail address for receiver of error/warning mails, default: null");
-  logger.info("         --smtpSendLevel=<level when mail is to be sent>      SUCCESS: 0, WARNING: 1, ERROR: 2, default: 2");
-  logger.info('         --testmodule=<moduleName>                            a certain module to test, e.g. "testIMDBmainPageData"');
+  logger.info(
+    "         --smtpPass=<password>                                smtp authentication password, default: null"
+  );
+  logger.info(
+    "         --smtpReceiver=<receiver mail address>               mail address for receiver of error/warning mails, default: null"
+  );
+  logger.info(
+    "         --smtpSendLevel=<level when mail is to be sent>      SUCCESS: 0, WARNING: 1, ERROR: 2, default: 2"
+  );
+  logger.info(
+    '         --testmodule=<moduleName>                            a certain module to test, e.g. "testIMDBmainPageData"'
+  );
 
   logger.info("");
   logger.info("used config:", JSON.stringify(config, null, 2));
 
-  if (!config.testmodule || config.testmodule === "testIMDBmainPageData") addLogEntry(await imdbScraperTests.testIMDBmainPageData());
-  if (!config.testmodule || config.testmodule === "testIMDBmainPageData2") addLogEntry(await imdbScraperTests.testIMDBmainPageData2());
-  if (!config.testmodule || config.testmodule === "testIMDBmainPageData3") addLogEntry(await imdbScraperTests.testIMDBmainPageData3());
-  if (!config.testmodule || config.testmodule === "testIMDBmainPageData4") addLogEntry(await imdbScraperTests.testIMDBmainPageData4());
-  if (!config.testmodule || config.testmodule === "testIMDBplotSummary") addLogEntry(await imdbScraperTests.testIMDBplotSummary());
-  if (!config.testmodule || config.testmodule === "testIMDBreleaseinfo") addLogEntry(await imdbScraperTests.testIMDBreleaseinfo());
-  if (!config.testmodule || config.testmodule === "testIMDBtechnicalData") addLogEntry(await imdbScraperTests.testIMDBtechnicalData());
-  if (!config.testmodule || config.testmodule === "testIMDBtechnicalData2") addLogEntry(await imdbScraperTests.testIMDBtechnicalData2());
-  if (!config.testmodule || config.testmodule === "testIMDBtechnicalData3") addLogEntry(await imdbScraperTests.testIMDBtechnicalData3());
-  if (!config.testmodule || config.testmodule === "testIMDBParentalGuideData") addLogEntry(await imdbScraperTests.testIMDBParentalGuideData());
-  if (!config.testmodule || config.testmodule === "testIMDBFullCreditsData") addLogEntry(await imdbScraperTests.testIMDBFullCreditsData());
-  if (!config.testmodule || config.testmodule === "testIMDBCompaniesData") addLogEntry(await imdbScraperTests.testIMDBCompaniesData());
-  if (!config.testmodule || config.testmodule === "testIMDBPersonData") addLogEntry(await imdbScraperTests.testIMDBPersonData());
-  if (!config.testmodule || config.testmodule === "testIMDBTrailerMediaURLs") addLogEntry(await imdbScraperTests.testIMDBTrailerMediaURLs());
-  if (!config.testmodule || config.testmodule === "testIMDBplotKeywords") addLogEntry(await imdbScraperTests.testIMDBplotKeywords());
-  if (!config.testmodule || config.testmodule === "testIMDBFilmingLocations") addLogEntry(await imdbScraperTests.testIMDBFilmingLocations());
+  if (!config.testmodule || config.testmodule === "testIMDBmainPageData")
+    addLogEntry(await imdbScraperTests.testIMDBmainPageData());
+  if (!config.testmodule || config.testmodule === "testIMDBmainPageData2")
+    addLogEntry(await imdbScraperTests.testIMDBmainPageData2());
+  if (!config.testmodule || config.testmodule === "testIMDBmainPageData3")
+    addLogEntry(await imdbScraperTests.testIMDBmainPageData3());
+  if (!config.testmodule || config.testmodule === "testIMDBmainPageData4")
+    addLogEntry(await imdbScraperTests.testIMDBmainPageData4());
+  if (!config.testmodule || config.testmodule === "testIMDBplotSummary")
+    addLogEntry(await imdbScraperTests.testIMDBplotSummary());
+  if (!config.testmodule || config.testmodule === "testIMDBreleaseinfo")
+    addLogEntry(await imdbScraperTests.testIMDBreleaseinfo());
+  if (!config.testmodule || config.testmodule === "testIMDBtechnicalData")
+    addLogEntry(await imdbScraperTests.testIMDBtechnicalData());
+  if (!config.testmodule || config.testmodule === "testIMDBtechnicalData2")
+    addLogEntry(await imdbScraperTests.testIMDBtechnicalData2());
+  if (!config.testmodule || config.testmodule === "testIMDBtechnicalData3")
+    addLogEntry(await imdbScraperTests.testIMDBtechnicalData3());
+  if (!config.testmodule || config.testmodule === "testIMDBParentalGuideData")
+    addLogEntry(await imdbScraperTests.testIMDBParentalGuideData());
+  if (!config.testmodule || config.testmodule === "testIMDBFullCreditsData")
+    addLogEntry(await imdbScraperTests.testIMDBFullCreditsData());
+  if (!config.testmodule || config.testmodule === "testIMDBCompaniesData")
+    addLogEntry(await imdbScraperTests.testIMDBCompaniesData());
+  if (!config.testmodule || config.testmodule === "testIMDBPersonData")
+    addLogEntry(await imdbScraperTests.testIMDBPersonData());
+  if (!config.testmodule || config.testmodule === "testIMDBTrailerMediaURLs")
+    addLogEntry(await imdbScraperTests.testIMDBTrailerMediaURLs());
+  if (!config.testmodule || config.testmodule === "testIMDBplotKeywords")
+    addLogEntry(await imdbScraperTests.testIMDBplotKeywords());
+  if (!config.testmodule || config.testmodule === "testIMDBFilmingLocations")
+    addLogEntry(await imdbScraperTests.testIMDBFilmingLocations());
   // #rip-rating-demographics
   // if (!config.testmodule || config.testmodule === "testIMDBRatingDemographics") addLogEntry(await imdbScraperTests.testIMDBRatingDemographics());
-  if (!config.testmodule || config.testmodule === "testIMDBSuggestion") addLogEntry(await imdbScraperTests.testIMDBSuggestion());
-  if (!config.testmodule || config.testmodule === "testIMDBAdvancedTitleSearch") addLogEntry(await imdbScraperTests.testIMDBAdvancedTitleSearch());
-  if (!config.testmodule || config.testmodule === "testIMDBFindPageSearch") addLogEntry(await imdbScraperTests.testIMDBFindPageSearch());
+  if (!config.testmodule || config.testmodule === "testIMDBSuggestion")
+    addLogEntry(await imdbScraperTests.testIMDBSuggestion());
+  if (!config.testmodule || config.testmodule === "testIMDBAdvancedTitleSearch")
+    addLogEntry(await imdbScraperTests.testIMDBAdvancedTitleSearch());
+  if (!config.testmodule || config.testmodule === "testIMDBFindPageSearch")
+    addLogEntry(await imdbScraperTests.testIMDBFindPageSearch());
 
   await checkSendMail();
 })();

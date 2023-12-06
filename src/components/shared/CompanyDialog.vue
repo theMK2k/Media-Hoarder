@@ -3,7 +3,13 @@
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         {{ $t("Company") }}: {{ Company_Name }}
-        <v-progress-linear v-if="isScraping || isLoadingMovies" color="red accent-0" indeterminate rounded height="3"></v-progress-linear>
+        <v-progress-linear
+          v-if="isScraping || isLoadingMovies"
+          color="red accent-0"
+          indeterminate
+          rounded
+          height="3"
+        ></v-progress-linear>
       </v-card-title>
 
       <v-card-text>
@@ -24,9 +30,19 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCloseClick" style="margin-left: 8px">{{ $t("Close") }}</v-btn>
-        <v-btn class="xs-fullwidth" color="primary" v-on:click.stop="openIMDB()" style="margin-left: 8px"> <v-icon small>mdi-web</v-icon>&nbsp;IMDB </v-btn>
-        <v-btn v-if="numMovies !== null" class="xs-fullwidth" color="primary" v-on:click.native="onFilterClick" style="margin-left: 8px">
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCloseClick" style="margin-left: 8px">{{
+          $t("Close")
+        }}</v-btn>
+        <v-btn class="xs-fullwidth" color="primary" v-on:click.stop="openIMDB()" style="margin-left: 8px">
+          <v-icon small>mdi-web</v-icon>&nbsp;IMDB
+        </v-btn>
+        <v-btn
+          v-if="numMovies !== null"
+          class="xs-fullwidth"
+          color="primary"
+          v-on:click.native="onFilterClick"
+          style="margin-left: 8px"
+        >
           {{ $t("Filter by this company") }}
         </v-btn>
       </v-card-actions>

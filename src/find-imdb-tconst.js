@@ -11,7 +11,9 @@ const { scrapeIMDBFindPageSearchV3, scrapeIMDBtechnicalData } = require("./imdb-
  */
 export async function findIMDBtconstIncluded(movie) {
   logger.log("[findIMDBtconstIncluded] START");
-  const name = movie.isDirectoryBased ? helpers.getLastDirectoryName(movie.fullDirectory) : movie.Filename;
+  const name = movie.isDirectoryBased
+    ? helpers.getLastDirectoryName(movie.MediaType === "series" ? movie.fullPath : movie.fullDirectory)
+    : movie.Filename;
 
   logger.log("[findIMDBtconstIncluded] name:", name);
 
@@ -112,10 +114,17 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
   try {
     logger.log("[findIMDBtconstByFileOrDirname] movie.isDirectoryBased", movie.isDirectoryBased);
     const arrYears = movie.isDirectoryBased
-      ? helpers.getYearsFromFileName(helpers.getLastDirectoryName(movie.fullDirectory), false)
+      ? helpers.getYearsFromFileName(
+          helpers.getLastDirectoryName(movie.MediaType === "series" ? movie.fullPath : movie.fullDirectory),
+          false
+        )
       : helpers.getYearsFromFileName(movie.Filename, false);
 
-    const name = (movie.isDirectoryBased ? helpers.getMovieNameFromDirectory(movie.fullDirectory) : helpers.getMovieNameFromFileName(movie.Filename))
+    const name = (
+      movie.isDirectoryBased
+        ? helpers.getMovieNameFromDirectory(movie.MediaType === "series" ? movie.fullPath : movie.fullDirectory)
+        : helpers.getMovieNameFromFileName(movie.Filename)
+    )
       .replace(/\([^)]*?\)/g, "")
       .replace(/\[[^\]]*?\]/g, "")
       .trim();
@@ -241,9 +250,9 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
         }
       }
 
-      const coiceType = `${stats.immediateOptimum ? "|immediateOptimum" : ""}${stats.yearmatch ? `|year${stats.yearmatchexact ? "(exact)" : "(losely)"}` : ""}${
-        stats.excludedTVSeries ? "|excludedTVSeries" : ""
-      }${stats.runtimematch ? "|runtime" : ""}`;
+      const coiceType = `${stats.immediateOptimum ? "|immediateOptimum" : ""}${
+        stats.yearmatch ? `|year${stats.yearmatchexact ? "(exact)" : "(losely)"}` : ""
+      }${stats.excludedTVSeries ? "|excludedTVSeries" : ""}${stats.runtimematch ? "|runtime" : ""}`;
 
       stats.numResultsFiltered = results.length;
       stats.chosenName = searchTerm;

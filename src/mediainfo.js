@@ -109,7 +109,10 @@ async function analyzeMediaInfoData(miObj, id_Movies) {
     if (track.$.type === "Video") {
       const durationAnalysis = analyzeMediaInfoVideoDuration(track);
 
-      if (durationAnalysis.$MI_Duration_Seconds && (!MI.$MI_Duration_Seconds || MI.$MI_Duration_Seconds < durationAnalysis.$MI_Duration_Seconds)) {
+      if (
+        durationAnalysis.$MI_Duration_Seconds &&
+        (!MI.$MI_Duration_Seconds || MI.$MI_Duration_Seconds < durationAnalysis.$MI_Duration_Seconds)
+      ) {
         MI.$MI_Duration = durationAnalysis.$MI_Duration;
         MI.$MI_Duration_Seconds = durationAnalysis.$MI_Duration_Seconds;
         MI.$MI_Duration_Formatted = durationAnalysis.$MI_Duration_Formatted;

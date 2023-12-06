@@ -32,7 +32,9 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCloseClick" style="margin-left: 8px">{{ $t("Close") }}</v-btn>
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCloseClick" style="margin-left: 8px">{{
+          $t("Close")
+        }}</v-btn>
         <v-btn
           v-if="numMovies > 0"
           v-bind:disabled="!listTitle"
@@ -43,7 +45,12 @@
         >
           {{ $t("Create and filter by this list") }}
         </v-btn>
-        <v-text-field v-if="numMovies" v-bind:label="$t('List Title')" v-model="listTitle" style="margin-left: 16px"></v-text-field>
+        <v-text-field
+          v-if="numMovies"
+          v-bind:label="$t('List Title')"
+          v-model="listTitle"
+          style="margin-left: 16px"
+        ></v-text-field>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -139,7 +146,8 @@ export default {
       movieNamesAndYears.forEach((movieNameAndYear) => {
         if (
           this.movieNamesAndYears.find(
-            (movieNameAndYear2) => movieNameAndYear2.name === movieNameAndYear.name && movieNameAndYear2.year === movieNameAndYear.year
+            (movieNameAndYear2) =>
+              movieNameAndYear2.name === movieNameAndYear.name && movieNameAndYear2.year === movieNameAndYear.year
           )
         ) {
           return;
@@ -191,7 +199,12 @@ export default {
             { $name: movieNameAndYear.name }
           );
 
-          logger.log("[updateLists] movieNameAndYear.name:", movieNameAndYear.name, " imdb_tconst_candidates:", imdb_tconst_candidates);
+          logger.log(
+            "[updateLists] movieNameAndYear.name:",
+            movieNameAndYear.name,
+            " imdb_tconst_candidates:",
+            imdb_tconst_candidates
+          );
 
           if (imdb_tconst_candidates.length === 1) {
             logger.log("[updateLists] we found a single candidate!");
@@ -294,9 +307,14 @@ export default {
           updateFromBrowserwindowRunning = true;
 
           logger.log("[updateFromBrowserwindow] that.browserWindow:", that.browserWindow);
-          logger.log("[updateFromBrowserwindow] browserWindow closing, that.browserWindow.webContents:", that.browserWindow.webContents);
+          logger.log(
+            "[updateFromBrowserwindow] browserWindow closing, that.browserWindow.webContents:",
+            that.browserWindow.webContents
+          );
 
-          const content = await that.browserWindow.webContents.executeJavaScript("document.getElementsByTagName('body')[0].innerHTML");
+          const content = await that.browserWindow.webContents.executeJavaScript(
+            "document.getElementsByTagName('body')[0].innerHTML"
+          );
 
           logger.log("[onStartConversation] content:", content);
 

@@ -47,7 +47,8 @@ async function fetchRemoteVersionLinks() {
 
   result.version = html.match(rxVersion)[1];
 
-  const rxmediainfoCLIDownloadLink = /<a href="(.*?download\/binary\/mediainfo\/\d+\.\d+\/mediainfo_.*?_amd64\.Debian_10\.deb)"/;
+  const rxmediainfoCLIDownloadLink =
+    /<a href="(.*?download\/binary\/mediainfo\/\d+\.\d+\/mediainfo_.*?_amd64\.Debian_10\.deb)"/;
 
   if (!rxmediainfoCLIDownloadLink.test(html)) {
     throw new Error("Cannot determine MediaInfo CLI download link");
@@ -55,7 +56,8 @@ async function fetchRemoteVersionLinks() {
 
   result.mediainfoCLIDownloadLink = `${baseURL}${html.match(rxmediainfoCLIDownloadLink)[1].replace("//", "/")}`;
 
-  const rxlibmediainfoDownloadLink = /<a href="(.*?download\/binary\/libmediainfo0\/\d+\.\d+\/libmediainfo.*?_amd64\.Debian_10\.deb)"/;
+  const rxlibmediainfoDownloadLink =
+    /<a href="(.*?download\/binary\/libmediainfo0\/\d+\.\d+\/libmediainfo.*?_amd64\.Debian_10\.deb)"/;
 
   if (!rxlibmediainfoDownloadLink.test(html)) {
     throw new Error("Cannot determine libmediainfo download link");
@@ -131,13 +133,23 @@ async function checkAndDownloadMediaInfo() {
     logger.info("");
     logger.info("options:");
     logger.info("         --logLevel=<logLevel>                                log level, default: 2");
-    logger.info("         --dumpResults                                        dump media info analysis results to .json files");
+    logger.info(
+      "         --dumpResults                                        dump media info analysis results to .json files"
+    );
     logger.info("         --smtpHost=<host address>                            smtp host address, default: null");
     logger.info("         --smtpPort=<port number>                             smtp port, default: null");
-    logger.info("         --smtpUser=<username>                                smtp authentication user, default: null");
-    logger.info("         --smtpPass=<password>                                smtp authentication password, default: null");
-    logger.info("         --smtpReceiver=<receiver mail address>               mail address for receiver of error/warning mails, default: null");
-    logger.info("         --smtpSendLevel=<level when mail is to be sent>      SUCCESS: 0, WARNING: 1, ERROR: 2, default: 2");
+    logger.info(
+      "         --smtpUser=<username>                                smtp authentication user, default: null"
+    );
+    logger.info(
+      "         --smtpPass=<password>                                smtp authentication password, default: null"
+    );
+    logger.info(
+      "         --smtpReceiver=<receiver mail address>               mail address for receiver of error/warning mails, default: null"
+    );
+    logger.info(
+      "         --smtpSendLevel=<level when mail is to be sent>      SUCCESS: 0, WARNING: 1, ERROR: 2, default: 2"
+    );
 
     logger.info("");
 

@@ -23,7 +23,9 @@ logger.info("Syntax: find-imdb-tconst-tests [options]");
 logger.info("");
 logger.info("options:");
 logger.info("         --name=<name>        find IMDB tconst for a single name");
-logger.info("         --batch=<file.txt>   find IMDB tconst for multiple names defined in file.txt (also do a statistical analysis)");
+logger.info(
+  "         --batch=<file.txt>   find IMDB tconst for multiple names defined in file.txt (also do a statistical analysis)"
+);
 logger.info("         --duration=<seconds> provide a duration in seconds for the movie");
 
 logger.info(config);

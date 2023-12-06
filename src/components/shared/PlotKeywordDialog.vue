@@ -3,7 +3,13 @@
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         {{ $t("Plot Keyword") }}: {{ Keyword }}
-        <v-progress-linear v-if="isScraping || isLoadingMovies" color="red accent-0" indeterminate rounded height="3"></v-progress-linear>
+        <v-progress-linear
+          v-if="isScraping || isLoadingMovies"
+          color="red accent-0"
+          indeterminate
+          rounded
+          height="3"
+        ></v-progress-linear>
       </v-card-title>
 
       <v-card-text>
@@ -24,9 +30,14 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn v-if="numMovies !== null" class="xs-fullwidth" color="secondary" v-on:click.native="onCloseClick" style="margin-left: 8px">{{
-          $t("Close")
-        }}</v-btn>
+        <v-btn
+          v-if="numMovies !== null"
+          class="xs-fullwidth"
+          color="secondary"
+          v-on:click.native="onCloseClick"
+          style="margin-left: 8px"
+          >{{ $t("Close") }}</v-btn
+        >
         <v-btn class="xs-fullwidth" color="primary" v-on:click.native="onFilterClick" style="margin-left: 8px">
           {{ $t("Filter by this plot keyword") }}
         </v-btn>

@@ -6,10 +6,21 @@
           <v-list-item-content>
             <v-list-item-title>
               {{ value.TitleType }} ({{ $t("seen in {count} of 20M+", { count: value.Count }) }})
-              <v-btn v-show="showAdd && isHovered" v-on:click="onAddTitleTypeClicked" text small color="primary" style="height: 16px">{{
-                $t("Add this Title Type")
-              }}</v-btn>
-              <v-icon v-show="showRemove && isHovered" small class="mk-clickable-red" style="align-items: flex-start" v-on:click="onRemoveTitleTypeClicked"
+              <v-btn
+                v-show="showAdd && isHovered"
+                v-on:click="onAddTitleTypeClicked"
+                text
+                small
+                color="primary"
+                style="height: 16px"
+                >{{ $t("Add this Title Type") }}</v-btn
+              >
+              <v-icon
+                v-show="showRemove && isHovered"
+                small
+                class="mk-clickable-red"
+                style="align-items: flex-start"
+                v-on:click="onRemoveTitleTypeClicked"
                 >mdi-delete</v-icon
               >
             </v-list-item-title>

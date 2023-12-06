@@ -930,5 +930,9 @@
   "Add Movie to List": "Add Movie to List",
   "Close and Search Movie": "Close and Search Movie",
   "Exclude this genre": "Exclude this genre",
-  "Organize your source paths so that each subdirectory of them contains exactly one series_": "Organize your source paths so that each subdirectory of them contains exactly one series."
+  "Organize your source paths so that each subdirectory of them contains exactly one series_": "Organize your source paths so that each subdirectory of them contains exactly one series.",
+  "series_singular": "series",
+  "series_plural": "series",
+  "episode": "episode",
+  "episodes": "episodes"
 }

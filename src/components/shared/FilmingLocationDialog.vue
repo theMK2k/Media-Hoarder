@@ -5,7 +5,13 @@
         {{ $t("Filming Location") }}:
         {{ Location }}
       </v-card-title>
-      <v-progress-linear v-if="isScraping || isLoadingMovies" color="red accent-0" indeterminate rounded height="3"></v-progress-linear>
+      <v-progress-linear
+        v-if="isScraping || isLoadingMovies"
+        color="red accent-0"
+        indeterminate
+        rounded
+        height="3"
+      ></v-progress-linear>
 
       <v-card-text>
         <v-list-item three-line style="padding-left: 0px; align-items: flex-start">
@@ -25,8 +31,16 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCloseClick" style="margin-left: 8px">{{ $t("Close") }}</v-btn>
-        <v-btn v-if="numMovies" class="xs-fullwidth" color="primary" v-on:click.native="onFilterClick" style="margin-left: 8px">
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCloseClick" style="margin-left: 8px">{{
+          $t("Close")
+        }}</v-btn>
+        <v-btn
+          v-if="numMovies"
+          class="xs-fullwidth"
+          color="primary"
+          v-on:click.native="onFilterClick"
+          style="margin-left: 8px"
+        >
           {{ $t("Filter by this filming location") }}
         </v-btn>
       </v-card-actions>
@@ -125,7 +139,10 @@ export default {
         return;
       }
 
-      logger.log("[toggleShowMovies] this.$shared.filters.filterIMDBFilmingLocations:", this.$shared.filters.filterIMDBFilmingLocations);
+      logger.log(
+        "[toggleShowMovies] this.$shared.filters.filterIMDBFilmingLocations:",
+        this.$shared.filters.filterIMDBFilmingLocations
+      );
 
       if (!this.movies.length > 0) {
         this.isLoadingMovies = true;

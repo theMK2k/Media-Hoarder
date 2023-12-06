@@ -80,7 +80,12 @@ const deepDiffMapper = (function () {
       return !this.isObject(x) && !this.isArray(x);
     },
     isDiffValue: function (x) {
-      return this.isObject(x) && Object.keys(x).length === 2 && Object.keys(x).find((key) => key === "data") && Object.keys(x).find((key) => key === "type");
+      return (
+        this.isObject(x) &&
+        Object.keys(x).length === 2 &&
+        Object.keys(x).find((key) => key === "data") &&
+        Object.keys(x).find((key) => key === "type")
+      );
     },
     isEmptyObject: function (x) {
       return JSON.stringify(x) === JSON.stringify({});

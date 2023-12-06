@@ -54,8 +54,16 @@
         <!-- style="width: 100%; min-height: 600px !important; background-color: black; border-color: black; outline-color: black" -->
         <source v-bind:src="videoURL" v-bind:type="mimeType" />
       </video>
-      <div v-bind:style="controlsStyle" v-on:mouseover="controlsHovered = true" v-on:mouseleave="controlsHovered = false">
-        <v-list-item-content v-if="trailerShow" class="align-self-start" style="padding-top: 6px; padding-bottom: 6px; padding-left: 8px">
+      <div
+        v-bind:style="controlsStyle"
+        v-on:mouseover="controlsHovered = true"
+        v-on:mouseleave="controlsHovered = false"
+      >
+        <v-list-item-content
+          v-if="trailerShow"
+          class="align-self-start"
+          style="padding-top: 6px; padding-bottom: 6px; padding-left: 8px"
+        >
           <v-row class="mk-compact-movie-list-title"> {{ $t("Trailer Show") }}: </v-row>
           <div>
             <mk-compact-movie-list-row v-bind:movie="trailerShow.current" />
@@ -63,7 +71,14 @@
         </v-list-item-content>
 
         <v-row style="max-width: 100%; margin-top: 8px; padding-left: 8px">
-          <v-btn class="xs-fullwidth" outlined color="white" v-on:click.native="$emit('close')" style="margin-left: 8px">{{ $t("Close") }}</v-btn>
+          <v-btn
+            class="xs-fullwidth"
+            outlined
+            color="white"
+            v-on:click.native="$emit('close')"
+            style="margin-left: 8px"
+            >{{ $t("Close") }}</v-btn
+          >
           <v-spacer></v-spacer>
           <div v-if="trailerShow" style="padding-right: 8px">
             <v-pagination v-if="false"></v-pagination>
@@ -74,7 +89,12 @@
               v-bind:class="prevClass"
               v-bind:disabled="trailerShow.history.length == 0"
               v-on:click="$emit('trailer-show-previous')"
-              style="height: 38px !important; width: 38px !important; margin: 0px 8px 0px 0px !important; display: inline-block"
+              style="
+                height: 38px !important;
+                width: 38px !important;
+                margin: 0px 8px 0px 0px !important;
+                display: inline-block;
+              "
             >
               <i aria-hidden="true" class="v-icon notranslate mdi mdi-chevron-left theme--dark"></i>
             </button>
@@ -87,16 +107,31 @@
               v-bind:class="nextClass"
               v-bind:disabled="trailerShow.remaining.length == 0"
               v-on:click="$emit('trailer-show-next')"
-              style="height: 38px !important; width: 38px !important; margin: 0px 0px 0px 8px !important; display: inline-block"
+              style="
+                height: 38px !important;
+                width: 38px !important;
+                margin: 0px 0px 0px 8px !important;
+                display: inline-block;
+              "
             >
               <i aria-hidden="true" class="v-icon notranslate mdi mdi-chevron-right theme--dark"></i>
             </button>
-            <v-btn class="xs-fullwidth" outlined color="primary" v-on:click.native="$emit('trailer-show-add-movie-to-list')" style="margin-left: 8px">{{
-              $t("Add Movie to List")
-            }}</v-btn>
-            <v-btn class="xs-fullwidth" outlined color="primary" v-on:click.native="$emit('trailer-show-close-and-search-movie')" style="margin-left: 8px">{{
-              $t("Close and Search Movie")
-            }}</v-btn>
+            <v-btn
+              class="xs-fullwidth"
+              outlined
+              color="primary"
+              v-on:click.native="$emit('trailer-show-add-movie-to-list')"
+              style="margin-left: 8px"
+              >{{ $t("Add Movie to List") }}</v-btn
+            >
+            <v-btn
+              class="xs-fullwidth"
+              outlined
+              color="primary"
+              v-on:click.native="$emit('trailer-show-close-and-search-movie')"
+              style="margin-left: 8px"
+              >{{ $t("Close and Search Movie") }}</v-btn
+            >
           </div>
         </v-row>
       </div>
