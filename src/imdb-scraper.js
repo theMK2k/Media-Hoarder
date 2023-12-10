@@ -54,6 +54,14 @@ const graphQLqueries = {
    * API called when using https://www.imdb.com/find/
    */
   findPageSearch: (searchTerm) => graphqlURLs.findPageSearch.replace("$searchTerm", encodeURIComponent(searchTerm)),
+
+  /**
+   *
+   */
+  seriesEpisodes: (Series_IMDB_tconst, Series_Season) =>
+    graphqlURLs.seriesEpisodes
+      .replace("$Series_IMDB_tconst", Series_IMDB_tconst)
+      .replace("$Series_Season", Series_Season),
 };
 
 /**
@@ -2347,6 +2355,56 @@ async function scrapeIMDBRatingDemographics(movie) {
   }
 }
 
+/**
+ * GraphQL based series episodes
+ * @param {*} title
+ * @param {*} titleTypes
+ * @returns
+ */
+async function scrapeIMDBSeriesEpisodes(Series_IMDB_tconst, Series_Season) {
+  logger.log("[scrapeIMDBSeriesEpisodes] START", { Series_IMDB_tconst, Series_Season });
+
+  try {
+    const uri = graphQLqueries.seriesEpisodes(Series_IMDB_tconst, Series_Season);
+
+    logger.log("[scrapeIMDBSeriesEpisodes] uri:", uri);
+
+    const gqlEpisodes = JSON.parse(
+      (await helpers.requestAsync({ uri, headers: { "content-type": "application/json" } })).body
+    );
+
+    // logger.log("[scrapeIMDBSeriesEpisodes] gqlEpisodes:", JSON.stringify(gqlEpisodes, null, 2));
+
+    const results = _.get(gqlEpisodes, "data.title.episodes.episodes.edges", []).map((edge) => {
+      return {
+        tconst: _.get(edge, "node.id"),
+        title: _.get(edge, "node.titleText.text"),
+        releaseDateYear: _.get(edge, "node.releaseDate.year"),
+        releaseDateMonth: _.get(edge, "node.releaseDate.month"),
+        releaseDateDay: _.get(edge, "node.releaseDate.day"),
+        rating: parseFloat(_.get(edge, "node.ratingsSummary.aggregateRating")) || null,
+        numVotes: parseFloat(_.get(edge, "node.ratingsSummary.voteCount")) || null,
+        episode:
+          parseInt(
+            _.get(edge, "node.series.displayableEpisodeNumber.episodeNumber.displayableProperty.value.plainText")
+          ) || null,
+        season:
+          parseInt(
+            _.get(edge, "node.series.displayableEpisodeNumber.displayableSeason.displayableProperty.value.plainText")
+          ) || null,
+        imageURL: _.get(edge, "node.primaryImage.url"),
+      };
+    });
+
+    logger.log("[scrapeIMDBSeriesEpisodes] results[0]:", results[0]);
+
+    return results;
+  } catch (error) {
+    logger.error("[scrapeIMDBSeriesEpisodes] ERROR:", error);
+    return [];
+  }
+}
+
 const deprecated = {
   scrapeIMDBplotKeywords,
   scrapeIMDBFilmingLocations,
@@ -2373,4 +2431,5 @@ export {
   scrapeIMDBTrailerMediaURLs,
   scrapeIMDBplotKeywordsV3,
   scrapeIMDBFilmingLocationsV3,
+  scrapeIMDBSeriesEpisodes,
 };

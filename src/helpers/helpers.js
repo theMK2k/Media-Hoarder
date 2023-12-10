@@ -5,6 +5,7 @@ const requestretry = require("requestretry");
 const os = require("os");
 const filenamify = require("filenamify");
 const hash = require("string-hash-64");
+const _ = require("lodash");
 
 const logger = require("./logger");
 
@@ -345,7 +346,7 @@ async function requestAsync(options) {
   // return requestretryAsync(optionsDerived);
   const response = await requestretryAsync(optionsDerived);
 
-  logger.log("[requestAsync] response:", response);
+  logger.log("[requestAsync] response.body.length:", _.get(response, "body.length", 0));
 
   if (requestAsyncDumpToFile) {
     const filename = `${filenamifyExt(optionsDerived.url ? optionsDerived.url : optionsDerived.uri)}.html`;
@@ -547,6 +548,23 @@ function getSeriesEpisodeSeasonAndEpisodeNumbersFromName(name) {
   return result;
 }
 
+/**
+ * Get 'movies', 'series' or 'episode' according to mediaItem's data
+ * @param {*} mediaItem
+ */
+function getSpecificMediaType(mediaItem) {
+  let result = "movies";
+  if (mediaItem.MediaType === "series") {
+    if (mediaItem.Series_id_Movies_Owner) {
+      return "episodes";
+    } else {
+      return "series";
+    }
+  }
+
+  return uppercaseEachWord(result);
+}
+
 export {
   isWindows,
   isPORTABLE,
@@ -581,4 +599,5 @@ export {
   filenamifyExt,
   randomizeArray,
   getSeriesEpisodeSeasonAndEpisodeNumbersFromName,
+  getSpecificMediaType,
 };

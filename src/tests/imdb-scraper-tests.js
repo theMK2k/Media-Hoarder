@@ -1426,6 +1426,160 @@ async function testIMDBFindPageSearch() {
   return testResult;
 }
 
+/**
+ *
+ * @param {number} value
+ * @param {number} expected
+ * @param {number} epsilon A percentage between 0 and 100
+ * @returns
+ */
+function epsilonCheck(value, expected, epsilon) {
+  return value >= expected - (expected * epsilon) / 100 && value <= expected + (expected * epsilon) / 100;
+}
+
+async function testIMDBSeriesEpisodes() {
+  const testResult = {
+    name: "IMDB Series Episodes",
+    functionName: "textIMDBSeriesEpisodes",
+    status: status.SUCCESS,
+    log: [],
+  };
+
+  try {
+    const expected = [
+      {
+        name: "Bluey",
+        Series_IMDB_tconst: "tt7678620",
+        Series_Season: 2,
+        numResults: 52,
+        result0: {
+          tconst: "tt12539144",
+          title: "Dance Mode",
+          releaseDateYear: 2020,
+          releaseDateMonth: 3,
+          releaseDateDay: 17,
+          rating: 9.1,
+          numVotes: 442,
+          episode: "1",
+          season: "2",
+          imageURL:
+            "https://m.media-amazon.com/images/M/MV5BNTA2Mzc2ZWUtM2Y1MS00NmI2LThmNWEtYTVhZTY5YTc2YWNhXkEyXkFqcGdeQXVyNTE1NjY5Mg@@._V1_.jpg",
+        },
+      },
+    ];
+
+    for (let i = 0; i < expected.length; i++) {
+      const expectedValue = expected[i];
+
+      const scrapeResult = await imdbScraper.scrapeIMDBSeriesEpisodes(
+        expectedValue.Series_IMDB_tconst,
+        expectedValue.Series_Season
+      );
+
+      console.log(scrapeResult);
+
+      if (!scrapeResult) {
+        addSubLogEntry(
+          testResult,
+          `query '${expectedValue.name} Season ${expectedValue.Series_Season}' no response`,
+          status.ERROR
+        );
+        return testResult;
+      }
+
+      if (scrapeResult.length === 0) {
+        addSubLogEntry(
+          testResult,
+          `query '${expectedValue.name} Season ${expectedValue.Series_Season}' results missing`,
+          status.ERROR
+        );
+        return testResult;
+      }
+
+      if (scrapeResult.length !== expectedValue.numResults) {
+        addSubLogEntry(
+          testResult,
+          `query '${expectedValue.name} Season ${expectedValue.Series_Season}' results count mismatch
+                      got:      ${scrapeResult.length} episodes
+                      expected: ${expectedValue.numResults} episodes`,
+          status.WARNING
+        );
+      }
+
+      performDefaultCheck(
+        scrapeResult[0],
+        expectedValue.result0,
+        testResult,
+        "tconst",
+        `query '${expectedValue.name} Season ${expectedValue.Series_Season}'`
+      );
+      performDefaultCheck(
+        scrapeResult[0],
+        expectedValue.result0,
+        testResult,
+        "title",
+        `query '${expectedValue.name} Season ${expectedValue.Series_Season}'`
+      );
+      performDefaultCheck(
+        scrapeResult[0],
+        expectedValue.result0,
+        testResult,
+        "imageURL",
+        `query '${expectedValue.name} Season ${expectedValue.Series_Season}'`
+      );
+      performDefaultCheck(
+        scrapeResult[0],
+        expectedValue.result0,
+        testResult,
+        "releaseDateYear",
+        `query '${expectedValue.name} Season ${expectedValue.Series_Season}'`
+      );
+      performDefaultCheck(
+        scrapeResult[0],
+        expectedValue.result0,
+        testResult,
+        "releaseDateMonth",
+        `query '${expectedValue.name} Season ${expectedValue.Series_Season}'`
+      );
+      performDefaultCheck(
+        scrapeResult[0],
+        expectedValue.result0,
+        testResult,
+        "releaseDateDay",
+        `query '${expectedValue.name} Season ${expectedValue.Series_Season}'`
+      );
+      if (!scrapeResult[0].rating) {
+        addSubLogEntry(testResult, "rating missing", status.ERROR);
+      } else if (!epsilonCheck(scrapeResult[0].rating, expectedValue.result0.rating, 10)) {
+        addSubLogEntry(
+          testResult,
+          `rating unexpected value
+      got:      "${scrapeResult[0].rating}"
+      expected: ${expectedValue.result0.rating} +/- 10%`,
+          status.WARNING
+        );
+      }
+
+      if (!scrapeResult[0].numVotes) {
+        addSubLogEntry(testResult, "numVotes missing", status.ERROR);
+      } else if (!epsilonCheck(scrapeResult[0].numVotes, expectedValue.result0.numVotes, 10)) {
+        addSubLogEntry(
+          testResult,
+          `numVotes unexpected value
+      got:      "${scrapeResult.$IMDB_numVotes}"
+      expected: ${expectedValue.result0.numVotes} +/- 10%`,
+          status.WARNING
+        );
+      }
+    }
+  } catch (error) {
+    testResult.status = status.EXCEPTION;
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+  }
+
+  return testResult;
+}
+
 export {
   testIMDBmainPageData,
   testIMDBmainPageData2,
@@ -1447,5 +1601,6 @@ export {
   testIMDBSuggestion,
   testIMDBAdvancedTitleSearch,
   testIMDBFindPageSearch,
+  testIMDBSeriesEpisodes,
   status,
 };

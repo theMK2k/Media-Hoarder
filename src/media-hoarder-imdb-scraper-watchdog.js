@@ -114,6 +114,8 @@ const log = {
     addLogEntry(await imdbScraperTests.testIMDBAdvancedTitleSearch());
   if (!config.testmodule || config.testmodule === "testIMDBFindPageSearch")
     addLogEntry(await imdbScraperTests.testIMDBFindPageSearch());
+  if (!config.testmodule || config.testmodule === "testIMDBSeriesEpisodes")
+    addLogEntry(await imdbScraperTests.testIMDBSeriesEpisodes());
 
   await checkSendMail();
 })();
