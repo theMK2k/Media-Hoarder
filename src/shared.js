@@ -339,7 +339,7 @@ const shared = new Vue({
 
       // rescanMoviesMetaData_id_SourcePaths_IN: '(5, 10)',								// only rescan metadata in certain SourcePaths
       // rescanMoviesMetaData_id_Movies: 23,																	// only rescan a certain movie
-      // rescanMoviesMetaData_maxEntries: 3, // KILLME
+      // rescanMoviesMetaData_maxEntries: 3,
 
       rescanMoviesMetaData_applyMediaInfo: true,
       rescanMoviesMetaData_findIMDBtconst: true,
