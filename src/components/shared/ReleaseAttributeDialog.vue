@@ -140,16 +140,22 @@ export default {
       if (!this.movies.length > 0) {
         this.isLoadingMovies = true;
         const movies = (
-          await store.fetchMedia("movies", null, true, this.$t, {
-            filterSettings: {},
-            filterReleaseAttributes: [
-              { isAny: true, Selected: false },
-              {
-                isAny: false,
-                Selected: true,
-                ReleaseAttribute: this.ReleaseAttribute,
-              },
-            ],
+          await store.fetchMedia({
+            $MediaType: "movies",
+            arr_id_Movies: null,
+            minimumResultSet: true,
+            $t: this.$t,
+            filters: {
+              filterSettings: {},
+              filterReleaseAttributes: [
+                { isAny: true, Selected: false },
+                {
+                  isAny: false,
+                  Selected: true,
+                  ReleaseAttribute: this.ReleaseAttribute,
+                },
+              ],
+            },
           })
         ).sort((a, b) => {
           if (a.startYear > b.startYear) {

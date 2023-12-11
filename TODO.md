@@ -5,6 +5,8 @@
 ## NEXT Major (v1.4.0)
 
 - i18n: rescan finished snackbar
+- refactor buildINSERTQuery, buildUDPATEQuery to accept only one object
+- [x] refactor store.fetchMedia to only accept a single object containing the options
 
 ### TV Series Support
 

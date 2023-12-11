@@ -274,19 +274,25 @@ export default {
       if (!this.movies.length > 0) {
         this.isLoadingMovies = true;
         const movies = (
-          await store.fetchMedia("movies", null, true, this.$t, {
-            filterSettings: {},
-            filterPersons: [
-              {
-                id_Filter_Persons: 0,
-                Selected: false,
-              },
-              {
-                id_Filter_Persons: 666,
-                Selected: true,
-                IMDB_Person_ID: this.IMDB_Person_ID,
-              },
-            ],
+          await store.fetchMedia({
+            $MediaType: "movies",
+            arr_id_Movies: null,
+            minimumResultSet: true,
+            $t: this.$t,
+            filters: {
+              filterSettings: {},
+              filterPersons: [
+                {
+                  id_Filter_Persons: 0,
+                  Selected: false,
+                },
+                {
+                  id_Filter_Persons: 666,
+                  Selected: true,
+                  IMDB_Person_ID: this.IMDB_Person_ID,
+                },
+              ],
+            },
           })
         ).sort((a, b) => {
           if (a.startYear > b.startYear) {

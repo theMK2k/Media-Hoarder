@@ -2017,16 +2017,16 @@ export default {
           this.series.isLoading = true;
 
           this.series.item = (
-            await store.fetchMedia(
-              "series",
-              [Series_id_Movies_Owner],
-              false,
-              this.$local_t,
-              { filterSettings: {} },
-              null,
-              null,
-              "onlySeries"
-            )
+            await store.fetchMedia({
+              $MediaType: "series",
+              arr_id_Movies: [Series_id_Movies_Owner],
+              minimumResultSet: false,
+              $t: this.$local_t,
+              filters: { filterSettings: {} },
+              arr_IMDB_tconst: null,
+              Series_id_Movies_Owner: null,
+              seriesFetchType: "onlySeries",
+            })
           )[0];
 
           logger.log("[fetchSeriesOwner] fetched series item:", this.series.item);
@@ -2088,7 +2088,7 @@ export default {
     },
 
     async launch(mediaItem) {
-      if (mediaItem.MediaType === "series" && !mediaItem.Series_id_Movies_Owner) {
+      if (mediaItem.specificMediaType == "Series") {
         this.$router.push(`/medialist/series/${mediaItem.id_Movies}`);
         return;
       }
@@ -3083,26 +3083,26 @@ export default {
         logger.group("[Fetch Media Details]");
 
         const result = !this.Series_id_Movies_Owner
-          ? await store.fetchMedia(
-              this.mediatype,
-              arr_id_Movies,
-              false,
-              this.$local_t,
-              this.$shared.filters,
-              null,
-              null,
-              "onlySeries"
-            )
-          : await store.fetchMedia(
-              this.mediatype,
-              arr_id_Movies,
-              true,
-              this.$local_t,
-              { filterSettings: {} },
-              null,
-              this.Series_id_Movies_Owner,
-              "onlyEpisodes"
-            );
+          ? await store.fetchMedia({
+              $MediaType: this.mediatype,
+              arr_id_Movies: arr_id_Movies,
+              minimumResultSet: false,
+              $t: this.$local_t,
+              filters: this.$shared.filters,
+              arr_IMDB_tconst: null,
+              Series_id_Movies_Owner: null,
+              seriesFetchType: "onlySeries",
+            })
+          : await store.fetchMedia({
+              $MediaType: this.mediatype,
+              arr_id_Movies: arr_id_Movies,
+              minimumResultSet: true,
+              $t: this.$local_t,
+              filters: { filterSettings: {} },
+              arr_IMDB_tconst: null,
+              Series_id_Movies_Owner: this.Series_id_Movies_Owner,
+              seriesFetchType: "onlyEpisodes",
+            });
 
         logger.log("[completelyFetchMedia] result:", result);
 
@@ -3332,17 +3332,26 @@ export default {
 
         this.items = [];
         this.items = !this.Series_id_Movies_Owner
-          ? await store.fetchMedia(this.mediatype, null, true, $t, this.$shared.filters, null, null, "onlySeries")
-          : await store.fetchMedia(
-              this.mediatype,
-              null,
-              true,
-              $t,
-              { filterSettings: {} },
-              null,
-              this.Series_id_Movies_Owner,
-              "onlyEpisodes"
-            );
+          ? await store.fetchMedia({
+              $MediaType: this.mediatype,
+              arr_id_Movies: null,
+              minimumResultSet: true,
+              $t: $t,
+              filters: this.$shared.filters,
+              arr_IMDB_tconst: null,
+              Series_id_Movies_Owner: null,
+              seriesFetchType: "onlySeries",
+            })
+          : await store.fetchMedia({
+              $MediaType: this.mediatype,
+              arr_id_Movies: null,
+              minimumResultSet: true,
+              $t: $t,
+              filters: { filterSettings: {} },
+              arr_IMDB_tconst: null,
+              Series_id_Movies_Owner: this.Series_id_Movies_Owner,
+              seriesFetchType: "onlyEpisodes",
+            });
 
         this.$shared.currentPage = setPage && setPage <= this.numPages ? setPage : 1;
         store.saveCurrentPage(this.mediatype);

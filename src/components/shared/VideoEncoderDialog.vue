@@ -132,15 +132,21 @@ export default {
       if (!this.movies.length > 0) {
         this.isLoadingMovies = true;
         const movies = (
-          await store.fetchMedia("movies", null, true, this.$t, {
-            filterSettings: {},
-            filterVideoEncoders: [
-              { Name: "<not available>", Selected: false },
-              {
-                Name: this.Video_Encoder,
-                Selected: true,
-              },
-            ],
+          await store.fetchMedia({
+            $MediaType: "movies",
+            arr_id_Movies: null,
+            minimumResultSet: true,
+            $t: this.$t,
+            filters: {
+              filterSettings: {},
+              filterVideoEncoders: [
+                { Name: "<not available>", Selected: false },
+                {
+                  Name: this.Video_Encoder,
+                  Selected: true,
+                },
+              ],
+            },
           })
         ).sort((a, b) => {
           if (a.startYear > b.startYear) {

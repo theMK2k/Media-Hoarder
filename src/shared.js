@@ -339,7 +339,7 @@ const shared = new Vue({
 
       // rescanMoviesMetaData_id_SourcePaths_IN: '(5, 10)',								// only rescan metadata in certain SourcePaths
       // rescanMoviesMetaData_id_Movies: 23,																	// only rescan a certain movie
-      // rescanMoviesMetaData_maxEntries: 10,
+      // rescanMoviesMetaData_maxEntries: 3, // KILLME
 
       rescanMoviesMetaData_applyMediaInfo: true,
       rescanMoviesMetaData_findIMDBtconst: true,
@@ -423,6 +423,11 @@ const shared = new Vue({
         key: "rescanMoviesMetaData_fetchIMDBMetaData_filmingLocations",
         enabled: true,
         description: "Filming Locations",
+      },
+      {
+        key: "rescanMoviesMetaData_fetchIMDBMetaData_seriesEpisodes",
+        enabled: true,
+        description: "Series Episodes",
       },
     ],
 
@@ -533,6 +538,16 @@ const shared = new Vue({
         description: "Filming Locations",
         enabled: true,
         checkFunctions: [imdbScraperTests.testIMDBFilmingLocations],
+        icon: null,
+        color: null,
+        isRunning: false,
+        result: null,
+      },
+      {
+        key: "rescanMoviesMetaData_fetchIMDBMetaData_seriesEpisodes",
+        description: "Series Episodes",
+        enabled: true,
+        checkFunctions: [imdbScraperTests.testIMDBSeriesEpisodes],
         icon: null,
         color: null,
         isRunning: false,

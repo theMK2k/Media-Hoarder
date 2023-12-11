@@ -841,6 +841,7 @@
   "scan already in progress": "Recherche déjà en cours",
   "Rescanning Movies": "Nouvelle recherche (films)",
   "Rescanning Series": "Nouvelle recherche (séries)",
+  "Rescanning Episodes": "Nouvelle recherche (épisodes)",
   "Rescan started": "Nouvelle recherche démarrée",
   "{appName} needs the path to a media player of your choice for media playback_ We recommend the VLC media player, you can get it at:": "{appName} a besoin d'un chemin vers le lecteur média de votre choix. Nous recommandons VLC Media Player, que vous pouvez obtenir sur:",
   "{appName} needs the path to Mediainfo CLI in order to determine duration, video resolution and languages of your media_ You can get Mediainfo CLI at:": "{appName} a besoin du chemin vers Mediainfo CLI afin de déterminer la durée, la résolution video ainsi que la langue de votre média . Vous pouvez télécharger Mediainfo CLI ici:",
@@ -979,5 +980,6 @@
   "series_singular": "série",
   "series_plural": "séries",
   "episode": "épisode",
-  "episodes": "épisodes"
+  "episodes": "épisodes",
+  "Series Episodes": "Épisodes de Séries"
 }

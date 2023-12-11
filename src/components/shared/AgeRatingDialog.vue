@@ -186,21 +186,27 @@ export default {
       if (!this.movies.length > 0) {
         this.isLoadingMovies = true;
         const movies = (
-          await store.fetchMedia("movies", null, true, this.$t, {
-            filterSettings: {},
-            filterAgeRatings: [
-              { Age: -1, Selected: false },
-              ...this.$shared.filters.filterAgeRatings
-                .filter((item) => {
-                  return item.Age >= this.getMinAge(this.Age_Rating) && item.Age <= this.getMaxAge(this.Age_Rating);
-                })
-                .map((item) => {
-                  return {
-                    Age: item.Age,
-                    Selected: true,
-                  };
-                }),
-            ],
+          await store.fetchMedia({
+            $MediaType: "movies",
+            arr_id_Movies: null,
+            minimumResultSet: true,
+            $t: this.$t,
+            filters: {
+              filterSettings: {},
+              filterAgeRatings: [
+                { Age: -1, Selected: false },
+                ...this.$shared.filters.filterAgeRatings
+                  .filter((item) => {
+                    return item.Age >= this.getMinAge(this.Age_Rating) && item.Age <= this.getMaxAge(this.Age_Rating);
+                  })
+                  .map((item) => {
+                    return {
+                      Age: item.Age,
+                      Selected: true,
+                    };
+                  }),
+              ],
+            },
           })
         ).sort((a, b) => {
           if (a.startYear > b.startYear) {

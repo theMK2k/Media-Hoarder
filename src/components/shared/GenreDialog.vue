@@ -137,23 +137,29 @@ export default {
       if (!this.movies.length > 0) {
         this.isLoadingMovies = true;
         const movies = (
-          await store.fetchMedia("movies", null, true, this.$t, {
-            filterSettings: {},
-            filterGenres: [
-              { GenreID: "none", Name: "None", Selected: false, id_Genres: -1 },
-              ...this.$shared.filters.filterGenres
-                .filter((item) => {
-                  return item.Name === this.Genre.translated;
-                })
-                .map((item) => {
-                  return {
-                    GenreID: item.GenreID,
-                    Name: item.Name,
-                    Selected: true,
-                    id_Genres: item.id_Genres,
-                  };
-                }),
-            ],
+          await store.fetchMedia({
+            $MediaType: "movies",
+            arr_id_Movies: null,
+            minimumResultSet: true,
+            $t: this.$t,
+            filters: {
+              filterSettings: {},
+              filterGenres: [
+                { GenreID: "none", Name: "None", Selected: false, id_Genres: -1 },
+                ...this.$shared.filters.filterGenres
+                  .filter((item) => {
+                    return item.Name === this.Genre.translated;
+                  })
+                  .map((item) => {
+                    return {
+                      GenreID: item.GenreID,
+                      Name: item.Name,
+                      Selected: true,
+                      id_Genres: item.id_Genres,
+                    };
+                  }),
+              ],
+            },
           })
         ).sort((a, b) => {
           if (a.startYear > b.startYear) {

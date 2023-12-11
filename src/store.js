@@ -29,17 +29,7 @@ const mediainfo = require("./mediainfo");
 
 const { shared } = require("./shared");
 
-const {
-  scrapeIMDBmainPageData,
-  scrapeIMDBplotSummary,
-  scrapeIMDBCompaniesDataV3,
-  scrapeIMDBFullCreditsData,
-  scrapeIMDBParentalGuideData,
-  scrapeIMDBreleaseinfo,
-  scrapeIMDBtechnicalData,
-  scrapeIMDBplotKeywordsV3,
-  scrapeIMDBFilmingLocationsV3,
-} = require("./imdb-scraper");
+const imdbScraper = require("./imdb-scraper");
 
 const definedError = require("@/helpers/defined-error");
 
@@ -311,7 +301,7 @@ async function rescanItems(mediaItems, $t) {
     rescanETA.startTime = new Date().getTime();
 
     eventBus.scanInfoShow(
-      $t(`Rescanning ${mediaItem.MediaType === "movies" ? "Movies" : "Series"}`) + " {remainingTimeDisplay}",
+      $t(`Rescanning ${helpers.getSpecificMediaType(mediaItem)}`) + " {remainingTimeDisplay}",
       `${mediaItem.Name || mediaItem.Filename}`,
       rescanETA
     );
@@ -1790,6 +1780,12 @@ async function applyMetaData(onlyNew, id_Movies) {
   logger.log("[applyMetaData] END");
 }
 
+/**
+ *
+ * @param {boolean} onlyNew
+ * @param {string} id_Movies (optional)
+ * @param {Object} $t i18n instance
+ */
 async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t) {
   // NOTE: if WHERE clause gets enhanced, please also enhance the code below "Filter movies that only have..."
   const query = `
@@ -1810,35 +1806,53 @@ async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t) {
     , MOV.scanErrors
     , SP.MediaType
     , MOV.Series_id_Movies_Owner
+    , MOV2.IMDB_tconst AS Series_Owner_IMDB_tconst
+    , MOV.Series_Season
+    , MOV.Series_Episodes_First
+    , MOV.Series_Episodes_Complete
   FROM tbl_Movies MOV
   INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
-  WHERE 
-    (isRemoved IS NULL OR isRemoved = 0)
+  LEFT JOIN tbl_Movies MOV2 ON MOV2.id_Movies = MOV.Series_id_Movies_Owner
+  WHERE
+    (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+    AND (MOV2.isRemoved IS NULL OR MOV2.isRemoved = 0)
     AND SP.MediaType = $MediaType
-    AND Series_id_Movies_Owner IS NULL -- MVP! only series, no episodes
-    AND Extra_id_Movies_Owner IS NULL
-    ${onlyNew ? "AND (isNew = 1 OR scanErrors IS NOT NULL OR IFNULL(IMDB_Done, 0) = 0 OR IFNULL(MI_Done, 0) = 0)" : ""}
+    AND CASE WHEN $SeriesEpisodes = 0 THEN MOV.Series_id_Movies_Owner IS NULL ELSE MOV.Series_id_Movies_Owner IS NOT NULL END
+    AND MOV.Extra_id_Movies_Owner IS NULL
+    ${
+      onlyNew
+        ? "AND (MOV.isNew = 1 OR MOV.scanErrors IS NOT NULL OR IFNULL(MOV.IMDB_Done, 0) = 0 OR IFNULL(MOV.MI_Done, 0) = 0)"
+        : ""
+    }
     ${
       shared.scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
-        ? "AND id_SourcePaths IN " + shared.scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
+        ? "AND MOV.id_SourcePaths IN " + shared.scanOptions.rescanMoviesMetaData_id_SourcePaths_IN
         : ""
     }
     ${
       shared.scanOptions.rescanMoviesMetaData_id_Movies
-        ? "AND id_Movies = " + shared.scanOptions.rescanMoviesMetaData_id_Movies
+        ? "AND MOV.id_Movies = " + shared.scanOptions.rescanMoviesMetaData_id_Movies
         : ""
     }
-    ${id_Movies ? "AND id_Movies = " + id_Movies : ""}
+    ${id_Movies ? "AND MOV.id_Movies = " + id_Movies : ""}
   `;
 
   const movies = await db.fireProcedureReturnAll(query, {
     $MediaType: "movies",
+    $SeriesEpisodes: 0,
   });
   const series = await db.fireProcedureReturnAll(query, {
     $MediaType: "series",
+    $SeriesEpisodes: 0,
+  });
+  const seriesEpisodes = await db.fireProcedureReturnAll(query, {
+    $MediaType: "series",
+    $SeriesEpisodes: 1,
   });
 
-  let mediaItems = movies.concat(series);
+  let mediaItems = movies.concat(series).concat(seriesEpisodes);
+
+  logger.log("[rescanMediaItemsMetaData] mediaItems:", mediaItems);
 
   // TODO: Series - we now work with SP.MediaType and MOV.Series_id_Movies_Owner
 
@@ -1925,7 +1939,7 @@ async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t) {
 async function rescanMediaItemMetaData(onlyNew, mediaItem, $t, optRescanMediaInfo, optFindIMDBtconst) {
   // eventBus.scanInfoOff();
   eventBus.scanInfoShow(
-    $t(`Rescanning ${mediaItem.MediaType === "movies" ? "Movies" : "Series"}`) + " {remainingTimeDisplay}",
+    $t(`Rescanning ${helpers.getSpecificMediaType(mediaItem)}`) + " {remainingTimeDisplay}",
     `${mediaItem.Name || mediaItem.Filename}`,
     rescanETA
   );
@@ -1936,8 +1950,12 @@ async function rescanMediaItemMetaData(onlyNew, mediaItem, $t, optRescanMediaInf
   const IMDB_tconst_before = mediaItem.IMDB_tconst;
 
   // MediaInfo
-  const scanInfoMediaType = $t(`Rescanning ${mediaItem.MediaType === "movies" ? "Movies" : "Series"}`);
-  if (optRescanMediaInfo && shared.scanOptions.rescanMoviesMetaData_applyMediaInfo) {
+  const scanInfoMediaType = $t(`Rescanning ${helpers.getSpecificMediaType(mediaItem)}`);
+  if (
+    optRescanMediaInfo &&
+    shared.scanOptions.rescanMoviesMetaData_applyMediaInfo &&
+    (mediaItem.MediaType == "movies" || mediaItem.Series_id_Movies_Owner) // run MediaInfo only on movies or series episodes, not on series themselves
+  ) {
     eventBus.scanInfoShow(
       scanInfoMediaType + " {remainingTimeDisplay}",
       `${mediaItem.Name || mediaItem.Filename} (${$t("applying MediaInfo")})`,
@@ -1947,6 +1965,7 @@ async function rescanMediaItemMetaData(onlyNew, mediaItem, $t, optRescanMediaInf
     await applyMediaInfo(mediaItem, onlyNew);
   }
 
+  // IMDB
   if (optFindIMDBtconst && shared.scanOptions.rescanMoviesMetaData_findIMDBtconst) {
     eventBus.scanInfoShow(
       scanInfoMediaType + " {remainingTimeDisplay}",
@@ -2127,13 +2146,19 @@ async function applyMediaInfo(movie, onlyNew) {
 async function findIMDBtconst(mediaItem, onlyNew, $t) {
   // find IMDB tconst
   // save IMDB_tconst to db
-  logger.log("[findIMDBtconst] START movie:", mediaItem);
+  logger.log("[findIMDBtconst] START mediaItem:", mediaItem);
+
+  // TODO: Episode - fetch series' IMDB_tconst and use it for the episode
 
   const isMovie = mediaItem.MediaType === "movie";
   const isSeries = mediaItem.MediaType === "series" && !mediaItem.Series_id_Movies_Owner;
   const isSeriesEpisode = mediaItem.MediaType === "series" && mediaItem.Series_id_Movies_Owner;
 
   logger.log("[findIMDBtconst] ", { isMovie, isSeries, isSeriesEpisode });
+
+  if (isSeriesEpisode) {
+    return await findSeriesEpisodeIMDBtconst(mediaItem, onlyNew, $t);
+  }
 
   if (onlyNew && mediaItem.IMDB_Done) {
     logger.log("[findIMDBtconst] nothing to do, abort");
@@ -2142,7 +2167,7 @@ async function findIMDBtconst(mediaItem, onlyNew, $t) {
 
   eventBus.scanInfoShow(
     `${
-      isMovie ? $t(`Rescanning ${mediaItem.MediaType === "movies" ? "Movies" : "Series"}`) : $t("Rescanning Series")
+      isMovie ? $t(`Rescanning ${helpers.getSpecificMediaType(mediaItem)}`) : $t("Rescanning Series")
     } {remainingTimeDisplay}`,
     `${mediaItem.Name || mediaItem.Filename} (${$t("detecting IMDB entry")})`,
     rescanETA
@@ -2263,6 +2288,153 @@ async function findIMDBtconst(mediaItem, onlyNew, $t) {
   }
 }
 
+/**
+ * {
+ *  "tt1234567": {
+ *    "Season 1" [
+ *      {
+ *        episode: "1",
+ *        tconst: "tt9876543",
+ *        year: 2020,
+ *        month: 3,
+ *        day: 17
+ *      }
+ *      ...
+ *    ],
+ *  }
+ * }
+ */
+const cacheSeriesEpisodesIMDBtconst = {};
+
+function getSeriesEpisodeTconstFromCache(seriesIMDBtconst, Series_Season, Series_Episode) {
+  logger.log("[getSeriesEpisodeTconstFromCache] START", { seriesIMDBtconst, Series_Season, Series_Episode });
+  const cacheSeries = _.get(cacheSeriesEpisodesIMDBtconst, `${seriesIMDBtconst}`);
+  if (cacheSeries) {
+    const cacheSeriesSeason = cacheSeries[`S${Series_Season}`];
+    if (cacheSeriesSeason) {
+      return (cacheSeriesSeason.find((episode) => episode.episode == Series_Episode) || {}).tconst;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Find IMDB tconst for a series episode
+ * This is a bit different from a movie or a series, because we will rely on the series' IMDB tconst (which need to be found first - but that's been taken care of)
+ * With the series' IMDB tconst, we fetch the series' episodes and use Series_Season and Series_Episodes_First to find the episode's IMDB tconst
+ * We also cache the vital data we fetched
+ * @param {Object} mediaItem
+ * @param {boolean} onlyNew
+ * @param {Object} $t
+ */
+async function findSeriesEpisodeIMDBtconst(mediaItem, onlyNew, $t) {
+  // TODO: build up scan errors
+  // TODO: decide what to do with multiple episodes in one medium
+
+  try {
+    logger.log("[findSeriesEpisodeIMDBtconst] START:", { mediaItem, onlyNew, $t });
+
+    if (isNaN(mediaItem.Series_Season)) {
+      // TODO: add to scanErrors? just use series' IMDB tconst?
+      logger.log("[findSeriesEpisodeIMDBtconst] Series_Season is not a number, aborting");
+      return null;
+    }
+    if (isNaN(mediaItem.Series_Episodes_First)) {
+      // TODO: add to scanErrors? just use series' IMDB tconst?
+      logger.log("[findSeriesEpisodeIMDBtconst] Series_Episodes_First is not a number, aborting");
+      return null;
+    }
+
+    const seriesIMDBtconst = await db.fireProcedureReturnScalar(
+      `SELECT IMDB_tconst FROM tbl_Movies WHERE id_Movies = $Series_id_Movies_Owner`,
+      { $Series_id_Movies_Owner: mediaItem.Series_id_Movies_Owner }
+    );
+
+    if (!seriesIMDBtconst) {
+      // TODO: add to scanErrors? just use series' IMDB tconst?
+      logger.log("[findSeriesEpisodeIMDBtconst] seriesIMDBtconst could not be found, aborting");
+      return null;
+    }
+
+    logger.log("[findSeriesEpisodeIMDBtconst] seriesIMDBtconst found:", seriesIMDBtconst);
+
+    // get episode's tconst from cache if available
+    let episodeIMDBtconst = getSeriesEpisodeTconstFromCache(
+      seriesIMDBtconst,
+      mediaItem.Series_Season,
+      mediaItem.Series_Episodes_First
+    );
+
+    if (episodeIMDBtconst) {
+      logger.log("[findSeriesEpisodeIMDBtconst] episodeIMDBtconst found in cache:", episodeIMDBtconst);
+      return episodeIMDBtconst;
+    }
+
+    logger.log("[findSeriesEpisodeIMDBtconst] episodeIMDBtconst not found in cache, fetching from IMDB");
+    const imdbSeriesEpisodes = await imdbScraper.scrapeIMDBSeriesEpisodes(seriesIMDBtconst, mediaItem.Series_Season);
+
+    // update the cache
+    if (!cacheSeriesEpisodesIMDBtconst[seriesIMDBtconst]) {
+      cacheSeriesEpisodesIMDBtconst[seriesIMDBtconst] = {};
+    }
+    cacheSeriesEpisodesIMDBtconst[seriesIMDBtconst][`S${mediaItem.Series_Season}`] = imdbSeriesEpisodes.map(
+      (episode) => {
+        return {
+          tconst: episode.tconst,
+          episode: episode.episode,
+          releaseDateYear: episode.releaseDateYear,
+          releaseDateMonth: episode.releaseDateMonth,
+          releaseDateDay: episode.releaseDateDay,
+        };
+      }
+    );
+
+    // get episode's tconst from cache (it should be updated by now)
+    episodeIMDBtconst = getSeriesEpisodeTconstFromCache(
+      seriesIMDBtconst,
+      mediaItem.Series_Season,
+      mediaItem.Series_Episodes_First
+    );
+
+    mediaItem.IMDB_tconst = episodeIMDBtconst;
+
+    await db.fireProcedure(
+      `
+        UPDATE tbl_Movies
+          SET	IMDB_tconst = $IMDB_tconst
+        WHERE id_Movies = $id_Movies
+        `,
+      {
+        $id_Movies: mediaItem.id_Movies,
+        $IMDB_tconst: mediaItem.IMDB_tconst,
+      }
+    );
+
+    return episodeIMDBtconst;
+  } catch (error) {
+    logger.error(error);
+
+    if (mediaItem.scanErrors) {
+      mediaItem.scanErrors["IMDB entry detection"] = error.message;
+    }
+  } finally {
+    if (mediaItem.scanErrors) {
+      await db.fireProcedure(
+        `
+      UPDATE tbl_Movies
+        SET	scanErrors = $scanErrors
+      WHERE id_Movies = $id_Movies
+      `,
+        {
+          $id_Movies: mediaItem.id_Movies,
+          $scanErrors: JSON.stringify(mediaItem.scanErrors),
+        }
+      );
+    }
+  }
+}
+
 async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
   logger.log("[fetchIMDBdata] movie:", mediaItem);
 
@@ -2295,12 +2467,12 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
     ) {
       try {
         eventBus.scanInfoShow(
-          $t(`Rescanning ${mediaItem.MediaType === "movies" ? "Movies" : "Series"}`) + " {remainingTimeDisplay}",
+          $t(`Rescanning ${helpers.getSpecificMediaType(mediaItem)}`) + " {remainingTimeDisplay}",
           `${mediaItem.Name || mediaItem.Filename} (${$t("scraping IMDB Main Page")})`,
           rescanETA
         );
 
-        imdbData.mainPageData = await scrapeIMDBmainPageData(mediaItem, helpers.downloadFile);
+        imdbData.mainPageData = await imdbScraper.scrapeIMDBmainPageData(mediaItem, helpers.downloadFile);
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
@@ -2319,7 +2491,7 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
     //       rescanETA
     //     );
 
-    //     imdbData.ratingDemographics = await scrapeIMDBRatingDemographics(movie);
+    //     imdbData.ratingDemographics = await imdbScraper.scrapeIMDBRatingDemographics(movie);
     //   } catch (error) {
     //     imdbData.IMDB_Done = false;
     //     logger.error(error);
@@ -2332,12 +2504,15 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
     ) {
       try {
         eventBus.scanInfoShow(
-          $t(`Rescanning ${mediaItem.MediaType === "movies" ? "Movies" : "Series"}`) + " {remainingTimeDisplay}",
+          $t(`Rescanning ${helpers.getSpecificMediaType(mediaItem)}`) + " {remainingTimeDisplay}",
           `${mediaItem.Name || mediaItem.Filename} (${$t("scraping IMDB Plot Summary")})`,
           rescanETA
         );
 
-        imdbData.plotSummaryFull = await scrapeIMDBplotSummary(mediaItem, imdbData.mainPageData.$IMDB_plotSummary);
+        imdbData.plotSummaryFull = await imdbScraper.scrapeIMDBplotSummary(
+          mediaItem,
+          imdbData.mainPageData.$IMDB_plotSummary
+        );
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
@@ -2350,12 +2525,12 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
     ) {
       try {
         eventBus.scanInfoShow(
-          $t(`Rescanning ${mediaItem.MediaType === "movies" ? "Movies" : "Series"}`) + " {remainingTimeDisplay}",
+          $t(`Rescanning ${helpers.getSpecificMediaType(mediaItem)}`) + " {remainingTimeDisplay}",
           `${mediaItem.Name || mediaItem.Filename} (${$t("scraping IMDB Plot Keywords")})`,
           rescanETA
         );
 
-        imdbData.plotKeywords = await scrapeIMDBplotKeywordsV3(mediaItem);
+        imdbData.plotKeywords = await imdbScraper.scrapeIMDBplotKeywordsV3(mediaItem);
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
@@ -2371,12 +2546,12 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
         const allowedTitleTypes = await getAllowedTitleTypes();
 
         eventBus.scanInfoShow(
-          $t(`Rescanning ${mediaItem.MediaType === "movies" ? "Movies" : "Series"}`) + " {remainingTimeDisplay}",
+          $t(`Rescanning ${helpers.getSpecificMediaType(mediaItem)}`) + " {remainingTimeDisplay}",
           `${mediaItem.Name || mediaItem.Filename} (${$t("scraping IMDB Release Info")})`,
           rescanETA
         );
 
-        imdbData.releaseinfo = await scrapeIMDBreleaseinfo(mediaItem, regions, allowedTitleTypes);
+        imdbData.releaseinfo = await imdbScraper.scrapeIMDBreleaseinfo(mediaItem, regions, allowedTitleTypes);
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
@@ -2389,12 +2564,12 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
     ) {
       try {
         eventBus.scanInfoShow(
-          $t(`Rescanning ${mediaItem.MediaType === "movies" ? "Movies" : "Series"}`) + " {remainingTimeDisplay}",
+          $t(`Rescanning ${helpers.getSpecificMediaType(mediaItem)}`) + " {remainingTimeDisplay}",
           `${mediaItem.Name || mediaItem.Filename} (${$t("scraping IMDB Technical Data")})`,
           rescanETA
         );
 
-        imdbData.technicalData = await scrapeIMDBtechnicalData(mediaItem);
+        imdbData.technicalData = await imdbScraper.scrapeIMDBtechnicalData(mediaItem);
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
@@ -2409,12 +2584,12 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
         const regions = await getRegions();
 
         eventBus.scanInfoShow(
-          $t(`Rescanning ${mediaItem.MediaType === "movies" ? "Movies" : "Series"}`) + " {remainingTimeDisplay}",
+          $t(`Rescanning ${helpers.getSpecificMediaType(mediaItem)}`) + " {remainingTimeDisplay}",
           `${mediaItem.Name || mediaItem.Filename} (${$t("scraping IMDB Parental Guide")})`,
           rescanETA
         );
 
-        imdbData.parentalguideData = await scrapeIMDBParentalGuideData(
+        imdbData.parentalguideData = await imdbScraper.scrapeIMDBParentalGuideData(
           mediaItem,
           regions,
           db.fireProcedureReturnAll,
@@ -2433,12 +2608,12 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
     ) {
       try {
         eventBus.scanInfoShow(
-          $t(`Rescanning ${mediaItem.MediaType === "movies" ? "Movies" : "Series"}`) + " {remainingTimeDisplay}",
+          $t(`Rescanning ${helpers.getSpecificMediaType(mediaItem)}`) + " {remainingTimeDisplay}",
           `${mediaItem.Name || mediaItem.Filename} (${$t("scraping IMDB Full Credits")})`,
           rescanETA
         );
 
-        imdbData.creditsData = await scrapeIMDBFullCreditsData(mediaItem);
+        imdbData.creditsData = await imdbScraper.scrapeIMDBFullCreditsData(mediaItem);
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
@@ -2451,12 +2626,12 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
     ) {
       try {
         eventBus.scanInfoShow(
-          $t(`Rescanning ${mediaItem.MediaType === "movies" ? "Movies" : "Series"}`) + " {remainingTimeDisplay}",
+          $t(`Rescanning ${helpers.getSpecificMediaType(mediaItem)}`) + " {remainingTimeDisplay}",
           `${mediaItem.Name || mediaItem.Filename} (${$t("scraping IMDB Companies")})`,
           rescanETA
         );
 
-        imdbData.companiesData = await scrapeIMDBCompaniesDataV3(mediaItem);
+        imdbData.companiesData = await imdbScraper.scrapeIMDBCompaniesDataV3(mediaItem);
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
@@ -2469,12 +2644,12 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
     ) {
       try {
         eventBus.scanInfoShow(
-          $t(`Rescanning ${mediaItem.MediaType === "movies" ? "Movies" : "Series"}`) + " {remainingTimeDisplay}",
+          $t(`Rescanning ${helpers.getSpecificMediaType(mediaItem)}`) + " {remainingTimeDisplay}",
           `${mediaItem.Name || mediaItem.Filename} (${$t("scraping IMDB Filming Locations")})`,
           rescanETA
         );
 
-        imdbData.filmingLocations = await scrapeIMDBFilmingLocationsV3(mediaItem);
+        imdbData.filmingLocations = await imdbScraper.scrapeIMDBFilmingLocationsV3(mediaItem);
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
@@ -2485,7 +2660,7 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
 
     if (shared.scanOptions.rescanMoviesMetaData_saveIMDBData) {
       eventBus.scanInfoShow(
-        $t(`Rescanning ${mediaItem.MediaType === "movies" ? "Movies" : "Series"}`) + " {remainingTimeDisplay}",
+        $t(`Rescanning ${helpers.getSpecificMediaType(mediaItem)}`) + " {remainingTimeDisplay}",
         `${mediaItem.Name || mediaItem.Filename} (${$t("store IMDB metadata")})`,
         rescanETA
       );
@@ -2673,7 +2848,10 @@ async function saveIMDBData(movie, imdbData) {
         );
       } else {
         await db.fireProcedure(
-          db.buildINSERTQuery("tbl_Movies_IMDB_Credits", "id_Movies_IMDB_Credits", creditData),
+          db.buildINSERTQuery("tbl_Movies_IMDB_Credits", "id_Movies_IMDB_Credits", creditData, {
+            columns: ["id_Movies", "Category", "IMDB_Person_ID", "Credit"],
+            algorithm: "NOTHING",
+          }),
           creditData
         );
       }
@@ -3754,7 +3932,7 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
  * @param {*} seriesFetchType either 'onlySeries' or 'onlyEpisodes'
  * @returns
  */
-async function fetchMedia(
+async function fetchMedia({
   $MediaType,
   arr_id_Movies,
   minimumResultSet,
@@ -3762,8 +3940,12 @@ async function fetchMedia(
   filters,
   arr_IMDB_tconst,
   Series_id_Movies_Owner,
-  seriesFetchType
-) {
+  seriesFetchType,
+}) {
+  if (!$MediaType) {
+    throw new Error("[fetchMedia] $MediaType missing");
+  }
+
   logger.log("[fetchMedia] filters:", filters);
 
   const filterQuery = generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst);
@@ -3914,168 +4096,176 @@ async function fetchMedia(
       saveSortValues($MediaType);
     }
 
-    result.forEach((item) => {
+    result.forEach((mediaItem) => {
       // logger.log("[fetchMedia] item.Name:", item.Name);
-      item.IMDB_posterSmall_URL = item.IMDB_posterSmall_URL
-        ? "local-resource://" + helpers.getDataPath(item.IMDB_posterSmall_URL).replace(/\\/g, "\\\\")
-        : item.IMDB_posterSmall_URL;
-      item.IMDB_posterLarge_URL = item.IMDB_posterLarge_URL
-        ? "local-resource://" + helpers.getDataPath(item.IMDB_posterLarge_URL).replace(/\\/g, "\\\\")
-        : item.IMDB_posterLarge_URL;
-      item.yearDisplay = item.startYear ? "(" + item.startYear + (item.endYear ? `-${item.endYear}` : "") + ")" : "";
-      item.IMDB_rating_defaultFormatted = item.IMDB_rating_default
-        ? `${item.IMDB_rating_default.toLocaleString(shared.uiLanguage, {
+      mediaItem.IMDB_posterSmall_URL = mediaItem.IMDB_posterSmall_URL
+        ? "local-resource://" + helpers.getDataPath(mediaItem.IMDB_posterSmall_URL).replace(/\\/g, "\\\\")
+        : mediaItem.IMDB_posterSmall_URL;
+      mediaItem.IMDB_posterLarge_URL = mediaItem.IMDB_posterLarge_URL
+        ? "local-resource://" + helpers.getDataPath(mediaItem.IMDB_posterLarge_URL).replace(/\\/g, "\\\\")
+        : mediaItem.IMDB_posterLarge_URL;
+      mediaItem.yearDisplay = mediaItem.startYear
+        ? "(" + mediaItem.startYear + (mediaItem.endYear ? `-${mediaItem.endYear}` : "") + ")"
+        : "";
+      mediaItem.IMDB_rating_defaultFormatted = mediaItem.IMDB_rating_default
+        ? `${mediaItem.IMDB_rating_default.toLocaleString(shared.uiLanguage, {
             minimumFractionDigits: 1,
           })}`
         : "";
-      item.IMDB_rating_defaultDisplay = item.IMDB_rating_defaultFormatted
-        ? `${item.IMDB_rating_defaultFormatted} (${item.IMDB_numVotes_default.toLocaleString(shared.uiLanguage)})`
+      mediaItem.IMDB_rating_defaultDisplay = mediaItem.IMDB_rating_defaultFormatted
+        ? `${mediaItem.IMDB_rating_defaultFormatted} (${mediaItem.IMDB_numVotes_default.toLocaleString(
+            shared.uiLanguage
+          )})`
         : "";
 
-      item.AudioLanguages = generateLanguageArray(item.Audio_Languages);
+      mediaItem.AudioLanguages = generateLanguageArray(mediaItem.Audio_Languages);
 
-      item.SubtitleLanguages = generateLanguageArray(item.Subtitle_Languages);
+      mediaItem.SubtitleLanguages = generateLanguageArray(mediaItem.Subtitle_Languages);
 
-      if (item.Age || item.Age === 0) {
-        item.AgeRating = item.Age + "+";
+      if (mediaItem.Age || mediaItem.Age === 0) {
+        mediaItem.AgeRating = mediaItem.Age + "+";
       } else {
-        if (item.IMDB_MinAge || item.IMDB_MinAge === 0) {
-          item.AgeRating = `${item.IMDB_MinAge}${
-            item.IMDB_MaxAge && item.IMDB_MaxAge > item.IMDB_MinAge ? "-" + item.IMDB_MaxAge : ""
+        if (mediaItem.IMDB_MinAge || mediaItem.IMDB_MinAge === 0) {
+          mediaItem.AgeRating = `${mediaItem.IMDB_MinAge}${
+            mediaItem.IMDB_MaxAge && mediaItem.IMDB_MaxAge > mediaItem.IMDB_MinAge ? "-" + mediaItem.IMDB_MaxAge : ""
           }+`;
         }
       }
 
       // only show secondary title if it is not part of the primary title or the primary title
-      if (item.Name2) {
-        if (item.Name.includes(item.Name2)) {
-          item.Name2 = "";
+      if (mediaItem.Name2) {
+        if (mediaItem.Name.includes(mediaItem.Name2)) {
+          mediaItem.Name2 = "";
         }
       }
 
-      item.SearchSpace =
-        (item.Name || "").toLowerCase() +
+      mediaItem.SearchSpace =
+        (mediaItem.Name || "").toLowerCase() +
         " " +
-        (item.Name2 || "").toLowerCase() +
+        (mediaItem.Name2 || "").toLowerCase() +
         " " +
-        (item.IMDB_plotSummary || "").toLowerCase() +
+        (mediaItem.IMDB_plotSummary || "").toLowerCase() +
         " " +
-        (item.fullPath || "").toLowerCase() +
+        (mediaItem.fullPath || "").toLowerCase() +
         " " +
-        (item.IMDB_tconst || "").toLowerCase();
+        (mediaItem.IMDB_tconst || "").toLowerCase();
 
-      item.IMDB_Top_Directors = item.IMDB_Top_Directors ? JSON.parse(item.IMDB_Top_Directors) : null;
-      item.IMDB_Top_Writers = item.IMDB_Top_Writers ? JSON.parse(item.IMDB_Top_Writers) : null;
-      item.IMDB_Top_Producers = item.IMDB_Top_Producers ? JSON.parse(item.IMDB_Top_Producers) : null;
-      item.IMDB_Top_Cast = item.IMDB_Top_Cast ? JSON.parse(item.IMDB_Top_Cast) : null;
-      item.IMDB_Top_Production_Companies = item.IMDB_Top_Production_Companies
-        ? JSON.parse(item.IMDB_Top_Production_Companies)
+      mediaItem.IMDB_Top_Directors = mediaItem.IMDB_Top_Directors ? JSON.parse(mediaItem.IMDB_Top_Directors) : null;
+      mediaItem.IMDB_Top_Writers = mediaItem.IMDB_Top_Writers ? JSON.parse(mediaItem.IMDB_Top_Writers) : null;
+      mediaItem.IMDB_Top_Producers = mediaItem.IMDB_Top_Producers ? JSON.parse(mediaItem.IMDB_Top_Producers) : null;
+      mediaItem.IMDB_Top_Cast = mediaItem.IMDB_Top_Cast ? JSON.parse(mediaItem.IMDB_Top_Cast) : null;
+      mediaItem.IMDB_Top_Production_Companies = mediaItem.IMDB_Top_Production_Companies
+        ? JSON.parse(mediaItem.IMDB_Top_Production_Companies)
         : null;
 
-      if (item.MI_Duration_Formatted) {
-        item.Duration = item.MI_Duration_Formatted;
-      } else if (item.IMDB_runtimeMinutes) {
-        item.Duration = helpers.getTimeString(item.IMDB_runtimeMinutes * 60);
+      if (mediaItem.MI_Duration_Formatted) {
+        mediaItem.Duration = mediaItem.MI_Duration_Formatted;
+      } else if (mediaItem.IMDB_runtimeMinutes) {
+        mediaItem.Duration = helpers.getTimeString(mediaItem.IMDB_runtimeMinutes * 60);
       }
 
       // translate Genres
-      if (item.Genres) {
+      if (mediaItem.Genres) {
         const genres = [];
-        item.Genres.split(", ").forEach((genre) => {
+        mediaItem.Genres.split(", ").forEach((genre) => {
           genres.push({
             name: genre,
             translated: $t(`GenreNames.${genre}`),
           });
         });
 
-        item.Genres = genres;
+        mediaItem.Genres = genres;
       }
 
-      if (item.scanErrors) {
-        item.scanErrors = JSON.parse(item.scanErrors);
+      if (mediaItem.scanErrors) {
+        mediaItem.scanErrors = JSON.parse(mediaItem.scanErrors);
       }
 
-      if (item.ReleaseAttributesSearchTerms) {
-        item.ReleaseAttributes = getReleaseAttributes(item.ReleaseAttributesSearchTerms);
+      if (mediaItem.ReleaseAttributesSearchTerms) {
+        mediaItem.ReleaseAttributes = getReleaseAttributes(mediaItem.ReleaseAttributesSearchTerms);
       } else {
-        item.ReleaseAttributes = null;
+        mediaItem.ReleaseAttributes = null;
       }
 
-      if (item.Video_Encoder) {
-        item.Video_Encoder_Display = item.Video_Encoder.split(";").map((ve) => {
+      if (mediaItem.Video_Encoder) {
+        mediaItem.Video_Encoder_Display = mediaItem.Video_Encoder.split(";").map((ve) => {
           return ve.split(" ")[0].trim();
         });
       } else {
-        item.Video_Encoder_Display = null;
+        mediaItem.Video_Encoder_Display = null;
       }
 
-      if (item.Audio_Format) {
-        item.Audio_Format_Display = item.Audio_Format.split(";").map((af) => {
+      if (mediaItem.Audio_Format) {
+        mediaItem.Audio_Format_Display = mediaItem.Audio_Format.split(";").map((af) => {
           return af.trim();
         });
-        item.Audio_Format_Display = item.Audio_Format_Display.filter((value, index) => {
-          return item.Audio_Format_Display.indexOf(value) === index;
+        mediaItem.Audio_Format_Display = mediaItem.Audio_Format_Display.filter((value, index) => {
+          return mediaItem.Audio_Format_Display.indexOf(value) === index;
         });
       } else {
-        item.Audio_Format_Display = null;
+        mediaItem.Audio_Format_Display = null;
       }
 
-      if (item.Series_Season != null) {
-        item.Series_Season_Displaytext = `S${`${item.Series_Season < 10 ? "0" : ""}${item.Series_Season}`}`;
+      if (mediaItem.Series_Season != null) {
+        mediaItem.Series_Season_Displaytext = `S${`${mediaItem.Series_Season < 10 ? "0" : ""}${
+          mediaItem.Series_Season
+        }`}`;
       }
 
-      if (item.Series_Episodes_Complete) {
+      if (mediaItem.Series_Episodes_Complete) {
         logger.log("[fetchMedia Series_Episodes_Complete] has value!");
-        const episodes = JSON.parse(item.Series_Episodes_Complete);
+        const episodes = JSON.parse(mediaItem.Series_Episodes_Complete);
 
         logger.log("[fetchMedia Series_Episodes_Complete] episodes:", episodes);
 
         if (episodes.length == 1) {
           logger.log("[fetchMedia Series_Episodes_Complete] just one episode");
-          item.Series_Episodes_Displaytext = `E${`${episodes[0] < 10 ? "0" : ""}${episodes[0]}`}`;
+          mediaItem.Series_Episodes_Displaytext = `E${`${episodes[0] < 10 ? "0" : ""}${episodes[0]}`}`;
           logger.log(
             "[fetchMedia Series_Episodes_Complete] item.Series_Episodes_Displaytext:",
-            item.Series_Episodes_Displaytext
+            mediaItem.Series_Episodes_Displaytext
           );
         } else if (episodes.length > 1) {
           const minEpisode = Math.min(...episodes);
           const maxEpisode = Math.max(...episodes);
 
           if (maxEpisode - minEpisode + 1 == episodes.length) {
-            item.Series_Episodes_Displaytext = `E${`${minEpisode < 10 ? "0" : ""}${minEpisode}`}-E${`${
+            mediaItem.Series_Episodes_Displaytext = `E${`${minEpisode < 10 ? "0" : ""}${minEpisode}`}-E${`${
               maxEpisode < 10 ? "0" : ""
             }${maxEpisode}`}`;
           } else {
-            item.Series_Episodes_Displaytext = `${episodes
+            mediaItem.Series_Episodes_Displaytext = `${episodes
               .map((episode) => `E${`${episode < 10 ? "0" : ""}${episode}`}`)
               .join(", ")}`;
           }
           logger.log(
             "[fetchMedia Series_Episodes_Complete] item.Series_Episodes_Displaytext:",
-            item.Series_Episodes_Displaytext
+            mediaItem.Series_Episodes_Displaytext
           );
         }
       }
 
-      // additional fields (prevent Recalculation of Pagination Items on mouseover)
-      item.lists = [];
-      item.extras = [];
-      item.extrasFetched = false;
-      item.selected = false;
-      item.lastAccessMoment = null;
+      mediaItem.specificMediaType = helpers.getSpecificMediaType(mediaItem);
 
-      item.showCredits = false;
-      item.credits = null;
-      item.showCompanies = false;
-      item.companies = null;
-      item.avatarHovered = false;
-      item.nameHovered = false;
-      item.name2Hovered = false;
-      item.showContentAdvisory = false;
-      item.showPlotKeywords = false;
-      item.showFilmingLocations = false;
-      item.plotKeywords = null;
-      item.showScanErrors = false;
+      // additional fields (prevent Recalculation of Pagination Items on mouseover)
+      mediaItem.lists = [];
+      mediaItem.extras = [];
+      mediaItem.extrasFetched = false;
+      mediaItem.selected = false;
+      mediaItem.lastAccessMoment = null;
+
+      mediaItem.showCredits = false;
+      mediaItem.credits = null;
+      mediaItem.showCompanies = false;
+      mediaItem.companies = null;
+      mediaItem.avatarHovered = false;
+      mediaItem.nameHovered = false;
+      mediaItem.name2Hovered = false;
+      mediaItem.showContentAdvisory = false;
+      mediaItem.showPlotKeywords = false;
+      mediaItem.showFilmingLocations = false;
+      mediaItem.plotKeywords = null;
+      mediaItem.showScanErrors = false;
     });
 
     return result;

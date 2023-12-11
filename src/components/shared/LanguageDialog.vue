@@ -183,7 +183,15 @@ export default {
 
         logger.log("[toggleShowMovies] filters:", filters);
 
-        const movies = (await store.fetchMedia("movies", null, true, this.$t, filters)).sort((a, b) => {
+        const movies = (
+          await store.fetchMedia({
+            $MediaType: "movies",
+            arr_id_Movies: null,
+            minimumResultSet: true,
+            $t: this.$t,
+            filters: filters,
+          })
+        ).sort((a, b) => {
           if (a.startYear > b.startYear) {
             return -1;
           }

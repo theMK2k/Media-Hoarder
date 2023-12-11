@@ -231,16 +231,16 @@ export default {
       }
       this.isLoadingMovies = true;
       let movies = (
-        await store.fetchMedia(
-          "movies",
-          null,
-          true,
-          this.$t,
-          {
+        await store.fetchMedia({
+          $MediaType: "movies",
+          arr_id_Movies: null,
+          minimumResultSet: true,
+          $t: this.$t,
+          filters: {
             filterSettings: {},
           },
-          this.arr_IMDB_tconst
-        )
+          arr_IMDB_tconst: this.arr_IMDB_tconst,
+        })
       ).sort((a, b) => {
         if (a.startYear > b.startYear) {
           return -1;

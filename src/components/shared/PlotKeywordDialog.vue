@@ -138,20 +138,26 @@ export default {
       if (!this.movies.length > 0) {
         this.isLoadingMovies = true;
         const movies = (
-          await store.fetchMedia("movies", null, true, this.$t, {
-            filterSettings: {},
-            filterIMDBPlotKeywords: [
-              {
-                id_Filter_IMDB_Plot_Keywords: -1,
-                Selected: false,
-              },
-              {
-                id_Filter_IMDB_Plot_Keywords: 666,
-                Selected: true,
-                id_IMDB_Plot_Keywords: this.id_IMDB_Plot_Keywords,
-                Keyword: this.Keyword,
-              },
-            ],
+          await store.fetchMedia({
+            $MediaType: "movies",
+            arr_id_Movies: null,
+            minimumResultSet: true,
+            $t: this.$t,
+            filters: {
+              filterSettings: {},
+              filterIMDBPlotKeywords: [
+                {
+                  id_Filter_IMDB_Plot_Keywords: -1,
+                  Selected: false,
+                },
+                {
+                  id_Filter_IMDB_Plot_Keywords: 666,
+                  Selected: true,
+                  id_IMDB_Plot_Keywords: this.id_IMDB_Plot_Keywords,
+                  Keyword: this.Keyword,
+                },
+              ],
+            },
           })
         ).sort((a, b) => {
           if (a.startYear > b.startYear) {
