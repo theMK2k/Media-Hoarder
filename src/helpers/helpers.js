@@ -556,9 +556,9 @@ function getSpecificMediaType(mediaItem) {
   let result = "movies";
   if (mediaItem.MediaType === "series") {
     if (mediaItem.Series_id_Movies_Owner) {
-      return "episodes";
+      result = "episodes";
     } else {
-      return "series";
+      result = "series";
     }
   }
 
