@@ -180,9 +180,10 @@ function sqlitefireProcedureReturnAllCB(query, vars, callback) {
  * @param {string} tableName
  * @param {string} primaryKeyName
  * @param {Object} data e.g. {$column1: 'value1', $column2: 'value2'}
+ * @param {Object} onConflict e.g. { columns: ['column1', 'column2'], algorithm: 'NOTHING' }
  * @returns {string}
  */
-function buildINSERTQuery(tableName, primaryKeyName, data) {
+function buildINSERTQuery(tableName, primaryKeyName, data, onConflict = null) {
   let query = `
   INSERT INTO ${tableName} (
     `;
@@ -210,6 +211,12 @@ function buildINSERTQuery(tableName, primaryKeyName, data) {
   });
   query += `)`;
 
+  if (onConflict) {
+    query += `\nON CONFLICT (${onConflict.columns.reduce((acc, currentValue, index) => {
+      return acc + '"' + currentValue + '"' + (index < onConflict.columns.length - 1 ? ", " : "");
+    }, "")}) DO ${onConflict.algorithm}`;
+  }
+
   return query;
 }
 
@@ -218,9 +225,10 @@ function buildINSERTQuery(tableName, primaryKeyName, data) {
  * @param {string} tableName
  * @param {string} primaryKeyName
  * @param {Object} data e.g. {$column1: 'value1', $column2: 'value2'}
+ * @param {Object} onConflict e.g. { columns: ['column1', 'column2'], algorithm: 'NOTHING' }
  * @returns {string}
  */
-function buildUPDATEQuery(tableName, primaryKeyName, data) {
+function buildUPDATEQuery(tableName, primaryKeyName, data, onConflict = null) {
   let query = `
   UPDATE ${tableName} SET
   `;
@@ -238,6 +246,12 @@ function buildUPDATEQuery(tableName, primaryKeyName, data) {
   });
   query += `
   WHERE ${primaryKeyName} = $${primaryKeyName}`;
+
+  if (onConflict) {
+    query += `\nON CONFLICT (${onConflict.columns.reduce((acc, currentValue, index) => {
+      return acc + '"' + currentValue + '"' + (index < onConflict.columns.length - 1 ? ", " : "");
+    }, "")}) DO ${onConflict.algorithm}`;
+  }
 
   return query;
 }
