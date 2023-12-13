@@ -85,7 +85,7 @@ Please read [00-Dev-Setup.md](docs/00-Dev-Setup.md).
 
 ### Install Node.js
 
-Visit <https://nodejs.org> and download/install it for your OS. **Media Hoarder** is developed with Node.js v14 but should also be compatible with newer versions.
+Visit <https://nodejs.org> and download/install it for your OS. **Media Hoarder** is developed with Node.js v14.
 
 ### Install vue-cli
 
