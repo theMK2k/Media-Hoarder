@@ -293,6 +293,7 @@ async function rescanItems(mediaItems, $t) {
   eventBus.rescanStarted();
 
   for (const mediaItem of mediaItems) {
+    // TODO: mediaItem may be a series, so mediaItems.length is a lie in assignIMDB as well as subsequently rescanMediaItemsMetaData
     if (doAbortRescan) {
       break;
     }
@@ -361,7 +362,7 @@ async function rescan(onlyNew, $t) {
 
   if (shared.scanOptions.filescanSeries) await filescanSeries(onlyNew, $t);
 
-  if (shared.scanOptions.rescanMoviesMetaData) await rescanMediaItemsMetaData(onlyNew, null, $t);
+  if (shared.scanOptions.rescanMoviesMetaData) await rescanMediaItemsMetaData(onlyNew, null, $t, false);
 
   // TODO:   if (shared.scanOptions.rescanSeriesMetaData) await rescanSeriesMetaData(onlyNew, null, $t);
 
@@ -969,6 +970,30 @@ async function filescanSeries(onlyNew, $t) {
           } else {
             rescanStats.updatedSeries++;
           }
+
+          await db.fireProcedure(
+            `
+            UPDATE tbl_Movies
+            SET    Series_Num_Episodes = (
+                      SELECT SUM(MOV2.Series_Num_Episodes)
+                      FROM  tbl_Movies MOV2
+                      WHERE MOV2.Series_id_Movies_Owner = $id_Movies
+                            AND MOV2.Series_Num_Episodes IS NOT NULL
+                   )
+                   
+                   , Series_Num_Seasons = (
+                      SELECT COUNT(*)
+                      FROM
+                        (
+                            SELECT DISTINCT MOV2.Series_Season
+                            FROM tbl_Movies MOV2 WHERE MOV2.Series_id_Movies_Owner = $id_Movies AND MOV2.Series_Season > 0
+                        )
+                   )
+            WHERE id_Movies = $id_Movies`,
+            {
+              $id_Movies: series_id_Movies,
+            }
+          );
         }
       }
     }
@@ -1411,6 +1436,7 @@ async function addSeriesEpisode(series_id_Movies, seriesSourcePath, pathItem, is
     , Series_Episodes_First
     , Series_Episodes_Complete
     , Series_Bonus_Number
+    , Series_Num_Episodes
   ) VALUES (
     $id_SourcePaths
     , $Name
@@ -1427,6 +1453,7 @@ async function addSeriesEpisode(series_id_Movies, seriesSourcePath, pathItem, is
     , $Series_Episodes_First
     , $Series_Episodes_Complete
     , $Series_Bonus_Number
+    , $Series_Num_Episodes
   )`;
 
   const sqlData = {
@@ -1443,6 +1470,7 @@ async function addSeriesEpisode(series_id_Movies, seriesSourcePath, pathItem, is
     $Series_Episodes_First,
     $Series_Episodes_Complete: $Series_Episodes_Complete ? JSON.stringify($Series_Episodes_Complete) : null,
     $Series_Bonus_Number,
+    $Series_Num_Episodes: $Series_Episodes_Complete ? $Series_Episodes_Complete.length : 0,
   };
 
   logger.log("[addSeriesEpisode] query:", sqlQuery, "data:", sqlData);
@@ -1786,7 +1814,7 @@ async function applyMetaData(onlyNew, id_Movies) {
  * @param {string} id_Movies (optional)
  * @param {Object} $t i18n instance
  */
-async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t) {
+async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t, resetRescanETA) {
   // NOTE: if WHERE clause gets enhanced, please also enhance the code below "Filter movies that only have..."
   const query = `
   SELECT
@@ -1834,27 +1862,33 @@ async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t) {
         ? "AND MOV.id_Movies = " + shared.scanOptions.rescanMoviesMetaData_id_Movies
         : ""
     }
-    ${id_Movies ? "AND MOV.id_Movies = " + id_Movies : ""}
+    ${id_Movies ? `AND (MOV.id_Movies = ${id_Movies} OR MOV.Series_id_Movies_Owner = ${id_Movies})` : ""}
   `;
 
+  // first: movies
   const movies = await db.fireProcedureReturnAll(query, {
     $MediaType: "movies",
     $SeriesEpisodes: 0,
   });
+  logger.log("[rescanMediaItemsMetaData] movies:", movies);
+
+  // second: series
   const series = await db.fireProcedureReturnAll(query, {
     $MediaType: "series",
     $SeriesEpisodes: 0,
   });
+  logger.log("[rescanMediaItemsMetaData] series:", series);
+
+  // third: episodes
   const seriesEpisodes = await db.fireProcedureReturnAll(query, {
     $MediaType: "series",
     $SeriesEpisodes: 1,
   });
+  logger.log("[rescanMediaItemsMetaData] seriesEpisodes:", seriesEpisodes);
 
   let mediaItems = movies.concat(series).concat(seriesEpisodes);
 
   logger.log("[rescanMediaItemsMetaData] mediaItems:", mediaItems);
-
-  // TODO: Series - we now work with SP.MediaType and MOV.Series_id_Movies_Owner
 
   // Filter mediaItems that only have one scanError and that is "IMDB link verification" - a rescan without new IMDB tconst will not help here
   if (!id_Movies && onlyNew) {
@@ -1882,7 +1916,7 @@ async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t) {
     });
   }
 
-  if (!id_Movies) {
+  if (mediaItems.length > 1) {
     rescanETA.show = false;
     rescanETA.numItems = mediaItems.length;
     rescanETA.counter = 0;
@@ -1900,9 +1934,24 @@ async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t) {
       break;
     }
 
-    if (!id_Movies) {
-      rescanETA.counter++;
-      rescanETA.startTime = new Date().getTime();
+    if (mediaItems.length > 1) {
+      if (resetRescanETA) {
+        rescanETA = {
+          show: false,
+          counter: 0,
+          numItems: mediaItems.length,
+          elapsedMS: 0,
+          averageMS: null,
+          startTime: null,
+          endTime: null,
+          timeRemaining: null,
+          displayETA: "",
+          progressPercent: 0,
+        };
+      } else {
+        rescanETA.counter++;
+        rescanETA.startTime = new Date().getTime();
+      }
     }
 
     const mediaItem = mediaItems[i];
@@ -1913,7 +1962,7 @@ async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t) {
 
     await rescanMediaItemMetaData(onlyNew, mediaItem, $t, !id_Movies, !id_Movies);
 
-    if (!id_Movies) {
+    if (mediaItems.length > 1) {
       rescanETA.endTime = new Date().getTime();
       rescanETA.elapsedMS += rescanETA.endTime - rescanETA.startTime;
       rescanETA.averageMS = rescanETA.elapsedMS / rescanETA.counter;
@@ -1936,7 +1985,9 @@ async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t) {
  * @param {Object} mediaItem
  * @param {Object} $t
  */
-async function rescanMediaItemMetaData(onlyNew, mediaItem, $t, optRescanMediaInfo, optFindIMDBtconst) {
+async function rescanMediaItemMetaData(onlyNew, mediaItem, $t, optRescanMediaInfo) {
+  logger.log("[rescanMediaItemMetaData] START, mediaItem:", mediaItem);
+
   // eventBus.scanInfoOff();
   eventBus.scanInfoShow(
     $t(`Rescanning ${helpers.getSpecificMediaType(mediaItem)}`) + " {remainingTimeDisplay}",
@@ -1966,7 +2017,7 @@ async function rescanMediaItemMetaData(onlyNew, mediaItem, $t, optRescanMediaInf
   }
 
   // IMDB
-  if (optFindIMDBtconst && shared.scanOptions.rescanMoviesMetaData_findIMDBtconst) {
+  if (shared.scanOptions.rescanMoviesMetaData_findIMDBtconst) {
     eventBus.scanInfoShow(
       scanInfoMediaType + " {remainingTimeDisplay}",
       `${mediaItem.Name || mediaItem.Filename} (${$t("determining IMDB ID")})`,
@@ -1974,7 +2025,7 @@ async function rescanMediaItemMetaData(onlyNew, mediaItem, $t, optRescanMediaInf
     );
 
     if (!mediaItem.isUnlinkedIMDB) {
-      await findIMDBtconst(mediaItem, onlyNew, $t);
+      await findIMDBtconst({ mediaItem, onlyNew, $t, forced: false });
     }
   }
 
@@ -2020,6 +2071,10 @@ async function rescanMediaItemMetaData(onlyNew, mediaItem, $t, optRescanMediaInf
     );
 
     await verifyIMDBtconst(mediaItem.id_Movies, $t);
+  }
+
+  if (mediaItem.Series_id_Movies_Owner) {
+    updateSeriesMetadataFromEpisodes(mediaItem.Series_id_Movies_Owner);
   }
 }
 
@@ -2143,22 +2198,28 @@ async function applyMediaInfo(movie, onlyNew) {
   }
 }
 
-async function findIMDBtconst(mediaItem, onlyNew, $t) {
+async function findIMDBtconst({
+  mediaItem,
+  onlyNew,
+  $t,
+  forced, // also try to find IMDB tconst if it is already set
+}) {
   // find IMDB tconst
   // save IMDB_tconst to db
   logger.log("[findIMDBtconst] START mediaItem:", mediaItem);
+
+  if (!forced && mediaItem.IMDB_tconst) {
+    logger.log("[findIMDBtconst] IMDB_tconst already set and forced = false, aborting");
+    return mediaItem.IMDB_tconst;
+  }
 
   // TODO: Episode - fetch series' IMDB_tconst and use it for the episode
 
   const isMovie = mediaItem.MediaType === "movie";
   const isSeries = mediaItem.MediaType === "series" && !mediaItem.Series_id_Movies_Owner;
-  const isSeriesEpisode = mediaItem.MediaType === "series" && mediaItem.Series_id_Movies_Owner;
+  const isSeriesEpisode = !!(mediaItem.MediaType === "series" && mediaItem.Series_id_Movies_Owner);
 
   logger.log("[findIMDBtconst] ", { isMovie, isSeries, isSeriesEpisode });
-
-  if (isSeriesEpisode) {
-    return await findSeriesEpisodeIMDBtconst(mediaItem, onlyNew, $t);
-  }
 
   if (onlyNew && mediaItem.IMDB_Done) {
     logger.log("[findIMDBtconst] nothing to do, abort");
@@ -2188,61 +2249,66 @@ async function findIMDBtconst(mediaItem, onlyNew, $t) {
     let tconstIncluded = "";
     let tconst = "";
 
-    // find tconst by duplicate
-    if (shared.duplicatesHandling.actualDuplicate.relinkIMDB) {
-      logger.log("[findIMDBtconst] trying by duplicate");
-      const actualDuplicates = await getMovieDuplicates(mediaItem.id_Movies, true, false, true);
-      const actualDuplicate =
-        actualDuplicates.length > 0
-          ? (
-              await db.fireProcedureReturnAll("SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies", {
-                $id_Movies: actualDuplicates[0],
-              })
-            )[0]
-          : null;
+    if (isSeriesEpisode) {
+      logger.log("[findIMDBtconst] this is a series episode, calling findSeriesEpisodeIMDBtconst");
+      tconst = await findSeriesEpisodeIMDBtconst(mediaItem, onlyNew, $t);
+    } else {
+      // find tconst by duplicate
+      if (!tconst && shared.duplicatesHandling.actualDuplicate.relinkIMDB) {
+        logger.log("[findIMDBtconst] trying by duplicate");
+        const actualDuplicates = await getMovieDuplicates(mediaItem.id_Movies, true, false, true);
+        const actualDuplicate =
+          actualDuplicates.length > 0
+            ? (
+                await db.fireProcedureReturnAll("SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies", {
+                  $id_Movies: actualDuplicates[0],
+                })
+              )[0]
+            : null;
 
-      if (actualDuplicate && actualDuplicate.IMDB_tconst) {
-        tconst = actualDuplicate.IMDB_tconst;
-        logger.log("[findIMDBtconst] trying by duplicate - FOUND!");
+        if (actualDuplicate && actualDuplicate.IMDB_tconst) {
+          tconst = actualDuplicate.IMDB_tconst;
+          logger.log("[findIMDBtconst] trying by duplicate - FOUND!");
+        }
       }
-    }
 
-    if (!tconst) {
-      // tconst not found yet, maybe it's included in the file/directory name
-      logger.log("[findIMDBtconst] checking for file/directory name inclusion");
-      tconstIncluded = await findIMDBtconstIncluded(mediaItem);
-      if (!shared.scanOptions.rescanMoviesMetaData_findIMDBtconst_ignore_tconst_in_filename) {
-        tconst = tconstIncluded;
+      if (!tconst) {
+        // tconst not found yet, maybe it's included in the file/directory name
+        logger.log("[findIMDBtconst] checking for file/directory name inclusion");
+        tconstIncluded = await findIMDBtconstIncluded(mediaItem);
+        if (!shared.scanOptions.rescanMoviesMetaData_findIMDBtconst_ignore_tconst_in_filename) {
+          tconst = tconstIncluded;
+        }
       }
-    }
 
-    if (!tconst) {
-      // tconst not found yet, try to find it in the .nfo file (if it exists)
-      logger.log("[findIMDBtconst] checking for .nfo file content");
-      const tconstByNFO = await findIMDBtconstInNFO(mediaItem);
+      if (!tconst) {
+        // tconst not found yet, try to find it in the .nfo file (if it exists)
+        logger.log("[findIMDBtconst] checking for .nfo file content");
+        const tconstByNFO = await findIMDBtconstInNFO(mediaItem);
 
-      if (tconstByNFO) {
-        tconst = tconstByNFO;
+        if (tconstByNFO) {
+          tconst = tconstByNFO;
+        }
       }
-    }
 
-    if (!tconst) {
-      // tconst not found yet, try to find it by searching imdb from the file/directory name
-      logger.log("[findIMDBtconst] using file/directory name (search)");
-      logger.log("[findIMDBtconst] movie:", mediaItem);
-      tconst = await findIMDBtconstByFileOrDirname(mediaItem, {
-        returnAnalysisData: false,
-        category: "title",
-        excludeTVSeries: true,
-      });
+      if (!tconst) {
+        // tconst not found yet, try to find it by searching imdb from the file/directory name
+        logger.log("[findIMDBtconst] using file/directory name (search)");
+        logger.log("[findIMDBtconst] movie:", mediaItem);
+        tconst = await findIMDBtconstByFileOrDirname(mediaItem, {
+          returnAnalysisData: false,
+          category: "title",
+          excludeTVSeries: true,
+        });
 
-      if (shared.scanOptions.rescanMoviesMetaData_findIMDBtconst_ignore_tconst_in_filename) {
-        // compare tconst from IMDB search with included tconst
-        if (tconstIncluded && tconst) {
-          if (tconstIncluded !== tconst) {
-            logger.log(`[findIMDBtconst] tconst compare;mismatch;${tconst};${tconstIncluded};${mediaItem.Filename}`);
-          } else {
-            logger.log(`[findIMDBtconst] tconst compare;match;${tconst};${tconstIncluded};${mediaItem.Filename}`);
+        if (shared.scanOptions.rescanMoviesMetaData_findIMDBtconst_ignore_tconst_in_filename) {
+          // compare tconst from IMDB search with included tconst
+          if (tconstIncluded && tconst) {
+            if (tconstIncluded !== tconst) {
+              logger.log(`[findIMDBtconst] tconst compare;mismatch;${tconst};${tconstIncluded};${mediaItem.Filename}`);
+            } else {
+              logger.log(`[findIMDBtconst] tconst compare;match;${tconst};${tconstIncluded};${mediaItem.Filename}`);
+            }
           }
         }
       }
@@ -3991,6 +4057,8 @@ async function fetchMedia({
       , MOV.Series_Season
       , MOV.Series_Episodes_First
       , MOV.Series_Bonus_Number
+      , MOV.Series_Num_Seasons
+      , MOV.Series_Num_Episodes
 
       ${
         minimumResultSet
@@ -6195,11 +6263,16 @@ async function deleteFilterCompany($id_Filter_Companies) {
   );
 }
 
-async function assignIMDB($id_Movies, $IMDB_tconst, isHandlingDuplicates, movie, $t) {
-  logger.log("[assignIMDB] $id_Movies:", $id_Movies, "$IMDB_tconst:", $IMDB_tconst, "movie:", movie);
+async function assignIMDB($id_Movies, $IMDB_tconst, isHandlingDuplicates, mediaItem, $t) {
+  logger.log("[assignIMDB] $id_Movies:", $id_Movies, "$IMDB_tconst:", $IMDB_tconst, "mediaItem:", mediaItem);
 
-  if (!$IMDB_tconst && movie) {
-    $IMDB_tconst = await findIMDBtconst(movie, false, $t);
+  if (!$IMDB_tconst && mediaItem) {
+    $IMDB_tconst = await findIMDBtconst({
+      mediaItem,
+      onlyNew: false,
+      $t,
+      forced: false,
+    });
   }
 
   if (!$IMDB_tconst) {
@@ -6211,7 +6284,7 @@ async function assignIMDB($id_Movies, $IMDB_tconst, isHandlingDuplicates, movie,
     $IMDB_tconst,
   });
 
-  await rescanMediaItemsMetaData(false, $id_Movies, $t);
+  await rescanMediaItemsMetaData(false, $id_Movies, $t, true);
   await applyMetaData(false, $id_Movies);
 
   if (isHandlingDuplicates) {
@@ -7771,6 +7844,33 @@ async function verifyIMDBtconst($id_Movies) {
   }
 
   logger.log("[verifyIMDBtconst] movie:", movie);
+}
+
+/**
+ * Updates a Series' data from Episodes:
+ * - Video Qualities (multiple!)
+ * - Video Encoders (multiple!)
+ * - Audio Formats
+ * - Release Attributes
+ * - Series_Num_Episodes
+ * - Series_Num_Seasons
+ * - supoprted Audio Languages
+ * - supported Subtitle Languages
+ * - tbl_Movies.Series_Episodes
+ * - tbl_Movies.Series_Seasons
+ * @param {*} id_Movies the id_Movies of the series
+ */
+async function updateSeriesMetadataFromEpisodes(id_Movies) {
+  return id_Movies;
+
+  // const query_tbl_Movies = `
+  //   UPDATE tbl_Movies
+  //   SET   ...
+
+  //   WHERE id_Movies = $id_Movies AND Series_id_Movies_Owner IS NULL
+  // `;
+
+  // await db.fireProcedure(query_tbl_Movies, { $id_Movies: id_Movies });
 }
 
 export {

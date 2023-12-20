@@ -744,7 +744,20 @@
     "Special Effects": "Effets spéciaux"
   },
   "moment": {
-    "months": ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Décembre"],
+    "months": [
+      "Janvier",
+      "Février",
+      "Mars",
+      "Avril",
+      "Mai",
+      "Juin",
+      "Juillet",
+      "Aout",
+      "Septembre",
+      "Octobre",
+      "Novembre",
+      "Décembre"
+    ],
     "monthsShort": ["Jan", "Fev", "Mar", "Avr", "Mai", "Jui", "Jul", "Aou", "Sep", "Oct", "Nov", "Dec"],
     "monthsParseExact": true,
     "weekdays": ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
@@ -982,5 +995,7 @@
   "episode": "épisode",
   "episodes": "épisodes",
   "Series Episodes": "Épisodes de Séries",
-  "Open": "Ouvrir"
+  "Open": "Ouvrir",
+  "season": "saison",
+  "seasons": "saisons"
 }

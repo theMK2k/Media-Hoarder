@@ -4,6 +4,27 @@
 
 - [x] Windows: update bundled VLC to 3.0.20
 - [x] Windows: update bundled Mediainfo CLI to 23.11
+- [x] refactor store.fetchMedia to only accept a single object containing the options
+- [x] check sqlite version for json support - _The JSON functions and operators are built into SQLite by default, as of SQLite version 3.38.0 (2022-02-22)._
+  - specs see [data/devdocs/series.md](data/devdocs/series.md), [docs/01-Media-Storage.md](01-Media-Storage.md)
+
+### TV Series Support (MVP)
+
+- [x] find IMDB tconst and provide metadata for the series and episodes
+- [x] provide series in a different route
+
+### TV Series support
+
+- [x] new symbol for "opening" a series and changing the screen to its eposiodes
+- [x] Series / Episode detection in directory/filenames, examples:
+  - [x] "S01E01" - the default
+  - [x] "Ep01" - as seen with some anime stuff
+  - [x] "E01" - episode without season - assume S01
+  - [x] "1x5" - same as S01E05
+  - [x] "S01E01E02" - multiple episodes
+  - [x] "S01E01-E03" - multiple episodes
+  - [x] "S01E01E02E03" - multiple episodes
+  - [x] "S01E01-03" - multiple episodes
 
 ## v1.3.2
 

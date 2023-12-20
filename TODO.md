@@ -4,34 +4,31 @@
 
 ## NEXT Major (v1.4.0)
 
-- i18n: rescan finished snackbar
-- refactor buildINSERTQuery, buildUDPATEQuery to accept only one object
-- [x] refactor store.fetchMedia to only accept a single object containing the options
+- [ ] i18n: rescan finished snackbar
+- [ ] refactor buildINSERTQuery, buildUDPATEQuery to accept only one object
 
-### TV Series Support
+### TV Series Support (MVP)
 
-- check sqlite version for json support - _The JSON functions and operators are built into SQLite by default, as of SQLite version 3.38.0 (2022-02-22)._
-- specs see [data/devdocs/series.md](data/devdocs/series.md), [docs/01-Media-Storage.md](01-Media-Storage.md)
 - Dialogs: most of them do not utilize mediaType
-- [x] Series / Episode detection in directory/filenames, examples:
-  - [x] "S01E01" - the default
-  - [x] "Ep01" - as seen with some anime stuff
-  - [x] "E01" - episode without season - assume S01
-  - [x] "1x5" - same as S01E05
-  - [x] "S01E01E02" - multiple episodes
-  - [x] "S01E01-E03" - multiple episodes
-  - [x] "S01E01E02E03" - multiple episodes
-  - [x] "S01E01-03" - multiple episodes
-- [ ] MVP:
-  - [x] find IMDB tconst and provide metadata for the series (not the episodes)
-  - [ ] provide series in a different route
-    - [ ] when scanning a series, prefer imdb type "tv series" over "movie" and others
-  - TODO: check tconst detection with movies, too (we changed some fullDirectory to fullPath)
+- [ ] BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
+- [ ] function: updateSeriesDataFromEpisodes
+  - [ ] Video Qualities (multiple!)
+  - [ ] Video Encoders (multiple!)
+  - [ ] Audio Formats
+  - [ ] Release Attributes
+  - [ ] Series_Num_Episodes
+  - [ ] Series_Num_Seasons
+  - [ ] supoprted Audio Languages
+  - [ ] supported Subtitle Languages
+  - [ ] tbl_Movies.Series_Episodes
+  - [ ] tbl_Movies.Series_Seasons
+
+- [ ] when scanning a series, prefer imdb type "tv series" over "movie" and others
+- [ ] create a test set with series name and year
+- [ ] check tconst detection with movies, too (we changed some fullDirectory to fullPath)
 - [ ] IMDB Rating heatmap like <https://whattowatchon.tv>
-- [ ] new symbol for "activating" a series and changing the screen to its eposiodes
 
-
-## NEXT Minor (current v1.3.2)
+## NEXT Minor (current v1.4.0)
 
 - [ ] use imdb-graphql-urls.json (also try to fetch them from master in github, this way we can update the urls if imdb changes them - without creating a new release)
 - [ ] Fix: subdirectory called "extras" is not assigned to the main movie (the files are provided as main movies themselves)

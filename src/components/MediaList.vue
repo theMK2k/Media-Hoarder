@@ -607,9 +607,24 @@
                         v-on:mouseleave="setItemHovered(item, 'name2', false)"
                       >
                         <!-- v-if="item.Name2 || item.selected" -->
-                        <word-highlighter v-bind:query="$shared.searchText || ''">
-                          {{ item.Name2 }}
-                        </word-highlighter>
+                        <word-highlighter v-bind:query="$shared.searchText || ''"> {{ item.Name2 }} </word-highlighter
+                        ><span
+                          v-if="
+                            item.specificMediaType == 'Series' &&
+                            !item.Series_id_Movies_Owner &&
+                            (item.Series_Num_Seasons || items.Series_Num_Episodes)
+                          "
+                        >
+                          <span v-if="item.Name2">·</span>
+                          <span v-if="item.Series_Num_Seasons">
+                            {{ item.Series_Num_Seasons }}
+                            {{ $t(item.Series_Num_Seasons == 1 ? "season" : "seasons") }}</span
+                          ><span v-if="item.Series_Num_Episodes"
+                            >{{ item.Series_Num_Seasons ? ", " : "" }}
+                            {{ item.Series_Num_Episodes }}
+                            {{ $t(item.Series_Num_Episodes == 1 ? "episode" : "episodes") }}
+                          </span>
+                        </span>
                       </v-list-item-subtitle>
 
                       <div style="font-size: 0.875rem; font-weight: normal">
