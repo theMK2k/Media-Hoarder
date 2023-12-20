@@ -21,14 +21,14 @@ export default new Router({
 
     {
       path: "/medialist/:mediatype/:Series_id_Movies_Owner",
-      name: "medialist",
+      name: "medialist-series-episodes",
       component: MediaList,
       props: true,
     },
 
     {
       path: "/medialist/:mediatype",
-      name: "medialist-series-episodes",
+      name: "medialist",
       component: MediaList,
       props: true,
     },
