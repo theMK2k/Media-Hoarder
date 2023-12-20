@@ -20,8 +20,6 @@
   - [ ] Series_Num_Seasons
   - [ ] supoprted Audio Languages
   - [ ] supported Subtitle Languages
-  - [ ] tbl_Movies.Series_Episodes
-  - [ ] tbl_Movies.Series_Seasons
 
 - [ ] when scanning a series, prefer imdb type "tv series" over "movie" and others
 - [ ] create a test set with series name and year
