@@ -164,13 +164,6 @@ export default {
 
           return 0;
         });
-        // .map((item) => {
-        //   return {
-        //     Name: item.Name,
-        //     Name2: item.Name2,
-        //     yearDisplay: item.yearDisplay,
-        //   };
-        // });
 
         this.movies = movies.filter((item, index) => {
           return (

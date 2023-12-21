@@ -3994,8 +3994,7 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
  * @param {Object} $t the vue-i18n object
  * @param {*} filters
  * @param {*} arr_IMDB_tconst
- * @param {*} Series_id_Movies_Owner
- * @param {*} seriesFetchType either 'onlySeries' or 'onlyEpisodes'
+ * @param {*} Series_id_Movies_Owner if set, then only fetch episodes of this series
  * @returns
  */
 async function fetchMedia({
@@ -4006,7 +4005,6 @@ async function fetchMedia({
   filters,
   arr_IMDB_tconst,
   Series_id_Movies_Owner,
-  seriesFetchType,
 }) {
   if (!$MediaType) {
     throw new Error("[fetchMedia] $MediaType missing");
@@ -4142,9 +4140,9 @@ async function fetchMedia({
 		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 		WHERE	(MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
 					AND MOV.id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths WHERE MediaType = $MediaType)
-          ${$MediaType === "series" && seriesFetchType === "onlySeries" ? `AND MOV.Series_id_Movies_Owner IS NULL` : ""}
+          ${$MediaType === "series" && !Series_id_Movies_Owner ? `AND MOV.Series_id_Movies_Owner IS NULL` : ""}
           ${
-            $MediaType === "series" && seriesFetchType === "onlyEpisodes"
+            $MediaType === "series" && Series_id_Movies_Owner
               ? `AND MOV.Series_id_Movies_Owner = ${Series_id_Movies_Owner}`
               : ""
           }

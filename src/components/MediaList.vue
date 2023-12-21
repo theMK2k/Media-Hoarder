@@ -496,7 +496,7 @@
                       >
                         <div style="display: flex; min-height: 30px">
                           <div style="overflow: hidden; text-overflow: ellipsis">
-                            <span v-if="Series_id_Movies_Owner" style="font-weight: 400; color: lightgray">
+                            <span v-if="item.Series_Season_Displaytext" style="font-weight: 400; color: lightgray">
                               {{ item.Series_Season_Displaytext
                               }}{{ `${item.Series_Season_Displaytext ? "." : ""}${item.Series_Episodes_Displaytext}` }}
                             </span>
@@ -1371,13 +1371,6 @@
       v-on:close="onVideoEncoderDialogClose"
     ></mk-video-encoder-dialog>
 
-    <mk-audio-format-dialog
-      ref="audioFormatDialog"
-      v-bind:show="audioFormatDialog.show"
-      v-bind:Audio_Format="audioFormatDialog.Audio_Format"
-      v-on:close="onAudioFormatDialogClose"
-    ></mk-audio-format-dialog>
-
     <mk-genre-dialog
       ref="genreDialog"
       v-bind:show="genreDialog.show"
@@ -1393,13 +1386,6 @@
       v-bind:Language="languageDialog.Language"
       v-on:close="onLanguageDialogClose"
     ></mk-language-dialog>
-
-    <mk-age-rating-dialog
-      ref="ageRatingDialog"
-      v-bind:show="ageRatingDialog.show"
-      v-bind:Age_Rating="ageRatingDialog.Age_Rating"
-      v-on:close="onAgeRatingDialogClose"
-    ></mk-age-rating-dialog>
 
     <mk-plot-keyword-dialog
       ref="plotKeywordDialog"
@@ -1506,6 +1492,40 @@
       v-on:ok="onRescanCurrentListDialogOK"
       v-on:cancel="rescanCurrentListDialog.show = false"
     ></mk-rescan-current-list-dialog>
+
+    <mk-media-property-dialog
+      ref="ageRatingDialog"
+      v-bind:mediaType="mediatype"
+      v-bind:Series_id_Movies_Owner="Series_id_Movies_Owner"
+      propertyTypeKey="age-rating"
+      v-bind:show="ageRatingDialog.show"
+      v-bind:propertyValue="ageRatingDialog.Age_Rating"
+      v-on:close="onAgeRatingDialogClose"
+    ></mk-media-property-dialog>
+    <mk-media-property-dialog
+      ref="audioFormatDialog"
+      v-bind:mediaType="mediatype"
+      v-bind:Series_id_Movies_Owner="Series_id_Movies_Owner"
+      propertyTypeKey="audio-format"
+      v-bind:show="audioFormatDialog.show"
+      v-bind:propertyValue="audioFormatDialog.Audio_Format"
+      v-on:close="onAudioFormatDialogClose"
+    ></mk-media-property-dialog>
+
+    <!-- Deprecated, non-generalized dialogs
+    <mk-age-rating-dialog
+      ref="ageRatingDialog"
+      v-bind:show="ageRatingDialog.show"
+      v-bind:Age_Rating="ageRatingDialog.Age_Rating"
+      v-on:close="onAgeRatingDialogClose"
+    ></mk-age-rating-dialog>
+    <mk-audio-format-dialog
+      ref="audioFormatDialog"
+      v-bind:show="audioFormatDialog.show"
+      v-bind:Audio_Format="audioFormatDialog.Audio_Format"
+      v-on:close="onAudioFormatDialogClose"
+    ></mk-audio-format-dialog>
+    -->
   </div>
 </template>
 
@@ -1528,10 +1548,8 @@ import PersonDialog from "@/components/shared/PersonDialog.vue";
 import CompanyDialog from "@/components/shared/CompanyDialog.vue";
 import VideoQualityDialog from "@/components/shared/VideoQualityDialog.vue";
 import VideoEncoderDialog from "@/components/shared/VideoEncoderDialog.vue";
-import AudioFormatDialog from "@/components/shared/AudioFormatDialog.vue";
 import GenreDialog from "@/components/shared/GenreDialog.vue";
 import LanguageDialog from "@/components/shared/LanguageDialog.vue";
-import AgeRatingDialog from "@/components/shared/AgeRatingDialog.vue";
 import PlotKeywordDialog from "@/components/shared/PlotKeywordDialog.vue";
 import FilmingLocationDialog from "@/components/shared/FilmingLocationDialog.vue";
 import VideoPlayerDialog from "@/components/shared/VideoPlayerDialog.vue";
@@ -1541,6 +1559,10 @@ import Pagination from "@/components/shared/Pagination.vue";
 import RatingDemographicsDialog from "@/components/shared/RatingDemographicsDialog";
 import ReleaseAttributeDialog from "@/components/shared/ReleaseAttributeDialog";
 import Dialog from "@/components/shared/Dialog.vue";
+
+import MediaPropertyDialog from "@/components/shared/MediaPropertyDialog.vue";
+//import AgeRatingDialog from "@/components/shared/AgeRatingDialog.vue";
+//import AudioFormatDialog from "@/components/shared/AudioFormatDialog.vue";
 
 const { shell } = require("@electron/remote");
 
@@ -1559,10 +1581,8 @@ export default {
     "mk-company-dialog": CompanyDialog,
     "mk-video-quality-dialog": VideoQualityDialog,
     "mk-video-encoder-dialog": VideoEncoderDialog,
-    "mk-audio-format-dialog": AudioFormatDialog,
     "mk-genre-dialog": GenreDialog,
     "mk-language-dialog": LanguageDialog,
-    "mk-age-rating-dialog": AgeRatingDialog,
     "mk-plot-keyword-dialog": PlotKeywordDialog,
     "mk-filming-location-dialog": FilmingLocationDialog,
     "mk-video-player-dialog": VideoPlayerDialog,
@@ -1574,6 +1594,10 @@ export default {
     "mk-edit-media-item-dialog": EditMediaItemDialog,
     "mk-delete-media-dialog": Dialog,
     "mk-rescan-current-list-dialog": Dialog,
+
+    // "mk-age-rating-dialog": AgeRatingDialog,
+    // "mk-audio-format-dialog": AudioFormatDialog,
+    "mk-media-property-dialog": MediaPropertyDialog,
   },
 
   data: () => ({
@@ -2060,7 +2084,6 @@ export default {
               filters: { filterSettings: {} },
               arr_IMDB_tconst: null,
               Series_id_Movies_Owner: null,
-              seriesFetchType: "onlySeries",
             })
           )[0];
 
@@ -3128,7 +3151,6 @@ export default {
               filters: this.$shared.filters,
               arr_IMDB_tconst: null,
               Series_id_Movies_Owner: null,
-              seriesFetchType: "onlySeries",
             })
           : await store.fetchMedia({
               $MediaType: this.mediatype,
@@ -3138,7 +3160,6 @@ export default {
               filters: { filterSettings: {} },
               arr_IMDB_tconst: null,
               Series_id_Movies_Owner: this.Series_id_Movies_Owner,
-              seriesFetchType: "onlyEpisodes",
             });
 
         logger.log("[completelyFetchMedia] result:", result);
@@ -3377,7 +3398,6 @@ export default {
               filters: this.$shared.filters,
               arr_IMDB_tconst: null,
               Series_id_Movies_Owner: null,
-              seriesFetchType: "onlySeries",
             })
           : await store.fetchMedia({
               $MediaType: this.mediatype,
@@ -3387,7 +3407,6 @@ export default {
               filters: { filterSettings: {} },
               arr_IMDB_tconst: null,
               Series_id_Movies_Owner: this.Series_id_Movies_Owner,
-              seriesFetchType: "onlyEpisodes",
             });
 
         this.$shared.currentPage = setPage && setPage <= this.numPages ? setPage : 1;

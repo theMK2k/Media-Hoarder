@@ -3,6 +3,10 @@
     class="mk-compact-movie-list-row mk-highlightable-row"
     style="padding-top: 4px; padding-bottom: 2px; margin-top: 2px"
   >
+    <span v-if="movie.Series_Season_Displaytext" style="font-weight: 400; color: lightgray; margin-right: 4px">
+      {{ movie.Series_Season_Displaytext
+      }}{{ `${movie.Series_Season_Displaytext ? "." : ""}${movie.Series_Episodes_Displaytext}` }}
+    </span>
     {{ movie.Name }}
     {{ movie.Name2 ? " | " + movie.Name2 : "" }}
     {{ movie.yearDisplay }}
