@@ -22,7 +22,7 @@
       - [x] AgeRatingDialog
       - [x] AudioFormatDialog
       - [x] CompanyDialog
-      - [ ] FilmingLocationDialog
+      - [x] FilmingLocationDialog
       - [ ] GenreDialog
       - [ ] LanguageDialog?
       - [ ] PlotKeywordDialog

@@ -3,7 +3,7 @@
   <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onEscapePressed" scrollable>
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
-        {{ $t(propertyType.title) }}: {{ propertyValue }}
+        {{ $t(propertyType.title) }}: {{ propertyValueDisplayText }}
         <v-progress-linear
           v-if="isScraping || isLoadingMovies"
           color="red accent-0"
@@ -55,7 +55,7 @@
 
         <!-- Button: IMDB -->
         <v-btn
-          v-if="propertyTypeKey == 'company'"
+          v-if="['company'].includes(propertyTypeKey)"
           class="xs-fullwidth"
           color="primary"
           v-on:click.stop="openIMDB()"
@@ -92,7 +92,15 @@ import { eventBus } from "@/main";
 import CompactMovieListRow from "@/components/shared/CompactMovieListRow.vue";
 
 export default {
-  props: ["show", "propertyTypeKey", "propertyValue", "imdbTconst", "mediaType", "Series_id_Movies_Owner"],
+  props: [
+    "show",
+    "propertyTypeKey",
+    "propertyValue",
+    "propertyValueDisplayText",
+    "imdbTconst",
+    "mediaType",
+    "Series_id_Movies_Owner",
+  ],
 
   components: {
     "mk-compact-movie-list-row": CompactMovieListRow,
@@ -118,6 +126,10 @@ export default {
         company: {
           title: "Company",
           filterButtonText: "Filter by this company",
+        },
+        "filming-location": {
+          title: "Filming Location",
+          filterButtonText: "Filter by this filming location",
         },
       },
 
@@ -191,6 +203,9 @@ export default {
         case "company":
           queryParams.$CompanyName = this.propertyValue;
           break;
+        case "filming-location":
+          queryParams.$id_IMDB_Filming_Locations = this.propertyValue;
+          break;
       }
 
       logger.log(`[MediaPropertyDialog ${this.propertyTypeKey}] queryParams:`, queryParams);
@@ -211,6 +226,8 @@ export default {
                 ? `INNER JOIN tbl_Movies_MI_Tracks MITAUDIO ON MITAUDIO.type = "audio" AND MITAUDIO.id_Movies = MOV.id_Movies AND MITAUDIO.Format = $Audio_Format`
                 : this.propertyTypeKey === "company"
                 ? `INNER JOIN tbl_Movies_IMDB_Companies MC ON MC.id_Movies = MOV.id_Movies`
+                : this.propertyTypeKey === "filming-location"
+                ? `INNER JOIN tbl_Movies_IMDB_Filming_Locations MFL ON MFL.id_Movies = MOV.id_Movies`
                 : ``
             }
 
@@ -237,6 +254,11 @@ export default {
                       : ""
                   }
                   ${this.propertyTypeKey === "company" ? `AND MC.Company_Name = $CompanyName` : ""}
+                  ${
+                    this.propertyTypeKey === "filming-location"
+                      ? `AND MFL.id_IMDB_Filming_Locations = $id_IMDB_Filming_Locations`
+                      : ""
+                  }
           )
         `,
           queryParams
@@ -276,8 +298,14 @@ export default {
           setFilter.filterAudioFormats = [this.propertyValue];
           break;
         case "company":
+          await store.addFilterCompany(this.propertyValue);
           setFilter.filterCompanies = [this.propertyValue];
           eventBus.companyDialogConfirm(setFilter);
+          break;
+        case "filming-location":
+          await store.addFilterIMDBFilmingLocation(this.propertyValue, this.propertyValueDisplayText);
+          setFilter.filterIMDBFilmingLocations = [this.propertyValue];
+          eventBus.filmingLocationDialogConfirm(setFilter);
           break;
       }
 
@@ -351,6 +379,19 @@ export default {
                 Selected: true,
                 IMDB_Company_ID: this.imdbTconst,
                 Company_Name: this.propertyValue,
+              },
+            ];
+            break;
+          case "filming-location":
+            filters.filterIMDBFilmingLocations = [
+              {
+                id_Filter_IMDB_Filming_Locations: 0,
+                Selected: false,
+              },
+              {
+                id_Filter_IMDB_Filming_Locations: 666,
+                id_IMDB_Filming_Locations: this.propertyValue,
+                Selected: true,
               },
             ];
             break;
