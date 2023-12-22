@@ -90,6 +90,7 @@ const logger = require("../../helpers/logger");
 import { eventBus } from "@/main";
 
 import CompactMovieListRow from "@/components/shared/CompactMovieListRow.vue";
+import { filter } from "cheerio/lib/api/traversing";
 
 export default {
   props: [
@@ -130,6 +131,10 @@ export default {
         "filming-location": {
           title: "Filming Location",
           filterButtonText: "Filter by this filming location",
+        },
+        genre: {
+          title: "Genre",
+          filterButtonText: "Filter by this genre",
         },
       },
 
@@ -184,6 +189,8 @@ export default {
     },
 
     async init() {
+      logger.log(`[MediaPropertyDialog ${this.propertyTypeKey} init] START, this.propertyValue:`, this.propertyValue);
+
       this.movies = [];
       this.showMovies = false;
       this.numMovies = null;
@@ -205,6 +212,9 @@ export default {
           break;
         case "filming-location":
           queryParams.$id_IMDB_Filming_Locations = this.propertyValue;
+          break;
+        case "genre":
+          queryParams.$Genre = this.propertyValue;
           break;
       }
 
@@ -259,6 +269,11 @@ export default {
                       ? `AND MFL.id_IMDB_Filming_Locations = $id_IMDB_Filming_Locations`
                       : ""
                   }
+                  ${
+                    this.propertyTypeKey === "genre"
+                      ? `AND MOV.id_Movies IN (SELECT MG.id_Movies FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G WHERE MG.id_Genres = G.id_Genres AND G.Name = $Genre)`
+                      : ""
+                  }
           )
         `,
           queryParams
@@ -306,6 +321,9 @@ export default {
           await store.addFilterIMDBFilmingLocation(this.propertyValue, this.propertyValueDisplayText);
           setFilter.filterIMDBFilmingLocations = [this.propertyValue];
           eventBus.filmingLocationDialogConfirm(setFilter);
+          break;
+        case "genre":
+          setFilter.filterGenres = [{ name: this.propertyValue, translated: this.propertyValueDisplayText }];
           break;
       }
 
@@ -393,6 +411,23 @@ export default {
                 id_IMDB_Filming_Locations: this.propertyValue,
                 Selected: true,
               },
+            ];
+            break;
+          case "genre":
+            filter.filterGenres = [
+              { GenreID: "none", Name: "None", Selected: false, id_Genres: -1 },
+              ...this.$shared.filters.filterGenres
+                .filter((item) => {
+                  return item.Name === this.propertyValue;
+                })
+                .map((item) => {
+                  return {
+                    GenreID: item.GenreID,
+                    Name: item.Name,
+                    Selected: true,
+                    id_Genres: item.id_Genres,
+                  };
+                }),
             ];
             break;
         }

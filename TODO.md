@@ -23,7 +23,7 @@
       - [x] AudioFormatDialog
       - [x] CompanyDialog
       - [x] FilmingLocationDialog
-      - [WIP] GenreDialog
+      - [x] GenreDialog
       - [ ] LanguageDialog?
       - [ ] PlotKeywordDialog
       - [ ] ReleaseAttributeDialog

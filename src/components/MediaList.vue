@@ -1373,13 +1373,6 @@
       v-on:close="onVideoEncoderDialogClose"
     ></mk-video-encoder-dialog>
 
-    <mk-genre-dialog
-      ref="genreDialog"
-      v-bind:show="genreDialog.show"
-      v-bind:Genre="genreDialog.Genre"
-      v-on:close="onGenreDialogClose"
-    ></mk-genre-dialog>
-
     <mk-language-dialog
       ref="languageDialog"
       v-bind:show="languageDialog.show"
@@ -1491,8 +1484,8 @@
       ref="ageRatingDialog"
       v-bind:mediaType="mediatype"
       v-bind:Series_id_Movies_Owner="Series_id_Movies_Owner"
-      v-bind:show="ageRatingDialog.show"
       propertyTypeKey="age-rating"
+      v-bind:show="ageRatingDialog.show"
       v-bind:propertyValue="ageRatingDialog.Age_Rating"
       v-bind:propertyValueDisplayText="ageRatingDialog.Age_Rating"
       v-on:close="onAgeRatingDialogClose"
@@ -1502,8 +1495,8 @@
       ref="audioFormatDialog"
       v-bind:mediaType="mediatype"
       v-bind:Series_id_Movies_Owner="Series_id_Movies_Owner"
-      v-bind:show="audioFormatDialog.show"
       propertyTypeKey="audio-format"
+      v-bind:show="audioFormatDialog.show"
       v-bind:propertyValue="audioFormatDialog.Audio_Format"
       v-bind:propertyValueDisplayText="audioFormatDialog.Audio_Format"
       v-on:close="onAudioFormatDialogClose"
@@ -1513,8 +1506,8 @@
       ref="companyDialog"
       v-bind:mediaType="mediatype"
       v-bind:Series_id_Movies_Owner="Series_id_Movies_Owner"
-      v-bind:show="companyDialog.show"
       propertyTypeKey="company"
+      v-bind:show="companyDialog.show"
       v-bind:propertyValue="companyDialog.Company_Name"
       v-bind:propertyValueDisplayText="companyDialog.Company_Name"
       v-bind:imdbTconst="companyDialog.IMDB_Company_ID"
@@ -1525,12 +1518,23 @@
       ref="filmingLocationDialog"
       v-bind:mediaType="mediatype"
       v-bind:Series_id_Movies_Owner="Series_id_Movies_Owner"
-      v-bind:show="filmingLocationDialog.show"
       propertyTypeKey="filming-location"
+      v-bind:show="filmingLocationDialog.show"
       v-bind:propertyValue="filmingLocationDialog.id_IMDB_Filming_Locations"
       v-bind:propertyValueDisplayText="filmingLocationDialog.Location"
       v-on:close="onFilmingLocationDialogClose"
     ></mk-filming-location-dialog>
+
+    <mk-genre-dialog
+      ref="genreDialog"
+      v-bind:mediaType="mediatype"
+      v-bind:Series_id_Movies_Owner="Series_id_Movies_Owner"
+      propertyTypeKey="genre"
+      v-bind:show="genreDialog.show"
+      v-bind:propertyValue="genreDialog.name"
+      v-bind:propertyValueDisplayText="genreDialog.translated"
+      v-on:close="onGenreDialogClose"
+    ></mk-genre-dialog>
 
     <!-- Deprecated, non-generalized dialogs
     <mk-age-rating-dialog
@@ -1559,6 +1563,12 @@
       v-bind:Location="filmingLocationDialog.Location"
       v-on:close="onFilmingLocationDialogClose"
     ></mk-filming-location-dialog>
+    <mk-genre-dialog
+      ref="genreDialog"
+      v-bind:show="genreDialog.show"
+      v-bind:Genre="genreDialog.Genre"
+      v-on:close="onGenreDialogClose"
+    ></mk-genre-dialog>
     -->
   </div>
 </template>
@@ -1581,7 +1591,6 @@ import ListDialog from "@/components/shared/ListDialog.vue";
 import PersonDialog from "@/components/shared/PersonDialog.vue";
 import VideoQualityDialog from "@/components/shared/VideoQualityDialog.vue";
 import VideoEncoderDialog from "@/components/shared/VideoEncoderDialog.vue";
-import GenreDialog from "@/components/shared/GenreDialog.vue";
 import LanguageDialog from "@/components/shared/LanguageDialog.vue";
 import PlotKeywordDialog from "@/components/shared/PlotKeywordDialog.vue";
 import VideoPlayerDialog from "@/components/shared/VideoPlayerDialog.vue";
@@ -1613,7 +1622,6 @@ export default {
     "mk-person-dialog": PersonDialog,
     "mk-video-quality-dialog": VideoQualityDialog,
     "mk-video-encoder-dialog": VideoEncoderDialog,
-    "mk-genre-dialog": GenreDialog,
     "mk-language-dialog": LanguageDialog,
     "mk-plot-keyword-dialog": PlotKeywordDialog,
     "mk-video-player-dialog": VideoPlayerDialog,
@@ -1630,6 +1638,7 @@ export default {
     "mk-audio-format-dialog": MediaPropertyDialog,
     "mk-company-dialog": MediaPropertyDialog,
     "mk-filming-location-dialog": MediaPropertyDialog,
+    "mk-genre-dialog": MediaPropertyDialog,
   },
 
   data: () => ({
@@ -1710,7 +1719,8 @@ export default {
 
     genreDialog: {
       show: false,
-      Video_Quality: null,
+      name: null,
+      translated: null,
     },
 
     languageDialog: {
@@ -2698,7 +2708,10 @@ export default {
       logger.log("[onGenreClicked]:", genre);
 
       this.genreDialog.show = true;
-      this.genreDialog.Genre = genre;
+      this.genreDialog.name = genre.name;
+      this.genreDialog.translated = genre.translated;
+
+      logger.log("[onGenreClicked] this.genreDialog:", this.genreDialog);
 
       return;
     },
