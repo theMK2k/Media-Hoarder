@@ -982,6 +982,16 @@
                   <word-highlighter v-bind:query="$shared.searchText || ''">
                     {{ item.IMDB_tconst || notAvailableText }}
                   </word-highlighter>
+                  <v-btn
+                    v-if="item.IMDB_tconst"
+                    class="mk-btn-small"
+                    text
+                    small
+                    color="primary"
+                    v-on:click.stop="copyImdbTconst(item)"
+                    style="margin-top: -1px"
+                    ><v-icon small>mdi-content-copy</v-icon></v-btn
+                  >
                 </v-col>
               </v-row>
               <v-row class="mk-detail-row">
@@ -2244,6 +2254,20 @@ export default {
       }
 
       el.value = info;
+      el.setAttribute("readonly", "");
+      el.style = { position: "absolute", left: "-9999px" };
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand("copy");
+      document.body.removeChild(el);
+
+      eventBus.showSnackbar("info", this.$t("Info copied to clipboard"));
+    },
+
+    copyImdbTconst(mediaItem) {
+      const el = document.createElement("textarea");
+
+      el.value = mediaItem.IMDB_tconst;
       el.setAttribute("readonly", "");
       el.style = { position: "absolute", left: "-9999px" };
       document.body.appendChild(el);

@@ -23,7 +23,7 @@
       - [x] AudioFormatDialog
       - [x] CompanyDialog
       - [x] FilmingLocationDialog
-      - [ ] GenreDialog
+      - [WIP] GenreDialog
       - [ ] LanguageDialog?
       - [ ] PlotKeywordDialog
       - [ ] ReleaseAttributeDialog
@@ -60,6 +60,7 @@
     - the trailers are also labeled!
 
 - edit movie: define audio / subtitle languages
+- add ffmpeg in order to create screenshots for movies/episodes with missing poster
 
 ### Defects
 

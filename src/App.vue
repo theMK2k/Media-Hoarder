@@ -4779,6 +4779,9 @@ a {
 
 .mk-btn-small {
   height: 20px !important;
+  padding: 0 4px !important;
+  min-width: 20px !important;
+  margin-left: 4px;
 }
 
 .mk-main-detail-row {
