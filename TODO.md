@@ -18,17 +18,18 @@
     - [x] act as a dialog for series
     - [x] act as a dialog for episodes (of a certain series)
     - [x] debounce the init() function and call it on any property change, with 10ms debounce
-    - [x] AgeRatingDialog
-    - [x] AudioFormatDialog
-    - [ ] CompanyDialog
-    - [ ] FilmingLocationDialog
-    - [ ] GenreDialog
-    - [ ] LanguageDialog?
-    - [ ] PlotKeywordDialog
-    - [ ] ReleaseAttributeDialog
-    - [ ] VideoEncodeDialog
-    - [ ] VideoEncoderDialog
-    - [ ] VideoQualiyDialog
+    - [ ] integrate old dialogs:
+      - [x] AgeRatingDialog
+      - [x] AudioFormatDialog
+      - [x] CompanyDialog
+      - [ ] FilmingLocationDialog
+      - [ ] GenreDialog
+      - [ ] LanguageDialog?
+      - [ ] PlotKeywordDialog
+      - [ ] ReleaseAttributeDialog
+      - [ ] VideoEncodeDialog
+      - [ ] VideoEncoderDialog
+      - [ ] VideoQualiyDialog
 - [ ] BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
 - [ ] function: updateSeriesDataFromEpisodes
   - [ ] Video Qualities (multiple!)

@@ -48,9 +48,22 @@
       </v-card-text>
 
       <v-card-actions>
+        <!-- Button: Close -->
         <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCloseClick" style="margin-left: 8px">{{
           $t("Close")
         }}</v-btn>
+
+        <!-- Button: IMDB -->
+        <v-btn
+          v-if="propertyTypeKey == 'company'"
+          class="xs-fullwidth"
+          color="primary"
+          v-on:click.stop="openIMDB()"
+          style="margin-left: 8px"
+        >
+          <v-icon small>mdi-web</v-icon>&nbsp;IMDB
+        </v-btn>
+        <!-- Button: Filter by this... -->
         <v-btn
           v-if="!Series_id_Movies_Owner && numMovies !== null"
           class="xs-fullwidth"
@@ -66,6 +79,8 @@
 </template>
 
 <script>
+const { shell } = require("@electron/remote");
+
 import * as _ from "lodash";
 
 import * as store from "@/store";
@@ -77,7 +92,7 @@ import { eventBus } from "@/main";
 import CompactMovieListRow from "@/components/shared/CompactMovieListRow.vue";
 
 export default {
-  props: ["show", "propertyTypeKey", "propertyValue", "mediaType", "Series_id_Movies_Owner"],
+  props: ["show", "propertyTypeKey", "propertyValue", "imdbTconst", "mediaType", "Series_id_Movies_Owner"],
 
   components: {
     "mk-compact-movie-list-row": CompactMovieListRow,
@@ -99,6 +114,10 @@ export default {
         "audio-format": {
           title: "Audio Format",
           filterButtonText: "Filter by this audio format",
+        },
+        company: {
+          title: "Company",
+          filterButtonText: "Filter by this company",
         },
       },
 
@@ -169,6 +188,9 @@ export default {
         case "audio-format":
           queryParams.$Audio_Format = this.propertyValue;
           break;
+        case "company":
+          queryParams.$CompanyName = this.propertyValue;
+          break;
       }
 
       logger.log(`[MediaPropertyDialog ${this.propertyTypeKey}] queryParams:`, queryParams);
@@ -187,6 +209,8 @@ export default {
                 ? `LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating`
                 : this.propertyTypeKey === "audio-format"
                 ? `INNER JOIN tbl_Movies_MI_Tracks MITAUDIO ON MITAUDIO.type = "audio" AND MITAUDIO.id_Movies = MOV.id_Movies AND MITAUDIO.Format = $Audio_Format`
+                : this.propertyTypeKey === "company"
+                ? `INNER JOIN tbl_Movies_IMDB_Companies MC ON MC.id_Movies = MOV.id_Movies`
                 : ``
             }
 
@@ -212,6 +236,7 @@ export default {
                         )`
                       : ""
                   }
+                  ${this.propertyTypeKey === "company" ? `AND MC.Company_Name = $CompanyName` : ""}
           )
         `,
           queryParams
@@ -250,11 +275,25 @@ export default {
         case "audio-format":
           setFilter.filterAudioFormats = [this.propertyValue];
           break;
+        case "company":
+          setFilter.filterCompanies = [this.propertyValue];
+          eventBus.companyDialogConfirm(setFilter);
+          break;
       }
 
       eventBus.refetchSpecificFilter(setFilter);
 
       this.$emit("close");
+    },
+
+    openIMDB() {
+      if (!this.imdbTconst) {
+        return;
+      }
+
+      if (this.propertyTypeKey == "company") {
+        shell.openExternal(`https://www.imdb.com/company/${this.imdbTconst}`);
+      }
     },
 
     onEscapePressed() {
@@ -298,6 +337,20 @@ export default {
               {
                 Name: this.propertyValue,
                 Selected: true,
+              },
+            ];
+            break;
+          case "company":
+            filters.filterCompanies = [
+              {
+                id_Filter_Companies: 0,
+                Selected: false,
+              },
+              {
+                id_Filter_Companies: 666,
+                Selected: true,
+                IMDB_Company_ID: this.imdbTconst,
+                Company_Name: this.propertyValue,
               },
             ];
             break;

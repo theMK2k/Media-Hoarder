@@ -1349,14 +1349,6 @@
       v-on:close="onPersonDialogClose"
     ></mk-person-dialog>
 
-    <mk-company-dialog
-      ref="companyDialog"
-      v-bind:show="companyDialog.show"
-      v-bind:IMDB_Company_ID="companyDialog.IMDB_Company_ID"
-      v-bind:Company_Name="companyDialog.Company_Name"
-      v-on:close="onCompanyDialogClose"
-    ></mk-company-dialog>
-
     <mk-video-quality-dialog
       ref="videoQualityDialog"
       v-bind:show="videoQualityDialog.show"
@@ -1493,24 +1485,36 @@
       v-on:cancel="rescanCurrentListDialog.show = false"
     ></mk-rescan-current-list-dialog>
 
-    <mk-media-property-dialog
+    <mk-age-rating-dialog
       ref="ageRatingDialog"
       v-bind:mediaType="mediatype"
       v-bind:Series_id_Movies_Owner="Series_id_Movies_Owner"
-      propertyTypeKey="age-rating"
       v-bind:show="ageRatingDialog.show"
+      propertyTypeKey="age-rating"
       v-bind:propertyValue="ageRatingDialog.Age_Rating"
       v-on:close="onAgeRatingDialogClose"
-    ></mk-media-property-dialog>
-    <mk-media-property-dialog
+    ></mk-age-rating-dialog>
+
+    <mk-audio-format-dialog
       ref="audioFormatDialog"
       v-bind:mediaType="mediatype"
       v-bind:Series_id_Movies_Owner="Series_id_Movies_Owner"
-      propertyTypeKey="audio-format"
       v-bind:show="audioFormatDialog.show"
+      propertyTypeKey="audio-format"
       v-bind:propertyValue="audioFormatDialog.Audio_Format"
       v-on:close="onAudioFormatDialogClose"
-    ></mk-media-property-dialog>
+    ></mk-audio-format-dialog>
+
+    <mk-company-dialog
+      ref="companyDialog"
+      v-bind:mediaType="mediatype"
+      v-bind:Series_id_Movies_Owner="Series_id_Movies_Owner"
+      v-bind:show="companyDialog.show"
+      propertyTypeKey="company"
+      v-bind:propertyValue="companyDialog.Company_Name"
+      v-bind:imdbTconst="companyDialog.IMDB_Company_ID"
+      v-on:close="onCompanyDialogClose"
+    ></mk-company-dialog>
 
     <!-- Deprecated, non-generalized dialogs
     <mk-age-rating-dialog
@@ -1525,6 +1529,14 @@
       v-bind:Audio_Format="audioFormatDialog.Audio_Format"
       v-on:close="onAudioFormatDialogClose"
     ></mk-audio-format-dialog>
+    <mk-company-dialog
+      ref="companyDialog"
+      v-bind:show="companyDialog.show"
+      v-bind:IMDB_Company_ID="companyDialog.IMDB_Company_ID"
+      v-bind:Company_Name="companyDialog.Company_Name"
+      v-on:close="onCompanyDialogClose"
+    ></mk-company-dialog>
+
     -->
   </div>
 </template>
@@ -1545,7 +1557,6 @@ import WordHighlighter from "vue-word-highlighter";
 import EditMediaItemDialog from "@/components/shared/EditMediaItemDialog.vue";
 import ListDialog from "@/components/shared/ListDialog.vue";
 import PersonDialog from "@/components/shared/PersonDialog.vue";
-import CompanyDialog from "@/components/shared/CompanyDialog.vue";
 import VideoQualityDialog from "@/components/shared/VideoQualityDialog.vue";
 import VideoEncoderDialog from "@/components/shared/VideoEncoderDialog.vue";
 import GenreDialog from "@/components/shared/GenreDialog.vue";
@@ -1563,6 +1574,7 @@ import Dialog from "@/components/shared/Dialog.vue";
 import MediaPropertyDialog from "@/components/shared/MediaPropertyDialog.vue";
 //import AgeRatingDialog from "@/components/shared/AgeRatingDialog.vue";
 //import AudioFormatDialog from "@/components/shared/AudioFormatDialog.vue";
+//import CompanyDialog from "@/components/shared/CompanyDialog.vue";
 
 const { shell } = require("@electron/remote");
 
@@ -1578,7 +1590,6 @@ export default {
     "word-highlighter": WordHighlighter,
     "mk-list-dialog": ListDialog,
     "mk-person-dialog": PersonDialog,
-    "mk-company-dialog": CompanyDialog,
     "mk-video-quality-dialog": VideoQualityDialog,
     "mk-video-encoder-dialog": VideoEncoderDialog,
     "mk-genre-dialog": GenreDialog,
@@ -1595,9 +1606,9 @@ export default {
     "mk-delete-media-dialog": Dialog,
     "mk-rescan-current-list-dialog": Dialog,
 
-    // "mk-age-rating-dialog": AgeRatingDialog,
-    // "mk-audio-format-dialog": AudioFormatDialog,
-    "mk-media-property-dialog": MediaPropertyDialog,
+    "mk-age-rating-dialog": MediaPropertyDialog,
+    "mk-audio-format-dialog": MediaPropertyDialog,
+    "mk-company-dialog": MediaPropertyDialog,
   },
 
   data: () => ({
