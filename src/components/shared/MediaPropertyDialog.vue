@@ -173,6 +173,14 @@ export default {
           title: "Release Attribute",
           filterButtonText: "Filter by this release attribute",
         },
+        "video-encoder": {
+          title: "Video Encoder",
+          filterButtonText: "Filter by this video encoder",
+        },
+        "video-quality": {
+          title: "Video Quality",
+          filterButtonText: "Filter by this video quality",
+        },
       },
 
       isScraping: false,
@@ -276,6 +284,12 @@ export default {
         case "plot-keyword":
           queryParams.$id_IMDB_Plot_Keywords = this.propertyValue;
           break;
+        case "video-encoder":
+          queryParams.$Video_Encoder = this.propertyValue;
+          break;
+        case "video-quality":
+          queryParams.$Video_Quality = this.propertyValue;
+          break;
       }
 
       logger.log(`[MediaPropertyDialog ${this.propertyTypeKey}] queryParams:`, queryParams);
@@ -302,6 +316,8 @@ export default {
                 ? `INNER JOIN tbl_Movies_IMDB_Plot_Keywords MPK ON MPK.id_Movies = MOV.id_Movies`
                 : this.propertyTypeKey === "release-attribute"
                 ? `INNER JOIN tbl_Movies_Release_Attributes MRA ON MRA.id_Movies = MOV.id_Movies`
+                : this.propertyTypeKey === "video-encoder"
+                ? `INNER JOIN tbl_Movies_MI_Tracks MITVIDEO ON MITVIDEO.type = "video" AND MITVIDEO.id_Movies = MOV.id_Movies AND MITVIDEO.Encoded_Library_Name_Trimmed = $Video_Encoder`
                 : ``
             }
 
@@ -361,6 +377,7 @@ export default {
                          }, "")})`
                       : ""
                   }
+                  ${this.propertyTypeKey === "video-quality" ? `AND MOV.MI_Quality = $Video_Quality` : ""}
           )
         `,
           queryParams
@@ -416,6 +433,12 @@ export default {
           break;
         case "release-attribute":
           setFilter.filterReleaseAttributes = [this.propertyValue];
+          break;
+        case "video-encoder":
+          setFilter.filterVideoEncoders = [this.propertyValue];
+          break;
+        case "video-quality":
+          setFilter.filterQualities = [this.propertyValue];
           break;
       }
 
@@ -567,6 +590,24 @@ export default {
                 isAny: false,
                 Selected: true,
                 ReleaseAttribute: this.propertyValue,
+              },
+            ];
+            break;
+          case "video-encoder":
+            filters.filterVideoEncoders = [
+              { Name: "<not available>", Selected: false },
+              {
+                Name: this.propertyValue,
+                Selected: true,
+              },
+            ];
+            break;
+          case "video-quality":
+            filters.filterQualities = [
+              { MI_Quality: "<none>", Selected: false },
+              {
+                MI_Quality: this.propertyValue,
+                Selected: true,
               },
             ];
             break;

@@ -1359,20 +1359,6 @@
       v-on:close="onPersonDialogClose"
     ></mk-person-dialog>
 
-    <mk-video-quality-dialog
-      ref="videoQualityDialog"
-      v-bind:show="videoQualityDialog.show"
-      v-bind:Video_Quality="videoQualityDialog.Video_Quality"
-      v-on:close="onVideoQualityDialogClose"
-    ></mk-video-quality-dialog>
-
-    <mk-video-encoder-dialog
-      ref="videoEncoderDialog"
-      v-bind:show="videoEncoderDialog.show"
-      v-bind:Video_Encoder="videoEncoderDialog.Video_Encoder"
-      v-on:close="onVideoEncoderDialogClose"
-    ></mk-video-encoder-dialog>
-
     <mk-video-player-dialog
       v-bind:show="videoPlayerDialog.show"
       v-bind:showActualPlayer="videoPlayerDialog.showActualPlayer"
@@ -1547,13 +1533,35 @@
     <mk-release-attribute-dialog
       ref="releaseAttributeDialog"
       v-bind:mediaType="mediatype"
+      v-bind:show="releaseAttributeDialog.show"
       v-bind:Series_id_Movies_Owner="Series_id_Movies_Owner"
       propertyTypeKey="release-attribute"
-      v-bind:show="releaseAttributeDialog.show"
       v-bind:propertyValue="releaseAttributeDialog.ReleaseAttribute"
       v-bind:propertyValueDisplayText="releaseAttributeDialog.ReleaseAttribute"
       v-on:close="releaseAttributeDialog.show = false"
     ></mk-release-attribute-dialog>
+
+    <mk-video-quality-dialog
+      ref="videoQualityDialog"
+      v-bind:mediaType="mediatype"
+      v-bind:show="videoQualityDialog.show"
+      v-bind:Series_id_Movies_Owner="Series_id_Movies_Owner"
+      propertyTypeKey="video-quality"
+      v-bind:propertyValue="videoQualityDialog.Video_Quality"
+      v-bind:propertyValueDisplayText="videoQualityDialog.Video_Quality"
+      v-on:close="onVideoQualityDialogClose"
+    ></mk-video-quality-dialog>
+
+    <mk-video-encoder-dialog
+      ref="videoEncoderDialog"
+      v-bind:mediaType="mediatype"
+      v-bind:show="videoEncoderDialog.show"
+      v-bind:Series_id_Movies_Owner="Series_id_Movies_Owner"
+      propertyTypeKey="video-encoder"
+      v-bind:propertyValue="videoEncoderDialog.Video_Encoder"
+      v-bind:propertyValueDisplayText="videoEncoderDialog.Video_Encoder"
+      v-on:close="onVideoEncoderDialogClose"
+    ></mk-video-encoder-dialog>
   </div>
 </template>
 
@@ -1573,8 +1581,6 @@ import WordHighlighter from "vue-word-highlighter";
 import EditMediaItemDialog from "@/components/shared/EditMediaItemDialog.vue";
 import ListDialog from "@/components/shared/ListDialog.vue";
 import PersonDialog from "@/components/shared/PersonDialog.vue";
-import VideoQualityDialog from "@/components/shared/VideoQualityDialog.vue";
-import VideoEncoderDialog from "@/components/shared/VideoEncoderDialog.vue";
 import VideoPlayerDialog from "@/components/shared/VideoPlayerDialog.vue";
 import LocalVideoPlayerDialog from "@/components/shared/LocalVideoPlayerDialog.vue";
 import LinkIMDBDialog from "@/components/shared/LinkIMDBDialog.vue";
@@ -1598,8 +1604,6 @@ export default {
     "word-highlighter": WordHighlighter,
     "mk-list-dialog": ListDialog,
     "mk-person-dialog": PersonDialog,
-    "mk-video-quality-dialog": VideoQualityDialog,
-    "mk-video-encoder-dialog": VideoEncoderDialog,
     "mk-video-player-dialog": VideoPlayerDialog,
     "mk-local-video-player-dialog": LocalVideoPlayerDialog,
     "mk-link-imdb-dialog": LinkIMDBDialog,
@@ -1618,6 +1622,8 @@ export default {
     "mk-subtitle-language-dialog": MediaPropertyDialog,
     "mk-plot-keyword-dialog": MediaPropertyDialog,
     "mk-release-attribute-dialog": MediaPropertyDialog,
+    "mk-video-quality-dialog": MediaPropertyDialog,
+    "mk-video-encoder-dialog": MediaPropertyDialog,
   },
 
   data: () => ({

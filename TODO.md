@@ -26,7 +26,7 @@
       - [x] GenreDialog
       - [x] LanguageDialog -> audioLanguageDialog + subtitleLanguageDialog
       - [x] PlotKeywordDialog
-      - [ ] ReleaseAttributeDialog
+      - [x] ReleaseAttributeDialog
       - [ ] VideoEncoderDialog
       - [ ] VideoQualityDialog
 - [ ] BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
