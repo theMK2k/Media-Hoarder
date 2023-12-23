@@ -1416,14 +1416,6 @@
       v-on:close="ratingDemographicsDialog.show = false"
     ></mk-rating-demographics-dialog>
 
-    <mk-release-attribute-dialog
-      ref="releaseAttributeDialog"
-      v-bind:show="releaseAttributeDialog.show"
-      v-bind:ReleaseAttribute="releaseAttributeDialog.ReleaseAttribute"
-      v-on:close="releaseAttributeDialog.show = false"
-      v-on:delete="onReleaseAttributesDialogDelete"
-    ></mk-release-attribute-dialog>
-
     <mk-edit-media-item-dialog
       ref="editMediaItemDialog"
       v-bind:show="editMediaItemDialog.show"
@@ -1551,6 +1543,17 @@
       v-bind:propertyValueDisplayText="plotKeywordDialog.Keyword"
       v-on:close="onPlotKeywordDialogClose"
     ></mk-plot-keyword-dialog>
+
+    <mk-release-attribute-dialog
+      ref="releaseAttributeDialog"
+      v-bind:mediaType="mediatype"
+      v-bind:Series_id_Movies_Owner="Series_id_Movies_Owner"
+      propertyTypeKey="release-attribute"
+      v-bind:show="releaseAttributeDialog.show"
+      v-bind:propertyValue="releaseAttributeDialog.ReleaseAttribute"
+      v-bind:propertyValueDisplayText="releaseAttributeDialog.ReleaseAttribute"
+      v-on:close="releaseAttributeDialog.show = false"
+    ></mk-release-attribute-dialog>
   </div>
 </template>
 
@@ -1577,7 +1580,6 @@ import LocalVideoPlayerDialog from "@/components/shared/LocalVideoPlayerDialog.v
 import LinkIMDBDialog from "@/components/shared/LinkIMDBDialog.vue";
 import Pagination from "@/components/shared/Pagination.vue";
 import RatingDemographicsDialog from "@/components/shared/RatingDemographicsDialog";
-import ReleaseAttributeDialog from "@/components/shared/ReleaseAttributeDialog";
 import Dialog from "@/components/shared/Dialog.vue";
 
 import MediaPropertyDialog from "@/components/shared/MediaPropertyDialog.vue";
@@ -1603,7 +1605,6 @@ export default {
     "mk-link-imdb-dialog": LinkIMDBDialog,
     "mk-pagination": Pagination,
     "mk-rating-demographics-dialog": RatingDemographicsDialog,
-    "mk-release-attribute-dialog": ReleaseAttributeDialog,
     "mk-edit-media-item-dialog": EditMediaItemDialog,
     "mk-delete-media-dialog": Dialog,
     "mk-rescan-current-list-dialog": Dialog,
@@ -1616,6 +1617,7 @@ export default {
     "mk-audio-language-dialog": MediaPropertyDialog,
     "mk-subtitle-language-dialog": MediaPropertyDialog,
     "mk-plot-keyword-dialog": MediaPropertyDialog,
+    "mk-release-attribute-dialog": MediaPropertyDialog,
   },
 
   data: () => ({
@@ -3259,26 +3261,6 @@ export default {
       this.deleteMediaDialog.alertText = null;
 
       this.deleteMediaDialog.show = true;
-    },
-
-    async onReleaseAttributesDialogDelete() {
-      try {
-        await store.removeReleaseAttributeFromMovie(
-          this.releaseAttributeDialog.movie.id_Movies,
-          this.releaseAttributeDialog.ReleaseAttribute
-        );
-
-        eventBus.refetchMedia();
-
-        eventBus.showSnackbar(
-          "success",
-          this.$t('Release Attribute "{ReleaseAttribute}" successfully removed from selected movie_', {
-            ReleaseAttribute: this.releaseAttributeDialog.ReleaseAttribute,
-          })
-        );
-      } catch (error) {
-        eventBus.showSnackbar("error", error);
-      }
     },
 
     onOpenEditMediaItemDialog(item) {

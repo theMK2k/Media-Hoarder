@@ -86,6 +86,7 @@
 </template>
 
 <script>
+const sqlString = require("sqlstring-sqlite");
 const { shell } = require("@electron/remote");
 
 import * as _ from "lodash";
@@ -168,6 +169,10 @@ export default {
           title: "Plot Keyword",
           filterButtonText: "Filter by this plot keyword",
         },
+        "release-attribute": {
+          title: "Release Attribute",
+          filterButtonText: "Filter by this release attribute",
+        },
       },
 
       isScraping: false,
@@ -227,9 +232,23 @@ export default {
       this.showMovies = false;
       this.numMovies = null;
 
+      if (!this.propertyValue) {
+        return;
+      }
+
       const queryParams = {
         $MediaType: this.mediaType,
       };
+
+      // release-attribute needs a bit more preparation
+      const releaseAttributesHierarchy =
+        this.propertyTypeKey === "release-attribute" ? store.getReleaseAttributesHierarchy() : null;
+      const ra =
+        this.propertyTypeKey === "release-attribute"
+          ? releaseAttributesHierarchy.find((rah) => rah.displayAs === this.propertyValue)
+          : null;
+
+      logger.log(`[MediaPropertyDialog ${this.propertyTypeKey}] ra:`, ra);
 
       switch (this.propertyTypeKey) {
         case "age-rating":
@@ -281,6 +300,8 @@ export default {
                 ? `INNER JOIN tbl_Movies_IMDB_Filming_Locations MFL ON MFL.id_Movies = MOV.id_Movies`
                 : this.propertyTypeKey === "plot-keyword"
                 ? `INNER JOIN tbl_Movies_IMDB_Plot_Keywords MPK ON MPK.id_Movies = MOV.id_Movies`
+                : this.propertyTypeKey === "release-attribute"
+                ? `INNER JOIN tbl_Movies_Release_Attributes MRA ON MRA.id_Movies = MOV.id_Movies`
                 : ``
             }
 
@@ -332,6 +353,14 @@ export default {
                       ? `AND MPK.id_IMDB_Plot_Keywords = $id_IMDB_Plot_Keywords`
                       : ""
                   }
+                  ${
+                    this.propertyTypeKey === "release-attribute"
+                      ? `AND MRA.deleted = 0
+                         AND MRA.Release_Attributes_searchTerm IN (${ra.searchTerms.reduce((prev, current) => {
+                           return prev + (prev ? ", " : "") + `${sqlString.escape(current)}`;
+                         }, "")})`
+                      : ""
+                  }
           )
         `,
           queryParams
@@ -341,15 +370,6 @@ export default {
       }
 
       logger.log(`[MediaPropertyDialog ${this.propertyTypeKey}] numMovies:`, this.numMovies);
-    },
-
-    onButtonClick(eventName) {
-      this.$emit(eventName, {
-        dontAskAgain: this.dontAskAgainValue,
-        textValue: this.textValueLocal,
-      });
-
-      this.resetData();
     },
 
     onCloseClick() {
@@ -393,6 +413,9 @@ export default {
           await store.addFilterIMDBPlotKeyword(this.propertyValue, this.propertyValueDisplayText);
           setFilter.filterIMDBPlotKeywords = [this.propertyValue];
           eventBus.plotKeywordDialogConfirm(setFilter);
+          break;
+        case "release-attribute":
+          setFilter.filterReleaseAttributes = [this.propertyValue];
           break;
       }
 
@@ -534,6 +557,16 @@ export default {
                 Selected: true,
                 id_IMDB_Plot_Keywords: this.propertyValue,
                 Keyword: this.propertyValueDisplayText,
+              },
+            ];
+            break;
+          case "release-attribute":
+            filters.filterReleaseAttributes = [
+              { isAny: true, Selected: false },
+              {
+                isAny: false,
+                Selected: true,
+                ReleaseAttribute: this.propertyValue,
               },
             ];
             break;

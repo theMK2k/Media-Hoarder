@@ -25,12 +25,13 @@
       - [x] FilmingLocationDialog
       - [x] GenreDialog
       - [x] LanguageDialog -> audioLanguageDialog + subtitleLanguageDialog
-      - [ ] PlotKeywordDialog
+      - [x] PlotKeywordDialog
       - [ ] ReleaseAttributeDialog
       - [ ] VideoEncoderDialog
       - [ ] VideoQualityDialog
 - [ ] BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
 - [ ] function: updateSeriesDataFromEpisodes
+
   - [ ] Video Qualities (multiple!)
   - [ ] Video Encoders (multiple!)
   - [ ] Audio Formats
@@ -47,6 +48,11 @@
 
 ## NEXT Minor (current v1.4.0)
 
+- [ ] scanErrors: introduce WARNING vs. ERROR
+  - WARNING:
+    - imdb implausibility
+  - ERROR:
+    - (new) mediainfo without result (possibly due to max path length exceeded)
 - [ ] use imdb-graphql-urls.json (also try to fetch them from master in github, this way we can update the urls if imdb changes them - without creating a new release)
 - [ ] Fix: subdirectory called "extras" is not assigned to the main movie (the files are provided as main movies themselves)
 
