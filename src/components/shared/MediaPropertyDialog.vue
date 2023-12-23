@@ -164,6 +164,10 @@ export default {
           filterButtonText: "Filter by this language",
           languageType: "subtitle",
         },
+        "plot-keyword": {
+          title: "Plot Keyword",
+          filterButtonText: "Filter by this plot keyword",
+        },
       },
 
       isScraping: false,
@@ -250,6 +254,9 @@ export default {
         case "subtitle-language":
           queryParams.$Language = this.propertyValue;
           break;
+        case "plot-keyword":
+          queryParams.$id_IMDB_Plot_Keywords = this.propertyValue;
+          break;
       }
 
       logger.log(`[MediaPropertyDialog ${this.propertyTypeKey}] queryParams:`, queryParams);
@@ -272,6 +279,8 @@ export default {
                 ? `INNER JOIN tbl_Movies_IMDB_Companies MC ON MC.id_Movies = MOV.id_Movies`
                 : this.propertyTypeKey === "filming-location"
                 ? `INNER JOIN tbl_Movies_IMDB_Filming_Locations MFL ON MFL.id_Movies = MOV.id_Movies`
+                : this.propertyTypeKey === "plot-keyword"
+                ? `INNER JOIN tbl_Movies_IMDB_Plot_Keywords MPK ON MPK.id_Movies = MOV.id_Movies`
                 : ``
             }
 
@@ -316,6 +325,11 @@ export default {
                   ${
                     this.propertyTypeKey === "subtitle-language"
                       ? `AND MOV.id_Movies IN (SELECT ML.id_Movies FROM tbl_Movies_Languages ML WHERE ML.Type = "subtitle" AND UPPER(ML.Language) = $Language)`
+                      : ""
+                  }
+                  ${
+                    this.propertyTypeKey === "plot-keyword"
+                      ? `AND MPK.id_IMDB_Plot_Keywords = $id_IMDB_Plot_Keywords`
                       : ""
                   }
           )
@@ -374,6 +388,11 @@ export default {
           break;
         case "subtitle-language":
           setFilter.filterSubtitleLanguages = [helpers.uppercaseEachWord(this.propertyValue.toLowerCase())];
+          break;
+        case "plot-keyword":
+          await store.addFilterIMDBPlotKeyword(this.propertyValue, this.propertyValueDisplayText);
+          setFilter.filterIMDBPlotKeywords = [this.propertyValue];
+          eventBus.plotKeywordDialogConfirm(setFilter);
           break;
       }
 
@@ -501,6 +520,20 @@ export default {
               {
                 Language: helpers.uppercaseEachWord(this.propertyValue.toLowerCase()),
                 Selected: true,
+              },
+            ];
+            break;
+          case "plot-keyword":
+            filters.filterIMDBPlotKeywords = [
+              {
+                id_Filter_IMDB_Plot_Keywords: -1,
+                Selected: false,
+              },
+              {
+                id_Filter_IMDB_Plot_Keywords: 666,
+                Selected: true,
+                id_IMDB_Plot_Keywords: this.propertyValue,
+                Keyword: this.propertyValueDisplayText,
               },
             ];
             break;

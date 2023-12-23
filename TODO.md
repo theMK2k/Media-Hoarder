@@ -27,9 +27,8 @@
       - [x] LanguageDialog -> audioLanguageDialog + subtitleLanguageDialog
       - [ ] PlotKeywordDialog
       - [ ] ReleaseAttributeDialog
-      - [ ] VideoEncodeDialog
       - [ ] VideoEncoderDialog
-      - [ ] VideoQualiyDialog
+      - [ ] VideoQualityDialog
 - [ ] BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
 - [ ] function: updateSeriesDataFromEpisodes
   - [ ] Video Qualities (multiple!)

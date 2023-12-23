@@ -1373,14 +1373,6 @@
       v-on:close="onVideoEncoderDialogClose"
     ></mk-video-encoder-dialog>
 
-    <mk-plot-keyword-dialog
-      ref="plotKeywordDialog"
-      v-bind:show="plotKeywordDialog.show"
-      v-bind:id_IMDB_Plot_Keywords="plotKeywordDialog.id_IMDB_Plot_Keywords"
-      v-bind:Keyword="plotKeywordDialog.Keyword"
-      v-on:close="onPlotKeywordDialogClose"
-    ></mk-plot-keyword-dialog>
-
     <mk-video-player-dialog
       v-bind:show="videoPlayerDialog.show"
       v-bind:showActualPlayer="videoPlayerDialog.showActualPlayer"
@@ -1549,48 +1541,16 @@
       v-on:close="onSubtitleLanguageDialogClose"
     ></mk-subtitle-language-dialog>
 
-    <!-- Deprecated, non-generalized dialogs
-    <mk-age-rating-dialog
-      ref="ageRatingDialog"
-      v-bind:show="ageRatingDialog.show"
-      v-bind:Age_Rating="ageRatingDialog.Age_Rating"
-      v-on:close="onAgeRatingDialogClose"
-    ></mk-age-rating-dialog>
-    <mk-audio-format-dialog
-      ref="audioFormatDialog"
-      v-bind:show="audioFormatDialog.show"
-      v-bind:Audio_Format="audioFormatDialog.Audio_Format"
-      v-on:close="onAudioFormatDialogClose"
-    ></mk-audio-format-dialog>
-    <mk-company-dialog
-      ref="companyDialog"
-      v-bind:show="companyDialog.show"
-      v-bind:IMDB_Company_ID="companyDialog.IMDB_Company_ID"
-      v-bind:Company_Name="companyDialog.Company_Name"
-      v-on:close="onCompanyDialogClose"
-    ></mk-company-dialog>
-    <mk-filming-location-dialog
-      ref="filmingLocationDialog"
-      v-bind:show="filmingLocationDialog.show"
-      v-bind:id_IMDB_Filming_Locations="filmingLocationDialog.id_IMDB_Filming_Locations"
-      v-bind:Location="filmingLocationDialog.Location"
-      v-on:close="onFilmingLocationDialogClose"
-    ></mk-filming-location-dialog>
-    <mk-genre-dialog
-      ref="genreDialog"
-      v-bind:show="genreDialog.show"
-      v-bind:Genre="genreDialog.Genre"
-      v-on:close="onGenreDialogClose"
-    ></mk-genre-dialog>
-    <mk-language-dialog
-      ref="languageDialog"
-      v-bind:show="languageDialog.show"
-      v-bind:Type="languageDialog.Type"
-      v-bind:Code="languageDialog.Code"
-      v-bind:Language="languageDialog.Language"
-      v-on:close="onLanguageDialogClose"
-    ></mk-language-dialog>
-    -->
+    <mk-plot-keyword-dialog
+      ref="plotKeywordDialog"
+      v-bind:mediaType="mediatype"
+      v-bind:Series_id_Movies_Owner="Series_id_Movies_Owner"
+      propertyTypeKey="plot-keyword"
+      v-bind:show="plotKeywordDialog.show"
+      v-bind:propertyValue="plotKeywordDialog.id_IMDB_Plot_Keywords"
+      v-bind:propertyValueDisplayText="plotKeywordDialog.Keyword"
+      v-on:close="onPlotKeywordDialogClose"
+    ></mk-plot-keyword-dialog>
   </div>
 </template>
 
@@ -1612,7 +1572,6 @@ import ListDialog from "@/components/shared/ListDialog.vue";
 import PersonDialog from "@/components/shared/PersonDialog.vue";
 import VideoQualityDialog from "@/components/shared/VideoQualityDialog.vue";
 import VideoEncoderDialog from "@/components/shared/VideoEncoderDialog.vue";
-import PlotKeywordDialog from "@/components/shared/PlotKeywordDialog.vue";
 import VideoPlayerDialog from "@/components/shared/VideoPlayerDialog.vue";
 import LocalVideoPlayerDialog from "@/components/shared/LocalVideoPlayerDialog.vue";
 import LinkIMDBDialog from "@/components/shared/LinkIMDBDialog.vue";
@@ -1639,7 +1598,6 @@ export default {
     "mk-person-dialog": PersonDialog,
     "mk-video-quality-dialog": VideoQualityDialog,
     "mk-video-encoder-dialog": VideoEncoderDialog,
-    "mk-plot-keyword-dialog": PlotKeywordDialog,
     "mk-video-player-dialog": VideoPlayerDialog,
     "mk-local-video-player-dialog": LocalVideoPlayerDialog,
     "mk-link-imdb-dialog": LinkIMDBDialog,
@@ -1657,6 +1615,7 @@ export default {
     "mk-genre-dialog": MediaPropertyDialog,
     "mk-audio-language-dialog": MediaPropertyDialog,
     "mk-subtitle-language-dialog": MediaPropertyDialog,
+    "mk-plot-keyword-dialog": MediaPropertyDialog,
   },
 
   data: () => ({
