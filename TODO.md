@@ -24,7 +24,7 @@
       - [x] CompanyDialog
       - [x] FilmingLocationDialog
       - [x] GenreDialog
-      - [ ] LanguageDialog?
+      - [x] LanguageDialog -> audioLanguageDialog + subtitleLanguageDialog
       - [ ] PlotKeywordDialog
       - [ ] ReleaseAttributeDialog
       - [ ] VideoEncodeDialog

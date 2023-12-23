@@ -3,7 +3,14 @@
   <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onEscapePressed" scrollable>
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
-        {{ $t(propertyType.title) }}: {{ propertyValueDisplayText }}
+        {{ $t(propertyType.title) }}:
+        {{
+          propertyTypeKey == "audio-language" || propertyTypeKey == "subtitle-language"
+            ? Language
+              ? `${$t(`LanguageNames.${Language}`)} (${propertyValueDisplayText})`
+              : propertyValueDisplayText
+            : propertyValueDisplayText
+        }}
         <v-progress-linear
           v-if="isScraping || isLoadingMovies"
           color="red accent-0"
@@ -84,8 +91,10 @@ const { shell } = require("@electron/remote");
 import * as _ from "lodash";
 
 import * as store from "@/store";
-// import * as helpers from "@/helpers/helpers";
+import * as helpers from "@/helpers/helpers";
 const logger = require("../../helpers/logger");
+
+const { languageCodeNameMapping } = require("@/languages");
 
 import { eventBus } from "@/main";
 
@@ -111,6 +120,15 @@ export default {
     propertyType() {
       return this.propertyTypes[this.propertyTypeKey];
     },
+
+    // Language Dialog
+    Language() {
+      if (this.propertyTypeKey !== "audio-language" && this.propertyTypeKey !== "subtitle-language") {
+        return null;
+      }
+      const codeTransformed = this.propertyValue ? helpers.uppercaseEachWord(this.propertyValue.toLowerCase()) : "";
+      return languageCodeNameMapping[codeTransformed];
+    },
   },
 
   data() {
@@ -135,6 +153,16 @@ export default {
         genre: {
           title: "Genre",
           filterButtonText: "Filter by this genre",
+        },
+        "audio-language": {
+          title: "Audio Language",
+          filterButtonText: "Filter by this language",
+          languageType: "audio",
+        },
+        "subtitle-language": {
+          title: "Subtitle Language",
+          filterButtonText: "Filter by this language",
+          languageType: "subtitle",
         },
       },
 
@@ -216,6 +244,12 @@ export default {
         case "genre":
           queryParams.$Genre = this.propertyValue;
           break;
+        case "audio-language":
+          queryParams.$Language = this.propertyValue;
+          break;
+        case "subtitle-language":
+          queryParams.$Language = this.propertyValue;
+          break;
       }
 
       logger.log(`[MediaPropertyDialog ${this.propertyTypeKey}] queryParams:`, queryParams);
@@ -274,6 +308,16 @@ export default {
                       ? `AND MOV.id_Movies IN (SELECT MG.id_Movies FROM tbl_Movies_Genres MG INNER JOIN tbl_Genres G WHERE MG.id_Genres = G.id_Genres AND G.Name = $Genre)`
                       : ""
                   }
+                  ${
+                    this.propertyTypeKey === "audio-language"
+                      ? `AND MOV.id_Movies IN (SELECT ML.id_Movies FROM tbl_Movies_Languages ML WHERE ML.Type = "audio" AND UPPER(ML.Language) = $Language)`
+                      : ""
+                  }
+                  ${
+                    this.propertyTypeKey === "subtitle-language"
+                      ? `AND MOV.id_Movies IN (SELECT ML.id_Movies FROM tbl_Movies_Languages ML WHERE ML.Type = "subtitle" AND UPPER(ML.Language) = $Language)`
+                      : ""
+                  }
           )
         `,
           queryParams
@@ -324,6 +368,12 @@ export default {
           break;
         case "genre":
           setFilter.filterGenres = [{ name: this.propertyValue, translated: this.propertyValueDisplayText }];
+          break;
+        case "audio-language":
+          setFilter.filterAudioLanguages = [helpers.uppercaseEachWord(this.propertyValue.toLowerCase())];
+          break;
+        case "subtitle-language":
+          setFilter.filterSubtitleLanguages = [helpers.uppercaseEachWord(this.propertyValue.toLowerCase())];
           break;
       }
 
@@ -428,6 +478,30 @@ export default {
                     id_Genres: item.id_Genres,
                   };
                 }),
+            ];
+            break;
+          case "audio-language":
+            filters.filterAudioLanguages = [
+              {
+                Language: "<none>",
+                Selected: false,
+              },
+              {
+                Language: helpers.uppercaseEachWord(this.propertyValue.toLowerCase()),
+                Selected: true,
+              },
+            ];
+            break;
+          case "subtitle-language":
+            filters.filterSubtitleLanguages = [
+              {
+                Language: "<none>",
+                Selected: false,
+              },
+              {
+                Language: helpers.uppercaseEachWord(this.propertyValue.toLowerCase()),
+                Selected: true,
+              },
             ];
             break;
         }

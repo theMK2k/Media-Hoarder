@@ -1373,15 +1373,6 @@
       v-on:close="onVideoEncoderDialogClose"
     ></mk-video-encoder-dialog>
 
-    <mk-language-dialog
-      ref="languageDialog"
-      v-bind:show="languageDialog.show"
-      v-bind:Type="languageDialog.Type"
-      v-bind:Code="languageDialog.Code"
-      v-bind:Language="languageDialog.Language"
-      v-on:close="onLanguageDialogClose"
-    ></mk-language-dialog>
-
     <mk-plot-keyword-dialog
       ref="plotKeywordDialog"
       v-bind:show="plotKeywordDialog.show"
@@ -1536,6 +1527,28 @@
       v-on:close="onGenreDialogClose"
     ></mk-genre-dialog>
 
+    <mk-audio-language-dialog
+      ref="audioLanguageDialog"
+      v-bind:mediaType="mediatype"
+      v-bind:Series_id_Movies_Owner="Series_id_Movies_Owner"
+      propertyTypeKey="audio-language"
+      v-bind:show="audioLanguageDialog.show"
+      v-bind:propertyValue="audioLanguageDialog.Code"
+      v-bind:propertyValueDisplayText="audioLanguageDialog.Code"
+      v-on:close="onAudioLanguageDialogClose"
+    ></mk-audio-language-dialog>
+
+    <mk-subtitle-language-dialog
+      ref="subtitleLanguageDialog"
+      v-bind:mediaType="mediatype"
+      v-bind:Series_id_Movies_Owner="Series_id_Movies_Owner"
+      propertyTypeKey="subtitle-language"
+      v-bind:show="subtitleLanguageDialog.show"
+      v-bind:propertyValue="subtitleLanguageDialog.Code"
+      v-bind:propertyValueDisplayText="subtitleLanguageDialog.Code"
+      v-on:close="onSubtitleLanguageDialogClose"
+    ></mk-subtitle-language-dialog>
+
     <!-- Deprecated, non-generalized dialogs
     <mk-age-rating-dialog
       ref="ageRatingDialog"
@@ -1569,6 +1582,14 @@
       v-bind:Genre="genreDialog.Genre"
       v-on:close="onGenreDialogClose"
     ></mk-genre-dialog>
+    <mk-language-dialog
+      ref="languageDialog"
+      v-bind:show="languageDialog.show"
+      v-bind:Type="languageDialog.Type"
+      v-bind:Code="languageDialog.Code"
+      v-bind:Language="languageDialog.Language"
+      v-on:close="onLanguageDialogClose"
+    ></mk-language-dialog>
     -->
   </div>
 </template>
@@ -1591,7 +1612,6 @@ import ListDialog from "@/components/shared/ListDialog.vue";
 import PersonDialog from "@/components/shared/PersonDialog.vue";
 import VideoQualityDialog from "@/components/shared/VideoQualityDialog.vue";
 import VideoEncoderDialog from "@/components/shared/VideoEncoderDialog.vue";
-import LanguageDialog from "@/components/shared/LanguageDialog.vue";
 import PlotKeywordDialog from "@/components/shared/PlotKeywordDialog.vue";
 import VideoPlayerDialog from "@/components/shared/VideoPlayerDialog.vue";
 import LocalVideoPlayerDialog from "@/components/shared/LocalVideoPlayerDialog.vue";
@@ -1602,9 +1622,6 @@ import ReleaseAttributeDialog from "@/components/shared/ReleaseAttributeDialog";
 import Dialog from "@/components/shared/Dialog.vue";
 
 import MediaPropertyDialog from "@/components/shared/MediaPropertyDialog.vue";
-//import AgeRatingDialog from "@/components/shared/AgeRatingDialog.vue";
-//import AudioFormatDialog from "@/components/shared/AudioFormatDialog.vue";
-//import CompanyDialog from "@/components/shared/CompanyDialog.vue";
 
 const { shell } = require("@electron/remote");
 
@@ -1622,7 +1639,6 @@ export default {
     "mk-person-dialog": PersonDialog,
     "mk-video-quality-dialog": VideoQualityDialog,
     "mk-video-encoder-dialog": VideoEncoderDialog,
-    "mk-language-dialog": LanguageDialog,
     "mk-plot-keyword-dialog": PlotKeywordDialog,
     "mk-video-player-dialog": VideoPlayerDialog,
     "mk-local-video-player-dialog": LocalVideoPlayerDialog,
@@ -1639,6 +1655,8 @@ export default {
     "mk-company-dialog": MediaPropertyDialog,
     "mk-filming-location-dialog": MediaPropertyDialog,
     "mk-genre-dialog": MediaPropertyDialog,
+    "mk-audio-language-dialog": MediaPropertyDialog,
+    "mk-subtitle-language-dialog": MediaPropertyDialog,
   },
 
   data: () => ({
@@ -1723,9 +1741,13 @@ export default {
       translated: null,
     },
 
-    languageDialog: {
+    audioLanguageDialog: {
       show: false,
-      Type: null,
+      Code: null,
+    },
+
+    subtitleLanguageDialog: {
+      show: false,
       Code: null,
     },
 
@@ -2726,9 +2748,13 @@ export default {
       }
 
       // clicked language is a standard language code, e.g. "De"
-      this.languageDialog.Type = type;
-      this.languageDialog.Code = code;
-      this.languageDialog.show = true;
+      if (type === "audio") {
+        this.audioLanguageDialog.Code = code;
+        this.audioLanguageDialog.show = true;
+      } else {
+        this.subtitleLanguageDialog.Code = code;
+        this.subtitleLanguageDialog.show = true;
+      }
 
       return;
     },
@@ -2896,8 +2922,12 @@ export default {
       this.genreDialog.show = false;
     },
 
-    onLanguageDialogClose() {
-      this.languageDialog.show = false;
+    onAudioLanguageDialogClose() {
+      this.audioLanguageDialog.show = false;
+    },
+
+    onSubtitleLanguageDialogClose() {
+      this.subtitleLanguageDialog.show = false;
     },
 
     onAgeRatingDialogClose() {
