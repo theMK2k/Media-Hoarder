@@ -1351,14 +1351,6 @@
       v-on:cancel="onListDialogCancel"
     ></mk-list-dialog>
 
-    <mk-person-dialog
-      ref="personDialog"
-      v-bind:show="personDialog.show"
-      v-bind:IMDB_Person_ID="personDialog.IMDB_Person_ID"
-      v-bind:Person_Name="personDialog.Person_Name"
-      v-on:close="onPersonDialogClose"
-    ></mk-person-dialog>
-
     <mk-video-player-dialog
       v-bind:show="videoPlayerDialog.show"
       v-bind:showActualPlayer="videoPlayerDialog.showActualPlayer"
@@ -1562,6 +1554,18 @@
       v-bind:propertyValueDisplayText="videoEncoderDialog.Video_Encoder"
       v-on:close="onVideoEncoderDialogClose"
     ></mk-video-encoder-dialog>
+
+    <mk-person-dialog
+      ref="personDialog"
+      v-bind:mediaType="mediatype"
+      v-bind:show="personDialog.show"
+      v-bind:Series_id_Movies_Owner="Series_id_Movies_Owner"
+      propertyTypeKey="person"
+      v-bind:propertyValue="personDialog.IMDB_Person_ID"
+      v-bind:propertyValueDisplayText="personDialog.Person_Name"
+      v-bind:imdbTconst="personDialog.IMDB_Person_ID"
+      v-on:close="onPersonDialogClose"
+    ></mk-person-dialog>
   </div>
 </template>
 
@@ -1580,7 +1584,6 @@ import { scrapeIMDBTrailerMediaURLs, scrapeIMDBmainPageData } from "@/imdb-scrap
 import WordHighlighter from "vue-word-highlighter";
 import EditMediaItemDialog from "@/components/shared/EditMediaItemDialog.vue";
 import ListDialog from "@/components/shared/ListDialog.vue";
-import PersonDialog from "@/components/shared/PersonDialog.vue";
 import VideoPlayerDialog from "@/components/shared/VideoPlayerDialog.vue";
 import LocalVideoPlayerDialog from "@/components/shared/LocalVideoPlayerDialog.vue";
 import LinkIMDBDialog from "@/components/shared/LinkIMDBDialog.vue";
@@ -1603,7 +1606,6 @@ export default {
     "star-rating": StarRating,
     "word-highlighter": WordHighlighter,
     "mk-list-dialog": ListDialog,
-    "mk-person-dialog": PersonDialog,
     "mk-video-player-dialog": VideoPlayerDialog,
     "mk-local-video-player-dialog": LocalVideoPlayerDialog,
     "mk-link-imdb-dialog": LinkIMDBDialog,
@@ -1624,6 +1626,7 @@ export default {
     "mk-release-attribute-dialog": MediaPropertyDialog,
     "mk-video-quality-dialog": MediaPropertyDialog,
     "mk-video-encoder-dialog": MediaPropertyDialog,
+    "mk-person-dialog": MediaPropertyDialog,
   },
 
   data: () => ({

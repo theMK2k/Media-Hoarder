@@ -14,6 +14,7 @@
 - [ ] Medialist: check if the image for episodes can be set to "fit height"
 - [ ] Dialogs: most of them do not utilize mediaType
   - Generalize to MediaPropertyDialog:
+    - IMPORTANT: provide movies *and* series lists (and episodes lists)? it's probably interesting to see these even if a person etc. has been opened from a series...
     - [x] act as a dialog for movies
     - [x] act as a dialog for series
     - [x] act as a dialog for episodes (of a certain series)
@@ -27,8 +28,9 @@
       - [x] LanguageDialog -> audioLanguageDialog + subtitleLanguageDialog
       - [x] PlotKeywordDialog
       - [x] ReleaseAttributeDialog
-      - [ ] VideoEncoderDialog
-      - [ ] VideoQualityDialog
+      - [x] VideoEncoderDialog
+      - [x] VideoQualityDialog
+      - [ ] PersonDialog
 - [ ] BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
 - [ ] function: updateSeriesDataFromEpisodes
 

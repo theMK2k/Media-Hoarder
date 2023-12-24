@@ -2,8 +2,8 @@
 <template>
   <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onEscapePressed" scrollable>
     <v-card dark flat v-bind:ripple="false">
-      <v-card-title>
-        {{ $t(propertyType.title) }}:
+      <v-card-title v-on:mouseover="isTitleHovered = true" v-on:mouseleave="isTitleHovered = false">
+        {{ propertyTypeKey !== "person" ? `${$t(propertyType.title)}:` : "" }}
         {{
           propertyTypeKey == "audio-language" || propertyTypeKey == "subtitle-language"
             ? Language
@@ -11,6 +11,26 @@
               : propertyValueDisplayText
             : propertyValueDisplayText
         }}
+        <v-tooltip v-if="propertyTypeKey == 'person' && isTitleHovered" bottom>
+          <template v-slot:activator="{ on }">
+            <span v-on="on">
+              <v-icon
+                class="mk-clickable"
+                v-on:click.stop="scrapeData()"
+                style="margin-left: 8px; margin-bottom: 3px"
+                v-bind:disabled="isScraping"
+                >mdi-reload-alert</v-icon
+              >
+            </span>
+          </template>
+          <span>
+            {{ $t("Rescan Meta Data") }}
+            <span v-if="isScraping">
+              <br />
+              {{ $t("scan already in progress") }}
+            </span>
+          </span>
+        </v-tooltip>
         <v-progress-linear
           v-if="isScraping || isLoadingMovies"
           color="red accent-0"
@@ -22,34 +42,78 @@
 
       <v-card-text>
         <v-list-item three-line style="padding-left: 0px; align-items: flex-start">
+          <div v-if="propertyTypeKey === 'person'">
+            <v-list-item-avatar tile style="margin: 6px; height: 150px; width: 120px">
+              <!-- v-if="!isScraping" -->
+              <v-img
+                v-if="detailData.Image_URL"
+                contain
+                v-bind:src="detailData.Image_URL"
+                style="border-radius: 6px"
+              ></v-img>
+              <v-icon v-if="!detailData.Image_URL && !isScraping" disabled x-large loading>
+                mdi-account-outline
+              </v-icon>
+              <v-progress-circular
+                v-if="isScraping"
+                indeterminate
+                color="grey"
+                size="32"
+                width="5"
+              ></v-progress-circular>
+            </v-list-item-avatar>
+          </div>
           <v-list-item-content class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
-            <div v-on:click.stop="toggleShowMovies()">
-              <v-row v-if="numMovies !== null" class="mk-clickable mk-compact-movie-list-title">
-                {{
-                  numMovies +
-                  " " +
-                  $t(
-                    numMovies === 1
-                      ? mediaType == "movies"
-                        ? "movie"
-                        : Series_id_Movies_Owner
-                        ? "episode"
-                        : "series_singular"
-                      : mediaType == "movies"
-                      ? "movies"
-                      : Series_id_Movies_Owner
-                      ? "episodes"
-                      : "series_plural"
-                  ) +
-                  (!showMovies ? " »" : "")
-                }}
+            <v-col style="padding: 0px 0px 0px 4px !important" sm="12">
+              <v-row v-if="propertyTypeKey === 'person'" style="margin: 0px 6px 8px 0px">
+                <div
+                  v-if="!showDescriptionLong"
+                  style="font-size: 0.875rem; font-weight: normal"
+                  class="mk-clickable"
+                  v-on:click.stop="showDescriptionLong = true"
+                >
+                  {{ detailData.DescriptionShort ? detailData.DescriptionShort : detailData.DescriptionLong }}
+                </div>
+                <div
+                  v-if="showDescriptionLong"
+                  style="font-size: 0.875rem; font-weight: normal"
+                  class="mk-clickable-white"
+                  v-on:click.stop="showDescriptionLong = false"
+                >
+                  <p v-for="(line, index) in detailData.DescriptionLong.split('\n')" v-bind:key="index">
+                    {{ line }}
+                  </p>
+                </div>
               </v-row>
-              <div v-if="showMovies" class="mk-clickable-white">
-                <div v-for="(movie, index) in movies" v-bind:key="index">
-                  <mk-compact-movie-list-row v-bind:movie="movie" />
+
+              <div v-on:click.stop="toggleShowMovies()">
+                <v-row v-if="numMovies !== null" class="mk-clickable mk-compact-movie-list-title">
+                  {{
+                    numMovies +
+                    " " +
+                    $t(
+                      numMovies === 1
+                        ? mediaType == "movies"
+                          ? "movie"
+                          : Series_id_Movies_Owner
+                          ? "episode"
+                          : "series_singular"
+                        : mediaType == "movies"
+                        ? "movies"
+                        : Series_id_Movies_Owner
+                        ? "episodes"
+                        : "series_plural"
+                    ) +
+                    (!showMovies ? " »" : "")
+                  }}
+                </v-row>
+                <div v-if="showMovies" class="mk-clickable-white">
+                  <div v-for="(movie, index) in movies" v-bind:key="index">
+                    <mk-compact-movie-list-row v-bind:movie="movie" />
+                  </div>
                 </div>
               </div>
-            </div>
+            </v-col>
           </v-list-item-content>
         </v-list-item>
       </v-card-text>
@@ -62,7 +126,7 @@
 
         <!-- Button: IMDB -->
         <v-btn
-          v-if="['company'].includes(propertyTypeKey)"
+          v-if="['company', 'person'].includes(propertyTypeKey)"
           class="xs-fullwidth"
           color="primary"
           v-on:click.stop="openIMDB()"
@@ -96,6 +160,8 @@ import * as helpers from "@/helpers/helpers";
 const logger = require("../../helpers/logger");
 
 const { languageCodeNameMapping } = require("@/languages");
+
+import { scrapeIMDBPersonData } from "@/imdb-scraper";
 
 import { eventBus } from "@/main";
 
@@ -181,6 +247,10 @@ export default {
           title: "Video Quality",
           filterButtonText: "Filter by this video quality",
         },
+        person: {
+          title: "Person",
+          filterButtonText: "Filter by this person",
+        },
       },
 
       isScraping: false,
@@ -188,6 +258,9 @@ export default {
       isLoadingMovies: false,
       movies: [],
       showMovies: false,
+      isTitleHovered: false,
+      detailData: {},
+      showDescriptionLong: false,
     };
   },
 
@@ -233,12 +306,50 @@ export default {
       return ageRating;
     },
 
+    // person: scrape data
+    async scrapeData() {
+      if (this.propertyTypeKey === "person") {
+        logger.log(
+          `[MediaPropertyDialog ${this.propertyTypeKey} scrapeData] START, this.propertyValue:`,
+          this.propertyValue
+        );
+
+        try {
+          this.isScraping = true;
+
+          const detailData = await scrapeIMDBPersonData(this.propertyValue, helpers.downloadFile);
+
+          store.saveIMDBPersonData(detailData);
+
+          logger.log(`[MediaPropertyDialog ${this.propertyTypeKey} scrapeData] detailData:`, detailData);
+
+          this.detailData = {
+            IMDB_ID: detailData.$IMDB_Person_ID,
+            Image_URL: detailData.$Photo_URL
+              ? "local-resource://" + helpers.getDataPath(detailData.$Photo_URL).replace(/\\/g, "\\\\")
+              : detailData.$Photo_URL,
+            DescriptionShort: detailData.$ShortBio,
+            DescriptionLong: detailData.$LongBio,
+          };
+
+          logger.log(`[MediaPropertyDialog ${this.propertyTypeKey} scrapeData] this.detailData:`, this.detailData);
+        } catch (err) {
+          logger.log(err);
+          eventBus.showSnackbar("error", err);
+        } finally {
+          this.isScraping = false;
+        }
+      }
+    },
+
     async init() {
       logger.log(`[MediaPropertyDialog ${this.propertyTypeKey} init] START, this.propertyValue:`, this.propertyValue);
 
       this.movies = [];
       this.showMovies = false;
       this.numMovies = null;
+      this.detailData = {};
+      this.showDescriptionLong = false;
 
       if (!this.propertyValue) {
         return;
@@ -256,7 +367,7 @@ export default {
           ? releaseAttributesHierarchy.find((rah) => rah.displayAs === this.propertyValue)
           : null;
 
-      logger.log(`[MediaPropertyDialog ${this.propertyTypeKey}] ra:`, ra);
+      logger.log(`[MediaPropertyDialog ${this.propertyTypeKey} init] ra:`, ra);
 
       switch (this.propertyTypeKey) {
         case "age-rating":
@@ -290,9 +401,12 @@ export default {
         case "video-quality":
           queryParams.$Video_Quality = this.propertyValue;
           break;
+        case "person":
+          queryParams.$IMDB_Person_ID = this.propertyValue;
+          break;
       }
 
-      logger.log(`[MediaPropertyDialog ${this.propertyTypeKey}] queryParams:`, queryParams);
+      logger.log(`[MediaPropertyDialog ${this.propertyTypeKey} init] queryParams:`, queryParams);
 
       try {
         this.numMovies = await store.db.fireProcedureReturnScalar(
@@ -318,6 +432,8 @@ export default {
                 ? `INNER JOIN tbl_Movies_Release_Attributes MRA ON MRA.id_Movies = MOV.id_Movies`
                 : this.propertyTypeKey === "video-encoder"
                 ? `INNER JOIN tbl_Movies_MI_Tracks MITVIDEO ON MITVIDEO.type = "video" AND MITVIDEO.id_Movies = MOV.id_Movies AND MITVIDEO.Encoded_Library_Name_Trimmed = $Video_Encoder`
+                : this.propertyTypeKey === "person"
+                ? `INNER JOIN tbl_Movies_IMDB_Credits MC ON MC.id_Movies = MOV.id_Movies`
                 : ``
             }
 
@@ -378,10 +494,32 @@ export default {
                       : ""
                   }
                   ${this.propertyTypeKey === "video-quality" ? `AND MOV.MI_Quality = $Video_Quality` : ""}
+                  ${this.propertyTypeKey === "person" ? `AND MC.IMDB_Person_ID = $IMDB_Person_ID` : ""}
           )
         `,
           queryParams
         );
+
+        if (this.propertyTypeKey === "person") {
+          let detailData = await store.fetchIMDBPerson(this.propertyValue);
+
+          logger.log(`[MediaPropertyDialog ${this.propertyTypeKey} init] fetched detailData:`, detailData);
+
+          if (!detailData || detailData.length === 0) {
+            await this.scrapeData();
+            return;
+          }
+
+          detailData = detailData[0];
+
+          detailData.Image_URL = detailData.Photo_URL
+            ? "local-resource://" + helpers.getDataPath(detailData.Photo_URL).replace(/\\/g, "\\\\")
+            : null;
+
+          this.detailData = detailData;
+
+          logger.log(`[MediaPropertyDialog ${this.propertyTypeKey} init] this.personData:`, this.detailData);
+        }
       } catch (error) {
         logger.error(`[MediaPropertyDialog ${this.propertyTypeKey}] ERROR:`, error);
       }
@@ -440,6 +578,11 @@ export default {
         case "video-quality":
           setFilter.filterQualities = [this.propertyValue];
           break;
+        case "person":
+          await store.addFilterPerson(this.propertyValue, this.propertyValueDisplayText);
+          setFilter.filterPersons = [this.propertyValue];
+          eventBus.personDialogConfirm(setFilter);
+          break;
       }
 
       eventBus.refetchSpecificFilter(setFilter);
@@ -452,8 +595,13 @@ export default {
         return;
       }
 
-      if (this.propertyTypeKey == "company") {
-        shell.openExternal(`https://www.imdb.com/company/${this.imdbTconst}`);
+      switch (this.propertyTypeKey) {
+        case "company":
+          shell.openExternal(`https://www.imdb.com/company/${this.imdbTconst}`);
+          break;
+        case "person":
+          shell.openExternal(`https://www.imdb.com/name/${this.imdbTconst}`);
+          break;
       }
     },
 
@@ -611,6 +759,18 @@ export default {
               },
             ];
             break;
+          case "person":
+            filters.filterPersons = [
+              {
+                id_Filter_Persons: 0,
+                Selected: false,
+              },
+              {
+                id_Filter_Persons: 666,
+                Selected: true,
+                IMDB_Person_ID: this.propertyValue,
+              },
+            ];
         }
 
         const movies = (
@@ -656,6 +816,7 @@ export default {
           return 0;
         });
 
+        // Deduplication
         this.movies = movies.filter((item, index) => {
           return (
             movies.findIndex((item2) => {
