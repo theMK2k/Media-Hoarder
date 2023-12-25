@@ -93,7 +93,9 @@
                       mic.numItems +
                       " " +
                       $t(mic.numItems === 1 ? mic.nameSingular : mic.namePlural) +
-                      (mic.type === "episodes" && Series_Name ? ` (${Series_Name})` : "") +
+                      (mic.type === "episodes" && Series_Name
+                        ? ` - ${Series_Name}${Series_Year_Display ? " " + Series_Year_Display : ""}`
+                        : "") +
                       (!mic.showMediaItems ? " »" : "")
                     }}
                   </v-row>
@@ -170,6 +172,7 @@ export default {
     "mediaType",
     "Series_id_Movies_Owner",
     "Series_Name",
+    "Series_Year_Display",
   ],
 
   components: {
