@@ -4847,6 +4847,10 @@ a {
   font-size: 16px !important;
 }
 
+.v-image__image--contain {
+  background-size: cover !important;
+}
+
 /* ### MetaCritic ### */
 .MetaCriticRed {
   background-color: red;
