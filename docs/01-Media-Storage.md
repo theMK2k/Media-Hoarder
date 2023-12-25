@@ -88,3 +88,30 @@ Example of a series organization:
 ...
 └── Season09
 ```
+
+
+
+.......
+
+**Media Hoarder** expects series source paths to be organized in the following way:
+
+```text
+/series
+├── The X Files (1993-2006) [tt0106179]
+    ├── Season01
+        ├── The X Files S01E01 Pilot.mkv
+        ├── The X Files S01E02 Deep Throat.mkv
+        ...
+        └── The X Files S01E24 The Erlenmeyer Flask.mkv
+    ├── Season02
+    ...
+    └── Season09
+├── Star Trek - The Next Generation (1987-1994)
+    ├── Season01
+    ...
+    └── Season07
+```
+
+In the example above, the path `/series` is the source path. In Windows it would be something like `D:\Series`.
+
+Any directory under the source path must be of a certain series, in this example `The X Files (1993-2006) [tt0106179]`.

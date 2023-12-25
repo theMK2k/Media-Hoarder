@@ -12,25 +12,14 @@
 ### TV Series Support (MVP)
 
 - [ ] Medialist: check if the image for episodes can be set to "fit height"
+- [ ] Filters - the numbers should represent either movies or series
 - [ ] Dialogs: most of them do not utilize mediaType
   - Generalize to MediaPropertyDialog:
-    - IMPORTANT: provide movies *and* series lists (and episodes lists)? it's probably interesting to see these even if a person etc. has been opened from a series...
+    - IMPORTANT: provide movies _and_ series lists (and episodes lists)? it's probably interesting to see these even if a person etc. has been opened from a series...
     - [x] act as a dialog for movies
     - [x] act as a dialog for series
     - [x] act as a dialog for episodes (of a certain series)
     - [x] debounce the init() function and call it on any property change, with 10ms debounce
-    - [ ] integrate old dialogs:
-      - [x] AgeRatingDialog
-      - [x] AudioFormatDialog
-      - [x] CompanyDialog
-      - [x] FilmingLocationDialog
-      - [x] GenreDialog
-      - [x] LanguageDialog -> audioLanguageDialog + subtitleLanguageDialog
-      - [x] PlotKeywordDialog
-      - [x] ReleaseAttributeDialog
-      - [x] VideoEncoderDialog
-      - [x] VideoQualityDialog
-      - [ ] PersonDialog
 - [ ] BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
 - [ ] function: updateSeriesDataFromEpisodes
 
@@ -47,6 +36,7 @@
 - [ ] create a test set with series name and year
 - [ ] check tconst detection with movies, too (we changed some fullDirectory to fullPath)
 - [ ] IMDB Rating heatmap like <https://whattowatchon.tv>
+- [ ] update 01-Media-Storage.md about aspects of tv series in Media Hoarder, link to it (github) from the history markdown
 
 ## NEXT Minor (current v1.4.0)
 

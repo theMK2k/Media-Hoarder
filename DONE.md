@@ -1,6 +1,6 @@
 # DONE
 
-## v1.4.0
+## v1.3.37-a (later: v1.4.0)
 
 - [x] Windows: update bundled VLC to 3.0.20
 - [x] Windows: update bundled Mediainfo CLI to 23.11
@@ -12,9 +12,18 @@
 
 - [x] find IMDB tconst and provide metadata for the series and episodes
 - [x] provide series in a different route
-
-### TV Series support
-
+  - [x] integrate old dialogs:
+    - [x] AgeRatingDialog
+    - [x] AudioFormatDialog
+    - [x] CompanyDialog
+    - [x] FilmingLocationDialog
+    - [x] GenreDialog
+    - [x] LanguageDialog -> audioLanguageDialog + subtitleLanguageDialog
+    - [x] PlotKeywordDialog
+    - [x] ReleaseAttributeDialog
+    - [x] VideoEncoderDialog
+    - [x] VideoQualityDialog
+    - [x] PersonDialog
 - [x] new symbol for "opening" a series and changing the screen to its eposiodes
 - [x] Series / Episode detection in directory/filenames, examples:
   - [x] "S01E01" - the default
