@@ -86,30 +86,21 @@
                 </div>
               </v-row>
 
-              <div v-on:click.stop="toggleShowMovies()">
-                <v-row v-if="numMovies !== null" class="mk-clickable mk-compact-movie-list-title">
-                  {{
-                    numMovies +
-                    " " +
-                    $t(
-                      numMovies === 1
-                        ? mediaType == "movies"
-                          ? "movie"
-                          : Series_id_Movies_Owner
-                          ? "episode"
-                          : "series_singular"
-                        : mediaType == "movies"
-                        ? "movies"
-                        : Series_id_Movies_Owner
-                        ? "episodes"
-                        : "series_plural"
-                    ) +
-                    (!showMovies ? " »" : "")
-                  }}
-                </v-row>
-                <div v-if="showMovies" class="mk-clickable-white">
-                  <div v-for="(movie, index) in movies" v-bind:key="index">
-                    <mk-compact-movie-list-row v-bind:movie="movie" />
+              <div v-for="(mic, index) in Object.values(mediaItemsContainer)" v-bind:key="index">
+                <div v-if="mic.type !== 'episodes' || Series_id_Movies_Owner" v-on:click.stop="toggleShowMovies(mic)">
+                  <v-row v-if="mic.numItems !== null" class="mk-clickable mk-compact-movie-list-title">
+                    {{
+                      mic.numItems +
+                      " " +
+                      $t(mic.numItems === 1 ? mic.nameSingular : mic.namePlural) +
+                      (mic.type === "episodes" && Series_Name ? ` (${Series_Name})` : "") +
+                      (!mic.showMediaItems ? " »" : "")
+                    }}
+                  </v-row>
+                  <div v-if="mic.showMediaItems" class="mk-clickable-white">
+                    <div v-for="(mediaItem, index) in mic.mediaItems" v-bind:key="index">
+                      <mk-compact-movie-list-row v-bind:movie="mediaItem" />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -136,7 +127,9 @@
         </v-btn>
         <!-- Button: Filter by this... -->
         <v-btn
-          v-if="!Series_id_Movies_Owner && numMovies !== null"
+          v-if="
+            !Series_id_Movies_Owner // TODO!!! && numMovies !== null
+          "
           class="xs-fullwidth"
           color="primary"
           v-on:click.native="onFilterClick"
@@ -166,7 +159,6 @@ import { scrapeIMDBPersonData } from "@/imdb-scraper";
 import { eventBus } from "@/main";
 
 import CompactMovieListRow from "@/components/shared/CompactMovieListRow.vue";
-import { filter } from "cheerio/lib/api/traversing";
 
 export default {
   props: [
@@ -177,6 +169,7 @@ export default {
     "imdbTconst",
     "mediaType",
     "Series_id_Movies_Owner",
+    "Series_Name",
   ],
 
   components: {
@@ -253,13 +246,44 @@ export default {
         },
       },
 
-      isScraping: false,
-      numMovies: null,
-      isLoadingMovies: false,
-      movies: [],
-      showMovies: false,
       isTitleHovered: false,
-      detailData: {},
+
+      isScraping: false,
+      isLoadingMovies: false,
+
+      mediaItemsContainer: {
+        movies: {
+          type: "movies",
+          nameSingular: "movie",
+          namePlural: "movies",
+          numItems: null,
+          mediaItems: [],
+          showMediaItems: false,
+        },
+        series: {
+          type: "series",
+          nameSingular: "series_singular",
+          namePlural: "series_plural",
+          numItems: null,
+          mediaItems: [],
+          showMediaItems: false,
+        },
+        episodes: {
+          type: "episodes",
+          nameSingular: "episode",
+          namePlural: "episodes",
+          numItems: null,
+          mediaItems: [],
+          showMediaItems: false,
+        },
+      },
+
+      detailData: {
+        IMDB_ID: null,
+        Image_URL: null,
+        DescriptionShort: null,
+        DescriptionLong: null,
+      },
       showDescriptionLong: false,
     };
   },
@@ -345,9 +369,12 @@ export default {
     async init() {
       logger.log(`[MediaPropertyDialog ${this.propertyTypeKey} init] START, this.propertyValue:`, this.propertyValue);
 
-      this.movies = [];
-      this.showMovies = false;
-      this.numMovies = null;
+      Object.values(this.mediaItemsContainer).forEach((mic) => {
+        mic.numItems = null;
+        mic.mediaItems = [];
+        mic.showMediaItems = false;
+      });
+
       this.detailData = {};
       this.showDescriptionLong = false;
 
@@ -355,9 +382,7 @@ export default {
         return;
       }
 
-      const queryParams = {
-        $MediaType: this.mediaType,
-      };
+      const queryParams = {};
 
       // release-attribute needs a bit more preparation
       const releaseAttributesHierarchy =
@@ -406,11 +431,7 @@ export default {
           break;
       }
 
-      logger.log(`[MediaPropertyDialog ${this.propertyTypeKey} init] queryParams:`, queryParams);
-
-      try {
-        this.numMovies = await store.db.fireProcedureReturnScalar(
-          `
+      const query = `
           SELECT COUNT(1) FROM
           (
             SELECT DISTINCT
@@ -439,16 +460,7 @@ export default {
 
             WHERE SP.MediaType = $MediaType
                   AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
-                  ${
-                    this.mediaType === "series" && !this.Series_id_Movies_Owner
-                      ? `AND MOV.Series_id_Movies_Owner IS NULL`
-                      : ""
-                  }
-                  ${
-                    this.mediaType === "series" && this.Series_id_Movies_Owner
-                      ? `AND MOV.Series_id_Movies_Owner = ${this.Series_id_Movies_Owner}`
-                      : ""
-                  }
+                  AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                   ${
                     this.propertyTypeKey === "age-rating"
                       ? `AND (
@@ -496,10 +508,11 @@ export default {
                   ${this.propertyTypeKey === "video-quality" ? `AND MOV.MI_Quality = $Video_Quality` : ""}
                   ${this.propertyTypeKey === "person" ? `AND MC.IMDB_Person_ID = $IMDB_Person_ID` : ""}
           )
-        `,
-          queryParams
-        );
+        `;
 
+      logger.log(`[MediaPropertyDialog ${this.propertyTypeKey} init] queryParams:`, queryParams);
+
+      try {
         if (this.propertyTypeKey === "person") {
           let detailData = await store.fetchIMDBPerson(this.propertyValue);
 
@@ -520,11 +533,24 @@ export default {
 
           logger.log(`[MediaPropertyDialog ${this.propertyTypeKey} init] this.personData:`, this.detailData);
         }
+
+        for (const mic of Object.values(this.mediaItemsContainer)) {
+          if (mic.type === "episodes" && !this.Series_id_Movies_Owner) {
+            continue;
+          }
+
+          mic.numItems = await store.db.fireProcedureReturnScalar(
+            query,
+            Object.assign(queryParams, {
+              $MediaType: mic.type === "episodes" ? "series" : mic.type,
+              $Series_id_Movies_Owner: mic.type === "episodes" ? this.Series_id_Movies_Owner : null,
+            })
+          );
+        }
+        logger.log(`[MediaPropertyDialog] this.mediaItemsContainer:`, this.mediaItemsContainer);
       } catch (error) {
         logger.error(`[MediaPropertyDialog ${this.propertyTypeKey}] ERROR:`, error);
       }
-
-      logger.log(`[MediaPropertyDialog ${this.propertyTypeKey}] numMovies:`, this.numMovies);
     },
 
     onCloseClick() {
@@ -609,13 +635,13 @@ export default {
       this.onCloseClick();
     },
 
-    async toggleShowMovies() {
-      if (this.showMovies) {
-        this.showMovies = false;
+    async toggleShowMovies(mic) {
+      if (mic.showMediaItems) {
+        mic.showMediaItems = false;
         return;
       }
 
-      if (!this.movies.length > 0) {
+      if (!mic.mediaItems.length > 0) {
         this.isLoadingMovies = true;
 
         const filters = {
@@ -677,7 +703,7 @@ export default {
             ];
             break;
           case "genre":
-            filter.filterGenres = [
+            filters.filterGenres = [
               { GenreID: "none", Name: "None", Selected: false, id_Genres: -1 },
               ...this.$shared.filters.filterGenres
                 .filter((item) => {
@@ -773,16 +799,18 @@ export default {
             ];
         }
 
-        const movies = (
-          await store.fetchMedia({
-            $MediaType: this.mediaType,
-            arr_id_Movies: null,
-            minimumResultSet: true,
-            $t: this.$t,
-            filters,
-            Series_id_Movies_Owner: this.Series_id_Movies_Owner,
-          })
-        ).sort((a, b) => {
+        const options = {
+          $MediaType: mic.type === "episodes" ? "series" : mic.type,
+          arr_id_Movies: null,
+          minimumResultSet: true,
+          $t: this.$t,
+          filters,
+          Series_id_Movies_Owner: mic.type === "episodes" ? this.Series_id_Movies_Owner : null,
+        };
+
+        logger.log(`[MediaPropertyDialog toggleShowMovies] options:`, options);
+
+        const mediaItems = (await store.fetchMedia(options)).sort((a, b) => {
           if (this.Series_id_Movies_Owner) {
             if (a.Series_Season > b.Series_Season) {
               return 1;
@@ -816,19 +844,23 @@ export default {
           return 0;
         });
 
+        logger.log(`[MediaPropertyDialog toggleShowMovies] mediaItems:`, mediaItems);
+
         // Deduplication
-        this.movies = movies.filter((item, index) => {
+        mic.mediaItems = mediaItems.filter((item, index) => {
           return (
-            movies.findIndex((item2) => {
+            mediaItems.findIndex((item2) => {
               return `${item2.Name} ${item2.yearDisplay}` === `${item.Name} ${item.yearDisplay}`;
             }) === index
           );
         });
 
+        logger.log(`[MediaPropertyDialog toggleShowMovies] mic.mediaItems:`, mic.mediaItems);
+
         this.isLoadingMovies = false;
       }
 
-      this.showMovies = true;
+      mic.showMediaItems = true;
     },
   },
 

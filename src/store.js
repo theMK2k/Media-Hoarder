@@ -4150,8 +4150,11 @@ async function fetchMedia({
 	`;
 
     logger.log("[fetchMedia] query:", query);
+    logger.log("[fetchMedia] $MediaType:", $MediaType);
 
     const result = await db.fireProcedureReturnAll(query, { $MediaType });
+
+    // logger.log("[fetchMedia] result:", result);
 
     result.forEach((movie) => {
       ensureMediaFullPath(movie);
