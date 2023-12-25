@@ -475,7 +475,7 @@
                     contain
                     v-if="item.IMDB_posterSmall_URL"
                     v-bind:src="item.IMDB_posterSmall_URL"
-                    style="border-radius: 6px"
+                    style="border-radius: 6px; background-size: cover"
                   ></v-img>
                   <v-icon v-if="!item.IMDB_posterSmall_URL" disabled x-large> mdi-filmstrip </v-icon>
 
