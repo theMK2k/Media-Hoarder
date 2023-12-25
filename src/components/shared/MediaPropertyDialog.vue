@@ -88,7 +88,11 @@
 
               <div v-for="(mic, index) in Object.values(mediaItemsContainer)" v-bind:key="index">
                 <div v-if="mic.type !== 'episodes' || Series_id_Movies_Owner" v-on:click.stop="toggleShowMovies(mic)">
-                  <v-row v-if="mic.numItems !== null" class="mk-clickable mk-compact-movie-list-title">
+                  <v-row
+                    v-if="mic.numItems !== null"
+                    class="mk-compact-movie-list-title"
+                    v-bind:class="{ 'mk-clickable': !!mic.numItems }"
+                  >
                     {{
                       mic.numItems +
                       " " +
@@ -96,7 +100,7 @@
                       (mic.type === "episodes" && Series_Name
                         ? ` - ${Series_Name}${Series_Year_Display ? " " + Series_Year_Display : ""}`
                         : "") +
-                      (!mic.showMediaItems ? " »" : "")
+                      (!!mic.numItems && !mic.showMediaItems ? " »" : "")
                     }}
                   </v-row>
                   <div v-if="mic.showMediaItems" class="mk-clickable-white">
@@ -522,19 +526,18 @@ export default {
           logger.log(`[MediaPropertyDialog ${this.propertyTypeKey} init] fetched detailData:`, detailData);
 
           if (!detailData || detailData.length === 0) {
-            await this.scrapeData();
-            return;
+            this.scrapeData();
+          } else {
+            detailData = detailData[0];
+
+            detailData.Image_URL = detailData.Photo_URL
+              ? "local-resource://" + helpers.getDataPath(detailData.Photo_URL).replace(/\\/g, "\\\\")
+              : null;
+
+            this.detailData = detailData;
+
+            logger.log(`[MediaPropertyDialog ${this.propertyTypeKey} init] this.detailData:`, this.detailData);
           }
-
-          detailData = detailData[0];
-
-          detailData.Image_URL = detailData.Photo_URL
-            ? "local-resource://" + helpers.getDataPath(detailData.Photo_URL).replace(/\\/g, "\\\\")
-            : null;
-
-          this.detailData = detailData;
-
-          logger.log(`[MediaPropertyDialog ${this.propertyTypeKey} init] this.personData:`, this.detailData);
         }
 
         for (const mic of Object.values(this.mediaItemsContainer)) {
@@ -641,6 +644,10 @@ export default {
     async toggleShowMovies(mic) {
       if (mic.showMediaItems) {
         mic.showMediaItems = false;
+        return;
+      }
+
+      if (!mic.numItems) {
         return;
       }
 
