@@ -69,17 +69,14 @@
                 <div
                   v-if="!showDescriptionLong"
                   style="font-size: 0.875rem; font-weight: normal"
-                  class="mk-clickable"
-                  v-on:click.stop="showDescriptionLong = true"
+                  v-bind:class="{ 'mk-clickable': detailData.DescriptionShort !== detailData.DescriptionLong }"
+                  v-on:click.stop="
+                    showDescriptionLong = detailData.DescriptionShort !== detailData.DescriptionLong ? true : false
+                  "
                 >
                   {{ detailData.DescriptionShort ? detailData.DescriptionShort : detailData.DescriptionLong }}
                 </div>
-                <div
-                  v-if="showDescriptionLong"
-                  style="font-size: 0.875rem; font-weight: normal"
-                  class="mk-clickable-white"
-                  v-on:click.stop="showDescriptionLong = false"
-                >
+                <div v-if="showDescriptionLong" style="font-size: 0.875rem; font-weight: normal">
                   <p v-for="(line, index) in detailData.DescriptionLong.split('\n')" v-bind:key="index">
                     {{ line }}
                   </p>
@@ -534,7 +531,12 @@ export default {
               ? "local-resource://" + helpers.getDataPath(detailData.Photo_URL).replace(/\\/g, "\\\\")
               : null;
 
-            this.detailData = detailData;
+            this.detailData = {
+              IMDB_ID: detailData.IMDB_Person_ID,
+              Image_URL: detailData.Image_URL,
+              DescriptionShort: detailData.ShortBio,
+              DescriptionLong: detailData.LongBio,
+            };
 
             logger.log(`[MediaPropertyDialog ${this.propertyTypeKey} init] this.detailData:`, this.detailData);
           }
