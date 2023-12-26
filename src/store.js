@@ -608,7 +608,7 @@ async function mergeExtraDirectoryBased(movie) {
   logger.log("[mergeExtraDirectoryBased] $ParentDirectory:", $ParentDirectory);
 
   let possibleParents = await db.fireProcedureReturnAll(
-    /*sql*/ `
+    `
 		SELECT
 			id_Movies
 			, RelativePath
@@ -4538,7 +4538,7 @@ async function fetchSortValues($MediaType) {
   return JSON.parse(result);
 }
 
-async function fetchFilterDataQuality($MediaType, loadFilterValuesFromStorage) {
+async function fetchFilterDataQuality($MediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
   logger.log("[fetchFilterDataQuality] MediaType:", $MediaType);
   shared.loadingFilter = "filterDataQuality";
 
@@ -4553,7 +4553,7 @@ async function fetchFilterDataQuality($MediaType, loadFilterValuesFromStorage) {
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
   const results = await db.fireProcedureReturnAll(
-    /*sql*/ `
+    `
       SELECT
         1 AS Selected
         , '<noAnomalies>' AS Name
@@ -4564,6 +4564,7 @@ async function fetchFilterDataQuality($MediaType, loadFilterValuesFromStorage) {
             INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
             LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
             WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                  AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                   AND MOV.Extra_id_Movies_Owner IS NULL
                   AND (
                     MOV.IMDB_tconst IS NOT NULL
@@ -4584,6 +4585,7 @@ async function fetchFilterDataQuality($MediaType, loadFilterValuesFromStorage) {
             INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
             LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
             WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                  AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                   AND MOV.Extra_id_Movies_Owner IS NULL
                   AND MOV.IMDB_tconst IS NULL
                   ${additionalFilterQuery}
@@ -4597,6 +4599,7 @@ async function fetchFilterDataQuality($MediaType, loadFilterValuesFromStorage) {
           INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
           LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
           WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND MOV.Extra_id_Movies_Owner IS NULL
                 AND MOV.scanErrors IS NOT NULL
                 ${additionalFilterQuery}
@@ -4610,6 +4613,7 @@ async function fetchFilterDataQuality($MediaType, loadFilterValuesFromStorage) {
           INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
           LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
           WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND MOV.Extra_id_Movies_Owner IS NULL
                 AND MOV.Name2 IS NULL
                 ${additionalFilterQuery}
@@ -4623,6 +4627,7 @@ async function fetchFilterDataQuality($MediaType, loadFilterValuesFromStorage) {
           INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
           LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
           WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND MOV.Extra_id_Movies_Owner IS NULL
                 AND MOV.IMDB_posterSmall_URL IS NULL
                 ${additionalFilterQuery}
@@ -4636,12 +4641,13 @@ async function fetchFilterDataQuality($MediaType, loadFilterValuesFromStorage) {
           INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
           LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
           WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND MOV.Extra_id_Movies_Owner IS NULL
                 AND MOV.IMDB_plotSummary IS NULL
                 ${additionalFilterQuery}
       ) AS NumMovies
     `,
-    { $MediaType }
+    { $MediaType, $Series_id_Movies_Owner }
   );
 
   if (filterValues && filterValues.filterDataQuality) {
@@ -4662,7 +4668,7 @@ async function fetchFilterDataQuality($MediaType, loadFilterValuesFromStorage) {
   shared.loadingFilter = "";
 }
 
-async function fetchFilterSourcePaths($MediaType) {
+async function fetchFilterSourcePaths($MediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
   logger.log("[fetchFilterSourcePaths] MediaType:", $MediaType);
   shared.loadingFilter = "filterSourcePaths";
 
@@ -4684,12 +4690,19 @@ async function fetchFilterSourcePaths($MediaType) {
         FROM tbl_Movies MOV
         LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
         WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+              AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
               AND MOV.Extra_id_Movies_Owner IS NULL
-              AND id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths SP2 WHERE SP2.Description = SP.Description)
+              AND id_SourcePaths IN (
+                  SELECT id_SourcePaths
+                  FROM tbl_SourcePaths SP2
+                  WHERE SP2.Description = SP.Description
+              )
               ${additionalFilterQuery}
         ) AS NumMovies
-		FROM tbl_SourcePaths SP WHERE MediaType = $MediaType`,
-    { $MediaType }
+		FROM tbl_SourcePaths SP
+    WHERE MediaType = $MediaType
+    `,
+    { $MediaType, $Series_id_Movies_Owner }
   );
 
   if (filterValues && filterValues.filterSourcePaths) {
@@ -4710,7 +4723,7 @@ async function fetchFilterSourcePaths($MediaType) {
   shared.loadingFilter = "";
 }
 
-async function fetchFilterGenres($MediaType, $t) {
+async function fetchFilterGenres($MediaType, $t, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
   logger.log("[fetchFilterGenres] MediaType:", $MediaType);
   shared.loadingFilter = "filterGenres";
 
@@ -4735,7 +4748,7 @@ async function fetchFilterGenres($MediaType, $t) {
 			, (
 				SELECT COUNT(1)
 				FROM tbl_Movies_Genres MG
-				INNER JOIN tbl_Movies MOV ON MG.id_Movies = MOV.id_Movies AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+				INNER JOIN tbl_Movies MOV ON MG.id_Movies = MOV.id_Movies AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
 				INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
         LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 				WHERE MG.id_Genres = G.id_Genres
@@ -4743,7 +4756,7 @@ async function fetchFilterGenres($MediaType, $t) {
 			) AS NumMovies
 		FROM tbl_Genres G
 		ORDER BY Name`,
-    { $MediaType }
+    { $MediaType, $Series_id_Movies_Owner }
   );
 
   const resultsFiltered = results; // results.filter((result) => result.NumMovies > 0); // we should not filter out, because "AND" can quickly result in an empty set
@@ -4777,7 +4790,7 @@ async function fetchFilterGenres($MediaType, $t) {
   shared.loadingFilter = "";
 }
 
-async function fetchFilterAgeRatings($MediaType) {
+async function fetchFilterAgeRatings($MediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
   logger.log("[fetchFilterAgeRatings] MediaType:", $MediaType);
   shared.loadingFilter = "filterAgeRatings";
 
@@ -4799,6 +4812,7 @@ async function fetchFilterAgeRatings($MediaType) {
         INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
         LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
         WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+              AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
               AND MOV.Extra_id_Movies_Owner IS NULL
               AND 
               (
@@ -4818,6 +4832,7 @@ async function fetchFilterAgeRatings($MediaType) {
           INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
           LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating AND AR.Age IS NOT NULL
           WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND (
                       AR.Age = Ages.Age
                       OR (
@@ -4840,7 +4855,7 @@ async function fetchFilterAgeRatings($MediaType) {
     )) Ages
     WHERE NumMovies > 0
     `,
-    { $MediaType }
+    { $MediaType, $Series_id_Movies_Owner }
   );
 
   const resultsFiltered = results; // results.filter((result) => result.NumMovies > 0);  // we should not filter out, because "AND" can quickly result in an empty set
@@ -4863,7 +4878,7 @@ async function fetchFilterAgeRatings($MediaType) {
   shared.loadingFilter = "";
 }
 
-async function fetchFilterRatings($MediaType) {
+async function fetchFilterRatings($MediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
   logger.log("[fetchFilterRatings] MediaType:", $MediaType);
   shared.loadingFilter = "filterRatings";
 
@@ -4886,6 +4901,7 @@ async function fetchFilterRatings($MediaType) {
       INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
       LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
       WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+            AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
             AND (MOV.Rating IS NULL OR MOV.Rating = 0)
             ${additionalFilterQuery}
     ) AS NumMovies
@@ -4899,6 +4915,7 @@ async function fetchFilterRatings($MediaType) {
         INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
         LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
         WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+              AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
               AND MOV.Rating = 0.5
               ${additionalFilterQuery}
         ) AS NumMovies
@@ -4912,6 +4929,7 @@ async function fetchFilterRatings($MediaType) {
         INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
         LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
         WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+              AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
               AND MOV.Extra_id_Movies_Owner IS NULL
               AND MOV.Rating = 1
         ${additionalFilterQuery}
@@ -4926,6 +4944,7 @@ async function fetchFilterRatings($MediaType) {
         INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
         LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
         WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+              AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
               AND MOV.Extra_id_Movies_Owner IS NULL
               AND MOV.Rating = 1.5
               ${additionalFilterQuery}
@@ -4940,6 +4959,7 @@ async function fetchFilterRatings($MediaType) {
         INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
         LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
         WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+              AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
               AND MOV.Extra_id_Movies_Owner IS NULL
               AND MOV.Rating = 2
               ${additionalFilterQuery}
@@ -4954,6 +4974,7 @@ async function fetchFilterRatings($MediaType) {
         INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
         LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
         WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+              AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
               AND MOV.Extra_id_Movies_Owner IS NULL
               AND MOV.Rating = 2.5
               ${additionalFilterQuery}
@@ -4968,6 +4989,7 @@ async function fetchFilterRatings($MediaType) {
         INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
         LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
         WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+              AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
               AND MOV.Extra_id_Movies_Owner IS NULL
               AND MOV.Rating = 3
               ${additionalFilterQuery}
@@ -4982,6 +5004,7 @@ async function fetchFilterRatings($MediaType) {
         INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
         LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
         WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+              AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
               AND MOV.Extra_id_Movies_Owner IS NULL
               AND MOV.Rating = 3.5
               ${additionalFilterQuery}
@@ -4996,6 +5019,7 @@ async function fetchFilterRatings($MediaType) {
         INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
         LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
         WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+              AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
               AND MOV.Extra_id_Movies_Owner IS NULL
               AND MOV.Rating = 4
               ${additionalFilterQuery}
@@ -5010,6 +5034,7 @@ async function fetchFilterRatings($MediaType) {
         INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
         LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
         WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+              AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
               AND MOV.Extra_id_Movies_Owner IS NULL
               AND MOV.Rating = 4.5
               ${additionalFilterQuery}
@@ -5024,12 +5049,13 @@ async function fetchFilterRatings($MediaType) {
         INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
         LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
         WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+              AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
               AND MOV.Extra_id_Movies_Owner IS NULL
               AND MOV.Rating = 5
               ${additionalFilterQuery}
       ) AS NumMovies
 				`,
-    { $MediaType }
+    { $MediaType, $Series_id_Movies_Owner }
   );
 
   if (filterValues && filterValues.filterRatings) {
@@ -5050,13 +5076,13 @@ async function fetchFilterRatings($MediaType) {
   shared.loadingFilter = "";
 }
 
-async function fetchFilterParentalAdvisory($MediaType) {
+async function fetchFilterParentalAdvisory($MediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
   shared.loadingFilter = "filterParentalAdvisory";
-  const Nudity = await fetchFilterParentalAdvisoryCategory($MediaType, "Nudity");
-  const Violence = await fetchFilterParentalAdvisoryCategory($MediaType, "Violence");
-  const Profanity = await fetchFilterParentalAdvisoryCategory($MediaType, "Profanity");
-  const Alcohol = await fetchFilterParentalAdvisoryCategory($MediaType, "Alcohol");
-  const Frightening = await fetchFilterParentalAdvisoryCategory($MediaType, "Frightening");
+  const Nudity = await fetchFilterParentalAdvisoryCategory($MediaType, "Nudity", $Series_id_Movies_Owner);
+  const Violence = await fetchFilterParentalAdvisoryCategory($MediaType, "Violence", $Series_id_Movies_Owner);
+  const Profanity = await fetchFilterParentalAdvisoryCategory($MediaType, "Profanity", $Series_id_Movies_Owner);
+  const Alcohol = await fetchFilterParentalAdvisoryCategory($MediaType, "Alcohol", $Series_id_Movies_Owner);
+  const Frightening = await fetchFilterParentalAdvisoryCategory($MediaType, "Frightening", $Series_id_Movies_Owner);
 
   shared.filters.filterParentalAdvisory = {
     Nudity,
@@ -5068,7 +5094,7 @@ async function fetchFilterParentalAdvisory($MediaType) {
   shared.loadingFilter = "";
 }
 
-async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category) {
+async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category, $Series_id_Movies_Owner) {
   logger.log(`[fetchFilterParentalAdvisory${PA_Category}] MediaType:`, $MediaType);
 
   const filterValues = await fetchFilterValues($MediaType);
@@ -5091,6 +5117,7 @@ async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category) {
 					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
           LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND MOV.Extra_id_Movies_Owner IS NULL
                 AND MOV.IMDB_Parental_Advisory_${PA_Category} IS NULL
                 ${additionalFilterQuery}
@@ -5106,6 +5133,7 @@ async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category) {
 					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
           LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND MOV.Extra_id_Movies_Owner IS NULL
                 AND MOV.IMDB_Parental_Advisory_${PA_Category} = 0
                 ${additionalFilterQuery}
@@ -5121,6 +5149,7 @@ async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category) {
 					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
           LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND MOV.Extra_id_Movies_Owner IS NULL
                 AND MOV.IMDB_Parental_Advisory_${PA_Category} = 1
                 ${additionalFilterQuery}
@@ -5136,6 +5165,7 @@ async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category) {
 					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
           LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND MOV.Extra_id_Movies_Owner IS NULL
                 AND MOV.IMDB_Parental_Advisory_${PA_Category} = 2
                 ${additionalFilterQuery}
@@ -5151,12 +5181,13 @@ async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category) {
 					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
           LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND MOV.Extra_id_Movies_Owner IS NULL
                 AND MOV.IMDB_Parental_Advisory_${PA_Category} = 3
                 ${additionalFilterQuery}
 				) AS NumMovies
 				`,
-    { $MediaType }
+    { $MediaType, $Series_id_Movies_Owner }
   );
 
   if (filterValues && filterValues.filterParentalAdvisory && filterValues.filterParentalAdvisory[PA_Category]) {
@@ -5178,7 +5209,7 @@ async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category) {
   return results;
 }
 
-async function fetchFilterPersons($MediaType, $t) {
+async function fetchFilterPersons($MediaType, $t, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
   shared.loadingFilter = "filterPersons";
   const filterValues = await fetchFilterValues($MediaType);
 
@@ -5201,6 +5232,7 @@ async function fetchFilterPersons($MediaType, $t) {
 					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
           LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND MOV.Extra_id_Movies_Owner IS NULL
                 AND MOV.id_Movies NOT IN (
                   SELECT DISTINCT MC.id_Movies
@@ -5221,7 +5253,7 @@ async function fetchFilterPersons($MediaType, $t) {
 					SELECT COUNT(1) FROM (
 						SELECT DISTINCT MC.id_Movies
 						FROM tbl_Movies_IMDB_Credits MC
-						INNER JOIN tbl_Movies MOV ON MC.id_Movies = MOV.id_Movies AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+						INNER JOIN tbl_Movies MOV ON MC.id_Movies = MOV.id_Movies AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
 						INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
             LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 						WHERE MC.IMDB_Person_ID = FILTERPERSON.IMDB_Person_ID
@@ -5230,7 +5262,7 @@ async function fetchFilterPersons($MediaType, $t) {
         ) AS NumMovies
 		FROM tbl_Filter_Persons FILTERPERSON
 	`,
-    { $MediaType, $any: $t("<any other person>") }
+    { $MediaType, $any: $t("<any other person>"), $Series_id_Movies_Owner }
   );
 
   // logger.log('[fetchFilterPersons] QUERY:', )
@@ -5255,7 +5287,7 @@ async function fetchFilterPersons($MediaType, $t) {
   shared.loadingFilter = "";
 }
 
-async function fetchFilterCompanies($MediaType, $t) {
+async function fetchFilterCompanies($MediaType, $t, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
   shared.loadingFilter = "filterCompanies";
   const filterValues = await fetchFilterValues($MediaType);
 
@@ -5277,6 +5309,7 @@ async function fetchFilterCompanies($MediaType, $t) {
 					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
           LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND MOV.Extra_id_Movies_Owner IS NULL
                 AND MOV.id_Movies NOT IN (
                   SELECT DISTINCT MC.id_Movies
@@ -5297,7 +5330,11 @@ async function fetchFilterCompanies($MediaType, $t) {
 					SELECT COUNT(1) FROM (
 						SELECT DISTINCT MC.id_Movies
 						FROM tbl_Movies_IMDB_Companies MC
-						INNER JOIN tbl_Movies MOV ON MC.id_Movies = MOV.id_Movies AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+						INNER JOIN tbl_Movies MOV ON
+                      MC.id_Movies = MOV.id_Movies
+                      AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                      AND MOV.Extra_id_Movies_Owner IS NULL
+                      AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
 						INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
             LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 						WHERE MC.Company_Name = FILTERCOMPANY.Company_Name
@@ -5306,7 +5343,7 @@ async function fetchFilterCompanies($MediaType, $t) {
 			) AS NumMovies
 		FROM tbl_Filter_Companies FILTERCOMPANY
 	`,
-    { $MediaType, $any: $t("<any other company>") }
+    { $MediaType, $any: $t("<any other company>"), $Series_id_Movies_Owner }
   );
 
   // logger.log('[fetchFilterCompanies] QUERY:', )
@@ -5331,7 +5368,7 @@ async function fetchFilterCompanies($MediaType, $t) {
   shared.loadingFilter = "";
 }
 
-async function fetchFilterIMDBPlotKeywords($MediaType, $t) {
+async function fetchFilterIMDBPlotKeywords($MediaType, $t, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
   shared.loadingFilter = "filterIMDBPlotKeywords";
   const filterValues = await fetchFilterValues($MediaType);
 
@@ -5354,6 +5391,7 @@ async function fetchFilterIMDBPlotKeywords($MediaType, $t) {
 					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
           LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND MOV.Extra_id_Movies_Owner IS NULL
                 AND MOV.id_Movies NOT IN (
                   SELECT DISTINCT MPK.id_Movies
@@ -5375,7 +5413,7 @@ async function fetchFilterIMDBPlotKeywords($MediaType, $t) {
 					SELECT COUNT(1) FROM (
             SELECT DISTINCT MPK.id_Movies
             FROM tbl_Movies_IMDB_Plot_Keywords MPK
-            INNER JOIN tbl_Movies MOV ON MPK.id_Movies = MOV.id_Movies AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+            INNER JOIN tbl_Movies MOV ON MPK.id_Movies = MOV.id_Movies AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
             INNER JOIN tbl_SourcePaths SP2 ON MOV.id_SourcePaths = SP2.id_SourcePaths AND SP2.MediaType = $MediaType
             LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
             WHERE MPK.id_IMDB_Plot_Keywords IN (SELECT id_IMDB_Plot_Keywords FROM tbl_Filter_IMDB_Plot_Keywords WHERE id_IMDB_Plot_Keywords = FILTERPLOTKEYWORDS.id_IMDB_Plot_Keywords)
@@ -5384,7 +5422,7 @@ async function fetchFilterIMDBPlotKeywords($MediaType, $t) {
 			) AS NumMovies
 		FROM tbl_Filter_IMDB_Plot_Keywords FILTERPLOTKEYWORDS
 	`,
-    { $MediaType, $any: $t("<any other plot keyword>") }
+    { $MediaType, $any: $t("<any other plot keyword>"), $Series_id_Movies_Owner }
   );
 
   // logger.log('[fetchFilterIMDBPlotKeywords] QUERY:', )
@@ -5409,7 +5447,7 @@ async function fetchFilterIMDBPlotKeywords($MediaType, $t) {
   shared.loadingFilter = "";
 }
 
-async function fetchFilterIMDBFilmingLocations($MediaType, $t) {
+async function fetchFilterIMDBFilmingLocations($MediaType, $t, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
   shared.loadingFilter = "filterIMDBFilmingLocations";
   const filterValues = await fetchFilterValues($MediaType);
 
@@ -5432,6 +5470,7 @@ async function fetchFilterIMDBFilmingLocations($MediaType, $t) {
 					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
           LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND MOV.Extra_id_Movies_Owner IS NULL
                 AND MOV.id_Movies NOT IN (
                   SELECT DISTINCT MFL.id_Movies
@@ -5453,7 +5492,7 @@ async function fetchFilterIMDBFilmingLocations($MediaType, $t) {
 					SELECT COUNT(1) FROM (
             SELECT DISTINCT MFL.id_Movies
             FROM tbl_Movies_IMDB_Filming_Locations MFL
-            INNER JOIN tbl_Movies MOV ON MFL.id_Movies = MOV.id_Movies AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+            INNER JOIN tbl_Movies MOV ON MFL.id_Movies = MOV.id_Movies AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
             INNER JOIN tbl_SourcePaths SP2 ON MOV.id_SourcePaths = SP2.id_SourcePaths AND SP2.MediaType = $MediaType
             LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
             WHERE MFL.id_IMDB_Filming_Locations IN (SELECT id_IMDB_Filming_Locations FROM tbl_Filter_IMDB_Filming_Locations WHERE id_IMDB_Filming_Locations = FILTERFILMINGLOCATIONS.id_IMDB_Filming_Locations)
@@ -5462,7 +5501,7 @@ async function fetchFilterIMDBFilmingLocations($MediaType, $t) {
 			) AS NumMovies
 		FROM tbl_Filter_IMDB_Filming_Locations FILTERFILMINGLOCATIONS
 	`,
-    { $MediaType, $any: $t("<any other filming location>") }
+    { $MediaType, $any: $t("<any other filming location>"), $Series_id_Movies_Owner }
   );
 
   if (filterValues && filterValues.filterIMDBFilmingLocations) {
@@ -5485,7 +5524,7 @@ async function fetchFilterIMDBFilmingLocations($MediaType, $t) {
   shared.loadingFilter = "";
 }
 
-async function fetchFilterYears($MediaType) {
+async function fetchFilterYears($MediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
   shared.loadingFilter = "filterYears";
   logger.log("[fetchFilterYears] MediaType:", $MediaType);
 
@@ -5507,6 +5546,7 @@ async function fetchFilterYears($MediaType) {
 		INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
 		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 		WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+          AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
           AND MOV.Extra_id_Movies_Owner IS NULL
           AND MOV.startYear IS NULL
           ${additionalFilterQuery}
@@ -5519,12 +5559,13 @@ async function fetchFilterYears($MediaType) {
 		INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
 		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 		WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+          AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
           AND MOV.Extra_id_Movies_Owner IS NULL
           AND MOV.startYear IS NOT NULL
           ${additionalFilterQuery}
 		GROUP BY (startYear)
 		ORDER BY startYear DESC`,
-    { $MediaType }
+    { $MediaType, $Series_id_Movies_Owner }
   );
 
   const resultsFiltered = results; // results.filter((result) => result.NumMovies > 0); // we should not filter out, because "AND" can quickly result in an empty set
@@ -5551,7 +5592,7 @@ async function fetchFilterYears($MediaType) {
   shared.loadingFilter = "";
 }
 
-async function fetchFilterQualities($MediaType) {
+async function fetchFilterQualities($MediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
   shared.loadingFilter = "filterQualities";
   logger.log("[fetchFilterQualities] MediaType:", $MediaType);
 
@@ -5573,10 +5614,11 @@ async function fetchFilterQualities($MediaType) {
 		INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
 		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 		WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+          AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
           AND MOV.Extra_id_Movies_Owner IS NULL
           ${additionalFilterQuery}
 		GROUP BY (MI_Quality)`,
-    { $MediaType }
+    { $MediaType, $Series_id_Movies_Owner }
   );
 
   const resultsFiltered = results; // results.filter((result) => result.NumMovies > 0);  // we should not filter out, because "AND" can quickly result in an empty set
@@ -5709,7 +5751,7 @@ async function fetchLists() {
 	`);
 }
 
-async function fetchFilterLists($MediaType, $t) {
+async function fetchFilterLists($MediaType, $t, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
   shared.loadingFilter = "filterLists";
   const filterValues = await fetchFilterValues($MediaType);
 
@@ -5729,6 +5771,7 @@ async function fetchFilterLists($MediaType, $t) {
 				INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
         LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 				WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+              AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
               AND MOV.Extra_id_Movies_Owner IS NULL
               AND MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Lists_Movies)
               ${additionalFilterQuery}
@@ -5741,7 +5784,7 @@ async function fetchFilterLists($MediaType, $t) {
 			, (
 				SELECT COUNT(1)
 				FROM tbl_Lists_Movies LM
-				INNER JOIN tbl_Movies MOV ON LM.id_Movies = MOV.id_Movies AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+				INNER JOIN tbl_Movies MOV ON LM.id_Movies = MOV.id_Movies AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
 				INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
         LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 				WHERE LM.id_Lists = LISTS.id_Lists
@@ -5750,7 +5793,7 @@ async function fetchFilterLists($MediaType, $t) {
 		FROM tbl_Lists LISTS
 		ORDER BY Name
 	`,
-    { $MediaType, $any: $t("<not in any list>") }
+    { $MediaType, $any: $t("<not in any list>"), $Series_id_Movies_Owner }
   );
 
   if (filterValues && filterValues.filterLists) {
@@ -5771,7 +5814,13 @@ async function fetchFilterLists($MediaType, $t) {
   shared.loadingFilter = "";
 }
 
-async function fetchFilterLanguages($MediaType, $LanguageType, $t) {
+async function fetchFilterLanguages(
+  $MediaType,
+  $LanguageType,
+  $t,
+  loadFilterValuesFromStorage,
+  $Series_id_Movies_Owner
+) {
   shared.loadingFilter = `filter${helpers.uppercaseEachWord($LanguageType)}Languages`;
   logger.log("[fetchFilterLanguages] MediaType:", $MediaType);
 
@@ -5794,12 +5843,13 @@ async function fetchFilterLanguages($MediaType, $LanguageType, $t) {
 					INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
           LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 					WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
-					AND MOV.id_Movies NOT IN (
-                SELECT id_Movies
-                FROM	tbl_Movies_Languages ML
-                WHERE ML.Type = $LanguageType
-              )
-              ${additionalFilterQuery}
+                AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
+                AND MOV.id_Movies NOT IN (
+                      SELECT id_Movies
+                      FROM	tbl_Movies_Languages ML
+                      WHERE ML.Type = $LanguageType
+                )
+                ${additionalFilterQuery}
 				) AS NumMovies
 		UNION
 		SELECT
@@ -5808,7 +5858,7 @@ async function fetchFilterLanguages($MediaType, $LanguageType, $t) {
 			, 1 AS Selected
 			, (
 					SELECT COUNT(1) FROM tbl_Movies_Languages ML2
-					INNER JOIN tbl_Movies MOV ON ML2.id_Movies = MOV.id_Movies
+					INNER JOIN tbl_Movies MOV ON ML2.id_Movies = MOV.id_Movies AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
 					INNER JOIN tbl_SourcePaths SP2 ON MOV.id_SourcePaths = SP2.id_SourcePaths AND SP2.MediaType = $MediaType
           LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 					WHERE	ML.Language = ML2.Language
@@ -5824,11 +5874,12 @@ async function fetchFilterLanguages($MediaType, $LanguageType, $t) {
 			FROM tbl_Movies MOV
 			INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
 			WHERE	(MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
-					AND MOV.Extra_id_Movies_Owner IS NULL
+            AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
+            AND MOV.Extra_id_Movies_Owner IS NULL
 		)
 		GROUP BY Language
 		ORDER BY NumMovies DESC`,
-    { $MediaType, $LanguageType }
+    { $MediaType, $LanguageType, $Series_id_Movies_Owner }
   );
 
   const resultsFiltered = results; //results.filter((result) => result.NumMovies > 0); // we should not filter out, because "AND" can quickly result in an empty set
@@ -7091,7 +7142,7 @@ function getReleaseAttributesHierarchy() {
   return releaseAttributes;
 }
 
-async function fetchFilterReleaseAttributes($MediaType) {
+async function fetchFilterReleaseAttributes($MediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
   logger.log("[fetchFilterReleaseAttributes] MediaType:", $MediaType);
   shared.loadingFilter = "filterReleaseAttributes";
 
@@ -7118,7 +7169,7 @@ async function fetchFilterReleaseAttributes($MediaType) {
     SELECT COUNT(1) FROM (
       SELECT DISTINCT MRA.id_Movies
       FROM tbl_Movies_Release_Attributes MRA
-      INNER JOIN tbl_Movies MOV ON MRA.id_Movies = MOV.id_Movies
+      INNER JOIN tbl_Movies MOV ON MRA.id_Movies = MOV.id_Movies AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
       INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
       LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
       WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
@@ -7132,7 +7183,7 @@ async function fetchFilterReleaseAttributes($MediaType) {
 
     logger.log("[fetchFilterReleaseAttributes] sql:", sql);
 
-    const NumMovies = await db.fireProcedureReturnScalar(sql, { $MediaType });
+    const NumMovies = await db.fireProcedureReturnScalar(sql, { $MediaType, $Series_id_Movies_Owner });
 
     logger.log("[fetchFilterReleaseAttributes] NumMovies:", NumMovies);
 
@@ -7157,6 +7208,7 @@ async function fetchFilterReleaseAttributes($MediaType) {
           INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
           LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
           WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+                AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 ${additionalFilterQuery}
                 AND MOV.id_Movies NOT IN (
                   SELECT MRA.id_Movies
@@ -7166,7 +7218,7 @@ async function fetchFilterReleaseAttributes($MediaType) {
         ) AS NumMovies
     `;
 
-  const anyResults = await db.fireProcedureReturnAll(sqlAny, { $MediaType });
+  const anyResults = await db.fireProcedureReturnAll(sqlAny, { $MediaType, $Series_id_Movies_Owner });
 
   results = [
     anyResults[0],
@@ -7194,7 +7246,7 @@ async function fetchFilterReleaseAttributes($MediaType) {
   shared.loadingFilter = "";
 }
 
-async function fetchFilterVideoEncoders($MediaType) {
+async function fetchFilterVideoEncoders($MediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
   logger.log("[fetchFilterVideoEncoders] MediaType:", $MediaType);
   shared.loadingFilter = "filterVideoEncoders";
 
@@ -7218,6 +7270,7 @@ async function fetchFilterVideoEncoders($MediaType) {
     LEFT JOIN tbl_Movies_MI_Tracks MITVIDEO2 ON MITVIDEO2.type = "video" AND MOV.id_Movies = MITVIDEO2.id_Movies
     LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
     WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+        AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
         AND MOV.Extra_id_Movies_Owner IS NULL
         AND IFNULL(MITVIDEO2.Encoded_Library_Name_Trimmed, 'null') = IFNULL(SubQ.Name, 'null')
         ${additionalFilterQuery}
@@ -7230,7 +7283,7 @@ FROM (	SELECT DISTINCT
 
   logger.log("[fetchFilterVideoEncoders] sql:", sql);
 
-  results = await db.fireProcedureReturnAll(sql, { $MediaType });
+  results = await db.fireProcedureReturnAll(sql, { $MediaType, $Series_id_Movies_Owner });
 
   if (filterValues && filterValues.filterVideoEncoders) {
     results.forEach((result) => {
@@ -7251,7 +7304,7 @@ FROM (	SELECT DISTINCT
   shared.loadingFilter = "";
 }
 
-async function fetchFilterAudioFormats($MediaType) {
+async function fetchFilterAudioFormats($MediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
   logger.log("[fetchFilterAudioFormats] MediaType:", $MediaType);
   shared.loadingFilter = "filterAudioFormats";
 
@@ -7270,15 +7323,19 @@ async function fetchFilterAudioFormats($MediaType) {
   , IFNULL(Name, '<not available>') AS Name
   , (
     SELECT COUNT(1)
-    FROM tbl_Movies MOV
-    INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
-    LEFT JOIN tbl_Movies_MI_Tracks MITAUDIO2 ON MITAUDIO2.type = "audio" AND MOV.id_Movies = MITAUDIO2.id_Movies
-    LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
-    WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
-        AND MOV.Extra_id_Movies_Owner IS NULL
-        AND IFNULL(MITAUDIO2.Format, 'null') = IFNULL(SubQ.Name, 'null')
-        ${additionalFilterQuery}
-      ) AS NumMovies
+    FROM (
+      SELECT DISTINCT MOV.id_Movies
+      FROM tbl_Movies MOV
+      INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+      LEFT JOIN tbl_Movies_MI_Tracks MITAUDIO2 ON MITAUDIO2.type = "audio" AND MOV.id_Movies = MITAUDIO2.id_Movies
+      LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
+      WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+          AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
+          AND MOV.Extra_id_Movies_Owner IS NULL
+          AND IFNULL(MITAUDIO2.Format, 'null') = IFNULL(SubQ.Name, 'null')
+          ${additionalFilterQuery}
+      ) SubQ
+    ) AS NumMovies
 FROM (	SELECT DISTINCT
   MITAUDIO.Format AS Name
   FROM tbl_Movies_MI_Tracks MITAUDIO WHERE MITAUDIO.type = "audio"
@@ -7287,7 +7344,7 @@ FROM (	SELECT DISTINCT
 
   logger.log("[fetchFilterAudioFormats] sql:", sql);
 
-  results = await db.fireProcedureReturnAll(sql, { $MediaType });
+  results = await db.fireProcedureReturnAll(sql, { $MediaType, $Series_id_Movies_Owner });
 
   if (filterValues && filterValues.filterAudioFormats) {
     results.forEach((result) => {

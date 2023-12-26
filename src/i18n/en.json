@@ -663,7 +663,8 @@
     "Talk-Show": "Talk-Show",
     "Thriller": "Thriller",
     "War": "War",
-    "Western": "Western"
+    "Western": "Western",
+    "Adult": "Adult"
   },
   "undetermined": "undetermined",
   "<any other person>": "<any other person>",
