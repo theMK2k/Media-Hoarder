@@ -4,9 +4,9 @@
 
 ## NEXT Major (v1.4.0)
 
+- [ ] MediaList: onDeleteMediaDialogYes: also delete series and episodes properly
 - [ ] i18n: rescan finished snackbar
 - [ ] refactor buildINSERTQuery, buildUDPATEQuery to accept only one object
-- [ ] ensure that MI Tracks table is cleaned up when a movie gets removed
 - [ ] check "rescan" for possible double scanning / meta data retrieval
 
 ### TV Series Support (MVP)
@@ -32,7 +32,7 @@
   - [ ] supoprted Audio Languages
   - [ ] supported Subtitle Languages
 
-- [ ] when scanning a series, prefer imdb type "tv series", "tv movie" over "movie" and others
+- [ ] when detecting IMDB tconst for a series, prefer imdb type "tv series", "tv movie" over "movie" and others
 - [ ] create a test set with series name and year
 - [ ] check tconst detection with movies, too (we changed some fullDirectory to fullPath)
 - [ ] IMDB Rating heatmap like <https://whattowatchon.tv>

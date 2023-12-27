@@ -6483,26 +6483,24 @@ async function getMovieDuplicates($id_Movies, useActualDuplicates, useMetaDuplic
 }
 
 async function ensureMovieDeleted() {
-  await db.fireProcedure("DELETE FROM tbl_Movies_Genres WHERE id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies)");
-  await db.fireProcedure(
-    "DELETE FROM tbl_Movies_IMDB_Companies WHERE id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies)"
-  );
-  await db.fireProcedure(
-    "DELETE FROM tbl_Movies_IMDB_Credits WHERE id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies)"
-  );
-  await db.fireProcedure(
-    "DELETE FROM tbl_Movies_IMDB_Filming_Locations WHERE id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies)"
-  );
-  await db.fireProcedure(
-    "DELETE FROM tbl_Movies_IMDB_Plot_Keywords WHERE id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies)"
-  );
-  await db.fireProcedure("DELETE FROM tbl_Movies_Languages WHERE id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies)");
-  await db.fireProcedure(
-    "DELETE FROM tbl_Movies_Release_Attributes WHERE id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies)"
-  );
-  await db.fireProcedure(
-    "DELETE FROM tbl_IMDB_Plot_Keywords WHERE id_IMDB_Plot_Keywords NOT IN (SELECT id_IMDB_Plot_Keywords FROM tbl_Movies_IMDB_Plot_Keywords)"
-  );
+  logger.log("[ensureMovieDeleted] START");
+  const tableNames = await db.fireProcedureReturnAll(`
+    WITH tables AS (
+      SELECT name tableName
+          , sql 
+      FROM sqlite_master WHERE type = 'table' AND tableName NOT LIKE 'sqlite_%'
+    )
+    SELECT tableName
+    FROM tables
+    CROSS JOIN pragma_table_info(tables.tableName) fields
+    WHERE fields.name = 'id_Movies'  
+  `);
+
+  for (const tableName of tableNames.map((t) => t.tableName)) {
+    logger.log("[ensureMovieDeleted] removing orphaned entries in:", tableName);
+    await db.fireProcedure(`DELETE FROM ${tableName} WHERE id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies)`);
+  }
+  logger.log("[ensureMovieDeleted] END");
 }
 
 async function updateMovieAttribute(

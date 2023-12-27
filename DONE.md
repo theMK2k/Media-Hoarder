@@ -7,6 +7,7 @@
 - [x] refactor store.fetchMedia to only accept a single object containing the options
 - [x] check sqlite version for json support - _The JSON functions and operators are built into SQLite by default, as of SQLite version 3.38.0 (2022-02-22)._
   - specs see [data/devdocs/series.md](data/devdocs/series.md), [docs/01-Media-Storage.md](01-Media-Storage.md)
+- [x] ensure that MI Tracks table is cleaned up when a movie gets removed
 
 ### TV Series Support (MVP)
 
