@@ -21,16 +21,15 @@
     - [x] act as a dialog for episodes (of a certain series)
     - [x] debounce the init() function and call it on any property change, with 10ms debounce
 - [ ] BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
-- [ ] function: updateSeriesDataFromEpisodes
-
-  - [ ] Video Qualities (multiple!)
-  - [ ] Video Encoders (multiple!)
-  - [ ] Audio Formats
-  - [ ] Release Attributes
-  - [ ] Series_Num_Episodes
-  - [ ] Series_Num_Seasons
-  - [ ] supoprted Audio Languages
-  - [ ] supported Subtitle Languages
+- [WIP] function: updateSeriesMetadataFromEpisodes
+  - [x] Audio Formats
+  - [x] Release Attributes
+  - [x] Audio Languages
+  - [x] Subtitle Languages
+  - [x] Video Encoders
+  - [x] Video Qualities (multiple!)
+    - tbl_Movies_MI_Qualities: also use for filtering!
+    - tbl_Movies_MI_Qualities: also use for editing the series entry
 
 - [ ] when detecting IMDB tconst for a series, prefer imdb type "tv series", "tv movie" over "movie" and others
 - [ ] create a test set with series name and year

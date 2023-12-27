@@ -2074,7 +2074,7 @@ async function rescanMediaItemMetaData(onlyNew, mediaItem, $t, optRescanMediaInf
   }
 
   if (mediaItem.Series_id_Movies_Owner) {
-    updateSeriesMetadataFromEpisodes(mediaItem.Series_id_Movies_Owner);
+    await updateSeriesMetadataFromEpisodes(mediaItem.Series_id_Movies_Owner);
   }
 }
 
@@ -7904,29 +7904,317 @@ async function verifyIMDBtconst($id_Movies) {
 
 /**
  * Updates a Series' data from Episodes:
- * - Video Qualities (multiple!)
- * - Video Encoders (multiple!)
  * - Audio Formats
  * - Release Attributes
- * - Series_Num_Episodes
- * - Series_Num_Seasons
- * - supoprted Audio Languages
+ * - supported Audio Languages
  * - supported Subtitle Languages
  * - tbl_Movies.Series_Episodes
  * - tbl_Movies.Series_Seasons
+ * - Video Qualities (multiple!)
+ * - Video Encoders (multiple!)
  * @param {*} id_Movies the id_Movies of the series
  */
-async function updateSeriesMetadataFromEpisodes(id_Movies) {
-  return id_Movies;
+async function updateSeriesMetadataFromEpisodes($id_Movies) {
+  // !!! IMPORTANT: the newly created datastructures for series MUST also be used for filtering!!!
+  // -> we should re-use the existing data structures
+  logger.log("[updateSeriesMetadataFromEpisodes] START, id_Movies:", $id_Movies);
 
-  // const query_tbl_Movies = `
-  //   UPDATE tbl_Movies
-  //   SET   ...
+  await updateSeriesAudioFormatsFromEpisodes($id_Movies);
+  await updateSeriesReleaseAttributesFromEpisodes($id_Movies);
+  await updateSeriesLanguagesFromEpisodes($id_Movies, "audio");
+  await updateSeriesLanguagesFromEpisodes($id_Movies, "subtitle");
+  await updateSeriesVideoEncodersFromEpisodes($id_Movies);
+  await updateSeriesVideoQualitiesFromEpisodes($id_Movies);
+}
 
-  //   WHERE id_Movies = $id_Movies AND Series_id_Movies_Owner IS NULL
-  // `;
+async function updateSeriesAudioFormatsFromEpisodes($id_Movies) {
+  // Audio Formats:
+  // from Episodes: (SELECT GROUP_CONCAT(Format, ';') FROM tbl_Movies_MI_Tracks MITAUDIO WHERE MITAUDIO.type = "audio" AND MITAUDIO.id_Movies = MOV.id_Movies ORDER BY "Default" DESC) AS Audio_Format
+  logger.log("[updateSeriesAudioFormatsFromEpisodes] START, $id_Movies:", $id_Movies);
 
-  // await db.fireProcedure(query_tbl_Movies, { $id_Movies: id_Movies });
+  const seriesAudioFormats = await db.fireProcedureReturnAll(
+    `SELECT Format
+            , "Default"
+            , type
+      FROM  tbl_Movies_MI_Tracks MITAUDIO
+      WHERE MITAUDIO.type = "audio"
+            AND MITAUDIO.id_Movies = $id_Movies
+      ORDER BY "Default" DESC`,
+    { $id_Movies }
+  );
+
+  logger.log("[updateSeriesAudioFormatsFromEpisodes] seriesAudioFormats:", seriesAudioFormats);
+
+  const episodesAudioFormats = await db.fireProcedureReturnAll(
+    `SELECT DISTINCT Format
+            , "Default"
+            , type
+     FROM   tbl_Movies_MI_Tracks MITAUDIO
+     WHERE  MITAUDIO.type = "audio"
+            AND MITAUDIO.id_Movies IN (
+                SELECT id_Movies FROM tbl_Movies WHERE Series_id_Movies_Owner = $id_Movies
+            )
+    ORDER BY "Default" DESC`,
+    { $id_Movies }
+  );
+
+  logger.log("[updateSeriesAudioFormatsFromEpisodes] episodesAudioFormats:", episodesAudioFormats);
+
+  // remove seriesAudioFormats that are not in episodesAudioFormats
+  for (const seriesAudioFormat of seriesAudioFormats) {
+    if (!episodesAudioFormats.find((eaf) => eaf.Format === seriesAudioFormat.Format)) {
+      // remove seriesAudioFormat
+      logger.log("[updateSeriesAudioFormatsFromEpisodes] remove:", seriesAudioFormat);
+
+      await db.fireProcedure(
+        `DELETE FROM tbl_Movies_MI_Tracks WHERE id_Movies = $id_Movies AND type = $type AND Format = $Format`,
+        {
+          $id_Movies,
+          $type: seriesAudioFormat.type,
+          $Format: seriesAudioFormat.Format,
+        }
+      );
+    }
+  }
+
+  // add episodesAudioFormats that are not in seriesAudioFormats
+  for (const episodesAudioFormat of episodesAudioFormats) {
+    if (!seriesAudioFormats.find((saf) => saf.Format === episodesAudioFormat.Format)) {
+      // add episodesAudioFormat
+      logger.log("[updateSeriesAudioFormatsFromEpisodes] add:", episodesAudioFormat);
+
+      await db.fireProcedure(
+        `INSERT INTO tbl_Movies_MI_Tracks (id_Movies, type, Format, "Default") VALUES ($id_Movies, $type, $Format, $Default)`,
+        {
+          $id_Movies,
+          $type: episodesAudioFormat.type,
+          $Format: episodesAudioFormat.Format,
+          $Default: episodesAudioFormat.Default,
+        }
+      );
+    }
+  }
+}
+
+async function updateSeriesReleaseAttributesFromEpisodes($id_Movies) {
+  // Release Attributes: these are user-definable, so we do not auto-remove them from the series
+  // (SELECT GROUP_CONCAT(MRA.Release_Attributes_searchTerm, ';') FROM tbl_Movies_Release_Attributes MRA WHERE MRA.id_Movies = MOV.id_Movies AND MRA.deleted = 0) AS ReleaseAttributesSearchTerms
+  logger.log("[updateSeriesReleaseAttributesFromEpisodes] START, $id_Movies:", $id_Movies);
+
+  const seriesReleaseAttributes = await db.fireProcedureReturnAll(
+    `SELECT MRA.id_Movies_Release_Attributes
+            , MRA.Release_Attributes_searchTerm
+            , MRA.deleted
+    FROM    tbl_Movies_Release_Attributes MRA
+    WHERE    MRA.id_Movies = $id_Movies
+`,
+    { $id_Movies }
+  );
+
+  logger.log("[updateSeriesReleaseAttributesFromEpisodes] seriesReleaseAttributes:", seriesReleaseAttributes);
+
+  const episodesReleaseAttributes = await db.fireProcedureReturnAll(
+    `SELECT DISTINCT
+      MRA.Release_Attributes_searchTerm
+    FROM    tbl_Movies_Release_Attributes MRA
+    WHERE   MRA.deleted = 0
+            AND MRA.id_Movies IN (
+              SELECT id_Movies FROM tbl_Movies WHERE Series_id_Movies_Owner = $id_Movies
+            )
+    `,
+    { $id_Movies }
+  );
+
+  logger.log("[updateSeriesReleaseAttributesFromEpisodes] episodesReleaseAttributes:", episodesReleaseAttributes);
+
+  // add episodeReleaseAttributes that are not in seriesReleaseAttributes
+  for (const episodesReleaseAttribute of episodesReleaseAttributes) {
+    if (!seriesReleaseAttributes.find((saf) => saf.Format === episodesReleaseAttribute.Format)) {
+      // add episodeReleaseAttribute
+      logger.log("[updateSeriesReleaseAttributesFromEpisodes] add:", episodesReleaseAttribute);
+
+      await db.fireProcedure(
+        `INSERT INTO tbl_Movies_Release_Attributes (id_Movies, Release_Attributes_searchTerm, deleted)
+         VALUES ($id_Movies, $Release_Attributes_searchTerm, 0)`,
+        { $id_Movies, $Release_Attributes_searchTerm: episodesReleaseAttribute.Release_Attributes_searchTerm }
+      );
+    }
+  }
+}
+
+async function updateSeriesLanguagesFromEpisodes($id_Movies, $type) {
+  // Audio/Subtitle Languages: these are user-definable, so we do not auto-remove them from the series
+
+  // Audio Languages
+  // from Episodes: (SELECT GROUP_CONCAT(Language, ', ') FROM tbl_Movies_Languages ML WHERE ML.id_Movies = MOV.id_Movies AND ML.Type = 'audio') AS Audio_Languages
+
+  // Subtitle Languages
+  // from Episodes: (SELECT GROUP_CONCAT(Language, ', ') FROM tbl_Movies_Languages ML WHERE ML.id_Movies = MOV.id_Movies AND ML.Type = 'subtitle') AS Subtitle_Languages
+  logger.log(`[updateSeriesLanguages ${$type}] START, $id_Movies:`, $id_Movies);
+
+  const seriesReleaseLanguages = await db.fireProcedureReturnAll(
+    `SELECT
+              Language
+      FROM    tbl_Movies_Languages ML
+      WHERE   ML.Type = $type
+              AND ML.id_Movies = $id_Movies
+  `,
+    { $type, $id_Movies }
+  );
+
+  logger.log(`[updateSeriesLanguages ${$type}] seriesReleaseLanguages:`, seriesReleaseLanguages);
+
+  const episodesLanguages = await db.fireProcedureReturnAll(
+    `SELECT DISTINCT
+            Language
+      FROM  tbl_Movies_Languages ML
+      WHERE ML.Type = $type
+            AND ML.id_Movies IN (
+                SELECT id_Movies FROM tbl_Movies WHERE Series_id_Movies_Owner = $id_Movies
+            )
+      `,
+    { $type, $id_Movies }
+  );
+
+  logger.log(`[updateSeriesLanguages ${$type}] episodesLanguages:`, episodesLanguages);
+
+  // add episodesLanguages that are not in seriesReleaseLanguages
+  for (const episodesLanguage of episodesLanguages) {
+    if (!seriesReleaseLanguages.find((sl) => sl.Language === episodesLanguage.Language)) {
+      // add episodesLanguage
+      logger.log(`[updateSeriesLanguages ${$type}] add:`, episodesLanguage);
+
+      await db.fireProcedure(
+        `INSERT INTO tbl_Movies_Languages (id_Movies, type, Language)
+           VALUES ($id_Movies, $type, $Language)`,
+        { $id_Movies, $type, $Language: episodesLanguage.Language }
+      );
+    }
+  }
+}
+
+async function updateSeriesVideoEncodersFromEpisodes($id_Movies) {
+  // Video Encoders
+  // from Episodes: (SELECT GROUP_CONCAT(Encoded_Library_Name_Trimmed, ';') FROM tbl_Movies_MI_Tracks MITVIDEO WHERE MITVIDEO.type = "video" AND MITVIDEO.id_Movies = MOV.id_Movies ORDER BY "Default" DESC) AS Video_Encoder
+  logger.log("[updateSeriesVideoEncodersFromEpisodes] START, $id_Movies:", $id_Movies);
+
+  const seriesVideoEncoders = await db.fireProcedureReturnAll(
+    `SELECT Encoded_Library_Name_Trimmed
+            , type
+      FROM  tbl_Movies_MI_Tracks MITVIDEO
+      WHERE MITVIDEO.type = "video"
+            AND MITVIDEO.id_Movies = $id_Movies
+      ORDER BY "Default" DESC`,
+    { $id_Movies }
+  );
+
+  logger.log("[updateSeriesVideoEncodersFromEpisodes] seriesVideoEncoders:", seriesVideoEncoders);
+
+  const episodesVideoEncoders = await db.fireProcedureReturnAll(
+    `SELECT DISTINCT Encoded_Library_Name_Trimmed
+            , type
+    FROM  tbl_Movies_MI_Tracks MITVIDEO
+    WHERE MITVIDEO.type = "video"
+          AND Encoded_Library_Name_Trimmed IS NOT NULL
+          AND MITVIDEO.id_Movies IN (
+            SELECT id_Movies FROM tbl_Movies WHERE Series_id_Movies_Owner = $id_Movies
+          )
+    ORDER BY "Default" DESC
+    `,
+    { $id_Movies }
+  );
+
+  logger.log("[updateSeriesVideoEncodersFromEpisodes] episodesVideoEncoders:", episodesVideoEncoders);
+
+  // remove seriesVideoEncoder that are not in episodesVideoEncoders
+  for (const seriesVideoEncoder of seriesVideoEncoders) {
+    if (
+      !episodesVideoEncoders.find(
+        (evenc) => evenc.Encoded_Library_Name_Trimmed === seriesVideoEncoder.Encoded_Library_Name_Trimmed
+      )
+    ) {
+      // remove seriesVideoEncoder
+      logger.log("[updateSeriesVideoEncodersFromEpisodes] remove:", seriesVideoEncoder);
+
+      await db.fireProcedure(
+        `DELETE FROM tbl_Movies_MI_Tracks WHERE id_Movies = $id_Movies AND type = $type AND Encoded_Library_Name_Trimmed = $Encoded_Library_Name_Trimmed`,
+        {
+          $id_Movies,
+          $type: seriesVideoEncoder.type,
+          $Encoded_Library_Name_Trimmed: seriesVideoEncoder.Encoded_Library_Name_Trimmed,
+        }
+      );
+    }
+  }
+
+  // add episodesVideoEncoders that are not in seriesVideoEncoders
+  for (const episodesVideoEncoder of episodesVideoEncoders) {
+    if (
+      !seriesVideoEncoders.find(
+        (svenc) => svenc.Encoded_Library_Name_Trimmed === episodesVideoEncoder.Encoded_Library_Name_Trimmed
+      )
+    ) {
+      // add episodesVideoEncoder
+      logger.log("[updateSeriesVideoEncodersFromEpisodes] add:", episodesVideoEncoder);
+
+      await db.fireProcedure(
+        `INSERT INTO tbl_Movies_MI_Tracks (id_Movies, type, Encoded_Library_Name_Trimmed) VALUES ($id_Movies, $type, $Encoded_Library_Name_Trimmed)`,
+        {
+          $id_Movies,
+          $type: episodesVideoEncoder.type,
+          $Encoded_Library_Name_Trimmed: episodesVideoEncoder.Encoded_Library_Name_Trimmed,
+        }
+      );
+    }
+  }
+}
+
+async function updateSeriesVideoQualitiesFromEpisodes($id_Movies) {
+  // Video Qualities: these are user-definable, so we do not auto-remove them from the series
+
+  // new: tbl_Movies_MI_Qualities
+  // from Episodes: tbl_Movies.MI_Quality
+  logger.log(`[updateSeriesVideoQualitiesFromEpisodes] START, $id_Movies:`, $id_Movies);
+
+  const seriesVideoQualities = await db.fireProcedureReturnAll(
+    `
+      SELECT
+        MI_Quality
+        , deleted
+      FROM  tbl_Movies_MI_Qualities
+      WHERE id_Movies = $id_Movies
+    `,
+    { $id_Movies }
+  );
+
+  logger.log(`[updateSeriesVideoQualitiesFromEpisodes] seriesReleaseLanguages:`, seriesVideoQualities);
+
+  const episodesVideoQualities = await db.fireProcedureReturnAll(
+    `SELECT DISTINCT
+            MI_Quality
+      FROM  tbl_Movies
+      WHERE id_Movies IN (
+                SELECT id_Movies FROM tbl_Movies WHERE Series_id_Movies_Owner = $id_Movies
+            )
+      `,
+    { $id_Movies }
+  );
+
+  logger.log(`[updateSeriesVideoQualitiesFromEpisodes] episodesLanguages:`, episodesVideoQualities);
+
+  // add episodesVideoQualities that are not in seriesVideoQualities
+  for (const episodesVideoQuality of episodesVideoQualities) {
+    if (!seriesVideoQualities.find((svq) => svq.MI_Quality === episodesVideoQuality.MI_Quality)) {
+      // add episodesVideoQuality
+      logger.log(`[updateSeriesVideoQualitiesFromEpisodes] add:`, episodesVideoQuality);
+
+      await db.fireProcedure(
+        `INSERT INTO tbl_Movies_MI_Qualities (id_Movies, MI_Quality, deleted)
+           VALUES ($id_Movies, $MI_Quality, 0)`,
+        { $id_Movies, $MI_Quality: episodesVideoQuality.MI_Quality }
+      );
+    }
+  }
 }
 
 export {
