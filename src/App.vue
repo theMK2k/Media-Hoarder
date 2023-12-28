@@ -2785,6 +2785,8 @@
         <mk-search-companies-dialog
           ref="searchCompaniesDialog"
           v-bind:show="searchCompaniesDialog.show"
+          v-bind:mediaType="searchCompaniesDialog.mediaType"
+          v-bind:Series_id_Movies_Owner="searchCompaniesDialog.Series_id_Movies_Owner"
           v-bind:title="$t('Find Company')"
           searchMode="companies"
           v-on:cancel="onSearchCompaniesDialogCancel"
@@ -2793,6 +2795,8 @@
         <mk-search-plot-keywords-dialog
           ref="searchPlotKeywordsDialog"
           v-bind:show="searchPlotKeywordsDialog.show"
+          v-bind:mediaType="searchPlotKeywordsDialog.mediaType"
+          v-bind:Series_id_Movies_Owner="searchPlotKeywordsDialog.Series_id_Movies_Owner"
           v-bind:title="$t('Find Plot Keyword')"
           searchMode="plot-keywords"
           v-on:cancel="onSearchPlotKeywordsDialogCancel"
@@ -2801,6 +2805,8 @@
         <mk-search-filming-locations-dialog
           ref="searchFilmingLocationsDialog"
           v-bind:show="searchFilmingLocationsDialog.show"
+          v-bind:mediaType="searchFilmingLocationsDialog.mediaType"
+          v-bind:Series_id_Movies_Owner="searchFilmingLocationsDialog.Series_id_Movies_Owner"
           v-bind:title="$t('Find Filming Location')"
           searchMode="filming-locations"
           v-on:cancel="onSearchFilmingLocationsDialogCancel"
@@ -2809,6 +2815,8 @@
         <mk-search-persons-dialog
           ref="searchPersonsDialog"
           v-bind:show="searchPersonsDialog.show"
+          v-bind:mediaType="searchPersonsDialog.mediaType"
+          v-bind:Series_id_Movies_Owner="searchPersonsDialog.Series_id_Movies_Owner"
           v-bind:title="$t('Find Person')"
           searchMode="persons"
           v-on:cancel="onSearchPersonsDialogCancel"
@@ -3004,18 +3012,26 @@ export default {
 
     searchCompaniesDialog: {
       show: false,
+      mediaType: "movies",
+      Series_id_Movies_Owner: null,
     },
 
     searchPersonsDialog: {
       show: false,
+      mediaType: "movies",
+      Series_id_Movies_Owner: null,
     },
 
     searchPlotKeywordsDialog: {
       show: false,
+      mediaType: "movies",
+      Series_id_Movies_Owner: null,
     },
 
     searchFilmingLocationsDialog: {
       show: false,
+      mediaType: "movies",
+      Series_id_Movies_Owner: null,
     },
 
     scanOptionsDialog: {
@@ -4256,6 +4272,9 @@ export default {
 
     addPerson() {
       this.searchPersonsDialog.show = true;
+      this.searchPersonsDialog.mediaType = this.$router.history.current.params.mediatype || "movies";
+      this.searchPersonsDialog.Series_id_Movies_Owner =
+        this.$router.history.current.params.Series_id_Movies_Owner || null;
       this.$refs.searchPersonsDialog.init();
     },
 
@@ -4264,6 +4283,9 @@ export default {
     },
 
     addCompany() {
+      this.searchCompaniesDialog.mediaType = this.$router.history.current.params.mediatype || "movies";
+      this.searchCompaniesDialog.Series_id_Movies_Owner =
+        this.$router.history.current.params.Series_id_Movies_Owner || null;
       this.searchCompaniesDialog.show = true;
       this.$refs.searchCompaniesDialog.init();
     },
@@ -4274,16 +4296,22 @@ export default {
 
     addIMDBPlotKeyword() {
       this.searchPlotKeywordsDialog.show = true;
+      this.searchPlotKeywordsDialog.mediaType = this.$router.history.current.params.mediatype || "movies";
+      this.searchPlotKeywordsDialog.Series_id_Movies_Owner =
+        this.$router.history.current.params.Series_id_Movies_Owner || null;
       this.$refs.searchPlotKeywordsDialog.init();
-    },
-
-    addIMDBFilmingLocation() {
-      this.searchFilmingLocationsDialog.show = true;
-      this.$refs.searchFilmingLocationsDialog.init();
     },
 
     onSearchPlotKeywordsDialogCancel() {
       this.searchPlotKeywordsDialog.show = false;
+    },
+
+    addIMDBFilmingLocation() {
+      this.searchFilmingLocationsDialog.show = true;
+      this.searchFilmingLocationsDialog.mediaType = this.$router.history.current.params.mediatype || "movies";
+      this.searchFilmingLocationsDialog.Series_id_Movies_Owner =
+        this.$router.history.current.params.Series_id_Movies_Owner || null;
+      this.$refs.searchFilmingLocationsDialog.init();
     },
 
     onSearchFilmingLocationsDialogCancel() {

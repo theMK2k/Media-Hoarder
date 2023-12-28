@@ -24,7 +24,9 @@
       <v-card-text>
         <v-checkbox
           v-model="sortByNumMovies"
-          v-bind:label="$t('Sort by number of media')"
+          v-bind:label="
+            $t(`Sort by number of ${mediaType === 'series' && Series_id_Movies_Owner ? 'episodes' : mediaType}`)
+          "
           v-on:change="sortItems(items)"
           style="margin: 0px; margin-top: 12px"
           color="mk-dark-grey"
@@ -58,7 +60,7 @@ const sqlString = require("sqlstring-sqlite");
 import { eventBus } from "@/main";
 
 export default {
-  props: ["show", "title", "searchMode"],
+  props: ["show", "title", "searchMode", "mediaType", "Series_id_Movies_Owner"],
 
   data() {
     return {
@@ -109,8 +111,11 @@ export default {
 										MOV.Name || ' ' || IFNULL(MOV.startYear, 'xxx')
                   FROM tbl_Movies_IMDB_Companies MC2
                   INNER JOIN tbl_Movies MOV ON MC2.id_Movies = MOV.id_Movies
-									WHERE MC2.Company_Name = MC.Company_Name
+                  INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+									WHERE SP.MediaType = $MediaType
+                        AND MC2.Company_Name = MC.Company_Name
                 				AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+                        AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
 								)) AS NumMovies
 					FROM tbl_Movies_IMDB_Companies MC
 					WHERE Company_Name LIKE '%${searchText}%'
@@ -130,8 +135,11 @@ export default {
 										MOV.Name || ' ' || IFNULL(MOV.startYear, 'xxx')
                   FROM tbl_Movies_IMDB_Credits MC2
                   INNER JOIN tbl_Movies MOV ON MC2.id_Movies = MOV.id_Movies
-                  WHERE MC2.IMDB_Person_ID = MC.IMDB_Person_ID
+                  INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+									WHERE SP.MediaType = $MediaType
+                        AND MC2.IMDB_Person_ID = MC.IMDB_Person_ID
                 				AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+                        AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
 								)) AS NumMovies
 					FROM tbl_Movies_IMDB_Credits MC
 					WHERE Person_Name LIKE '%${searchText}%'
@@ -153,8 +161,11 @@ export default {
                     MOV.Name || ' ' || IFNULL(MOV.startYear, 'xxx')
                   FROM tbl_Movies_IMDB_Plot_Keywords MPK
                   INNER JOIN tbl_Movies MOV ON MPK.id_Movies = MOV.id_Movies
-                  WHERE PK.id_IMDB_Plot_Keywords = MPK.id_IMDB_Plot_Keywords
+                  INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+									WHERE SP.MediaType = $MediaType
+                        AND PK.id_IMDB_Plot_Keywords = MPK.id_IMDB_Plot_Keywords
                         AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+                        AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 )
               ) AS NumMovies
           FROM tbl_IMDB_Plot_Keywords PK
@@ -176,8 +187,11 @@ export default {
                     MOV.Name || ' ' || IFNULL(MOV.startYear, 'xxx')
                   FROM tbl_Movies_IMDB_Filming_Locations MFL
                   INNER JOIN tbl_Movies MOV ON MFL.id_Movies = MOV.id_Movies
-                  WHERE FL.id_IMDB_Filming_Locations = MFL.id_IMDB_Filming_Locations
+                  INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+									WHERE SP.MediaType = $MediaType
+                        AND FL.id_IMDB_Filming_Locations = MFL.id_IMDB_Filming_Locations
                         AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
+                        AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
               )
             ) AS NumMovies
           FROM tbl_IMDB_Filming_Locations FL
@@ -188,7 +202,10 @@ export default {
 
       logger.log("[runSearch] search query:", sql);
 
-      const items = await store.db.fireProcedureReturnAll(sql, []);
+      const items = await store.db.fireProcedureReturnAll(sql, {
+        $MediaType: this.mediaType,
+        $Series_id_Movies_Owner: this.Series_id_Movies_Owner,
+      });
       this.sortItems(items);
       this.items = items;
 
