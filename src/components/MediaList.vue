@@ -628,7 +628,7 @@
                       </v-list-item-subtitle>
 
                       <div style="font-size: 0.875rem; font-weight: normal">
-                        <span v-if="item.MI_Quality">
+                        <!-- <span v-if="item.MI_Quality">
                           <span
                             class="mk-clickable"
                             v-bind:class="{
@@ -637,9 +637,22 @@
                             v-on:click.stop="onVideoQualityClicked(item.MI_Quality)"
                             >{{ item.MI_Quality }}</span
                           >
+                        </span> -->
+                        <span v-if="item.MI_Qualities">
+                          <span v-for="(MI_Quality, index) in item.MI_Qualities" v-bind:key="MI_Quality">
+                            <span>{{ index > 0 ? ", " : "" }}</span>
+                            <span
+                              class="mk-clickable"
+                              v-bind:class="{
+                                'mk-search-highlight': $shared.filterQualitiesAppliedContains(MI_Quality),
+                              }"
+                              v-on:click.stop="onVideoQualityClicked(MI_Quality)"
+                              >{{ MI_Quality }}</span
+                            >
+                          </span>
                         </span>
                         <span v-if="item.AgeRating">
-                          <span v-if="item.MI_Quality"> | </span>
+                          <span v-if="item.MI_Qualities"> | </span>
                           <span
                             class="mk-clickable"
                             v-bind:class="{

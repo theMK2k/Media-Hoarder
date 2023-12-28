@@ -509,7 +509,11 @@ export default {
                          }, "")})`
                       : ""
                   }
-                  ${this.propertyTypeKey === "video-quality" ? `AND MOV.MI_Quality = $Video_Quality` : ""}
+                  ${
+                    this.propertyTypeKey === "video-quality"
+                      ? `AND (MOV.MI_Quality = $Video_Quality OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_MI_Qualities MOVQ WHERE MOVQ.MI_Quality = $Video_Quality AND MOVQ.deleted = 0))`
+                      : ""
+                  }
                   ${this.propertyTypeKey === "person" ? `AND MC.IMDB_Person_ID = $IMDB_Person_ID` : ""}
           )
         `;

@@ -224,6 +224,8 @@ async function manageIndexes(db) {
     generateIndexQueryObject("tbl_Movies_Release_Attributes", ["id_Movies"], false),
     generateIndexQueryObject("tbl_Movies_MI_Tracks", ["id_Movies"], false),
     generateIndexQueryObject("tbl_Movies_MI_Tracks", ["type"], false),
+    generateIndexQueryObject("tbl_Movies_MI_Qualities", ["id_Movies"], false),
+    generateIndexQueryObject("tbl_Movies_MI_Qualities", ["MI_Quality"], false),
   ];
 
   logger.log("[manageIndexes] queries:", queries);
@@ -3653,8 +3655,16 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
         .reduce((prev, current) => {
           return prev + (prev ? ", " : "") + `${sqlString.escape(current)}`;
         }, "");
-
       filterQualities += ")";
+
+      filterQualities += `\nOR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_MI_Qualities WHERE MI_Quality IN (`;
+      filterQualities += filters.filterQualities
+        .filter((filter) => filter.Selected)
+        .map((filter) => filter.MI_Quality)
+        .reduce((prev, current) => {
+          return prev + (prev ? ", " : "") + `${sqlString.escape(current)}`;
+        }, "");
+      filterQualities += "))";
     }
 
     filterQualities += ")";
@@ -4067,7 +4077,7 @@ async function fetchMedia({
         , NULL AS file_created_at
         , NULL AS endYear
         , NULL AS MI_Duration
-        , NULL AS MI_Quality
+        , NULL AS MI_Qualities
         , NULL AS Audio_Languages
         , NULL AS Subtitle_Languages
         , NULL AS MI_Audio_Languages
@@ -4101,7 +4111,7 @@ async function fetchMedia({
         , MOV.file_created_at
         , MOV.endYear
         , MOV.MI_Duration
-        , MOV.MI_Quality
+        , CASE WHEN MOV.MI_Quality IS NOT NULL THEN MOV.MI_Quality ELSE (SELECT GROUP_CONCAT(MI_Quality, ', ') FROM tbl_Movies_MI_Qualities MOVQ WHERE MOVQ.id_Movies = MOV.id_Movies AND MOVQ.deleted = 0) END AS MI_Qualities
         , (SELECT GROUP_CONCAT(Language, ', ') FROM tbl_Movies_Languages ML WHERE ML.id_Movies = MOV.id_Movies AND ML.Type = 'audio') AS Audio_Languages
         , (SELECT GROUP_CONCAT(Language, ', ') FROM tbl_Movies_Languages ML WHERE ML.id_Movies = MOV.id_Movies AND ML.Type = 'subtitle') AS Subtitle_Languages
         , MOV.MI_Audio_Languages
@@ -4170,17 +4180,21 @@ async function fetchMedia({
       mediaItem.IMDB_posterSmall_URL = mediaItem.IMDB_posterSmall_URL
         ? "local-resource://" + helpers.getDataPath(mediaItem.IMDB_posterSmall_URL).replace(/\\/g, "\\\\")
         : mediaItem.IMDB_posterSmall_URL;
+
       mediaItem.IMDB_posterLarge_URL = mediaItem.IMDB_posterLarge_URL
         ? "local-resource://" + helpers.getDataPath(mediaItem.IMDB_posterLarge_URL).replace(/\\/g, "\\\\")
         : mediaItem.IMDB_posterLarge_URL;
+
       mediaItem.yearDisplay = mediaItem.startYear
         ? "(" + mediaItem.startYear + (mediaItem.endYear ? `-${mediaItem.endYear}` : "") + ")"
         : "";
+
       mediaItem.IMDB_rating_defaultFormatted = mediaItem.IMDB_rating_default
         ? `${mediaItem.IMDB_rating_default.toLocaleString(shared.uiLanguage, {
             minimumFractionDigits: 1,
           })}`
         : "";
+
       mediaItem.IMDB_rating_defaultDisplay = mediaItem.IMDB_rating_defaultFormatted
         ? `${mediaItem.IMDB_rating_defaultFormatted} (${mediaItem.IMDB_numVotes_default.toLocaleString(
             shared.uiLanguage
@@ -4312,6 +4326,10 @@ async function fetchMedia({
             mediaItem.Series_Episodes_Displaytext
           );
         }
+      }
+
+      if (mediaItem.MI_Qualities) {
+        mediaItem.MI_Qualities = mediaItem.MI_Qualities.split(", ");
       }
 
       mediaItem.specificMediaType = helpers.getSpecificMediaType(mediaItem);
@@ -5606,18 +5624,25 @@ async function fetchFilterQualities($MediaType, loadFilterValuesFromStorage, $Se
 
   const results = await db.fireProcedureReturnAll(
     `
-		SELECT
-			MI_Quality
-			, COUNT(1) AS NumMovies
-			, 1 AS Selected
-		FROM tbl_Movies MOV
-		INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
-		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
-		WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
-          AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
-          AND MOV.Extra_id_Movies_Owner IS NULL
-          ${additionalFilterQuery}
-		GROUP BY (MI_Quality)`,
+    SELECT
+            MI_Quality
+            , COUNT(1) AS NumMovies
+            , 1 AS Seleced
+    FROM (
+          SELECT
+                      MOV.id_Movies
+                      , CASE WHEN MOVQ.id_Movies_MI_Qualities IS NOT NULL THEN MOVQ.MI_Quality ELSE MOV.MI_Quality END AS MI_Quality
+          FROM        tbl_Movies MOV
+          INNER JOIN  tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
+          LEFT JOIN   tbl_Movies_MI_Qualities MOVQ ON MOVQ.id_Movies = MOV.id_Movies AND MOVQ.deleted = 0
+          LEFT JOIN   tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
+          WHERE       (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                      AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
+                      AND MOV.Extra_id_Movies_Owner IS NULL
+                      ${additionalFilterQuery}
+) SubQ
+GROUP BY (MI_Quality)
+`,
     { $MediaType, $Series_id_Movies_Owner }
   );
 
@@ -7903,20 +7928,10 @@ async function verifyIMDBtconst($id_Movies) {
 }
 
 /**
- * Updates a Series' data from Episodes:
- * - Audio Formats
- * - Release Attributes
- * - supported Audio Languages
- * - supported Subtitle Languages
- * - tbl_Movies.Series_Episodes
- * - tbl_Movies.Series_Seasons
- * - Video Qualities (multiple!)
- * - Video Encoders (multiple!)
+ * Updates a Series' data from Episodes
  * @param {*} id_Movies the id_Movies of the series
  */
 async function updateSeriesMetadataFromEpisodes($id_Movies) {
-  // !!! IMPORTANT: the newly created datastructures for series MUST also be used for filtering!!!
-  // -> we should re-use the existing data structures
   logger.log("[updateSeriesMetadataFromEpisodes] START, id_Movies:", $id_Movies);
 
   await updateSeriesAudioFormatsFromEpisodes($id_Movies);
@@ -8193,7 +8208,8 @@ async function updateSeriesVideoQualitiesFromEpisodes($id_Movies) {
     `SELECT DISTINCT
             MI_Quality
       FROM  tbl_Movies
-      WHERE id_Movies IN (
+      WHERE MI_Quality IS NOT NULL
+            AND id_Movies IN (
                 SELECT id_Movies FROM tbl_Movies WHERE Series_id_Movies_Owner = $id_Movies
             )
       `,

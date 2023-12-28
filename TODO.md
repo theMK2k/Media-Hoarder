@@ -4,6 +4,7 @@
 
 ## NEXT Major (v1.4.0)
 
+- [ ] Remove mediaItem Dialog: always show the affected location full path
 - [ ] MediaList: onDeleteMediaDialogYes: also delete series and episodes properly
 - [ ] i18n: rescan finished snackbar
 - [ ] refactor buildINSERTQuery, buildUDPATEQuery to accept only one object
