@@ -29,7 +29,7 @@
   - [x] Subtitle Languages
   - [x] Video Encoders
   - [x] Video Qualities (multiple!)
-    - tbl_Movies_MI_Qualities: also use for filtering!
+    - [x] tbl_Movies_MI_Qualities: also use for filtering!
     - tbl_Movies_MI_Qualities: also use for editing the series entry
 
 - [ ] when detecting IMDB tconst for a series, prefer imdb type "tv series", "tv movie" over "movie" and others
