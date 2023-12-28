@@ -5,8 +5,13 @@
 ## NEXT Major (v1.4.0)
 
 - [ ] investigate bug in Series, where Video Quality filter resets from "ALL" to some being checked just by switching back and forth (series <> episodes)
+- [ ] scanErrors: introduce WARNING vs. ERROR
+  - WARNING:
+    - imdb implausibility
+  - ERROR:
+    - (new) mediainfo without result (possibly due to max path length exceeded)
 - [ ] add ScanErrors functionality in applyMediaInfo (mediainfo may fail on exceeding 259 chars paths)
-- [ ] Remove mediaItem Dialog: always show the affected location full path
+
 - [ ] MediaList: onDeleteMediaDialogYes: also delete series and episodes properly
 - [ ] i18n: rescan finished snackbar
 - [ ] refactor buildINSERTQuery, buildUDPATEQuery to accept only one object
@@ -69,11 +74,6 @@ store.js:2199 Error: Command failed: "c:\Apps\Video\MediaInfo CLI\MediaInfo.exe"
 
 ## NEXT Minor (current v1.4.0)
 
-- [ ] scanErrors: introduce WARNING vs. ERROR
-  - WARNING:
-    - imdb implausibility
-  - ERROR:
-    - (new) mediainfo without result (possibly due to max path length exceeded)
 - [ ] use imdb-graphql-urls.json (also try to fetch them from master in github, this way we can update the urls if imdb changes them - without creating a new release)
 - [ ] Fix: subdirectory called "extras" is not assigned to the main movie (the files are provided as main movies themselves)
 

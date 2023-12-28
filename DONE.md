@@ -11,6 +11,9 @@
 
 ### TV Series Support (MVP)
 
+- [x] Remove mediaItem Dialog:
+  - [x] always show the affected location full path
+  - [x] differentiate Movies, Series and Episodes
 - [x] update "lastAccessAt" also for the series as well as any duplicate (and not only for the episode)
 - [x] function: updateSeriesMetadataFromEpisodes
   - [x] Audio Formats

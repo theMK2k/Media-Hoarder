@@ -1421,6 +1421,7 @@
       v-bind:show="deleteMediaDialog.show"
       v-bind:title="$t(deleteMediaDialog.Title)"
       v-bind:question="$t(deleteMediaDialog.Message, { ItemName: deleteMediaDialog.ItemName })"
+      v-bind:additionalTextBlocks="deleteMediaDialog.additionalTextBlocks"
       v-bind:yes="$t('YES DELETE')"
       v-bind:no="$t('No')"
       v-bind:ok="$t('Open Storage Location')"
@@ -1827,6 +1828,7 @@ export default {
       Message: null,
       ItemName: null,
       loading: false,
+      location: null,
     },
 
     rescanCurrentListDialog: {
@@ -3381,10 +3383,20 @@ export default {
       this.deleteMediaDialog.item = item;
       this.deleteMediaDialog.Title = "Delete Media";
       this.deleteMediaDialog.Message =
-        "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete the media?";
+        item.MediaType === "movies"
+          ? "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete this movie?"
+          : item.MediaType === "series" && !item.Series_id_Movies_Owner
+          ? "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete the whole series?"
+          : item.MediaType === "series" && item.Series_id_Movies_Owner
+          ? "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete this episode?"
+          : "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete the media?";
       this.deleteMediaDialog.ItemName = item.Name;
       this.deleteMediaDialog.alertType = null;
       this.deleteMediaDialog.alertText = null;
+
+      const location =
+        item.isDirectoryBased && item.specificMediaType !== "Series" ? item.fullDirectory : item.fullPath;
+      this.deleteMediaDialog.additionalTextBlocks = [this.$t("storage location:") + " " + location];
 
       this.deleteMediaDialog.show = true;
     },

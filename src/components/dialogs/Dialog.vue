@@ -27,6 +27,8 @@
         </v-alert>
       </v-card-text>
 
+      <v-card-text v-for="item in additionalTextBlocks || []" v-bind:key="item"> {{ item }} </v-card-text>
+
       <v-card-actions>
         <!-- <v-row> -->
         <div v-if="dontAskAgain">
@@ -107,6 +109,7 @@ export default {
     "loading",
     "alertText",
     "alertType",
+    "additionalTextBlocks",
   ],
 
   data() {

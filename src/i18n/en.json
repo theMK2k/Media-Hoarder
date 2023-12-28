@@ -915,6 +915,9 @@
   "Delete": "Delete",
   "Delete Media": "Delete Media",
   "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete the media?": "This will delete '{ItemName}' and all the files associated to it on your hard drive. Do you really want to delete the media?",
+  "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete this movie?": "This will delete '{ItemName}' and all the files associated to it on your hard drive. Do you really want to delete this movie?",
+  "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete the whole series?": "This will delete '{ItemName}' and all the files associated to it on your hard drive. Do you really want to delete the whole series?",
+  "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete this episode?": "This will delete '{ItemName}' and all the files associated to it on your hard drive. Do you really want to delete this episode?",
   "Open Storage Location": "Open Storage Location",
   "'{ItemName}' has been deleted_": "'{ItemName}' has been deleted.",
   "Let an AI recommend some movies": "Let an AI recommend some movies",
@@ -942,5 +945,6 @@
   "Series Episodes": "Series Episodes",
   "Open": "Open",
   "season": "season",
-  "seasons": "seasons"
+  "seasons": "seasons",
+  "storage location:": "storage location:"
 }

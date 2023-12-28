@@ -972,6 +972,9 @@
   "Delete": "Löschen",
   "Delete Media": "Medien Löschen",
   "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete the media?": "Dieser Vorgang löscht '{ItemName}' und dessen Dateien auf Deiner Festplatte. Soll das Medium wirklich gelöscht werden?",
+  "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete this movie?": "Dieser Vorgang löscht '{ItemName}' und dessen Dateien auf Deiner Festplatte. Soll der Film wirklich gelöscht werden?",
+  "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete the whole series?": "Dieser Vorgang löscht '{ItemName}' und deren Dateien auf Deiner Festplatte. Soll die komplette Serie wirklich gelöscht werden?",
+  "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete this episode?": "Dieser Vorgang löscht '{ItemName}' und deren Dateien auf Deiner Festplatte. Soll die Episode wirklich gelöscht werden?",
   "Open Storage Location": "Speicherort Öffnen",
   "'{ItemName}' has been deleted_": "'{ItemName}' wurde gelöscht.",
   "Let an AI recommend some movies": "Lass eine KI Filme vorschlagen",
@@ -999,5 +1002,6 @@
   "Series Episodes": "Episoden von Serien",
   "Open": "Öffnen",
   "season": "Staffel",
-  "seasons": "Staffeln"
+  "seasons": "Staffeln",
+  "storage location:": "Speicherort:"
 }
