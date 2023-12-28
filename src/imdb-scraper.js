@@ -85,7 +85,9 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
     const html = response.body;
 
     // V2: we partially use the application/ld+json data, too
-    const jsonData = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+    const jsonData = /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.test(html)
+      ? JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1])
+      : {};
 
     // logger.log("[scrapeIMDBmainPageData] jsonData:", jsonData);
 
@@ -807,7 +809,7 @@ async function scrapeIMDBtechnicalData(movie) {
 
       const runtimeData = jsonData.props.pageProps.contentData.section.items.find((item) => item.id === "runtime");
 
-      if (runtimeData.listContent && runtimeData.listContent[0]) {
+      if (runtimeData && runtimeData.listContent && runtimeData.listContent[0]) {
         // we expect .text = "3h 1m" and .subText = "(181 min)" (e.g. https://www.imdb.com/title/tt4154796/technical/)
         // sometimes this is not the case: .text = "48m" and .subtext ="(DVD) (United States)" (see: https://www.imdb.com/title/tt0888817/technical/, https://www.imdb.com/title/tt1329665/technical/)
         // -> we should go with .text and interpret "2h 1m" as 121 minutes, while the hour-part is optional and not rely on .subtext being "(xy min)"

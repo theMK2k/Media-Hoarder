@@ -4,16 +4,61 @@
 
 ## NEXT Major (v1.4.0)
 
+- [ ] investigate bug in Series, where Video Quality filter resets from "ALL" to some being checked just by switching back and forth (series <> episodes)
+- [ ] add ScanErrors functionality in applyMediaInfo (mediainfo may fail on exceeding 259 chars paths)
 - [ ] Remove mediaItem Dialog: always show the affected location full path
 - [ ] MediaList: onDeleteMediaDialogYes: also delete series and episodes properly
 - [ ] i18n: rescan finished snackbar
 - [ ] refactor buildINSERTQuery, buildUDPATEQuery to accept only one object
 - [ ] check "rescan" for possible double scanning / meta data retrieval
+- [ ] investigate the errors of a bigger rescan:
+
+done?
+
+```shell
+TypeError: Cannot read property 'listContent' of undefined
+    at Module.v (imdb-scraper.js:810)
+    at runMicrotasks (<anonymous>)
+    at processTicksAndRejections (internal/process/task_queues.js:93)
+    at async Ie (store.js:2640)
+    at async Me (store.js:2038)
+    at async fe (store.js:1962)
+    at async q (store.js:367)
+```
+
+done?
+
+```shell
+TypeError: Cannot read property '1' of null
+    at Module.u (imdb-scraper.js:88)
+    at processTicksAndRejections (internal/process/task_queues.js:93)
+    at async Ie (store.js:2543)
+    at async Me (store.js:2038)
+    at async fe (store.js:1962)
+    at async q (store.js:367)
+```
+
+done? -> folgefehler von `Cannot read property '1' of null`
+
+```shell
+store.js:2586 TypeError: Cannot read property '$IMDB_plotSummary' of null
+    at Ie (store.js:2582)
+    at processTicksAndRejections (internal/process/task_queues.js:93)
+    at async Me (store.js:2038)
+    at async fe (store.js:1962)
+    at async q (store.js:367)
+```
+
+-> this should be tracked in scanErrors!
+
+```shell
+store.js:2199 Error: Command failed: "c:\Apps\Video\MediaInfo CLI\MediaInfo.exe" --Output=XML "... a too long path exceeding 259 characters..."
+```
 
 ### TV Series Support (MVP)
 
-- [ ] Medialist: check if the image for episodes can be set to "fit height"
-- [ ] Filters - the numbers should represent either movies or series
+- [x] Medialist: check if the image for episodes can be set to "fit height"
+- [x] Filters - the numbers should represent either movies or series
 - [ ] Dialogs: most of them do not utilize mediaType
   - Generalize to MediaPropertyDialog:
     - IMPORTANT: provide movies _and_ series lists (and episodes lists)? it's probably interesting to see these even if a person etc. has been opened from a series...
@@ -23,6 +68,7 @@
     - [x] debounce the init() function and call it on any property change, with 10ms debounce
 - [ ] BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
 - [WIP] function: updateSeriesMetadataFromEpisodes
+
   - [x] Audio Formats
   - [x] Release Attributes
   - [x] Audio Languages
@@ -32,6 +78,9 @@
     - [x] tbl_Movies_MI_Qualities: also use for filtering!
     - tbl_Movies_MI_Qualities: also use for editing the series entry
 
+- [WIP] test if included tconst is used for series on rescan
+- [ ] revisit the rescan summary (the numbers are wrong mostly)
+- [ ] update "lastAccessAt" also for the series as well as any duplicate (and not only for the episode)
 - [ ] when detecting IMDB tconst for a series, prefer imdb type "tv series", "tv movie" over "movie" and others
 - [ ] create a test set with series name and year
 - [ ] check tconst detection with movies, too (we changed some fullDirectory to fullPath)

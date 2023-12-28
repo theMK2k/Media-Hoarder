@@ -790,11 +790,11 @@ const logger = require("../helpers/logger");
 import { eventBus } from "@/main";
 import * as store from "@/store";
 import SourcePath from "@/components/shared/SourcePath";
-import Dialog from "@/components/shared/Dialog.vue";
-import AddRegionsDialog from "@/components/shared/AddRegionsDialog.vue";
-import AddLanguagesDialog from "@/components/shared/AddLanguagesDialog.vue";
-import AddTitleTypeDialog from "@/components/shared/AddTitleTypeDialog.vue";
-import EditReleaseAttributeDialog from "@/components/shared/EditReleaseAttributeDialog";
+import Dialog from "@/components/dialogs/Dialog.vue";
+import AddRegionsDialog from "@/components/dialogs/AddRegionsDialog.vue";
+import AddLanguagesDialog from "@/components/dialogs/AddLanguagesDialog.vue";
+import AddTitleTypeDialog from "@/components/dialogs/AddTitleTypeDialog.vue";
+import EditReleaseAttributeDialog from "@/components/dialogs/EditReleaseAttributeDialog";
 import TitleType from "@/components/shared/TitleType.vue";
 
 import * as helpers from "@/helpers/helpers";

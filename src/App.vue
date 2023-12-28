@@ -2911,12 +2911,12 @@ import * as helpers from "@/helpers/helpers";
 
 const { enmFilterSortModes } = require("./enums/enmFilterSortModes");
 
-import Dialog from "@/components/shared/Dialog.vue";
-import SearchDataDialog from "@/components/shared/SearchDataDialog.vue";
-import ScanOptionsDialog from "@/components/shared/ScanOptionsDialog.vue";
-import VersionDialog from "@/components/shared/VersionDialog.vue";
-import CheckIMDBScraperDialog from "@/components/shared/CheckIMDBScraperDialog.vue";
-import ChatGPTDialog from "@/components/shared/ChatGPTDialog.vue";
+import Dialog from "@/components/dialogs/Dialog.vue";
+import SearchDataDialog from "@/components/dialogs/SearchDataDialog.vue";
+import ScanOptionsDialog from "@/components/dialogs/ScanOptionsDialog.vue";
+import VersionDialog from "@/components/dialogs/VersionDialog.vue";
+import CheckIMDBScraperDialog from "@/components/dialogs/CheckIMDBScraperDialog.vue";
+import ChatGPTDialog from "@/components/dialogs/ChatGPTDialog.vue";
 
 export default {
   components: {

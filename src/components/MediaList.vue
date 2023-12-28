@@ -1619,16 +1619,16 @@ import * as store from "@/store";
 import { eventBus } from "@/main";
 import { scrapeIMDBTrailerMediaURLs, scrapeIMDBmainPageData } from "@/imdb-scraper";
 import WordHighlighter from "vue-word-highlighter";
-import EditMediaItemDialog from "@/components/shared/EditMediaItemDialog.vue";
-import ListDialog from "@/components/shared/ListDialog.vue";
-import VideoPlayerDialog from "@/components/shared/VideoPlayerDialog.vue";
-import LocalVideoPlayerDialog from "@/components/shared/LocalVideoPlayerDialog.vue";
-import LinkIMDBDialog from "@/components/shared/LinkIMDBDialog.vue";
+import EditMediaItemDialog from "@/components/dialogs/EditMediaItemDialog.vue";
+import ListDialog from "@/components/dialogs/ListDialog.vue";
+import VideoPlayerDialog from "@/components/dialogs/VideoPlayerDialog.vue";
+import LocalVideoPlayerDialog from "@/components/dialogs/LocalVideoPlayerDialog.vue";
+import LinkIMDBDialog from "@/components/dialogs/LinkIMDBDialog.vue";
 import Pagination from "@/components/shared/Pagination.vue";
-import RatingDemographicsDialog from "@/components/shared/RatingDemographicsDialog";
-import Dialog from "@/components/shared/Dialog.vue";
+import RatingDemographicsDialog from "@/components/dialogs/RatingDemographicsDialog";
+import Dialog from "@/components/dialogs/Dialog.vue";
 
-import MediaPropertyDialog from "@/components/shared/MediaPropertyDialog.vue";
+import MediaPropertyDialog from "@/components/dialogs/MediaPropertyDialog.vue";
 
 const { shell } = require("@electron/remote");
 
