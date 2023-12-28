@@ -6100,9 +6100,14 @@ async function getMovieDetails($id_Movies) {
 }
 
 async function setLastAccess($id_Movies, isHandlingDuplicates) {
-  await db.fireProcedure(`UPDATE tbl_Movies SET last_access_at = DATETIME('now') WHERE id_Movies = $id_Movies`, {
-    $id_Movies,
-  });
+  await db.fireProcedure(
+    `UPDATE tbl_Movies
+     SET last_access_at = DATETIME('now')
+     WHERE id_Movies = $id_Movies OR id_Movies IN (SELECT Series_id_Movies_Owner FROM tbl_Movies MOV WHERE MOV.id_Movies = $id_Movies)`,
+    {
+      $id_Movies,
+    }
+  );
 
   if (!isHandlingDuplicates) {
     const duplicates = await getMovieDuplicates(

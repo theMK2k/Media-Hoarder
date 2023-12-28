@@ -11,6 +11,24 @@
 
 ### TV Series Support (MVP)
 
+- [x] update "lastAccessAt" also for the series as well as any duplicate (and not only for the episode)
+- [x] function: updateSeriesMetadataFromEpisodes
+  - [x] Audio Formats
+  - [x] Release Attributes
+  - [x] Audio Languages
+  - [x] Subtitle Languages
+  - [x] Video Encoders
+  - [x] Video Qualities (multiple!)
+    - [x] tbl_Movies_MI_Qualities: also use for filtering!
+- [x] Medialist: check if the image for episodes can be set to "fit height"
+- [x] Filters - the numbers should represent either movies or series
+- [x] Dialogs: most of them do not utilize mediaType
+  - Generalize to MediaPropertyDialog:
+    - [x] provide movies _and_ series lists (and episodes lists)? it's probably interesting to see these even if a person etc. has been opened from a series...
+    - [x] act as a dialog for movies
+    - [x] act as a dialog for series
+    - [x] act as a dialog for episodes (of a certain series)
+    - [x] debounce the init() function and call it on any property change, with 10ms debounce
 - [x] find IMDB tconst and provide metadata for the series and episodes
 - [x] provide series in a different route
   - [x] integrate old dialogs:

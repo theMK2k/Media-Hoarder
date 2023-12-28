@@ -57,30 +57,10 @@ store.js:2199 Error: Command failed: "c:\Apps\Video\MediaInfo CLI\MediaInfo.exe"
 
 ### TV Series Support (MVP)
 
-- [x] Medialist: check if the image for episodes can be set to "fit height"
-- [x] Filters - the numbers should represent either movies or series
-- [ ] Dialogs: most of them do not utilize mediaType
-  - Generalize to MediaPropertyDialog:
-    - IMPORTANT: provide movies _and_ series lists (and episodes lists)? it's probably interesting to see these even if a person etc. has been opened from a series...
-    - [x] act as a dialog for movies
-    - [x] act as a dialog for series
-    - [x] act as a dialog for episodes (of a certain series)
-    - [x] debounce the init() function and call it on any property change, with 10ms debounce
 - [ ] BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
-- [WIP] function: updateSeriesMetadataFromEpisodes
+- [ ] tbl_Movies_MI_Qualities: also use for editing the series entry
 
-  - [x] Audio Formats
-  - [x] Release Attributes
-  - [x] Audio Languages
-  - [x] Subtitle Languages
-  - [x] Video Encoders
-  - [x] Video Qualities (multiple!)
-    - [x] tbl_Movies_MI_Qualities: also use for filtering!
-    - tbl_Movies_MI_Qualities: also use for editing the series entry
-
-- [WIP] test if included tconst is used for series on rescan
 - [ ] revisit the rescan summary (the numbers are wrong mostly)
-- [ ] update "lastAccessAt" also for the series as well as any duplicate (and not only for the episode)
 - [ ] when detecting IMDB tconst for a series, prefer imdb type "tv series", "tv movie" over "movie" and others
 - [ ] create a test set with series name and year
 - [ ] check tconst detection with movies, too (we changed some fullDirectory to fullPath)
