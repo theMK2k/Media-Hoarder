@@ -4,6 +4,8 @@
 
 ## NEXT Major (v1.4.0)
 
+- [ ] BUUUG! - we apparently do not use the timezone (we store in UTC)
+- [ ] investigate if we still use Series_id_Movies_Owner to differentiate Series and Episodes -> we have specificMediaType now
 - [ ] investigate bug in Series, where Video Quality filter resets from "ALL" to some being checked just by switching back and forth (series <> episodes)
 - [ ] scanErrors: introduce WARNING vs. ERROR
   - WARNING:

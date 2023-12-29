@@ -3394,9 +3394,11 @@ export default {
       this.deleteMediaDialog.alertType = null;
       this.deleteMediaDialog.alertText = null;
 
-      const location =
+      this.deleteMediaDialog.location =
         item.isDirectoryBased && item.specificMediaType !== "Series" ? item.fullDirectory : item.fullPath;
-      this.deleteMediaDialog.additionalTextBlocks = [this.$t("storage location:") + " " + location];
+      this.deleteMediaDialog.additionalTextBlocks = [
+        this.$t("storage location:") + " " + this.deleteMediaDialog.location,
+      ];
 
       this.deleteMediaDialog.show = true;
     },
@@ -3475,17 +3477,17 @@ export default {
         }
 
         if (this.deleteMediaDialog.item.isDirectoryBased) {
-          if (await this.checkPathExistence(this.deleteMediaDialog.item.fullDirectory, checkRemovedFiles)) {
-            logger.log("[onDeleteMediaDialogYes] deleting directory:", this.deleteMediaDialog.item.fullDirectory);
-            await fs.rm(this.deleteMediaDialog.item.fullDirectory, {
+          if (await this.checkPathExistence(this.deleteMediaDialog.location, checkRemovedFiles)) {
+            logger.log("[onDeleteMediaDialogYes] deleting directory:", this.deleteMediaDialog.location);
+            await fs.rm(this.deleteMediaDialog.location, {
               recursive: true,
               force: true,
             });
           }
         } else {
-          if (await this.checkPathExistence(this.deleteMediaDialog.item.fullPath, checkRemovedFiles)) {
-            logger.log("[onDeleteMediaDialogYes] deleting file:", this.deleteMediaDialog.item.fullDirectory);
-            await fs.rm(this.deleteMediaDialog.item.fullPath);
+          if (await this.checkPathExistence(this.deleteMediaDialog.location, checkRemovedFiles)) {
+            logger.log("[onDeleteMediaDialogYes] deleting file:", this.deleteMediaDialog.location);
+            await fs.rm(this.deleteMediaDialog.location);
           }
         }
 

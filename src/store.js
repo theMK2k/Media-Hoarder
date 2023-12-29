@@ -551,7 +551,7 @@ async function mergeExtras(onlyNew) {
 
   // removed: 		AND Extra_id_Movies_Owner IS NULL
   //              because on rescan we also want to re-merge extras
-  const children = await db.fireProcedureReturnAll(/* sql */ `
+  const children = await db.fireProcedureReturnAll(`
 	SELECT
 		MOV.id_Movies
 		, MOV.RelativePath
@@ -563,6 +563,8 @@ async function mergeExtras(onlyNew) {
     , MOV.id_SourcePaths
     , MOV.isDirectoryBased
     , SP.Path AS SourcePath
+    , SP.MediaType
+    , MOV.Series_id_Movies_Owner
   FROM tbl_Movies MOV
   INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
 	WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
@@ -682,14 +684,24 @@ async function mergeExtraFileBased(movie) {
 			, Name
 			, Name2
 			, IMDB_tconst
+      , SP.Path AS SourcePath
 		FROM tbl_Movies MOV
-		WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
-      AND id_SourcePaths = $id_SourcePaths
-			AND Filename NOT LIKE '% - extra%'
-      AND Filename LIKE '${$movieName.replace("'", "_")}%'
+    INNER JOIN tbl_SourcePaths SP ON SP.id_SourcePaths = MOV.id_SourcePaths
+    WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+      AND CASE WHEN $Series_id_Movies_Owner IS NULL THEN MOV.Series_id_Movies_Owner IS NULL ELSE MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner END
+      AND MOV.id_SourcePaths = $id_SourcePaths
+			AND MOV.Filename NOT LIKE '% - extra%'
+      AND MOV.Filename LIKE '${$movieName.replace("'", "_")}%'
 	`,
-    { $id_SourcePaths: movie.id_SourcePaths }
+    {
+      $id_SourcePaths: movie.id_SourcePaths,
+      $Series_id_Movies_Owner: movie.Series_id_Movies_Owner,
+    }
   );
+
+  possibleParents.forEach((parent) => {
+    ensureMediaFullPath(parent);
+  });
 
   logger.log("[mergeExtraFileBased] possibleParents:", possibleParents);
 
@@ -6125,7 +6137,19 @@ async function setLastAccess($id_Movies, isHandlingDuplicates) {
 }
 
 async function getCurrentTime() {
-  return await db.fireProcedureReturnScalar(`SELECT DATETIME('now')`);
+  // const currentTimeDB = await db.fireProcedureReturnScalar(`SELECT DATETIME('now')`);
+  const currentTimeJS = new Date()
+    .toISOString()
+    .replace("T", " ")
+    .replace(/\.\d\d\dZ/, "");
+
+  // logger.log("[getCurrentTime]", { currentTimeDB, currentTimeJS });
+  // logger.log("[getCurrentTime] moment", {
+  //   currentTimeDB: moment(currentTimeDB).toString(),
+  //   currentTimeJS: moment(currentTimeJS).toString(),
+  // });
+
+  return currentTimeJS;
 }
 
 async function fetchMovieCredits($id_Movies) {
