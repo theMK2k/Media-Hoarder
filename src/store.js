@@ -5639,7 +5639,7 @@ async function fetchFilterQualities($MediaType, loadFilterValuesFromStorage, $Se
     SELECT
             MI_Quality
             , COUNT(1) AS NumMovies
-            , 1 AS Seleced
+            , 1 AS Selected
     FROM (
           SELECT
                       MOV.id_Movies

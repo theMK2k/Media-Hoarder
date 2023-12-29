@@ -10,6 +10,7 @@
 - [x] ensure that MI Tracks table is cleaned up when a movie gets removed
 - [x] bugfix: store.mergeExtraFileBased 713 TypeError: Cannot read property 'length' of undefined
 - [x] bugfix: delete series actually deleted the source path
+- [x] bugfix: in Series, where Video Quality filter resets from "ALL" to some being checked just by switching back and forth (series <> episodes)
 
 ### TV Series Support (MVP)
 
