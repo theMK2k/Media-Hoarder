@@ -71,7 +71,7 @@ Read [02-IMDB-ID-Detection.md](02-IMDB-ID-Detection.md) for infos on how the IMD
 
 ## Series
 
-**Media Hoarder** expects series to be contained in a directory per series, e.g. `The X-Files (1993-2006)`. If the series directory already contains the IMDB ID, Media Hoarder will directly be able to find the correct meta data for the series, e.g. `The X-Files (1993-2006) [tt0106179]`.
+**Media Hoarder** expects series to be contained in a directory per series, e.g. `The X-Files (1993-2006)`. If the series directory already contains the IMDB ID, **Media Hoarder** will directly be able to find the correct meta data for the series, e.g. `The X-Files (1993-2006) [tt0106179]`. Of course, **Media Hoarder** will try its best to find the correct IMDB data if the IMDB ID is not part of the directory name.
 
 Further organization by seasons is optional. **Media Hoarder** supports both file-based and directory-based storage of episodes.
 
