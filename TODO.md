@@ -24,6 +24,7 @@
 
 - [ ] BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
 - [ ] tbl_Movies_MI_Qualities: also use for editing the series entry
+- [ ] rescanning a specific series does not run mediainfo on its episodes
 
 - [ ] revisit the rescan summary (the numbers are mostly wrong)
 - [ ] when detecting IMDB tconst for a series, prefer imdb type "tv series", "tv movie" over "movie" and others
