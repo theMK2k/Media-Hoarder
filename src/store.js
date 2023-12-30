@@ -4189,6 +4189,8 @@ async function fetchMedia({
 
     result.forEach((mediaItem) => {
       // logger.log("[fetchMedia] item.Name:", item.Name);
+      mediaItem.specificMediaType = helpers.getSpecificMediaType(mediaItem);
+
       mediaItem.IMDB_posterSmall_URL = mediaItem.IMDB_posterSmall_URL
         ? "local-resource://" + helpers.getDataPath(mediaItem.IMDB_posterSmall_URL).replace(/\\/g, "\\\\")
         : mediaItem.IMDB_posterSmall_URL;
@@ -4197,9 +4199,24 @@ async function fetchMedia({
         ? "local-resource://" + helpers.getDataPath(mediaItem.IMDB_posterLarge_URL).replace(/\\/g, "\\\\")
         : mediaItem.IMDB_posterLarge_URL;
 
-      mediaItem.yearDisplay = mediaItem.startYear
-        ? "(" + mediaItem.startYear + (mediaItem.endYear ? `-${mediaItem.endYear}` : "") + ")"
-        : "";
+      mediaItem.yearDisplay = "";
+      if (mediaItem.startYear) {
+        mediaItem.yearDisplay = "(" + mediaItem.startYear;
+
+        if (mediaItem.specificMediaType == "Series") {
+          if (mediaItem.endYear && mediaItem.endYear !== mediaItem.startYear) {
+            mediaItem.yearDisplay += "–" + mediaItem.endYear;
+          } else if (!mediaItem.endYear) {
+            mediaItem.yearDisplay += "–";
+          }
+        } else {
+          if (mediaItem.endYear && mediaItem.endYear !== mediaItem.startYear) {
+            mediaItem.yearDisplay += "–" + mediaItem.endYear;
+          }
+        }
+
+        mediaItem.yearDisplay += ")";
+      }
 
       mediaItem.IMDB_rating_defaultFormatted = mediaItem.IMDB_rating_default
         ? `${mediaItem.IMDB_rating_default.toLocaleString(shared.uiLanguage, {
@@ -4343,8 +4360,6 @@ async function fetchMedia({
       if (mediaItem.MI_Qualities) {
         mediaItem.MI_Qualities = mediaItem.MI_Qualities.split(", ");
       }
-
-      mediaItem.specificMediaType = helpers.getSpecificMediaType(mediaItem);
 
       // additional fields (prevent Recalculation of Pagination Items on mouseover)
       mediaItem.lists = [];
