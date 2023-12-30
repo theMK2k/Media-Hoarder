@@ -18,60 +18,20 @@
 - [ ] refactor buildINSERTQuery, buildUDPATEQuery to accept only one object
 - [ ] check "rescan" for possible double scanning / meta data retrieval
 - [ ] investigate the errors of a bigger rescan:
-
-done?
-
-```shell
-TypeError: Cannot read property 'listContent' of undefined
-    at Module.v (imdb-scraper.js:810)
-    at runMicrotasks (<anonymous>)
-    at processTicksAndRejections (internal/process/task_queues.js:93)
-    at async Ie (store.js:2640)
-    at async Me (store.js:2038)
-    at async fe (store.js:1962)
-    at async q (store.js:367)
-```
-
-done?
-
-```shell
-TypeError: Cannot read property '1' of null
-    at Module.u (imdb-scraper.js:88)
-    at processTicksAndRejections (internal/process/task_queues.js:93)
-    at async Ie (store.js:2543)
-    at async Me (store.js:2038)
-    at async fe (store.js:1962)
-    at async q (store.js:367)
-```
-
-done? -> folgefehler von `Cannot read property '1' of null`
-
-```shell
-store.js:2586 TypeError: Cannot read property '$IMDB_plotSummary' of null
-    at Ie (store.js:2582)
-    at processTicksAndRejections (internal/process/task_queues.js:93)
-    at async Me (store.js:2038)
-    at async fe (store.js:1962)
-    at async q (store.js:367)
-```
-
--> this should be tracked in scanErrors!
-
-```shell
-store.js:2199 Error: Command failed: "c:\Apps\Video\MediaInfo CLI\MediaInfo.exe" --Output=XML "... a too long path exceeding 259 characters..."
-```
+  - [ ] store.js:2199 Error: Command failed: "c:\Apps\Video\MediaInfo CLI\MediaInfo.exe" --Output=XML "... a too long path exceeding 259 characters..."
 
 ### TV Series Support (MVP)
 
 - [ ] BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
 - [ ] tbl_Movies_MI_Qualities: also use for editing the series entry
 
-- [ ] revisit the rescan summary (the numbers are wrong mostly)
+- [ ] revisit the rescan summary (the numbers are mostly wrong)
 - [ ] when detecting IMDB tconst for a series, prefer imdb type "tv series", "tv movie" over "movie" and others
 - [ ] create a test set with series name and year
 - [ ] check tconst detection with movies, too (we changed some fullDirectory to fullPath)
 - [ ] IMDB Rating heatmap like <https://whattowatchon.tv>
 - [ ] update 01-Media-Storage.md about aspects of tv series in Media Hoarder, link to it (github) from the history markdown
+- [ ] rescanHandleDuplicates (also provide snackbar progress for this)
 
 ## NEXT Minor (current v1.4.0)
 
