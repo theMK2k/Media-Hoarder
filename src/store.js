@@ -2329,6 +2329,8 @@ async function findIMDBtconst({
     }
 
     if (tconst) {
+      logger.log("[findIMDBtconst] tconst found, storing at mediaItem in tbl_Movies:", tconst);
+
       mediaItem.IMDB_tconst = tconst;
 
       await db.fireProcedure(
@@ -2344,6 +2346,8 @@ async function findIMDBtconst({
       );
 
       return tconst;
+    } else {
+      logger.log("[findIMDBtconst] tconst NOT found");
     }
   } catch (error) {
     logger.error(error);
@@ -2392,7 +2396,19 @@ function getSeriesEpisodeTconstFromCache(seriesIMDBtconst, Series_Season, Series
   if (cacheSeries) {
     const cacheSeriesSeason = cacheSeries[`S${Series_Season}`];
     if (cacheSeriesSeason) {
-      return (cacheSeriesSeason.find((episode) => episode.episode == Series_Episode) || {}).tconst;
+      for (const episode of cacheSeriesSeason) {
+        // Episode numbers directly match
+        if (episode.episode == Series_Episode) {
+          return episode.tconst;
+        }
+
+        // special case: we have a SxxE00 episode; imdb may have this but its data will have episode == null
+        if (Series_Episode === 0) {
+          if (episode.episode === null) {
+            return episode.tconst;
+          }
+        }
+      }
     }
   }
 
@@ -2453,6 +2469,8 @@ async function findSeriesEpisodeIMDBtconst(mediaItem, onlyNew, $t) {
 
     logger.log("[findSeriesEpisodeIMDBtconst] episodeIMDBtconst not found in cache, fetching from IMDB");
     const imdbSeriesEpisodes = await imdbScraper.scrapeIMDBSeriesEpisodes(seriesIMDBtconst, mediaItem.Series_Season);
+
+    logger.log("[findSeriesEpisodeIMDBtconst] scraped imdbSeriesEpisodes:", imdbSeriesEpisodes);
 
     // update the cache
     if (!cacheSeriesEpisodesIMDBtconst[seriesIMDBtconst]) {

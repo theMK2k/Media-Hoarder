@@ -22,6 +22,8 @@
 
 ### TV Series Support (MVP)
 
+- [ ] S01E00 not recognized?
+- [ ] in Series section: provide default sort order "Season+Episode", as page hint use "Sxx.Eyy"
 - [ ] BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
 - [ ] tbl_Movies_MI_Qualities: also use for editing the series entry
 - [ ] rescanning a specific series does not run mediainfo on its episodes
@@ -33,6 +35,8 @@
 - [ ] IMDB Rating heatmap like <https://whattowatchon.tv>
 - [ ] update 01-Media-Storage.md about aspects of tv series in Media Hoarder, link to it (github) from the history markdown
 - [ ] rescanHandleDuplicates (also provide snackbar progress for this)
+- [ ] investigate with series-generator: find possible multitudes of episode numbers (also: episode == null)
+  - [ ] if this is the case: we need a better getSeriesEpisodeTconstFromCache, possibly by utilizing levenshtein between filename and imdb's episode title
 
 ## NEXT Minor (current v1.4.0)
 
