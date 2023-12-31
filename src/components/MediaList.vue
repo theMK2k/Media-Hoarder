@@ -61,7 +61,7 @@
           solo
           clearable
           dense
-          v-bind:items="sortAbles"
+          v-bind:items="sortAblesFiltered"
           item-text="DescriptionTranslated"
           item-value="Field"
           v-model="$shared.sortField"
@@ -333,7 +333,7 @@
             solo
             clearable
             dense
-            v-bind:items="sortAbles"
+            v-bind:items="sortAblesFiltered"
             item-text="DescriptionTranslated"
             item-value="Field"
             v-model="$shared.sortField"
@@ -1670,33 +1670,41 @@ export default {
   data: () => ({
     items: [],
     sortAbles: [
+      { Field: "Season_and_Episode", Description: "Season and Episode", specificMediaType: ["Episodes"] },
       {
         Field: "Name",
         Description: "Title",
+        specificMediaType: ["Movies", "Series", "Episodes"],
       },
       {
         Field: "IMDB_rating_default",
         Description: "IMDB Rating",
+        specificMediaType: ["Movies", "Series", "Episodes"],
       },
       {
         Field: "IMDB_metacriticScore",
         Description: "Metacritic Score",
+        specificMediaType: ["Movies", "Series", "Episodes"],
       },
       {
         Field: "Rating",
         Description: "My Rating",
+        specificMediaType: ["Movies", "Series", "Episodes"],
       },
       {
         Field: "startYear",
         Description: "Release Year",
+        specificMediaType: ["Movies", "Series", "Episodes"],
       },
       {
         Field: "created_at",
         Description: "Imported at",
+        specificMediaType: ["Movies", "Series", "Episodes"],
       },
       {
         Field: "last_access_at",
         Description: "Last Access at",
+        specificMediaType: ["Movies", "Series", "Episodes"],
       },
     ],
 
@@ -1915,6 +1923,12 @@ export default {
       return this.$shared.sortField;
     },
 
+    sortAblesFiltered() {
+      return this.sortAbles.filter((item) => {
+        return item.specificMediaType.includes(this.specificMediaType);
+      });
+    },
+
     paginationItems() {
       const result = [];
 
@@ -1946,6 +1960,9 @@ export default {
             break;
           case "last_access_at":
             detailInfo = currentItem.last_access_at ? currentItem.last_access_at.replace(/\d+:\d+:\d+/, "") : "";
+            break;
+          case "Season_and_Episode":
+            detailInfo = `${currentItem.Series_Season_Displaytext}.${currentItem.Series_Episodes_Displaytext}`;
             break;
         }
 
@@ -2105,6 +2122,15 @@ export default {
             return 0; // nothing to sort
           }
 
+          if (this.$shared.sortField === "Season_and_Episode") {
+            // sort by Season_and_Episode
+            const valA = `${a.Series_Season_Displaytext}.${a.Series_Episodes_Displaytext}`;
+            const valB = `${b.Series_Season_Displaytext}.${b.Series_Episodes_Displaytext}`;
+
+            return helpers.compare(valA, valB, false);
+          }
+
+          // Default sorting by a certain field
           const valA =
             typeof a[this.$shared.sortField] === "string" || a[this.$shared.sortField] instanceof String
               ? a[this.$shared.sortField].toLowerCase()
@@ -2126,6 +2152,10 @@ export default {
 
           return primarySort;
         });
+    },
+
+    specificMediaType() {
+      return this.mediatype === "series" ? (this.Series_id_Movies_Owner ? "Episodes" : "Series") : "Movies";
     },
   },
 
@@ -2157,6 +2187,8 @@ export default {
               filters: { filterSettings: {} },
               arr_IMDB_tconst: null,
               Series_id_Movies_Owner: null,
+              specificMediaType: "Series",
+              dontStoreFilters: true,
             })
           )[0];
 
@@ -2522,6 +2554,7 @@ export default {
 
       try {
         // eventBus.showSidebarLoadingOverlay(true);
+        await store.fetchSortValues(this.specificMediaType);
 
         const currentFetchFiltersIteration = ++this.fetchFiltersIteration;
 
@@ -2580,6 +2613,7 @@ export default {
             case "filterSettings":
               await store.fetchFilterSettings(
                 this.mediatype,
+                this.specificMediaType,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
               );
@@ -2587,6 +2621,7 @@ export default {
             case "filterSourcePaths":
               await store.fetchFilterSourcePaths(
                 this.mediatype,
+                this.specificMediaType,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
               );
@@ -2594,6 +2629,7 @@ export default {
             case "filterGenres":
               await store.fetchFilterGenres(
                 this.mediatype,
+                this.specificMediaType,
                 this.$local_t,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
@@ -2602,6 +2638,7 @@ export default {
             case "filterAgeRatings":
               await store.fetchFilterAgeRatings(
                 this.mediatype,
+                this.specificMediaType,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
               );
@@ -2609,6 +2646,7 @@ export default {
             case "filterRatings":
               await store.fetchFilterRatings(
                 this.mediatype,
+                this.specificMediaType,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
               );
@@ -2616,6 +2654,7 @@ export default {
             case "filterLists":
               await store.fetchFilterLists(
                 this.mediatype,
+                this.specificMediaType,
                 this.$local_t,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
@@ -2624,6 +2663,7 @@ export default {
             case "filterParentalAdvisory":
               await store.fetchFilterParentalAdvisory(
                 this.mediatype,
+                this.specificMediaType,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
               );
@@ -2631,6 +2671,7 @@ export default {
             case "filterPersons":
               await store.fetchFilterPersons(
                 this.mediatype,
+                this.specificMediaType,
                 this.$local_t,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
@@ -2639,6 +2680,7 @@ export default {
             case "filterCompanies":
               await store.fetchFilterCompanies(
                 this.mediatype,
+                this.specificMediaType,
                 this.$local_t,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
@@ -2647,6 +2689,7 @@ export default {
             case "filterIMDBPlotKeywords":
               await store.fetchFilterIMDBPlotKeywords(
                 this.mediatype,
+                this.specificMediaType,
                 this.$local_t,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
@@ -2655,6 +2698,7 @@ export default {
             case "filterIMDBFilmingLocations":
               await store.fetchFilterIMDBFilmingLocations(
                 this.mediatype,
+                this.specificMediaType,
                 this.$local_t,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
@@ -2664,6 +2708,7 @@ export default {
               // await store.fetchFilterReleaseYears(this.mediatype, this.loadFilterValuesFromStorage);
               await store.fetchFilterYears(
                 this.mediatype,
+                this.specificMediaType,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
               );
@@ -2671,6 +2716,7 @@ export default {
             case "filterQualities":
               await store.fetchFilterQualities(
                 this.mediatype,
+                this.specificMediaType,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
               );
@@ -2678,6 +2724,7 @@ export default {
             case "filterAudioLanguages":
               await store.fetchFilterLanguages(
                 this.mediatype,
+                this.specificMediaType,
                 "audio",
                 this.$local_t,
                 this.loadFilterValuesFromStorage,
@@ -2687,6 +2734,7 @@ export default {
             case "filterSubtitleLanguages":
               await store.fetchFilterLanguages(
                 this.mediatype,
+                this.specificMediaType,
                 "subtitle",
                 this.$local_t,
                 this.loadFilterValuesFromStorage,
@@ -2696,6 +2744,7 @@ export default {
             case "filterIMDBRating":
               await store.fetchFilterIMDBRating(
                 this.mediatype,
+                this.specificMediaType,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
               );
@@ -2703,6 +2752,7 @@ export default {
             case "filterMetacriticScore":
               await store.fetchFilterMetacriticScore(
                 this.mediatype,
+                this.specificMediaType,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
               );
@@ -2710,6 +2760,7 @@ export default {
             case "filterReleaseAttributes":
               await store.fetchFilterReleaseAttributes(
                 this.mediatype,
+                this.specificMediaType,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
               );
@@ -2717,6 +2768,7 @@ export default {
             case "filterDataQuality":
               await store.fetchFilterDataQuality(
                 this.mediatype,
+                this.specificMediaType,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
               );
@@ -2724,6 +2776,7 @@ export default {
             case "filterVideoEncoders":
               await store.fetchFilterVideoEncoders(
                 this.mediatype,
+                this.specificMediaType,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
               );
@@ -2731,6 +2784,7 @@ export default {
             case "filterAudioFormats":
               await store.fetchFilterAudioFormats(
                 this.mediatype,
+                this.specificMediaType,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
               );
@@ -2751,8 +2805,6 @@ export default {
         }
 
         this.$shared.loadingFilterProgress = 100;
-
-        await store.fetchSortValues(this.mediatype);
 
         await store.fetchCurrentPage(this.mediatype);
 
@@ -3292,7 +3344,7 @@ export default {
     },
 
     onSortChanged() {
-      store.saveSortValues(this.mediatype);
+      store.saveSortValues(this.specificMediaType);
     },
 
     onReload() {
@@ -3329,6 +3381,7 @@ export default {
               filters: this.$shared.filters,
               arr_IMDB_tconst: null,
               Series_id_Movies_Owner: null,
+              specificMediaType: this.specificMediaType,
             })
           : await store.fetchMedia({
               $MediaType: this.mediatype,
@@ -3338,6 +3391,7 @@ export default {
               filters: { filterSettings: {} },
               arr_IMDB_tconst: null,
               Series_id_Movies_Owner: this.Series_id_Movies_Owner,
+              specificMediaType: this.specificMediaType,
             });
 
         logger.log("[completelyFetchMedia] result:", result);
@@ -3568,6 +3622,7 @@ export default {
               filters: this.$shared.filters,
               arr_IMDB_tconst: null,
               Series_id_Movies_Owner: null,
+              specificMediaType: this.specificMediaType,
             })
           : await store.fetchMedia({
               $MediaType: this.mediatype,
@@ -3577,6 +3632,7 @@ export default {
               filters: { filterSettings: {} },
               arr_IMDB_tconst: null,
               Series_id_Movies_Owner: this.Series_id_Movies_Owner,
+              specificMediaType: this.specificMediaType,
             });
 
         this.$shared.currentPage = setPage && setPage <= this.numPages ? setPage : 1;

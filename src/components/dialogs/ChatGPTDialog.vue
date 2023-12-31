@@ -240,6 +240,7 @@ export default {
             filterSettings: {},
           },
           arr_IMDB_tconst: this.arr_IMDB_tconst,
+          dontStoreFilters: true,
         })
       ).sort((a, b) => {
         if (a.startYear > b.startYear) {

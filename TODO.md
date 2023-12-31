@@ -4,6 +4,8 @@
 
 ## NEXT Major (v1.4.0)
 
+- [ ] store.saveFilterValues still works with MediaType and not SpecificMediaType
+- [ ] investigate everything that still works with MediaType (and possibly should also use SpecificMediaType)
 - [ ] we apparently do not use the timezone (we store in UTC)
 - [ ] investigate if we still use Series_id_Movies_Owner to differentiate Series and Episodes -> we have specificMediaType now
 - [ ] scanErrors: introduce WARNING vs. ERROR

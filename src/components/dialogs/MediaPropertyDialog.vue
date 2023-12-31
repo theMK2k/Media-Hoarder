@@ -822,6 +822,7 @@ export default {
           $t: this.$t,
           filters,
           Series_id_Movies_Owner: mic.type === "episodes" ? this.Series_id_Movies_Owner : null,
+          dontStoreFilters: true,
         };
 
         logger.log(`[MediaPropertyDialog toggleShowMovies] options:`, options);

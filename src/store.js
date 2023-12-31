@@ -4045,6 +4045,8 @@ async function fetchMedia({
   filters,
   arr_IMDB_tconst,
   Series_id_Movies_Owner,
+  specificMediaType,
+  dontStoreFilters,
 }) {
   if (!$MediaType) {
     throw new Error("[fetchMedia] $MediaType missing");
@@ -4097,6 +4099,7 @@ async function fetchMedia({
       , MOV.Series_Bonus_Number
       , MOV.Series_Num_Seasons
       , MOV.Series_Num_Episodes
+      , MOV.Series_Episodes_Complete
 
       ${
         minimumResultSet
@@ -4131,7 +4134,6 @@ async function fetchMedia({
         , NULL AS ReleaseAttributesSearchTerms
         , NULL AS Video_Encoder
         , NULL AS Audio_Format
-        , MOV.Series_Episodes_Complete
 
       `
           : `
@@ -4172,7 +4174,6 @@ async function fetchMedia({
         , (SELECT GROUP_CONCAT(MRA.Release_Attributes_searchTerm, ';') FROM tbl_Movies_Release_Attributes MRA WHERE MRA.id_Movies = MOV.id_Movies AND MRA.deleted = 0) AS ReleaseAttributesSearchTerms
         , (SELECT GROUP_CONCAT(Encoded_Library_Name_Trimmed, ';') FROM tbl_Movies_MI_Tracks MITVIDEO WHERE MITVIDEO.type = "video" AND MITVIDEO.id_Movies = MOV.id_Movies ORDER BY "Default" DESC) AS Video_Encoder
         , (SELECT GROUP_CONCAT(Format, ';') FROM tbl_Movies_MI_Tracks MITAUDIO WHERE MITAUDIO.type = "audio" AND MITAUDIO.id_Movies = MOV.id_Movies ORDER BY "Default" DESC) AS Audio_Format
-        , MOV.Series_Episodes_Complete
       `
       }
     FROM tbl_Movies MOV
@@ -4200,9 +4201,9 @@ async function fetchMedia({
       ensureMediaFullPath(movie);
     });
 
-    if (result && result.length > 0) {
-      saveFilterValues($MediaType);
-      saveSortValues($MediaType);
+    if (!dontStoreFilters && result && result.length > 0) {
+      saveFilterValues(specificMediaType);
+      // saveSortValues(specificMediaType);
     }
 
     result.forEach((mediaItem) => {
@@ -4573,9 +4574,9 @@ async function launchMovie(movie) {
   logger.log("[launchMovie] launching END task:", task);
 }
 
-async function fetchFilterValues($MediaType, loadFilterValuesFromStorage) {
+async function fetchFilterValues($SpecificMediaType, loadFilterValuesFromStorage) {
   if (loadFilterValuesFromStorage) {
-    const result = await getSetting(`filtersMediaType_${$MediaType}`);
+    const result = await getSetting(`filtersSpecificMediaType_${$SpecificMediaType}`);
     if (!result) {
       return null;
     }
@@ -4586,10 +4587,12 @@ async function fetchFilterValues($MediaType, loadFilterValuesFromStorage) {
   return shared.filters;
 }
 
-async function fetchSortValues($MediaType) {
-  logger.log("[fetchSortValues] START");
+async function fetchSortValues($SpecificMediaType) {
+  logger.log("[fetchSortValues] START, $SpecificMediaType:", $SpecificMediaType);
 
-  const result = await getSetting(`sortMediaType${$MediaType}`);
+  shared.sortField = $SpecificMediaType === "Episodes" ? "Season_and_Episode" : null;
+
+  const result = await getSetting(`sortSpecificMediaType_${$SpecificMediaType}`);
   if (!result) {
     return null;
   }
@@ -4601,11 +4604,28 @@ async function fetchSortValues($MediaType) {
   return JSON.parse(result);
 }
 
-async function fetchFilterDataQuality($MediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
+async function saveSortValues($SpecificMediaType) {
+  console.log("[saveSortValues] $SpecificMediaType: ", $SpecificMediaType, "shared.sortField:", shared.sortField);
+
+  const sortValues = {
+    sortField: shared.sortField,
+  };
+
+  const sortValuesString = JSON.stringify(sortValues);
+
+  await setSetting(`sortSpecificMediaType_${$SpecificMediaType}`, sortValuesString);
+}
+
+async function fetchFilterDataQuality(
+  $MediaType,
+  $SpecificMediaType,
+  loadFilterValuesFromStorage,
+  $Series_id_Movies_Owner
+) {
   logger.log("[fetchFilterDataQuality] MediaType:", $MediaType);
   shared.loadingFilter = "filterDataQuality";
 
-  const filterValues = await fetchFilterValues($MediaType, loadFilterValuesFromStorage);
+  const filterValues = await fetchFilterValues($SpecificMediaType, loadFilterValuesFromStorage);
 
   logger.log("[fetchFilterDataQuality] filterValues:", filterValues);
 
@@ -4731,11 +4751,16 @@ async function fetchFilterDataQuality($MediaType, loadFilterValuesFromStorage, $
   shared.loadingFilter = "";
 }
 
-async function fetchFilterSourcePaths($MediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
+async function fetchFilterSourcePaths(
+  $MediaType,
+  $SpecificMediaType,
+  loadFilterValuesFromStorage,
+  $Series_id_Movies_Owner
+) {
   logger.log("[fetchFilterSourcePaths] MediaType:", $MediaType);
   shared.loadingFilter = "filterSourcePaths";
 
-  const filterValues = await fetchFilterValues($MediaType);
+  const filterValues = await fetchFilterValues($SpecificMediaType);
 
   logger.log("[fetchFilterSourcePaths] filterValues:", filterValues);
 
@@ -4786,11 +4811,17 @@ async function fetchFilterSourcePaths($MediaType, loadFilterValuesFromStorage, $
   shared.loadingFilter = "";
 }
 
-async function fetchFilterGenres($MediaType, $t, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
+async function fetchFilterGenres(
+  $MediaType,
+  $SpecificMediaType,
+  $t,
+  loadFilterValuesFromStorage,
+  $Series_id_Movies_Owner
+) {
   logger.log("[fetchFilterGenres] MediaType:", $MediaType);
   shared.loadingFilter = "filterGenres";
 
-  const filterValues = await fetchFilterValues($MediaType);
+  const filterValues = await fetchFilterValues($SpecificMediaType);
 
   logger.log("[fetchFilterGenres] filterValues:", filterValues);
 
@@ -4853,11 +4884,16 @@ async function fetchFilterGenres($MediaType, $t, loadFilterValuesFromStorage, $S
   shared.loadingFilter = "";
 }
 
-async function fetchFilterAgeRatings($MediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
+async function fetchFilterAgeRatings(
+  $MediaType,
+  $SpecificMediaType,
+  loadFilterValuesFromStorage,
+  $Series_id_Movies_Owner
+) {
   logger.log("[fetchFilterAgeRatings] MediaType:", $MediaType);
   shared.loadingFilter = "filterAgeRatings";
 
-  const filterValues = await fetchFilterValues($MediaType);
+  const filterValues = await fetchFilterValues($SpecificMediaType);
 
   logger.log("[fetchFilterAgeRatings] filterValues:", filterValues);
 
@@ -4941,11 +4977,16 @@ async function fetchFilterAgeRatings($MediaType, loadFilterValuesFromStorage, $S
   shared.loadingFilter = "";
 }
 
-async function fetchFilterRatings($MediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
+async function fetchFilterRatings(
+  $MediaType,
+  $SpecificMediaType,
+  loadFilterValuesFromStorage,
+  $Series_id_Movies_Owner
+) {
   logger.log("[fetchFilterRatings] MediaType:", $MediaType);
   shared.loadingFilter = "filterRatings";
 
-  const filterValues = await fetchFilterValues($MediaType);
+  const filterValues = await fetchFilterValues($SpecificMediaType);
 
   logger.log("[fetchFilterRatings] filterValues:", filterValues);
 
@@ -5139,13 +5180,43 @@ async function fetchFilterRatings($MediaType, loadFilterValuesFromStorage, $Seri
   shared.loadingFilter = "";
 }
 
-async function fetchFilterParentalAdvisory($MediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
+async function fetchFilterParentalAdvisory(
+  $MediaType,
+  $SpecificMediaType,
+  loadFilterValuesFromStorage,
+  $Series_id_Movies_Owner
+) {
   shared.loadingFilter = "filterParentalAdvisory";
-  const Nudity = await fetchFilterParentalAdvisoryCategory($MediaType, "Nudity", $Series_id_Movies_Owner);
-  const Violence = await fetchFilterParentalAdvisoryCategory($MediaType, "Violence", $Series_id_Movies_Owner);
-  const Profanity = await fetchFilterParentalAdvisoryCategory($MediaType, "Profanity", $Series_id_Movies_Owner);
-  const Alcohol = await fetchFilterParentalAdvisoryCategory($MediaType, "Alcohol", $Series_id_Movies_Owner);
-  const Frightening = await fetchFilterParentalAdvisoryCategory($MediaType, "Frightening", $Series_id_Movies_Owner);
+  const Nudity = await fetchFilterParentalAdvisoryCategory(
+    $MediaType,
+    $SpecificMediaType,
+    "Nudity",
+    $Series_id_Movies_Owner
+  );
+  const Violence = await fetchFilterParentalAdvisoryCategory(
+    $MediaType,
+    $SpecificMediaType,
+    "Violence",
+    $Series_id_Movies_Owner
+  );
+  const Profanity = await fetchFilterParentalAdvisoryCategory(
+    $MediaType,
+    $SpecificMediaType,
+    "Profanity",
+    $Series_id_Movies_Owner
+  );
+  const Alcohol = await fetchFilterParentalAdvisoryCategory(
+    $MediaType,
+    $SpecificMediaType,
+    "Alcohol",
+    $Series_id_Movies_Owner
+  );
+  const Frightening = await fetchFilterParentalAdvisoryCategory(
+    $MediaType,
+    $SpecificMediaType,
+    "Frightening",
+    $Series_id_Movies_Owner
+  );
 
   shared.filters.filterParentalAdvisory = {
     Nudity,
@@ -5157,10 +5228,15 @@ async function fetchFilterParentalAdvisory($MediaType, loadFilterValuesFromStora
   shared.loadingFilter = "";
 }
 
-async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category, $Series_id_Movies_Owner) {
+async function fetchFilterParentalAdvisoryCategory(
+  $MediaType,
+  $SpecificMediaType,
+  PA_Category,
+  $Series_id_Movies_Owner
+) {
   logger.log(`[fetchFilterParentalAdvisory${PA_Category}] MediaType:`, $MediaType);
 
-  const filterValues = await fetchFilterValues($MediaType);
+  const filterValues = await fetchFilterValues($SpecificMediaType);
 
   logger.log(`[fetchFilterParentalAdvisory${PA_Category}] filterValues:`, filterValues);
 
@@ -5272,9 +5348,15 @@ async function fetchFilterParentalAdvisoryCategory($MediaType, PA_Category, $Ser
   return results;
 }
 
-async function fetchFilterPersons($MediaType, $t, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
+async function fetchFilterPersons(
+  $MediaType,
+  $SpecificMediaType,
+  $t,
+  loadFilterValuesFromStorage,
+  $Series_id_Movies_Owner
+) {
   shared.loadingFilter = "filterPersons";
-  const filterValues = await fetchFilterValues($MediaType);
+  const filterValues = await fetchFilterValues($SpecificMediaType);
 
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   if (!shared.filters.filterSettings.filterPersonsAND) {
@@ -5350,9 +5432,15 @@ async function fetchFilterPersons($MediaType, $t, loadFilterValuesFromStorage, $
   shared.loadingFilter = "";
 }
 
-async function fetchFilterCompanies($MediaType, $t, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
+async function fetchFilterCompanies(
+  $MediaType,
+  $SpecificMediaType,
+  $t,
+  loadFilterValuesFromStorage,
+  $Series_id_Movies_Owner
+) {
   shared.loadingFilter = "filterCompanies";
-  const filterValues = await fetchFilterValues($MediaType);
+  const filterValues = await fetchFilterValues($SpecificMediaType);
 
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   if (!shared.filters.filterSettings.filterCompaniesAND) {
@@ -5431,9 +5519,15 @@ async function fetchFilterCompanies($MediaType, $t, loadFilterValuesFromStorage,
   shared.loadingFilter = "";
 }
 
-async function fetchFilterIMDBPlotKeywords($MediaType, $t, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
+async function fetchFilterIMDBPlotKeywords(
+  $MediaType,
+  $SpecificMediaType,
+  $t,
+  loadFilterValuesFromStorage,
+  $Series_id_Movies_Owner
+) {
   shared.loadingFilter = "filterIMDBPlotKeywords";
-  const filterValues = await fetchFilterValues($MediaType);
+  const filterValues = await fetchFilterValues($SpecificMediaType);
 
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   if (!shared.filters.filterSettings.filterIMDBPlotKeywordsAND) {
@@ -5510,9 +5604,15 @@ async function fetchFilterIMDBPlotKeywords($MediaType, $t, loadFilterValuesFromS
   shared.loadingFilter = "";
 }
 
-async function fetchFilterIMDBFilmingLocations($MediaType, $t, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
+async function fetchFilterIMDBFilmingLocations(
+  $MediaType,
+  $SpecificMediaType,
+  $t,
+  loadFilterValuesFromStorage,
+  $Series_id_Movies_Owner
+) {
   shared.loadingFilter = "filterIMDBFilmingLocations";
-  const filterValues = await fetchFilterValues($MediaType);
+  const filterValues = await fetchFilterValues($SpecificMediaType);
 
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   if (!shared.filters.filterSettings.filterIMDBFilmingLocationsAND) {
@@ -5587,11 +5687,11 @@ async function fetchFilterIMDBFilmingLocations($MediaType, $t, loadFilterValuesF
   shared.loadingFilter = "";
 }
 
-async function fetchFilterYears($MediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
+async function fetchFilterYears($MediaType, $SpecificMediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
   shared.loadingFilter = "filterYears";
   logger.log("[fetchFilterYears] MediaType:", $MediaType);
 
-  const filterValues = await fetchFilterValues($MediaType);
+  const filterValues = await fetchFilterValues($SpecificMediaType);
 
   logger.log("[fetchFilterYears] filterValues:", filterValues);
 
@@ -5655,11 +5755,16 @@ async function fetchFilterYears($MediaType, loadFilterValuesFromStorage, $Series
   shared.loadingFilter = "";
 }
 
-async function fetchFilterQualities($MediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
+async function fetchFilterQualities(
+  $MediaType,
+  $SpecificMediaType,
+  loadFilterValuesFromStorage,
+  $Series_id_Movies_Owner
+) {
   shared.loadingFilter = "filterQualities";
   logger.log("[fetchFilterQualities] MediaType:", $MediaType);
 
-  const filterValues = await fetchFilterValues($MediaType);
+  const filterValues = await fetchFilterValues($SpecificMediaType);
 
   logger.log("[fetchFilterQualities] filterValues:", filterValues);
 
@@ -5719,24 +5824,14 @@ function resetAbortRescan() {
   doAbortRescan = false;
 }
 
-function saveFilterValues($MediaType) {
+function saveFilterValues($SpecificMediaType) {
   const filterValues = shared.filters;
 
   const filterValuesString = JSON.stringify(filterValues);
 
   logger.log("[saveFilterValues] filterValues:", filterValues);
 
-  setSetting(`filtersMediaType_${$MediaType}`, filterValuesString);
-}
-
-async function saveSortValues($MediaType) {
-  const sortValues = {
-    sortField: shared.sortField,
-  };
-
-  const sortValuesString = JSON.stringify(sortValues);
-
-  await setSetting(`sortMediaType${$MediaType}`, sortValuesString);
+  setSetting(`filtersSpecificMediaType_${$SpecificMediaType}`, filterValuesString);
 }
 
 async function createList($Name, noErrorOnDuplicateName) {
@@ -5821,9 +5916,15 @@ async function fetchLists() {
 	`);
 }
 
-async function fetchFilterLists($MediaType, $t, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
+async function fetchFilterLists(
+  $MediaType,
+  $SpecificMediaType,
+  $t,
+  loadFilterValuesFromStorage,
+  $Series_id_Movies_Owner
+) {
   shared.loadingFilter = "filterLists";
-  const filterValues = await fetchFilterValues($MediaType);
+  const filterValues = await fetchFilterValues($SpecificMediaType);
 
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   delete currentFilters.filterLists;
@@ -5886,6 +5987,7 @@ async function fetchFilterLists($MediaType, $t, loadFilterValuesFromStorage, $Se
 
 async function fetchFilterLanguages(
   $MediaType,
+  $SpecificMediaType,
   $LanguageType,
   $t,
   loadFilterValuesFromStorage,
@@ -5894,7 +5996,7 @@ async function fetchFilterLanguages(
   shared.loadingFilter = `filter${helpers.uppercaseEachWord($LanguageType)}Languages`;
   logger.log("[fetchFilterLanguages] MediaType:", $MediaType);
 
-  const filterValues = await fetchFilterValues($MediaType);
+  const filterValues = await fetchFilterValues($SpecificMediaType);
 
   logger.log("[fetchFilterLanguages] filterValues:", filterValues);
 
@@ -6004,9 +6106,9 @@ async function fetchFilterLanguages(
   shared.loadingFilter = "";
 }
 
-async function fetchFilterIMDBRating($MediaType) {
+async function fetchFilterIMDBRating($MediaType, $SpecificMediaType) {
   shared.loadingFilter = "filterIMDBRating";
-  const filterValues = await fetchFilterValues($MediaType);
+  const filterValues = await fetchFilterValues($SpecificMediaType);
 
   if (filterValues && filterValues.filterIMDBRating && filterValues.filterIMDBRating.length > 0) {
     shared.filters.filterIMDBRating = filterValues.filterIMDBRating;
@@ -6018,8 +6120,8 @@ async function fetchFilterIMDBRating($MediaType) {
   shared.loadingFilter = "";
 }
 
-async function fetchFilterMetacriticScore($MediaType) {
-  const filterValues = await fetchFilterValues($MediaType);
+async function fetchFilterMetacriticScore($MediaType, $SpecificMediaType) {
+  const filterValues = await fetchFilterValues($SpecificMediaType);
 
   if (filterValues && filterValues.filterMetacriticScore && filterValues.filterMetacriticScore.length > 0) {
     shared.filters.filterMetacriticScore = filterValues.filterMetacriticScore;
@@ -6098,11 +6200,11 @@ async function fetchFilterMetacriticScore($MediaType) {
 //   }
 // }
 
-async function fetchFilterSettings($MediaType) {
+async function fetchFilterSettings($MediaType, $SpecificMediaType) {
   logger.log("[fetchFilterSettings] START");
   shared.loadingFilter = "filterSettings";
 
-  const filterValues = await fetchFilterValues($MediaType);
+  const filterValues = await fetchFilterValues($SpecificMediaType);
 
   logger.log("[fetchFilterSettings] filterValues:", filterValues);
 
@@ -7227,11 +7329,16 @@ function getReleaseAttributesHierarchy() {
   return releaseAttributes;
 }
 
-async function fetchFilterReleaseAttributes($MediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
+async function fetchFilterReleaseAttributes(
+  $MediaType,
+  $SpecificMediaType,
+  loadFilterValuesFromStorage,
+  $Series_id_Movies_Owner
+) {
   logger.log("[fetchFilterReleaseAttributes] MediaType:", $MediaType);
   shared.loadingFilter = "filterReleaseAttributes";
 
-  const filterValues = await fetchFilterValues($MediaType);
+  const filterValues = await fetchFilterValues($SpecificMediaType);
 
   logger.log("[fetchFilterReleaseAttributes] filterValues:", filterValues);
 
@@ -7331,11 +7438,16 @@ async function fetchFilterReleaseAttributes($MediaType, loadFilterValuesFromStor
   shared.loadingFilter = "";
 }
 
-async function fetchFilterVideoEncoders($MediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
+async function fetchFilterVideoEncoders(
+  $MediaType,
+  $SpecificMediaType,
+  loadFilterValuesFromStorage,
+  $Series_id_Movies_Owner
+) {
   logger.log("[fetchFilterVideoEncoders] MediaType:", $MediaType);
   shared.loadingFilter = "filterVideoEncoders";
 
-  const filterValues = await fetchFilterValues($MediaType);
+  const filterValues = await fetchFilterValues($SpecificMediaType);
 
   logger.log("[fetchFilterVideoEncoders] filterValues:", filterValues);
 
@@ -7389,11 +7501,16 @@ FROM (	SELECT DISTINCT
   shared.loadingFilter = "";
 }
 
-async function fetchFilterAudioFormats($MediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
+async function fetchFilterAudioFormats(
+  $MediaType,
+  $SpecificMediaType,
+  loadFilterValuesFromStorage,
+  $Series_id_Movies_Owner
+) {
   logger.log("[fetchFilterAudioFormats] MediaType:", $MediaType);
   shared.loadingFilter = "filterAudioFormats";
 
-  const filterValues = await fetchFilterValues($MediaType);
+  const filterValues = await fetchFilterValues($SpecificMediaType);
 
   logger.log("[fetchFilterAudioFormats] filterValues:", filterValues);
 
