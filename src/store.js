@@ -8119,6 +8119,7 @@ async function updateSeriesMetadataFromEpisodes($id_Movies) {
   await updateSeriesLanguagesFromEpisodes($id_Movies, "subtitle");
   await updateSeriesVideoEncodersFromEpisodes($id_Movies);
   await updateSeriesVideoQualitiesFromEpisodes($id_Movies);
+  await updateSeriesNumSeasonsNumEpisodesFromEpisodes($id_Movies);
 }
 
 async function updateSeriesAudioFormatsFromEpisodes($id_Movies) {
@@ -8146,7 +8147,9 @@ async function updateSeriesAudioFormatsFromEpisodes($id_Movies) {
      FROM   tbl_Movies_MI_Tracks MITAUDIO
      WHERE  MITAUDIO.type = "audio"
             AND MITAUDIO.id_Movies IN (
-                SELECT id_Movies FROM tbl_Movies WHERE Series_id_Movies_Owner = $id_Movies
+                SELECT id_Movies FROM tbl_Movies MOV
+                WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                      AND Series_id_Movies_Owner = $id_Movies
             )
     ORDER BY "Default" DESC`,
     { $id_Movies }
@@ -8213,7 +8216,9 @@ async function updateSeriesReleaseAttributesFromEpisodes($id_Movies) {
     FROM    tbl_Movies_Release_Attributes MRA
     WHERE   MRA.deleted = 0
             AND MRA.id_Movies IN (
-              SELECT id_Movies FROM tbl_Movies WHERE Series_id_Movies_Owner = $id_Movies
+              SELECT id_Movies FROM tbl_Movies MOV
+              WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                    AND Series_id_Movies_Owner = $id_Movies
             )
     `,
     { $id_Movies }
@@ -8311,7 +8316,9 @@ async function updateSeriesVideoEncodersFromEpisodes($id_Movies) {
     WHERE MITVIDEO.type = "video"
           AND Encoded_Library_Name_Trimmed IS NOT NULL
           AND MITVIDEO.id_Movies IN (
-            SELECT id_Movies FROM tbl_Movies WHERE Series_id_Movies_Owner = $id_Movies
+            SELECT id_Movies FROM tbl_Movies MOV
+            WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                  AND Series_id_Movies_Owner = $id_Movies
           )
     ORDER BY "Default" DESC
     `,
@@ -8389,7 +8396,10 @@ async function updateSeriesVideoQualitiesFromEpisodes($id_Movies) {
       FROM  tbl_Movies
       WHERE MI_Quality IS NOT NULL
             AND id_Movies IN (
-                SELECT id_Movies FROM tbl_Movies WHERE Series_id_Movies_Owner = $id_Movies
+                SELECT id_Movies
+                FROM  tbl_Movies
+                WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                      Series_id_Movies_Owner = $id_Movies
             )
       `,
     { $id_Movies }
@@ -8410,6 +8420,36 @@ async function updateSeriesVideoQualitiesFromEpisodes($id_Movies) {
       );
     }
   }
+}
+
+async function updateSeriesNumSeasonsNumEpisodesFromEpisodes($id_Movies) {
+  await db.fireProcedure(
+    `
+    UPDATE tbl_Movies
+    SET    Series_Num_Episodes = (
+              SELECT SUM(MOV2.Series_Num_Episodes)
+              FROM  tbl_Movies MOV
+              WHERE 
+                    (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)      
+                    AND MOV.Series_id_Movies_Owner = $id_Movies
+                    AND MOV.Series_Num_Episodes IS NOT NULL
+           )
+           
+           , Series_Num_Seasons = (
+              SELECT COUNT(*)
+              FROM
+                (
+                    SELECT DISTINCT MOV.Series_Season
+                    FROM tbl_Movies MOV 
+                    WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                          AND MOV.Series_id_Movies_Owner = $id_Movies AND MOV.Series_Season > 0
+                )
+           )
+    WHERE id_Movies = $id_Movies`,
+    {
+      $id_Movies,
+    }
+  );
 }
 
 export {
