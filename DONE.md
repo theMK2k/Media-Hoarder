@@ -62,6 +62,7 @@
 - [x] assign series episode imdb tconst when episode number is 0 (imdb provides null in this case)
 - [x] add "Season and Episode" sort order (only for Episodes specificMediaType)
 - [x] store filters and sort values by specificMediaType ("Movies", "Series", "Episodes")
+- [x] update Series_Num_Episodes and Series_Num_Seasons after an episode has been removed
 
 ## v1.3.2
 

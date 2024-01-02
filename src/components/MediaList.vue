@@ -3533,15 +3533,19 @@ export default {
         if (this.deleteMediaDialog.item.isDirectoryBased) {
           if (await this.checkPathExistence(this.deleteMediaDialog.location, checkRemovedFiles)) {
             logger.log("[onDeleteMediaDialogYes] deleting directory:", this.deleteMediaDialog.location);
-            await fs.rm(this.deleteMediaDialog.location, {
-              recursive: true,
-              force: true,
-            });
+
+            // KILLME
+            // await fs.rm(this.deleteMediaDialog.location, {
+            //   recursive: true,
+            //   force: true,
+            // });
           }
         } else {
           if (await this.checkPathExistence(this.deleteMediaDialog.location, checkRemovedFiles)) {
             logger.log("[onDeleteMediaDialogYes] deleting file:", this.deleteMediaDialog.location);
-            await fs.rm(this.deleteMediaDialog.location);
+
+            // KILLME
+            // await fs.rm(this.deleteMediaDialog.location);
           }
         }
 
@@ -3554,6 +3558,11 @@ export default {
         await store.db.fireProcedure(`UPDATE tbl_Movies SET isRemoved = 1 WHERE id_Movies = $id_Movies`, {
           $id_Movies: this.deleteMediaDialog.item.id_Movies,
         });
+
+        // update series metadata if we just deleted an episode
+        if (this.Series_id_Movies_Owner) {
+          await store.updateSeriesMetadataFromEpisodes(this.Series_id_Movies_Owner);
+        }
 
         eventBus.showSnackbar(
           "success",

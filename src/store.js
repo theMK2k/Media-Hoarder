@@ -989,18 +989,18 @@ async function filescanSeries(onlyNew, $t) {
             `
             UPDATE tbl_Movies
             SET    Series_Num_Episodes = (
-                      SELECT SUM(MOV2.Series_Num_Episodes)
-                      FROM  tbl_Movies MOV2
-                      WHERE MOV2.Series_id_Movies_Owner = $id_Movies
-                            AND MOV2.Series_Num_Episodes IS NOT NULL
+                      SELECT SUM(MOV.Series_Num_Episodes)
+                      FROM  tbl_Movies MOV
+                      WHERE MOV.Series_id_Movies_Owner = $id_Movies
+                            AND MOV.Series_Num_Episodes IS NOT NULL
                    )
                    
                    , Series_Num_Seasons = (
                       SELECT COUNT(*)
                       FROM
                         (
-                            SELECT DISTINCT MOV2.Series_Season
-                            FROM tbl_Movies MOV2 WHERE MOV2.Series_id_Movies_Owner = $id_Movies AND MOV2.Series_Season > 0
+                            SELECT DISTINCT MOV.Series_Season
+                            FROM tbl_Movies MOV WHERE MOV.Series_id_Movies_Owner = $id_Movies AND MOV.Series_Season > 0
                         )
                    )
             WHERE id_Movies = $id_Movies`,
@@ -8397,9 +8397,9 @@ async function updateSeriesVideoQualitiesFromEpisodes($id_Movies) {
       WHERE MI_Quality IS NOT NULL
             AND id_Movies IN (
                 SELECT id_Movies
-                FROM  tbl_Movies
+                FROM  tbl_Movies MOV
                 WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
-                      Series_id_Movies_Owner = $id_Movies
+                      AND Series_id_Movies_Owner = $id_Movies
             )
       `,
     { $id_Movies }
@@ -8427,7 +8427,7 @@ async function updateSeriesNumSeasonsNumEpisodesFromEpisodes($id_Movies) {
     `
     UPDATE tbl_Movies
     SET    Series_Num_Episodes = (
-              SELECT SUM(MOV2.Series_Num_Episodes)
+              SELECT SUM(MOV.Series_Num_Episodes)
               FROM  tbl_Movies MOV
               WHERE 
                     (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)      
@@ -8551,4 +8551,5 @@ export {
   deleteIMDBData,
   saveFilterGroups,
   applyMediaInfo,
+  updateSeriesMetadataFromEpisodes,
 };

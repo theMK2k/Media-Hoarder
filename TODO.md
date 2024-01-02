@@ -4,7 +4,10 @@
 
 ## NEXT Major (v1.4.0)
 
-- [ ] update Series_Num_Episodes and Series_Num_Seasons after an episode has been removed
+- [ ] re-link imdb for series and episodes
+  - [ ] for episodes:
+    - [ ] provide all entries for the current series (Series_id_Movies_Owner's IMDB_tconst)
+    - [ ] allow a fallback to standard imdb search
 - [ ] store.saveFilterValues still works with MediaType and not SpecificMediaType
 - [ ] investigate everything that still works with MediaType (and possibly should also use SpecificMediaType)
 - [ ] we apparently do not use the timezone (we store in UTC)
