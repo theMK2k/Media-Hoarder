@@ -3207,7 +3207,14 @@ export default {
 
         eventBus.rescanStarted();
 
-        await store.assignIMDB(this.linkIMDBDialog.item.id_Movies, tconst, false, null, this.$local_t);
+        await store.assignIMDB({
+          $id_Movies: this.linkIMDBDialog.item.id_Movies,
+          $IMDB_tconst: tconst,
+          isHandlingDuplicates: false,
+          mediaItem: null,
+          $t: this.$local_t,
+          isIMDB_tconst_userDefined: true,
+        });
 
         eventBus.rescanStopped();
 
@@ -3242,7 +3249,21 @@ export default {
             dontStoreFilters: true,
           });
 
-          for (const episode of episodes) {
+          const episodesFiltered = episodes.filter((episode) => {
+            if (!episode.IMDB_tconst) {
+              return false;
+            }
+            if (!episode.isDirectoryBased && episode.Filename && episode.Filename.includes(episode.IMDB_tconst)) {
+              return false;
+            }
+            if (episode.DefinedByUser && episode.DefinedByUser.includes("|IMDB_tconst|")) {
+              return false;
+            }
+
+            return true;
+          });
+
+          for (const episode of episodesFiltered) {
             await store.deleteIMDBData(episode);
           }
         }

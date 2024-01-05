@@ -30,11 +30,13 @@
 
 ### Series: Link IMDB Dialog
 
-- [x] unlink IMDB on series: also unlink all episodes
 - [ ] for episodes:
   - [WIP] provide all entries for the current series (Series_id_Movies_Owner's IMDB_tconst)
     - [ ] new imdb scraper: scrapeSeriesSeasons(tconst) -> `https://www.imdb.com/title/tt0206512/episodes/` -> dropdown
   - [ ] allow a fallback to standard imdb search
+- [x] unlink IMDB on series: also unlink all episodes, which
+  - [x] don't have the tt* as part of their file name
+  - [x] haven't been user-set tt* (do we even track this?)
 
 ### Series: Edit Media Dialog
 

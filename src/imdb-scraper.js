@@ -2410,6 +2410,44 @@ async function scrapeIMDBSeriesEpisodes(Series_IMDB_tconst, Series_Season) {
   }
 }
 
+/**
+ *
+ * @param {String} Series_IMDB_tconst
+ */
+async function scrapeIMDBSeriesSeasons(Series_IMDB_tconst) {
+  const options = {
+    uri: `https://www.imdb.com/title/${Series_IMDB_tconst}/episodes/`,
+    method: "GET",
+  };
+
+  logger.log("[scrapeIMDBSeriesSeasons] fetching", options.uri);
+  const responseSeasons = await helpers.requestAsync(options);
+
+  const $ = cheerio.load(responseSeasons.body);
+
+  const seasons = [];
+
+  $(`li[data-testid="tab-season-entry"]`).each((i, elSeason) => {
+    const season = $(elSeason).text().trim().toLowerCase();
+
+    let seasonDisplayText = "";
+
+    if (!isNaN(season)) {
+      seasonDisplayText = `Season ${season}`;
+    }
+    if (season === "unknown") {
+      seasonDisplayText = "Extras / Specials / Unknown";
+    }
+
+    seasons.push({
+      season,
+      seasonDisplayText,
+    });
+  });
+
+  return seasons;
+}
+
 const deprecated = {
   scrapeIMDBplotKeywords,
   scrapeIMDBFilmingLocations,
@@ -2437,4 +2475,5 @@ export {
   scrapeIMDBplotKeywordsV3,
   scrapeIMDBFilmingLocationsV3,
   scrapeIMDBSeriesEpisodes,
+  scrapeIMDBSeriesSeasons,
 };

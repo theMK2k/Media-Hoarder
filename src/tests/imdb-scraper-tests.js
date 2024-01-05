@@ -1427,7 +1427,7 @@ async function testIMDBFindPageSearch() {
 }
 
 /**
- *
+ * Check if a value is within a percentage of the expected value
  * @param {number} value
  * @param {number} expected
  * @param {number} epsilon A percentage between 0 and 100
@@ -1440,7 +1440,7 @@ function epsilonCheck(value, expected, epsilon) {
 async function testIMDBSeriesEpisodes() {
   const testResult = {
     name: "IMDB Series Episodes",
-    functionName: "textIMDBSeriesEpisodes",
+    functionName: "testIMDBSeriesEpisodes",
     status: status.SUCCESS,
     log: [],
   };
@@ -1580,6 +1580,81 @@ async function testIMDBSeriesEpisodes() {
   return testResult;
 }
 
+async function testIMDBSeriesSeasons() {
+  const testResult = {
+    name: "IMDB Series Seasons",
+    functionName: "testIMDBSeriesSeasons",
+    status: status.SUCCESS,
+    log: [],
+  };
+
+  try {
+    const expected = [
+      {
+        name: "Adventure Time",
+        Series_IMDB_tconst: "tt1305826",
+        seasons: [
+          { season: "1", seasonDisplayText: "Season 1" },
+          { season: "2", seasonDisplayText: "Season 2" },
+          { season: "3", seasonDisplayText: "Season 3" },
+          { season: "4", seasonDisplayText: "Season 4" },
+          { season: "5", seasonDisplayText: "Season 5" },
+          { season: "6", seasonDisplayText: "Season 6" },
+          { season: "7", seasonDisplayText: "Season 7" },
+          { season: "8", seasonDisplayText: "Season 8" },
+          { season: "9", seasonDisplayText: "Season 9" },
+          { season: "10", seasonDisplayText: "Season 10" },
+          {
+            season: "unknown",
+            seasonDisplayText: "Extras / Specials / Unknown",
+          },
+        ],
+      },
+    ];
+
+    for (let i = 0; i < expected.length; i++) {
+      const expectedValue = expected[i];
+
+      const scrapeResult = await imdbScraper.scrapeIMDBSeriesSeasons(expectedValue.Series_IMDB_tconst);
+
+      console.log(scrapeResult);
+
+      if (!scrapeResult) {
+        addSubLogEntry(testResult, `query '${expectedValue.name} Seasons' no response`, status.ERROR);
+        return testResult;
+      }
+
+      if (scrapeResult.length === 0) {
+        addSubLogEntry(testResult, `query '${expectedValue.name} Seasons' results missing`, status.ERROR);
+        return testResult;
+      }
+
+      if (scrapeResult.length !== expectedValue.seasons.length) {
+        addSubLogEntry(
+          testResult,
+          `query '${expectedValue.name} Seasons' results count mismatch
+                      got:      ${scrapeResult.length} seasons
+                      expected: ${expectedValue.seasons.length} seasons`,
+          status.WARNING
+        );
+      }
+
+      performDefaultCheck(
+        { seasons: scrapeResult },
+        expectedValue,
+        testResult,
+        "seasons",
+        `query '${expectedValue.name} Seasons'`
+      );
+    }
+  } catch (error) {
+    testResult.status = status.EXCEPTION;
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+  }
+
+  return testResult;
+}
+
 export {
   testIMDBmainPageData,
   testIMDBmainPageData2,
@@ -1602,5 +1677,6 @@ export {
   testIMDBAdvancedTitleSearch,
   testIMDBFindPageSearch,
   testIMDBSeriesEpisodes,
+  testIMDBSeriesSeasons,
   status,
 };

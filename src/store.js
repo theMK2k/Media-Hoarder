@@ -315,7 +315,14 @@ async function rescanItems(mediaItems, $t) {
 
     await applyMediaInfo(mediaItem, false);
 
-    await assignIMDB(mediaItem.id_Movies, mediaItem.IMDB_tconst, null, mediaItem, $t);
+    await assignIMDB({
+      $id_Movies: mediaItem.id_Movies,
+      $IMDB_tconst: mediaItem.IMDB_tconst,
+      isHandlingDuplicates: null,
+      mediaItem,
+      $t,
+      isIMDB_tconst_userDefined: false,
+    });
 
     rescanETA.endTime = new Date().getTime();
     rescanETA.elapsedMS += rescanETA.endTime - rescanETA.startTime;
@@ -2866,6 +2873,16 @@ async function deleteIMDBData(mediaItem) {
   await db.fireProcedure("UPDATE tbl_Movies SET isUnlinkedIMDB = 1 WHERE id_Movies = $id_Movies", {
     $id_Movies,
   });
+
+  // remove possible |IMDB_tconst| from DefinedByUser
+  if (movie.DefinedByUser && movie.DefinedByUser.includes("|IMDB_tconst|")) {
+    const definedByUser = getFieldsDefinedByUser(movie.DefinedByUser);
+    definedByUser.splice(definedByUser.indexOf("IMDB_tconst"), 1);
+    await db.fireProcedure("UPDATE tbl_Movies SET DefinedByUser = $DefinedByUser WHERE id_Movies = $id_Movies", {
+      $id_Movies,
+      $DefinedByUser: getDefinedByUserStringFromFields(definedByUser),
+    });
+  }
 }
 
 async function saveIMDBData(movie, imdbData) {
@@ -4123,6 +4140,7 @@ async function fetchMedia({
       , MOV.Series_Num_Seasons
       , MOV.Series_Num_Episodes
       , MOV.Series_Episodes_Complete
+      , MOV.DefinedByUser
 
       ${
         minimumResultSet
@@ -6527,8 +6545,27 @@ async function deleteFilterCompany($id_Filter_Companies) {
   );
 }
 
-async function assignIMDB($id_Movies, $IMDB_tconst, isHandlingDuplicates, mediaItem, $t) {
+async function assignIMDB({
+  $id_Movies,
+  $IMDB_tconst,
+  isHandlingDuplicates,
+  mediaItem,
+  $t,
+  isIMDB_tconst_userDefined,
+}) {
   logger.log("[assignIMDB] $id_Movies:", $id_Movies, "$IMDB_tconst:", $IMDB_tconst, "mediaItem:", mediaItem);
+
+  if ($IMDB_tconst && isIMDB_tconst_userDefined) {
+    // user has defined the IMDB_tconst, set it in DefinedByUser fields
+    const definedByUser = await fetchMovieFieldsDefinedByUser($id_Movies);
+    if (!definedByUser.find((dbu) => dbu.Field === "IMDB_tconst")) {
+      definedByUser.push("IMDB_tconst");
+      await db.fireProcedure(`UPDATE tbl_Movies SET DefinedByUser = $DefinedByUser WHERE id_Movies = $id_Movies`, {
+        $id_Movies,
+        $DefinedByUser: getDefinedByUserStringFromFields(definedByUser),
+      });
+    }
+  }
 
   if (!$IMDB_tconst && mediaItem) {
     $IMDB_tconst = await findIMDBtconst({
@@ -6558,7 +6595,14 @@ async function assignIMDB($id_Movies, $IMDB_tconst, isHandlingDuplicates, mediaI
   const duplicates = await getMovieDuplicates($id_Movies, shared.duplicatesHandling.actualDuplicate.relinkIMDB, false);
 
   for (let i = 0; i < duplicates.length; i++) {
-    await assignIMDB(duplicates[i], $IMDB_tconst, true, null, $t);
+    await assignIMDB({
+      $id_Movies: duplicates[i],
+      $IMDB_tconst,
+      isHandlingDuplicates: true,
+      mediaItem: null,
+      $t,
+      isIMDB_tconst_userDefined,
+    });
   }
 }
 
@@ -8019,8 +8063,30 @@ async function fetchMovieFieldsDefinedByUser($id_Movies) {
   return getFieldsDefinedByUser(definedByUser);
 }
 
+/**
+ * Get fields that have been defined by the user as an array
+ * @param {*} definedByUserString a string like "|field1|,|field2|"
+ * @returns an array like ["field1", "field2"]
+ */
 function getFieldsDefinedByUser(definedByUserString) {
-  return !definedByUserString ? [] : definedByUserString.split(",").map((item) => item.match(/^\|(.*?)\|/)[1]);
+  if (!definedByUserString) {
+    return [];
+  }
+
+  return definedByUserString.split(",").map((item) => item.match(/^\|(.*?)\|/)[1]);
+}
+
+/**
+ * convert an array of fields to a DefinedByUser string for tbl_Movies
+ * @param {*} fields
+ * @returns
+ */
+function getDefinedByUserStringFromFields(fields) {
+  if (!fields) {
+    return null;
+  }
+
+  return fields.map((item) => `|${item}|`).join(",");
 }
 
 /**
@@ -8571,6 +8637,7 @@ export {
   updateMovieReleaseAttribues,
   fetchMovieFieldsDefinedByUser,
   getFieldsDefinedByUser,
+  getDefinedByUserStringFromFields,
   deleteIMDBData,
   saveFilterGroups,
   applyMediaInfo,
