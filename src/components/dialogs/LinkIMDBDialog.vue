@@ -110,6 +110,7 @@
                       <v-list-item-subtitle v-if="item.detailInfo" style="margin-top: -8px; margin-bottom: 4px">{{
                         item.detailInfo
                       }}</v-list-item-subtitle>
+                      <v-list-item-subtitle> {{ `${$t("IMDB ID")}:` }} {{ item.tconst }} </v-list-item-subtitle>
 
                       <v-row style="margin-top: 8px">
                         <v-btn
@@ -338,6 +339,8 @@ export default {
       this.isLinking = true;
 
       this.$emit("selected", item.tconst);
+
+      this.$emit("close");
     },
 
     onUnlinkClick() {

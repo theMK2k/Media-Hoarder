@@ -3,7 +3,7 @@
  *
  * Database interface and functions for sqlite access and management
  */
-const LOG_ALL_DB = true; // set to true to log all db queries
+const LOG_ALL_DB = false; // set to true to log all db queries
 const logger = require("./logger");
 const fs = require("fs");
 const sqlite3 = require("sqlite3").verbose();

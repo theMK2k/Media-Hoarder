@@ -1904,11 +1904,10 @@ async function scrapeIMDBFind(searchTerm, type) {
 /**
  * GraphQL based find page search, supports Unicode!
  * @param {*} title
- * @param {*} titleTypes
  * @returns
  */
-async function scrapeIMDBFindPageSearchV3(title, titleTypes) {
-  logger.log("[scrapeIMDBFindPageSearchV3] START", { title, titleTypes });
+async function scrapeIMDBFindPageSearchV3(title) {
+  logger.log("[scrapeIMDBFindPageSearchV3] START", { title });
 
   try {
     const uri = graphQLqueries.findPageSearch(title);
@@ -1927,7 +1926,11 @@ async function scrapeIMDBFindPageSearchV3(title, titleTypes) {
             return {
               type: _.get(edge.node, "entity.__typename", null),
               tconst: _.get(edge.node, "entity.id", null),
-              title: _.get(edge.node, "entity.titleText.text", null),
+              title: `${_.get(edge.node, "entity.titleText.text", "")}${
+                _.get(edge.node, "entity.titleType.displayableProperty.value.plainText")
+                  ? ` (${_.get(edge.node, "entity.titleType.displayableProperty.value.plainText")})`
+                  : ""
+              }`,
               year: _.get(edge.node, "entity.releaseYear.year", null),
               imageURL: _.get(edge.node, "entity.primaryImage.url", null),
               ageRating: null,

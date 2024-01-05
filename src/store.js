@@ -948,6 +948,10 @@ async function filescanSeries(onlyNew, $t) {
 
       eventBus.scanInfoShow(currentScanInfoHeader, "");
 
+      if (!fs.existsSync(seriesSourcePath.Path)) {
+        logger.log("[filescanSeries] seriesSourcePath does not exist, skipping:", seriesSourcePath.Path);
+      }
+
       const seriesDirs = (await listPath(seriesSourcePath.Path, seriesSourcePath.Path)).filter(
         (item) => item.isDirectory
       );
@@ -1017,7 +1021,6 @@ async function filescanSeries(onlyNew, $t) {
     logger.log("[filescanSeries] END");
   } catch (err) {
     logger.log("[filescanSeries] ERROR:", err);
-    throw err;
   } finally {
     eventBus.setProgressBar(-1); // off
   }
@@ -1031,7 +1034,7 @@ async function filescanSeries(onlyNew, $t) {
  * @returns {Promise} { isAdded, series_id_Movies (the id of the inserted or existing series entry in tbl_Movies)
  */
 async function upsertSeries(seriesSourcePath, seriesDirectory, seriesHave) {
-  logger.log("[upsertSeries] pathItem.fullPath:", seriesDirectory.fullPath);
+  logger.log("[upsertSeries] START", { seriesSourcePath, seriesDirectory, seriesHave });
 
   const seriesHaveItem = seriesHave.find((have) => have.fullPathLower === seriesDirectory.fullPathLower);
 
@@ -1047,7 +1050,7 @@ async function upsertSeries(seriesSourcePath, seriesDirectory, seriesHave) {
   // currentScanInfoHeader
   eventBus.scanInfoShow(currentScanInfoHeader, `adding ${seriesDirectory.Name}`);
 
-  const $Name = helpers.getMovieNameFromDirectory(seriesDirectory.fullDirectory);
+  const $Name = helpers.getMovieNameFromDirectory(seriesDirectory.fullPath);
 
   logger.log("[upsertSeries] $Name:", $Name);
 
@@ -1829,7 +1832,7 @@ async function applyMetaData(onlyNew, id_Movies) {
  * @param {Object} $t i18n instance
  */
 async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t, resetRescanETA) {
-  // NOTE: if WHERE clause gets enhanced, please also enhance the code below "Filter movies that only have..."
+  // NOTE: if WHERE clause gets enhanced, please also enhance the code below "Filter mediaItems that only have..."
   const query = `
   SELECT
     MOV.id_Movies
@@ -2227,9 +2230,7 @@ async function findIMDBtconst({
     return mediaItem.IMDB_tconst;
   }
 
-  // TODO: Episode - fetch series' IMDB_tconst and use it for the episode
-
-  const isMovie = mediaItem.MediaType === "movie";
+  const isMovie = mediaItem.MediaType === "movies";
   const isSeries = mediaItem.MediaType === "series" && !mediaItem.Series_id_Movies_Owner;
   const isSeriesEpisode = !!(mediaItem.MediaType === "series" && mediaItem.Series_id_Movies_Owner);
 
@@ -2263,70 +2264,73 @@ async function findIMDBtconst({
     let tconstIncluded = "";
     let tconst = "";
 
-    if (isSeriesEpisode) {
+    // find tconst by duplicate
+    if (!tconst && shared.duplicatesHandling.actualDuplicate.relinkIMDB) {
+      logger.log("[findIMDBtconst] trying by duplicate");
+      const actualDuplicates = await getMovieDuplicates(mediaItem.id_Movies, true, false, true);
+      const actualDuplicate =
+        actualDuplicates.length > 0
+          ? (
+              await db.fireProcedureReturnAll("SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies", {
+                $id_Movies: actualDuplicates[0],
+              })
+            )[0]
+          : null;
+
+      if (actualDuplicate && actualDuplicate.IMDB_tconst) {
+        tconst = actualDuplicate.IMDB_tconst;
+        logger.log("[findIMDBtconst] trying by duplicate - FOUND!");
+      }
+    }
+
+    if (!tconst) {
+      // tconst not found yet, maybe it's included in the file/directory name
+      logger.log("[findIMDBtconst] checking for file/directory name inclusion");
+      tconstIncluded = await findIMDBtconstIncluded(mediaItem);
+      if (!shared.scanOptions.rescanMoviesMetaData_findIMDBtconst_ignore_tconst_in_filename) {
+        tconst = tconstIncluded;
+      }
+    }
+
+    if (!tconst && isSeriesEpisode) {
+      // tconst not found yet, in case of a series episode, we can determine it from the series' IMDB tconst and the episode's season and episode number
       logger.log("[findIMDBtconst] this is a series episode, calling findSeriesEpisodeIMDBtconst");
       tconst = await findSeriesEpisodeIMDBtconst(mediaItem, onlyNew, $t);
-    } else {
-      // find tconst by duplicate
-      if (!tconst && shared.duplicatesHandling.actualDuplicate.relinkIMDB) {
-        logger.log("[findIMDBtconst] trying by duplicate");
-        const actualDuplicates = await getMovieDuplicates(mediaItem.id_Movies, true, false, true);
-        const actualDuplicate =
-          actualDuplicates.length > 0
-            ? (
-                await db.fireProcedureReturnAll("SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies", {
-                  $id_Movies: actualDuplicates[0],
-                })
-              )[0]
-            : null;
+    }
 
-        if (actualDuplicate && actualDuplicate.IMDB_tconst) {
-          tconst = actualDuplicate.IMDB_tconst;
-          logger.log("[findIMDBtconst] trying by duplicate - FOUND!");
-        }
+    if (!tconst && !isSeriesEpisode) {
+      // tconst not found yet, try to find it in the .nfo file (if it exists), unlikely for a series episode as in 99% of the cases, the series' IMDB tconst is included in the .nfo
+      logger.log("[findIMDBtconst] checking for .nfo file content");
+      const tconstByNFO = await findIMDBtconstInNFO(mediaItem);
+
+      if (tconstByNFO) {
+        tconst = tconstByNFO;
       }
+    }
 
-      if (!tconst) {
-        // tconst not found yet, maybe it's included in the file/directory name
-        logger.log("[findIMDBtconst] checking for file/directory name inclusion");
-        tconstIncluded = await findIMDBtconstIncluded(mediaItem);
-        if (!shared.scanOptions.rescanMoviesMetaData_findIMDBtconst_ignore_tconst_in_filename) {
-          tconst = tconstIncluded;
-        }
-      }
+    if (!tconst && !isSeriesEpisode) {
+      // tconst not found yet, try to find it by searching imdb from the file/directory name
+      logger.log("[findIMDBtconst] using file/directory name (search)");
+      logger.log("[findIMDBtconst] movie:", mediaItem);
+      tconst = await findIMDBtconstByFileOrDirname(mediaItem, {
+        returnAnalysisData: false,
+        category: "title",
+        excludeTVSeries: isMovie,
+      });
 
-      if (!tconst) {
-        // tconst not found yet, try to find it in the .nfo file (if it exists)
-        logger.log("[findIMDBtconst] checking for .nfo file content");
-        const tconstByNFO = await findIMDBtconstInNFO(mediaItem);
-
-        if (tconstByNFO) {
-          tconst = tconstByNFO;
-        }
-      }
-
-      if (!tconst) {
-        // tconst not found yet, try to find it by searching imdb from the file/directory name
-        logger.log("[findIMDBtconst] using file/directory name (search)");
-        logger.log("[findIMDBtconst] movie:", mediaItem);
-        tconst = await findIMDBtconstByFileOrDirname(mediaItem, {
-          returnAnalysisData: false,
-          category: "title",
-          excludeTVSeries: true,
-        });
-
-        if (shared.scanOptions.rescanMoviesMetaData_findIMDBtconst_ignore_tconst_in_filename) {
-          // compare tconst from IMDB search with included tconst
-          if (tconstIncluded && tconst) {
-            if (tconstIncluded !== tconst) {
-              logger.log(`[findIMDBtconst] tconst compare;mismatch;${tconst};${tconstIncluded};${mediaItem.Filename}`);
-            } else {
-              logger.log(`[findIMDBtconst] tconst compare;match;${tconst};${tconstIncluded};${mediaItem.Filename}`);
-            }
+      if (shared.scanOptions.rescanMoviesMetaData_findIMDBtconst_ignore_tconst_in_filename) {
+        // compare tconst from IMDB search with included tconst
+        if (tconstIncluded && tconst) {
+          if (tconstIncluded !== tconst) {
+            logger.log(`[findIMDBtconst] tconst compare;mismatch;${tconst};${tconstIncluded};${mediaItem.Filename}`);
+          } else {
+            logger.log(`[findIMDBtconst] tconst compare;match;${tconst};${tconstIncluded};${mediaItem.Filename}`);
           }
         }
       }
     }
+
+    // TODO: we need a more sophisticated method in the case of series episode (work with series IMDB, search within its episodes)
 
     if (tconst) {
       logger.log("[findIMDBtconst] tconst found, storing at mediaItem in tbl_Movies:", tconst);
@@ -2773,19 +2777,26 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
 
 /**
  * Removes all IMDB Data from a certain movie
- * @param {String} $id_Movies
+ * @param {Object} mediaItem
  */
-async function deleteIMDBData($id_Movies) {
+async function deleteIMDBData(mediaItem) {
+  logger.log("[deleteIMDBData] mediaItem:", mediaItem);
+
+  const $id_Movies = mediaItem.id_Movies;
+
   const rowsMovie = await db.fireProcedureReturnAll(
     `SELECT
-      MOV.*
-      , SP.Path AS SourcePath
-    FROM tbl_Movies MOV
-    INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
-    WHERE id_Movies = $id_Movies`,
-    { $id_Movies }
+        MOV.*
+        , SP.Path AS SourcePath
+      FROM tbl_Movies MOV
+      INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+      WHERE id_Movies = $id_Movies`,
+    { $id_Movies: mediaItem.id_Movies }
   );
-  const movie = rowsMovie[0];
+  const movie = Object.assign({}, rowsMovie[0], {
+    specificMediaType: mediaItem.specificMediaType,
+    fullPath: mediaItem.fullPath,
+  });
 
   logger.log("[deleteIMDBData] movie:", movie);
 
@@ -2800,12 +2811,16 @@ async function deleteIMDBData($id_Movies) {
 
   const sqlMoviesIMDBCols = `UPDATE tbl_Movies SET scanErrors = NULL, ${colsMovieIMDB} WHERE id_Movies = $id_Movies`;
   logger.log("[deleteIMDBData] sqlMoviesIMDBCols:", sqlMoviesIMDBCols);
+  logger.log("[deleteIMDBData] movie.specificMediaType:", movie.specificMediaType);
   await db.fireProcedure(sqlMoviesIMDBCols, { $id_Movies });
 
   if (!movie.DefinedByUser.includes("|Name|")) {
-    const $Name = movie.isDirectoryBased
-      ? helpers.getMovieNameFromDirectory(path.join(movie.SourcePath, movie.RelativeDirectory))
-      : helpers.getMovieNameFromFileName(movie.Filename);
+    const $Name =
+      movie.specificMediaType == "Series"
+        ? helpers.getMovieNameFromDirectory(movie.fullPath)
+        : movie.isDirectoryBased
+        ? helpers.getMovieNameFromDirectory(path.join(movie.SourcePath, movie.RelativeDirectory))
+        : helpers.getMovieNameFromFileName(movie.Filename);
 
     const sqlMovieName = `UPDATE tbl_Movies SET Name = $Name WHERE id_Movies = $id_Movies`;
     logger.log("[deleteIMDBData] sqlMovieNames $Name:", $Name, "sqlMovieNames:", sqlMovieName);
@@ -2836,13 +2851,21 @@ async function deleteIMDBData($id_Movies) {
     await db.fireProcedure(sqlMoviesGenres, { $id_Movies });
   }
 
-  await db.fireProcedure("DELETE FROM tbl_Movies_IMDB_Companies WHERE id_Movies = $id_Movies", { $id_Movies });
+  await db.fireProcedure("DELETE FROM tbl_Movies_IMDB_Companies WHERE id_Movies = $id_Movies", {
+    $id_Movies,
+  });
   await db.fireProcedure("DELETE FROM tbl_Movies_IMDB_Credits WHERE id_Movies = $id_Movies", { $id_Movies });
-  await db.fireProcedure("DELETE FROM tbl_Movies_IMDB_Filming_Locations WHERE id_Movies = $id_Movies", { $id_Movies });
-  await db.fireProcedure("DELETE FROM tbl_Movies_IMDB_Plot_Keywords WHERE id_Movies = $id_Movies", { $id_Movies });
+  await db.fireProcedure("DELETE FROM tbl_Movies_IMDB_Filming_Locations WHERE id_Movies = $id_Movies", {
+    $id_Movies,
+  });
+  await db.fireProcedure("DELETE FROM tbl_Movies_IMDB_Plot_Keywords WHERE id_Movies = $id_Movies", {
+    $id_Movies,
+  });
 
   // mark as "isUnlinkedIMDB" to prevent rescan doing a tconst detection
-  await db.fireProcedure("UPDATE tbl_Movies SET isUnlinkedIMDB = 1 WHERE id_Movies = $id_Movies", { $id_Movies });
+  await db.fireProcedure("UPDATE tbl_Movies SET isUnlinkedIMDB = 1 WHERE id_Movies = $id_Movies", {
+    $id_Movies,
+  });
 }
 
 async function saveIMDBData(movie, imdbData) {

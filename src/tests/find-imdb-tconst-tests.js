@@ -14,21 +14,28 @@ const cmdArguments = minimist(process.argv.slice(2));
 const config = {
   name: cmdArguments.name,
   batch: cmdArguments.batch,
+  mediatype: cmdArguments.mediatype,
   duration: cmdArguments.duration ? parseInt(cmdArguments.duration) : null,
 };
 
-logger.setLevel(0);
+logger.setLevel(2);
 
 logger.info("Syntax: find-imdb-tconst-tests [options]");
 logger.info("");
 logger.info("options:");
-logger.info("         --name=<name>        find IMDB tconst for a single name");
+logger.info("         --name=<name>           find IMDB tconst for a single name");
 logger.info(
-  "         --batch=<file.txt>   find IMDB tconst for multiple names defined in file.txt (also do a statistical analysis)"
+  "         --batch=<file.txt>      find IMDB tconst for multiple names defined in file.txt (also do a statistical analysis)"
 );
-logger.info("         --duration=<seconds> provide a duration in seconds for the movie");
+logger.info("         --mediatype=<mediatype> define the media type ('movies' or 'series')");
+logger.info("         --duration=<seconds>    provide a duration in seconds for the movie");
 
 logger.info(config);
+
+if (!config.mediatype) {
+  logger.error("mediatype is missing!");
+  process.exit(0);
+}
 
 (async () => {
   if (config.name) {
@@ -36,14 +43,18 @@ logger.info(config);
       isDirectoryBased: false,
       Filename: config.name,
       MI_Duration_Seconds: config.duration,
+      MediaType: config.mediatype,
     };
+
     const options = {
       returnAnalysisData: true,
       category: "title",
-      excludeTVSeries: true,
+      excludeTVSeries: config.mediatype == "movies",
     };
+
     const tconstIncluded = await findIMDBtconst.findIMDBtconstIncluded(movie);
     const stats = await findIMDBtconst.findIMDBtconstByFileOrDirname(movie, options);
+
     stats.tconstIncluded = tconstIncluded;
 
     stats.isTconstCorrect = tconstIncluded == (stats.result ? stats.result.tconst : "<none>");
@@ -59,7 +70,7 @@ logger.info(config);
 
 async function benchmark(filePath) {
   if (!filePath) {
-    return logger.error(`filePath is missing!`);
+    return logger.error(`filePath is missing, use the --batch parameter!`);
   }
 
   const fileContent = await (await readFileAsync(filePath)).toString().split("\n");
@@ -106,7 +117,7 @@ async function benchmark(filePath) {
         stats = await findIMDBtconst.findIMDBtconstByFileOrDirname(movie, {
           returnAnalysisData: true,
           category: "title",
-          excludeTVSeries: true,
+          excludeTVSeries: movie.MediaType == "movies",
         });
       }
 

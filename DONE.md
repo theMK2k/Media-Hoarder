@@ -1,5 +1,11 @@
 # DONE
 
+## v1.3.37-a3
+
+- [x] use tt\* in the filename to override the tconst of an episode
+
+## v1.3.37-a2
+
 ## v1.3.37-a (later: v1.4.0)
 
 - [x] Windows: update bundled VLC to 3.0.20
@@ -11,6 +17,11 @@
 - [x] bugfix: store.mergeExtraFileBased 713 TypeError: Cannot read property 'length' of undefined
 - [x] bugfix: delete series actually deleted the source path
 - [x] bugfix: in Series, where Video Quality filter resets from "ALL" to some being checked just by switching back and forth (series <> episodes)
+- [x] create a test set with series name and year (see: <https://github.com/theMK2k/media-hoarder-testset-generator>)
+  - [x] enumerate series names
+  - [x] enumerate episodes for each series
+  - [x] benchmark series name detection (success: 98% hits on 1799 english series names)
+  - [x] also benchmark the english movies test set
 
 ### TV Series Support (MVP)
 

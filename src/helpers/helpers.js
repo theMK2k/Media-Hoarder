@@ -163,6 +163,8 @@ function getMovieNameFromDirectory(directory) {
     lastDirectory = lastDirectory.replace(/\s\s/g, " ");
   }
 
+  logger.log("[getMovieNameFromDirectory] lastDirectory:", lastDirectory);
+
   return lastDirectory;
 }
 

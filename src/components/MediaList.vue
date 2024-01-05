@@ -1684,7 +1684,7 @@ export default {
       {
         Field: "IMDB_metacriticScore",
         Description: "Metacritic Score",
-        specificMediaType: ["Movies", "Series", "Episodes"],
+        specificMediaType: ["Movies"],
       },
       {
         Field: "Rating",
@@ -3226,7 +3226,26 @@ export default {
       try {
         store.resetUserScanOptions();
 
-        await store.deleteIMDBData(this.linkIMDBDialog.item.id_Movies);
+        await store.deleteIMDBData(this.linkIMDBDialog.item);
+
+        if (this.linkIMDBDialog.item.specificMediaType === "Series") {
+          // unlink all episodes
+          const episodes = await store.fetchMedia({
+            $MediaType: "series",
+            Series_id_Movies_Owner: this.linkIMDBDialog.item.id_Movies,
+            $t: this.$local_t,
+            filters: { filterSettings: {} },
+            arr_IMDB_tconst: null,
+            arr_id_Movies: null,
+            minimumResultSet: false,
+            specificMediaType: "Episodes",
+            dontStoreFilters: true,
+          });
+
+          for (const episode of episodes) {
+            await store.deleteIMDBData(episode);
+          }
+        }
 
         eventBus.refetchMedia(this.$shared.currentPage);
 
@@ -3534,18 +3553,16 @@ export default {
           if (await this.checkPathExistence(this.deleteMediaDialog.location, checkRemovedFiles)) {
             logger.log("[onDeleteMediaDialogYes] deleting directory:", this.deleteMediaDialog.location);
 
-            // KILLME
-            // await fs.rm(this.deleteMediaDialog.location, {
-            //   recursive: true,
-            //   force: true,
-            // });
+            await fs.rm(this.deleteMediaDialog.location, {
+              recursive: true,
+              force: true,
+            });
           }
         } else {
           if (await this.checkPathExistence(this.deleteMediaDialog.location, checkRemovedFiles)) {
             logger.log("[onDeleteMediaDialogYes] deleting file:", this.deleteMediaDialog.location);
 
-            // KILLME
-            // await fs.rm(this.deleteMediaDialog.location);
+            await fs.rm(this.deleteMediaDialog.location);
           }
         }
 

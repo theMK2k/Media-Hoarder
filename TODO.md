@@ -4,10 +4,55 @@
 
 ## NEXT Major (v1.4.0)
 
-- [ ] re-link imdb for series and episodes
-  - [ ] for episodes:
-    - [ ] provide all entries for the current series (Series_id_Movies_Owner's IMDB_tconst)
-    - [ ] allow a fallback to standard imdb search
+### Series: scanning
+
+- [ ] BUG: medialist for series does not reload after rescan
+- [ ] BUG: series and the series being directory based leads to errors:
+  - [ ] unlink IMDB leads to the series being called "Series" and not the name of the series derived from the directory
+  - [x] during scan (before imdb metadata retrieval) a series is only shown as "Series"
+- [ ] BUG: subtitles in .rar files are added to the media list
+- [ ] if season is unknown or episode number not set: try to find the imdb tconst by comparing names
+  - [ ] store.findIMDBtconst: series episode find by name
+- [ ] Defect: rescanning a specific series does not run mediainfo on its episodes
+- [ ] check "rescan" for possible double scanning / meta data retrieval
+- [ ] BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
+- [ ] revisit the rescan summary (the numbers are mostly wrong)
+- [ ] rescanHandleDuplicates (also provide snackbar progress for this)
+- [ ] investigate with series-generator: find possible multitudes of episode numbers (also: episode == null)
+  - [ ] if this is the case: we need a better getSeriesEpisodeTconstFromCache, possibly by utilizing levenshtein between filename and imdb's episode title
+- [ ] Fix: subdirectory called "extras" is not assigned to the main movie (the files are provided as main movies themselves)
+- add ffmpeg in order to create screenshots for movies/episodes with missing poster
+- [ ] check tconst detection with movies, too (we changed some fullDirectory to fullPath)
+- [ ] findIMDBtconst for episodes:
+  - [x] tt* override
+  - [x] by season and episode numbers
+  - [ ] by name
+
+### Series: Link IMDB Dialog
+
+- [x] unlink IMDB on series: also unlink all episodes
+- [ ] for episodes:
+  - [WIP] provide all entries for the current series (Series_id_Movies_Owner's IMDB_tconst)
+    - [ ] new imdb scraper: scrapeSeriesSeasons(tconst) -> `https://www.imdb.com/title/tt0206512/episodes/` -> dropdown
+  - [ ] allow a fallback to standard imdb search
+
+### Series: Edit Media Dialog
+
+- [ ] tbl_Movies_MI_Qualities: also use for editing the series entry
+- Allow user to define audio / subtitle languages
+- Allow user to upload a poster of their liking
+
+### Series: Delete Media Dialog
+
+- [ ] MediaList: onDeleteMediaDialogYes: also delete series and episodes properly
+
+### Series: create IMDB rating heatmap
+
+- [ ] IMDB Rating heatmap like <https://whattowatchon.tv>
+
+### Misc
+
+- [ ] BUG: series in dialog always show yearStart
 - [ ] store.saveFilterValues still works with MediaType and not SpecificMediaType
 - [ ] investigate everything that still works with MediaType (and possibly should also use SpecificMediaType)
 - [ ] we apparently do not use the timezone (we store in UTC)
@@ -18,37 +63,11 @@
   - ERROR:
     - (new) mediainfo without result (possibly due to max path length exceeded)
 - [ ] add ScanErrors functionality in applyMediaInfo (mediainfo may fail on exceeding 259 chars paths)
-
-- [ ] MediaList: onDeleteMediaDialogYes: also delete series and episodes properly
-- [ ] i18n: rescan finished snackbar
-- [ ] refactor buildINSERTQuery, buildUDPATEQuery to accept only one object
-- [ ] check "rescan" for possible double scanning / meta data retrieval
 - [ ] investigate the errors of a bigger rescan:
   - [ ] store.js:2199 Error: Command failed: "c:\Apps\Video\MediaInfo CLI\MediaInfo.exe" --Output=XML "... a too long path exceeding 259 characters..."
-
-### TV Series Support (MVP)
-
-- [ ] S01E00 not recognized?
-- [ ] in Series section: provide default sort order "Season+Episode", as page hint use "Sxx.Eyy"
-- [ ] BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
-- [ ] tbl_Movies_MI_Qualities: also use for editing the series entry
-- [ ] rescanning a specific series does not run mediainfo on its episodes
-
-- [ ] revisit the rescan summary (the numbers are mostly wrong)
-- [ ] when detecting IMDB tconst for a series, prefer imdb type "tv series", "tv movie" over "movie" and others
-- [ ] create a test set with series name and year
-- [ ] check tconst detection with movies, too (we changed some fullDirectory to fullPath)
-- [ ] IMDB Rating heatmap like <https://whattowatchon.tv>
-- [ ] update 01-Media-Storage.md about aspects of tv series in Media Hoarder, link to it (github) from the history markdown
-- [ ] rescanHandleDuplicates (also provide snackbar progress for this)
-- [ ] investigate with series-generator: find possible multitudes of episode numbers (also: episode == null)
-  - [ ] if this is the case: we need a better getSeriesEpisodeTconstFromCache, possibly by utilizing levenshtein between filename and imdb's episode title
-
-## NEXT Minor (current v1.4.0)
-
+- [ ] i18n: rescan finished snackbar
+- [ ] refactor buildINSERTQuery, buildUDPATEQuery to accept only one object
 - [ ] use imdb-graphql-urls.json (also try to fetch them from master in github, this way we can update the urls if imdb changes them - without creating a new release)
-- [ ] Fix: subdirectory called "extras" is not assigned to the main movie (the files are provided as main movies themselves)
-
 - [ ] Trailer Show - trailer dialog is open, when adding to list the scrollbar appears on the side, also the trailer dialog seems to wiggle a bit when the add-to-list dialog closes
 - [ ] IMDB Scraper: analyze video URLs in "Videos" section and find a better suited Trailer URL than the one primarily shown in the main page (which is oftentimes an IMDB special)
 
@@ -57,14 +76,11 @@
     - <https://www.imdb.com/title/tt4154796/videogallery/content_type-trailer/?sortDir=desc&sort=duration>
     - the trailers are also labeled!
 
-- edit movie: define audio / subtitle languages
-- add ffmpeg in order to create screenshots for movies/episodes with missing poster
+### Series: Documentation
+
+- [ ] update 01-Media-Storage.md about aspects of tv series in Media Hoarder, link to it (github) from the history markdown
 
 ### Defects
-
-- nothing
-
-### Other
 
 - nothing
 

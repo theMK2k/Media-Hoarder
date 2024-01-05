@@ -90,7 +90,7 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
     options = {
       returnAnalysisData: false,
       category: "title",
-      excludeTVSeries: true, // filters out all titles containing "(TV Series)" in the title, still includes "(TV Mini Series)"
+      excludeTVSeries: true, // filters out all titles containing "(TV Series)" and "(TV Episode)" in the title, still includes "(TV Mini Series)"
     };
   }
 

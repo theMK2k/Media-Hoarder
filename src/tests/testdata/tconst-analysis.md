@@ -27,6 +27,15 @@ All test sets below have 7,576 entries if not otherwise stated.
   - result_title.(TV Series): 80 (35%)    REQ: [x] optionally filter "TV Series" (this excludes TV Series and Episodes but not TV Mini Series, which is good!)
   - result_title.(TV Episode): 34 (15%)
 
+## Analysis of tconst-series-01-english-full
+
+- Total: 1799
+- Hits: 1763 (98%)
+  - choiceType optimum|immediateOptimum: 12 (1%)
+  - choiceType optimum|year(exact): 243 (14%)
+  - choiceType optimum|year(exact)|runtime: 1508 (84%)
+- Misses: 36 (2%)
+
 ## Analysis of new features
 
 ### Use category (title)
