@@ -3570,21 +3570,13 @@ export default {
           }
         }
 
-        if (this.deleteMediaDialog.item.isDirectoryBased) {
-          if (await this.checkPathExistence(this.deleteMediaDialog.location, checkRemovedFiles)) {
-            logger.log("[onDeleteMediaDialogYes] deleting directory:", this.deleteMediaDialog.location);
+        if (await this.checkPathExistence(this.deleteMediaDialog.location, checkRemovedFiles)) {
+          logger.log("[onDeleteMediaDialogYes] deleting:", this.deleteMediaDialog.location);
 
-            await fs.rm(this.deleteMediaDialog.location, {
-              recursive: true,
-              force: true,
-            });
-          }
-        } else {
-          if (await this.checkPathExistence(this.deleteMediaDialog.location, checkRemovedFiles)) {
-            logger.log("[onDeleteMediaDialogYes] deleting file:", this.deleteMediaDialog.location);
-
-            await fs.rm(this.deleteMediaDialog.location);
-          }
+          await fs.rm(this.deleteMediaDialog.location, {
+            recursive: true,
+            force: true,
+          });
         }
 
         // remove media entries from DB (use isRemoved?)
@@ -3622,11 +3614,7 @@ export default {
 
     async onDeleteMediaDialogOK() {
       // open storage location based on item.isDirectoryBased
-      if (this.deleteMediaDialog.item.isDirectoryBased) {
-        shell.showItemInFolder(this.deleteMediaDialog.item.fullDirectory);
-      } else {
-        shell.showItemInFolder(this.deleteMediaDialog.item.fullPath);
-      }
+      shell.showItemInFolder(this.deleteMediaDialog.location);
     },
 
     async onDeleteMediaDialogCancel() {

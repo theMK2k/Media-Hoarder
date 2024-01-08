@@ -1608,6 +1608,8 @@ async function applyMetaData(onlyNew, id_Movies) {
   const query = `
   SELECT
     MOV.id_Movies
+    , MOV.Name
+    , MOV.Name2
     , MOV.Filename
     , MOV.RelativeDirectory
     , IFNULL(MOV.IMDB_localTitle, '') AS IMDB_localTitle
@@ -1641,8 +1643,8 @@ async function applyMetaData(onlyNew, id_Movies) {
     // let Name = movie.IMDB_localTitle;
     // let Name2 = null;
 
-    let Name = null;
-    let Name2 = null;
+    let Name = movie.Name;
+    let Name2 = movie.Name2;
 
     const names = [];
 
@@ -2545,12 +2547,12 @@ async function findSeriesEpisodeIMDBtconst(mediaItem, onlyNew, $t) {
 }
 
 async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
-  logger.log("[fetchIMDBdata] movie:", mediaItem);
+  logger.log("[fetchIMDBMetaData] movie:", mediaItem);
 
   // fetch IMDB data from imdb.com (incl. images)
   // save IMDB data to db
   if (onlyNew && mediaItem.IMDB_Done) {
-    logger.log("[fetchIMDBdata] IMDB already processed, abort");
+    logger.log("[fetchIMDBMetaData] IMDB already processed, abort");
     return;
   }
 
@@ -2585,6 +2587,7 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
+        throw new Error(error);
       }
     }
 
@@ -2765,7 +2768,7 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
       }
     }
 
-    logger.log("[fetchIMDBdata] imdbData:", imdbData);
+    logger.log("[fetchIMDBMetaData] imdbData:", imdbData);
 
     if (shared.scanOptions.rescanMoviesMetaData_saveIMDBData) {
       eventBus.scanInfoShow(
