@@ -1,8 +1,18 @@
 # DONE
 
+## v1.3.37-a4
+
+- [x] findIMDBtconst for episodes:
+  - [x] tt* override
+  - [x] by season and episode numbers
+
+
 ## v1.3.37-a3
 
 - [x] use tt\* in the filename to override the tconst of an episode
+- [x] unlink IMDB on series: also unlink all episodes, which
+  - [x] don't have the tt* as part of their file name
+  - [x] haven't been user-set tt* (do we even track this?)
 
 ## v1.3.37-a2
 

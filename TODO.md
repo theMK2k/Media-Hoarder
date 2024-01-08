@@ -6,6 +6,9 @@
 
 ### Series: scanning
 
+- [x] stop imdb scraping when the tconst is obviously not working
+- [ ] dont override mediaItem.Name when IMDB scan was unsuccessful
+
 - [ ] BUG: medialist for series does not reload after rescan
 - [ ] BUG: series and the series being directory based leads to errors:
   - [ ] unlink IMDB leads to the series being called "Series" and not the name of the series derived from the directory
@@ -23,10 +26,6 @@
 - [ ] Fix: subdirectory called "extras" is not assigned to the main movie (the files are provided as main movies themselves)
 - add ffmpeg in order to create screenshots for movies/episodes with missing poster
 - [ ] check tconst detection with movies, too (we changed some fullDirectory to fullPath)
-- [ ] findIMDBtconst for episodes:
-  - [x] tt* override
-  - [x] by season and episode numbers
-  - [ ] by name
 
 ### Series: Link IMDB Dialog
 
@@ -34,9 +33,6 @@
   - [WIP] provide all entries for the current series (Series_id_Movies_Owner's IMDB_tconst)
     - [ ] new imdb scraper: scrapeSeriesSeasons(tconst) -> `https://www.imdb.com/title/tt0206512/episodes/` -> dropdown
   - [ ] allow a fallback to standard imdb search
-- [x] unlink IMDB on series: also unlink all episodes, which
-  - [x] don't have the tt* as part of their file name
-  - [x] haven't been user-set tt* (do we even track this?)
 
 ### Series: Edit Media Dialog
 
@@ -59,11 +55,13 @@
 - [ ] investigate everything that still works with MediaType (and possibly should also use SpecificMediaType)
 - [ ] we apparently do not use the timezone (we store in UTC)
 - [ ] investigate if we still use Series_id_Movies_Owner to differentiate Series and Episodes -> we have specificMediaType now
-- [ ] scanErrors: introduce WARNING vs. ERROR
-  - WARNING:
-    - imdb implausibility
-  - ERROR:
-    - (new) mediainfo without result (possibly due to max path length exceeded)
+- [ ] scanErrors:
+  - [ ] review how rescan and applyIMDB handle scanErrors (string to object, handle null)
+  - [ ] introduce WARNING vs. ERROR
+    - WARNING:
+      - imdb implausibility
+    - ERROR:
+      - (new) mediainfo without result (possibly due to max path length exceeded)
 - [ ] add ScanErrors functionality in applyMediaInfo (mediainfo may fail on exceeding 259 chars paths)
 - [ ] investigate the errors of a bigger rescan:
   - [ ] store.js:2199 Error: Command failed: "c:\Apps\Video\MediaInfo CLI\MediaInfo.exe" --Output=XML "... a too long path exceeding 259 characters..."
