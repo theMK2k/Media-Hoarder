@@ -6609,13 +6609,31 @@ async function assignIMDB({
   }
 }
 
-async function saveCurrentPage($MediaType) {
-  await setSetting(`currentPageMediatype${$MediaType}`, shared.currentPage);
+async function saveCurrentPage(specificMediaType, Series_id_Movies_Owner) {
+  if (specificMediaType === "Episodes") {
+    await db.fireProcedure(`UPDATE tbl_Movies SET Series_currentPage = $currentPage WHERE id_Movies = $id_Movies`, {
+      $currentPage: shared.currentPage,
+      $id_Movies: Series_id_Movies_Owner,
+    });
+  } else {
+    await setSetting(`currentPageSpecificMediatype_${specificMediaType}`, shared.currentPage);
+  }
 }
 
-async function fetchCurrentPage($MediaType) {
-  const currentPage = await getSetting(`currentPageMediatype${$MediaType}`);
-  shared.currentPage = parseInt(currentPage || 1);
+async function loadCurrentPage(specificMediaType, Series_id_Movies_Owner) {
+  let currentPage = null;
+  if (specificMediaType === "Episodes") {
+    if (Series_id_Movies_Owner) {
+      currentPage = await db.fireProcedureReturnScalar(
+        `SELECT Series_currentPage FROM tbl_Movies WHERE id_Movies = $id_Movies`,
+        { $id_Movies: Series_id_Movies_Owner }
+      );
+    }
+  } else {
+    currentPage = await getSetting(`currentPageSpecificMediatype_${specificMediaType}`);
+  }
+
+  return parseInt(currentPage || 1);
 }
 
 function selectBestQualityMediaURL(mediaURLs) {
@@ -8605,7 +8623,7 @@ export {
   fetchSortValues,
   saveSortValues,
   saveCurrentPage,
-  fetchCurrentPage,
+  loadCurrentPage,
   selectBestQualityMediaURL,
   getMovieDuplicates,
   ensureMovieDeleted,

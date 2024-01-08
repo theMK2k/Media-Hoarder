@@ -1859,7 +1859,14 @@ export default {
 
   watch: {
     mediatype(newValue, oldValue) {
-      logger.log("[MediaList.mediatype] newValue:", newValue, "oldValue:", oldValue);
+      logger.log(
+        "[MediaList.mediatype] newValue:",
+        newValue,
+        "oldValue:",
+        oldValue,
+        "this.specificMediaType:",
+        this.specificMediaType
+      );
 
       eventBus.refetchMedia();
     },
@@ -1879,7 +1886,8 @@ export default {
         this.$shared.currentPage = oldValue || 1;
         return;
       }
-      store.saveCurrentPage(this.mediatype);
+
+      store.saveCurrentPage(this.specificMediaType, this.Series_id_Movies_Owner);
 
       this.completelyFetchMedia();
 
@@ -2554,8 +2562,6 @@ export default {
 
       try {
         // eventBus.showSidebarLoadingOverlay(true);
-        await store.fetchSortValues(this.specificMediaType);
-
         const currentFetchFiltersIteration = ++this.fetchFiltersIteration;
 
         this.$shared.isLoadingFilter = true;
@@ -2805,8 +2811,6 @@ export default {
         }
 
         this.$shared.loadingFilterProgress = 100;
-
-        await store.fetchCurrentPage(this.mediatype);
 
         // eventBus.showSidebarLoadingOverlay(false);
 
@@ -3638,7 +3642,7 @@ export default {
     // Register eventBus events
     eventBus.$on("searchTextChanged", () => {
       this.$shared.currentPage = 1;
-      store.saveCurrentPage(this.mediatype);
+      store.saveCurrentPage(this.specificMediaType, this.Series_id_Movies_Owner);
       this.completelyFetchMedia();
     });
 
@@ -3646,6 +3650,8 @@ export default {
       logger.group("[Fetch Media List]");
       (async () => {
         eventBus.showLoadingOverlay(true);
+
+        await store.fetchSortValues(this.specificMediaType);
 
         this.items = [];
         this.items = !this.Series_id_Movies_Owner
@@ -3670,8 +3676,9 @@ export default {
               specificMediaType: this.specificMediaType,
             });
 
-        this.$shared.currentPage = setPage && setPage <= this.numPages ? setPage : 1;
-        store.saveCurrentPage(this.mediatype);
+        const lastCurrentPage = await store.loadCurrentPage(this.specificMediaType, this.Series_id_Movies_Owner);
+        this.$shared.currentPage = lastCurrentPage && lastCurrentPage <= this.numPages ? lastCurrentPage : 1;
+        store.saveCurrentPage(this.specificMediaType, this.Series_id_Movies_Owner);
 
         await this.completelyFetchMedia();
 
@@ -3684,11 +3691,13 @@ export default {
       logger.groupEnd();
     });
 
-    eventBus.$on("refetchFilters", (setFilter) => {
+    eventBus.$on("refetchFilters", async (setFilter) => {
+      await store.fetchSortValues(this.specificMediaType);
       this.fetchFilters(setFilter);
     });
 
-    eventBus.$on("refetchSpecificFilter", (setFilter) => {
+    eventBus.$on("refetchSpecificFilter", async (setFilter) => {
+      await store.fetchSortValues(this.specificMediaType);
       this.fetchFilters(setFilter, true);
     });
 
@@ -3733,8 +3742,6 @@ export default {
       await this.fetchSeriesOwner(this.Series_id_Movies_Owner);
 
       eventBus.refetchMedia();
-
-      this.$shared.currentPage = await store.fetchCurrentPage(this.mediatype);
 
       logger.log("[created] this.items:", this.items);
     })();

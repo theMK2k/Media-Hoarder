@@ -666,7 +666,8 @@
     "Thriller": "Thriller",
     "War": "War",
     "Western": "Western",
-    "Adult": "Adult"
+    "Adult": "Adult",
+    "Game-Show": "Game-Show"
   },
   "undetermined": "undetermined",
   "<any other person>": "<any other person>",
