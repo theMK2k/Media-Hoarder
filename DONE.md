@@ -2,6 +2,8 @@
 
 ## v1.3.37-a4
 
+- [x] MediaList: store currentPage for Movies, Series and Episodes (episodes in tbl_Movies.Series_currentPage)
+- [x] MediaList: optimize fetchSortValues before fetchFilters
 - [x] findIMDBtconst for episodes:
   - [x] tt* override
   - [x] by season and episode numbers
