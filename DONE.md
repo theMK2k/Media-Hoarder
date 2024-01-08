@@ -1,5 +1,7 @@
 # DONE
 
+## v1.3.37-a5
+
 ## v1.3.37-a4
 
 - [x] MediaList: store currentPage for Movies, Series and Episodes (episodes in tbl_Movies.Series_currentPage)
