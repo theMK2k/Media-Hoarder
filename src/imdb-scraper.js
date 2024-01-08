@@ -82,6 +82,10 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
 
     const response = await helpers.requestAsync(url);
 
+    if (response.statusCode > 399) {
+      throw new Error(`ERROR: IMDB Main Page gave HTTP status code ${response.statusCode}. URL used: ${url}`);
+    }
+
     const html = response.body;
 
     // V2: we partially use the application/ld+json data, too
