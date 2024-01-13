@@ -1841,6 +1841,8 @@ async function applyMetaData(onlyNew, id_Movies) {
  * @param {Object} $t i18n instance
  */
 async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t, resetRescanETA) {
+  logger.log("[rescanMediaItemsMetaData] START", { onlyNew, id_Movies });
+
   // NOTE: if WHERE clause gets enhanced, please also enhance the code below "Filter mediaItems that only have..."
   const query = `
   SELECT
@@ -1942,6 +1944,8 @@ async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t, resetRescanETA) 
     });
   }
 
+  logger.log("[rescanMediaItemsMetaData] mediaItems (after filtering):", mediaItems);
+
   if (mediaItems.length > 1) {
     rescanETA.show = false;
     rescanETA.numItems = mediaItems.length;
@@ -2028,11 +2032,8 @@ async function rescanMediaItemMetaData(onlyNew, mediaItem, $t, optRescanMediaInf
 
   // MediaInfo
   const scanInfoMediaType = $t(`Rescanning ${helpers.getSpecificMediaType(mediaItem)}`);
-  if (
-    optRescanMediaInfo &&
-    shared.scanOptions.rescanMoviesMetaData_applyMediaInfo &&
-    (mediaItem.MediaType == "movies" || mediaItem.Series_id_Movies_Owner) // run MediaInfo only on movies or series episodes, not on series themselves
-  ) {
+
+  if (optRescanMediaInfo && shared.scanOptions.rescanMoviesMetaData_applyMediaInfo) {
     eventBus.scanInfoShow(
       scanInfoMediaType + " {remainingTimeDisplay}",
       `${mediaItem.Name || mediaItem.Filename} (${$t("applying MediaInfo")})`,
@@ -2118,8 +2119,13 @@ async function applyMediaInfo(movie, onlyNew) {
     return;
   }
 
+  logger.log("[applyMediaInfo] movie:", movie);
+
   if (movie.MediaType == "series" && !movie.Series_id_Movies_Owner) {
     logger.log("[applyMediaInfo] series doesn't need media info, aborting");
+    await db.fireProcedure(`UPDATE tbl_Movies SET MI_Done = 1 WHERE id_Movies = $id_Movies`, {
+      $id_Movies: movie.id_Movies,
+    });
     return;
   }
 
@@ -2134,8 +2140,6 @@ async function applyMediaInfo(movie, onlyNew) {
     logger.log("[applyMediaInfo] file not found, skipping movie:", movie);
     return;
   }
-
-  logger.log("[applyMediaInfo] movie:", movie);
 
   try {
     const miObj = await mediainfo.runMediaInfo(mediaInfoPath, movie.fullPath);
