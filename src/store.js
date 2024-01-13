@@ -2415,7 +2415,7 @@ function getSeriesEpisodeTconstFromCache(seriesIMDBtconst, Series_Season, Series
     if (cacheSeriesSeason) {
       for (const episode of cacheSeriesSeason) {
         // Episode numbers directly match
-        if (episode.episode == Series_Episode) {
+        if (Series_Episode && episode.episode == Series_Episode) {
           return episode.tconst;
         }
 

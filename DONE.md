@@ -2,6 +2,9 @@
 
 ## v1.3.37-a5
 
+- [x] imdb-graphql-urls: update seriesEpisodes (new persisted query)
+- [x] fix: series episodes matching: don't assume E01 if neither season nor episode are set
+
 ## v1.3.37-a4
 
 - [x] MediaList: store currentPage for Movies, Series and Episodes (episodes in tbl_Movies.Series_currentPage)

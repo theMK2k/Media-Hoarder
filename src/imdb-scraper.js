@@ -56,7 +56,7 @@ const graphQLqueries = {
   findPageSearch: (searchTerm) => graphqlURLs.findPageSearch.replace("$searchTerm", encodeURIComponent(searchTerm)),
 
   /**
-   *
+   * API called when fetching episodes (e.g. https://www.imdb.com/title/tt7678620/episodes/)
    */
   seriesEpisodes: (Series_IMDB_tconst, Series_Season) =>
     graphqlURLs.seriesEpisodes
@@ -2374,7 +2374,7 @@ async function scrapeIMDBSeriesEpisodes(Series_IMDB_tconst, Series_Season) {
   logger.log("[scrapeIMDBSeriesEpisodes] START", { Series_IMDB_tconst, Series_Season });
 
   try {
-    const uri = graphQLqueries.seriesEpisodes(Series_IMDB_tconst, Series_Season);
+    const uri = graphQLqueries.seriesEpisodes(Series_IMDB_tconst, Series_Season || "unknown");
 
     logger.log("[scrapeIMDBSeriesEpisodes] uri:", uri);
 
@@ -2383,6 +2383,11 @@ async function scrapeIMDBSeriesEpisodes(Series_IMDB_tconst, Series_Season) {
     );
 
     // logger.log("[scrapeIMDBSeriesEpisodes] gqlEpisodes:", JSON.stringify(gqlEpisodes, null, 2));
+
+    if (gqlEpisodes.errors) {
+      logger.error("[scrapeIMDBSeriesEpisodes] gqlEpisodes.errors:", gqlEpisodes.errors);
+      return [];
+    }
 
     const results = _.get(gqlEpisodes, "data.title.episodes.episodes.edges", []).map((edge) => {
       return {
@@ -2404,6 +2409,10 @@ async function scrapeIMDBSeriesEpisodes(Series_IMDB_tconst, Series_Season) {
         imageURL: _.get(edge, "node.primaryImage.url"),
       };
     });
+
+    if (!results || results.length == 0) {
+      logger.warn("[scrapeIMDBSeriesEpisodes] zero results, gqlEpisodes:", gqlEpisodes);
+    }
 
     logger.log("[scrapeIMDBSeriesEpisodes] results[0]:", results[0]);
 
