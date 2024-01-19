@@ -1804,14 +1804,6 @@ export default {
       history: [],
     },
 
-    editItemDialog: {
-      show: false,
-      title: null,
-      item: {},
-      attributeName: null,
-      attributeDisplayText: null,
-    },
-
     linkIMDBDialog: {
       show: false,
       showUnlink: false,
@@ -3298,41 +3290,6 @@ export default {
 
     setItemHovered(item, section, value) {
       this.$set(item, `${section}Hovered`, value);
-    },
-
-    async onEditItemDialogOK(result) {
-      logger.log("[onEditItemDialogOK] EDIT NAME DIALOG OK result:", result);
-      this.editItemDialog.show = false;
-
-      const useActualDuplicates =
-        (this.editItemDialog.attributeName == "Name" && this.$shared.duplicatesHandling.actualDuplicate.updateTitle) ||
-        (this.editItemDialog.attributeName == "Name2" &&
-          this.$shared.duplicatesHandling.actualDuplicate.updateSubTitle);
-
-      const arr_id_Movies = await store.updateMovieAttribute(
-        this.editItemDialog.item.id_Movies,
-        this.editItemDialog.attributeName,
-        result.textValue,
-        useActualDuplicates,
-        false
-      );
-
-      this.items.forEach((mov) => {
-        if (arr_id_Movies.findIndex((id_Movies) => mov.id_Movies === id_Movies) !== -1) {
-          this.$set(mov, this.editItemDialog.attributeName, result.textValue);
-        }
-      });
-
-      eventBus.showSnackbar(
-        "success",
-        this.$t("{something} successfully changed_", {
-          something: this.editItemDialog.attributeDisplayText,
-        })
-      );
-    },
-
-    onEditItemDialogCancel() {
-      this.editItemDialog.show = false;
     },
 
     contentAdvisorySeverityDisplayText(severity) {

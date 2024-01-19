@@ -36,9 +36,9 @@
 
 ### Series: Edit Media Dialog
 
-- [ ] tbl_Movies_MI_Qualities: also use for editing the series entry
-- Allow user to define audio / subtitle languages
-- Allow user to upload a poster of their liking
+- [WIP] tbl_Movies_MI_Qualities: also use for editing the series entry
+- [ ] Allow user to define audio / subtitle languages
+- [ ] Allow user to upload a poster of their liking
 
 ### Series: Delete Media Dialog
 

@@ -15,30 +15,51 @@
 
       <v-card-text>
         <!-- Primary Title -->
-        <v-text-field v-bind:label="$t('Primary Title')" v-model="mediaItem.Name"></v-text-field>
+        <v-row style="margin-top: 8px; margin-left: 0px">
+          <div style="font-size: 14px; margin-top: 10px">
+            {{ $t("Primary Title") }}
+          </div>
+        </v-row>
+        <v-text-field v-model="mediaItem.Name"></v-text-field>
 
         <!-- Secondary Title -->
-        <v-text-field v-bind:label="$t('Secondary Title')" v-model="mediaItem.Name2"></v-text-field>
+        <v-row style="margin-top: 8px; margin-left: 0px">
+          <div style="font-size: 14px; margin-top: 10px">
+            {{ $t("Secondary Title") }}
+          </div>
+        </v-row>
+        <v-text-field v-model="mediaItem.Name2"></v-text-field>
 
         <!-- Release Year -->
-        <v-text-field v-bind:label="$t('Release Year')" v-model="mediaItem.startYear"></v-text-field>
+        <v-row style="margin-top: 8px; margin-left: 0px">
+          <div style="font-size: 14px; margin-top: 10px">
+            {{ $t("Release Year") }}
+          </div>
+        </v-row>
+        <v-text-field v-model="mediaItem.startYear"></v-text-field>
 
-        <!-- Video Quality -->
-        <v-select
-          v-bind:label="$t('Video Quality')"
-          v-bind:items="$shared.videoQualities.map((item) => item.name)"
-          v-model="mediaItem.MI_Quality"
-        >
-        </v-select>
+        <!-- Video Quality (Movie or Episode) -->
+        <div v-if="mediaItem.specificMediaType !== 'Series'">
+          <v-row style="margin-top: 8px; margin-left: 0px">
+            <div style="font-size: 14px; margin-top: 10px">
+              {{ $t("Primary Title") }}
+            </div>
+          </v-row>
+          <v-select v-bind:items="$shared.videoQualities.map((item) => item.name)" v-model="mediaItem.MI_Quality">
+          </v-select>
+        </div>
 
-        <!-- Description -->
-        <v-textarea v-bind:label="$t('Description')" v-model="mediaItem.plotSummaryFull"> </v-textarea>
+        <!-- Video Qualities (Series only) -->
+        <div v-if="mediaItem.specificMediaType == 'Series'">
+          <v-row style="margin-top: 8px; margin-left: 0px">
+            <div style="font-size: 14px; margin-top: 10px">
+              {{ $t("Video Qualities") }}
+            </div>
+          </v-row>
 
-        <!-- Genres -->
-        <div>
-          <h2 style="margin-top: 8px; margin-bottom: 8px">
-            {{ $t("Genres") }}
-          </h2>
+          {{ mediaItem.MI_Qualities }}
+          <!-- KILLME -->
+
           <v-chip
             v-for="(genre, index) in mediaItem.Genres"
             v-bind:key="index"
@@ -99,11 +120,130 @@
           </v-row>
         </div>
 
+        <!-- Description -->
+        <v-row style="margin-top: 8px; margin-left: 0px">
+          <div style="font-size: 14px; margin-top: 10px">
+            {{ $t("Description") }}
+          </div>
+        </v-row>
+        <v-textarea v-model="mediaItem.plotSummaryFull"> </v-textarea>
+
+        <!-- Genres -->
+        <v-row style="margin-top: 8px; margin-left: 0px">
+          <div style="font-size: 14px; margin-top: 10px">
+            {{ $t("Genres") }}
+          </div>
+          <v-menu
+            v-model="showAddGenreDialog"
+            v-bind:close-on-click="false"
+            v-bind:close-on-content-click="false"
+            bottom
+            right
+            transition="scale-transition"
+            origin="top left"
+          >
+            <template v-slot:activator="{ on }">
+              <v-btn
+                color="primary"
+                text
+                small
+                style="margin-left: 12px; margin-right: 4px; margin-bottom: 4px; margin-top: 8px"
+                v-on="on"
+                v-on:click="onShowAddGenreDialog"
+                >{{ $t("Add") }}</v-btn
+              >
+            </template>
+            <v-card>
+              <v-card-title>
+                {{ $t("Add Genre") }}
+              </v-card-title>
+              <v-card-text>
+                <v-select
+                  v-bind:items="genres"
+                  v-model="selectedGenre"
+                  item-text="Name"
+                  item-value="GenreID"
+                ></v-select>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="secondary" v-on:click.stop="showAddGenreDialog = false">{{ $t("Cancel") }}</v-btn>
+                <v-btn color="primary" v-on:click.stop="onAddGenreDialogOK">{{ $t("OK") }}</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-menu>
+        </v-row>
+
+        <div style="margin-top: 4px">
+          <v-chip
+            v-for="(genre, index) in mediaItem.Genres"
+            v-bind:key="index"
+            label
+            outlined
+            draggable
+            close
+            close-icon="mdi-delete"
+            style="margin-right: 4px; margin-bottom: 4px"
+            v-on:click:close="onRemoveGenre(index)"
+          >
+            {{ genre.translated }}
+          </v-chip>
+          <div v-if="!mediaItem.Genres || mediaItem.Genres.length === 0">
+            <p>{{ $t("none") }}</p>
+          </div>
+
+          <v-row align="center"> </v-row>
+        </div>
+
         <!-- Release Attributes -->
-        <div>
-          <h2 style="margin-top: 8px; margin-bottom: 8px">
+        <v-row style="margin-top: 24px; margin-left: 0px">
+          <div style="font-size: 14px; margin-top: 10px">
             {{ $t("Release Attributes") }}
-          </h2>
+          </div>
+          <v-menu
+            v-model="showAddReleaseAttributeDialog"
+            v-bind:close-on-click="false"
+            v-bind:close-on-content-click="false"
+            bottom
+            right
+            transition="scale-transition"
+            origin="top left"
+          >
+            <template v-slot:activator="{ on }">
+              <v-btn
+                color="primary"
+                text
+                small
+                style="margin-left: 12px; margin-right: 4px; margin-bottom: 4px; margin-top: 8px"
+                v-on="on"
+                v-on:click="onShowAddReleaseAttributeDialog"
+                >{{ $t("Add") }}</v-btn
+              >
+            </template>
+            <v-card>
+              <v-card-title>
+                {{ $t("Add Release Attribute") }}
+              </v-card-title>
+              <v-card-text>
+                <v-select
+                  v-bind:items="releaseAttributes"
+                  v-model="selectedReleaseAttribute"
+                  item-text="displayAs"
+                  item-value="searchTerm"
+                ></v-select>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="secondary" v-on:click.stop="showAddReleaseAttributeDialog = false">{{
+                  $t("Cancel")
+                }}</v-btn>
+                <v-btn color="primary" v-on:click.stop="onAddReleaseAttributeDialogOK">{{ $t("OK") }}</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-menu>
+        </v-row>
+
+        <div style="margin-top: 4px">
           <v-chip
             v-for="(raSearchTerm, index) in arrayReleaseAttributesSearchTerms"
             v-bind:key="index"
@@ -120,51 +260,9 @@
           <div v-if="!mediaItem.ReleaseAttributesSearchTerms">
             <p>{{ $t("none") }}</p>
           </div>
-
-          <v-row align="center">
-            <v-menu
-              v-model="showAddReleaseAttributeDialog"
-              v-bind:close-on-click="false"
-              v-bind:close-on-content-click="false"
-              bottom
-              right
-              transition="scale-transition"
-              origin="top left"
-            >
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  color="primary"
-                  text
-                  small
-                  style="margin-left: 12px; margin-right: 4px; margin-bottom: 4px; margin-top: 8px"
-                  v-on="on"
-                  v-on:click="onShowAddReleaseAttributeDialog"
-                  >{{ $t("Add Release Attribute") }}</v-btn
-                >
-              </template>
-              <v-card>
-                <v-card-title>
-                  {{ $t("Add Release Attribute") }}
-                </v-card-title>
-                <v-card-text>
-                  <v-select
-                    v-bind:items="releaseAttributes"
-                    v-model="selectedReleaseAttribute"
-                    item-text="displayAs"
-                    item-value="searchTerm"
-                  ></v-select>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="secondary" v-on:click.stop="showAddReleaseAttributeDialog = false">{{
-                    $t("Cancel")
-                  }}</v-btn>
-                  <v-btn color="primary" v-on:click.stop="onAddReleaseAttributeDialogOK">{{ $t("OK") }}</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-menu>
-          </v-row>
         </div>
+
+        <v-row align="center"> </v-row>
       </v-card-text>
 
       <v-card-actions>
