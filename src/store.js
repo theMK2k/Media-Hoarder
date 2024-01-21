@@ -3734,7 +3734,7 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
         }, "");
       filterQualities += ")";
 
-      filterQualities += `\nOR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_MI_Qualities WHERE MI_Quality IN (`;
+      filterQualities += `\nOR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_MI_Qualities MOVQ WHERE (MOVQ.deleted IS NULL OR MOVQ.deleted = 0) AND MOVQ.MI_Quality IN (`;
       filterQualities += filters.filterQualities
         .filter((filter) => filter.Selected)
         .map((filter) => filter.MI_Quality)
@@ -4159,6 +4159,7 @@ async function fetchMedia({
         , NULL AS endYear
         , NULL AS MI_Duration
         , NULL AS MI_Qualities
+        , NULL AS MI_Quality
         , NULL AS Audio_Languages
         , NULL AS Subtitle_Languages
         , NULL AS MI_Audio_Languages
@@ -4191,6 +4192,7 @@ async function fetchMedia({
         , MOV.file_created_at
         , MOV.endYear
         , MOV.MI_Duration
+        , MOV.MI_Quality
         , CASE WHEN MOV.MI_Quality IS NOT NULL THEN MOV.MI_Quality ELSE (SELECT GROUP_CONCAT(MI_Quality, ', ') FROM tbl_Movies_MI_Qualities MOVQ WHERE MOVQ.id_Movies = MOV.id_Movies AND MOVQ.deleted = 0) END AS MI_Qualities
         , (SELECT GROUP_CONCAT(Language, ', ') FROM tbl_Movies_Languages ML WHERE ML.id_Movies = MOV.id_Movies AND ML.Type = 'audio') AS Audio_Languages
         , (SELECT GROUP_CONCAT(Language, ', ') FROM tbl_Movies_Languages ML WHERE ML.id_Movies = MOV.id_Movies AND ML.Type = 'subtitle') AS Subtitle_Languages
@@ -7996,6 +7998,76 @@ async function updateMovieGenres($id_Movies, genres) {
 /**
  *
  * @param {Integer} $id_Movies
+ * @param {Array<String>} videoQualities e.g. ['action', 'adventure', 'sci-fi']
+ */
+async function updateMovieVideoQualities($id_Movies, videoQualities) {
+  logger.log("[updateMovieVideoQualities] START, $id_Movies:", $id_Movies, "videoQualities:", videoQualities);
+
+  const mediaItemVideoQualities = await db.fireProcedureReturnAll(
+    ` SELECT  id_Movies_MI_Qualities
+              , MI_Quality
+              , deleted
+              , 0 AS Found
+      FROM  tbl_Movies_MI_Qualities
+      WHERE id_Movies = $id_Movies`,
+    { $id_Movies }
+  );
+
+  logger.log("[updateMovieVideoQualities] mediaItemVideoQualities:", mediaItemVideoQualities);
+
+  for (let i = 0; i < videoQualities.length; i++) {
+    const videoQuality = videoQualities[i];
+
+    logger.log("[updateMovieVideoQualities] analyzing videoQuality:", videoQuality);
+
+    const mediaItemVideoQuality = mediaItemVideoQualities.find((quality) => quality.MI_Quality === videoQuality);
+
+    if (mediaItemVideoQuality) {
+      logger.log("[updateMovieVideoQualities] videoQuality is already known:", mediaItemVideoQuality);
+
+      // videoQuality is already known
+      if (mediaItemVideoQuality.deleted) {
+        // previously deleted videoQuality -> just UPDATE the record
+        logger.log("[updateMovieVideoQualities] videoQuality was deleted before, undeleting it...");
+        await db.fireProcedure(
+          "UPDATE tbl_Movies_MI_Qualities SET deleted = 0 WHERE id_Movies = $id_Movies AND MI_Quality = $MI_Quality",
+          { $id_Movies, $MI_Quality: videoQuality }
+        );
+      }
+      mediaItemVideoQuality.Found = true;
+    } else {
+      // video quality needs to be added for the movie
+      logger.log("[updateMovieVideoQualities] videoQuality was needs to be added...");
+      await db.fireProcedure(
+        "INSERT INTO tbl_Movies_MI_Qualities (id_Movies, MI_Quality, deleted) VALUES ($id_Movies, $MI_Quality, 0)",
+        {
+          $id_Movies,
+          $MI_Quality: videoQuality,
+        }
+      );
+    }
+  }
+
+  // remove movie qualities that are not available anymore (e.g. re-link to another imdb entry)
+  for (let i = 0; i < mediaItemVideoQualities.length; i++) {
+    const videoQuality = mediaItemVideoQualities[i];
+
+    if (!videoQuality.Found) {
+      // logger.log('[updateMovieGenres] removing genre', movieGenre);
+
+      await db.fireProcedure(
+        "UPDATE tbl_Movies_MI_Qualities SET deleted = 1 WHERE id_Movies_MI_Qualities = $id_Movies_MI_Qualities",
+        {
+          $id_Movies_MI_Qualities: videoQuality.id_Movies_MI_Qualities,
+        }
+      );
+    }
+  }
+}
+
+/**
+ *
+ * @param {Integer} $id_Movies
  * @param {String} searchTermsString Semicolon separated list of search terms
  */
 async function updateMovieReleaseAttribues($id_Movies, searchTermsString) {
@@ -8659,6 +8731,7 @@ export {
   saveFilterValues,
   updateMediaRecordField,
   updateMovieGenres,
+  updateMovieVideoQualities,
   updateMovieReleaseAttribues,
   fetchMovieFieldsDefinedByUser,
   getFieldsDefinedByUser,
