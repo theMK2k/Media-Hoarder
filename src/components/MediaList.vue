@@ -282,11 +282,9 @@
               v-if="series.item.IMDB_rating_defaultDisplay"
             >
               <v-icon small color="amber" style="padding-bottom: 4px">mdi-star</v-icon>
-              <!--
-                          #rip-rating-demographics
-                          <a class="headline mb-2 mk-clickable" v-on:click.stop="onShowRatingDemographicsDialog(item)">{{ series.item.IMDB_rating_defaultDisplay }}</a>
-                        -->
-              <span class="headline mb-2">{{ series.item.IMDB_rating_defaultDisplay }}</span>
+              <a class="headline mb-2 mk-clickable" v-on:click.stop="onShowSeriesIMDBRatingDialog(series.item)">{{
+                series.item.IMDB_rating_defaultDisplay
+              }}</a>
               <span
                 v-if="series.item.IMDB_metacriticScore"
                 v-bind:class="helpers.getMetaCriticClass(series.item.IMDB_metacriticScore)"
@@ -778,7 +776,16 @@
                           #rip-rating-demographics
                           <a class="headline mb-2 mk-clickable" v-on:click.stop="onShowRatingDemographicsDialog(item)">{{ item.IMDB_rating_defaultDisplay }}</a>
                         -->
-                        <span class="headline mb-2">{{ item.IMDB_rating_defaultDisplay }}</span>
+                        <span v-if="item.specificMediaType !== 'Series'" class="headline mb-2">{{
+                          item.IMDB_rating_defaultDisplay
+                        }}</span>
+                        <a
+                          v-if="item.specificMediaType == 'Series'"
+                          class="headline mb-2 mk-clickable"
+                          v-on:click.stop="onShowSeriesIMDBRatingDialog(item)"
+                          >{{ item.IMDB_rating_defaultDisplay }}</a
+                        >
+
                         <span
                           v-if="item.IMDB_metacriticScore"
                           v-bind:class="helpers.getMetaCriticClass(item.IMDB_metacriticScore)"
@@ -1604,6 +1611,16 @@
       v-bind:imdbTconst="personDialog.IMDB_Person_ID"
       v-on:close="onPersonDialogClose"
     ></mk-person-dialog>
+
+    <mk-series-imdb-rating-dialog
+      ref="seriesIMDBRatingDialog"
+      v-bind:show="seriesIMDBRatingDialog.show"
+      v-bind:data="seriesIMDBRatingDialog.data"
+      v-bind:isLoading="seriesIMDBRatingDialog.isLoading"
+      v-bind:title="seriesIMDBRatingDialog.title"
+      v-on:close="seriesIMDBRatingDialog.show = false"
+    >
+    </mk-series-imdb-rating-dialog>
   </div>
 </template>
 
@@ -1630,6 +1647,7 @@ import RatingDemographicsDialog from "@/components/dialogs/RatingDemographicsDia
 import Dialog from "@/components/dialogs/Dialog.vue";
 
 import MediaPropertyDialog from "@/components/dialogs/MediaPropertyDialog.vue";
+import SeriesIMDBRatingDialog from "@/components/dialogs/SeriesIMDBRatingDialog.vue";
 
 const { shell } = require("@electron/remote");
 
@@ -1665,6 +1683,8 @@ export default {
     "mk-video-quality-dialog": MediaPropertyDialog,
     "mk-video-encoder-dialog": MediaPropertyDialog,
     "mk-person-dialog": MediaPropertyDialog,
+
+    "mk-series-imdb-rating-dialog": SeriesIMDBRatingDialog,
   },
 
   data: () => ({
@@ -1842,6 +1862,13 @@ export default {
     editMediaItemDialog: {
       show: false,
       mediaItem: null,
+    },
+
+    seriesIMDBRatingDialog: {
+      show: false,
+      data: null,
+      title: null,
+      isLoading: false,
     },
 
     loadFilterValuesFromStorage: false,
@@ -2880,6 +2907,7 @@ export default {
 
       if (/\+\d/.test(code)) {
         // clicked language is expandable, e.g. "+4"
+        logger.log("[onLanguageClicked] expand", code, "languages");
         await this.expandLanguages(item, type);
         return;
       }
@@ -2897,10 +2925,11 @@ export default {
     },
 
     async expandLanguages(item, type) {
+      logger.log("[expandLanguages] item:", item, "type:", type);
       if (type === "audio") {
-        item.AudioLanguages = store.generateLanguageArray(item.MI_Audio_Languages, 9999);
+        item.AudioLanguages = store.generateLanguageArray(item.Audio_Languages, 9999);
       } else {
-        item.SubtitleLanguages = store.generateLanguageArray(item.MI_Subtitle_Languages, 9999);
+        item.SubtitleLanguages = store.generateLanguageArray(item.Subtitle_Languages, 9999);
       }
     },
 
@@ -3461,6 +3490,14 @@ export default {
     onOpenEditMediaItemDialog(item) {
       logger.log("[onOpenEditMediaItemDialog] item:", item);
       this.editMediaItemDialog.mediaItem = JSON.parse(JSON.stringify(item)); // we don't allow direct manipulation of the item itself
+      this.editMediaItemDialog.mediaItem.AudioLanguages = store.generateLanguageArray(
+        this.editMediaItemDialog.mediaItem.Audio_Languages,
+        9999
+      );
+      this.editMediaItemDialog.mediaItem.SubtitleLanguages = store.generateLanguageArray(
+        this.editMediaItemDialog.mediaItem.Subtitle_Languages,
+        9999
+      );
       this.editMediaItemDialog.show = true;
     },
 
@@ -3590,6 +3627,105 @@ export default {
     },
 
     async onListActionCopyInfo() {},
+
+    async onShowSeriesIMDBRatingDialog(mediaItem) {
+      try {
+        this.seriesIMDBRatingDialog.data = null;
+        this.seriesIMDBRatingDialog.title = mediaItem.Name;
+        this.seriesIMDBRatingDialog.show = true;
+        this.seriesIMDBRatingDialog.isLoading = true;
+
+        const mediaItems = await store.fetchMedia({
+          $MediaType: "series",
+          Series_id_Movies_Owner: mediaItem.id_Movies,
+          $t: this.$local_t,
+          filters: { filterSettings: {} },
+          arr_IMDB_tconst: null,
+          arr_id_Movies: null,
+          minimumResultSet: true,
+          specificMediaType: "Episodes",
+          dontStoreFilters: true,
+        });
+
+        logger.log("[onShowSeriesIMDBRatingDialog] mediaItems:", mediaItems);
+
+        // TODO: init datastructure for the grid
+        const data = {
+          meta: {
+            seasons: {
+              min: 1,
+              max: 1,
+            },
+            episodes: {
+              min: 1,
+              max: 1,
+            },
+          },
+          mediaItems: {},
+          seasonRatings: {},
+          seasons: [],
+          episodes: [],
+        };
+
+        for (const mediaItem of mediaItems) {
+          logger.log("[onShowSeriesIMDBRatingDialog] mediaItem:", mediaItem);
+
+          if (mediaItem.Series_Season == null || isNaN(mediaItem.Series_Season)) {
+            continue;
+          }
+
+          logger.log("[onShowSeriesIMDBRatingDialog] mediaItem.Series_Season:", mediaItem.Series_Season);
+
+          if (mediaItem.Series_Season < data.meta.seasons.min) {
+            data.meta.seasons.min = mediaItem.Series_Season;
+          }
+          if (mediaItem.Series_Season > data.meta.seasons.max) {
+            data.meta.seasons.max = mediaItem.Series_Season;
+          }
+
+          if (!data.mediaItems[mediaItem.Series_Season]) {
+            data.mediaItems[mediaItem.Series_Season] = {};
+          }
+
+          if (!mediaItem.SeriesEpisodesComplete) {
+            continue;
+          }
+
+          for (const episode of mediaItem.SeriesEpisodesComplete) {
+            data.mediaItems[mediaItem.Series_Season][episode] = mediaItem;
+
+            if (episode < data.meta.episodes.min) {
+              data.meta.episodes.min = episode;
+            }
+            if (episode > data.meta.episodes.max) {
+              data.meta.episodes.max = episode;
+            }
+          }
+        }
+
+        for (let season = data.meta.seasons.min; season <= data.meta.seasons.max; season++) {
+          data.seasons.push({
+            season,
+            displayText: `S${`${season < 10 ? "0" : ""}${season}`}`,
+          });
+        }
+        for (let episode = data.meta.episodes.min; episode <= data.meta.episodes.max; episode++) {
+          data.episodes.push({
+            episode,
+            displayText: `E${`${episode < 10 ? "0" : ""}${episode}`}`,
+          });
+        }
+
+        logger.log("[onShowSeriesIMDBRatingDialog] data:", data);
+
+        this.seriesIMDBRatingDialog.data = data;
+      } catch (error) {
+        logger.error(error);
+        eventBus.showSnackbar("error", logger.error(error));
+      } finally {
+        this.seriesIMDBRatingDialog.isLoading = false;
+      }
+    },
   },
 
   // ### LifeCycle Hooks ###

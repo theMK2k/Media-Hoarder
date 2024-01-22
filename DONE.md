@@ -1,5 +1,14 @@
 # DONE
 
+## v1.3.37-a6
+
+### Series: Edit Media Dialog
+
+- [x] tbl_Movies_MI_Qualities: also use for editing the series entry
+- [x] Allow user to define audio / subtitle languages
+  - [x] implement EditMediaItemDialog controls
+  - [x] save on diff
+
 ## v1.3.37-a5
 
 - [x] imdb-graphql-urls: update seriesEpisodes (new persisted query)

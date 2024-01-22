@@ -4397,6 +4397,8 @@ async function fetchMedia({
         logger.log("[fetchMedia Series_Episodes_Complete] has value!");
         const episodes = JSON.parse(mediaItem.Series_Episodes_Complete);
 
+        mediaItem.SeriesEpisodesComplete = episodes;
+
         logger.log("[fetchMedia Series_Episodes_Complete] episodes:", episodes);
 
         if (episodes.length == 1) {
@@ -4459,6 +4461,8 @@ async function fetchMedia({
 }
 
 function generateLanguageArray(languages, maxLangDisplay) {
+  logger.log("[generateLanguageArray] languages:", languages, "maxLangDisplay:", maxLangDisplay);
+
   if (!languages) {
     return null;
   }
@@ -7998,6 +8002,53 @@ async function updateMovieGenres($id_Movies, genres) {
 /**
  *
  * @param {Integer} $id_Movies
+ * @param {String} $Type e.g. 'audio' or 'subtitle'
+ * @param {Array<String>} languageCodes e.g. ['De', 'En', 'Es']
+ */
+async function updateMovieLanguages($id_Movies, $Type, languageCodes) {
+  logger.log("[updateMovieLanguages] START, $id_Movies:", $id_Movies, "$Type:", $Type, "languageCodes:", languageCodes);
+
+  const movieLanguages = await db.fireProcedureReturnAll(
+    "SELECT id_Movies_Languages, Language, 0 AS Found FROM tbl_Movies_Languages ML WHERE ML.Type = $Type AND ML.id_Movies = $id_Movies",
+    { $id_Movies, $Type }
+  );
+
+  for (let i = 0; i < languageCodes.length; i++) {
+    const languageCode = languageCodes[i];
+
+    const movieLanguage = movieLanguages.find((ml) => ml.Language === languageCode);
+
+    if (movieLanguage) {
+      // language is already known
+      movieLanguage.Found = true;
+    } else {
+      // language needs to be added for the movie
+      await db.fireProcedure(
+        "INSERT INTO tbl_Movies_Languages (id_Movies, Type, Language) VALUES ($id_Movies, $Type, $Language)",
+        {
+          $id_Movies,
+          $Type,
+          $Language: languageCode,
+        }
+      );
+    }
+  }
+
+  // remove existing languages that are not available anymore (e.g. re-link to another imdb entry)
+  for (let i = 0; i < movieLanguages.length; i++) {
+    const movieLanguage = movieLanguages[i];
+
+    if (!movieLanguage.Found) {
+      await db.fireProcedure("DELETE FROM tbl_Movies_Languages WHERE id_Movies_Languages = $id_Movies_Languages", {
+        $id_Movies_Languages: movieLanguage.id_Movies_Languages,
+      });
+    }
+  }
+}
+
+/**
+ *
+ * @param {Integer} $id_Movies
  * @param {Array<String>} videoQualities e.g. ['action', 'adventure', 'sci-fi']
  */
 async function updateMovieVideoQualities($id_Movies, videoQualities) {
@@ -8733,6 +8784,7 @@ export {
   updateMovieGenres,
   updateMovieVideoQualities,
   updateMovieReleaseAttribues,
+  updateMovieLanguages,
   fetchMovieFieldsDefinedByUser,
   getFieldsDefinedByUser,
   getDefinedByUserStringFromFields,

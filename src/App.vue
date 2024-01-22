@@ -4890,6 +4890,29 @@ a {
   background-color: green;
 }
 
+/* ### IMDBRating ### */
+.IMDBRatingRed {
+  background-color: #b90000;
+}
+.IMDBRatingOrangeRed {
+  background-color: #aa4300;
+}
+.IMDBRatingOrange {
+  background-color: #a16c00;
+}
+.IMDBRatingOrangeGreen {
+  background-color: #7e8300;
+}
+.IMDBRatingGreenOrange {
+  background-color: #3c9600;
+}
+.IMDBRatingGreen {
+  background-color: #00a400;
+}
+.IMDBRatingDarkGreen {
+  background-color: darkgreen;
+}
+
 /* ### Vuetify fixes ### */
 
 /* this is part of v-select and makes it unneccessarily high */

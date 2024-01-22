@@ -474,6 +474,28 @@ function getMetaCriticClass(IMDB_metacriticScore) {
   return cssClasses;
 }
 
+function getIMDBRatingClass(IMDB_rating) {
+  const cssClasses = {};
+
+  if (IMDB_rating < 0) {
+    cssClasses.IMDBRatingRed = true;
+  } else if (IMDB_rating < 6) {
+    cssClasses.IMDBRatingOrangeRed = true;
+  } else if (IMDB_rating < 7) {
+    cssClasses.IMDBRatingOrange = true;
+  } else if (IMDB_rating < 8) {
+    cssClasses.IMDBRatingOrangeGreen = true;
+  } else if (IMDB_rating < 9) {
+    cssClasses.IMDBRatingGreenOrange = true;
+  } else if (IMDB_rating < 9.5) {
+    cssClasses.IMDBRatingGreen = true;
+  } else {
+    cssClasses.IMDBRatingDarkGreen = true;
+  }
+
+  return cssClasses;
+}
+
 function randomizeArray(arr) {
   for (let i = arr.length - 1; i > 0; i--) {
     const randomIndex = Math.floor(Math.random() * (i + 1));
@@ -597,6 +619,7 @@ export {
   listPath,
   readFileAsync,
   getMetaCriticClass,
+  getIMDBRatingClass,
   filenamifyExt,
   randomizeArray,
   getSeriesEpisodeSeasonAndEpisodeNumbersFromName,

@@ -120,6 +120,144 @@
             </div>
           </div>
 
+          <!-- Audio Languages -->
+          <div>
+            <v-row style="margin-top: 8px; margin-left: 0px">
+              <div style="font-size: 14px; margin-top: 11px">
+                {{ $t("Audio Languages") }}
+              </div>
+              <v-menu
+                v-model="showAddAudioLanguageDialog"
+                v-bind:close-on-click="false"
+                v-bind:close-on-content-click="false"
+                bottom
+                right
+                transition="scale-transition"
+                origin="top left"
+              >
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    color="primary"
+                    text
+                    small
+                    style="margin-left: 12px; margin-right: 4px; margin-bottom: 4px; margin-top: 8px"
+                    v-on="on"
+                    v-on:click="onShowAddAudioLanguageDialog"
+                    >{{ $t("Add") }}</v-btn
+                  >
+                </template>
+                <v-card>
+                  <v-card-title>
+                    {{ $t("Add Audio Language") }}
+                  </v-card-title>
+                  <v-card-text>
+                    <v-select
+                      v-bind:items="audioLanguages"
+                      v-model="selectedAudioLanguage"
+                      item-text="displayText"
+                      item-value="languageCodeUpperCase"
+                    ></v-select>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="secondary" v-on:click.stop="showAddAudioLanguageDialog = false">{{
+                      $t("Cancel")
+                    }}</v-btn>
+                    <v-btn color="primary" v-on:click.stop="onAddAudioLanguageDialogOK">{{ $t("OK") }}</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-menu>
+            </v-row>
+
+            <div style="margin-top: 8px">
+              <v-chip
+                v-for="(audioLanguage, index) in mediaItem.AudioLanguages"
+                v-bind:key="index"
+                label
+                outlined
+                draggable
+                close
+                close-icon="mdi-delete"
+                style="margin-right: 4px; margin-bottom: 4px"
+                v-on:click:close="onRemoveAudioLanguage(index)"
+              >
+                {{ audioLanguage }}
+              </v-chip>
+            </div>
+            <div v-if="!mediaItem.AudioLanguages || mediaItem.AudioLanguages.length === 0">
+              <p>{{ $t("none") }}</p>
+            </div>
+          </div>
+
+          <!-- Subtitle Languages -->
+          <div>
+            <v-row style="margin-top: 8px; margin-left: 0px">
+              <div style="font-size: 14px; margin-top: 11px">
+                {{ $t("Subtitle Languages") }}
+              </div>
+              <v-menu
+                v-model="showAddSubtitleLanguageDialog"
+                v-bind:close-on-click="false"
+                v-bind:close-on-content-click="false"
+                bottom
+                right
+                transition="scale-transition"
+                origin="top left"
+              >
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    color="primary"
+                    text
+                    small
+                    style="margin-left: 12px; margin-right: 4px; margin-bottom: 4px; margin-top: 8px"
+                    v-on="on"
+                    v-on:click="onShowAddSubtitleLanguageDialog"
+                    >{{ $t("Add") }}</v-btn
+                  >
+                </template>
+                <v-card>
+                  <v-card-title>
+                    {{ $t("Add Subtitle Language") }}
+                  </v-card-title>
+                  <v-card-text>
+                    <v-select
+                      v-bind:items="subtitleLanguages"
+                      v-model="selectedSubtitleLanguage"
+                      item-text="displayText"
+                      item-value="languageCodeUpperCase"
+                    ></v-select>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="secondary" v-on:click.stop="showAddSubtitleLanguageDialog = false">{{
+                      $t("Cancel")
+                    }}</v-btn>
+                    <v-btn color="primary" v-on:click.stop="onAddSubtitleLanguageDialogOK">{{ $t("OK") }}</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-menu>
+            </v-row>
+
+            <div style="margin-top: 8px">
+              <v-chip
+                v-for="(subtitleLanguage, index) in mediaItem.SubtitleLanguages"
+                v-bind:key="index"
+                label
+                outlined
+                draggable
+                close
+                close-icon="mdi-delete"
+                style="margin-right: 4px; margin-bottom: 4px"
+                v-on:click:close="onRemoveSubtitleLanguage(index)"
+              >
+                {{ subtitleLanguage }}
+              </v-chip>
+            </div>
+            <div v-if="!mediaItem.SubtitleLanguages || mediaItem.SubtitleLanguages.length === 0">
+              <p>{{ $t("none") }}</p>
+            </div>
+          </div>
+
           <!-- Genres -->
           <v-row style="margin-top: 8px; margin-left: 0px">
             <div style="font-size: 14px; margin-top: 11px">
@@ -272,6 +410,8 @@ import * as helpers from "@/helpers/helpers";
 import * as store from "@/store";
 import { eventBus } from "@/main";
 
+const { languageCodeNameMapping } = require("@/languages");
+
 const { deepDiffMapper } = require("@/helpers/deep-diff-mapper");
 
 export default {
@@ -286,6 +426,10 @@ export default {
       selectedVideoQuality: null,
       showAddReleaseAttributeDialog: false,
       selectedReleaseAttribute: null,
+      showAddAudioLanguageDialog: false,
+      selectedAudioLanguage: null,
+      showAddSubtitleLanguageDialog: false,
+      selectedSubtitleLanguage: null,
     };
   },
 
@@ -298,6 +442,20 @@ export default {
   },
 
   computed: {
+    languages() {
+      return Object.keys(languageCodeNameMapping)
+        .map((languageCode) => {
+          return {
+            displayText: `${this.$t(
+              `LanguageNames.${languageCodeNameMapping[languageCode].replace(/\./g, "_").replace(/'/g, "_")}`
+            )} (${languageCode.toUpperCase()})`,
+            languageCode,
+            languageCodeUpperCase: languageCode.toUpperCase(),
+          };
+        })
+        .sort((a, b) => helpers.compare(a.displayText, b.displayText, false));
+    },
+
     i18nCurrentMessages() {
       logger.log(
         "[i18nCurrentMessages] this.$i18n.messages[this.$i18n.locale]:",
@@ -327,6 +485,22 @@ export default {
         .filter(
           (item) => !this.mediaItem.MI_Qualities || !this.mediaItem.MI_Qualities.find((quality) => quality === item)
         );
+    },
+
+    audioLanguages() {
+      return this.languages.filter(
+        (language) =>
+          !this.mediaItem.AudioLanguages ||
+          !this.mediaItem.AudioLanguages.find((lang) => lang === language.languageCodeUpperCase)
+      );
+    },
+
+    subtitleLanguages() {
+      return this.languages.filter(
+        (language) =>
+          !this.mediaItem.SubtitleLanguages ||
+          !this.mediaItem.SubtitleLanguages.find((lang) => lang === language.languageCodeUpperCase)
+      );
     },
 
     arrayReleaseAttributesSearchTerms() {
@@ -412,6 +586,26 @@ export default {
 
       if (Object.keys(diff).find((key) => key === "ReleaseAttributesSearchTerms")) {
         await store.updateMovieReleaseAttribues(this.mediaItem.id_Movies, this.mediaItem.ReleaseAttributesSearchTerms);
+      }
+
+      if (Object.keys(diff).find((key) => key === "AudioLanguages")) {
+        await store.updateMovieLanguages(
+          this.mediaItem.id_Movies,
+          "audio",
+          this.mediaItem.AudioLanguages.map((item) => {
+            return this.languages.find((lang) => lang.languageCodeUpperCase === item).languageCode;
+          })
+        );
+      }
+
+      if (Object.keys(diff).find((key) => key === "SubtitleLanguages")) {
+        await store.updateMovieLanguages(
+          this.mediaItem.id_Movies,
+          "subtitle",
+          this.mediaItem.SubtitleLanguages.map((item) => {
+            return this.languages.find((lang) => lang.languageCodeUpperCase === item).languageCode;
+          })
+        );
       }
 
       if (Object.keys(diff).find((key) => key === "plotSummaryFull")) {
@@ -511,6 +705,59 @@ export default {
       }
 
       this.showAddVideoQualityDialog = false;
+    },
+
+    onRemoveAudioLanguage(index) {
+      logger.log("[onRemoveAudioLanguage] array (before):", this.mediaItem.AudioLanguages);
+
+      this.mediaItem.AudioLanguages.splice(index, 1);
+
+      logger.log("[onRemoveAudioLanguage] array (after):", this.mediaItem.AudioLanguages);
+    },
+
+    onShowAddAudioLanguageDialog() {
+      this.selectedAudioLanguage = this.audioLanguages.length > 0 ? this.audioLanguages[0].languageCodeUpperCase : null;
+    },
+
+    onAddAudioLanguageDialogOK() {
+      logger.log("[onAddAudioLanguageDialogOK] selectedAudioLanguage:", this.selectedAudioLanguage);
+
+      if (this.selectedAudioLanguage) {
+        if (!this.mediaItem.AudioLanguages) {
+          this.mediaItem.AudioLanguages = [];
+        }
+
+        this.mediaItem.AudioLanguages.push(this.selectedAudioLanguage);
+      }
+
+      this.showAddAudioLanguageDialog = false;
+    },
+
+    onRemoveSubtitleLanguage(index) {
+      logger.log("[onRemoveSubtitleLanguage] array (before):", this.mediaItem.SubtitleLanguages);
+
+      this.mediaItem.SubtitleLanguages.splice(index, 1);
+
+      logger.log("[onRemoveSubtitleLanguage] array (after):", this.mediaItem.SubtitleLanguages);
+    },
+
+    onShowAddSubtitleLanguageDialog() {
+      this.selectedSubtitleLanguage =
+        this.subtitleLanguages.length > 0 ? this.subtitleLanguages[0].languageCodeUpperCase : null;
+    },
+
+    onAddSubtitleLanguageDialogOK() {
+      logger.log("[onAddSubtitleLanguageDialogOK] selectedSubtitleLanguage:", this.selectedSubtitleLanguage);
+
+      if (this.selectedSubtitleLanguage) {
+        if (!this.mediaItem.SubtitleLanguages) {
+          this.mediaItem.SubtitleLanguages = [];
+        }
+
+        this.mediaItem.SubtitleLanguages.push(this.selectedSubtitleLanguage);
+      }
+
+      this.showAddSubtitleLanguageDialog = false;
     },
 
     getReleaseAttribute(searchTerm) {

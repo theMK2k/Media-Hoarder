@@ -1,6 +1,6 @@
-# Media Hoarder v1.3.37-a5 Changelog
+# Media Hoarder v1.3.37-a6 Changelog
 
-This is the fifth **alpha release** of the upcoming v1.4.0 which finally introduces TV series support to Media Hoarder.
+This is a **pre release** of the upcoming v1.4.0 which finally introduces TV series support to Media Hoarder.
 
 ## TV Series Support
 

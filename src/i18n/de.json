@@ -24,7 +24,9 @@
   "Video Qualities": "Videoqualitäten",
   "Add Video Quality": "Videoqualität Hinzufügen",
   "Audio Languages": "Audiosprachen",
+  "Add Audio Language": "Audiosprache Hinzufügen",
   "Subtitle Languages": "Untertitelsprachen",
+  "Add Subtitle Language": "Untertitelsprache Hinzufügen",
   "My Lists": "Meine Listen",
   "My Ratings": "Meine Bewertungen",
   "Metacritic Scores": "Metacritic Bewertungen",
@@ -241,7 +243,7 @@
     "Maori": "Maorisch",
     "Marathi": "Marathi",
     "Mongolian": "Mongolisch",
-    "N'Ko": "N'Ko",
+    "N_Ko": "N'Ko",
     "Nepali": "Nepali",
     "Norwegian": "Norwegisch",
     "Persian": "Persisch",
@@ -1007,5 +1009,6 @@
   "season": "Staffel",
   "seasons": "Staffeln",
   "storage location:": "Speicherort:",
-  "Season and Episode": "Staffel und Episode"
+  "Season and Episode": "Staffel und Episode",
+  "IMDB Ratings for": "IMDB Bewertungen für"
 }
