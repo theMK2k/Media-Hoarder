@@ -2,6 +2,12 @@
 
 ## v1.3.37-a6
 
+### Series: IMDB Rating Dialog
+
+- [x] IMDB Rating heatmap like <https://whattowatchon.tv>
+  - [x] make medialist item card a shared component (now used in medialist as well as SeriesIMDBRatingDialog)main list "jumps" and THEN reloads with the filter applied (possibly a fix for another issue)
+  - [x] prevent certain activities while in IMDB Rating Dialog mode
+
 ### Series: Edit Media Dialog
 
 - [x] tbl_Movies_MI_Qualities: also use for editing the series entry
@@ -19,16 +25,15 @@
 - [x] MediaList: store currentPage for Movies, Series and Episodes (episodes in tbl_Movies.Series_currentPage)
 - [x] MediaList: optimize fetchSortValues before fetchFilters
 - [x] findIMDBtconst for episodes:
-  - [x] tt* override
+  - [x] tt\* override
   - [x] by season and episode numbers
-
 
 ## v1.3.37-a3
 
 - [x] use tt\* in the filename to override the tconst of an episode
 - [x] unlink IMDB on series: also unlink all episodes, which
-  - [x] don't have the tt* as part of their file name
-  - [x] haven't been user-set tt* (do we even track this?)
+  - [x] don't have the tt\* as part of their file name
+  - [x] haven't been user-set tt\* (do we even track this?)
 
 ## v1.3.37-a2
 
