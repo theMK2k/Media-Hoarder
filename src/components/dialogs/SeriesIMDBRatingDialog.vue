@@ -46,7 +46,7 @@
                       v-bind:class="
                         helpers.getIMDBRatingClass(data.mediaItems[season.season][episode.episode].IMDB_rating_default)
                       "
-                      class="mk-clickable-white"
+                      class="mk-clickable-lightgrey-white"
                     >
                       {{ data.mediaItems[season.season][episode.episode].IMDB_rating_defaultFormatted }}
                     </div>

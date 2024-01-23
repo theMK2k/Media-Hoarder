@@ -4788,6 +4788,17 @@ a {
   color: white !important;
 }
 
+.mk-clickable-lightgrey-white {
+  font-size: 0.875rem;
+  font-weight: normal;
+  color: #e3e3e3 !important;
+  cursor: pointer;
+}
+
+.mk-clickable-lightgrey-white:hover {
+  color: white !important;
+}
+
 .mk-grab {
   cursor: grab !important;
 }

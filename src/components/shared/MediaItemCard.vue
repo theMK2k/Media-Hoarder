@@ -15,7 +15,7 @@
       >
         <v-list-item-avatar
           tile
-          style="margin: 6px; height: 190px; width: 130px"
+          style="margin: 6px; height: 190px; width: 130px; cursor: pointer"
           v-on:click.stop="emitMediaItemEvent('launch', { mediaItem })"
         >
           <img

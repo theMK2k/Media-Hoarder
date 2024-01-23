@@ -20,7 +20,7 @@ const statAsync = util.promisify(fs.stat);
 const readFileAsync = util.promisify(fs.readFile);
 const requestretryAsync = util.promisify(requestretry);
 
-const isPORTABLE = false; // DON'T TOUCH! This is handled by set-portable.js
+const isPORTABLE = true; // DON'T TOUCH! This is handled by set-portable.js
 
 let requestAsyncDumpToFile = false; // Temporarily set to true and every response of requestAsync will be dumped to a file
 
