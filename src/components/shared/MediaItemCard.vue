@@ -181,7 +181,7 @@
                   v-if="
                     mediaItem.specificMediaType == 'Series' &&
                     !mediaItem.Series_id_Movies_Owner &&
-                    (mediaItem.Series_Num_Seasons || items.Series_Num_Episodes)
+                    (mediaItem.Series_Num_Seasons || mediaItem.Series_Num_Episodes)
                   "
                 >
                   <span v-if="mediaItem.Name2">·</span>

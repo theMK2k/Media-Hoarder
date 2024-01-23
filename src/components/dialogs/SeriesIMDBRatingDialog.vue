@@ -32,7 +32,7 @@
                     data.mediaItems[season.season][episode.episode].IMDB_rating_defaultFormatted
                   "
                   v-model="data.mediaItems[season.season][episode.episode].showDetails"
-                  v-bind:close-on-click="true"
+                  v-bind:close-on-click="false"
                   v-bind:close-on-content-click="false"
                   bottom
                   right
@@ -55,11 +55,12 @@
                     <v-list-item three-line style="padding-left: 0px; padding-right: 0px">
                       <mk-media-item-card
                         v-bind:mediaItem="data.mediaItems[season.season][episode.episode]"
+                        v-bind:isScanning="false"
+                        v-on:mediaItemEvent="onMICmediaItemEvent"
                       ></mk-media-item-card>
                     </v-list-item>
 
                     <v-card-actions>
-                      <v-spacer></v-spacer>
                       <v-btn
                         color="secondary"
                         v-on:click.stop="data.mediaItems[season.season][episode.episode].showDetails = false"
@@ -140,6 +141,11 @@ export default {
       Object.keys(result[0]).forEach((key) => {
         mediaItem[key] = result[0][key];
       });
+    },
+
+    async onMICmediaItemEvent(payload) {
+      logger.log("[SeriesIMDBRatingDialog.onMICmediaItemEvent] payload:", payload);
+      this.$emit("mediaItemEvent", payload);
     },
   },
 

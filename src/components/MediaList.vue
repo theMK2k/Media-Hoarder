@@ -41,8 +41,6 @@
       <!-- Top Row for Movies and Series -->
       <template v-if="!Series_id_Movies_Owner">
         <h1 style="margin-bottom: 0px; margin-top: 0px; margin-left: 9px">
-          NEW
-          <!-- KILLME -->
           {{ $t(mediatype.toUpperCase()) }} ({{ itemsFiltered.length.toLocaleString($shared.uiLanguage) }})
           <v-tooltip bottom v-if="filtersList.length > 0">
             <template v-slot:activator="{ on }">
@@ -709,7 +707,8 @@
       v-bind:data="seriesIMDBRatingDialog.data"
       v-bind:isLoading="seriesIMDBRatingDialog.isLoading"
       v-bind:title="seriesIMDBRatingDialog.title"
-      v-on:close="seriesIMDBRatingDialog.show = false"
+      v-on:close="onCloseSeriesIMDBRatingDialog"
+      v-on:mediaItemEvent="onMICmediaItemEvent"
     >
     </mk-series-imdb-rating-dialog>
   </div>
@@ -781,7 +780,7 @@ export default {
   data: () => ({
     items: [],
     sortAbles: [
-      { Field: "Season_and_Episode", Description: "Season and Episode", specificMediaType: ["Episodes"] },
+      { Field: " Season_and_Episode", Description: "Season and Episode", specificMediaType: ["Episodes"] },
       {
         Field: "Name",
         Description: "Title",
@@ -2736,17 +2735,25 @@ export default {
         logger.log("[onShowSeriesIMDBRatingDialog] data:", data);
 
         this.seriesIMDBRatingDialog.data = data;
+
+        this.$shared.hideFilterByButton = true; // globally disable filtering while the dialog is open
       } catch (error) {
         logger.error(error);
         eventBus.showSnackbar("error", logger.error(error));
+        this.$shared.hideFilterByButton = false;
       } finally {
         this.seriesIMDBRatingDialog.isLoading = false;
       }
     },
 
+    async onCloseSeriesIMDBRatingDialog() {
+      this.$shared.hideFilterByButton = false;
+      this.seriesIMDBRatingDialog.show = false;
+    },
+
     // ### MediaItemCard (MIC) Events ###
     async onMICmediaItemEvent(payload) {
-      logger.log("[onMICmediaItemEvent] payload:", payload);
+      logger.log("[MediaList.onMICmediaItemEvent] payload:", payload);
 
       switch (payload.eventName) {
         case "launch":

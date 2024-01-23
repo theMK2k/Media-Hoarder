@@ -131,7 +131,8 @@
         <!-- Button: Filter by this... -->
         <v-btn
           v-if="
-            !Series_id_Movies_Owner // TODO!!! && numMovies !== null
+            !Series_id_Movies_Owner && // TODO!!! && numMovies !== null
+            !$shared.hideFilterByButton
           "
           class="xs-fullwidth"
           color="primary"

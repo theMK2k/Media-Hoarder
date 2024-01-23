@@ -26,6 +26,8 @@ const shared = new Vue({
     isLoadingFilter: false,
     loadingFilterProgress: 0,
 
+    hideFilterByButton: false,
+
     filterGroups: [
       {
         name: "filterSourcePaths",
