@@ -26,7 +26,7 @@ const shared = new Vue({
     isLoadingFilter: false,
     loadingFilterProgress: 0,
 
-    hideFilterByButton: false,
+    seriesIMDBRatingDialogMode: false, // during this mode, certain aspects of Media Hoarder must be disabled (expanding Media Item Card, showing filter buttons, etc.)
 
     filterGroups: [
       {

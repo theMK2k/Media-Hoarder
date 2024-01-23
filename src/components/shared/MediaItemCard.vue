@@ -1,5 +1,12 @@
 <template>
-  <v-card dark flat hover v-bind:ripple="false" v-on:click="emitMediaItemEvent('selectMediaItem', { mediaItem })">
+  <v-card
+    dark
+    flat
+    hover
+    v-bind:ripple="false"
+    v-on:click="!$shared.seriesIMDBRatingDialogMode && emitMediaItemEvent('selectMediaItem', { mediaItem })"
+    v-bind:style="{ cursor: !$shared.seriesIMDBRatingDialogMode ? 'pointer' : 'default!important' }"
+  >
     <v-list-item three-line style="padding-left: 0px; padding-right: 0px">
       <!-- Poster -->
       <div
@@ -58,8 +65,14 @@
               <v-list-item-title
                 class="headline mb-2"
                 style="margin-bottom: 0px !important"
-                v-on:mouseover="emitMediaItemEvent('setItemHovered', { mediaItem, section: 'name', value: true })"
-                v-on:mouseleave="emitMediaItemEvent('setItemHovered', { mediaItem, section: 'name', value: false })"
+                v-on:mouseover="
+                  !$shared.seriesIMDBRatingDialogMode &&
+                    emitMediaItemEvent('setItemHovered', { mediaItem, section: 'name', value: true })
+                "
+                v-on:mouseleave="
+                  !$shared.seriesIMDBRatingDialogMode &&
+                    emitMediaItemEvent('setItemHovered', { mediaItem, section: 'name', value: false })
+                "
               >
                 <div style="display: flex; min-height: 30px">
                   <div style="overflow: hidden; text-overflow: ellipsis">
@@ -85,7 +98,7 @@
                   </div>
 
                   <!-- all the edit buttons -->
-                  <div>
+                  <div v-if="!$shared.seriesIMDBRatingDialogMode">
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
                         <span v-on="on">
@@ -172,8 +185,14 @@
 
               <v-list-item-subtitle
                 style="margin-bottom: 4px; min-height: 18px"
-                v-on:mouseover="emitMediaItemEvent('setItemHovered', { mediaItem, section: 'name2', value: true })"
-                v-on:mouseleave="emitMediaItemEvent('setItemHovered', { mediaItem, section: 'name2', value: false })"
+                v-on:mouseover="
+                  !$shared.seriesIMDBRatingDialogMode &&
+                    emitMediaItemEvent('setItemHovered', { mediaItem, section: 'name2', value: true })
+                "
+                v-on:mouseleave="
+                  !$shared.seriesIMDBRatingDialogMode &&
+                    emitMediaItemEvent('setItemHovered', { mediaItem, section: 'name2', value: false })
+                "
               >
                 <!-- v-if="mediaItem.Name2 || mediaItem.selected" -->
                 <word-highlighter v-bind:query="$shared.searchText || ''"> {{ mediaItem.Name2 }} </word-highlighter

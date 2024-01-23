@@ -132,7 +132,7 @@
         <v-btn
           v-if="
             !Series_id_Movies_Owner && // TODO!!! && numMovies !== null
-            !$shared.hideFilterByButton
+            !$shared.seriesIMDBRatingDialogMode
           "
           class="xs-fullwidth"
           color="primary"

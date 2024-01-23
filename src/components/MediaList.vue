@@ -2736,18 +2736,18 @@ export default {
 
         this.seriesIMDBRatingDialog.data = data;
 
-        this.$shared.hideFilterByButton = true; // globally disable filtering while the dialog is open
+        this.$shared.seriesIMDBRatingDialogMode = true; // globally disable filtering while the dialog is open
       } catch (error) {
         logger.error(error);
         eventBus.showSnackbar("error", logger.error(error));
-        this.$shared.hideFilterByButton = false;
+        this.$shared.seriesIMDBRatingDialogMode = false;
       } finally {
         this.seriesIMDBRatingDialog.isLoading = false;
       }
     },
 
     async onCloseSeriesIMDBRatingDialog() {
-      this.$shared.hideFilterByButton = false;
+      this.$shared.seriesIMDBRatingDialogMode = false;
       this.seriesIMDBRatingDialog.show = false;
     },
 
