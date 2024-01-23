@@ -25,19 +25,49 @@
                 {{ episode.displayText }}
               </td>
               <td v-for="season of data.seasons" v-bind:key="season.displayText">
-                <div
+                <v-menu
                   v-if="
                     data.mediaItems[season.season] &&
                     data.mediaItems[season.season][episode.episode] &&
                     data.mediaItems[season.season][episode.episode].IMDB_rating_defaultFormatted
                   "
-                  v-bind:class="
-                    helpers.getIMDBRatingClass(data.mediaItems[season.season][episode.episode].IMDB_rating_default)
-                  "
-                  class="mk-clickable-white"
+                  v-model="data.mediaItems[season.season][episode.episode].showDetails"
+                  v-bind:close-on-click="true"
+                  v-bind:close-on-content-click="false"
+                  bottom
+                  right
+                  transition="scale-transition"
+                  origin="top left"
                 >
-                  {{ data.mediaItems[season.season][episode.episode].IMDB_rating_defaultFormatted }}
-                </div>
+                  <template v-slot:activator="{ on }">
+                    <div
+                      v-on="on"
+                      v-on:click="onShowMediaItemDetails(data.mediaItems[season.season][episode.episode])"
+                      v-bind:class="
+                        helpers.getIMDBRatingClass(data.mediaItems[season.season][episode.episode].IMDB_rating_default)
+                      "
+                      class="mk-clickable-white"
+                    >
+                      {{ data.mediaItems[season.season][episode.episode].IMDB_rating_defaultFormatted }}
+                    </div>
+                  </template>
+                  <v-card>
+                    <v-list-item three-line style="padding-left: 0px; padding-right: 0px">
+                      <mk-media-item-card
+                        v-bind:mediaItem="data.mediaItems[season.season][episode.episode]"
+                      ></mk-media-item-card>
+                    </v-list-item>
+
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        color="secondary"
+                        v-on:click.stop="data.mediaItems[season.season][episode.episode].showDetails = false"
+                        >{{ $t("Close") }}</v-btn
+                      >
+                    </v-card-actions>
+                  </v-card>
+                </v-menu>
               </td>
             </tr>
           </tbody>
@@ -58,9 +88,17 @@
 
 <script>
 // import { eventBus } from "@/main";
+const logger = require("../../helpers/logger");
 import * as helpers from "@/helpers/helpers";
+import * as store from "@/store";
+
+import MediaItemCard from "@/components/shared/MediaItemCard.vue";
 
 export default {
+  components: {
+    "mk-media-item-card": MediaItemCard,
+  },
+
   props: ["show", "isLoading", "data", "title"],
 
   data() {
@@ -76,6 +114,32 @@ export default {
   methods: {
     onCloseClick() {
       this.$emit("close");
+    },
+
+    $local_t(key, payload) {
+      return this.$t(key, payload);
+    },
+
+    async onShowMediaItemDetails(mediaItem) {
+      // completely fetch mediaItem details
+      const result = await store.fetchMedia({
+        $MediaType: "series",
+        arr_id_Movies: [mediaItem.id_Movies],
+        minimumResultSet: false,
+        $t: this.$local_t,
+        filters: { filterSettings: {} },
+        arr_IMDB_tconst: null,
+        Series_id_Movies_Owner: mediaItem.Series_id_Movies_Owner,
+        specificMediaType: "Episodes",
+      });
+
+      logger.log("[onShowMediaItemDetails] result:", result);
+
+      if (!result || !result.length) return;
+
+      Object.keys(result[0]).forEach((key) => {
+        mediaItem[key] = result[0][key];
+      });
     },
   },
 

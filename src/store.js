@@ -4461,7 +4461,7 @@ async function fetchMedia({
 }
 
 function generateLanguageArray(languages, maxLangDisplay) {
-  logger.log("[generateLanguageArray] languages:", languages, "maxLangDisplay:", maxLangDisplay);
+  // logger.log("[generateLanguageArray] languages:", languages, "maxLangDisplay:", maxLangDisplay);
 
   if (!languages) {
     return null;
