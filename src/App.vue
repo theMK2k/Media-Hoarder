@@ -4902,6 +4902,9 @@ a {
 }
 
 /* ### IMDBRating ### */
+.IMDBRatingNone {
+  background-color: #797979;
+}
 .IMDBRatingRed {
   background-color: #b90000;
 }

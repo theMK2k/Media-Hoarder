@@ -26,11 +26,7 @@
               </td>
               <td v-for="season of data.seasons" v-bind:key="season.displayText">
                 <v-menu
-                  v-if="
-                    data.mediaItems[season.season] &&
-                    data.mediaItems[season.season][episode.episode] &&
-                    data.mediaItems[season.season][episode.episode].IMDB_rating_defaultFormatted
-                  "
+                  v-if="data.mediaItems[season.season] && data.mediaItems[season.season][episode.episode]"
                   v-model="data.mediaItems[season.season][episode.episode].showDetails"
                   v-bind:close-on-click="!$shared.mediaPropertyDialogVisible"
                   v-bind:close-on-content-click="false"
@@ -48,7 +44,7 @@
                       "
                       class="mk-clickable-lightgrey-white"
                     >
-                      {{ data.mediaItems[season.season][episode.episode].IMDB_rating_defaultFormatted }}
+                      {{ data.mediaItems[season.season][episode.episode].IMDB_rating_defaultFormatted || "-" }}
                     </div>
                   </template>
                   <v-card>

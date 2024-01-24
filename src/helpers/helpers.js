@@ -477,7 +477,9 @@ function getMetaCriticClass(IMDB_metacriticScore) {
 function getIMDBRatingClass(IMDB_rating) {
   const cssClasses = {};
 
-  if (IMDB_rating < 0) {
+  if (!IMDB_rating) {
+    cssClasses.IMDBRatingNone = true;
+  } else if (IMDB_rating < 5) {
     cssClasses.IMDBRatingRed = true;
   } else if (IMDB_rating < 6) {
     cssClasses.IMDBRatingOrangeRed = true;
