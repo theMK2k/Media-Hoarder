@@ -9,6 +9,7 @@
   - [x] prevent certain activities while in IMDB Rating Dialog mode
 - [x] fix z-index for other dialogs on top of the SeriesIMDBRatingDialog
 - [x] globally track MediaPropertyDialog's visibility in order to allow closing of SeriesIMDBRatingDialog on outside-click if MediaPropertyDialog is not open
+- [x] MediaList: provide Series_id_Movies_Owner explicitly to MediaPropertyDialog
 
 ### Series: Edit Media Dialog
 

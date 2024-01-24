@@ -224,7 +224,7 @@
                       v-bind:class="{
                         'mk-search-highlight': $shared.filterQualitiesAppliedContains(MI_Quality),
                       }"
-                      v-on:click.stop="emitMediaItemEvent('videoQualityClicked', { MI_Quality })"
+                      v-on:click.stop="emitMediaItemEvent('videoQualityClicked', { mediaItem, MI_Quality })"
                       >{{ MI_Quality }}</span
                     >
                   </span>
@@ -236,7 +236,9 @@
                     v-bind:class="{
                       'mk-search-highlight': $shared.filterAgeRatingsActive,
                     }"
-                    v-on:click.stop="emitMediaItemEvent('ageRatingClicked', { AgeRating: mediaItem.AgeRating })"
+                    v-on:click.stop="
+                      emitMediaItemEvent('ageRatingClicked', { mediaItem, AgeRating: mediaItem.AgeRating })
+                    "
                     >{{ mediaItem.AgeRating }}</span
                   >
                 </span>
@@ -249,7 +251,7 @@
                       v-bind:class="{
                         'mk-search-highlight': $shared.filterGenresAppliedContains(genre.translated),
                       }"
-                      v-on:click.stop="emitMediaItemEvent('genreClicked', { genre })"
+                      v-on:click.stop="emitMediaItemEvent('genreClicked', { mediaItem, genre })"
                       >{{ genre.translated }}</span
                     >
                   </span>
@@ -269,7 +271,9 @@
                           mediaItem.Audio_Languages
                         ),
                       }"
-                      v-on:click.stop="emitMediaItemEvent('languageClicked', { code: lang, type: 'audio', mediaItem })"
+                      v-on:click.stop="
+                        emitMediaItemEvent('languageClicked', { mediaItem, code: lang, type: 'audio', mediaItem })
+                      "
                       >{{ lang }}</span
                     >
                   </span>
@@ -290,7 +294,7 @@
                         ),
                       }"
                       v-on:click.stop="
-                        emitMediaItemEvent('languageClicked', { code: lang, type: 'subtitle', mediaItem })
+                        emitMediaItemEvent('languageClicked', { mediaItem, code: lang, type: 'subtitle', mediaItem })
                       "
                       >{{ lang }}</span
                     >
@@ -419,7 +423,7 @@
                     v-bind:class="{
                       'mk-search-highlight': $shared.filterPersonsAppliedContains(credit),
                     }"
-                    v-on:click.stop="emitMediaItemEvent('creditClicked', { credit })"
+                    v-on:click.stop="emitMediaItemEvent('creditClicked', { mediaItem, credit })"
                     >{{ credit.name }}</a
                   >
                 </span>
@@ -440,7 +444,7 @@
                     v-bind:class="{
                       'mk-search-highlight': $shared.filterPersonsAppliedContains(credit),
                     }"
-                    v-on:click.stop="emitMediaItemEvent('creditClicked', { credit })"
+                    v-on:click.stop="emitMediaItemEvent('creditClicked', { mediaItem, credit })"
                     >{{ credit.name }}</a
                   >
                 </span>
@@ -461,7 +465,7 @@
                     v-bind:class="{
                       'mk-search-highlight': $shared.filterPersonsAppliedContains(credit),
                     }"
-                    v-on:click.stop="emitMediaItemEvent('creditClicked', { credit })"
+                    v-on:click.stop="emitMediaItemEvent('creditClicked', { mediaItem, credit })"
                     >{{ credit.name }}</a
                   >
                 </span>
@@ -482,7 +486,7 @@
                     v-bind:class="{
                       'mk-search-highlight': $shared.filterCompaniesAppliedContains(company),
                     }"
-                    v-on:click.stop="emitMediaItemEvent('companyClicked', { company })"
+                    v-on:click.stop="emitMediaItemEvent('companyClicked', { mediaItem, company })"
                     >{{ company.name }}</a
                   >
                 </span>
@@ -690,7 +694,7 @@
                   v-bind:class="{
                     'mk-search-highlight': $shared.filterPersonsAppliedContains(credit),
                   }"
-                  v-on:click.stop="emitMediaItemEvent('creditClicked', { credit })"
+                  v-on:click.stop="emitMediaItemEvent('creditClicked', { mediaItem, credit })"
                   >{{ credit.name }}</a
                 >
               </v-col>
@@ -845,7 +849,7 @@
               v-bind:class="{
                 'mk-search-highlight': $shared.filterIMDBPlotKeywordsAppliedContains(plotKeyword.Keyword),
               }"
-              v-on:click.stop="emitMediaItemEvent('plotKeywordClicked', { plotKeyword })"
+              v-on:click.stop="emitMediaItemEvent('plotKeywordClicked', { mediaItem, plotKeyword })"
               >{{ plotKeyword.Keyword }}</a
             >
 
@@ -895,7 +899,7 @@
               v-bind:class="{
                 'mk-search-highlight': $shared.filterIMDBFilmingLocationsAppliedContains(filmingLocation.Location),
               }"
-              v-on:click.stop="emitMediaItemEvent('filmingLocationClicked', { filmingLocation })"
+              v-on:click.stop="emitMediaItemEvent('filmingLocationClicked', { mediaItem, filmingLocation })"
               >{{ filmingLocation.Location }}</a
             >
           </v-row>

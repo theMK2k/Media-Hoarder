@@ -44,7 +44,7 @@
 
 ### Misc
 
-- [ ] BUG? when opening persond dialog and clicking "filter by this person", the main list "jumps" and THEN reloads with the filter applied (possibly a fix for another issue)
+- [ ] BUG? when opening person dialog and clicking "filter by this person", the main list "jumps" and THEN reloads with the filter applied (possibly a fix for another issue)
 - [ ] BUG: series in dialog always show yearStart
 - [ ] store.saveFilterValues still works with MediaType and not SpecificMediaType
 - [ ] investigate everything that still works with MediaType (and possibly should also use SpecificMediaType)

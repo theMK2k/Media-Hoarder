@@ -384,6 +384,8 @@ export default {
     async init() {
       logger.log(`[MediaPropertyDialog ${this.propertyTypeKey} init] START, this.propertyValue:`, this.propertyValue);
 
+      this.isLoadingMovies = true;
+
       Object.values(this.mediaItemsContainer).forEach((mic) => {
         mic.numItems = null;
         mic.mediaItems = [];
@@ -573,6 +575,8 @@ export default {
         logger.log(`[MediaPropertyDialog] this.mediaItemsContainer:`, this.mediaItemsContainer);
       } catch (error) {
         logger.error(`[MediaPropertyDialog ${this.propertyTypeKey}] ERROR:`, error);
+      } finally {
+        this.isLoadingMovies = false;
       }
     },
 
