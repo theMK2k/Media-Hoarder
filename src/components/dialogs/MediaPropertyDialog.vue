@@ -1,6 +1,13 @@
 <!-- This is a generalized dialog for properties like age rating, audio format, genre etc. -->
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onEscapePressed" scrollable>
+  <v-dialog
+    v-model="show"
+    persistent
+    max-width="1000px"
+    v-on:keydown.escape="onEscapePressed"
+    scrollable
+    style="z-index: 300 !important"
+  >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title v-on:mouseover="isTitleHovered = true" v-on:mouseleave="isTitleHovered = false">
         {{ propertyTypeKey !== "person" ? `${$t(propertyType.title)}:` : "" }}
@@ -196,6 +203,21 @@ export default {
     },
   },
 
+  watch: {
+    show(newValue) {
+      this.$shared.mediaPropertyDialogVisible = newValue;
+    },
+    propertyValue: function (newVal) {
+      this.debouncedInit(newVal);
+    },
+    mediaType: function () {
+      this.debouncedInit(this.propertyValue);
+    },
+    Series_id_Movies_Owner: function () {
+      this.debouncedInit(this.propertyValue);
+    },
+  },
+
   data() {
     return {
       propertyTypes: {
@@ -291,18 +313,6 @@ export default {
       },
       showDescriptionLong: false,
     };
-  },
-
-  watch: {
-    propertyValue: function (newVal) {
-      this.debouncedInit(newVal);
-    },
-    mediaType: function () {
-      this.debouncedInit(this.propertyValue);
-    },
-    Series_id_Movies_Owner: function () {
-      this.debouncedInit(this.propertyValue);
-    },
   },
 
   methods: {

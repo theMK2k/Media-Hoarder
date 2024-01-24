@@ -42,10 +42,6 @@
 
 - [ ] MediaList: onDeleteMediaDialogYes: also delete series and episodes properly
 
-### Series: create IMDB rating heatmap
-
-
-
 ### Misc
 
 - [ ] BUG? when opening persond dialog and clicking "filter by this person", the main list "jumps" and THEN reloads with the filter applied (possibly a fix for another issue)

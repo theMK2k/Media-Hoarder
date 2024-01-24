@@ -7,6 +7,8 @@
 - [x] IMDB Rating heatmap like <https://whattowatchon.tv>
   - [x] make medialist item card a shared component (now used in medialist as well as SeriesIMDBRatingDialog)main list "jumps" and THEN reloads with the filter applied (possibly a fix for another issue)
   - [x] prevent certain activities while in IMDB Rating Dialog mode
+- [x] fix z-index for other dialogs on top of the SeriesIMDBRatingDialog
+- [x] globally track MediaPropertyDialog's visibility in order to allow closing of SeriesIMDBRatingDialog on outside-click if MediaPropertyDialog is not open
 
 ### Series: Edit Media Dialog
 

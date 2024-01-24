@@ -32,7 +32,7 @@
                     data.mediaItems[season.season][episode.episode].IMDB_rating_defaultFormatted
                   "
                   v-model="data.mediaItems[season.season][episode.episode].showDetails"
-                  v-bind:close-on-click="false"
+                  v-bind:close-on-click="!$shared.mediaPropertyDialogVisible"
                   v-bind:close-on-content-click="false"
                   bottom
                   right
@@ -59,14 +59,6 @@
                         v-on:mediaItemEvent="onMICmediaItemEvent"
                       ></mk-media-item-card>
                     </v-list-item>
-
-                    <v-card-actions>
-                      <v-btn
-                        color="secondary"
-                        v-on:click.stop="data.mediaItems[season.season][episode.episode].showDetails = false"
-                        >{{ $t("Close") }}</v-btn
-                      >
-                    </v-card-actions>
                   </v-card>
                 </v-menu>
               </td>
