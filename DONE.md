@@ -2,6 +2,11 @@
 
 ## v1.3.37-a6
 
+### Series: Media Property Dialog
+
+- [x] make series clickable and expand to episodes listing for the selected series, show affected number of episodes vs. total number of episodes
+- [x] remove the episodes section (in favor of episodes sections for all listed series)
+
 ### Series: IMDB Rating Dialog
 
 - [x] IMDB Rating heatmap like <https://whattowatchon.tv>

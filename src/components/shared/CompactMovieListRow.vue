@@ -1,7 +1,9 @@
 <template>
   <v-row
     class="mk-compact-movie-list-row mk-highlightable-row"
+    v-bind:class="isClickable ? 'mk-clickable-white' : ''"
     style="padding-top: 4px; padding-bottom: 2px; margin-top: 2px"
+    v-on:click.stop="isClickable ? $emit('click', movie) : null"
   >
     <span v-if="movie.Series_Season_Displaytext" style="font-weight: 400; color: lightgray; margin-right: 4px">
       {{ movie.Series_Season_Displaytext
@@ -10,6 +12,7 @@
     {{ movie.Name }}
     {{ movie.Name2 ? " | " + movie.Name2 : "" }}
     {{ movie.yearDisplay }}
+    {{ isClickable && isCollapsed ? " »" : "" }}
     <v-spacer />
     <span>
       <span v-if="movie.IMDB_rating_defaultDisplay">
@@ -31,7 +34,7 @@
 import * as helpers from "@/helpers/helpers";
 
 export default {
-  props: ["movie"],
+  props: ["movie", "isClickable", "isCollapsed"],
   computed: {
     helpers() {
       return helpers;

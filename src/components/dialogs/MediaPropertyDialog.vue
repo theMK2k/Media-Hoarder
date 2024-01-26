@@ -91,11 +91,12 @@
               </v-row>
 
               <div v-for="(mic, index) in Object.values(mediaItemsContainer)" v-bind:key="index">
-                <div v-if="mic.type !== 'episodes' || Series_id_Movies_Owner" v-on:click.stop="toggleShowMovies(mic)">
+                <div v-if="mic.type !== 'episodes' || Series_id_Movies_Owner">
                   <v-row
                     v-if="mic.numItems !== null"
                     class="mk-compact-movie-list-title"
                     v-bind:class="{ 'mk-clickable': !!mic.numItems }"
+                    v-on:click.stop="toggleShowMovies(mic)"
                   >
                     {{
                       mic.numItems +
@@ -107,9 +108,37 @@
                       (!!mic.numItems && !mic.showMediaItems ? " »" : "")
                     }}
                   </v-row>
-                  <div v-if="mic.showMediaItems" class="mk-clickable-white">
+                  <div v-if="mic.showMediaItems">
                     <div v-for="(mediaItem, index) in mic.mediaItems" v-bind:key="index">
-                      <mk-compact-movie-list-row v-bind:movie="mediaItem" />
+                      <mk-compact-movie-list-row
+                        v-bind:movie="mediaItem"
+                        v-bind:isClickable="mic.type == 'series'"
+                        v-bind:isCollapsed="!mediaItem.showSeriesEpisodes"
+                        v-on:click="mic.type == 'series' && toggleSeriesEpisodes(mediaItem)"
+                      />
+
+                      <!-- Episodes (after clicking a series)-->
+                      <div
+                        v-if="mediaItem.showSeriesEpisodes"
+                        style="margin-left: 32px; margin-top: 4px; margin-bottom: 4px"
+                      >
+                        <v-progress-linear
+                          v-if="mediaItem.isLoadingSeriesEpisodes"
+                          color="red accent-0"
+                          indeterminate
+                          rounded
+                          height="3"
+                        ></v-progress-linear>
+                        <div v-if="!mediaItem.isLoadingSeriesEpisodes">
+                          {{ mediaItem.seriesEpisodesCount }} / {{ mediaItem.seriesEpisodesTotal }} {{ $t("episodes") }}
+                        </div>
+                        <mk-compact-movie-list-row
+                          v-for="(episode, index) in mediaItem.seriesEpisodesMediaItems"
+                          v-bind:key="index"
+                          v-bind:movie="episode"
+                          v-bind:isClickable="false"
+                        ></mk-compact-movie-list-row>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -291,14 +320,6 @@ export default {
           type: "series",
           nameSingular: "series_singular",
           namePlural: "series_plural",
-          numItems: null,
-          mediaItems: [],
-          showMediaItems: false,
-        },
-        episodes: {
-          type: "episodes",
-          nameSingular: "episode",
-          namePlural: "episodes",
           numItems: null,
           mediaItems: [],
           showMediaItems: false,
@@ -672,9 +693,30 @@ export default {
         return;
       }
 
-      if (!mic.mediaItems.length > 0) {
-        this.isLoadingMovies = true;
+      if (mic.mediaItems.length !== 0) {
+        mic.showMediaItems = true;
+        return;
+      }
 
+      this.isLoadingMovies = true;
+
+      // Deduplication
+      mic.mediaItems = await this.fetchMediaItems(mic.type);
+
+      logger.log(`[MediaPropertyDialog toggleShowMovies] mic.mediaItems:`, mic.mediaItems);
+
+      this.isLoadingMovies = false;
+
+      mic.showMediaItems = true;
+    },
+
+    /**
+     * Fetch Media Items (movies, series, episodes)
+     * @param {string} type the type of media items to fetch ("movies", "series", "episodes")
+     * @param {number} Series_id_Movies_Owner (optional) the Series_id_Movies_Owner (if type === "episodes")
+     */
+    async fetchMediaItems(type, Series_id_Movies_Owner) {
+      try {
         const filters = {
           filterSettings: {},
         };
@@ -831,19 +873,19 @@ export default {
         }
 
         const options = {
-          $MediaType: mic.type === "episodes" ? "series" : mic.type,
+          $MediaType: type === "episodes" ? "series" : type,
           arr_id_Movies: null,
           minimumResultSet: true,
           $t: this.$t,
           filters,
-          Series_id_Movies_Owner: mic.type === "episodes" ? this.Series_id_Movies_Owner : null,
+          Series_id_Movies_Owner,
           dontStoreFilters: true,
         };
 
         logger.log(`[MediaPropertyDialog toggleShowMovies] options:`, options);
 
         const mediaItems = (await store.fetchMedia(options)).sort((a, b) => {
-          if (this.Series_id_Movies_Owner) {
+          if (Series_id_Movies_Owner) {
             if (a.Series_Season > b.Series_Season) {
               return 1;
             }
@@ -876,10 +918,7 @@ export default {
           return 0;
         });
 
-        logger.log(`[MediaPropertyDialog toggleShowMovies] mediaItems:`, mediaItems);
-
-        // Deduplication
-        mic.mediaItems = mediaItems.filter((item, index) => {
+        const mediaItemsDeduplicated = mediaItems.filter((item, index) => {
           return (
             mediaItems.findIndex((item2) => {
               return `${item2.Name} ${item2.yearDisplay}` === `${item.Name} ${item.yearDisplay}`;
@@ -887,12 +926,60 @@ export default {
           );
         });
 
-        logger.log(`[MediaPropertyDialog toggleShowMovies] mic.mediaItems:`, mic.mediaItems);
+        logger.log(`[MediaPropertyDialog fetchMediaItems] mediaItemsDeduplicated:`, mediaItemsDeduplicated);
 
-        this.isLoadingMovies = false;
+        return mediaItemsDeduplicated;
+      } catch (error) {
+        logger.error(error);
       }
 
-      mic.showMediaItems = true;
+      return [];
+    },
+
+    async toggleSeriesEpisodes(mediaItem) {
+      // seriesEpisodesCount
+      // seriesEpisodesTotal
+      // seriesEpisodesMediaItems
+
+      logger.log("[toggleSeriesEpisodes] mediaItem:", mediaItem);
+
+      if (mediaItem.showSeriesEpisodes) {
+        this.$set(mediaItem, "showSeriesEpisodes", false);
+        return;
+      }
+
+      this.$set(mediaItem, "showSeriesEpisodes", true);
+
+      if (mediaItem.seriesEpisodesTotal) {
+        return;
+      }
+
+      try {
+        this.$set(mediaItem, "isLoadingSeriesEpisodes", true);
+
+        const mediaItems = await this.fetchMediaItems("episodes", mediaItem.id_Movies);
+
+        this.$set(mediaItem, "seriesEpisodesMediaItems", mediaItems);
+
+        this.$set(mediaItem, "seriesEpisodesCount", mediaItems.length);
+
+        // get number of total episodes
+        const totalEpisodes = await store.db.fireProcedureReturnScalar(
+          `
+            SELECT COUNT(1) FROM tbl_Movies WHERE Series_id_Movies_Owner = $Series_id_Movies_Owner
+          `,
+          {
+            $Series_id_Movies_Owner: mediaItem.id_Movies,
+          }
+        );
+
+        this.$set(mediaItem, "seriesEpisodesTotal", totalEpisodes);
+      } catch (error) {
+        console.error(error);
+        eventBus.showSnackbar("error", error);
+      } finally {
+        this.$set(mediaItem, "isLoadingSeriesEpisodes", false);
+      }
     },
   },
 
