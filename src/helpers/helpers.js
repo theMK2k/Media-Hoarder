@@ -349,6 +349,7 @@ async function requestAsync(options) {
   const response = await requestretryAsync(optionsDerived);
 
   logger.log("[requestAsync] response.body.length:", _.get(response, "body.length", 0));
+  // logger.log("[requestAsync] response:", response);
 
   if (requestAsyncDumpToFile) {
     const filename = `${filenamifyExt(optionsDerived.url ? optionsDerived.url : optionsDerived.uri)}.html`;
@@ -539,9 +540,7 @@ function getSeriesEpisodeSeasonAndEpisodeNumbersFromName(name) {
       result.$Series_Bonus_Number = +isolated.match(/b(\d+)/i)[1];
     } else {
       // a regular episode
-      result.$Series_Episodes_Complete = isolated
-        .match(/ep?\d+/gi)
-        .map((item) => +item.toLowerCase().replace("ep", "").replace("e", ""));
+      result.$Series_Episodes_Complete = isolated.match(/ep?\d+/gi).map((item) => +item.toLowerCase().replace("ep", "").replace("e", ""));
       result.$Series_Episodes_First = result.$Series_Episodes_Complete[0];
     }
   }

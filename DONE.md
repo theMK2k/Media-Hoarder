@@ -114,6 +114,15 @@
 - [x] add "Season and Episode" sort order (only for Episodes specificMediaType)
 - [x] store filters and sort values by specificMediaType ("Movies", "Series", "Episodes")
 - [x] update Series_Num_Episodes and Series_Num_Seasons after an episode has been removed
+## v1.3.3
+
+- [x] update IMDB sources
+  - [x] testIMDBreleaseinfo
+  - [x] testIMDBCompaniesData
+  - [x] testIMDBplotKeywords
+  - [x] testIMDBFilmingLocations
+  - [x] testIMDBFindPageSearch
+
 
 ## v1.3.2
 

@@ -23,6 +23,12 @@
 - [ ] rescanHandleDuplicates (also provide snackbar progress for this)
 - [ ] investigate with series-generator: find possible multitudes of episode numbers (also: episode == null)
   - [ ] if this is the case: we need a better getSeriesEpisodeTconstFromCache, possibly by utilizing levenshtein between filename and imdb's episode title
+
+## NEXT Minor (current v1.3.2)
+
+- [ ] implement a test which just checks if the graphQL URLs are fine
+
+- [ ] use imdb-graphql-urls.json (also try to fetch them from master in github, this way we can update the urls if imdb changes them - without creating a new release)
 - [ ] Fix: subdirectory called "extras" is not assigned to the main movie (the files are provided as main movies themselves)
 - add ffmpeg in order to create screenshots for movies/episodes with missing poster
 - [ ] check tconst detection with movies, too (we changed some fullDirectory to fullPath)
