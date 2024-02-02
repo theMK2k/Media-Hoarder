@@ -336,7 +336,7 @@ async function requestAsync(options) {
   // return requestretryAsync(optionsDerived);
   const response = await requestretryAsync(optionsDerived);
 
-  logger.log("[requestAsync] response:", response);
+  // logger.log("[requestAsync] response:", response);
 
   if (requestAsyncDumpToFile) {
     const filename = `${filenamifyExt(optionsDerived.url ? optionsDerived.url : optionsDerived.uri)}.html`;

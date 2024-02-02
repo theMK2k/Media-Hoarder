@@ -1,5 +1,15 @@
 # DONE
 
+## v1.3.3
+
+- [x] update IMDB sources
+  - [x] testIMDBreleaseinfo
+  - [x] testIMDBCompaniesData
+  - [x] testIMDBplotKeywords
+  - [x] testIMDBFilmingLocations
+  - [x] testIMDBFindPageSearch
+
+
 ## v1.3.2
 
 - [x] Link IMDB Dialog:

@@ -11,7 +11,7 @@ let graphqlURLs = require("./data/imdb-graphql-urls.json");
 
 const graphQLqueries = {
   /**
-   *
+   * see https://www.imdb.com/title/tt0076759/releaseinfo/
    * @param {string} $IMDB_tconst
    * @returns
    */
@@ -27,14 +27,14 @@ const graphQLqueries = {
     graphqlURLs.companies.replace("$IMDB_tconst", $IMDB_tconst).replace("$IMDB_Companies_Category", $IMDB_Companies_Category),
 
   /**
-   *
+   * see https://www.imdb.com/title/tt0076759/keywords/
    * @param {string} $IMDB_tconst
    * @returns
    */
   plotKeywords: ($IMDB_tconst) => graphqlURLs.plotKeywords.replace("$IMDB_tconst", $IMDB_tconst),
 
   /**
-   *
+   * see https://www.imdb.com/title/tt0076759/locations/
    * @param {string} $IMDB_tconst
    * @returns
    */
@@ -48,7 +48,7 @@ const graphQLqueries = {
   advancedTitleSearch: (searchTerm) => graphqlURLs.advancedTitleSearch.replace("$searchTerm", encodeURIComponent(searchTerm)),
 
   /**
-   * API called when using https://www.imdb.com/find/
+   * API called when using https://www.imdb.com/find/?q=xxx
    */
   findPageSearch: (searchTerm) => graphqlURLs.findPageSearch.replace("$searchTerm", encodeURIComponent(searchTerm)),
 };
