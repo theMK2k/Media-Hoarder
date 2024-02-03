@@ -1,6 +1,6 @@
 const imdbScraper = require("../imdb-scraper");
 
-// const logger = require("../helpers/logger");
+const logger = require("../helpers/logger");
 
 const status = {
   SUCCESS: 0,
@@ -484,7 +484,7 @@ async function testIMDBtechnicalData2() {
   } catch (error) {
     testResult.status = status.EXCEPTION;
     testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
-    console.error(error);
+    logger.error(error);
   }
 
   return testResult;
@@ -518,7 +518,7 @@ async function testIMDBtechnicalData3() {
   } catch (error) {
     testResult.status = status.EXCEPTION;
     testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
-    console.error(error);
+    logger.error(error);
   }
 
   return testResult;
@@ -1138,7 +1138,7 @@ async function testIMDBSuggestion() {
 
       const scrapeResult = await imdbScraper.scrapeIMDBSuggestion(expectedValue.searchTerm);
 
-      // console.log(scrapeResult);
+      // logger.log(scrapeResult);
 
       if (!scrapeResult) {
         addSubLogEntry(testResult, `query '${expectedValue.searchTerm}' no response`, status.ERROR);
@@ -1359,7 +1359,7 @@ async function testIMDBFindPageSearch() {
 
       const scrapeResult = await imdbScraper.scrapeIMDBFindPageSearchV3(expectedValue.searchTerm, expectedValue.type);
 
-      // console.log(scrapeResult);
+      // logger.log(scrapeResult);
 
       if (!scrapeResult) {
         addSubLogEntry(
@@ -1476,7 +1476,7 @@ async function testIMDBSeriesEpisodes() {
         expectedValue.Series_Season
       );
 
-      console.log(scrapeResult);
+      logger.log(scrapeResult);
 
       if (!scrapeResult) {
         addSubLogEntry(
@@ -1617,7 +1617,7 @@ async function testIMDBSeriesSeasons() {
 
       const scrapeResult = await imdbScraper.scrapeIMDBSeriesSeasons(expectedValue.Series_IMDB_tconst);
 
-      console.log(scrapeResult);
+      logger.log(scrapeResult);
 
       if (!scrapeResult) {
         addSubLogEntry(testResult, `query '${expectedValue.name} Seasons' no response`, status.ERROR);

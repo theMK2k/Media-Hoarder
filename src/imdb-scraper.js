@@ -2440,7 +2440,7 @@ async function scrapeIMDBSeriesSeasons(Series_IMDB_tconst) {
 
   const seasons = [];
 
-  $(`li[data-testid="tab-season-entry"]`).each((i, elSeason) => {
+  $(`a[data-testid="tab-season-entry"]`).each((i, elSeason) => {
     const season = $(elSeason).text().trim().toLowerCase();
 
     let seasonDisplayText = "";

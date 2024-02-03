@@ -540,7 +540,9 @@ function getSeriesEpisodeSeasonAndEpisodeNumbersFromName(name) {
       result.$Series_Bonus_Number = +isolated.match(/b(\d+)/i)[1];
     } else {
       // a regular episode
-      result.$Series_Episodes_Complete = isolated.match(/ep?\d+/gi).map((item) => +item.toLowerCase().replace("ep", "").replace("e", ""));
+      result.$Series_Episodes_Complete = isolated
+        .match(/ep?\d+/gi)
+        .map((item) => +item.toLowerCase().replace("ep", "").replace("e", ""));
       result.$Series_Episodes_First = result.$Series_Episodes_Complete[0];
     }
   }
