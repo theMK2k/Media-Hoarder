@@ -1,5 +1,5 @@
 {
-  "release": 1,
+  "releaseNumber": 2,
   "akaTitles": "https://caching.graphql.imdb.com/?operationName=TitleAkasPaginated&variables={\"const\":\"$IMDB_tconst\",\"after\":\"\",\"first\":500,\"isAutoTranslationEnabled\":false,\"locale\":\"en-GB\",\"originalTitleText\":true}&extensions={\"persistedQuery\":{\"sha256Hash\":\"48d4f7bfa73230fb550147bd4704d8050080e65fe2ad576da6276cac2330e446\",\"version\":1}}",
   "companies": "https://caching.graphql.imdb.com/?operationName=TitleCompanyCreditsPagination&variables={\"const\":\"$IMDB_tconst\",\"filter\":{\"categories\":[\"$IMDB_Companies_Category\"]},\"first\":500,\"locale\":\"en-GB\",\"originalTitleText\":false}&extensions={\"persistedQuery\":{\"sha256Hash\":\"832e9b62579c7063ba988e1d3dfaf340dcdfeedf9cb5abab2ef8317e297b0d4f\",\"version\":1}}",
   "plotKeywords": "https://caching.graphql.imdb.com/?operationName=TitleKeywordsPagination&variables={\"const\":\"$IMDB_tconst\",\"first\":500,\"locale\":\"en-GB\",\"originalTitleText\":false}&extensions={\"persistedQuery\":{\"sha256Hash\":\"04628cd376a392eba1e6fc0aad7070fe78e10018dc59b159924bf0026a1450de\",\"version\":1}}",
