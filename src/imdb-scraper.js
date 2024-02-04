@@ -10,6 +10,8 @@ const helpers = require("./helpers/helpers");
 let graphqlURLs = require("./data/imdb-graphql-urls.json");
 
 const graphQLqueries = {
+  release: () => graphqlURLs.release,
+
   /**
    * see https://www.imdb.com/title/tt0076759/releaseinfo/
    * @param {string} $IMDB_tconst
