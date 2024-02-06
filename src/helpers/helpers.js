@@ -346,6 +346,7 @@ async function requestAsync(options) {
   }
 
   // return requestretryAsync(optionsDerived);
+  // logger.log("[requestAsync] running requestretryAsync with optionsDerived:", optionsDerived);
   const response = await requestretryAsync(optionsDerived);
 
   logger.log("[requestAsync] response.body.length:", _.get(response, "body.length", 0));

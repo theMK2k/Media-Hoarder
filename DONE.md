@@ -1,5 +1,11 @@
 # DONE
 
+## v1.3.37-a7
+
+- [x] use imdb-graphql-urls.json (also try to fetch them from master in github, this way we can update the urls if imdb changes them - without creating a new release)
+  - <https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/src/data/imdb-graphql-urls.json>
+- [x] propagate actual errors of imdb scraping to the test result (i.e. errors in graphql querying instead of $IMDB_something is NULL)
+
 ## v1.3.37-a6
 
 ### Series: Media Property Dialog
@@ -114,6 +120,7 @@
 - [x] add "Season and Episode" sort order (only for Episodes specificMediaType)
 - [x] store filters and sort values by specificMediaType ("Movies", "Series", "Episodes")
 - [x] update Series_Num_Episodes and Series_Num_Seasons after an episode has been removed
+
 ## v1.3.3
 
 - [x] update IMDB sources
@@ -122,7 +129,6 @@
   - [x] testIMDBplotKeywords
   - [x] testIMDBFilmingLocations
   - [x] testIMDBFindPageSearch
-
 
 ## v1.3.2
 

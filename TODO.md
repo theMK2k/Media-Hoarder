@@ -27,9 +27,6 @@
 ## NEXT Minor (current v1.3.2)
 
 - [ ] implement a test which just checks if the graphQL URLs are fine
-
-- [WIP] use imdb-graphql-urls.json (also try to fetch them from master in github, this way we can update the urls if imdb changes them - without creating a new release)
-  - <https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/src/data/imdb-graphql-urls.json>
 - [ ] Fix: subdirectory called "extras" is not assigned to the main movie (the files are provided as main movies themselves)
 - add ffmpeg in order to create screenshots for movies/episodes with missing poster
 - [ ] check tconst detection with movies, too (we changed some fullDirectory to fullPath)
