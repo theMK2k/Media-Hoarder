@@ -10,6 +10,8 @@ const helpers = require("./helpers/helpers");
 let graphqlURLs = require("./data/imdb-graphql-urls.json");
 
 const graphQLqueries = {
+  releaseNumber: () => graphqlURLs.releaseNumber,
+
   /**
    * see https://www.imdb.com/title/tt0076759/releaseinfo/
    * @param {string} $IMDB_tconst
@@ -52,6 +54,49 @@ const graphQLqueries = {
    */
   findPageSearch: (searchTerm) => graphqlURLs.findPageSearch.replace("$searchTerm", encodeURIComponent(searchTerm)),
 };
+
+/**
+ * Auto-Update our definition of graphqlURLs from https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/src/data/imdb-graphql-urls.json
+ * I.E. as soon as Media Hoarder has the defintion updated and pushed to master, we can directly use them here (instead of creating a new release just for updated graphqlURLs)
+ */
+let lastGraphqlURLsUpdate = null;
+async function autoUpdateGraphqlURLs() {
+  logger.log("[autoUpdateGraphqlURLs] START");
+  if (lastGraphqlURLsUpdate && /* lastGraphqlURLsUpdate must be older than 1 hour */ Date.now() - lastGraphqlURLsUpdate < 60 * 60 * 1000) {
+    logger.log("[autoUpdateGraphqlURLs] lastGraphqlURLsUpdate has already been run in the last hour, skipping");
+    return;
+  }
+
+  try {
+    const response = await helpers.requestAsync("https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/src/data/imdb-graphql-urls.json");
+    const body = JSON.parse(response.body);
+
+    logger.log("[autoUpdateGraphqlURLs] body:", body);
+    logger.log("[autoUpdateGraphqlURLs] graphQLqueries.releaseNumber:", graphQLqueries.releaseNumber());
+
+    if (graphQLqueries.releaseNumber() >= body.releaseNumber) {
+      logger.log("[autoUpdateGraphqlURLs] remote graphqlURLs are not newer, skipping");
+      return;
+    }
+
+    graphqlURLs = body;
+
+    logger.log("[autoUpdateGraphqlURLs] graphqlURLs updated, graphQLqueries.releaseNumber:", graphQLqueries.releaseNumber());
+  } catch (error) {
+    logger.error(error);
+  }
+}
+
+autoUpdateGraphqlURLs();
+
+/**
+ * Inspect @param body if it contains errors and throw an error if so
+ */
+function handleGraphQLErrors(body) {
+  if (body.errors && body.errors.length) {
+    throw new Error(`GraphQL Error: ${body.errors[0].message}`);
+  }
+}
 
 /**
  * scrape IMDB Main Page Data (e.g. https://www.imdb.com/title/tt4154796)
@@ -676,8 +721,9 @@ async function scrapeIMDBreleaseinfoV3(movie, regions, allowedTitleTypes, html) 
     const gqlAkaTitles = JSON.parse(
       (await helpers.requestAsync({ uri: graphQLqueries.akaTitles(movie.IMDB_tconst), headers: { "content-type": "application/json" } })).body
     );
+    handleGraphQLErrors(gqlAkaTitles);
 
-    // logger.log("[scrapeIMDBreleaseinfoV2] gqlAkaTitles:", logger.inspectObject(gqlAkaTitles));
+    logger.log("[scrapeIMDBreleaseinfoV3] gqlAkaTitles:", logger.inspectObject(gqlAkaTitles));
 
     const gqlAkaTitlesEdges = _.get(gqlAkaTitles, "data.title.akas.edges", []);
 
@@ -685,7 +731,7 @@ async function scrapeIMDBreleaseinfoV3(movie, regions, allowedTitleTypes, html) 
     let $IMDB_localTitle = null;
     if (regions) {
       for (const region of regions) {
-        logger.log("[scrapeIMDBreleaseinfoV2] regions trying:", `"${region.name}"`);
+        logger.log("[scrapeIMDBreleaseinfoV3] regions trying:", `"${region.name}"`);
 
         if (!$IMDB_localTitle) {
           const regionAkaTitles = gqlAkaTitlesEdges.filter((node) => {
@@ -694,10 +740,10 @@ async function scrapeIMDBreleaseinfoV3(movie, regions, allowedTitleTypes, html) 
 
           for (const regionAkaTitle of regionAkaTitles) {
             const title = _.get(regionAkaTitle, "node.displayableProperty.value.plainText", null);
-            logger.log(`[scrapeIMDBreleaseinfoV2] regions: found aka title candidate: "${title}"`);
+            logger.log(`[scrapeIMDBreleaseinfoV3] regions: found aka title candidate: "${title}"`);
 
             if (!title) {
-              logger.log("[scrapeIMDBreleaseinfoV2] skip; no title found in regionAkaTitle:", logger.inspectObject(regionAkaTitle));
+              logger.log("[scrapeIMDBreleaseinfoV3] skip; no title found in regionAkaTitle:", logger.inspectObject(regionAkaTitle));
               continue;
             }
 
@@ -710,11 +756,14 @@ async function scrapeIMDBreleaseinfoV3(movie, regions, allowedTitleTypes, html) 
             }).length;
 
             if (numAllowed !== titleTypes.length) {
-              logger.log("[scrapeIMDBreleaseinfoV2] regions: skipped local title, some title types are not allowed", { numAllowed, titleTypes });
+              logger.log("[scrapeIMDBreleaseinfoV3] regions: skipped local title, some title types are not allowed", {
+                numAllowed,
+                titleTypes,
+              });
               continue;
             }
 
-            logger.log("[scrapeIMDBreleaseinfoV2] regions: using local title:", title);
+            logger.log("[scrapeIMDBreleaseinfoV3] regions: using local title:", title);
             $IMDB_localTitle = regionAkaTitle.node.displayableProperty.value.plainText;
             break;
           }
@@ -731,7 +780,7 @@ async function scrapeIMDBreleaseinfoV3(movie, regions, allowedTitleTypes, html) 
       $IMDB_primaryTitle,
     };
 
-    logger.log("[scrapeIMDBreleaseinfoV2] result:", result);
+    logger.log("[scrapeIMDBreleaseinfoV3] result:", result);
 
     return result;
   } catch (error) {
@@ -1264,23 +1313,36 @@ async function scrapeIMDBCompaniesDataV3(movie) {
 
   try {
     const gqlCompaniesProduction = JSON.parse(
-      (await helpers.requestAsync({ uri: graphQLqueries.companies(movie.IMDB_tconst, "production"), headers: { "content-type": "application/json" } })).body
+      (
+        await helpers.requestAsync({
+          uri: graphQLqueries.companies(movie.IMDB_tconst, "production"),
+          headers: { "content-type": "application/json" },
+        })
+      ).body
     );
+    handleGraphQLErrors(gqlCompaniesProduction);
+
     const { companies: companiesProduction, topCompanies: topCompaniesProduction } = getGQLCompaniesData(gqlCompaniesProduction, "Production");
 
     const gqlCompaniesDistribution = JSON.parse(
       (await helpers.requestAsync({ uri: graphQLqueries.companies(movie.IMDB_tconst, "distribution"), headers: { "content-type": "application/json" } })).body
     );
+    handleGraphQLErrors(gqlCompaniesDistribution);
+
     const { companies: companiesDistribution } = getGQLCompaniesData(gqlCompaniesDistribution, "Distribution");
 
     const gqlCompaniesSpecialEffects = JSON.parse(
       (await helpers.requestAsync({ uri: graphQLqueries.companies(movie.IMDB_tconst, "specialEffects"), headers: { "content-type": "application/json" } })).body
     );
+    handleGraphQLErrors(gqlCompaniesSpecialEffects);
+
     const { companies: companiesSpecialEffects } = getGQLCompaniesData(gqlCompaniesSpecialEffects, "Special Effects");
 
     const gqlCompaniesOther = JSON.parse(
       (await helpers.requestAsync({ uri: graphQLqueries.companies(movie.IMDB_tconst, "miscellaneous"), headers: { "content-type": "application/json" } })).body
     );
+    handleGraphQLErrors(gqlCompaniesOther);
+
     const { companies: companiesOther } = getGQLCompaniesData(gqlCompaniesOther, "Other");
 
     return {
@@ -1645,6 +1707,7 @@ async function scrapeIMDBAdvancedTitleSearchV3(title, titleTypes) {
     logger.log("[scrapeIMDBAdvancedTitleSearchV3] uri:", uri);
 
     const gqlTitles = JSON.parse((await helpers.requestAsync({ uri, headers: { "content-type": "application/json" } })).body);
+    handleGraphQLErrors(gqlTitles);
 
     logger.log("[scrapeIMDBAdvancedTitleSearchV3] gqlTitles:", gqlTitles);
 
@@ -1819,6 +1882,7 @@ async function scrapeIMDBFindPageSearchV3(title, titleTypes) {
     logger.log("[scrapeIMDBFindPageSearchV3] uri:", uri);
 
     const gqlTitles = JSON.parse((await helpers.requestAsync({ uri, headers: { "content-type": "application/json" } })).body);
+    handleGraphQLErrors(gqlTitles);
 
     logger.log("[scrapeIMDBFindPageSearchV3] gqlTitles:", gqlTitles);
 
@@ -1999,8 +2063,9 @@ async function scrapeIMDBplotKeywordsV3(movie) {
     const gqlPlotKeywords = JSON.parse(
       (await helpers.requestAsync({ uri: graphQLqueries.plotKeywords(movie.IMDB_tconst), headers: { "content-type": "application/json" } })).body
     );
+    handleGraphQLErrors(gqlPlotKeywords);
 
-    // logger.log("[scrapeIMDBreleaseinfoV2] gqlAkaTitles:", logger.inspectObject(gqlAkaTitles));
+    // logger.log("[scrapeIMDBplotKeywordsV3] gqlAkaTitles:", logger.inspectObject(gqlAkaTitles));
 
     const gqlPlotKeywordsEdges = _.get(gqlPlotKeywords, "data.title.keywords.edges", []);
 
@@ -2092,6 +2157,7 @@ async function scrapeIMDBFilmingLocationsV3(movie) {
     const gqlLocations = JSON.parse(
       (await helpers.requestAsync({ uri: graphQLqueries.filmingLocations(movie.IMDB_tconst), headers: { "content-type": "application/json" } })).body
     );
+    handleGraphQLErrors(gqlLocations);
 
     const gqlLocationsEdges = _.get(gqlLocations, "data.title.filmingLocations.edges", []);
 
