@@ -133,7 +133,7 @@ async function testIMDBmainPageData() {
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_endYear", null, true);
   } catch (error) {
     testResult.status = status.EXCEPTION;
-    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
   }
 
   return testResult;
@@ -213,7 +213,7 @@ async function testIMDBmainPageData2() {
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_endYear", null, true);
   } catch (error) {
     testResult.status = status.EXCEPTION;
-    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
   }
 
   return testResult;
@@ -294,7 +294,7 @@ async function testIMDBmainPageData3() {
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_endYear", null, true);
   } catch (error) {
     testResult.status = status.EXCEPTION;
-    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
   }
 
   return testResult;
@@ -343,7 +343,7 @@ async function testIMDBmainPageData4() {
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_endYear", null, true);
   } catch (error) {
     testResult.status = status.EXCEPTION;
-    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
   }
 
   return testResult;
@@ -380,7 +380,7 @@ async function testIMDBplotSummary() {
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_plotSummaryFull");
   } catch (error) {
     testResult.status = status.EXCEPTION;
-    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
   }
 
   return testResult;
@@ -417,7 +417,7 @@ async function testIMDBreleaseinfo() {
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_primaryTitle");
   } catch (error) {
     testResult.status = status.EXCEPTION;
-    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
   }
 
   return testResult;
@@ -450,7 +450,7 @@ async function testIMDBtechnicalData() {
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_runtimeMinutes");
   } catch (error) {
     testResult.status = status.EXCEPTION;
-    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
   }
 
   return testResult;
@@ -483,7 +483,7 @@ async function testIMDBtechnicalData2() {
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_runtimeMinutes");
   } catch (error) {
     testResult.status = status.EXCEPTION;
-    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
     logger.error(error);
   }
 
@@ -517,7 +517,7 @@ async function testIMDBtechnicalData3() {
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_runtimeMinutes");
   } catch (error) {
     testResult.status = status.EXCEPTION;
-    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
     logger.error(error);
   }
 
@@ -596,7 +596,7 @@ async function testIMDBParentalGuideData() {
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_Parental_Advisory_Frightening");
   } catch (error) {
     testResult.status = status.EXCEPTION;
-    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
   }
 
   return testResult;
@@ -669,7 +669,7 @@ async function testIMDBFullCreditsData() {
     }
   } catch (error) {
     testResult.status = status.EXCEPTION;
-    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
   }
 
   return testResult;
@@ -736,7 +736,7 @@ async function testIMDBCompaniesData() {
     }
   } catch (error) {
     testResult.status = status.EXCEPTION;
-    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
   }
 
   return testResult;
@@ -778,7 +778,7 @@ async function testIMDBPersonData() {
     performDefaultCheck(scrapeResult, expected, testResult, "$LongBio");
   } catch (error) {
     testResult.status = status.EXCEPTION;
-    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
   }
 
   return testResult;
@@ -831,7 +831,7 @@ async function testIMDBTrailerMediaURLs() {
     }
   } catch (error) {
     testResult.status = status.EXCEPTION;
-    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
   }
 
   return testResult;
@@ -905,7 +905,7 @@ async function testIMDBplotKeywords() {
     }
   } catch (error) {
     testResult.status = status.EXCEPTION;
-    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
   }
 
   return testResult;
@@ -995,7 +995,7 @@ async function testIMDBFilmingLocations() {
     }
   } catch (error) {
     testResult.status = status.EXCEPTION;
-    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
   }
 
   return testResult;
@@ -1098,7 +1098,7 @@ async function testIMDBRatingDemographics() {
     });
   } catch (error) {
     testResult.status = status.EXCEPTION;
-    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
   }
 
   return testResult;
@@ -1198,7 +1198,7 @@ async function testIMDBSuggestion() {
     }
   } catch (error) {
     testResult.status = status.EXCEPTION;
-    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
   }
 
   return testResult;
@@ -1324,7 +1324,7 @@ async function testIMDBAdvancedTitleSearch() {
     }
   } catch (error) {
     testResult.status = status.EXCEPTION;
-    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
   }
 
   return testResult;
@@ -1420,7 +1420,7 @@ async function testIMDBFindPageSearch() {
     }
   } catch (error) {
     testResult.status = status.EXCEPTION;
-    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
   }
 
   return testResult;
@@ -1574,7 +1574,7 @@ async function testIMDBSeriesEpisodes() {
     }
   } catch (error) {
     testResult.status = status.EXCEPTION;
-    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
   }
 
   return testResult;
@@ -1649,7 +1649,7 @@ async function testIMDBSeriesSeasons() {
     }
   } catch (error) {
     testResult.status = status.EXCEPTION;
-    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, null, 2)}`);
+    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
   }
 
   return testResult;
