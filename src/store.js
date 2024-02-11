@@ -4659,7 +4659,7 @@ async function fetchSortValues($SpecificMediaType) {
 }
 
 async function saveSortValues($SpecificMediaType) {
-  console.log("[saveSortValues] $SpecificMediaType: ", $SpecificMediaType, "shared.sortField:", shared.sortField);
+  logger.log("[saveSortValues] $SpecificMediaType: ", $SpecificMediaType, "shared.sortField:", shared.sortField);
 
   const sortValues = {
     sortField: shared.sortField,
@@ -7878,7 +7878,7 @@ function setLogLevel(level) {
   logger.setLevel(level);
 
   // eslint-disable-next-line no-console
-  console.log("[setLogLevel] logLevel set to", logger.getLevel());
+  logger.info("[setLogLevel] logLevel set to", logger.getLevel());
 }
 
 function routeTo(router, route) {
