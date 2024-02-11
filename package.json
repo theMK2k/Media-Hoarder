@@ -84,6 +84,7 @@
     "@vue/cli-plugin-router": "4.5.13",
     "@vue/cli-service": "4.5.13",
     "@vue/eslint-config-prettier": "6.0.0",
+    "@vue/runtime-dom": "^3.4.18",
     "babel-cli": "6.26.0",
     "babel-eslint": "10.1.0",
     "babel-preset-es2015": "6.24.1",
