@@ -792,7 +792,7 @@ export default {
     fetchFiltersIteration: 0, // detect another fetch even when one is already running
 
     sortAbles: [
-      { Field: " Season_and_Episode", Description: "Season and Episode", specificMediaType: ["Episodes"] },
+      { Field: "Season_and_Episode", Description: "Season and Episode", specificMediaType: ["Episodes"] },
       {
         Field: "Name",
         Description: "Title",

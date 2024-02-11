@@ -1,5 +1,9 @@
 # DONE
 
+## v1.3.38-a8
+
+- [x] Bug: sort by Season and Episode didn't work anymore
+
 ## v1.3.37-a7
 
 - [x] use imdb-graphql-urls.json (also try to fetch them from master in github, this way we can update the urls if imdb changes them - without creating a new release)
