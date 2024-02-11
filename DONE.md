@@ -2,7 +2,8 @@
 
 ## v1.3.38-a8
 
-- [x] Bug: sort by Season and Episode didn't work anymore
+- [x] Fix: sort by Season and Episode didn't work anymore (now fixed)
+- [x] Update Plotsummary IMDB Scraper Test
 
 ## v1.3.37-a7
 

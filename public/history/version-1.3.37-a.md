@@ -1,4 +1,4 @@
-# Media Hoarder v1.3.37-a7 Changelog
+# Media Hoarder v1.3.37-a8 Changelog
 
 This is a **pre release** of the upcoming v1.4.0 which finally introduces TV series support to Media Hoarder.
 
