@@ -91,3 +91,18 @@ describe("getSeriesEpisodeSeasonAndEpisodeNumbersFromName", () => {
     });
   });
 });
+
+describe("compare", () => {
+  test("compare null with null", () => {
+    expect(helpers.compare(null, null)).toBe(0);
+  });
+  test("compare undefined with null", () => {
+    expect(helpers.compare(undefined, null)).toBe(0);
+  });
+  test("compare 123 with null", () => {
+    expect(helpers.compare(123, null)).toBe(1);
+  });
+  test("compare 123 with null (reverse)", () => {
+    expect(helpers.compare(123, null, true)).toBe(-1);
+  });
+});

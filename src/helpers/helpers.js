@@ -399,15 +399,22 @@ function isNullOrUndefined(value) {
   return value == null || typeof value === "undefined";
 }
 
+/**
+ * Compare a and b
+ * @param {any} a value to compare
+ * @param {any} b value to compare
+ * @param {boolean} reverse if true, the comparison is reversed
+ * @returns 0, 1 or -1
+ */
 function compare(a, b, reverse) {
-  if (this.isNullOrUndefined(a) && this.isNullOrUndefined(b)) {
+  if (isNullOrUndefined(a) && isNullOrUndefined(b)) {
     return 0;
   }
 
-  if (this.isNullOrUndefined(a)) {
+  if (isNullOrUndefined(a)) {
     return reverse ? 1 : -1;
   }
-  if (this.isNullOrUndefined(b)) {
+  if (isNullOrUndefined(b)) {
     return reverse ? -1 : 1;
   }
 
