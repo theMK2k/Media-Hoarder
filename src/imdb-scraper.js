@@ -1850,7 +1850,8 @@ async function scrapeIMDBAdvancedTitleSearchV3(title, titleTypes) {
     return results;
   } catch (error) {
     logger.error("[scrapeIMDBAdvancedTitleSearchV3] ERROR:", error);
-    return [];
+
+    throw error;
   }
 }
 

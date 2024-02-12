@@ -297,7 +297,7 @@ export default {
       try {
         advancedTitleSearchResults = await scrapeIMDBAdvancedTitleSearchV3(this.searchText, this.titleTypes);
       } catch (err) {
-        logger.error("[onSearchClick] ERROR:", err);
+        logger.error("[onSearchClick] scrapeIMDBAdvancedTitleSearchV3 ERROR:", err);
       }
 
       let findResults = null;
