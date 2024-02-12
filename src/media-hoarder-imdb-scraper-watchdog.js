@@ -74,6 +74,15 @@ const log = {
   logger.info("");
   logger.info("used config:", JSON.stringify(config, null, 2));
 
+  // wait 1sec so that auto-updated graphql urls are fetched (see imdb-scraper.ts)
+  await (() => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 1000);
+    });
+  })();
+
   if (!config.testmodule || config.testmodule === "testIMDBmainPageData")
     addLogEntry(await imdbScraperTests.testIMDBmainPageData());
   if (!config.testmodule || config.testmodule === "testIMDBmainPageData2")
