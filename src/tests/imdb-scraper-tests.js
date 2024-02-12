@@ -359,7 +359,7 @@ async function testIMDBplotSummary() {
   try {
     const expected = {
       $IMDB_plotSummaryFull:
-        "1941 in a small town in Nazi occupied France. Against the will of its elderly male and his adult niece residents, the Nazis commandeer a house for one of their officers, Lt. Werner von Ebrennac, to live in for as long as he is in the area on Nazi business. As a figurative and literal silent protest against the Nazis and the officer, the uncle and niece do whatever is required of them while the officer is in their house, however they do not acknowledge his presence, living largely in silence whenever he is around. The officer treats the housing situation with care, like he is a guest. Although not a nightly occurrence, the officer begins an evening routine with his reluctant hosts: in his civilian clothes, he knocks on the door of the room in which they have convened for the evening, walking in shortly thereafter knowing that no acknowledgment will be made for him to enter, he visits with them for no more than five minutes before he bids them a good evening as he exits. During these visits, he speaks reverently about, among other things, culture - music and literature in particular as he is a composer and musician - his national pride, his love of France, and what he hopes will emerge from the war, namely a strong and free France, stronger than it was before the war, and the marriage between the French and German cultures which will enrich the lives of all Europeans. All the while, he makes no expectations from them, either to listen, or to answer if they are indeed listening. At the end of what ends up being his six month stay at the house, he does end up having a profound effect on the uncle and niece, despite that effect being largely unacknowledged, as his stay in France has a profound effect on him, opening up his eyes to the reality of the war based largely on his first ever visit into Paris.",
+        "In occupied France, an elderly man and his niece are forced to give shelter to a German army lieutenant who seemingly loves their country and culture.",
     };
 
     const movie = {
@@ -368,7 +368,7 @@ async function testIMDBplotSummary() {
 
     const scrapeResult = await imdbScraper.scrapeIMDBplotSummary(
       movie,
-      "1941 in a small town in Nazi occupied France. Against the will of its elderly male and his adult niece residents, the Nazis commandeer a house for one of their officers, Lt. Werner von Ebrennac, to live in for as long as he is in the area on Nazi business. As a figurative and lit..."
+      "In occupied France, an elderly man and his niece are forced to give shelter to a German army lieutenant who seemingly loves their country and culture."
     );
 
     if (!scrapeResult) {
