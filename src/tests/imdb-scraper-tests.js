@@ -1459,7 +1459,7 @@ async function testIMDBSeriesEpisodes() {
           releaseDateMonth: 3,
           releaseDateDay: 17,
           rating: 9.1,
-          numVotes: 442,
+          numVotes: 487,
           episode: "1",
           season: "2",
           imageURL:
@@ -1566,7 +1566,7 @@ async function testIMDBSeriesEpisodes() {
         addSubLogEntry(
           testResult,
           `numVotes unexpected value
-      got:      "${scrapeResult.$IMDB_numVotes}"
+      got:      "${scrapeResult[0].numVotes}"
       expected: ${expectedValue.result0.numVotes} +/- 10%`,
           status.WARNING
         );
