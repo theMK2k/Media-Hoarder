@@ -86,6 +86,8 @@
 
 ## LATER
 
+- [ ] provide "source path selection" in "scan media" dialog
+  - allows to select a sub-set of source paths for a media scan
 - [ ] include find-imdb-tconst-tests in imdb scraper watchdog
 - [ ] fix file/dirbased name when IMDB tconst detection has no result: if the medium is directory-based, then show the directory name and not the file-based name
 - [ ] new filter: min. IMDB votes
