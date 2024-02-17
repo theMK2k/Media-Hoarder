@@ -5,12 +5,11 @@
         <div class="headline" style="width: 100%; font-size: 1.17em">
           {{ title }}
         </div>
-        <v-row>
+        <v-row style="margin-top: 8px">
           <v-text-field
             :append-icon-cb="() => {}"
             v-bind:placeholder="$t(`Search___ (use '*' to list all)`)"
             single-line
-            append-icon="mdi-magnify"
             color="white"
             hide-details
             v-model="searchText"
