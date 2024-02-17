@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onCancelClick" scrollable>
     <v-card dark flat v-bind:ripple="false">
-      <v-card-title>
+      <v-card-title style="padding-bottom: 0px">
         <div class="headline" style="width: 100%; font-size: 1.17em">
           <v-row style="margin: 0px">
             {{ $t("Link with IMDB entry") }}
@@ -19,7 +19,7 @@
           </v-row>
         </div>
 
-        <v-row style="padding-left: 16px; margin-top: 16px; margin-bottom: 24px; width: 100%">
+        <v-row style="padding-left: 16px; margin-top: 16px; margin-bottom: 24px; width: 100%; align-items: flex-end">
           <v-text-field
             :append-icon-cb="() => {}"
             v-bind:placeholder="`${$t('Enter a title')}...`"
@@ -30,6 +30,8 @@
             v-model="searchText"
             v-on:keydown.enter="onSearchClick"
           ></v-text-field>
+
+          <v-btn text v-bind:loading="isLoading" v-on:click.native="onSearchClick">{{ $t("Search") }}</v-btn>
         </v-row>
 
         <!--
@@ -54,14 +56,14 @@
         </v-expansion-panels>
       -->
 
-        <v-row style="margin-bottom: 16px">
+        <!-- <v-row style="margin-bottom: 16px">
           <v-btn text v-bind:loading="isLoading" v-on:click.native="onSearchClick">{{ $t("Search") }}</v-btn>
-        </v-row>
+        </v-row> -->
       </v-card-title>
 
       <!-- Results -->
       <v-card-text v-if="firstSearchCompleted" style="padding-right: 28px">
-        <div v-if="searchResults.length === 0">{{ $t("No results") }}</div>
+        <div v-if="searchResults.length === 0" style="margin-left: 5px">{{ $t("No results") }}</div>
         <div v-if="searchResults.length > 0">
           <!-- Top Pagination -->
           <div
@@ -82,8 +84,8 @@
           </div>
 
           <!-- Result Items -->
-          <v-row v-for="(item, i) in searchResultsPaginated" :key="i">
-            <v-col style="padding: 2px; margin-left: 16px">
+          <v-row v-for="(item, i) in searchResultsPaginated" :key="i" style="margin: 0px">
+            <v-col style="padding: 2px; margin-left: 0px">
               <v-card
                 dark
                 flat
