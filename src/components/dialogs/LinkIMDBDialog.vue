@@ -24,7 +24,6 @@
             :append-icon-cb="() => {}"
             v-bind:placeholder="`${$t('Enter a title')}...`"
             single-line
-            append-icon="mdi-magnify"
             color="white"
             hide-details
             v-model="searchText"
