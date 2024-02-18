@@ -2409,7 +2409,12 @@ export default {
       this.$set(movie, "showFilmingLocations", true);
     },
 
+    /**
+     * USER changed the sort field actively
+     */
     onSortChanged() {
+      // logger.log("[onSortChanged] $shared.sortField:", this.$shared.sortField);
+      this.$shared.currentPage = 1; // reset to first page
       store.saveSortValues(this.specificMediaType);
     },
 

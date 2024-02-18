@@ -4,6 +4,7 @@
 
 ## NEXT Major (v1.4.0)
 
+
 ### Series: scanning
 
 - [x] stop imdb scraping when the tconst is obviously not working

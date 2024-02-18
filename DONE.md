@@ -1,6 +1,10 @@
 # DONE
 
-## v1.3.38-a8
+## v1.3.37-a9
+
+- [x] MediaList: as soon as "sort by" was changed by the user, reset page to 1
+
+## v1.3.37-a8
 
 - [x] Fix: sort by Season and Episode didn't work anymore (now fixed)
 - [x] Update Plotsummary IMDB Scraper Test
