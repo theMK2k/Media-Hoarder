@@ -52,6 +52,9 @@
                       <mk-media-item-card
                         v-bind:mediaItem="data.mediaItems[season.season][episode.episode]"
                         v-bind:isScanning="false"
+                        v-bind:isInDialog="true"
+                        v-bind:showCloseButton="true"
+                        v-on:close="data.mediaItems[season.season][episode.episode].showDetails = false"
                         v-on:mediaItemEvent="onMICmediaItemEvent"
                       ></mk-media-item-card>
                     </v-list-item>
@@ -112,14 +115,14 @@ export default {
     async onShowMediaItemDetails(mediaItem) {
       // completely fetch mediaItem details
       const result = await store.fetchMedia({
-        $MediaType: "series",
+        $MediaType: mediaItem.MediaType,
         arr_id_Movies: [mediaItem.id_Movies],
         minimumResultSet: false,
         $t: this.$local_t,
         filters: { filterSettings: {} },
         arr_IMDB_tconst: null,
         Series_id_Movies_Owner: mediaItem.Series_id_Movies_Owner,
-        specificMediaType: "Episodes",
+        specificMediaType: mediaItem.specificMediaType,
       });
 
       logger.log("[onShowMediaItemDetails] result:", result);

@@ -4,8 +4,8 @@
     flat
     hover
     v-bind:ripple="false"
-    v-on:click="!$shared.seriesIMDBRatingDialogMode && emitMediaItemEvent('selectMediaItem', { mediaItem })"
-    v-bind:style="{ cursor: !$shared.seriesIMDBRatingDialogMode ? 'pointer' : 'default!important' }"
+    v-on:click="allowMediaItemClick && emitMediaItemEvent('selectMediaItem', { mediaItem })"
+    v-bind:style="{ cursor: allowMediaItemClick ? 'pointer' : 'default!important' }"
   >
     <v-list-item three-line style="padding-left: 0px; padding-right: 0px">
       <!-- Poster -->
@@ -66,12 +66,10 @@
                 class="headline mb-2"
                 style="margin-bottom: 0px !important"
                 v-on:mouseover="
-                  !$shared.seriesIMDBRatingDialogMode &&
-                    emitMediaItemEvent('setItemHovered', { mediaItem, section: 'name', value: true })
+                  allowEditButtons && emitMediaItemEvent('setItemHovered', { mediaItem, section: 'name', value: true })
                 "
                 v-on:mouseleave="
-                  !$shared.seriesIMDBRatingDialogMode &&
-                    emitMediaItemEvent('setItemHovered', { mediaItem, section: 'name', value: false })
+                  allowEditButtons && emitMediaItemEvent('setItemHovered', { mediaItem, section: 'name', value: false })
                 "
               >
                 <div style="display: flex; min-height: 30px">
@@ -98,7 +96,7 @@
                   </div>
 
                   <!-- all the edit buttons -->
-                  <div v-if="!$shared.seriesIMDBRatingDialogMode">
+                  <div v-if="allowEditButtons">
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
                         <span v-on="on">
@@ -186,11 +184,10 @@
               <v-list-item-subtitle
                 style="margin-bottom: 4px; min-height: 18px"
                 v-on:mouseover="
-                  !$shared.seriesIMDBRatingDialogMode &&
-                    emitMediaItemEvent('setItemHovered', { mediaItem, section: 'name2', value: true })
+                  allowEditButtons && emitMediaItemEvent('setItemHovered', { mediaItem, section: 'name2', value: true })
                 "
                 v-on:mouseleave="
-                  !$shared.seriesIMDBRatingDialogMode &&
+                  allowEditButtons &&
                     emitMediaItemEvent('setItemHovered', { mediaItem, section: 'name2', value: false })
                 "
               >
@@ -224,7 +221,7 @@
                       v-bind:class="{
                         'mk-search-highlight': $shared.filterQualitiesAppliedContains(MI_Quality),
                       }"
-                      v-on:click.stop="emitMediaItemEvent('videoQualityClicked', { mediaItem, MI_Quality })"
+                      v-on:click.stop="emitMediaItemEvent('videoQualityClicked', { mediaItem, MI_Quality, isInDialog })"
                       >{{ MI_Quality }}</span
                     >
                   </span>
@@ -237,7 +234,7 @@
                       'mk-search-highlight': $shared.filterAgeRatingsActive,
                     }"
                     v-on:click.stop="
-                      emitMediaItemEvent('ageRatingClicked', { mediaItem, AgeRating: mediaItem.AgeRating })
+                      emitMediaItemEvent('ageRatingClicked', { mediaItem, AgeRating: mediaItem.AgeRating, isInDialog })
                     "
                     >{{ mediaItem.AgeRating }}</span
                   >
@@ -251,7 +248,7 @@
                       v-bind:class="{
                         'mk-search-highlight': $shared.filterGenresAppliedContains(genre.translated),
                       }"
-                      v-on:click.stop="emitMediaItemEvent('genreClicked', { mediaItem, genre })"
+                      v-on:click.stop="emitMediaItemEvent('genreClicked', { mediaItem, genre, isInDialog })"
                       >{{ genre.translated }}</span
                     >
                   </span>
@@ -272,7 +269,13 @@
                         ),
                       }"
                       v-on:click.stop="
-                        emitMediaItemEvent('languageClicked', { mediaItem, code: lang, type: 'audio', mediaItem })
+                        emitMediaItemEvent('languageClicked', {
+                          mediaItem,
+                          code: lang,
+                          type: 'audio',
+                          mediaItem,
+                          isInDialog,
+                        })
                       "
                       >{{ lang }}</span
                     >
@@ -294,7 +297,13 @@
                         ),
                       }"
                       v-on:click.stop="
-                        emitMediaItemEvent('languageClicked', { mediaItem, code: lang, type: 'subtitle', mediaItem })
+                        emitMediaItemEvent('languageClicked', {
+                          mediaItem,
+                          code: lang,
+                          type: 'subtitle',
+                          mediaItem,
+                          isInDialog,
+                        })
                       "
                       >{{ lang }}</span
                     >
@@ -310,7 +319,9 @@
                       v-bind:class="{
                         'mk-search-highlight': $shared.filterVideoEncodersAppliedContains(videoEncoder),
                       }"
-                      v-on:click.stop="emitMediaItemEvent('videoEncoderClicked', { mediaItem, videoEncoder })"
+                      v-on:click.stop="
+                        emitMediaItemEvent('videoEncoderClicked', { mediaItem, videoEncoder, isInDialog })
+                      "
                       >{{ videoEncoder }}</span
                     >
                   </span>
@@ -325,7 +336,7 @@
                       v-bind:class="{
                         'mk-search-highlight': $shared.filterAudioFormatsAppliedContains(audioFormat),
                       }"
-                      v-on:click.stop="emitMediaItemEvent('audioFormatClicked', { mediaItem, audioFormat })"
+                      v-on:click.stop="emitMediaItemEvent('audioFormatClicked', { mediaItem, audioFormat, isInDialog })"
                       >{{ audioFormat }}</span
                     >
                   </span>
@@ -340,7 +351,9 @@
                       v-bind:class="{
                         'mk-search-highlight': $shared.filterReleaseAttributesAppliedContains(releaseAttribute),
                       }"
-                      v-on:click.stop="emitMediaItemEvent('releaseAttributeClicked', { mediaItem, releaseAttribute })"
+                      v-on:click.stop="
+                        emitMediaItemEvent('releaseAttributeClicked', { mediaItem, releaseAttribute, isInDialog })
+                      "
                       >{{ releaseAttribute }}</span
                     >
                   </span>
@@ -423,7 +436,7 @@
                     v-bind:class="{
                       'mk-search-highlight': $shared.filterPersonsAppliedContains(credit),
                     }"
-                    v-on:click.stop="emitMediaItemEvent('creditClicked', { mediaItem, credit })"
+                    v-on:click.stop="emitMediaItemEvent('creditClicked', { mediaItem, credit, isInDialog })"
                     >{{ credit.name }}</a
                   >
                 </span>
@@ -444,7 +457,7 @@
                     v-bind:class="{
                       'mk-search-highlight': $shared.filterPersonsAppliedContains(credit),
                     }"
-                    v-on:click.stop="emitMediaItemEvent('creditClicked', { mediaItem, credit })"
+                    v-on:click.stop="emitMediaItemEvent('creditClicked', { mediaItem, credit, isInDialog })"
                     >{{ credit.name }}</a
                   >
                 </span>
@@ -465,7 +478,7 @@
                     v-bind:class="{
                       'mk-search-highlight': $shared.filterPersonsAppliedContains(credit),
                     }"
-                    v-on:click.stop="emitMediaItemEvent('creditClicked', { mediaItem, credit })"
+                    v-on:click.stop="emitMediaItemEvent('creditClicked', { mediaItem, credit, isInDialog })"
                     >{{ credit.name }}</a
                   >
                 </span>
@@ -486,7 +499,7 @@
                     v-bind:class="{
                       'mk-search-highlight': $shared.filterCompaniesAppliedContains(company),
                     }"
-                    v-on:click.stop="emitMediaItemEvent('companyClicked', { mediaItem, company })"
+                    v-on:click.stop="emitMediaItemEvent('companyClicked', { mediaItem, company, isInDialog })"
                     >{{ company.name }}</a
                   >
                 </span>
@@ -694,7 +707,7 @@
                   v-bind:class="{
                     'mk-search-highlight': $shared.filterPersonsAppliedContains(credit),
                   }"
-                  v-on:click.stop="emitMediaItemEvent('creditClicked', { mediaItem, credit })"
+                  v-on:click.stop="emitMediaItemEvent('creditClicked', { mediaItem, credit, isInDialog })"
                   >{{ credit.name }}</a
                 >
               </v-col>
@@ -752,7 +765,7 @@
                   v-bind:class="{
                     'mk-search-highlight': $shared.filterCompaniesAppliedContains(company),
                   }"
-                  v-on:click.stop="emitMediaItemEvent('companyClicked', { company })"
+                  v-on:click.stop="emitMediaItemEvent('companyClicked', { mediaItem, company, isInDialog })"
                   >{{ company.name }}</a
                 >
               </v-col>
@@ -849,7 +862,7 @@
               v-bind:class="{
                 'mk-search-highlight': $shared.filterIMDBPlotKeywordsAppliedContains(plotKeyword.Keyword),
               }"
-              v-on:click.stop="emitMediaItemEvent('plotKeywordClicked', { mediaItem, plotKeyword })"
+              v-on:click.stop="emitMediaItemEvent('plotKeywordClicked', { mediaItem, plotKeyword, isInDialog })"
               >{{ plotKeyword.Keyword }}</a
             >
 
@@ -899,50 +912,60 @@
               v-bind:class="{
                 'mk-search-highlight': $shared.filterIMDBFilmingLocationsAppliedContains(filmingLocation.Location),
               }"
-              v-on:click.stop="emitMediaItemEvent('filmingLocationClicked', { mediaItem, filmingLocation })"
+              v-on:click.stop="emitMediaItemEvent('filmingLocationClicked', { mediaItem, filmingLocation, isInDialog })"
               >{{ filmingLocation.Location }}</a
             >
           </v-row>
         </div>
       </div>
 
-      <v-row style="margin-top: 16px">
-        <v-btn text color="primary" v-on:click.stop="emitMediaItemEvent('copyInfo', { mediaItem })">{{
-          $t("Copy Info")
-        }}</v-btn>
-        <v-btn
-          v-if="mediaItem.IMDB_Trailer_URL"
-          text
-          color="primary"
-          v-on:click.stop="emitMediaItemEvent('showTrailer', { mediaItem })"
-          >{{ $t("Trailer") }}</v-btn
-        >
-        <v-btn
-          text
-          v-bind:disabled="!mediaItem.IMDB_tconst"
-          color="primary"
-          v-on:click.stop="emitMediaItemEvent('openIMDB', { mediaItem })"
-        >
-          <v-icon small>mdi-web</v-icon>&nbsp;IMDB
-        </v-btn>
-        <v-btn
-          text
-          v-bind:disabled="!mediaItem.IMDB_tconst"
-          color="primary"
-          v-on:click.stop="emitMediaItemEvent('openLetterboxd', { mediaItem })"
-        >
-          <v-icon small>mdi-web</v-icon>&nbsp;Letterboxd
-        </v-btn>
-        <v-btn
-          text
-          v-bind:disabled="!mediaItem.IMDB_tconst"
-          color="primary"
-          v-on:click.stop="emitMediaItemEvent('openMovieChat', { mediaItem })"
-        >
-          <v-icon small>mdi-web</v-icon>&nbsp;MovieChat
-        </v-btn>
-      </v-row>
+      <v-row style="margin-top: 16px"> </v-row>
     </v-col>
+
+    <v-card-actions v-if="isInDialog || mediaItem.selected">
+      <v-btn
+        v-if="showCloseButton"
+        class="xs-fullwidth"
+        color="secondary"
+        v-on:click.native.stop="$emit('close')"
+        style="margin-left: 8px"
+        >{{ $t("Close") }}</v-btn
+      >
+      <v-btn text color="primary" v-on:click.stop="emitMediaItemEvent('copyInfo', { mediaItem })">{{
+        $t("Copy Info")
+      }}</v-btn>
+      <v-btn
+        v-if="mediaItem.IMDB_Trailer_URL"
+        text
+        color="primary"
+        v-on:click.stop="emitMediaItemEvent('showTrailer', { mediaItem })"
+        >{{ $t("Trailer") }}</v-btn
+      >
+      <v-btn
+        text
+        v-bind:disabled="!mediaItem.IMDB_tconst"
+        color="primary"
+        v-on:click.stop="emitMediaItemEvent('openIMDB', { mediaItem })"
+      >
+        <v-icon small>mdi-web</v-icon>&nbsp;IMDB
+      </v-btn>
+      <v-btn
+        text
+        v-bind:disabled="!mediaItem.IMDB_tconst"
+        color="primary"
+        v-on:click.stop="emitMediaItemEvent('openLetterboxd', { mediaItem })"
+      >
+        <v-icon small>mdi-web</v-icon>&nbsp;Letterboxd
+      </v-btn>
+      <v-btn
+        text
+        v-bind:disabled="!mediaItem.IMDB_tconst"
+        color="primary"
+        v-on:click.stop="emitMediaItemEvent('openMovieChat', { mediaItem })"
+      >
+        <v-icon small>mdi-web</v-icon>&nbsp;MovieChat
+      </v-btn>
+    </v-card-actions>
   </v-card>
 </template>
 <script>
@@ -956,7 +979,7 @@ import * as Humanize from "humanize-plus";
 import * as helpers from "@/helpers/helpers";
 
 export default {
-  props: ["mediaItem", "isScanning"],
+  props: ["mediaItem", "isScanning", "showCloseButton", "allowMediaItemClick", "allowEditButtons", "isInDialog"],
   components: { "word-highlighter": WordHighlighter, "star-rating": StarRating },
   data() {
     return {};

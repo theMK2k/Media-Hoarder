@@ -428,6 +428,9 @@
           <mk-media-item-card
             v-bind:mediaItem="mediaItem"
             v-bind:isScanning="isScanning"
+            v-bind:isInDialog="false"
+            v-bind:allowMediaItemClick="true"
+            v-bind:allowEditButtons="true"
             v-on:mediaItemEvent="onMICmediaItemEvent"
           ></mk-media-item-card>
         </v-col>
@@ -457,9 +460,11 @@
       v-bind:Series_Year_Display="series.item.yearDisplay"
       propertyTypeKey="age-rating"
       v-bind:show="ageRatingDialog.show"
+      v-bind:isInDialog="ageRatingDialog.isInDialog"
       v-bind:propertyValue="ageRatingDialog.Age_Rating"
       v-bind:propertyValueDisplayText="ageRatingDialog.Age_Rating"
       v-on:close="onAgeRatingDialogClose"
+      v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-age-rating-dialog>
 
     <mk-audio-format-dialog
@@ -470,9 +475,11 @@
       v-bind:Series_Year_Display="series.item.yearDisplay"
       propertyTypeKey="audio-format"
       v-bind:show="audioFormatDialog.show"
+      v-bind:isInDialog="audioFormatDialog.isInDialog"
       v-bind:propertyValue="audioFormatDialog.Audio_Format"
       v-bind:propertyValueDisplayText="audioFormatDialog.Audio_Format"
       v-on:close="onAudioFormatDialogClose"
+      v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-audio-format-dialog>
 
     <mk-audio-language-dialog
@@ -483,9 +490,11 @@
       v-bind:Series_Year_Display="series.item.yearDisplay"
       propertyTypeKey="audio-language"
       v-bind:show="audioLanguageDialog.show"
+      v-bind:isInDialog="audioLanguageDialog.isInDialog"
       v-bind:propertyValue="audioLanguageDialog.Code"
       v-bind:propertyValueDisplayText="audioLanguageDialog.Code"
       v-on:close="onAudioLanguageDialogClose"
+      v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-audio-language-dialog>
 
     <mk-company-dialog
@@ -496,10 +505,12 @@
       v-bind:Series_Year_Display="series.item.yearDisplay"
       propertyTypeKey="company"
       v-bind:show="companyDialog.show"
+      v-bind:isInDialog="companyDialog.isInDialog"
       v-bind:propertyValue="companyDialog.Company_Name"
       v-bind:propertyValueDisplayText="companyDialog.Company_Name"
       v-bind:imdbTconst="companyDialog.IMDB_Company_ID"
       v-on:close="onCompanyDialogClose"
+      v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-company-dialog>
 
     <mk-filming-location-dialog
@@ -510,9 +521,11 @@
       v-bind:Series_Year_Display="series.item.yearDisplay"
       propertyTypeKey="filming-location"
       v-bind:show="filmingLocationDialog.show"
+      v-bind:isInDialog="filmingLocationDialog.isInDialog"
       v-bind:propertyValue="filmingLocationDialog.id_IMDB_Filming_Locations"
       v-bind:propertyValueDisplayText="filmingLocationDialog.Location"
       v-on:close="onFilmingLocationDialogClose"
+      v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-filming-location-dialog>
 
     <mk-genre-dialog
@@ -523,15 +536,18 @@
       v-bind:Series_Year_Display="series.item.yearDisplay"
       propertyTypeKey="genre"
       v-bind:show="genreDialog.show"
+      v-bind:isInDialog="genreDialog.isInDialog"
       v-bind:propertyValue="genreDialog.name"
       v-bind:propertyValueDisplayText="genreDialog.translated"
       v-on:close="onGenreDialogClose"
+      v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-genre-dialog>
 
     <mk-person-dialog
       ref="personDialog"
       v-bind:mediaType="mediatype"
       v-bind:show="personDialog.show"
+      v-bind:isInDialog="personDialog.isInDialog"
       v-bind:Series_id_Movies_Owner="MediaPropertyDialog_Series_id_Movies_Owner"
       v-bind:Series_Name="series.item.Name"
       v-bind:Series_Year_Display="series.item.yearDisplay"
@@ -540,6 +556,7 @@
       v-bind:propertyValueDisplayText="personDialog.Person_Name"
       v-bind:imdbTconst="personDialog.IMDB_Person_ID"
       v-on:close="onPersonDialogClose"
+      v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-person-dialog>
 
     <mk-plot-keyword-dialog
@@ -550,15 +567,18 @@
       v-bind:Series_Year_Display="series.item.yearDisplay"
       propertyTypeKey="plot-keyword"
       v-bind:show="plotKeywordDialog.show"
+      v-bind:isInDialog="plotKeywordDialog.isInDialog"
       v-bind:propertyValue="plotKeywordDialog.id_IMDB_Plot_Keywords"
       v-bind:propertyValueDisplayText="plotKeywordDialog.Keyword"
       v-on:close="onPlotKeywordDialogClose"
+      v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-plot-keyword-dialog>
 
     <mk-release-attribute-dialog
       ref="releaseAttributeDialog"
       v-bind:mediaType="mediatype"
       v-bind:show="releaseAttributeDialog.show"
+      v-bind:isInDialog="releaseAttributeDialog.isInDialog"
       v-bind:Series_id_Movies_Owner="MediaPropertyDialog_Series_id_Movies_Owner"
       v-bind:Series_Name="series.item.Name"
       v-bind:Series_Year_Display="series.item.yearDisplay"
@@ -566,6 +586,7 @@
       v-bind:propertyValue="releaseAttributeDialog.ReleaseAttribute"
       v-bind:propertyValueDisplayText="releaseAttributeDialog.ReleaseAttribute"
       v-on:close="releaseAttributeDialog.show = false"
+      v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-release-attribute-dialog>
 
     <mk-subtitle-language-dialog
@@ -576,15 +597,18 @@
       v-bind:Series_Year_Display="series.item.yearDisplay"
       propertyTypeKey="subtitle-language"
       v-bind:show="subtitleLanguageDialog.show"
+      v-bind:isInDialog="subtitleLanguageDialog.isInDialog"
       v-bind:propertyValue="subtitleLanguageDialog.Code"
       v-bind:propertyValueDisplayText="subtitleLanguageDialog.Code"
       v-on:close="onSubtitleLanguageDialogClose"
+      v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-subtitle-language-dialog>
 
     <mk-video-encoder-dialog
       ref="videoEncoderDialog"
       v-bind:mediaType="mediatype"
       v-bind:show="videoEncoderDialog.show"
+      v-bind:isInDialog="videoEncoderDialog.isInDialog"
       v-bind:Series_id_Movies_Owner="MediaPropertyDialog_Series_id_Movies_Owner"
       v-bind:Series_Name="series.item.Name"
       v-bind:Series_Year_Display="series.item.yearDisplay"
@@ -592,12 +616,14 @@
       v-bind:propertyValue="videoEncoderDialog.Video_Encoder"
       v-bind:propertyValueDisplayText="videoEncoderDialog.Video_Encoder"
       v-on:close="onVideoEncoderDialogClose"
+      v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-video-encoder-dialog>
 
     <mk-video-quality-dialog
       ref="videoQualityDialog"
       v-bind:mediaType="mediatype"
       v-bind:show="videoQualityDialog.show"
+      v-bind:isInDialog="videoQualityDialog.isInDialog"
       v-bind:Series_id_Movies_Owner="MediaPropertyDialog_Series_id_Movies_Owner"
       v-bind:Series_Name="series.item.Name"
       v-bind:Series_Year_Display="series.item.yearDisplay"
@@ -605,6 +631,7 @@
       v-bind:propertyValue="videoQualityDialog.Video_Quality"
       v-bind:propertyValueDisplayText="videoQualityDialog.Video_Quality"
       v-on:close="onVideoQualityDialogClose"
+      v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-video-quality-dialog>
 
     <!-- Other Dialogs -->
@@ -842,18 +869,21 @@ export default {
       show: false,
       Age_Rating: null,
       Series_id_Movies_Owner: null,
+      isInDialog: false,
     },
 
     audioFormatDialog: {
       show: false,
       Audio_Format: null,
       Series_id_Movies_Owner: null,
+      isInDialog: false,
     },
 
     audioLanguageDialog: {
       show: false,
       Code: null,
       Series_id_Movies_Owner: null,
+      isInDialog: false,
     },
 
     companyDialog: {
@@ -861,6 +891,7 @@ export default {
       IMDB_Company_ID: null,
       Company_Name: null,
       Series_id_Movies_Owner: null,
+      isInDialog: false,
     },
 
     filmingLocationDialog: {
@@ -868,6 +899,7 @@ export default {
       id_IMDB_Filming_Locations: null,
       Location: null,
       Series_id_Movies_Owner: null,
+      isInDialog: false,
     },
 
     genreDialog: {
@@ -875,6 +907,7 @@ export default {
       name: null,
       translated: null,
       Series_id_Movies_Owner: null,
+      isInDialog: false,
     },
 
     personDialog: {
@@ -882,6 +915,7 @@ export default {
       IMDB_Person_ID: null,
       Person_Name: null,
       Series_id_Movies_Owner: null,
+      isInDialog: false,
     },
 
     plotKeywordDialog: {
@@ -889,6 +923,7 @@ export default {
       id_IMDB_Plot_Keywords: null,
       Keyword: null,
       Series_id_Movies_Owner: null,
+      isInDialog: false,
     },
 
     releaseAttributeDialog: {
@@ -896,24 +931,28 @@ export default {
       ReleaseAttribute: null,
       movie: null,
       Series_id_Movies_Owner: null,
+      isInDialog: false,
     },
 
     subtitleLanguageDialog: {
       show: false,
       Code: null,
       Series_id_Movies_Owner: null,
+      isInDialog: false,
     },
 
     videoEncoderDialog: {
       show: false,
       Video_Encoder: null,
       Series_id_Movies_Owner: null,
+      isInDialog: false,
     },
 
     videoQualityDialog: {
       show: false,
       Video_Quality: null,
       Series_id_Movies_Owner: null,
+      isInDialog: false,
     },
 
     // other Dialogs
@@ -1943,89 +1982,6 @@ export default {
       logger.groupEnd();
     },
 
-    onCreditClicked(credit) {
-      logger.log("[onCreditClicked] credit:", credit);
-
-      this.personDialog.show = true;
-      this.personDialog.IMDB_Person_ID = credit.id;
-      this.personDialog.Person_Name = credit.name;
-      // this.$refs.personDialog.init();
-
-      return;
-    },
-
-    onCompanyClicked(company) {
-      logger.log("[onCompanyClicked]:", company);
-
-      this.companyDialog.show = true;
-      this.companyDialog.IMDB_Company_ID = company.id;
-      this.companyDialog.Company_Name = company.name;
-      // this.$refs.personDialog.init();
-
-      return;
-    },
-
-    onVideoQualityClicked(videoQuality) {
-      logger.log("[onVideoQualityClicked]:", videoQuality);
-
-      this.videoQualityDialog.show = true;
-      this.videoQualityDialog.Video_Quality = videoQuality;
-
-      return;
-    },
-
-    onVideoEncoderClicked(videoEncoder) {
-      logger.log("[onVideoEncoderClicked]:", videoEncoder);
-
-      this.videoEncoderDialog.show = true;
-      this.videoEncoderDialog.Video_Encoder = videoEncoder;
-
-      return;
-    },
-
-    onAudioFormatClicked(audioFormat) {
-      logger.log("[onAudioFormatClicked]:", audioFormat);
-
-      this.audioFormatDialog.show = true;
-      this.audioFormatDialog.Audio_Format = audioFormat;
-
-      return;
-    },
-
-    onGenreClicked(genre) {
-      logger.log("[onGenreClicked]:", genre);
-
-      this.genreDialog.show = true;
-      this.genreDialog.name = genre.name;
-      this.genreDialog.translated = genre.translated;
-
-      logger.log("[onGenreClicked] this.genreDialog:", this.genreDialog);
-
-      return;
-    },
-
-    async onLanguageClicked(code, type, mediaItem) {
-      logger.log("[onLanguageClicked]:", code, type);
-
-      if (/\+\d/.test(code)) {
-        // clicked language is expandable, e.g. "+4"
-        logger.log("[onLanguageClicked] expand", code, "languages");
-        await this.expandLanguages(mediaItem, type);
-        return;
-      }
-
-      // clicked language is a standard language code, e.g. "De"
-      if (type === "audio") {
-        this.audioLanguageDialog.Code = code;
-        this.audioLanguageDialog.show = true;
-      } else {
-        this.subtitleLanguageDialog.Code = code;
-        this.subtitleLanguageDialog.show = true;
-      }
-
-      return;
-    },
-
     async expandLanguages(item, type) {
       logger.log("[expandLanguages] item:", item, "type:", type);
       if (type === "audio") {
@@ -2035,34 +1991,114 @@ export default {
       }
     },
 
-    onAgeRatingClicked(ageRating) {
-      logger.log("[onAgeRatingClicked]:", ageRating);
+    // ### MediaPropteryDialog based methods
+    mpdShowAgeRatingDialog(ageRating, isInDialog) {
+      logger.log("[mpdOnAgeRatingClicked]:", ageRating, "isInDialog:", isInDialog);
 
       this.ageRatingDialog.show = true;
       this.ageRatingDialog.Age_Rating = ageRating;
+      this.ageRatingDialog.isInDialog = !!isInDialog;
 
       return;
     },
 
-    onIMDBPlotKeywordClicked(plotKeyword) {
-      logger.log("[onPlotKeywordClicked]:", plotKeyword);
+    mpdShowAudioFormatDialog(audioFormat, isInDialog) {
+      logger.log("[mpdShowAudioFormatDialog]:", audioFormat);
 
-      this.plotKeywordDialog.show = true;
-      this.plotKeywordDialog.id_IMDB_Plot_Keywords = plotKeyword.id_IMDB_Plot_Keywords;
-      this.plotKeywordDialog.Keyword = plotKeyword.Keyword;
+      this.audioFormatDialog.show = true;
+      this.audioFormatDialog.Audio_Format = audioFormat;
+      this.audioFormatDialog.isInDialog = !!isInDialog;
 
       return;
     },
 
-    onIMDBFilmingLocationClicked(filmingLocation) {
-      logger.log("[onIMDBFilmingLocationClicked]:", filmingLocation);
+    mpdShowCompanyDialog(company, isInDialog) {
+      logger.log("[mpdShowCompanyDialog]:", company);
+
+      this.companyDialog.show = true;
+      this.companyDialog.IMDB_Company_ID = company.id;
+      this.companyDialog.Company_Name = company.name;
+      this.companyDialog.isInDialog = !!isInDialog;
+
+      return;
+    },
+
+    mpdShowFilmingLocationDialog(filmingLocation, isInDialog) {
+      logger.log("[mpdShowFilmingLocationDialog]:", filmingLocation);
 
       this.filmingLocationDialog.show = true;
       this.filmingLocationDialog.id_IMDB_Filming_Locations = filmingLocation.id_IMDB_Filming_Locations;
       this.filmingLocationDialog.Location = filmingLocation.Location;
+      this.filmingLocationDialog.isInDialog = isInDialog;
 
       return;
     },
+
+    mpdShowGenreDialog(genre, isInDialog) {
+      logger.log("[mpdShowGenreDialog]:", genre);
+
+      this.genreDialog.show = true;
+      this.genreDialog.name = genre.name;
+      this.genreDialog.translated = genre.translated;
+      this.genreDialog.isInDialog = !!isInDialog;
+
+      logger.log("[mpdShowGenreDialog] this.genreDialog:", this.genreDialog);
+
+      return;
+    },
+
+    mpdShowPersonDialog(credit, isInDialog) {
+      logger.log("[mpdShowPersonDialog] credit:", credit);
+
+      this.personDialog.show = true;
+      this.personDialog.IMDB_Person_ID = credit.id;
+      this.personDialog.Person_Name = credit.name;
+      this.personDialog.isInDialog = !!isInDialog;
+
+      return;
+    },
+
+    mpdShowPlotKeywordDialog(plotKeyword, isInDialog) {
+      logger.log("[mpdShowPlotKeywordDialog]:", plotKeyword);
+
+      this.plotKeywordDialog.show = true;
+      this.plotKeywordDialog.id_IMDB_Plot_Keywords = plotKeyword.id_IMDB_Plot_Keywords;
+      this.plotKeywordDialog.Keyword = plotKeyword.Keyword;
+      this.plotKeywordDialog.isInDialog = isInDialog;
+
+      return;
+    },
+
+    mpdShowReleaseAttributeDialog(releaseAttribute, movie, isInDialog) {
+      this.releaseAttributeDialog.ReleaseAttribute = releaseAttribute;
+      this.releaseAttributeDialog.movie = movie;
+      this.releaseAttributeDialog.isInDialog = !!isInDialog;
+
+      this.$refs.releaseAttributeDialog.init(releaseAttribute);
+
+      this.releaseAttributeDialog.show = true;
+    },
+
+    mpdShowVideoEncoderDialog(videoEncoder, isInDialog) {
+      logger.log("[mpdShowVideoEncoderDialog]:", videoEncoder);
+
+      this.videoEncoderDialog.show = true;
+      this.videoEncoderDialog.Video_Encoder = videoEncoder;
+      this.videoEncoderDialog.isInDialog = !!isInDialog;
+
+      return;
+    },
+
+    mpdShowVideoQualityDialog(videoQuality, isInDialog) {
+      logger.log("[mpdShowVideoQualityDialog]:", videoQuality);
+
+      this.videoQualityDialog.show = true;
+      this.videoQualityDialog.Video_Quality = videoQuality;
+      this.videoQualityDialog.isInDialog = !!isInDialog;
+
+      return;
+    },
+    // ### End MediaPropertyDialog based methods
 
     async updateCurrentTime() {
       this.currentTime = moment(await store.getCurrentTime());
@@ -2493,15 +2529,6 @@ export default {
       this.ratingDemographicsDialog.show = true;
     },
 
-    onShowReleaseAttributeDialog(releaseAttribute, movie) {
-      this.releaseAttributeDialog.ReleaseAttribute = releaseAttribute;
-      this.releaseAttributeDialog.movie = movie;
-
-      this.$refs.releaseAttributeDialog.init(releaseAttribute);
-
-      this.releaseAttributeDialog.show = true;
-    },
-
     onShowDeleteMediaDialog(item) {
       logger.log("[onShowDeleteMediaDialog] item:", item);
 
@@ -2760,25 +2787,21 @@ export default {
         logger.log("[onShowSeriesIMDBRatingDialog] data:", data);
 
         this.seriesIMDBRatingDialog.data = data;
-
-        this.$shared.seriesIMDBRatingDialogMode = true; // globally disable filtering while the dialog is open
       } catch (error) {
         logger.error(error);
         eventBus.showSnackbar("error", logger.error(error));
-        this.$shared.seriesIMDBRatingDialogMode = false;
       } finally {
         this.seriesIMDBRatingDialog.isLoading = false;
       }
     },
 
     async onCloseSeriesIMDBRatingDialog() {
-      this.$shared.seriesIMDBRatingDialogMode = false;
       this.seriesIMDBRatingDialog.show = false;
     },
 
     // ### MediaItemCard (MIC) Events ###
     async onMICmediaItemEvent(payload) {
-      logger.log("[MediaList.onMICmediaItemEvent] payload:", payload);
+      // logger.log("[MediaList.onMICmediaItemEvent] payload:", payload);
 
       switch (payload.eventName) {
         case "launch":
@@ -2857,47 +2880,47 @@ export default {
         // MediaPropertyDialog based events
         case "ageRatingClicked":
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
-          await this.onAgeRatingClicked(payload.AgeRating);
+          await this.mpdShowAgeRatingDialog(payload.AgeRating, payload.isInDialog);
           break;
         case "audioFormatClicked":
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
-          await this.onAudioFormatClicked(payload.audioFormat, payload.mediaItem);
+          await this.mpdShowAudioFormatDialog(payload.audioFormat, payload.mediaItem, payload.isInDialog);
           break;
         case "languageClicked":
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
-          await this.onLanguageClicked(payload.code, payload.type, payload.mediaItem);
+          await this.mpdShowLanguageDialog(payload.code, payload.type, payload.mediaItem, payload.isInDialog);
           break;
         case "companyClicked":
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
-          await this.onCompanyClicked(payload.company);
+          await this.mpdShowCompanyDialog(payload.company, payload.isInDialog);
           break;
         case "filmingLocationClicked":
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
-          await this.onIMDBFilmingLocationClicked(payload.filmingLocation);
+          await this.mpdShowFilmingLocationDialog(payload.filmingLocation, payload.isInDialog);
           break;
         case "genreClicked":
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
-          await this.onGenreClicked(payload.genre);
+          await this.mpdShowGenreDialog(payload.genre, payload.isInDialog);
           break;
         case "creditClicked":
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
-          await this.onCreditClicked(payload.credit);
+          await this.mpdShowPersonDialog(payload.credit, payload.isInDialog);
           break;
         case "plotKeywordClicked":
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
-          await this.onIMDBPlotKeywordClicked(payload.plotKeyword);
+          await this.mpdShowPlotKeywordDialog(payload.plotKeyword, payload.isInDialog);
           break;
         case "releaseAttributeClicked":
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
-          await this.onShowReleaseAttributeDialog(payload.releaseAttribute, payload.mediaItem);
+          await this.mpdShowReleaseAttributeDialog(payload.releaseAttribute, payload.mediaItem, payload.isInDialog);
           break;
         case "videoEncoderClicked":
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
-          await this.onVideoEncoderClicked(payload.videoEncoder, payload.mediaItem);
+          await this.mpdShowVideoEncoderDialog(payload.videoEncoder, payload.mediaItem, payload.isInDialog);
           break;
         case "videoQualityClicked":
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
-          await this.onVideoQualityClicked(payload.MI_Quality);
+          await this.mpdShowVideoQualityDialog(payload.MI_Quality, payload.isInDialog);
           break;
 
         default:

@@ -3,7 +3,7 @@
     class="mk-compact-movie-list-row mk-highlightable-row"
     v-bind:class="isClickable ? 'mk-clickable-white' : ''"
     style="padding-top: 4px; padding-bottom: 2px; margin-top: 2px"
-    v-on:click.stop="isClickable ? $emit('click', movie) : null"
+    v-on:click="onClick"
   >
     <span v-if="movie.Series_Season_Displaytext" style="font-weight: 400; color: lightgray; margin-right: 4px">
       {{ movie.Series_Season_Displaytext
@@ -12,7 +12,7 @@
     {{ movie.Name }}
     {{ movie.Name2 ? " | " + movie.Name2 : "" }}
     {{ movie.yearDisplay }}
-    {{ isClickable && isCollapsed ? " »" : "" }}
+    {{ isClickable && showExpandIndicator && isCollapsed ? " »" : "" }}
     <v-spacer />
     <span>
       <span v-if="movie.IMDB_rating_defaultDisplay">
@@ -31,13 +31,25 @@
 </template>
 
 <script>
+// const logger = require("../../helpers/logger");
 import * as helpers from "@/helpers/helpers";
 
 export default {
-  props: ["movie", "isClickable", "isCollapsed"],
+  props: ["movie", "isClickable", "showExpandIndicator", "isCollapsed"],
   computed: {
     helpers() {
       return helpers;
+    },
+  },
+  methods: {
+    onClick(e) {
+      if (this.isClickable) {
+        this.$emit("click", e);
+      }
+
+      if (e.stopPropagation) {
+        e.stopPropagation();
+      }
     },
   },
 };

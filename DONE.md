@@ -2,6 +2,7 @@
 
 ## v1.3.37-a9
 
+- [x] MediaPropertyDialog: when clicking a media item (in one of the lists), show the item's card
 - [x] MediaList: as soon as "sort by" was changed by the user, reset page to 1
 
 ## v1.3.37-a8

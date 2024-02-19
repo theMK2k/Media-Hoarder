@@ -4,6 +4,8 @@
 
 ## NEXT Major (v1.4.0)
 
+- [ ] PersonDialog: in the media list, show the role the person had with the medium
+- [ ] CompanyDialog: in the media list, show the role of the company with the medium
 
 ### Series: scanning
 
