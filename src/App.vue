@@ -4378,6 +4378,24 @@ export default {
       await store.saveFilterGroups();
       this.editFilters.isEditFilters = false;
       this.expandedFilterGroups = JSON.parse(JSON.stringify(this.editFilters.oldExpandedFilterGroups));
+
+      logger.log("[onEditFiltersOK] this.$shared.filterGroups:", this.$shared.filterGroups);
+      logger.log("[onEditFiltersOK] this.editFilters.oldFilterGroups:", this.editFilters.oldFilterGroups);
+
+      // TODO: refetch filters only for those that changed visibility from false to true
+      const changedFilters = this.editFilters.oldFilterGroups
+        .filter(
+          (oldFilterGroup) =>
+            !oldFilterGroup.visible &&
+            this.$shared.filterGroups.find(
+              (filterGroup) => filterGroup.name === oldFilterGroup.name && filterGroup.visible
+            )
+        )
+        .map((fg) => fg.name);
+
+      logger.log("[onEditFiltersOK] changedFilters (hidden -> visible):", changedFilters);
+
+      eventBus.refetchFilters(null, changedFilters);
     },
 
     async onEditFiltersCancel() {

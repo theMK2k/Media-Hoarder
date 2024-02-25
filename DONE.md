@@ -1,5 +1,11 @@
 # DONE
 
+## v1.4.0-b2
+
+- [x] only load filters that are actually shown
+  - [x] reload filters when "edit filters" is done (only reload those filters that have changed visibility from false to true)
+
+
 ## v1.4.0-b1
 
 - [x] when clicking a media item in one of the smaller lists, show the item's card

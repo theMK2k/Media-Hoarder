@@ -54,8 +54,13 @@ export const eventBus = new Vue({
       this.$emit("refetchMedia", setPage, $t, setFilter);
     },
 
-    refetchFilters(setFilter) {
-      this.$emit("refetchFilters", setFilter);
+    /**
+     *
+     * @param {Object} setFilter (optional)
+     * @param {Array} specificFilterNames (optional)
+     */
+    refetchFilters(setFilter, specificFilterNames) {
+      this.$emit("refetchFilters", { setFilter, specificFilterNames });
     },
 
     refetchSpecificFilter(setFilter) {

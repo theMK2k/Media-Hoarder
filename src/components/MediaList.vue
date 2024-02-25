@@ -1746,12 +1746,13 @@ export default {
     },
 
     /**
-     * @param {Object} setFilter:
+     * @param {Object} setFilter (optional):
      *                 key has value null: the filter will be refetched early
      *                 key has values: the filter items will be enabled
-     * @param {Boolean} specificBySetFilter ONLY refetch the filter specified in setFilter
+     * @param {Boolean} specificBySetFilter (optional) ONLY refetch the filter specified in setFilter
+     * @param {Array} specificFilterNames (optional) yet another way to tell which filters to fetch; if truthy, ONLY refetch the filters specified by their name in this array
      */
-    async fetchFilters(setFilter, specificBySetFilter) {
+    async fetchFilters(setFilter, specificBySetFilter, specificFilterNames) {
       logger.group("[Fetch Filters]");
 
       try {
@@ -1798,6 +1799,10 @@ export default {
           this.$shared.lastChangedFilter = null; // we only need this once
         }
 
+        if (specificFilterNames) {
+          filterGroups = filterGroups.filter((fg) => specificFilterNames.includes(fg.name));
+        }
+
         logger.log("[fetchFilters] filterGroups:", filterGroups);
 
         for (let i = 0; i < filterGroups.length; i++) {
@@ -1805,11 +1810,16 @@ export default {
             break;
           }
 
-          const filter = filterGroups[i];
+          const filterGroup = filterGroups[i];
 
-          this.$shared.loadingFilterProgress = 100 * (i / filterGroups.length);
+          if (!filterGroup.visible) {
+            // don't load filterGroup if it isn't even visible
+            continue;
+          }
 
-          switch (filter.name) {
+          this.$shared.loadingFilterProgress = 100 * (i / filterGroups.filter((fg) => fg.visible).length);
+
+          switch (filterGroup.name) {
             case "filterSettings":
               await store.fetchFilterSettings(
                 this.mediatype,
@@ -1990,7 +2000,7 @@ export default {
               );
               break;
             default:
-              throw new Error("Unsupported filter type:", filter.name);
+              throw new Error("Unsupported filter type:", filterGroup.name);
           }
         }
 
@@ -3020,9 +3030,9 @@ export default {
       logger.groupEnd();
     });
 
-    eventBus.$on("refetchFilters", async (setFilter) => {
+    eventBus.$on("refetchFilters", async ({ setFilter, specificFilterNames }) => {
       await store.fetchSortValues(this.specificMediaType);
-      this.fetchFilters(setFilter);
+      this.fetchFilters(setFilter, false, specificFilterNames);
     });
 
     eventBus.$on("refetchSpecificFilter", async (setFilter) => {
