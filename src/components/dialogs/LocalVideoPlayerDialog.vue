@@ -65,8 +65,37 @@
           style="padding-top: 6px; padding-bottom: 6px; padding-left: 8px"
         >
           <v-row class="mk-compact-movie-list-title"> {{ $t("Trailer Show") }}: </v-row>
-          <div>
-            <mk-compact-movie-list-row v-bind:movie="trailerShow.current" />
+          <div v-if="trailerShow.current">
+            <v-menu
+              v-model="trailerShow.current.showDetails"
+              v-bind:close-on-click="false"
+              v-bind:close-on-content-click="false"
+              bottom
+              right
+              transition="scale-transition"
+              origin="top left"
+            >
+              <template v-slot:activator="{ on }">
+                <mk-compact-movie-list-row
+                  v-on="on"
+                  v-on:click="onShowMediaItemDetails(trailerShow.current)"
+                  v-bind:movie="trailerShow.current"
+                  v-bind:isClickable="true"
+                />
+              </template>
+              <v-card>
+                <v-list-item three-line style="padding-left: 0px; padding-right: 0px">
+                  <mk-media-item-card
+                    v-bind:mediaItem="trailerShow.current"
+                    v-bind:isScanning="false"
+                    v-bind:isInDialog="true"
+                    v-bind:showCloseButton="true"
+                    v-on:close="trailerShow.current.showDetails = false"
+                    v-on:mediaItemEvent="onMICmediaItemEvent"
+                  ></mk-media-item-card>
+                </v-list-item>
+              </v-card>
+            </v-menu>
           </div>
         </v-list-item-content>
 
@@ -142,14 +171,17 @@
 <script>
 // const videojs = require("video.js");
 
-// const logger = require("../../helpers/logger");
+const logger = require("../../helpers/logger");
+import * as store from "@/store";
 
 // import { eventBus } from "@/main";
 import CompactMovieListRow from "@/components/shared/CompactMovieListRow.vue";
+import MediaItemCard from "@/components/shared/MediaItemCard.vue";
 
 export default {
   components: {
     "mk-compact-movie-list-row": CompactMovieListRow,
+    "mk-media-item-card": MediaItemCard,
   },
 
   props: ["show", "videoURL", "mimeType", "slateURL", "trailerShow", "showActualPlayer"],
@@ -220,6 +252,39 @@ export default {
       if (this.trailerShow && this.trailerShow.remaining.length !== 0) {
         this.$emit("trailer-show-next");
       }
+    },
+
+    $local_t(key, payload) {
+      return this.$t(key, payload);
+    },
+
+    async onShowMediaItemDetails(mediaItem) {
+      logger.log("[onShowMediaItemDetails] mediaItem:", mediaItem);
+
+      // completely fetch mediaItem details
+      const result = await store.fetchMedia({
+        $MediaType: mediaItem.MediaType,
+        arr_id_Movies: [mediaItem.id_Movies],
+        minimumResultSet: false,
+        $t: this.$local_t,
+        filters: { filterSettings: {} },
+        arr_IMDB_tconst: null,
+        Series_id_Movies_Owner: mediaItem.Series_id_Movies_Owner,
+        specificMediaType: mediaItem.specificMediaType,
+      });
+
+      logger.log("[onShowMediaItemDetails] result:", result);
+
+      if (!result || !result.length) return;
+
+      Object.keys(result[0]).forEach((key) => {
+        mediaItem[key] = result[0][key];
+      });
+    },
+
+    async onMICmediaItemEvent(payload) {
+      logger.log("[LocalVideoPlayerDialog.onMICmediaItemEvent] payload:", payload);
+      this.$emit("mediaItemEvent", payload);
     },
   },
 

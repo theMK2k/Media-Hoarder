@@ -124,7 +124,7 @@
                       <v-menu
                         v-if="mic.type == 'movies'"
                         v-model="mediaItem.showDetails"
-                        v-bind:close-on-click="!$shared.mediaPropertyDialogVisible"
+                        v-bind:close-on-click="false"
                         v-bind:close-on-content-click="false"
                         bottom
                         right
@@ -169,12 +169,44 @@
                         <div v-if="!mediaItem.isLoadingSeriesEpisodes">
                           {{ mediaItem.seriesEpisodesCount }} / {{ mediaItem.seriesEpisodesTotal }} {{ $t("episodes") }}
                         </div>
-                        <mk-compact-movie-list-row
+                        <!-- <mk-compact-movie-list-row
                           v-for="(episode, index) in mediaItem.seriesEpisodesMediaItems"
                           v-bind:key="index"
                           v-bind:movie="episode"
                           v-bind:isClickable="false"
-                        ></mk-compact-movie-list-row>
+                        ></mk-compact-movie-list-row> -->
+                        <div v-for="(episode, index) in mediaItem.seriesEpisodesMediaItems" v-bind:key="index">
+                          <v-menu
+                            v-model="episode.showDetails"
+                            v-bind:close-on-click="false"
+                            v-bind:close-on-content-click="false"
+                            bottom
+                            right
+                            transition="scale-transition"
+                            origin="top left"
+                          >
+                            <template v-slot:activator="{ on }">
+                              <mk-compact-movie-list-row
+                                v-on="on"
+                                v-on:click="onShowMediaItemDetails(episode)"
+                                v-bind:movie="episode"
+                                v-bind:isClickable="true"
+                              />
+                            </template>
+                            <v-card>
+                              <v-list-item three-line style="padding-left: 0px; padding-right: 0px">
+                                <mk-media-item-card
+                                  v-bind:mediaItem="episode"
+                                  v-bind:isScanning="false"
+                                  v-bind:isInDialog="true"
+                                  v-bind:showCloseButton="true"
+                                  v-on:close="episode.showDetails = false"
+                                  v-on:mediaItemEvent="onMICmediaItemEvent"
+                                ></mk-media-item-card>
+                              </v-list-item>
+                            </v-card>
+                          </v-menu>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -274,9 +306,6 @@ export default {
   },
 
   watch: {
-    show(newValue) {
-      this.$shared.mediaPropertyDialogVisible = newValue;
-    },
     propertyValue: function (newVal) {
       this.debouncedInit(newVal);
     },

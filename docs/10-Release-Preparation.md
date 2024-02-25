@@ -6,7 +6,7 @@ This document describes the steps necessary to get a new release done.
 
 - [ ] we are on release branch `release-next` or `release-x.y.z`
 - [ ] Increase Version Number in [../package.json](../package.json)
-- [ ] create `public/history/version-x.y.z.md` from info in [../DONE.md](../DONE.md) 
+- [ ] create `public/history/version-x.y.z.md` from info in [../DONE.md](../DONE.md)
 - [ ] Update history.json (create new entry on top of the others in the array)
 - [ ] Test using `npm start` - it should show the new version incl. history
 - [ ] git push

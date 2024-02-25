@@ -1,8 +1,11 @@
 # DONE
 
-## v1.3.37-a9
+## v1.4.0-b1
 
-- [x] MediaPropertyDialog: when clicking a media item (in one of the lists), show the item's card
+- [x] when clicking a media item in one of the smaller lists, show the item's card
+  - [x] Media Property Dialog
+  - [x] Trailer Show (LocalVideoPlayerDialog, VideoPlayerDialog)
+  - [x] Chat GPT Dialog
 - [x] MediaList: as soon as "sort by" was changed by the user, reset page to 1
 
 ## v1.3.37-a8

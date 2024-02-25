@@ -4,6 +4,10 @@
 
 ## NEXT Major (v1.4.0)
 
+- [ ] bug: fast switching during trailer show lags behind
+
+- [ ] only load filters that are actually shown
+- [ ] cancel loading filters on series -> episodes change
 - [ ] PersonDialog: in the media list, show the role the person had with the medium
 - [ ] CompanyDialog: in the media list, show the role of the company with the medium
 

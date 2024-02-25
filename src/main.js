@@ -158,6 +158,10 @@ export const eventBus = new Vue({
     rescanFinished({ hasChanges }) {
       this.$emit("rescanFinished", { hasChanges });
     },
+
+    openChatGPTDialog() {
+      this.$emit("openChatGPTDialog");
+    },
   },
 });
 

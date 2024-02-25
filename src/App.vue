@@ -4348,8 +4348,9 @@ export default {
     },
 
     onOpenChatGPTDialog() {
-      this.$refs.chatGPTDialog.init();
-      this.chatGPTDialog.show = true;
+      // this.$refs.chatGPTDialog.init();
+      // this.chatGPTDialog.show = true;
+      eventBus.openChatGPTDialog();
     },
 
     onChatGPTDialogClose() {
@@ -4357,7 +4358,6 @@ export default {
     },
 
     onChatGPTDialogOK() {
-      // TODO: implement filtering
       this.chatGPTDialog.show = false;
     },
 

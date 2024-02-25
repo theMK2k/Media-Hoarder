@@ -28,7 +28,7 @@
                 <v-menu
                   v-if="data.mediaItems[season.season] && data.mediaItems[season.season][episode.episode]"
                   v-model="data.mediaItems[season.season][episode.episode].showDetails"
-                  v-bind:close-on-click="!$shared.mediaPropertyDialogVisible"
+                  v-bind:close-on-click="false"
                   v-bind:close-on-content-click="false"
                   bottom
                   right

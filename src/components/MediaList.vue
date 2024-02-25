@@ -635,6 +635,14 @@
     ></mk-video-quality-dialog>
 
     <!-- Other Dialogs -->
+    <mk-chat-gpt-dialog
+      ref="chatGPTDialog"
+      v-bind:show="chatGPTDialog.show"
+      v-on:close="onChatGPTDialogClose"
+      v-on:ok="onChatGPTDialogOK"
+      v-on:mediaItemEvent="onMICmediaItemEvent"
+    ></mk-chat-gpt-dialog>
+
     <mk-list-dialog
       v-bind:show="listDialog.show"
       v-bind:title="listDialog.title"
@@ -657,6 +665,7 @@
       v-on:trailer-show-next="onTrailerShowNext"
       v-on:trailer-show-add-movie-to-list="onTrailerShowAddMovieToList"
       v-on:trailer-show-close-and-search-movie="onTrailerShowCloseAndSearchMovie"
+      v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-video-player-dialog>
 
     <mk-local-video-player-dialog
@@ -671,6 +680,7 @@
       v-on:trailer-show-next="onTrailerShowNext"
       v-on:trailer-show-add-movie-to-list="onTrailerShowAddMovieToList"
       v-on:trailer-show-close-and-search-movie="onTrailerShowCloseAndSearchMovie"
+      v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-local-video-player-dialog>
 
     <mk-link-imdb-dialog
@@ -763,6 +773,7 @@ import LinkIMDBDialog from "@/components/dialogs/LinkIMDBDialog.vue";
 import Pagination from "@/components/shared/Pagination.vue";
 import RatingDemographicsDialog from "@/components/dialogs/RatingDemographicsDialog";
 import Dialog from "@/components/dialogs/Dialog.vue";
+import ChatGPTDialog from "@/components/dialogs/ChatGPTDialog.vue";
 
 import MediaPropertyDialog from "@/components/dialogs/MediaPropertyDialog.vue";
 import SeriesIMDBRatingDialog from "@/components/dialogs/SeriesIMDBRatingDialog.vue";
@@ -791,6 +802,8 @@ export default {
 
     "mk-delete-media-dialog": Dialog,
     "mk-rescan-current-list-dialog": Dialog,
+
+    "mk-chat-gpt-dialog": ChatGPTDialog,
 
     "mk-age-rating-dialog": MediaPropertyDialog,
     "mk-audio-format-dialog": MediaPropertyDialog,
@@ -956,6 +969,10 @@ export default {
     },
 
     // other Dialogs
+    chatGPTDialog: {
+      show: false,
+    },
+
     listDialog: {
       mode: "add",
       title: "",
@@ -1598,7 +1615,7 @@ export default {
 
         logger.log("[showTrailer] trailerMediaURLs:", trailerMediaURLs);
 
-        const dontUseLocalPlayer = false; // TODO: we can scrape mediaURLs, but we get a 403 Forbidden if we access them with our media player
+        const dontUseLocalPlayer = false; // set this to true in order to force an iframe player
 
         this.trailerShow = trailerShow;
 
@@ -1705,6 +1722,23 @@ export default {
 
     onListDialogCancel() {
       this.listDialog.show = false;
+    },
+
+    openChatGPTDialog() {
+      if (!this.$refs.chatGPTDialog) {
+        console.error("[openChatGPTDialog] this.$refs.chatGPTDialog is not available");
+      } else {
+        this.$refs.chatGPTDialog.init();
+      }
+      this.chatGPTDialog.show = true;
+    },
+
+    onChatGPTDialogClose() {
+      this.chatGPTDialog.show = false;
+    },
+
+    onChatGPTDialogOK() {
+      this.chatGPTDialog.show = false;
     },
 
     $local_t(key, payload) {
@@ -2934,7 +2968,7 @@ export default {
   created() {
     logger.log("[created] MediaList created");
 
-    // Register eventBus events
+    // #region Register eventBus events
     eventBus.$on("searchTextChanged", () => {
       this.$shared.currentPage = 1;
       store.saveCurrentPage(this.specificMediaType, this.Series_id_Movies_Owner);
@@ -3032,6 +3066,11 @@ export default {
         })();
       }
     });
+
+    eventBus.$on("openChatGPTDialog", () => {
+      this.openChatGPTDialog();
+    });
+    // #endregion
 
     (async () => {
       await this.fetchSeriesOwner(this.Series_id_Movies_Owner);
