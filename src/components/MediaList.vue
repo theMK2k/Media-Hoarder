@@ -1053,7 +1053,8 @@ export default {
         this.specificMediaType
       );
 
-      eventBus.refetchMedia();
+      // eventBus.refetchMedia();
+      this.refetchMedia({ dontStoreFilters: true });
     },
 
     async Series_id_Movies_Owner(newValue, oldValue) {
@@ -1061,7 +1062,8 @@ export default {
 
       await this.fetchSeriesOwner(newValue);
 
-      eventBus.refetchMedia();
+      // eventBus.refetchMedia();
+      this.refetchMedia({});
     },
 
     currentPage(newValue, oldValue) {
@@ -1710,7 +1712,8 @@ export default {
 
             this.$shared.lastChangedFilter = "filterLists";
 
-            eventBus.refetchMedia(this.$shared.currentPage);
+            // eventBus.refetchMedia(this.$shared.currentPage);
+            this.refetchMedia({ setPage: this.$shared.currentPage });
 
             eventBus.showSnackbar("success", this.$t("item removed from list"));
           }
@@ -2026,15 +2029,6 @@ export default {
       logger.groupEnd();
     },
 
-    async expandLanguages(item, type) {
-      logger.log("[expandLanguages] item:", item, "type:", type);
-      if (type === "audio") {
-        item.AudioLanguages = store.generateLanguageArray(item.Audio_Languages, 9999);
-      } else {
-        item.SubtitleLanguages = store.generateLanguageArray(item.Subtitle_Languages, 9999);
-      }
-    },
-
     // ### MediaPropteryDialog based methods
     mpdShowAgeRatingDialog(ageRating, isInDialog) {
       logger.log("[mpdOnAgeRatingClicked]:", ageRating, "isInDialog:", isInDialog);
@@ -2089,6 +2083,21 @@ export default {
       logger.log("[mpdShowGenreDialog] this.genreDialog:", this.genreDialog);
 
       return;
+    },
+
+    // TODO mpdShowLanguageDialog
+    mpdShowLanguageDialog(code, type, isInDialog) {
+      logger.log("[mpdShowLanguageDialog]:", { code, type });
+
+      if (type === "audio") {
+        this.audioLanguageDialog.show = true;
+        this.audioLanguageDialog.Code = code;
+        this.audioLanguageDialog.isInDialog = !!isInDialog;
+      } else {
+        this.subtitleLanguageDialog.show = true;
+        this.subtitleLanguageDialog.Code = code;
+        this.subtitleLanguageDialog.isInDialog = !!isInDialog;
+      }
     },
 
     mpdShowPersonDialog(credit, isInDialog) {
@@ -2373,7 +2382,8 @@ export default {
 
         eventBus.rescanStopped();
 
-        eventBus.refetchMedia(this.$shared.currentPage);
+        // eventBus.refetchMedia(this.$shared.currentPage);
+        this.refetchMedia({ setPage: this.$shared.currentPage });
 
         eventBus.showSnackbar("success", this.$t("entry linked successfully"));
 
@@ -2423,7 +2433,8 @@ export default {
           }
         }
 
-        eventBus.refetchMedia(this.$shared.currentPage);
+        // eventBus.refetchMedia(this.$shared.currentPage);
+        this.refetchMedia({ setPage: this.$shared.currentPage });
 
         eventBus.showSnackbar("success", this.$t("entry unlinked successfully"));
 
@@ -2438,7 +2449,8 @@ export default {
       try {
         await store.rescanItems(items, this.$local_t);
 
-        eventBus.refetchMedia(this.$shared.currentPage, this.$local_t);
+        // eventBus.refetchMedia(this.$shared.currentPage, this.$local_t);
+        this.refetchMedia({ setPage: this.$shared.currentPage, $t: this.$local_t });
 
         eventBus.showSnackbar("success", this.$t(`${items.length === 1 ? "entry" : "entries"} successfully rescanned`));
       } catch (err) {
@@ -2500,7 +2512,8 @@ export default {
 
     onReload() {
       logger.log("[onReload]");
-      eventBus.refetchMedia();
+      // eventBus.refetchMedia();
+      this.refetchMedia({});
     },
 
     async completelyFetchMedia() {
@@ -2711,7 +2724,8 @@ export default {
           })
         );
 
-        eventBus.refetchMedia();
+        // eventBus.refetchMedia();
+        this.refetchMedia({});
 
         this.deleteMediaDialog.show = false;
       } catch (err) {
@@ -2928,11 +2942,11 @@ export default {
           break;
         case "audioFormatClicked":
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
-          await this.mpdShowAudioFormatDialog(payload.audioFormat, payload.mediaItem, payload.isInDialog);
+          await this.mpdShowAudioFormatDialog(payload.audioFormat, payload.isInDialog);
           break;
         case "languageClicked":
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
-          await this.mpdShowLanguageDialog(payload.code, payload.type, payload.mediaItem, payload.isInDialog);
+          await this.mpdShowLanguageDialog(payload.code, payload.type, payload.isInDialog);
           break;
         case "companyClicked":
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
@@ -2960,7 +2974,7 @@ export default {
           break;
         case "videoEncoderClicked":
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
-          await this.mpdShowVideoEncoderDialog(payload.videoEncoder, payload.mediaItem, payload.isInDialog);
+          await this.mpdShowVideoEncoderDialog(payload.videoEncoder, payload.isInDialog);
           break;
         case "videoQualityClicked":
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
@@ -2971,6 +2985,53 @@ export default {
           logger.error("[onMICmediaItemEvent] unknown eventName:", payload.eventName);
           break;
       }
+    },
+
+    async refetchMedia({ setPage, $t, setFilter, dontStoreFilters }) {
+      logger.group("[Fetch Media List]", { setPage, $t, setFilter });
+
+      eventBus.showLoadingOverlay(true);
+
+      await store.fetchSortValues(this.specificMediaType);
+
+      this.items = [];
+      this.items = !this.Series_id_Movies_Owner
+        ? await store.fetchMedia({
+            $MediaType: this.mediatype,
+            arr_id_Movies: null,
+            minimumResultSet: true,
+            $t: $t || this.$local_t,
+            filters: this.$shared.filters,
+            arr_IMDB_tconst: null,
+            Series_id_Movies_Owner: null,
+            specificMediaType: this.specificMediaType,
+            dontStoreFilters: !!dontStoreFilters,
+          })
+        : await store.fetchMedia({
+            $MediaType: this.mediatype,
+            arr_id_Movies: null,
+            minimumResultSet: true,
+            $t: $t || this.$local_t,
+            filters: { filterSettings: {} },
+            arr_IMDB_tconst: null,
+            Series_id_Movies_Owner: this.Series_id_Movies_Owner,
+            specificMediaType: this.specificMediaType,
+            dontStoreFilters: !!dontStoreFilters,
+          });
+
+      const lastCurrentPage = await store.loadCurrentPage(this.specificMediaType, this.Series_id_Movies_Owner);
+      this.$shared.currentPage = lastCurrentPage && lastCurrentPage <= this.numPages ? lastCurrentPage : 1;
+      store.saveCurrentPage(this.specificMediaType, this.Series_id_Movies_Owner);
+
+      await this.completelyFetchMedia();
+
+      eventBus.showLoadingOverlay(false);
+
+      await this.fetchFilters(setFilter);
+
+      this.loadFilterValuesFromStorage = false; // only load filter values from storage initially
+
+      logger.groupEnd();
     },
   },
 
@@ -2986,46 +3047,10 @@ export default {
     });
 
     eventBus.$on("refetchMedia", (setPage, $t, setFilter) => {
+      logger.log("[MediaList] eventBus.$on(refetchMedia)");
       logger.group("[Fetch Media List]");
       (async () => {
-        eventBus.showLoadingOverlay(true);
-
-        await store.fetchSortValues(this.specificMediaType);
-
-        this.items = [];
-        this.items = !this.Series_id_Movies_Owner
-          ? await store.fetchMedia({
-              $MediaType: this.mediatype,
-              arr_id_Movies: null,
-              minimumResultSet: true,
-              $t: $t,
-              filters: this.$shared.filters,
-              arr_IMDB_tconst: null,
-              Series_id_Movies_Owner: null,
-              specificMediaType: this.specificMediaType,
-            })
-          : await store.fetchMedia({
-              $MediaType: this.mediatype,
-              arr_id_Movies: null,
-              minimumResultSet: true,
-              $t: $t,
-              filters: { filterSettings: {} },
-              arr_IMDB_tconst: null,
-              Series_id_Movies_Owner: this.Series_id_Movies_Owner,
-              specificMediaType: this.specificMediaType,
-            });
-
-        const lastCurrentPage = await store.loadCurrentPage(this.specificMediaType, this.Series_id_Movies_Owner);
-        this.$shared.currentPage = lastCurrentPage && lastCurrentPage <= this.numPages ? lastCurrentPage : 1;
-        store.saveCurrentPage(this.specificMediaType, this.Series_id_Movies_Owner);
-
-        await this.completelyFetchMedia();
-
-        eventBus.showLoadingOverlay(false);
-
-        await this.fetchFilters(setFilter);
-
-        this.loadFilterValuesFromStorage = false; // only load filter values from storage initially
+        await this.refetchMedia({ setPage, $t, setFilter });
       })();
       logger.groupEnd();
     });
@@ -3085,7 +3110,8 @@ export default {
     (async () => {
       await this.fetchSeriesOwner(this.Series_id_Movies_Owner);
 
-      eventBus.refetchMedia();
+      // eventBus.refetchMedia();
+      this.refetchMedia({});
 
       logger.log("[created] this.items:", this.items);
     })();

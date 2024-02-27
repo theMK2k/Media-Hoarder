@@ -268,15 +268,7 @@
                           mediaItem.Audio_Languages
                         ),
                       }"
-                      v-on:click.stop="
-                        emitMediaItemEvent('languageClicked', {
-                          mediaItem,
-                          code: lang,
-                          type: 'audio',
-                          mediaItem,
-                          isInDialog,
-                        })
-                      "
+                      v-on:click.stop="onLanguageClicked(mediaItem, lang, 'audio', isInDialog)"
                       >{{ lang }}</span
                     >
                   </span>
@@ -296,15 +288,7 @@
                           mediaItem.Audio_Languages
                         ),
                       }"
-                      v-on:click.stop="
-                        emitMediaItemEvent('languageClicked', {
-                          mediaItem,
-                          code: lang,
-                          type: 'subtitle',
-                          mediaItem,
-                          isInDialog,
-                        })
-                      "
+                      v-on:click.stop="onLanguageClicked(mediaItem, lang, 'subtitle', isInDialog)"
                       >{{ lang }}</span
                     >
                   </span>
@@ -972,11 +956,14 @@
 const path = require("path");
 const moment = require("moment");
 
+const logger = require("../../helpers/logger");
+
 import WordHighlighter from "vue-word-highlighter";
 import StarRating from "vue-star-rating";
 import * as Humanize from "humanize-plus";
 
 import * as helpers from "@/helpers/helpers";
+import * as store from "@/store";
 
 export default {
   props: ["mediaItem", "isScanning", "showCloseButton", "allowMediaItemClick", "allowEditButtons", "isInDialog"],
@@ -1071,6 +1058,27 @@ export default {
       }
 
       return this.$t("<not available>");
+    },
+
+    async onLanguageClicked(mediaItem, lang, type, isInDialog) {
+      logger.log("[onLanguageClicked]:", lang, type);
+
+      if (/\+\d/.test(lang)) {
+        // clicked language is expandable, e.g. "+4"
+        await this.expandLanguages(mediaItem, type);
+        return;
+      }
+
+      this.emitMediaItemEvent("languageClicked", { mediaItem, code: lang, type, isInDialog });
+    },
+
+    async expandLanguages(item, type) {
+      logger.log("[expandLanguages] item:", item, "type:", type);
+      if (type === "audio") {
+        item.AudioLanguages = store.generateLanguageArray(item.Audio_Languages, 9999);
+      } else {
+        item.SubtitleLanguages = store.generateLanguageArray(item.Subtitle_Languages, 9999);
+      }
     },
   },
 };
