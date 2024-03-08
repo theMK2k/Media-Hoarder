@@ -17,9 +17,12 @@
         {{ isClickable && showExpandIndicator && isCollapsed ? " »" : "" }}
       </div>
       <div v-if="movie.propertyDetails" class="mk-light-grey" style="margin-top: 2px">
-        <span v-for="(detail, index) in movie.propertyDetails" v-bind:key="detail.Value">
+        <span v-for="(detail, index) in movie.propertyDetails" v-bind:key="index">
           <span v-if="index > 0"> | </span>
-          <span v-if="detail.Category"> {{ $t(detail.Category) }}<span v-if="detail.Value">: </span> </span>
+          <span v-if="detail.Category || detail.CategoryToTranslate">
+            {{ detail.CategoryToTranslate ? $t(detail.CategoryToTranslate) : detail.Category
+            }}<span v-if="detail.Value">: </span>
+          </span>
           <span v-if="detail.Value">{{ detail.Value }}</span>
         </span>
       </div>

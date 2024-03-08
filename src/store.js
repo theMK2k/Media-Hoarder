@@ -8748,8 +8748,63 @@ async function addMediaItemPropertyDetails_Person($IMDB_Person_ID, mediaItems) {
           mediaItem.propertyDetails = [];
         }
         mediaItem.propertyDetails.push({
-          Category: creditDetailsRow.Category,
+          CategoryToTranslate: creditDetailsRow.Category,
           Value: creditDetailsRow.Credit,
+        });
+      }
+    }
+  }
+}
+
+/**
+ * Get and add companyDetails to every mediaItem in @param mediaItems
+ * @param {string} IMDB_Person_ID
+ * @param {Array<object>} mediaItems
+ * @returns
+ */
+async function addMediaItemPropertyDetails_Company($IMDB_Company_ID, mediaItems) {
+  logger.log(
+    "[addMediaItemPropertyDetails_Company] START, $IMDB_Company_ID:",
+    $IMDB_Company_ID,
+    "mediaItems:",
+    mediaItems
+  );
+
+  if (!$IMDB_Company_ID) {
+    return;
+  }
+  if (!mediaItems || mediaItems.length === 0) {
+    return;
+  }
+
+  const query = `
+  SELECT
+    MIC.id_Movies
+    , MIC.Role
+  FROM tbl_Movies_IMDB_Companies MIC
+  WHERE MIC.IMDB_Company_ID = $IMDB_Company_ID
+        AND MIC.id_Movies IN (${mediaItems.map((item) => item.id_Movies).join(", ")})
+  `;
+
+  const queryParams = {
+    $IMDB_Company_ID,
+  };
+
+  logger.log("[addMediaItemPropertyDetails_Company] query:", query, "queryParams:", queryParams);
+
+  const companyDetailsRows = await db.fireProcedureReturnAll(query, queryParams);
+
+  logger.log("[addMediaItemPropertyDetails_Company] creditDetailsRows:", companyDetailsRows);
+
+  for (const mediaItem of mediaItems) {
+    for (const creditDetailsRow of companyDetailsRows) {
+      if (mediaItem.id_Movies == creditDetailsRow.id_Movies) {
+        if (!mediaItem.propertyDetails) {
+          mediaItem.propertyDetails = [];
+        }
+        mediaItem.propertyDetails.push({
+          Category: creditDetailsRow.Role,
+          // Value: creditDetailsRow.Credit,
         });
       }
     }
@@ -8861,4 +8916,5 @@ export {
   applyMediaInfo,
   updateSeriesMetadataFromEpisodes,
   addMediaItemPropertyDetails_Person,
+  addMediaItemPropertyDetails_Company,
 };

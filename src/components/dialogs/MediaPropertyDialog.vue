@@ -511,7 +511,7 @@ export default {
           queryParams.$Audio_Format = this.propertyValue;
           break;
         case "company":
-          queryParams.$CompanyName = this.propertyValue;
+          queryParams.$CompanyName = this.propertyValueDisplayText;
           break;
         case "filming-location":
           queryParams.$id_IMDB_Filming_Locations = this.propertyValue;
@@ -1000,6 +1000,9 @@ export default {
 
         if (this.propertyTypeKey === "person") {
           await store.addMediaItemPropertyDetails_Person(this.propertyValue, mediaItemsDeduplicated);
+        }
+        if (this.propertyTypeKey === "company") {
+          await store.addMediaItemPropertyDetails_Company(this.imdbTconst, mediaItemsDeduplicated);
         }
 
         return mediaItemsDeduplicated;
