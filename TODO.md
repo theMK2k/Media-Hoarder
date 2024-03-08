@@ -4,11 +4,12 @@
 
 ## NEXT Major (v1.4.0)
 
+- [WIP] bug: series/movies filters are not stored when switching to movies/series and back
+  - check again how $shared.filters is loaded
 - [ ] bug: fast switching during trailer show lags behind
-- [ ] bug: series/movies filters are not stored when switching to movies/series and back
 
 - [ ] cancel loading filters on series -> episodes change
-- [ ] PersonDialog: in the media list, show the role the person had with the medium
+- [WIP] PersonDialog: in the media list, show the role the person had with the medium
 - [ ] CompanyDialog: in the media list, show the role of the company with the medium
 
 ### Series: scanning
@@ -16,6 +17,7 @@
 - [x] stop imdb scraping when the tconst is obviously not working
 - [ ] dont override mediaItem.Name when IMDB scan was unsuccessful
 
+- [ ] BUG: unlinking a series does not unlink its episodes
 - [ ] BUG: medialist for series does not reload after rescan
 - [ ] BUG: series and the series being directory based leads to errors:
   - [ ] unlink IMDB leads to the series being called "Series" and not the name of the series derived from the directory
@@ -27,6 +29,8 @@
 - [ ] check "rescan" for possible double scanning / meta data retrieval
 - [ ] BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
 - [ ] revisit the rescan summary (the numbers are mostly wrong)
+- [ ] during rescan record change details (what was added, removed)
+  - [ ] access the rescan logs from Settings and the rescan summary popup
 - [ ] rescanHandleDuplicates (also provide snackbar progress for this)
 - [ ] investigate with series-generator: find possible multitudes of episode numbers (also: episode == null)
   - [ ] if this is the case: we need a better getSeriesEpisodeTconstFromCache, possibly by utilizing levenshtein between filename and imdb's episode title

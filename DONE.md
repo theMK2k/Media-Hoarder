@@ -1,10 +1,16 @@
 # DONE
 
+## next
+
+- [x] bug: clicking on plot keyword in "find plot keyword dialog" does nothing
+  - [ ] check if any other dialog is also broken
+- [x] find plot keyword dialog: items with 0 movies are also shown (because of mediaType)
+  - fix by hiding any item with 0 media count
+
 ## v1.4.0-b2
 
 - [x] only load filters that are actually shown
   - [x] reload filters when "edit filters" is done (only reload those filters that have changed visibility from false to true)
-
 
 ## v1.4.0-b1
 

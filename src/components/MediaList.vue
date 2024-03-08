@@ -1043,7 +1043,7 @@ export default {
   }),
 
   watch: {
-    mediatype(newValue, oldValue) {
+    async mediatype(newValue, oldValue) {
       logger.log(
         "[MediaList.mediatype] newValue:",
         newValue,
@@ -2085,7 +2085,6 @@ export default {
       return;
     },
 
-    // TODO mpdShowLanguageDialog
     mpdShowLanguageDialog(code, type, isInDialog) {
       logger.log("[mpdShowLanguageDialog]:", { code, type });
 
@@ -2988,11 +2987,17 @@ export default {
     },
 
     async refetchMedia({ setPage, $t, setFilter, dontStoreFilters }) {
-      logger.group("[Fetch Media List]", { setPage, $t, setFilter });
+      logger.group("[Fetch Media List]");
+
+      logger.log("[refetchMedia]", { setPage, $t, setFilter, dontStoreFilters });
+      logger.log("[refetchMedia] this.specificMediaType:", this.specificMediaType);
+      logger.log("[refetchMedia] this.$shared.filters:", JSON.stringify(this.$shared.filters, null, 2));
 
       eventBus.showLoadingOverlay(true);
 
       await store.fetchSortValues(this.specificMediaType);
+
+      this.$shared.filters = (await store.fetchFilterValues(this.specificMediaType)) || this.$shared.filters; // always fetch filter values cached in db
 
       this.items = [];
       this.items = !this.Series_id_Movies_Owner
@@ -3076,19 +3081,20 @@ export default {
     });
 
     eventBus.$on("showPersonDialog", (value) => {
-      this.onCreditClicked(value);
+      this.mpdShowPersonDialog(value);
     });
 
     eventBus.$on("showPlotKeywordDialog", (value) => {
-      this.onIMDBPlotKeywordClicked(value);
+      // this.onIMDBPlotKeywordClicked(value);
+      this.mpdShowPlotKeywordDialog(value);
     });
 
     eventBus.$on("showFilmingLocationDialog", (value) => {
-      this.onIMDBFilmingLocationClicked(value);
+      this.mpdShowFilmingLocationDialog(value);
     });
 
     eventBus.$on("showCompanyDialog", (value) => {
-      this.onCompanyClicked(value);
+      this.mpdShowCompanyDialog(value);
     });
 
     eventBus.$on("rescanFinished", ({ hasChanges }) => {

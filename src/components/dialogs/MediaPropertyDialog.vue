@@ -998,6 +998,10 @@ export default {
 
         logger.log(`[MediaPropertyDialog fetchMediaItems] mediaItemsDeduplicated:`, mediaItemsDeduplicated);
 
+        if (this.propertyTypeKey === "person") {
+          await store.addMediaItemPropertyDetails_Person(this.propertyValue, mediaItemsDeduplicated);
+        }
+
         return mediaItemsDeduplicated;
       } catch (error) {
         logger.error(error);

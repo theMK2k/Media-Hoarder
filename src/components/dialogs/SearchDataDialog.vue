@@ -118,6 +118,7 @@ export default {
 								)) AS NumMovies
 					FROM tbl_Movies_IMDB_Companies MC
 					WHERE Company_Name LIKE '%${searchText}%'
+                AND NumMovies > 0
           GROUP BY Company_Name
           ${this.sortByNumMovies ? "ORDER BY NumMovies DESC" : "ORDER BY name ASC"}
           `;
@@ -142,6 +143,7 @@ export default {
 								)) AS NumMovies
 					FROM tbl_Movies_IMDB_Credits MC
 					WHERE Person_Name LIKE '%${searchText}%'
+                AND NumMovies > 0
           GROUP BY IMDB_Person_ID
           ${this.sortByNumMovies ? "ORDER BY NumMovies DESC" : "ORDER BY name ASC"}
           `;
@@ -169,6 +171,7 @@ export default {
               ) AS NumMovies
           FROM tbl_IMDB_Plot_Keywords PK
           WHERE PK.Keyword LIKE '%${searchText}%'
+                AND NumMovies > 0
           ${this.sortByNumMovies ? "ORDER BY NumMovies DESC" : "ORDER BY Keyword ASC"}
           `;
       }
@@ -195,6 +198,7 @@ export default {
             ) AS NumMovies
           FROM tbl_IMDB_Filming_Locations FL
           WHERE FL.Location LIKE '%${searchText}%'
+                AND NumMovies > 0
           ${this.sortByNumMovies ? "ORDER BY NumMovies DESC" : "ORDER BY Location ASC"}
           `;
       }
