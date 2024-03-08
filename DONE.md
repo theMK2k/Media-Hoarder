@@ -2,6 +2,7 @@
 
 ## next
 
+- [x] Search Data Dialog show role of person/company
 - [x] bug: clicking on plot keyword in "find plot keyword dialog" does nothing
   - [ ] check if any other dialog is also broken
 - [x] find plot keyword dialog: items with 0 movies are also shown (because of mediaType)
