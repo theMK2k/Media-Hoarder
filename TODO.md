@@ -1,14 +1,14 @@
 # TODO
 
-- Provide Screenshots in README.md
+- [ ] Provide Screenshots in README.md
 
 ## NEXT Major (v1.4.0)
 
-- [WIP] bug: series/movies filters are not stored when switching to movies/series and back
-  - check again how $shared.filters is loaded
 - [ ] bug: fast switching during trailer show lags behind
 
 - [ ] cancel loading filters on series -> episodes change
+
+- [ ] bring back filters for episodes?
 
 ### Series: scanning
 

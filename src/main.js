@@ -50,8 +50,8 @@ export const eventBus = new Vue({
       this.$emit("searchTextChanged", { searchText });
     },
 
-    refetchMedia(setPage, $t, setFilter) {
-      this.$emit("refetchMedia", setPage, $t, setFilter);
+    refetchMedia({ setPage, $t, setFilter, dontLoadFiltersFromDb }) {
+      this.$emit("refetchMedia", { setPage, $t, setFilter, dontLoadFiltersFromDb });
     },
 
     /**

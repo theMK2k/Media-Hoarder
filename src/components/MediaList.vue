@@ -2986,7 +2986,7 @@ export default {
       }
     },
 
-    async refetchMedia({ setPage, $t, setFilter, dontStoreFilters }) {
+    async refetchMedia({ setPage, $t, setFilter, dontStoreFilters, dontLoadFiltersFromDb }) {
       logger.group("[Fetch Media List]");
 
       logger.log("[refetchMedia]", { setPage, $t, setFilter, dontStoreFilters });
@@ -2997,7 +2997,9 @@ export default {
 
       await store.fetchSortValues(this.specificMediaType);
 
-      this.$shared.filters = (await store.fetchFilterValues(this.specificMediaType)) || this.$shared.filters; // always fetch filter values cached in db
+      if (!dontLoadFiltersFromDb) {
+        this.$shared.filters = (await store.fetchFilterValues(this.specificMediaType, true)) || this.$shared.filters; // always fetch filter values cached in db
+      }
 
       this.items = [];
       this.items = !this.Series_id_Movies_Owner
@@ -3051,11 +3053,11 @@ export default {
       this.completelyFetchMedia();
     });
 
-    eventBus.$on("refetchMedia", (setPage, $t, setFilter) => {
+    eventBus.$on("refetchMedia", ({ setPage, $t, setFilter, dontLoadFiltersFromDb }) => {
       logger.log("[MediaList] eventBus.$on(refetchMedia)");
       logger.group("[Fetch Media List]");
       (async () => {
-        await this.refetchMedia({ setPage, $t, setFilter });
+        await this.refetchMedia({ setPage, $t, setFilter, dontLoadFiltersFromDb });
       })();
       logger.groupEnd();
     });

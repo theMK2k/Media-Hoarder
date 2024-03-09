@@ -3774,7 +3774,10 @@ export default {
     },
 
     eventBusRefetchMedia: function (setPage) {
-      eventBus.refetchMedia(setPage);
+      eventBus.refetchMedia({
+        setPage,
+        dontLoadFiltersFromDb: true, // we fire refetch on filter change, so we don't want to load filters from db
+      });
     },
 
     filterCheckboxMousedown: function (filterName, filterItem, setAllFunction) {
@@ -4129,9 +4132,7 @@ export default {
           );
 
           // eventBus.refetchFilters({ filterLists: null });
-          eventBus.refetchMedia(this.$shared.currentPage, null, {
-            filterLists: null,
-          });
+          eventBus.refetchMedia({ setPage: this.$shared.currentPage, dontLoadFiltersFromDb: true });
 
           eventBus.showSnackbar(
             "success",
@@ -4159,7 +4160,7 @@ export default {
         ),
         1
       );
-      eventBus.refetchMedia({ filterPersons: null });
+      eventBus.refetchMedia({ setFilter: { filterPersons: null }, dontLoadFiltersFromDb: true });
     },
 
     async deleteFilterIMDBPlotKeyword(filterIMDBPlotKeyword) {
@@ -4177,7 +4178,7 @@ export default {
         ),
         1
       );
-      eventBus.refetchMedia({ filterIMDBPlotKeywords: null });
+      eventBus.refetchMedia({ setFilter: { filterIMDBPlotKeywords: null }, dontLoadFiltersFromDb: true });
     },
 
     async deleteFilterIMDBFilmingLocation(filterIMDBFilmingLocation) {
@@ -4196,7 +4197,7 @@ export default {
         ),
         1
       );
-      eventBus.refetchMedia({ filterIMDBFilmingLocations: null });
+      eventBus.refetchMedia({ setFilter: { filterIMDBFilmingLocations: null }, dontLoadFiltersFromDb: true });
     },
 
     async deleteCompany(filterCompany) {
@@ -4213,7 +4214,7 @@ export default {
         ),
         1
       );
-      eventBus.refetchMedia({ filterCompanies: null });
+      eventBus.refetchMedia({ setFilter: { filterCompanies: null }, dontLoadFiltersFromDb: true });
     },
 
     async onRescan() {

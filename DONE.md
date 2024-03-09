@@ -2,6 +2,8 @@
 
 ## next
 
+- [x] fix: series/movies filters are not stored when switching to movies/series and back
+  - [x] related bug: switching movies <> series may lead to 0 media items, even when pressing reload button
 - [x] Search Data Dialog show role of person/company
 - [x] bug: clicking on plot keyword in "find plot keyword dialog" does nothing
   - [ ] check if any other dialog is also broken
