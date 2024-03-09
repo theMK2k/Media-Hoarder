@@ -4629,9 +4629,9 @@ async function launchMovie(movie) {
 }
 
 async function fetchFilterValues($SpecificMediaType, loadFilterValuesFromStorage) {
-  logger.log("DEBUG: [fetchFilterValues]", $SpecificMediaType, loadFilterValuesFromStorage);
+  logger.log("[fetchFilterValues]", $SpecificMediaType, loadFilterValuesFromStorage);
   if (loadFilterValuesFromStorage) {
-    logger.log("DEBUG: [fetchFilterValues] loading from localStorage for", $SpecificMediaType);
+    logger.log("[fetchFilterValues] loading from localStorage for", $SpecificMediaType);
     const result = await getSetting(`filtersSpecificMediaType_${$SpecificMediaType}`);
     if (!result) {
       return null;
@@ -5898,7 +5898,7 @@ function saveFilterValues($SpecificMediaType) {
     filterValues
   );
 
-  logger.log("DEBUG: [saveFilterValues] saving to localStorage for", $SpecificMediaType);
+  logger.log("[saveFilterValues] saving to localStorage for", $SpecificMediaType);
   setSetting(`filtersSpecificMediaType_${$SpecificMediaType}`, filterValuesString);
 }
 
