@@ -4127,10 +4127,10 @@ async function fetchMedia({
       , IFNULL(MOV.plotSummary, IFNULL(MOV.IMDB_plotSummary_Translated, MOV.IMDB_plotSummary)) AS plotSummary
       , MOV.RelativePath
       , MOV.RelativeDirectory
-      , MI_Done
-      , MI_Duration_Formatted
-      , MI_Duration_Seconds
-      , IMDB_runtimeMinutes
+      , MOV.MI_Done
+      , MOV.MI_Duration_Formatted
+      , MOV.MI_Duration_Seconds
+      , MOV.IMDB_runtimeMinutes
       , AR.Age
       , MOV.IMDB_MinAge
       , MOV.IMDB_MaxAge
@@ -4165,6 +4165,7 @@ async function fetchMedia({
         , NULL AS MI_Audio_Languages
         , NULL AS MI_Subtitle_Languages
         , NULL AS IMDB_posterSmall_URL
+        , NULL AS SeriesOwner_IMDB_posterSmall_URL
         , NULL AS IMDB_posterLarge_URL
         , IFNULL(MOV.plotSummaryFull, IFNULL(MOV.IMDB_plotSummaryFull_Translated, MOV.IMDB_plotSummaryFull)) AS plotSummaryFull
         , NULL AS Genres
@@ -4199,6 +4200,7 @@ async function fetchMedia({
         , MOV.MI_Audio_Languages
         , MOV.MI_Subtitle_Languages
         , MOV.IMDB_posterSmall_URL
+        , MOV_SeriesOwner.IMDB_posterSmall_URL AS SeriesOwner_IMDB_posterSmall_URL
         , MOV.IMDB_posterLarge_URL
         , IFNULL(MOV.plotSummaryFull, IFNULL(MOV.IMDB_plotSummaryFull_Translated, MOV.IMDB_plotSummaryFull)) AS plotSummaryFull
         , (SELECT GROUP_CONCAT(GQ.Name, ', ') FROM
@@ -4229,6 +4231,7 @@ async function fetchMedia({
     FROM tbl_Movies MOV
     INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
 		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
+    LEFT JOIN tbl_Movies MOV_SeriesOwner ON MOV.Series_id_Movies_Owner = MOV_SeriesOwner.id_Movies
 		WHERE	(MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL
 					AND MOV.id_SourcePaths IN (SELECT id_SourcePaths FROM tbl_SourcePaths WHERE MediaType = $MediaType)
           ${$MediaType === "series" && !Series_id_Movies_Owner ? `AND MOV.Series_id_Movies_Owner IS NULL` : ""}
@@ -4263,6 +4266,10 @@ async function fetchMedia({
       mediaItem.IMDB_posterSmall_URL = mediaItem.IMDB_posterSmall_URL
         ? "local-resource://" + helpers.getDataPath(mediaItem.IMDB_posterSmall_URL).replace(/\\/g, "\\\\")
         : mediaItem.IMDB_posterSmall_URL;
+
+      mediaItem.SeriesOwner_IMDB_posterSmall_URL = mediaItem.SeriesOwner_IMDB_posterSmall_URL
+        ? "local-resource://" + helpers.getDataPath(mediaItem.SeriesOwner_IMDB_posterSmall_URL).replace(/\\/g, "\\\\")
+        : mediaItem.SeriesOwner_IMDB_posterSmall_URL;
 
       mediaItem.IMDB_posterLarge_URL = mediaItem.IMDB_posterLarge_URL
         ? "local-resource://" + helpers.getDataPath(mediaItem.IMDB_posterLarge_URL).replace(/\\/g, "\\\\")

@@ -10,6 +10,10 @@
 - [x] find plot keyword dialog: items with 0 movies are also shown (because of mediaType)
   - fix by hiding any item with 0 media count
 - [x] prevent filtering and highlighting of searchText in Episodes listing
+- [x] bring back filters for episodes?
+  - NOT NOW! this introduces more problems than solutions
+- [x] include description text in search space
+- [x] fix: fast switching during trailer show lags behind
 
 ## v1.4.0-b2
 

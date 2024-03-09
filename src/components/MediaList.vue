@@ -657,6 +657,7 @@
 
     <mk-video-player-dialog
       v-bind:show="videoPlayerDialog.show"
+      v-bind:isLoading="videoPlayerDialog.isLoading"
       v-bind:showActualPlayer="videoPlayerDialog.showActualPlayer"
       v-bind:src="videoPlayerDialog.videoURL"
       v-bind:trailerShow="trailerShow"
@@ -670,6 +671,7 @@
 
     <mk-local-video-player-dialog
       v-bind:show="localVideoPlayerDialog.show"
+      v-bind:isLoading="localVideoPlayerDialog.isLoading"
       v-bind:showActualPlayer="localVideoPlayerDialog.showActualPlayer"
       v-bind:videoURL="localVideoPlayerDialog.videoURL"
       v-bind:slateURL="localVideoPlayerDialog.slate"
@@ -986,12 +988,14 @@ export default {
 
     videoPlayerDialog: {
       show: false,
+      isLoading: false,
       showActualPlayer: false,
       videoURL: null,
     },
 
     localVideoPlayerDialog: {
       show: false,
+      isLoading: false,
       showActualPlayer: false,
       videoURL: null,
       slateURL: null,
@@ -1586,16 +1590,20 @@ export default {
 
       // also close the local player if it is open
       this.localVideoPlayerDialog.show = false;
+      this.localVideoPlayerDialog.isLoading = false;
       this.localVideoPlayerDialog.showActualPlayer = false;
 
       window.requestAnimationFrame(() => {
         this.videoPlayerDialog.showActualPlayer = true;
+        this.videoPlayerDialog.isLoading = false;
         this.videoPlayerDialog.show = true;
       });
     },
 
     async showTrailer(item, trailerShow) {
       try {
+        this.localVideoPlayerDialog.isLoading = true;
+        this.videoPlayerDialog.isLoading = true;
         let trailerMediaURLs = await scrapeIMDBTrailerMediaURLs(
           `https://www.imdb.com${item.IMDB_Trailer_URL.replace("https://www.imdb.com", "")}`
         );
@@ -1655,6 +1663,9 @@ export default {
         });
       } catch (err) {
         eventBus.showSnackbar("error", err);
+      } finally {
+        this.localVideoPlayerDialog.isLoading = false;
+        this.videoPlayerDialog.isLoading = false;
       }
     },
 

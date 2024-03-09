@@ -116,7 +116,7 @@
               type="button"
               class="v-pagination__navigation"
               v-bind:class="prevClass"
-              v-bind:disabled="trailerShow.history.length == 0"
+              v-bind:disabled="trailerShow.history.length == 0 || isLoading"
               v-on:click="$emit('trailer-show-previous')"
               style="
                 height: 38px !important;
@@ -134,7 +134,7 @@
               type="button"
               class="v-pagination__navigation"
               v-bind:class="nextClass"
-              v-bind:disabled="trailerShow.remaining.length == 0"
+              v-bind:disabled="trailerShow.remaining.length == 0 || isLoading"
               v-on:click="$emit('trailer-show-next')"
               style="
                 height: 38px !important;
@@ -184,7 +184,7 @@ export default {
     "mk-media-item-card": MediaItemCard,
   },
 
-  props: ["show", "videoURL", "mimeType", "slateURL", "trailerShow", "showActualPlayer"],
+  props: ["show", "videoURL", "mimeType", "slateURL", "trailerShow", "showActualPlayer", "isLoading"],
 
   data: () => ({
     controlsHovered: false,
@@ -193,13 +193,13 @@ export default {
   computed: {
     prevClass() {
       return {
-        "v-pagination__navigation--disabled": this.trailerShow.history.length == 0,
+        "v-pagination__navigation--disabled": this.trailerShow.history.length == 0 || this.isLoading,
       };
     },
 
     nextClass() {
       return {
-        "v-pagination__navigation--disabled": this.trailerShow.remaining.length == 0,
+        "v-pagination__navigation--disabled": this.trailerShow.remaining.length == 0 || this.isLoading,
       };
     },
 

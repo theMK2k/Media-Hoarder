@@ -4,10 +4,7 @@
 
 ## NEXT Major (v1.4.0)
 
-- [ ] include description text in search space
 - [ ] cancel loading filters on series -> episodes change
-- [ ] bring back filters for episodes?
-- [ ] bug: fast switching during trailer show lags behind
 
 ### Series: scanning
 
@@ -47,6 +44,7 @@
 
 ### Series: Edit Media Dialog
 
+- [ ] show series poster if one is missing for episode
 - [ ] Allow user to upload a poster of their liking
 
 ### Series: Delete Media Dialog

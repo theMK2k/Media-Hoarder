@@ -46,11 +46,17 @@
 
           <v-img
             contain
-            v-if="mediaItem.IMDB_posterSmall_URL"
-            v-bind:src="mediaItem.IMDB_posterSmall_URL"
+            v-if="mediaItem.IMDB_posterSmall_URL || mediaItem.SeriesOwner_IMDB_posterSmall_URL"
+            v-bind:src="mediaItem.IMDB_posterSmall_URL || mediaItem.SeriesOwner_IMDB_posterSmall_URL"
             style="border-radius: 6px; background-size: cover"
           ></v-img>
-          <v-icon v-if="!mediaItem.IMDB_posterSmall_URL" disabled x-large> mdi-filmstrip </v-icon>
+          <v-icon
+            v-if="!(mediaItem.IMDB_posterSmall_URL || mediaItem.SeriesOwner_IMDB_posterSmall_URL)"
+            disabled
+            x-large
+          >
+            mdi-filmstrip
+          </v-icon>
 
           <div class="duration-overlay-container" v-if="mediaItem.specificMediaType !== 'Series' && mediaItem.Duration">
             <span class="text-overlay">{{ mediaItem.Duration }}</span>
