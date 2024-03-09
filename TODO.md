@@ -4,11 +4,10 @@
 
 ## NEXT Major (v1.4.0)
 
-- [ ] bug: fast switching during trailer show lags behind
-
+- [ ] include description text in search space
 - [ ] cancel loading filters on series -> episodes change
-
 - [ ] bring back filters for episodes?
+- [ ] bug: fast switching during trailer show lags behind
 
 ### Series: scanning
 

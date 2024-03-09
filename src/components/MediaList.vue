@@ -1103,6 +1103,10 @@ export default {
     },
 
     searchText() {
+      if (this.specificMediaType == "Episodes") {
+        // we don't filter and don't highlight searchText if we're listing Episodes
+        return null;
+      }
       return this.$shared.searchText;
     },
 

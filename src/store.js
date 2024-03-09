@@ -4325,7 +4325,7 @@ async function fetchMedia({
         " " +
         (mediaItem.Name2 || "").toLowerCase() +
         " " +
-        (mediaItem.IMDB_plotSummary || "").toLowerCase() +
+        (mediaItem.plotSummary || "").toLowerCase() +
         " " +
         (mediaItem.fullPath || "").toLowerCase() +
         " " +

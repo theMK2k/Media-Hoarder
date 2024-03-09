@@ -80,7 +80,7 @@
                         `${mediaItem.Series_Season_Displaytext ? "." : ""}${mediaItem.Series_Episodes_Displaytext}`
                       }}
                     </span>
-                    <word-highlighter v-bind:query="$shared.searchText || ''">
+                    <word-highlighter v-bind:query="searchText || ''">
                       {{ mediaItem.Name }}
                     </word-highlighter>
                     <span>
@@ -192,7 +192,7 @@
                 "
               >
                 <!-- v-if="mediaItem.Name2 || mediaItem.selected" -->
-                <word-highlighter v-bind:query="$shared.searchText || ''"> {{ mediaItem.Name2 }} </word-highlighter
+                <word-highlighter v-bind:query="searchText || ''"> {{ mediaItem.Name2 }} </word-highlighter
                 ><span
                   v-if="
                     mediaItem.specificMediaType == 'Series' &&
@@ -398,7 +398,7 @@
 
           <v-row v-if="mediaItem.plotSummary" style="margin: 4px 6px 8px 4px">
             <div v-show="!mediaItem.selected" style="font-size: 0.875rem; font-weight: normal">
-              <word-highlighter v-bind:query="$shared.searchText || ''">
+              <word-highlighter v-bind:query="searchText || ''">
                 {{ mediaItem.plotSummary }}
               </word-highlighter>
             </div>
@@ -524,14 +524,12 @@
         >
         <v-col class="detailContent">
           <word-highlighter
-            v-bind:query="$shared.searchText || ''"
+            v-bind:query="searchText || ''"
             v-bind:class="{
               'mk-search-highlight': $shared.filterSourcePathsActive,
             }"
             >{{ mediaItem.SourcePath }}{{ pathSeparator }}</word-highlighter
-          ><word-highlighter v-bind:query="$shared.searchText || ''">{{
-            mediaItem.RelativePath
-          }}</word-highlighter></v-col
+          ><word-highlighter v-bind:query="searchText || ''">{{ mediaItem.RelativePath }}</word-highlighter></v-col
         >
       </v-row>
       <v-row class="mk-detail-row">
@@ -579,7 +577,7 @@
           ><strong>{{ $t("IMDB ID") }}:</strong></v-col
         >
         <v-col class="detailContent">
-          <word-highlighter v-bind:query="$shared.searchText || ''">
+          <word-highlighter v-bind:query="searchText || ''">
             {{ mediaItem.IMDB_tconst || notAvailableText }}
           </word-highlighter>
           <v-btn
@@ -978,6 +976,14 @@ export default {
 
     pathSeparator() {
       return path.sep;
+    },
+
+    searchText() {
+      if (this.mediaItem && this.mediaItem.specificMediaType == "Episodes") {
+        // we don't filter and don't highlight searchText if we're listing Episodes
+        return null;
+      }
+      return this.$shared.searchText;
     },
   },
   methods: {

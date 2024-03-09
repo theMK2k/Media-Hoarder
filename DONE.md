@@ -9,6 +9,7 @@
   - [ ] check if any other dialog is also broken
 - [x] find plot keyword dialog: items with 0 movies are also shown (because of mediaType)
   - fix by hiding any item with 0 media count
+- [x] prevent filtering and highlighting of searchText in Episodes listing
 
 ## v1.4.0-b2
 
