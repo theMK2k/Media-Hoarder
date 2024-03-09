@@ -1,4 +1,4 @@
-# Media Hoarder v1.4.0-b1 Changelog
+# Media Hoarder v1.4.0-b2 Changelog
 
 This is a **beta release** of the upcoming v1.4.0 which finally introduces TV series support to Media Hoarder.
 
