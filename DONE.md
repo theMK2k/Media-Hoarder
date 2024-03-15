@@ -1,108 +1,152 @@
 # DONE
 
-## next
-
-- [x] fix: series/movies filters are not stored when switching to movies/series and back
-  - [x] related bug: switching movies <> series may lead to 0 media items, even when pressing reload button
-- [x] Search Data Dialog show role of person/company
-- [x] bug: clicking on plot keyword in "find plot keyword dialog" does nothing
-  - [ ] check if any other dialog is also broken
-- [x] find plot keyword dialog: items with 0 movies are also shown (because of mediaType)
-  - fix by hiding any item with 0 media count
-- [x] prevent filtering and highlighting of searchText in Episodes listing
-- [x] bring back filters for episodes?
-  - NOT NOW! this introduces more problems than solutions
-- [x] include description text in search space
-- [x] fix: fast switching during trailer show lags behind
+## next (v1.4.0-b3)
 
 ## v1.4.0-b2
 
-- [x] only load filters that are actually shown
+### Features (v1.4.0-b2)
+
+- [x] FEAT: Search Data Dialog: show role of person/company
+
+![image](https://github.com/theMK2k/Media-Hoarder/assets/16878526/34d52613-4f72-4a03-a615-b6a287ca1f75)
+
+![image](https://github.com/theMK2k/Media-Hoarder/assets/16878526/a753ddba-d6da-411b-a80e-6e369e3217a5)
+
+### Misc / Fixes (v1.4.0-b2)
+
+- [x] UX: only load filters that are actually shown
   - [x] reload filters when "edit filters" is done (only reload those filters that have changed visibility from false to true)
+- [x] FIX: series/movies filters are not stored when switching to movies/series and back
+  - [x] related bug: switching movies <> series may lead to 0 media items, even when pressing reload button
+- [x] FIX: clicking on plot keyword in "find plot keyword dialog" does nothing
+- [x] FIX: hide items in dialogs that have 0 media (e.g. plot keywords for movies that can only be found in series)
+- [x] FIX: prevent filtering and highlighting of searchText in Episodes listing
+- [x] DECISION: bring back filters for episodes?
+  - NOT NOW! this introduces more problems than solutions
+- [x] FIX: include description text in search space
+- [x] FIX: fast switching during trailer show lags behind
 
 ## v1.4.0-b1
 
-- [x] when clicking a media item in one of the smaller lists, show the item's card
+### Features (v1.4.0-b1)
+
+- [x] FEAT: when clicking a media item in one of the smaller lists, show the item's card
   - [x] Media Property Dialog
   - [x] Trailer Show (LocalVideoPlayerDialog, VideoPlayerDialog)
   - [x] Chat GPT Dialog
-- [x] MediaList: as soon as "sort by" was changed by the user, reset page to 1
+
+![image](https://github.com/theMK2k/Media-Hoarder/assets/16878526/b23db3ce-e8b5-4607-94db-dc5888247e49)
+
+### Misc / Fixes (v1.4.0-b1)
+
+- [x] UX: MediaList: as soon as "sort by" was changed by the user, reset page to 1
 
 ## v1.3.37-a8
 
-- [x] Fix: sort by Season and Episode didn't work anymore (now fixed)
-- [x] Update Plotsummary IMDB Scraper Test
+### Misc / Fixes (v1.3.37-a8)
+
+- [x] FIX: sort by Season and Episode didn't work anymore
+- [x] SCRAPER: Update Plotsummary IMDB Scraper Test
 
 ## v1.3.37-a7
 
-- [x] use imdb-graphql-urls.json (also try to fetch them from master in github, this way we can update the urls if imdb changes them - without creating a new release)
+### Features (v1.3.37-a7)
+
+- [x] UX/SCRAPER: use imdb-graphql-urls.json (also try to fetch them from master in github, this way we can update the urls if imdb changes them - without creating a new release)
+
   - <https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/src/data/imdb-graphql-urls.json>
-- [x] propagate actual errors of imdb scraping to the test result (i.e. errors in graphql querying instead of $IMDB_something is NULL)
+
+- [x] UX/SCRAPER: propagate actual errors of imdb scraping to the test result (i.e. errors in graphql querying instead of $IMDB_something is NULL)
 
 ## v1.3.37-a6
 
-### Series: Media Property Dialog
+### Features (v1.3.37-a6)
 
-- [x] make series clickable and expand to episodes listing for the selected series, show affected number of episodes vs. total number of episodes
-- [x] remove the episodes section (in favor of episodes sections for all listed series)
+#### Series: Media Property Dialog
 
-### Series: IMDB Rating Dialog
+- [x] FEAT: make series clickable and expand to episodes listing for the selected series, show affected number of episodes vs. total number of episodes
+- [x] UX: remove the episodes section (in favor of episodes sections for all listed series)
 
-- [x] IMDB Rating heatmap like <https://whattowatchon.tv>
+#### Series: IMDB Rating Dialog
+
+- [x] FEAT: IMDB Rating heatmap like <https://whattowatchon.tv>
   - [x] make medialist item card a shared component (now used in medialist as well as SeriesIMDBRatingDialog)main list "jumps" and THEN reloads with the filter applied (possibly a fix for another issue)
   - [x] prevent certain activities while in IMDB Rating Dialog mode
-- [x] fix z-index for other dialogs on top of the SeriesIMDBRatingDialog
-- [x] globally track MediaPropertyDialog's visibility in order to allow closing of SeriesIMDBRatingDialog on outside-click if MediaPropertyDialog is not open
+
+![image](https://github.com/theMK2k/Media-Hoarder/assets/16878526/998bf433-05d6-4f19-a573-83d62f78bc75)
+
+![image](https://github.com/theMK2k/Media-Hoarder/assets/16878526/ed06025f-ce16-42f5-be2b-e14d5a2ae5af)
+
+- [x] UI: fix z-index for other dialogs on top of the SeriesIMDBRatingDialog
+
+- [x] UX: globally track MediaPropertyDialog's visibility in order to allow closing of SeriesIMDBRatingDialog on outside-click if MediaPropertyDialog is not open
+
+- [x] UI: also provide clickable area for episodes we have but is missing an IMDB rating
+
+![image](https://github.com/theMK2k/Media-Hoarder/assets/16878526/78163da9-eb5c-47a4-82d9-2eaa8eecf47d)
+
 - [x] MediaList: provide Series_id_Movies_Owner explicitly to MediaPropertyDialog
-- [x] also provide clickable area for episodes we have but is missing an IMDB rating
 
-### Series: Edit Media Dialog
+#### Series: Edit Media Dialog
 
-- [x] tbl_Movies_MI_Qualities: also use for editing the series entry
-- [x] Allow user to define audio / subtitle languages
+- [x] FEAT: Allow user to define audio / subtitle languages
   - [x] implement EditMediaItemDialog controls
   - [x] save on diff
 
+![image](https://github.com/theMK2k/Media-Hoarder/assets/16878526/ae1fb019-1cb8-4c06-b8e6-913c671d38ce)
+
+![image](https://github.com/theMK2k/Media-Hoarder/assets/16878526/c5a031ac-bd41-4cfe-a9fa-6e09b6197d7c)
+
+- [x] DB: tbl_Movies_MI_Qualities: also use for editing the series entry
+
 ## v1.3.37-a5
 
-- [x] imdb-graphql-urls: update seriesEpisodes (new persisted query)
-- [x] fix: series episodes matching: don't assume E01 if neither season nor episode are set
+### Misc / Fixes (v1.3.37-a5)
+
+- [x] SCRAPER: imdb-graphql-urls: update seriesEpisodes (new persisted query)
+- [x] FIX: series episodes matching: don't assume E01 if neither season nor episode are set
 
 ## v1.3.37-a4
 
-- [x] MediaList: store currentPage for Movies, Series and Episodes (episodes in tbl_Movies.Series_currentPage)
-- [x] MediaList: optimize fetchSortValues before fetchFilters
-- [x] findIMDBtconst for episodes:
+### Misc / Fixes (v1.3.37-a4)
+
+- [x] UX: MediaList: store currentPage for Movies, Series and Episodes (episodes in tbl_Movies.Series_currentPage)
+- [x] UX: MediaList: optimize fetchSortValues before fetchFilters
+- [x] SCRAPER/UX: findIMDBtconst for episodes:
   - [x] tt\* override
   - [x] by season and episode numbers
 
 ## v1.3.37-a3
 
-- [x] use tt\* in the filename to override the tconst of an episode
-- [x] unlink IMDB on series: also unlink all episodes, which
+### Misc / Fixes
+
+- [x] UX: use tt\* in the filename to override the tconst of an episode
+- [x] UX: unlink IMDB on series: also unlink all episodes, which
   - [x] don't have the tt\* as part of their file name
   - [x] haven't been user-set tt\* (do we even track this?)
 
-## v1.3.37-a2
+## v1.3.37-a
 
-## v1.3.37-a (later: v1.4.0)
+### Misc / Fixes
 
-- [x] Windows: update bundled VLC to 3.0.20
-- [x] Windows: update bundled Mediainfo CLI to 23.11
-- [x] refactor store.fetchMedia to only accept a single object containing the options
-- [x] check sqlite version for json support - _The JSON functions and operators are built into SQLite by default, as of SQLite version 3.38.0 (2022-02-22)._
+- [x] CHORE: Windows: update bundled VLC to 3.0.20
+- [x] CHORE: Windows: update bundled Mediainfo CLI to 23.11
+- [x] CHORE: refactor store.fetchMedia to only accept a single object containing the options
+- [x] CHORE: check sqlite version for json support - _The JSON functions and operators are built into SQLite by default, as of SQLite version 3.38.0 (2022-02-22)._
   - specs see [data/devdocs/series.md](data/devdocs/series.md), [docs/01-Media-Storage.md](01-Media-Storage.md)
-- [x] ensure that MI Tracks table is cleaned up when a movie gets removed
-- [x] bugfix: store.mergeExtraFileBased 713 TypeError: Cannot read property 'length' of undefined
-- [x] bugfix: delete series actually deleted the source path
-- [x] bugfix: in Series, where Video Quality filter resets from "ALL" to some being checked just by switching back and forth (series <> episodes)
-- [x] create a test set with series name and year (see: <https://github.com/theMK2k/media-hoarder-testset-generator>)
+- [x] DB: ensure that MI Tracks table is cleaned up when a movie gets removed
+- [x] FIX: store.mergeExtraFileBased 713 TypeError: Cannot read property 'length' of undefined
+- [x] FIX: delete series actually deleted the source path
+- [x] FIX: in Series, where Video Quality filter resets from "ALL" to some being checked just by switching back and forth (series <> episodes)
+- [x] TEST: create a test set with series name and year (see: <https://github.com/theMK2k/media-hoarder-testset-generator>)
   - [x] enumerate series names
   - [x] enumerate episodes for each series
   - [x] benchmark series name detection (success: 98% hits on 1799 english series names)
   - [x] also benchmark the english movies test set
 
-### TV Series Support (MVP)
+## TV Series Support (MVP)
+
+These items track the series feature in general.
 
 - [x] Remove mediaItem Dialog:
   - [x] always show the affected location full path
