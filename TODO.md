@@ -9,43 +9,36 @@
 ### Series: scanning
 
 - [x] stop imdb scraping when the tconst is obviously not working
+- [ ] revisit the rescan summary (the numbers are mostly wrong)
+  - related: #45 Scan Media wrong number added
+- [ ] during rescan record change details (what was added, removed)
+  - [ ] access the rescan logs from Settings and the rescan summary popup
 - [ ] dont override mediaItem.Name when IMDB scan was unsuccessful
-
 - [ ] BUG: unlinking a series does not unlink its episodes
 - [ ] BUG: medialist for series does not reload after rescan
 - [ ] BUG: series and the series being directory based leads to errors:
   - [ ] unlink IMDB leads to the series being called "Series" and not the name of the series derived from the directory
   - [x] during scan (before imdb metadata retrieval) a series is only shown as "Series"
 - [ ] BUG: subtitles in .rar files are added to the media list
-- [ ] if season is unknown or episode number not set: try to find the imdb tconst by comparing names
-  - [ ] store.findIMDBtconst: series episode find by name
-- [ ] Defect: rescanning a specific series does not run mediainfo on its episodes
+- [ ] BUG: rescanning a specific series does not run mediainfo on its episodes
 - [ ] check "rescan" for possible double scanning / meta data retrieval
 - [ ] BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
-- [ ] revisit the rescan summary (the numbers are mostly wrong)
-- [ ] during rescan record change details (what was added, removed)
-  - [ ] access the rescan logs from Settings and the rescan summary popup
 - [ ] rescanHandleDuplicates (also provide snackbar progress for this)
 - [ ] investigate with series-generator: find possible multitudes of episode numbers (also: episode == null)
   - [ ] if this is the case: we need a better getSeriesEpisodeTconstFromCache, possibly by utilizing levenshtein between filename and imdb's episode title
-
-## NEXT Minor (current v1.3.2)
-
-- [ ] Fix: subdirectory called "extras" is not assigned to the main movie (the files are provided as main movies themselves)
-- add ffmpeg in order to create screenshots for movies/episodes with missing poster
-- [ ] check tconst detection with movies, too (we changed some fullDirectory to fullPath)
+- #55 BUG: Wont add season or episode number to main seires page
+- #51 Found work around for custom shows and episodes
+- #41 Series: Organization of Extras / Specials / Bonus, and Unnumbered Episodes
+- #39 Multipart Episodes
+- #36 Mediainfo always opening
 
 ### Series: Link IMDB Dialog
 
 - [ ] for episodes:
+
   - [WIP] provide all entries for the current series (Series_id_Movies_Owner's IMDB_tconst)
     - [ ] new imdb scraper: scrapeSeriesSeasons(tconst) -> `https://www.imdb.com/title/tt0206512/episodes/` -> dropdown
   - [ ] allow a fallback to standard imdb search
-
-### Series: Edit Media Dialog
-
-- [ ] show series poster if one is missing for episode
-- [ ] Allow user to upload a poster of their liking
 
 ### Series: Delete Media Dialog
 
@@ -53,14 +46,16 @@
 
 ### Misc
 
+- [ ] BUG: subdirectory called "extras" is not assigned to the main movie (the files are provided as main movies themselves)
+- [ ] check tconst detection with movies, too (we changed some fullDirectory to fullPath)
 - [ ] add "w2wTV" button for Series (https://whattowatchon.tv/tt17220216)
 - [ ] make loading of filters abortable (e.g. when switching from Series -> Episodes, the filters of Series don't have to be loaded completely through, or Episodes -> Series)
 - [ ] BUG? when opening person dialog and clicking "filter by this person", the main list "jumps" and THEN reloads with the filter applied (possibly a fix for another issue)
 - [ ] BUG: series in dialog always show yearStart
 - [ ] store.saveFilterValues still works with MediaType and not SpecificMediaType
 - [ ] investigate everything that still works with MediaType (and possibly should also use SpecificMediaType)
-- [ ] we apparently do not use the timezone (we store in UTC)
 - [ ] investigate if we still use Series_id_Movies_Owner to differentiate Series and Episodes -> we have specificMediaType now
+- [ ] we apparently do not use the timezone (we store in UTC)
 - [ ] scanErrors:
   - [ ] review how rescan and applyIMDB handle scanErrors (string to object, handle null)
   - [ ] introduce WARNING vs. ERROR
@@ -68,13 +63,12 @@
       - imdb implausibility
     - ERROR:
       - (new) mediainfo without result (possibly due to max path length exceeded)
+      - IMDB GraphQL errors
 - [ ] add ScanErrors functionality in applyMediaInfo (mediainfo may fail on exceeding 259 chars paths)
 - [ ] investigate the errors of a bigger rescan:
   - [ ] store.js:2199 Error: Command failed: "c:\Apps\Video\MediaInfo CLI\MediaInfo.exe" --Output=XML "... a too long path exceeding 259 characters..."
 - [ ] i18n: rescan finished snackbar
-- [ ] refactor buildINSERTQuery, buildUDPATEQuery to accept only one object
-- [ ] use imdb-graphql-urls.json (also try to fetch them from master in github, this way we can update the urls if imdb changes them - without creating a new release)
-- [ ] Trailer Show - trailer dialog is open, when adding to list the scrollbar appears on the side, also the trailer dialog seems to wiggle a bit when the add-to-list dialog closes
+- [ ] refactor buildINSERTQuery, buildUDPATEQuery to accept only one object as function parameter
 - [ ] IMDB Scraper: analyze video URLs in "Videos" section and find a better suited Trailer URL than the one primarily shown in the main page (which is oftentimes an IMDB special)
 
   - or simply use:
@@ -92,6 +86,18 @@
 
 ## LATER
 
+### Series:scanning
+
+- [ ] if season is unknown or episode number not set: try to find the imdb tconst by comparing names
+  - [ ] store.findIMDBtconst: series episode find by name
+
+### Series: Edit Media Dialog
+
+- [ ] Allow user to upload a poster of their liking
+
+### Misc (LATER)
+
+- add ffmpeg in order to create screenshots for movies/episodes with missing poster
 - [ ] provide "source path selection" in "scan media" dialog
   - allows to select a sub-set of source paths for a media scan
 - [ ] include find-imdb-tconst-tests in imdb scraper watchdog
@@ -102,6 +108,7 @@
 - [ ] later: properly differentiate V1, V2 and V3 mainPageData handling
 - [ ] later: async db funcs (initDb, syncSqlite)
 - [ ] add "play random media" functionality to the List Actions menu
+- [ ] Trailer Show - trailer dialog is open, when adding to list the scrollbar appears on the side, also the trailer dialog seems to wiggle a bit when the add-to-list dialog closes
 
 ### Plugin System
 

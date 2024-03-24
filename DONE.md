@@ -12,6 +12,8 @@
 
 ![image](https://github.com/theMK2k/Media-Hoarder/assets/16878526/a753ddba-d6da-411b-a80e-6e369e3217a5)
 
+- [x] FEAT: MediaList: automatically show series poster if one is missing for episode
+
 ### Misc / Fixes (v1.4.0-b2)
 
 - [x] UX: only load filters that are actually shown
