@@ -939,6 +939,19 @@
       </v-btn>
       <v-btn
         text
+        v-if="mediaItem.specificMediaType == 'Series' || mediaItem.specificMediaType == 'Episodes'"
+        v-bind:disabled="
+          (mediaItem.specificMediaType == 'Series' && !mediaItem.IMDB_tconst) ||
+          (mediaItem.specificMediaType == 'Episodes' && !mediaItem.SeriesOwner_IMDB_tconst)
+        "
+        color="primary"
+        v-on:click.stop="emitMediaItemEvent('openWhatToWatchOnTV', { mediaItem })"
+      >
+        <v-icon small>mdi-web</v-icon>&nbsp;w2wTV
+      </v-btn>
+      <v-btn
+        text
+        v-if="mediaItem.specificMediaType == 'Movies'"
         v-bind:disabled="!mediaItem.IMDB_tconst"
         color="primary"
         v-on:click.stop="emitMediaItemEvent('openLetterboxd', { mediaItem })"

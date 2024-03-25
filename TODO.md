@@ -48,7 +48,6 @@
 
 - [ ] BUG: subdirectory called "extras" is not assigned to the main movie (the files are provided as main movies themselves)
 - [ ] check tconst detection with movies, too (we changed some fullDirectory to fullPath)
-- [ ] add "w2wTV" button for Series (https://whattowatchon.tv/tt17220216)
 - [ ] make loading of filters abortable (e.g. when switching from Series -> Episodes, the filters of Series don't have to be loaded completely through, or Episodes -> Series)
 - [ ] BUG? when opening person dialog and clicking "filter by this person", the main list "jumps" and THEN reloads with the filter applied (possibly a fix for another issue)
 - [ ] BUG: series in dialog always show yearStart

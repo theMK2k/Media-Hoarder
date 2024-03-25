@@ -2,6 +2,8 @@
 
 ## next (v1.4.0-b3)
 
+- [x] UI: add "w2wTV" button for Series and Episodes which opens up <https://whattowatchon.tv> with the series pre-selected
+
 ## v1.4.0-b2
 
 ### Features (v1.4.0-b2)

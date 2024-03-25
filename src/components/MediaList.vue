@@ -2175,6 +2175,20 @@ export default {
       shell.openExternal(`https://www.imdb.com/title/${movie.IMDB_tconst}/`);
     },
 
+    openWhatToWatchOnTV(mediaItem) {
+      logger.log("[openWhatToWatchOnTV] mediaItem:", mediaItem);
+
+      if (mediaItem.specificMediaType == "Series") {
+        shell.openExternal(`https://www.whattowatchon.tv/${mediaItem.IMDB_tconst}`);
+        return;
+      }
+
+      if (mediaItem.specificMediaType == "Episodes") {
+        shell.openExternal(`https://www.whattowatchon.tv/${mediaItem.SeriesOwner_IMDB_tconst}`);
+        return;
+      }
+    },
+
     openLetterboxd(movie) {
       shell.openExternal(`https://www.letterboxd.com/imdb/${movie.IMDB_tconst}/`);
     },
@@ -2941,6 +2955,9 @@ export default {
           break;
         case "openIMDB":
           await this.openIMDB(payload.mediaItem);
+          break;
+        case "openWhatToWatchOnTV":
+          await this.openWhatToWatchOnTV(payload.mediaItem);
           break;
         case "openLetterboxd":
           await this.openLetterboxd(payload.mediaItem);
