@@ -37,26 +37,70 @@ const imdbDataDefinition = require("./object-definitions/imdb-data");
 
 const isBuild = process.env.NODE_ENV === "production";
 
-const rescanStats = {
-  addedMovies: 0,
-  removedMovies: 0,
-  addedSeries: 0,
-  addedSeriesEpisodes: 0,
-  updatedSeries: 0,
-  updatedSeriesEpisodes: 0,
-  removedSeries: 0,
-  removedSeriesEpisodes: 0,
-  reset: function () {
-    this.addedMovies = 0;
-    this.removedMovies = 0;
-    this.addedSeries = 0;
-    this.addedSeriesEpisodes = 0;
-    this.updatedSeries = 0;
-    this.updatedSeriesEpisodes = 0;
-    this.removedSeries = 0;
-    this.removedSeriesEpisodes = 0;
-  },
+const scanProcessActionTypes = {
+  ADD_MOVIE: "ADD_MOVIE",
+  REMOVE_MOVIE: "REMOVE_MOVIE",
+  ADD_MOVIE_EXTRA: "ADD_MOVIE_EXTRA",
+  REMOVE_MOVIE_EXTRA: "REMOVE_MOVIE_EXTRA",
+
+  ADD_SERIES: "ADD_SERIES",
+  ADDED_SERIES_ADD_EXTRA: "ADDED_SERIES_ADD_EXTRA",
+  ADDED_SERIES_ADD_EPISODE: "ADDED_SERIES_ADD_EPISODE",
+  ADDED_SERIES_ADD_EPISODE_EXTRA: "ADDED_SERIES_ADD_EPISODE_EXTRA",
+
+  REMOVE_SERIES: "REMOVE_SERIES",
+  REMOVED_SERIES_REMOVE_EXTRA: "REMOVED_SERIES_REMOVE_EXTRA",
+  REMOVED_SERIES_REMOVE_EPISODE: "REMOVED_SERIES_REMOVE_EPISODE",
+  REMOVED_SERIES_REMOVE_EPISODE_EXTRA: "REMOVED_SERIES_REMOVE_EPISODE_EXTRA",
+
+  UPDATE_SERIES: "UPDATE_SERIES",
+  UPDATED_SERIES_ADD_EXTRA: "UPDATED_SERIES_ADD_EXTRA",
+  UPDATED_SERIES_ADD_EPISODE: "UPDATED_SERIES_ADD_EPISODE",
+  UPDATED_SERIES_ADD_EPISODE_EXTRA: "UPDATED_SERIES_ADD_EPISODE_EXTRA",
+  UPDATED_SERIES_REMOVE_EXTRA: "UPDATED_SERIES_REMOVE_EXTRA",
+  UPDATED_SERIES_REMOVE_EPISODE: "UPDATED_SERIES_REMOVE_EPISODE",
+  UPDATED_SERIES_REMOVE_EPISODE_EXTRA: "UPDATED_SERIES_REMOVE_EPISODE_EXTRA",
 };
+
+const scanProcessTypes = {
+  "global re-scan": "global re-scan",
+  "individual re-scan": "individual re-scan",
+};
+
+// const rescanStats = {
+//   log: [],
+//   addedMovies: 0,
+//   removedMovies: 0,
+//   addedMoviesExtras: 0,
+//   removedMoviesExtras: 0,
+//   addedSeries: 0,
+//   addedSeriesEpisodes: 0,
+//   updatedSeries: 0,
+//   updatedSeriesEpisodes: 0,
+//   removedSeries: 0,
+//   removedSeriesEpisodes: 0,
+//   addedSeriesExtras: 0,
+//   removedSeriesExtras: 0,
+//   addedSeriesEpisodesExtras: 0,
+//   removedSeriesEpisodesExtras: 0,
+//   reset: function () {
+//     this.log = [];
+//     this.addedMovies = 0;
+//     this.removedMovies = 0;
+//     this.addedMoviesExtras = 0;
+//     this.removedMoviesExtras = 0;
+//     this.addedSeries = 0;
+//     this.addedSeriesEpisodes = 0;
+//     this.updatedSeries = 0;
+//     this.updatedSeriesEpisodes = 0;
+//     this.removedSeries = 0;
+//     this.removedSeriesEpisodes = 0;
+//     this.addedSeriesExtras = 0;
+//     this.removedSeriesExtras = 0;
+//     this.addedSeriesEpisodesExtras = 0;
+//     this.removedSeriesEpisodesExtras = 0;
+//   },
+// };
 
 let rescanETA = {
   show: false,
@@ -254,7 +298,7 @@ async function manageIndexes(db) {
 
 async function fetchSourcePaths() {
   const result = await db.fireProcedureReturnAll(
-    /* sql */ `
+    `
 			SELECT 
 			id_SourcePaths
 			, MediaType
@@ -360,7 +404,11 @@ async function rescan(onlyNew, $t) {
     progressPercent: 0,
   };
 
-  rescanStats.reset();
+  // rescanStats.reset();
+  addScanProcess(scanProcessTypes["global re-scan"], {
+    scanOptions: shared.scanOptions,
+    userScanOptions: shared.userScanOptions,
+  });
 
   shared.isScanning = true;
   eventBus.rescanStarted();
@@ -383,77 +431,472 @@ async function rescan(onlyNew, $t) {
   // delete all removed entries
   logger.log("[rescan] Cleanup START");
 
-  rescanStats.removedMovies = await db.fireProcedureReturnScalar(`
-    SELECT COUNT(1)
-    FROM tbl_Movies MOV
+  const removedMovies = await db.fireProcedureReturnAll(`
+    SELECT SP.Path
+          , MOV.id_Movies
+          , MOV.RelativePath
+          , MOV.isDirectoryBased
+    FROM  tbl_Movies MOV
     INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
     WHERE MediaType = 'movies'
-          AND MOV.isRemoved = 1
-  `);
-
-  rescanStats.removedSeries = await db.fireProcedureReturnScalar(`
-    SELECT COUNT(1)
-    FROM tbl_Movies MOV
-    INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
-    WHERE MediaType = 'series'
           AND MOV.isRemoved = 1
           AND Extra_id_Movies_Owner IS NULL
   `);
 
-  rescanStats.removedSeriesEpisodes = await db.fireProcedureReturnScalar(`
-    SELECT COUNT(1)
+  for (const removedMovie of removedMovies) {
+    await addScanProcessItem(
+      shared.current_id_Scan_Processes,
+      scanProcessActionTypes.REMOVE_MOVIE,
+      path.join(removedMovie.Path, removedMovie.RelativePath || ""),
+      removedMovie.isDirectoryBased,
+      removedMovie.id_Movies
+    );
+  }
+
+  const removedMoviesExtras = await db.fireProcedureReturnAll(`
+    SELECT SP.Path
+          , MOV.id_Movies
+          , MOV.Extra_id_Movies_Owner
+          , MOV.RelativePath
+          , MOV.isDirectoryBased
+    FROM  tbl_Movies MOV
+    INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+    WHERE MediaType = 'movies'
+          AND MOV.isRemoved = 1
+          AND Extra_id_Movies_Owner IS NOT NULL
+  `);
+
+  for (const removedMoviesExtra of removedMoviesExtras) {
+    await addScanProcessItem(
+      shared.current_id_Scan_Processes,
+      scanProcessActionTypes.REMOVE_MOVIE_EXTRA,
+      path.join(removedMoviesExtra.Path, removedMoviesExtra.RelativePath || ""),
+      removedMoviesExtra.isDirectoryBased,
+      removedMoviesExtra.id_Movies,
+      null,
+      removedMoviesExtra.Extra_id_Movies_Owner
+    );
+  }
+
+  const removedSeries = await db.fireProcedureReturnAll(`
+    SELECT SP.Path
+          , MOV.id_Movies
+          , MOV.RelativePath
+          , MOV.isDirectoryBased
     FROM tbl_Movies MOV
     INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
-    WHERE MediaType = 'series'
+    WHERE SP.MediaType = 'series'
           AND MOV.isRemoved = 1
-          AND Extra_id_Movies_Owner IS NOT NULL`);
+          AND Series_id_Movies_Owner IS NULL
+          AND Extra_id_Movies_Owner IS NULL
+  `);
 
-  await db.fireProcedure(`DELETE FROM tbl_Movies WHERE isRemoved = 1`, []); // movies, series and episodes
+  for (const removedSeriesItem of removedSeries) {
+    logger.log("[rescan] removedSeriesItem:", removedSeriesItem);
+    await addScanProcessItem(
+      shared.current_id_Scan_Processes,
+      scanProcessActionTypes.REMOVE_SERIES,
+      path.join(removedSeriesItem.Path, removedSeriesItem.RelativePath || ""),
+      removedSeriesItem.isDirectoryBased,
+      removedSeriesItem.id_Movies
+    );
+  }
+
+  const removedSeriesRemovedExtras = await db.fireProcedureReturnAll(`
+    SELECT SP.Path
+          , MOV.id_Movies
+          , MOV.Extra_id_Movies_Owner
+          , MOV.RelativePath
+          , MOV.isDirectoryBased
+    FROM tbl_Movies MOV
+    INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+    WHERE SP.MediaType = 'series'
+          AND MOV.isRemoved = 1
+          AND Series_id_Movies_Owner IS NULL
+          AND Extra_id_Movies_Owner IS NOT NULL
+          AND Extra_id_Movies_Owner IN (SELECT id_Movies FROM tbl_Movies WHERE isRemoved = 1)
+  `);
+
+  for (const removedSeriesExtra of removedSeriesRemovedExtras) {
+    await addScanProcessItem(
+      shared.current_id_Scan_Processes,
+      scanProcessActionTypes.REMOVED_SERIES_REMOVE_EXTRA,
+      path.join(removedSeriesExtra.Path, removedSeriesExtra.RelativePath || ""),
+      removedSeriesExtra.isDirectoryBased,
+      removedSeriesExtra.id_Movies,
+      null,
+      removedSeriesExtra.Extra_id_Movies_Owner
+    );
+  }
+
+  const removedSeriesEpisodes = await db.fireProcedureReturnAll(`
+    SELECT SP.Path
+          , MOV.id_Movies
+          , MOV.Series_id_Movies_Owner
+          , MOV.RelativePath
+          , MOV.isDirectoryBased
+    FROM tbl_Movies MOV
+    INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+    WHERE SP.MediaType = 'series'
+          AND MOV.isRemoved = 1
+          AND Series_id_Movies_Owner IS NOT NULL
+          AND Extra_id_Movies_Owner IS NULL
+          AND Series_id_Movies_Owner IN (SELECT id_Movies FROM tbl_Movies WHERE isRemoved = 1)
+  `);
+
+  for (const removedSeriesEpisode of removedSeriesEpisodes) {
+    await addScanProcessItem(
+      shared.current_id_Scan_Processes,
+      scanProcessActionTypes.REMOVED_SERIES_REMOVE_EPISODE,
+      path.join(removedSeriesEpisode.Path, removedSeriesEpisode.RelativePath || ""),
+      removedSeriesEpisode.isDirectoryBased,
+      removedSeriesEpisode.id_Movies,
+      removedSeriesEpisode.Series_id_Movies_Owner
+    );
+  }
+
+  const removedSeriesEpisodesExtras = await db.fireProcedureReturnAll(`
+  SELECT SP.Path
+        , MOV.id_Movies
+        , MOV.Series_id_Movies_Owner
+        , MOV.Extra_id_Movies_Owner
+        , MOV.RelativePath
+        , MOV.isDirectoryBased
+    FROM tbl_Movies MOV
+    INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+    WHERE SP.MediaType = 'series'
+          AND MOV.isRemoved = 1
+          AND Series_id_Movies_Owner IS NOT NULL
+          AND Extra_id_Movies_Owner IS NOT NULL
+          AND Series_id_Movies_Owner IN (SELECT id_Movies FROM tbl_Movies WHERE isRemoved = 1)
+  `);
+
+  for (const removedSeriesEpisodesExtra of removedSeriesEpisodesExtras) {
+    await addScanProcessItem(
+      shared.current_id_Scan_Processes,
+      scanProcessActionTypes.REMOVED_SERIES_REMOVE_EPISODE_EXTRA,
+      path.join(removedSeriesEpisodesExtra.Path, removedSeriesEpisodesExtra.RelativePath || ""),
+      removedSeriesEpisodesExtra.isDirectoryBased,
+      removedSeriesEpisodesExtra.id_Movies,
+      removedSeriesEpisodesExtra.Series_id_Movies_Owner,
+      removedSeriesEpisodesExtra.Extra_id_Movies_Owner
+    );
+  }
+
+  const updatedSeriesRemovedExtras = await db.fireProcedureReturnAll(`
+    SELECT SP.Path
+          , MOV.id_Movies
+          , MOV.Extra_id_Movies_Owner
+          , MOV.Series_id_Movies_Owner
+          , MOV.RelativePath
+          , MOV.isDirectoryBased
+    FROM tbl_Movies MOV
+    INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+    WHERE SP.MediaType = 'series'
+          AND MOV.isRemoved = 1
+          AND Series_id_Movies_Owner IS NULL
+          AND Extra_id_Movies_Owner IS NOT NULL
+          AND Extra_id_Movies_Owner NOT IN (SELECT id_Movies FROM tbl_Movies WHERE isRemoved = 1)
+  `);
+
+  for (const updatedSeriesRemovedExtra of updatedSeriesRemovedExtras) {
+    await addScanProcessItem(
+      shared.current_id_Scan_Processes,
+      scanProcessActionTypes.UPDATED_SERIES_REMOVE_EXTRA,
+      path.join(updatedSeriesRemovedExtra.Path, updatedSeriesRemovedExtra.RelativePath || ""),
+      updatedSeriesRemovedExtra.isDirectoryBased,
+      updatedSeriesRemovedExtra.id_Movies,
+      updatedSeriesRemovedExtra.Series_id_Movies_Owner,
+      updatedSeriesRemovedExtra.Extra_id_Movies_Owner
+    );
+  }
+
+  const updatedSeriesRemovedEpisodes = await db.fireProcedureReturnAll(`
+    SELECT SP.Path
+          , MOV.id_Movies
+          , MOV.Series_id_Movies_Owner
+          , MOV.RelativePath
+          , MOV.isDirectoryBased
+    FROM tbl_Movies MOV
+    INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+    WHERE SP.MediaType = 'series'
+          AND MOV.isRemoved = 1
+          AND Series_id_Movies_Owner IS NOT NULL
+          AND Extra_id_Movies_Owner IS NULL
+          AND Series_id_Movies_Owner NOT IN (SELECT id_Movies FROM tbl_Movies WHERE isRemoved = 1)
+  `);
+
+  for (const updatedSeriesEpisode of updatedSeriesRemovedEpisodes) {
+    await addScanProcessItem(
+      shared.current_id_Scan_Processes,
+      scanProcessActionTypes.UPDATED_SERIES_REMOVE_EPISODE,
+      path.join(updatedSeriesEpisode.Path, updatedSeriesEpisode.RelativePath || ""),
+      updatedSeriesEpisode.isDirectoryBased,
+      updatedSeriesEpisode.id_Movies,
+      updatedSeriesEpisode.Series_id_Movies_Owner
+    );
+  }
+
+  const updatedSeriesRemovedEpisodesExtras = await db.fireProcedureReturnAll(`
+  SELECT SP.Path
+        , MOV.id_Movies
+        , MOV.Series_id_Movies_Owner
+        , MOV.Extra_id_Movies_Owner
+        , MOV.RelativePath
+        , MOV.isDirectoryBased
+    FROM tbl_Movies MOV
+    INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+    WHERE SP.MediaType = 'series'
+          AND MOV.isRemoved = 1
+          AND Series_id_Movies_Owner IS NOT NULL
+          AND Extra_id_Movies_Owner IS NOT NULL
+          AND Series_id_Movies_Owner NOT IN (SELECT id_Movies FROM tbl_Movies WHERE isRemoved = 1)
+  `);
+
+  for (const updatedSeriesRemovedEpisodesExtra of updatedSeriesRemovedEpisodesExtras) {
+    await addScanProcessItem(
+      shared.current_id_Scan_Processes,
+      scanProcessActionTypes.UPDATED_SERIES_REMOVE_EPISODE_EXTRA,
+      path.join(updatedSeriesRemovedEpisodesExtra.Path, updatedSeriesRemovedEpisodesExtra.RelativePath || ""),
+      updatedSeriesRemovedEpisodesExtra.isDirectoryBased,
+      updatedSeriesRemovedEpisodesExtra.id_Movies,
+      updatedSeriesRemovedEpisodesExtra.Series_id_Movies_Owner,
+      updatedSeriesRemovedEpisodesExtra.Extra_id_Movies_Owner
+    );
+  }
+
+  // Updated Series (derive from removed extras, removed episodes and removed episodes_extras)
+  const updatedSeries = await db.fireProcedureReturnAll(
+    `
+    SELECT DISTINCT
+          SP_Series.Path
+          , MOV_Series.id_Movies
+          , MOV_Series.RelativePath
+          , MOV_Series.isDirectoryBased
+    FROM tbl_Movies MOV_Series
+    INNER JOIN tbl_SourcePaths SP_Series ON MOV_Series.id_SourcePaths = SP_Series.id_SourcePaths
+    WHERE SP_Series.MediaType = 'series'
+          AND MOV_Series.isRemoved <> 1
+          AND MOV_Series.id_Movies IN (
+            SELECT Series_id_Movies_Owner
+            FROM tbl_Scan_Processes_Items SPI
+            WHERE SPI.id_Scan_Processes = $id_Scan_Processes
+          )
+          AND MOV_Series.id_Movies NOT IN (SELECT id_Movies FROM tbl_Scan_Processes_Items WHERE id_Scan_Processes = $id_Scan_Processes)
+  `,
+    { $id_Scan_Processes: shared.current_id_Scan_Processes }
+  );
+
+  for (const updateSeriesItem of updatedSeries) {
+    await addScanProcessItem(
+      shared.current_id_Scan_Processes,
+      scanProcessActionTypes.UPDATE_SERIES,
+      path.join(updateSeriesItem.Path, updateSeriesItem.RelativePath || ""),
+      updateSeriesItem.isDirectoryBased,
+      updateSeriesItem.id_Movies
+    );
+  }
+
+  // FINALLY remove all the items that are marked as removed
+  await db.fireProcedure(`DELETE FROM tbl_Movies WHERE isRemoved = 1`, []); // movies, series and episodes (and their extras)
 
   await ensureMovieDeleted();
   logger.log("[rescan] CLEANUP END");
 
+  await db.fireProcedure(
+    `UPDATE tbl_Scan_Processes SET End = DATETIME('now') WHERE id_Scan_Processes = $id_Scan_Processes`,
+    {
+      $id_Scan_Processes: shared.current_id_Scan_Processes,
+    }
+  );
+
+  const scanProcessSummary = (
+    await db.fireProcedureReturnAll(`SELECT * FROM tbl_Scan_Processes WHERE id_Scan_Processes = $id_Scan_Processes`, {
+      $id_Scan_Processes: shared.current_id_Scan_Processes,
+    })
+  )[0];
+
+  logger.log("[rescan] scanProcessSummary:", scanProcessSummary);
+
   shared.isScanning = false;
   doAbortRescan = false;
 
-  const hasChanges =
-    !rescanStats.addedMovies &&
-    !rescanStats.removedMovies &&
-    !rescanStats.addedSeries &&
-    !rescanStats.updatedSeries &&
-    !rescanStats.removedSeries;
+  const hasChanges = !!Object.keys(scanProcessSummary).find((key) => {
+    return key.startsWith("Stats_") && !isNaN(scanProcessSummary[key]) && scanProcessSummary[key] != 0;
+  });
 
   eventBus.rescanStopped();
   eventBus.rescanFinished({ hasChanges });
+
   eventBus.showSnackbar(
     "success",
     {
       info: {
         message: "rescan finished",
-        details: [
-          !rescanStats.addedMovies &&
-          !rescanStats.removedMovies &&
-          !rescanStats.addedSeries &&
-          !rescanStats.updatedSeries &&
-          !rescanStats.removedSeries
-            ? "nothing changed"
-            : null,
-          rescanStats.addedMovies ? `movies added: ${rescanStats.addedMovies}` : null,
-          rescanStats.removedMovies ? `movies removed: ${rescanStats.removedMovies}` : null,
-          rescanStats.addedSeries
-            ? `series added: ${rescanStats.addedSeries} (${rescanStats.addedSeriesEpisodes} episodes)`
-            : null,
-          rescanStats.updatedSeries
-            ? `series updated: ${rescanStats.updatedSeries} (${rescanStats.updatedSeriesEpisodes} episodes)`
-            : null,
-          rescanStats.removedSeries
-            ? `series removed: ${rescanStats.removedSeries} (${rescanStats.removedSeriesEpisodes} episodes)`
-            : null,
-        ],
+        details: createScanProcessSummaryTexts(scanProcessSummary),
       },
     },
     0
   );
+}
+
+/**
+ * Take scanProcessSummary object and create an array of strings to display in the UI
+ * @param {*} scanProcessSummary
+ * @returns
+ */
+function createScanProcessSummaryTexts(scanProcessSummary) {
+  const hasChanges = !!Object.keys(scanProcessSummary).find((key) => {
+    return key.startsWith("Stats_") && !isNaN(scanProcessSummary[key]) && scanProcessSummary[key] != 0;
+  });
+
+  const result = [];
+
+  if (!hasChanges) {
+    return ["no changes"];
+  }
+
+  if (scanProcessSummary.Stats_ADD_MOVIE) {
+    result.push(
+      `movies added: ${scanProcessSummary.Stats_ADD_MOVIE}${
+        scanProcessSummary.Stats_ADD_MOVIE_EXTRA
+          ? ` (+${getNumAndSingularOrPluralText(scanProcessSummary.Stats_ADD_MOVIE_EXTRA, "extra", "extras")})`
+          : ""
+      }`
+    );
+  } else if (scanProcessSummary.Stats_ADD_MOVIE_EXTRA) {
+    result.push(`movie extras added: ${scanProcessSummary.Stats_ADD_MOVIE_EXTRA}`);
+  }
+
+  if (scanProcessSummary.Stats_REMOVE_MOVIE) {
+    result.push(
+      `movies removed: ${scanProcessSummary.Stats_REMOVE_MOVIE}${
+        scanProcessSummary.Stats_REMOVE_MOVIE_EXTRA
+          ? `(${getNumAndSingularOrPluralText(scanProcessSummary.Stats_REMOVE_MOVIE_EXTRA, "extra", "extras")})`
+          : ""
+      }`
+    );
+  } else if (scanProcessSummary.Stats_REMOVE_MOVIE_EXTRA) {
+    result.push(`movie extras removed: ${scanProcessSummary.Stats_REMOVE_MOVIE_EXTRA}`);
+  }
+
+  if (scanProcessSummary.Stats_ADD_SERIES) {
+    // series added: 3 (4 extras, 5 episodes with 6 extras)
+    result.push(
+      `series added: ${scanProcessSummary.Stats_ADD_SERIES} (${
+        scanProcessSummary.Stats_ADDED_SERIES_ADD_EXTRA
+          ? `${getNumAndSingularOrPluralText(scanProcessSummary.Stats_ADDED_SERIES_ADD_EXTRA, "extra", "extras")}, `
+          : ``
+      }${getNumAndSingularOrPluralText(scanProcessSummary.Stats_ADDED_SERIES_ADD_EPISODE, "episode", "episodes")}${
+        scanProcessSummary.Stats_ADDED_SERIES_ADD_EPISODE_EXTRA
+          ? ` with ${getNumAndSingularOrPluralText(
+              scanProcessSummary.Stats_ADDED_SERIES_ADD_EPISODE_EXTRA,
+              "extra",
+              "extras"
+            )}`
+          : ""
+      })`
+    );
+  }
+
+  if (scanProcessSummary.Stats_REMOVE_SERIES) {
+    // series removed: 3 (4 extras, 5 episodes with 6 extras)
+    result.push(
+      `series added: ${scanProcessSummary.Stats_REMOVE_SERIES} (${
+        scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EXTRA
+          ? `${getNumAndSingularOrPluralText(
+              scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EXTRA,
+              "extra",
+              "extras"
+            )}, `
+          : ``
+      } ${getNumAndSingularOrPluralText(
+        scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EPISODE,
+        "episode",
+        "episodes"
+      )}${
+        scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EPISODE_EXTRA
+          ? ` with ${getNumAndSingularOrPluralText(
+              scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EPISODE_EXTRA,
+              "extra",
+              "extras"
+            )}`
+          : ""
+      })`
+    );
+  }
+
+  if (scanProcessSummary.Stats_UPDATE_SERIES) {
+    // series updated: 3 (4 extras added, 2 extras removed, 4 episodes added with 5 extras, 2 episodes removed with 3 extras)
+    let parts = "";
+
+    if (scanProcessSummary.Stats_UPDATED_SERIES_ADD_EXTRA) {
+      parts += `${getNumAndSingularOrPluralText(
+        scanProcessSummary.Stats_UPDATED_SERIES_ADD_EXTRA,
+        "extra",
+        "extras"
+      )} added`;
+    }
+    if (scanProcessSummary.Stats_UPDATED_SERIES_REMOVE_EXTRA) {
+      parts += `${parts ? `, ` : ``}${getNumAndSingularOrPluralText(
+        scanProcessSummary.Stats_UPDATED_SERIES_REMOVE_EXTRA,
+        "extra",
+        "extras"
+      )} removed`;
+    }
+
+    if (scanProcessSummary.Stats_UPDATED_SERIES_ADD_EPISODE) {
+      parts += `${parts ? `, ` : ``}${getNumAndSingularOrPluralText(
+        scanProcessSummary.Stats_UPDATED_SERIES_ADD_EPISODE,
+        "episode",
+        "episodes"
+      )} ${
+        scanProcessSummary.Stats_UPDATED_SERIES_ADD_EPISODE_EXTRA
+          ? `with ${getNumAndSingularOrPluralText(
+              scanProcessSummary.Stats_UPDATED_SERIES_ADD_EPISODE_EXTRA,
+              "extra",
+              "extras"
+            )}`
+          : ``
+      } added`;
+    } else if (scanProcessSummary.Stats_UPDATED_SERIES_ADD_EPISODE_EXTRA) {
+      parts += `${parts ? `, ` : ``}${getNumAndSingularOrPluralText(
+        scanProcessSummary.Stats_UPDATED_SERIES_ADD_EPISODE_EXTRA,
+        "extra",
+        "extras"
+      )} added`;
+    }
+
+    if (scanProcessSummary.Stats_UPDATED_SERIES_REMOVE_EPISODE) {
+      parts += `${parts ? `, ` : ``}${getNumAndSingularOrPluralText(
+        scanProcessSummary.Stats_UPDATED_SERIES_REMOVE_EPISODE,
+        "episode",
+        "episodes"
+      )} ${
+        scanProcessSummary.Stats_UPDATED_SERIES_REMOVE_EPISODE_EXTRA
+          ? `with ${getNumAndSingularOrPluralText(
+              scanProcessSummary.Stats_UPDATED_SERIES_REMOVE_EPISODE_EXTRA,
+              "extra",
+              "extras"
+            )}`
+          : ``
+      } removed`;
+    } else if (scanProcessSummary.Stats_UPDATED_SERIES_REMOVE_EPISODE_EXTRA) {
+      parts += `${parts ? `, ` : ``}${getNumAndSingularOrPluralText(
+        scanProcessSummary.Stats_UPDATED_SERIES_REMOVE_EPISODE_EXTRA,
+        "extra",
+        "extras"
+      )} removed`;
+    }
+
+    result.push(`series updated: ${scanProcessSummary.Stats_UPDATE_SERIES} (${parts})`);
+  }
+
+  return result;
+}
+
+function getNumAndSingularOrPluralText(num, singular, plural) {
+  return `${num} ${num == 1 ? singular : plural}`;
 }
 
 async function rescanHandleDuplicates() {
@@ -542,7 +985,7 @@ async function rescanHandleDuplicates() {
  * @param {*} movies
  */
 function ensureMediaFullPath(movie) {
-  movie.fullPath = path.join(movie.SourcePath, movie.RelativePath);
+  movie.fullPath = path.join(movie.SourcePath, movie.RelativePath || "");
   movie.fullDirectory = path.join(movie.SourcePath, movie.RelativeDirectory);
 }
 
@@ -979,7 +1422,6 @@ async function filescanSeries(onlyNew, $t) {
         }
 
         logger.log("[filescanSeries] series_id_Movies:", series_id_Movies);
-        logger.log("[filescanSeries] rescanStats:", rescanStats);
 
         const hasChanges = await filescanSeriesEpisodesPath(
           series_id_Movies,
@@ -991,9 +1433,21 @@ async function filescanSeries(onlyNew, $t) {
 
         if (hasChanges) {
           if (isAdded) {
-            rescanStats.addedSeriesEpisodes++;
+            await addScanProcessItem(
+              shared.current_id_Scan_Processes,
+              scanProcessActionTypes.ADD_SERIES,
+              path.join(seriesSourcePath.Path, seriesDir.Name),
+              true,
+              series_id_Movies
+            );
           } else {
-            rescanStats.updatedSeries++;
+            await addScanProcessItem(
+              shared.current_id_Scan_Processes,
+              scanProcessActionTypes.UPDATE_SERIES,
+              path.join(seriesSourcePath.Path, seriesDir.Name),
+              true,
+              series_id_Movies
+            );
           }
 
           await db.fireProcedure(
@@ -1027,7 +1481,7 @@ async function filescanSeries(onlyNew, $t) {
 
     logger.log("[filescanSeries] END");
   } catch (err) {
-    logger.log("[filescanSeries] ERROR:", err);
+    logger.error("[filescanSeries] ERROR:", err);
   } finally {
     eventBus.setProgressBar(-1); // off
   }
@@ -1051,8 +1505,6 @@ async function upsertSeries(seriesSourcePath, seriesDirectory, seriesHave) {
   }
 
   logger.log("[upsertSeries] adding:", seriesDirectory.Name);
-
-  rescanStats.addedSeries++;
 
   // currentScanInfoHeader
   eventBus.scanInfoShow(currentScanInfoHeader, `adding ${seriesDirectory.Name}`);
@@ -1103,6 +1555,14 @@ async function upsertSeries(seriesSourcePath, seriesDirectory, seriesHave) {
       $id_SourcePaths: seriesSourcePath.id_SourcePaths,
       $RelativePath: seriesDirectory.relativePath,
     }
+  );
+
+  await addScanProcessItem(
+    shared.current_id_Scan_Processes,
+    scanProcessActionTypes.ADD_SERIES,
+    seriesDirectory.fullPath,
+    true,
+    series_id_Movies
   );
 
   return { isAdded: true, series_id_Movies };
@@ -1158,8 +1618,8 @@ async function filescanSeriesEpisodesPath(series_id_Movies, onlyNew, seriesHave,
           continue;
         }
 
-        await addSeriesEpisode(series_id_Movies, seriesSourcePath, pathItem, !!seriesHaveItem);
-        hasChanges = true;
+        hasChanges =
+          (await addSeriesEpisode(series_id_Movies, seriesSourcePath, pathItem, !!seriesHaveItem)) || hasChanges;
       }
     }
 
@@ -1345,8 +1805,6 @@ async function addMovie(movieSourcePath, pathItem) {
 
   logger.log("[addMovie] adding:", pathItem.Name);
 
-  rescanStats.addedMovies++;
-
   // currentScanInfoHeader
   eventBus.scanInfoShow(currentScanInfoHeader, `adding ${pathItem.Name}`);
 
@@ -1360,6 +1818,8 @@ async function addMovie(movieSourcePath, pathItem) {
   logger.log("[addMovie] $Name:", $Name);
 
   const $Size = await getFileSize(pathItem);
+
+  const $isDiretoryBased = movieType === enmMovieTypes.DIRECTORYBASED;
 
   const sqlQuery = `INSERT INTO tbl_Movies (
     id_SourcePaths
@@ -1382,8 +1842,8 @@ async function addMovie(movieSourcePath, pathItem) {
     , $file_created_at
     , DATETIME('now')
     , 1
-    , $DIRECTORYBASED
-  )`;
+    , $isDiretoryBased
+  ) RETURNING id_Movies`;
 
   const sqlData = {
     $id_SourcePaths: movieSourcePath.id_SourcePaths,
@@ -1393,12 +1853,20 @@ async function addMovie(movieSourcePath, pathItem) {
     $Filename: pathItem.Name,
     $Size,
     $file_created_at: pathItem.file_created_at,
-    $DIRECTORYBASED: movieType === enmMovieTypes.DIRECTORYBASED,
+    $isDiretoryBased,
   };
 
   logger.log("[addMovie] query:", sqlQuery, "data:", sqlData);
 
-  await db.fireProcedure(sqlQuery, sqlData);
+  const id_Movies = await db.fireProcedureReturnScalar(sqlQuery, sqlData);
+
+  await addScanProcessItem(
+    shared.current_id_Scan_Processes,
+    scanProcessActionTypes.ADD_MOVIE,
+    pathItem.fullPath,
+    $isDiretoryBased,
+    id_Movies
+  );
 }
 
 /**
@@ -1406,6 +1874,7 @@ async function addMovie(movieSourcePath, pathItem) {
  *
  * @param {*} seriesSourcePath
  * @param {pathItem} pathItem
+ * @returns true if the episode has been actually added, false if nothing has been added
  */
 async function addSeriesEpisode(series_id_Movies, seriesSourcePath, pathItem, isSeriesHave) {
   logger.log("[addSeriesEpisode] pathItem.fullPath:", pathItem.fullPath);
@@ -1416,16 +1885,10 @@ async function addSeriesEpisode(series_id_Movies, seriesSourcePath, pathItem, is
 
   if (movieType === enmMovieTypes.IGNORE || movieType === enmMovieTypes.EXCEPTION) {
     logger.log("[addSeriesEpisode] movieType is IGNORE or EXCEPTION, abort!");
-    return;
+    return false;
   }
 
   logger.log("[addSeriesEpisode] adding:", pathItem.Name);
-
-  if (isSeriesHave) {
-    rescanStats.updatedSeriesEpisodes++;
-  } else {
-    rescanStats.addedSeriesEpisodes++;
-  }
 
   // currentScanInfoHeader
   eventBus.scanInfoShow(currentScanInfoHeader, `adding ${pathItem.Name}`);
@@ -1443,6 +1906,8 @@ async function addSeriesEpisode(series_id_Movies, seriesSourcePath, pathItem, is
 
   const { $Series_Season, $Series_Episodes_First, $Series_Episodes_Complete, $Series_Bonus_Number } =
     helpers.getSeriesEpisodeSeasonAndEpisodeNumbersFromName($Name);
+
+  const $isDiretoryBased = movieType === enmMovieTypes.DIRECTORYBASED;
 
   const sqlQuery = `INSERT INTO tbl_Movies (
     id_SourcePaths
@@ -1471,14 +1936,14 @@ async function addSeriesEpisode(series_id_Movies, seriesSourcePath, pathItem, is
     , $file_created_at
     , DATETIME('now')
     , 1
-    , $DIRECTORYBASED
+    , $isDiretoryBased
     , $series_id_Movies
     , $Series_Season
     , $Series_Episodes_First
     , $Series_Episodes_Complete
     , $Series_Bonus_Number
     , $Series_Num_Episodes
-  )`;
+  ) RETURNING id_Movies`;
 
   const sqlData = {
     $id_SourcePaths: seriesSourcePath.id_SourcePaths,
@@ -1488,7 +1953,7 @@ async function addSeriesEpisode(series_id_Movies, seriesSourcePath, pathItem, is
     $Filename: pathItem.Name,
     $Size,
     $file_created_at: pathItem.file_created_at,
-    $DIRECTORYBASED: movieType === enmMovieTypes.DIRECTORYBASED,
+    $isDiretoryBased,
     $series_id_Movies: series_id_Movies,
     $Series_Season,
     $Series_Episodes_First,
@@ -1499,7 +1964,29 @@ async function addSeriesEpisode(series_id_Movies, seriesSourcePath, pathItem, is
 
   logger.log("[addSeriesEpisode] query:", sqlQuery, "data:", sqlData);
 
-  await db.fireProcedure(sqlQuery, sqlData);
+  const id_Movies = await db.fireProcedureReturnScalar(sqlQuery, sqlData);
+
+  if (isSeriesHave) {
+    await addScanProcessItem(
+      shared.current_id_Scan_Processes,
+      scanProcessActionTypes.UPDATED_SERIES_ADD_EPISODE,
+      pathItem.fullPath,
+      $isDiretoryBased,
+      id_Movies,
+      series_id_Movies
+    );
+  } else {
+    await addScanProcessItem(
+      shared.current_id_Scan_Processes,
+      scanProcessActionTypes.ADDED_SERIES_ADD_EPISODE,
+      pathItem.fullPath,
+      $isDiretoryBased,
+      id_Movies,
+      series_id_Movies
+    );
+  }
+
+  return true;
 }
 
 /**
@@ -6798,7 +7285,7 @@ async function ensureMovieDeleted() {
     WITH tables AS (
       SELECT name tableName
           , sql 
-      FROM sqlite_master WHERE type = 'table' AND tableName NOT LIKE 'sqlite_%'
+      FROM sqlite_master WHERE type = 'table' AND tableName NOT LIKE 'sqlite_%' AND tableName <> 'tbl_Scan_Processes_Items'
     )
     SELECT tableName
     FROM tables
@@ -8820,6 +9307,128 @@ async function addMediaItemPropertyDetails_Company($IMDB_Company_ID, mediaItems)
         });
       }
     }
+  }
+}
+
+/**
+ * Add a new scan process to the database (allows to retroactively see what has been added/removed etc. during a scan process)
+ * @param {*} Settings
+ */
+async function addScanProcess(scanProcessType, Settings) {
+  // there can only be one scan process at a time
+  await db.fireProcedure(`
+    UPDATE  tbl_Scan_Processes
+    SET     End = '<unknown>'
+    WHERE   END IS NULL
+  `);
+
+  shared.current_id_Scan_Processes = await db.fireProcedureReturnScalar(
+    `
+    INSERT INTO tbl_Scan_Processes (
+      Scan_Process_Type
+      , Settings
+      , Start
+    ) VALUES (
+      $Scan_Process_Type
+      , $Settings
+      , DATETIME('now')
+    ) RETURNING id_Scan_Processes
+  `,
+    { $Scan_Process_Type: scanProcessType, $Settings: JSON.stringify(Settings) }
+  );
+
+  logger.log("[addScanProcess] shared.current_id_Scan_Processes:", shared.current_id_Scan_Processes);
+}
+
+/**
+ * Add a scan process item
+ * @param {*} $id_Scan_Processes
+ * @param {*} $ActionType see scanProcessActionTypes
+ * @param {*} $Path
+ * @param {*} $isDirectoryBased
+ */
+async function addScanProcessItem(
+  $id_Scan_Processes,
+  $ActionType,
+  $Path,
+  $isDirectoryBased,
+  $id_Movies,
+  $Series_id_Movies_Owner,
+  $Extra_id_Movies_Owner
+) {
+  try {
+    logger.log("[addScanProcessItem] START", {
+      $id_Scan_Processes,
+      $ActionType,
+      $Path,
+      $isDirectoryBased,
+      $id_Movies,
+      $Series_id_Movies_Owner,
+      $Extra_id_Movies_Owner,
+    });
+
+    if (!$id_Scan_Processes) {
+      throw new Error("[addScanProcessItem] $id_Scan_Processes is missing");
+    }
+
+    if (!$id_Movies) {
+      throw new Error("[addScanProcessItem] $id_Movies is missing");
+    }
+
+    if (!$ActionType) {
+      throw new Error("[addScanProcessItem] $ActionType is missing");
+    }
+
+    if (!$Path) {
+      throw new Error("[addScanProcessItem] $Path is missing");
+    }
+
+    const query = `
+    INSERT INTO tbl_Scan_Processes_Items (
+      id_Scan_Processes
+      , id_Movies
+      , Series_id_Movies_Owner
+      , Extra_id_Movies_Owner
+      , ActionType
+      , Path
+      , isDirectoryBased
+      , created_at
+    ) VALUES (
+      $id_Scan_Processes
+      , $id_Movies
+      , $Series_id_Movies_Owner
+      , $Extra_id_Movies_Owner
+      , $ActionType
+      , $Path
+      , $isDirectoryBased
+      , DATETIME('now')
+    ) RETURNING id_Scan_Processes_Items
+  `;
+
+    const params = {
+      $id_Scan_Processes,
+      $id_Movies,
+      $Series_id_Movies_Owner,
+      $Extra_id_Movies_Owner,
+      $ActionType,
+      $Path,
+      $isDirectoryBased,
+    };
+
+    const id_Scan_Processes_Items = await db.fireProcedureReturnScalar(query, params);
+    logger.log("[addScanProcessItem] newly created id_Scan_Processes_Items:", id_Scan_Processes_Items);
+
+    const columnName = `Stats_${$ActionType}`;
+
+    await db.fireProcedure(
+      `UPDATE tbl_Scan_Processes SET ${columnName} = ${columnName} + 1 WHERE id_Scan_Processes = $id_Scan_Processes`,
+      { $id_Scan_Processes }
+    );
+
+    logger.log("[addScanProcessItem] shared.current_id_Scan_Processes:", shared.current_id_Scan_Processes);
+  } catch (error) {
+    logger.error(error);
+    throw error;
   }
 }
 

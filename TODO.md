@@ -8,9 +8,23 @@
 
 ### Series: scanning
 
-- [x] stop imdb scraping when the tconst is obviously not working
-- [ ] revisit the rescan summary (the numbers are mostly wrong)
+- [WIP] revisit the rescan summary (the numbers are mostly wrong)
+
+  - [ ] differentiate added/removed episodes for NEW series vs. EXISTING (updated) series
   - related: #45 Scan Media wrong number added
+  - track (re-)scan summary data and log in a dedicated table
+    - tbl_Scan_Results
+      - (all the statistics as columns)
+      - log
+        - just a text body or more sophisticated columns?
+  - summary:
+    movies added: 11
+    movies removed: 11
+    series added: 11 (22 episodes)
+    series removed: 11 (22 episodes)
+    series updated: 11 (22 episodes added, 33 episodes removed)
+  - [ ] track collection sizes (before, after, diff; by media type, by source path?)
+
 - [ ] during rescan record change details (what was added, removed)
   - [ ] access the rescan logs from Settings and the rescan summary popup
 - [ ] dont override mediaItem.Name when IMDB scan was unsuccessful

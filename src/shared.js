@@ -373,6 +373,8 @@ const shared = new Vue({
       handleDuplicates: true,
     },
 
+    current_id_Scan_Processes: null, // during a re-scan process, this is the id of the Scan_Processes entry
+
     userScanOptions: [
       {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_mainPageData",

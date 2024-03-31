@@ -4,6 +4,8 @@
 
 - [x] UI: add "w2wTV" button for Series and Episodes which opens up <https://whattowatchon.tv> with the series pre-selected
 
+- [x] SCRAPER: stop imdb scraping when the tconst is obviously not working
+
 ## v1.4.0-b2
 
 ### Features (v1.4.0-b2)
