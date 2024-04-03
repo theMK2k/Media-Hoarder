@@ -28,10 +28,20 @@
           <v-list-item-action>
             <v-icon>mdi-settings</v-icon>
           </v-list-item-action>
-          <v-list-item-title>{{ $t("Settings") }}</v-list-item-title>
+          <v-list-item-title style="height: 18px">{{ $t("Settings") }}</v-list-item-title>
         </v-list-item>
 
         <v-divider></v-divider>
+
+        <!-- Home -->
+        <v-list-item v-bind:to="'/'">
+          <v-list-item-action>
+            <v-icon>mdi-home</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>{{ $t("Home") }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
 
         <!-- Movies, Series -->
         <v-list-item
@@ -4903,6 +4913,8 @@ a {
 
 .v-list-item__title {
   font-size: 16px !important;
+  overflow: initial;
+  white-space: initial;
 }
 
 .v-image__image--contain {
