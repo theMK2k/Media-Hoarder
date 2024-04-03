@@ -9,6 +9,7 @@ const levenshtein = require("fast-levenshtein");
 const osLocale = require("os-locale");
 const path = require("path");
 const sqlString = require("sqlstring-sqlite");
+import * as Humanize from "humanize-plus";
 
 const readdirAsync = util.promisify(fs.readdir);
 const existsAsync = util.promisify(fs.exists);
@@ -835,11 +836,7 @@ function createScanProcessSummaryTexts(scanProcessSummary) {
               "extras"
             )}, `
           : ``
-      } ${getNumAndSingularOrPluralText(
-        scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EPISODE,
-        "episode",
-        "episodes"
-      )}${
+      }${getNumAndSingularOrPluralText(scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EPISODE, "episode", "episodes")}${
         scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EPISODE_EXTRA
           ? ` with ${getNumAndSingularOrPluralText(
               scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EPISODE_EXTRA,
@@ -912,6 +909,12 @@ function createScanProcessSummaryTexts(scanProcessSummary) {
         "extra",
         "extras"
       )} removed`;
+    }
+
+    if (scanProcessSummary.Size_Diff_Total) {
+      parts += `${parts ? `, ` : ``}collection size ${
+        scanProcessSummary.Size_Diff_Total > 0 ? "grew" : "shrank"
+      } by ${Humanize.fileSize(Math.abs(scanProcessSummary.Size_Diff_Total))}`;
     }
 
     result.push(`series updated: ${scanProcessSummary.Stats_UPDATE_SERIES} (${parts})`);
