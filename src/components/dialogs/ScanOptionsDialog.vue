@@ -68,6 +68,30 @@
               >{{ $t("IMDB Scraper Options") }} {{ imdbOptionsTitle }}</v-expansion-panel-header
             >
             <v-expansion-panel-content>
+              <div style="display: flex">
+                <v-spacer></v-spacer>
+                <v-tooltip bottom style="z-index: 21">
+                  <template v-slot:activator="{ on }">
+                    <span v-on="on">
+                      <v-btn class="mk-filter-action-btn" text v-on:click="setAllIMDBScraperOptions(false)">
+                        <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
+                      </v-btn>
+                    </span>
+                  </template>
+                  <span>{{ $t("Clear Selection") }}</span>
+                </v-tooltip>
+                <v-tooltip bottom style="z-index: 21">
+                  <template v-slot:activator="{ on }">
+                    <span v-on="on">
+                      <v-btn class="mk-filter-action-btn" text v-on:click="setAllIMDBScraperOptions(true)">
+                        <v-icon>mdi-check-box-multiple-outline</v-icon>
+                      </v-btn>
+                    </span>
+                  </template>
+                  <span>{{ $t("Select All") }}</span>
+                </v-tooltip>
+              </div>
+
               <v-col>
                 <v-checkbox
                   v-for="userScanOption in $shared.userScanOptions"
@@ -227,6 +251,12 @@ export default {
 
     openMediaArea() {
       shell.openExternal(`https://mediaarea.net/en/MediaInfo`);
+    },
+
+    setAllIMDBScraperOptions(enabled) {
+      for (let i = 0; i < this.$shared.userScanOptions.length; i++) {
+        this.$shared.userScanOptions[i].enabled = enabled;
+      }
     },
   },
 
