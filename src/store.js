@@ -703,10 +703,35 @@ async function rescan(onlyNew, $t) {
   await ensureMovieDeleted();
   logger.log("[rescan] CLEANUP END");
 
+  const collectionsSizes = await getCollectionsSizes();
+
+  // there can only be one scan process at a time, close all others
   await db.fireProcedure(
-    `UPDATE tbl_Scan_Processes SET End = DATETIME('now') WHERE id_Scan_Processes = $id_Scan_Processes`,
+    `
+    UPDATE  tbl_Scan_Processes
+    SET       End = DATETIME('now')
+            , Size_After_Total = $Size_Total
+            , Size_After_Movies = $Size_Movies
+            , Size_After_Series = $Size_Series
+            , Size_Diff_Total = $Size_Total - IFNULL(Size_Before_Total, 0)
+            , Size_Diff_Movies = $Size_Movies - IFNULL(Size_Before_Movies, 0)
+            , Size_Diff_Series = $Size_Series - IFNULL(Size_Before_Series, 0)
+            , Num_After_Movies = $Num_Movies
+            , Num_After_Series = $Num_Series
+            , Num_After_Episodes = $Num_Episodes
+            , Num_Diff_Movies = $Num_Movies - IFNULL(Num_Before_Movies, 0)
+            , Num_Diff_Series = $Num_Series - IFNULL(Num_Before_Series, 0)
+            , Num_Diff_Episodes = $Num_Episodes - IFNULL(Num_Before_Episodes, 0)
+    WHERE   id_Scan_Processes = $id_Scan_Processes
+  `,
     {
       $id_Scan_Processes: shared.current_id_Scan_Processes,
+      $Size_Total: collectionsSizes.Size_Total,
+      $Size_Movies: collectionsSizes.Size_Movies,
+      $Size_Series: collectionsSizes.Size_Series,
+      $Num_Movies: collectionsSizes.Num_Movies,
+      $Num_Series: collectionsSizes.Num_Series,
+      $Num_Episodes: collectionsSizes.Num_Episodes,
     }
   );
 
@@ -802,7 +827,7 @@ function createScanProcessSummaryTexts(scanProcessSummary) {
   if (scanProcessSummary.Stats_REMOVE_SERIES) {
     // series removed: 3 (4 extras, 5 episodes with 6 extras)
     result.push(
-      `series added: ${scanProcessSummary.Stats_REMOVE_SERIES} (${
+      `series removed: ${scanProcessSummary.Stats_REMOVE_SERIES} (${
         scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EXTRA
           ? `${getNumAndSingularOrPluralText(
               scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EXTRA,
@@ -1555,14 +1580,6 @@ async function upsertSeries(seriesSourcePath, seriesDirectory, seriesHave) {
       $id_SourcePaths: seriesSourcePath.id_SourcePaths,
       $RelativePath: seriesDirectory.relativePath,
     }
-  );
-
-  await addScanProcessItem(
-    shared.current_id_Scan_Processes,
-    scanProcessActionTypes.ADD_SERIES,
-    seriesDirectory.fullPath,
-    true,
-    series_id_Movies
   );
 
   return { isAdded: true, series_id_Movies };
@@ -9311,16 +9328,98 @@ async function addMediaItemPropertyDetails_Company($IMDB_Company_ID, mediaItems)
 }
 
 /**
+ * Get the sizes in bytes for the total collection, movies and series
+ */
+async function getCollectionsSizes() {
+  return await db.fireProcedureReturnSingle(`
+  SELECT
+      IFNULL((
+        SELECT SUM(Size)
+        FROM tbl_Movies MOV
+        WHERE 1=1
+              AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+      ), 0) AS Size_Total
+    , IFNULL((
+      SELECT SUM(Size)
+      FROM tbl_Movies MOV
+      INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+      WHERE 1=1
+            AND SP.MediaType = 'movies'
+            AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+    ), 0) AS Size_Movies
+    , IFNULL((
+      SELECT SUM(Size)
+      FROM tbl_Movies MOV
+      INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+      WHERE 1=1
+            AND SP.MediaType = 'series'
+            AND MOV.Series_id_Movies_Owner IS NOT NULL
+            AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+    ), 0) AS Size_Series
+    , IFNULL((
+      SELECT COUNT(1)
+      FROM tbl_Movies MOV
+      INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+      WHERE 1=1
+            AND SP.MediaType = 'movies'
+            AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+    ), 0) AS Num_Movies
+    , IFNULL((
+      SELECT COUNT(1)
+      FROM tbl_Movies MOV
+      INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+      WHERE 1=1
+            AND SP.MediaType = 'series'
+            AND MOV.Series_id_Movies_Owner IS NULL
+            AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+    ), 0) AS Num_Series
+    , IFNULL((
+      SELECT COUNT(1)
+      FROM tbl_Movies MOV
+      INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths
+      WHERE 1=1
+            AND SP.MediaType = 'series'
+            AND MOV.Series_id_Movies_Owner IS NOT NULL
+            AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+    ), 0) AS Num_Episodes
+    `);
+}
+
+/**
  * Add a new scan process to the database (allows to retroactively see what has been added/removed etc. during a scan process)
  * @param {*} Settings
  */
 async function addScanProcess(scanProcessType, Settings) {
-  // there can only be one scan process at a time
-  await db.fireProcedure(`
+  const collectionsSizes = await getCollectionsSizes();
+
+  // there can only be one scan process at a time, close all others
+  await db.fireProcedure(
+    `
     UPDATE  tbl_Scan_Processes
     SET     End = '<unknown>'
+            , Size_After_Total = $Size_Total
+            , Size_After_Movies = $Size_Movies
+            , Size_After_Series = $Size_Series
+            , Size_Diff_Total = $Size_Total - IFNULL(Size_Before_Total, 0)
+            , Size_Diff_Movies = $Size_Movies - IFNULL(Size_Before_Movies, 0)
+            , Size_Diff_Series = $Size_Series - IFNULL(Size_Before_Series, 0)
+            , Num_After_Movies = $Num_Movies
+            , Num_After_Series = $Num_Series
+            , Num_After_Episodes = $Num_Episodes
+            , Num_Diff_Movies = $Num_Movies - IFNULL(Num_Before_Movies, 0)
+            , Num_Diff_Series = $Num_Series - IFNULL(Num_Before_Series, 0)
+            , Num_Diff_Episodes = $Num_Episodes - IFNULL(Num_Before_Episodes, 0)
     WHERE   END IS NULL
-  `);
+  `,
+    {
+      $Size_Total: collectionsSizes.Size_Total,
+      $Size_Movies: collectionsSizes.Size_Movies,
+      $Size_Series: collectionsSizes.Size_Series,
+      $Num_Movies: collectionsSizes.Num_Movies,
+      $Num_Series: collectionsSizes.Num_Series,
+      $Num_Episodes: collectionsSizes.Num_Episodes,
+    }
+  );
 
   shared.current_id_Scan_Processes = await db.fireProcedureReturnScalar(
     `
@@ -9328,13 +9427,34 @@ async function addScanProcess(scanProcessType, Settings) {
       Scan_Process_Type
       , Settings
       , Start
-    ) VALUES (
+      , Size_Before_Total
+      , Size_Before_Movies
+      , Size_Before_Series
+      , Num_Before_Movies
+      , Num_Before_Series
+      , Num_Before_Episodes
+) VALUES (
       $Scan_Process_Type
       , $Settings
       , DATETIME('now')
+      , $Size_Total
+      , $Size_Movies
+      , $Size_Series
+      , $Num_Movies
+      , $Num_Series
+      , $Num_Episodes
     ) RETURNING id_Scan_Processes
   `,
-    { $Scan_Process_Type: scanProcessType, $Settings: JSON.stringify(Settings) }
+    {
+      $Scan_Process_Type: scanProcessType,
+      $Settings: JSON.stringify(Settings),
+      $Size_Total: collectionsSizes.Size_Total,
+      $Size_Movies: collectionsSizes.Size_Movies,
+      $Size_Series: collectionsSizes.Size_Series,
+      $Num_Movies: collectionsSizes.Num_Movies,
+      $Num_Series: collectionsSizes.Num_Series,
+      $Num_Episodes: collectionsSizes.Num_Episodes,
+    }
   );
 
   logger.log("[addScanProcess] shared.current_id_Scan_Processes:", shared.current_id_Scan_Processes);
@@ -9538,4 +9658,5 @@ export {
   updateSeriesMetadataFromEpisodes,
   addMediaItemPropertyDetails_Person,
   addMediaItemPropertyDetails_Company,
+  getCollectionsSizes,
 };

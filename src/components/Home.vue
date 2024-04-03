@@ -7,7 +7,7 @@
           <!-- :color="item.color" -->
           <div class="d-flex flex-no-wrap justify-space-between">
             <div>
-              <v-card-title class="headline">
+              <v-card-title class="headline" style="padding-bottom: 8px">
                 <v-icon left>{{ item.icon }}</v-icon>
                 {{ $t(`${item.text}`) }}
                 <v-progress-linear
@@ -19,25 +19,29 @@
                 ></v-progress-linear>
               </v-card-title>
 
-              <v-card-text class="mk-light-grey">
-                <p v-if="item.id === 'movies' && item.fetchNumMovies && !item.isFetchingNumMovies">
+              <v-card-text class="mk-light-grey" style="padding-bottom: 4px">
+                <p
+                  v-if="item.id === 'movies' && item.fetchNumMovies && !item.isFetchingNumMovies"
+                  style="height: 22px; margin-bottom: 22px"
+                >
                   {{ item.numMovies }}
-                  {{ item.numMovies == 1 ? $t("entry") : $t("entries") }}
+                  {{ item.numMovies == 1 ? $t("movie") : $t("movies") }}
                 </p>
                 <p
                   v-if="item.id === 'series' && item.fetchNumMovies && !item.isFetchingNumMovies"
-                  style="margin-bottom: 0px"
+                  style="height: 22px; margin-bottom: 0px"
                 >
                   {{ item.numSeries }}
                   {{ item.numSeries == 1 ? $t("series_singular") : $t("series_plural") }}
                 </p>
                 <p
                   v-if="item.id === 'series' && item.fetchNumMovies && !item.isFetchingNumMovies"
-                  style="margin-bottom: 0px"
+                  style="height: 22px; margin-bottom: 0px"
                 >
                   {{ item.numEpisodes }}
                   {{ item.numEpisodes == 1 ? $t("episode") : $t("episodes") }}
                 </p>
+                <p v-if="item.size" style="margin-bottom: 0px">{{ Humanize().fileSize(item.size) }}</p>
               </v-card-text>
             </div>
           </div>
@@ -50,6 +54,9 @@
 <script>
 import * as store from "@/store";
 import { eventBus } from "@/main";
+
+import * as Humanize from "humanize-plus";
+
 const logger = require("../helpers/logger");
 
 export default {
@@ -66,6 +73,7 @@ export default {
         icon: "mdi-movie",
         text: "Movies",
         id: "movies",
+        size: 0,
         fetchNumMovies: true,
         numMovies: null,
         isFetchingNumMovies: true,
@@ -74,6 +82,7 @@ export default {
         icon: "mdi-television",
         text: "Series",
         id: "series",
+        size: 0,
         fetchNumMovies: true,
         numMovies: null,
         numSeries: null,
@@ -84,6 +93,10 @@ export default {
   }),
 
   methods: {
+    Humanize() {
+      return Humanize;
+    },
+
     onItemClick(itemid) {
       if (!itemid) {
         return;
@@ -120,6 +133,12 @@ export default {
             item.isFetchingNumMovies = false;
           }
         }
+
+        const collectionSizes = await store.getCollectionsSizes();
+        logger.log("[fetchNumMovies] collectionSizes:", collectionSizes);
+        this.items.find((item) => item.id === "movies").size = collectionSizes.Size_Movies;
+        this.items.find((item) => item.id === "series").size = collectionSizes.Size_Series;
+        logger.log("[fetchNumMovies] this.items:", this.items);
       } catch (e) {
         logger.log("[fetchNumMovies] ERROR:", e);
       }
@@ -128,7 +147,9 @@ export default {
 
   // Lifecycle Hooks
   created() {
-    this.fetchNumMovies();
+    if (store.db) {
+      this.fetchNumMovies();
+    }
 
     eventBus.$on("dbInitialized", () => {
       this.fetchNumMovies();

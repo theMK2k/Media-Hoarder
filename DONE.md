@@ -2,8 +2,8 @@
 
 ## next (v1.4.0-b3)
 
+- [x] FEAT: calculate collection sizes (movies, series, total) before and after a re-scan, show current collection sizes in the home screen
 - [x] UI: add "w2wTV" button for Series and Episodes which opens up <https://whattowatchon.tv> with the series pre-selected
-
 - [x] SCRAPER: stop imdb scraping when the tconst is obviously not working
 
 ## v1.4.0-b2
