@@ -3,7 +3,7 @@
  *
  * Database interface and functions for sqlite access and management
  */
-const LOG_ALL_DB = true; // set to true to log all db queries
+const LOG_ALL_DB = false; // set to true to log all db queries
 const logger = require("./logger");
 const fs = require("fs");
 const sqlite3 = require("sqlite3").verbose();
@@ -137,6 +137,11 @@ function fireProcedureReturnAll(query, vars) {
   });
 }
 
+async function fireProcedureReturnSingle(query, vars) {
+  const result = await fireProcedureReturnAll(query, vars);
+  return result[0];
+}
+
 function initSQLite(callback) {
   logger.debug("[initSQLite] Initializing SQLite");
 
@@ -266,6 +271,7 @@ export {
   fireProcedure,
   fireProcedureReturnScalar,
   fireProcedureReturnAll,
+  fireProcedureReturnSingle,
   buildINSERTQuery,
   buildUPDATEQuery,
 };
