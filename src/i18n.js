@@ -4,7 +4,7 @@ import VueI18n from "vue-i18n";
 const fs = require("fs");
 const path = require("path");
 
-const moment = require("moment");
+// const moment = require("moment");
 
 const logger = require("./helpers/logger");
 const helpers = require("./helpers/helpers");
@@ -82,11 +82,11 @@ const messages = loadLocaleMessages();
 validateMessages(messages);
 
 // Load Moment Locales
-Object.keys(messages).forEach((key) => {
-  if (messages[key].moment) {
-    moment.locale(key, messages[key].moment);
-  }
-});
+// Object.keys(messages).forEach((key) => {
+//   if (messages[key].moment) {
+//     moment.locale(key, messages[key].moment);
+//   }
+// });
 
 /**
  * check that

@@ -38,6 +38,10 @@ export const eventBus = new Vue({
       this.$emit("showSnackbar", { color, textOrErrorObject, timeout });
     },
 
+    showScanProcessFinishedSnackbar(id_Scan_Processes, details) {
+      this.$emit("showScanProcessFinishedSnackbar", { id_Scan_Processes, details });
+    },
+
     rescanStarted() {
       this.$emit("rescanStarted");
     },

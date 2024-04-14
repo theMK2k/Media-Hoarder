@@ -1,12 +1,43 @@
 # DONE
 
-## next (v1.4.0-b3)
+## next (v1.4.0-b4)
 
-- [x] FEAT: calculate collection sizes (movies, series, total) before and after a re-scan, show current collection sizes in the home screen
+
+
+## v1.4.0-b3
+
+## Features (v1.4.0-b3)
+
+- [x] FEAT: calculate collection sizes (movies, series, total) before and after a re-scan, show current collection sizes in the home screen (which also now has a link in the navigation bar on the left)
+
+![image](https://github.com/theMK2k/Media-Hoarder/assets/16878526/d7fe9d5f-3344-4e6d-9b3a-1f3121b731e4)
+
+- [x] FEAT: enhanced rescan summary
+
+  - [x] related ticket: #45
+  - [x] show how many movies/series/episodes have been added/updated/removed
+
+![Media_Hoarder_v1 4 0-New_Scan_Summary](https://github.com/theMK2k/Media-Hoarder/assets/16878526/ce45a98d-b593-4d04-8b79-05e5d29cb7bb)
+
+- [x] details dialog where the user can check individual files
+
+![Media_Hoarder_v1 4 0-New_Scan_Details_Dialog](https://github.com/theMK2k/Media-Hoarder/assets/16878526/5277e7ea-0338-4a37-b921-cbed188f7c69)
+
+- [x] new tab in Settings where past scan sessions are listed (detail dialog on click)
+
+![Media_Hoarder_v1 4 0-Scan_History](https://github.com/theMK2k/Media-Hoarder/assets/16878526/e9efd0fa-b4fe-4ea1-890e-05478180d9c0)
+
 - [x] UI: add "w2wTV" button for Series and Episodes which opens up <https://whattowatchon.tv> with the series pre-selected
-- [x] SCRAPER: stop imdb scraping when the tconst is obviously not working
 
-## v1.4.0-b2
+## Misc / Fixes (v1.4.0-b3)
+
+- [x] SCRAPER: stop imdb scraping when the tconst is obviously not working
+- [x] reworked relative time and duration i18n
+
+# Older Releases (click to expand)
+
+<details>
+  <summary>v1.4.0-b2</summary>
 
 ### Features (v1.4.0-b2)
 
@@ -15,8 +46,6 @@
 ![image](https://github.com/theMK2k/Media-Hoarder/assets/16878526/34d52613-4f72-4a03-a615-b6a287ca1f75)
 
 ![image](https://github.com/theMK2k/Media-Hoarder/assets/16878526/a753ddba-d6da-411b-a80e-6e369e3217a5)
-
-- [x] FEAT: MediaList: automatically show series poster if one is missing for episode
 
 ### Misc / Fixes (v1.4.0-b2)
 
@@ -32,7 +61,10 @@
 - [x] FIX: include description text in search space
 - [x] FIX: fast switching during trailer show lags behind
 
-## v1.4.0-b1
+</details>
+
+<details>
+  <summary>v1.4.0-b1</summary>
 
 ### Features (v1.4.0-b1)
 
@@ -46,15 +78,19 @@
 ### Misc / Fixes (v1.4.0-b1)
 
 - [x] UX: MediaList: as soon as "sort by" was changed by the user, reset page to 1
+</details>
 
-## v1.3.37-a8
+<details>
+  <summary>v1.3.37-a8</summary>
 
 ### Misc / Fixes (v1.3.37-a8)
 
 - [x] FIX: sort by Season and Episode didn't work anymore
 - [x] SCRAPER: Update Plotsummary IMDB Scraper Test
+</details>
 
-## v1.3.37-a7
+<details>
+  <summary>v1.3.37-a7</summary>
 
 ### Features (v1.3.37-a7)
 
@@ -63,8 +99,10 @@
   - <https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/src/data/imdb-graphql-urls.json>
 
 - [x] UX/SCRAPER: propagate actual errors of imdb scraping to the test result (i.e. errors in graphql querying instead of $IMDB_something is NULL)
+</details>
 
-## v1.3.37-a6
+<details>
+  <summary>v1.3.37-a6</summary>
 
 ### Features (v1.3.37-a6)
 
@@ -104,15 +142,19 @@
 ![image](https://github.com/theMK2k/Media-Hoarder/assets/16878526/c5a031ac-bd41-4cfe-a9fa-6e09b6197d7c)
 
 - [x] DB: tbl_Movies_MI_Qualities: also use for editing the series entry
+</details>
 
-## v1.3.37-a5
+<details>
+  <summary>v1.3.37-a5</summary>
 
 ### Misc / Fixes (v1.3.37-a5)
 
 - [x] SCRAPER: imdb-graphql-urls: update seriesEpisodes (new persisted query)
 - [x] FIX: series episodes matching: don't assume E01 if neither season nor episode are set
+</details>
 
-## v1.3.37-a4
+<details>
+  <summary>v1.3.37-a4</summary>
 
 ### Misc / Fixes (v1.3.37-a4)
 
@@ -122,16 +164,23 @@
   - [x] tt\* override
   - [x] by season and episode numbers
 
-## v1.3.37-a3
+</details>
+
+<details>
+  <summary>v1.3.37-a3</summary>
 
 ### Misc / Fixes
 
 - [x] UX: use tt\* in the filename to override the tconst of an episode
 - [x] UX: unlink IMDB on series: also unlink all episodes, which
+
   - [x] don't have the tt\* as part of their file name
   - [x] haven't been user-set tt\* (do we even track this?)
 
-## v1.3.37-a
+</details>
+
+<details>
+  <summary>v1.3.37-a</summary>
 
 ### Misc / Fixes
 
@@ -203,6 +252,8 @@ These items track the series feature in general.
 - [x] add "Season and Episode" sort order (only for Episodes specificMediaType)
 - [x] store filters and sort values by specificMediaType ("Movies", "Series", "Episodes")
 - [x] update Series_Num_Episodes and Series_Num_Seasons after an episode has been removed
+
+</details>
 
 ## v1.3.3
 
@@ -1149,12 +1200,9 @@ Series
 
 - [x] min/maxAge is false when 0 is in place
 
-### @Mike
-
-- [x] Analyze the call App.vue -> store.rescan(onlyNew); -> node functionality without IPC or whatever
-
 ### Other
 
+- [x] Analyze the call App.vue -> store.rescan(onlyNew); -> node functionality without IPC or whatever
 - [x] sort by last_access faulty after introduction of 2nd sort criteria (name)
 - [x] \*Dialog movie list: don't use mk-clickable on the whole list
 - [x] use " »" indicator on MediaList for expandable sections of text (e.g. plot keywords, people etc.)

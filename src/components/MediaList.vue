@@ -1097,11 +1097,6 @@ export default {
       return helpers;
     },
 
-    notAvailableText() {
-      // we can't use "<" or ">" in template without irritating the formatter/linter
-      return this.$t("<not available>");
-    },
-
     isScanning() {
       return this.$shared.isScanning;
     },

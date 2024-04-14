@@ -172,7 +172,6 @@
   "list is missing": "list is missing",
   "item added to list": "item added to list",
   "item removed from list": "item removed from list",
-  "{duration} ago": "{timespan} ago",
   "none": "none",
   "entry linked successfully": "entry linked successfully",
   "Edit {something}": "Edit {something}",
@@ -748,7 +747,7 @@
     "Series Cast": "Series Cast",
     "Series Editing by": "Series Editing by",
     "Series Production Department": "Series Production Department"
-    },
+  },
   "CompanyCategories": {
     "Distributors": "Distributors",
     "Other": "Other",
@@ -959,5 +958,65 @@
   "storage location:": "storage location:",
   "Season and Episode": "Season and Episode",
   "IMDB Ratings for": "IMDB Ratings for",
-  "No Results": "No Results"
+  "No Results": "No Results",
+  "Scan History": "Scan History",
+  "No previous media scan found_": "No previous media scan found.",
+  "Reload": "Reload",
+  "Start": "Start",
+  "End": "End",
+  "Duration": "Duration",
+  "Media Scan Details": "Media Scan Details",
+  "global re-scan": "Global Media Re-Scan",
+
+  "movies added: {amount}": "movies added: {amount}",
+  "{amount} extra": "{amount} extra",
+  "{amount} extra added": "{amount} extra added",
+  "{amount} extra removed": "{amount} extra removed",
+  "{amount} extras": "{amount} extras",
+  "{amount} extras added": "{amount} extras added",
+  "{amount} extras removed": "{amount} extras removed",
+  "movie extras added: {amount}": "movie extras added: {amount}",
+  "movies removed: {amount}": "movies removed: {amount}",
+  "movie extras removed: {amount}": "movie extras removed: {amount}",
+
+  "series added: {amount}": "series added: {amount}",
+  "series removed: {amount}": "series removed: {amount}",
+  "series updated: {amount}": "series updated: {amount}",
+
+  "{amountEpisodes} episode": "{amountEpisodes} episode",
+  "{amountEpisodes} episode added": "{amountEpisodes} episode added",
+  "{amountEpisodes} episode removed": "{amountEpisodes} episode removed",
+  "{amountEpisodes} episodes": "{amountEpisodes} episodes",
+  "{amountEpisodes} episodes added": "{amountEpisodes} episodes added",
+  "{amountEpisodes} episodes removed": "{amountEpisodes} episodes removed",
+
+  "{amountEpisodes} episode with {amountExtras} extra": "{amountEpisodes} episode with {amountExtras} extra",
+  "{amountEpisodes} episode added with {amountExtras} extra": "{amountEpisodes} episode added with {amountExtras} extra",
+  "{amountEpisodes} episode removed with {amountExtras} extra": "{amountEpisodes} episode added with {amountExtras} extra",
+  "{amountEpisodes} episode with {amountExtras} extras": "{amountEpisodes} episode with {amountExtras} extras",
+  "{amountEpisodes} episode added with {amountExtras} extras": "{amountEpisodes} episode added with {amountExtras} extras",
+  "{amountEpisodes} episode removed with {amountExtras} extras": "{amountEpisodes} episode removed with {amountExtras} extras",
+  "{amountEpisodes} episodes with {amountExtras} extra": "{amountEpisodes} episodes with {amountExtras} extra",
+  "{amountEpisodes} episodes added with {amountExtras} extra": "{amountEpisodes} episodes added with {amountExtras} extra",
+  "{amountEpisodes} episodes removed with {amountExtras} extra": "{amountEpisodes} episodes added with {amountExtras} extra",
+  "{amountEpisodes} episodes with {amountExtras} extras": "{amountEpisodes} episodes with {amountExtras} extras",
+  "{amountEpisodes} episodes added with {amountExtras} extras": "{amountEpisodes} episodes added with {amountExtras} extras",
+  "{amountEpisodes} episodes removed with {amountExtras} extras": "{amountEpisodes} episodes removed with {amountExtras} extras",
+
+  "collection size grew by {amount}": "collection size grew by {amount}",
+  "collection size shrank by {amount}": "collection size shrank by {amount}",
+
+  "ScanProcessSummaryCategories": {
+    "ADD_MOVIE": "Added Movies",
+    "REMOVE_MOVIE": "Removed Movies",
+    "ADD_MOVIE_EXTRA": "Added Movie Extras",
+    "REMOVE_MOVIE_EXTRA": "Removed Movie Extras",
+    "ADD_SERIES": "Added Series",
+    "REMOVE_SERIES": "Removed Series",
+    "UPDATE_SERIES": "Updated Series"
+  },
+
+  "Rescan Finished": "Rescan Finished",
+  "Show Details": "Show Details",
+  "no changes": "no change"
 }

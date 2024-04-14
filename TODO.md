@@ -8,25 +8,20 @@
 
 ### Series: scanning
 
-- [WIP] revisit the rescan summary (the numbers are mostly wrong)
+- [WIP] Support Extras/Specials/Bonus
+  - related ticket: #41 Series: Organization of Extras / Specials / Bonus, and Unnumbered Episodes
+  - Extras/Specials/Bonus are indicated by B01 or S02B02 and will be treated as bonus
+    - B01 will automatically go to Season 1
+    - S00B01 will automatically go to Season 0 (the unknown Season)
+    - [ ] rename all Series "Extras" to "Bonus" (at least for the UI)
+  - [ ] season's card should show the number of extras
+- [ ] provide more docs about season numbering, bonus/extras/specials
 
-  - [ ] differentiate added/removed episodes for NEW series vs. EXISTING (updated) series
-  - related: #45 Scan Media wrong number added
-  - track (re-)scan summary data and log in a dedicated table
-    - tbl_Scan_Results
-      - (all the statistics as columns)
-      - log
-        - just a text body or more sophisticated columns?
-  - summary:
-    movies added: 11
-    movies removed: 11
-    series added: 11 (22 episodes)
-    series removed: 11 (22 episodes)
-    series updated: 11 (22 episodes added, 33 episodes removed)
-  - [ ] track collection sizes (before, after, diff; by media type, by source path?)
+  - actual episodes without official numbering should be put into season 0 and sequentially numbered, e.g. S00E01, S00E02 (this allow the episodes overview to work)
+  - Extras/Specials/Bonus attributed to a certain season should be sequentially numbered with the season prefixed, e.g. S02B01, S02B02
+  - Extras/Specials/Bonus without attribution to a certain season should be put into season 0, e.g. S00B01, S00B02
 
-- [ ] during rescan record change details (what was added, removed)
-  - [ ] access the rescan logs from Settings and the rescan summary popup
+- [ ] ScanProcessSummary support for individual rescans
 - [ ] dont override mediaItem.Name when IMDB scan was unsuccessful
 - [ ] BUG: unlinking a series does not unlink its episodes
 - [ ] BUG: medialist for series does not reload after rescan
@@ -40,9 +35,7 @@
 - [ ] rescanHandleDuplicates (also provide snackbar progress for this)
 - [ ] investigate with series-generator: find possible multitudes of episode numbers (also: episode == null)
   - [ ] if this is the case: we need a better getSeriesEpisodeTconstFromCache, possibly by utilizing levenshtein between filename and imdb's episode title
-- #55 BUG: Wont add season or episode number to main seires page
 - #51 Found work around for custom shows and episodes
-- #41 Series: Organization of Extras / Specials / Bonus, and Unnumbered Episodes
 - #39 Multipart Episodes
 - #36 Mediainfo always opening
 

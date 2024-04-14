@@ -1004,6 +1004,11 @@ export default {
       }
       return this.$shared.searchText;
     },
+
+    notAvailableText() {
+      // we can't use "<" or ">" in template without irritating the formatter/linter
+      return this.$t("<not available>");
+    },
   },
   methods: {
     moment() {
@@ -1052,9 +1057,7 @@ export default {
         movie.lastAccessMoment = moment(movie.last_access_at);
       }
 
-      return this.$t("{duration} ago", {
-        timespan: moment.duration(movie.lastAccessMoment.diff(this.currentTime)).humanize(),
-      });
+      return movie.lastAccessMoment.fromNow();
     },
 
     createdHumanized(movie) {
@@ -1066,9 +1069,7 @@ export default {
         movie.createdMoment = moment(movie.created_at);
       }
 
-      return this.$t("{duration} ago", {
-        timespan: moment.duration(movie.createdMoment.diff(this.currentTime)).humanize(),
-      });
+      return movie.createdMoment.fromNow();
     },
 
     contentAdvisorySeverityDisplayText(severity) {

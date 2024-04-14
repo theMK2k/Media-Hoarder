@@ -318,7 +318,7 @@ async function fetchSourcePaths() {
 /**
  * Rescan meta data of the given items
  * @param {Array} mediaItems the items to rescan
- * @param {object} $t the i18n translate function
+ * @param {function} $t the i18n translate function
  */
 async function rescanItems(mediaItems, $t) {
   rescanETA = {
@@ -754,15 +754,20 @@ async function rescan(onlyNew, $t) {
   eventBus.rescanStopped();
   eventBus.rescanFinished({ hasChanges });
 
-  eventBus.showSnackbar(
-    "success",
-    {
-      info: {
-        message: "rescan finished",
-        details: createScanProcessSummaryTexts(scanProcessSummary),
-      },
-    },
-    0
+  // eventBus.showSnackbar(
+  //   "success",
+  //   {
+  //     info: {
+  //       message: "rescan finished",
+  //       details: createScanProcessSummaryTexts(scanProcessSummary, $t),
+  //     },
+  //   },
+  //   0
+  // );
+
+  eventBus.showScanProcessFinishedSnackbar(
+    shared.current_id_Scan_Processes,
+    createScanProcessSummaryTexts(scanProcessSummary, $t)
   );
 }
 
@@ -771,7 +776,7 @@ async function rescan(onlyNew, $t) {
  * @param {*} scanProcessSummary
  * @returns
  */
-function createScanProcessSummaryTexts(scanProcessSummary) {
+function createScanProcessSummaryTexts(scanProcessSummary, $t) {
   const hasChanges = !!Object.keys(scanProcessSummary).find((key) => {
     return key.startsWith("Stats_") && !isNaN(scanProcessSummary[key]) && scanProcessSummary[key] != 0;
   });
@@ -779,14 +784,17 @@ function createScanProcessSummaryTexts(scanProcessSummary) {
   const result = [];
 
   if (!hasChanges) {
-    return ["no changes"];
+    return [$t("no changes")];
   }
 
   if (scanProcessSummary.Stats_ADD_MOVIE) {
     result.push(
-      `movies added: ${scanProcessSummary.Stats_ADD_MOVIE}${
+      `${$t("movies added: {amount}", { amount: scanProcessSummary.Stats_ADD_MOVIE })}${
         scanProcessSummary.Stats_ADD_MOVIE_EXTRA
-          ? ` (+${getNumAndSingularOrPluralText(scanProcessSummary.Stats_ADD_MOVIE_EXTRA, "extra", "extras")})`
+          ? ` (+${$t(
+              getSingularOrPluralText(scanProcessSummary.Stats_ADD_MOVIE_EXTRA, "{amount} extra", "{amount} extras"),
+              { amount: scanProcessSummary.Stats_ADD_MOVIE_EXTRA }
+            )})`
           : ""
       }`
     );
@@ -795,136 +803,192 @@ function createScanProcessSummaryTexts(scanProcessSummary) {
   }
 
   if (scanProcessSummary.Stats_REMOVE_MOVIE) {
-    result.push(
-      `movies removed: ${scanProcessSummary.Stats_REMOVE_MOVIE}${
-        scanProcessSummary.Stats_REMOVE_MOVIE_EXTRA
-          ? `(${getNumAndSingularOrPluralText(scanProcessSummary.Stats_REMOVE_MOVIE_EXTRA, "extra", "extras")})`
-          : ""
-      }`
-    );
+    let resultLine = $t("movies removed: {amount}", { amount: scanProcessSummary.Stats_REMOVE_MOVIE });
+
+    if (scanProcessSummary.Stats_REMOVE_MOVIE_EXTRA) {
+      resultLine += "(";
+      resultLine += $t(
+        `{amount} ${getSingularOrPluralText(scanProcessSummary.Stats_REMOVE_MOVIE_EXTRA, "extra", "extras")}`,
+        { amount: scanProcessSummary.Stats_REMOVE_MOVIE_EXTRA }
+      );
+      resultLine += ")";
+    }
+
+    result.push(resultLine);
   } else if (scanProcessSummary.Stats_REMOVE_MOVIE_EXTRA) {
-    result.push(`movie extras removed: ${scanProcessSummary.Stats_REMOVE_MOVIE_EXTRA}`);
+    result.push($t(`movie extras removed: {amount}`, { amount: scanProcessSummary.Stats_REMOVE_MOVIE_EXTRA }));
   }
 
   if (scanProcessSummary.Stats_ADD_SERIES) {
     // series added: 3 (4 extras, 5 episodes with 6 extras)
-    result.push(
-      `series added: ${scanProcessSummary.Stats_ADD_SERIES} (${
-        scanProcessSummary.Stats_ADDED_SERIES_ADD_EXTRA
-          ? `${getNumAndSingularOrPluralText(scanProcessSummary.Stats_ADDED_SERIES_ADD_EXTRA, "extra", "extras")}, `
-          : ``
-      }${getNumAndSingularOrPluralText(scanProcessSummary.Stats_ADDED_SERIES_ADD_EPISODE, "episode", "episodes")}${
-        scanProcessSummary.Stats_ADDED_SERIES_ADD_EPISODE_EXTRA
-          ? ` with ${getNumAndSingularOrPluralText(
-              scanProcessSummary.Stats_ADDED_SERIES_ADD_EPISODE_EXTRA,
-              "extra",
-              "extras"
-            )}`
-          : ""
-      })`
+    let resultLine = $t("series added: {amount}", { amount: scanProcessSummary.Stats_ADD_SERIES });
+    resultLine += " (";
+
+    if (scanProcessSummary.Stats_ADDED_SERIES_ADD_EXTRA) {
+      resultLine +=
+        $t(
+          getSingularOrPluralText(scanProcessSummary.Stats_ADDED_SERIES_ADD_EXTRA, "{amount} extra", "{amount} extras"),
+          { amount: scanProcessSummary.Stats_ADDED_SERIES_ADD_EXTRA }
+        ) + ", ";
+    }
+
+    let episodeAndExtrasLine = getSingularOrPluralText(
+      scanProcessSummary.Stats_ADDED_SERIES_ADD_EPISODE,
+      "{amountEpisodes} episode",
+      "{amountEpisodes} episodes"
     );
+
+    if (scanProcessSummary.Stats_ADDED_SERIES_ADD_EPISODE_EXTRA) {
+      episodeAndExtrasLine += ` with ${getSingularOrPluralText(
+        scanProcessSummary.Stats_ADDED_SERIES_ADD_EPISODE_EXTRA,
+        "{amountExtras} extra",
+        "{amountExtras} extras"
+      )}`;
+    }
+
+    resultLine += $t(episodeAndExtrasLine, {
+      amountEpisodes: scanProcessSummary.Stats_ADDED_SERIES_ADD_EPISODE,
+      amountExtras: scanProcessSummary.Stats_ADDED_SERIES_ADD_EPISODE_EXTRA,
+    });
+
+    resultLine += ")";
+
+    result.push(resultLine);
   }
 
   if (scanProcessSummary.Stats_REMOVE_SERIES) {
     // series removed: 3 (4 extras, 5 episodes with 6 extras)
-    result.push(
-      `series removed: ${scanProcessSummary.Stats_REMOVE_SERIES} (${
-        scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EXTRA
-          ? `${getNumAndSingularOrPluralText(
-              scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EXTRA,
-              "extra",
-              "extras"
-            )}, `
-          : ``
-      }${getNumAndSingularOrPluralText(scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EPISODE, "episode", "episodes")}${
-        scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EPISODE_EXTRA
-          ? ` with ${getNumAndSingularOrPluralText(
-              scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EPISODE_EXTRA,
-              "extra",
-              "extras"
-            )}`
-          : ""
-      })`
+    let resultLine = $t("series removed: {amount}", { amount: scanProcessSummary.Stats_REMOVE_SERIES });
+    resultLine += " (";
+
+    if (scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EXTRA) {
+      resultLine +=
+        $t(
+          getSingularOrPluralText(
+            scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EXTRA,
+            "{amount} extra",
+            "{amount} extras"
+          ),
+          { amount: scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EXTRA }
+        ) + ", ";
+    }
+
+    let episodeAndExtrasLine = getSingularOrPluralText(
+      scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EPISODE,
+      "{amountEpisodes} episode",
+      "{amountEpisodes} episodes"
     );
+
+    if (scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EPISODE_EXTRA) {
+      episodeAndExtrasLine += ` with ${getSingularOrPluralText(
+        scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EPISODE_EXTRA,
+        "{amountExtras} extra",
+        "{amountExtras} extras"
+      )}`;
+    }
+
+    resultLine += $t(episodeAndExtrasLine, {
+      amountEpisodes: scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EPISODE,
+      amountExtras: scanProcessSummary.Stats_REMOVED_SERIES_REMOVE_EPISODE_EXTRA,
+    });
+
+    resultLine += ")";
+
+    result.push(resultLine);
   }
 
   if (scanProcessSummary.Stats_UPDATE_SERIES) {
     // series updated: 3 (4 extras added, 2 extras removed, 4 episodes added with 5 extras, 2 episodes removed with 3 extras)
-    let parts = "";
+    let resultLine = "";
 
     if (scanProcessSummary.Stats_UPDATED_SERIES_ADD_EXTRA) {
-      parts += `${getNumAndSingularOrPluralText(
-        scanProcessSummary.Stats_UPDATED_SERIES_ADD_EXTRA,
-        "extra",
-        "extras"
-      )} added`;
+      resultLine += $t(
+        getSingularOrPluralText(
+          scanProcessSummary.Stats_UPDATED_SERIES_ADD_EXTRA,
+          "{amount} extra added",
+          "{amount} extras added"
+        ),
+        { amount: scanProcessSummary.Stats_UPDATED_SERIES_ADD_EXTRA }
+      );
     }
+
     if (scanProcessSummary.Stats_UPDATED_SERIES_REMOVE_EXTRA) {
-      parts += `${parts ? `, ` : ``}${getNumAndSingularOrPluralText(
-        scanProcessSummary.Stats_UPDATED_SERIES_REMOVE_EXTRA,
-        "extra",
-        "extras"
-      )} removed`;
+      resultLine += resultLine ? `, ` : ``;
+
+      resultLine += $t(
+        getSingularOrPluralText(
+          scanProcessSummary.Stats_UPDATED_SERIES_REMOVE_EXTRA,
+          "{amount} extra removed",
+          "{amount} extras removed"
+        ),
+        { amount: scanProcessSummary.Stats_UPDATED_SERIES_REMOVE_EXTRA }
+      );
     }
 
     if (scanProcessSummary.Stats_UPDATED_SERIES_ADD_EPISODE) {
-      parts += `${parts ? `, ` : ``}${getNumAndSingularOrPluralText(
+      resultLine += resultLine ? `, ` : ``;
+
+      let episodeAndExtrasLine = getSingularOrPluralText(
         scanProcessSummary.Stats_UPDATED_SERIES_ADD_EPISODE,
-        "episode",
-        "episodes"
-      )} ${
-        scanProcessSummary.Stats_UPDATED_SERIES_ADD_EPISODE_EXTRA
-          ? `with ${getNumAndSingularOrPluralText(
-              scanProcessSummary.Stats_UPDATED_SERIES_ADD_EPISODE_EXTRA,
-              "extra",
-              "extras"
-            )}`
-          : ``
-      } added`;
-    } else if (scanProcessSummary.Stats_UPDATED_SERIES_ADD_EPISODE_EXTRA) {
-      parts += `${parts ? `, ` : ``}${getNumAndSingularOrPluralText(
-        scanProcessSummary.Stats_UPDATED_SERIES_ADD_EPISODE_EXTRA,
-        "extra",
-        "extras"
-      )} added`;
+        "{amountEpisodes} episode added",
+        "{amountEpisodes} episodes added"
+      );
+
+      if (scanProcessSummary.Stats_UPDATED_SERIES_ADD_EPISODE_EXTRA) {
+        episodeAndExtrasLine += ` with ${getSingularOrPluralText(
+          scanProcessSummary.Stats_UPDATED_SERIES_ADD_EPISODE_EXTRA,
+          "{amountExtras} extra",
+          "{amountExtras} extras"
+        )}`;
+      }
+
+      resultLine += $t(episodeAndExtrasLine, {
+        amountEpisodes: scanProcessSummary.Stats_UPDATED_SERIES_ADD_EPISODE,
+        amountExtras: scanProcessSummary.Stats_UPDATED_SERIES_ADD_EPISODE_EXTRA,
+      });
     }
 
     if (scanProcessSummary.Stats_UPDATED_SERIES_REMOVE_EPISODE) {
-      parts += `${parts ? `, ` : ``}${getNumAndSingularOrPluralText(
+      resultLine += resultLine ? `, ` : ``;
+
+      let episodeAndExtrasLine = getSingularOrPluralText(
         scanProcessSummary.Stats_UPDATED_SERIES_REMOVE_EPISODE,
-        "episode",
-        "episodes"
-      )} ${
-        scanProcessSummary.Stats_UPDATED_SERIES_REMOVE_EPISODE_EXTRA
-          ? `with ${getNumAndSingularOrPluralText(
-              scanProcessSummary.Stats_UPDATED_SERIES_REMOVE_EPISODE_EXTRA,
-              "extra",
-              "extras"
-            )}`
-          : ``
-      } removed`;
-    } else if (scanProcessSummary.Stats_UPDATED_SERIES_REMOVE_EPISODE_EXTRA) {
-      parts += `${parts ? `, ` : ``}${getNumAndSingularOrPluralText(
-        scanProcessSummary.Stats_UPDATED_SERIES_REMOVE_EPISODE_EXTRA,
-        "extra",
-        "extras"
-      )} removed`;
+        "{amountEpisodes} episode removed",
+        "{amountEpisodes} episodes removed"
+      );
+
+      if (scanProcessSummary.Stats_UPDATED_SERIES_REMOVE_EPISODE_EXTRA) {
+        episodeAndExtrasLine += ` with ${getSingularOrPluralText(
+          scanProcessSummary.Stats_UPDATED_SERIES_REMOVE_EPISODE_EXTRA,
+          "{amountExtras} extra",
+          "{amountExtras} extras"
+        )}`;
+      }
+
+      resultLine += $t(episodeAndExtrasLine, {
+        amountEpisodes: scanProcessSummary.Stats_UPDATED_SERIES_REMOVE_EPISODE,
+        amountExtras: scanProcessSummary.Stats_UPDATED_SERIES_REMOVE_EPISODE_EXTRA,
+      });
     }
 
-    if (scanProcessSummary.Size_Diff_Total) {
-      parts += `${parts ? `, ` : ``}collection size ${
-        scanProcessSummary.Size_Diff_Total > 0 ? "grew" : "shrank"
-      } by ${Humanize.fileSize(Math.abs(scanProcessSummary.Size_Diff_Total))}`;
-    }
+    result.push(
+      $t("series updated: {amount}", { amount: scanProcessSummary.Stats_UPDATE_SERIES }) + " (" + resultLine + ")"
+    );
+  }
 
-    result.push(`series updated: ${scanProcessSummary.Stats_UPDATE_SERIES} (${parts})`);
+  if (scanProcessSummary.Size_Diff_Total) {
+    result.push(
+      $t(`collection size ${scanProcessSummary.Size_Diff_Total > 0 ? "grew" : "shrank"} by {amount}`, {
+        amount: Humanize.fileSize(Math.abs(scanProcessSummary.Size_Diff_Total)),
+      })
+    );
   }
 
   return result;
 }
 
-function getNumAndSingularOrPluralText(num, singular, plural) {
-  return `${num} ${num == 1 ? singular : plural}`;
+function getSingularOrPluralText(num, singular, plural) {
+  return `${num == 1 ? singular : plural}`;
 }
 
 async function rescanHandleDuplicates() {
@@ -9555,6 +9619,117 @@ async function addScanProcessItem(
   }
 }
 
+async function getScanProcesses($t) {
+  const scanProcesses = await db.fireProcedureReturnAll(`SELECT * FROM tbl_Scan_Processes ORDER BY Start DESC`);
+
+  for (const scanProcess of scanProcesses) {
+    scanProcess.summary = createScanProcessSummaryTexts(scanProcess, $t);
+    scanProcess.duration =
+      moment.duration(moment(scanProcess.Start).diff(moment(scanProcess.End))).humanize() +
+      " (" +
+      helpers.getTimeString((new Date(scanProcess.End) - new Date(scanProcess.Start)) / 1000, true) +
+      ")";
+  }
+
+  return scanProcesses;
+}
+
+async function getScanProcessDetails($id_Scan_Processes) {
+  const scanProcess = await db.fireProcedureReturnSingle(
+    `SELECT * FROM tbl_Scan_Processes WHERE id_Scan_Processes = $id_Scan_Processes`,
+    { $id_Scan_Processes }
+  );
+
+  const scanProcessDetails = {};
+
+  const scanProcessItems = await db.fireProcedureReturnAll(
+    `SELECT * FROM tbl_Scan_Processes_Items WHERE id_Scan_Processes = $id_Scan_Processes`,
+    { $id_Scan_Processes }
+  );
+
+  const relevantScanProcessActionTypes = [
+    scanProcessActionTypes.ADD_MOVIE,
+    scanProcessActionTypes.REMOVE_MOVIE,
+    scanProcessActionTypes.ADD_MOVIE_EXTRA,
+    scanProcessActionTypes.REMOVE_MOVIE_EXTRA,
+    scanProcessActionTypes.ADD_SERIES,
+    scanProcessActionTypes.UPDATE_SERIES,
+    scanProcessActionTypes.REMOVE_SERIES,
+  ];
+
+  for (const scanProcessItem of scanProcessItems) {
+    if (relevantScanProcessActionTypes.includes(scanProcessItem.ActionType)) {
+      if (!scanProcessDetails[scanProcessItem.ActionType]) {
+        scanProcessDetails[scanProcessItem.ActionType] = [];
+      }
+      scanProcessDetails[scanProcessItem.ActionType].push(scanProcessItem);
+    }
+  }
+
+  logger.log("[getScanProcessDetails] scanProcessDetails (after first loop):", scanProcessDetails);
+
+  for (const scanProcessItem of scanProcessItems) {
+    let parentActionType = null;
+    let childActionType = null;
+
+    if (scanProcessItem.ActionType.startsWith("ADDED_SERIES_")) {
+      parentActionType = "ADD_SERIES";
+      childActionType = scanProcessItem.ActionType.replace("ADDED_SERIES_", "");
+    }
+    if (scanProcessItem.ActionType.startsWith("REMOVED_SERIES_")) {
+      parentActionType = "REMOVE_SERIES";
+      childActionType = scanProcessItem.ActionType.replace("REMOVED_SERIES_", "");
+    }
+    if (scanProcessItem.ActionType.startsWith("UPDATED_SERIES_")) {
+      parentActionType = "UPDATE_SERIES";
+      childActionType = scanProcessItem.ActionType.replace("UPDATED_SERIES_", "");
+    }
+
+    if (!parentActionType) {
+      continue;
+    }
+
+    const parentScanProcessItem = scanProcessDetails[parentActionType].find((item) =>
+      scanProcessItem.Path.startsWith(item.Path)
+    );
+
+    if (!parentScanProcessItem) {
+      logger.error("[getScanProcessDetails] parentScanProcessItem not found for scanProcessItem:", scanProcessItem);
+      continue;
+    }
+
+    if (!parentScanProcessItem[childActionType]) {
+      parentScanProcessItem[childActionType] = [];
+    }
+
+    scanProcessItem.ShortPath = scanProcessItem.Path.replace(parentScanProcessItem.Path, "");
+
+    parentScanProcessItem[childActionType].push(scanProcessItem);
+  }
+
+  const scanProcessDetailsArray = [];
+
+  for (const scanProcessActionType of relevantScanProcessActionTypes) {
+    if (!scanProcessDetails[scanProcessActionType]) {
+      continue;
+    }
+
+    scanProcessDetailsArray.push({
+      actionType: scanProcessActionType,
+      items: scanProcessDetails[scanProcessActionType],
+    });
+  }
+
+  // const scanProcessDetailsArray = Object.keys(scanProcessDetails).map((key) => {
+  //   return {
+  //     actionType: key,
+  //     items: scanProcessDetails[key],
+  //   };
+  // });
+
+  return { scanProcess, scanProcessDetailsArray };
+}
+
 export {
   db,
   doAbortRescan,
@@ -9662,4 +9837,6 @@ export {
   addMediaItemPropertyDetails_Person,
   addMediaItemPropertyDetails_Company,
   getCollectionsSizes,
+  getScanProcessDetails,
+  getScanProcesses,
 };

@@ -172,7 +172,6 @@
   "list is missing": "keine Liste angegeben",
   "item added to list": "Eintrag zur Liste hinzugefügt",
   "item removed from list": "Eintrag aus Liste entfernt",
-  "{duration} ago": "vor {timespan}",
   "none": "keine",
   "entry linked successfully": "Eintrag erfolgreich verknüpft",
   "Edit {something}": "{something} Bearbeiten",
@@ -755,63 +754,6 @@
     "Production": "Produktion",
     "Special Effects": "Spezialeffekte"
   },
-  "moment": {
-    "months": [
-      "Januar",
-      "Februar",
-      "März",
-      "April",
-      "Mai",
-      "Juni",
-      "Juli",
-      "August",
-      "September",
-      "Oktober",
-      "November",
-      "Dezember"
-    ],
-    "monthsShort": ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
-    "monthsParseExact": true,
-    "weekdays": ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
-    "weekdaysShort": ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
-    "weekdaysMin": ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
-    "weekdaysParseExact": true,
-    "longDateFormat": {
-      "LT": "HH:mm",
-      "LTS": "HH:mm:ss",
-      "L": "DD.MM.YYYY",
-      "LL": "D MMMM YYYY",
-      "LLL": "D MMMM YYYY HH:mm",
-      "LLLL": "dddd D MMMM YYYY HH:mm"
-    },
-    "calendar": {
-      "sameDay": "[heute] LT",
-      "nextDay": "[morgen] LT",
-      "nextWeek": "[nächsten] dddd LT",
-      "lastDay": "[gestern] LT",
-      "lastWeek": "[vergangenen] dddd LT",
-      "sameElse": "L"
-    },
-    "relativeTime": {
-      "future": "in %s",
-      "past": "vor %s",
-      "s": "wenigen Sekunden",
-      "m": "einer Minute",
-      "mm": "%d Minuten",
-      "h": "einer Stunde",
-      "hh": "%d Stunden",
-      "d": "einem Tag",
-      "dd": "%d Tagen",
-      "M": "einem Monat",
-      "MM": "%d Monaten",
-      "y": "einem Jahr",
-      "yy": "%d Jahren"
-    },
-    "week": {
-      "dow": 1,
-      "doy": 4
-    }
-  },
   "Sort by": "Sortiert nach",
   "Language of the Application": "Sprache der Anwendung",
   "Change the language of the application here_": "Hier kannst Du die Sprache der Anwendung ändern.",
@@ -1016,5 +958,65 @@
   "storage location:": "Speicherort:",
   "Season and Episode": "Staffel und Episode",
   "IMDB Ratings for": "IMDB Bewertungen für",
-  "No Results": "Keine Ergebnisse"
+  "No Results": "Keine Ergebnisse",
+  "Scan History": "Scan Historie",
+  "No previous media scan found_": "Bisher wurden noch keine Medienscans aufgezeichnet.",
+  "Reload": "Neu Laden",
+  "Start": "Start",
+  "End": "Ende",
+  "Duration": "Dauer",
+  "Media Scan Details": "Details zum Medienscan",
+  "global re-scan": "Globales Einlesen der Medien",
+
+  "movies added: {amount}": "Hinzugefügte Filme: {amount}",
+  "{amount} extra": "{amount} Extra",
+  "{amount} extra added": "{amount} Extra hinzugefügt",
+  "{amount} extra removed": "{amount} Extra entfernt",
+  "{amount} extras": "{amount} Extras",
+  "{amount} extras added": "{amount} Extras hinzugefügt",
+  "{amount} extras removed": "{amount} Extras entfernt",
+  "movie extras added: {amount}": "Hinzugefügte Film-Extras: {amount}",
+  "movies removed: {amount}": "Entfernte Filme: {amount}",
+  "movie extras removed: {amount}": "Entfernte Film-Extras: {amount}",
+
+  "series added: {amount}": "Hinzugefügte Serien: {amount}",
+  "series removed: {amount}": "Entfernte Serien: {amount}",
+  "series updated: {amount}": "Aktualisierte Serien: {amount}",
+
+  "{amountEpisodes} episode": "{amountEpisodes} Episode",
+  "{amountEpisodes} episode added": "{amountEpisodes} Episode hinzugefügt",
+  "{amountEpisodes} episode removed": "{amountEpisodes} Episode entfernt",
+  "{amountEpisodes} episodes": "{amountEpisodes} Episoden",
+  "{amountEpisodes} episodes added": "{amountEpisodes} Episoden hinzugefügt",
+  "{amountEpisodes} episodes removed": "{amountEpisodes} Episoden entfernt",
+
+  "{amountEpisodes} episode with {amountExtras} extra": "{amountEpisodes} Episode mit {amountExtras} Extra",
+  "{amountEpisodes} episode added with {amountExtras} extra": "{amountEpisodes} Episode hinzugefügt mit {amountExtras} Extra",
+  "{amountEpisodes} episode removed with {amountExtras} extra": "{amountEpisodes} Episode entfernt mit {amountExtras} Extra",
+  "{amountEpisodes} episode with {amountExtras} extras": "{amountEpisodes} Episoden mit {amountExtras} Extras",
+  "{amountEpisodes} episode added with {amountExtras} extras": "{amountEpisodes} Episoden hinzugefügt mit {amountExtras} Extras",
+  "{amountEpisodes} episode removed with {amountExtras} extras": "{amountEpisodes} Episoden entfernt mit {amountExtras} Extras",
+  "{amountEpisodes} episodes with {amountExtras} extra": "{amountEpisodes} Episoden mit {amountExtras} Extra",
+  "{amountEpisodes} episodes added with {amountExtras} extra": "{amountEpisodes} Episoden hinzugefügt mit {amountExtras} Extra",
+  "{amountEpisodes} episodes removed with {amountExtras} extra": "{amountEpisodes} Episoden entfernt mit {amountExtras} Extra",
+  "{amountEpisodes} episodes with {amountExtras} extras": "{amountEpisodes} Episoden mit {amountExtras} Extras",
+  "{amountEpisodes} episodes added with {amountExtras} extras": "{amountEpisodes} Episoden hinzugefügt mit {amountExtras} Extras",
+  "{amountEpisodes} episodes removed with {amountExtras} extras": "{amountEpisodes} Episoden entfernt mit {amountExtras} Extras",
+
+  "collection size grew by {amount}": "Sammlung ist um {amount} gewachsen",
+  "collection size shrank by {amount}": "Sammlung ist um {amount} geschrumpft",
+
+  "ScanProcessSummaryCategories": {
+    "ADD_MOVIE": "Hinzugefügte Filme",
+    "REMOVE_MOVIE": "Entfernte Filme",
+    "ADD_MOVIE_EXTRA": "Hinzugefügte Film-Extras",
+    "REMOVE_MOVIE_EXTRA": "Entfernte Film-Extras",
+    "ADD_SERIES": "Hinzugefügte Serien",
+    "UPDATE_SERIES": "Aktualisierte Serien",
+    "REMOVE_SERIES": "Entfernte Serien"
+  },
+
+  "Rescan Finished": "Einlesen Abgeschlossen",
+  "Show Details": "Details Anzeigen",
+  "no changes": "keine Änderungen"
 }

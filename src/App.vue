@@ -24,15 +24,6 @@
 
         <v-divider></v-divider>
 
-        <v-list-item v-bind:to="'/settings'">
-          <v-list-item-action>
-            <v-icon>mdi-settings</v-icon>
-          </v-list-item-action>
-          <v-list-item-title style="height: 18px">{{ $t("Settings") }}</v-list-item-title>
-        </v-list-item>
-
-        <v-divider></v-divider>
-
         <!-- Home -->
         <v-list-item v-bind:to="'/'">
           <v-list-item-action>
@@ -42,6 +33,17 @@
             <v-list-item-title>{{ $t("Home") }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+
+        <v-divider></v-divider>
+
+        <v-list-item v-bind:to="'/settings'">
+          <v-list-item-action>
+            <v-icon>mdi-settings</v-icon>
+          </v-list-item-action>
+          <v-list-item-title style="height: 18px">{{ $t("Settings") }}</v-list-item-title>
+        </v-list-item>
+
+        <v-divider></v-divider>
 
         <!-- Movies, Series -->
         <v-list-item
@@ -2854,6 +2856,14 @@
           v-on:ok="onChatGPTDialogOK"
         ></mk-chat-gpt-dialog>
 
+        <mk-scan-history-item-dialog
+          ref="scanHistoryItemDialog"
+          v-bind:show="scanHistoryItemDialog.show"
+          v-bind:id_Scan_Processes="scanHistoryItemDialog.id_Scan_Processes"
+          v-on:close="scanHistoryItemDialog.show = false"
+        >
+        </mk-scan-history-item-dialog>
+
         <!-- BOTTOM BAR -->
         <v-bottom-navigation
           fixed
@@ -2901,6 +2911,9 @@
         </div>
       </div>
       <v-spacer />
+      <v-btn v-if="snackbar.id_Scan_Processes" dark text @click="openScanHistoryItemDialog(snackbar.id_Scan_Processes)">
+        {{ $t("Show Details") }}
+      </v-btn>
       <v-btn dark text @click="snackbar.show = false">{{ $t("Close") }}</v-btn>
     </v-snackbar>
 
@@ -2935,6 +2948,7 @@ import ScanOptionsDialog from "@/components/dialogs/ScanOptionsDialog.vue";
 import VersionDialog from "@/components/dialogs/VersionDialog.vue";
 import CheckIMDBScraperDialog from "@/components/dialogs/CheckIMDBScraperDialog.vue";
 import ChatGPTDialog from "@/components/dialogs/ChatGPTDialog.vue";
+import ScanHistoryItemDialog from "@/components/dialogs/ScanHistoryItemDialog";
 
 export default {
   components: {
@@ -2948,6 +2962,7 @@ export default {
     "mk-version-dialog": VersionDialog,
     "mk-check-imdb-scraper-dialog": CheckIMDBScraperDialog,
     "mk-chat-gpt-dialog": ChatGPTDialog,
+    "mk-scan-history-item-dialog": ScanHistoryItemDialog,
   },
 
   props: {
@@ -2990,6 +3005,13 @@ export default {
       color: "",
       timeout: 6000,
       text: "",
+      details: [],
+      id_Scan_Processes: null,
+    },
+
+    scanFinishedSnackbar: {
+      show: false,
+      id_Scan_Processes: 0,
       details: [],
     },
 
@@ -3067,6 +3089,11 @@ export default {
       min: 0,
       max: 0,
       range: [0, 0],
+    },
+
+    scanHistoryItemDialog: {
+      show: false,
+      id_Scan_Processes: null,
     },
   }),
 
@@ -4496,10 +4523,18 @@ export default {
 
       await store.saveFilterGroups();
     },
+
+    openScanHistoryItemDialog(id_Scan_Processes) {
+      this.scanHistoryItemDialog.id_Scan_Processes = id_Scan_Processes;
+      this.scanHistoryItemDialog.show = true;
+    },
   },
 
   // ### LifeCycleHooks ###
   created() {
+    logger.log("[moment-test] relative time (vor 2 Jahren):", moment("2021-01-01").fromNow());
+    logger.log("[moment-test] duration (5 Minuten):", moment.duration(moment().diff(moment("2024-01-01"))).humanize());
+
     document.onkeydown = this.onKeyDown;
 
     this.$vuetify.theme.dark = true;
@@ -4536,11 +4571,26 @@ export default {
       );
     }, 1000);
 
+    eventBus.$on("showScanProcessFinishedSnackbar", ({ id_Scan_Processes, details }) => {
+      logger.log("[showScanProcessFinishedSnackbar] id_Scan_Processes:", id_Scan_Processes, "details:", details);
+
+      this.snackbar.color = "success";
+      this.snackbar.text = this.$t("Rescan Finished");
+      this.snackbar.timeout = 0;
+      this.snackbar.id_Scan_Processes = id_Scan_Processes;
+      this.snackbar.details = [];
+      details.forEach((detail) => {
+        this.snackbar.details.push(detail);
+      });
+      this.snackbar.show = true;
+    });
+
     eventBus.$on("showSnackbar", ({ color, textOrErrorObject, timeout }) => {
       logger.debug("[showSnackbar] snackbar called:", textOrErrorObject);
       this.snackbar.details = [];
       this.snackbar.color = color;
       this.snackbar.timeout = timeout;
+      this.snackbar.id_Scan_Processes = null;
 
       if (typeof textOrErrorObject === "string" || textOrErrorObject instanceof String) {
         this.snackbar.text = textOrErrorObject;

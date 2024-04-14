@@ -16,6 +16,7 @@
       <v-tab>{{ $t("Languages") }}</v-tab>
       <v-tab>{{ $t("Title Types") }}</v-tab>
       <v-tab>{{ $t("Release Attributes") }}</v-tab>
+      <v-tab v-on:click="loadScanProcesses">{{ $t("Scan History") }}</v-tab>
 
       <!-- GENERAL -->
       <v-tab-item style="padding: 8px">
@@ -632,6 +633,57 @@
           $t("Add")
         }}</v-btn>
       </v-tab-item>
+
+      <!-- SCAN HISTORY -->
+      <v-tab-item style="padding: 8px">
+        <div style="display: flex">
+          <v-spacer></v-spacer>
+          <v-btn text v-on:click="loadScanProcesses" style="margin-right: 8px">
+            <v-icon>mdi-refresh</v-icon>
+            {{ $t("Reload") }}
+          </v-btn>
+        </div>
+        <v-card-text v-if="scanProcesses.length == 0" class="mk-light-grey">
+          <p>
+            {{ $t("No previous media scan found_") }}
+          </p>
+        </v-card-text>
+
+        <v-card
+          v-for="scanProcess in scanProcesses"
+          v-bind:key="scanProcess.id_Scan_Processes"
+          style="margin-bottom: 4px"
+          v-on:click="openScanHistoryItemDialog(scanProcess.id_Scan_Processes)"
+        >
+          <v-card-text>
+            <v-list-item-title style="color: white">
+              {{ $t(scanProcess.Scan_Process_Type) }} ({{ getRelativeTimeText(scanProcess.Start) }})
+            </v-list-item-title>
+            <div class="mk-clickable-lightgrey-white" style="margin-top: 8px">
+              <div style="display: flex">
+                <div style="margin-right: 4px">
+                  <p style="margin-bottom: 4px">{{ $t("Start") }}:</p>
+                  <p style="margin-bottom: 4px">{{ $t("End") }}:</p>
+                  <p style="margin-bottom: 4px">{{ $t("Duration") }}:</p>
+                </div>
+                <div>
+                  <p style="margin-bottom: 4px">{{ scanProcess.Start }}</p>
+                  <p style="margin-bottom: 4px">{{ scanProcess.End }}</p>
+                  <p style="margin-bottom: 4px">
+                    {{ scanProcess.duration }}
+                  </p>
+                </div>
+              </div>
+
+              <v-divider style="margin-bottom: 4px"></v-divider>
+
+              <p v-for="summaryItem in scanProcess.summary" v-bind:key="summaryItem" style="margin-bottom: 4px">
+                {{ summaryItem }}
+              </p>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-tab-item>
     </v-tabs>
 
     <mk-sourcepath-description-dialog
@@ -777,6 +829,14 @@
       v-on:ok="onEditMediainfoPathDialogOK"
       v-on:cancel="onEditMediainfoPathDialogCancel"
     ></mk-edit-mediainfo-path-dialog>
+
+    <mk-scan-history-item-dialog
+      ref="scanHistoryItemDialog"
+      v-bind:show="scanHistoryItemDialog.show"
+      v-bind:id_Scan_Processes="scanHistoryItemDialog.id_Scan_Processes"
+      v-on:close="scanHistoryItemDialog.show = false"
+    >
+    </mk-scan-history-item-dialog>
   </div>
 </template>
 
@@ -784,6 +844,7 @@
 const { dialog, BrowserWindow } = require("@electron/remote");
 import * as _ from "lodash";
 import draggable from "vuedraggable";
+const moment = require("moment");
 
 const logger = require("../helpers/logger");
 
@@ -795,6 +856,7 @@ import AddRegionsDialog from "@/components/dialogs/AddRegionsDialog.vue";
 import AddLanguagesDialog from "@/components/dialogs/AddLanguagesDialog.vue";
 import AddTitleTypeDialog from "@/components/dialogs/AddTitleTypeDialog.vue";
 import EditReleaseAttributeDialog from "@/components/dialogs/EditReleaseAttributeDialog";
+import ScanHistoryItemDialog from "@/components/dialogs/ScanHistoryItemDialog";
 import TitleType from "@/components/shared/TitleType.vue";
 
 import * as helpers from "@/helpers/helpers";
@@ -818,6 +880,7 @@ export default {
     "mk-title-type": TitleType,
     "mk-edit-mediaplayer-path-dialog": Dialog,
     "mk-edit-mediainfo-path-dialog": Dialog,
+    "mk-scan-history-item-dialog": ScanHistoryItemDialog,
   },
 
   data: () => ({
@@ -926,6 +989,13 @@ export default {
     },
 
     availableLanguages: [],
+
+    scanProcesses: [],
+
+    scanHistoryItemDialog: {
+      show: false,
+      id_Scan_Processes: null,
+    },
   }),
 
   watch: {
@@ -986,6 +1056,14 @@ export default {
   },
 
   methods: {
+    moment() {
+      return moment;
+    },
+
+    $local_t(key, payload) {
+      return this.$t(key, payload);
+    },
+
     async browseMediaplayerPath() {
       const filters = helpers.isWindows
         ? [
@@ -1600,6 +1678,20 @@ export default {
 
     releaseAttributesFilter(value /*, search, item*/) {
       return !value;
+    },
+
+    async loadScanProcesses() {
+      this.scanProcesses = await store.getScanProcesses(this.$local_t);
+      logger.log("[loadScanProcesses] this.scanProcesses:", this.scanProcesses);
+    },
+
+    openScanHistoryItemDialog(id_Scan_Processes) {
+      this.scanHistoryItemDialog.id_Scan_Processes = id_Scan_Processes;
+      this.scanHistoryItemDialog.show = true;
+    },
+
+    getRelativeTimeText(start) {
+      return moment(start).fromNow();
     },
   },
 
