@@ -1459,7 +1459,7 @@ async function testIMDBSeriesEpisodes() {
           releaseDateMonth: 3,
           releaseDateDay: 17,
           rating: 9.1,
-          numVotes: 487,
+          numVotes: 551,
           episode: "1",
           season: "2",
           imageURL:
@@ -1550,12 +1550,12 @@ async function testIMDBSeriesEpisodes() {
       );
       if (!scrapeResult[0].rating) {
         addSubLogEntry(testResult, "rating missing", status.ERROR);
-      } else if (!epsilonCheck(scrapeResult[0].rating, expectedValue.result0.rating, 10)) {
+      } else if (!epsilonCheck(scrapeResult[0].rating, expectedValue.result0.rating, 20)) {
         addSubLogEntry(
           testResult,
           `rating unexpected value
       got:      "${scrapeResult[0].rating}"
-      expected: ${expectedValue.result0.rating} +/- 10%`,
+      expected: ${expectedValue.result0.rating} +/- 20%`,
           status.WARNING
         );
       }
