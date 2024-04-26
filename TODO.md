@@ -13,14 +13,15 @@
   - Extras/Specials/Bonus are indicated by B01 or S02B02 and will be treated as bonus
     - B01 will automatically go to Season 1
     - S00B01 will automatically go to Season 0 (the unknown Season)
-    - [ ] rename all Series "Extras" to "Bonus" (at least for the UI)
-  - [ ] season's card should show the number of extras
+    - [WIP] rename all Series "Extras" to "Bonus" (at least for the UI)
+  - [ ] season's card should show the number of bonus
 - [ ] provide more docs about season numbering, bonus/extras/specials
 
   - actual episodes without official numbering should be put into season 0 and sequentially numbered, e.g. S00E01, S00E02 (this allow the episodes overview to work)
   - Extras/Specials/Bonus attributed to a certain season should be sequentially numbered with the season prefixed, e.g. S02B01, S02B02
   - Extras/Specials/Bonus without attribution to a certain season should be put into season 0, e.g. S00B01, S00B02
 
+- [ ] BUG: distinct release attributes for a series not correct (see: Star Trek Lower Decks)
 - [ ] ScanProcessSummary support for individual rescans
 - [ ] dont override mediaItem.Name when IMDB scan was unsuccessful
 - [ ] BUG: unlinking a series does not unlink its episodes
@@ -53,6 +54,7 @@
 
 ### Misc
 
+- [ ] BUG: setting stars in Episodes view doesn't store them
 - [ ] BUG: subdirectory called "extras" is not assigned to the main movie (the files are provided as main movies themselves)
 - [ ] check tconst detection with movies, too (we changed some fullDirectory to fullPath)
 - [ ] make loading of filters abortable (e.g. when switching from Series -> Episodes, the filters of Series don't have to be loaded completely through, or Episodes -> Series)
