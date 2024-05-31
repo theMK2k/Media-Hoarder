@@ -5,6 +5,7 @@
 ## NEXT Major (v1.4.0)
 
 - [ ] cancel loading filters on series -> episodes change
+- [ ] introduce HDR (detect with color spaces, e.g. <https://www.reddit.com/r/PleX/comments/7kwoy8/is_there_a_way_to_tell_if_a_file_is_hdr_from_the/>)
 
 ### Series: scanning
 
