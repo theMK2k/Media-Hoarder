@@ -2901,20 +2901,26 @@
 
     <!-- SNACK BAR -->
     <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
-      <div>
-        <strong v-if="snackbar.details && snackbar.details.length > 0">{{ snackbar.text }}</strong>
-        <div v-if="!snackbar.details || snackbar.details.length === 0">
-          {{ snackbar.text }}
+      <div style="display: flex; gap: 8px">
+        <div style="flex-grow: 1">
+          <strong v-if="snackbar.details && snackbar.details.length > 0">{{ snackbar.text }}</strong>
+          <div v-if="!snackbar.details || snackbar.details.length === 0">
+            {{ snackbar.text }}
+          </div>
+          <div v-for="(snackbardetail, index) in snackbarDetailsFiltered" v-bind:key="index" style="padding-left: 8px">
+            {{ snackbardetail }}
+          </div>
         </div>
-        <div v-for="(snackbardetail, index) in snackbarDetailsFiltered" v-bind:key="index" style="padding-left: 8px">
-          {{ snackbardetail }}
-        </div>
+        <v-btn
+          v-if="snackbar.id_Scan_Processes"
+          dark
+          text
+          @click="openScanHistoryItemDialog(snackbar.id_Scan_Processes)"
+        >
+          {{ $t("Show Details") }}
+        </v-btn>
+        <v-btn dark text @click="snackbar.show = false">{{ $t("Close") }}</v-btn>
       </div>
-      <v-spacer />
-      <v-btn v-if="snackbar.id_Scan_Processes" dark text @click="openScanHistoryItemDialog(snackbar.id_Scan_Processes)">
-        {{ $t("Show Details") }}
-      </v-btn>
-      <v-btn dark text @click="snackbar.show = false">{{ $t("Close") }}</v-btn>
     </v-snackbar>
 
     <!-- MAIN LOADING OVERLAY -->
