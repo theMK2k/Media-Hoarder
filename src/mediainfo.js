@@ -43,7 +43,7 @@ async function analyzeMediaInfoData(miObj, id_Movies) {
     $MI_Duration: null,
     $MI_Duration_Seconds: null,
     $MI_Duration_Formatted: null,
-    $MI_Quality: null,
+    $MI_Quality: null, // TODO: deprecate!
     $MI_Aspect_Ratio: null,
     $MI_Audio_Languages: "",
     $MI_Subtitle_Languages: "",
@@ -51,6 +51,8 @@ async function analyzeMediaInfoData(miObj, id_Movies) {
 
   const audioLanguages = [];
   const subtitleLanguages = [];
+  const videoResolutions = [];
+  const videoHDR = [];
 
   let tracks = [];
 
@@ -118,13 +120,21 @@ async function analyzeMediaInfoData(miObj, id_Movies) {
         MI.$MI_Duration_Formatted = durationAnalysis.$MI_Duration_Formatted;
       }
 
-      const videoResolutionAnalysis = analyzeMediaInfoVideoResolution(track);
+      const videoAnalysis = analyzeMediaInfoVideoProperties(track);
 
-      if (videoResolutionAnalysis.qualityLevel && videoResolutionAnalysis.qualityLevel > bestQualityLevel) {
-        bestQualityLevel = videoResolutionAnalysis.qualityLevel;
+      if (videoAnalysis.Video_Resolution && !videoResolutions.find((r) => r === videoAnalysis.Video_Resolution)) {
+        videoResolutions.push(videoAnalysis.Video_Resolution);
+      }
+      if (videoAnalysis.Video_HDR && !videoHDR.find((r) => r === videoAnalysis.Video_HDR)) {
+        videoHDR.push(videoAnalysis.Video_HDR);
+      }
 
-        MI.$MI_Quality = videoResolutionAnalysis.$MI_Quality;
-        MI.$MI_Aspect_Ratio = videoResolutionAnalysis.$MI_Aspect_Ratio;
+      // TODO: deprecate, use videoResolutions instead
+      if (videoAnalysis.qualityLevel && videoAnalysis.qualityLevel > bestQualityLevel) {
+        bestQualityLevel = videoAnalysis.qualityLevel;
+
+        MI.$MI_Quality = videoAnalysis.Video_Resolution;
+        MI.$MI_Aspect_Ratio = videoAnalysis.$MI_Aspect_Ratio;
       }
     }
 
@@ -168,7 +178,7 @@ async function analyzeMediaInfoData(miObj, id_Movies) {
     MI.$MI_Subtitle_Languages = subtitleLanguages.reduce((prev, current) => prev + (prev ? ", " : "") + current);
   }
 
-  return { MI, tracks, audioLanguages, subtitleLanguages };
+  return { MI, tracks, audioLanguages, subtitleLanguages, videoResolutions, videoHDR };
 }
 
 function analyzeMediaInfoVideoDuration(videoTrack) {
@@ -222,11 +232,12 @@ function analyzeMediaInfoVideoDuration(videoTrack) {
   return result;
 }
 
-function analyzeMediaInfoVideoResolution(videoTrack) {
+function analyzeMediaInfoVideoProperties(videoTrack) {
   const result = {
-    $MI_Quality: null,
+    Video_Resolution: null,
     qualityLevel: null,
     $MI_Aspect_Ratio: null,
+    Video_HDR: null,
   };
 
   if (videoTrack.Width && videoTrack.Width.length > 0) {
@@ -241,27 +252,27 @@ function analyzeMediaInfoVideoResolution(videoTrack) {
 
     const tolerance = 1.1; // tolerance level, so that e.g. 1085p is NOT UHD
 
-    result.$MI_Quality = "SD";
+    result.Video_Resolution = "SD";
     result.qualityLevel = 1;
 
     if (iWidth * iHeight > 720 * 576 * tolerance) {
-      result.$MI_Quality = "720p";
+      result.Video_Resolution = "720p";
       result.qualityLevel = 2;
     }
     if (iWidth * iHeight > 1280 * 720 * tolerance) {
-      result.$MI_Quality = "HD";
+      result.Video_Resolution = "HD";
       result.qualityLevel = 3;
     }
     if (iWidth * iHeight > 1920 * 1080 * tolerance) {
-      result.$MI_Quality = "UHD";
+      result.Video_Resolution = "UHD";
       result.qualityLevel = 4;
     }
     if (iWidth * iHeight > 3840 * 2160 * tolerance) {
-      result.$MI_Quality = "4K";
+      result.Video_Resolution = "4K";
       result.qualityLevel = 5;
     }
     if (iWidth * iHeight > 4096 * 2160 * tolerance) {
-      result.$MI_Quality = "8K";
+      result.Video_Resolution = "8K";
       result.qualityLevel = 6;
     }
   }
@@ -273,6 +284,20 @@ function analyzeMediaInfoVideoResolution(videoTrack) {
   if (videoTrack.DisplayAspectRatio && videoTrack.DisplayAspectRatio.length > 0) {
     result.$MI_Aspect_Ratio = videoTrack.DisplayAspectRatio[0];
   }
+
+  // HDR - 'HDR10', 'HDR10+', 'DV', 'HLG'
+  logger.log("[analyzeMediaInfoVideoProperties] HDR_Format:", videoTrack.HDR_Format);
+  logger.log("[analyzeMediaInfoVideoProperties] HDR_Format_Compatibility:", videoTrack.HDR_Format_Compatibility);
+
+  if (videoTrack.HDR_Format == "Dolby Vision") {
+    result.Video_HDR = "DV";
+  } else if (videoTrack.HDR_Format_Compatibility?.[0]?.startsWith("HDR10+")) {
+    result.Video_HDR = "HDR10+";
+  } else if (videoTrack.HDR_Format_Compatibility?.[0]?.startsWith("HDR10")) {
+    result.Video_HDR = "HDR10";
+  }
+
+  logger.log("[analyzeMediaInfoVideoProperties] result:", result);
 
   return result;
 }

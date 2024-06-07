@@ -5,7 +5,29 @@
 ## NEXT Major (v1.4.0)
 
 - [ ] cancel loading filters on series -> episodes change
-- [ ] introduce HDR (detect with color spaces, e.g. <https://www.reddit.com/r/PleX/comments/7kwoy8/is_there_a_way_to_tell_if_a_file_is_hdr_from_the/>)
+
+- [ ] DB Migrations
+
+  - [x] new table: tbl_DB_Migrations
+  - [ ] implement migration runner
+
+- [WIP] introduce HDR (detect with color spaces, e.g. <https://www.reddit.com/r/PleX/comments/7kwoy8/is_there_a_way_to_tell_if_a_file_is_hdr_from_the/>)
+
+  - "HDR10", "HDR10+", "DV", "HLG"
+
+  - in sources: `#VIDEOPROPERTIES`
+  - [ ] add them to "Video Quality" filter
+
+  - [WIP] exclusively use tbl_Movies_MI_Qualities, deprecate tbl_Movies.MI_Quality
+
+  - [x] create migration (tbl_Movies.MI_Quality -> tbl_Movies_MI_Qualities)
+    - [x] Name: `2024-06-02 migrate to tbl_Movies_MI_Qualities`
+      - [x] add rows for each tbl_Movies row with MI_Quality entry
+      - [x] add Category_Name 'video-resolution' and Category_Sort 1 for all entries ("SD", "HD", "UHD", "4K", ...)
+      - ?remove MI_Quality column from tbl_Movies? -> !migration needs to check if MI_Quality column is present in tbl_Movies before!
+  - [WIP] everywhere in code where MI_Quality is used, use tbl_Movies_MI_Qualities (rescan, fetchMedia etc.)
+  - check what store.updateMovieVideoQualities does
+  - [ ] introduce AND filter for Video Qualities
 
 ### Series: scanning
 

@@ -23,6 +23,7 @@ import { eventBus } from "@/main";
 const logger = require("./helpers/logger");
 const db = require("./helpers/db");
 const dbsyncSQLite = require("./helpers/dbsync-sqlite");
+const dbMigrations = require("./db-migrations/db-migrations");
 const helpers = require("./helpers/helpers");
 const { findIMDBtconstIncluded, findIMDBtconstInNFO, findIMDBtconstByFileOrDirname } = require("./find-imdb-tconst");
 const { languageNameCodeMapping, languageCodeNameMapping } = require("./languages");
@@ -158,6 +159,8 @@ dbsync.runSync(
         await ensureLogLevel();
 
         await manageIndexes(db);
+
+        await dbMigrations.runMigrations(db);
 
         await loadSettingDuplicatesHandling();
 
@@ -2714,10 +2717,8 @@ async function applyMediaInfo(movie, onlyNew) {
 
   try {
     const miObj = await mediainfo.runMediaInfo(mediaInfoPath, movie.fullPath);
-    const { MI, tracks, audioLanguages, subtitleLanguages } = await mediainfo.analyzeMediaInfoData(
-      miObj,
-      movie.id_Movies
-    );
+    const { MI, tracks, audioLanguages, subtitleLanguages, videoResolutions, videoHDR } =
+      await mediainfo.analyzeMediaInfoData(miObj, movie.id_Movies);
 
     logger.log("[applyMediaInfo] { MI, tracks, audioLanguages, subtitleLanguages }:", {
       MI,
@@ -2734,7 +2735,7 @@ async function applyMediaInfo(movie, onlyNew) {
 				, MI_Duration = $MI_Duration
 				, MI_Duration_Seconds = $MI_Duration_Seconds
 				, MI_Duration_Formatted = $MI_Duration_Formatted
-				, MI_Quality = $MI_Quality
+				, MI_Quality = $MI_Quality  -- #VIDEOPROPERTIES deprecate!
 				, MI_Aspect_Ratio = $MI_Aspect_Ratio
 				, MI_Audio_Languages = $MI_Audio_Languages
 				, MI_Subtitle_Languages = $MI_Subtitle_Languages
@@ -2742,6 +2743,63 @@ async function applyMediaInfo(movie, onlyNew) {
 			`,
       MI
     );
+
+    for (const $MI_Quality of videoResolutions) {
+      await db.fireProcedure(
+        `
+        INSERT INTO tbl_Movies_MI_Qualities (
+          id_Movies
+          , MI_Quality
+          , Category_Name
+          , Category_Sort
+          , deleted
+        ) SELECT
+          $id_Movies
+          , $MI_Quality
+          , $Category_Name
+          , $Category_Sort
+          , 0
+        WHERE NOT EXISTS (
+          SELECT 1 FROM tbl_Movies_MI_Qualities WHERE id_Movies = $id_Movies AND MI_Quality = $MI_Quality
+        )
+        `,
+        {
+          $id_Movies: movie.id_Movies,
+          $MI_Quality: $MI_Quality,
+          $Category_Name: "video-resolution",
+          $Category_Sort: 1,
+        }
+      );
+    }
+
+    for (const $MI_Quality of videoHDR) {
+      await db.fireProcedure(
+        `
+        INSERT INTO tbl_Movies_MI_Qualities (
+          id_Movies
+          , MI_Quality
+          , Category_Name
+          , Category_Sort
+          , deleted
+        )
+        SELECT
+          $id_Movies
+          , $MI_Quality
+          , $Category_Name
+          , $Category_Sort
+          , 0
+        WHERE NOT EXISTS (
+          SELECT 1 FROM tbl_Movies_MI_Qualities WHERE id_Movies = $id_Movies AND MI_Quality = $MI_Quality
+        )
+        `,
+        {
+          $id_Movies: movie.id_Movies,
+          $MI_Quality: $MI_Quality,
+          $Category_Name: "video-hdr",
+          $Category_Sort: 2,
+        }
+      );
+    }
 
     for (let i = 0; i < audioLanguages.length; i++) {
       await db.fireProcedure(
@@ -4729,7 +4787,6 @@ async function fetchMedia({
         , NULL AS file_created_at
         , NULL AS endYear
         , NULL AS MI_Duration
-        , NULL AS MI_Qualities
         , NULL AS MI_Quality
         , NULL AS Audio_Languages
         , NULL AS Subtitle_Languages
@@ -4756,7 +4813,9 @@ async function fetchMedia({
         , NULL AS ReleaseAttributesSearchTerms
         , NULL AS Video_Encoder
         , NULL AS Audio_Format
-
+        , NULL AS MI_Video_Resolutions
+        , NULL AS MI_Video_HDR
+        , NULL AS MI_Qualities
       `
           : `
         , 1 AS isCompletelyFetched
@@ -4766,7 +4825,6 @@ async function fetchMedia({
         , MOV.endYear
         , MOV.MI_Duration
         , MOV.MI_Quality
-        , CASE WHEN MOV.MI_Quality IS NOT NULL THEN MOV.MI_Quality ELSE (SELECT GROUP_CONCAT(MI_Quality, ', ') FROM tbl_Movies_MI_Qualities MOVQ WHERE MOVQ.id_Movies = MOV.id_Movies AND MOVQ.deleted = 0) END AS MI_Qualities
         , (SELECT GROUP_CONCAT(Language, ', ') FROM tbl_Movies_Languages ML WHERE ML.id_Movies = MOV.id_Movies AND ML.Type = 'audio') AS Audio_Languages
         , (SELECT GROUP_CONCAT(Language, ', ') FROM tbl_Movies_Languages ML WHERE ML.id_Movies = MOV.id_Movies AND ML.Type = 'subtitle') AS Subtitle_Languages
         , MOV.MI_Audio_Languages
@@ -4799,6 +4857,23 @@ async function fetchMedia({
         , (SELECT GROUP_CONCAT(MRA.Release_Attributes_searchTerm, ';') FROM tbl_Movies_Release_Attributes MRA WHERE MRA.id_Movies = MOV.id_Movies AND MRA.deleted = 0) AS ReleaseAttributesSearchTerms
         , (SELECT GROUP_CONCAT(Encoded_Library_Name_Trimmed, ';') FROM tbl_Movies_MI_Tracks MITVIDEO WHERE MITVIDEO.type = "video" AND MITVIDEO.id_Movies = MOV.id_Movies ORDER BY "Default" DESC) AS Video_Encoder
         , (SELECT GROUP_CONCAT(Format, ';') FROM tbl_Movies_MI_Tracks MITAUDIO WHERE MITAUDIO.type = "audio" AND MITAUDIO.id_Movies = MOV.id_Movies ORDER BY "Default" DESC) AS Audio_Format
+        , (SELECT GROUP_CONCAT(MI_Quality, ', ') FROM tbl_Movies_MI_Qualities MMIQ WHERE MMIQ.id_Movies = MOV.id_Movies AND Category_Name = 'video-resolution') AS MI_Video_Resolutions
+        , (SELECT GROUP_CONCAT(MI_Quality, ', ') FROM tbl_Movies_MI_Qualities MMIQ WHERE MMIQ.id_Movies = MOV.id_Movies AND Category_Name = 'video-hdr') AS MI_Video_HDR
+        , (
+            SELECT
+            JSON_GROUP_ARRAY (
+              JSON_OBJECT
+              (
+                'MI_Quality'
+                , MI_Quality
+                , 'Category_Name'
+                , Category_Name
+              )
+            )
+            FROM (
+              SELECT MI_Quality, Category_Name FROM tbl_Movies_MI_Qualities MMIQ WHERE MMIQ.id_Movies = MOV.id_Movies ORDER BY Category_Sort
+            )
+          ) AS MI_Qualities
       `
       }
     FROM tbl_Movies MOV
@@ -5009,7 +5084,8 @@ async function fetchMedia({
       }
 
       if (mediaItem.MI_Qualities) {
-        mediaItem.MI_Qualities = mediaItem.MI_Qualities.split(", ");
+        logger.log("[fetchMedia] mediaItem.MI_Qualities:", mediaItem.MI_Qualities);
+        mediaItem.MI_Qualities = JSON.parse(mediaItem.MI_Qualities);
       }
 
       // additional fields (prevent Recalculation of Pagination Items on mouseover)
@@ -6397,6 +6473,7 @@ async function fetchFilterYears($MediaType, $SpecificMediaType, loadFilterValues
   shared.loadingFilter = "";
 }
 
+// #VIDEOPROPERTIES
 async function fetchFilterQualities(
   $MediaType,
   $SpecificMediaType,
@@ -6432,9 +6509,9 @@ async function fetchFilterQualities(
                       AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                       AND MOV.Extra_id_Movies_Owner IS NULL
                       ${additionalFilterQuery}
-) SubQ
-GROUP BY (MI_Quality)
-`,
+    ) SubQ
+    GROUP BY (MI_Quality)
+    `,
     { $MediaType, $Series_id_Movies_Owner }
   );
 
@@ -8646,6 +8723,7 @@ async function updateMovieLanguages($id_Movies, $Type, languageCodes) {
  * @param {Array<String>} videoQualities e.g. ['action', 'adventure', 'sci-fi']
  */
 async function updateMovieVideoQualities($id_Movies, videoQualities) {
+  // #VIDEOPROPERTIES TODO
   logger.log("[updateMovieVideoQualities] START, $id_Movies:", $id_Movies, "videoQualities:", videoQualities);
 
   const mediaItemVideoQualities = await db.fireProcedureReturnAll(
@@ -8682,7 +8760,7 @@ async function updateMovieVideoQualities($id_Movies, videoQualities) {
       mediaItemVideoQuality.Found = true;
     } else {
       // video quality needs to be added for the movie
-      logger.log("[updateMovieVideoQualities] videoQuality was needs to be added...");
+      logger.log("[updateMovieVideoQualities] videoQuality needs to be added...");
       await db.fireProcedure(
         "INSERT INTO tbl_Movies_MI_Qualities (id_Movies, MI_Quality, deleted) VALUES ($id_Movies, $MI_Quality, 0)",
         {
