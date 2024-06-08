@@ -532,7 +532,7 @@ export default {
           queryParams.$Video_Encoder = this.propertyValue;
           break;
         case "video-quality":
-          queryParams.$Video_Quality = this.propertyValue;
+          queryParams.$Video_Quality = this.propertyValue.MI_Quality;
           break;
         case "person":
           queryParams.$IMDB_Person_ID = this.propertyValue;
@@ -615,7 +615,7 @@ export default {
                   }
                   ${
                     this.propertyTypeKey === "video-quality"
-                      ? `AND (MOV.MI_Quality = $Video_Quality OR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_MI_Qualities MOVQ WHERE MOVQ.MI_Quality = $Video_Quality AND MOVQ.deleted = 0))`
+                      ? `AND (MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_MI_Qualities MOVQ WHERE MOVQ.MI_Quality = $Video_Quality AND MOVQ.deleted = 0))`
                       : ""
                   }
                   ${this.propertyTypeKey === "person" ? `AND MC.IMDB_Person_ID = $IMDB_Person_ID` : ""}
@@ -720,7 +720,7 @@ export default {
           setFilter.filterVideoEncoders = [this.propertyValue];
           break;
         case "video-quality":
-          setFilter.filterQualities = [this.propertyValue];
+          setFilter.filterQualities = [this.propertyValue.MI_Quality];
           break;
         case "person":
           await store.addFilterPerson(this.propertyValue, this.propertyValueDisplayText);
@@ -923,7 +923,7 @@ export default {
             filters.filterQualities = [
               { MI_Quality: "<none>", Selected: false },
               {
-                MI_Quality: this.propertyValue,
+                MI_Quality: this.propertyValue.MI_Quality,
                 Selected: true,
               },
             ];

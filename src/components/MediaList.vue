@@ -628,8 +628,10 @@
       v-bind:Series_Name="series.item.Name"
       v-bind:Series_Year_Display="series.item.yearDisplay"
       propertyTypeKey="video-quality"
-      v-bind:propertyValue="videoQualityDialog.Video_Quality"
-      v-bind:propertyValueDisplayText="videoQualityDialog.Video_Quality"
+      v-bind:propertyValue="videoQualityDialog.MI_Qualities_Item"
+      v-bind:propertyValueDisplayText="
+        videoQualityDialog.MI_Qualities_Item ? videoQualityDialog.MI_Qualities_Item.MI_Quality : null
+      "
       v-on:close="onVideoQualityDialogClose"
       v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-video-quality-dialog>
@@ -965,7 +967,7 @@ export default {
 
     videoQualityDialog: {
       show: false,
-      Video_Quality: null,
+      MI_Qualities_Item: null,
       Series_id_Movies_Owner: null,
       isInDialog: false,
     },
@@ -2151,11 +2153,11 @@ export default {
       return;
     },
 
-    mpdShowVideoQualityDialog(videoQuality, isInDialog) {
-      logger.log("[mpdShowVideoQualityDialog]:", videoQuality);
+    mpdShowVideoQualityDialog(MI_Qualities_Item, isInDialog) {
+      logger.log("[mpdShowVideoQualityDialog] MI_Qualities_Item:", MI_Qualities_Item);
 
       this.videoQualityDialog.show = true;
-      this.videoQualityDialog.Video_Quality = videoQuality;
+      this.videoQualityDialog.MI_Qualities_Item = MI_Qualities_Item;
       this.videoQualityDialog.isInDialog = !!isInDialog;
 
       return;
@@ -3004,7 +3006,7 @@ export default {
           break;
         case "videoQualityClicked":
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
-          await this.mpdShowVideoQualityDialog(payload.MI_Quality, payload.isInDialog);
+          await this.mpdShowVideoQualityDialog(payload.MI_Qualities_Item, payload.isInDialog);
           break;
 
         default:

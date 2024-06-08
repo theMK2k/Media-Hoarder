@@ -2735,7 +2735,7 @@ async function applyMediaInfo(movie, onlyNew) {
 				, MI_Duration = $MI_Duration
 				, MI_Duration_Seconds = $MI_Duration_Seconds
 				, MI_Duration_Formatted = $MI_Duration_Formatted
-				, MI_Quality = $MI_Quality  -- #VIDEOPROPERTIES deprecate!
+				, MI_Quality = $MI_Quality  -- TODO: #VIDEOPROPERTIES deprecate!
 				, MI_Aspect_Ratio = $MI_Aspect_Ratio
 				, MI_Audio_Languages = $MI_Audio_Languages
 				, MI_Subtitle_Languages = $MI_Subtitle_Languages
@@ -4347,22 +4347,12 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
   logger.log("[generateFilterQuery] filters.filterQualities:", filters.filterQualities);
   if (filters.filterQualities && filters.filterQualities.find((filter) => !filter.Selected)) {
     if (filters.filterQualities.find((filter) => filter.Selected && !filter.MI_Quality)) {
-      filterQualities = `AND (MOV.MI_Quality IS NULL `;
+      filterQualities = `AND (MOV.id_Movies NOT IN (SELECT id_Movies FROM tbl_Movies_MI_Qualities MOVQ WHERE (MOVQ.deleted IS NULL OR MOVQ.deleted = 0)) `;
     } else {
       filterQualities = `AND (1=0 `;
     }
 
     if (filters.filterQualities.find((filter) => filter.Selected && filter.MI_Quality)) {
-      filterQualities += `OR MOV.MI_Quality IN (`;
-
-      filterQualities += filters.filterQualities
-        .filter((filter) => filter.Selected)
-        .map((filter) => filter.MI_Quality)
-        .reduce((prev, current) => {
-          return prev + (prev ? ", " : "") + `${sqlString.escape(current)}`;
-        }, "");
-      filterQualities += ")";
-
       filterQualities += `\nOR MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_MI_Qualities MOVQ WHERE (MOVQ.deleted IS NULL OR MOVQ.deleted = 0) AND MOVQ.MI_Quality IN (`;
       filterQualities += filters.filterQualities
         .filter((filter) => filter.Selected)

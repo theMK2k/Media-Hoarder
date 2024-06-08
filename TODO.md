@@ -26,11 +26,12 @@
       - [x] add Category_Name 'video-resolution' and Category_Sort 1 for all entries ("SD", "HD", "UHD", "4K", ...)
       - ?remove MI_Quality column from tbl_Movies? -> !migration needs to check if MI_Quality column is present in tbl_Movies before!
   - [WIP] everywhere in code where MI_Quality is used, use tbl_Movies_MI_Qualities (rescan, fetchMedia etc.)
-    - [ ] adapt mediaPropertyDialog for video quality Object containing MI_Quality, Category_Name (was string before)
-    - [ ] adapt videoQualityClicked for Object containing MI_Quality, Category_Name
-  - [WIP] adapt updateSeriesVideoQualitiesFromEpisodes
+    - [x] adapt mediaPropertyDialog for video quality Object containing MI_Quality, Category_Name (was string before)
+    - [x] adapt videoQualityClicked for Object containing MI_Quality, Category_Name
+  - [x] adapt updateSeriesVideoQualitiesFromEpisodes
   - [ ] check what store.updateMovieVideoQualities does
-  - [ ] introduce AND filter for Video Qualities
+
+  - [ ] LATER: introduce AND filter for Video Qualities (other filters might also get AND filter added)
 
 ### Series: scanning
 
@@ -98,6 +99,10 @@
     - ERROR:
       - (new) mediainfo without result (possibly due to max path length exceeded)
       - IMDB GraphQL errors
+  - [ ] introduce error types:
+    - during filescan
+    - during imdb scraping
+    - during mediainfo
 - [ ] add ScanErrors functionality in applyMediaInfo (mediainfo may fail on exceeding 259 chars paths)
 - [ ] investigate the errors of a bigger rescan:
   - [ ] store.js:2199 Error: Command failed: "c:\Apps\Video\MediaInfo CLI\MediaInfo.exe" --Output=XML "... a too long path exceeding 259 characters..."
