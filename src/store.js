@@ -8729,6 +8729,8 @@ async function updateMovieVideoQualities($id_Movies, videoQualities) {
   const mediaItemVideoQualities = await db.fireProcedureReturnAll(
     ` SELECT  id_Movies_MI_Qualities
               , MI_Quality
+              , Category_Name
+              , Category_Sort
               , deleted
               , 0 AS Found
       FROM  tbl_Movies_MI_Qualities
@@ -9290,6 +9292,8 @@ async function updateSeriesVideoQualitiesFromEpisodes($id_Movies) {
     `
       SELECT
         MI_Quality
+        , Category_Name
+        , Category_Sort
         , deleted
       FROM  tbl_Movies_MI_Qualities
       WHERE id_Movies = $id_Movies
@@ -9302,8 +9306,10 @@ async function updateSeriesVideoQualitiesFromEpisodes($id_Movies) {
   const episodesVideoQualities = await db.fireProcedureReturnAll(
     `SELECT DISTINCT
             MI_Quality
-      FROM  tbl_Movies
-      WHERE MI_Quality IS NOT NULL
+            , Category_Name
+            , Category_Sort
+      FROM  tbl_Movies_MI_Qualities
+      WHERE (deleted IS NULL OR deleted = 0)
             AND id_Movies IN (
                 SELECT id_Movies
                 FROM  tbl_Movies MOV
@@ -9314,7 +9320,7 @@ async function updateSeriesVideoQualitiesFromEpisodes($id_Movies) {
     { $id_Movies }
   );
 
-  logger.log(`[updateSeriesVideoQualitiesFromEpisodes] episodesLanguages:`, episodesVideoQualities);
+  logger.log(`[updateSeriesVideoQualitiesFromEpisodes] episodesVideoQualities:`, episodesVideoQualities);
 
   // add episodesVideoQualities that are not in seriesVideoQualities
   for (const episodesVideoQuality of episodesVideoQualities) {
@@ -9323,9 +9329,14 @@ async function updateSeriesVideoQualitiesFromEpisodes($id_Movies) {
       logger.log(`[updateSeriesVideoQualitiesFromEpisodes] add:`, episodesVideoQuality);
 
       await db.fireProcedure(
-        `INSERT INTO tbl_Movies_MI_Qualities (id_Movies, MI_Quality, deleted)
-           VALUES ($id_Movies, $MI_Quality, 0)`,
-        { $id_Movies, $MI_Quality: episodesVideoQuality.MI_Quality }
+        `INSERT INTO tbl_Movies_MI_Qualities (id_Movies, Category_Name, Category_Sort, MI_Quality, deleted)
+           VALUES ($id_Movies, $Category_Name, $Category_Sort, $MI_Quality, 0)`,
+        {
+          $id_Movies,
+          $MI_Quality: episodesVideoQuality.MI_Quality,
+          $Category_Name: episodesVideoQuality.Category_Name,
+          $Category_Sort: episodesVideoQuality.Category_Sort,
+        }
       );
     }
   }

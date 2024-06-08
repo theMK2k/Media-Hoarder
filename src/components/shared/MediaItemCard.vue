@@ -220,15 +220,24 @@
 
               <div style="font-size: 0.875rem; font-weight: normal">
                 <span v-if="mediaItem.MI_Qualities">
-                  <span v-for="(MI_Quality, index) in mediaItem.MI_Qualities" v-bind:key="MI_Quality">
+                  <span
+                    v-for="(MI_Quality_Item, index) in mediaItem.MI_Qualities"
+                    v-bind:key="MI_Quality_Item.MI_Quality"
+                  >
                     <span>{{ index > 0 ? ", " : "" }}</span>
                     <span
                       class="mk-clickable"
                       v-bind:class="{
-                        'mk-search-highlight': $shared.filterQualitiesAppliedContains(MI_Quality),
+                        'mk-search-highlight': $shared.filterQualitiesAppliedContains(MI_Quality_Item.MI_Quality),
                       }"
-                      v-on:click.stop="emitMediaItemEvent('videoQualityClicked', { mediaItem, MI_Quality, isInDialog })"
-                      >{{ MI_Quality }}</span
+                      v-on:click.stop="
+                        emitMediaItemEvent('videoQualityClicked', {
+                          mediaItem,
+                          MI_Quality: MI_Quality_Item,
+                          isInDialog,
+                        })
+                      "
+                      >{{ MI_Quality_Item.MI_Quality }}</span
                     >
                   </span>
                 </span>

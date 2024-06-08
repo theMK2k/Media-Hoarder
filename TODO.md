@@ -26,7 +26,10 @@
       - [x] add Category_Name 'video-resolution' and Category_Sort 1 for all entries ("SD", "HD", "UHD", "4K", ...)
       - ?remove MI_Quality column from tbl_Movies? -> !migration needs to check if MI_Quality column is present in tbl_Movies before!
   - [WIP] everywhere in code where MI_Quality is used, use tbl_Movies_MI_Qualities (rescan, fetchMedia etc.)
-  - check what store.updateMovieVideoQualities does
+    - [ ] adapt mediaPropertyDialog for video quality Object containing MI_Quality, Category_Name (was string before)
+    - [ ] adapt videoQualityClicked for Object containing MI_Quality, Category_Name
+  - [WIP] adapt updateSeriesVideoQualitiesFromEpisodes
+  - [ ] check what store.updateMovieVideoQualities does
   - [ ] introduce AND filter for Video Qualities
 
 ### Series: scanning
