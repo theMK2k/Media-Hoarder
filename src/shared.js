@@ -437,6 +437,17 @@ const shared = new Vue({
 
     imdbScraperChecks: [
       {
+        key: "adhoc_FindPageSearch",
+        description: "Find (Ad-Hoc)",
+        alwaysEnabled: true, // show this check in any case
+        enabled: true,
+        checkFunctions: [imdbScraperTests.testIMDBFindPageSearch],
+        icon: null,
+        color: null,
+        isRunning: false,
+        result: null,
+      },
+      {
         key: "rescanMoviesMetaData_fetchIMDBMetaData_mainPageData",
         description: "Main Page (Genres, Rating/Votes, Metacritic Score, Poster, Plot Summary, Trailer URL)",
         enabled: true,
@@ -552,17 +563,6 @@ const shared = new Vue({
         description: "Series Episodes",
         enabled: true,
         checkFunctions: [imdbScraperTests.testIMDBSeriesEpisodes],
-        icon: null,
-        color: null,
-        isRunning: false,
-        result: null,
-      },
-      {
-        key: "adhoc_FindPageSearch",
-        description: "Find (Ad-Hoc)",
-        alwaysEnabled: true,
-        enabled: true,
-        checkFunctions: [imdbScraperTests.testIMDBFindPageSearch],
         icon: null,
         color: null,
         isRunning: false,

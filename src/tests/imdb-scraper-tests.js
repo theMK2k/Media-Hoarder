@@ -1332,7 +1332,7 @@ async function testIMDBAdvancedTitleSearch() {
 
 async function testIMDBFindPageSearch() {
   const testResult = {
-    name: "IMDB Find",
+    name: "IMDB Find (vital for detecting the IMDB entry, used with find-imdb-tconst)",
     functionName: "testIMDBFindPageSearch",
     status: status.SUCCESS,
     log: [],

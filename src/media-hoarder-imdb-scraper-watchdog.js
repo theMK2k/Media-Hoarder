@@ -83,6 +83,8 @@ const log = {
     });
   })();
 
+  if (!config.testmodule || config.testmodule === "testIMDBFindPageSearch")
+    addLogEntry(await imdbScraperTests.testIMDBFindPageSearch());
   if (!config.testmodule || config.testmodule === "testIMDBmainPageData")
     addLogEntry(await imdbScraperTests.testIMDBmainPageData());
   if (!config.testmodule || config.testmodule === "testIMDBmainPageData2")
@@ -121,8 +123,6 @@ const log = {
     addLogEntry(await imdbScraperTests.testIMDBSuggestion());
   if (!config.testmodule || config.testmodule === "testIMDBAdvancedTitleSearch")
     addLogEntry(await imdbScraperTests.testIMDBAdvancedTitleSearch());
-  if (!config.testmodule || config.testmodule === "testIMDBFindPageSearch")
-    addLogEntry(await imdbScraperTests.testIMDBFindPageSearch());
   if (!config.testmodule || config.testmodule === "testIMDBSeriesEpisodes")
     addLogEntry(await imdbScraperTests.testIMDBSeriesEpisodes());
   if (!config.testmodule || config.testmodule === "testIMDBSeriesSeasons")
