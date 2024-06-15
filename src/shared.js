@@ -558,6 +558,17 @@ const shared = new Vue({
         result: null,
       },
       {
+        key: "adhoc_FindPageSearch",
+        description: "Find (Ad-Hoc)",
+        alwaysEnabled: true,
+        enabled: true,
+        checkFunctions: [imdbScraperTests.testIMDBFindPageSearch],
+        icon: null,
+        color: null,
+        isRunning: false,
+        result: null,
+      },
+      {
         key: "adhoc_PersonData",
         description: "Person Data (Ad-Hoc)",
         enabled: true,
@@ -597,19 +608,6 @@ const shared = new Vue({
         isRunning: false,
         result: null,
       },
-      /*
-      // currently disabled we don't use the "Find" search
-      {
-        key: "adhoc_FindSearch",
-        description: "Find (Ad-Hoc)",
-        enabled: true,
-        checkFunction: imdbScraperTests.testIMDBFind,
-        icon: null,
-        color: null,
-        isRunning: false,
-        result: null,
-      },
-      */
     ],
 
     supportedLanguages: [

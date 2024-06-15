@@ -104,7 +104,8 @@ export default {
 
       this.$shared.imdbScraperChecks.forEach((check) => {
         check.enabled = this.settings
-          ? this.settings.userScanOptions.find(
+          ? check.alwaysEnabled ||
+            this.settings.userScanOptions.find(
               (userScanOption) => userScanOption.key === check.key && userScanOption.enabled
             )
           : true;
