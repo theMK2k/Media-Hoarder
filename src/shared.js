@@ -438,7 +438,7 @@ const shared = new Vue({
     imdbScraperChecks: [
       {
         key: "adhoc_FindPageSearch",
-        description: "Find (Ad-Hoc)",
+        description: "Find (vital to detect the IMDB entry for movies and tv series)",
         alwaysEnabled: true, // show this check in any case
         enabled: true,
         checkFunctions: [imdbScraperTests.testIMDBFindPageSearch],

@@ -81,7 +81,7 @@ export async function findIMDBtconstInNFO(movie) {
  * Find an IMDB tconst based on the movie's name (also checks possible release years contained in the name)
  * @param {Object} movie
  * @param {Object} options
- * @returns {String|Object}
+ * @returns {String|Object} with options.returnAnalysisData = true, returns an object with analysis data, else the tconst (or empty string if tconst could't be found)
  */
 export async function findIMDBtconstByFileOrDirname(movie, options) {
   logger.log("[findIMDBtconstByFileOrDirname] START movie.isDirectoryBased", movie.isDirectoryBased, "movie:", movie);
@@ -280,6 +280,7 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
     }
   } catch (err) {
     logger.error(err);
+    throw err;
   }
 
   return options.returnAnalysisData ? stats : "";

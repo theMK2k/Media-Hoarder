@@ -2034,7 +2034,9 @@ async function scrapeIMDBFindPageSearchV3(title) {
     return results;
   } catch (error) {
     logger.error("[scrapeIMDBFindPageSearchV3] ERROR:", error);
-    return [];
+
+    // return [];
+    throw error;
   }
 }
 

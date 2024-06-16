@@ -4,8 +4,6 @@
 
 ## NEXT Major (v1.4.0)
 
-- [ ] add testIMDBFindPageSearch to testset in UI (it is used for detecting the IMDB entry)
-
 - [ ] cancel loading filters on series -> episodes change
 
 - [ ] DB Migrations

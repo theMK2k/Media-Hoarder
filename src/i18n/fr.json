@@ -906,7 +906,7 @@
   "Trailer Media URLs (Ad-Hoc)": "Liens des bandes annonces (Ad-Hoc)",
   "Suggestion Search (Ad-Hoc)": "Suggestion de recherche (Ad-Hoc)",
   "Advanced Title Search (Ad-Hoc)": "Recherche de titre avancée (Ad-Hoc)",
-  "Find (Ad-Hoc)": "Rechercher (Ad-Hoc)",
+  "Find (vital to detect the IMDB entry for movies and tv series)": "Rechercher (vital pour détecter l'entrée IMDB pour les films et séries télévisées)",
   "Edit Filters": "Editer filtres",
   "Show/Hide this filter": "Montrer/Masquer le filtre",
   "IMDB ID": "Identifiant IMDB",

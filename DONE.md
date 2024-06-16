@@ -2,9 +2,24 @@
 
 ## next (v1.4.0-b4)
 
+## v1.4.0-b4
 
+## Misc / Fixes
 
-## v1.4.0-b3
+The IMDB entry detection (Media Hoarder trying to find the correct IMDB entry for a movie / tv show based on its name and release year) can fail due to different circumstances. Until now, Media Hoarder did not show errors prominently enough.
+
+- [x] SCRAPER: add testIMDBFindPageSearch to testset in UI
+
+![image](https://github.com/theMK2k/Media-Hoarder/assets/16878526/922bc341-d4ff-4198-9788-36885fbee140)
+
+- [x] SCRAPER: during the phase of IMDB entry detection, if something fails, the error will be stored in the scraper errors
+
+![image](https://github.com/theMK2k/Media-Hoarder/assets/16878526/9b818ea3-db29-443e-8f1b-ced30ac45bc3)
+
+# Older Releases (click to expand)
+
+<details>
+  <summary>v1.4.0-b3</summary>
 
 ## Features (v1.4.0-b3)
 
@@ -33,8 +48,7 @@
 
 - [x] SCRAPER: stop imdb scraping when the tconst is obviously not working
 - [x] reworked relative time and duration i18n
-
-# Older Releases (click to expand)
+</details>
 
 <details>
   <summary>v1.4.0-b2</summary>
