@@ -2911,15 +2911,17 @@
             {{ snackbardetail }}
           </div>
         </div>
-        <v-btn
-          v-if="snackbar.id_Scan_Processes"
-          dark
-          text
-          @click="openScanHistoryItemDialog(snackbar.id_Scan_Processes)"
-        >
-          {{ $t("Show Details") }}
-        </v-btn>
-        <v-btn dark text @click="snackbar.show = false">{{ $t("Close") }}</v-btn>
+        <div style="display: flex; align-items: flex-end">
+          <v-btn
+            v-if="snackbar.id_Scan_Processes"
+            dark
+            text
+            @click="openScanHistoryItemDialog(snackbar.id_Scan_Processes)"
+          >
+            {{ $t("Show Details") }}
+          </v-btn>
+          <v-btn dark text @click="snackbar.show = false">{{ $t("Close") }}</v-btn>
+        </div>
       </div>
     </v-snackbar>
 
