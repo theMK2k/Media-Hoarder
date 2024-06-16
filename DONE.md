@@ -4,6 +4,24 @@
 
 ## v1.4.0-b4
 
+## Features
+
+- [x] FEAT: add HDR variants to the Video Quality section
+
+Media Hoarder now detects the following HDR variants: "HDR10", "HDR10+", "DV", "HLG".
+
+The HDR variants are shown in the media entries of the main list:
+
+![image](https://github.com/theMK2k/Media-Hoarder/assets/16878526/6f225bee-ee2e-4efd-ae21-631456ad8217)
+
+When clicked, you can see details about a certain HDR variant:
+
+![image](https://github.com/theMK2k/Media-Hoarder/assets/16878526/b5eb9f78-8269-4ef8-a622-a6a2ad27b7ab)
+
+Filter section "Video Quality" also contains these entries:
+
+![image](https://github.com/theMK2k/Media-Hoarder/assets/16878526/58258ddb-58bd-49b1-bc9a-1340cd746c03)
+
 ## Misc / Fixes
 
 The IMDB entry detection (Media Hoarder trying to find the correct IMDB entry for a movie / tv show based on its name and release year) can fail due to different circumstances. Until now, Media Hoarder did not show errors prominently enough.
