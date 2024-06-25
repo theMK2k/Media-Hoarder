@@ -1,11 +1,13 @@
 #!/bin/sh
 
+echo "IMPORTANT: BUILDING BETA VERSION"
+
 rm ./RELEASE/*
 
 npx browserslist@latest --update-db
 
-npm run electron:build-win-portable
-npm run electron:build-win-setup
+npm run electron:build-win-portable-beta
+npm run electron:build-win-setup-beta
 
 cd RELEASE
 

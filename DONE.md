@@ -1,10 +1,23 @@
 # DONE
 
-## next (v1.4.0-b4)
+## next (v1.4.0-b6)
 
-## v1.4.0-b4
+## v1.4.0-b5
 
 ## Features
+
+- [x] FEAT: do an update check on the beta channel if the build is a beta build
+
+A beta build (like this one) will now do version checks against other beta builds and tell you if a newer beta build is available. The link for downloading is also pointing to the beta releases (and not the Media Hoarder website's download section).
+
+![image](https://github.com/theMK2k/Media-Hoarder/assets/16878526/63dadfb6-a7cc-4357-b956-91ee852d0226)
+
+# Older Releases (click to expand)
+
+<details>
+  <summary>v1.4.0-b4</summary>
+
+## Features (v1.4.0-b4)
 
 - [x] FEAT: add HDR variants to the Video Quality section
 
@@ -22,7 +35,7 @@ Filter section "Video Quality" also contains these entries:
 
 ![image](https://github.com/theMK2k/Media-Hoarder/assets/16878526/58258ddb-58bd-49b1-bc9a-1340cd746c03)
 
-## Misc / Fixes
+## Misc / Fixes (v1.4.0-b4)
 
 The IMDB entry detection (Media Hoarder trying to find the correct IMDB entry for a movie / tv show based on its name and release year) can fail due to different circumstances. Until now, Media Hoarder did not show errors prominently enough.
 
@@ -34,7 +47,7 @@ The IMDB entry detection (Media Hoarder trying to find the correct IMDB entry fo
 
 ![image](https://github.com/theMK2k/Media-Hoarder/assets/16878526/9b818ea3-db29-443e-8f1b-ced30ac45bc3)
 
-# Older Releases (click to expand)
+</details>
 
 <details>
   <summary>v1.4.0-b3</summary>

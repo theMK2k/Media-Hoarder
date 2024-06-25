@@ -12,6 +12,7 @@ const logger = require("./logger");
 const isBuild = process.env.NODE_ENV === "production";
 const isDevelopment = !isBuild;
 const isWindows = process.platform === "win32";
+const isBeta = process.env.VUE_APP_IS_BETA === "true";
 
 const writeFileAsync = util.promisify(fs.writeFile);
 const existsAsync = util.promisify(fs.exists);
@@ -603,6 +604,7 @@ export {
   isWindows,
   isPORTABLE,
   isDevelopment,
+  isBeta,
   writeFileAsync,
   existsAsync,
   getDataPath,

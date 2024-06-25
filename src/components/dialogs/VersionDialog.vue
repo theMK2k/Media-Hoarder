@@ -46,9 +46,7 @@
                   latestName: latestName,
                 })
               }}
-              <a href="https://media.hoarder.software/downloads" target="_blank" rel="noreferrer noopener nofollow"
-                >https://media.hoarder.software/downloads</a
-              >
+              <a v-bind:href="downloadURL" target="_blank" rel="noreferrer noopener nofollow">{{ downloadURL }}</a>
             </span>
             <span v-if="isUpToDate">{{ $t("you are up to date") }}</span>
             <span v-if="!isNewVersionAvailable && !isUpToDate">{{
@@ -147,6 +145,12 @@ export default {
     };
   },
 
+  computed: {
+    downloadURL() {
+      return process.env.VUE_APP_DOWNLOAD_URL || "https://media.hoarder.software/downloads";
+    },
+  },
+
   watch: {
     infoPosition: function (newValue) {
       this.updateVersionInfo(newValue);
@@ -187,7 +191,10 @@ export default {
           logger.log("[updateVersionInfo] fetchRemoteHistory");
 
           const resRemoteVersionInfo = await fetch(
-            `https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/public/history/${fileName}`
+            `${
+              process.env.VUE_APP_HISTORY_BASE_URL ||
+              "https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/public/history"
+            }/${fileName}`
           );
 
           const remoteVersionInfo = await resRemoteVersionInfo.text();
@@ -224,7 +231,10 @@ export default {
         this.quoteSource = objLocalHistory[0].quoteSource;
 
         const resRemoteHistory = await fetch(
-          "https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/public/history/history.json"
+          `${
+            process.env.VUE_APP_HISTORY_BASE_URL ||
+            "https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/public/history"
+          }/history.json`
         );
 
         const remoteHistory = await resRemoteHistory.json();

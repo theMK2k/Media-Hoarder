@@ -2734,6 +2734,7 @@
       <v-toolbar-title class="mr-12 align-center mk-noshrink">
         <span class="title">
           {{ $shared.appName }}
+          {{ $shared.isBeta ? " (BETA)" : "" }}
           {{ $shared.isDevelopment ? ` (DEV)` : "" }}
           {{ $shared.isPORTABLE ? ` - Portable` : "" }}
         </span>
