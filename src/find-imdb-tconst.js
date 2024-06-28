@@ -79,12 +79,19 @@ export async function findIMDBtconstInNFO(movie) {
 
 /**
  * Find an IMDB tconst based on the movie's name (also checks possible release years contained in the name)
- * @param {Object} movie
+ * @param {Object} mediaItem
  * @param {Object} options
  * @returns {String|Object} with options.returnAnalysisData = true, returns an object with analysis data, else the tconst (or empty string if tconst could't be found)
  */
-export async function findIMDBtconstByFileOrDirname(movie, options) {
-  logger.log("[findIMDBtconstByFileOrDirname] START movie.isDirectoryBased", movie.isDirectoryBased, "movie:", movie);
+export async function findIMDBtconstByFileOrDirname(mediaItem, options) {
+  // TODO: utilize mediaItem.MediaType ("movies" or "series") to rank the IMDB search results
+
+  logger.log(
+    "[findIMDBtconstByFileOrDirname] START mediaItem.isDirectoryBased",
+    mediaItem.isDirectoryBased,
+    "mediaItem:",
+    mediaItem
+  );
 
   if (!options) {
     options = {
@@ -112,18 +119,20 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
   };
 
   try {
-    logger.log("[findIMDBtconstByFileOrDirname] movie.isDirectoryBased", movie.isDirectoryBased);
-    const arrYears = movie.isDirectoryBased
+    logger.log("[findIMDBtconstByFileOrDirname] movie.isDirectoryBased", mediaItem.isDirectoryBased);
+    const arrYears = mediaItem.isDirectoryBased
       ? helpers.getYearsFromFileName(
-          helpers.getLastDirectoryName(movie.MediaType === "series" ? movie.fullPath : movie.fullDirectory),
+          helpers.getLastDirectoryName(mediaItem.MediaType === "series" ? mediaItem.fullPath : mediaItem.fullDirectory),
           false
         )
-      : helpers.getYearsFromFileName(movie.Filename, false);
+      : helpers.getYearsFromFileName(mediaItem.Filename, false);
 
     const name = (
-      movie.isDirectoryBased
-        ? helpers.getMovieNameFromDirectory(movie.MediaType === "series" ? movie.fullPath : movie.fullDirectory)
-        : helpers.getMovieNameFromFileName(movie.Filename)
+      mediaItem.isDirectoryBased
+        ? helpers.getMovieNameFromDirectory(
+            mediaItem.MediaType === "series" ? mediaItem.fullPath : mediaItem.fullDirectory
+          )
+        : helpers.getMovieNameFromFileName(mediaItem.Filename)
     )
       .replace(/\([^)]*?\)/g, "")
       .replace(/\[[^\]]*?\]/g, "")
@@ -145,6 +154,7 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
       let results = await scrapeIMDBFindPageSearchV3(searchTerm, options.category === "title" ? "tt" : null);
 
       logger.log(`[findIMDBtconstByFileOrDirname] ${results.length} results found for "${searchTerm}"`);
+      logger.log(`[findIMDBtconstByFileOrDirname] results:`, JSON.parse(JSON.stringify(results)));
       stats.numResults = results.length;
 
       if (results.length === 0) {
@@ -172,6 +182,16 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
             1
           );
         }
+      }
+
+      // When scanning a Series source path, re-rank results so that TV Series are preferred
+      if (mediaItem.MediaType === "series") {
+        logger.log("[findIMDBtconstByFileOrDirname] re-ranking results according to TV Series");
+        results = results.sort((a, b) => {
+          return a.title.includes("(TV Series)") && !b.title.includes("(TV Series)") ? -1 : 0;
+        });
+
+        logger.log("[findIMDBtconstByFileOrDirname] re-ranked results:", results);
       }
 
       // filter by year match
@@ -205,7 +225,7 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
       }
 
       // filter by runtime, but only use the first 10 items due to traffic
-      if (results.length > 1 && movie.MI_Duration_Seconds) {
+      if (results.length > 1 && mediaItem.MI_Duration_Seconds) {
         let counter = 0;
         for (let result of results) {
           counter++;
@@ -219,7 +239,7 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
           if (imdbData.$IMDB_runtimeMinutes) {
             const runtimeSeconds = imdbData.$IMDB_runtimeMinutes ? parseInt(imdbData.$IMDB_runtimeMinutes) * 60 : null;
 
-            result.runtimeDiff = runtimeSeconds ? Math.abs(movie.MI_Duration_Seconds - runtimeSeconds) : null;
+            result.runtimeDiff = runtimeSeconds ? Math.abs(mediaItem.MI_Duration_Seconds - runtimeSeconds) : null;
 
             if (result.runtimeDiff !== null) {
               stats.runtimematch = true;
@@ -228,7 +248,7 @@ export async function findIMDBtconstByFileOrDirname(movie, options) {
               }
             }
 
-            if (result.runtimeDiff < movie.MI_Duration_Seconds * 0.02) {
+            if (result.runtimeDiff < mediaItem.MI_Duration_Seconds * 0.02) {
               break; // the runtime matches at least to 98%, which is a window of 2 minutes if the movie has a runtime of 100 minutes
             }
           } else {

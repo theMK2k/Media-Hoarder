@@ -6,11 +6,6 @@
 
 - [ ] cancel loading filters on series -> episodes change
 
-- [ ] DB Migrations
-
-  - [x] new table: tbl_DB_Migrations
-  - [ ] implement migration runner
-
 - [WIP] introduce HDR (detect with color spaces, e.g. <https://www.reddit.com/r/PleX/comments/7kwoy8/is_there_a_way_to_tell_if_a_file_is_hdr_from_the/>)
 
   - "HDR10", "HDR10+", "DV", "HLG"
@@ -63,9 +58,9 @@
 - [ ] rescanHandleDuplicates (also provide snackbar progress for this)
 - [ ] investigate with series-generator: find possible multitudes of episode numbers (also: episode == null)
   - [ ] if this is the case: we need a better getSeriesEpisodeTconstFromCache, possibly by utilizing levenshtein between filename and imdb's episode title
-- #51 Found work around for custom shows and episodes
-- #39 Multipart Episodes
-- #36 Mediainfo always opening
+- [ ] #51 Found work around for custom shows and episodes
+- [ ] #39 Multipart Episodes
+- [ ] #36 Mediainfo always opening
 
 ### Series: Link IMDB Dialog
 
@@ -93,6 +88,7 @@
 - [ ] we apparently do not use the timezone (we store in UTC)
 - [ ] scanErrors:
   - [ ] review how rescan and applyIMDB handle scanErrors (string to object, handle null)
+  - [ ] artificially test graphql not found errors
   - [ ] introduce WARNING vs. ERROR
     - WARNING:
       - imdb implausibility

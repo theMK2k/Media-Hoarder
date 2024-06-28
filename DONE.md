@@ -2,9 +2,19 @@
 
 ## next (v1.4.0-b6)
 
-## v1.4.0-b5
+## v1.4.0-b6
 
-## Features
+## IMDB Scraper
+
+- [x] SCRAPER: When scanning series, re-rank IMDB search results so that tv-series are higher than movies when detecting the IMDB entry
+  - closes #61
+
+# Older Releases (click to expand)
+
+<details>
+  <summary>v1.4.0-b5</summary>
+
+## Features (v1.4.0-b5)
 
 - [x] FEAT: do an update check on the beta channel if the build is a beta build
 
@@ -12,7 +22,13 @@ A beta build (like this one) will now do version checks against other beta build
 
 ![image](https://github.com/theMK2k/Media-Hoarder/assets/16878526/63dadfb6-a7cc-4357-b956-91ee852d0226)
 
-# Older Releases (click to expand)
+## Misc (v1.4.0-b5)
+
+- [x] DB Migrations
+  - [x] new table: tbl_DB_Migrations
+  - [x] implement migration runner
+
+</details>
 
 <details>
   <summary>v1.4.0-b4</summary>
