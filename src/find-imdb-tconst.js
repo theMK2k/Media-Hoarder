@@ -168,6 +168,7 @@ export async function findIMDBtconstByFileOrDirname(mediaItem, options) {
 
       // filter by excluding "TV Series"
       if (results.length > 1 && options.excludeTVSeries) {
+        logger.log("[findIMDBtconstByFileOrDirname] excluding TV Series and TV Episodes from results");
         while (results.find((result) => result.title.includes("(TV Series)"))) {
           stats.excludedTVSeries = true;
           results.splice(
@@ -182,6 +183,8 @@ export async function findIMDBtconstByFileOrDirname(mediaItem, options) {
             1
           );
         }
+
+        logger.log("[findIMDBtconstByFileOrDirname] results after exclusion:", results);
       }
 
       // When scanning a Series source path, re-rank results so that TV Series are preferred
