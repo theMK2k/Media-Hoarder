@@ -164,9 +164,6 @@
               class="headline mb-2"
               style="margin-bottom: 0px !important; margin-top: 8px; margin-left: 9px"
             >
-              <!-- v-on:mouseover="setItemHovered(item, 'name', true)"
-                      v-on:mouseleave="setItemHovered(item, 'name', false)" -->
-
               <div style="display: flex; min-height: 30px">
                 <div style="overflow: hidden; text-overflow: ellipsis">
                   {{ series.item.Name }}
@@ -180,97 +177,9 @@
                     </span>
                   </span>
                 </div>
-                <!-- (all the edit buttons)
-                    <div>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <span v-on="on">
-                      <v-icon
-                        v-show="series.item.nameHovered || series.item.selected"
-                        class="mk-clickable"
-                        v-on:click.stop="onOpenEditMediaItemDialog(item)"
-                        style="margin-left: 8px; margin-bottom: 3px"
-                        >mdi-pencil</v-icon
-                      >
-                    </span>
-                  </template>
-                  <span style="margin-left: ">{{ $t("Edit Movie") }}</span>
-                </v-tooltip>
-
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <span v-on="on">
-                      <v-icon
-                        v-show="item.nameHovered || item.selected"
-                        class="mk-clickable"
-                        v-on:click.stop="onRescanItems([item])"
-                        style="margin-left: 8px; margin-bottom: 3px"
-                        v-bind:disabled="isScanning"
-                        >mdi-reload-alert</v-icon
-                      >
-                    </span>
-                  </template>
-                  <span>
-                    {{ $t("Rescan Meta Data") }}
-                    <span v-if="isScanning">
-                      <br />
-                      {{ $t("scan already in progress") }}
-                    </span>
-                  </span>
-                </v-tooltip>
-
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <span v-on="on">
-                      <v-icon
-                        v-show="item.nameHovered || item.selected"
-                        class="mk-clickable"
-                        v-on:click.stop="onOpenLinkIMDBDialog(item)"
-                        style="margin-left: 8px; margin-bottom: 3px"
-                        v-bind:disabled="isScanning"
-                        >mdi-link</v-icon
-                      >
-                    </span>
-                  </template>
-                  <span>
-                    {{ $t("Link with IMDB entry") }}
-                    <span v-if="isScanning">
-                      <br />
-                      {{ $t("scan already in progress") }}
-                    </span>
-                  </span>
-                </v-tooltip>
-
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <span v-on="on">
-                      <v-icon
-                        v-show="item.nameHovered || item.selected"
-                        class="mk-clickable-red"
-                        v-on:click.stop="onShowDeleteMediaDialog(item)"
-                        style="margin-left: 8px; margin-bottom: 3px"
-                        v-bind:disabled="isScanning"
-                        >mdi-delete</v-icon
-                      >
-                    </span>
-                  </template>
-                  <span>
-                    {{ $t("Delete") }}
-                    <span v-if="isScanning">
-                      <br />
-                      {{ $t("scan already in progress") }}
-                    </span>
-                  </span>
-                </v-tooltip>
-                    </div>
-                    -->
               </div>
             </v-list-item-title>
             <v-list-item-subtitle style="margin-bottom: 4px; min-height: 18px">
-              <!--
-              v-on:mouseover="setItemHovered(item, 'name2', true)"
-              v-on:mouseleave="setItemHovered(item, 'name2', false)"
-              -->
               {{ series.item.Name2 }}
             </v-list-item-subtitle>
           </div>
@@ -308,7 +217,7 @@
                   style="margin-right: 26px; padding: 0px !important"
                   v-bind:star-points="[7, 3, 6, 6, 2, 6, 5, 8, 4, 12, 7, 10, 10, 12, 9, 8, 12, 6, 8, 6]"
                   v-bind:glow="1"
-                  v-on:rating-selected="changeRating(item)"
+                  v-on:rating-selected="changeRating(series.item)"
                 ></star-rating>
               </div>
             </v-row>

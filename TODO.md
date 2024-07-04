@@ -11,7 +11,7 @@
   - "HDR10", "HDR10+", "DV", "HLG"
 
   - in sources: `#VIDEOPROPERTIES`
-  - [ ] add them to "Video Quality" filter
+  - [x] add them to "Video Quality" filter
 
   - [WIP] exclusively use tbl_Movies_MI_Qualities, deprecate tbl_Movies.MI_Quality
 

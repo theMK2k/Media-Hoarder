@@ -1,6 +1,8 @@
 # DONE
 
-## next (v1.4.0-b6)
+## next (v1.4.0-b7)
+
+- [ ] FIX: giving user rating stars for the series in episode view
 
 ## v1.4.0-b6
 
