@@ -233,7 +233,6 @@ async function manageIndexes(db) {
     generateIndexQueryObject("tbl_Genres", ["GenreID"], true),
     generateIndexQueryObject("tbl_Movies", ["id_SourcePaths"], false),
     generateIndexQueryObject("tbl_Movies", ["MI_Duration_Seconds"], false),
-    generateIndexQueryObject("tbl_Movies", ["MI_Quality"], false),
     generateIndexQueryObject("tbl_Movies", ["MI_Aspect_Ratio"], false),
     generateIndexQueryObject("tbl_Movies", ["IMDB_tconst"], false),
     generateIndexQueryObject("tbl_Movies", ["IMDB_releaseType"], false),
@@ -4777,7 +4776,6 @@ async function fetchMedia({
         , NULL AS file_created_at
         , NULL AS endYear
         , NULL AS MI_Duration
-        , NULL AS MI_Quality
         , NULL AS Audio_Languages
         , NULL AS Subtitle_Languages
         , NULL AS MI_Audio_Languages
@@ -4814,7 +4812,6 @@ async function fetchMedia({
         , MOV.file_created_at
         , MOV.endYear
         , MOV.MI_Duration
-        , MOV.MI_Quality
         , (SELECT GROUP_CONCAT(Language, ', ') FROM tbl_Movies_Languages ML WHERE ML.id_Movies = MOV.id_Movies AND ML.Type = 'audio') AS Audio_Languages
         , (SELECT GROUP_CONCAT(Language, ', ') FROM tbl_Movies_Languages ML WHERE ML.id_Movies = MOV.id_Movies AND ML.Type = 'subtitle') AS Subtitle_Languages
         , MOV.MI_Audio_Languages
