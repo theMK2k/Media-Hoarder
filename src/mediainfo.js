@@ -8,6 +8,8 @@ const helpers = require("./helpers/helpers");
 const mediainfoTrackDefinition = require("./object-definitions/mediainfo-track");
 const { languageNameCodeMapping } = require("./languages");
 
+const { shared } = require("./shared");
+
 const execAsync = util.promisify(child_process.exec);
 
 /**
@@ -252,27 +254,27 @@ function analyzeMediaInfoVideoProperties(videoTrack) {
 
     const tolerance = 1.1; // tolerance level, so that e.g. 1085p is NOT UHD
 
-    result.Video_Resolution = "SD";
+    result.Video_Resolution = shared.videoQualities.SD.name;
     result.qualityLevel = 1;
 
     if (iWidth * iHeight > 720 * 576 * tolerance) {
-      result.Video_Resolution = "720p";
+      result.Video_Resolution = shared.videoQualities["720p"].name;
       result.qualityLevel = 2;
     }
     if (iWidth * iHeight > 1280 * 720 * tolerance) {
-      result.Video_Resolution = "HD";
+      result.Video_Resolution = shared.videoQualities.HD.name;
       result.qualityLevel = 3;
     }
     if (iWidth * iHeight > 1920 * 1080 * tolerance) {
-      result.Video_Resolution = "UHD";
+      result.Video_Resolution = shared.videoQualities.UHD.name;
       result.qualityLevel = 4;
     }
     if (iWidth * iHeight > 3840 * 2160 * tolerance) {
-      result.Video_Resolution = "4K";
+      result.Video_Resolution = shared.videoQualities["4K"].name;
       result.qualityLevel = 5;
     }
     if (iWidth * iHeight > 4096 * 2160 * tolerance) {
-      result.Video_Resolution = "8K";
+      result.Video_Resolution = shared.videoQualities["8K"].name;
       result.qualityLevel = 6;
     }
   }
@@ -290,11 +292,11 @@ function analyzeMediaInfoVideoProperties(videoTrack) {
   logger.log("[analyzeMediaInfoVideoProperties] HDR_Format_Compatibility:", videoTrack.HDR_Format_Compatibility);
 
   if (videoTrack.HDR_Format == "Dolby Vision") {
-    result.Video_HDR = "DV";
+    result.Video_HDR = shared.videoQualities.DV.name;
   } else if (videoTrack.HDR_Format_Compatibility?.[0]?.startsWith("HDR10+")) {
-    result.Video_HDR = "HDR10+";
+    result.Video_HDR = shared.videoQualities["HDR10+"].name;
   } else if (videoTrack.HDR_Format_Compatibility?.[0]?.startsWith("HDR10")) {
-    result.Video_HDR = "HDR10";
+    result.Video_HDR = shared.videoQualities["HDR10"].name;
   }
 
   logger.log("[analyzeMediaInfoVideoProperties] result:", result);

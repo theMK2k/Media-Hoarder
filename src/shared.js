@@ -897,32 +897,99 @@ const shared = new Vue({
       },
     ],
 
+    videoQualitiesCategories: {
+      "video-resolution": {
+        displayText: "Video Resolution",
+        Category_Sort: 1,
+      },
+      "video-hdr": {
+        displayText: "HDR Variant",
+        Category_Sort: 2,
+      },
+    },
+
+    videoQualities: {
+      SD: {
+        Category_Name: "video-resolution",
+        minResolution: 0 * 0,
+      },
+      "720p": {
+        Category_Name: "video-resolution",
+        minResolution: 720 * 576,
+      },
+      HD: {
+        Category_Name: "video-resolution",
+        minResolution: 1280 * 720,
+      },
+      UHD: {
+        Category_Name: "video-resolution",
+        minResolution: 1920 * 1080,
+      },
+      "4K": {
+        Category_Name: "video-resolution",
+        minResolution: 3840 * 2160,
+      },
+      "8K": {
+        Category_Name: "video-resolution",
+        minResolution: 4096 * 2160,
+      },
+      DV: {
+        Category_Name: "video-hdr",
+      },
+      HDR10: {
+        Category_Name: "video-hdr",
+      },
+      "HDR10+": {
+        Category_Name: "video-hdr",
+      },
+    },
+
+    /*
     videoQualities: [
       {
         name: "SD",
+        Category_Name: "video-resolution",
         minResolution: 0 * 0,
       },
       {
         name: "720p",
+        Category_Name: "video-resolution",
         minResolution: 720 * 576,
       },
       {
         name: "HD",
+        Category_Name: "video-resolution",
         minResolution: 1280 * 720,
       },
       {
         name: "UHD",
+        Category_Name: "video-resolution",
         minResolution: 1920 * 1080,
       },
       {
         name: "4K",
+        Category_Name: "video-resolution",
         minResolution: 3840 * 2160,
       },
       {
         name: "8K",
+        Category_Name: "video-resolution",
         minResolution: 4096 * 2160,
       },
+      {
+        name: "DV",
+        Category_Name: "video-hdr",
+      },
+      {
+        name: "HDR10",
+        Category_Name: "video-hdr",
+      },
+      {
+        name: "HDR10+",
+        Category_Name: "video-hdr",
+      },
     ],
+    */
   },
 
   computed: {

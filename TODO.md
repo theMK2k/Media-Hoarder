@@ -4,6 +4,8 @@
 
 ## NEXT Major (v1.4.0)
 
+- [ ] Individual rescan on a particular series should also rescan its files (added episodes)
+
 - [ ] cancel loading filters on series -> episodes change
 
 - [WIP] introduce HDR (detect with color spaces, e.g. <https://www.reddit.com/r/PleX/comments/7kwoy8/is_there_a_way_to_tell_if_a_file_is_hdr_from_the/>)
@@ -25,6 +27,7 @@
     - [x] adapt videoQualityClicked for Object containing MI_Quality, Category_Name
   - [x] adapt updateSeriesVideoQualitiesFromEpisodes
   - [ ] check what store.updateMovieVideoQualities does
+  - [x] edit media dialog: adapt to handle multiple MI_Qualities
 
   - [ ] LATER: introduce AND filter for Video Qualities (other filters might also get AND filter added)
 

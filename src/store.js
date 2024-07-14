@@ -8732,7 +8732,9 @@ async function updateMovieVideoQualities($id_Movies, videoQualities) {
 
     logger.log("[updateMovieVideoQualities] analyzing videoQuality:", videoQuality);
 
-    const mediaItemVideoQuality = mediaItemVideoQualities.find((quality) => quality.MI_Quality === videoQuality);
+    const mediaItemVideoQuality = mediaItemVideoQualities.find(
+      (quality) => quality.MI_Quality === videoQuality.MI_Quality
+    );
 
     if (mediaItemVideoQuality) {
       logger.log("[updateMovieVideoQualities] videoQuality is already known:", mediaItemVideoQuality);
@@ -8743,18 +8745,39 @@ async function updateMovieVideoQualities($id_Movies, videoQualities) {
         logger.log("[updateMovieVideoQualities] videoQuality was deleted before, undeleting it...");
         await db.fireProcedure(
           "UPDATE tbl_Movies_MI_Qualities SET deleted = 0 WHERE id_Movies = $id_Movies AND MI_Quality = $MI_Quality",
-          { $id_Movies, $MI_Quality: videoQuality }
+          { $id_Movies, $MI_Quality: videoQuality.MI_Quality }
         );
       }
       mediaItemVideoQuality.Found = true;
     } else {
       // video quality needs to be added for the movie
       logger.log("[updateMovieVideoQualities] videoQuality needs to be added...");
+
+      logger.log("[updateMovieVideoQualities] videoQuality:", videoQuality);
+      logger.log(
+        "[updateMovieVideoQualities] shared.videoQualitiesCategories[videoQuality.Category_Name].Category_Sort:",
+        shared.videoQualitiesCategories[videoQuality.Category_Name].Category_Sort
+      );
+
       await db.fireProcedure(
-        "INSERT INTO tbl_Movies_MI_Qualities (id_Movies, MI_Quality, deleted) VALUES ($id_Movies, $MI_Quality, 0)",
+        `INSERT INTO tbl_Movies_MI_Qualities (
+          id_Movies
+          , MI_Quality
+          , Category_Name
+          , Category_Sort
+          , deleted
+        ) VALUES (
+          $id_Movies
+          , $MI_Quality
+          , $Category_Name
+          , $Category_Sort
+          , 0
+        )`,
         {
           $id_Movies,
-          $MI_Quality: videoQuality,
+          $MI_Quality: videoQuality.MI_Quality,
+          $Category_Name: videoQuality.Category_Name,
+          $Category_Sort: shared.videoQualitiesCategories[videoQuality.Category_Name].Category_Sort,
         }
       );
     }

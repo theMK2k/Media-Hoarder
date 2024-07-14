@@ -48,6 +48,7 @@
           <v-textarea v-model="mediaItem.plotSummaryFull"> </v-textarea>
 
           <!-- Video Quality (Movie or Episode) -->
+          <!--
           <div v-if="mediaItem.specificMediaType !== 'Series'">
             <v-row style="margin-top: 8px; margin-left: 0px">
               <div style="font-size: 14px; margin-top: 10px">{{ $t("Video Quality") }}</div>
@@ -55,9 +56,11 @@
             <v-select v-bind:items="$shared.videoQualities.map((item) => item.name)" v-model="mediaItem.MI_Quality">
             </v-select>
           </div>
+          -->
 
-          <!-- Video Qualities (Series only) -->
-          <div v-if="mediaItem.specificMediaType == 'Series'">
+          <!-- Video Qualities -->
+          <div>
+            <!--  v-if="mediaItem.specificMediaType == 'Series'" -->
             <v-row style="margin-top: 8px; margin-left: 0px">
               <div style="font-size: 14px; margin-top: 11px">
                 {{ $t("Video Qualities") }}
@@ -112,7 +115,7 @@
                 style="margin-right: 4px; margin-bottom: 4px"
                 v-on:click:close="onRemoveVideoQuality(index)"
               >
-                {{ quality }}
+                {{ quality.MI_Quality }}
               </v-chip>
             </div>
             <div v-if="!mediaItem.MI_Qualities || mediaItem.MI_Qualities.length === 0">
@@ -480,11 +483,10 @@ export default {
     },
 
     videoQualities() {
-      return this.$shared.videoQualities
-        .map((item) => item.name)
-        .filter(
-          (item) => !this.mediaItem.MI_Qualities || !this.mediaItem.MI_Qualities.find((quality) => quality === item)
-        );
+      return Object.keys(this.$shared.videoQualities).filter(
+        (item) =>
+          !this.mediaItem.MI_Qualities || !this.mediaItem.MI_Qualities.find((quality) => quality.MI_Quality === item)
+      );
     },
 
     audioLanguages() {
@@ -549,11 +551,11 @@ export default {
       let hasChanges = false;
       const diff = deepDiffMapper.prune(deepDiffMapper.map(this.mediaItem, this.mediaItemBackup));
 
-      logger.log("[onOKClick] diff:", diff);
-      logger.log("[onOKClick] Object.keys(diff):", Object.keys(diff));
+      logger.log("[MediaItemDialog.onOKClick] diff:", diff);
+      logger.log("[MediaItemDialog.onOKClick] Object.keys(diff):", Object.keys(diff));
 
       if (Object.keys(diff).length > 0) {
-        logger.log("[onOKClick] EditMediaItemDialog has changes!");
+        logger.log("[MediaItemDialog.onOKClick] EditMediaItemDialog has changes!");
         hasChanges = true;
       }
 
@@ -627,7 +629,7 @@ export default {
       let definedByUser = await store.fetchMovieFieldsDefinedByUser(this.mediaItem.id_Movies);
       const definedByUserOld = JSON.stringify(definedByUser);
 
-      logger.log("[onOKClick] definedByUser (from db):", definedByUser);
+      logger.log("[MediaItemDialog.onOKClick] definedByUser (from db):", definedByUser);
 
       Object.keys(diff).forEach((key) => {
         if (!definedByUser.find((item) => item === key)) {
@@ -635,7 +637,7 @@ export default {
         }
       });
 
-      logger.log("[onOKClick] definedByUser (new):", definedByUser);
+      logger.log("[MediaItemDialog.onOKClick] definedByUser (new):", definedByUser);
 
       if (definedByUserOld !== JSON.stringify(definedByUser)) {
         await store.updateMediaRecordField(
@@ -701,7 +703,12 @@ export default {
           this.mediaItem.MI_Qualities = [];
         }
 
-        this.mediaItem.MI_Qualities.push(this.selectedVideoQuality);
+        logger.log("[onAddVideoQualityDialogOK] selectedVideoQuality:", this.selectedVideoQuality);
+
+        this.mediaItem.MI_Qualities.push({
+          MI_Quality: this.selectedVideoQuality,
+          Category_Name: this.$shared.videoQualities[this.selectedVideoQuality].Category_Name,
+        });
       }
 
       this.showAddVideoQualityDialog = false;
