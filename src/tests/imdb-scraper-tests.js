@@ -17,13 +17,33 @@ function addSubLogEntry(testResult, message, newStatus) {
   testResult.log.push(message);
 }
 
+/**
+ * Check if a field is truthy and add a log entry if it's not
+ * @param {*} scrapeResult
+ * @param {*} testResult
+ * @param {*} fieldName
+ * @param {*} msgPrefix
+ * @param {*} allowFalsy
+ * @returns {boolean} true if the field is truthy (or allowFalsy allows it to be falsy), false otherwise
+ */
+function performTruthyCheck(scrapeResult, testResult, fieldName, msgPrefix, allowFalsy) {
+  if (!allowFalsy && !scrapeResult[fieldName]) {
+    addSubLogEntry(testResult, `${msgPrefix ? msgPrefix + " " : ""}${fieldName} missing`, status.ERROR);
+    return false;
+  }
+
+  return true;
+}
+
 /*
  * Perform a default check: the item must be truthy and equal to the expected value
  */
 function performDefaultCheck(scrapeResult, expected, testResult, fieldName, msgPrefix, allowFalsy, checkIncludes) {
-  if (!allowFalsy && !scrapeResult[fieldName]) {
-    addSubLogEntry(testResult, `${msgPrefix ? msgPrefix + " " : ""}${fieldName} missing`, status.ERROR);
-  } else if (
+  if (!performTruthyCheck(scrapeResult, testResult, fieldName, msgPrefix, allowFalsy)) {
+    return;
+  }
+
+  if (
     (!checkIncludes && JSON.stringify(scrapeResult[fieldName]) !== JSON.stringify(expected[fieldName])) ||
     (checkIncludes && JSON.stringify(scrapeResult[fieldName]).includes(JSON.stringify(expected[fieldName])))
   ) {
@@ -1123,7 +1143,7 @@ async function testIMDBSuggestion() {
           titleType: "feature",
           year: 1994,
           imageURL:
-            "https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_.jpg",
+            "https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_.jpg", // only checked for presence
         },
       },
       // {
@@ -1188,13 +1208,8 @@ async function testIMDBSuggestion() {
         "year",
         `query '${expectedValue.searchTerm}'`
       );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "imageURL",
-        `query '${expectedValue.searchTerm}'`
-      );
+
+      performTruthyCheck(scrapeResult[0], testResult, "imageURL", `query '${expectedValue.searchTerm}'`);
     }
   } catch (error) {
     testResult.status = status.EXCEPTION;
@@ -1223,7 +1238,7 @@ async function testIMDBAdvancedTitleSearch() {
           title: "Forrest Gump",
           year: 1994,
           imageURL:
-            "https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_.jpg",
+            "https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_.jpg", // only checked for presence
           ageRating: "PG-13",
           runtimeSeconds: 8520,
           genres: "Drama, Romance",
@@ -1285,9 +1300,8 @@ async function testIMDBAdvancedTitleSearch() {
         "title",
         `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
       );
-      performDefaultCheck(
+      performTruthyCheck(
         scrapeResult[0],
-        expectedValue.result0,
         testResult,
         "imageURL",
         `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
@@ -1349,7 +1363,7 @@ async function testIMDBFindPageSearch() {
           title: "Weathering with You",
           year: 2019,
           imageURL:
-            "https://m.media-amazon.com/images/M/MV5BNzE4ZDEzOGUtYWFjNC00ODczLTljOGQtZGNjNzhjNjdjNjgzXkEyXkFqcGdeQXVyNzE5ODMwNzI@._V1_.jpg",
+            "https://m.media-amazon.com/images/M/MV5BNzE4ZDEzOGUtYWFjNC00ODczLTljOGQtZGNjNzhjNjdjNjgzXkEyXkFqcGdeQXVyNzE5ODMwNzI@._V1_.jpg", // only checked for presence
         },
       },
     ];
@@ -1410,9 +1424,8 @@ async function testIMDBFindPageSearch() {
         "year",
         `query '${expectedValue.searchTerm}' [${expectedValue.type}]`
       );
-      performDefaultCheck(
+      performTruthyCheck(
         scrapeResult[0],
-        expectedValue.result0,
         testResult,
         "imageURL",
         `query '${expectedValue.searchTerm}' [${expectedValue.type}]`
@@ -1463,7 +1476,7 @@ async function testIMDBSeriesEpisodes() {
           episode: "1",
           season: "2",
           imageURL:
-            "https://m.media-amazon.com/images/M/MV5BNTA2Mzc2ZWUtM2Y1MS00NmI2LThmNWEtYTVhZTY5YTc2YWNhXkEyXkFqcGdeQXVyNTE1NjY5Mg@@._V1_.jpg",
+            "https://m.media-amazon.com/images/M/MV5BNTA2Mzc2ZWUtM2Y1MS00NmI2LThmNWEtYTVhZTY5YTc2YWNhXkEyXkFqcGdeQXVyNTE1NjY5Mg@@._V1_.jpg", // only checked for presence
         },
       },
     ];
@@ -1520,9 +1533,8 @@ async function testIMDBSeriesEpisodes() {
         "title",
         `query '${expectedValue.name} Season ${expectedValue.Series_Season}'`
       );
-      performDefaultCheck(
+      performTruthyCheck(
         scrapeResult[0],
-        expectedValue.result0,
         testResult,
         "imageURL",
         `query '${expectedValue.name} Season ${expectedValue.Series_Season}'`
