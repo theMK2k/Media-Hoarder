@@ -28,7 +28,8 @@ async function runMigration(db) {
       , 1
       , 0
     FROM tbl_Movies MOV
-    WHERE MOV.id_Movies || MOV.MI_Quality NOT IN (SELECT id_Movies || MI_Quality FROM tbl_Movies_MI_Qualities)`
+    WHERE MI_Quality IS NOT NULL
+          AND MOV.id_Movies || MOV.MI_Quality NOT IN (SELECT id_Movies || MI_Quality FROM tbl_Movies_MI_Qualities)`
   );
   return;
 }
