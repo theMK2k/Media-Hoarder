@@ -129,7 +129,7 @@ helpers.ensureDirectorySync(helpers.getDataPath("extras"));
 
 logger.info(asciiLogo);
 
-logger.group("[Initialization]");
+//logger.group("[Initialization]");
 dbsync.runSync(
   helpers.getStaticPath("data/media-hoarder.db_initial"),
   helpers.getDataPath("media-hoarder.db"),
@@ -204,7 +204,7 @@ dbsync.runSync(
 
         eventBus.dbInitialized();
 
-        logger.groupEnd();
+        //logger.groupEnd();
       })();
     });
   }
@@ -8710,7 +8710,6 @@ async function updateMovieLanguages($id_Movies, $Type, languageCodes) {
  * @param {Array<String>} videoQualities e.g. ['action', 'adventure', 'sci-fi']
  */
 async function updateMovieVideoQualities($id_Movies, videoQualities) {
-  // #VIDEOPROPERTIES TODO
   logger.log("[updateMovieVideoQualities] START, $id_Movies:", $id_Movies, "videoQualities:", videoQualities);
 
   const mediaItemVideoQualities = await db.fireProcedureReturnAll(

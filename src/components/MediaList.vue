@@ -1677,18 +1677,30 @@ export default {
      * @param {Array} specificFilterNames (optional) yet another way to tell which filters to fetch; if truthy, ONLY refetch the filters specified by their name in this array
      */
     async fetchFilters(setFilter, specificBySetFilter, specificFilterNames) {
-      logger.group("[Fetch Filters]");
+      // TODO: set a context (movies, series, episodes incl. id_series)
+      //       also have this context in shared objects
+      //       in the for-loop check if both contexts are the same, if not, cancel the filter fetch
+      const fetchFiltersContext = JSON.stringify({
+        mediatype: this.mediatype,
+        specificMediaType: this.specificMediaType,
+        Series_id_Movies_Owner: this.Series_id_Movies_Owner,
+      });
+
+      //logger.group("[Fetch Filters]");
+
+      logger.debug("[fetchFilters] START, fetchFiltersContext:", fetchFiltersContext);
 
       try {
         // eventBus.showSidebarLoadingOverlay(true);
         const currentFetchFiltersIteration = ++this.fetchFiltersIteration;
+        const logPrefix = `[fetchFilters][${currentFetchFiltersIteration}]`;
 
         this.$shared.isLoadingFilter = true;
 
         let filterGroups = JSON.parse(JSON.stringify(this.$shared.filterGroups));
 
         // put any filter in setFilter on top of the list (filters in setFilter are ones provided by dialogs, e.g. GenreDialog)
-        logger.log("[fetchFilters] setFilter:", setFilter);
+        logger.log(`${logPrefix} setFilter:`, setFilter);
         if (setFilter) {
           Object.keys(setFilter).forEach((filtername) => {
             const index = filterGroups.findIndex((item) => item.name === filtername);
@@ -1706,16 +1718,16 @@ export default {
 
         // put the filter on top of the list that has been changed last
         if (!specificBySetFilter) {
-          logger.log("[fetchFilters] this.$shared.lastChangedFilter:", this.$shared.lastChangedFilter);
-          logger.log("[fetchFilters] filterGroups before:", filterGroups);
+          logger.log(`${logPrefix} this.$shared.lastChangedFilter:`, this.$shared.lastChangedFilter);
+          logger.log(`${logPrefix} filterGroups before:`, filterGroups);
           if (this.$shared.lastChangedFilter) {
             const index = filterGroups.findIndex((item) => item.name === this.$shared.lastChangedFilter);
 
-            logger.log("[fetchFilters] index:", index);
+            logger.log(`${logPrefix} index:`, index);
 
             const item = filterGroups[index];
 
-            logger.log("[fetchFilters] item:", item);
+            logger.log(`${logPrefix} item:`, item);
 
             filterGroups.splice(index, 1); // remove the item in-place
             filterGroups = [item, ...filterGroups];
@@ -1727,17 +1739,33 @@ export default {
           filterGroups = filterGroups.filter((fg) => specificFilterNames.includes(fg.name));
         }
 
-        logger.log("[fetchFilters] filterGroups:", filterGroups);
+        logger.log(`${logPrefix} filterGroups:`, filterGroups);
 
         for (let i = 0; i < filterGroups.length; i++) {
+          if (
+            fetchFiltersContext !==
+            JSON.stringify({
+              mediatype: this.mediatype,
+              specificMediaType: this.specificMediaType,
+              Series_id_Movies_Owner: this.Series_id_Movies_Owner,
+            })
+          ) {
+            logger.log(`${logPrefix} ABORT due to context mismatch`);
+            return;
+          }
+
           if (currentFetchFiltersIteration !== this.fetchFiltersIteration) {
+            logger.log(`${logPrefix} ABORT due to iteration mismatch`);
             break;
           }
 
           const filterGroup = filterGroups[i];
 
+          logger.log(`${logPrefix} filterGroup:`, filterGroup);
+
           if (!filterGroup.visible) {
             // don't load filterGroup if it isn't even visible
+            logger.log(`${logPrefix} ABORT due to filterGroup not visible`);
             continue;
           }
 
@@ -1934,7 +1962,7 @@ export default {
 
         if (currentFetchFiltersIteration !== this.fetchFiltersIteration) {
           // another fetch has been initiated
-          logger.groupEnd();
+          //logger.groupEnd();
           return;
         }
 
@@ -1943,11 +1971,13 @@ export default {
         // eventBus.showSidebarLoadingOverlay(false);
 
         this.$shared.isLoadingFilter = false;
+
+        logger.log(`${logPrefix} DONE`);
       } catch (err) {
         logger.error(err);
       }
 
-      logger.groupEnd();
+      //logger.groupEnd();
     },
 
     // ### MediaPropteryDialog based methods
@@ -2466,7 +2496,7 @@ export default {
           return;
         }
 
-        logger.group("[Fetch Media Details]");
+        //logger.group("[Fetch Media Details]");
 
         logger.log("[completelyFetchMedia] this.Series_id_Movies_Owner:", this.Series_id_Movies_Owner);
 
@@ -2509,7 +2539,7 @@ export default {
         logger.error(err);
       }
 
-      logger.groupEnd();
+      //logger.groupEnd();
     },
 
     onShowRatingDemographicsDialog(item) {
@@ -2925,7 +2955,7 @@ export default {
     },
 
     async refetchMedia({ setPage, $t, setFilter, dontStoreFilters, dontLoadFiltersFromDb }) {
-      logger.group("[Fetch Media List]");
+      //logger.group("[Fetch Media List]");
 
       logger.log("[refetchMedia]", { setPage, $t, setFilter, dontStoreFilters });
       logger.log("[refetchMedia] this.specificMediaType:", this.specificMediaType);
@@ -2976,7 +3006,7 @@ export default {
 
       this.loadFilterValuesFromStorage = false; // only load filter values from storage initially
 
-      logger.groupEnd();
+      //logger.groupEnd();
     },
   },
 
@@ -2993,11 +3023,11 @@ export default {
 
     eventBus.$on("refetchMedia", ({ setPage, $t, setFilter, dontLoadFiltersFromDb }) => {
       logger.log("[MediaList] eventBus.$on(refetchMedia)");
-      logger.group("[Fetch Media List]");
+      //logger.group("[Fetch Media List]");
       (async () => {
         await this.refetchMedia({ setPage, $t, setFilter, dontLoadFiltersFromDb });
       })();
-      logger.groupEnd();
+      //logger.groupEnd();
     });
 
     eventBus.$on("refetchFilters", async ({ setFilter, specificFilterNames }) => {

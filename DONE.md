@@ -4,6 +4,25 @@
 
 - [ ] FIX: giving user rating stars for the series in episode view
 
+## Misc (v1.4.0-b7)
+
+- [x] cancel loading filters on series -> episodes change
+- [x] introduce HDR (detect with color spaces, e.g. <https://www.reddit.com/r/PleX/comments/7kwoy8/is_there_a_way_to_tell_if_a_file_is_hdr_from_the/>)
+  - "HDR10", "HDR10+", "DV", "HLG"
+  - in sources: `#VIDEOPROPERTIES`
+  - [x] add them to "Video Quality" filter
+  - [x] exclusively use tbl_Movies_MI_Qualities
+  - [x] create migration (tbl_Movies.MI_Quality -> tbl_Movies_MI_Qualities)
+    - [x] Name: `2024-06-02 migrate to tbl_Movies_MI_Qualities`
+      - [x] add rows for each tbl_Movies row with MI_Quality entry
+      - [x] add Category_Name 'video-resolution' and Category_Sort 1 for all entries ("SD", "HD", "UHD", "4K", ...)
+      - ?remove MI_Quality column from tbl_Movies? -> !migration needs to check if MI_Quality column is present in tbl_Movies before!
+  - [x] everywhere in code where MI_Quality is used, use tbl_Movies_MI_Qualities (rescan, fetchMedia etc.)
+    - [x] adapt mediaPropertyDialog for video quality Object containing MI_Quality, Category_Name (was string before)
+    - [x] adapt videoQualityClicked for Object containing MI_Quality, Category_Name
+  - [x] adapt updateSeriesVideoQualitiesFromEpisodes
+  - [x] edit media dialog: adapt to handle multiple MI_Qualities
+
 ## v1.4.0-b6
 
 ## IMDB Scraper

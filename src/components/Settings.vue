@@ -1697,7 +1697,7 @@ export default {
 
   // ### LifeCycle Hooks ###
   async created() {
-    logger.group("[Initialize Settings]");
+    //logger.group("[Initialize Settings]");
     this.$shared.imdbRatingDemographics.forEach((demographic) => {
       demographic.long_translated = this.$t(`RatingDemographics.${demographic.long}`);
     });
@@ -1757,7 +1757,7 @@ export default {
     // lodash debounced functions
     this.debouncedUpdateMinimumWaitForSetAccess = _.debounce(this.updateMinimumWaitForSetAccess, 500);
 
-    logger.groupEnd();
+    //logger.groupEnd();
   },
 };
 </script>
