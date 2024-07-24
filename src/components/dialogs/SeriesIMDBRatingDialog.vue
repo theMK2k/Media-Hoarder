@@ -20,6 +20,65 @@
             </tr>
           </thead>
           <tbody>
+            <!-- Bonus Episodes -->
+            <tr v-for="bonusEpisode of data.bonusEpisodes" v-bind:key="bonusEpisode.displayText">
+              <td style="font-weight: bold">
+                {{ bonusEpisode.displayText }}
+              </td>
+              <td v-for="season of data.seasons" v-bind:key="season.displayText">
+                <v-menu
+                  v-if="
+                    data.mediaItems[season.season] && data.mediaItems[season.season][`B${bonusEpisode.bonusEpisode}`]
+                  "
+                  v-model="data.mediaItems[season.season][`B${bonusEpisode.bonusEpisode}`].showDetails"
+                  v-bind:close-on-click="false"
+                  v-bind:close-on-content-click="false"
+                  bottom
+                  right
+                  transition="scale-transition"
+                  origin="top left"
+                >
+                  <template v-slot:activator="{ on }">
+                    <div
+                      v-on="on"
+                      v-on:click="
+                        onShowMediaItemDetails(data.mediaItems[season.season][`B${bonusEpisode.bonusEpisode}`])
+                      "
+                      v-bind:class="
+                        helpers.getIMDBRatingClass(
+                          data.mediaItems[season.season][`B${bonusEpisode.bonusEpisode}`].IMDB_rating_default
+                        )
+                      "
+                      class="mk-clickable-lightgrey-white"
+                    >
+                      {{
+                        data.mediaItems[season.season][`B${bonusEpisode.bonusEpisode}`].IMDB_rating_defaultFormatted ||
+                        "-"
+                      }}
+                    </div>
+                  </template>
+                  <v-card>
+                    <v-list-item three-line style="padding-left: 0px; padding-right: 0px">
+                      <mk-media-item-card
+                        v-bind:mediaItem="data.mediaItems[season.season][`B${bonusEpisode.bonusEpisode}`]"
+                        v-bind:isScanning="false"
+                        v-bind:isInDialog="true"
+                        v-bind:showCloseButton="true"
+                        v-on:close="data.mediaItems[season.season][`B${bonusEpisode.bonusEpisode}`].showDetails = false"
+                        v-on:mediaItemEvent="onMICmediaItemEvent"
+                      ></mk-media-item-card>
+                    </v-list-item>
+                  </v-card>
+                </v-menu>
+              </td>
+            </tr>
+            <tr>
+              <td v-bind:colspan="data.seasons.length + 1">
+                <v-divider></v-divider>
+              </td>
+            </tr>
+
+            <!-- Episodes -->
             <tr v-for="episode of data.episodes" v-bind:key="episode.displayText">
               <td style="font-weight: bold">
                 {{ episode.displayText }}

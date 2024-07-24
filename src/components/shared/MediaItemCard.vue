@@ -213,7 +213,12 @@
                   ><span v-if="mediaItem.Series_Num_Episodes"
                     >{{ mediaItem.Series_Num_Seasons ? ", " : "" }}
                     {{ mediaItem.Series_Num_Episodes }}
-                    {{ $t(mediaItem.Series_Num_Episodes == 1 ? "episode" : "episodes") }}
+                    {{ $t(mediaItem.Series_Num_Episodes == 1 ? "episode" : "episodes") }}</span
+                  >
+                  <span v-if="mediaItem.Series_Num_Bonus"
+                    >{{ mediaItem.Series_Num_Seasons || mediaItem.Series_Num_Episodes ? ", " : "" }}
+                    {{ mediaItem.Series_Num_Bonus }}
+                    {{ $t(mediaItem.Series_Num_Bonus == 1 ? "bonus episode" : "bonus episodes") }}
                   </span>
                 </span>
               </v-list-item-subtitle>

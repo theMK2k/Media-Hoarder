@@ -1543,31 +1543,39 @@ async function filescanSeries(onlyNew, $t) {
               series_id_Movies
             );
           }
-
-          await db.fireProcedure(
-            `
-            UPDATE tbl_Movies
-            SET    Series_Num_Episodes = (
-                      SELECT SUM(MOV.Series_Num_Episodes)
-                      FROM  tbl_Movies MOV
-                      WHERE MOV.Series_id_Movies_Owner = $id_Movies
-                            AND MOV.Series_Num_Episodes IS NOT NULL
-                   )
-                   
-                   , Series_Num_Seasons = (
-                      SELECT COUNT(*)
-                      FROM
-                        (
-                            SELECT DISTINCT MOV.Series_Season
-                            FROM tbl_Movies MOV WHERE MOV.Series_id_Movies_Owner = $id_Movies AND MOV.Series_Season > 0
-                        )
-                   )
-            WHERE id_Movies = $id_Movies`,
-            {
-              $id_Movies: series_id_Movies,
-            }
-          );
         }
+
+        // Update Series Stats
+        await db.fireProcedure(
+          `
+          UPDATE tbl_Movies
+          SET    Series_Num_Episodes = (
+                    SELECT SUM(MOV.Series_Num_Episodes)
+                    FROM  tbl_Movies MOV
+                    WHERE MOV.Series_id_Movies_Owner = $id_Movies
+                          AND MOV.Series_Num_Episodes IS NOT NULL
+                 )
+                 
+                 , Series_Num_Seasons = (
+                    SELECT COUNT(*)
+                    FROM
+                      (
+                          SELECT DISTINCT MOV.Series_Season
+                          FROM tbl_Movies MOV WHERE MOV.Series_id_Movies_Owner = $id_Movies AND MOV.Series_Season > 0
+                      )
+                 )
+
+                 , Series_Num_Bonus = (
+                    SELECT COUNT(*)
+                    FROM  tbl_Movies MOV
+                    WHERE MOV.Series_id_Movies_Owner = $id_Movies
+                          AND MOV.Series_Bonus_Number IS NOT NULL
+                 )
+          WHERE id_Movies = $id_Movies`,
+          {
+            $id_Movies: series_id_Movies,
+          }
+        );
       }
     }
 
@@ -4764,6 +4772,7 @@ async function fetchMedia({
       , MOV.Series_Bonus_Number
       , MOV.Series_Num_Seasons
       , MOV.Series_Num_Episodes
+      , MOV.Series_Num_Bonus
       , MOV.Series_Episodes_Complete
       , MOV.DefinedByUser
 
@@ -5068,6 +5077,10 @@ async function fetchMedia({
             mediaItem.Series_Episodes_Displaytext
           );
         }
+      } else if (mediaItem.Series_Bonus_Number) {
+        mediaItem.Series_Episodes_Displaytext = `B${`${mediaItem.Series_Bonus_Number < 10 ? "0" : ""}${
+          mediaItem.Series_Bonus_Number
+        }`}`;
       }
 
       if (mediaItem.MI_Qualities) {
@@ -9364,7 +9377,14 @@ async function updateSeriesNumSeasonsNumEpisodesFromEpisodes($id_Movies) {
                     AND MOV.Series_Num_Episodes IS NOT NULL
            )
            
-           , Series_Num_Seasons = (
+          , Series_Num_Bonus = (
+            SELECT COUNT(*)
+            FROM  tbl_Movies MOV
+            WHERE MOV.Series_id_Movies_Owner = $id_Movies
+                  AND MOV.Series_Bonus_Number IS NOT NULL
+          )
+
+          , Series_Num_Seasons = (
               SELECT COUNT(*)
               FROM
                 (

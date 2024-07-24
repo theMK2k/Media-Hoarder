@@ -6,13 +6,18 @@
 
 ### Series: scanning
 
+- [ ] Edit Episode: select season, episode number / bonus number
+
 - [WIP] Support Extras/Specials/Bonus
+  General Concept:
+
+  - Media Hoarder treats dedicated episodes which can be called Extras, Specials or Bonus in one category: "Bonus Episodes"
   - related ticket: #41 Series: Organization of Extras / Specials / Bonus, and Unnumbered Episodes
   - Extras/Specials/Bonus are indicated by B01 or S02B02 and will be treated as bonus
     - B01 will automatically go to Season 1
     - S00B01 will automatically go to Season 0 (the unknown Season)
     - [WIP] rename all Series "Extras" to "Bonus" (at least for the UI)
-  - [ ] season's card should show the number of bonus
+
 - [ ] provide more docs about season numbering, bonus/extras/specials
 
   - actual episodes without official numbering should be put into season 0 and sequentially numbered, e.g. S00E01, S00E02 (this allow the episodes overview to work)

@@ -23,6 +23,10 @@
   - [x] adapt updateSeriesVideoQualitiesFromEpisodes
   - [x] edit media dialog: adapt to handle multiple MI_Qualities
 
+- Bonus / Special Episodes
+  - [x] season's card shows the number of bonus
+  - [x] show bonus episodes in SeriesIMDBRatingDialog
+
 ## v1.4.0-b6
 
 ## IMDB Scraper

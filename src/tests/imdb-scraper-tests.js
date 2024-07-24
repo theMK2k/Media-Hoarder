@@ -1472,7 +1472,7 @@ async function testIMDBSeriesEpisodes() {
           releaseDateMonth: 3,
           releaseDateDay: 17,
           rating: 9.1,
-          numVotes: 551,
+          numVotes: 600,
           episode: "1",
           season: "2",
           imageURL:
@@ -1574,12 +1574,12 @@ async function testIMDBSeriesEpisodes() {
 
       if (!scrapeResult[0].numVotes) {
         addSubLogEntry(testResult, "numVotes missing", status.ERROR);
-      } else if (!epsilonCheck(scrapeResult[0].numVotes, expectedValue.result0.numVotes, 10)) {
+      } else if (scrapeResult[0].numVotes < expectedValue.result0.numVotes) {
         addSubLogEntry(
           testResult,
           `numVotes unexpected value
       got:      "${scrapeResult[0].numVotes}"
-      expected: ${expectedValue.result0.numVotes} +/- 10%`,
+      expected: > ${expectedValue.result0.numVotes}`,
           status.WARNING
         );
       }

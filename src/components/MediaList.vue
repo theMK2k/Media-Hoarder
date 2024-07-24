@@ -2750,11 +2750,16 @@ export default {
               min: 1,
               max: 1,
             },
+            bonusEpisodes: {
+              min: null,
+              max: null,
+            },
           },
           mediaItems: {},
           seasonRatings: {},
           seasons: [],
           episodes: [],
+          bonusEpisodes: [],
         };
 
         for (const mediaItem of mediaItems) {
@@ -2777,18 +2782,28 @@ export default {
             data.mediaItems[mediaItem.Series_Season] = {};
           }
 
-          if (!mediaItem.SeriesEpisodesComplete) {
-            continue;
+          if (mediaItem.Series_Bonus_Number) {
+            if (data.meta.bonusEpisodes.min == null || mediaItem.Series_Bonus_Number < data.meta.bonusEpisodes.min) {
+              data.meta.bonusEpisodes.min = mediaItem.Series_Bonus_Number;
+            }
+
+            if (data.meta.bonusEpisodes.max == null || mediaItem.Series_Bonus_Number > data.meta.bonusEpisodes.max) {
+              data.meta.bonusEpisodes.max = mediaItem.Series_Bonus_Number;
+            }
+
+            data.mediaItems[mediaItem.Series_Season][`B${mediaItem.Series_Bonus_Number}`] = mediaItem;
           }
 
-          for (const episode of mediaItem.SeriesEpisodesComplete) {
-            data.mediaItems[mediaItem.Series_Season][episode] = mediaItem;
+          if (mediaItem.SeriesEpisodesComplete) {
+            for (const episode of mediaItem.SeriesEpisodesComplete) {
+              data.mediaItems[mediaItem.Series_Season][episode] = mediaItem;
 
-            if (episode < data.meta.episodes.min) {
-              data.meta.episodes.min = episode;
-            }
-            if (episode > data.meta.episodes.max) {
-              data.meta.episodes.max = episode;
+              if (episode < data.meta.episodes.min) {
+                data.meta.episodes.min = episode;
+              }
+              if (episode > data.meta.episodes.max) {
+                data.meta.episodes.max = episode;
+              }
             }
           }
         }
@@ -2799,6 +2814,20 @@ export default {
             displayText: `S${`${season < 10 ? "0" : ""}${season}`}`,
           });
         }
+
+        if (data.meta.bonusEpisodes.min !== null && data.meta.bonusEpisodes.max !== null) {
+          for (
+            let bonusEpisode = data.meta.bonusEpisodes.min;
+            bonusEpisode <= data.meta.bonusEpisodes.max;
+            bonusEpisode++
+          ) {
+            data.bonusEpisodes.push({
+              bonusEpisode,
+              displayText: `B${`${bonusEpisode < 10 ? "0" : ""}${bonusEpisode}`}`,
+            });
+          }
+        }
+
         for (let episode = data.meta.episodes.min; episode <= data.meta.episodes.max; episode++) {
           data.episodes.push({
             episode,
