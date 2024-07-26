@@ -8,6 +8,7 @@
 
 - [x] cancel loading filters on series -> episodes change
 - [x] introduce HDR (detect with color spaces, e.g. <https://www.reddit.com/r/PleX/comments/7kwoy8/is_there_a_way_to_tell_if_a_file_is_hdr_from_the/>)
+
   - "HDR10", "HDR10+", "DV", "HLG"
   - in sources: `#VIDEOPROPERTIES`
   - [x] add them to "Video Quality" filter
@@ -24,8 +25,19 @@
   - [x] edit media dialog: adapt to handle multiple MI_Qualities
 
 - Bonus / Special Episodes
+
   - [x] season's card shows the number of bonus
   - [x] show bonus episodes in SeriesIMDBRatingDialog
+
+- [x] Support Extras/Specials/Bonus
+      General Concept:
+
+  - Media Hoarder treats dedicated episodes which can be called Extras, Specials or Bonus in one category: "Bonus Episodes"
+  - related ticket: #41 Series: Organization of Extras / Specials / Bonus, and Unnumbered Episodes
+  - Extras/Specials/Bonus are indicated by B01 or S02B02 and will be treated as bonus
+    - B01 will automatically go to Season 1
+    - S00B01 will automatically go to Season 0 (the unknown Season)
+    - [x] rename all Series "Extras" to "Bonus" (at least for the UI)
 
 ## v1.4.0-b6
 

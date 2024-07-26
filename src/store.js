@@ -418,9 +418,9 @@ async function rescan(onlyNew, $t) {
 
   if (shared.scanOptions.filescanMovies) await filescanMovies(onlyNew, $t);
 
-  if (shared.scanOptions.mergeExtras) await mergeExtras(onlyNew);
-
   if (shared.scanOptions.filescanSeries) await filescanSeries(onlyNew, $t);
+
+  if (shared.scanOptions.mergeExtras) await mergeExtras(onlyNew);
 
   if (shared.scanOptions.rescanMoviesMetaData) await rescanMediaItemsMetaData(onlyNew, null, $t, false);
 
@@ -1554,6 +1554,7 @@ async function filescanSeries(onlyNew, $t) {
                     FROM  tbl_Movies MOV
                     WHERE MOV.Series_id_Movies_Owner = $id_Movies
                           AND MOV.Series_Num_Episodes IS NOT NULL
+                          AND NOT (Filename LIKE '% - extra%' OR (isDirectoryBased = 1 AND RelativeDirectory LIKE '%extra%'))
                  )
                  
                  , Series_Num_Seasons = (
@@ -1570,6 +1571,7 @@ async function filescanSeries(onlyNew, $t) {
                     FROM  tbl_Movies MOV
                     WHERE MOV.Series_id_Movies_Owner = $id_Movies
                           AND MOV.Series_Bonus_Number IS NOT NULL
+                          AND NOT (Filename LIKE '% - extra%' OR (isDirectoryBased = 1 AND RelativeDirectory LIKE '%extra%'))
                  )
           WHERE id_Movies = $id_Movies`,
           {

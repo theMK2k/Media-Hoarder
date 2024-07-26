@@ -4,19 +4,14 @@
 
 ## NEXT Major (v1.4.0)
 
+- [ ] BUG: genre missing for tt5672290
+
 ### Series: scanning
 
-- [ ] Edit Episode: select season, episode number / bonus number
+- BUG: Extras are not correctly assigned to episodes
 
-- [WIP] Support Extras/Specials/Bonus
-  General Concept:
-
-  - Media Hoarder treats dedicated episodes which can be called Extras, Specials or Bonus in one category: "Bonus Episodes"
-  - related ticket: #41 Series: Organization of Extras / Specials / Bonus, and Unnumbered Episodes
-  - Extras/Specials/Bonus are indicated by B01 or S02B02 and will be treated as bonus
-    - B01 will automatically go to Season 1
-    - S00B01 will automatically go to Season 0 (the unknown Season)
-    - [WIP] rename all Series "Extras" to "Bonus" (at least for the UI)
+- [ ] rename all "Extra" to "Bonus"
+- [ ] scan summary says "added episodes" while actually they have been removed
 
 - [ ] provide more docs about season numbering, bonus/extras/specials
 
@@ -25,7 +20,6 @@
   - Extras/Specials/Bonus without attribution to a certain season should be put into season 0, e.g. S00B01, S00B02
 
 - [ ] BUG: distinct release attributes for a series not correct (see: Star Trek Lower Decks)
-- [ ] ScanProcessSummary support for individual rescans
 - [ ] dont override mediaItem.Name when IMDB scan was unsuccessful
 - [ ] BUG: unlinking a series does not unlink its episodes
 - [ ] BUG: medialist for series does not reload after rescan
@@ -37,8 +31,6 @@
 - [ ] check "rescan" for possible double scanning / meta data retrieval
 - [ ] BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
 - [ ] rescanHandleDuplicates (also provide snackbar progress for this)
-- [ ] investigate with series-generator: find possible multitudes of episode numbers (also: episode == null)
-  - [ ] if this is the case: we need a better getSeriesEpisodeTconstFromCache, possibly by utilizing levenshtein between filename and imdb's episode title
 - [ ] #51 Found work around for custom shows and episodes
 - [ ] #39 Multipart Episodes
 - [ ] #36 Mediainfo always opening
@@ -102,17 +94,16 @@
 
 ## LATER
 
-### Series:scanning
+### Series
+
+- [ ] Edit Episode: select season, episode number / bonus number
 
 - [ ] if season is unknown or episode number not set: try to find the imdb tconst by comparing names
   - [ ] store.findIMDBtconst: series episode find by name
 
-### Series: Edit Media Dialog
-
-- [ ] Allow user to upload a poster of their liking
-
 ### Misc (LATER)
 
+- [ ] Allow user to upload a poster of their liking
 - [ ] introduce AND filter for Video Qualities (other filters might also get AND filter added)
 - [ ] Rescan: allow to select/unselect certain source paths for the rescan
 - [ ] deprecate tbl_Movies.ML_Quality (it isn't used in code anymore)

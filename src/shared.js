@@ -911,36 +911,45 @@ const shared = new Vue({
     videoQualities: {
       SD: {
         Category_Name: "video-resolution",
+        name: "SD",
         minResolution: 0 * 0,
       },
       "720p": {
         Category_Name: "video-resolution",
+        name: "720p",
         minResolution: 720 * 576,
       },
       HD: {
         Category_Name: "video-resolution",
+        name: "HD",
         minResolution: 1280 * 720,
       },
       UHD: {
         Category_Name: "video-resolution",
+        name: "UHD",
         minResolution: 1920 * 1080,
       },
       "4K": {
         Category_Name: "video-resolution",
+        name: "4K",
         minResolution: 3840 * 2160,
       },
       "8K": {
         Category_Name: "video-resolution",
+        name: "8K",
         minResolution: 4096 * 2160,
       },
       DV: {
         Category_Name: "video-hdr",
+        name: "DV",
       },
       HDR10: {
         Category_Name: "video-hdr",
+        name: "HDR10",
       },
       "HDR10+": {
         Category_Name: "video-hdr",
+        name: "HDR10+",
       },
     },
 
