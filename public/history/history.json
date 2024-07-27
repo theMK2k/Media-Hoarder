@@ -1,5 +1,12 @@
 [
   {
+    "version": "1.3.5",
+    "name": "Ripley",
+    "quote": " You know, Burke, I don't know which species is worse. You don't see them fucking each other over for a goddamn percentage.",
+    "quoteSource": "Alien (1979)",
+    "description": "version-1.3.5.md"
+  },
+  {
     "version": "1.3.4",
     "name": "Ripley",
     "quote": " You know, Burke, I don't know which species is worse. You don't see them fucking each other over for a goddamn percentage.",
