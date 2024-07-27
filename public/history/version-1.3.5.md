@@ -1,4 +1,4 @@
-# Media Hoarder v1.3.4 Changelog
+# Media Hoarder v1.3.5 Changelog
 
 ## Auto-Update IMDB Sources (since v1.3.4)
 
