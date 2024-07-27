@@ -94,6 +94,11 @@
 
 ## LATER
 
+### IMDB Interests
+
+- IMDB provides interests (genres, subgenres, form, style etc.)
+- update-imdb-interests which created data/imdb-interests.json is already created, run with `npm run update-imdb-interests`
+
 ### Series
 
 - [ ] Edit Episode: select season, episode number / bonus number

@@ -36,7 +36,8 @@
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
     "publish": "vue-cli-service electron:build -p always",
-    "test": "jest"
+    "test": "jest",
+    "update-imdb-interests": "babel-node --presets es2015 ./update-imdb-interests.js"
   },
   "main": "background.js",
   "dependencies": {
