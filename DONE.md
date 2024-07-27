@@ -194,6 +194,7 @@ The IMDB entry detection (Media Hoarder trying to find the correct IMDB entry fo
 
 - [x] UX/SCRAPER: use imdb-graphql-urls.json (also try to fetch them from master in github, this way we can update the urls if imdb changes them - without creating a new release)
 
+
   - <https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/src/data/imdb-graphql-urls.json>
 
 - [x] UX/SCRAPER: propagate actual errors of imdb scraping to the test result (i.e. errors in graphql querying instead of $IMDB_something is NULL)
@@ -352,6 +353,10 @@ These items track the series feature in general.
 - [x] update Series_Num_Episodes and Series_Num_Seasons after an episode has been removed
 
 </details>
+
+## v1.3.5
+
+- [x] fix IMDB scraper (detecting genres and performing searches)
 
 ## v1.3.3
 

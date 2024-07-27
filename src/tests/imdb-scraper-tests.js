@@ -251,7 +251,7 @@ async function testIMDBmainPageData3() {
   try {
     const expected = {
       $IMDB_releaseType: "tvSeries",
-      $IMDB_genres: ["action", "adventure", "drama"],
+      $IMDB_genres: ["action", "adventure", "drama", "sci-fi"],
       $IMDB_rating: 8.7,
       $IMDB_numVotes: 123000,
       $IMDB_posterSmall_URL: "extras/tt0092455_posterSmall.jpg",
@@ -332,7 +332,7 @@ async function testIMDBmainPageData4() {
   try {
     const expected = {
       $IMDB_releaseType: "movie",
-      $IMDB_genres: ["comedy", "fantasy", "horror"],
+      $IMDB_genres: ["comedy", "fantasy", "horror", "thriller"],
       $IMDB_plotSummary: null,
       $IMDB_Trailer_URL: null,
       $IMDB_startYear: null,
@@ -1362,8 +1362,6 @@ async function testIMDBFindPageSearch() {
           tconst: "tt9426210",
           title: "Weathering with You",
           year: 2019,
-          imageURL:
-            "https://m.media-amazon.com/images/M/MV5BNzE4ZDEzOGUtYWFjNC00ODczLTljOGQtZGNjNzhjNjdjNjgzXkEyXkFqcGdeQXVyNzE5ODMwNzI@._V1_.jpg", // only checked for presence
         },
       },
     ];
