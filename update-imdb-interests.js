@@ -30,7 +30,9 @@ helpers.setRequestAsyncDumpToFile(true);
         Similar_Interests_IDs: [], // interestData.similarInterests[].id; e.g. ["in0000002", "in0000003"]
       };
 
-      const url = `https://www.imdb.com/interest/in0000${counter < 100 ? "0" : ""}${counter < 10 ? "0" : ""}${counter}/`;
+      const url = `https://www.imdb.com/interest/in0000${counter < 100 ? "0" : ""}${
+        counter < 10 ? "0" : ""
+      }${counter}/`;
 
       const response = await helpers.requestAsync(url);
 
@@ -40,7 +42,9 @@ helpers.setRequestAsyncDumpToFile(true);
 
       const html = response.body;
 
-      const jsonDataNext = JSON.parse((html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/) || [null, "{}"])[1]);
+      const jsonDataNext = JSON.parse(
+        (html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/) || [null, "{}"])[1]
+      );
 
       const interestData = _.get(jsonDataNext, "props.pageProps.interestData");
 
@@ -50,13 +54,18 @@ helpers.setRequestAsyncDumpToFile(true);
       imdbInterestDataItem.Description = _.get(interestData, "description.value.plainText");
       imdbInterestDataItem.Image_URL = _.get(interestData, "primaryImage.url");
       imdbInterestDataItem.Image_Caption = _.get(interestData, "primaryImage.caption.plainText");
-      imdbInterestDataItem.Similar_Interests_IDs = _.get(interestData, "similarInterests.edges", []).map((similarInterest) =>
-        _.get(similarInterest, "node.id")
+      imdbInterestDataItem.Similar_Interests_IDs = _.get(interestData, "similarInterests.edges", []).map(
+        (similarInterest) => _.get(similarInterest, "node.id")
       );
 
       // logger.log(imdbInterestDataItem);
       if (imdbInterestDataItem.IMDB_Interest_ID && imdbInterestDataItem.Name && imdbInterestDataItem.Category) {
-        logger.log("adding/updating", imdbInterestDataItem.Category, imdbInterestDataItem.Name, `(${imdbInterestDataItem.IMDB_Interest_ID})`);
+        logger.log(
+          "adding/updating",
+          imdbInterestDataItem.Category,
+          imdbInterestDataItem.Name,
+          `(${imdbInterestDataItem.IMDB_Interest_ID})`
+        );
         imdbInterestData.push(imdbInterestDataItem);
       } else {
         logger.error("cannot add/update, counter:", counter, "failedPages:", failedPages++);
