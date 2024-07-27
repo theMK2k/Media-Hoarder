@@ -172,6 +172,21 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
       }
     }
 
+    logger.log("[scrapeIMDBmainPageData] $IMDB_genres after V1:", $IMDB_genres);
+
+    // ## Genres V2 (via __NEXT_DATA__ / jsonDataNext)
+    if (jsonDataNext) {
+      const genres = _.get(jsonDataNext, "props.pageProps.aboveTheFoldData.genres.genres", []);
+      genres.forEach((genre) => {
+        const genreId = genre.id.toLowerCase();
+        if (!$IMDB_genres.find((genreFind) => genreFind == genreId)) {
+          $IMDB_genres.push(genreId);
+        }
+      });
+    }
+
+    logger.log("[scrapeIMDBmainPageData] $IMDB_genres after V2:", $IMDB_genres);
+
     // ## IMDB Rating and Number of Votes
     let $IMDB_rating = null;
     let $IMDB_numVotes = null;

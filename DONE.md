@@ -1,5 +1,9 @@
 # DONE
 
+## v1.3.5
+
+- [x] fix IMDB scraper (detecting genres and performing searches)
+
 ## v1.3.4
 
 - [x] use imdb-graphql-urls.json (also try to fetch them from master in github, this way we can update the urls if imdb changes them - without creating a new release)
