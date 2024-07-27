@@ -215,6 +215,8 @@ export default {
     async checkVersion() {
       logger.log("[checkVersion] START");
 
+      this.isUpToDate = false;
+
       this.isLoadingHistory = true;
 
       try {
