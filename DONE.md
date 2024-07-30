@@ -3,6 +3,7 @@
 ## next (v1.4.0-b8)
 
 - [x] FIX: series in dialog always only showed the start year
+- [x] UI: show media type (TV Series, Video, TV Movie) in IMDB Link Dialog
 
 ## Misc (v1.4.0-b7)
 

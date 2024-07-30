@@ -62,7 +62,7 @@
 
       <!-- Results -->
       <v-card-text v-if="firstSearchCompleted" style="padding-right: 28px">
-        <div v-if="searchResults.length === 0" style="margin-left: 5px">{{ $t("No results") }}</div>
+        <div v-if="searchResults.length === 0" style="margin-left: 5px">{{ $t("No Results") }}</div>
         <div v-if="searchResults.length > 0">
           <!-- Top Pagination -->
           <div
@@ -108,9 +108,14 @@
                         >
                       </v-row>
 
+                      <v-list-item-subtitle v-if="item.mediaType" style="margin-top: -8px; margin-bottom: 12px">
+                        {{ item.mediaType }}
+                      </v-list-item-subtitle>
+
                       <v-list-item-subtitle v-if="item.detailInfo" style="margin-top: -8px; margin-bottom: 4px">{{
                         item.detailInfo
                       }}</v-list-item-subtitle>
+
                       <v-list-item-subtitle> {{ `${$t("IMDB ID")}:` }} {{ item.tconst }} </v-list-item-subtitle>
 
                       <v-row style="margin-top: 8px">

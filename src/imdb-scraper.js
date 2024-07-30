@@ -1838,6 +1838,7 @@ async function scrapeIMDBAdvancedTitleSearchV3(title, titleTypes) {
                 .join(", "),
               rating: _.get(edge.node.title, "ratingsSummary.aggregateRating", null),
               numVotes: _.get(edge.node.title, "ratingsSummary.voteCount", null),
+              mediaType: _.get(edge.node.title, "titleType.displayableProperty.value.plainText", null),
             };
           })
         : [];
@@ -2010,11 +2011,7 @@ async function scrapeIMDBFindPageSearchV3(title) {
             return {
               type: _.get(edge.node, "entity.__typename", null),
               tconst: _.get(edge.node, "entity.id", null),
-              title: `${_.get(edge.node, "entity.titleText.text", "")}${
-                _.get(edge.node, "entity.titleType.displayableProperty.value.plainText")
-                  ? ` (${_.get(edge.node, "entity.titleType.displayableProperty.value.plainText")})`
-                  : ""
-              }`,
+              title: _.get(edge.node, "entity.titleText.text", ""),
               year: _.get(edge.node, "entity.releaseYear.year", null),
               imageURL: _.get(edge.node, "entity.primaryImage.url", null),
               ageRating: null,
@@ -2022,6 +2019,7 @@ async function scrapeIMDBFindPageSearchV3(title) {
               genres: null,
               rating: null,
               numVotes: null,
+              mediaType: _.get(edge.node, "entity.titleType.displayableProperty.value.plainText", null),
             };
           })
         : [];

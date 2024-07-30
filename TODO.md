@@ -6,18 +6,6 @@
 
 ### Series: scanning
 
-- [ ] BUG: rescanning a specific series does not run mediainfo on its episodes
-
-- [ ] BUG: Extras are not correctly assigned to episodes
-
-- [ ] rename all "Extra" to "Bonus"
-
-- [ ] BUG: scan summary says "added episodes" while actually they have been removed
-
-- [ ] dont override mediaItem.Name when IMDB scan was unsuccessful
-
-- [ ] BUG: unlinking a series does not unlink its episodes
-
 - [ ] BUG: series and the series being directory based leads to errors:
 
   - [ ] unlink IMDB leads to the series being called "Series" and not the name of the series derived from the directory
@@ -66,6 +54,9 @@
 - update-imdb-interests which created data/imdb-interests.json is already created, run with `npm run update-imdb-interests`
 
 ### Series
+
+- [ ] BUG: rescanning a specific series does not run mediainfo on its episodes
+  - store.rescanItems
 
 - [ ] Edit Episode: select season, episode number / bonus number
 
