@@ -1,11 +1,12 @@
 # DONE
 
-## next (v1.4.0-b7)
+## next (v1.4.0-b8)
 
-- [ ] FIX: giving user rating stars for the series in episode view
+- [x] FIX: series in dialog always only showed the start year
 
 ## Misc (v1.4.0-b7)
 
+- [x] FIX: giving user rating stars for the series in episode view
 - [x] cancel loading filters on series -> episodes change
 - [x] introduce HDR (detect with color spaces, e.g. <https://www.reddit.com/r/PleX/comments/7kwoy8/is_there_a_way_to_tell_if_a_file_is_hdr_from_the/>)
 

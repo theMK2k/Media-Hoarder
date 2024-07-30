@@ -4746,6 +4746,7 @@ async function fetchMedia({
 			, MOV.IMDB_metacriticScore
 			, IFNULL(MOV.Rating, 0) AS Rating
 			, MOV.startYear
+      , MOV.endYear
 			, MOV.created_at
 			, MOV.last_access_at
       -- #rip-rating-demographics, MOV.IMDB_numVotes${
@@ -4785,7 +4786,6 @@ async function fetchMedia({
         , NULL AS Filename
         , NULL AS Size
         , NULL AS file_created_at
-        , NULL AS endYear
         , NULL AS MI_Duration
         , NULL AS Audio_Languages
         , NULL AS Subtitle_Languages
@@ -4821,7 +4821,6 @@ async function fetchMedia({
         , MOV.Filename
         , MOV.Size
         , MOV.file_created_at
-        , MOV.endYear
         , MOV.MI_Duration
         , (SELECT GROUP_CONCAT(Language, ', ') FROM tbl_Movies_Languages ML WHERE ML.id_Movies = MOV.id_Movies AND ML.Type = 'audio') AS Audio_Languages
         , (SELECT GROUP_CONCAT(Language, ', ') FROM tbl_Movies_Languages ML WHERE ML.id_Movies = MOV.id_Movies AND ML.Type = 'subtitle') AS Subtitle_Languages

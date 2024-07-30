@@ -4,36 +4,28 @@
 
 ## NEXT Major (v1.4.0)
 
-- [ ] BUG: genre missing for tt5672290
-
 ### Series: scanning
 
-- BUG: Extras are not correctly assigned to episodes
+- [ ] BUG: rescanning a specific series does not run mediainfo on its episodes
+
+- [ ] BUG: Extras are not correctly assigned to episodes
 
 - [ ] rename all "Extra" to "Bonus"
-- [ ] scan summary says "added episodes" while actually they have been removed
 
-- [ ] provide more docs about season numbering, bonus/extras/specials
+- [ ] BUG: scan summary says "added episodes" while actually they have been removed
 
-  - actual episodes without official numbering should be put into season 0 and sequentially numbered, e.g. S00E01, S00E02 (this allow the episodes overview to work)
-  - Extras/Specials/Bonus attributed to a certain season should be sequentially numbered with the season prefixed, e.g. S02B01, S02B02
-  - Extras/Specials/Bonus without attribution to a certain season should be put into season 0, e.g. S00B01, S00B02
-
-- [ ] BUG: distinct release attributes for a series not correct (see: Star Trek Lower Decks)
 - [ ] dont override mediaItem.Name when IMDB scan was unsuccessful
+
 - [ ] BUG: unlinking a series does not unlink its episodes
-- [ ] BUG: medialist for series does not reload after rescan
+
 - [ ] BUG: series and the series being directory based leads to errors:
+
   - [ ] unlink IMDB leads to the series being called "Series" and not the name of the series derived from the directory
   - [x] during scan (before imdb metadata retrieval) a series is only shown as "Series"
+
 - [ ] BUG: subtitles in .rar files are added to the media list
-- [ ] BUG: rescanning a specific series does not run mediainfo on its episodes
-- [ ] check "rescan" for possible double scanning / meta data retrieval
+
 - [ ] BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
-- [ ] rescanHandleDuplicates (also provide snackbar progress for this)
-- [ ] #51 Found work around for custom shows and episodes
-- [ ] #39 Multipart Episodes
-- [ ] #36 Mediainfo always opening
 
 ### Series: Link IMDB Dialog
 
@@ -49,44 +41,18 @@
 
 ### Misc
 
-- [ ] BUG: setting stars in Episodes view doesn't store them
+- [ ] BUG: with age rating range (e.g. 6-16+), the dialog's movies and series lists do not expand
 - [ ] BUG: subdirectory called "extras" is not assigned to the main movie (the files are provided as main movies themselves)
 - [ ] check tconst detection with movies, too (we changed some fullDirectory to fullPath)
-- [ ] make loading of filters abortable (e.g. when switching from Series -> Episodes, the filters of Series don't have to be loaded completely through, or Episodes -> Series)
-- [ ] BUG? when opening person dialog and clicking "filter by this person", the main list "jumps" and THEN reloads with the filter applied (possibly a fix for another issue)
-- [ ] BUG: series in dialog always show yearStart
-- [ ] store.saveFilterValues still works with MediaType and not SpecificMediaType
-- [ ] investigate everything that still works with MediaType (and possibly should also use SpecificMediaType)
-- [ ] investigate if we still use Series_id_Movies_Owner to differentiate Series and Episodes -> we have specificMediaType now
-- [ ] we apparently do not use the timezone (we store in UTC)
-- [ ] scanErrors:
-  - [ ] review how rescan and applyIMDB handle scanErrors (string to object, handle null)
-  - [ ] artificially test graphql not found errors
-  - [ ] introduce WARNING vs. ERROR
-    - WARNING:
-      - imdb implausibility
-    - ERROR:
-      - (new) mediainfo without result (possibly due to max path length exceeded)
-      - IMDB GraphQL errors
-  - [ ] introduce error types:
-    - during filescan
-    - during imdb scraping
-    - during mediainfo
-- [ ] add ScanErrors functionality in applyMediaInfo (mediainfo may fail on exceeding 259 chars paths)
-- [ ] investigate the errors of a bigger rescan:
-  - [ ] store.js:2199 Error: Command failed: "c:\Apps\Video\MediaInfo CLI\MediaInfo.exe" --Output=XML "... a too long path exceeding 259 characters..."
-- [ ] i18n: rescan finished snackbar
-- [ ] refactor buildINSERTQuery, buildUDPATEQuery to accept only one object as function parameter
-- [ ] IMDB Scraper: analyze video URLs in "Videos" section and find a better suited Trailer URL than the one primarily shown in the main page (which is oftentimes an IMDB special)
-
-  - or simply use:
-    - <https://www.imdb.com/title/tt0088247/videogallery/content_type-trailer/?sort=date&sortDir=desc>
-    - <https://www.imdb.com/title/tt4154796/videogallery/content_type-trailer/?sortDir=desc&sort=duration>
-    - the trailers are also labeled!
 
 ### Series: Documentation
 
 - [ ] update 01-Media-Storage.md about aspects of tv series in Media Hoarder, link to it (github) from the history markdown
+- [ ] provide more docs about season numbering, bonus/extras/specials
+
+  - actual episodes without official numbering should be put into season 0 and sequentially numbered, e.g. S00E01, S00E02 (this allow the episodes overview to work)
+  - Extras/Specials/Bonus attributed to a certain season should be sequentially numbered with the season prefixed, e.g. S02B01, S02B02
+  - Extras/Specials/Bonus without attribution to a certain season should be put into season 0, e.g. S00B01, S00B02
 
 ### Defects
 
@@ -108,6 +74,33 @@
 
 ### Misc (LATER)
 
+- [ ] IMDB Scraper: analyze video URLs in "Videos" section and find a better suited Trailer URL than the one primarily shown in the main page (which is oftentimes an IMDB special)
+  - or simply use:
+    - <https://www.imdb.com/title/tt0088247/videogallery/content_type-trailer/?sort=date&sortDir=desc>
+    - <https://www.imdb.com/title/tt4154796/videogallery/content_type-trailer/?sortDir=desc&sort=duration>
+    - the trailers are also labeled!
+- [ ] refactor buildINSERTQuery, buildUDPATEQuery to accept only one object as function parameter
+- [ ] scanErrors:
+  - [ ] review how rescan and applyIMDB handle scanErrors (string to object, handle null)
+  - [ ] artificially test graphql not found errors
+  - [ ] introduce WARNING vs. ERROR
+    - WARNING:
+      - imdb implausibility
+    - ERROR:
+      - (new) mediainfo without result (possibly due to max path length exceeded)
+      - IMDB GraphQL errors
+  - [ ] introduce error types:
+    - during filescan
+    - during imdb scraping
+    - during mediainfo
+- [ ] i18n: rescan finished snackbar
+- [ ] add ScanErrors functionality in applyMediaInfo (mediainfo may fail on exceeding 259 chars paths)
+- [ ] we apparently do not use the timezone (we store in UTC)
+- [ ] investigate everything that still works with MediaType (and possibly should also use SpecificMediaType)
+- [ ] investigate if we still use Series_id_Movies_Owner to differentiate Series and Episodes -> we have specificMediaType now
+- [ ] BUG? when opening person dialog and clicking "filter by this person", the main list "jumps" and THEN reloads with the filter applied (possibly a fix for another issue)
+- [ ] #36 Mediainfo always opening
+- [ ] rescanHandleDuplicates (also provide snackbar progress for this)
 - [ ] Allow user to upload a poster of their liking
 - [ ] introduce AND filter for Video Qualities (other filters might also get AND filter added)
 - [ ] Rescan: allow to select/unselect certain source paths for the rescan
