@@ -115,13 +115,13 @@ Downloads are availbale at [releases](https://github.com/theMK2k/Media-Hoarder/r
 
 Currently **Media Hoarder** comes as:
 
-- Windows 7/8/10 x64 Setup and Portable (.zip)
+- Windows 7/8/10/11 x64 Setup and Portable (.zip)
 - Linux x64 Setup (.deb, .appimage, .snap, .rpm) and Portable (.tar.gz)
 - MacOS X .dmg (Intel and Apple Silicon)
 
 ## For Developers: Getting started from source
 
-Please read [Dev-Setup.md](data/dev-docs/Dev-Setup.md).
+Please read [Dev-Setup.md](data/devdocs/Dev-Setup.md).
 
 ### Install Node.js
 
