@@ -4,33 +4,8 @@
 
 ## NEXT Major (v1.4.0)
 
-### Series: scanning
-
-- [ ] BUG: series and the series being directory based leads to errors:
-
-  - [ ] unlink IMDB leads to the series being called "Series" and not the name of the series derived from the directory
-  - [x] during scan (before imdb metadata retrieval) a series is only shown as "Series"
-
-- [ ] BUG: subtitles in .rar files are added to the media list
-
-- [ ] BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
-
-### Series: Link IMDB Dialog
-
-- [ ] for episodes:
-
-  - [WIP] provide all entries for the current series (Series_id_Movies_Owner's IMDB_tconst)
-    - [ ] new imdb scraper: scrapeSeriesSeasons(tconst) -> `https://www.imdb.com/title/tt0206512/episodes/` -> dropdown
-  - [ ] allow a fallback to standard imdb search
-
-### Series: Delete Media Dialog
-
-- [ ] MediaList: onDeleteMediaDialogYes: also delete series and episodes properly
-
 ### Misc
 
-- [ ] BUG: with age rating range (e.g. 6-16+), the dialog's movies and series lists do not expand
-- [ ] BUG: subdirectory called "extras" is not assigned to the main movie (the files are provided as main movies themselves)
 - [ ] check tconst detection with movies, too (we changed some fullDirectory to fullPath)
 
 ### Series: Documentation
@@ -53,9 +28,20 @@
 - IMDB provides interests (genres, subgenres, form, style etc.)
 - update-imdb-interests which created data/imdb-interests.json is already created, run with `npm run update-imdb-interests`
 
+### Series: Link IMDB Dialog
+
+- [ ] for episodes:
+
+  - [ ] provide all entries for the current series (Series_id_Movies_Owner's IMDB_tconst)
+    - [ ] new imdb scraper: scrapeSeriesSeasons(tconst) -> `https://www.imdb.com/title/tt0206512/episodes/` -> dropdown
+  - [ ] allow a fallback to standard imdb search
+
 ### Series
 
+- [ ] BUG: subtitles in .rar files are added to the media list
+
 - [ ] BUG: rescanning a specific series does not run mediainfo on its episodes
+
   - store.rescanItems
 
 - [ ] Edit Episode: select season, episode number / bonus number
@@ -65,6 +51,9 @@
 
 ### Misc (LATER)
 
+- [ ] BUG: with age rating range (e.g. 6-16+), the dialog's movies and series lists do not expand
+  - we have a general issue with age ratings and their ranges
+- [ ] BUG: subdirectory called "extras" is not assigned to the main movie (the files are provided as main movies themselves)
 - [ ] IMDB Scraper: analyze video URLs in "Videos" section and find a better suited Trailer URL than the one primarily shown in the main page (which is oftentimes an IMDB special)
   - or simply use:
     - <https://www.imdb.com/title/tt0088247/videogallery/content_type-trailer/?sort=date&sortDir=desc>

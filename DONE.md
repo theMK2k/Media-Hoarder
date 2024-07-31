@@ -4,6 +4,8 @@
 
 - [x] FIX: series in dialog always only showed the start year
 - [x] UI: show media type (TV Series, Video, TV Movie) in IMDB Link Dialog
+- [x] NOT A BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
+  - not a bug: it's unlikely for a series episode that it's individual imdb tconst is included in the .nfo as in 99% of the cases, the series' IMDB tconst is included in the .nfo
 
 ## Misc (v1.4.0-b7)
 
