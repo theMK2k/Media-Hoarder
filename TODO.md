@@ -2,22 +2,8 @@
 
 - [ ] Provide Screenshots in README.md
 
-## NEXT Major (v1.4.0)
-
-### Misc
-
-### Series: Documentation
-
-- [ ] update 01-Media-Storage.md about aspects of tv series in Media Hoarder, link to it (github) from the history markdown
-- [ ] provide more docs about season numbering, bonus/extras/specials
-
-  - actual episodes without official numbering should be put into season 0 and sequentially numbered, e.g. S00E01, S00E02 (this allow the episodes overview to work)
-  - Extras/Specials/Bonus attributed to a certain season should be sequentially numbered with the season prefixed, e.g. S02B01, S02B02
-  - Extras/Specials/Bonus without attribution to a certain season should be put into season 0, e.g. S00B01, S00B02
-
-### Defects
-
-- nothing
+- [ ] TV Series feature video:
+  - BGM 1:30min <https://www.youtube.com/watch?v=O6QPPI9ggsM>
 
 ## LATER
 

@@ -104,13 +104,22 @@ Further organization by seasons is optional.
 
 **Media Hoarder** supports the following number formats in the episode's file- or directory name:
 
-| example        | descritption                                   |
-| -------------- | ---------------------------------------------- |
-| `s1e1`         | season 1, episode 1                            |
-| `s01e01`       | season 1, episode 1 with leading zeros         |
-| `s01e01e02e03` | season 1, multiple episodes                    |
-| `s01e1-4`      | season 1, multiple episodes                    |
-| `s01e01-e04`   | season 1, multiple episodes with leading zeros |
-| `1x1`          | season 1, episode 1                            |
-| `s1b1`         | season 1, bonus episode 1                      |
-| `s01b01`       | season 1, bonus episode 1 with leading zeros   |
+| example        | descritption                                      |
+| -------------- | ------------------------------------------------- |
+| `s1e1`         | season 1, episode 1                               |
+| `s01e01`       | season 1, episode 1 with leading zeros            |
+| `e001`         | season 1 (implicit), episode 1 with leading zeros |
+| `s01e01e02e03` | season 1, multiple episodes                       |
+| `s01e1-4`      | season 1, multiple episodes                       |
+| `s01e01-e04`   | season 1, multiple episodes with leading zeros    |
+| `1x1`          | season 1, episode 1                               |
+| `s1b1`         | season 1, bonus episode 1                         |
+| `s01b01`       | season 1, bonus episode 1 with leading zeros      |
+
+**Media Hoarder** works case-insensitive, so both `s01e01` and `S01E01` are valid.
+
+If there's no season attributable, use `s0` or `s00` as season number.
+
+Specials and Bonus episodes are subsumized as **Bonus** in **Media Hoarder** e.g. `Bluey S00B01 Bonus Bits - Silent Night [tt14534624].mkv`.
+
+Even if there is no official episode or bonus episode numbering, it is recommended to number them in the file- or directory name.
