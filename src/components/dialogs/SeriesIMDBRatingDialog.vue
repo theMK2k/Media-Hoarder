@@ -72,7 +72,7 @@
                 </v-menu>
               </td>
             </tr>
-            <tr>
+            <tr v-if="data.bonusEpisodes.length">
               <td v-bind:colspan="data.seasons.length + 1">
                 <v-divider></v-divider>
               </td>
