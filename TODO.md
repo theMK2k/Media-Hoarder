@@ -6,8 +6,6 @@
 
 ### Misc
 
-- [ ] check tconst detection with movies, too (we changed some fullDirectory to fullPath)
-
 ### Series: Documentation
 
 - [ ] update 01-Media-Storage.md about aspects of tv series in Media Hoarder, link to it (github) from the history markdown
@@ -37,6 +35,8 @@
   - [ ] allow a fallback to standard imdb search
 
 ### Series
+
+- [ ] support for date based series (`2023-01-31`)
 
 - [ ] BUG: subtitles in .rar files are added to the media list
 

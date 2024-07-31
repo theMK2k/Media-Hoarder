@@ -19,8 +19,6 @@ Exceptions:
 
 Directory-based storage means, a particular movie is contained in one directory, e.g.
 
-directory:
-
 ```text
 /movies/Alien.1979.Remastered.1080p.BluRay.x264-COLLECTORS
 ├── collectors-alien.1080p.nfo
@@ -40,7 +38,7 @@ directory:
     └── I love Chestbursters.mp4
 ```
 
-**Media Hoarder** interprets the storage of a movie as directory-based if the follwing criteria hold true:
+**Media Hoarder** interprets the storage of a movie as directory-based if the following criteria hold true:
 
 - the directory contains an .nfo file
 - the directory contains max. 2 media files (multi-part archives are counted as one media file)
@@ -64,40 +62,20 @@ If the criteria for directory-based storage does not hold true, **Media Hoarder*
 └── Before Sunset (De, En)(BD)(HD)[2004][Drama, Romance][8.0 @ 211372][tt0381681].mkv
 ```
 
-- the media file from the directory as movie entry (except the ones containing `- extra` in their file name)
+In case of a file-based storage, **Media Hoarder** imports the following files:
+
+- each media file as a movie entry (except the ones containing `- extra` in their file name)
 - media files containing `- extra` in their file name as extras to the movie entry having the same name before the `- extra` part, in our example: `Before Midnight`
 
 Read [02-IMDB-ID-Detection.md](02-IMDB-ID-Detection.md) for infos on how the IMDB ID is detected.
 
 ## Series
 
-**Media Hoarder** expects series to be contained in a directory per series, e.g. `The X-Files (1993-2006)`. If the series directory already contains the IMDB ID, **Media Hoarder** will directly be able to find the correct meta data for the series, e.g. `The X-Files (1993-2006) [tt0106179]`. Of course, **Media Hoarder** will try its best to find the correct IMDB data if the IMDB ID is not part of the directory name.
-
-Further organization by seasons is optional. **Media Hoarder** supports both file-based and directory-based storage of episodes.
-
-Example of a series organization:
-
-```text
-/series/The X Files (1993-2006)
-├── Season01
-    ├── The X Files S01E01 Pilot.mkv
-    ├── The X Files S01E02 Deep Throat.mkv
-    ...
-    └── The X Files S01E24 The Erlenmeyer Flask.mkv
-├── Season02
-...
-└── Season09
-```
-
-
-
-.......
-
 **Media Hoarder** expects series source paths to be organized in the following way:
 
 ```text
 /series
-├── The X Files (1993-2006) [tt0106179]
+├── The X Files (1993-2006)
     ├── Season01
         ├── The X Files S01E01 Pilot.mkv
         ├── The X Files S01E02 Deep Throat.mkv
@@ -112,6 +90,27 @@ Example of a series organization:
     └── Season07
 ```
 
-In the example above, the path `/series` is the source path. In Windows it would be something like `D:\Series`.
+In the example above, the path `/series` is the **source path**. In Windows it would be something like `D:\Series`.
 
-Any directory under the source path must be of a certain series, in this example `The X Files (1993-2006) [tt0106179]`.
+Each directory inside the source path must be of a certain series, in the example above `The X Files (1993-2006)` and `Star Trek - The Next Generation (1987-1994)`.
+
+If the series' directory name already contains the IMDB ID, **Media Hoarder** will directly be able to find the correct meta data for the series, e.g. `The X-Files (1993-2006) [tt0106179]`. Of course, **Media Hoarder** will try its best to find the correct IMDB data if the IMDB ID is not part of the directory name.
+
+Further organization by seasons is optional.
+
+**Media Hoarder** supports both file-based and directory-based storage of episodes.
+
+### Series Season / Episode numbering
+
+**Media Hoarder** supports the following number formats in the episode's file- or directory name:
+
+| example        | descritption                                   |
+| -------------- | ---------------------------------------------- |
+| `s1e1`         | season 1, episode 1                            |
+| `s01e01`       | season 1, episode 1 with leading zeros         |
+| `s01e01e02e03` | season 1, multiple episodes                    |
+| `s01e1-4`      | season 1, multiple episodes                    |
+| `s01e01-e04`   | season 1, multiple episodes with leading zeros |
+| `1x1`          | season 1, episode 1                            |
+| `s1b1`         | season 1, bonus episode 1                      |
+| `s01b01`       | season 1, bonus episode 1 with leading zeros   |

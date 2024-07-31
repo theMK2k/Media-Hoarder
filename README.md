@@ -1,6 +1,10 @@
 # Media Hoarder
 
-**Media Hoarder** is THE frontend for your movie (and later: tv series) collection if you love metadata, filter abilities and easy management.
+**Media Hoarder** is THE frontend for your Movie and TV Series collection if you love metadata, filter abilities and easy management.
+
+## Screnshots
+
+
 
 ## Features
 
@@ -81,7 +85,7 @@ Currently **Media Hoarder** comes as:
 
 ## For Developers: Getting started from source
 
-Please read [00-Dev-Setup.md](docs/00-Dev-Setup.md).
+Please read [Dev-Setup.md](data/dev-docs/Dev-Setup.md).
 
 ### Install Node.js
 

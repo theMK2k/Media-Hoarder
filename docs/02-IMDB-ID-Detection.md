@@ -60,3 +60,19 @@ Result of the tests:
   - if possible exclude entries from the result that don't match the years extracted from the file- or directory name (see 3.)
   - if possible match the result's entries runtime to the actual runtime of the movie, sort the result accordingly
   - take the best match (by year and/or runtime) or just take the first element in the result
+
+## IMDB ID Detection for Series and Episodes
+
+### Series
+
+For **series**, **Media Hoarder** will try to detect the IMDB ID for the series itself.
+
+If the series' directory name contains the IMDB ID, it will be used directly.
+
+Otherwise, **Media Hoarder** will try to find the correct IMDB data by searching for the series' name and year.
+
+### Episodes
+
+For **episodes**, if the file- or directoryname contains the IMDB ID, it will be directly used. This also means, you can provide any IMDB imaginable (even those of stand-alone movies) and **Media Hoarder** will use it.
+
+Otherwise, it is crucial that the series is correctly linked to the IMDB ID. With that, each episode will be matched to its IMDB entry using the **season and episode numbers**.
