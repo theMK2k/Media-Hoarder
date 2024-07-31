@@ -2,9 +2,45 @@
 
 **Media Hoarder** is THE frontend for your Movie and TV Series collection if you love metadata, filter abilities and easy management.
 
-## Screnshots
+## Screenshots
 
+_Media Hoarder's movie list_
 
+![Movie List](docs/screenshots/Media_Hoarder_01_Movies_List.png)
+
+<details>
+
+<summary>Click Here For More Screenshots</summary>
+
+_Details about an actor including the movies they are involved in as well as their role_
+
+![Cast](docs/screenshots/Media_Hoarder_02_Cast.png)
+
+_Access individual movies in any list_
+
+![Cast with direct movie access](docs/screenshots/Media_Hoarder_03_Cast_with_direct_movie_access.png)
+
+_Let ChatGPT generate movie lists_
+
+![ChatGPT Integration](docs/screenshots/Media_Hoarder_20_ChatGPT_Integration.png)
+
+_Media Hoarder's series list_
+
+![Series List](docs/screenshots/Media_Hoarder_10_Series_List.png)
+
+_Episode rating heatmap for a series_
+
+![Episode Rating Heatmap](docs/screenshots/Media_Hoarder_11_Series_Episode_Heatmap.png)
+
+_Access individual episodes from the rating heatmap_
+
+![Series List](docs/screenshots/Media_Hoarder_12_Series_Episode_Heatmap_with_direct_episode_access.png)
+
+_Details of an actor and their involvement in series / episodes_
+
+![Cast (Series)](docs/screenshots/Media_Hoarder_13_Cast_with_series_and_episodes_details.png)
+
+</details>
 
 ## Features
 
