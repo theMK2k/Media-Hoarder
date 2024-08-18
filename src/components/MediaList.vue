@@ -2721,7 +2721,7 @@ export default {
       this.rescanCurrentListDialog.show = false;
 
       // TODO: properly handle array for the rescan (total time etc.)
-      this.onRescanItems(this.items);
+      this.onRescanItems(this.itemsFiltered);
     },
 
     async onListActionCopyInfo() {},
