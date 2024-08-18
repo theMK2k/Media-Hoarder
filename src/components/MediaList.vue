@@ -774,7 +774,12 @@ export default {
       {
         Field: "created_at",
         Description: "Imported at",
-        specificMediaType: ["Movies", "Series", "Episodes"],
+        specificMediaType: ["Movies", "Episodes"],
+      },
+      {
+        Field: "updated_at",
+        Description: "Imported / Updated at",
+        specificMediaType: ["Series"],
       },
       {
         Field: "last_access_at",
@@ -1062,6 +1067,9 @@ export default {
             break;
           case "created_at":
             detailInfo = currentItem.created_at ? currentItem.created_at.replace(/\d+:\d+:\d+/, "") : "";
+            break;
+          case "updated_at":
+            detailInfo = currentItem.updated_at ? currentItem.updated_at.replace(/\d+:\d+:\d+/, "") : "";
             break;
           case "last_access_at":
             detailInfo = currentItem.last_access_at ? currentItem.last_access_at.replace(/\d+:\d+:\d+/, "") : "";

@@ -1,7 +1,49 @@
 # DONE
 
+## v1.4.0 Highlights
+
+### TV Series
+
+- In general: Media Hoarder now supports TV Series
+
+  - configure the source paths (each directory within the source path should be a Series)
+  - browse series (also filter, search and sort)
+  - click "into" a series to browse episodes, also sort
+
+- All Dialogs now support Series
+
+  - expandable to see episodes
+  - episodes and movies can be clicked to access (and play)
+
+- Show IMDB Rating Heatmap by clicking the series rating
+  - click each episode to see details (and play)
+
+### Other
+
+- Added HDR variants to the Video Quality section
+
+  - Media Hoarder now detects the following HDR variants: "HDR10", "HDR10+", "DV", "HLG"
+  - the HDR variants are shown in the media entries of the main list
+  - when clicked, you can see details about a certain HDR variant
+  - Filter section "Video Quality" also contains these entries
+
+- enhanced rescan summary
+  - see how many movies/series/episodes have been added/updated/removed
+    - click on Details: see changes on individual movies, series down to the files involved
+  - go to Settings and review past rescans (details on click)
+  - calculate collection sizes (dashboard shows the sizes)
+
+- UI: add "w2wTV" button for Series and Episodes which opens up <https://whattowatchon.tv> with the series pre-selected
+
+- Search Data Dialog (and other dialogs): show role of person/company
+
+- clicking a media item in one of the smaller lists, shows the item's card (and possibility to play)
+
+- Allow user to define audio / subtitle languages
+
 ## next (v1.4.0-b8)
 
+- [x] series: update imported_at for a series if episodes have been added
 - [x] FIX: series in dialog always only showed the start year
 - [x] UI: show media type (TV Series, Video, TV Movie) in IMDB Link Dialog
 - [x] NOT A BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
@@ -197,7 +239,6 @@ The IMDB entry detection (Media Hoarder trying to find the correct IMDB entry fo
 ### Features (v1.3.37-a7)
 
 - [x] UX/SCRAPER: use imdb-graphql-urls.json (also try to fetch them from master in github, this way we can update the urls if imdb changes them - without creating a new release)
-
 
   - <https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/src/data/imdb-graphql-urls.json>
 

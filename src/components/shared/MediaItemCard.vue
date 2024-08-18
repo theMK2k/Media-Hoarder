@@ -554,7 +554,9 @@
       </v-row>
       <v-row class="mk-detail-row">
         <v-col class="detailLabel"
-          ><strong>{{ $t("Imported") }}:</strong></v-col
+          ><strong
+            >{{ mediaItem.specificMediaType == "Series" ? $t("Imported / Updated") : $t("Imported") }}:</strong
+          ></v-col
         >
         <v-col class="detailContent">
           <v-tooltip right>
@@ -1039,15 +1041,27 @@ export default {
     },
 
     createdDisplayText(mediaItem) {
-      if (!mediaItem.created_at) {
-        return "";
-      }
+      if (mediaItem.specificMediaType == "Series") {
+        if (!mediaItem.updated_at) {
+          return "";
+        }
 
-      if (!mediaItem.createdMoment) {
-        mediaItem.createdMoment = moment(mediaItem.created_at);
-      }
+        if (!mediaItem.updatedMoment) {
+          mediaItem.updatedMoment = moment(mediaItem.updated_at);
+        }
 
-      return moment.utc(mediaItem.createdMoment).local().format("YYYY-MM-DD HH:mm:ss");
+        return moment.utc(mediaItem.updatedMoment).local().format("YYYY-MM-DD HH:mm:ss");
+      } else {
+        if (!mediaItem.created_at) {
+          return "";
+        }
+
+        if (!mediaItem.createdMoment) {
+          mediaItem.createdMoment = moment(mediaItem.created_at);
+        }
+
+        return moment.utc(mediaItem.createdMoment).local().format("YYYY-MM-DD HH:mm:ss");
+      }
     },
 
     lastAccessDisplayText(movie) {
@@ -1074,16 +1088,28 @@ export default {
       return movie.lastAccessMoment.fromNow();
     },
 
-    createdHumanized(movie) {
-      if (!movie.created_at) {
-        return "none";
-      }
+    createdHumanized(mediaItem) {
+      if (mediaItem.specificMediaType == "Series") {
+        if (!mediaItem.updated_at) {
+          return "none";
+        }
 
-      if (!movie.createdMoment) {
-        movie.createdMoment = moment(movie.created_at);
-      }
+        if (!mediaItem.updatedMoment) {
+          mediaItem.updatedMoment = moment(mediaItem.updated_at);
+        }
 
-      return movie.createdMoment.fromNow();
+        return mediaItem.updatedMoment.fromNow();
+      } else {
+        if (!mediaItem.created_at) {
+          return "none";
+        }
+
+        if (!mediaItem.createdMoment) {
+          mediaItem.createdMoment = moment(mediaItem.created_at);
+        }
+
+        return mediaItem.createdMoment.fromNow();
+      }
     },
 
     contentAdvisorySeverityDisplayText(severity) {

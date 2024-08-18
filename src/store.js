@@ -1526,6 +1526,7 @@ async function filescanSeries(onlyNew, $t) {
         );
 
         if (hasChanges) {
+          logger.log("[filescanSeries] has changes, adding scan process items and setting updated_at in tbl_Movies");
           if (isAdded) {
             await addScanProcessItem(
               shared.current_id_Scan_Processes,
@@ -1543,6 +1544,10 @@ async function filescanSeries(onlyNew, $t) {
               series_id_Movies
             );
           }
+
+          await db.fireProcedure(`UPDATE tbl_Movies SET updated_at = DATETIME('now') WHERE id_Movies = $id_Movies`, {
+            $id_Movies: series_id_Movies,
+          });
         }
 
         // Update Series Stats
@@ -4748,6 +4753,7 @@ async function fetchMedia({
 			, MOV.startYear
       , MOV.endYear
 			, MOV.created_at
+			, IFNULL(MOV.updated_at, MOV.created_at) AS updated_at
 			, MOV.last_access_at
       -- #rip-rating-demographics, MOV.IMDB_numVotes${
         shared.imdbRatingDemographic ? "_" + shared.imdbRatingDemographic : ""

@@ -1,6 +1,7 @@
 # TODO
 
 - [ ] Provide Screenshots in README.md
+- [ ] Provide animated gif in README.md where it makes sense
 
 - [ ] TV Series feature video:
   - BGM 1:30min <https://www.youtube.com/watch?v=O6QPPI9ggsM>
