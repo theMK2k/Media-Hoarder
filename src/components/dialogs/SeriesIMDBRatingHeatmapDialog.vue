@@ -194,7 +194,7 @@ export default {
     },
 
     async onMICmediaItemEvent(payload) {
-      logger.log("[SeriesIMDBRatingDialog.onMICmediaItemEvent] payload:", payload);
+      logger.log("[SeriesIMDBRatingHeatmapDialog.onMICmediaItemEvent] payload:", payload);
       this.$emit("mediaItemEvent", payload);
     },
   },

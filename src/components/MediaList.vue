@@ -191,9 +191,11 @@
               v-if="series.item.IMDB_rating_defaultDisplay"
             >
               <v-icon small color="amber" style="padding-bottom: 4px">mdi-star</v-icon>
-              <a class="headline mb-2 mk-clickable" v-on:click.stop="onShowSeriesIMDBRatingDialog(series.item)">{{
-                series.item.IMDB_rating_defaultDisplay
-              }}</a>
+              <a
+                class="headline mb-2 mk-clickable"
+                v-on:click.stop="onShowSeriesIMDBRatingHeatmapDialog(series.item)"
+                >{{ series.item.IMDB_rating_defaultDisplay }}</a
+              >
               <span
                 v-if="series.item.IMDB_metacriticScore"
                 v-bind:class="helpers.getMetaCriticClass(series.item.IMDB_metacriticScore)"
@@ -653,16 +655,16 @@
       v-on:cancel="rescanCurrentListDialog.show = false"
     ></mk-rescan-current-list-dialog>
 
-    <mk-series-imdb-rating-dialog
-      ref="seriesIMDBRatingDialog"
-      v-bind:show="seriesIMDBRatingDialog.show"
-      v-bind:data="seriesIMDBRatingDialog.data"
-      v-bind:isLoading="seriesIMDBRatingDialog.isLoading"
-      v-bind:title="seriesIMDBRatingDialog.title"
-      v-on:close="onCloseSeriesIMDBRatingDialog"
+    <mk-series-imdb-rating-heatmap-dialog
+      ref="SeriesIMDBRatingHeatmapDialog"
+      v-bind:show="SeriesIMDBRatingHeatmapDialog.show"
+      v-bind:data="SeriesIMDBRatingHeatmapDialog.data"
+      v-bind:isLoading="SeriesIMDBRatingHeatmapDialog.isLoading"
+      v-bind:title="SeriesIMDBRatingHeatmapDialog.title"
+      v-on:close="onCloseSeriesIMDBRatingHeatmapDialog"
       v-on:mediaItemEvent="onMICmediaItemEvent"
     >
-    </mk-series-imdb-rating-dialog>
+    </mk-series-imdb-rating-heatmap-dialog>
   </div>
 </template>
 
@@ -689,7 +691,7 @@ import Dialog from "@/components/dialogs/Dialog.vue";
 import ChatGPTDialog from "@/components/dialogs/ChatGPTDialog.vue";
 
 import MediaPropertyDialog from "@/components/dialogs/MediaPropertyDialog.vue";
-import SeriesIMDBRatingDialog from "@/components/dialogs/SeriesIMDBRatingDialog.vue";
+import SeriesIMDBRatingHeatmapDialog from "@/components/dialogs/SeriesIMDBRatingHeatmapDialog.vue";
 
 const { shell } = require("@electron/remote");
 
@@ -731,7 +733,7 @@ export default {
     "mk-video-encoder-dialog": MediaPropertyDialog,
     "mk-video-quality-dialog": MediaPropertyDialog,
 
-    "mk-series-imdb-rating-dialog": SeriesIMDBRatingDialog,
+    "mk-series-imdb-rating-heatmap-dialog": SeriesIMDBRatingHeatmapDialog,
   },
 
   data: () => ({
@@ -954,7 +956,7 @@ export default {
       mediaItem: null,
     },
 
-    seriesIMDBRatingDialog: {
+    SeriesIMDBRatingHeatmapDialog: {
       show: false,
       data: null,
       title: null,
@@ -2726,12 +2728,12 @@ export default {
 
     async onListActionCopyInfo() {},
 
-    async onShowSeriesIMDBRatingDialog(mediaItem) {
+    async onShowSeriesIMDBRatingHeatmapDialog(mediaItem) {
       try {
-        this.seriesIMDBRatingDialog.data = null;
-        this.seriesIMDBRatingDialog.title = mediaItem.Name;
-        this.seriesIMDBRatingDialog.show = true;
-        this.seriesIMDBRatingDialog.isLoading = true;
+        this.SeriesIMDBRatingHeatmapDialog.data = null;
+        this.SeriesIMDBRatingHeatmapDialog.title = mediaItem.Name;
+        this.SeriesIMDBRatingHeatmapDialog.show = true;
+        this.SeriesIMDBRatingHeatmapDialog.isLoading = true;
 
         const mediaItems = await store.fetchMedia({
           $MediaType: "series",
@@ -2745,7 +2747,7 @@ export default {
           dontStoreFilters: true,
         });
 
-        logger.log("[onShowSeriesIMDBRatingDialog] mediaItems:", mediaItems);
+        logger.log("[onShowSeriesIMDBRatingHeatmapDialog] mediaItems:", mediaItems);
 
         // TODO: init datastructure for the grid
         const data = {
@@ -2771,13 +2773,13 @@ export default {
         };
 
         for (const mediaItem of mediaItems) {
-          logger.log("[onShowSeriesIMDBRatingDialog] mediaItem:", mediaItem);
+          logger.log("[onShowSeriesIMDBRatingHeatmapDialog] mediaItem:", mediaItem);
 
           if (mediaItem.Series_Season == null || isNaN(mediaItem.Series_Season)) {
             continue;
           }
 
-          logger.log("[onShowSeriesIMDBRatingDialog] mediaItem.Series_Season:", mediaItem.Series_Season);
+          logger.log("[onShowSeriesIMDBRatingHeatmapDialog] mediaItem.Series_Season:", mediaItem.Series_Season);
 
           if (mediaItem.Series_Season < data.meta.seasons.min) {
             data.meta.seasons.min = mediaItem.Series_Season;
@@ -2843,19 +2845,19 @@ export default {
           });
         }
 
-        logger.log("[onShowSeriesIMDBRatingDialog] data:", data);
+        logger.log("[onShowSeriesIMDBRatingHeatmapDialog] data:", data);
 
-        this.seriesIMDBRatingDialog.data = data;
+        this.SeriesIMDBRatingHeatmapDialog.data = data;
       } catch (error) {
         logger.error(error);
         eventBus.showSnackbar("error", logger.error(error));
       } finally {
-        this.seriesIMDBRatingDialog.isLoading = false;
+        this.SeriesIMDBRatingHeatmapDialog.isLoading = false;
       }
     },
 
-    async onCloseSeriesIMDBRatingDialog() {
-      this.seriesIMDBRatingDialog.show = false;
+    async onCloseSeriesIMDBRatingHeatmapDialog() {
+      this.SeriesIMDBRatingHeatmapDialog.show = false;
     },
 
     // ### MediaItemCard (MIC) Events ###
@@ -2887,8 +2889,8 @@ export default {
         case "showRatingDemographicsDialog":
           await this.onShowRatingDemographicsDialog(payload.mediaItem);
           break;
-        case "showSeriesIMDBRatingDialog":
-          await this.onShowSeriesIMDBRatingDialog(payload.mediaItem);
+        case "showSeriesIMDBRatingHeatmapDialog":
+          await this.onShowSeriesIMDBRatingHeatmapDialog(payload.mediaItem);
           break;
         case "changeRating":
           await this.changeRating(payload.mediaItem);

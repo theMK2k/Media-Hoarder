@@ -382,7 +382,7 @@
                 <a
                   v-if="mediaItem.specificMediaType == 'Series'"
                   class="headline mb-2 mk-clickable"
-                  v-on:click.stop="emitMediaItemEvent('showSeriesIMDBRatingDialog', { mediaItem })"
+                  v-on:click.stop="emitMediaItemEvent('showSeriesIMDBRatingHeatmapDialog', { mediaItem })"
                   >{{ mediaItem.IMDB_rating_defaultDisplay }}</a
                 >
 
