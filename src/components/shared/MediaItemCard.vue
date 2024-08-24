@@ -393,7 +393,7 @@
                   >{{ mediaItem.IMDB_metacriticScore }}</span
                 >
               </div>
-              <v-row style="margin: 0px -12px">
+              <v-row style="margin: 0px -12px 0px 0px">
                 <div class="flex-grow-1"></div>
 
                 <div v-on:click.stop="">
