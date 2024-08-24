@@ -157,13 +157,12 @@
             justify-content: flex-start;
             align-items: center;
             align-content: center;
+
+            margin-left: 9px;
           "
         >
           <div style="flex: 0 1 auto; flex-grow: 1; flex-shrink: 1; flex-basis: auto">
-            <v-list-item-title
-              class="headline mb-2"
-              style="margin-bottom: 0px !important; margin-top: 8px; margin-left: 9px"
-            >
+            <v-list-item-title class="headline mb-2" style="margin-bottom: 0px !important; margin-top: 8px">
               <div style="display: flex; min-height: 30px">
                 <div style="overflow: hidden; text-overflow: ellipsis">
                   {{ series.item.Name }}
