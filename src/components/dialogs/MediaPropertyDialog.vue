@@ -1,6 +1,13 @@
 <!-- This is a generalized dialog for properties like age rating, audio format, genre etc. -->
 <template>
-  <v-dialog v-model="show" scrollable persistent v-on:keydown.escape="onEscapePressed" style="z-index: 300 !important">
+  <v-dialog
+    v-model="show"
+    max-width="1000px"
+    scrollable
+    persistent
+    v-on:keydown.escape="onEscapePressed"
+    style="z-index: 300 !important"
+  >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title v-on:mouseover="isTitleHovered = true" v-on:mouseleave="isTitleHovered = false">
         {{ propertyTypeKey !== "person" ? `${$t(propertyType.title)}:` : "" }}
