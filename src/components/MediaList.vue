@@ -178,7 +178,7 @@
                 </div>
               </div>
             </v-list-item-title>
-            <v-list-item-subtitle style="margin-bottom: 4px; min-height: 18px">
+            <v-list-item-subtitle style="margin-bottom: 4px; min-height: 18px; color: rgba(255, 255, 255, 0.7)">
               {{ series.item.Name2 }}
             </v-list-item-subtitle>
           </div>
