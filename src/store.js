@@ -39,6 +39,8 @@ const imdbDataDefinition = require("./object-definitions/imdb-data");
 
 const isBuild = process.env.NODE_ENV === "production";
 
+const SUPPORTED_MEDIA_FILE_EXTENSIONS = [".avi", ".mp4", ".mkv", ".m2ts", ".rar", ".webm"];
+
 const scanProcessActionTypes = {
   ADD_MOVIE: "ADD_MOVIE",
   REMOVE_MOVIE: "REMOVE_MOVIE",
@@ -1404,7 +1406,7 @@ async function filescanMoviesPath(onlyNew, moviesHave, movieSourcePath, scanPath
         }
 
         if (
-          ![".avi", ".mp4", ".mkv", ".m2ts", ".rar"].find((ext) => {
+          !SUPPORTED_MEDIA_FILE_EXTENSIONS.find((ext) => {
             return ext === pathItem.ExtensionLower;
           })
         ) {
@@ -1712,7 +1714,7 @@ async function filescanSeriesEpisodesPath(series_id_Movies, onlyNew, seriesHave,
         }
 
         if (
-          ![".avi", ".mp4", ".mkv", ".m2ts", ".rar"].find((ext) => {
+          ![...SUPPORTED_MEDIA_FILE_EXTENSIONS, ".rar"].find((ext) => {
             return ext === pathItem.ExtensionLower;
           })
         ) {
