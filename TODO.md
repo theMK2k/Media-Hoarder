@@ -1,7 +1,12 @@
 # TODO
 
 - [ ] TV Series feature video:
+
   - BGM 1:30min <https://www.youtube.com/watch?v=O6QPPI9ggsM>
+
+- [x] use eventBus.setProgressBar on individual item rescan (also bulk)
+  - individual item: marquee (2)
+  - bulk: percent (currentIndex / numItems)
 
 ## LATER
 

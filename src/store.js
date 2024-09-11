@@ -338,9 +338,12 @@ async function rescanItems(mediaItems, $t) {
     progressPercent: 0,
   };
 
+  logger.log("[rescanItems] rescanETA:", rescanETA);
+
   resetUserScanOptions(); // user scan options (which apply to the standard rescan by source paths) don't apply here
 
   shared.isScanning = true;
+
   eventBus.rescanStarted();
 
   for (const mediaItem of mediaItems) {
@@ -358,7 +361,11 @@ async function rescanItems(mediaItems, $t) {
       rescanETA
     );
 
-    eventBus.setProgressBar(rescanETA.counter / rescanETA.numItems); // absolute progress
+    if (rescanETA.numItems > 1) {
+      eventBus.setProgressBar(rescanETA.counter / rescanETA.numItems); // absolute progress
+    } else {
+      eventBus.setProgressBar(2); // marquee
+    }
 
     await findReleaseAttributes(mediaItem, false);
 
