@@ -28,6 +28,7 @@
   - Filter section "Video Quality" also contains these entries
 
 - enhanced rescan summary
+
   - see how many movies/series/episodes have been added/updated/removed
     - click on Details: see changes on individual movies, series down to the files involved
   - go to Settings and review past rescans (details on click)
@@ -48,6 +49,7 @@
 - [x] UI: show media type (TV Series, Video, TV Movie) in IMDB Link Dialog
 - [x] NOT A BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
   - not a bug: it's unlikely for a series episode that it's individual imdb tconst is included in the .nfo as in 99% of the cases, the series' IMDB tconst is included in the .nfo
+- [x] SCRAPER: Parental Guide
 
 ## Misc (v1.4.0-b7)
 
