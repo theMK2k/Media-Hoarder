@@ -50,6 +50,9 @@
 - [x] NOT A BUG: findIMDBtconstInNFO does not search in correct sub-dir: `searching in Z:\_TESTSPACE\Media-Hoarder\Series`
   - not a bug: it's unlikely for a series episode that it's individual imdb tconst is included in the .nfo as in 99% of the cases, the series' IMDB tconst is included in the .nfo
 - [x] SCRAPER: Parental Guide
+- [x] use eventBus.setProgressBar on individual item rescan (also bulk)
+  - individual item: marquee (2)
+  - bulk: percent (currentIndex / numItems)
 
 ## Misc (v1.4.0-b7)
 
