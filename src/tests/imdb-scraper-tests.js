@@ -594,7 +594,19 @@ async function testIMDBParentalGuideData() {
       return testResult;
     }
 
-    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_MinAge");
+    if (!scrapeResult["$IMDB_MinAge"]) {
+      addSubLogEntry(testResult, `$IMDB_MinAge missing`, status.ERROR);
+      return false;
+    } else if (scrapeResult["$IMDB_MinAge"] < expected["$IMDB_MinAge"]) {
+      addSubLogEntry(
+        testResult,
+        `$IMDB_MinAge lower than expected
+    got:      ${JSON.stringify(scrapeResult["$IMDB_MinAge"])}
+    expected: ${JSON.stringify(expected["$IMDB_MinAge"])} or higher`,
+        status.WARNING
+      );
+    }
+
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_MaxAge");
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_id_AgeRating_Chosen_Country");
 

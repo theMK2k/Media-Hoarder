@@ -925,39 +925,66 @@ let cacheAgeRatings = null;
 async function scrapeIMDBParentalGuideData(
   movie,
   regions,
-  dbFireProcedureReturnAllCallback,
-  dbFireProcedureCallback,
-  dbFireProcedureReturnScalarCallback
+  dbFireProcedureReturnAll,
+  dbFireProcedure,
+  dbFireProcedureReturnScalar
 ) {
+  if (!cacheAgeRatings) {
+    cacheAgeRatings = await dbFireProcedureReturnAll(`SELECT id_AgeRating, Country, Code, Age FROM tbl_AgeRating`);
+    logger.log("[scrapeIMDBParentalGuideData] cacheAgeRatings:", cacheAgeRatings);
+  }
+
+  let regionCodes = [];
+
+  try {
+    if (regions) {
+      regionCodes = regions.map((region) => (region.code ? region.code.toUpperCase() : ""));
+    }
+  } catch (e) {
+    logger.error(e);
+  }
+
+  logger.log("[scrapeIMDBParentalGuideData] AgeRating regionCodes:", regionCodes);
+
+  const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/parentalguide`;
+  logger.log("[scrapeIMDBParentalGuideData] url:", url);
+  const response = await helpers.requestAsync(url);
+  const html = response.body;
+
+  const jsonDataNext = JSON.parse(
+    (html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/) || [null, null])[1]
+  );
+
+  if (jsonDataNext) {
+    // V3 - using __NEXT_DATA__
+    return await scrapeIMDBParentalGuideDataV3(
+      movie,
+      regionCodes,
+      jsonDataNext,
+      dbFireProcedure,
+      dbFireProcedureReturnScalar
+    );
+  }
+
+  // V1 - using plain HTML
+  return await scrapeIMDBParentalGuideDataV1(movie, regionCodes, html, dbFireProcedure, dbFireProcedureReturnScalar);
+}
+
+/**
+ * Scrape IMDB Parental Guide Data V1 - using plain HTML
+ * @param {*} movie
+ * @param {*} regionCodes
+ * @param {*} html
+ * @param {*} dbFireProcedure
+ * @param {*} dbFireProcedureReturnScalar
+ * @returns
+ */
+async function scrapeIMDBParentalGuideDataV1(movie, regionCodes, html, dbFireProcedure, dbFireProcedureReturnScalar) {
   if (movie.scanErrors) {
     delete movie.scanErrors["IMDB Parental Guide"];
   }
 
   try {
-    if (!cacheAgeRatings) {
-      cacheAgeRatings = await dbFireProcedureReturnAllCallback(
-        `SELECT id_AgeRating, Country, Code, Age FROM tbl_AgeRating`
-      );
-      logger.log("[scrapeIMDBParentalGuideData] cacheAgeRatings:", cacheAgeRatings);
-    }
-
-    let regionCodes = [];
-
-    try {
-      if (regions) {
-        regionCodes = regions.map((region) => (region.code ? region.code.toUpperCase() : ""));
-      }
-    } catch (e) {
-      logger.error(e);
-    }
-
-    logger.log("[scrapeIMDBParentalGuideData] AgeRating regionCodes:", regionCodes);
-
-    const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/parentalguide`;
-    logger.log("[scrapeIMDBParentalGuideData] url:", url);
-    const response = await helpers.requestAsync(url);
-    const html = response.body;
-
     const rxAgeRating = /a href="\/search\/title\?certificates=(.*?):(.*?)"/g;
 
     let matchAgeRating = null;
@@ -969,18 +996,18 @@ async function scrapeIMDBParentalGuideData(
       const Country = matchAgeRating[1];
       const Code = unescape(matchAgeRating[2]);
 
-      logger.log("[scrapeIMDBParentalGuideData] rating found:", Country, Code);
+      logger.log("[scrapeIMDBParentalGuideDataV1] rating found:", Country, Code);
 
       const cachedRating = cacheAgeRatings.find((cache) => cache.Country === Country && cache.Code === Code);
 
       let Age = null;
       if (cachedRating) {
         Age = cachedRating.Age;
-        logger.log("[scrapeIMDBParentalGuideData] Age (cached):", Age);
+        logger.log("[scrapeIMDBParentalGuideDataV1] Age (cached):", Age);
       } else {
         if (/\d+/.test(Code)) {
           Age = parseInt(Code.match(/\d+/)[0]);
-          logger.log("[scrapeIMDBParentalGuideData] Age (parsed):", Age);
+          logger.log("[scrapeIMDBParentalGuideDataV1] Age (parsed):", Age);
         }
 
         const definedPGs = [
@@ -1012,12 +1039,12 @@ async function scrapeIMDBParentalGuideData(
 
         if (foundPG) {
           Age = foundPG.Age;
-          logger.log("[scrapeIMDBParentalGuideData] Age (found):", Age);
+          logger.log("[scrapeIMDBParentalGuideDataV1] Age (found):", Age);
         }
       }
 
       ageRatings.push({ Country, Code, Age });
-      logger.log("[scrapeIMDBParentalGuideData] ageRatings:", ageRatings);
+      logger.log("[scrapeIMDBParentalGuideDataV1] ageRatings:", ageRatings);
     }
 
     let $IMDB_MinAge = null;
@@ -1031,12 +1058,12 @@ async function scrapeIMDBParentalGuideData(
       );
 
       if (!cachedRating) {
-        await dbFireProcedureCallback(`INSERT INTO tbl_AgeRating (Country, Code, Age) VALUES ($Country, $Code, $Age)`, {
+        await dbFireProcedure(`INSERT INTO tbl_AgeRating (Country, Code, Age) VALUES ($Country, $Code, $Age)`, {
           $Country: rating.Country,
           $Code: rating.Code,
           $Age: rating.Age,
         });
-        rating.id_AgeRating = await dbFireProcedureReturnScalarCallback(
+        rating.id_AgeRating = await dbFireProcedureReturnScalar(
           `SELECT id_AgeRating FROM tbl_AgeRating WHERE Country = $Country AND Code = $Code`,
           {
             $Country: rating.Country,
@@ -1059,7 +1086,7 @@ async function scrapeIMDBParentalGuideData(
         rating.Age != null &&
         regionCodes.find((regionCode) => regionCode === rating.Country)
       ) {
-        logger.log("[scrapeIMDBParentalGuideData] AgeRating regions FOUND:", rating);
+        logger.log("[scrapeIMDBParentalGuideDataV1] AgeRating regions FOUND:", rating);
         $IMDB_id_AgeRating_Chosen_Country = rating.id_AgeRating;
       }
 
@@ -1081,7 +1108,7 @@ async function scrapeIMDBParentalGuideData(
       }
     }
 
-    logger.log("[scrapeIMDBParentalGuideData] found age ratings:", ageRatings);
+    logger.log("[scrapeIMDBParentalGuideDataV1] found age ratings:", ageRatings);
 
     const rx_Parental_Advisory_Nudity =
       /<section id="advisory-nudity">[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>[\s\S][\s\S].*?>(.*?)<\/span>/;
@@ -1090,15 +1117,7 @@ async function scrapeIMDBParentalGuideData(
     if (rx_Parental_Advisory_Nudity.test(html)) {
       const severity = html.match(rx_Parental_Advisory_Nudity)[1].trim().toLowerCase();
 
-      if (severity == "none") {
-        $IMDB_Parental_Advisory_Nudity = 0;
-      } else if (severity == "mild") {
-        $IMDB_Parental_Advisory_Nudity = 1;
-      } else if (severity == "moderate") {
-        $IMDB_Parental_Advisory_Nudity = 2;
-      } else if (severity == "severe") {
-        $IMDB_Parental_Advisory_Nudity = 3;
-      }
+      $IMDB_Parental_Advisory_Nudity = getParentalGuideSeverityNumber(severity);
     }
 
     const rx_Parental_Advisory_Violence =
@@ -1108,15 +1127,7 @@ async function scrapeIMDBParentalGuideData(
     if (rx_Parental_Advisory_Violence.test(html)) {
       const severity = html.match(rx_Parental_Advisory_Violence)[1].trim().toLowerCase();
 
-      if (severity == "none") {
-        $IMDB_Parental_Advisory_Violence = 0;
-      } else if (severity == "mild") {
-        $IMDB_Parental_Advisory_Violence = 1;
-      } else if (severity == "moderate") {
-        $IMDB_Parental_Advisory_Violence = 2;
-      } else if (severity == "severe") {
-        $IMDB_Parental_Advisory_Violence = 3;
-      }
+      $IMDB_Parental_Advisory_Violence = getParentalGuideSeverityNumber(severity);
     }
 
     const rx_Parental_Advisory_Profanity =
@@ -1126,15 +1137,7 @@ async function scrapeIMDBParentalGuideData(
     if (rx_Parental_Advisory_Profanity.test(html)) {
       const severity = html.match(rx_Parental_Advisory_Profanity)[1].trim().toLowerCase();
 
-      if (severity == "none") {
-        $IMDB_Parental_Advisory_Profanity = 0;
-      } else if (severity == "mild") {
-        $IMDB_Parental_Advisory_Profanity = 1;
-      } else if (severity == "moderate") {
-        $IMDB_Parental_Advisory_Profanity = 2;
-      } else if (severity == "severe") {
-        $IMDB_Parental_Advisory_Profanity = 3;
-      }
+      $IMDB_Parental_Advisory_Profanity = getParentalGuideSeverityNumber(severity);
     }
 
     const rx_Parental_Advisory_Alcohol =
@@ -1144,15 +1147,7 @@ async function scrapeIMDBParentalGuideData(
     if (rx_Parental_Advisory_Alcohol.test(html)) {
       const severity = html.match(rx_Parental_Advisory_Alcohol)[1].trim().toLowerCase();
 
-      if (severity == "none") {
-        $IMDB_Parental_Advisory_Alcohol = 0;
-      } else if (severity == "mild") {
-        $IMDB_Parental_Advisory_Alcohol = 1;
-      } else if (severity == "moderate") {
-        $IMDB_Parental_Advisory_Alcohol = 2;
-      } else if (severity == "severe") {
-        $IMDB_Parental_Advisory_Alcohol = 3;
-      }
+      $IMDB_Parental_Advisory_Alcohol = getParentalGuideSeverityNumber(severity);
     }
 
     const rx_Parental_Advisory_Frightening =
@@ -1162,16 +1157,246 @@ async function scrapeIMDBParentalGuideData(
     if (rx_Parental_Advisory_Frightening.test(html)) {
       const severity = html.match(rx_Parental_Advisory_Frightening)[1].trim().toLowerCase();
 
-      if (severity == "none") {
-        $IMDB_Parental_Advisory_Frightening = 0;
-      } else if (severity == "mild") {
-        $IMDB_Parental_Advisory_Frightening = 1;
-      } else if (severity == "moderate") {
-        $IMDB_Parental_Advisory_Frightening = 2;
-      } else if (severity == "severe") {
-        $IMDB_Parental_Advisory_Frightening = 3;
+      $IMDB_Parental_Advisory_Frightening = getParentalGuideSeverityNumber(severity);
+    }
+
+    return {
+      $IMDB_MinAge,
+      $IMDB_MaxAge,
+      $IMDB_id_AgeRating_Chosen_Country,
+      $IMDB_Parental_Advisory_Nudity,
+      $IMDB_Parental_Advisory_Violence,
+      $IMDB_Parental_Advisory_Profanity,
+      $IMDB_Parental_Advisory_Alcohol,
+      $IMDB_Parental_Advisory_Frightening,
+    };
+  } catch (error) {
+    if (movie.scanErrors) {
+      movie.scanErrors["IMDB Parental Guide"] = error.message;
+    }
+
+    throw error;
+  }
+}
+
+function getParentalGuideSeverityNumber(severity) {
+  if (severity == "none") {
+    return 0;
+  } else if (severity == "mild") {
+    return 1;
+  } else if (severity == "moderate") {
+    return 2;
+  } else if (severity == "severe") {
+    return 3;
+  }
+
+  return null;
+}
+
+function scrapeIMDBParentalGuideDataV3_getParentalGuideSeverityFromCategory(parentsGuideCategoriesData, categoryId) {
+  const parentsGuideData = parentsGuideCategoriesData.find((category) => category.category.id === categoryId);
+
+  if (!parentsGuideData) {
+    return null;
+  }
+
+  const severity = _.get(parentsGuideData, "severity.text", "").trim().toLowerCase();
+
+  return getParentalGuideSeverityNumber(severity);
+}
+
+/**
+ * Scrape IMDB Parental Guide Data V3 - using __NEXT_DATA__
+ * @param {*} movie
+ * @param {*} regionCodes
+ * @param {*} jsonDataNext
+ * @param {*} dbFireProcedure
+ * @param {*} dbFireProcedureReturnScalar
+ * @returns
+ */
+async function scrapeIMDBParentalGuideDataV3(
+  movie,
+  regionCodes,
+  jsonDataNext,
+  dbFireProcedure,
+  dbFireProcedureReturnScalar
+) {
+  if (movie.scanErrors) {
+    delete movie.scanErrors["IMDB Parental Guide"];
+  }
+
+  try {
+    // ### Age Ratings ###
+    const ageRatings = [];
+
+    const ageRatingsData = _.get(jsonDataNext, "props.pageProps.contentData.data.title.certificates.edges", []);
+
+    for (const ageRating of ageRatingsData) {
+      const Country = _.get(ageRating, "node.country.id", null);
+      if (!Country) {
+        logger.error(
+          "[scrapeIMDBParentalGuideDataV3] Country identified in",
+          ageRating,
+          "expected path: node.country.id"
+        );
+      }
+
+      const Code = _.get(ageRating, "node.rating", null);
+      if (Code == null) {
+        logger.error("[scrapeIMDBParentalGuideDataV3] Code identified in", ageRating, "expected path: node.rating");
+      }
+
+      logger.log("[scrapeIMDBParentalGuideDataV3] rating found:", Country, Code);
+
+      const cachedRating = cacheAgeRatings.find((cache) => cache.Country === Country && cache.Code === Code);
+
+      let Age = null;
+      if (cachedRating) {
+        Age = cachedRating.Age;
+        logger.log("[scrapeIMDBParentalGuideDataV3] Age (cached):", Age);
+      } else {
+        if (/\d+/.test(Code)) {
+          Age = parseInt(Code.match(/\d+/)[0]);
+          logger.log("[scrapeIMDBParentalGuideDataV3] Age (parsed):", Age);
+        }
+
+        const definedPGs = [
+          {
+            Age: 0,
+            codes: ["b.o.", "Tous+publics", "Tous+Public"],
+          },
+          {
+            Age: 6,
+            codes: ["U", "Tous+publics+avec+avertissement"],
+          },
+          {
+            Age: 12,
+            codes: ["T", "PG", "NRC", "GP"],
+          },
+          {
+            Age: 17,
+            codes: ["R"],
+          },
+          {
+            Age: 18,
+            codes: ["Unrated", "X", "XXX", "SOA"],
+          },
+        ];
+
+        const foundPG = definedPGs.find((pg) => {
+          return pg.codes.find((definedCode) => definedCode === Code);
+        });
+
+        if (foundPG) {
+          Age = foundPG.Age;
+          logger.log("[scrapeIMDBParentalGuideDataV3] Age (found):", Age);
+        }
+      }
+
+      ageRatings.push({ Country, Code, Age });
+      logger.log("[scrapeIMDBParentalGuideDataV3] ageRatings:", ageRatings);
+    }
+
+    let $IMDB_MinAge = null;
+    let $IMDB_MaxAge = null;
+    let $IMDB_id_AgeRating_Chosen_Country = null;
+
+    for (let i = 0; i < ageRatings.length; i++) {
+      const rating = ageRatings[i];
+      const cachedRating = cacheAgeRatings.find(
+        (cache) => cache.Country === rating.Country && cache.Code === rating.Code
+      );
+
+      if (!cachedRating) {
+        await dbFireProcedure(`INSERT INTO tbl_AgeRating (Country, Code, Age) VALUES ($Country, $Code, $Age)`, {
+          $Country: rating.Country,
+          $Code: rating.Code,
+          $Age: rating.Age,
+        });
+        rating.id_AgeRating = await dbFireProcedureReturnScalar(
+          `SELECT id_AgeRating FROM tbl_AgeRating WHERE Country = $Country AND Code = $Code`,
+          {
+            $Country: rating.Country,
+            $Code: rating.Code,
+          }
+        );
+
+        cacheAgeRatings.push({
+          id_AgeRating: rating.id_AgeRating,
+          Country: rating.Country,
+          Code: rating.Code,
+          Age: rating.Age,
+        });
+      } else {
+        rating.id_AgeRating = cachedRating.id_AgeRating;
+      }
+
+      if (
+        rating.id_AgeRating &&
+        rating.Age != null &&
+        regionCodes.find((regionCode) => regionCode === rating.Country)
+      ) {
+        logger.log("[scrapeIMDBParentalGuideDataV3] AgeRating regions FOUND:", rating);
+        $IMDB_id_AgeRating_Chosen_Country = rating.id_AgeRating;
+      }
+
+      if (rating.Age || rating.Age === 0) {
+        if (!$IMDB_MinAge) {
+          $IMDB_MinAge = rating.Age;
+        }
+
+        if (!$IMDB_MaxAge) {
+          $IMDB_MaxAge = rating.Age;
+        }
+
+        if ($IMDB_MinAge > rating.Age) {
+          $IMDB_MinAge = rating.Age;
+        }
+        if ($IMDB_MaxAge < rating.Age) {
+          $IMDB_MaxAge = rating.Age;
+        }
       }
     }
+
+    logger.log("[scrapeIMDBParentalGuideDataV3] found age ratings:", ageRatings);
+
+    // ### Parental Guides ###
+    const parentsGuideCategoriesData = _.get(
+      jsonDataNext,
+      "props.pageProps.contentData.data.title.parentsGuide.categories",
+      []
+    );
+
+    logger.log("[scrapeIMDBParentalGuideDataV3] parentsGuideCategoriesData:", parentsGuideCategoriesData);
+
+    const $IMDB_Parental_Advisory_Nudity = scrapeIMDBParentalGuideDataV3_getParentalGuideSeverityFromCategory(
+      parentsGuideCategoriesData,
+      "NUDITY"
+    );
+
+    // Parental Guide: VIOLENCE
+    const $IMDB_Parental_Advisory_Violence = scrapeIMDBParentalGuideDataV3_getParentalGuideSeverityFromCategory(
+      parentsGuideCategoriesData,
+      "VIOLENCE"
+    );
+
+    // Parental Guide: PROFANITY
+    const $IMDB_Parental_Advisory_Profanity = scrapeIMDBParentalGuideDataV3_getParentalGuideSeverityFromCategory(
+      parentsGuideCategoriesData,
+      "PROFANITY"
+    );
+
+    // Parental Guide: ALCOHOL
+    const $IMDB_Parental_Advisory_Alcohol = scrapeIMDBParentalGuideDataV3_getParentalGuideSeverityFromCategory(
+      parentsGuideCategoriesData,
+      "ALCOHOL"
+    );
+
+    // Parental Guide: FRIGHTENING
+    const $IMDB_Parental_Advisory_Frightening = scrapeIMDBParentalGuideDataV3_getParentalGuideSeverityFromCategory(
+      parentsGuideCategoriesData,
+      "FRIGHTENING"
+    );
 
     return {
       $IMDB_MinAge,
