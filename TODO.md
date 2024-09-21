@@ -32,6 +32,7 @@
 
 ### Misc (LATER)
 
+- [ ] download <https://easylist.to/easylist/easylist.txt> every now and then
 - [ ] implement a test which just checks if the graphQL URLs are fine
 - [ ] Fix: subdirectory called "extras" is not assigned to the main movie (the files are provided as main movies themselves)
 - [ ] lots of video encoders are `<not available>`
