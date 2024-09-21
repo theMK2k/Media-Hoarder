@@ -1,9 +1,5 @@
 # TODO
 
-- [ ] TV Series feature video:
-
-  - BGM 1:30min <https://www.youtube.com/watch?v=O6QPPI9ggsM>
-
 ## LATER
 
 ### IMDB Interests
@@ -36,6 +32,8 @@
 
 ### Misc (LATER)
 
+- [ ] implement a test which just checks if the graphQL URLs are fine
+- [ ] Fix: subdirectory called "extras" is not assigned to the main movie (the files are provided as main movies themselves)
 - [ ] lots of video encoders are `<not available>`
 - [ ] BUG: with age rating range (e.g. 6-16+), the dialog's movies and series lists do not expand
   - we have a general issue with age ratings and their ranges

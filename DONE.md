@@ -408,6 +408,13 @@ These items track the series feature in general.
 
 - [x] fix IMDB scraper (detecting genres and performing searches)
 
+## v1.3.4
+
+- [x] use imdb-graphql-urls.json (also try to fetch them from master in github, this way we can update the urls if imdb changes them - without creating a new release)
+  - <https://raw.githubusercontent.com/theMK2k/Media-Hoarder/master/src/data/imdb-graphql-urls.json>
+- [x] update IMDB sources:
+  - [x] advancedTitleSearch
+
 ## v1.3.3
 
 - [x] update IMDB sources

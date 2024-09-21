@@ -109,6 +109,10 @@ The following linked documents provide some detailed information about some inne
 | [02-IMDB-ID-Detection.md](docs/02-IMDB-ID-Detection.md)               | in-depth talk about how **Media Hoarder** tries to find the correct IMDB entry for a movie |
 | [03-Parental-Guidance-Rating.md](docs/03-Parental-Guidance-Rating.md) | how **Media Hoarder** handles parental guidance / rating                                   |
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=theMK2k/Media-Hoarder&type=Date)](https://star-history.com/#theMK2k/Media-Hoarder&Date)
+
 ## Download and Install
 
 Downloads are availbale at [releases](https://github.com/theMK2k/Media-Hoarder/releases).
