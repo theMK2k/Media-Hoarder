@@ -111,7 +111,7 @@
   },
   "engineStrict": true,
   "engines": {
-    "node": "=14.17.5 <15.0.0"
+    "node": ">=14.17.5 <15.0.0"
   },
   "unused-dependencies": {
     "core-js": "2.6.5",
