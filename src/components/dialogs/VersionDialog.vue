@@ -68,7 +68,7 @@
               class="mk-clickable"
               v-on:click="showHistory = !showHistory"
               style="font-size: 1.17em"
-              >{{ $t("Show Version History") }}</span
+              >{{ $t("Show Version History »") }}</span
             >
             <span
               v-if="showHistory"
