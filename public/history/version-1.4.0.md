@@ -1,10 +1,14 @@
 # Media Hoarder v1.4.0 Changelog
 
-After several months of development, I am proud to present the next version of **Media Hoarder** which finally introduces **TV series support**.
+After several months of development, I am proud to present the next version of **Media Hoarder** which finally introduces **TV series support** and with that **Episodes Heatmaps**.
 
 My thanks go to _**kolbdog323**_ for their continuous support and feedback during the development of this feature.
 
 ## TV Series Support
+
+Watch the following video to see the new TV series support in action:
+
+[![Media Hoarder v1.4.0 - TV Series Support](https://img.youtube.com/vi/3qfb5UWJrdQ/0.jpg)](https://www.youtube.com/watch?v=3qfb5UWJrdQ)
 
 Please read here about how **Media Hoarder** expects series to be organized: [feature-series/docs/01-Media-Storage.md](https://github.com/theMK2k/Media-Hoarder/blob/feature-series/docs/01-Media-Storage.md)
 
@@ -19,7 +23,7 @@ Please read here about how **Media Hoarder** expects series to be organized: [fe
   - many dialogs show lists of movies and series (e.g. the ones a certain director has worked on)
   - you can now also click on any item in those lists and see details as well as play the movie/episode
 
-- Show IMDB Rating Heatmap by clicking the series rating
+- Show a heatmap of all episodes based on IMDB ratings by clicking the series rating
   - click each episode to see details and play the episode
 
 ## Other Features
@@ -32,6 +36,7 @@ Please read here about how **Media Hoarder** expects series to be organized: [fe
   - Filter section "Video Quality" also contains these entries
 
 - enhanced rescan summary
+
   - see how many movies/series/episodes have been added/updated/removed
     - click on Details: see changes on individual movies, series down to the files involved
   - go to Settings and review past rescans (details on click)
