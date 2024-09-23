@@ -2,6 +2,8 @@
 
 **Media Hoarder** is THE frontend for your Movie and TV Series collection if you love metadata, filter abilities and easy management.
 
+Of course **Media Hoarder** plays your media, too - by launching the media player of your choice, e.g. VLC.
+
 ## Screenshots
 
 _Media Hoarder's movie list_
