@@ -2,6 +2,12 @@
 
 **Media Hoarder** is THE frontend for your Movie and TV Series collection if you love metadata, filter abilities and easy management.
 
+**Media Hoarder**:
+
+- scans your movies and tv series (local or NAS, you define the source paths)
+- gathers metadata using mediainfo and imdb.com
+- provides a frontend to browse your collection and play your media (running the media player of your choice, e.g. VLC)
+
 ## Screenshots
 
 _Media Hoarder's movie list_
@@ -47,7 +53,8 @@ _Details of an actor and their involvement in series / episodes_
 - Start a conversation with ChatGPT and apply the results to your media <https://www.youtube.com/watch?v=EqiChgd2iuo>
 - Tons of metadata from imdb.com including poster images
 - Metadata from mediainfo analysis
-- Filter by:
+- Filter by multiple criteria
+
   - Source Paths (e.g. distinguish between files on your NAS and locally available ones)
   - Video Quality (e.g. 720p, HD, 4k etc.)
   - Audio Languages
@@ -67,6 +74,7 @@ _Details of an actor and their involvement in series / episodes_
   - People (e.g. Directors, Actors etc.)
   - Companies (e.g. Production, Visual Effects etc.)
   - Year of Release
+
 - Sort by
   - Name
   - IMDB Rating
@@ -75,7 +83,7 @@ _Details of an actor and their involvement in series / episodes_
   - Year
   - Date/Time of import
 - Embedded Trailer Player
-- List Management (create lists and add/remove movies)
+- List Management (create lists and add/remove movies/series)
 - Copy Info (for easy sharing with social media, includes your 5-star rating)
 
   Example:
