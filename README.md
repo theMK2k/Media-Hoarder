@@ -4,9 +4,9 @@
 
 **Media Hoarder**:
 
-- scans your movies and tv series (local or NAS, you define the source paths)
-- gathers metadata using mediainfo and imdb.com
-- provides a frontend to browse your collection and play your media (running the media player of your choice, e.g. VLC)
+- **automatically scans** your movies and tv series (local or NAS, you define the source paths)
+- **gathers metadata** using mediainfo and imdb.com
+- provides a frontend to **browse your collection** and **play your media** (running the media player of your choice, e.g. VLC)
 
 ## Screenshots
 
