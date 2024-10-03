@@ -62,6 +62,11 @@ npm i
 
 - upload all files from Build Packs
 
+```
+gh release list
+gh release upload vX.Y.Z *
+```
+
 ## Update Website
 
 - [ ] create new set of download locations
