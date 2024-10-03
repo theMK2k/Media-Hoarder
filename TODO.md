@@ -17,6 +17,8 @@
 
 ### Series
 
+- [ ] Heatmap: allow to customize the colors
+
 - [ ] support for date based series (`2023-01-31`)
 
 - [ ] BUG: subtitles in .rar files are added to the media list

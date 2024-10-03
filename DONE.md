@@ -1,5 +1,9 @@
 # DONE
 
+## v1.4.1
+
+- [x] SCRAPER: Release Info - primary title fix
+
 ## v1.4.0 Highlights
 
 ### TV Series

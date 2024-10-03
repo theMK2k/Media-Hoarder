@@ -837,7 +837,7 @@ async function scrapeIMDBreleaseinfoV3(movie, regions, allowedTitleTypes, html) 
     }
 
     // ### Local Title
-    let $IMDB_primaryTitle = _.get(jsonDataNext, "props.pageProps.contentData.parentDisplayText", null);
+    let $IMDB_primaryTitle = _.get(jsonDataNext, "props.pageProps.contentData.data.title.titleText.text", null);
 
     const result = {
       $IMDB_originalTitle,

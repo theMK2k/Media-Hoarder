@@ -427,6 +427,8 @@ async function testIMDBreleaseinfo() {
 
     const scrapeResult = await imdbScraper.scrapeIMDBreleaseinfo(movie, [{ name: "Germany" }], []);
 
+    logger.log("[testIMDBreleaseinfo] scrapeResult", scrapeResult);
+
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
       return testResult;
