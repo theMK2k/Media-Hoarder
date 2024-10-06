@@ -15,6 +15,7 @@ const shared = new Vue({
     isBeta: helpers.isBeta,
 
     currentVersion: null,
+    isNewVersionAvailable: false,
     currentName: null,
 
     sidenav: null,

@@ -249,9 +249,11 @@ export default {
         if (semver.gt(this.latestVersion, this.$shared.currentVersion)) {
           this.history = remoteHistory;
           this.isNewVersionAvailable = true;
+          this.$shared.isNewVersionAvailable = true;
           this.showHistory = true;
         } else {
           this.isUpToDate = true;
+          this.$shared.isNewVersionAvailable = false;
         }
 
         this.updateVersionInfo(0);

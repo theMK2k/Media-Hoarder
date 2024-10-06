@@ -2731,12 +2731,20 @@
     <!-- TOP BAR -->
     <v-app-bar app clipped-left color="red" dense>
       <v-app-bar-nav-icon @click.stop="$shared.sidenav = !$shared.sidenav"></v-app-bar-nav-icon>
-      <v-toolbar-title class="mr-12 align-center mk-noshrink">
-        <span class="title">
+      <v-toolbar-title class="mr-12 align-center justify-center mk-noshrink">
+        <span class="title" style="text-align: center">
           {{ $shared.appName }}
+          {{ $shared.currentVersion ? `v${$shared.currentVersion}` : "" }}
           {{ $shared.isBeta ? " (BETA)" : "" }}
           {{ $shared.isDevelopment ? ` (DEV)` : "" }}
           {{ $shared.isPORTABLE ? ` - Portable` : "" }}
+          <span
+            class="mk-clickable-lightgrey-white"
+            style="display: inline-block"
+            v-if="$shared.isNewVersionAvailable"
+            v-on:click="openVersionDialog"
+            >{{ $t("New version available!") }}</span
+          >
         </span>
       </v-toolbar-title>
       <!-- <div class="flex-grow-1"></div> -->
@@ -4537,6 +4545,10 @@ export default {
       this.scanHistoryItemDialog.id_Scan_Processes = id_Scan_Processes;
       this.scanHistoryItemDialog.show = true;
     },
+
+    async openVersionDialog() {
+      this.versionDialog.show = true;
+    },
   },
 
   // ### LifeCycleHooks ###
@@ -4553,6 +4565,10 @@ export default {
     }
 
     this.checkVersion();
+
+    setInterval(() => {
+      this.checkVersion();
+    }, 1000 * 60 * 60); // check every hour
 
     this.searchText = this.$shared.searchText;
 

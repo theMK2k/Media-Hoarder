@@ -1,5 +1,10 @@
 # DONE
 
+## Next (current v1.4.1)
+
+- [x] display the current version and detect new version during runtime
+  - checks for new version hourly, if a new version is available, a notification is shown in the header
+
 ## v1.4.1
 
 - [x] SCRAPER: Release Info - primary title fix
