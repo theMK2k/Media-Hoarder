@@ -1,5 +1,7 @@
 # TODO
 
+- [ ] sidebar filters: a button per item to open the filter dialog (e.g. My Lists - SciFi Classics)
+
 ## LATER
 
 ### IMDB Interests
