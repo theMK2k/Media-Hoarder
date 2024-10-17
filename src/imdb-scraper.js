@@ -2029,6 +2029,7 @@ async function scrapeIMDBAdvancedTitleSearch(title, titleTypes) {
 
 /**
  * GraphQL based advanced title search (does not support unicode!)
+ * WebUI: https://www.imdb.com/search/title/?title=bluey
  * @param {*} title
  * @param {*} titleTypes
  * @returns
