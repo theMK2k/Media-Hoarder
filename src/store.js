@@ -1503,6 +1503,7 @@ async function filescanSeries(onlyNew, $t) {
 
       if (!fs.existsSync(seriesSourcePath.Path)) {
         logger.log("[filescanSeries] seriesSourcePath does not exist, skipping:", seriesSourcePath.Path);
+        continue;
       }
 
       const seriesDirs = (await listPath(seriesSourcePath.Path, seriesSourcePath.Path)).filter(
