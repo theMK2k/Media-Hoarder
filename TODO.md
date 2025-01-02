@@ -2,12 +2,20 @@
 
 - [ ] sidebar filters: a button per item to open the filter dialog (e.g. My Lists - SciFi Classics)
 
+- [ ] series card doesn't show all release attributes (e.g. it should show "BD, WEB", but only shows "WEB" - see House of the Dragon)
+
+- [ ] BUG: with a multi-episode, when clicking the episode in the IMDB Rating Dialog, the episode is opened multiple times (see: Star Trek Prodigy S01E01-E02)
+
 ## LATER
 
 ### IMDB Interests
 
 - IMDB provides interests (genres, subgenres, form, style etc.)
 - update-imdb-interests which created data/imdb-interests.json is already created, run with `npm run update-imdb-interests`
+
+### IMDB Soundtrack
+
+- https://www.imdb.com/title/tt0227445/soundtrack/
 
 ### Series: Link IMDB Dialog
 
