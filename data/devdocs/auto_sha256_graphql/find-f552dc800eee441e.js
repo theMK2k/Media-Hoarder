@@ -1,36 +1,3 @@
-# TODO
-
-- [ ] BUG: "filter by this Language" does not work
-
-- [ ] sidebar filters: a button per item to open the filter dialog (e.g. My Lists - SciFi Classics)
-
-- [ ] series card doesn't show all release attributes (e.g. it should show "BD, WEB", but only shows "WEB" - see House of the Dragon)
-
-- [ ] BUG: with a multi-episode, when clicking the episode in the IMDB Rating Dialog, the episode is opened multiple times (see: Star Trek Prodigy S01E01-E02)
-
-- [ ] imdb heatmap: highlight season and episode "headers" when hovering over the heatmap
-
-- [ ] series episodes list
-  - [ ] when sort by season and episode, provide button to scroll to last watched episode
-  - [ ] highlight watched episodes, maybe highlight last watched episode differently as well
-
-## Road to automatic sha256 calculation
-
-see: data/devdocs/auto_sha256_graphql
-
-### Example: Find Page Search
-
-In Browser: <https://www.imdb.com/find/?q=the>
-
-JS File: `find-f552dc800eee441e.js`
-
-Operation Name: `FindPageSearch`
-
-SHA: 038ff5315025edc006d874aa81178b17335fcae8fecc25bf7c2ce3f1b8085b60
-
-In JS file:
-
-```js
 (self.webpackChunk_N_E = self.webpackChunk_N_E || []).push([
   [3190],
   {
@@ -575,11 +542,7 @@ In JS file:
                       secondaryText: t.secondaryText?.text || void 0,
                     };
                   case "Keyword":
-                    return {
-                      id: t.id,
-                      keywordText: t.text?.text || "",
-                      numTitles: t.titles?.total || 0,
-                    };
+                    return { id: t.id, keywordText: t.text?.text || "", numTitles: t.titles?.total || 0 };
                   case "Name":
                     return {
                       id: t.id,
@@ -659,16 +622,12 @@ In JS file:
           (0, x.setPropertyToSpacingVar)("padding-top", "ipt-pageMargin"),
           (0, x.setPropertyToColorVar)("color", "ipt-on-base-textSecondary-color")
         ),
-        W = (0, o.default)(c.ChipList).withConfig({
-          componentId: "sc-9a8b3183-1",
-        })(
+        W = (0, o.default)(c.ChipList).withConfig({ componentId: "sc-9a8b3183-1" })(
           ["padding:0;", " ", ""],
           (0, x.setPropertyToSpacingVar)("padding-left", "ipt-pageMargin"),
           (0, x.setPropertyToSpacingVar)("padding-right", "ipt-pageMargin")
         ),
-        J = (0, o.default)(c.PageSection).withConfig({
-          componentId: "sc-9a8b3183-2",
-        })(
+        J = (0, o.default)(c.PageSection).withConfig({ componentId: "sc-9a8b3183-2" })(
           ["", " ", ""],
           (0, x.setPropertyToSpacingVar)("padding-left", "ipt-pageMargin"),
           (0, x.setPropertyToSpacingVar)("padding-right", "ipt-pageMargin")
@@ -690,10 +649,7 @@ In JS file:
               id: "search_main_include_adult_login_link_text",
               defaultMessage: "Sign in to enable adult matches",
             }),
-            g = (0, T.N)({
-              id: "search_main_include_adult_enable_link_text",
-              defaultMessage: "Enable adult matches",
-            }),
+            g = (0, T.N)({ id: "search_main_include_adult_enable_link_text", defaultMessage: "Enable adult matches" }),
             y = (0, T.N)({
               id: "search_main_include_adult_disable_link_text",
               defaultMessage: "Disable adult matches",
@@ -724,29 +680,17 @@ In JS file:
                           id: "search_main_advanced_search_chip_tt",
                           defaultMessage: "Movies, TV & more",
                         }),
-                        href: m({
-                          refSuffix: [v.Cd.ADVANCED_SEARCH_RESULT, v.Cd.TITLE],
-                        }),
+                        href: m({ refSuffix: [v.Cd.ADVANCED_SEARCH_RESULT, v.Cd.TITLE] }),
                       }),
                       (0, s.jsx)(c.Chip, {
                         "data-testid": "advanced-search-chip-nm",
-                        label: (0, T.N)({
-                          id: "common_people",
-                          defaultMessage: "People",
-                        }),
-                        href: u({
-                          refSuffix: [v.Cd.ADVANCED_SEARCH_RESULT, v.Cd.NAME],
-                        }),
+                        label: (0, T.N)({ id: "common_people", defaultMessage: "People" }),
+                        href: u({ refSuffix: [v.Cd.ADVANCED_SEARCH_RESULT, v.Cd.NAME] }),
                       }),
                       (0, s.jsx)(c.Chip, {
                         "data-testid": "advanced-search-chip-co",
-                        label: (0, T.N)({
-                          id: "common_collaborations",
-                          defaultMessage: "Collaborations",
-                        }),
-                        href: d({
-                          refSuffix: [v.Cd.ADVANCED_SEARCH_RESULT, v.Cd.COMMON],
-                        }),
+                        label: (0, T.N)({ id: "common_collaborations", defaultMessage: "Collaborations" }),
+                        href: d({ refSuffix: [v.Cd.ADVANCED_SEARCH_RESULT, v.Cd.COMMON] }),
                       }),
                     ],
                   }),
@@ -764,9 +708,7 @@ In JS file:
                           (0, s.jsx)(c.InlineListItem, {
                             children: (0, s.jsx)(c.TextLink, {
                               "data-testid": "advanced-search-link-genres",
-                              href: l({
-                                refSuffix: [v.Cd.ADVANCED_SEARCH_RESULT, v.Cd.GENRE],
-                              }),
+                              href: l({ refSuffix: [v.Cd.ADVANCED_SEARCH_RESULT, v.Cd.GENRE] }),
                               text: (0, T.N)({
                                 id: "search_main_advanced_search_browse_genres_link_text",
                                 defaultMessage: "Genres",
@@ -776,9 +718,7 @@ In JS file:
                           (0, s.jsx)(c.InlineListItem, {
                             children: (0, s.jsx)(c.TextLink, {
                               "data-testid": "advanced-search-link-keywords",
-                              href: p({
-                                refSuffix: [v.Cd.ADVANCED_SEARCH_RESULT, v.Cd.KEYWORDS],
-                              }),
+                              href: p({ refSuffix: [v.Cd.ADVANCED_SEARCH_RESULT, v.Cd.KEYWORDS] }),
                               text: (0, T.N)({
                                 id: "search_main_advanced_search_browse_keywords_link_text",
                                 defaultMessage: "Keywords",
@@ -820,10 +760,7 @@ In JS file:
       let z = (e) => {
         let { id: t, companyName: a, hasSearchType: i, index: r, countryText: n, typeText: l, className: o } = e,
           { searchTitleLinkBuilder: d } = (0, E.WO)(),
-          p = d({
-            refSuffix: [i ? Z.C.COMPANY : Z.C.ALL, { t: Z.C.COMPANY, n: r }],
-            query: { companies: t },
-          }),
+          p = d({ refSuffix: [i ? Z.C.COMPANY : Z.C.ALL, { t: Z.C.COMPANY, n: r }], query: { companies: t } }),
           u = [];
         return (
           n && u.push(n),
@@ -842,19 +779,9 @@ In JS file:
         et = a(51442);
       let ea = () => {
           let e = (0, et.D9)(ee.$.FIND),
-            t = (0, T.N)({
-              id: "search_main_meta_title",
-              defaultMessage: "Find - IMDb",
-            }),
-            a = (0, T.N)({
-              id: "search_main_meta_description",
-              defaultMessage: "IMDb's Find Results Page",
-            });
-          return (0, s.jsx)(X.ZP, {
-            title: t,
-            description: a,
-            canonicalUrl: e,
-          });
+            t = (0, T.N)({ id: "search_main_meta_title", defaultMessage: "Find - IMDb" }),
+            a = (0, T.N)({ id: "search_main_meta_description", defaultMessage: "IMDb's Find Results Page" });
+          return (0, s.jsx)(X.ZP, { title: t, description: a, canonicalUrl: e });
         },
         es = (e) => {
           let {
@@ -868,10 +795,7 @@ In JS file:
               className: d,
             } = e,
             { interestSingleLinkBuilder: p } = (0, E.WO)(),
-            u = p({
-              inconst: t,
-              refSuffix: [a ? Z.C.INTEREST : Z.C.ALL, { t: Z.C.INTEREST, n: i }],
-            }),
+            u = p({ inconst: t, refSuffix: [a ? Z.C.INTEREST : Z.C.ALL, { t: Z.C.INTEREST, n: i }] }),
             m = [];
           return (
             l && m.push({ text: l }),
@@ -881,11 +805,7 @@ In JS file:
               titleLink: u,
               title: n,
               preElement: (0, s.jsx)(ei, {
-                children: (0, s.jsx)(c.PosterImage, {
-                  imageModel: r,
-                  imageType: o,
-                  size: 50,
-                }),
+                children: (0, s.jsx)(c.PosterImage, { imageModel: r, imageType: o, size: 50 }),
               }),
               textList: m,
             })
@@ -899,10 +819,7 @@ In JS file:
             { searchTitleLinkBuilder: l } = (0, E.WO)(),
             o = l({
               refSuffix: [i ? Z.C.KEYWORDS : Z.C.ALL, { t: Z.C.KEYWORDS, n: r }],
-              query: {
-                keywords: t.replace(/\s{1}/g, "-"),
-                explore: "keywords",
-              },
+              query: { keywords: t.replace(/\s{1}/g, "-"), explore: "keywords" },
             }),
             d = (0, T.N)(
               {
@@ -946,10 +863,7 @@ In JS file:
             id: "search_main_movie_results_section_label",
             defaultMessage: "{numTitles, plural, one {Movies} other {Movies}}",
           },
-          [w.Py.Tv]: {
-            id: "search_main_tv_results_section_label",
-            defaultMessage: "TV",
-          },
+          [w.Py.Tv]: { id: "search_main_tv_results_section_label", defaultMessage: "TV" },
           [w.Py.TvEpisode]: {
             id: "search_main_tv_episode_results_section_label",
             defaultMessage: "{numTitles, plural, one {TV Episode} other {TV Episodes}}",
@@ -1001,9 +915,7 @@ In JS file:
           bioChip: "more-results-bi-chip",
           inChip: "more-results-in-chip",
         },
-        ec = (0, o.default)(c.ChipList).withConfig({
-          componentId: "sc-178f508-0",
-        })(
+        ec = (0, o.default)(c.ChipList).withConfig({ componentId: "sc-178f508-0" })(
           ["padding:0;", " ", ""],
           (0, x.setPropertyToSpacingVar)("padding-left", "ipt-pageMargin"),
           (0, x.setPropertyToSpacingVar)("padding-right", "ipt-pageMargin")
@@ -1023,60 +935,17 @@ In JS file:
             f = (0, T.N)(el[w.lg.Company], { numCompanies: 2 }),
             y = (0, T.N)(el[w.lg.Keyword], { numKeywords: 2 }),
             x = (0, T.N)(el[w.lg.Interest], { numInterests: 2 }),
-            _ = (0, T.N)({
-              id: "search_main_more_results_chip_all",
-              defaultMessage: "All",
-            }),
+            _ = (0, T.N)({ id: "search_main_more_results_chip_all", defaultMessage: "All" }),
             C = { ...t, searchType: void 0, isExactMatch: !1 },
-            M = {
-              ...t,
-              searchType: w.lg.Title,
-              titleSearchType: void 0,
-              isExactMatch: !1,
-            },
+            M = { ...t, searchType: w.lg.Title, titleSearchType: void 0, isExactMatch: !1 },
             P = { ...t, searchType: w.lg.Name, isExactMatch: !1 },
-            S = {
-              ...t,
-              searchType: w.lg.Title,
-              titleSearchType: [w.Py.Movie],
-              isExactMatch: !1,
-            },
-            b = {
-              ...t,
-              searchType: w.lg.Title,
-              titleSearchType: [w.Py.Tv],
-              isExactMatch: !1,
-            },
-            N = {
-              ...t,
-              searchType: w.lg.Title,
-              titleSearchType: [w.Py.TvEpisode],
-              isExactMatch: !1,
-            },
-            v = {
-              ...t,
-              searchType: w.lg.Title,
-              titleSearchType: [w.Py.PodcastSeries],
-              isExactMatch: !1,
-            },
-            j = {
-              ...t,
-              searchType: w.lg.Title,
-              titleSearchType: [w.Py.PodcastEpisode],
-              isExactMatch: !1,
-            },
-            I = {
-              ...t,
-              searchType: w.lg.Title,
-              titleSearchType: [w.Py.MusicVideo],
-              isExactMatch: !1,
-            },
-            L = {
-              ...t,
-              searchType: w.lg.Title,
-              titleSearchType: [w.Py.VideoGame],
-              isExactMatch: !1,
-            },
+            S = { ...t, searchType: w.lg.Title, titleSearchType: [w.Py.Movie], isExactMatch: !1 },
+            b = { ...t, searchType: w.lg.Title, titleSearchType: [w.Py.Tv], isExactMatch: !1 },
+            N = { ...t, searchType: w.lg.Title, titleSearchType: [w.Py.TvEpisode], isExactMatch: !1 },
+            v = { ...t, searchType: w.lg.Title, titleSearchType: [w.Py.PodcastSeries], isExactMatch: !1 },
+            j = { ...t, searchType: w.lg.Title, titleSearchType: [w.Py.PodcastEpisode], isExactMatch: !1 },
+            I = { ...t, searchType: w.lg.Title, titleSearchType: [w.Py.MusicVideo], isExactMatch: !1 },
+            L = { ...t, searchType: w.lg.Title, titleSearchType: [w.Py.VideoGame], isExactMatch: !1 },
             k = { ...t, searchType: w.lg.Company, isExactMatch: !1 },
             R = { ...t, searchType: w.lg.Keyword, isExactMatch: !1 },
             A = { ...t, searchType: w.lg.Interest, isExactMatch: !1 };
@@ -1091,10 +960,7 @@ In JS file:
                   },
                   { searchTerm: t.searchTerm }
                 ),
-                children: (0, T.N)({
-                  id: "search_main_more_results_section_title",
-                  defaultMessage: "More results",
-                }),
+                children: (0, T.N)({ id: "search_main_more_results_section_title", defaultMessage: "More results" }),
               }),
               (0, s.jsxs)(ec, {
                 wrap: !0,
@@ -1153,10 +1019,7 @@ In JS file:
                     (0, s.jsx)(c.Chip, {
                       className: eo.peChip,
                       label: h,
-                      href: a({
-                        query: K(j),
-                        refSuffix: [Z.C.PODCAST_EPISODE],
-                      }),
+                      href: a({ query: K(j), refSuffix: [Z.C.PODCAST_EPISODE] }),
                     }),
                   !t.titleSearchType?.includes(w.Py.VideoGame) &&
                     (0, s.jsx)(c.Chip, {
@@ -1178,36 +1041,18 @@ In JS file:
                     }),
                   (0, s.jsx)(c.Chip, {
                     className: eo.quoteChip,
-                    label: (0, T.N)({
-                      id: "search_main_more_results_chip_quotes",
-                      defaultMessage: "Quotes",
-                    }),
-                    href: i({
-                      query: { quotes: t.searchTerm },
-                      refSuffix: Z.C.QUOTES,
-                    }),
+                    label: (0, T.N)({ id: "search_main_more_results_chip_quotes", defaultMessage: "Quotes" }),
+                    href: i({ query: { quotes: t.searchTerm }, refSuffix: Z.C.QUOTES }),
                   }),
                   (0, s.jsx)(c.Chip, {
                     className: eo.plotChip,
-                    label: (0, T.N)({
-                      id: "search_main_more_results_chip_plot",
-                      defaultMessage: "Plot Summaries",
-                    }),
-                    href: i({
-                      query: { plot: t.searchTerm },
-                      refSuffix: Z.C.PLOT,
-                    }),
+                    label: (0, T.N)({ id: "search_main_more_results_chip_plot", defaultMessage: "Plot Summaries" }),
+                    href: i({ query: { plot: t.searchTerm }, refSuffix: Z.C.PLOT }),
                   }),
                   (0, s.jsx)(c.Chip, {
                     className: eo.bioChip,
-                    label: (0, T.N)({
-                      id: "search_main_more_results_chip_bio",
-                      defaultMessage: "Biographies",
-                    }),
-                    href: r({
-                      query: { bio: t.searchTerm },
-                      refSuffix: Z.C.BIO,
-                    }),
+                    label: (0, T.N)({ id: "search_main_more_results_chip_bio", defaultMessage: "Biographies" }),
+                    href: r({ query: { bio: t.searchTerm }, refSuffix: Z.C.BIO }),
                   }),
                   t.searchType &&
                     t.searchType !== w.lg.Interest &&
@@ -1235,27 +1080,16 @@ In JS file:
               className: u,
             } = e,
             m = `${[n, [l, o && `(${o})`].filter(Boolean).join(" ")].filter(Boolean).join(", ")}`,
-            h = (0, T.N)(
-              {
-                id: "search_main_name_result_aka_text",
-                defaultMessage: 'aka "{akaName}"',
-              },
-              { akaName: d }
-            );
+            h = (0, T.N)({ id: "search_main_name_result_aka_text", defaultMessage: 'aka "{akaName}"' }, { akaName: d });
           d && (m = h);
           let { nameMainLinkBuilder: g } = (0, E.WO)(),
-            f = g({
-              nconst: t,
-              refSuffix: [i ? Z.C.NAME : Z.C.ALL, { t: Z.C.NAME, n: r }],
-            });
+            f = g({ nconst: t, refSuffix: [i ? Z.C.NAME : Z.C.ALL, { t: Z.C.NAME, n: r }] });
           return (0, s.jsx)(c.MetaDataListSummaryItem, {
             className: u,
             href: f,
             titleLink: f,
             title: a,
-            preElement: (0, s.jsx)(eu, {
-              children: (0, s.jsx)(c.AvatarImage, { imageModel: p, size: 50 }),
-            }),
+            preElement: (0, s.jsx)(eu, { children: (0, s.jsx)(c.AvatarImage, { imageModel: p, size: 50 }) }),
             textList: [{ text: m }],
           });
         },
@@ -1277,17 +1111,13 @@ In JS file:
           (0, x.setTypographyType)("headline4"),
           x.spacing.xxs
         ),
-        eh = (0, o.default)(c.PageSection).withConfig({
-          componentId: "sc-f2794aa0-1",
-        })(["padding-left:", ";padding-right:", ";"], x.pageMargin.xl, x.pageMargin.xl),
-        eg = {
-          id: "search_main_top_heading",
-          defaultMessage: 'Search "{searchTerm}"',
-        },
-        ef = {
-          id: "search_main_empty_search_heading",
-          defaultMessage: "Search IMDb",
-        },
+        eh = (0, o.default)(c.PageSection).withConfig({ componentId: "sc-f2794aa0-1" })(
+          ["padding-left:", ";padding-right:", ";"],
+          x.pageMargin.xl,
+          x.pageMargin.xl
+        ),
+        eg = { id: "search_main_top_heading", defaultMessage: 'Search "{searchTerm}"' },
+        ef = { id: "search_main_empty_search_heading", defaultMessage: "Search IMDb" },
         ey = {
           id: "search_main_empty_message",
           defaultMessage: "Search IMDb by typing a word or phrase in the search box at the top of this page.",
@@ -1298,9 +1128,7 @@ In JS file:
             i = (0, T.N)(ef),
             r = (0, T.N)(ey),
             n = f(t);
-          return (0, s.jsxs)(eh, {
-            children: [(0, s.jsx)(em, { children: n ? i : a }), n && r],
-          });
+          return (0, s.jsxs)(eh, { children: [(0, s.jsx)(em, { children: n ? i : a }), n && r] });
         };
       var eT = a(72779),
         e_ = a.n(eT);
@@ -1311,12 +1139,14 @@ In JS file:
           emptyResultsMessage: "results-section-empty-results-msg",
         },
         eM = "find-result-item",
-        eP = (0, o.default)(c.PageSection).withConfig({
-          componentId: "sc-b03627f1-0",
-        })(["", ""], (0, x.setPropertyToSpacingVar)("padding-bottom", "ipt-pageMargin")),
-        eS = (0, o.default)(c.SectionTitle).withConfig({
-          componentId: "sc-b03627f1-1",
-        })(["", "{margin-bottom:0;}"], x.mediaQueries.breakpoints.below.l),
+        eP = (0, o.default)(c.PageSection).withConfig({ componentId: "sc-b03627f1-0" })(
+          ["", ""],
+          (0, x.setPropertyToSpacingVar)("padding-bottom", "ipt-pageMargin")
+        ),
+        eS = (0, o.default)(c.SectionTitle).withConfig({ componentId: "sc-b03627f1-1" })(
+          ["", "{margin-bottom:0;}"],
+          x.mediaQueries.breakpoints.below.l
+        ),
         eb = o.default.div.withConfig({ componentId: "sc-b03627f1-2" })(
           [
             "",
@@ -1336,9 +1166,7 @@ In JS file:
           (0, x.setPropertyToSpacingVar)("padding-top", "ipt-pageMargin"),
           eM
         ),
-        eN = (0, o.default)(c.MetaDataList).withConfig({
-          componentId: "sc-b03627f1-3",
-        })(
+        eN = (0, o.default)(c.MetaDataList).withConfig({ componentId: "sc-b03627f1-3" })(
           ["margin:0;", "{", " ", "}"],
           x.mediaQueries.breakpoints.below.l,
           (0, x.setPropertyToSpacingVar)("margin-left", "ipt-pageMargin"),
@@ -1370,27 +1198,12 @@ In JS file:
             } = e,
             o = (0, j.b)(),
             { findLinkBuilder: d } = (0, E.WO)(),
-            p = (0, T.N)({
-              id: "search_main_more_popular_matches_button",
-              defaultMessage: "More popular matches",
-            }),
-            u = (0, T.N)({
-              id: "search_main_see_popular_matches_button",
-              defaultMessage: "Popular matches",
-            }),
-            m = (0, T.N)({
-              id: "search_main_more_exact_matches_button",
-              defaultMessage: "More exact matches",
-            }),
-            h = (0, T.N)({
-              id: "search_main_see_exact_matches_button",
-              defaultMessage: "Exact matches",
-            }),
+            p = (0, T.N)({ id: "search_main_more_popular_matches_button", defaultMessage: "More popular matches" }),
+            u = (0, T.N)({ id: "search_main_see_popular_matches_button", defaultMessage: "Popular matches" }),
+            m = (0, T.N)({ id: "search_main_more_exact_matches_button", defaultMessage: "More exact matches" }),
+            h = (0, T.N)({ id: "search_main_see_exact_matches_button", defaultMessage: "Exact matches" }),
             g = (0, T.N)(
-              {
-                id: "search_main_empty_results_message",
-                defaultMessage: 'No results found for "{searchTerm}"',
-              },
+              { id: "search_main_empty_results_message", defaultMessage: 'No results found for "{searchTerm}"' },
               { searchTerm: a.searchTerm }
             );
           return (0, s.jsxs)(eP, {
@@ -1455,10 +1268,7 @@ In JS file:
                         }),
                       ],
                     })
-                  : (0, s.jsx)(ev, {
-                      "data-testid": eC.emptyResultsMessage,
-                      children: g,
-                    }),
+                  : (0, s.jsx)(ev, { "data-testid": eC.emptyResultsMessage, children: g }),
               }),
             ],
           });
@@ -1550,11 +1360,7 @@ In JS file:
                 titleLink: M,
                 title: a,
                 preElement: (0, s.jsx)(eD, {
-                  children: (0, s.jsx)(c.PosterImage, {
-                    imageModel: o,
-                    imageType: y,
-                    size: 50,
-                  }),
+                  children: (0, s.jsx)(c.PosterImage, { imageModel: o, imageType: y, size: 50 }),
                 }),
                 textList: T,
                 subTextList: [{ text: p, href: t }, { text: m }],
@@ -1570,11 +1376,7 @@ In JS file:
               titleLink: M,
               title: a,
               preElement: (0, s.jsx)(eD, {
-                children: (0, s.jsx)(c.PosterImage, {
-                  imageModel: o,
-                  imageType: y,
-                  size: 50,
-                }),
+                children: (0, s.jsx)(c.PosterImage, { imageModel: o, imageType: y, size: 50 }),
               }),
               textList: T,
               subTextList: f && [{ text: f?.join(", ") }],
@@ -1652,32 +1454,17 @@ In JS file:
             [d, p] = (0, i.useState)(s),
             [u, m] = (0, i.useState)(r),
             [{ data: h, error: g, fetching: f }] = (0, eB.E8)({
-              ...$({
-                skipHasExact: !0,
-                typeFilter: t,
-                findPageMeta: a,
-                numResults: 25,
-                nextCursor: u,
-              }),
+              ...$({ skipHasExact: !0, typeFilter: t, findPageMeta: a, numResults: 25, nextCursor: u }),
               pause: !o,
             });
           return (
             (0, i.useEffect)(() => {
               if (!h) return;
-              let { results: e, nextCursor: t } = Y({
-                data: h,
-                requestContext: l,
-                findPageMeta: a,
-              });
+              let { results: e, nextCursor: t } = Y({ data: h, requestContext: l, findPageMeta: a });
               p((t) => [...t, ...e]), m(t), c(!1);
             }, [h, l]),
             [
-              {
-                results: d,
-                nextCursor: u,
-                newResultsPending: f,
-                hasExactMatches: n,
-              },
+              { results: d, nextCursor: u, newResultsPending: f, hasExactMatches: n },
               () => {
                 f || o || c(!0);
               },
@@ -1744,35 +1531,15 @@ In JS file:
               children: c.map((e) => {
                 switch (e) {
                   case w.lg.Name:
-                    return (0, s.jsx)(eR, {
-                      findPageMeta: t,
-                      nameResults: f,
-                      loadMoreNameResults: y,
-                    });
+                    return (0, s.jsx)(eR, { findPageMeta: t, nameResults: f, loadMoreNameResults: y });
                   case w.lg.Title:
-                    return (0, s.jsx)(eV, {
-                      findPageMeta: t,
-                      titleResults: x,
-                      loadMoreTitleResults: T,
-                    });
+                    return (0, s.jsx)(eV, { findPageMeta: t, titleResults: x, loadMoreTitleResults: T });
                   case w.lg.Company:
-                    return (0, s.jsx)(eI, {
-                      findPageMeta: t,
-                      companyResults: d,
-                      loadMoreCompanyResults: p,
-                    });
+                    return (0, s.jsx)(eI, { findPageMeta: t, companyResults: d, loadMoreCompanyResults: p });
                   case w.lg.Interest:
-                    return (0, s.jsx)(eL, {
-                      findPageMeta: t,
-                      interestResults: u,
-                      loadMoreInterestResults: m,
-                    });
+                    return (0, s.jsx)(eL, { findPageMeta: t, interestResults: u, loadMoreInterestResults: m });
                   case w.lg.Keyword:
-                    return (0, s.jsx)(ek, {
-                      findPageMeta: t,
-                      keywordResults: h,
-                      loadMoreKeywordResults: g,
-                    });
+                    return (0, s.jsx)(ek, { findPageMeta: t, keywordResults: h, loadMoreKeywordResults: g });
                 }
               }),
             })
@@ -1799,10 +1566,7 @@ In JS file:
                 baseColor: "baseAlt",
                 className: g.R,
                 children: (0, s.jsx)(c.PageContentContainer, {
-                  children: (0, s.jsx)(u.ZP, {
-                    name: n.AD_SLOT_NAMES.INLINE20,
-                    nasConfig: { theme: n.NasTheme.DARK },
-                  }),
+                  children: (0, s.jsx)(u.ZP, { name: n.AD_SLOT_NAMES.INLINE20, nasConfig: { theme: n.NasTheme.DARK } }),
                 }),
               }),
               (0, s.jsx)(c.PageContentContainer, {
@@ -1818,10 +1582,7 @@ In JS file:
                             (0, y.YN)(),
                             (0, s.jsx)(l.CSAPageATFScript, {}),
                             f(t)
-                              ? (0, s.jsx)(Q, {
-                                  findPageMeta: t,
-                                  isLoggedIn: _,
-                                })
+                              ? (0, s.jsx)(Q, { findPageMeta: t, isLoggedIn: _ })
                               : (0, s.jsx)(eG, {
                                   findPageMeta: t,
                                   nameResults: a,
@@ -1838,17 +1599,12 @@ In JS file:
                         span: 1,
                         children: (0, s.jsxs)("div", {
                           children: [
-                            (0, s.jsx)(u.ZP, {
-                              name: n.AD_SLOT_NAMES.INLINE40,
-                            }),
+                            (0, s.jsx)(u.ZP, { name: n.AD_SLOT_NAMES.INLINE40 }),
                             !f(t) &&
                               (0, s.jsxs)(d._, {
                                 children: [
                                   (0, s.jsx)(ed, { findPageMeta: t }),
-                                  (0, s.jsx)(Q, {
-                                    findPageMeta: t,
-                                    isLoggedIn: _,
-                                  }),
+                                  (0, s.jsx)(Q, { findPageMeta: t, isLoggedIn: _ }),
                                 ],
                               }),
                           ],
@@ -1861,9 +1617,7 @@ In JS file:
             ],
           });
         },
-        eU = (0, o.default)(c.PageBackground).withConfig({
-          componentId: "sc-f2176668-0",
-        })(["position:relative;"]);
+        eU = (0, o.default)(c.PageBackground).withConfig({ componentId: "sc-f2176668-0" })(["position:relative;"]);
       var eW = a(70071),
         eJ = !0,
         eQ = (e) =>
@@ -1904,10 +1658,7 @@ In JS file:
       function r(e, t) {
         return (
           void 0 === t && (t = {}),
-          {
-            type: "application/ld+json",
-            dangerouslySetInnerHTML: { __html: JSON.stringify(e, c, t.space) },
-          }
+          { type: "application/ld+json", dangerouslySetInnerHTML: { __html: JSON.stringify(e, c, t.space) } }
         );
       }
       (t.JsonLd = function (e) {
@@ -1915,21 +1666,9 @@ In JS file:
       }),
         (t.jsonLdScriptProps = r),
         (t.helmetJsonLdProp = function (e, t) {
-          return (
-            void 0 === t && (t = {}),
-            {
-              type: "application/ld+json",
-              innerHTML: JSON.stringify(e, c, t.space),
-            }
-          );
+          return void 0 === t && (t = {}), { type: "application/ld+json", innerHTML: JSON.stringify(e, c, t.space) };
         });
-      var n = Object.freeze({
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          '"': "&quot;",
-          "'": "&apos;",
-        }),
+      var n = Object.freeze({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" }),
         l = RegExp("[" + Object.keys(n).join("") + "]", "g"),
         o = function (e) {
           return n[e];
@@ -1958,496 +1697,3 @@ In JS file:
       (_N_E = e.O());
   },
 ]);
-```
-
-SHA256 source string:
-
-```text
-query FindPageSearch($skipHasExact: Boolean!, $numResults: Int!, $searchTerm: String!, $includeAdult: Boolean!, $isExactMatch: Boolean!, $typeFilter: [MainSearchType!], $titleSearchOptions: TitleSearchOptions, $after: String) {
-  results: mainSearch(
-    first: $numResults
-    after: $after
-    options: {searchTerm: $searchTerm, type: $typeFilter, includeAdult: $includeAdult, isExactMatch: $isExactMatch, titleSearchOptions: $titleSearchOptions}
-  ) {
-    edges {
-      node {
-        entity {
-          ... on Company {
-            ...CompanyResult
-          }
-          ... on Keyword {
-            ...KeywordResult
-          }
-          ... on Interest {
-            ...InterestResult
-          }
-          ... on Name {
-            ...NameResult
-          }
-          ... on Title {
-            ...TitleResult
-          }
-        }
-      }
-    }
-    pageInfo {
-      hasNextPage
-      endCursor
-    }
-  }
-  hasExact: mainSearch(
-    first: 1
-    options: {searchTerm: $searchTerm, type: $typeFilter, includeAdult: $includeAdult, isExactMatch: true, titleSearchOptions: $titleSearchOptions}
-  ) {
-    edges @skip(if: $skipHasExact) {
-      node {
-        entity {
-          __typename
-        }
-      }
-    }
-  }
-}
-
-fragment CompanyResult on Company {
-  __typename
-  id
-  companyText {
-    text
-  }
-  companyTypes(limit: 1) {
-    text
-  }
-  country {
-    text
-  }
-}
-
-fragment InterestResult on Interest {
-  __typename
-  id
-  primaryText {
-    text
-  }
-  secondaryText {
-    text
-  }
-  primaryImage {
-    url
-    height
-    width
-    caption {
-      plainText
-    }
-  }
-}
-
-fragment KeywordResult on Keyword {
-  __typename
-  id
-  text {
-    text
-  }
-  titles(first: 1) {
-    total
-  }
-}
-
-fragment NameResult on Name {
-  __typename
-  id
-  nameText {
-    text
-  }
-  disambiguator {
-    text
-  }
-  primaryImage {
-    url
-    height
-    width
-    caption {
-      plainText
-    }
-  }
-  akas(first: 10) {
-    edges {
-      node {
-        displayableProperty {
-          value {
-            plainText
-          }
-        }
-      }
-    }
-  }
-  nickNames(limit: 10) {
-    displayableProperty {
-      value {
-        plainText
-      }
-    }
-  }
-  knownFor(first: 1) {
-    edges {
-      node {
-        title {
-          titleText {
-            text
-          }
-          originalTitleText {
-            text
-          }
-          releaseYear {
-            year
-            endYear
-          }
-          titleType {
-            id
-            text
-            canHaveEpisodes
-          }
-        }
-        summary {
-          principalCategory {
-            text
-          }
-        }
-      }
-    }
-  }
-}
-
-fragment TitleResult on Title {
-  __typename
-  id
-  meta {
-    canonicalId
-    publicationStatus
-  }
-  titleType {
-    id
-    canHaveEpisodes
-    displayableProperty {
-      value {
-        plainText
-      }
-    }
-  }
-  titleText {
-    text
-  }
-  originalTitleText {
-    text
-  }
-  releaseYear {
-    year
-    endYear
-  }
-  primaryImage {
-    url
-    height
-    width
-    caption {
-      plainText
-    }
-  }
-  principalCredits(filter: {categories: ["cast"]}) {
-    credits {
-      name {
-        nameText {
-          text
-        }
-      }
-    }
-  }
-  series {
-    series {
-      id
-      titleText {
-        text
-      }
-      originalTitleText {
-        text
-      }
-      releaseYear {
-        year
-        endYear
-      }
-      titleType {
-        id
-        canHaveEpisodes
-        displayableProperty {
-          value {
-            plainText
-          }
-        }
-      }
-    }
-    displayableEpisodeNumber {
-      displayableSeason {
-        displayableProperty {
-          value {
-            plainText
-          }
-        }
-      }
-      episodeNumber {
-        displayableProperty {
-          value {
-            plainText
-          }
-        }
-      }
-    }
-  }
-}
-```
-
-## LATER
-
-### IMDB Interests
-
-- IMDB provides interests (genres, subgenres, form, style etc.)
-- update-imdb-interests which created data/imdb-interests.json is already created, run with `npm run update-imdb-interests`
-
-### IMDB Soundtrack
-
-- https://www.imdb.com/title/tt0227445/soundtrack/
-
-### Series: Link IMDB Dialog
-
-- [ ] for episodes:
-
-  - [ ] provide all entries for the current series (Series_id_Movies_Owner's IMDB_tconst)
-    - [ ] new imdb scraper: scrapeSeriesSeasons(tconst) -> `https://www.imdb.com/title/tt0206512/episodes/` -> dropdown
-  - [ ] allow a fallback to standard imdb search
-
-### Series
-
-- [ ] Heatmap: allow to customize the colors
-
-- [ ] support for date based series (`2023-01-31`)
-
-- [ ] BUG: subtitles in .rar files are added to the media list
-
-- [ ] BUG: rescanning a specific series does not run mediainfo on its episodes
-
-  - store.rescanItems
-
-- [ ] Edit Episode: select season, episode number / bonus number
-
-- [ ] if season is unknown or episode number not set: try to find the imdb tconst by comparing names
-  - [ ] store.findIMDBtconst: series episode find by name
-
-### Misc (LATER)
-
-- [ ] download <https://easylist.to/easylist/easylist.txt> every now and then
-- [ ] implement a test which just checks if the graphQL URLs are fine
-- [ ] Fix: subdirectory called "extras" is not assigned to the main movie (the files are provided as main movies themselves)
-- [ ] lots of video encoders are `<not available>`
-- [ ] BUG: with age rating range (e.g. 6-16+), the dialog's movies and series lists do not expand
-  - we have a general issue with age ratings and their ranges
-- [ ] BUG: subdirectory called "extras" is not assigned to the main movie (the files are provided as main movies themselves)
-- [ ] IMDB Scraper: analyze video URLs in "Videos" section and find a better suited Trailer URL than the one primarily shown in the main page (which is oftentimes an IMDB special)
-  - or simply use:
-    - <https://www.imdb.com/title/tt0088247/videogallery/content_type-trailer/?sort=date&sortDir=desc>
-    - <https://www.imdb.com/title/tt4154796/videogallery/content_type-trailer/?sortDir=desc&sort=duration>
-    - the trailers are also labeled!
-- [ ] refactor buildINSERTQuery, buildUDPATEQuery to accept only one object as function parameter
-- [ ] scanErrors:
-  - [ ] review how rescan and applyIMDB handle scanErrors (string to object, handle null)
-  - [ ] artificially test graphql not found errors
-  - [ ] introduce WARNING vs. ERROR
-    - WARNING:
-      - imdb implausibility
-    - ERROR:
-      - (new) mediainfo without result (possibly due to max path length exceeded)
-      - IMDB GraphQL errors
-  - [ ] introduce error types:
-    - during filescan
-    - during imdb scraping
-    - during mediainfo
-- [ ] i18n: rescan finished snackbar
-- [ ] add ScanErrors functionality in applyMediaInfo (mediainfo may fail on exceeding 259 chars paths)
-- [ ] we apparently do not use the timezone (we store in UTC)
-- [ ] investigate everything that still works with MediaType (and possibly should also use SpecificMediaType)
-- [ ] investigate if we still use Series_id_Movies_Owner to differentiate Series and Episodes -> we have specificMediaType now
-- [ ] BUG? when opening person dialog and clicking "filter by this person", the main list "jumps" and THEN reloads with the filter applied (possibly a fix for another issue)
-- [ ] #36 Mediainfo always opening
-- [ ] rescanHandleDuplicates (also provide snackbar progress for this)
-- [ ] Allow user to upload a poster of their liking
-- [ ] introduce AND filter for Video Qualities (other filters might also get AND filter added)
-- [ ] Rescan: allow to select/unselect certain source paths for the rescan
-- [ ] deprecate tbl_Movies.ML_Quality (it isn't used in code anymore)
-- add ffmpeg in order to create screenshots for movies/episodes with missing poster
-- [ ] provide "source path selection" in "scan media" dialog
-  - allows to select a sub-set of source paths for a media scan
-- [ ] include find-imdb-tconst-tests in imdb scraper watchdog
-- [ ] fix file/dirbased name when IMDB tconst detection has no result: if the medium is directory-based, then show the directory name and not the file-based name
-- [ ] new filter: min. IMDB votes
-- [ ] "IMDB score comparison game" (in context of the current list?)
-- [ ] curl/wget easylist.txt automatically before build <https://easylist.to/easylist/easylist.txt>
-- [ ] later: properly differentiate V1, V2 and V3 mainPageData handling
-- [ ] later: async db funcs (initDb, syncSqlite)
-- [ ] add "play random media" functionality to the List Actions menu
-- [ ] Trailer Show - trailer dialog is open, when adding to list the scrollbar appears on the side, also the trailer dialog seems to wiggle a bit when the add-to-list dialog closes
-
-### Plugin System
-
-- check Shopware's Plugin System <https://www.youtube.com/watch?v=SlhFzRpneJI>
-
-### Remove Noise from duplicate router push
-
-router.js
-
-```js
-// remove the noise from duplicated router pushs (https://stackoverflow.com/a/58439497/5627010)
-const originalPush = Router.prototype.push;
-Router.prototype.push = function push(location) {
-  return originalPush.call(this, location).catch((err) => err);
-};
-```
-
-### In-List File Management
-
-- for individual movies as well as for the whole (filtered) list
-- copy/move entries to
-  - another sourcepath
-  - a user-defined destination
-
-### Customizable Quick Info Area
-
-- [ ] have the quick info area customizable?
-  - [ ] let user decide to hide certain fields
-  - [ ] let user re-arrange the fields
-
-### Find Inspiration from <https://github.com/whyboris/Video-Hub-App>
-
-### Create i18n Editor
-
-- [ ] check out <https://crowdin.com/> which is free for opensource projects
-
-- [x] load message definitions from %workdir%/i18n (e.g. zh.json, fr.json etc.)
-- [x] provide selectable languages from actually loaded messages
-- [ ] include \*.json export in Media Hoarder
-- [ ] investigate external i18n sources - so that tranlastors can access their creation
-- [ ] dropdown of available (to be translated) languages
-- [ ] read available en.json ($fieldName, $expectedText)
-- [ ] provide $expectedText as Input, let user type the translation in the language of choice
-- [ ] establish a way of file exchange
-- [ ] implement i18n/where.json as copy of en.json. The value describes the location in the UI where the string is shown.
-
-### Raspberry Pi (armhf) Build
-
-### JSDoc everywhere
-
-```text
-/**
- * Description of the function
- * @param {string} myParam
- */
-```
-
-### Memory Leak (multiple reloads of medialist)
-
-- [ ] more intelligent loading?
-- [ ] better garbage collection?
-- [x] -> we have a memory leak using eventBus.$on -> implement eventBus.$off on beforeDestroy() lifecycle hook
-- [x] -> we still have the memory leak: don't fetch all data at once (re-fetch for each page)
-- [x] -> check if memory leak is only in dev-mode (yes, it still persists even in prod-mode)
-
-### Use Alternative Search Method
-
-- [ ] IMDB Detection uses Suggestion API which doesn't support non-latin names
-- [ ] IMDB Link Dialog uses Advanced Title Search API which doesn't support non-latin names
-- [ ] maybe we should use `https://www.imdb.com/find?q=` (which is IMDB search incl. ENTER)?
-- [ ] -> replace it in LinkIMDBDialog
-- [ ] -> also use it for IMDB detection by filename
-- IMPORTANT: Find API only yields results if the movie title is complete
-- [ ] => we have to use find API only as fallback for the advancedTitleSearch
-- [ ] => maybe we should implement an "ultimate" search which combines results of all three searches?
-
-### Filters Customization
-
-- [ ] UI: implement App - Filters as array with Sort field
-- [ ] add Settings - Filters tab
-- [ ] user may reorder and show/hide filters
-- [ ] also use this in the filtersList creation
-
-### I18N - Basic
-
-- [ ] support all languages supported by DeepL or AWS (API): `en, de, fr, es, it, nl, pl, ja, pt-PT, pt-BR, ru, zh`
-
-### I18N - Advanced
-
-- [ ] Create AWS-based Service for automatic translation
-  - [ ] Integrate with DeepL API or AWS
-  - [ ] Integrate Payment API (sorry, DeepL/AWS are great but also want some cash)
-
-### Mediainfo Languages
-
-- [ ] we get languages like "German" from Mediainfo and map them to e.g. "De" using languages.js and store.js' ensureLanguageMapping
-- [ ] however, we can't be sure that we know all possible Mediainfo provided languages
-- [ ] how do we cope with that???
-  - [ ] local logging?
-  - [ ] webservice?
-
-### Progress - Movies sorted by Name
-
-- page: 56 (God bless America)
-
-### Other (later)
-
-- [ ] investigate Linux "stores" (see: https://www.electron.build/configuration/linux.html)
-  - [ ] Linux Mint
-  - [ ] Flatpak <https://docs.flatpak.org/en/latest/electron.html>
-  - [ ] Snap <https://snapcraft.io/docs/electron-apps>
-- [ ] investigate scroll-snap <https://markodenic.com/css-tips/>
-- [ ] have individual lists of "my lists" clickable, show dialog (analog to genres, people, companies etc.) and thus "filter by this list"
-
-- [ ] create a MediaInfo watchdog
-
-  - autodownload latest mediainfo
-  - check for expected fields (error on fail)
-  - check for new fields (warning on fail)
-
-- [ ] Test mediainfo and VLC in Linux/MacOS (we now use "" in the exec)
-
-  - [x] Win: OK
-  - [x] Linux: OK
-  - [ ] MacOS: ??
-
-- [ ] MediaInfo supports "--Output=JSON", better use this instead of the default XML Output
-- [ ] .iso handling?
-- [ ] IMDB Awards (Oscars etc.) as data and filter criteria
-- [ ] apply shared.\*AppliedContains to the media item once after completely fetching media
-  - huge refactoring as movie data must then contain the information if it is affected by the filter
-- [ ] items which have a scan error skew the next scan's time-per-item
-- [ ] allow imdbid in relink dialog
-- [ ] refactor
-  - [x] use find-imdb-tconst.js and remove functions from store
-  - [ ] find proper place for imdb-scraper.js, find-imdb-tconst.js
-  - [ ] identify other functions in store.js which don't really belong there
-  - [ ] provide util.promisified stuff in helpers.js and use it exclusively from there
-- [ ] handle helpers.isPortable via env-var (get rid of set-portable.js)
-- [ ] add a new rescan method: "rescan entries with errors"
-- [ ] layout the app with css grid (see: <https://layout.bradwoods.io/customize>)
-- [ ] treat rescan of particular titles as a queue (don't disable all other titles when a rescan runs)
-  - same queue as a "Scan Media" process
-- introduce #tags instead of lists (keep the datastructures in .db though)
-- [ ] correctly implement mk-scrollcontainer class (e.g. Medialist)
-- [ ] OK? - fix moment's missing local time (see MediaList.lastAccessDisplayText)
-
-### Youtube Support
-
-- [ ] youtube (incl. subscription importer -> <https://www.youtube.com/subscription_manager?action_takeout=1)>
-
-### QA
-
-- [ ] check how fetchMedia/MediaList works if only filescan has been performed (no MI/IMDB data)
-
-### Unsure: Implement Backend as express-like server
-
-- this way we can have front- and backend as independent apps
-- major re-write neccessary
