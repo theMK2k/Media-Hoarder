@@ -12,7 +12,7 @@
 
 - [ ] imdb heatmap:
 
-  - [ ] indicate watched episodes
+  - [x] indicate watched episodes
   - [X] highlight season and episode "headers" when hovering over the heatmap
 
 - [ ] series episodes list

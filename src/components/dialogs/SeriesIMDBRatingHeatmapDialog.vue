@@ -63,6 +63,12 @@
                         )
                       "
                       class="mk-clickable-lightgrey-white"
+                      style="height: 22px"
+                      v-bind:style="{
+                        border: data.mediaItems[season.season][`B${bonusEpisode.bonusEpisode}`].last_access_at
+                          ? '1px solid lightgrey'
+                          : '1px solid transparent',
+                      }"
                     >
                       {{
                         data.mediaItems[season.season][`B${bonusEpisode.bonusEpisode}`].IMDB_rating_defaultFormatted ||
@@ -124,6 +130,12 @@
                         helpers.getIMDBRatingClass(data.mediaItems[season.season][episode.episode].IMDB_rating_default)
                       "
                       class="mk-clickable-lightgrey-white"
+                      style="height: 22px"
+                      v-bind:style="{
+                        border: data.mediaItems[season.season][episode.episode].last_access_at
+                          ? '1px solid lightgrey'
+                          : '1px solid transparent',
+                      }"
                     >
                       {{ data.mediaItems[season.season][episode.episode].IMDB_rating_defaultFormatted || "-" }}
                     </div>
