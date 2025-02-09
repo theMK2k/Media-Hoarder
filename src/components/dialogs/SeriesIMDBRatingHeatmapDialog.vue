@@ -58,17 +58,11 @@
                       v-on:mouseenter="setHoveredSeasonEpisode(season.season, `B${bonusEpisode.bonusEpisode}`)"
                       v-on:mouseleave="debouncedSetHoveredSeasonEpisode(null, null)"
                       v-bind:class="
-                        helpers.getIMDBRatingClass(
-                          data.mediaItems[season.season][`B${bonusEpisode.bonusEpisode}`].IMDB_rating_default
+                        getEpisodeClasses(
+                          data.mediaItems[season.season][`B${bonusEpisode.bonusEpisode}`].IMDB_rating_default,
+                          data.mediaItems[season.season][`B${bonusEpisode.bonusEpisode}`].last_access_at
                         )
                       "
-                      class="mk-clickable-lightgrey-white"
-                      style="height: 22px"
-                      v-bind:style="{
-                        border: data.mediaItems[season.season][`B${bonusEpisode.bonusEpisode}`].last_access_at
-                          ? '1px solid lightgrey'
-                          : '1px solid transparent',
-                      }"
                     >
                       {{
                         data.mediaItems[season.season][`B${bonusEpisode.bonusEpisode}`].IMDB_rating_defaultFormatted ||
@@ -127,15 +121,11 @@
                       v-on:mouseenter="setHoveredSeasonEpisode(season.season, `E${episode.episode}`)"
                       v-on:mouseleave="debouncedSetHoveredSeasonEpisode(null, null)"
                       v-bind:class="
-                        helpers.getIMDBRatingClass(data.mediaItems[season.season][episode.episode].IMDB_rating_default)
+                        getEpisodeClasses(
+                          data.mediaItems[season.season][episode.episode].IMDB_rating_default,
+                          data.mediaItems[season.season][episode.episode].last_access_at
+                        )
                       "
-                      class="mk-clickable-lightgrey-white"
-                      style="height: 22px"
-                      v-bind:style="{
-                        border: data.mediaItems[season.season][episode.episode].last_access_at
-                          ? '1px solid lightgrey'
-                          : '1px solid transparent',
-                      }"
                     >
                       {{ data.mediaItems[season.season][episode.episode].IMDB_rating_defaultFormatted || "-" }}
                     </div>
@@ -242,6 +232,37 @@ export default {
       this.hoveredEpisode = episode;
       this.debouncedSetHoveredSeasonEpisode.cancel();
     },
+
+    getEpisodeClasses(IMDB_rating, last_access_at) {
+      const cssClasses = {
+        episode: true,
+        "mk-clickable-lightgrey-white": true,
+      };
+
+      if (!IMDB_rating) {
+        cssClasses.IMDBRatingNone = true;
+      } else if (IMDB_rating < 5) {
+        cssClasses.IMDBRatingRed = true;
+      } else if (IMDB_rating < 6) {
+        cssClasses.IMDBRatingOrangeRed = true;
+      } else if (IMDB_rating < 7) {
+        cssClasses.IMDBRatingOrange = true;
+      } else if (IMDB_rating < 8) {
+        cssClasses.IMDBRatingOrangeGreen = true;
+      } else if (IMDB_rating < 9) {
+        cssClasses.IMDBRatingGreenOrange = true;
+      } else if (IMDB_rating < 9.5) {
+        cssClasses.IMDBRatingGreen = true;
+      } else {
+        cssClasses.IMDBRatingDarkGreen = true;
+      }
+
+      if (last_access_at) {
+        cssClasses.watched = true;
+      }
+
+      return cssClasses;
+    },
   },
 
   // ### Lifecycle Hooks ###
@@ -286,5 +307,21 @@ td {
 .input-group--text-field {
   padding-left: 16px;
   /* padding-top: 0px; */
+}
+
+.episode {
+  height: 22px;
+  padding-top: 1px;
+}
+
+.episode.watched {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.2) 0,
+    rgba(255, 255, 255, 0.2) 2px,
+    transparent 4px,
+    transparent 8px
+  );
+  background-blend-mode: overlay;
 }
 </style>

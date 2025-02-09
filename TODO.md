@@ -10,9 +10,9 @@
 
 - [WIP] MediaItemCard: indicate if a medium has been watched
 
-- [ ] imdb heatmap:
+- [ ] Episodes Heatmap:
 
-  - [x] indicate watched episodes
+  - [x] highlight watched episodes with a discreet background pattern
   - [X] highlight season and episode "headers" when hovering over the heatmap
 
 - [ ] series episodes list
