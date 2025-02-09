@@ -8,7 +8,12 @@
 
 - [ ] BUG: with a multi-episode, when clicking the episode in the IMDB Rating Dialog, the episode is opened multiple times (see: Star Trek Prodigy S01E01-E02)
 
-- [ ] imdb heatmap: highlight season and episode "headers" when hovering over the heatmap
+- [WIP] MediaItemCard: indicate if a medium has been watched
+
+- [ ] imdb heatmap:
+
+  - [ ] indicate watched episodes
+  - [ ] highlight season and episode "headers" when hovering over the heatmap
 
 - [ ] series episodes list
   - [ ] when sort by season and episode, provide button to scroll to last watched episode

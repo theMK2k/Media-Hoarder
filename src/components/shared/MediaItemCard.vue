@@ -79,6 +79,17 @@
                 "
               >
                 <div style="display: flex; min-height: 30px">
+                  <div v-if="mediaItem.last_access_at">
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on }">
+                        <span v-on="on">
+                          <v-icon style="margin-right: 8px; margin-bottom: 3px">mdi-eye-check-outline</v-icon>
+                        </span>
+                      </template>
+                      <span>{{ $t("Last Access") }}: {{ lastAccessHumanized(mediaItem) }}</span>
+                    </v-tooltip>
+                  </div>
+
                   <div style="overflow: hidden; text-overflow: ellipsis">
                     <span v-if="mediaItem.Series_Season_Displaytext" style="font-weight: 400; color: lightgray">
                       {{ mediaItem.Series_Season_Displaytext
