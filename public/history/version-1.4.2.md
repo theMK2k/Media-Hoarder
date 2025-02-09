@@ -3,6 +3,7 @@
 ## Updates in v1.4.2
 
 - added indicator as soon as a medium has been watched
+- Episodes Heatmap: highlight hovered season and episode labels in the heatmap
 
 ## Updates in v1.4.1
 

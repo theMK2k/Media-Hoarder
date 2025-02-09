@@ -13,7 +13,7 @@
 - [ ] imdb heatmap:
 
   - [ ] indicate watched episodes
-  - [ ] highlight season and episode "headers" when hovering over the heatmap
+  - [X] highlight season and episode "headers" when hovering over the heatmap
 
 - [ ] series episodes list
   - [ ] when sort by season and episode, provide button to scroll to last watched episode

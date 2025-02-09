@@ -6,7 +6,11 @@
         <v-progress-linear v-if="isLoading" color="red accent-0" indeterminate rounded height="3"></v-progress-linear>
       </v-card-title>
       <v-card-text>
+        <!-- KILLME -->
+        <div>{{ hoveredSeason }} - {{ hoveredEpisode }}</div>
+
         <table v-if="data" style="margin-left: auto; margin-right: auto">
+          <!-- header row "   S01 S02 S03" -->
           <thead>
             <tr>
               <th></th>
@@ -14,17 +18,27 @@
                 v-for="season of data.seasons"
                 v-bind:key="season.displayText"
                 style="font-weight: bold; color: white"
+                v-bind:style="{
+                  color: season.season === hoveredSeason ? '#2196f3' : 'white',
+                }"
               >
                 {{ season.displayText }}
               </th>
             </tr>
           </thead>
           <tbody>
-            <!-- Bonus Episodes -->
+            <!-- Rows: Bonus Episodes -->
             <tr v-for="bonusEpisode of data.bonusEpisodes" v-bind:key="bonusEpisode.displayText">
-              <td style="font-weight: bold">
+              <!-- First Column: label, e.g. "B01", "B02" -->
+              <td
+                style="font-weight: bold"
+                v-bind:style="{
+                  color: `B${bonusEpisode.bonusEpisode}` === hoveredEpisode ? '#2196f3' : 'white',
+                }"
+              >
                 {{ bonusEpisode.displayText }}
               </td>
+              <!-- Other Columns: the actual bonus episodes -->
               <td v-for="season of data.seasons" v-bind:key="season.displayText">
                 <v-menu
                   v-if="
@@ -44,6 +58,8 @@
                       v-on:click="
                         onShowMediaItemDetails(data.mediaItems[season.season][`B${bonusEpisode.bonusEpisode}`])
                       "
+                      v-on:mouseenter="setHoveredSeasonEpisode(season.season, `B${bonusEpisode.bonusEpisode}`)"
+                      v-on:mouseleave="debouncedSetHoveredSeasonEpisode(null, null)"
                       v-bind:class="
                         helpers.getIMDBRatingClass(
                           data.mediaItems[season.season][`B${bonusEpisode.bonusEpisode}`].IMDB_rating_default
@@ -78,11 +94,18 @@
               </td>
             </tr>
 
-            <!-- Episodes -->
+            <!-- Rows: Episodes -->
             <tr v-for="episode of data.episodes" v-bind:key="episode.displayText">
-              <td style="font-weight: bold">
+              <!-- First Column: label, e.g. "E01", "E02" ... -->
+              <td
+                style="font-weight: bold"
+                v-bind:style="{
+                  color: `E${episode.episode}` === hoveredEpisode ? '#2196f3' : 'white',
+                }"
+              >
                 {{ episode.displayText }}
               </td>
+              <!-- Other Columns: the actual episodes -->
               <td v-for="season of data.seasons" v-bind:key="season.displayText">
                 <v-menu
                   v-if="data.mediaItems[season.season] && data.mediaItems[season.season][episode.episode]"
@@ -98,6 +121,8 @@
                     <div
                       v-on="on"
                       v-on:click="onShowMediaItemDetails(data.mediaItems[season.season][episode.episode])"
+                      v-on:mouseenter="setHoveredSeasonEpisode(season.season, `E${episode.episode}`)"
+                      v-on:mouseleave="debouncedSetHoveredSeasonEpisode(null, null)"
                       v-bind:class="
                         helpers.getIMDBRatingClass(data.mediaItems[season.season][episode.episode].IMDB_rating_default)
                       "
@@ -140,6 +165,8 @@
 <script>
 // import { eventBus } from "@/main";
 const logger = require("../../helpers/logger");
+import * as _ from "lodash";
+
 import * as helpers from "@/helpers/helpers";
 import * as store from "@/store";
 
@@ -153,7 +180,10 @@ export default {
   props: ["show", "isLoading", "data", "title"],
 
   data() {
-    return {};
+    return {
+      hoveredSeason: null,
+      hoveredEpisode: null,
+    };
   },
 
   computed: {
@@ -197,10 +227,19 @@ export default {
       logger.log("[SeriesIMDBRatingHeatmapDialog.onMICmediaItemEvent] payload:", payload);
       this.$emit("mediaItemEvent", payload);
     },
+
+    setHoveredSeasonEpisode(season, episode) {
+      this.hoveredSeason = season;
+      this.hoveredEpisode = episode;
+      this.debouncedSetHoveredSeasonEpisode.cancel();
+    },
   },
 
   // ### Lifecycle Hooks ###
-  created() {},
+  created() {
+    // lodash debounced functions
+    this.debouncedSetHoveredSeasonEpisode = _.debounce(this.setHoveredSeasonEpisode, 100);
+  },
 };
 </script>
 
