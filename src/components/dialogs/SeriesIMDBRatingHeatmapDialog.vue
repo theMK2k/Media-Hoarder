@@ -6,9 +6,6 @@
         <v-progress-linear v-if="isLoading" color="red accent-0" indeterminate rounded height="3"></v-progress-linear>
       </v-card-title>
       <v-card-text>
-        <!-- KILLME -->
-        <div>{{ hoveredSeason }} - {{ hoveredEpisode }}</div>
-
         <table v-if="data" style="margin-left: auto; margin-right: auto">
           <!-- header row "   S01 S02 S03" -->
           <thead>
