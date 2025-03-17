@@ -2124,6 +2124,10 @@ async function scrapeIMDBSuggestion(searchTerm) {
 
   if (objResponse && objResponse.d && objResponse.d.length > 0) {
     objResponse.d.forEach((item) => {
+      if (!item.id.startsWith("tt")) {
+        return; // later we found promotional stuff in the suggestions search, e.g. /features/kleenexscore :D
+      }
+
       results.push({
         tconst: item.id,
         title: item.l,

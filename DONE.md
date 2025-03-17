@@ -8,6 +8,9 @@
 
 - [x] SCRAPER
   - update Trailer URL handling
+  - fix tests for plot summaries
+  - update tests for companies data
+  - update imdb search for more robust results
 
 ## v1.4.1
 
