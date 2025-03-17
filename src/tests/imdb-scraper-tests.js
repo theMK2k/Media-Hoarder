@@ -185,7 +185,8 @@ async function testIMDBmainPageData2() {
       $IMDB_numVotes: 4000,
       $IMDB_posterSmall_URL: "extras/tt0039822_posterSmall.jpg",
       $IMDB_posterLarge_URL: "extras/tt0039822_posterLarge.jpg",
-      $IMDB_plotSummary: "1941 in a small town in Nazi occupied France",
+      $IMDB_plotSummary:
+        "In occupied France, an elderly man and his niece are forced to give shelter to a German army lieutenant who seemingly loves their country and culture.",
       $IMDB_Trailer_URL: null,
       $IMDB_startYear: 1949,
       $IMDB_endYear: null,
@@ -342,7 +343,8 @@ async function testIMDBmainPageData4() {
     const expected = {
       $IMDB_releaseType: "movie",
       $IMDB_genres: ["comedy", "fantasy", "horror", "thriller"],
-      $IMDB_plotSummary: null,
+      $IMDB_plotSummary:
+        "As she travels through the UK with her boyfriend, Alex is bitten by a werewolf in this remake of the 1981 classic.",
       $IMDB_Trailer_URL: null,
       $IMDB_startYear: null,
       $IMDB_endYear: null,
@@ -730,14 +732,14 @@ async function testIMDBCompaniesData() {
     const expected = {
       topProductionCompanies: {
         $IMDB_Top_Production_Companies:
-          '[{"category":"Production","id":"co0051941","name":"Marvel Studios","role":""},{"category":"Production","id":"co0008970","name":"Walt Disney Pictures","role":""}]',
+          '[{"category":"Production","id":"co0051941","name":"Marvel Studios","role":"(presents)"}]',
       },
 
-      companies1: {
+      companies0: {
         category: "Production",
-        id: "co0008970",
-        name: "Walt Disney Pictures",
-        role: "",
+        id: "co0051941",
+        name: "Marvel Studios",
+        role: "(presents)",
       },
     };
 
@@ -767,12 +769,12 @@ async function testIMDBCompaniesData() {
         );
       }
 
-      if (JSON.stringify(scrapeResult.companies[1]) !== JSON.stringify(expected.companies1)) {
+      if (JSON.stringify(scrapeResult.companies[0]) !== JSON.stringify(expected.companies0)) {
         addSubLogEntry(
           testResult,
           `companies[1] mismatch
-      got:      ${JSON.stringify(scrapeResult.companies[1])}
-      expected: ${JSON.stringify(expected.companies1)}`,
+      got:      ${JSON.stringify(scrapeResult.companies[0])}
+      expected: ${JSON.stringify(expected.companies0)}`,
           status.WARNING
         );
       }
