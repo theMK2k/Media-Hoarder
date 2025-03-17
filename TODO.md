@@ -1,5 +1,7 @@
 # TODO
 
+- [ ] Scraper - Fix Trailer URL expectation
+
 - [ ] BUG: "filter by this Language" does not work
 
 - [ ] sidebar filters: a button per item to open the filter dialog (e.g. My Lists - SciFi Classics)

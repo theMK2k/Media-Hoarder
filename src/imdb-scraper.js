@@ -2368,7 +2368,9 @@ async function scrapeIMDBTrailerMediaURLsV1(html) {
 
 async function scrapeIMDBTrailerMediaURLs(trailerURL) {
   try {
-    trailerURL = trailerURL.replace("/video/imdb/", "/videoplayer/");
+    // We're only interested in the vi012345678 id and use it for https://www.imdb.com/videoplayer/vi012345678
+    const videoId = trailerURL.match(/vi\d+/)[0];
+    trailerURL = `https://www.imdb.com/videoplayer/${videoId}`;
 
     logger.log("[scrapeIMDBTrailerMediaURLs] trailerURL:", trailerURL);
 

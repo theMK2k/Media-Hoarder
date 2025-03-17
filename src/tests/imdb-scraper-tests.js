@@ -35,21 +35,28 @@ function performTruthyCheck(scrapeResult, testResult, fieldName, msgPrefix, allo
   return true;
 }
 
-/*
- * Perform a default check: the item must be truthy and equal to the expected value
+/**
+ * Perform a default check: the item must be truthy and equal to the expected value, see also @param options
+ * @param {*} scrapeResult
+ * @param {*} expected
+ * @param {*} testResult
+ * @param {*} fieldName
+ * @param {*} options optional options {msgPrefix: string, allowFalsy: boolean = false, checkIncludes: boolean = false}
+ * @returns
  */
-function performDefaultCheck(scrapeResult, expected, testResult, fieldName, msgPrefix, allowFalsy, checkIncludes) {
-  if (!performTruthyCheck(scrapeResult, testResult, fieldName, msgPrefix, allowFalsy)) {
+function performDefaultCheck(scrapeResult, expected, testResult, fieldName, options = {}) {
+  if (!performTruthyCheck(scrapeResult, testResult, fieldName, options.msgPrefix, options.allowFalsy)) {
     return;
   }
 
   if (
-    (!checkIncludes && JSON.stringify(scrapeResult[fieldName]) !== JSON.stringify(expected[fieldName])) ||
-    (checkIncludes && JSON.stringify(scrapeResult[fieldName]).includes(JSON.stringify(expected[fieldName])))
+    (!options.checkIncludes && JSON.stringify(scrapeResult[fieldName]) !== JSON.stringify(expected[fieldName])) ||
+    (options.checkIncludes &&
+      !(scrapeResult[fieldName] || "<undefined1>").includes(expected[fieldName] || "<undefined2>"))
   ) {
     addSubLogEntry(
       testResult,
-      `${msgPrefix ? msgPrefix + " " : ""}${fieldName} mismatch
+      `${options.msgPrefix ? options.msgPrefix + " " : ""}${fieldName} mismatch
     got:      ${JSON.stringify(scrapeResult[fieldName])}
     expected: ${JSON.stringify(expected[fieldName])}`,
       status.WARNING
@@ -77,7 +84,7 @@ async function testIMDBmainPageData() {
       $IMDB_posterLarge_URL: "extras/tt4154796_posterLarge.jpg",
       $IMDB_plotSummary:
         "After the devastating events of Avengers: Infinity War (2018), the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe.",
-      $IMDB_Trailer_URL: "/video/imdb/vi2163260441",
+      $IMDB_Trailer_URL: "vi2163260441",
       $IMDB_startYear: 2019,
       $IMDB_endYear: null,
     };
@@ -148,9 +155,11 @@ async function testIMDBmainPageData() {
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_posterSmall_URL");
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_posterLarge_URL");
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_plotSummary");
-    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_Trailer_URL");
-    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_startYear", null, true);
-    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_endYear", null, true);
+
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_Trailer_URL", { checkIncludes: true });
+
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_startYear", { allowFalsy: true });
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_endYear", { allowFalsy: true });
   } catch (error) {
     testResult.status = status.EXCEPTION;
     testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
@@ -225,12 +234,12 @@ async function testIMDBmainPageData2() {
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_posterSmall_URL");
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_posterLarge_URL");
 
-    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_plotSummary", null, null, true);
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_plotSummary", { checkIncludes: true });
 
-    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_Trailer_URL", null, true);
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_Trailer_URL", { allowFalsy: true });
 
-    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_startYear", null, true);
-    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_endYear", null, true);
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_startYear", { allowFalsy: true });
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_endYear", { allowFalsy: true });
   } catch (error) {
     testResult.status = status.EXCEPTION;
     testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
@@ -258,7 +267,7 @@ async function testIMDBmainPageData3() {
       $IMDB_posterLarge_URL: "extras/tt0092455_posterLarge.jpg",
       $IMDB_plotSummary:
         "Set almost 100 years after Captain Kirk's 5-year mission, a new generation of Starfleet officers sets off in the U.S.S. Enterprise-D",
-      $IMDB_Trailer_URL: "/video/imdb/vi71221529",
+      $IMDB_Trailer_URL: "vi71221529",
       $IMDB_startYear: 1987,
       $IMDB_endYear: 1994,
     };
@@ -306,12 +315,12 @@ async function testIMDBmainPageData3() {
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_posterSmall_URL");
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_posterLarge_URL");
 
-    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_plotSummary", null, null, true);
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_plotSummary", { checkIncludes: true });
 
-    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_Trailer_URL", null, true);
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_Trailer_URL", { checkIncludes: true });
 
-    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_startYear", null, true);
-    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_endYear", null, true);
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_startYear");
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_endYear");
   } catch (error) {
     testResult.status = status.EXCEPTION;
     testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
@@ -355,12 +364,12 @@ async function testIMDBmainPageData4() {
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_releaseType");
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_genres");
 
-    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_plotSummary", null, null, true);
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_plotSummary", { checkIncludes: true });
 
-    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_Trailer_URL", null, true);
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_Trailer_URL", { allowFalsy: true });
 
-    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_startYear", null, true);
-    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_endYear", null, true);
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_startYear", { allowFalsy: true });
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_endYear", { allowFalsy: true });
   } catch (error) {
     testResult.status = status.EXCEPTION;
     testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
@@ -1194,34 +1203,18 @@ async function testIMDBSuggestion() {
         );
       }
 
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "tconst",
-        `query '${expectedValue.searchTerm}'`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "title",
-        `query '${expectedValue.searchTerm}'`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "titleType",
-        `query '${expectedValue.searchTerm}'`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "year",
-        `query '${expectedValue.searchTerm}'`
-      );
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "tconst", {
+        msgPrefix: `query '${expectedValue.searchTerm}'`,
+      });
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "title", {
+        msgPrefix: `query '${expectedValue.searchTerm}'`,
+      });
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "titleType", {
+        msgPrefix: `query '${expectedValue.searchTerm}'`,
+      });
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "year", {
+        msgPrefix: `query '${expectedValue.searchTerm}'`,
+      });
 
       performTruthyCheck(scrapeResult[0], testResult, "imageURL", `query '${expectedValue.searchTerm}'`);
     }
@@ -1300,55 +1293,27 @@ async function testIMDBAdvancedTitleSearch() {
         );
       }
 
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "tconst",
-        `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "title",
-        `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
-      );
-      performTruthyCheck(
-        scrapeResult[0],
-        testResult,
-        "imageURL",
-        `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "ageRating",
-        `query '${expectedValue.title}' [${expectedValue.titleTypes}]`,
-        true
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "runtime",
-        `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "genres",
-        `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "detailInfo",
-        `query '${expectedValue.title}' [${expectedValue.titleTypes}]`
-      );
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "tconst", {
+        msgPrefix: `query '${expectedValue.title}' [${expectedValue.titleTypes}]`,
+      });
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "title", {
+        msgPrefix: `query '${expectedValue.title}' [${expectedValue.titleTypes}]`,
+      });
+      performTruthyCheck(scrapeResult[0], testResult, "imageURL", {
+        msgPrefix: `query '${expectedValue.title}' [${expectedValue.titleTypes}]`,
+      });
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "ageRating", {
+        msgPrefix: `query '${expectedValue.title}' [${expectedValue.titleTypes}]`,
+      });
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "runtime", {
+        msgPrefix: `query '${expectedValue.title}' [${expectedValue.titleTypes}]`,
+      });
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "genres", {
+        msgPrefix: `query '${expectedValue.title}' [${expectedValue.titleTypes}]`,
+      });
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "detailInfo", {
+        msgPrefix: `query '${expectedValue.title}' [${expectedValue.titleTypes}]`,
+      });
     }
   } catch (error) {
     testResult.status = status.EXCEPTION;
@@ -1415,33 +1380,18 @@ async function testIMDBFindPageSearch() {
         );
       }
 
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "tconst",
-        `query '${expectedValue.searchTerm}' [${expectedValue.type}]`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "title",
-        `query '${expectedValue.searchTerm}' [${expectedValue.type}]`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "year",
-        `query '${expectedValue.searchTerm}' [${expectedValue.type}]`
-      );
-      performTruthyCheck(
-        scrapeResult[0],
-        testResult,
-        "imageURL",
-        `query '${expectedValue.searchTerm}' [${expectedValue.type}]`
-      );
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "tconst", {
+        msgPrefix: `query '${expectedValue.searchTerm}' [${expectedValue.type}]`,
+      });
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "title", {
+        msgPrefix: `query '${expectedValue.searchTerm}' [${expectedValue.type}]`,
+      });
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "year", {
+        msgPrefix: `query '${expectedValue.searchTerm}' [${expectedValue.type}]`,
+      });
+      performTruthyCheck(scrapeResult[0], testResult, "imageURL", {
+        msgPrefix: `query '${expectedValue.searchTerm}' [${expectedValue.type}]`,
+      });
     }
   } catch (error) {
     testResult.status = status.EXCEPTION;
@@ -1531,47 +1481,24 @@ async function testIMDBSeriesEpisodes() {
         );
       }
 
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "tconst",
-        `query '${expectedValue.name} Season ${expectedValue.Series_Season}'`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "title",
-        `query '${expectedValue.name} Season ${expectedValue.Series_Season}'`
-      );
-      performTruthyCheck(
-        scrapeResult[0],
-        testResult,
-        "imageURL",
-        `query '${expectedValue.name} Season ${expectedValue.Series_Season}'`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "releaseDateYear",
-        `query '${expectedValue.name} Season ${expectedValue.Series_Season}'`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "releaseDateMonth",
-        `query '${expectedValue.name} Season ${expectedValue.Series_Season}'`
-      );
-      performDefaultCheck(
-        scrapeResult[0],
-        expectedValue.result0,
-        testResult,
-        "releaseDateDay",
-        `query '${expectedValue.name} Season ${expectedValue.Series_Season}'`
-      );
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "tconst", {
+        msgPrefix: `query '${expectedValue.name} Season ${expectedValue.Series_Season}'`,
+      });
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "title", {
+        msgPrefix: `query '${expectedValue.name} Season ${expectedValue.Series_Season}'`,
+      });
+      performTruthyCheck(scrapeResult[0], testResult, "imageURL", {
+        msgPrefix: `query '${expectedValue.name} Season ${expectedValue.Series_Season}'`,
+      });
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "releaseDateYear", {
+        msgPrefix: `query '${expectedValue.name} Season ${expectedValue.Series_Season}'`,
+      });
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "releaseDateMonth", {
+        msgPrefix: `query '${expectedValue.name} Season ${expectedValue.Series_Season}'`,
+      });
+      performDefaultCheck(scrapeResult[0], expectedValue.result0, testResult, "releaseDateDay", {
+        msgPrefix: `query '${expectedValue.name} Season ${expectedValue.Series_Season}'`,
+      });
       if (!scrapeResult[0].rating) {
         addSubLogEntry(testResult, "rating missing", status.ERROR);
       } else if (!epsilonCheck(scrapeResult[0].rating, expectedValue.result0.rating, 20)) {
@@ -1663,13 +1590,9 @@ async function testIMDBSeriesSeasons() {
         );
       }
 
-      performDefaultCheck(
-        { seasons: scrapeResult },
-        expectedValue,
-        testResult,
-        "seasons",
-        `query '${expectedValue.name} Seasons'`
-      );
+      performDefaultCheck({ seasons: scrapeResult }, expectedValue, testResult, "seasons", {
+        msgPrefix: `query '${expectedValue.name} Seasons'`,
+      });
     }
   } catch (error) {
     testResult.status = status.EXCEPTION;

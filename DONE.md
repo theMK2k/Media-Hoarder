@@ -2,8 +2,12 @@
 
 ## Next (current v1.4.1)
 
-- [x] display the current version and detect new version during runtime
+- [x] FEATURE: display the current version and detect new version during runtime
+
   - checks for new version hourly, if a new version is available, a notification is shown in the header
+
+- [x] SCRAPER
+  - update Trailer URL handling
 
 ## v1.4.1
 
