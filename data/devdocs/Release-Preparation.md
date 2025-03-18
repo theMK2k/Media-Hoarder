@@ -15,7 +15,7 @@ This document describes the steps necessary to get a new release done.
 
 ### Windows Build
 
-- [WIP] in Windows run:
+- [ ] in Windows run:
 
 ```bash
 git pull
@@ -62,14 +62,15 @@ npm i
 
 - upload all files from Build Packs
 
-```
+```shell
+cd /d/Data/Code/WebApps/media-hoarder/RELEASES/media-hoarder-$version
 gh release list
 gh release upload vX.Y.Z *
 ```
 
 ## Update Website
 
-- [ ] create new set of download locations
+- [ ] create new set of download locations in `downloads.json`
 - [ ] build and deploy website
   - `./create-and-deploy-everything.sh`
 
