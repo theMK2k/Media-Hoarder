@@ -2,10 +2,29 @@
 
 ## Updates in v1.4.2
 
-- added indicator as soon as a medium has been watched
-- Episodes Heatmap:
-  - highlight hovered season and episode labels in the heatmap
-  - highlight watched episodes with a discreet background pattern
+### Feature: "Watched" indicator
+
+_As soon as a medium has been watched, an indicator is shown in the media list as well as in the series episodes heatmap._
+
+Media List: watched medium shows an icon in front of the title:
+
+![image](https://github.com/user-attachments/assets/a1bd3014-408b-4a54-82b6-b753023a774e)
+
+Episodes Heatmap: watched episodes have a different background pattern:
+
+![image](https://github.com/user-attachments/assets/79739aa4-2fac-4dfd-a36a-68d4dc3bceb5)
+
+### Feature: Heatmap Highlight season and episode number under cursor
+
+![media-hoarder-heatmap-highlight](https://github.com/user-attachments/assets/7b1e26e7-462c-4852-bd6d-3c5085c61b03)
+
+### Fixes
+
+- SCRAPER
+  - update Trailer URL handling
+  - fix tests for plot summaries
+  - update tests for companies data
+  - update imdb search for more robust results
 
 ## Updates in v1.4.1
 
