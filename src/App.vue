@@ -2778,7 +2778,7 @@
 
     <!-- CONTENT -->
     <v-main>
-      <v-container style="display: flex; max-width: 100% !important; padding: 0px !important">
+      <v-container style="display: flex; height: 100%; max-width: 100% !important; padding: 0px !important">
         <router-view></router-view>
 
         <mk-version-dialog
