@@ -1,5 +1,7 @@
 # TODO
 
+- [ ] Scraper: scrapeIMDBCompaniesDataV3 - use the page to identify the categories (e.g. <https://www.imdb.com/title/tt0095327/companycredits/>)
+
 - [ ] Scraper - Fix Trailer URL expectation
 
 - [ ] BUG: "filter by this Language" does not work
@@ -15,7 +17,7 @@
 - [ ] Episodes Heatmap:
 
   - [x] highlight watched episodes with a discreet background pattern
-  - [X] highlight season and episode "headers" when hovering over the heatmap
+  - [x] highlight season and episode "headers" when hovering over the heatmap
 
 - [ ] series episodes list
   - [ ] when sort by season and episode, provide button to scroll to last watched episode

@@ -657,13 +657,24 @@ async function testIMDBFullCreditsData() {
 
   try {
     const expected = {
-      topCredits: {
+      topCreditsV1: {
         $IMDB_Top_Directors:
           '[{"category":"Directed by","id":"nm0751577","name":"Anthony Russo","credit":null},{"category":"Directed by","id":"nm0751648","name":"Joe Russo","credit":null}]',
         $IMDB_Top_Writers:
           '[{"category":"Writing Credits","id":"nm1321655","name":"Christopher Markus","credit":"(screenplay by) &"},{"category":"Writing Credits","id":"nm1321656","name":"Stephen McFeely","credit":"(screenplay by)"},{"category":"Writing Credits","id":"nm0498278","name":"Stan Lee","credit":"(based on the Marvel comics by) and"},{"category":"Writing Credits","id":"nm0456158","name":"Jack Kirby","credit":"(based on the Marvel comics by)"},{"category":"Writing Credits","id":"nm0800209","name":"Joe Simon","credit":"(Captain America created by) and"}]',
         $IMDB_Top_Producers:
           '[{"category":"Produced by","id":"nm0022285","name":"Victoria Alonso","credit":"executive producer"},{"category":"Produced by","id":"nm0068416","name":"Mitchell Bell","credit":"co-producer (as Mitch Bell)"},{"category":"Produced by","id":"nm2753152","name":"Ari Costa","credit":"associate producer"},{"category":"Produced by","id":"nm0195669","name":"Louis D\'Esposito","credit":"executive producer"},{"category":"Produced by","id":"nm0269463","name":"Jon Favreau","credit":"executive producer"}]',
+        $IMDB_Top_Cast:
+          '[{"category":"Cast","id":"nm0000375","name":"Robert Downey Jr.","credit":"Tony Stark / Iron Man"},{"category":"Cast","id":"nm0262635","name":"Chris Evans","credit":"Steve Rogers / Captain America"},{"category":"Cast","id":"nm0749263","name":"Mark Ruffalo","credit":"Bruce Banner / Hulk"},{"category":"Cast","id":"nm1165110","name":"Chris Hemsworth","credit":"Thor"},{"category":"Cast","id":"nm0424060","name":"Scarlett Johansson","credit":"Natasha Romanoff / Black Widow"}]',
+      },
+
+      topCreditsV3: {
+        $IMDB_Top_Directors:
+          '[{"category":"Directors","id":"nm0751577","name":"Anthony Russo","credit":null},{"category":"Directors","id":"nm0751648","name":"Joe Russo","credit":null}]',
+        $IMDB_Top_Writers:
+          '[{"category":"Writers","id":"nm1321655","name":"Christopher Markus","credit":"screenplay by"},{"category":"Writers","id":"nm1321656","name":"Stephen McFeely","credit":"screenplay by"},{"category":"Writers","id":"nm0498278","name":"Stan Lee","credit":"based on the Marvel comics by / Groot created by"},{"category":"Writers","id":"nm0456158","name":"Jack Kirby","credit":"based on the Marvel comics by / Captain America created by / Groot created by"},{"category":"Writers","id":"nm0800209","name":"Joe Simon","credit":"Captain America created by"}]',
+        $IMDB_Top_Producers:
+          '[{"category":"Producers","id":"nm0022285","name":"Victoria Alonso","credit":"executive producer"},{"category":"Producers","id":"nm0068416","name":"Mitchell Bell","credit":"co-producer"},{"category":"Producers","id":"nm2753152","name":"Ari Costa","credit":"associate producer"},{"category":"Producers","id":"nm0195669","name":"Louis D\'Esposito","credit":"executive producer"},{"category":"Producers","id":"nm0269463","name":"Jon Favreau","credit":"executive producer"}]',
         $IMDB_Top_Cast:
           '[{"category":"Cast","id":"nm0000375","name":"Robert Downey Jr.","credit":"Tony Stark / Iron Man"},{"category":"Cast","id":"nm0262635","name":"Chris Evans","credit":"Steve Rogers / Captain America"},{"category":"Cast","id":"nm0749263","name":"Mark Ruffalo","credit":"Bruce Banner / Hulk"},{"category":"Cast","id":"nm1165110","name":"Chris Hemsworth","credit":"Thor"},{"category":"Cast","id":"nm0424060","name":"Scarlett Johansson","credit":"Natasha Romanoff / Black Widow"}]',
       },
@@ -687,17 +698,16 @@ async function testIMDBFullCreditsData() {
       return testResult;
     }
 
-    performDefaultCheck(scrapeResult, expected, testResult, "topCredits");
-
-    if (!scrapeResult.credits) {
+    if (!scrapeResult.credits || scrapeResult.credits.length === 0) {
       addSubLogEntry(testResult, "credits missing", status.ERROR);
+      return testResult;
     } else {
-      if (scrapeResult.credits.length < 3647) {
+      if (scrapeResult.credits.length < 4000) {
         addSubLogEntry(
           testResult,
           `credits count mismatch
       got:      ${scrapeResult.credits.length} entries
-      expected: 3647+ entries`,
+      expected: 4000+ entries`,
           status.WARNING
         );
       }
@@ -711,6 +721,12 @@ async function testIMDBFullCreditsData() {
           status.WARNING
         );
       }
+    }
+
+    if (scrapeResult.scraperVersion == "V1") {
+      performDefaultCheck({ topCreditsV1: scrapeResult.topCredits }, expected, testResult, "topCreditsV1");
+    } else {
+      performDefaultCheck({ topCreditsV3: scrapeResult.topCredits }, expected, testResult, "topCreditsV3");
     }
   } catch (error) {
     testResult.status = status.EXCEPTION;

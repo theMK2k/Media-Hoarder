@@ -64,6 +64,12 @@ const graphQLqueries = {
     graphqlURLs.seriesEpisodes
       .replace("$Series_IMDB_tconst", Series_IMDB_tconst)
       .replace("$Series_Season", Series_Season),
+
+  /**
+   * APIs called when fetching credits (e.g. https://www.imdb.com/title/tt4154796/fullcredits)
+   */
+  credits: (IMDB_tconst, category) =>
+    graphqlURLs.credits.replace(/\$IMDB_tconst/g, IMDB_tconst).replace("$category", category),
 };
 
 /**
@@ -775,19 +781,10 @@ async function scrapeIMDBreleaseinfoV3(movie, regions, allowedTitleTypes, html) 
       }
     }
 
-    const gqlAkaTitles = JSON.parse(
-      (
-        await helpers.requestAsync({
-          uri: graphQLqueries.akaTitles(movie.IMDB_tconst),
-          headers: { "content-type": "application/json" },
-        })
-      ).body
+    const gqlAkaTitlesEdges = await scrapeGraphQLPaginated(
+      graphQLqueries.akaTitles(movie.IMDB_tconst),
+      "data.title.akas"
     );
-    handleGraphQLErrors(gqlAkaTitles);
-
-    logger.log("[scrapeIMDBreleaseinfoV3] gqlAkaTitles:", logger.inspectObject(gqlAkaTitles));
-
-    const gqlAkaTitlesEdges = _.get(gqlAkaTitles, "data.title.akas.edges", []);
 
     // ### Local Title
     let $IMDB_localTitle = null;
@@ -1428,185 +1425,325 @@ async function scrapeIMDBFullCreditsData(movie) {
     const response = await helpers.requestAsync(url);
     const html = response.body;
 
-    const topMax = 5;
-
-    const topCast = [];
-    const topDirector = [];
-    const topProducer = [];
-    const topWriter = [];
-
-    const credits = [];
-
-    const rx_castTable = /<h4 name="cast"[\s\S]*?<\/table>/;
-
-    if (rx_castTable.test(html)) {
-      const castTable = html.match(rx_castTable)[0];
-
-      const rx_castEntry = /<tr class.*?>[\s\S]*?<a href="\/name\/(nm\d*)\/[\s\S]*?>\s([\s\S]*?)<\/a>[\s\S]*?<\/tr>/g;
-
-      let match = null;
-
-      // eslint-disable-next-line no-cond-assign
-      while ((match = rx_castEntry.exec(castTable))) {
-        // const entry = { id: match[1], name: match[2].replace(/^\s*/, '').replace(/\s*$/, ''), character: null };
-        const entry = {
-          category: "Cast",
-          id: match[1],
-          name: unescape(
-            htmlToText
-              .fromString(match[2], {
-                wordwrap: null,
-                ignoreImage: true,
-                ignoreHref: true,
-              })
-              .trim()
-          ),
-          credit: null,
-        };
-
-        const rx_character = /<td class="character">([\s\S]*?)<\/td>/;
-        if (rx_character.test(match[0])) {
-          entry.credit = unescape(
-            htmlToText
-              .fromString(match[0].match(rx_character)[1], {
-                wordwrap: null,
-                ignoreImage: true,
-                ignoreHref: true,
-              })
-              .trim()
-          );
-        }
-
-        credits.push(entry);
-        if (topCast.length < topMax && !topCast.find((tc) => tc.name === entry.name)) {
-          topCast.push(entry);
-        }
-      }
+    if (/__NEXT_DATA__/.test(html)) {
+      // V3
+      logger.log("[scrapeIMDBFullCreditsData] going for V3");
+      const result = await scrapeIMDBFullCreditsDataV3(movie, html);
+      result.scraperVersion = "V3";
+      return result;
+    } else {
+      logger.log("[scrapeIMDBFullCreditsData] going for V1");
+      const result = await scrapeIMDBFullCreditsDataV1(movie, html);
+      result.scraperVersion = "V1";
+      return result;
     }
-
-    const rx_creditsCategories = /class="dataHeaderWithBorder">([\s\S]*?)&nbsp/g;
-
-    let ccMatch = null;
-
-    // eslint-disable-next-line no-cond-assign
-    while ((ccMatch = rx_creditsCategories.exec(html))) {
-      const creditsCategory = unescape(
-        htmlToText.fromString(ccMatch[1], {
-          wordwrap: null,
-          ignoreImage: true,
-          ignoreHref: true,
-        })
-      )
-        .split("(")[0]
-        .trim();
-      logger.log("[scrapeIMDBFullCreditsData] creditsCategory found:", creditsCategory);
-
-      const result = parseCreditsCategory(html, creditsCategory, credits);
-
-      if (creditsCategory === "Directed by") {
-        result.forEach((entry) => {
-          if (topDirector.length < topMax && !topDirector.find((td) => td.name === entry.name)) {
-            topDirector.push(entry);
-          }
-        });
-      }
-      if (creditsCategory === "Produced by") {
-        result.forEach((entry) => {
-          if (topProducer.length < topMax && !topProducer.find((tp) => tp.name === entry.name)) {
-            topProducer.push(entry);
-          }
-        });
-      }
-      if (creditsCategory.startsWith("Writing Credits")) {
-        result.forEach((entry) => {
-          if (topWriter.length < topMax && !topWriter.find((tw) => tw.name === entry.name)) {
-            topWriter.push(entry);
-          }
-        });
-      }
-    }
-
-    logger.log("[scrapeIMDBFullCreditsData] credits:", credits);
-
-    let $IMDB_Top_Cast = topCast.length > 0 ? JSON.stringify(topCast) : null;
-    let $IMDB_Top_Writers = topWriter.length > 0 ? JSON.stringify(topWriter) : null;
-    let $IMDB_Top_Directors = topDirector.length > 0 ? JSON.stringify(topDirector) : null;
-    let $IMDB_Top_Producers = topProducer.length > 0 ? JSON.stringify(topProducer) : null;
-
-    return {
-      topCredits: {
-        $IMDB_Top_Directors,
-        $IMDB_Top_Writers,
-        $IMDB_Top_Producers,
-        $IMDB_Top_Cast,
-      },
-      credits,
-    };
   } catch (error) {
     if (movie.scanErrors) {
-      movie.scanErrors["IMDB Parental Guide"] = error.message;
+      movie.scanErrors["scrapeIMDBFullCreditsData"] = error.message;
     }
 
     throw error;
   }
 }
 
-function getGQLCompaniesData(gqlCompanies, category) {
+async function scrapeIMDBFullCreditsDataV1(movie, html) {
+  const topMax = 5;
+
+  const topCast = [];
+  const topDirector = [];
+  const topProducer = [];
+  const topWriter = [];
+
+  const credits = [];
+
+  const rx_castTable = /<h4 name="cast"[\s\S]*?<\/table>/;
+
+  if (rx_castTable.test(html)) {
+    const castTable = html.match(rx_castTable)[0];
+
+    const rx_castEntry = /<tr class.*?>[\s\S]*?<a href="\/name\/(nm\d*)\/[\s\S]*?>\s([\s\S]*?)<\/a>[\s\S]*?<\/tr>/g;
+
+    let match = null;
+
+    // eslint-disable-next-line no-cond-assign
+    while ((match = rx_castEntry.exec(castTable))) {
+      // const entry = { id: match[1], name: match[2].replace(/^\s*/, '').replace(/\s*$/, ''), character: null };
+      const entry = {
+        category: "Cast",
+        id: match[1],
+        name: unescape(
+          htmlToText
+            .fromString(match[2], {
+              wordwrap: null,
+              ignoreImage: true,
+              ignoreHref: true,
+            })
+            .trim()
+        ),
+        credit: null,
+      };
+
+      const rx_character = /<td class="character">([\s\S]*?)<\/td>/;
+      if (rx_character.test(match[0])) {
+        entry.credit = unescape(
+          htmlToText
+            .fromString(match[0].match(rx_character)[1], {
+              wordwrap: null,
+              ignoreImage: true,
+              ignoreHref: true,
+            })
+            .trim()
+        );
+      }
+
+      credits.push(entry);
+      if (topCast.length < topMax && !topCast.find((tc) => tc.name === entry.name)) {
+        topCast.push(entry);
+      }
+    }
+  }
+
+  const rx_creditsCategories = /class="dataHeaderWithBorder">([\s\S]*?)&nbsp/g;
+
+  let ccMatch = null;
+
+  // eslint-disable-next-line no-cond-assign
+  while ((ccMatch = rx_creditsCategories.exec(html))) {
+    const creditsCategory = unescape(
+      htmlToText.fromString(ccMatch[1], {
+        wordwrap: null,
+        ignoreImage: true,
+        ignoreHref: true,
+      })
+    )
+      .split("(")[0]
+      .trim();
+    logger.log("[scrapeIMDBFullCreditsDataV1] creditsCategory found:", creditsCategory);
+
+    const result = parseCreditsCategory(html, creditsCategory, credits);
+
+    if (creditsCategory === "Directed by") {
+      result.forEach((entry) => {
+        if (topDirector.length < topMax && !topDirector.find((td) => td.name === entry.name)) {
+          topDirector.push(entry);
+        }
+      });
+    }
+    if (creditsCategory === "Produced by") {
+      result.forEach((entry) => {
+        if (topProducer.length < topMax && !topProducer.find((tp) => tp.name === entry.name)) {
+          topProducer.push(entry);
+        }
+      });
+    }
+    if (creditsCategory.startsWith("Writing Credits")) {
+      result.forEach((entry) => {
+        if (topWriter.length < topMax && !topWriter.find((tw) => tw.name === entry.name)) {
+          topWriter.push(entry);
+        }
+      });
+    }
+  }
+
+  // logger.log("[scrapeIMDBFullCreditsDataV1] credits:", credits);
+
+  let $IMDB_Top_Cast = topCast.length > 0 ? JSON.stringify(topCast) : null;
+  let $IMDB_Top_Writers = topWriter.length > 0 ? JSON.stringify(topWriter) : null;
+  let $IMDB_Top_Directors = topDirector.length > 0 ? JSON.stringify(topDirector) : null;
+  let $IMDB_Top_Producers = topProducer.length > 0 ? JSON.stringify(topProducer) : null;
+
+  return {
+    topCredits: {
+      $IMDB_Top_Directors,
+      $IMDB_Top_Writers,
+      $IMDB_Top_Producers,
+      $IMDB_Top_Cast,
+    },
+    credits,
+    scraperVersion: "V1",
+  };
+}
+
+async function scrapeIMDBFullCreditsDataV3(movie, html) {
+  const topMax = 5;
+
+  const topCast = [];
+  const topDirector = [];
+  const topProducer = [];
+  const topWriter = [];
+
+  const credits = [];
+
+  // get all available categories from __NEXT_DATA__
+  const jsonDataNext = JSON.parse(
+    (html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/) || [null, "{}"])[1]
+  );
+
+  const creditCategories = _.get(jsonDataNext, "props.pageProps.contentData.categories", []).map((creditCategory) => {
+    return {
+      id: creditCategory.id,
+      name: creditCategory.name,
+    };
+  });
+
+  logger.log("found categories:\n", creditCategories.map((cc) => cc.name).join("\n"));
+
+  // move category with id = 'cast' to the front of creditCategories (V1 compatibility)
+  const castCategoryIndex = creditCategories.findIndex((cc) => cc.id === "cast");
+  if (castCategoryIndex > 0) {
+    const castCategory = creditCategories.splice(castCategoryIndex, 1)[0];
+    creditCategories.unshift(castCategory);
+  }
+
+  logger.log("[scrapeIMDBFullCreditsDataV3] creditCategories:", creditCategories);
+
+  for (const creditCategory of creditCategories) {
+    // fetch GraphQL data for this category
+    const uri = graphQLqueries.credits(movie.IMDB_tconst, creditCategory.id);
+
+    logger.log(`[scrapeIMDBFullCreditsDataV3] category '${creditCategory.id}', GraphQL uri:`, uri);
+
+    const gqlCredits = await scrapeGraphQLPaginated(uri, "data.title.credits");
+
+    logger.log(`[scrapeIMDBFullCreditsDataV3] category '${creditCategory.id}', gqlCredits.length:`, gqlCredits.length);
+
+    const gqlCreditsMapped = (gqlCredits || [])
+      .map((edge) => {
+        // logger.log(
+        //   '[scrapeIMDBFullCreditsDataV3] (_.get(edge, "characters", []) || []):',
+        //   _.get(edge, "node.characters", []) || []
+        // );
+
+        const creditedFor =
+          [
+            (_.get(edge, "node.jobDetails", []) || [])
+              .map((jobDetail) => _.get(jobDetail, "job.text", ""))
+              .filter((jobDetail) => !!jobDetail)
+              .join(" / "),
+            (_.get(edge, "node.characters", []) || [])
+              .map((character) => _.get(character, "name", ""))
+              .filter((character) => !!character)
+              .join(" / "),
+          ]
+            .filter((cf) => !!cf)
+            .join(", ") || null;
+
+        return {
+          category: creditCategory.name,
+          id: _.get(edge, "node.name.id"),
+          name: _.get(edge, "node.name.nameText.text"),
+          credit: creditedFor,
+        };
+      })
+      .filter((credit) => !!credit.id && !!credit.name);
+
+    credits.push(...gqlCreditsMapped);
+
+    // logger.log(`[scrapeIMDBFullCreditsDataV3] credits[0]:`, credits[0]);
+
+    // fill top categories
+    if (["cast", "director", "producer", "writer"].includes(creditCategory.id)) {
+      const topCategory =
+        creditCategory.id === "cast"
+          ? topCast
+          : creditCategory.id === "director"
+          ? topDirector
+          : creditCategory.id === "producer"
+          ? topProducer
+          : creditCategory.id === "writer"
+          ? topWriter
+          : null;
+
+      if (!topCategory) {
+        throw new Error("INTERNAL ERROR - unknown credit category: " + creditCategory.id);
+      }
+
+      gqlCreditsMapped.forEach((entry) => {
+        if (topCategory.length < topMax && !topCategory.find((tc) => tc.name === entry.name)) {
+          topCategory.push(entry);
+        }
+      });
+    }
+
+    // logger.log(`[scrapeIMDBFullCreditsDataV3] category '${creditCategory.id}, gqlCreditsMapped:`, gqlCreditsMapped);
+  }
+
+  // logger.log("[scrapeIMDBFullCreditsDataV3] topCredits:", { topDirector, topWriter, topProducer, topCast });
+
+  let $IMDB_Top_Cast = topCast.length > 0 ? JSON.stringify(topCast) : null;
+  let $IMDB_Top_Writers = topWriter.length > 0 ? JSON.stringify(topWriter) : null;
+  let $IMDB_Top_Directors = topDirector.length > 0 ? JSON.stringify(topDirector) : null;
+  let $IMDB_Top_Producers = topProducer.length > 0 ? JSON.stringify(topProducer) : null;
+
+  return {
+    topCredits: {
+      $IMDB_Top_Directors,
+      $IMDB_Top_Writers,
+      $IMDB_Top_Producers,
+      $IMDB_Top_Cast,
+    },
+    credits,
+  };
+}
+
+function getGQLCompaniesData(gqlCompaniesEdges, category) {
   const topMax = 5;
   const companies = [];
   const topCompanies = [];
 
-  if (gqlCompanies && gqlCompanies.data && gqlCompanies.data.title && gqlCompanies.data.title.companyCredits) {
-    gqlCompanies.data.title.companyCredits.edges.forEach((edge) => {
-      const node = edge.node;
-      const entry = {
-        category: category,
-        id: node.company.id,
-        name: _.get(node, "displayableProperty.value.plainText", null),
-        role: null,
-      };
-
-      const roles = [];
-
-      let yearsInvolved = "";
-      if (node.yearsInvolved && node.yearsInvolved.year) {
-        yearsInvolved = `${node.yearsInvolved.year}${
-          node.yearsInvolved.endYear && node.yearsInvolved.year !== node.yearsInvolved.endYear
-            ? `-${node.yearsInvolved.endYear}`
-            : ""
-        }`;
-      }
-
-      let countries = "";
-      if (node.countries && node.countries.length > 0) {
-        node.countries.forEach((country) => {
-          countries = `${countries ? ", " : ""}${country.text}`;
-        });
-      }
-
-      if (yearsInvolved || countries) {
-        roles.push(`(${countries}${countries && yearsInvolved ? ", " : ""}${yearsInvolved})`);
-      }
-
-      if (node.attributes && node.attributes.length > 0) {
-        let attributes = "";
-
-        node.attributes.forEach((attribute) => {
-          attributes = `${attributes ? `${attributes}, ` : ""}${attribute.text}`;
-        });
-
-        roles.push(`(${attributes})`);
-      }
-
-      entry.role = roles.join(" ");
-
-      companies.push(entry);
-
-      if (topCompanies.length < topMax && !topCompanies.find((tc) => tc.name === entry.name)) {
-        topCompanies.push(entry);
-      }
-    });
+  if (!gqlCompaniesEdges) {
+    return { companies, topCompanies };
   }
+
+  gqlCompaniesEdges.forEach((edge) => {
+    const node = edge.node;
+    const entry = {
+      category: category,
+      id: node.company.id,
+      name: _.get(node, "displayableProperty.value.plainText", null),
+      role: null,
+    };
+
+    const roles = [];
+
+    let yearsInvolved = "";
+    if (node.yearsInvolved && node.yearsInvolved.year) {
+      yearsInvolved = `${node.yearsInvolved.year}${
+        node.yearsInvolved.endYear && node.yearsInvolved.year !== node.yearsInvolved.endYear
+          ? `-${node.yearsInvolved.endYear}`
+          : ""
+      }`;
+    }
+
+    let countries = "";
+    if (node.countries && node.countries.length > 0) {
+      node.countries.forEach((country) => {
+        countries = `${countries ? ", " : ""}${country.text}`;
+      });
+    }
+
+    if (yearsInvolved || countries) {
+      roles.push(`(${countries}${countries && yearsInvolved ? ", " : ""}${yearsInvolved})`);
+    }
+
+    if (node.attributes && node.attributes.length > 0) {
+      let attributes = "";
+
+      node.attributes.forEach((attribute) => {
+        attributes = `${attributes ? `${attributes}, ` : ""}${attribute.text}`;
+      });
+
+      roles.push(`(${attributes})`);
+    }
+
+    entry.role = roles.join(" ");
+
+    companies.push(entry);
+
+    if (topCompanies.length < topMax && !topCompanies.find((tc) => tc.name === entry.name)) {
+      topCompanies.push(entry);
+    }
+  });
 
   return { companies, topCompanies };
 }
@@ -1616,61 +1753,46 @@ function getGQLCompaniesData(gqlCompanies, category) {
  * @param {Object} movie
  */
 async function scrapeIMDBCompaniesDataV3(movie) {
+  // TODO: use the page to identify the categories (e.g. https://www.imdb.com/title/tt0095327/companycredits/)
+
   if (movie.scanErrors) {
     delete movie.scanErrors["IMDB Companies"];
   }
 
   try {
-    const gqlCompaniesProduction = JSON.parse(
-      (
-        await helpers.requestAsync({
-          uri: graphQLqueries.companies(movie.IMDB_tconst, "production"),
-          headers: { "content-type": "application/json" },
-        })
-      ).body
+    const gqlCompaniesProductionEdges = await scrapeGraphQLPaginated(
+      graphQLqueries.companies(movie.IMDB_tconst, "production"),
+      "data.title.companyCredits"
     );
-    handleGraphQLErrors(gqlCompaniesProduction);
 
     const { companies: companiesProduction, topCompanies: topCompaniesProduction } = getGQLCompaniesData(
-      gqlCompaniesProduction,
+      gqlCompaniesProductionEdges,
       "Production"
     );
 
-    const gqlCompaniesDistribution = JSON.parse(
-      (
-        await helpers.requestAsync({
-          uri: graphQLqueries.companies(movie.IMDB_tconst, "distribution"),
-          headers: { "content-type": "application/json" },
-        })
-      ).body
+    const gqlCompaniesDistributionEdges = await scrapeGraphQLPaginated(
+      graphQLqueries.companies(movie.IMDB_tconst, "distribution"),
+      "data.title.companyCredits"
     );
-    handleGraphQLErrors(gqlCompaniesDistribution);
 
-    const { companies: companiesDistribution } = getGQLCompaniesData(gqlCompaniesDistribution, "Distribution");
+    const { companies: companiesDistribution } = getGQLCompaniesData(gqlCompaniesDistributionEdges, "Distribution");
 
-    const gqlCompaniesSpecialEffects = JSON.parse(
-      (
-        await helpers.requestAsync({
-          uri: graphQLqueries.companies(movie.IMDB_tconst, "specialEffects"),
-          headers: { "content-type": "application/json" },
-        })
-      ).body
+    const gqlCompaniesSpecialEffectsEdges = await scrapeGraphQLPaginated(
+      graphQLqueries.companies(movie.IMDB_tconst, "specialEffects"),
+      "data.title.companyCredits"
     );
-    handleGraphQLErrors(gqlCompaniesSpecialEffects);
 
-    const { companies: companiesSpecialEffects } = getGQLCompaniesData(gqlCompaniesSpecialEffects, "Special Effects");
-
-    const gqlCompaniesOther = JSON.parse(
-      (
-        await helpers.requestAsync({
-          uri: graphQLqueries.companies(movie.IMDB_tconst, "miscellaneous"),
-          headers: { "content-type": "application/json" },
-        })
-      ).body
+    const { companies: companiesSpecialEffects } = getGQLCompaniesData(
+      gqlCompaniesSpecialEffectsEdges,
+      "Special Effects"
     );
-    handleGraphQLErrors(gqlCompaniesOther);
 
-    const { companies: companiesOther } = getGQLCompaniesData(gqlCompaniesOther, "Other");
+    const gqlCompaniesOtherEdges = await scrapeGraphQLPaginated(
+      graphQLqueries.companies(movie.IMDB_tconst, "miscellaneous"),
+      "data.title.companyCredits"
+    );
+
+    const { companies: companiesOther } = getGQLCompaniesData(gqlCompaniesOtherEdges, "Other");
 
     return {
       topProductionCompanies: {
@@ -2419,19 +2541,10 @@ async function scrapeIMDBplotKeywordsV3(movie) {
   try {
     const plotKeywords = [];
 
-    const gqlPlotKeywords = JSON.parse(
-      (
-        await helpers.requestAsync({
-          uri: graphQLqueries.plotKeywords(movie.IMDB_tconst),
-          headers: { "content-type": "application/json" },
-        })
-      ).body
+    const gqlPlotKeywordsEdges = await scrapeGraphQLPaginated(
+      graphQLqueries.plotKeywords(movie.IMDB_tconst),
+      "data.title.keywords"
     );
-    handleGraphQLErrors(gqlPlotKeywords);
-
-    // logger.log("[scrapeIMDBplotKeywordsV3] gqlAkaTitles:", logger.inspectObject(gqlAkaTitles));
-
-    const gqlPlotKeywordsEdges = _.get(gqlPlotKeywords, "data.title.keywords.edges", []);
 
     gqlPlotKeywordsEdges.forEach((edge) => {
       plotKeywords.push({
@@ -2518,17 +2631,10 @@ async function scrapeIMDBFilmingLocationsV3(movie) {
   try {
     let filmingLocations = [];
 
-    const gqlLocations = JSON.parse(
-      (
-        await helpers.requestAsync({
-          uri: graphQLqueries.filmingLocations(movie.IMDB_tconst),
-          headers: { "content-type": "application/json" },
-        })
-      ).body
+    const gqlLocationsEdges = await scrapeGraphQLPaginated(
+      graphQLqueries.filmingLocations(movie.IMDB_tconst),
+      "data.title.filmingLocations"
     );
-    handleGraphQLErrors(gqlLocations);
-
-    const gqlLocationsEdges = _.get(gqlLocations, "data.title.filmingLocations.edges", []);
 
     gqlLocationsEdges.forEach((edge) => {
       filmingLocations.push({
@@ -2692,19 +2798,9 @@ async function scrapeIMDBSeriesEpisodes(Series_IMDB_tconst, Series_Season) {
 
     logger.log("[scrapeIMDBSeriesEpisodes] uri:", uri);
 
-    const gqlEpisodes = JSON.parse(
-      (await helpers.requestAsync({ uri, headers: { "content-type": "application/json" } })).body
-    );
-    handleGraphQLErrors(gqlEpisodes);
+    const gqlEpisodesEdges = await scrapeGraphQLPaginated(uri, "data.title.episodes.episodes");
 
-    // logger.log("[scrapeIMDBSeriesEpisodes] gqlEpisodes:", JSON.stringify(gqlEpisodes, null, 2));
-
-    if (gqlEpisodes.errors) {
-      logger.error("[scrapeIMDBSeriesEpisodes] gqlEpisodes.errors:", gqlEpisodes.errors);
-      return [];
-    }
-
-    const results = _.get(gqlEpisodes, "data.title.episodes.episodes.edges", []).map((edge) => {
+    const results = gqlEpisodesEdges.map((edge) => {
       return {
         tconst: _.get(edge, "node.id"),
         title: _.get(edge, "node.titleText.text"),
@@ -2726,10 +2822,10 @@ async function scrapeIMDBSeriesEpisodes(Series_IMDB_tconst, Series_Season) {
     });
 
     if (!results || results.length == 0) {
-      logger.warn("[scrapeIMDBSeriesEpisodes] zero results, gqlEpisodes:", gqlEpisodes);
+      logger.warn("[scrapeIMDBSeriesEpisodes] zero results");
+    } else {
+      logger.log("[scrapeIMDBSeriesEpisodes] results[0]:", results[0]);
     }
-
-    logger.log("[scrapeIMDBSeriesEpisodes] results[0]:", results[0]);
 
     return results;
   } catch (error) {
@@ -2774,6 +2870,60 @@ async function scrapeIMDBSeriesSeasons(Series_IMDB_tconst) {
   });
 
   return seasons;
+}
+
+/**
+ * Paginated scraping of GraphQL data
+ * IMPORTANT: directly returns the array of edges (not the whole construct)
+ * @param {*} uri
+ * @param {*} innerPath the inner path leading to the edges array as well as pageInfo
+ * @param {*} resultArray
+ * @param {*} endCursor
+ */
+async function scrapeGraphQLPaginated(uri, innerPath, resultArray = null, endCursor = null, retry = 0) {
+  const uriUsed = !endCursor ? uri : uri.replace(`"after":""`, `"after":"${endCursor}"`);
+
+  logger.log("[scrapeGraphQLPaginated] uriUsed:", uriUsed);
+
+  const newResult = JSON.parse(
+    (
+      await helpers.requestAsync({
+        uri: uriUsed,
+        headers: { "content-type": "application/json" },
+      })
+    ).body
+  );
+
+  try {
+    handleGraphQLErrors(newResult);
+  } catch (error) {
+    if (retry > 3) {
+      throw error;
+    }
+
+    return scrapeGraphQLPaginated(uri, innerPath, resultArray, endCursor, retry + 1);
+  }
+
+  const newResult_pageInfo = _.get(newResult, `${innerPath}.pageInfo`, null);
+  const newResult_Array = _.get(newResult, `${innerPath}.edges`, null);
+
+  // logger.log("[scrapeGraphQLPaginated] newResult_Array.length:", newResult_Array.length);
+
+  if (!newResult_pageInfo) {
+    throw new Error("[scrapeGraphQLPaginated] pageInfo missing in result");
+  }
+
+  if (resultArray) {
+    resultArray = resultArray.concat(newResult_Array);
+  } else {
+    resultArray = newResult_Array;
+  }
+
+  if (!newResult_pageInfo.hasNextPage) {
+    return resultArray;
+  }
+
+  return scrapeGraphQLPaginated(uri, innerPath, resultArray, newResult_pageInfo.endCursor);
 }
 
 const deprecated = {

@@ -77,3 +77,4 @@ gh release upload vX.Y.Z *
 ## FINALLY
 
 - [ ] merge `release-next` branch into master (this makes history.json public)
+- [ ] PUBLISH the release on GitHub
