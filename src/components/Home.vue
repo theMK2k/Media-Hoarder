@@ -53,7 +53,7 @@
     <v-spacer></v-spacer>
     <div style="display: flex; justify-content: flex-end">
       <div>
-        Discuss Media Hoarder at
+        Discuss Media Hoarder on
         <a
           href="https://github.com/theMK2k/Media-Hoarder/discussions"
           target="_blank"
