@@ -1,6 +1,10 @@
 # DONE
 
-## Next (current v1.4.1)
+## Next (current: 1.4.2)
+
+## v1.4.2
+
+- [x] MediaItemCard: indicate if a medium has been watched
 
 - [x] FEATURE: display the current version and detect new version during runtime
 

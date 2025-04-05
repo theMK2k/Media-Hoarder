@@ -1,5 +1,7 @@
 # TODO
 
+- [WIP] Settings - Scan History: show a graph of collection sizes (disk space, number of media) over time
+
 - [ ] Scraper: scrapeIMDBCompaniesDataV3 - use the page to identify the categories (e.g. <https://www.imdb.com/title/tt0095327/companycredits/>)
 
 - [ ] Scraper - Fix Trailer URL expectation
@@ -11,8 +13,6 @@
 - [ ] series card doesn't show all release attributes (e.g. it should show "BD, WEB", but only shows "WEB" - see House of the Dragon)
 
 - [ ] BUG: with a multi-episode, when clicking the episode in the IMDB Rating Dialog, the episode is opened multiple times (see: Star Trek Prodigy S01E01-E02)
-
-- [WIP] MediaItemCard: indicate if a medium has been watched
 
 - [ ] Episodes Heatmap:
 

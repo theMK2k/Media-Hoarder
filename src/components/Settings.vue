@@ -649,6 +649,8 @@
           </p>
         </v-card-text>
 
+        <canvas v-if="scanProcesses.length > 0" id="scanHistoryChart" ref="scanHistoryChart"></canvas>
+
         <v-card
           v-for="scanProcess in scanProcesses"
           v-bind:key="scanProcess.id_Scan_Processes"
@@ -845,6 +847,38 @@ const { dialog, BrowserWindow } = require("@electron/remote");
 import * as _ from "lodash";
 import draggable from "vuedraggable";
 const moment = require("moment");
+import * as Humanize from "humanize-plus";
+
+import {
+  Chart,
+  BarController,
+  LineController,
+  BarElement,
+  LineElement,
+  PointElement,
+  CategoryScale,
+  LinearScale,
+  TimeScale,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+import "chartjs-adapter-moment";
+
+Chart.register(
+  BarController,
+  LineController,
+  BarElement,
+  LineElement,
+  PointElement,
+  CategoryScale,
+  LinearScale,
+  TimeScale,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const logger = require("../helpers/logger");
 
@@ -996,6 +1030,8 @@ export default {
       show: false,
       id_Scan_Processes: null,
     },
+
+    chartInstance: null,
   }),
 
   watch: {
@@ -1683,6 +1719,10 @@ export default {
     async loadScanProcesses() {
       this.scanProcesses = await store.getScanProcesses(this.$local_t);
       logger.log("[loadScanProcesses] this.scanProcesses:", this.scanProcesses);
+
+      requestAnimationFrame(() => {
+        this.renderScanHistoryChart();
+      });
     },
 
     openScanHistoryItemDialog(id_Scan_Processes) {
@@ -1692,6 +1732,82 @@ export default {
 
     getRelativeTimeText(start) {
       return moment(start).fromNow();
+    },
+
+    renderScanHistoryChart() {
+      const ctx = this.$refs.scanHistoryChart.getContext("2d");
+
+      const scanProcessesReverseOrder = this.scanProcesses.slice().reverse();
+
+      const sizeTotals = scanProcessesReverseOrder.map((scan) => {
+        return scan.Size_After_Total || 0;
+      });
+
+      if (this.chartInstance) {
+        this.chartInstance.destroy();
+      }
+
+      this.chartInstance = new Chart(ctx, {
+        type: "line",
+        data: {
+          // Map scanProcesses to use the End date as labels
+          labels: scanProcessesReverseOrder.map((scanProcess) => scanProcess.End),
+          datasets: [
+            {
+              label: "Total Size",
+              data: sizeTotals,
+              backgroundColor: "rgba(54, 162, 235, 0.2)",
+              borderColor: "rgba(54, 162, 235, 1)",
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  let label = context.dataset.label || "";
+                  if (label) {
+                    label += ": ";
+                  }
+                  if (context.parsed.y !== null) {
+                    // Use humanize-plus to format the tooltip value
+                    label += Humanize.filesize(context.parsed.y);
+                  }
+                  return label;
+                },
+              },
+            },
+          },
+          scales: {
+            x: {
+              type: "time",
+              time: {
+                parser: "YYYY-MM-DD HH:mm:ss",
+                tooltipFormat: "YYYY-MM-DD HH:mm:ss",
+                unit: "day",
+                displayFormats: {
+                  day: "YYYY-MM-DD",
+                },
+              },
+              distribution: "linear",
+              // Set min and max to span exactly the data's range
+              min: scanProcessesReverseOrder[0].End,
+              max: scanProcessesReverseOrder[scanProcessesReverseOrder.length - 1].End,
+            },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function (value) {
+                  return Humanize.filesize(value);
+                },
+              },
+            },
+          },
+        },
+      });
     },
   },
 
