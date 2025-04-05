@@ -1739,26 +1739,44 @@ export default {
 
       const scanProcessesReverseOrder = this.scanProcesses.slice().reverse();
 
-      const sizeTotals = scanProcessesReverseOrder.map((scan) => {
-        return scan.Size_After_Total || 0;
-      });
-
       if (this.chartInstance) {
         this.chartInstance.destroy();
       }
 
       this.chartInstance = new Chart(ctx, {
-        type: "line",
+        type: "line", // global default; each dataset specifies its type if needed
         data: {
-          // Map scanProcesses to use the End date as labels
-          labels: scanProcessesReverseOrder.map((scanProcess) => scanProcess.End),
+          labels: scanProcessesReverseOrder.map((scan) => scan.End),
           datasets: [
             {
+              // TV Series as a stacked area chart
+              label: "TV Series",
+              type: "line",
+              data: scanProcessesReverseOrder.map((scan) => scan.Size_After_Series || 0),
+              borderColor: "rgba(255, 159, 64, 1)",
+              backgroundColor: "rgba(255, 159, 64, 0.4)",
+              fill: true,
+              stack: "stack1",
+            },
+            {
+              // Movies as a stacked area chart
+              label: "Movies",
+              type: "line",
+              data: scanProcessesReverseOrder.map((scan) => scan.Size_After_Movies || 0),
+              borderColor: "rgba(75, 192, 192, 1)",
+              backgroundColor: "rgba(75, 192, 192, 0.4)",
+              fill: true,
+              stack: "stack1",
+            },
+            {
+              // Total Size is shown as a regular line (not filled)
               label: "Total Size",
-              data: sizeTotals,
-              backgroundColor: "rgba(54, 162, 235, 0.2)",
+              type: "line",
+              data: scanProcessesReverseOrder.map((scan) => scan.Size_After_Total || 0),
               borderColor: "rgba(54, 162, 235, 1)",
-              borderWidth: 1,
+              backgroundColor: "transparent",
+              fill: false,
+              // Do not assign a stack here so it’s drawn on top
             },
           ],
         },
@@ -1773,7 +1791,6 @@ export default {
                     label += ": ";
                   }
                   if (context.parsed.y !== null) {
-                    // Use humanize-plus to format the tooltip value
                     label += Humanize.filesize(context.parsed.y);
                   }
                   return label;
@@ -1788,17 +1805,15 @@ export default {
                 parser: "YYYY-MM-DD HH:mm:ss",
                 tooltipFormat: "YYYY-MM-DD HH:mm:ss",
                 unit: "day",
-                displayFormats: {
-                  day: "YYYY-MM-DD",
-                },
+                displayFormats: { day: "YYYY-MM-DD" },
               },
               distribution: "linear",
-              // Set min and max to span exactly the data's range
               min: scanProcessesReverseOrder[0].End,
               max: scanProcessesReverseOrder[scanProcessesReverseOrder.length - 1].End,
             },
             y: {
               beginAtZero: true,
+              stacked: true, // Enables stacking of area fills for movies and TV series
               ticks: {
                 callback: function (value) {
                   return Humanize.filesize(value);
