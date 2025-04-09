@@ -649,7 +649,7 @@
           </p>
         </v-card-text>
 
-        <canvas v-if="scanProcesses.length > 0" id="scanHistoryChart" ref="scanHistoryChart"></canvas>
+        <canvas v-if="scanProcesses.length > 0" ref="scanHistoryChart" style="margin-bottom: 16px"></canvas>
 
         <v-card
           v-for="scanProcess in scanProcesses"
@@ -862,7 +862,12 @@ import {
   Title,
   Tooltip,
   Legend,
+  Filler,
 } from "chart.js";
+
+Chart.defaults.backgroundColor = "#9BD0F5";
+Chart.defaults.borderColor = "rgba(255, 255, 255, 0.12)";
+Chart.defaults.color = "#e3e3e3";
 
 import "chartjs-adapter-moment";
 
@@ -877,7 +882,8 @@ Chart.register(
   TimeScale,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler
 );
 
 const logger = require("../helpers/logger");
@@ -1753,30 +1759,40 @@ export default {
               label: "TV Series",
               type: "line",
               data: scanProcessesReverseOrder.map((scan) => scan.Size_After_Series || 0),
+              cubicInterpolationMode: "monotone",
               borderColor: "rgba(255, 159, 64, 1)",
               backgroundColor: "rgba(255, 159, 64, 0.4)",
-              fill: true,
+              //fill: true,
+              fill: "origin",
               stack: "stack1",
+              stacked: true,
+              stepped: true,
             },
             {
               // Movies as a stacked area chart
               label: "Movies",
               type: "line",
               data: scanProcessesReverseOrder.map((scan) => scan.Size_After_Movies || 0),
+              cubicInterpolationMode: "monotone",
               borderColor: "rgba(75, 192, 192, 1)",
               backgroundColor: "rgba(75, 192, 192, 0.4)",
               fill: true,
+              // fill: 1,
               stack: "stack1",
+              stacked: true,
+              stepped: true,
             },
             {
               // Total Size is shown as a regular line (not filled)
               label: "Total Size",
               type: "line",
               data: scanProcessesReverseOrder.map((scan) => scan.Size_After_Total || 0),
+              cubicInterpolationMode: "monotone",
               borderColor: "rgba(54, 162, 235, 1)",
               backgroundColor: "transparent",
               fill: false,
               // Do not assign a stack here so it’s drawn on top
+              stepped: true,
             },
           ],
         },
@@ -1797,7 +1813,16 @@ export default {
                 },
               },
             },
+            filler: {
+              propagate: true,
+            },
           },
+          interaction: {
+            mode: "nearest",
+            axis: "x",
+            intersect: false,
+          },
+
           scales: {
             x: {
               type: "time",
