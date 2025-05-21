@@ -1756,7 +1756,7 @@ export default {
           datasets: [
             {
               // TV Series as a stacked area chart
-              label: "TV Series",
+              label: this.$t("Series"),
               type: "line",
               data: scanProcessesReverseOrder.map((scan) => scan.Size_After_Series || 0),
               cubicInterpolationMode: "monotone",
@@ -1770,7 +1770,7 @@ export default {
             },
             {
               // Movies as a stacked area chart
-              label: "Movies",
+              label: this.$t("Movies"),
               type: "line",
               data: scanProcessesReverseOrder.map((scan) => scan.Size_After_Movies || 0),
               cubicInterpolationMode: "monotone",
@@ -1784,7 +1784,7 @@ export default {
             },
             {
               // Total Size is shown as a regular line (not filled)
-              label: "Total Size",
+              label: this.$t("Total Size"),
               type: "line",
               data: scanProcessesReverseOrder.map((scan) => scan.Size_After_Total || 0),
               cubicInterpolationMode: "monotone",
@@ -1838,7 +1838,7 @@ export default {
             },
             y: {
               beginAtZero: true,
-              stacked: true, // Enables stacking of area fills for movies and TV series
+              stacked: true, // Enables stacking of area fills for movies and series
               ticks: {
                 callback: function (value) {
                   return Humanize.filesize(value);
