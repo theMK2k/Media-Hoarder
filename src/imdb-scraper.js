@@ -870,14 +870,22 @@ async function scrapeIMDBtechnicalData(movie) {
     let $IMDB_runtimeMinutes = null;
     const rxRuntimeValue = /<td class="label"> Runtime <\/td>[\s\S]*?<td>([\s\S]*?)<\/td>/;
 
-    const rxRuntimeValueV2 = /<script.*?type="application\/json">([\s\S]*?)<\/script>/;
+    const rxRuntimeValueV2 = /<script id="__NEXT_DATA__".*?type="application\/json">([\s\S]*?)<\/script>/;
 
     if (rxRuntimeValueV2.test(html)) {
       // v2 (2023-01-28) - utilize JSON
       logger.log("[scrapeIMDBtechnicalData] going for V2");
       const jsonData = JSON.parse(html.match(rxRuntimeValueV2)[1]);
 
-      const runtimeData = jsonData.props.pageProps.contentData.section.items.find((item) => item.id === "runtime");
+      const runtimeSeconds = _.get(jsonData, "props.pageProps.contentData.entityMetadata.runtime.seconds", null);
+      if (runtimeSeconds) {
+        $IMDB_runtimeMinutes = Math.floor(runtimeSeconds / 60).toString();
+      }
+
+      /*
+      const runtimeData = jsonData.props.pageProps.contentData.entityMetadata.runtime.seconds.items.find(
+        (item) => item.id === "runtime"
+      );
 
       if (runtimeData && runtimeData.listContent && runtimeData.listContent[0]) {
         // we expect .text = "3h 1m" and .subText = "(181 min)" (e.g. https://www.imdb.com/title/tt4154796/technical/)
@@ -890,6 +898,7 @@ async function scrapeIMDBtechnicalData(movie) {
 
         $IMDB_runtimeMinutes = (hours * 60 + minutes).toString() || null;
       }
+      */
     } else if (rxRuntimeValue.test(html)) {
       // v1
       logger.log("[scrapeIMDBtechnicalData] going for V1");
