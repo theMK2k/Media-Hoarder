@@ -1,6 +1,18 @@
 # TODO
 
-- [WIP] Settings - Scan History: show a graph of collection sizes (disk space, number of media) over time
+- [ ] create a top-list scoring
+  - see https://chatgpt.com/c/680d6f2e-7be8-8012-9fcc-ee3b839a892e
+  - https://help.imdb.com/article/imdb/featured-content/why-doesn-t-a-title-with-the-average-user-vote-of-9-4-appear-in-your-top-250-movies-or-tv-list/GTU67Q5QQ8W53RJT#
+
+```text
+      (WR) = (v ÷ (v+m)) × R + (m ÷ (v+m)) × C
+    where:
+
+        R = average for the movie (mean) = (Rating)
+        v = number of votes for the movie = (votes)
+        m = minimum votes required to be listed in the Top 250 (currently 25000)
+        C = the mean vote across the whole report (currently 7.1)
+```
 
 - [ ] Scraper: scrapeIMDBCompaniesDataV3 - use the page to identify the categories (e.g. <https://www.imdb.com/title/tt0095327/companycredits/>)
 

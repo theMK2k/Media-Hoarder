@@ -1,6 +1,15 @@
 # DONE
 
-## Next (current: 1.4.2)
+## Next (current: 1.4.4)
+
+## v1.4.4
+
+- [x] FEATURE: Settings - Scan History: show a graph of collection sizes (disk space) over time
+- [x] SCRAPER: Technical Data (Runtime)
+
+## v1.4.3
+
+- SCRAPER: Full Credits updated
 
 ## v1.4.2
 
