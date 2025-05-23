@@ -9759,11 +9759,14 @@ async function getScanProcesses($t) {
 
   for (const scanProcess of scanProcesses) {
     scanProcess.summary = createScanProcessSummaryTexts(scanProcess, $t);
-    scanProcess.duration =
-      moment.duration(moment(scanProcess.Start).diff(moment(scanProcess.End))).humanize() +
-      " (" +
-      helpers.getTimeString((new Date(scanProcess.End) - new Date(scanProcess.Start)) / 1000, true) +
-      ")";
+
+    if (scanProcess.End !== "<unknown>") {
+      scanProcess.duration =
+        moment.duration(moment(scanProcess.Start).diff(moment(scanProcess.End))).humanize() +
+        " (" +
+        helpers.getTimeString((new Date(scanProcess.End) - new Date(scanProcess.Start)) / 1000, true) +
+        ")";
+    }
   }
 
   return scanProcesses;
