@@ -1833,8 +1833,11 @@ export default {
                 displayFormats: { day: "YYYY-MM-DD" },
               },
               distribution: "linear",
-              min: scanProcessesReverseOrder[0].End,
-              max: scanProcessesReverseOrder[scanProcessesReverseOrder.length - 1].End,
+              min: scanProcessesReverseOrder[0].Start,
+              max:
+                scanProcessesReverseOrder[scanProcessesReverseOrder.length - 1].End !== "<unknown>"
+                  ? scanProcessesReverseOrder[scanProcessesReverseOrder.length - 1].End
+                  : scanProcessesReverseOrder[scanProcessesReverseOrder.length - 1].Start,
             },
             y: {
               beginAtZero: true,

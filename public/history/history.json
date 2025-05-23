@@ -1,5 +1,12 @@
 [
   {
+    "version": "1.4.5-beta1",
+    "name": "Jean-Luc Picard",
+    "quote": "Make it so.",
+    "quoteSource": "Star Trek: The Next Generation (1987-1994)",
+    "description": "version-1.4.5.md"
+  },
+  {
     "version": "1.4.4",
     "name": "Jean-Luc Picard",
     "quote": "Make it so.",

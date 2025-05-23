@@ -1,5 +1,20 @@
 # TODO
 
+- [WIP] fix #90 Settings | Scan History graph shows 1970 date
+
+- [ ] DB Backup
+
+  - [ ] Settings:
+    - [ ] set backup interval (every X scans, default = 5)
+    - [ ] set retention volume (default = 3 db copies)
+    - [ ] use data/backups folder to store the files
+
+- [ ] Delete/Remove Media
+
+  - provide choice between "Delete the media" and "Remove from library"
+
+- [ ] VACUUM after scan
+
 - [ ] create a top-list scoring
   - see https://chatgpt.com/c/680d6f2e-7be8-8012-9fcc-ee3b839a892e
   - https://help.imdb.com/article/imdb/featured-content/why-doesn-t-a-title-with-the-average-user-vote-of-9-4-appear-in-your-top-250-movies-or-tv-list/GTU67Q5QQ8W53RJT#
