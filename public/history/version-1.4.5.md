@@ -1,6 +1,6 @@
 # Media Hoarder v1.4.5 Changelog
 
-## Updates in 1.4.5
+## Updates in 1.4.5-beta1
 
 ### Fixes
 
