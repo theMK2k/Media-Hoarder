@@ -1,6 +1,7 @@
 # TODO
 
-- [WIP] fix #90 Settings | Scan History graph shows 1970 date
+- [ ] BUG: rescan specific media leads to removal of "last access at"
+  - "last access at" (on the series - not the episode) is gone if a media moved
 
 - [ ] DB Backup
 

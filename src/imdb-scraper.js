@@ -1623,7 +1623,7 @@ async function scrapeIMDBFullCreditsDataV3(movie, html) {
         //   _.get(edge, "node.characters", []) || []
         // );
 
-        const creditedFor =
+        let creditedFor =
           [
             (_.get(edge, "node.jobDetails", []) || [])
               .map((jobDetail) => _.get(jobDetail, "job.text", ""))
@@ -1636,6 +1636,15 @@ async function scrapeIMDBFullCreditsDataV3(movie, html) {
           ]
             .filter((cf) => !!cf)
             .join(", ") || null;
+
+        const attributes = (_.get(edge, "node.attributes", []) || [])
+          .map((attribute) => _.get(attribute, "text", ""))
+          .filter((attribute) => !!attribute)
+          .join(", ");
+
+        if (attributes) {
+          creditedFor = `${creditedFor} (${attributes})`;
+        }
 
         return {
           category: creditCategory.name,

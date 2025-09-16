@@ -2,6 +2,9 @@
 
 ## Next (current: 1.4.4)
 
+- [x] fix #90 Settings | Scan History graph shows 1970 date
+- [x] fix #92 credits are missing the attribute (e.g. "Alex Borstein - Lois Griffin (voice)" in tt34208873)
+
 ## v1.4.4
 
 - [x] FEATURE: Settings - Scan History: show a graph of collection sizes (disk space) over time
