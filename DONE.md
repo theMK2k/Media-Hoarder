@@ -2,6 +2,12 @@
 
 ## Next (current: 1.4.4)
 
+### Features
+
+- [x] Added `Missing Credits` filter in `Data Quality` filter set
+
+### Fixes
+
 - [x] fix #90 Settings | Scan History graph shows 1970 date
 - [x] fix #92 credits are missing the attribute (e.g. "Alex Borstein - Lois Griffin (voice)" in tt34208873)
 

@@ -3933,6 +3933,7 @@ function getPreferredLanguages() {
  * @param {Object} filters
  */
 function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
+  // Source Paths
   let filterSourcePaths = "";
   logger.log("[generateFilterQuery] filters.filterSourcePaths:", filters.filterSourcePaths);
   if (filters.filterSourcePaths && filters.filterSourcePaths.find((filter) => !filter.Selected)) {
@@ -3948,6 +3949,7 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
     filterSourcePaths += "))";
   }
 
+  // Genres
   let filterGenres = "";
   if (
     filters.filterGenres &&
@@ -4025,6 +4027,7 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
     }
   }
 
+  // Age Ratings
   let filterAgeRatings = "";
   logger.log("[generateFilterQuery] filters.filterAgeRatings:", filters.filterAgeRatings);
   if (filters.filterAgeRatings && filters.filterAgeRatings.find((filter) => !filter.Selected)) {
@@ -4058,6 +4061,7 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
     filterAgeRatings += ")";
   }
 
+  // Ratings
   let filterRatings = "";
   logger.log("[generateFilterQuery] filters.filterRatings:", filters.filterRatings);
   if (filters.filterRatings && filters.filterRatings.find((filter) => !filter.Selected)) {
@@ -4083,6 +4087,7 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
     filterRatings += ")";
   }
 
+  // Lists
   let filterLists = "";
   if (filters.filterLists && filters.filterLists.find((filter) => !filter.Selected)) {
     if (filters.filterLists.find((filter) => filter.Selected && !filter.id_Lists)) {
@@ -4107,6 +4112,7 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
     filterLists += ")";
   }
 
+  // Parental Advisory
   let filterParentalAdvisory = "";
   if (filters.filterParentalAdvisory) {
     Object.keys(filters.filterParentalAdvisory).forEach((category) => {
@@ -4145,6 +4151,7 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
     });
   }
 
+  // Persons
   let filterPersons = "";
   logger.log("[generateFilterQuery] filters.filterPersons:", filters.filterPersons);
   if (
@@ -4193,6 +4200,7 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
     }
   }
 
+  // Companies
   let filterCompanies = "";
   if (
     filters.filterCompanies &&
@@ -4240,6 +4248,7 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
     }
   }
 
+  // Plot Keywords
   let filterIMDBPlotKeywords = "";
   if (
     filters.filterIMDBPlotKeywords &&
@@ -4288,6 +4297,7 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
     }
   }
 
+  // Filming Locations
   let filterIMDBFilmingLocations = "";
   if (
     filters.filterIMDBFilmingLocations &&
@@ -4342,6 +4352,7 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
     }
   }
 
+  // Years
   let filterYears = "";
   logger.log("[generateFilterQuery] filters.filterYears:", filters.filterYears);
   if (filters.filterYears && filters.filterYears.find((filter) => !filter.Selected)) {
@@ -4367,6 +4378,7 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
     filterYears += ")";
   }
 
+  // Qualities
   let filterQualities = "";
   logger.log("[generateFilterQuery] filters.filterQualities:", filters.filterQualities);
   if (filters.filterQualities && filters.filterQualities.find((filter) => !filter.Selected)) {
@@ -4390,6 +4402,7 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
     filterQualities += ")";
   }
 
+  // Audio Languages
   let filterAudioLanguages = "";
   if (filters.filterAudioLanguages && filters.filterAudioLanguages.find((filter) => !filter.Selected)) {
     if (filters.filterAudioLanguages.find((filter) => filter.Selected && filter.Language == "<not available>")) {
@@ -4414,6 +4427,7 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
     filterAudioLanguages += ")";
   }
 
+  // Subtitle Languages
   let filterSubtitleLanguages = "";
   if (filters.filterSubtitleLanguages && filters.filterSubtitleLanguages.find((filter) => !filter.Selected)) {
     if (filters.filterSubtitleLanguages.find((filter) => filter.Selected && filter.Language == "<not available>")) {
@@ -4438,6 +4452,7 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
     filterSubtitleLanguages += ")";
   }
 
+  // Metacritic Score
   let filterMetacriticScore = "";
   if (
     filters.filterMetacriticScore &&
@@ -4462,6 +4477,7 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
     filterMetacriticScore += ")";
   }
 
+  // IMDB Rating
   let filterIMDBRating = "";
   if (
     filters.filterIMDBRating &&
@@ -4482,6 +4498,7 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
     filterIMDBRating += ")";
   }
 
+  // Release Attributes
   let filterReleaseAttributes = "";
   const releaseAttributesHierarchy = getReleaseAttributesHierarchy();
 
@@ -4546,6 +4563,7 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
     }
   }
 
+  // Data Quality
   let filterDataQuality = "";
   logger.log("[generateFilterQuery] filters.filterDataQuality:", filters.filterDataQuality);
 
@@ -4558,6 +4576,12 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
           AND Name2 IS NOT NULL
           AND IMDB_posterSmall_URL IS NOT NULL
           AND IMDB_plotSummary IS NOT NULL
+          AND (
+            IMDB_Top_Directors IS NOT NULL
+            OR IMDB_Top_Writers IS NOT NULL
+            OR IMDB_Top_Producers IS NOT NULL
+            OR IMDB_Top_Cast IS NOT NULL
+          )
         )`;
       case "missingIMDBLink":
         return `SELECT id_Movies FROM tbl_Movies WHERE IMDB_tconst IS NULL`;
@@ -4569,6 +4593,13 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
         return `SELECT id_Movies FROM tbl_Movies WHERE IMDB_posterSmall_URL IS NULL`;
       case "missingPlotSummary":
         return `SELECT id_Movies FROM tbl_Movies WHERE IMDB_plotSummary IS NULL`;
+      case "missingCredits":
+        return `SELECT id_Movies FROM tbl_Movies WHERE (
+          IMDB_Top_Directors IS NULL
+          AND IMDB_Top_Writers IS NULL
+          AND IMDB_Top_Producers IS NULL
+          AND IMDB_Top_Cast IS NULL
+        )`;
       default:
         throw new Error(`Unknown data quality filter "${filterDataQualityName}"`);
     }
@@ -5374,7 +5405,6 @@ async function fetchFilterDataQuality(
             SELECT COUNT(1)
             FROM tbl_Movies MOV
             INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
-            LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
             WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
                   AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                   AND MOV.Extra_id_Movies_Owner IS NULL
@@ -5395,7 +5425,6 @@ async function fetchFilterDataQuality(
         , (
             SELECT COUNT(1) FROM tbl_Movies MOV
             INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
-            LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
             WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
                   AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                   AND MOV.Extra_id_Movies_Owner IS NULL
@@ -5409,7 +5438,6 @@ async function fetchFilterDataQuality(
       , (
           SELECT COUNT(1) FROM tbl_Movies MOV
           INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
-          LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
           WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
                 AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND MOV.Extra_id_Movies_Owner IS NULL
@@ -5423,7 +5451,6 @@ async function fetchFilterDataQuality(
       , (
           SELECT COUNT(1) FROM tbl_Movies MOV
           INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
-          LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
           WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
                 AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND MOV.Extra_id_Movies_Owner IS NULL
@@ -5437,7 +5464,6 @@ async function fetchFilterDataQuality(
       , (
           SELECT COUNT(1) FROM tbl_Movies MOV
           INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
-          LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
           WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
                 AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND MOV.Extra_id_Movies_Owner IS NULL
@@ -5451,11 +5477,28 @@ async function fetchFilterDataQuality(
       , (
           SELECT COUNT(1) FROM tbl_Movies MOV
           INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
-          LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
           WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
                 AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND MOV.Extra_id_Movies_Owner IS NULL
                 AND MOV.IMDB_plotSummary IS NULL
+                ${additionalFilterQuery}
+      ) AS NumMovies
+      UNION ALL
+      SELECT 1 AS Selected
+      , 'missingCredits' AS Name
+      , 'missing Credits' AS DisplayText
+      , (
+          SELECT COUNT(1) FROM tbl_Movies MOV
+          INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
+          WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
+                AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
+                AND MOV.Extra_id_Movies_Owner IS NULL
+                AND (
+                  IMDB_Top_Directors IS NULL
+                  AND IMDB_Top_Writers IS NULL
+                  AND IMDB_Top_Producers IS NULL
+                  AND IMDB_Top_Cast IS NULL
+                )
                 ${additionalFilterQuery}
       ) AS NumMovies
     `,
@@ -5505,7 +5548,6 @@ async function fetchFilterSourcePaths(
 			, (
         SELECT COUNT(1)
         FROM tbl_Movies MOV
-        LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
         WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
               AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
               AND MOV.Extra_id_Movies_Owner IS NULL
@@ -5573,7 +5615,6 @@ async function fetchFilterGenres(
 				FROM tbl_Movies_Genres MG
 				INNER JOIN tbl_Movies MOV ON MG.id_Movies = MOV.id_Movies AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
 				INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
-        LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 				WHERE MG.id_Genres = G.id_Genres
               ${additionalFilterQuery}
 			) AS NumMovies
