@@ -105,7 +105,7 @@ _Details of an actor and their involvement in series / episodes_
 | mp4            | MPEG-4                                           |
 | mkv            | Matroska                                         |
 | m2ts           | Blu-ray Disc Audio-Video MPEG-2 Transport Stream |
-| rar            | Roshal Archive (preferrably uncompressed)        |
+| rar            | Roshal Archive (preferably uncompressed)         |
 
 ## Documentation
 
@@ -123,7 +123,7 @@ The following linked documents provide some detailed information about some inne
 
 ## Download and Install
 
-Downloads are availbale at [releases](https://github.com/theMK2k/Media-Hoarder/releases).
+Downloads are available at [releases](https://github.com/theMK2k/Media-Hoarder/releases).
 
 Currently **Media Hoarder** comes as:
 
