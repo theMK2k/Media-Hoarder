@@ -1,10 +1,18 @@
 # Media Hoarder v1.4.5 Changelog
 
-## Updates in 1.4.5-beta1
+## Updates in 1.4.5
+
+### Features
+
+- The `Data Quality` filters now also have an added `Missing Credits` filter
+  - this filter shows all media items that do not have any credits (cast and crew) information
+  - useful to find media items where the scraper possibly did not fetch credits information properly
 
 ### Fixes
 
 - Graph in **Settings | Scan History**: fixed the time range when scans did not provide a proper end date
+- SCRAPER: fixed credits scraping for recently introduced `creditsV2` data structure of IMDB
+- SCRAPER: fixed credits were missing the attribute (e.g. "Alex Borstein - Lois Griffin (voice)" in tt34208873)
 
 ## Updates in 1.4.4
 
