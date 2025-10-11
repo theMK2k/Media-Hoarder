@@ -1,6 +1,10 @@
 # TODO
 
 - [WIP] Add "number of votes" filter
+- [WIP] Scraper: adapt the scraper for recently introduced creditsV2 datastructure
+  - test with tt34172082 (https://github.com/theMK2k/Media-Hoarder/issues/92)
+
+- [ ] Add Missing Credits filter
 
 - [ ] BUG: rescan specific media leads to removal of "last access at"
   - "last access at" (on the series - not the episode) is gone if a media moved
