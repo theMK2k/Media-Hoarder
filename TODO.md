@@ -1,8 +1,6 @@
 # TODO
 
 - [WIP] Add "number of votes" filter
-- [WIP] Scraper: adapt the scraper for recently introduced creditsV2 datastructure
-  - test with tt34172082 (https://github.com/theMK2k/Media-Hoarder/issues/92)
 
 - [ ] Add Missing Credits filter
 

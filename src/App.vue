@@ -1159,6 +1159,96 @@
                   </v-expansion-panel-content>
                 </v-expansion-panel>
 
+                <!-- FILTER IMDB Number of Votes -->
+                <!--
+                <v-expansion-panel
+                  v-bind:readonly="editFilters.isEditFilters"
+                  v-if="filterGroup.name === 'filterIMDBNumVotes'"
+                  v-show="editFilters.isEditFilters || filterGroup.visible"
+                  style="padding: 0px !important; width: 316px"
+                  xxx-v-bind:disabled="
+                    $shared.loadingFilter === 'filterIMDBRatings'
+                  "
+                >
+                  <v-expansion-panel-header style="padding: 8px !important">
+                    <div
+                      v-bind:class="{
+                        'mk-grab': editFilters.isEditFilters,
+                        'mk-dark-grey': !filterGroup.visible,
+                        'mk-search-highlight': $shared.filterIMDBNumVotesActive,
+                      }"
+                      style="display: flex; align-items: center"
+                    >
+                      <span class="mk-filter-icon-container">
+                        <v-icon
+                          v-show="$shared.loadingFilter !== 'filterIMDBNumVotes'"
+                          v-bind:class="{
+                            'mk-dark-grey': !filterGroup.visible,
+                            'mk-search-highlight': $shared.filterIMDBNumVotesActive,
+                          }"
+                          >mdi-account-multiple-outline</v-icon
+                        >
+                        <v-progress-circular
+                          class="mk-filter-spinner"
+                          v-bind:class="{
+                            'mk-search-highlight': $shared.filterIMDBNumVotesActive,
+                          }"
+                          v-show="$shared.loadingFilter === 'filterIMDBNumVotes'"
+                          v-bind:size="16"
+                          v-bind:width="3"
+                          indeterminate
+                        >
+                        </v-progress-circular>
+                      </span>
+                      {{ $t("IMDB Votes") }} {{ filterIMDBNumVotesTitle }}
+                    </div>
+                    <template v-slot:actions>
+                      <v-icon
+                        v-if="!editFilters.isEditFilters"
+                        v-bind:class="{
+                          'mk-search-highlight': $shared.filterIMDBNumVotesActive,
+                        }"
+                      >
+                        $expand
+                      </v-icon>
+                      <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">
+                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
+                          </span>
+                        </template>
+                        <span>{{ $t("Show/Hide this filter") }}</span>
+                      </v-tooltip>
+                    </template>
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <v-range-slider
+                      v-model="$shared.filters.filterIMDBRating"
+                      :max="10"
+                      :min="0"
+                      :step="0.1"
+                      hide-details
+                      class="align-center"
+                      v-on:change="filtersChanged('filterIMDBRating')"
+                    >
+                      <template v-slot:prepend>{{
+                        $shared.filters.filterIMDBRating[0].toLocaleString($shared.uiLanguage)
+                      }}</template>
+                      <template v-slot:append>{{
+                        $shared.filters.filterIMDBRating[1].toLocaleString($shared.uiLanguage)
+                      }}</template>
+                    </v-range-slider>
+                    <v-checkbox
+                      v-bind:label="$t('include entries with no IMDB rating')"
+                      v-model="$shared.filters.filterIMDBRatingNone"
+                      v-on:click.native="filtersChanged('filterIMDBRating')"
+                      style="margin: 0px"
+                      color="mk-dark-grey"
+                    ></v-checkbox>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+                -->
+
                 <!-- FILTER GENRES -->
                 <v-expansion-panel
                   v-bind:readonly="editFilters.isEditFilters"

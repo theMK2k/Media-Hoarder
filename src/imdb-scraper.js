@@ -1673,7 +1673,7 @@ async function scrapeIMDBFullCreditsDataV3(movie, html) {
     for (const gqlCreditsMappedItem of gqlCreditsMapped) {
       const existingItem = gqlCreditsMappedMerged.find(
         (item) => item.category === gqlCreditsMappedItem.category && item.id === gqlCreditsMappedItem.id
-      )
+      );
 
       if (existingItem) {
         if (gqlCreditsMappedItem.credit && existingItem.credit !== gqlCreditsMappedItem.credit) {

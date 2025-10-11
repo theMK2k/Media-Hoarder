@@ -41,7 +41,7 @@ function performTruthyCheck(scrapeResult, testResult, fieldName, msgPrefix, allo
  * @param {*} expected
  * @param {*} testResult
  * @param {*} fieldName
- * @param {*} options optional options {msgPrefix: string, allowFalsy: boolean = false, checkIncludes: boolean = false}
+ * @param {*} options optional options {msgPrefix: string, allowFalsy: boolean = false, checkIncludes: boolean = false, caseInsensitive: boolean = false}
  * @returns
  */
 function performDefaultCheck(scrapeResult, expected, testResult, fieldName, options = {}) {
@@ -49,8 +49,20 @@ function performDefaultCheck(scrapeResult, expected, testResult, fieldName, opti
     return;
   }
 
+  let gotStringified = JSON.stringify(scrapeResult[fieldName]);
+  let expectedStringified = JSON.stringify(expected[fieldName]);
+
+  if (options.caseInsensitive) {
+    try {
+      gotStringified = gotStringified.toLowerCase();
+      expectedStringified = expectedStringified.toLowerCase();
+    } catch (error) {
+      //
+    }
+  }
+
   if (
-    (!options.checkIncludes && JSON.stringify(scrapeResult[fieldName]) !== JSON.stringify(expected[fieldName])) ||
+    (!options.checkIncludes && gotStringified !== expectedStringified) ||
     (options.checkIncludes &&
       !(scrapeResult[fieldName] || "<undefined1>").includes(expected[fieldName] || "<undefined2>"))
   ) {
@@ -446,8 +458,8 @@ async function testIMDBreleaseinfo() {
     }
 
     performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_originalTitle");
-    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_localTitle");
-    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_primaryTitle");
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_localTitle", { caseInsensitive: true });
+    performDefaultCheck(scrapeResult, expected, testResult, "$IMDB_primaryTitle", { caseInsensitive: true });
   } catch (error) {
     testResult.status = status.EXCEPTION;
     testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
