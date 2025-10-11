@@ -1,5 +1,7 @@
 # TODO
 
+- [WIP] Scraper: adapt the scraper for recently introduced creditsV2 datastructure
+
 - [ ] Add Missing Credits filter
 
 - [ ] BUG: rescan specific media leads to removal of "last access at"

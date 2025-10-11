@@ -1612,68 +1612,98 @@ async function scrapeIMDBFullCreditsDataV3(movie, html) {
 
     logger.log(`[scrapeIMDBFullCreditsDataV3] category '${creditCategory.id}', GraphQL uri:`, uri);
 
-    const gqlCredits = await scrapeGraphQLPaginated(uri, "data.title.credits");
+    const gqlCredits = await scrapeGraphQLPaginated(uri, "data.title.creditsV2");
 
-    logger.log(`[scrapeIMDBFullCreditsDataV3] category '${creditCategory.id}', gqlCredits.length:`, gqlCredits.length);
+    logger.log(
+      `[scrapeIMDBFullCreditsDataV3] category '${creditCategory.name}' (${creditCategory.id}), gqlCredits.length:`,
+      gqlCredits.length
+    );
 
     const gqlCreditsMapped = (gqlCredits || [])
       .map((edge) => {
-        // logger.log(
-        //   '[scrapeIMDBFullCreditsDataV3] (_.get(edge, "characters", []) || []):',
-        //   _.get(edge, "node.characters", []) || []
-        // );
+        const name = _.get(edge, "node.name.nameText.text");
+
+        const DEBUG_LOG_NAME = "Stan Lee";
+        if (name == DEBUG_LOG_NAME) {
+          logger.log(`XXX ${DEBUG_LOG_NAME} edge:`, JSON.stringify(edge, null, 2));
+        }
 
         let creditedFor =
           [
-            (_.get(edge, "node.jobDetails", []) || [])
-              .map((jobDetail) => _.get(jobDetail, "job.text", ""))
-              .filter((jobDetail) => !!jobDetail)
-              .join(" / "),
-            (_.get(edge, "node.characters", []) || [])
-              .map((character) => _.get(character, "name", ""))
-              .filter((character) => !!character)
+            (_.get(edge, "node.creditedRoles.edges", []) || [])
+              .map((creditedForEdge) => _.get(creditedForEdge, "node.text", ""))
+              .filter((creditedForText) => !!creditedForText)
               .join(" / "),
           ]
             .filter((cf) => !!cf)
             .join(", ") || null;
 
-        const attributes = (_.get(edge, "node.attributes", []) || [])
+        const attributes = (_.get(edge, "node.creditedRoles.edges", []) || [])
+          .flatMap((creditedForEdge) => _.get(creditedForEdge, "node.attributes", []))
           .map((attribute) => _.get(attribute, "text", ""))
-          .filter((attribute) => !!attribute)
+          .filter((attributeText) => !!attributeText)
           .join(", ");
+
+        if (name == DEBUG_LOG_NAME) {
+          logger.log(`XXX ${DEBUG_LOG_NAME} attributes:`, attributes);
+        }
 
         if (attributes) {
           creditedFor = `${creditedFor} (${attributes})`;
         }
 
-        return {
+        const result = {
           category: creditCategory.name,
           id: _.get(edge, "node.name.id"),
           name: _.get(edge, "node.name.nameText.text"),
           credit: creditedFor,
         };
+
+        if (name == DEBUG_LOG_NAME) {
+          logger.log(`XXX ${DEBUG_LOG_NAME} result:`, JSON.stringify(result, null, 2));
+        }
+
+        return result;
       })
       .filter((credit) => !!credit.id && !!credit.name);
 
-    credits.push(...gqlCreditsMapped);
+    const gqlCreditsMappedMerged = [];
+
+    // gqlCreditsMapped can contain multiple entries for the same person and department (e.g. Stan Lee in Writers for "based on the Marvel comics by" and "Groot created by")
+    for (const gqlCreditsMappedItem of gqlCreditsMapped) {
+      const existingItem = gqlCreditsMappedMerged.find(
+        (item) => item.category === gqlCreditsMappedItem.category && item.id === gqlCreditsMappedItem.id
+      )
+
+      if (existingItem) {
+        if (gqlCreditsMappedItem.credit && existingItem.credit !== gqlCreditsMappedItem.credit) {
+          existingItem.credit = `${existingItem.credit} / ${gqlCreditsMappedItem.credit}`;
+        }
+      } else {
+        gqlCreditsMappedMerged.push(gqlCreditsMappedItem);
+      }
+    }
+
+    credits.push(...gqlCreditsMappedMerged);
 
     // logger.log(`[scrapeIMDBFullCreditsDataV3] credits[0]:`, credits[0]);
 
     // fill top categories
-    if (["cast", "director", "producer", "writer"].includes(creditCategory.id)) {
+    const creditCategoryLowerCase = creditCategory.name.toLowerCase();
+    if (["cast", "directors", "producers", "writers"].includes(creditCategory.name.toLowerCase())) {
       const topCategory =
-        creditCategory.id === "cast"
+        creditCategoryLowerCase === "cast"
           ? topCast
-          : creditCategory.id === "director"
+          : creditCategoryLowerCase === "directors"
           ? topDirector
-          : creditCategory.id === "producer"
+          : creditCategoryLowerCase === "producers"
           ? topProducer
-          : creditCategory.id === "writer"
+          : creditCategoryLowerCase === "writers"
           ? topWriter
           : null;
 
       if (!topCategory) {
-        throw new Error("INTERNAL ERROR - unknown credit category: " + creditCategory.id);
+        throw new Error("INTERNAL ERROR - unknown credit category: " + creditCategoryLowerCase);
       }
 
       gqlCreditsMapped.forEach((entry) => {
