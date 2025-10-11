@@ -1604,13 +1604,16 @@ async function scrapeIMDBFullCreditsDataV3(movie, html) {
     creditCategories.unshift(castCategory);
   }
 
-  logger.log("[scrapeIMDBFullCreditsDataV3] creditCategories:", creditCategories);
+  logger.log("[scrapeIMDBFullCreditsDataV3] creditCategories from __NEXT_DATA__:", creditCategories);
 
   for (const creditCategory of creditCategories) {
     // fetch GraphQL data for this category
     const uri = graphQLqueries.credits(movie.IMDB_tconst, creditCategory.id);
 
-    logger.log(`[scrapeIMDBFullCreditsDataV3] category '${creditCategory.id}', GraphQL uri:`, uri);
+    logger.log(
+      `[scrapeIMDBFullCreditsDataV3] category '${creditCategory.name}' (${creditCategory.id}), GraphQL uri:`,
+      uri
+    );
 
     const gqlCredits = await scrapeGraphQLPaginated(uri, "data.title.creditsV2");
 
@@ -1690,15 +1693,19 @@ async function scrapeIMDBFullCreditsDataV3(movie, html) {
 
     // fill top categories
     const creditCategoryLowerCase = creditCategory.name.toLowerCase();
-    if (["cast", "directors", "producers", "writers"].includes(creditCategory.name.toLowerCase())) {
+    if (
+      ["cast", "director", "directors", "producer", "producers", "writer", "writers"].includes(
+        creditCategory.name.toLowerCase()
+      )
+    ) {
       const topCategory =
         creditCategoryLowerCase === "cast"
           ? topCast
-          : creditCategoryLowerCase === "directors"
+          : creditCategoryLowerCase === "director" || creditCategoryLowerCase === "directors"
           ? topDirector
-          : creditCategoryLowerCase === "producers"
+          : creditCategoryLowerCase === "producer" || creditCategoryLowerCase === "producers"
           ? topProducer
-          : creditCategoryLowerCase === "writers"
+          : creditCategoryLowerCase === "writer" || creditCategoryLowerCase === "writers"
           ? topWriter
           : null;
 
