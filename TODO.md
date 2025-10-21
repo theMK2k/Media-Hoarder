@@ -1,6 +1,26 @@
 # TODO
 
+- [WIP] introduce caching for the filters
+  - [x] fetchFilterReleaseAttributes
+  - [ ] Source Paths
+  - [ ] Video Quality
+  - [ ] Video Encoders
+  - [ ] My Lists
+  - [ ] My Ratings
+  - [ ] Genres
+  - [ ] Age Ratings
+  - [ ] Content Advisories
+  - [ ] People
+  - [ ] Companies
+  - [ ] Plot Keywords
+  - [ ] Release Years
+  - [ ] Audio Languages
+  - [ ] Subtitle Languages
+  - [ ] Audio Formats
+  - [ ] Filming Locations
+
 - [WIP] Add "number of votes" filter
+
 
 - [ ] Add Missing Credits filter
 

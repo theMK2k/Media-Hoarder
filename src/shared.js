@@ -954,6 +954,13 @@ const shared = new Vue({
       },
     },
 
+    /**
+     * A simple cache for filters so querying the database is not necessary every time
+     * key = `${filterName}-${hashOfAppliedFilters}`
+     * value = { metaData: {createdAt: Date, size: Number}, data: <result of the filter query (the cache value)> }
+     */
+    filterCache: {},
+
     /*
     videoQualities: [
       {

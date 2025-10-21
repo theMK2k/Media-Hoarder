@@ -1,5 +1,6 @@
 const fs = require("fs");
 const util = require("util");
+const crypto = require("crypto");
 const { dialog } = require("@electron/remote");
 const child_process = require("child_process");
 const _ = require("lodash");
@@ -8156,6 +8157,25 @@ function getReleaseAttributesHierarchy() {
   return releaseAttributes;
 }
 
+/**
+ * Creates the hash (key) for a filter chache entry
+ * @param {*} $MediaType
+ * @param {*} $SpecificMediaType
+ * @param {*} $Series_id_Movies_Owner
+ * @param {*} filterValues
+ * @returns
+ */
+function getFilterCacheKey(identifier, $MediaType, $SpecificMediaType, $Series_id_Movies_Owner, filterValues) {
+  const hashObject = {
+    $MediaType,
+    $SpecificMediaType,
+    $Series_id_Movies_Owner,
+    filterValues,
+  };
+
+  return `${identifier}-${crypto.createHash("sha256").update(JSON.stringify(hashObject)).digest("hex")}`;
+}
+
 async function fetchFilterReleaseAttributes(
   $MediaType,
   $SpecificMediaType,
@@ -8168,6 +8188,25 @@ async function fetchFilterReleaseAttributes(
   const filterValues = await fetchFilterValues($SpecificMediaType, loadFilterValuesFromStorage);
 
   logger.log("[fetchFilterReleaseAttributes] filterValues:", filterValues);
+
+  const cacheHash = getFilterCacheKey(
+    "filterReleaseAttributes",
+    $MediaType,
+    $SpecificMediaType,
+    $Series_id_Movies_Owner,
+    filterValues
+  );
+
+  logger.log("[fetchFilterReleaseAttributes] cacheHash:", cacheHash);
+
+  if (shared.filterCache[cacheHash]) {
+    logger.log(`[fetchFilterReleaseAttributes] cache hit!`);
+    shared.filters.filterReleaseAttributes = shared.filterCache[cacheHash].data;
+    shared.loadingFilter = "";
+    return;
+  }
+
+  logger.log(`[fetchFilterReleaseAttributes] cache miss`);
 
   const releaseAttributesHierarchy = getReleaseAttributesHierarchy();
 
@@ -8260,8 +8299,15 @@ async function fetchFilterReleaseAttributes(
 
   logger.log("[fetchFilterReleaseAttributes] results:", results);
 
-  shared.filters.filterReleaseAttributes = results;
+  shared.filterCache[cacheHash] = {
+    metaData: {
+      createdAt: new Date(),
+      size: JSON.stringify(results).length,
+    },
+    data: results,
+  };
 
+  shared.filters.filterReleaseAttributes = results;
   shared.loadingFilter = "";
 }
 
