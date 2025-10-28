@@ -18,6 +18,10 @@ const shared = new Vue({
     isNewVersionAvailable: false,
     currentName: null,
 
+    featureFlags: {
+      useFilterCache: false, // set to true to use the filterCache feature
+    },
+
     sidenav: null,
     searchText: null,
     logLevel: 0,
@@ -1386,6 +1390,18 @@ const shared = new Vue({
 
     filterIMDBFilmingLocationsAppliedContains(location) {
       return !!this.$shared.filterIMDBFilmingLocationsApplied.find((ffla) => ffla.Location === location);
+    },
+
+    clearFilterCache(identifier) {
+      if (!identifier) {
+        this.filterCache = {};
+      }
+
+      const keys = Object.keys(this.filterCache).filter((key) => key.startsWith(identifier));
+
+      for (const key of keys) {
+        delete this.filterCache[key];
+      }
     },
   },
 });

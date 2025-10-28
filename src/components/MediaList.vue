@@ -2993,9 +2993,7 @@ export default {
     },
 
     async refetchMedia({ setPage, $t, setFilter, dontStoreFilters, dontLoadFiltersFromDb }) {
-      //logger.group("[Fetch Media List]");
-
-      logger.log("[refetchMedia]", { setPage, $t, setFilter, dontStoreFilters });
+      logger.log("[refetchMedia] START", { setPage, setFilter, dontStoreFilters, dontLoadFiltersFromDb });
       logger.log("[refetchMedia] this.specificMediaType:", this.specificMediaType);
       logger.log("[refetchMedia] this.$shared.filters:", JSON.stringify(this.$shared.filters, null, 2));
 

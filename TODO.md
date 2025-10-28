@@ -1,31 +1,44 @@
 # TODO
 
+## Prio 0
+
+- [ ] BUG: rescan specific media leads to removal of "last access at"
+
+  - "last access at" (on the series - not the episode) is gone if a media moved
+
+- [ ] BUG: when a series is moved, there should not be a new scan of imdb metadata
+
+  - [ ] also check with moved movie
+
 - [WIP] introduce caching for the filters
+
   - [x] fetchFilterReleaseAttributes
-  - [ ] Source Paths
-  - [ ] Video Quality
-  - [ ] Video Encoders
-  - [ ] My Lists
-  - [ ] My Ratings
-  - [ ] Genres
-  - [ ] Age Ratings
-  - [ ] Content Advisories
-  - [ ] People
-  - [ ] Companies
-  - [ ] Plot Keywords
-  - [ ] Release Years
-  - [ ] Audio Languages
-  - [ ] Subtitle Languages
-  - [ ] Audio Formats
+  - [x] Source Paths
+  - [x] Video Quality
+  - [x] Video Encoders
+  - [x] My Lists
+  - [x] My Ratings
+  - [x] Genres
+  - [x] Age Ratings
+  - [x] Content Advisories
+  - [x] People
+  - [x] Companies
+  - [x] Plot Keywords
+  - [ ] Release Years ??
+  - [x] Audio Languages
+  - [x] Subtitle Languages
+  - [x] Audio Formats
   - [ ] Filming Locations
+
+  - [ ] we might have an issue with fetchFilterValues and saveFilterValues in the complete chain
+
+  - [ ] probably filterValues is not the correct item for the hash (use shared.filters... instead)
+  - [ ] check with all implementations if possibly new fields for the hash key are necessary
+  - [ ] find a strategy to invalidate the cache (completely or for single filters)
 
 - [WIP] Add "number of votes" filter
 
-
 - [ ] Add Missing Credits filter
-
-- [ ] BUG: rescan specific media leads to removal of "last access at"
-  - "last access at" (on the series - not the episode) is gone if a media moved
 
 - [ ] DB Backup
 
