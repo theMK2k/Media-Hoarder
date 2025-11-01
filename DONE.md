@@ -1,6 +1,16 @@
 # DONE
 
-## Next (current: 1.4.4)
+## Next (current: 1.4.5)
+
+### Features
+
+- nothing yet
+
+### Fixes
+
+- [x] fix #94 IMDB detection for TV Series preferred movies
+
+## v1.4.5
 
 ### Features
 

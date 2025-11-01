@@ -2,8 +2,6 @@
 
 ## Prio 0
 
-- [ ] BUG during scan: `TypeError: Cannot read property 'IMDB_originalTitle' of null`
-
 - [WIP] SCANNING: use actualDuplicate to detect moved media and re-use metadata
 
   - [ ] also check with moved movie
@@ -44,8 +42,6 @@ with rescanMediaItemsMetaData the media items (incl. series) DON't have IMDB_tco
   - [ ] find a strategy to invalidate the cache (completely or for single filters)
 
 - [WIP] Add "number of votes" filter
-
-- [ ] Edge Case of IMDB identification <https://github.com/theMK2k/Media-Hoarder/issues/94>
 
 - [ ] Add Missing Credits filter
 

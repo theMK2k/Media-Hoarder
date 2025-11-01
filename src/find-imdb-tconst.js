@@ -153,6 +153,10 @@ export async function findIMDBtconstByFileOrDirname(mediaItem, options) {
 
       let results = await scrapeIMDBFindPageSearchV3(searchTerm, options.category === "title" ? "tt" : null);
 
+      results.forEach((result) => {
+        result.mediaTypeLowerCase = result.mediaType?.toLowerCase();
+      });
+
       logger.log(`[findIMDBtconstByFileOrDirname] ${results.length} results found for "${searchTerm}"`);
       logger.log(`[findIMDBtconstByFileOrDirname] results:`, JSON.parse(JSON.stringify(results)));
       stats.numResults = results.length;
@@ -169,17 +173,17 @@ export async function findIMDBtconstByFileOrDirname(mediaItem, options) {
       // filter by excluding "TV Series"
       if (results.length > 1 && options.excludeTVSeries) {
         logger.log("[findIMDBtconstByFileOrDirname] excluding TV Series and TV Episodes from results");
-        while (results.find((result) => result.title.includes("(TV Series)"))) {
+        while (results.find((result) => result.mediaTypeLowerCase.includes("series"))) {
           stats.excludedTVSeries = true;
           results.splice(
-            results.findIndex((result) => result.title.includes("(TV Series)")),
+            results.findIndex((result) => result.mediaTypeLowerCase.includes("series")),
             1
           );
         }
-        while (results.find((result) => result.title.includes("(TV Episode)"))) {
+        while (results.find((result) => result.mediaTypeLowerCase.includes("episode"))) {
           stats.excludedTVSeries = true;
           results.splice(
-            results.findIndex((result) => result.title.includes("(TV Episode)")),
+            results.findIndex((result) => result.mediaTypeLowerCase.includes("episode")),
             1
           );
         }
@@ -191,7 +195,11 @@ export async function findIMDBtconstByFileOrDirname(mediaItem, options) {
       if (mediaItem.MediaType === "series") {
         logger.log("[findIMDBtconstByFileOrDirname] re-ranking results according to TV Series");
         results = results.sort((a, b) => {
-          return a.title.includes("(TV Series)") && !b.title.includes("(TV Series)") ? -1 : 0;
+          return ((a.mediaTypeLowerCase.includes("series") || a.mediaTypeLowerCase.includes("episode")) &&
+            !b.mediaTypeLowerCase.includes("series")) ||
+            b.mediaTypeLowerCase.includes("episode")
+            ? -1
+            : 0;
         });
 
         logger.log("[findIMDBtconstByFileOrDirname] re-ranked results:", results);
