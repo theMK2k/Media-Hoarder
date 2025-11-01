@@ -3446,11 +3446,11 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew, actualDuplicate) {
         rescanETA
       );
 
-      //KILLME - dump imdbData to file
-      fs.writeFileSync(
-        `dump_${mediaItem.Filename}_${new Date().toISOString().substr(0, 19).replace(/:/g, "")}_imdbData.json`,
-        JSON.stringify(imdbData, null, 2)
-      );
+      // dump imdbData to file
+      // fs.writeFileSync(
+      //   `dump_${mediaItem.Filename}_${new Date().toISOString().substr(0, 19).replace(/:/g, "")}_imdbData.json`,
+      //   JSON.stringify(imdbData, null, 2)
+      // );
 
       await saveIMDBData(mediaItem, imdbData);
     }
