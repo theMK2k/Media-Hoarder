@@ -372,7 +372,7 @@ async function rescanItems(mediaItems, $t) {
 
     await applyMediaInfo(mediaItem, false);
 
-    await assignIMDB({
+    await assignIMDBAndScrape({
       $id_Movies: mediaItem.id_Movies,
       $IMDB_tconst: mediaItem.IMDB_tconst,
       isHandlingDuplicates: null,
@@ -432,7 +432,7 @@ async function rescan(onlyNew, $t) {
 
   if (shared.scanOptions.mergeExtras) await mergeExtras(onlyNew);
 
-  if (shared.scanOptions.rescanMoviesMetaData) await rescanMediaItemsMetaData(onlyNew, null, $t, false);
+  if (shared.scanOptions.rescanMoviesMetaData) await rescanMediaItemsMetaData(onlyNew, null, $t, false, false);
 
   // TODO:   if (shared.scanOptions.rescanSeriesMetaData) await rescanSeriesMetaData(onlyNew, null, $t);
 
@@ -2441,8 +2441,9 @@ async function applyMetaData(onlyNew, id_Movies) {
  * @param {boolean} onlyNew
  * @param {string} id_Movies (optional)
  * @param {Object} $t i18n instance
+ * @param {boolean} ignoreDuplicates ignore duplicates and scrape metadata from IMDB
  */
-async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t, resetRescanETA) {
+async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t, resetRescanETA, ignoreDuplicates) {
   logger.log("[rescanMediaItemsMetaData] START", { onlyNew, id_Movies });
 
   // NOTE: if WHERE clause gets enhanced, please also enhance the code below "Filter mediaItems that only have..."
@@ -2592,7 +2593,7 @@ async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t, resetRescanETA) 
       break;
     }
 
-    await rescanMediaItemMetaData(onlyNew, mediaItem, $t, !id_Movies, !id_Movies);
+    await rescanMediaItemMetaData(onlyNew, mediaItem, $t, !id_Movies, ignoreDuplicates);
 
     if (mediaItems.length > 1) {
       rescanETA.endTime = new Date().getTime();
@@ -2616,8 +2617,10 @@ async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t, resetRescanETA) 
  * @param {boolean} onlyNew
  * @param {Object} mediaItem
  * @param {Object} $t
+ * @param {boolean} optRescanMediaInfo whether to rescan MediaInfo
+ * @param {boolean} ignoreDuplicates ignore duplicates and scrape metadata from IMDB
  */
-async function rescanMediaItemMetaData(onlyNew, mediaItem, $t, optRescanMediaInfo) {
+async function rescanMediaItemMetaData(onlyNew, mediaItem, $t, optRescanMediaInfo, ignoreDuplicates) {
   logger.log("[rescanMediaItemMetaData] START, mediaItem:", mediaItem);
 
   // eventBus.scanInfoOff();
@@ -2632,7 +2635,7 @@ async function rescanMediaItemMetaData(onlyNew, mediaItem, $t, optRescanMediaInf
   const definedByUser = getFieldsDefinedByUser(mediaItem.DefinedByUser);
   const IMDB_tconst_before = mediaItem.IMDB_tconst;
 
-  const actualDuplicate = await getFirstActualMovieDuplicate(mediaItem.id_Movies);
+  const actualDuplicate = ignoreDuplicates ? null : await getFirstActualMovieDuplicate(mediaItem.id_Movies);
   logger.log("[rescanMediaItemMetaData] actualDuplicate:", actualDuplicate);
 
   // if actualDuplicate exists and has IMDB_tconst and IMDB_Done, copy over all the IMDB data and skip actual scraping
@@ -7671,7 +7674,7 @@ async function deleteFilterCompany($id_Filter_Companies) {
   );
 }
 
-async function assignIMDB({
+async function assignIMDBAndScrape({
   $id_Movies,
   $IMDB_tconst,
   isHandlingDuplicates,
@@ -7679,7 +7682,7 @@ async function assignIMDB({
   $t,
   isIMDB_tconst_userDefined,
 }) {
-  logger.log("[assignIMDB] $id_Movies:", $id_Movies, "$IMDB_tconst:", $IMDB_tconst, "mediaItem:", mediaItem);
+  logger.log("[assignIMDBAndScrape] $id_Movies:", $id_Movies, "$IMDB_tconst:", $IMDB_tconst, "mediaItem:", mediaItem);
 
   if ($IMDB_tconst && isIMDB_tconst_userDefined) {
     // user has defined the IMDB_tconst, set it in DefinedByUser fields
@@ -7711,7 +7714,8 @@ async function assignIMDB({
     $IMDB_tconst,
   });
 
-  await rescanMediaItemsMetaData(false, $id_Movies, $t, true);
+  await rescanMediaItemsMetaData(false, $id_Movies, $t, true, true);
+
   await applyMetaData(false, $id_Movies);
 
   if (isHandlingDuplicates) {
@@ -7721,7 +7725,7 @@ async function assignIMDB({
   const duplicates = await getMovieDuplicates($id_Movies, shared.duplicatesHandling.actualDuplicate.relinkIMDB, false);
 
   for (let i = 0; i < duplicates.length; i++) {
-    await assignIMDB({
+    await assignIMDBAndScrape({
       $id_Movies: duplicates[i],
       $IMDB_tconst,
       isHandlingDuplicates: true,
@@ -7814,6 +7818,9 @@ async function loadSettingDuplicatesHandling() {
 
 async function getFirstActualMovieDuplicate(id_Movies) {
   const actualDuplicates = await getMovieDuplicates(id_Movies, true, false, true);
+
+  logger.log("[getFirstActualMovieDuplicate] actualDuplicates:", actualDuplicates);
+
   const firstActualDuplicate =
     actualDuplicates.length > 0
       ? (
@@ -7825,11 +7832,19 @@ async function getFirstActualMovieDuplicate(id_Movies) {
   return firstActualDuplicate;
 }
 
+/**
+ * Find duplicates (actual or meta) of a given movie
+ * @param {*} $id_Movies
+ * @param {*} useActualDuplicates
+ * @param {*} useMetaDuplicates
+ * @param {*} ignoreNew
+ * @returns array of id_Movies that are duplicates
+ */
 async function getMovieDuplicates($id_Movies, useActualDuplicates, useMetaDuplicates, ignoreNew) {
   const result = [];
 
   if (!useActualDuplicates && !useMetaDuplicates) {
-    logger.log("[getMovieDuplicates] bailing out");
+    logger.log("[getMovieDuplicates] bailing out", { useActualDuplicates, useMetaDuplicates });
     return [];
   }
 
@@ -7852,8 +7867,6 @@ async function getMovieDuplicates($id_Movies, useActualDuplicates, useMetaDuplic
           `,
         { $id_Movies }
       );
-
-      //           ${ignoreNew ? 'AND (MOV.isNew IS NULL OR MOV.isNew = 0)' : ''}    'optional: only newly added movies (rescan)
 
       for (let i = 0; i < actualDuplicates.length; i++) {
         //if (result.findIndex(actualDuplicates[i].id_Movies) === -1) {
@@ -10475,7 +10488,7 @@ export {
   addFilterIMDBFilmingLocation,
   deleteFilterIMDBPlotKeyword,
   deleteFilterIMDBFilmingLocation,
-  assignIMDB,
+  assignIMDBAndScrape as assignIMDB,
   fetchSortValues,
   saveSortValues,
   saveCurrentPage,
