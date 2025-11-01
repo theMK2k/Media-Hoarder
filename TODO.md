@@ -2,15 +2,22 @@
 
 ## Prio 0
 
+- [ ] BUG during scan: `TypeError: Cannot read property 'IMDB_originalTitle' of null`
+
+- [WIP] SCANNING: use actualDuplicate to detect moved media and re-use metadata
+
+  - [ ] also check with moved movie
+  - [ ] test with actual duplicates and re-scan on specific files (then an imdb fetch should take place)
+
+Notes:
+
+with rescanMediaItemsMetaData the media items (incl. series) DON't have IMDB_tconst yet
+
 - [ ] BUG: rescan specific media leads to removal of "last access at"
 
   - "last access at" (on the series - not the episode) is gone if a media moved
 
-- [ ] BUG: when a series is moved, there should not be a new scan of imdb metadata
-
-  - [ ] also check with moved movie
-
-- [WIP] introduce caching for the filters
+- [WIP] introduce caching for the filters (uses shared.featureFlags)
 
   - [x] fetchFilterReleaseAttributes
   - [x] Source Paths
@@ -37,6 +44,8 @@
   - [ ] find a strategy to invalidate the cache (completely or for single filters)
 
 - [WIP] Add "number of votes" filter
+
+- [ ] Edge Case of IMDB identification <https://github.com/theMK2k/Media-Hoarder/issues/94>
 
 - [ ] Add Missing Credits filter
 

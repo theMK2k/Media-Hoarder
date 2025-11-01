@@ -1,3 +1,5 @@
+import { db } from "./store";
+
 const querystring = require("querystring");
 
 const _ = require("lodash");
@@ -127,12 +129,67 @@ function handleGraphQLErrors(body) {
  * scrape IMDB Main Page Data (e.g. https://www.imdb.com/title/tt4154796)
  * @param {Object} movie
  * @param {Function} downloadFileCallback
+ * @param {Object} actualDuplicate if the movie has an actual duplicate, the Object is passed here
  * @returns
  */
-async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
+async function scrapeIMDBmainPageData(movie, downloadFileCallback, actualDuplicate) {
   if (movie.scanErrors) {
     delete movie.scanErrors["IMDB Main Page"];
   }
+
+  let result = {
+    $IMDB_releaseType: null,
+    $IMDB_genres: null,
+    $IMDB_rating: null,
+    $IMDB_numVotes: null,
+    $IMDB_metacriticScore: null,
+    $IMDB_posterSmall_URL: null,
+    $IMDB_posterLarge_URL: null,
+    $IMDB_plotSummary: null,
+    $IMDB_Trailer_URL: null,
+    $IMDB_startYear: null,
+    $IMDB_endYear: null,
+  };
+
+  //#region Copy from duplicate
+  if (
+    actualDuplicate &&
+    actualDuplicate.IMDB_tconst &&
+    actualDuplicate.IMDB_Done &&
+    actualDuplicate.IMDB_tconst == movie.IMDB_tconst
+  ) {
+    logger.log("[scrapeIMDBmainPageData] using actualDuplicate data, no scraping needed");
+    result = {
+      $IMDB_releaseType: actualDuplicate.IMDB_releaseType,
+      $IMDB_genres: null, // genres are fetched below
+      $IMDB_rating: actualDuplicate.IMDB_rating,
+      $IMDB_numVotes: actualDuplicate.IMDB_numVotes,
+      $IMDB_metacriticScore: actualDuplicate.IMDB_metacriticScore,
+      $IMDB_posterSmall_URL: actualDuplicate.IMDB_posterSmall_URL,
+      $IMDB_posterLarge_URL: actualDuplicate.IMDB_posterLarge_URL,
+      $IMDB_plotSummary: actualDuplicate.IMDB_plotSummary,
+      $IMDB_Trailer_URL: actualDuplicate.IMDB_Trailer_URL,
+      $IMDB_startYear: actualDuplicate.IMDB_startYear,
+      $IMDB_endYear: actualDuplicate.IMDB_endYear,
+    };
+
+    result.$IMDB_genres = (
+      await db.fireProcedureReturnAll(
+        `
+        SELECT GenreID
+        FROM tbl_Movies_Genres MG
+        INNER JOIN tbl_Genres G ON MG.id_Genres = G.id_Genres
+        WHERE MG.id_Movies = $id_Movies
+      `,
+        {
+          $id_Movies: actualDuplicate.id_Movies,
+        }
+      )
+    ).map((row) => row.GenreID);
+
+    return result;
+  }
+  //#endregion Copy from duplicate
 
   try {
     // ## Fetch HTML
@@ -164,11 +221,11 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
     // ## Release Type
 
     // V3
-    let $IMDB_releaseType = _.get(jsonDataNext, "props.pageProps.aboveTheFoldData.titleType.id", null);
+    result.$IMDB_releaseType = _.get(jsonDataNext, "props.pageProps.aboveTheFoldData.titleType.id", null);
 
-    if (!$IMDB_releaseType) {
+    if (!result.$IMDB_releaseType) {
       // V1
-      $IMDB_releaseType = "movie";
+      result.$IMDB_releaseType = "movie";
       /*
           short			-- tt0000006 -> "/search/title?genres=short"
           tvMovie 		-- tt9915546 -> ">TV Movie" 
@@ -180,19 +237,19 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
           videoGame		-- tt8848200 -> ">Video game"
       */
 
-      if (/\/search\/title\?genres=short/.test(html)) $IMDB_releaseType = "";
-      if (/"presentation">TV Movie</.test(html)) $IMDB_releaseType = "tvMovie";
-      if (/"presentation">TV Series</.test(html)) $IMDB_releaseType = "tvSeries";
-      if (/"presentation">Episode/.test(html)) $IMDB_releaseType = "tvEpisode";
-      if (/"presentation">TV Short/.test(html)) $IMDB_releaseType = "tvShort";
-      if (/"presentation">TV Mini-Series/.test(html)) $IMDB_releaseType = "tvMiniSeries";
-      if (/"presentation">TV Special/.test(html)) $IMDB_releaseType = "tvSpecial";
-      if (/"presentation">Video\s/.test(html)) $IMDB_releaseType = "video";
-      if (/"presentation">Video game/.test(html)) $IMDB_releaseType = "videoGame";
+      if (/\/search\/title\?genres=short/.test(html)) result.$IMDB_releaseType = "";
+      if (/"presentation">TV Movie</.test(html)) result.$IMDB_releaseType = "tvMovie";
+      if (/"presentation">TV Series</.test(html)) result.$IMDB_releaseType = "tvSeries";
+      if (/"presentation">Episode/.test(html)) result.$IMDB_releaseType = "tvEpisode";
+      if (/"presentation">TV Short/.test(html)) result.$IMDB_releaseType = "tvShort";
+      if (/"presentation">TV Mini-Series/.test(html)) result.$IMDB_releaseType = "tvMiniSeries";
+      if (/"presentation">TV Special/.test(html)) result.$IMDB_releaseType = "tvSpecial";
+      if (/"presentation">Video\s/.test(html)) result.$IMDB_releaseType = "video";
+      if (/"presentation">Video game/.test(html)) result.$IMDB_releaseType = "videoGame";
     }
 
     // ## Genres
-    const $IMDB_genres = [];
+    result.$IMDB_genres = [];
 
     const rxGenres = /genres=(.*?)&/g;
     let match = null;
@@ -200,41 +257,41 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
     // eslint-disable-next-line no-cond-assign
     while ((match = rxGenres.exec(html))) {
       const genre = match[1].toLowerCase();
-      if (!$IMDB_genres.find((genreFind) => genreFind == genre)) {
-        $IMDB_genres.push(genre);
+      if (!result.$IMDB_genres.find((genreFind) => genreFind == genre)) {
+        result.$IMDB_genres.push(genre);
       }
     }
 
-    logger.log("[scrapeIMDBmainPageData] $IMDB_genres after V1:", $IMDB_genres);
+    logger.log("[scrapeIMDBmainPageData] $IMDB_genres after V1:", result.$IMDB_genres);
 
     // ## Genres V2 (via __NEXT_DATA__ / jsonDataNext)
     if (jsonDataNext) {
       const genres = _.get(jsonDataNext, "props.pageProps.aboveTheFoldData.genres.genres", []);
       genres.forEach((genre) => {
         const genreId = genre.id.toLowerCase();
-        if (!$IMDB_genres.find((genreFind) => genreFind == genreId)) {
-          $IMDB_genres.push(genreId);
+        if (!result.$IMDB_genres.find((genreFind) => genreFind == genreId)) {
+          result.$IMDB_genres.push(genreId);
         }
       });
     }
 
-    logger.log("[scrapeIMDBmainPageData] $IMDB_genres after V2:", $IMDB_genres);
+    logger.log("[scrapeIMDBmainPageData] $IMDB_genres after V2:", result.$IMDB_genres);
 
     // ## IMDB Rating and Number of Votes
-    let $IMDB_rating = null;
-    let $IMDB_numVotes = null;
+    result.$IMDB_rating = null;
+    result.$IMDB_numVotes = null;
 
     const rxRating = /<span itemprop="ratingValue">(.*?)<\/span>/;
     if (rxRating.test(html)) {
       const strRating = html.match(rxRating)[1].replace(",", ".");
-      $IMDB_rating = parseFloat(strRating);
+      result.$IMDB_rating = parseFloat(strRating);
 
       const matchVotes = html.match(/itemprop="ratingCount">(.*?)<\/span>/)[1];
       logger.log("[scrapeIMDBmainPageData] matchVotes:", matchVotes);
 
       const strVotes = html.match(/itemprop="ratingCount">(.*?)<\/span>/)[1].replace(/,/g, "");
       logger.log("[scrapeIMDBmainPageData] strVotes:", strVotes);
-      $IMDB_numVotes = parseInt(strVotes);
+      result.$IMDB_numVotes = parseInt(strVotes);
     }
 
     // V2
@@ -245,37 +302,37 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
       });
 
       const strRating = jsonData.aggregateRating.ratingValue;
-      $IMDB_rating = parseFloat(strRating);
+      result.$IMDB_rating = parseFloat(strRating);
 
       const strVotes = jsonData.aggregateRating.ratingCount;
-      $IMDB_numVotes = parseInt(strVotes);
+      result.$IMDB_numVotes = parseInt(strVotes);
     }
 
     // ## Metacritic Score
-    let $IMDB_metacriticScore = null;
+    result.$IMDB_metacriticScore = null;
 
     const rxMetacriticScore = /<div class="metacriticScore .*? titleReviewBarSubItem">[\s\S]*?<span>(\d*)<\/span>/;
     if (rxMetacriticScore.test(html)) {
-      $IMDB_metacriticScore = parseInt(html.match(rxMetacriticScore)[1]);
+      result.$IMDB_metacriticScore = parseInt(html.match(rxMetacriticScore)[1]);
     }
 
     // V2
     // <span class="score-meta" style="background-color:#54A72A">78</span>
     const rxMetacriticScoreV2 = /<span class="score-meta[\s\S]*?>(\d+)<\/span>/;
     if (rxMetacriticScoreV2.test(html)) {
-      $IMDB_metacriticScore = parseInt(html.match(rxMetacriticScoreV2)[1]);
+      result.$IMDB_metacriticScore = parseInt(html.match(rxMetacriticScoreV2)[1]);
     }
 
     // V2.1
     // <span class="sc-b0901df4-0 gzyNKq metacritic-score-box" style="background-color:#54A72A">78</span>
     const rxMetacriticScoreV21 = /<span class=".*?metacritic-score-box[\s\S]*?>(\d+)<\/span>/;
     if (rxMetacriticScoreV21.test(html)) {
-      $IMDB_metacriticScore = parseInt(html.match(rxMetacriticScoreV21)[1]);
+      result.$IMDB_metacriticScore = parseInt(html.match(rxMetacriticScoreV21)[1]);
     }
 
     // ## Poster
-    let $IMDB_posterSmall_URL = null;
-    let $IMDB_posterLarge_URL = null;
+    result.$IMDB_posterSmall_URL = null;
+    result.$IMDB_posterLarge_URL = null;
     let rxPosterMediaViewerURL = null;
 
     rxPosterMediaViewerURL = /<div class="poster">[\s\S]*?<a href="(.*?)"[\s\S]*?>/; // "/title/tt0130827/mediaviewer/rm215942400"
@@ -298,13 +355,13 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
         const posterSmallPath = `extras/${movie.IMDB_tconst}_posterSmall.jpg`;
         const posterSmallSuccess = await downloadFileCallback(posterURLs.$IMDB_posterSmall_URL, posterSmallPath, false);
         if (posterSmallSuccess) {
-          $IMDB_posterSmall_URL = posterSmallPath;
+          result.$IMDB_posterSmall_URL = posterSmallPath;
         }
 
         const posterLargePath = `extras/${movie.IMDB_tconst}_posterLarge.jpg`;
         const posterLargeSuccess = await downloadFileCallback(posterURLs.$IMDB_posterLarge_URL, posterLargePath, false);
         if (posterLargeSuccess) {
-          $IMDB_posterLarge_URL = posterLargePath;
+          result.$IMDB_posterLarge_URL = posterLargePath;
         }
       } catch (error) {
         if (movie.scanErrors) {
@@ -314,7 +371,7 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
     }
 
     // ## Plot Summary
-    let $IMDB_plotSummary = null;
+    result.$IMDB_plotSummary = null;
     const rxPlotSummary = /<div class="summary_text">([\s\S]*?)<\/div>/;
     const rxPlotSummary2 = /data-testid="plot-l"[\s\S]*?>([\s\S]*?)<\//;
 
@@ -324,7 +381,7 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
     if (rxPlotSummary2.test(html)) rxPlotSummaryChosen = rxPlotSummary2;
 
     if (rxPlotSummaryChosen) {
-      $IMDB_plotSummary = unescape(
+      result.$IMDB_plotSummary = unescape(
         htmlToText
           .fromString(html.match(rxPlotSummaryChosen)[1], {
             wordwrap: null,
@@ -338,27 +395,27 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
     }
 
     // ## Trailer
-    let $IMDB_Trailer_URL = null;
+    result.$IMDB_Trailer_URL = null;
 
     if (jsonData.trailer && jsonData.trailer.embedUrl) {
       // V2
-      $IMDB_Trailer_URL = jsonData.trailer.embedUrl.replace("https://www.imdb.com", "");
+      result.$IMDB_Trailer_URL = jsonData.trailer.embedUrl.replace("https://www.imdb.com", "");
     } else {
       const rxTrailerUrl =
         /href="(\/video\/vi\d*)\?playlistId=tt\d*&amp;ref_=tt_ov_vi"[\s\S]*?aria-label="Watch {VideoTitle}"/;
       if (rxTrailerUrl.test(html)) {
-        $IMDB_Trailer_URL = html.match(rxTrailerUrl)[1];
+        result.$IMDB_Trailer_URL = html.match(rxTrailerUrl)[1];
       }
     }
 
-    logger.log("[scrapeIMDBmainPageData] $IMDB_Trailer_URL:", $IMDB_Trailer_URL);
+    logger.log("[scrapeIMDBmainPageData] result.$IMDB_Trailer_URL:", result.$IMDB_Trailer_URL);
 
     // ## Year Range
     // V3
-    let $IMDB_startYear = _.get(jsonDataNext, "props.pageProps.aboveTheFoldData.releaseYear.year", null);
-    let $IMDB_endYear = _.get(jsonDataNext, "props.pageProps.aboveTheFoldData.releaseYear.endYear", null);
+    result.$IMDB_startYear = _.get(jsonDataNext, "props.pageProps.aboveTheFoldData.releaseYear.year", null);
+    result.$IMDB_endYear = _.get(jsonDataNext, "props.pageProps.aboveTheFoldData.releaseYear.endYear", null);
 
-    if (!$IMDB_startYear) {
+    if (!result.$IMDB_startYear) {
       // V1
       // <title>Star Trek: The Next Generation (TV Series 1987â€“1994) - Release info - IMDb</title>
       const rxYearRange = /<title>[\s\S]{0,20}\((.*?)\)[\s\S]{0,20}<\/title>/;
@@ -377,32 +434,21 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
         logger.log("[scrapeIMDBmainPageData] yearRange:", yearRange);
 
         const yearRangeSplit = yearRange.split("-");
-        $IMDB_startYear = +yearRangeSplit[0].match(/\d+/)[0];
+        result.$IMDB_startYear = +yearRangeSplit[0].match(/\d+/)[0];
         if (yearRange.includes("-")) {
           if (yearRangeSplit[1].match(/\d+/)) {
-            $IMDB_endYear = +yearRangeSplit[1].match(/\d+/)[0];
+            result.$IMDB_endYear = +yearRangeSplit[1].match(/\d+/)[0];
           }
         } else {
-          if (["tvSeries", "tvMiniSeries"].includes($IMDB_releaseType === "tvSeries")) {
-            $IMDB_endYear = $IMDB_startYear;
+          if (["tvSeries", "tvMiniSeries"].includes(result.$IMDB_releaseType === "tvSeries")) {
+            // TODO: if statement is a bit odd
+            result.$IMDB_endYear = result.$IMDB_startYear;
           }
         }
       }
     }
 
-    return {
-      $IMDB_releaseType,
-      $IMDB_genres,
-      $IMDB_rating,
-      $IMDB_numVotes,
-      $IMDB_metacriticScore,
-      $IMDB_posterSmall_URL,
-      $IMDB_posterLarge_URL,
-      $IMDB_plotSummary,
-      $IMDB_Trailer_URL,
-      $IMDB_startYear,
-      $IMDB_endYear,
-    };
+    return result;
   } catch (error) {
     logger.error(error);
 
@@ -414,7 +460,35 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
   }
 }
 
-async function scrapeIMDBplotSummary(movie, shortSummary) {
+/**
+ * scrape IMDB Plot Summary Data (e.g. https://www.imdb.com/title/tt4154796/plotsummary)
+ * @param {Object} movie
+ * @param {string} shortSummary
+ * @param {Object} actualDuplicate if the movie has an actual duplicate, the Object is passed here
+ * @returns
+ */
+async function scrapeIMDBplotSummary(movie, shortSummary, actualDuplicate) {
+  if (movie.scanErrors) {
+    delete movie.scanErrors["IMDB Plot Summary"];
+  }
+
+  let result = { $IMDB_plotSummaryFull: null };
+
+  //#region Copy from duplicate
+  if (
+    actualDuplicate &&
+    actualDuplicate.IMDB_tconst &&
+    actualDuplicate.IMDB_Done &&
+    actualDuplicate.IMDB_tconst == movie.IMDB_tconst
+  ) {
+    logger.log("[scrapeIMDBplotSummary] using actualDuplicate data, no scraping needed");
+    result = {
+      $IMDB_plotSummaryFull: actualDuplicate.IMDB_plotSummaryFull,
+    };
+    return result;
+  }
+  //#endregion Copy from duplicate
+
   const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/plotsummary`;
   const response = await helpers.requestAsync(url);
   const html = response.body;
@@ -569,7 +643,7 @@ async function scrapeIMDBposterURLs(posterMediaViewerURL) {
   }
 }
 
-async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
+async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes, actualDuplicate) {
   logger.log("[scrapeIMDBreleaseinfo] movie:", movie, "regions:", regions, "allowedTitleTypes:", allowedTitleTypes);
 
   if (movie.scanErrors) {
@@ -577,6 +651,31 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
   }
 
   try {
+    let result = {
+      $IMDB_originalTitle: null,
+      $IMDB_localTitle: null,
+      $IMDB_primaryTitle: null,
+    };
+
+    //#region Copy from duplicate
+    if (
+      actualDuplicate &&
+      actualDuplicate.IMDB_tconst &&
+      actualDuplicate.IMDB_Done &&
+      actualDuplicate.IMDB_tconst == movie.IMDB_tconst
+    ) {
+      logger.log("[scrapeIMDBreleaseinfo] using actualDuplicate data, no scraping needed");
+
+      result = {
+        $IMDB_originalTitle: actualDuplicate.IMDB_originalTitle,
+        $IMDB_localTitle: actualDuplicate.IMDB_localTitle,
+        $IMDB_primaryTitle: actualDuplicate.IMDB_primaryTitle,
+      };
+
+      return result;
+    }
+    //#endregion Copy from duplicate
+
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/releaseinfo`;
     logger.log("[scrapeIMDBreleaseinfo] url:", url, "allowedTitleTypes:", allowedTitleTypes);
     const response = await helpers.requestAsync(url);
@@ -587,7 +686,7 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
 
     logger.log(`[scrapeIMDBreleaseinfo] using V${version} scraping method`);
 
-    const result =
+    result =
       version === 1
         ? await scrapeIMDBreleaseinfoV1(movie, regions, allowedTitleTypes, html)
         : await scrapeIMDBreleaseinfoV3(movie, regions, allowedTitleTypes, html);
@@ -856,18 +955,36 @@ async function scrapeIMDBreleaseinfoV3(movie, regions, allowedTitleTypes, html) 
   }
 }
 
-async function scrapeIMDBtechnicalData(movie) {
+async function scrapeIMDBtechnicalData(movie, actualDuplicate) {
   if (movie.scanErrors) {
     delete movie.scanErrors["IMDB Technical Data"];
   }
 
   try {
+    let result = {
+      $IMDB_runtimeMinutes: null,
+    };
+
+    //#region Copy from duplicate
+    if (
+      actualDuplicate &&
+      actualDuplicate.IMDB_tconst &&
+      actualDuplicate.IMDB_Done &&
+      actualDuplicate.IMDB_tconst == movie.IMDB_tconst
+    ) {
+      logger.log("[scrapeIMDBtechnicalData] using actualDuplicate data, no scraping needed");
+
+      result = { $IMDB_runtimeMinutes: actualDuplicate.IMDB_runtimeMinutes };
+
+      return result;
+    }
+    //#endregion Copy from duplicate
+
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/technical`;
     logger.log("[scrapeIMDBtechnicalData] scrapeIMDBtechnicalData url:", url);
     const response = await helpers.requestAsync(url);
     const html = response.body;
 
-    let $IMDB_runtimeMinutes = null;
     const rxRuntimeValue = /<td class="label"> Runtime <\/td>[\s\S]*?<td>([\s\S]*?)<\/td>/;
 
     const rxRuntimeValueV2 = /<script id="__NEXT_DATA__".*?type="application\/json">([\s\S]*?)<\/script>/;
@@ -879,7 +996,7 @@ async function scrapeIMDBtechnicalData(movie) {
 
       const runtimeSeconds = _.get(jsonData, "props.pageProps.contentData.entityMetadata.runtime.seconds", null);
       if (runtimeSeconds) {
-        $IMDB_runtimeMinutes = Math.floor(runtimeSeconds / 60).toString();
+        result.$IMDB_runtimeMinutes = Math.floor(runtimeSeconds / 60).toString();
       }
 
       /*
@@ -906,17 +1023,15 @@ async function scrapeIMDBtechnicalData(movie) {
       const rxRuntimeMinutes = /\s(\d*?) min/;
 
       if (rxRuntimeMinutesTotal.test(html)) {
-        $IMDB_runtimeMinutes = html.match(rxRuntimeMinutesTotal)[1];
+        result.$IMDB_runtimeMinutes = html.match(rxRuntimeMinutesTotal)[1];
       } else if (rxRuntimeMinutes.test(html)) {
-        $IMDB_runtimeMinutes = html.match(rxRuntimeMinutes)[1];
+        result.$IMDB_runtimeMinutes = html.match(rxRuntimeMinutes)[1];
       }
     } else {
       logger.warn("[scrapeIMDBtechnicalData] WARNING: runtime values not found!");
     }
 
-    return {
-      $IMDB_runtimeMinutes,
-    };
+    return result;
   } catch (error) {
     if (movie.scanErrors) {
       movie.scanErrors["IMDB Technical Data"] = error.message;
@@ -933,8 +1048,47 @@ async function scrapeIMDBParentalGuideData(
   regions,
   dbFireProcedureReturnAll,
   dbFireProcedure,
-  dbFireProcedureReturnScalar
+  dbFireProcedureReturnScalar,
+  actualDuplicate
 ) {
+  if (movie.scanErrors) {
+    delete movie.scanErrors["IMDB Parental Guide"];
+  }
+
+  let result = {
+    $IMDB_MinAge: null,
+    $IMDB_MaxAge: null,
+    $IMDB_id_AgeRating_Chosen_Country: null,
+    $IMDB_Parental_Advisory_Nudity: null,
+    $IMDB_Parental_Advisory_Violence: null,
+    $IMDB_Parental_Advisory_Profanity: null,
+    $IMDB_Parental_Advisory_Alcohol: null,
+    $IMDB_Parental_Advisory_Frightening: null,
+  };
+
+  //#region Copy from duplicate
+  if (
+    actualDuplicate &&
+    actualDuplicate.IMDB_tconst &&
+    actualDuplicate.IMDB_Done &&
+    actualDuplicate.IMDB_tconst == movie.IMDB_tconst
+  ) {
+    logger.log("[scrapeIMDBParentalGuideData] using actualDuplicate data, no scraping needed");
+    result = {
+      $IMDB_MinAge: actualDuplicate.IMDB_MinAge,
+      $IMDB_MaxAge: actualDuplicate.IMDB_MaxAge,
+      $IMDB_id_AgeRating_Chosen_Country: actualDuplicate.IMDB_id_AgeRating_Chosen_Country,
+      $IMDB_Parental_Advisory_Nudity: actualDuplicate.IMDB_Parental_Advisory_Nudity,
+      $IMDB_Parental_Advisory_Violence: actualDuplicate.IMDB_Parental_Advisory_Violence,
+      $IMDB_Parental_Advisory_Profanity: actualDuplicate.IMDB_Parental_Advisory_Profanity,
+      $IMDB_Parental_Advisory_Alcohol: actualDuplicate.IMDB_Parental_Advisory_Alcohol,
+      $IMDB_Parental_Advisory_Frightening: actualDuplicate.IMDB_Parental_Advisory_Frightening,
+    };
+
+    return result;
+  }
+  //#endregion Copy from duplicate
+
   if (!cacheAgeRatings) {
     cacheAgeRatings = await dbFireProcedureReturnAll(`SELECT id_AgeRating, Country, Code, Age FROM tbl_AgeRating`);
     logger.log("[scrapeIMDBParentalGuideData] cacheAgeRatings:", cacheAgeRatings);
@@ -1227,10 +1381,6 @@ async function scrapeIMDBParentalGuideDataV3(
   dbFireProcedure,
   dbFireProcedureReturnScalar
 ) {
-  if (movie.scanErrors) {
-    delete movie.scanErrors["IMDB Parental Guide"];
-  }
-
   try {
     // ### Age Ratings ###
     const ageRatings = [];
@@ -1423,10 +1573,57 @@ async function scrapeIMDBParentalGuideDataV3(
   }
 }
 
-async function scrapeIMDBFullCreditsData(movie) {
+async function scrapeIMDBFullCreditsData(movie, actualDuplicate) {
   if (movie.scanErrors) {
     delete movie.scanErrors["IMDB Full Credits"];
   }
+
+  let result = {
+    topCredits: {
+      $IMDB_Top_Directors: null,
+      $IMDB_Top_Writers: null,
+      $IMDB_Top_Producers: null,
+      $IMDB_Top_Cast: null,
+    },
+    credits: [],
+    scraperVersion: null,
+  };
+
+  //#region Copy from duplicate
+  if (
+    actualDuplicate &&
+    actualDuplicate.IMDB_tconst &&
+    actualDuplicate.IMDB_Done &&
+    actualDuplicate.IMDB_tconst == movie.IMDB_tconst
+  ) {
+    logger.log("[scrapeIMDBFullCreditsData] using actualDuplicate data, no scraping needed");
+
+    const credits = await db.fireProcedureReturnAll(
+      `
+      SELECT
+      	Category AS category
+	      , IMDB_Person_ID AS id
+	      , Person_Name AS name
+	      , Credit AS credit
+      FROM tbl_Movies_IMDB_Credits
+      WHERE id_Movies = $id_Movies`,
+      { $id_Movies: actualDuplicate.id_Movies }
+    );
+
+    result = {
+      topCredits: {
+        $IMDB_Top_Directors: actualDuplicate.IMDB_Top_Directors,
+        $IMDB_Top_Writers: actualDuplicate.IMDB_Top_Writers,
+        $IMDB_Top_Producers: actualDuplicate.IMDB_Top_Producers,
+        $IMDB_Top_Cast: actualDuplicate.IMDB_Top_Cast,
+      },
+      credits,
+      scraperVersion: "V3",
+    };
+
+    return result;
+  }
+  //#endregion Copy from duplicate
 
   try {
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/fullcredits`;
@@ -1807,12 +2004,50 @@ function getGQLCompaniesData(gqlCompaniesEdges, category) {
  * Scrape companies from JSON provided by GraphQL
  * @param {Object} movie
  */
-async function scrapeIMDBCompaniesDataV3(movie) {
+async function scrapeIMDBCompaniesDataV3(movie, actualDuplicate) {
   // TODO: use the page to identify the categories (e.g. https://www.imdb.com/title/tt0095327/companycredits/)
-
   if (movie.scanErrors) {
     delete movie.scanErrors["IMDB Companies"];
   }
+
+  let result = {
+    topProductionCompanies: {
+      $IMDB_Top_Production_Companies: null,
+    },
+    companies: [],
+  };
+
+  //#region Copy from duplicate
+  if (
+    actualDuplicate &&
+    actualDuplicate.IMDB_tconst &&
+    actualDuplicate.IMDB_Done &&
+    actualDuplicate.IMDB_tconst == movie.IMDB_tconst
+  ) {
+    logger.log("[scrapeIMDBCompaniesDataV3] using actualDuplicate data, no scraping needed");
+
+    const companies = await db.fireProcedureReturnAll(
+      `
+        SELECT
+          Category AS category
+          , IMDB_Company_ID AS id
+          , Company_Name AS name
+          , Role AS role
+        FROM tbl_Movies_IMDB_Companies
+        WHERE id_Movies = $id_Movies`,
+      { $id_Movies: actualDuplicate.id_Movies }
+    );
+
+    result = {
+      topProductionCompanies: {
+        $IMDB_Top_Production_Companies: actualDuplicate.IMDB_Top_Production_Companies,
+      },
+      companies,
+    };
+
+    return result;
+  }
+  //#endregion Copy from duplicate
 
   try {
     const gqlCompaniesProductionEdges = await scrapeGraphQLPaginated(
@@ -2588,13 +2823,25 @@ async function scrapeIMDBTrailerMediaURLs(trailerURL) {
   }
 }
 
-async function scrapeIMDBplotKeywordsV3(movie) {
+async function scrapeIMDBplotKeywordsV3(movie, actualDuplicate) {
   if (movie.scanErrors) {
     delete movie.scanErrors["IMDB Plot Keywords"];
   }
 
   try {
     const plotKeywords = [];
+
+    //#region Copy from duplicate
+    if (
+      actualDuplicate &&
+      actualDuplicate.IMDB_tconst &&
+      actualDuplicate.IMDB_Done &&
+      actualDuplicate.IMDB_tconst == movie.IMDB_tconst
+    ) {
+      logger.log("[scrapeIMDBplotKeywordsV3] using actualDuplicate data, no scraping needed");
+    }
+
+    //#endregion Copy from duplicate
 
     const gqlPlotKeywordsEdges = await scrapeGraphQLPaginated(
       graphQLqueries.plotKeywords(movie.IMDB_tconst),
@@ -2614,7 +2861,7 @@ async function scrapeIMDBplotKeywordsV3(movie) {
     logger.error(error);
 
     if (movie.scanErrors) {
-      movie.scanErrors["IMDB Release Info"] = error.message;
+      movie.scanErrors["IMDB Plot Keywords"] = error.message;
     }
 
     throw error;
@@ -2678,14 +2925,40 @@ async function scrapeIMDBplotKeywords(movie) {
   }
 }
 
-async function scrapeIMDBFilmingLocationsV3(movie) {
+async function scrapeIMDBFilmingLocationsV3(movie, actualDuplicate) {
   if (movie.scanErrors) {
     delete movie.scanErrors["IMDB Filming Locations"];
   }
 
-  try {
-    let filmingLocations = [];
+  let filmingLocations = [];
 
+  //#region Copy from duplicate
+  if (
+    actualDuplicate &&
+    actualDuplicate.IMDB_tconst &&
+    actualDuplicate.IMDB_Done &&
+    actualDuplicate.IMDB_tconst == movie.IMDB_tconst
+  ) {
+    logger.log("[scrapeIMDBFilmingLocationsV3] using actualDuplicate data, no scraping needed");
+
+    filmingLocations = await db.fireProcedureReturnAll(
+      `
+        SELECT
+          Location
+            , Details
+            , NumInteresting
+            , NumVotes
+        FROM tbl_Movies_IMDB_Filming_Locations MFL
+        INNER JOIN tbl_IMDB_Filming_Locations FL ON MFL.id_IMDB_Filming_Locations = FL.id_IMDB_Filming_Locations
+        WHERE MFL.id_Movies = $id_Movies`,
+      { $id_Movies: actualDuplicate.id_Movies }
+    );
+
+    return filmingLocations;
+  }
+  //#endregion Copy from duplicate
+
+  try {
     const gqlLocationsEdges = await scrapeGraphQLPaginated(
       graphQLqueries.filmingLocations(movie.IMDB_tconst),
       "data.title.filmingLocations"
@@ -2940,45 +3213,70 @@ async function scrapeGraphQLPaginated(uri, innerPath, resultArray = null, endCur
 
   logger.log("[scrapeGraphQLPaginated] uriUsed:", uriUsed);
 
-  const newResult = JSON.parse(
-    (
-      await helpers.requestAsync({
-        uri: uriUsed,
-        headers: { "content-type": "application/json" },
-      })
-    ).body
-  );
+  let res = null;
 
   try {
-    handleGraphQLErrors(newResult);
-  } catch (error) {
-    if (retry > 3) {
-      throw error;
+    res = await helpers.requestAsync({
+      uri: uriUsed,
+      headers: { "content-type": "application/json" },
+    });
+
+    if (res.statusCode >= 400) {
+      const parsedBody = helpers.tryParseJSON(res.body);
+      const cleanBody = res.body
+        ? htmlToText
+            .fromString(res.body, {
+              wordwrap: null,
+              ignoreImage: true,
+              ignoreHref: true,
+            })
+            .trim()
+        : null;
+
+      throw new Error(
+        `HTTP error ${res.statusCode}${
+          parsedBody ? `: ${JSON.stringify(parsedBody)}` : cleanBody ? `: ${cleanBody}` : ""
+        }`
+      );
     }
 
-    return scrapeGraphQLPaginated(uri, innerPath, resultArray, endCursor, retry + 1);
+    const newResult = JSON.parse(res.body);
+
+    try {
+      handleGraphQLErrors(newResult);
+    } catch (error) {
+      if (retry > 3) {
+        throw error;
+      }
+
+      return scrapeGraphQLPaginated(uri, innerPath, resultArray, endCursor, retry + 1);
+    }
+
+    const newResult_pageInfo = _.get(newResult, `${innerPath}.pageInfo`, null);
+    const newResult_Array = _.get(newResult, `${innerPath}.edges`, null);
+
+    // logger.log("[scrapeGraphQLPaginated] newResult_Array.length:", newResult_Array.length);
+
+    if (!newResult_pageInfo) {
+      throw new Error("[scrapeGraphQLPaginated] pageInfo missing in result");
+    }
+
+    if (resultArray) {
+      resultArray = resultArray.concat(newResult_Array);
+    } else {
+      resultArray = newResult_Array;
+    }
+
+    if (!newResult_pageInfo.hasNextPage) {
+      return resultArray;
+    }
+
+    return scrapeGraphQLPaginated(uri, innerPath, resultArray, newResult_pageInfo.endCursor);
+  } catch (error) {
+    logger.error("[scrapeGraphQLPaginated] ERROR during request, res.statusCode:", res.statusCode);
+    logger.error(error);
+    throw error;
   }
-
-  const newResult_pageInfo = _.get(newResult, `${innerPath}.pageInfo`, null);
-  const newResult_Array = _.get(newResult, `${innerPath}.edges`, null);
-
-  // logger.log("[scrapeGraphQLPaginated] newResult_Array.length:", newResult_Array.length);
-
-  if (!newResult_pageInfo) {
-    throw new Error("[scrapeGraphQLPaginated] pageInfo missing in result");
-  }
-
-  if (resultArray) {
-    resultArray = resultArray.concat(newResult_Array);
-  } else {
-    resultArray = newResult_Array;
-  }
-
-  if (!newResult_pageInfo.hasNextPage) {
-    return resultArray;
-  }
-
-  return scrapeGraphQLPaginated(uri, innerPath, resultArray, newResult_pageInfo.endCursor);
 }
 
 const deprecated = {

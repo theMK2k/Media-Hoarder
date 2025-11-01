@@ -1003,6 +1003,9 @@ function getSingularOrPluralText(num, singular, plural) {
   return `${num == 1 ? singular : plural}`;
 }
 
+/**
+ * Handle duplicates for all new movies according to the settings in shared.duplicatesHandling
+ */
 async function rescanHandleDuplicates() {
   logger.log("[rescan] ### rescanHandleDuplicates ###");
 
@@ -2434,7 +2437,7 @@ async function applyMetaData(onlyNew, id_Movies) {
 }
 
 /**
- *
+ * Rescans the meta data of media items (movies, series, episodes)
  * @param {boolean} onlyNew
  * @param {string} id_Movies (optional)
  * @param {Object} $t i18n instance
@@ -2515,7 +2518,7 @@ async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t, resetRescanETA) 
 
   let mediaItems = movies.concat(series).concat(seriesEpisodes);
 
-  logger.log("[rescanMediaItemsMetaData] mediaItems:", mediaItems);
+  logger.log("[rescanMediaItemsMetaData] mediaItems:", JSON.parse(JSON.stringify(mediaItems)));
 
   // Filter mediaItems that only have one scanError and that is "IMDB link verification" - a rescan without new IMDB tconst will not help here
   if (!id_Movies && onlyNew) {
@@ -2629,6 +2632,11 @@ async function rescanMediaItemMetaData(onlyNew, mediaItem, $t, optRescanMediaInf
   const definedByUser = getFieldsDefinedByUser(mediaItem.DefinedByUser);
   const IMDB_tconst_before = mediaItem.IMDB_tconst;
 
+  const actualDuplicate = await getFirstActualMovieDuplicate(mediaItem.id_Movies);
+  logger.log("[rescanMediaItemMetaData] actualDuplicate:", actualDuplicate);
+
+  // if actualDuplicate exists and has IMDB_tconst and IMDB_Done, copy over all the IMDB data and skip actual scraping
+
   // MediaInfo
   const scanInfoMediaType = $t(`Rescanning ${helpers.getSpecificMediaType(mediaItem)}`);
 
@@ -2662,7 +2670,7 @@ async function rescanMediaItemMetaData(onlyNew, mediaItem, $t, optRescanMediaInf
       rescanETA
     );
 
-    await fetchIMDBMetaData($t, mediaItem, onlyNew);
+    await fetchIMDBMetaData($t, mediaItem, onlyNew, actualDuplicate);
   }
 
   if (shared.scanOptions.rescanMoviesMetaData_findReleaseAttributes) {
@@ -2934,15 +2942,7 @@ async function findIMDBtconst({
     // find tconst by duplicate
     if (!tconst && shared.duplicatesHandling.actualDuplicate.relinkIMDB) {
       logger.log("[findIMDBtconst] trying by duplicate");
-      const actualDuplicates = await getMovieDuplicates(mediaItem.id_Movies, true, false, true);
-      const actualDuplicate =
-        actualDuplicates.length > 0
-          ? (
-              await db.fireProcedureReturnAll("SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies", {
-                $id_Movies: actualDuplicates[0],
-              })
-            )[0]
-          : null;
+      const actualDuplicate = await getFirstActualMovieDuplicate(mediaItem.id_Movies);
 
       if (actualDuplicate && actualDuplicate.IMDB_tconst) {
         tconst = actualDuplicate.IMDB_tconst;
@@ -3204,7 +3204,7 @@ async function findSeriesEpisodeIMDBtconst(mediaItem, onlyNew, $t) {
   }
 }
 
-async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
+async function fetchIMDBMetaData($t, mediaItem, onlyNew, actualDuplicate) {
   logger.log("[fetchIMDBMetaData] movie:", mediaItem);
 
   // fetch IMDB data from imdb.com (incl. images)
@@ -3241,7 +3241,11 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
           rescanETA
         );
 
-        imdbData.mainPageData = await imdbScraper.scrapeIMDBmainPageData(mediaItem, helpers.downloadFile);
+        imdbData.mainPageData = await imdbScraper.scrapeIMDBmainPageData(
+          mediaItem,
+          helpers.downloadFile,
+          actualDuplicate
+        );
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
@@ -3281,7 +3285,8 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
 
         imdbData.plotSummaryFull = await imdbScraper.scrapeIMDBplotSummary(
           mediaItem,
-          imdbData.mainPageData.$IMDB_plotSummary
+          imdbData.mainPageData.$IMDB_plotSummary,
+          actualDuplicate
         );
       } catch (error) {
         imdbData.IMDB_Done = false;
@@ -3300,7 +3305,7 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
           rescanETA
         );
 
-        imdbData.plotKeywords = await imdbScraper.scrapeIMDBplotKeywordsV3(mediaItem);
+        imdbData.plotKeywords = await imdbScraper.scrapeIMDBplotKeywordsV3(mediaItem, actualDuplicate);
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
@@ -3321,7 +3326,12 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
           rescanETA
         );
 
-        imdbData.releaseinfo = await imdbScraper.scrapeIMDBreleaseinfo(mediaItem, regions, allowedTitleTypes);
+        imdbData.releaseinfo = await imdbScraper.scrapeIMDBreleaseinfo(
+          mediaItem,
+          regions,
+          allowedTitleTypes,
+          actualDuplicate
+        );
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
@@ -3339,7 +3349,7 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
           rescanETA
         );
 
-        imdbData.technicalData = await imdbScraper.scrapeIMDBtechnicalData(mediaItem);
+        imdbData.technicalData = await imdbScraper.scrapeIMDBtechnicalData(mediaItem, actualDuplicate);
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
@@ -3364,7 +3374,8 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
           regions,
           db.fireProcedureReturnAll,
           db.fireProcedure,
-          db.fireProcedureReturnScalar
+          db.fireProcedureReturnScalar,
+          actualDuplicate
         );
       } catch (error) {
         imdbData.IMDB_Done = false;
@@ -3383,7 +3394,7 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
           rescanETA
         );
 
-        imdbData.creditsData = await imdbScraper.scrapeIMDBFullCreditsData(mediaItem);
+        imdbData.creditsData = await imdbScraper.scrapeIMDBFullCreditsData(mediaItem, actualDuplicate);
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
@@ -3401,7 +3412,7 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
           rescanETA
         );
 
-        imdbData.companiesData = await imdbScraper.scrapeIMDBCompaniesDataV3(mediaItem);
+        imdbData.companiesData = await imdbScraper.scrapeIMDBCompaniesDataV3(mediaItem, actualDuplicate);
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
@@ -3419,7 +3430,7 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
           rescanETA
         );
 
-        imdbData.filmingLocations = await imdbScraper.scrapeIMDBFilmingLocationsV3(mediaItem);
+        imdbData.filmingLocations = await imdbScraper.scrapeIMDBFilmingLocationsV3(mediaItem, actualDuplicate);
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
@@ -3433,6 +3444,12 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew) {
         $t(`Rescanning ${helpers.getSpecificMediaType(mediaItem)}`) + " {remainingTimeDisplay}",
         `${mediaItem.Name || mediaItem.Filename} (${$t("store IMDB metadata")})`,
         rescanETA
+      );
+
+      //KILLME - dump imdbData to file
+      fs.writeFileSync(
+        `dump_${mediaItem.Filename}_${new Date().toISOString().substr(0, 19).replace(/:/g, "")}_imdbData.json`,
+        JSON.stringify(imdbData, null, 2)
       );
 
       await saveIMDBData(mediaItem, imdbData);
@@ -3604,9 +3621,10 @@ async function saveIMDBData(movie, imdbData) {
   // Credits
   if (
     shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_creditsData &&
-    getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_creditsData").enabled
+    getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_creditsData").enabled &&
+    imdbData?.creditsData?.credits
   ) {
-    logger.log("[saveIMDBData] credits:", imdbData.creditsData.credits);
+    logger.log("[saveIMDBData] credits:", imdbData?.creditsData?.credits);
 
     const movieCredits = await db.fireProcedureReturnAll(
       `
@@ -7792,6 +7810,19 @@ async function loadSettingDuplicatesHandling() {
   } catch (e) {
     //
   }
+}
+
+async function getFirstActualMovieDuplicate(id_Movies) {
+  const actualDuplicates = await getMovieDuplicates(id_Movies, true, false, true);
+  const firstActualDuplicate =
+    actualDuplicates.length > 0
+      ? (
+          await db.fireProcedureReturnAll("SELECT * FROM tbl_Movies WHERE id_Movies = $id_Movies", {
+            $id_Movies: actualDuplicates[0],
+          })
+        )[0]
+      : null;
+  return firstActualDuplicate;
 }
 
 async function getMovieDuplicates($id_Movies, useActualDuplicates, useMetaDuplicates, ignoreNew) {
