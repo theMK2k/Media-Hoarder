@@ -5427,6 +5427,7 @@ async function fetchFilterDataQuality(
             SELECT COUNT(1)
             FROM tbl_Movies MOV
             INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
+        		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
             WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
                   AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                   AND MOV.Extra_id_Movies_Owner IS NULL
@@ -5447,6 +5448,7 @@ async function fetchFilterDataQuality(
         , (
             SELECT COUNT(1) FROM tbl_Movies MOV
             INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
+         		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
             WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
                   AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                   AND MOV.Extra_id_Movies_Owner IS NULL
@@ -5460,6 +5462,7 @@ async function fetchFilterDataQuality(
       , (
           SELECT COUNT(1) FROM tbl_Movies MOV
           INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
+      		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
           WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
                 AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND MOV.Extra_id_Movies_Owner IS NULL
@@ -5473,6 +5476,7 @@ async function fetchFilterDataQuality(
       , (
           SELECT COUNT(1) FROM tbl_Movies MOV
           INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
+      		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
           WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
                 AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND MOV.Extra_id_Movies_Owner IS NULL
@@ -5486,6 +5490,7 @@ async function fetchFilterDataQuality(
       , (
           SELECT COUNT(1) FROM tbl_Movies MOV
           INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
+      		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
           WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
                 AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND MOV.Extra_id_Movies_Owner IS NULL
@@ -5499,6 +5504,7 @@ async function fetchFilterDataQuality(
       , (
           SELECT COUNT(1) FROM tbl_Movies MOV
           INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
+      		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
           WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
                 AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND MOV.Extra_id_Movies_Owner IS NULL
@@ -5512,6 +5518,7 @@ async function fetchFilterDataQuality(
       , (
           SELECT COUNT(1) FROM tbl_Movies MOV
           INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND MediaType = $MediaType
+      		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
           WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
                 AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND MOV.Extra_id_Movies_Owner IS NULL
@@ -5588,6 +5595,7 @@ async function fetchFilterSourcePaths(
 			, (
         SELECT COUNT(1)
         FROM tbl_Movies MOV
+    		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
         WHERE (MOV.isRemoved IS NULL OR MOV.isRemoved = 0)
               AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
               AND MOV.Extra_id_Movies_Owner IS NULL
@@ -5683,6 +5691,7 @@ async function fetchFilterGenres(
 				FROM tbl_Movies_Genres MG
 				INNER JOIN tbl_Movies MOV ON MG.id_Movies = MOV.id_Movies AND (MOV.isRemoved IS NULL OR MOV.isRemoved = 0) AND MOV.Extra_id_Movies_Owner IS NULL AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
 				INNER JOIN tbl_SourcePaths SP ON MOV.id_SourcePaths = SP.id_SourcePaths AND SP.MediaType = $MediaType
+    		LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating
 				WHERE MG.id_Genres = G.id_Genres
               ${additionalFilterQuery}
 			) AS NumMovies

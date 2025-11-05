@@ -1,6 +1,6 @@
 # DONE
 
-## Next (current: 1.4.5)
+## Next (1.5.0)
 
 ### Features
 
@@ -9,6 +9,7 @@
 ### Fixes
 
 - [x] fix #94 IMDB detection for TV Series preferred movies
+- [x] fix broken loading of other filters (Source Paths, Genres and Data Quality) with an active filter on age ratings
 
 ## v1.4.5
 
