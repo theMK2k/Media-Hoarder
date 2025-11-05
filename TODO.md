@@ -61,7 +61,10 @@
 
   - provide choice between "Delete the media" and "Remove from library"
 
-- [ ] VACUUM after scan
+- [ ] house keeping
+
+  - [ ] VACUUM after scan
+  - [ ] look into PRAMGA OPTIMIZE <https://sqlite.org/pragma.html#pragma_optimize>
 
 - [ ] create a top-list scoring
   - see https://chatgpt.com/c/680d6f2e-7be8-8012-9fcc-ee3b839a892e
