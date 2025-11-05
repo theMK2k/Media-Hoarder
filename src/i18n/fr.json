@@ -93,6 +93,7 @@
   "An actual duplicate is identified by the same filename and filesize": "Un doublon réel est identifié par le même nom et la même taille de fichier.",
   "With actual duplicates, {appName} should also___": "Avec les doublons réels {appName} doit aussi...",
   "relink IMDB": "associer aux données IMDB",
+  "re-use already scraped IMDB metadata": "réutiliser les métadonnées IMDB déjà scrappées",
   "add to list": "ajouter à ma liste",
   "update primary title": "mettre à jour le titre primaire",
   "update secondary title": "mettre à jour le titre secondaire",
@@ -773,7 +774,7 @@
   },
   "CompanyCategories": {
     "Distributors": "Distributeur",
-    "Distribution": "Distributeur", 
+    "Distribution": "Distributeur",
     "Other": "Autre",
     "Production": "Production",
     "Special Effects": "Effets spéciaux"

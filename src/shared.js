@@ -204,6 +204,7 @@ const shared = new Vue({
     duplicatesHandling: {
       actualDuplicate: {
         relinkIMDB: true,
+        reuseIMDBMetaData: true,
         addToList: true,
         updateTitle: true,
         updateSubTitle: true,

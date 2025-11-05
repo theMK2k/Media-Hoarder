@@ -3250,7 +3250,7 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew, actualDuplicate) {
         imdbData.mainPageData = await imdbScraper.scrapeIMDBmainPageData(
           mediaItem,
           helpers.downloadFile,
-          actualDuplicate
+          shared.duplicatesHandling.actualDuplicate.reuseIMDBMetaData ? actualDuplicate : null
         );
       } catch (error) {
         imdbData.IMDB_Done = false;
@@ -3292,7 +3292,7 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew, actualDuplicate) {
         imdbData.plotSummaryFull = await imdbScraper.scrapeIMDBplotSummary(
           mediaItem,
           imdbData.mainPageData.$IMDB_plotSummary,
-          actualDuplicate
+          shared.duplicatesHandling.actualDuplicate.reuseIMDBMetaData ? actualDuplicate : null
         );
       } catch (error) {
         imdbData.IMDB_Done = false;
@@ -3311,7 +3311,10 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew, actualDuplicate) {
           rescanETA
         );
 
-        imdbData.plotKeywords = await imdbScraper.scrapeIMDBplotKeywordsV3(mediaItem, actualDuplicate);
+        imdbData.plotKeywords = await imdbScraper.scrapeIMDBplotKeywordsV3(
+          mediaItem,
+          shared.duplicatesHandling.actualDuplicate.reuseIMDBMetaData ? actualDuplicate : null
+        );
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
@@ -3336,7 +3339,7 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew, actualDuplicate) {
           mediaItem,
           regions,
           allowedTitleTypes,
-          actualDuplicate
+          shared.duplicatesHandling.actualDuplicate.reuseIMDBMetaData ? actualDuplicate : null
         );
       } catch (error) {
         imdbData.IMDB_Done = false;
@@ -3355,7 +3358,10 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew, actualDuplicate) {
           rescanETA
         );
 
-        imdbData.technicalData = await imdbScraper.scrapeIMDBtechnicalData(mediaItem, actualDuplicate);
+        imdbData.technicalData = await imdbScraper.scrapeIMDBtechnicalData(
+          mediaItem,
+          shared.duplicatesHandling.actualDuplicate.reuseIMDBMetaData ? actualDuplicate : null
+        );
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
@@ -3381,7 +3387,7 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew, actualDuplicate) {
           db.fireProcedureReturnAll,
           db.fireProcedure,
           db.fireProcedureReturnScalar,
-          actualDuplicate
+          shared.duplicatesHandling.actualDuplicate.reuseIMDBMetaData ? actualDuplicate : null
         );
       } catch (error) {
         imdbData.IMDB_Done = false;
@@ -3400,7 +3406,10 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew, actualDuplicate) {
           rescanETA
         );
 
-        imdbData.creditsData = await imdbScraper.scrapeIMDBFullCreditsData(mediaItem, actualDuplicate);
+        imdbData.creditsData = await imdbScraper.scrapeIMDBFullCreditsData(
+          mediaItem,
+          shared.duplicatesHandling.actualDuplicate.reuseIMDBMetaData ? actualDuplicate : null
+        );
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
@@ -3418,7 +3427,10 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew, actualDuplicate) {
           rescanETA
         );
 
-        imdbData.companiesData = await imdbScraper.scrapeIMDBCompaniesDataV3(mediaItem, actualDuplicate);
+        imdbData.companiesData = await imdbScraper.scrapeIMDBCompaniesDataV3(
+          mediaItem,
+          shared.duplicatesHandling.actualDuplicate.reuseIMDBMetaData ? actualDuplicate : null
+        );
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);
@@ -3436,7 +3448,10 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew, actualDuplicate) {
           rescanETA
         );
 
-        imdbData.filmingLocations = await imdbScraper.scrapeIMDBFilmingLocationsV3(mediaItem, actualDuplicate);
+        imdbData.filmingLocations = await imdbScraper.scrapeIMDBFilmingLocationsV3(
+          mediaItem,
+          shared.duplicatesHandling.actualDuplicate.reuseIMDBMetaData ? actualDuplicate : null
+        );
       } catch (error) {
         imdbData.IMDB_Done = false;
         logger.error(error);

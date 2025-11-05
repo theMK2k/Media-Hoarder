@@ -2,12 +2,6 @@
 
 ## Prio 0
 
-- [WIP] SCANNING: use actualDuplicate to detect moved media and re-use metadata
-
-  - [x] also check with moved movie
-  - [x] "rescan metadata" should ignore duplicates completely
-  - [ ] add "Re-use metadata of known entries" option to rescan dialog (default: activated) or add it to Settings | Duplicates
-
 - [ ] BUG: during rescan the info of the last "adding ..." stays in the footer even when the adding is already finished
 
 - [ ] missing i18n keys (maybe just singular vs. plural?):

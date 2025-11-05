@@ -92,6 +92,7 @@
   "An actual duplicate is identified by the same filename and filesize": "Ein tatsächliches Duplikat liegt genau dann vor, wenn in zwei Dateien der Dateiname und die Dateigröße jeweils gleich sind.",
   "With actual duplicates, {appName} should also___": "Bei tatsächlichen Duplikaten soll {appName} auch ...",
   "relink IMDB": "die IMDB Daten übernehmen",
+  "re-use already scraped IMDB metadata": "bereits gescrapte IMDB Metadaten wiederverwenden",
   "add to list": "Einträge in 'Meine Listen' übernehmen",
   "update primary title": "den Primärtitel übernehmen",
   "update secondary title": "den Sekundärtitel übernehmen",
@@ -771,7 +772,7 @@
   },
   "CompanyCategories": {
     "Distributors": "Distribution",
-    "Distribution": "Distribution", 
+    "Distribution": "Distribution",
     "Other": "Andere",
     "Production": "Produktion",
     "Special Effects": "Spezialeffekte"

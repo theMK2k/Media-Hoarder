@@ -238,6 +238,14 @@
               v-on:click.native="duplicatesHandlingChanged"
             ></v-checkbox>
             <v-checkbox
+              v-bind:label="$t('re-use already scraped IMDB metadata')"
+              style="margin: 0px"
+              color="mk-dark-grey"
+              dense
+              v-model="$shared.duplicatesHandling.actualDuplicate.reuseIMDBMetaData"
+              v-on:click.native="duplicatesHandlingChanged"
+            ></v-checkbox>
+            <v-checkbox
               v-bind:label="$t('add to list')"
               style="margin: 0px"
               color="mk-dark-grey"

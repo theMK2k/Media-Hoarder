@@ -2,9 +2,13 @@
 
 ## Next (1.5.0)
 
-### Features
+### Optimizations
 
-- nothing yet
+- [x] SCANNING: use actualDuplicate to detect moved media and re-use metadata
+
+  - [x] also check with moved movie
+  - [x] "rescan metadata" should ignore duplicates completely
+  - [x] add "re-use already scraped IMDB metadata" option to rescan dialog (default: activated) or add it to Settings | Duplicates
 
 ### Fixes
 
