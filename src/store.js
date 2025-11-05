@@ -1712,6 +1712,8 @@ async function filescanSeriesEpisodesPath(series_id_Movies, onlyNew, seriesHave,
         if (episodeHave) {
           logger.log("[filescanSeriesEpisodesPath] HAVE:", pathItem.fullPathLower, "movieHave:", episodeHave);
 
+          eventBus.scanInfoShow(currentScanInfoHeader, ""); // resetting whatever is leftover of the last message (e.g. "adding $filename")
+
           const $Size = await getFileSize(pathItem);
 
           await db.fireProcedure(
@@ -1730,6 +1732,7 @@ async function filescanSeriesEpisodesPath(series_id_Movies, onlyNew, seriesHave,
             return ext === pathItem.ExtensionLower;
           })
         ) {
+          eventBus.scanInfoShow(currentScanInfoHeader, ""); // resetting whatever is leftover of the last message (e.g. "adding $filename")
           continue;
         }
 

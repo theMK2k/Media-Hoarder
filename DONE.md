@@ -10,6 +10,7 @@
 
 - [x] fix #94 IMDB detection for TV Series preferred movies
 - [x] fix broken loading of other filters (Source Paths, Genres and Data Quality) with an active filter on age ratings
+- [x] fix during scan the last added file info stayed in the footer even when the addition was already finished and other files are scanned
 
 ## v1.4.5
 
