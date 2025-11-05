@@ -2,8 +2,6 @@
 
 ## Prio 0
 
-- [ ] BUG: during rescan the info of the last "adding ..." stays in the footer even when the adding is already finished
-
 - [ ] missing i18n keys (maybe just singular vs. plural?):
 
   - CreditCategories.Director
