@@ -2,12 +2,6 @@
 
 ## Prio 0
 
-- [ ] missing i18n keys (maybe just singular vs. plural?):
-
-  - CreditCategories.Director
-  - CreditCategories.Writer
-  - CreditCategories.Editor
-
 - [ ] rescan specific media item: check if it is a tv series and provide dialog to either rescan just the series or also all episodes
 
 - [ ] BUG: rescan specific media leads to removal of "last access at"
