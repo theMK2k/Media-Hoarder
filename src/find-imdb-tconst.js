@@ -154,7 +154,7 @@ export async function findIMDBtconstByFileOrDirname(mediaItem, options) {
       let results = await scrapeIMDBFindPageSearchV3(searchTerm, options.category === "title" ? "tt" : null);
 
       results.forEach((result) => {
-        result.mediaTypeLowerCase = result.mediaType?.toLowerCase();
+        result.mediaTypeLowerCase = result.mediaType?.toLowerCase() ?? "feature";
       });
 
       logger.log(`[findIMDBtconstByFileOrDirname] ${results.length} results found for "${searchTerm}"`);
