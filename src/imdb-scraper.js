@@ -341,7 +341,7 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback, actualDuplica
       // V2
       // <a class="ipc-lockup-overlay ipc-focusable" href="/title/tt4154796/mediaviewer/rm2775147008/?ref_=tt_ov_i" aria-label="View {Title} Poster">
       rxPosterMediaViewerURL =
-        /<a class="ipc-lockup-overlay ipc-focusable" href="(\/title\/.*?\/mediaviewer\/.*?\/.*?)" aria-label=".*?Poster">/;
+        /<a class="ipc-lockup-overlay ipc-focusable.*?" href="(\/title\/.*?\/mediaviewer\/.*?\/.*?)" aria-label=".*?Poster">/;
     }
 
     if (rxPosterMediaViewerURL.test(html)) {
