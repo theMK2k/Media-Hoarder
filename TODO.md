@@ -8,6 +8,8 @@
 
   - "last access at" (on the series - not the episode) is gone if a media moved
 
+- [ ] After watching an episode from the imdb ratings matrix, the "is shown" flag isn't recognized on the tile (only after re-opening the matrix)
+
 - [WIP] introduce caching for the filters (uses shared.featureFlags)
 
   - [x] fetchFilterReleaseAttributes
@@ -36,7 +38,12 @@
 
 - [WIP] Add "number of votes" filter
 
-- [ ] Add Missing Credits filter
+- [ ] rescan: track times for each step:
+
+  - [ ] filescan
+  - [ ] mediainfo
+  - [ ] imdb scraping
+  - [ ] db updates
 
 - [ ] DB Backup
 
