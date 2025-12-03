@@ -1077,9 +1077,13 @@ export default {
 
   computed: {
     tvSourcePaths() {
-      return this.sourcePaths.filter((sourcePath) => {
-        return sourcePath.MediaType === "series";
-      });
+      return this.sourcePaths
+        .filter((sourcePath) => {
+          return sourcePath.MediaType === "series";
+        })
+        .sort((a, b) => {
+          return helpers.compare(a.Description, b.Description, false);
+        });
     },
 
     moviesSourcePaths() {

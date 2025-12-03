@@ -10,6 +10,8 @@
   - [x] "rescan metadata" should ignore duplicates completely
   - [x] add "re-use already scraped IMDB metadata" option to rescan dialog (default: activated) or add it to Settings | Duplicates
 
+- [x] Settings: series source paths are now sorted by their name
+
 ### Fixes
 
 - [x] fix #94 IMDB detection for TV Series preferred movies
