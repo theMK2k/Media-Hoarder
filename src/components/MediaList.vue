@@ -664,6 +664,13 @@
       v-on:mediaItemEvent="onMICmediaItemEvent"
     >
     </mk-series-imdb-rating-heatmap-dialog>
+
+    <mk-series-rescan-dialog
+      v-bind:show="seriesRescanDialog.show"
+      v-on:cancel="onSeriesRescanDialogCancel"
+      v-on:ok="onSeriesRescanDialogOK"
+    >
+    </mk-series-rescan-dialog>
   </div>
 </template>
 
@@ -691,6 +698,7 @@ import ChatGPTDialog from "@/components/dialogs/ChatGPTDialog.vue";
 
 import MediaPropertyDialog from "@/components/dialogs/MediaPropertyDialog.vue";
 import SeriesIMDBRatingHeatmapDialog from "@/components/dialogs/SeriesIMDBRatingHeatmapDialog.vue";
+import SeriesRescanDialog from "@/components/dialogs/SeriesRescanDialog.vue";
 
 const { shell } = require("@electron/remote");
 
@@ -733,6 +741,7 @@ export default {
     "mk-video-quality-dialog": MediaPropertyDialog,
 
     "mk-series-imdb-rating-heatmap-dialog": SeriesIMDBRatingHeatmapDialog,
+    "mk-series-rescan-dialog": SeriesRescanDialog,
   },
 
   data: () => ({
@@ -960,6 +969,11 @@ export default {
       data: null,
       title: null,
       isLoading: false,
+    },
+
+    seriesRescanDialog: {
+      show: false,
+      mediaItem: null,
     },
   }),
 
@@ -2418,9 +2432,9 @@ export default {
       }
     },
 
-    async onRescanItems(items) {
+    async onRescanItems(items, seriesOnly) {
       try {
-        await store.rescanItems(items, this.$local_t);
+        await store.rescanItems(items, this.$local_t, seriesOnly);
 
         // eventBus.refetchMedia(this.$shared.currentPage, this.$local_t);
         this.refetchMedia({ setPage: this.$shared.currentPage, $t: this.$local_t });
@@ -2859,6 +2873,25 @@ export default {
       this.SeriesIMDBRatingHeatmapDialog.show = false;
     },
 
+    showSeriesRescanDialog(mediaItem) {
+      this.seriesRescanDialog.mediaItem = mediaItem;
+      this.seriesRescanDialog.show = true;
+    },
+
+    onSeriesRescanDialogCancel() {
+      this.seriesRescanDialog.show = false;
+      this.seriesRescanDialog.mediaItem = null;
+    },
+
+    async onSeriesRescanDialogOK({ includeEpisodes }) {
+      this.seriesRescanDialog.show = false;
+      const mediaItem = this.seriesRescanDialog.mediaItem;
+      this.seriesRescanDialog.mediaItem = null;
+
+      // Pass seriesOnly=true when NOT including episodes
+      await this.onRescanItems([mediaItem], !includeEpisodes);
+    },
+
     // ### MediaItemCard (MIC) Events ###
     async onMICmediaItemEvent(payload) {
       // logger.log("[MediaList.onMICmediaItemEvent] payload:", payload);
@@ -2874,7 +2907,11 @@ export default {
           await this.onOpenEditMediaItemDialog(payload.mediaItem);
           break;
         case "rescanItem":
-          await this.onRescanItems([payload.mediaItem]);
+          if (payload.mediaItem.specificMediaType === "Series") {
+            this.showSeriesRescanDialog(payload.mediaItem);
+          } else {
+            await this.onRescanItems([payload.mediaItem]);
+          }
           break;
         case "openLinkIMDBDialog":
           await this.onOpenLinkIMDBDialog(payload.mediaItem);

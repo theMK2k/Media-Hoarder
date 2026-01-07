@@ -4,6 +4,8 @@
 
 ### Optimizations
 
+- [x] Rescan specific media item: if it is a tv series, let the user decide if the episodes should be rescanned as well or just the series
+
 - [x] SCANNING: use actualDuplicate to detect moved media and re-use metadata
 
   - [x] also check with moved movie

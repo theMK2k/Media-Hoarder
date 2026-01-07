@@ -2,7 +2,7 @@
 
 ## Prio 0
 
-- [ ] rescan specific media item: check if it is a tv series and provide dialog to either rescan just the series or also all episodes
+- [ ] rescan metadata from action list: let user decide if they also want to rescan the episodes or just the series
 
 - [ ] BUG: rescan specific media leads to removal of "last access at"
 

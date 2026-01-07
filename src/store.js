@@ -324,8 +324,9 @@ async function fetchSourcePaths() {
  * Rescan meta data of the given items
  * @param {Array} mediaItems the items to rescan
  * @param {function} $t the i18n translate function
+ * @param {boolean} seriesOnly if true, only rescan series metadata without episodes
  */
-async function rescanItems(mediaItems, $t) {
+async function rescanItems(mediaItems, $t, seriesOnly) {
   rescanETA = {
     show: false,
     counter: 0,
@@ -379,6 +380,7 @@ async function rescanItems(mediaItems, $t) {
       mediaItem,
       $t,
       isIMDB_tconst_userDefined: false,
+      seriesOnly: seriesOnly && mediaItem.MediaType === "series" && !mediaItem.Series_id_Movies_Owner,
     });
 
     rescanETA.endTime = new Date().getTime();
@@ -2446,7 +2448,7 @@ async function applyMetaData(onlyNew, id_Movies) {
  * @param {Object} $t i18n instance
  * @param {boolean} ignoreDuplicates ignore duplicates and scrape metadata from IMDB
  */
-async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t, resetRescanETA, ignoreDuplicates) {
+async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t, resetRescanETA, ignoreDuplicates, seriesOnly) {
   logger.log("[rescanMediaItemsMetaData] START", { onlyNew, id_Movies });
 
   // NOTE: if WHERE clause gets enhanced, please also enhance the code below "Filter mediaItems that only have..."
@@ -2514,10 +2516,12 @@ async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t, resetRescanETA, 
   logger.log("[rescanMediaItemsMetaData] series:", series);
 
   // third: episodes
-  const seriesEpisodes = await db.fireProcedureReturnAll(query, {
-    $MediaType: "series",
-    $SeriesEpisodes: 1,
-  });
+  const seriesEpisodes = seriesOnly
+    ? []
+    : await db.fireProcedureReturnAll(query, {
+        $MediaType: "series",
+        $SeriesEpisodes: 1,
+      });
   logger.log("[rescanMediaItemsMetaData] seriesEpisodes:", seriesEpisodes);
 
   let mediaItems = movies.concat(series).concat(seriesEpisodes);
@@ -7708,6 +7712,7 @@ async function assignIMDBAndScrape({
   mediaItem,
   $t,
   isIMDB_tconst_userDefined,
+  seriesOnly,
 }) {
   logger.log("[assignIMDBAndScrape] $id_Movies:", $id_Movies, "$IMDB_tconst:", $IMDB_tconst, "mediaItem:", mediaItem);
 
@@ -7741,7 +7746,7 @@ async function assignIMDBAndScrape({
     $IMDB_tconst,
   });
 
-  await rescanMediaItemsMetaData(false, $id_Movies, $t, true, true);
+  await rescanMediaItemsMetaData(false, $id_Movies, $t, true, true, seriesOnly);
 
   await applyMetaData(false, $id_Movies);
 
