@@ -162,7 +162,7 @@
 </template>
 
 <script>
-// import { eventBus } from "@/main";
+import { eventBus } from "@/main";
 const logger = require("../../helpers/logger");
 import * as _ from "lodash";
 
@@ -192,6 +192,20 @@ export default {
   },
 
   methods: {
+    onLastAccessUpdated({ arr_id_Movies, last_access_at }) {
+      // Update last_access_at for episodes in the heatmap data
+      if (!this.data) return;
+
+      Object.keys(this.data.mediaItems).forEach((season) => {
+        Object.keys(this.data.mediaItems[season]).forEach((episode) => {
+          const episodeItem = this.data.mediaItems[season][episode];
+          if (arr_id_Movies.findIndex((id_Movies) => episodeItem.id_Movies === id_Movies) !== -1) {
+            this.$set(episodeItem, "last_access_at", last_access_at);
+          }
+        });
+      });
+    },
+
     onCloseClick() {
       this.$emit("close");
     },
@@ -269,6 +283,14 @@ export default {
   created() {
     // lodash debounced functions
     this.debouncedSetHoveredSeasonEpisode = _.debounce(this.setHoveredSeasonEpisode, 100);
+
+    // Listen for last_access_at updates
+    eventBus.$on("lastAccessUpdated", this.onLastAccessUpdated);
+  },
+
+  beforeDestroy() {
+    // Clean up event listener
+    eventBus.$off("lastAccessUpdated", this.onLastAccessUpdated);
   },
 };
 </script>

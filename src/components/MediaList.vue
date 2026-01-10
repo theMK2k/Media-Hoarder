@@ -1411,12 +1411,17 @@ export default {
       const arr_id_Movies = await store.setLastAccess(mediaItem.id_Movies);
       await this.updateCurrentTime();
 
+      const last_access_at = this.currentTime.toISOString();
+
       this.items.forEach((mov) => {
         if (arr_id_Movies.findIndex((id_Movies) => mov.id_Movies === id_Movies) !== -1) {
           this.$set(mov, "lastAccessMoment", this.currentTime.clone());
-          this.$set(mov, "last_access_at", this.currentTime.toISOString());
+          this.$set(mov, "last_access_at", last_access_at);
         }
       });
+
+      // Notify other components that last_access_at has been updated
+      eventBus.$emit("lastAccessUpdated", { arr_id_Movies, last_access_at });
     },
 
     copyInfo(movies) {
@@ -1540,9 +1545,13 @@ export default {
 
         if (trailerMediaURLs.errorcode === 404) {
           console.log("[showTrailer] IMDB_Trailer_URL yields 404, rescraping IMDB Main Page data...");
-          const newIMDBMainPageData = await scrapeIMDBmainPageData(item, async () => {
-            return false;
-          });
+          const newIMDBMainPageData = await scrapeIMDBmainPageData(
+            item,
+            async () => {
+              return false;
+            },
+            store.db
+          );
 
           if (newIMDBMainPageData.$IMDB_Trailer_URL) {
             await store.updateMediaRecordField(

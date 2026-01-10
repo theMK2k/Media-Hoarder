@@ -6,6 +6,7 @@
 
 - [x] Rescan specific media item: if it is a tv series, let the user decide if the episodes should be rescanned as well or just the series
 - [x] Rescan Metadata from Action List: let user decide if they also want to rescan the episodes or just the series
+- [x] Apply "is already viewed" style on an episode in the heatmap dialog after watching long enough
 
 - [x] SCANNING: use actualDuplicate to detect moved media and re-use metadata
 
