@@ -3254,6 +3254,7 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew, actualDuplicate) {
         imdbData.mainPageData = await imdbScraper.scrapeIMDBmainPageData(
           mediaItem,
           helpers.downloadFile,
+          db,
           shared.duplicatesHandling.actualDuplicate.reuseIMDBMetaData ? actualDuplicate : null
         );
       } catch (error) {
@@ -3412,6 +3413,7 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew, actualDuplicate) {
 
         imdbData.creditsData = await imdbScraper.scrapeIMDBFullCreditsData(
           mediaItem,
+          db,
           shared.duplicatesHandling.actualDuplicate.reuseIMDBMetaData ? actualDuplicate : null
         );
       } catch (error) {
@@ -3433,6 +3435,7 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew, actualDuplicate) {
 
         imdbData.companiesData = await imdbScraper.scrapeIMDBCompaniesDataV3(
           mediaItem,
+          db,
           shared.duplicatesHandling.actualDuplicate.reuseIMDBMetaData ? actualDuplicate : null
         );
       } catch (error) {
@@ -3454,6 +3457,7 @@ async function fetchIMDBMetaData($t, mediaItem, onlyNew, actualDuplicate) {
 
         imdbData.filmingLocations = await imdbScraper.scrapeIMDBFilmingLocationsV3(
           mediaItem,
+          db,
           shared.duplicatesHandling.actualDuplicate.reuseIMDBMetaData ? actualDuplicate : null
         );
       } catch (error) {
@@ -3647,9 +3651,9 @@ async function saveIMDBData(movie, imdbData) {
   if (
     shared.scanOptions.rescanMoviesMetaData_fetchIMDBMetaData_creditsData &&
     getUserScanOption("rescanMoviesMetaData_fetchIMDBMetaData_creditsData").enabled &&
-    imdbData?.creditsData?.credits
+    _.get(imdbData, "creditsData.credits")
   ) {
-    logger.log("[saveIMDBData] credits:", imdbData?.creditsData?.credits);
+    logger.log("[saveIMDBData] credits:", _.get(imdbData, "creditsData.credits"));
 
     const movieCredits = await db.fireProcedureReturnAll(
       `

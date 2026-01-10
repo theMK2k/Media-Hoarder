@@ -9,6 +9,18 @@ const status = {
   EXCEPTION: 3,
 };
 
+const db = {
+  fireProcedureReturnAll: async function () {
+    return [];
+  },
+  fireProcedure: async function () {
+    return;
+  },
+  fireProcedureReturnScalar: async function () {
+    return null;
+  },
+};
+
 function addSubLogEntry(testResult, message, newStatus) {
   if (testResult.status < newStatus) {
     testResult.status = newStatus;
@@ -105,9 +117,13 @@ async function testIMDBmainPageData() {
       IMDB_tconst: "tt4154796",
     };
 
-    const scrapeResult = await imdbScraper.scrapeIMDBmainPageData(movie, async () => {
-      return true;
-    });
+    const scrapeResult = await imdbScraper.scrapeIMDBmainPageData(
+      movie,
+      async () => {
+        return true;
+      },
+      db
+    );
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
@@ -208,9 +224,13 @@ async function testIMDBmainPageData2() {
       IMDB_tconst: "tt0039822",
     };
 
-    const scrapeResult = await imdbScraper.scrapeIMDBmainPageData(movie, async () => {
-      return true;
-    });
+    const scrapeResult = await imdbScraper.scrapeIMDBmainPageData(
+      movie,
+      async () => {
+        return true;
+      },
+      db
+    );
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
@@ -289,9 +309,13 @@ async function testIMDBmainPageData3() {
       IMDB_tconst: "tt0092455",
     };
 
-    const scrapeResult = await imdbScraper.scrapeIMDBmainPageData(movie, async () => {
-      return true;
-    });
+    const scrapeResult = await imdbScraper.scrapeIMDBmainPageData(
+      movie,
+      async () => {
+        return true;
+      },
+      db
+    );
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
@@ -366,9 +390,13 @@ async function testIMDBmainPageData4() {
       IMDB_tconst: "tt1465834",
     };
 
-    const scrapeResult = await imdbScraper.scrapeIMDBmainPageData(movie, async () => {
-      return true;
-    });
+    const scrapeResult = await imdbScraper.scrapeIMDBmainPageData(
+      movie,
+      async () => {
+        return true;
+      },
+      db
+    );
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
@@ -698,7 +726,7 @@ async function testIMDBFullCreditsData() {
       IMDB_tconst: "tt4154796",
     };
 
-    const scrapeResult = await imdbScraper.scrapeIMDBFullCreditsData(movie);
+    const scrapeResult = await imdbScraper.scrapeIMDBFullCreditsData(movie, db);
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
@@ -770,7 +798,7 @@ async function testIMDBCompaniesData() {
       IMDB_tconst: "tt4154796",
     };
 
-    const scrapeResult = await imdbScraper.scrapeIMDBCompaniesDataV3(movie);
+    const scrapeResult = await imdbScraper.scrapeIMDBCompaniesDataV3(movie, db);
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);
@@ -1001,7 +1029,7 @@ async function testIMDBFilmingLocations() {
       IMDB_tconst: "tt4154796",
     };
 
-    const scrapeResult = await imdbScraper.scrapeIMDBFilmingLocationsV3(movie);
+    const scrapeResult = await imdbScraper.scrapeIMDBFilmingLocationsV3(movie, db);
 
     if (!scrapeResult) {
       addSubLogEntry(testResult, "no response", status.ERROR);

@@ -1,5 +1,3 @@
-import { db } from "./store";
-
 const querystring = require("querystring");
 
 const _ = require("lodash");
@@ -129,10 +127,11 @@ function handleGraphQLErrors(body) {
  * scrape IMDB Main Page Data (e.g. https://www.imdb.com/title/tt4154796)
  * @param {Object} movie
  * @param {Function} downloadFileCallback
+ * @param {Object} db Object containing db functions (fireProcedureReturnAll ...)
  * @param {Object} actualDuplicate if the movie has an actual duplicate, the Object is passed here
  * @returns
  */
-async function scrapeIMDBmainPageData(movie, downloadFileCallback, actualDuplicate) {
+async function scrapeIMDBmainPageData(movie, downloadFileCallback, db, actualDuplicate) {
   if (movie.scanErrors) {
     delete movie.scanErrors["IMDB Main Page"];
   }
@@ -1573,7 +1572,7 @@ async function scrapeIMDBParentalGuideDataV3(
   }
 }
 
-async function scrapeIMDBFullCreditsData(movie, actualDuplicate) {
+async function scrapeIMDBFullCreditsData(movie, db, actualDuplicate) {
   if (movie.scanErrors) {
     delete movie.scanErrors["IMDB Full Credits"];
   }
@@ -2004,7 +2003,7 @@ function getGQLCompaniesData(gqlCompaniesEdges, category) {
  * Scrape companies from JSON provided by GraphQL
  * @param {Object} movie
  */
-async function scrapeIMDBCompaniesDataV3(movie, actualDuplicate) {
+async function scrapeIMDBCompaniesDataV3(movie, db, actualDuplicate) {
   // TODO: use the page to identify the categories (e.g. https://www.imdb.com/title/tt0095327/companycredits/)
   if (movie.scanErrors) {
     delete movie.scanErrors["IMDB Companies"];
@@ -2925,7 +2924,7 @@ async function scrapeIMDBplotKeywords(movie) {
   }
 }
 
-async function scrapeIMDBFilmingLocationsV3(movie, actualDuplicate) {
+async function scrapeIMDBFilmingLocationsV3(movie, db, actualDuplicate) {
   if (movie.scanErrors) {
     delete movie.scanErrors["IMDB Filming Locations"];
   }
