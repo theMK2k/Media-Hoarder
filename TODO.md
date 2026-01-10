@@ -2,8 +2,6 @@
 
 ## Prio 0
 
-- [ ] rescan metadata from action list: let user decide if they also want to rescan the episodes or just the series
-
 - [ ] BUG: rescan specific media leads to removal of "last access at"
 
   - "last access at" (on the series - not the episode) is gone if a media moved

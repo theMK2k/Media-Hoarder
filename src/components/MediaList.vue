@@ -116,7 +116,7 @@
               <v-tooltip left v-bind:disabled="!isScanning">
                 <template v-slot:activator="{ on }">
                   <span v-on="on">
-                    <v-list-item v-bind:disabled="isScanning" v-on:click="rescanCurrentListDialog.show = true">
+                    <v-list-item v-bind:disabled="isScanning" v-on:click="onRescanMetaDataListClick">
                       {{ $t("Rescan Meta Data") }}
                     </v-list-item>
                   </span>
@@ -974,6 +974,7 @@ export default {
     seriesRescanDialog: {
       show: false,
       mediaItem: null,
+      isListRescan: false,
     },
   }),
 
@@ -2873,23 +2874,43 @@ export default {
       this.SeriesIMDBRatingHeatmapDialog.show = false;
     },
 
-    showSeriesRescanDialog(mediaItem) {
+    showSeriesRescanDialog(mediaItem, isListRescan = false) {
       this.seriesRescanDialog.mediaItem = mediaItem;
+      this.seriesRescanDialog.isListRescan = isListRescan;
       this.seriesRescanDialog.show = true;
     },
 
     onSeriesRescanDialogCancel() {
       this.seriesRescanDialog.show = false;
       this.seriesRescanDialog.mediaItem = null;
+      this.seriesRescanDialog.isListRescan = false;
     },
 
     async onSeriesRescanDialogOK({ includeEpisodes }) {
       this.seriesRescanDialog.show = false;
       const mediaItem = this.seriesRescanDialog.mediaItem;
+      const isListRescan = this.seriesRescanDialog.isListRescan;
       this.seriesRescanDialog.mediaItem = null;
+      this.seriesRescanDialog.isListRescan = false;
 
-      // Pass seriesOnly=true when NOT including episodes
-      await this.onRescanItems([mediaItem], !includeEpisodes);
+      if (isListRescan) {
+        // List rescan for series - pass seriesOnly=true when NOT including episodes
+        await this.onRescanItems(this.itemsFiltered, !includeEpisodes);
+      } else {
+        // Single item rescan - pass seriesOnly=true when NOT including episodes
+        await this.onRescanItems([mediaItem], !includeEpisodes);
+      }
+    },
+
+    onRescanMetaDataListClick() {
+      // Check if we're viewing TV series (not movies, not episodes)
+      if (this.specificMediaType === "Series") {
+        // Show SeriesRescanDialog to ask about episode rescanning
+        this.showSeriesRescanDialog(null, true);
+      } else {
+        // Show regular rescan dialog for movies or episodes
+        this.rescanCurrentListDialog.show = true;
+      }
     },
 
     // ### MediaItemCard (MIC) Events ###
