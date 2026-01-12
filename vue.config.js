@@ -37,5 +37,5 @@ module.exports = {
     },
   },
 
-  transpileDependencies: ["vuetify", "chart.js"],
+  transpileDependencies: ["vuetify", "chart.js", "fs-extra"],
 };
