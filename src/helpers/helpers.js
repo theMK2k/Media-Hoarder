@@ -1,8 +1,7 @@
 const util = require("util");
 const path = require("path");
 const fs = require("fs");
-const axios = require("axios");
-const axiosRetry = require("axios-retry");
+const requestretry = require("requestretry");
 const os = require("os");
 const filenamify = require("filenamify");
 const hash = require("string-hash-64");
@@ -20,16 +19,7 @@ const existsAsync = util.promisify(fs.exists);
 const readdirAsync = util.promisify(fs.readdir);
 const statAsync = util.promisify(fs.stat);
 const readFileAsync = util.promisify(fs.readFile);
-
-// Configure axios-retry with exponential backoff
-axiosRetry(axios, {
-  retries: 3,
-  retryDelay: axiosRetry.exponentialDelay,
-  retryCondition: (error) => {
-    // Retry on network errors or 5xx server errors
-    return axiosRetry.isNetworkOrIdempotentRequestError(error) || (error.response && error.response.status >= 500);
-  }
-});
+const requestretryAsync = util.promisify(requestretry);
 
 const isPORTABLE = false; // DON'T TOUCH! This is handled by set-portable.js
 
@@ -280,6 +270,19 @@ async function downloadFile(url, targetPath, redownload) {
   }
 }
 
+function requestRetryStrategy(err, response, body, options) {
+  const mustRetry = !!err;
+
+  if (mustRetry) {
+    logger.log("[requestRetryStrategy] retrying options:", options);
+  }
+
+  return {
+    mustRetry,
+    options: options,
+  };
+}
+
 function filenamifyExt(input) {
   let filename = filenamify(input, { maxLength: 10000 });
 
@@ -291,67 +294,67 @@ function filenamifyExt(input) {
 }
 
 async function requestAsync(options) {
-  let axiosConfig = {};
+  let optionsDerived = {};
 
   if (typeof options === "string") {
-    axiosConfig.url = options;
+    optionsDerived.url = options;
   } else {
-    axiosConfig = Object.assign({}, options);
+    optionsDerived = Object.assign({}, options);
   }
 
-  if (!axiosConfig.method) {
-    axiosConfig.method = "GET";
+  if (!optionsDerived.method) {
+    optionsDerived.method = "GET";
+  }
+
+  if (!optionsDerived.retryStrategy) {
+    optionsDerived.retryStrategy = requestRetryStrategy;
+  }
+
+  if (!optionsDerived.maxAttempts) {
+    optionsDerived.maxAttempts = 3;
+  }
+
+  if (!optionsDerived.retryDelay) {
+    optionsDerived.retryDelay = 1000;
   }
 
   // always provide header "Accept-Language": "en"
-  if (!axiosConfig.headers) {
-    axiosConfig.headers = {};
+  if (!optionsDerived.headers) {
+    optionsDerived.headers = {};
   }
 
-  if (!axiosConfig.headers["Accept-Language"]) {
-    axiosConfig.headers["Accept-Language"] = "en";
+  if (!optionsDerived.headers["Accept-Language"]) {
+    optionsDerived.headers["Accept-Language"] = "en";
   }
 
-  axiosConfig.headers["User-Agent"] =
+  optionsDerived.headers["User-Agent"] =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:144.0) Gecko/20100101 Firefox/144.0";
 
-  axiosConfig.timeout = 10000; // we set a 10s timeout
+  optionsDerived.timeout = 10000; // we set a 10s timeout
 
-  // Handle encoding: null option (for binary downloads)
-  if (axiosConfig.encoding === null) {
-    axiosConfig.responseType = 'arraybuffer';
-    delete axiosConfig.encoding;
-  }
-
-  // logger.log("[requestAsync] axiosConfig:", axiosConfig);
+  // logger.log("[requestAsync] optionsDerived:", optionsDerived);
 
   if (imdbScraperWatchdogUseDumps) {
-    const filename = `${filenamifyExt(axiosConfig.url ? axiosConfig.url : axiosConfig.uri)}.html`;
+    const filename = `${filenamifyExt(optionsDerived.url ? optionsDerived.url : optionsDerived.uri)}.html`;
     if (fs.existsSync(filename)) {
       return {
         body: fs.readFileSync(
-          `${filenamifyExt(axiosConfig.url ? axiosConfig.url : axiosConfig.uri)}.html`,
+          `${filenamifyExt(optionsDerived.url ? optionsDerived.url : optionsDerived.uri)}.html`,
           "UTF8"
         ),
       };
     }
   }
 
-  // Make axios request (retry is configured globally)
-  const axiosResponse = await axios(axiosConfig);
-
-  // Convert axios response to match old requestretry response format
-  const response = {
-    body: axiosResponse.data,
-    statusCode: axiosResponse.status,
-    headers: axiosResponse.headers,
-  };
+  // return requestretryAsync(optionsDerived);
+  // logger.log("[requestAsync] running requestretryAsync with optionsDerived:", optionsDerived);
+  const response = await requestretryAsync(optionsDerived);
 
   logger.log("[requestAsync] response.body.length:", _.get(response, "body.length", 0));
   // logger.log("[requestAsync] response:", response);
 
   if (requestAsyncDumpToFile) {
-    const filename = `${filenamifyExt(axiosConfig.url ? axiosConfig.url : axiosConfig.uri)}.html`;
+    const filename = `${filenamifyExt(optionsDerived.url ? optionsDerived.url : optionsDerived.uri)}.html`;
     logger.log("[requestAsync] dumping to", filename);
     await writeFileAsync(`./${filename}`, response.body);
   }

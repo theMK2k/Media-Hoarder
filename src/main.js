@@ -10,8 +10,7 @@ import { shared } from "@/shared";
 import i18n from "./i18n";
 import vuetify from "@/plugins/vuetify";
 
-import "core-js/stable";
-import "regenerator-runtime/runtime";
+import "@babel/polyfill";
 import "roboto-fontface/css/roboto/roboto-fontface.css";
 import "@mdi/font/css/materialdesignicons.css";
 

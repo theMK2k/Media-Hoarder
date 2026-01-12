@@ -34,10 +34,10 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 
 ## Phase 1: Foundation Upgrades (Days 4-7)
 
-**Status:** Not Started
+**Status:** In Progress
 
 ### Planned Changes
-- Replace `request` → `axios`
+- ~~Replace `request` → `axios`~~ **DEFERRED** - App architecture requires HTTP in renderer process, axios blocked by CORS
 - Remove `@babel/polyfill` → `core-js`
 - Fix `roboto-fontface` wildcard version
 - Upgrade Node.js-compatible utilities
@@ -108,13 +108,29 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 
 ## Breaking Changes Encountered
 
-*This section will be updated as breaking changes are discovered*
+### Phase 1: fs-extra requires transpilation
+- **Issue**: fs-extra 11.3.3 uses modern JS syntax (nullish coalescing `??`)
+- **Impact**: Webpack 4 (Vue CLI 4) fails to compile without transpilation
+- **Solution**: Added `"fs-extra"` to `transpileDependencies` in vue.config.js
+
+### Phase 1: sqlite3 5.1.7 lacks prebuilt binaries for Electron 13
+- **Issue**: sqlite3 5.1.7 has no prebuilt N-API v36 binaries for Electron 13, requires Python to build from source
+- **Impact**: Application fails at runtime with "Could not locate the bindings file" error
+- **Solution**: Rolled back to sqlite3 5.1.6 which has working prebuilt binaries (napi-v6)
+- **Note**: Will upgrade to newer sqlite3 in Phase 2 when upgrading Electron
+
+### Phase 1: axios migration blocked by app architecture
+- **Issue**: Attempted to replace deprecated `request`/`requestretry` with `axios`
+- **Impact**: IMDB scraping broke due to CORS - app runs HTTP requests in renderer process, axios is blocked by browser CORS policy
+- **Root Cause**: App architecture has IMDB scraping in renderer process (store.js, Vue components), not main process
+- **Decision**: **DEFERRED axios migration** - would require major refactoring to move HTTP to main process via IPC
+- **Status**: Keeping `request`/`requestretry` for now, will address in future phase
 
 ---
 
 ## Workarounds Applied
 
-*This section will be updated as workarounds are needed*
+*None needed for Phase 1 (simplified scope)*
 
 ---
 
