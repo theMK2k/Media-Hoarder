@@ -34,27 +34,71 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 
 ## Phase 1: Foundation Upgrades (Days 4-7)
 
-**Status:** In Progress
+**Status:** ✅ Complete
+**Date Completed:** 2026-01-13
 
-### Planned Changes
-- ~~Replace `request` → `axios`~~ **DEFERRED** - App architecture requires HTTP in renderer process, axios blocked by CORS
-- Remove `@babel/polyfill` → `core-js`
-- Fix `roboto-fontface` wildcard version
-- Upgrade Node.js-compatible utilities
-- Upgrade sqlite3 native module
+### Completed Changes
+
+- ✅ Upgraded Node.js-compatible utilities:
+  - async 3.0.1 → 3.2.6
+  - fs-extra 10.0.0 → 11.3.3 (added to transpileDependencies)
+  - jsonfile 6.0.1 → 6.2.0
+  - loglevel 1.7.1 → 1.9.2
+  - minimist 1.2.5 → 1.2.8
+  - moment 2.29.1 → 2.30.1
+  - semver 7.3.5 → 7.7.3
+  - xml2js 0.4.23 → 0.6.2
+- ✅ Fixed roboto-fontface wildcard version: "*" → "0.10.0"
+- ✅ sqlite3: Kept at 5.1.6 (5.1.7 lacks prebuilt binaries for Electron 13)
+- ✅ cheerio: Kept at 1.0.0-rc.10 (newer versions require Node 18+)
+- ✅ Removed version pinning violations (^) from package.json
+
+### Deferred Changes
+
+- ❌ Replace `request` → `axios` - **DEFERRED** due to app architecture (see Breaking Changes)
+- ❌ Remove `@babel/polyfill` → `core-js` - **DEFERRED** with axios migration
 
 ---
 
 ## Phase 2: Electron Upgrade (Days 8-14)
 
-**Status:** Not Started
+**Status:** 📋 Ready to Start
+**Detailed Plan:** See [PHASE-2-PLAN.md](PHASE-2-PLAN.md)
 
-### Planned Changes
-- Electron 13.6.6 → 22.3.27 (Step 1)
-- Electron 22.3.27 → 28.3.3 (Step 2)
-- Electron 28.3.3 → 33.4.1 (Step 3)
-- Electron 33.4.1 → 39.2.7 (Step 4)
-- Update @electron/remote
+### Planned Sub-Phases
+
+#### Phase 2a: Electron 13.6.6 → 22.3.27 (Node 14.16 → 16.17)
+
+- Upgrade @electron/remote 2.0.1 → 2.1.3
+- Upgrade Electron 13.6.6 → 22.3.27
+- Address sandboxing changes (Electron 20+)
+- Remove `new-window` event usage (Electron 22)
+- Test native window opening behavior
+
+#### Phase 2b: Electron 22.3.27 → 28.3.3 (Node 16.17 → 18.18)
+
+- Upgrade Electron 22.3.27 → 28.3.3
+- Remove Windows 7/8 support references
+- Migrate `ipcRenderer.sendTo()` to MessageChannel
+- Update protocol handlers to `protocol.handle()`
+- **Decision Point:** Upgrade sqlite3 to 5.1.7 OR migrate to better-sqlite3 12.6.0
+
+#### Phase 2c: Electron 28.3.3 → 33.4.1 (Node 18.18 → 20.18)
+
+- Upgrade Electron 28.3.3 → 33.4.1
+- Migrate BrowserView → WebContentsView (if used)
+- Update crash event handlers (render-process-gone, child-process-gone)
+- Update File.path usage → webUtils.getPathForFile()
+- Verify native modules build with C++20
+
+#### Phase 2d: Electron 33.4.1 → 39.2.7 (Node 20.18 → 22.20)
+
+- **Switch to Node.js 22** (can finally use system Node 22!)
+- Upgrade Electron 33.4.1 → 39.2.7
+- Update package.json engines to Node 22.x
+- Update .nvmrc to 22
+- Remove macOS 11 support references
+- Test GTK 4 on Linux
 
 ---
 
