@@ -3,7 +3,7 @@
 /* global __static */
 require("@electron/remote/main").initialize();
 
-import { app, protocol, BrowserWindow, session } from "electron";
+import { app, protocol, BrowserWindow, session, shell } from "electron";
 import {
   createProtocol,
   // installVueDevtools,
@@ -28,9 +28,6 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
-
-// workaround for Electron renderer crash on reload because of sqlite3 (https://github.com/mapbox/node-sqlite3/issues/1370)
-app.allowRendererProcessReuse = false;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{ scheme: "app", privileges: { secure: true, standard: true } }]);
@@ -63,6 +60,9 @@ function createWindow() {
   // automatically (the listeners will be removed when the window is closed)
   // and restore the maximized or full screen state
   mainWindowState.manage(win);
+
+  // Enable @electron/remote for this WebContents (required in Electron 14+)
+  require("@electron/remote/main").enable(win.webContents);
 
   // adBocker stuff
   try {
@@ -122,9 +122,11 @@ function createWindow() {
   });
 
   // target="_blank" external links should be opened with the browser and not the app itself (see also VersionDialog.created())
-  win.webContents.on("new-window", function (e, url) {
-    e.preventDefault();
-    require("electron").shell.openExternal(url);
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    if (url.startsWith('http:') || url.startsWith('https:')) {
+      shell.openExternal(url);
+    }
+    return { action: 'deny' };
   });
 }
 
