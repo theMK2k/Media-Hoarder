@@ -62,20 +62,42 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 
 ## Phase 2: Electron Upgrade (Days 8-14)
 
-**Status:** 📋 Ready to Start
+**Status:** 🚧 In Progress
 **Detailed Plan:** See [PHASE-2-PLAN.md](PHASE-2-PLAN.md)
 
-### Planned Sub-Phases
+### Phase 2a: Electron 13.6.6 → 22.3.27 (Node 14.16 → 16.17)
 
-#### Phase 2a: Electron 13.6.6 → 22.3.27 (Node 14.16 → 16.17)
+**Status:** ✅ Complete
+**Date Completed:** 2026-01-14
 
-- Upgrade @electron/remote 2.0.1 → 2.1.3
-- Upgrade Electron 13.6.6 → 22.3.27
-- Address sandboxing changes (Electron 20+)
-- Remove `new-window` event usage (Electron 22)
-- Test native window opening behavior
+#### Completed Changes
 
-#### Phase 2b: Electron 22.3.27 → 28.3.3 (Node 16.17 → 18.18)
+- ✅ Upgraded @electron/remote 2.0.1 → 2.1.3
+- ✅ Upgraded Electron 13.6.6 → 22.3.27
+- ✅ Fixed breaking change: Replaced `new-window` event with `setWindowOpenHandler()`
+- ✅ Fixed breaking change: Removed deprecated `app.allowRendererProcessReuse`
+- ✅ Added `require("@electron/remote/main").enable(win.webContents)` for Electron 14+ compatibility
+- ✅ Rebuilt sqlite3 5.1.6 for Electron 22 (Node.js 16.17.1)
+- ✅ Vulnerabilities reduced: 446 → 437 (9 resolved)
+- ✅ Manual testing passed
+
+#### Files Modified
+
+- [src/background.js](src/background.js) - Added shell import, removed deprecated property, updated window open handler, enabled @electron/remote
+- [package.json](package.json) - Updated Electron and @electron/remote versions
+- package-lock.json - Updated dependencies
+
+#### Notes
+
+- Sandboxing changes (Electron 20+) - No action needed, current settings still work
+- Native window opening - Tested and working with new `setWindowOpenHandler()`
+- All dialogs using @electron/remote working correctly
+
+### Phase 2b: Electron 22.3.27 → 28.3.3 (Node 16.17 → 18.18)
+
+**Status:** 📋 Not Started
+
+#### Planned Changes
 
 - Upgrade Electron 22.3.27 → 28.3.3
 - Remove Windows 7/8 support references
@@ -83,7 +105,11 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 - Update protocol handlers to `protocol.handle()`
 - **Decision Point:** Upgrade sqlite3 to 5.1.7 OR migrate to better-sqlite3 12.6.0
 
-#### Phase 2c: Electron 28.3.3 → 33.4.1 (Node 18.18 → 20.18)
+### Phase 2c: Electron 28.3.3 → 33.4.1 (Node 18.18 → 20.18)
+
+**Status:** 📋 Not Started
+
+#### Planned Changes
 
 - Upgrade Electron 28.3.3 → 33.4.1
 - Migrate BrowserView → WebContentsView (if used)
@@ -91,7 +117,11 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 - Update File.path usage → webUtils.getPathForFile()
 - Verify native modules build with C++20
 
-#### Phase 2d: Electron 33.4.1 → 39.2.7 (Node 20.18 → 22.20)
+### Phase 2d: Electron 33.4.1 → 39.2.7 (Node 20.18 → 22.20)
+
+**Status:** 📋 Not Started
+
+#### Planned Changes
 
 - **Switch to Node.js 22** (can finally use system Node 22!)
 - Upgrade Electron 33.4.1 → 39.2.7
