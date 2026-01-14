@@ -3,7 +3,8 @@
 /* global __static */
 require("@electron/remote/main").initialize();
 
-import { app, protocol, BrowserWindow, session, shell } from "electron";
+import { app, protocol, BrowserWindow, session, shell, net } from "electron";
+import { pathToFileURL } from "url";
 import {
   createProtocol,
   // installVueDevtools,
@@ -30,7 +31,10 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 let win;
 
 // Scheme must be registered before the app is ready
-protocol.registerSchemesAsPrivileged([{ scheme: "app", privileges: { secure: true, standard: true } }]);
+protocol.registerSchemesAsPrivileged([
+  { scheme: "app", privileges: { secure: true, standard: true } },
+  { scheme: "local-resource", privileges: { secure: true, standard: true, supportFetchAPI: true } }
+]);
 
 function createWindow() {
   // Load the previous state with fallback to defaults
@@ -133,14 +137,30 @@ function createWindow() {
 // allows us to use local files outside "public" folder as web ressource
 // https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#loading-local-images-resources
 function registerLocalResourceProtocol() {
-  protocol.registerFileProtocol("local-resource", (request, callback) => {
-    const url = request.url.replace(/^local-resource:\/\//, "");
+  protocol.handle("local-resource", async (request) => {
+    let filePath = request.url.replace(/^local-resource:\/\//, "");
+
     // Decode URL to prevent errors when loading filenames with UTF-8 chars or chars like "#"
-    const decodedUrl = decodeURI(url); // Needed in case URL contains spaces
+    filePath = decodeURI(filePath);
+
+    // Fix double slashes that result from escaped backslashes in URLs
+    // "c//Data//Code" -> "c:/Data/Code"
+    filePath = filePath.replace(/\/\//g, "/");
+
+    // Add colon after drive letter if missing (Windows paths)
+    // "c/Data" -> "C:/Data"
+    filePath = filePath.replace(/^([a-zA-Z])\//, "$1:/");
+
+    // Convert forward slashes to backslashes for Windows
+    filePath = filePath.replace(/\//g, "\\");
+
     try {
-      return callback(decodedUrl);
+      // Use pathToFileURL for proper file URL conversion on all platforms
+      const fileUrl = pathToFileURL(filePath).href;
+      return await net.fetch(fileUrl);
     } catch (error) {
-      console.error("ERROR: registerLocalResourceProtocol: Could not get file path:", error);
+      console.error("ERROR: registerLocalResourceProtocol: Could not get file path:", error, "Original URL:", request.url, "Processed path:", filePath);
+      return new Response(null, { status: 404 });
     }
   });
 }

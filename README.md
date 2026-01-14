@@ -127,7 +127,7 @@ Downloads are available at [releases](https://github.com/theMK2k/Media-Hoarder/r
 
 Currently **Media Hoarder** comes as:
 
-- Windows 7/8/10/11 x64 Setup and Portable (.zip)
+- Windows 10/11 x64 Setup and Portable (.zip)
 - Linux x64 Setup (.deb, .appimage, .snap, .rpm) and Portable (.tar.gz)
 - MacOS X .dmg (Intel and Apple Silicon)
 

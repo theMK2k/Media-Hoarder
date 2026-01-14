@@ -95,15 +95,42 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 
 ### Phase 2b: Electron 22.3.27 → 28.3.3 (Node 16.17 → 18.18)
 
-**Status:** 📋 Not Started
+**Status:** ✅ Complete
+**Date Completed:** 2026-01-15
 
-#### Planned Changes
+#### Completed Changes
 
-- Upgrade Electron 22.3.27 → 28.3.3
-- Remove Windows 7/8 support references
-- Migrate `ipcRenderer.sendTo()` to MessageChannel
-- Update protocol handlers to `protocol.handle()`
-- **Decision Point:** Upgrade sqlite3 to 5.1.7 OR migrate to better-sqlite3 12.6.0
+- ✅ Upgraded Electron 22.3.27 → 28.3.3
+- ✅ Updated README.md: Removed Windows 7/8 support references
+- ✅ Migrated `protocol.registerFileProtocol()` → `protocol.handle()` with `net.fetch()`
+- ✅ Registered `local-resource` scheme in `protocol.registerSchemesAsPrivileged()`
+- ✅ Added `pathToFileURL()` for proper Windows path handling
+- ✅ Fixed package.json `main` field: `background.js` → `./background.js`
+- ✅ sqlite3 5.1.6 kept (better-sqlite3 migration deferred to Phase 2d)
+- ✅ Vulnerabilities reduced: 437 → 436
+
+#### Breaking Changes Addressed
+
+**1. Protocol Handler Migration (src/background.js)**
+- Changed from callback-based `protocol.registerFileProtocol()` to Promise-based `protocol.handle()`
+- Added `net` import from electron
+- Registered `local-resource` scheme with `supportFetchAPI: true`
+- Implemented proper Windows path handling:
+  - Decode URI
+  - Fix double slashes from URL parsing
+  - Add colon after drive letter
+  - Convert to backslashes
+  - Use `pathToFileURL()` for proper file:// URL creation
+
+**2. Windows 7/8 Support Dropped (Electron 23+)**
+- Updated README.md to remove Windows 7/8 references
+
+#### Notes
+
+- No `ipcRenderer.sendTo()` usage found (breaking change didn't apply)
+- No `setTrafficLightPosition()` usage found (breaking change didn't apply)
+- better-sqlite3 migration deferred to Phase 2d (requires Node 20+)
+- Still using host Node 14 for builds (will upgrade to Node 22 in Phase 2d)
 
 ### Phase 2c: Electron 28.3.3 → 33.4.1 (Node 18.18 → 20.18)
 
