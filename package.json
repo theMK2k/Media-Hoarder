@@ -39,7 +39,7 @@
     "test": "jest",
     "update-imdb-interests": "babel-node --presets es2015 ./update-imdb-interests.js"
   },
-  "main": "./background.js",
+  "main": "background.js",
   "dependencies": {
     "@babel/polyfill": "7.4.4",
     "@cliqz/adblocker-electron": "1.22.7",
