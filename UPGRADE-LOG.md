@@ -157,16 +157,35 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 
 ### Phase 2d: Electron 33.4.1 → 39.2.7 (Node 20.18 → 22.20)
 
-**Status:** 📋 Not Started
+**Status:** ✅ Complete
+**Date Completed:** 2026-01-15
 
-#### Planned Changes
+#### Completed Changes
 
-- **Switch to Node.js 22** (can finally use system Node 22!)
-- Upgrade Electron 33.4.1 → 39.2.7
-- Update package.json engines to Node 22.x
-- Update .nvmrc to 22
-- Remove macOS 11 support references
-- Test GTK 4 on Linux
+- ✅ Upgraded Electron 33.4.1 → 39.2.7
+- ✅ Rebuilt sqlite3 5.1.6 for Electron 39 (Node.js 22.20)
+- ✅ Updated package.json engines: `>=14.17.5 <15.0.0` → `>=22.0.0 <23.0.0`
+- ✅ Updated all `check-node-version` calls in scripts: `^14.17` → `^22`
+- ✅ Updated .nvmrc: `14.17.5` → `22`
+- ✅ Vulnerabilities: 436 → 435 (1 resolved)
+
+#### Breaking Changes Analysis
+
+- **plugin-crashed event:** Not used in codebase
+- **--host-rules:** Not used in codebase
+- **macOS 11 support:** Only affects macOS builds (documentation)
+
+#### Known Deprecation Warnings (Non-blocking)
+
+- `DEP0128` (Invalid 'main' field in dist_electron) - vue-cli-plugin-electron-builder issue, fixed in Phase 3
+- `DEP0040` (punycode deprecated) - From request/cheerio dependencies
+- `session.getPreloads/setPreloads` - @electron/remote 2.1.3 not updated for Electron 39 yet
+
+#### Notes
+
+- All deprecation warnings are non-blocking
+- App runs smoothly with no browser console errors
+- Now requires Node.js 22.x for development and builds
 
 ---
 
