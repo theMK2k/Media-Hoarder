@@ -164,9 +164,6 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 
 - ✅ Upgraded Electron 33.4.1 → 39.2.7
 - ✅ Rebuilt sqlite3 5.1.6 for Electron 39 (Node.js 22.20)
-- ✅ Updated package.json engines: `>=14.17.5 <15.0.0` → `>=22.0.0 <23.0.0`
-- ✅ Updated all `check-node-version` calls in scripts: `^14.17` → `^22`
-- ✅ Updated .nvmrc: `14.17.5` → `22`
 - ✅ Vulnerabilities: 436 → 435 (1 resolved)
 
 #### Breaking Changes Analysis
@@ -181,11 +178,19 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 - `DEP0040` (punycode deprecated) - From request/cheerio dependencies
 - `session.getPreloads/setPreloads` - @electron/remote 2.1.3 not updated for Electron 39 yet
 
+#### Host Node.js Version
+
+- ❌ **Node 22 incompatible with Webpack 4** - `error:0308010C:digital envelope routines::unsupported`
+- Webpack 4 uses MD4 hashing removed in OpenSSL 3.0 (Node 17+)
+- **Keeping Node 14 until Phase 3** (Vue CLI 5 / Webpack 5 upgrade)
+- Electron 39's embedded Node 22.20 works fine - only affects build tooling
+
 #### Notes
 
 - All deprecation warnings are non-blocking
 - App runs smoothly with no browser console errors
-- Now requires Node.js 22.x for development and builds
+- Still requires Node.js 14.x for development and builds (Webpack 4 limitation)
+- Node 22 upgrade deferred to Phase 3 (Webpack 5)
 
 ---
 
