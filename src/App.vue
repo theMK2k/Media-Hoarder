@@ -4656,9 +4656,12 @@ export default {
 
     this.checkVersion();
 
-    setInterval(() => {
-      this.checkVersion();
-    }, 1000 * 60 * 60); // check every hour
+    setInterval(
+      () => {
+        this.checkVersion();
+      },
+      1000 * 60 * 60
+    ); // check every hour
 
     this.searchText = this.$shared.searchText;
 

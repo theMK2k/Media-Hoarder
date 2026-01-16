@@ -126,7 +126,7 @@
                           >
                         </span>
                       </template>
-                      <span style="margin-left: ">{{ $t("Edit Movie") }}</span>
+                      <span style="margin-left:">{{ $t("Edit Movie") }}</span>
                     </v-tooltip>
 
                     <v-tooltip bottom>
@@ -205,7 +205,7 @@
                 "
                 v-on:mouseleave="
                   allowEditButtons &&
-                    emitMediaItemEvent('setItemHovered', { mediaItem, section: 'name2', value: false })
+                  emitMediaItemEvent('setItemHovered', { mediaItem, section: 'name2', value: false })
                 "
               >
                 <!-- v-if="mediaItem.Name2 || mediaItem.selected" -->
@@ -1235,7 +1235,12 @@ export default {
   padding-right: 4px;
   padding-top: 2px;
   right: 0px;
-  text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px,
+  text-shadow:
+    #000 0px 0px 2px,
+    #000 0px 0px 2px,
+    #000 0px 0px 2px,
+    #000 0px 0px 2px,
+    #000 0px 0px 2px,
     #000 0px 0px 2px;
 }
 
@@ -1266,7 +1271,12 @@ export default {
   padding-top: 2px;
   position: absolute;
   right: 0px;
-  text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px,
+  text-shadow:
+    #000 0px 0px 2px,
+    #000 0px 0px 2px,
+    #000 0px 0px 2px,
+    #000 0px 0px 2px,
+    #000 0px 0px 2px,
     #000 0px 0px 2px;
 }
 

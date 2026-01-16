@@ -550,20 +550,20 @@ export default {
               this.propertyTypeKey === "age-rating"
                 ? `LEFT JOIN tbl_AgeRating AR ON MOV.IMDB_id_AgeRating_Chosen_Country = AR.id_AgeRating`
                 : this.propertyTypeKey === "audio-format"
-                ? `INNER JOIN tbl_Movies_MI_Tracks MITAUDIO ON MITAUDIO.type = "audio" AND MITAUDIO.id_Movies = MOV.id_Movies AND MITAUDIO.Format = $Audio_Format`
-                : this.propertyTypeKey === "company"
-                ? `INNER JOIN tbl_Movies_IMDB_Companies MC ON MC.id_Movies = MOV.id_Movies`
-                : this.propertyTypeKey === "filming-location"
-                ? `INNER JOIN tbl_Movies_IMDB_Filming_Locations MFL ON MFL.id_Movies = MOV.id_Movies`
-                : this.propertyTypeKey === "plot-keyword"
-                ? `INNER JOIN tbl_Movies_IMDB_Plot_Keywords MPK ON MPK.id_Movies = MOV.id_Movies`
-                : this.propertyTypeKey === "release-attribute"
-                ? `INNER JOIN tbl_Movies_Release_Attributes MRA ON MRA.id_Movies = MOV.id_Movies`
-                : this.propertyTypeKey === "video-encoder"
-                ? `INNER JOIN tbl_Movies_MI_Tracks MITVIDEO ON MITVIDEO.type = "video" AND MITVIDEO.id_Movies = MOV.id_Movies AND MITVIDEO.Encoded_Library_Name_Trimmed = $Video_Encoder`
-                : this.propertyTypeKey === "person"
-                ? `INNER JOIN tbl_Movies_IMDB_Credits MC ON MC.id_Movies = MOV.id_Movies`
-                : ``
+                  ? `INNER JOIN tbl_Movies_MI_Tracks MITAUDIO ON MITAUDIO.type = "audio" AND MITAUDIO.id_Movies = MOV.id_Movies AND MITAUDIO.Format = $Audio_Format`
+                  : this.propertyTypeKey === "company"
+                    ? `INNER JOIN tbl_Movies_IMDB_Companies MC ON MC.id_Movies = MOV.id_Movies`
+                    : this.propertyTypeKey === "filming-location"
+                      ? `INNER JOIN tbl_Movies_IMDB_Filming_Locations MFL ON MFL.id_Movies = MOV.id_Movies`
+                      : this.propertyTypeKey === "plot-keyword"
+                        ? `INNER JOIN tbl_Movies_IMDB_Plot_Keywords MPK ON MPK.id_Movies = MOV.id_Movies`
+                        : this.propertyTypeKey === "release-attribute"
+                          ? `INNER JOIN tbl_Movies_Release_Attributes MRA ON MRA.id_Movies = MOV.id_Movies`
+                          : this.propertyTypeKey === "video-encoder"
+                            ? `INNER JOIN tbl_Movies_MI_Tracks MITVIDEO ON MITVIDEO.type = "video" AND MITVIDEO.id_Movies = MOV.id_Movies AND MITVIDEO.Encoded_Library_Name_Trimmed = $Video_Encoder`
+                            : this.propertyTypeKey === "person"
+                              ? `INNER JOIN tbl_Movies_IMDB_Credits MC ON MC.id_Movies = MOV.id_Movies`
+                              : ``
             }
 
             WHERE SP.MediaType = $MediaType

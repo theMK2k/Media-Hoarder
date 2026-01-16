@@ -1898,12 +1898,12 @@ async function scrapeIMDBFullCreditsDataV3(movie, html) {
         creditCategoryLowerCase === "cast"
           ? topCast
           : creditCategoryLowerCase === "director" || creditCategoryLowerCase === "directors"
-          ? topDirector
-          : creditCategoryLowerCase === "producer" || creditCategoryLowerCase === "producers"
-          ? topProducer
-          : creditCategoryLowerCase === "writer" || creditCategoryLowerCase === "writers"
-          ? topWriter
-          : null;
+            ? topDirector
+            : creditCategoryLowerCase === "producer" || creditCategoryLowerCase === "producers"
+              ? topProducer
+              : creditCategoryLowerCase === "writer" || creditCategoryLowerCase === "writers"
+                ? topWriter
+                : null;
 
       if (!topCategory) {
         throw new Error("INTERNAL ERROR - unknown credit category: " + creditCategoryLowerCase);
