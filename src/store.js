@@ -3533,8 +3533,8 @@ async function deleteIMDBData(mediaItem) {
       movie.specificMediaType == "Series"
         ? helpers.getMovieNameFromDirectory(movie.fullPath)
         : movie.isDirectoryBased
-        ? helpers.getMovieNameFromDirectory(path.join(movie.SourcePath, movie.RelativeDirectory))
-        : helpers.getMovieNameFromFileName(movie.Filename);
+          ? helpers.getMovieNameFromDirectory(path.join(movie.SourcePath, movie.RelativeDirectory))
+          : helpers.getMovieNameFromFileName(movie.Filename);
 
     const sqlMovieName = `UPDATE tbl_Movies SET Name = $Name WHERE id_Movies = $id_Movies`;
     logger.log("[deleteIMDBData] sqlMovieNames $Name:", $Name, "sqlMovieNames:", sqlMovieName);

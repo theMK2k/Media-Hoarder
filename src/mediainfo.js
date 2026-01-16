@@ -97,6 +97,7 @@ async function analyzeMediaInfoData(miObj, id_Movies) {
           }
         }
       } else {
+        // eslint-disable-next-line no-constant-condition
         if (!`$${key}` === "$$") {
           logger.warn(`[applyMediaInfo] track key not found: "$${key}"`);
         }

@@ -16,7 +16,7 @@ const fs = require("fs");
 
 import * as _ from "lodash";
 const windowStateKeeper = require("./helpers/electron-window-state");
-import { ElectronBlocker } from "@cliqz/adblocker-electron";
+import { ElectronBlocker } from "@ghostery/adblocker-electron";
 
 import * as helpers from "./helpers/helpers";
 
@@ -33,7 +33,7 @@ let win;
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } },
-  { scheme: "local-resource", privileges: { secure: true, standard: true, supportFetchAPI: true } }
+  { scheme: "local-resource", privileges: { secure: true, standard: true, supportFetchAPI: true } },
 ]);
 
 function createWindow() {
@@ -127,10 +127,10 @@ function createWindow() {
 
   // target="_blank" external links should be opened with the browser and not the app itself (see also VersionDialog.created())
   win.webContents.setWindowOpenHandler(({ url }) => {
-    if (url.startsWith('http:') || url.startsWith('https:')) {
+    if (url.startsWith("http:") || url.startsWith("https:")) {
       shell.openExternal(url);
     }
-    return { action: 'deny' };
+    return { action: "deny" };
   });
 }
 
@@ -159,7 +159,14 @@ function registerLocalResourceProtocol() {
       const fileUrl = pathToFileURL(filePath).href;
       return await net.fetch(fileUrl);
     } catch (error) {
-      console.error("ERROR: registerLocalResourceProtocol: Could not get file path:", error, "Original URL:", request.url, "Processed path:", filePath);
+      console.error(
+        "ERROR: registerLocalResourceProtocol: Could not get file path:",
+        error,
+        "Original URL:",
+        request.url,
+        "Processed path:",
+        filePath
+      );
       return new Response(null, { status: 404 });
     }
   });

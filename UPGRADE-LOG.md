@@ -196,13 +196,57 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 
 ## Phase 3: Vue CLI & Build Tool Upgrades (Days 15-18)
 
-**Status:** Not Started
+**Status:** ✅ Complete
+**Date Completed:** 2026-01-16
 
-### Planned Changes
-- Vue CLI 4 → 5
-- Webpack 4 → 5
-- Remove Babel 6 CLI
-- Update sass-loader, sass
+### Completed Changes
+
+- ✅ Upgraded Vue CLI 4.5.13 → 5.0.8
+- ✅ Upgraded Webpack 4 → 5 (via Vue CLI)
+- ✅ Upgraded vue-cli-plugin-electron-builder 2.1.1 → 3.0.0-alpha.4
+- ✅ Upgraded ESLint 6.8.0 → 8.57.1
+- ✅ Upgraded Prettier 2.4.1 → 3.4.2
+- ✅ Replaced babel-eslint → @babel/eslint-parser 7.23.10
+- ✅ Upgraded eslint-plugin-vue 6.2.2 → 9.33.0
+- ✅ Upgraded eslint-plugin-prettier 3.4.1 → 5.2.1
+- ✅ Upgraded @vue/eslint-config-prettier 6.0.0 → 8.0.0
+- ✅ Upgraded sass-loader 10.2.0 → 13.3.3
+- ✅ Upgraded vue-cli-plugin-vuetify 2.4.2 → 2.5.8
+- ✅ Replaced @cliqz/adblocker-electron 1.22.7 → @ghostery/adblocker-electron 2.13.4
+- ✅ **Node.js 14 → 22 for development and builds**
+
+### Breaking Changes Addressed
+
+**1. ESLint Configuration (.eslintrc.js)**
+- Changed parser from `babel-eslint` to `@babel/eslint-parser`
+- Added `requireConfigFile: false` to parserOptions
+- Disabled `vue/multi-word-component-names` rule (too strict for existing components)
+- Disabled `vue/no-mutating-props` rule (existing code patterns)
+
+**2. Prettier 3.x Formatting**
+- Ran `npm run format` to fix all formatting differences
+- Minor whitespace/line break changes across codebase
+
+**3. Node.js Version**
+- Updated `.nvmrc`: 14.17.5 → 22
+- Updated `engines` in package.json: `>=14.17.5 <15.0.0` → `>=22.0.0 <23.0.0`
+- Updated all npm scripts: `check-node-version --node ^14.17` → `^22`
+
+**4. Adblocker Package Renamed**
+- @cliqz/adblocker-electron → @ghostery/adblocker-electron
+- Updated import in src/background.js
+- Fixes preload script absolute path error on Electron 39
+
+### Remaining Warnings (Non-blocking)
+
+- `DEP0128` (main field in dist_electron) - vue-cli-plugin-electron-builder quirk
+- `DEP0040` (punycode) - From request/cheerio dependencies (Phase 6)
+
+### Notes
+
+- vue-cli-plugin-electron-builder v3.0.0-alpha.4 is alpha but stable for this use case
+- Webpack 5 persistent caching provides faster rebuilds
+- All existing functionality tested and working
 
 ---
 
@@ -239,6 +283,7 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 - Electron IPC security migration
 - Remove @electron/remote
 - Final security audit
+- Investigate and resolve npm install warnings (peer dependencies, deprecations)
 
 ---
 

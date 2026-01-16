@@ -2592,10 +2592,10 @@ export default {
         item.MediaType === "movies"
           ? "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete this movie?"
           : item.MediaType === "series" && !item.Series_id_Movies_Owner
-          ? "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete the whole series?"
-          : item.MediaType === "series" && item.Series_id_Movies_Owner
-          ? "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete this episode?"
-          : "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete the media?";
+            ? "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete the whole series?"
+            : item.MediaType === "series" && item.Series_id_Movies_Owner
+              ? "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete this episode?"
+              : "This will delete '{ItemName}' and all the files associated to it on your hard drive_ Do you really want to delete the media?";
       this.deleteMediaDialog.ItemName = item.Name;
       this.deleteMediaDialog.alertType = null;
       this.deleteMediaDialog.alertText = null;

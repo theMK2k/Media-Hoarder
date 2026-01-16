@@ -138,10 +138,10 @@ function addLogEntry(testResult) {
       testResult.status === status.SUCCESS
         ? chalk.green("OK")
         : testResult.status === status.WARNING
-        ? chalk.yellow("WARN")
-        : testResult.status === status.ERROR
-        ? chalk.red("FAIL")
-        : chalk.red("EXCEPTION")
+          ? chalk.yellow("WARN")
+          : testResult.status === status.ERROR
+            ? chalk.red("FAIL")
+            : chalk.red("EXCEPTION")
     }${chalk.white("]")} ${testResult.name} (${testResult.functionName})`,
   };
 
