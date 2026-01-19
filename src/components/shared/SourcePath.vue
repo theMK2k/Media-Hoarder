@@ -33,7 +33,7 @@
 const logger = require("../../helpers/logger");
 
 import * as store from "@/store";
-import { eventBus } from "@/main";
+import { eventBus } from "@/eventBus";
 
 export default {
   props: ["value"],

@@ -3044,7 +3044,7 @@ const logger = require("./helpers/logger");
 
 import * as store from "@/store";
 import { shared } from "@/shared";
-import { eventBus } from "@/main";
+import { eventBus } from "@/eventBus";
 import * as helpers from "@/helpers/helpers";
 
 const { enmFilterSortModes } = require("./enums/enmFilterSortModes");
@@ -4689,7 +4689,7 @@ export default {
       );
     }, 1000);
 
-    eventBus.$on("showScanProcessFinishedSnackbar", ({ id_Scan_Processes, details }) => {
+    eventBus.on("showScanProcessFinishedSnackbar", ({ id_Scan_Processes, details }) => {
       logger.log("[showScanProcessFinishedSnackbar] id_Scan_Processes:", id_Scan_Processes, "details:", details);
 
       this.snackbar.color = "success";
@@ -4703,7 +4703,7 @@ export default {
       this.snackbar.show = true;
     });
 
-    eventBus.$on("showSnackbar", ({ color, textOrErrorObject, timeout }) => {
+    eventBus.on("showSnackbar", ({ color, textOrErrorObject, timeout }) => {
       logger.debug("[showSnackbar] snackbar called:", textOrErrorObject);
       this.snackbar.details = [];
       this.snackbar.color = color;
@@ -4751,7 +4751,7 @@ export default {
       this.snackbar.show = true;
     });
 
-    eventBus.$on("scanInfoShow", ({ headerOriginal, details, rescanETA }) => {
+    eventBus.on("scanInfoShow", ({ headerOriginal, details, rescanETA }) => {
       this.scanInfo = {
         headerOriginal: headerOriginal,
         header: headerOriginal.replace(
@@ -4766,32 +4766,32 @@ export default {
       };
     });
 
-    eventBus.$on("rescanStarted", () => {
+    eventBus.on("rescanStarted", () => {
       this.$shared.isScanning = true;
     });
 
-    eventBus.$on("rescanStopped", () => {
+    eventBus.on("rescanStopped", () => {
       this.$shared.isScanning = false;
       store.resetAbortRescan();
     });
 
-    eventBus.$on("scanInfoOff", () => {
+    eventBus.on("scanInfoOff", () => {
       this.scanInfo.show = false;
     });
 
-    eventBus.$on("filtersChanged", () => {
+    eventBus.on("filtersChanged", () => {
       this.filtersChanged();
     });
 
-    eventBus.$on("showLoadingOverlay", (value) => {
+    eventBus.on("showLoadingOverlay", (value) => {
       this.showLoadingOverlay = value;
     });
 
-    eventBus.$on("showSidebarLoadingOverlay", (value) => {
+    eventBus.on("showSidebarLoadingOverlay", (value) => {
       this.showSidebarLoadingOverlay = value;
     });
 
-    eventBus.$on("setFilter", (setFilter) => {
+    eventBus.on("setFilter", (setFilter) => {
       if (!setFilter) {
         return;
       }
@@ -4862,16 +4862,16 @@ export default {
       }
     });
 
-    eventBus.$on("openVersionDialog", () => {
+    eventBus.on("openVersionDialog", () => {
       this.checkVersion();
       this.versionDialog.show = true;
     });
 
-    eventBus.$on("openCheckIMDBScraperDialog", (settings) => {
+    eventBus.on("openCheckIMDBScraperDialog", (settings) => {
       this.showCheckIMDBScraperDialog(settings);
     });
 
-    eventBus.$on("setSearchText", (value) => {
+    eventBus.on("setSearchText", (value) => {
       this.searchText = value;
     });
 

@@ -1,30 +1,96 @@
 "use strict";
 
 /* global __static */
-require("@electron/remote/main").initialize();
 
-import { app, protocol, BrowserWindow, session, shell, net } from "electron";
-import { pathToFileURL } from "url";
-import {
-  createProtocol,
-  // installVueDevtools,
-} from "vue-cli-plugin-electron-builder/lib";
-// import { autoUpdater } from "electron-updater"
-import path from "path";
+// Main process entry point for Electron
+// Note: @electron/remote initialization moved to app.on('ready') - see below
 
+const { app, protocol, BrowserWindow, session, shell, net } = require("electron");
+const { pathToFileURL, URL } = require("url");
+const path = require("path");
 const fs = require("fs");
-
-import * as _ from "lodash";
+const _ = require("lodash");
 const windowStateKeeper = require("./helpers/electron-window-state");
-import { ElectronBlocker } from "@ghostery/adblocker-electron";
+const { ElectronBlocker } = require("@ghostery/adblocker-electron");
 
-import * as helpers from "./helpers/helpers";
-
-import { asciiLogo } from "./helpers/ascii-logo";
+const helpers = require("./helpers/helpers");
+const { asciiLogo } = require("./helpers/ascii-logo");
 
 console.log(asciiLogo);
 
 const isDevelopment = process.env.NODE_ENV !== "production";
+
+// MIME types for createProtocol
+const mimeTypes = {
+  ".html": "text/html",
+  ".htm": "text/html",
+  ".js": "text/javascript",
+  ".mjs": "text/javascript",
+  ".css": "text/css",
+  ".json": "application/json",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".gif": "image/gif",
+  ".svg": "image/svg+xml",
+  ".ico": "image/vnd.microsoft.icon",
+  ".woff": "font/woff",
+  ".woff2": "font/woff2",
+  ".ttf": "font/ttf",
+  ".eot": "application/vnd.ms-fontobject",
+  ".mp3": "audio/mpeg",
+  ".mp4": "video/mp4",
+  ".webm": "video/webm",
+  ".webp": "image/webp",
+  ".pdf": "application/pdf",
+  ".txt": "text/plain",
+  ".xml": "application/xml",
+};
+
+function getMimeType(filename) {
+  const ext = path.extname(filename || "").toLowerCase();
+  return mimeTypes[ext] || "application/octet-stream";
+}
+
+function getCharset(mimeType) {
+  return ["text/html", "text/javascript", "text/css", "application/json"].includes(mimeType) ? "utf-8" : null;
+}
+
+// Local implementation of createProtocol (the ESM version can't be required from CommonJS in unbundled mode)
+function createProtocol(scheme, baseDir) {
+  const protocolDir = baseDir || __dirname;
+
+  protocol.registerBufferProtocol(scheme, (req, callback) => {
+    const reqUrl = new URL(req.url);
+
+    // Security: path must start with /
+    if (!reqUrl.pathname.startsWith("/")) {
+      return callback({ mimeType: null, charset: null, data: null });
+    }
+
+    let reqPath = path.normalize(reqUrl.pathname);
+    if (reqPath === "/" || reqPath === "\\") {
+      reqPath = "/index.html";
+    }
+
+    const reqFilename = path.basename(reqPath);
+    const fullPath = path.join(protocolDir, reqPath);
+
+    fs.readFile(fullPath, (err, data) => {
+      const mimeType = getMimeType(reqFilename);
+      if (!err) {
+        callback({
+          mimeType: mimeType,
+          charset: getCharset(mimeType),
+          data: data,
+        });
+      } else {
+        console.error("createProtocol error:", err.message, "path:", fullPath);
+        callback({ mimeType: null, charset: null, data: null });
+      }
+    });
+  });
+}
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -53,7 +119,6 @@ function createWindow() {
       nodeIntegration: true,
       contextIsolation: false,
       enableRemoteModule: true,
-      // webSecurity: false,
       webviewTag: true,
       fullscreenable: false,
     },
@@ -112,7 +177,6 @@ function createWindow() {
     // Load the index.html when not in development
     setTimeout(() => {
       win.loadURL("app://./index.html");
-      // autoUpdater.checkForUpdatesAndNotify();
     }, 0);
   }
 
@@ -125,7 +189,7 @@ function createWindow() {
     win = null;
   });
 
-  // target="_blank" external links should be opened with the browser and not the app itself (see also VersionDialog.created())
+  // target="_blank" external links should be opened with the browser and not the app itself
   win.webContents.setWindowOpenHandler(({ url }) => {
     if (url.startsWith("http:") || url.startsWith("https:")) {
       shell.openExternal(url);
@@ -135,7 +199,6 @@ function createWindow() {
 }
 
 // allows us to use local files outside "public" folder as web ressource
-// https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#loading-local-images-resources
 function registerLocalResourceProtocol() {
   protocol.handle("local-resource", async (request) => {
     let filePath = request.url.replace(/^local-resource:\/\//, "");
@@ -144,18 +207,15 @@ function registerLocalResourceProtocol() {
     filePath = decodeURI(filePath);
 
     // Fix double slashes that result from escaped backslashes in URLs
-    // "c//Data//Code" -> "c:/Data/Code"
     filePath = filePath.replace(/\/\//g, "/");
 
     // Add colon after drive letter if missing (Windows paths)
-    // "c/Data" -> "C:/Data"
     filePath = filePath.replace(/^([a-zA-Z])\//, "$1:/");
 
     // Convert forward slashes to backslashes for Windows
     filePath = filePath.replace(/\//g, "\\");
 
     try {
-      // Use pathToFileURL for proper file URL conversion on all platforms
       const fileUrl = pathToFileURL(filePath).href;
       return await net.fetch(fileUrl);
     } catch (error) {
@@ -174,39 +234,24 @@ function registerLocalResourceProtocol() {
 
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  // if (process.platform !== "darwin") {
   app.quit();
-  // }
 });
 
 app.on("activate", () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  // if (win === null) {
-  //  createWindow();
-  // }
 });
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.on("ready", async () => {
+  // Initialize @electron/remote (must be done after app is ready in Electron 39+)
+  require("@electron/remote/main").initialize();
+
   registerLocalResourceProtocol();
 
   if (isDevelopment && !process.env.IS_TEST) {
-    // Install Vue Devtools
-    // Devtools extensions are broken in Electron 6.0.0 and greater
-    // See https://github.com/nklayman/vue-cli-plugin-electron-builder/issues/378 for more info
-    // Electron will not launch with Devtools extensions installed on Windows 10 with dark mode
-    // If you are not using Windows 10 dark mode, you may uncomment these lines
-    // In addition, if the linked issue is closed, you can upgrade electron and uncomment these lines
-    // try {
-    //   await installVueDevtools();
-    // } catch (e) {
-    //   console.error("Vue Devtools failed to install:", e.toString());
-    // }
+    // Vue Devtools can be installed here if needed
   }
   createWindow();
 });

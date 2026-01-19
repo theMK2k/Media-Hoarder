@@ -1,5 +1,11 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px" scrollable>
+  <v-dialog
+    :model-value="show"
+    @update:model-value="$emit('update:show', $event)"
+    persistent
+    max-width="1000px"
+    scrollable
+  >
     <v-card style="min-height: 500px">
       <v-card-title>
         <v-row class="headline" style="width: 100%; font-size: 1.17em">
@@ -79,6 +85,8 @@ const imdbScraperTests = require("@/tests/imdb-scraper-tests");
 
 export default {
   props: ["show"],
+
+  emits: ["update:show"],
 
   data() {
     return {

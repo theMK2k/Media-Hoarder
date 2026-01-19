@@ -67,7 +67,7 @@
 
 <script>
 import * as store from "@/store";
-import { eventBus } from "@/main";
+import { eventBus } from "@/eventBus";
 
 import * as Humanize from "humanize-plus";
 
@@ -165,11 +165,11 @@ export default {
       this.fetchNumMovies();
     }
 
-    eventBus.$on("dbInitialized", () => {
+    eventBus.on("dbInitialized", () => {
       this.fetchNumMovies();
     });
 
-    eventBus.$on("rescanFinished", () => {
+    eventBus.on("rescanFinished", () => {
       this.fetchNumMovies();
     });
   },

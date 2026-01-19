@@ -1,6 +1,7 @@
 <template>
   <v-dialog
-    v-model="show"
+    :model-value="show"
+    @update:model-value="$emit('update:show', $event)"
     persistent
     max-width="100%"
     v-on:keydown.escape="onCloseClick"
@@ -181,6 +182,8 @@ const { shell } = require("@electron/remote");
 
 export default {
   props: ["show"],
+
+  emits: ["update:show"],
 
   data() {
     return {

@@ -1,5 +1,12 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onEscapePressed" scrollable>
+  <v-dialog
+    :model-value="show"
+    @update:model-value="$emit('update:show', $event)"
+    persistent
+    max-width="1000px"
+    v-on:keydown.escape="onEscapePressed"
+    scrollable
+  >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         {{ $t("AI Recommendations") }}
@@ -96,13 +103,15 @@ const { BrowserWindow } = require("@electron/remote");
 
 const helpers = require("../../helpers/helpers");
 
-import { eventBus } from "@/main";
+import { eventBus } from "@/eventBus";
 
 import CompactMovieListRow from "@/components/shared/CompactMovieListRow.vue";
 import MediaItemCard from "@/components/shared/MediaItemCard.vue";
 
 export default {
   props: ["show"],
+
+  emits: ["update:show"],
 
   components: {
     "mk-compact-movie-list-row": CompactMovieListRow,

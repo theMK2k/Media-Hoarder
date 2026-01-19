@@ -1,5 +1,4 @@
-import Vue from "vue";
-import VueI18n from "vue-i18n";
+import { createI18n } from "vue-i18n";
 
 const fs = require("fs");
 const path = require("path");
@@ -8,8 +7,6 @@ const path = require("path");
 
 const logger = require("./helpers/logger");
 const helpers = require("./helpers/helpers");
-
-Vue.use(VueI18n);
 
 function loadLocaleMessages() {
   const locales = require.context("./i18n", true, /[A-Za-z0-9-_,\s]+\.json$/i);
@@ -129,7 +126,11 @@ function validateMessages(messages) {
   });
 }
 
-export default new VueI18n({
+// vue-i18n 9 uses createI18n instead of new VueI18n
+// legacy: false enables Composition API mode, but we use legacy: true for Options API compatibility
+export default createI18n({
+  legacy: true, // Use legacy mode for Options API ($t, $tc, etc.)
+  globalInjection: true, // Enable $t in templates
   locale: process.env.VUE_APP_I18N_LOCALE || "en",
   fallbackLocale: process.env.VUE_APP_I18N_FALLBACK_LOCALE || "en",
   messages,

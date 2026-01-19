@@ -1,5 +1,12 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onCancelClick" scrollable>
+  <v-dialog
+    :model-value="show"
+    @update:model-value="$emit('update:show', $event)"
+    persistent
+    max-width="1000px"
+    v-on:keydown.escape="onCancelClick"
+    scrollable
+  >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">
@@ -44,10 +51,12 @@ import * as store from "@/store";
 // import * as helpers from "@/helpers/helpers";
 const logger = require("../../helpers/logger");
 
-import { eventBus } from "@/main";
+import { eventBus } from "@/eventBus";
 
 export default {
   props: ["show"],
+
+  emits: ["update:show"],
 
   data() {
     return {

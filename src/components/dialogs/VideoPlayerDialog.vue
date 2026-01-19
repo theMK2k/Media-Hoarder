@@ -1,5 +1,12 @@
 <template>
-  <v-dialog v-model="show" persistent fullscreen max-width="100%" v-on:keydown.escape="onCloseClick">
+  <v-dialog
+    :model-value="show"
+    @update:model-value="$emit('update:show', $event)"
+    persistent
+    fullscreen
+    max-width="100%"
+    v-on:keydown.escape="onCloseClick"
+  >
     <!--  style="min-height: 600px!important" -->
     <v-card
       dark
@@ -171,6 +178,8 @@ export default {
   },
 
   props: ["show", "src", "trailerShow", "showActualPlayer", "isLoading"],
+
+  emits: ["update:show"],
 
   data: () => ({
     controlsHovered: false,

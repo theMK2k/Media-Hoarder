@@ -19,7 +19,7 @@ const execAsync = util.promisify(child_process.exec);
 const readFileAsync = util.promisify(fs.readFile);
 
 import { asciiLogo } from "@/helpers/ascii-logo";
-import { eventBus } from "@/main";
+import { eventBus } from "@/eventBus";
 
 const logger = require("./helpers/logger");
 const db = require("./helpers/db");

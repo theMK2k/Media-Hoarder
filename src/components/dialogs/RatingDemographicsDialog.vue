@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="show" persistent v-on:keydown.escape="onCloseClick">
+  <v-dialog
+    :model-value="show"
+    @update:model-value="$emit('update:show', $event)"
+    persistent
+    v-on:keydown.escape="onCloseClick"
+  >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">
@@ -218,6 +223,8 @@ import * as store from "@/store";
 
 export default {
   props: ["show", "id_Movies", "title"],
+
+  emits: ["update:show"],
 
   data() {
     return {

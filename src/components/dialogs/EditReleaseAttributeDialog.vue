@@ -1,6 +1,7 @@
 <template>
   <v-dialog
-    v-model="show"
+    :model-value="show"
+    @update:model-value="$emit('update:show', $event)"
     persistent
     max-width="1000px"
     v-on:keydown.escape="onEscapePressed"
@@ -35,10 +36,12 @@
 // import router from "@/router"; // workaround in order to access router.app.$t
 // const logger = require("../../helpers/logger");
 
-import { eventBus } from "@/main";
+import { eventBus } from "@/eventBus";
 
 export default {
   props: ["show", "title"],
+
+  emits: ["update:show"],
 
   data() {
     return {

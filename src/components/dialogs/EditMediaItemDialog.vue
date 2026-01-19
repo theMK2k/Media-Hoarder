@@ -1,7 +1,8 @@
 <template>
   <v-dialog
     v-if="mediaItem"
-    v-model="show"
+    :model-value="show"
+    @update:model-value="$emit('update:show', $event)"
     persistent
     max-width="1000px"
     v-on:keydown.escape="onEscapePressed"
@@ -411,7 +412,7 @@ import * as _ from "lodash";
 
 import * as helpers from "@/helpers/helpers";
 import * as store from "@/store";
-import { eventBus } from "@/main";
+import { eventBus } from "@/eventBus";
 
 const { languageCodeNameMapping } = require("@/languages");
 
@@ -419,6 +420,8 @@ const { deepDiffMapper } = require("@/helpers/deep-diff-mapper");
 
 export default {
   props: ["show", "type", "caption", "mediaItem"],
+
+  emits: ["update:show"],
 
   data() {
     return {

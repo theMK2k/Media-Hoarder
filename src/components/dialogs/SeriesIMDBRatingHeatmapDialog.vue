@@ -1,5 +1,11 @@
 <template>
-  <v-dialog v-model="show" scrollable persistent v-on:keydown.escape="onCloseClick">
+  <v-dialog
+    :model-value="show"
+    @update:model-value="$emit('update:show', $event)"
+    scrollable
+    persistent
+    v-on:keydown.escape="onCloseClick"
+  >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">{{ $t("IMDB Ratings for") }} {{ title }}</div>
@@ -162,7 +168,7 @@
 </template>
 
 <script>
-import { eventBus } from "@/main";
+import { eventBus } from "@/eventBus";
 const logger = require("../../helpers/logger");
 import * as _ from "lodash";
 
@@ -177,6 +183,8 @@ export default {
   },
 
   props: ["show", "isLoading", "data", "title"],
+
+  emits: ["update:show"],
 
   data() {
     return {
@@ -285,12 +293,12 @@ export default {
     this.debouncedSetHoveredSeasonEpisode = _.debounce(this.setHoveredSeasonEpisode, 100);
 
     // Listen for last_access_at updates
-    eventBus.$on("lastAccessUpdated", this.onLastAccessUpdated);
+    eventBus.on("lastAccessUpdated", this.onLastAccessUpdated);
   },
 
   beforeDestroy() {
     // Clean up event listener
-    eventBus.$off("lastAccessUpdated", this.onLastAccessUpdated);
+    eventBus.off("lastAccessUpdated", this.onLastAccessUpdated);
   },
 };
 </script>

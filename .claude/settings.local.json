@@ -3,7 +3,17 @@
     "allow": [
       "Bash(npm audit:*)",
       "Bash(npm list:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run dev:lite:*)",
+      "Bash(npm run format:*)",
+      "Bash(find:*)",
+      "Bash(node -e \"console.log\\(typeof require\\(''electron''\\), require\\(''electron''\\)\\)\")",
+      "Bash(npm view:*)",
+      "Bash(timeout 180 npm run electron:serve:*)",
+      "Bash(timeout 90 npm run:*)",
+      "Bash(timeout 120 npm run:*)",
+      "Bash(npm search:*)"
     ]
   }
 }
