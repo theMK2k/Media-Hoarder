@@ -1,5 +1,12 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px" v-on:keydown.escape="onCancelClick" scrollable>
+  <v-dialog
+    :model-value="show"
+    @update:model-value="$emit('update:show', $event)"
+    persistent
+    max-width="1000px"
+    v-on:keydown.escape="onCancelClick"
+    scrollable
+  >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">
@@ -56,10 +63,12 @@ import * as helpers from "@/helpers/helpers";
 const logger = require("../../helpers/logger");
 const sqlString = require("sqlstring-sqlite");
 
-import { eventBus } from "@/main";
+import { eventBus } from "@/eventBus";
 
 export default {
   props: ["show", "title", "searchMode", "mediaType", "Series_id_Movies_Owner"],
+
+  emits: ["update:show"],
 
   data() {
     return {
@@ -257,22 +266,22 @@ export default {
 
   created() {
     // lodash debounced functions
-    eventBus.$on("personDialogConfirm", () => {
+    eventBus.on("personDialogConfirm", () => {
       this.onCancelClick();
     });
-    eventBus.$on("companyDialogConfirm", () => {
+    eventBus.on("companyDialogConfirm", () => {
       this.onCancelClick();
     });
-    eventBus.$on("plotKeywordDialogConfirm", () => {
+    eventBus.on("plotKeywordDialogConfirm", () => {
       this.onCancelClick();
     });
-    eventBus.$on("filmingLocationDialogConfirm", () => {
+    eventBus.on("filmingLocationDialogConfirm", () => {
       this.onCancelClick();
     });
   },
 
   beforeDestroy() {
-    eventBus.$off("personDialogConfirm");
+    eventBus.off("personDialogConfirm");
   },
 };
 </script>

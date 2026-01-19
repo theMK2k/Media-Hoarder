@@ -1,5 +1,12 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="1000px" transition="fab-transition" scrollable>
+  <v-dialog
+    :model-value="show"
+    @update:model-value="$emit('update:show', $event)"
+    persistent
+    max-width="1000px"
+    transition="fab-transition"
+    scrollable
+  >
     <v-card>
       <v-card-title>
         <v-row class="headline" style="width: 100%; font-size: 1.17em; margin-left: 0px">
@@ -123,6 +130,8 @@ import * as store from "@/store";
 
 export default {
   props: ["show"],
+
+  emits: ["update:show"],
 
   data() {
     return {

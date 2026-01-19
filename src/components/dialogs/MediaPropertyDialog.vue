@@ -1,7 +1,8 @@
 <!-- This is a generalized dialog for properties like age rating, audio format, genre etc. -->
 <template>
   <v-dialog
-    v-model="show"
+    :model-value="show"
+    @update:model-value="$emit('update:show', $event)"
     max-width="1000px"
     scrollable
     persistent
@@ -267,7 +268,7 @@ const { languageCodeNameMapping } = require("@/languages");
 
 import { scrapeIMDBPersonData } from "@/imdb-scraper";
 
-import { eventBus } from "@/main";
+import { eventBus } from "@/eventBus";
 
 import CompactMovieListRow from "@/components/shared/CompactMovieListRow.vue";
 
@@ -284,6 +285,8 @@ export default {
     "Series_Name",
     "Series_Year_Display",
   ],
+
+  emits: ["update:show"],
 
   components: {
     "mk-compact-movie-list-row": CompactMovieListRow,

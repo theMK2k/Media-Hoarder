@@ -896,7 +896,7 @@ Chart.register(
 
 const logger = require("../helpers/logger");
 
-import { eventBus } from "@/main";
+import { eventBus } from "@/eventBus";
 import * as store from "@/store";
 import SourcePath from "@/components/shared/SourcePath";
 import Dialog from "@/components/dialogs/Dialog.vue";

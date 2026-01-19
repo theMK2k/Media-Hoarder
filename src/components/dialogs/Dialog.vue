@@ -1,6 +1,7 @@
 <template>
   <v-dialog
-    v-model="show"
+    :model-value="show"
+    @update:model-value="$emit('update:show', $event)"
     persistent
     max-width="1000px"
     v-on:keydown.escape="onEscapePressed"
@@ -111,6 +112,8 @@ export default {
     "alertType",
     "additionalTextBlocks",
   ],
+
+  emits: ["update:show"],
 
   data() {
     return {

@@ -681,7 +681,7 @@ import StarRating from "vue-star-rating";
 import * as _ from "lodash";
 
 import * as store from "@/store";
-import { eventBus } from "@/main";
+import { eventBus } from "@/eventBus";
 import { scrapeIMDBTrailerMediaURLs, scrapeIMDBmainPageData } from "@/imdb-scraper";
 
 import MediaItemCard from "@/components/shared/MediaItemCard.vue";
@@ -1421,7 +1421,7 @@ export default {
       });
 
       // Notify other components that last_access_at has been updated
-      eventBus.$emit("lastAccessUpdated", { arr_id_Movies, last_access_at });
+      eventBus.emit("lastAccessUpdated", { arr_id_Movies, last_access_at });
     },
 
     copyInfo(movies) {
@@ -3118,14 +3118,14 @@ export default {
     logger.log("[created] MediaList created");
 
     // #region Register eventBus events
-    eventBus.$on("searchTextChanged", () => {
+    eventBus.on("searchTextChanged", () => {
       this.$shared.currentPage = 1;
       store.saveCurrentPage(this.specificMediaType, this.Series_id_Movies_Owner);
       this.completelyFetchMedia();
     });
 
-    eventBus.$on("refetchMedia", ({ setPage, $t, setFilter, dontLoadFiltersFromDb }) => {
-      logger.log("[MediaList] eventBus.$on(refetchMedia)");
+    eventBus.on("refetchMedia", ({ setPage, $t, setFilter, dontLoadFiltersFromDb }) => {
+      logger.log("[MediaList] eventBus.on(refetchMedia)");
       //logger.group("[Fetch Media List]");
       (async () => {
         await this.refetchMedia({ setPage, $t, setFilter, dontLoadFiltersFromDb });
@@ -3133,44 +3133,44 @@ export default {
       //logger.groupEnd();
     });
 
-    eventBus.$on("refetchFilters", async ({ setFilter, specificFilterNames }) => {
+    eventBus.on("refetchFilters", async ({ setFilter, specificFilterNames }) => {
       await store.fetchSortValues(this.specificMediaType);
       this.fetchFilters(setFilter, false, specificFilterNames);
     });
 
-    eventBus.$on("refetchSpecificFilter", async (setFilter) => {
+    eventBus.on("refetchSpecificFilter", async (setFilter) => {
       await store.fetchSortValues(this.specificMediaType);
       this.fetchFilters(setFilter, true);
     });
 
-    eventBus.$on("listDialogSetUseExistingLists", (value) => {
+    eventBus.on("listDialogSetUseExistingLists", (value) => {
       this.listDialog.useExistingLists = value;
       this.listDialog.createNewList = !value;
     });
 
-    eventBus.$on("listDialogSetCreateNewList", (value) => {
+    eventBus.on("listDialogSetCreateNewList", (value) => {
       this.listDialog.createNewList = value;
       this.listDialog.useExistingLists = !value;
     });
 
-    eventBus.$on("showPersonDialog", (value) => {
+    eventBus.on("showPersonDialog", (value) => {
       this.mpdShowPersonDialog(value);
     });
 
-    eventBus.$on("showPlotKeywordDialog", (value) => {
+    eventBus.on("showPlotKeywordDialog", (value) => {
       // this.onIMDBPlotKeywordClicked(value);
       this.mpdShowPlotKeywordDialog(value);
     });
 
-    eventBus.$on("showFilmingLocationDialog", (value) => {
+    eventBus.on("showFilmingLocationDialog", (value) => {
       this.mpdShowFilmingLocationDialog(value);
     });
 
-    eventBus.$on("showCompanyDialog", (value) => {
+    eventBus.on("showCompanyDialog", (value) => {
       this.mpdShowCompanyDialog(value);
     });
 
-    eventBus.$on("rescanFinished", ({ hasChanges }) => {
+    eventBus.on("rescanFinished", ({ hasChanges }) => {
       if (hasChanges) {
         (async () => {
           // // Reset after Rescan -> else we get fuckups with filterYears' range
@@ -3181,7 +3181,7 @@ export default {
       }
     });
 
-    eventBus.$on("openChatGPTDialog", () => {
+    eventBus.on("openChatGPTDialog", () => {
       this.openChatGPTDialog();
     });
     // #endregion
@@ -3212,15 +3212,15 @@ export default {
   beforeDestroy() {
     logger.log("[beforeDestroy] MediaList beforeDestroy START");
     this.items = [];
-    eventBus.$off("searchTextChanged");
-    eventBus.$off("refetchMedia");
-    eventBus.$off("refetchFilters");
-    eventBus.$off("listDialogSetUseExistingLists");
-    eventBus.$off("listDialogSetCreateNewList");
-    eventBus.$off("showPersonDialog");
-    eventBus.$off("showPlotKeywordDialog");
-    eventBus.$off("showFilmingLocationDialog");
-    eventBus.$off("showCompanyDialog");
+    eventBus.off("searchTextChanged");
+    eventBus.off("refetchMedia");
+    eventBus.off("refetchFilters");
+    eventBus.off("listDialogSetUseExistingLists");
+    eventBus.off("listDialogSetCreateNewList");
+    eventBus.off("showPersonDialog");
+    eventBus.off("showPlotKeywordDialog");
+    eventBus.off("showFilmingLocationDialog");
+    eventBus.off("showCompanyDialog");
   },
 };
 </script>

@@ -1,5 +1,12 @@
 <template>
-  <v-dialog v-model="show" persistent max-width="500" v-on:keydown.escape="onCloseClick" v-on:keydown.enter="onOKClick">
+  <v-dialog
+    :model-value="show"
+    @update:model-value="$emit('update:show', $event)"
+    persistent
+    max-width="500"
+    v-on:keydown.escape="onCloseClick"
+    v-on:keydown.enter="onOKClick"
+  >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">
@@ -58,6 +65,8 @@
 <script>
 export default {
   props: ["show"],
+
+  emits: ["update:show"],
 
   data() {
     return {

@@ -1,7 +1,8 @@
 <!-- This is a generalized dialog for properties like age rating, audio format, genre etc. -->
 <template>
   <v-dialog
-    v-model="show"
+    :model-value="show"
+    @update:model-value="$emit('update:show', $event)"
     persistent
     max-width="90%"
     v-on:keydown.escape="onEscapePressed"
@@ -80,6 +81,8 @@ const logger = require("../../helpers/logger");
 
 export default {
   props: ["show", "id_Scan_Processes"],
+
+  emits: ["update:show"],
 
   components: {},
 
