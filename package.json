@@ -80,7 +80,7 @@
     "vue-star-rating": "1.7.0",
     "vue-word-highlighter": "1.0.4",
     "vuedraggable": "2.24.3",
-    "vuetify": "2.5.9",
+    "vuetify": "2.6.10",
     "xml2js": "0.4.23"
   },
   "devDependencies": {
