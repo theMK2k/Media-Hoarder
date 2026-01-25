@@ -1,13 +1,13 @@
-const util = require("util");
-const path = require("path");
-const fs = require("fs");
-const requestretry = require("requestretry");
-const os = require("os");
-const filenamify = require("filenamify");
-const hash = require("string-hash-64");
-const _ = require("lodash");
+import util from "util";
+import path from "path";
+import fs from "fs";
+import requestretry from "requestretry";
+import os from "os";
+import filenamify from "filenamify";
+import hash from "string-hash-64";
+import _ from "lodash";
 
-const logger = require("./logger");
+import logger from "./logger.js";
 
 const isBuild = process.env.NODE_ENV === "production";
 const isDevelopment = !isBuild;
@@ -52,13 +52,21 @@ function getDataPath(relativePath) {
 }
 
 /**
- * get absolute path for a given relative path from APPDIR/data depending on isBuild
+ * get absolute path for a given relative path from APPDIR depending on isBuild
+ * In development: uses the project root directory
+ * In production: uses the resources directory where static files are bundled
  * @param {string} relativePath
  */
 function getStaticPath(relativePath) {
-  /* eslint-disable no-undef */
-  return path.join(isBuild ? __dirname : __static, "../", relativePath);
-  /* eslint-enable no-undef */
+  if (isDevelopment) {
+    // In development, files are at the project root
+    // process.cwd() gives us the project root when running electron-vite dev
+    return path.join(process.cwd(), relativePath);
+  } else {
+    // In production, static files are in the resources directory
+    // __dirname points to dist/main, so go up to find resources
+    return path.join(__dirname, "../../", relativePath);
+  }
 }
 
 /**

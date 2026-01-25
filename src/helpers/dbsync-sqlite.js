@@ -1,9 +1,10 @@
-const fs = require("fs");
-const sqlite3 = require("sqlite3").verbose();
-const async = require("async");
+import fs from "fs";
+import async from "async";
+import logger from "./logger.js";
+import * as definedError from "./defined-error.js";
 
-const logger = require("./logger");
-const definedError = require("./defined-error");
+// Use window.require for native CommonJS modules in Electron renderer
+const sqlite3 = window.require("sqlite3").verbose();
 
 const dryRun = false; // if true, don't actually run sqlStatements
 
