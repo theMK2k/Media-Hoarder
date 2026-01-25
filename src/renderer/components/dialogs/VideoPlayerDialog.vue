@@ -5,7 +5,6 @@
     persistent
     fullscreen
     max-width="100%"
-    v-on:keydown.escape="onCloseClick"
   >
     <!--  style="min-height: 600px!important" -->
     <v-card

@@ -86,15 +86,14 @@
           ></mk-pagination>
 
           <!-- LIST MENU -->
-          <v-menu bottom right offset-y>
-            <template v-slot:activator="{ on: menu, attrs }">
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on: tooltip }">
+          <v-menu location="bottom right" offset="4">
+            <template v-slot:activator="{ props: menuProps }">
+              <v-tooltip location="bottom">
+                <template v-slot:activator="{ props: tooltipProps }">
                   <button
                     type="button"
                     class="v-pagination__navigation"
-                    v-bind="attrs"
-                    v-on="{ ...tooltip, ...menu }"
+                    v-bind="{ ...menuProps, ...tooltipProps }"
                     style="
                       height: 38px !important;
                       width: 38px !important;
@@ -946,8 +945,8 @@ export default {
     deleteMediaDialog: {
       show: false,
       item: null,
-      Title: null,
-      Message: null,
+      Title: "placeholder",
+      Message: "placeholder",
       ItemName: null,
       loading: false,
       location: null,
@@ -1356,9 +1355,9 @@ export default {
 
         logger.log("[ensureMovieExtras] movie details:", { lists, extras });
 
-        this.$set(movie, "lists", lists);
-        this.$set(movie, "extras", extras);
-        this.$set(movie, "extrasFetched", true);
+        movie.lists = lists;
+        movie.extras = extras;
+        movie.extrasFetched = true;
       }
     },
 
@@ -1369,7 +1368,7 @@ export default {
       } else {
         await this.ensureMovieExtras(movie);
 
-        this.$set(movie, "selected", true);
+        movie.selected = true;
       }
     },
 
@@ -1413,8 +1412,8 @@ export default {
 
       this.items.forEach((mov) => {
         if (arr_id_Movies.findIndex((id_Movies) => mov.id_Movies === id_Movies) !== -1) {
-          this.$set(mov, "lastAccessMoment", this.currentTime.clone());
-          this.$set(mov, "last_access_at", last_access_at);
+          mov.lastAccessMoment = this.currentTime.clone();
+          mov.last_access_at = last_access_at;
         }
       });
 
@@ -1643,7 +1642,7 @@ export default {
 
             const { lists } = await store.getMovieDetails(this.listDialog.movie.id_Movies);
 
-            this.$set(this.listDialog.movie, "lists", lists);
+            this.listDialog.movie.lists = lists;
 
             this.listDialog.lastChosenListID = data.chosen_id_Lists;
 
@@ -2166,7 +2165,7 @@ export default {
 
     async showCredits(movie, show) {
       if (!show) {
-        this.$set(movie, "showCredits", false);
+        movie.showCredits = false;
         return;
       }
 
@@ -2175,15 +2174,15 @@ export default {
 
         logger.log("[showCredits] credits:", credits);
 
-        this.$set(movie, "credits", credits);
+        movie.credits = credits;
       }
 
-      this.$set(movie, "showCredits", true);
+      movie.showCredits = true;
     },
 
     async showCompanies(movie, show) {
       if (!show) {
-        this.$set(movie, "showCompanies", false);
+        movie.showCompanies = false;
         return;
       }
 
@@ -2192,10 +2191,10 @@ export default {
 
         logger.log("[showCompanies] companies:", companies);
 
-        this.$set(movie, "companies", companies);
+        movie.companies = companies;
       }
 
-      this.$set(movie, "showCompanies", true);
+      movie.showCompanies = true;
     },
 
     onPersonDialogClose() {
@@ -2455,16 +2454,16 @@ export default {
     },
 
     setItemHovered(item, section, value) {
-      this.$set(item, `${section}Hovered`, value);
+      item[`${section}Hovered`] = value;
     },
 
     showContentAdvisory(movie, show) {
-      this.$set(movie, "showContentAdvisory", show);
+      movie.showContentAdvisory = show;
     },
 
     async showPlotKeywords(movie, show) {
       if (!show) {
-        this.$set(movie, "showPlotKeywords", false);
+        movie.showPlotKeywords = false;
         return;
       }
 
@@ -2473,15 +2472,15 @@ export default {
 
         logger.log("[showPlotKeywords] plotKeywords:", plotKeywords);
 
-        this.$set(movie, "plotKeywords", plotKeywords);
+        movie.plotKeywords = plotKeywords;
       }
 
-      this.$set(movie, "showPlotKeywords", true);
+      movie.showPlotKeywords = true;
     },
 
     async showFilmingLocations(movie, show) {
       if (!show) {
-        this.$set(movie, "showFilmingLocations", false);
+        movie.showFilmingLocations = false;
         return;
       }
 
@@ -2490,10 +2489,10 @@ export default {
 
         logger.log("[showFilmingLocations] filmingLocations:", filmingLocations);
 
-        this.$set(movie, "filmingLocations", filmingLocations);
+        movie.filmingLocations = filmingLocations;
       }
 
-      this.$set(movie, "showFilmingLocations", true);
+      movie.showFilmingLocations = true;
     },
 
     /**

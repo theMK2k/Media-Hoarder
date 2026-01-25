@@ -3,7 +3,6 @@
     :model-value="show"
     @update:model-value="$emit('update:show', $event)"
     persistent
-    v-on:keydown.escape="onCloseClick"
   >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>

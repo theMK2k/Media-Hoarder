@@ -4,7 +4,6 @@
     @update:model-value="$emit('update:show', $event)"
     persistent
     max-width="1000px"
-    v-on:keydown.escape="onEscapePressed"
     scrollable
   >
     <v-card dark flat v-bind:ripple="false">

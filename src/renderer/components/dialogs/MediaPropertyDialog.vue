@@ -6,7 +6,6 @@
     max-width="1000px"
     scrollable
     persistent
-    v-on:keydown.escape="onEscapePressed"
     style="z-index: 300 !important"
   >
     <v-card dark flat v-bind:ripple="false">
@@ -1024,24 +1023,24 @@ export default {
       logger.log("[toggleSeriesEpisodes] mediaItem:", mediaItem);
 
       if (mediaItem.showSeriesEpisodes) {
-        this.$set(mediaItem, "showSeriesEpisodes", false);
+        mediaItem.showSeriesEpisodes = false;
         return;
       }
 
-      this.$set(mediaItem, "showSeriesEpisodes", true);
+      mediaItem.showSeriesEpisodes = true;
 
       if (mediaItem.seriesEpisodesTotal) {
         return;
       }
 
       try {
-        this.$set(mediaItem, "isLoadingSeriesEpisodes", true);
+        mediaItem.isLoadingSeriesEpisodes = true;
 
         const mediaItems = await this.fetchMediaItems("episodes", mediaItem.id_Movies);
 
-        this.$set(mediaItem, "seriesEpisodesMediaItems", mediaItems);
+        mediaItem.seriesEpisodesMediaItems = mediaItems;
 
-        this.$set(mediaItem, "seriesEpisodesCount", mediaItems.length);
+        mediaItem.seriesEpisodesCount = mediaItems.length;
 
         // get number of total episodes
         const totalEpisodes = await store.db.fireProcedureReturnScalar(
@@ -1053,12 +1052,12 @@ export default {
           }
         );
 
-        this.$set(mediaItem, "seriesEpisodesTotal", totalEpisodes);
+        mediaItem.seriesEpisodesTotal = totalEpisodes;
       } catch (error) {
         console.error(error);
         eventBus.showSnackbar("error", error);
       } finally {
-        this.$set(mediaItem, "isLoadingSeriesEpisodes", false);
+        mediaItem.isLoadingSeriesEpisodes = false;
       }
     },
 

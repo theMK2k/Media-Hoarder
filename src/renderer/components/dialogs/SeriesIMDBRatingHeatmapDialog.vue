@@ -4,7 +4,6 @@
     @update:model-value="$emit('update:show', $event)"
     scrollable
     persistent
-    v-on:keydown.escape="onCloseClick"
   >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
@@ -208,7 +207,7 @@ export default {
         Object.keys(this.data.mediaItems[season]).forEach((episode) => {
           const episodeItem = this.data.mediaItems[season][episode];
           if (arr_id_Movies.findIndex((id_Movies) => episodeItem.id_Movies === id_Movies) !== -1) {
-            this.$set(episodeItem, "last_access_at", last_access_at);
+            episodeItem.last_access_at = last_access_at;
           }
         });
       });

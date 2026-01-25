@@ -5,7 +5,6 @@
     @update:model-value="$emit('update:show', $event)"
     persistent
     max-width="90%"
-    v-on:keydown.escape="onEscapePressed"
     scrollable
     style="z-index: 300 !important"
   >
@@ -137,7 +136,7 @@ export default {
 
     toggleBoolean(item, key) {
       logger.log(`[ScanHistoryItemDialog toggleBoolean]`, { item, key });
-      this.$set(item, key, !item[key]);
+      item[key] = !item[key];
     },
 
     totalCountSubItems(item) {

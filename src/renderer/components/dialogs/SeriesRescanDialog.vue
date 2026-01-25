@@ -4,8 +4,6 @@
     @update:model-value="$emit('update:show', $event)"
     persistent
     max-width="500"
-    v-on:keydown.escape="onCloseClick"
-    v-on:keydown.enter="onOKClick"
   >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
