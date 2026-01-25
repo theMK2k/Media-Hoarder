@@ -4,7 +4,6 @@
     @update:model-value="$emit('update:show', $event)"
     persistent
     max-width="1000px"
-    v-on:keydown.escape="onCancelClick"
     scrollable
   >
     <v-card dark flat v-bind:ripple="false">
@@ -367,7 +366,7 @@ export default {
     },
 
     setItemHovered(item, section, value) {
-      this.$set(item, `${section}Hovered`, value);
+      item[`${section}Hovered`] = value;
     },
 
     onPrevClicked() {
