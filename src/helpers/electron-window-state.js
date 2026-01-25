@@ -1,11 +1,9 @@
-"use strict";
+import path from "path";
+import electron from "electron";
+import jsonfile from "jsonfile";
+import mkdirp from "mkdirp";
 
-const path = require("path");
-const electron = require("electron");
-const jsonfile = require("jsonfile");
-const mkdirp = require("mkdirp");
-
-module.exports = function (options) {
+export default function windowStateKeeper(options) {
   const app = electron.app || electron.remote.app;
   const screen = electron.screen || electron.remote.screen;
   let state;
@@ -210,4 +208,4 @@ module.exports = function (options) {
     manage,
     resetStateToDefault,
   };
-};
+}

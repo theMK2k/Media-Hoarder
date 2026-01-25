@@ -1,6 +1,7 @@
-const util = require("util");
+import util from "util";
+import loglevel from "loglevel";
 
-const logger = require("loglevel");
+const logger = loglevel;
 
 logger.group = (label) => {
   if (logger.getLevel() < 2) {
@@ -18,4 +19,4 @@ logger.inspectObject = (obj) => {
   return util.inspect(obj, { showHidden: false, depth: null, colors: true });
 };
 
-module.exports = logger;
+export default logger;
