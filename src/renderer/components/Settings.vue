@@ -1,7 +1,7 @@
 <template>
   <div style="width: 100%; margin-left: 8px">
     <h1>
-      <v-btn text v-on:click="$router.go(-1)">
+      <v-btn variant="text" v-on:click="$router.go(-1)">
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
       {{ $t("Settings") }}
@@ -44,10 +44,10 @@
             style="margin-left: 16px"
           ></v-text-field>
 
-          <v-btn v-on:click="browseMediaplayerPath()" text small color="primary" style="margin-top: 16px">{{
+          <v-btn v-on:click="browseMediaplayerPath()" variant="text" size="small" color="primary" style="margin-top: 16px">{{
             $t("Browse")
           }}</v-btn>
-          <v-btn v-on:click="showEditMediaplayerPathDialog()" text small color="primary" style="margin-top: 16px">{{
+          <v-btn v-on:click="showEditMediaplayerPathDialog()" variant="text" size="small" color="primary" style="margin-top: 16px">{{
             $t("Edit")
           }}</v-btn>
         </v-row>
@@ -74,10 +74,10 @@
             style="margin-left: 16px"
           ></v-text-field>
 
-          <v-btn v-on:click="browseMediainfoPath()" text small color="primary" style="margin-top: 16px">{{
+          <v-btn v-on:click="browseMediainfoPath()" variant="text" size="small" color="primary" style="margin-top: 16px">{{
             $t("Browse")
           }}</v-btn>
-          <v-btn v-on:click="showEditMediainfoPathDialog()" text small color="primary" style="margin-top: 16px">{{
+          <v-btn v-on:click="showEditMediainfoPathDialog()" variant="text" size="small" color="primary" style="margin-top: 16px">{{
             $t("Edit")
           }}</v-btn>
         </v-row>
@@ -150,15 +150,15 @@
           ></v-select>
         </v-row>
 
-        <v-btn text small color="primary" v-on:click="openVersionDialog">{{ $t("Show Version Info") }}</v-btn>
-        <v-btn text small color="primary" v-on:click="openCheckIMDBScraperDialog">{{ $t("Check IMDB Scraper") }}</v-btn>
-        <v-btn text small color="primary" v-on:click="openDevTools">{{ $t("Open DevTools") }}</v-btn>
+        <v-btn variant="text" size="small" color="primary" v-on:click="openVersionDialog">{{ $t("Show Version Info") }}</v-btn>
+        <v-btn variant="text" size="small" color="primary" v-on:click="openCheckIMDBScraperDialog">{{ $t("Check IMDB Scraper") }}</v-btn>
+        <v-btn variant="text" size="small" color="primary" v-on:click="openDevTools">{{ $t("Open DevTools") }}</v-btn>
       </v-tab-item>
 
       <!-- MOVIES -->
       <v-tab-item style="padding: 8px">
         <h3>{{ $t("Movies") }} - {{ $t("Source Paths") }}</h3>
-        <v-alert type="warning" colored-border border="left" v-if="moviesSourcePaths.length == 0">{{
+        <v-alert type="warning" colored-border border="start" v-if="moviesSourcePaths.length == 0">{{
           $t("no paths defined")
         }}</v-alert>
 
@@ -171,13 +171,13 @@
           ></mk-sourcepath>
         </div>
 
-        <v-btn text small color="primary" v-on:click="addSource('movies')">{{ $t("Add Source Path") }}</v-btn>
+        <v-btn variant="text" size="small" color="primary" v-on:click="addSource('movies')">{{ $t("Add Source Path") }}</v-btn>
       </v-tab-item>
 
       <!-- SERIES -->
       <v-tab-item style="padding: 8px">
         <h3>{{ $t("Series") }} - {{ $t("Source Paths") }}</h3>
-        <v-alert type="warning" colored-border border="left" v-if="tvSourcePaths.length == 0">{{
+        <v-alert type="warning" colored-border border="start" v-if="tvSourcePaths.length == 0">{{
           $t("no paths defined")
         }}</v-alert>
 
@@ -195,7 +195,7 @@
           ></mk-sourcepath>
         </div>
 
-        <v-btn text small color="primary" v-on:click="addSource('series')">{{ $t("Add Source Path") }}</v-btn>
+        <v-btn variant="text" size="small" color="primary" v-on:click="addSource('series')">{{ $t("Add Source Path") }}</v-btn>
       </v-tab-item>
 
       <!-- DUPLICATES -->
@@ -233,7 +233,7 @@
               v-bind:label="$t('relink IMDB')"
               style="margin: 0px"
               color="mk-dark-grey"
-              dense
+              density="compact"
               v-model="$shared.duplicatesHandling.actualDuplicate.relinkIMDB"
               v-on:click.native="duplicatesHandlingChanged"
             ></v-checkbox>
@@ -241,7 +241,7 @@
               v-bind:label="$t('re-use already scraped IMDB metadata')"
               style="margin: 0px"
               color="mk-dark-grey"
-              dense
+              density="compact"
               v-model="$shared.duplicatesHandling.actualDuplicate.reuseIMDBMetaData"
               v-on:click.native="duplicatesHandlingChanged"
             ></v-checkbox>
@@ -249,7 +249,7 @@
               v-bind:label="$t('add to list')"
               style="margin: 0px"
               color="mk-dark-grey"
-              dense
+              density="compact"
               v-model="$shared.duplicatesHandling.actualDuplicate.addToList"
               v-on:click.native="duplicatesHandlingChanged"
             ></v-checkbox>
@@ -257,7 +257,7 @@
               v-bind:label="$t('update primary title')"
               style="margin: 0px"
               color="mk-dark-grey"
-              dense
+              density="compact"
               v-model="$shared.duplicatesHandling.actualDuplicate.updateTitle"
               v-on:click.native="duplicatesHandlingChanged"
             ></v-checkbox>
@@ -265,7 +265,7 @@
               v-bind:label="$t('update secondary title')"
               style="margin: 0px"
               color="mk-dark-grey"
-              dense
+              density="compact"
               v-model="$shared.duplicatesHandling.actualDuplicate.updateSubTitle"
               v-on:click.native="duplicatesHandlingChanged"
             ></v-checkbox>
@@ -273,7 +273,7 @@
               v-bind:label="$t('update rating')"
               style="margin: 0px"
               color="mk-dark-grey"
-              dense
+              density="compact"
               v-model="$shared.duplicatesHandling.actualDuplicate.updateRating"
               v-on:click.native="duplicatesHandlingChanged"
             ></v-checkbox>
@@ -281,7 +281,7 @@
               v-bind:label="$t('update last access')"
               style="margin: 0px"
               color="mk-dark-grey"
-              dense
+              density="compact"
               v-model="$shared.duplicatesHandling.actualDuplicate.updateLastAccess"
               v-on:click.native="duplicatesHandlingChanged"
             ></v-checkbox>
@@ -289,7 +289,7 @@
               v-bind:label="$t('update description')"
               style="margin: 0px"
               color="mk-dark-grey"
-              dense
+              density="compact"
               v-model="$shared.duplicatesHandling.actualDuplicate.updateDescription"
               v-on:click.native="duplicatesHandlingChanged"
             ></v-checkbox>
@@ -297,7 +297,7 @@
               v-bind:label="$t('update release attributes')"
               style="margin: 0px"
               color="mk-dark-grey"
-              dense
+              density="compact"
               v-model="$shared.duplicatesHandling.actualDuplicate.updateReleaseAttributes"
               v-on:click.native="duplicatesHandlingChanged"
             ></v-checkbox>
@@ -328,7 +328,7 @@
               v-bind:label="$t('add to list')"
               style="margin: 0px"
               color="mk-dark-grey"
-              dense
+              density="compact"
               v-model="$shared.duplicatesHandling.metaDuplicate.addToList"
               v-on:click.native="duplicatesHandlingChanged"
             ></v-checkbox>
@@ -336,7 +336,7 @@
               v-bind:label="$t('update rating')"
               style="margin: 0px"
               color="mk-dark-grey"
-              dense
+              density="compact"
               v-model="$shared.duplicatesHandling.metaDuplicate.updateRating"
               v-on:click.native="duplicatesHandlingChanged"
             ></v-checkbox>
@@ -363,7 +363,7 @@
           </p>
         </v-card-text>
 
-        <v-alert type="warning" colored-border border="left" v-if="$shared.regions.length === 0">
+        <v-alert type="warning" colored-border border="start" v-if="$shared.regions.length === 0">
           <span v-if="$shared.regions.length === 0 && $shared.fallbackRegion"
             >{{
               $t("You currently don't have a region set up_ {appName} will fall back to your system's locale", {
@@ -383,20 +383,18 @@
           <div v-for="region in $shared.regions" v-bind:key="region.code">
             <v-row style="margin: 8px">
               <v-card style="width: 100%">
-                <v-list-item two-line>
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      {{ region.nameTranslated }}
-                      <v-icon class="mk-clickable-red" v-on:click="openRemoveRegionDialog(region)">mdi-delete</v-icon>
-                    </v-list-item-title>
-                  </v-list-item-content>
+                <v-list-item>
+                  <v-list-item-title>
+                    {{ region.nameTranslated }}
+                    <v-icon class="mk-clickable-red" v-on:click="openRemoveRegionDialog(region)">mdi-delete</v-icon>
+                  </v-list-item-title>
                 </v-list-item>
               </v-card>
             </v-row>
           </div>
         </div>
 
-        <v-btn text small color="primary" v-on:click="openAddRegionsDialog">{{ $t("Add Regions") }}</v-btn>
+        <v-btn variant="text" size="small" color="primary" v-on:click="openAddRegionsDialog">{{ $t("Add Regions") }}</v-btn>
       </v-tab-item>
 
       <!-- LANGUAGES -->
@@ -436,7 +434,7 @@
         <v-alert
           type="warning"
           colored-border
-          border="left"
+          border="start"
           v-if="!$shared.languagesPrimaryTitle || $shared.languagesPrimaryTitle.length === 0"
         >
           <span v-if="$shared.fallbackLanguage"
@@ -464,24 +462,22 @@
           <div v-for="language in $shared.languagesPrimaryTitle" v-bind:key="language.code">
             <v-row style="margin: 8px">
               <v-card style="width: 100%">
-                <v-list-item two-line>
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      {{ language.DisplayText }}
-                      <v-icon
-                        class="mk-clickable-red"
-                        v-on:click="openRemoveLanguageDialog(language, 'languagesPrimaryTitle')"
-                        >mdi-delete</v-icon
-                      >
-                    </v-list-item-title>
-                  </v-list-item-content>
+                <v-list-item>
+                  <v-list-item-title>
+                    {{ language.DisplayText }}
+                    <v-icon
+                      class="mk-clickable-red"
+                      v-on:click="openRemoveLanguageDialog(language, 'languagesPrimaryTitle')"
+                      >mdi-delete</v-icon
+                    >
+                  </v-list-item-title>
                 </v-list-item>
               </v-card>
             </v-row>
           </div>
         </div>
 
-        <v-btn text small color="primary" v-on:click="openAddLanguagesDialog('languagesPrimaryTitle')">{{
+        <v-btn variant="text" size="small" color="primary" v-on:click="openAddLanguagesDialog('languagesPrimaryTitle')">{{
           $t("Add Languages")
         }}</v-btn>
 
@@ -502,7 +498,7 @@
         <v-alert
           type="warning"
           colored-border
-          border="left"
+          border="start"
           v-if="!$shared.languagesAudioSubtitles || $shared.languagesAudioSubtitles.length === 0"
         >
           <span v-if="$shared.fallbackLanguage"
@@ -530,24 +526,22 @@
           <div v-for="language in $shared.languagesAudioSubtitles" v-bind:key="language.code">
             <v-row style="margin: 8px">
               <v-card style="width: 100%">
-                <v-list-item two-line>
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      {{ language.DisplayText }}
-                      <v-icon
-                        class="mk-clickable-red"
-                        v-on:click="openRemoveLanguageDialog(language, 'languagesAudioSubtitles')"
-                        >mdi-delete</v-icon
-                      >
-                    </v-list-item-title>
-                  </v-list-item-content>
+                <v-list-item>
+                  <v-list-item-title>
+                    {{ language.DisplayText }}
+                    <v-icon
+                      class="mk-clickable-red"
+                      v-on:click="openRemoveLanguageDialog(language, 'languagesAudioSubtitles')"
+                      >mdi-delete</v-icon
+                    >
+                  </v-list-item-title>
                 </v-list-item>
               </v-card>
             </v-row>
           </div>
         </div>
 
-        <v-btn text small color="primary" v-on:click="openAddLanguagesDialog('languagesAudioSubtitles')">{{
+        <v-btn variant="text" size="small" color="primary" v-on:click="openAddLanguagesDialog('languagesAudioSubtitles')">{{
           $t("Add Languages")
         }}</v-btn>
       </v-tab-item>
@@ -565,7 +559,7 @@
           </p>
         </v-card-text>
 
-        <v-alert colored-border border="left" v-if="$shared.imdbTitleTypesWhitelist.length === 0">{{
+        <v-alert colored-border border="start" v-if="$shared.imdbTitleTypesWhitelist.length === 0">{{
           $t("No title types added, this is fine_")
         }}</v-alert>
 
@@ -577,7 +571,7 @@
           v-on:removeTitleType="openRemoveTitleTypeDialog"
         ></mk-title-type>
 
-        <v-btn text small color="primary" v-on:click="openAddTitleTypeDialog" style="margin-top: 16px">{{
+        <v-btn variant="text" size="small" color="primary" v-on:click="openAddTitleTypeDialog" style="margin-top: 16px">{{
           $t("Add Title Type")
         }}</v-btn>
       </v-tab-item>
@@ -633,7 +627,7 @@
           </template>
           <!-- <template v-slot:item.actions="{ item }"> </template> -->
         </v-data-table>
-        <v-btn v-on:click="onAddReleaseAttribute()" text small color="primary" style="margin-top: 16px">{{
+        <v-btn v-on:click="onAddReleaseAttribute()" variant="text" size="small" color="primary" style="margin-top: 16px">{{
           $t("Add")
         }}</v-btn>
       </v-tab-item>
@@ -642,7 +636,7 @@
       <v-tab-item style="padding: 8px">
         <div style="display: flex">
           <v-spacer></v-spacer>
-          <v-btn text v-on:click="loadScanProcesses" style="margin-right: 8px">
+          <v-btn variant="text" v-on:click="loadScanProcesses" style="margin-right: 8px">
             <v-icon>mdi-refresh</v-icon>
             {{ $t("Reload") }}
           </v-btn>

@@ -20,8 +20,8 @@
             : propertyValueDisplayText
         }}
         <v-tooltip v-if="propertyTypeKey == 'person' && isTitleHovered" bottom>
-          <template v-slot:activator="{ on }">
-            <span v-on="on">
+          <template v-slot:activator="{ props }">
+            <span v-bind="props">
               <v-icon
                 class="mk-clickable"
                 v-on:click.stop="scrapeData()"
@@ -132,9 +132,9 @@
                         transition="scale-transition"
                         origin="top left"
                       >
-                        <template v-slot:activator="{ on }">
+                        <template v-slot:activator="{ props }">
                           <mk-compact-movie-list-row
-                            v-on="on"
+                            v-bind="props"
                             v-on:click="onShowMediaItemDetails(mediaItem)"
                             v-bind:movie="mediaItem"
                             v-bind:isClickable="true"
@@ -186,9 +186,9 @@
                             transition="scale-transition"
                             origin="top left"
                           >
-                            <template v-slot:activator="{ on }">
+                            <template v-slot:activator="{ props }">
                               <mk-compact-movie-list-row
-                                v-on="on"
+                                v-bind="props"
                                 v-on:click="onShowMediaItemDetails(episode)"
                                 v-bind:movie="episode"
                                 v-bind:isClickable="true"

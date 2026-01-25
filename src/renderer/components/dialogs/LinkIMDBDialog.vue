@@ -14,9 +14,9 @@
             {{ $t("Link with IMDB entry") }}
             <v-spacer />
             <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <span v-on="on">
-                  <v-btn v-if="showUnlink" text color="error" v-on:click.stop="onUnlinkClick()">{{
+              <template v-slot:activator="{ props }">
+                <span v-bind="props">
+                  <v-btn v-if="showUnlink" variant="text" color="error" v-on:click.stop="onUnlinkClick()">{{
                     $t("UNLINK")
                   }}</v-btn>
                 </span>
@@ -37,7 +37,7 @@
             v-on:keydown.enter="onSearchClick"
           ></v-text-field>
 
-          <v-btn text v-bind:loading="isLoading" v-on:click.native="onSearchClick">{{ $t("Search") }}</v-btn>
+          <v-btn variant="text" v-bind:loading="isLoading" v-on:click.native="onSearchClick">{{ $t("Search") }}</v-btn>
         </v-row>
 
         <!--
@@ -63,7 +63,7 @@
       -->
 
         <!-- <v-row style="margin-bottom: 16px">
-          <v-btn text v-bind:loading="isLoading" v-on:click.native="onSearchClick">{{ $t("Search") }}</v-btn>
+          <v-btn variant="text" v-bind:loading="isLoading" v-on:click.native="onSearchClick">{{ $t("Search") }}</v-btn>
         </v-row> -->
       </v-card-title>
 
@@ -76,12 +76,12 @@
             v-if="Math.ceil(searchResults.length / searchResultsPerPage) > 1"
             style="margin-bottom: 24px; color: white"
           >
-            <v-btn small v-bind:disabled="currentPage == 1" v-on:click="onPrevClicked" style="margin-right: 16px"
+            <v-btn size="small" v-bind:disabled="currentPage == 1" v-on:click="onPrevClicked" style="margin-right: 16px"
               >&lt;</v-btn
             >
             {{ currentPage }} / {{ Math.ceil(searchResults.length / searchResultsPerPage) }}
             <v-btn
-              small
+              size="small"
               v-bind:disabled="currentPage >= Math.ceil(searchResults.length / searchResultsPerPage)"
               v-on:click="onNextClicked"
               style="margin-left: 16px"
@@ -100,7 +100,7 @@
                 v-on:mouseover="setItemHovered(item, 'item', true)"
                 v-on:mouseleave="setItemHovered(item, 'item', false)"
               >
-                <v-list-item three-line style="padding-left: 0px">
+                <v-list-item style="padding-left: 0px">
                   <div>
                     <v-list-item-avatar tile style="margin: 6px; height: 100px; width: 80px">
                       <v-img contain v-if="item.imageURL" v-bind:src="item.imageURL" style="border-radius: 6px"></v-img>
@@ -128,7 +128,7 @@
                       <v-row style="margin-top: 8px">
                         <v-btn
                           v-show="item.itemHovered || isLinking"
-                          text
+                          variant="text"
                           color="primary"
                           v-bind:loading="isLinking"
                           v-on:click.stop="onSelectClick(item)"
@@ -147,12 +147,12 @@
             v-if="Math.ceil(searchResults.length / searchResultsPerPage) > 1"
             style="margin-top: 16px; margin-bottom: 24px; color: white"
           >
-            <v-btn small v-bind:disabled="currentPage == 1" v-on:click="onPrevClicked" style="margin-right: 16px"
+            <v-btn size="small" v-bind:disabled="currentPage == 1" v-on:click="onPrevClicked" style="margin-right: 16px"
               >&lt;</v-btn
             >
             {{ currentPage }} / {{ Math.ceil(searchResults.length / searchResultsPerPage) }}
             <v-btn
-              small
+              size="small"
               v-bind:disabled="currentPage >= Math.ceil(searchResults.length / searchResultsPerPage)"
               v-on:click="onNextClicked"
               style="margin-left: 16px"

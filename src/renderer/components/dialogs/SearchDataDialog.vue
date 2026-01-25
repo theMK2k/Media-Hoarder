@@ -24,7 +24,7 @@
             v-on:keydown.enter="runSearch"
             style="padding-top: 0px; margin-left: 12px"
           ></v-text-field>
-          <v-btn text v-on:click="runSearch">{{ $t("Search") }}</v-btn>
+          <v-btn variant="text" v-on:click="runSearch">{{ $t("Search") }}</v-btn>
         </v-row>
       </v-card-title>
       <v-card-text>

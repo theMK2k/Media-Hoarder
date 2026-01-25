@@ -22,51 +22,46 @@
           {{ $t("Start Conversation") }}
         </v-btn>
 
-        <v-list-item three-line style="padding-left: 0px; align-items: flex-start">
-          <v-list-item-content class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
-            <div>
-              <v-row v-if="numMovies !== null" class="mk-compact-movie-list-title">
-                {{ $t("Result") + ": " + numMovies + " " + $t(numMovies === 1 ? "movie" : "movies") }}
-              </v-row>
-              <div class="mk-clickable-white">
-                <div v-for="(movieItem, index) in movies" v-bind:key="index">
-                  <!-- <mk-compact-movie-list-row v-bind:movie="movieItem" /> -->
-                  <div>
-                    <v-menu
-                      v-model="movieItem.showDetails"
-                      v-bind:close-on-click="false"
-                      v-bind:close-on-content-click="false"
-                      bottom
-                      right
-                      transition="scale-transition"
-                      origin="top left"
-                    >
-                      <template v-slot:activator="{ on }">
-                        <mk-compact-movie-list-row
-                          v-on="on"
-                          v-on:click="onShowMediaItemDetails(movieItem)"
-                          v-bind:movie="movieItem"
-                          v-bind:isClickable="true"
-                        />
-                      </template>
-                      <v-card>
-                        <v-list-item three-line style="padding-left: 0px; padding-right: 0px">
-                          <mk-media-item-card
-                            v-bind:mediaItem="movieItem"
-                            v-bind:isScanning="false"
-                            v-bind:isInDialog="true"
-                            v-bind:showCloseButton="true"
-                            v-on:close="movieItem.showDetails = false"
-                            v-on:mediaItemEvent="onMICmediaItemEvent"
-                          ></mk-media-item-card>
-                        </v-list-item>
-                      </v-card>
-                    </v-menu>
-                  </div>
-                </div>
+        <v-list-item style="padding-left: 0px; align-items: flex-start">
+          <div class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
+            <v-row v-if="numMovies !== null" class="mk-compact-movie-list-title">
+              {{ $t("Result") + ": " + numMovies + " " + $t(numMovies === 1 ? "movie" : "movies") }}
+            </v-row>
+            <div class="mk-clickable-white">
+              <div v-for="(movieItem, index) in movies" v-bind:key="index">
+                <v-menu
+                  v-model="movieItem.showDetails"
+                  v-bind:close-on-click="false"
+                  v-bind:close-on-content-click="false"
+                  bottom
+                  right
+                  transition="scale-transition"
+                  origin="top left"
+                >
+                  <template v-slot:activator="{ props }">
+                    <mk-compact-movie-list-row
+                      v-bind="props"
+                      v-on:click="onShowMediaItemDetails(movieItem)"
+                      v-bind:movie="movieItem"
+                      v-bind:isClickable="true"
+                    />
+                  </template>
+                  <v-card>
+                    <v-list-item style="padding-left: 0px; padding-right: 0px">
+                      <mk-media-item-card
+                        v-bind:mediaItem="movieItem"
+                        v-bind:isScanning="false"
+                        v-bind:isInDialog="true"
+                        v-bind:showCloseButton="true"
+                        v-on:close="movieItem.showDetails = false"
+                        v-on:mediaItemEvent="onMICmediaItemEvent"
+                      ></mk-media-item-card>
+                    </v-list-item>
+                  </v-card>
+                </v-menu>
               </div>
             </div>
-          </v-list-item-content>
+          </div>
         </v-list-item>
       </v-card-text>
 

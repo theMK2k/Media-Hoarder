@@ -12,10 +12,10 @@
           {{ $t("IMDB Scraper Check") }}
           <v-spacer></v-spacer>
 
-          <v-btn text v-on:click="onRunChecksPressed" v-bind:loading="isRunning" v-if="!settings">{{
+          <v-btn variant="text" v-on:click="onRunChecksPressed" v-bind:loading="isRunning" v-if="!settings">{{
             $t("Run Checks")
           }}</v-btn>
-          <v-btn text v-if="!settings" v-bind:disabled="isRunning" v-on:click="$emit('close')">{{ $t("Close") }}</v-btn>
+          <v-btn variant="text" v-if="!settings" v-bind:disabled="isRunning" v-on:click="$emit('close')">{{ $t("Close") }}</v-btn>
         </v-row>
       </v-card-title>
 
@@ -31,7 +31,7 @@
           <v-btn
             class="ma-2"
             v-bind:ripple="false"
-            text
+            variant="text"
             v-bind:loading="check.isRunning"
             icon
             v-bind:color="check.color || 'blue lighten-2'"
@@ -48,24 +48,24 @@
         </v-row>
 
         <div v-if="!isRunning" style="margin-left: -14px">
-          <v-alert type="success" colored-border border="left" v-if="checkResult === 0">{{
+          <v-alert type="success" colored-border border="start" v-if="checkResult === 0">{{
             $t("All checks successful!")
           }}</v-alert>
-          <v-alert type="warning" colored-border border="left" v-if="checkResult === 1">{{
+          <v-alert type="warning" colored-border border="start" v-if="checkResult === 1">{{
             $t("Checks with warning detected!")
           }}</v-alert>
-          <v-alert type="error" colored-border border="left" v-if="checkResult === 2">{{
+          <v-alert type="error" colored-border border="start" v-if="checkResult === 2">{{
             $t("Checks with error detected!")
           }}</v-alert>
-          <v-alert type="error" colored-border border="left" v-if="checkResult === 3">{{
+          <v-alert type="error" colored-border border="start" v-if="checkResult === 3">{{
             $t("Checks with exceptions detected!")
           }}</v-alert>
         </div>
       </v-card-text>
 
       <v-card-actions v-if="settings && !isRunning">
-        <v-btn text v-on:click="$emit('close')">{{ $t("Cancel") }}</v-btn>
-        <v-btn text v-on:click="$emit('ok')">{{ okButtonText }}</v-btn>
+        <v-btn variant="text" v-on:click="$emit('close')">{{ $t("Cancel") }}</v-btn>
+        <v-btn variant="text" v-on:click="$emit('ok')">{{ okButtonText }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

@@ -75,13 +75,13 @@
                 transition="scale-transition"
                 origin="top left"
               >
-                <template v-slot:activator="{ on }">
+                <template v-slot:activator="{ props }">
                   <v-btn
                     color="primary"
                     text
                     small
                     style="margin-left: 12px; margin-right: 4px; margin-bottom: 4px; margin-top: 8px"
-                    v-on="on"
+                    v-bind="props"
                     v-on:click="onShowAddVideoQualityDialog"
                     >{{ $t("Add") }}</v-btn
                   >
@@ -139,13 +139,13 @@
                 transition="scale-transition"
                 origin="top left"
               >
-                <template v-slot:activator="{ on }">
+                <template v-slot:activator="{ props }">
                   <v-btn
                     color="primary"
                     text
                     small
                     style="margin-left: 12px; margin-right: 4px; margin-bottom: 4px; margin-top: 8px"
-                    v-on="on"
+                    v-bind="props"
                     v-on:click="onShowAddAudioLanguageDialog"
                     >{{ $t("Add") }}</v-btn
                   >
@@ -208,13 +208,13 @@
                 transition="scale-transition"
                 origin="top left"
               >
-                <template v-slot:activator="{ on }">
+                <template v-slot:activator="{ props }">
                   <v-btn
                     color="primary"
                     text
                     small
                     style="margin-left: 12px; margin-right: 4px; margin-bottom: 4px; margin-top: 8px"
-                    v-on="on"
+                    v-bind="props"
                     v-on:click="onShowAddSubtitleLanguageDialog"
                     >{{ $t("Add") }}</v-btn
                   >
@@ -276,13 +276,13 @@
               transition="scale-transition"
               origin="top left"
             >
-              <template v-slot:activator="{ on }">
+              <template v-slot:activator="{ props }">
                 <v-btn
                   color="primary"
                   text
                   small
                   style="margin-left: 12px; margin-right: 4px; margin-bottom: 4px; margin-top: 8px"
-                  v-on="on"
+                  v-bind="props"
                   v-on:click="onShowAddGenreDialog"
                   >{{ $t("Add") }}</v-btn
                 >
@@ -341,13 +341,13 @@
               transition="scale-transition"
               origin="top left"
             >
-              <template v-slot:activator="{ on }">
+              <template v-slot:activator="{ props }">
                 <v-btn
                   color="primary"
                   text
                   small
                   style="margin-left: 12px; margin-right: 4px; margin-bottom: 4px; margin-top: 8px"
-                  v-on="on"
+                  v-bind="props"
                   v-on:click="onShowAddReleaseAttributeDialog"
                   >{{ $t("Add") }}</v-btn
                 >
