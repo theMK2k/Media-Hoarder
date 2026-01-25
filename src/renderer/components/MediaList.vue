@@ -16,9 +16,9 @@
     >
       <!-- Button: "<-" (go back) -->
       <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <span v-on="on">
-            <v-btn text v-on:click="$router.go(-1)" style="padding: 0px; margin-top: 6px; margin-left: 8px">
+        <template v-slot:activator="{ props }">
+          <span v-bind="props">
+            <v-btn variant="text" v-on:click="$router.go(-1)" style="padding: 0px; margin-top: 6px; margin-left: 8px">
               <v-icon>mdi-arrow-left</v-icon>
             </v-btn>
           </span>
@@ -28,9 +28,9 @@
 
       <!-- Button: "Reload List" -->
       <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <span v-on="on">
-            <v-btn text v-on:click="onReload" style="padding: 0px; margin-top: 6px; margin-left: 8px">
+        <template v-slot:activator="{ props }">
+          <span v-bind="props">
+            <v-btn variant="text" v-on:click="onReload" style="padding: 0px; margin-top: 6px; margin-left: 8px">
               <v-icon>mdi-reload</v-icon>
             </v-btn>
           </span>
@@ -43,8 +43,8 @@
         <h1 style="margin-bottom: 0px; margin-top: 0px; margin-left: 9px">
           {{ $t(mediatype.toUpperCase()) }} ({{ itemsFiltered.length.toLocaleString($shared.uiLanguage) }})
           <v-tooltip bottom v-if="filtersList.length > 0">
-            <template v-slot:activator="{ on }">
-              <span v-on="on">*</span>
+            <template v-slot:activator="{ props }">
+              <span v-bind="props">*</span>
             </template>
             <span>
               {{ $t("Applied Filters") }}:
@@ -114,8 +114,8 @@
                 {{ $t("Rescan Meta Data") }}
               </v-list-item> -->
               <v-tooltip left v-bind:disabled="!isScanning">
-                <template v-slot:activator="{ on }">
-                  <span v-on="on">
+                <template v-slot:activator="{ props }">
+                  <span v-bind="props">
                     <v-list-item v-bind:disabled="isScanning" v-on:click="onRescanMetaDataListClick">
                       {{ $t("Rescan Meta Data") }}
                     </v-list-item>
@@ -294,8 +294,8 @@
                   {{ $t("Rescan Meta Data") }}
                 </v-list-item> -->
                 <v-tooltip left v-bind:disabled="!isScanning">
-                  <template v-slot:activator="{ on }">
-                    <span v-on="on">
+                  <template v-slot:activator="{ props }">
+                    <span v-bind="props">
                       <v-list-item v-bind:disabled="isScanning" v-on:click="rescanCurrentListDialog.show = true">
                         {{ $t("Rescan Meta Data") }}
                       </v-list-item>

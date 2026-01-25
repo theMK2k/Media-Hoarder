@@ -1,45 +1,41 @@
 <template>
   <v-app>
     <!-- SIDEBAR -->
-    <v-navigation-drawer v-model="$shared.sidenav" app clipped style="z-index: 20" v-bind:width="320">
+    <v-navigation-drawer v-model="$shared.sidenav" style="z-index: 20" v-bind:width="320">
       <!-- SIDEBAR OVERLAY -->
-      <v-overlay style="z-index: 1000" v-bind:value="showSidebarLoadingOverlay">
+      <v-overlay style="z-index: 1000" v-model="showSidebarLoadingOverlay">
         <div style="text-align: center">
           <v-progress-circular indeterminate color="red" size="70" width="7"></v-progress-circular>
         </div>
       </v-overlay>
 
-      <v-list dense>
+      <v-list density="compact">
         <v-list-item v-on:click="onRescan" v-bind:disabled="store.doAbortRescan">
-          <v-list-item-action>
+          <template v-slot:prepend>
             <v-icon v-show="!isScanning">mdi-reload-alert</v-icon>
             <v-icon v-show="isScanning">mdi-cancel</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title v-show="!isScanning">{{ $t("Scan Media") }}</v-list-item-title>
-            <v-list-item-title v-show="isScanning && !store.doAbortRescan">{{ $t("Cancel Scan") }}</v-list-item-title>
-            <v-list-item-title v-show="isScanning && store.doAbortRescan">{{ $t("Cancelling___") }}</v-list-item-title>
-          </v-list-item-content>
+          </template>
+          <v-list-item-title v-show="!isScanning">{{ $t("Scan Media") }}</v-list-item-title>
+          <v-list-item-title v-show="isScanning && !store.doAbortRescan">{{ $t("Cancel Scan") }}</v-list-item-title>
+          <v-list-item-title v-show="isScanning && store.doAbortRescan">{{ $t("Cancelling___") }}</v-list-item-title>
         </v-list-item>
 
         <v-divider></v-divider>
 
         <!-- Home -->
         <v-list-item v-bind:to="'/'">
-          <v-list-item-action>
+          <template v-slot:prepend>
             <v-icon>mdi-home</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>{{ $t("Home") }}</v-list-item-title>
-          </v-list-item-content>
+          </template>
+          <v-list-item-title>{{ $t("Home") }}</v-list-item-title>
         </v-list-item>
 
         <v-divider></v-divider>
 
         <v-list-item v-bind:to="'/settings'">
-          <v-list-item-action>
+          <template v-slot:prepend>
             <v-icon>mdi-settings</v-icon>
-          </v-list-item-action>
+          </template>
           <v-list-item-title style="height: 18px">{{ $t("Settings") }}</v-list-item-title>
         </v-list-item>
 
@@ -52,19 +48,17 @@
           :key="appSection.text"
           v-on:click="navigateTo(appSection.id)"
         >
-          <v-list-item-action>
+          <template v-slot:prepend>
             <v-icon>{{ appSection.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>{{ $t(`${appSection.text}`) }}</v-list-item-title>
-          </v-list-item-content>
+          </template>
+          <v-list-item-title>{{ $t(`${appSection.text}`) }}</v-list-item-title>
         </v-list-item>
 
         <!-- Filters -->
         <div v-show="currentRoute && currentRoute.name === 'medialist'">
           <v-divider></v-divider>
 
-          <v-subheader
+          <v-list-subheader
             style="margin: 0px !important; font-size: 16px"
             v-on:mouseover="filterHeaderHovered = true"
             v-on:mouseleave="filterHeaderHovered = false"
@@ -72,35 +66,35 @@
             {{ $t("Filters") }}
             <v-spacer></v-spacer>
             <v-tooltip v-if="!editFilters.isEditFilters" bottom>
-              <template v-slot:activator="{ on }">
-                <span v-on="on">
-                  <v-btn text v-on:click="onResetFilters"><v-icon>mdi-restore</v-icon></v-btn>
+              <template v-slot:activator="{ props }">
+                <span v-bind="props">
+                  <v-btn variant="text" v-on:click="onResetFilters"><v-icon>mdi-restore</v-icon></v-btn>
                 </span>
               </template>
               <span>{{ $t("Reset Filters") }}</span>
             </v-tooltip>
             <v-tooltip v-if="!editFilters.isEditFilters" bottom>
-              <template v-slot:activator="{ on }">
-                <span v-on="on">
-                  <v-btn text v-on:click="onEditFilters"><v-icon>mdi-pencil</v-icon></v-btn>
+              <template v-slot:activator="{ props }">
+                <span v-bind="props">
+                  <v-btn variant="text" v-on:click="onEditFilters"><v-icon>mdi-pencil</v-icon></v-btn>
                 </span>
               </template>
               <span>{{ $t("Edit Filters") }}</span>
             </v-tooltip>
             <v-tooltip v-if="!editFilters.isEditFilters" bottom>
-              <template v-slot:activator="{ on }">
-                <span v-on="on">
-                  <v-btn text v-on:click="onOpenChatGPTDialog"><v-icon>mdi-robot</v-icon></v-btn>
+              <template v-slot:activator="{ props }">
+                <span v-bind="props">
+                  <v-btn variant="text" v-on:click="onOpenChatGPTDialog"><v-icon>mdi-robot</v-icon></v-btn>
                 </span>
               </template>
               <span>{{ $t("Let an AI recommend some movies") }}</span>
             </v-tooltip>
 
-            <v-btn v-if="editFilters.isEditFilters" text color="primary" v-on:click="onEditFiltersOK">{{
+            <v-btn v-if="editFilters.isEditFilters" variant="text" color="primary" v-on:click="onEditFiltersOK">{{
               $t("OK")
             }}</v-btn>
-            <v-btn v-if="editFilters.isEditFilters" text v-on:click="onEditFiltersCancel">{{ $t("Cancel") }}</v-btn>
-          </v-subheader>
+            <v-btn v-if="editFilters.isEditFilters" variant="text" v-on:click="onEditFiltersCancel">{{ $t("Cancel") }}</v-btn>
+          </v-list-subheader>
           <div v-if="!$shared.isLoadingFilter" style="height: 3px; width: 100%"></div>
           <v-progress-linear
             v-if="$shared.isLoadingFilter"
@@ -125,7 +119,7 @@
                     $shared.loadingFilter === 'filterSourcePaths'
                   "
                 >
-                  <v-expansion-panel-header style="padding: 8px !important">
+                  <v-expansion-panel-title style="padding: 8px !important">
                     <div
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
@@ -167,22 +161,22 @@
                         $expand
                       </v-icon>
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
                       </v-tooltip>
                     </template>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -199,9 +193,9 @@
                         }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterSourcePaths(false)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterSourcePaths(false)">
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -209,9 +203,9 @@
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterSourcePaths(true)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterSourcePaths(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -229,7 +223,7 @@
                       v-on:mousedown="filterCheckboxMousedown('filterSourcePaths', sourcePath, setAllFilterSourcePaths)"
                       color="mk-dark-grey"
                     ></v-checkbox>
-                  </v-expansion-panel-content>
+                  </v-expansion-panel-text>
                 </v-expansion-panel>
 
                 <!-- FILTER VIDEO QUALITIES -->
@@ -240,7 +234,7 @@
                   style="padding: 0px !important; width: 316px"
                   xxx-v-bind:disabled="$shared.loadingFilter === 'filterQualities'"
                 >
-                  <v-expansion-panel-header style="padding: 8px !important">
+                  <v-expansion-panel-title style="padding: 8px !important">
                     <div
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
@@ -282,22 +276,22 @@
                         $expand
                       </v-icon>
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
                       </v-tooltip>
                     </template>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -314,9 +308,9 @@
                         }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterQualities(false)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterQualities(false)">
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -324,9 +318,9 @@
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterQualities(true)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterQualities(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -344,7 +338,7 @@
                       v-on:mousedown="filterCheckboxMousedown('filterQualities', quality, setAllFilterQualities)"
                       color="mk-dark-grey"
                     ></v-checkbox>
-                  </v-expansion-panel-content>
+                  </v-expansion-panel-text>
                 </v-expansion-panel>
 
                 <!-- FILTER AUDIO LANGUAGES -->
@@ -357,7 +351,7 @@
                     $shared.loadingFilter === 'filterAudioLanguages'
                   "
                 >
-                  <v-expansion-panel-header style="padding: 8px !important">
+                  <v-expansion-panel-title style="padding: 8px !important">
                     <div
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
@@ -400,22 +394,22 @@
                         $expand
                       </v-icon>
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
                       </v-tooltip>
                     </template>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -432,9 +426,9 @@
                         }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterAudioLanguages(false)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterAudioLanguages(false)">
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -442,9 +436,9 @@
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterAudioLanguages(true)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterAudioLanguages(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -471,7 +465,7 @@
                       "
                       color="mk-dark-grey"
                     ></v-checkbox>
-                  </v-expansion-panel-content>
+                  </v-expansion-panel-text>
                 </v-expansion-panel>
 
                 <!-- FILTER SUBTITLE LANGUAGES -->
@@ -484,7 +478,7 @@
                     $shared.loadingFilter === 'filterSubtitleLanguages'
                   "
                 >
-                  <v-expansion-panel-header style="padding: 8px !important">
+                  <v-expansion-panel-title style="padding: 8px !important">
                     <div
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
@@ -527,22 +521,22 @@
                         $expand
                       </v-icon>
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
                       </v-tooltip>
                     </template>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -559,9 +553,9 @@
                         }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterSubtitleLanguages(false)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterSubtitleLanguages(false)">
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -569,9 +563,9 @@
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterSubtitleLanguages(true)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterSubtitleLanguages(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -602,7 +596,7 @@
                       "
                       color="mk-dark-grey"
                     ></v-checkbox>
-                  </v-expansion-panel-content>
+                  </v-expansion-panel-text>
                 </v-expansion-panel>
 
                 <!-- FILTER RELEASE ATTRIBUTES -->
@@ -615,7 +609,7 @@
                     $shared.loadingFilter === 'filterReleaseAttributes'
                   "
                 >
-                  <v-expansion-panel-header style="padding: 8px !important">
+                  <v-expansion-panel-title style="padding: 8px !important">
                     <div
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
@@ -659,22 +653,22 @@
                         $expand
                       </v-icon>
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
                       </v-tooltip>
                     </template>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -691,9 +685,9 @@
                         }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterReleaseAttributes(false)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterReleaseAttributes(false)">
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -701,9 +695,9 @@
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterReleaseAttributes(true)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterReleaseAttributes(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -744,7 +738,7 @@
                       "
                       color="mk-dark-grey"
                     ></v-checkbox>
-                  </v-expansion-panel-content>
+                  </v-expansion-panel-text>
                 </v-expansion-panel>
 
                 <!-- FILTER LISTS -->
@@ -755,7 +749,7 @@
                   style="padding: 0px !important; width: 316px"
                   xxx-v-bind:disabled="$shared.loadingFilter === 'filterLists'"
                 >
-                  <v-expansion-panel-header style="padding: 8px !important">
+                  <v-expansion-panel-title style="padding: 8px !important">
                     <div
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
@@ -797,22 +791,22 @@
                         $expand
                       </v-icon>
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
                       </v-tooltip>
                     </template>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -829,9 +823,9 @@
                         }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterLists(false)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterLists(false)">
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -839,9 +833,9 @@
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterLists(true)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterLists(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -875,7 +869,7 @@
                         >mdi-delete</v-icon
                       >
                     </v-row>
-                  </v-expansion-panel-content>
+                  </v-expansion-panel-text>
                 </v-expansion-panel>
 
                 <!-- FILTER MY RATINGS -->
@@ -886,7 +880,7 @@
                   style="padding: 0px !important; width: 316px"
                   xxx-v-bind:disabled="$shared.loadingFilter === 'filterRatings'"
                 >
-                  <v-expansion-panel-header style="padding: 8px !important">
+                  <v-expansion-panel-title style="padding: 8px !important">
                     <div
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
@@ -928,23 +922,23 @@
                         $expand
                       </v-icon>
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
                       </v-tooltip>
                     </template>
-                  </v-expansion-panel-header>
+                  </v-expansion-panel-title>
                   <!--  {{ filterRatingsTitle }} -->
-                  <v-expansion-panel-content>
+                  <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterRatings(false)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterRatings(false)">
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -952,9 +946,9 @@
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterRatings(true)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterRatings(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -980,7 +974,7 @@
                         >mdi-star</v-icon
                       >
                     </v-checkbox>
-                  </v-expansion-panel-content>
+                  </v-expansion-panel-text>
                 </v-expansion-panel>
 
                 <!-- FILTER Metacritic Score -->
@@ -993,7 +987,7 @@
                     $shared.loadingFilter === 'filterMetacriticScore'
                   "
                 >
-                  <v-expansion-panel-header style="padding: 8px !important">
+                  <v-expansion-panel-title style="padding: 8px !important">
                     <div
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
@@ -1036,16 +1030,16 @@
                         $expand
                       </v-icon>
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
                       </v-tooltip>
                     </template>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
                     <v-range-slider
                       v-model="$shared.filters.filterMetacriticScore"
                       :max="100"
@@ -1064,7 +1058,7 @@
                       style="margin: 0px"
                       color="mk-dark-grey"
                     ></v-checkbox>
-                  </v-expansion-panel-content>
+                  </v-expansion-panel-text>
                 </v-expansion-panel>
 
                 <!-- FILTER IMDB Ratings -->
@@ -1077,7 +1071,7 @@
                     $shared.loadingFilter === 'filterIMDBRatings'
                   "
                 >
-                  <v-expansion-panel-header style="padding: 8px !important">
+                  <v-expansion-panel-title style="padding: 8px !important">
                     <div
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
@@ -1119,16 +1113,16 @@
                         $expand
                       </v-icon>
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
                       </v-tooltip>
                     </template>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
                     <v-range-slider
                       v-model="$shared.filters.filterIMDBRating"
                       :max="10"
@@ -1152,7 +1146,7 @@
                       style="margin: 0px"
                       color="mk-dark-grey"
                     ></v-checkbox>
-                  </v-expansion-panel-content>
+                  </v-expansion-panel-text>
                 </v-expansion-panel>
 
                 <!-- FILTER IMDB Number of Votes -->
@@ -1166,7 +1160,7 @@
                     $shared.loadingFilter === 'filterIMDBRatings'
                   "
                 >
-                  <v-expansion-panel-header style="padding: 8px !important">
+                  <v-expansion-panel-title style="padding: 8px !important">
                     <div
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
@@ -1208,16 +1202,16 @@
                         $expand
                       </v-icon>
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
                       </v-tooltip>
                     </template>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
                     <v-range-slider
                       v-model="$shared.filters.filterIMDBRating"
                       :max="10"
@@ -1241,7 +1235,7 @@
                       style="margin: 0px"
                       color="mk-dark-grey"
                     ></v-checkbox>
-                  </v-expansion-panel-content>
+                  </v-expansion-panel-text>
                 </v-expansion-panel>
                 -->
 
@@ -1253,7 +1247,7 @@
                   style="padding: 0px !important; width: 316px"
                   xxx-v-bind:disabled="$shared.loadingFilter === 'filterGenres'"
                 >
-                  <v-expansion-panel-header style="padding: 8px !important">
+                  <v-expansion-panel-title style="padding: 8px !important">
                     <div
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
@@ -1297,22 +1291,22 @@
                         $expand
                       </v-icon>
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
                       </v-tooltip>
                     </template>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -1329,9 +1323,9 @@
                         }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterGenres(false)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterGenres(false)">
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -1339,9 +1333,9 @@
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterGenres(true)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterGenres(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -1373,8 +1367,8 @@
                         v-bind:color="genre.Excluded ? 'red' : 'mk-dark-grey'"
                       ></v-checkbox>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
                             <v-switch
                               color="red"
                               dense
@@ -1388,7 +1382,7 @@
                         <span>{{ $t("Exclude this genre") }}</span>
                       </v-tooltip>
                     </div>
-                  </v-expansion-panel-content>
+                  </v-expansion-panel-text>
                 </v-expansion-panel>
 
                 <!-- FILTER AGE RATINGS -->
@@ -1399,7 +1393,7 @@
                   style="padding: 0px !important; width: 316px"
                   xxx-v-bind:disabled="$shared.loadingFilter === 'filterAgeRatings'"
                 >
-                  <v-expansion-panel-header style="padding: 8px !important">
+                  <v-expansion-panel-title style="padding: 8px !important">
                     <div
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
@@ -1441,22 +1435,22 @@
                         $expand
                       </v-icon>
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
                       </v-tooltip>
                     </template>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterAgeRatings(false)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterAgeRatings(false)">
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -1464,9 +1458,9 @@
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterAgeRatings(true)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterAgeRatings(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -1489,7 +1483,7 @@
                       v-on:mousedown="filterCheckboxMousedown('filterAgeRatings', ageRating, setAllFilterAgeRatings)"
                       color="mk-dark-grey"
                     ></v-checkbox>
-                  </v-expansion-panel-content>
+                  </v-expansion-panel-text>
                 </v-expansion-panel>
 
                 <!-- FILTER GROUP: PARENTAL/CONTENT ADVISORY -->
@@ -1502,7 +1496,7 @@
                     $shared.loadingFilter === 'filterParentalAdvisory'
                   "
                 >
-                  <v-expansion-panel-header style="padding: 8px !important">
+                  <v-expansion-panel-title style="padding: 8px !important">
                     <div
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
@@ -1545,16 +1539,16 @@
                         $expand
                       </v-icon>
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
                       </v-tooltip>
                     </template>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
                     <v-expansion-panels accordion multiple>
                       <v-expansion-panel
                         v-for="category in filterParentalAdvisoryCategories"
@@ -1565,7 +1559,7 @@
                         "
                         style="padding: 0px !important; width: 316px"
                       >
-                        <v-expansion-panel-header
+                        <v-expansion-panel-title
                           style="padding: 8px !important"
                           v-bind:class="{
                             'mk-search-highlight': $shared.filters.filterParentalAdvisory[category.Name].find(
@@ -1586,13 +1580,13 @@
                               $expand
                             </v-icon>
                           </template>
-                        </v-expansion-panel-header>
-                        <v-expansion-panel-content>
+                        </v-expansion-panel-title>
+                        <v-expansion-panel-text>
                           <v-row style="margin-bottom: 8px">
                             <v-spacer />
                             <v-tooltip bottom style="z-index: 21">
-                              <template v-slot:activator="{ on }">
-                                <span v-on="on">
+                              <template v-slot:activator="{ props }">
+                                <span v-bind="props">
                                   <v-btn
                                     class="mk-filter-action-btn"
                                     text
@@ -1605,8 +1599,8 @@
                               <span>{{ $t("Clear Selection") }}</span>
                             </v-tooltip>
                             <v-tooltip bottom style="z-index: 21">
-                              <template v-slot:activator="{ on }">
-                                <span v-on="on">
+                              <template v-slot:activator="{ props }">
+                                <span v-bind="props">
                                   <v-btn
                                     class="mk-filter-action-btn"
                                     text
@@ -1636,10 +1630,10 @@
                               color="mk-dark-grey"
                             ></v-checkbox>
                           </v-row>
-                        </v-expansion-panel-content>
+                        </v-expansion-panel-text>
                       </v-expansion-panel>
                     </v-expansion-panels>
-                  </v-expansion-panel-content>
+                  </v-expansion-panel-text>
                 </v-expansion-panel>
 
                 <!-- FILTER People -->
@@ -1650,7 +1644,7 @@
                   style="padding: 0px !important; width: 316px"
                   xxx-v-bind:disabled="$shared.loadingFilter === 'filterPersons'"
                 >
-                  <v-expansion-panel-header style="padding: 8px !important">
+                  <v-expansion-panel-title style="padding: 8px !important">
                     <div
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
@@ -1694,22 +1688,22 @@
                         $expand
                       </v-icon>
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
                       </v-tooltip>
                     </template>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -1726,9 +1720,9 @@
                         }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterPersons(false)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterPersons(false)">
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -1736,9 +1730,9 @@
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterPersons(true)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterPersons(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -1746,9 +1740,9 @@
                         <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="addPerson()">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="addPerson()">
                               <v-icon>mdi-magnify</v-icon>
                             </v-btn>
                           </span>
@@ -1793,7 +1787,7 @@
                         >mdi-delete</v-icon
                       >
                     </v-row>
-                  </v-expansion-panel-content>
+                  </v-expansion-panel-text>
                 </v-expansion-panel>
 
                 <!-- FILTER Companies -->
@@ -1804,7 +1798,7 @@
                   style="padding: 0px !important; width: 316px"
                   xxx-v-bind:disabled="$shared.loadingFilter === 'filterCompanies'"
                 >
-                  <v-expansion-panel-header style="padding: 8px !important">
+                  <v-expansion-panel-title style="padding: 8px !important">
                     <div
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
@@ -1848,22 +1842,22 @@
                         $expand
                       </v-icon>
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
                       </v-tooltip>
                     </template>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -1880,9 +1874,9 @@
                         }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterCompanies(false)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterCompanies(false)">
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -1890,9 +1884,9 @@
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterCompanies(true)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterCompanies(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -1900,9 +1894,9 @@
                         <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="addCompany()">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="addCompany()">
                               <v-icon>mdi-magnify</v-icon>
                             </v-btn>
                           </span>
@@ -1947,7 +1941,7 @@
                         >mdi-delete</v-icon
                       >
                     </v-row>
-                  </v-expansion-panel-content>
+                  </v-expansion-panel-text>
                 </v-expansion-panel>
 
                 <!-- FILTER RELEASE YEARS -->
@@ -1958,7 +1952,7 @@
                   style="padding: 0px !important; width: 316px"
                   xxx-v-bind:disabled="$shared.loadingFilter === 'filterYears'"
                 >
-                  <v-expansion-panel-header style="padding: 8px !important">
+                  <v-expansion-panel-title style="padding: 8px !important">
                     <div
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
@@ -2000,22 +1994,22 @@
                         $expand
                       </v-icon>
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
                       </v-tooltip>
                     </template>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -2032,9 +2026,9 @@
                         }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterYears(false)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterYears(false)">
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2042,9 +2036,9 @@
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterYears(true)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterYears(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2052,9 +2046,9 @@
                         <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="showYearsRangeInput()">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="showYearsRangeInput()">
                               <v-icon>mdi-arrow-expand-horizontal</v-icon>
                             </v-btn>
                           </span>
@@ -2077,8 +2071,8 @@
                       </v-row>
                       <v-row>
                         <v-spacer></v-spacer>
-                        <v-btn text v-on:click="onYearsRangeInputCancel">{{ $t("Cancel") }}</v-btn>
-                        <v-btn text v-on:click="onYearsRangeInputOK">{{ $t("OK") }}</v-btn>
+                        <v-btn variant="text" v-on:click="onYearsRangeInputCancel">{{ $t("Cancel") }}</v-btn>
+                        <v-btn variant="text" v-on:click="onYearsRangeInputOK">{{ $t("OK") }}</v-btn>
                       </v-row>
                     </div>
 
@@ -2092,7 +2086,7 @@
                       v-on:mousedown="filterCheckboxMousedown('filterYears', year, setAllFilterYears)"
                       color="mk-dark-grey"
                     ></v-checkbox>
-                  </v-expansion-panel-content>
+                  </v-expansion-panel-text>
                 </v-expansion-panel>
 
                 <!-- FILTER IMDB Plot Keywords -->
@@ -2105,7 +2099,7 @@
                     $shared.loadingFilter === 'filterIMDBPlotKeywords'
                   "
                 >
-                  <v-expansion-panel-header style="padding: 8px !important">
+                  <v-expansion-panel-title style="padding: 8px !important">
                     <div
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
@@ -2149,22 +2143,22 @@
                         $expand
                       </v-icon>
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
                       </v-tooltip>
                     </template>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
                     <v-row>
                       <v-spacer />
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -2181,9 +2175,9 @@
                         }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllIFilterMDBPlotKeywords(false)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllIFilterMDBPlotKeywords(false)">
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2191,9 +2185,9 @@
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllIFilterMDBPlotKeywords(true)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllIFilterMDBPlotKeywords(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2201,9 +2195,9 @@
                         <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="addIMDBPlotKeyword()">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="addIMDBPlotKeyword()">
                               <v-icon>mdi-magnify</v-icon>
                             </v-btn>
                           </span>
@@ -2253,7 +2247,7 @@
                         >mdi-delete</v-icon
                       >
                     </v-row>
-                  </v-expansion-panel-content>
+                  </v-expansion-panel-text>
                 </v-expansion-panel>
 
                 <!-- FILTER IMDB Filming Locations -->
@@ -2266,7 +2260,7 @@
                     $shared.loadingFilter === 'filterIMDBFilmingLocations'
                   "
                 >
-                  <v-expansion-panel-header style="padding: 8px !important">
+                  <v-expansion-panel-title style="padding: 8px !important">
                     <div
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
@@ -2310,22 +2304,22 @@
                         $expand
                       </v-icon>
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
                       </v-tooltip>
                     </template>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
                     <v-row>
                       <v-spacer />
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -2342,8 +2336,8 @@
                         }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
                             <v-btn
                               class="mk-filter-action-btn"
                               text
@@ -2356,8 +2350,8 @@
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
                             <v-btn
                               class="mk-filter-action-btn"
                               text
@@ -2370,9 +2364,9 @@
                         <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="addIMDBFilmingLocation()">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="addIMDBFilmingLocation()">
                               <v-icon>mdi-magnify</v-icon>
                             </v-btn>
                           </span>
@@ -2426,7 +2420,7 @@
                         >mdi-delete</v-icon
                       >
                     </v-row>
-                  </v-expansion-panel-content>
+                  </v-expansion-panel-text>
                 </v-expansion-panel>
 
                 <!-- FILTER DATA QUALITY -->
@@ -2439,7 +2433,7 @@
                     $shared.loadingFilter === 'filterDataQuality'
                   "
                 >
-                  <v-expansion-panel-header style="padding: 8px !important">
+                  <v-expansion-panel-title style="padding: 8px !important">
                     <div
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
@@ -2483,22 +2477,22 @@
                         $expand
                       </v-icon>
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
                       </v-tooltip>
                     </template>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
                     <v-row>
                       <v-spacer />
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterDataQuality(false)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterDataQuality(false)">
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2506,9 +2500,9 @@
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterDataQuality(true)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterDataQuality(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2540,7 +2534,7 @@
                         color="mk-dark-grey"
                       ></v-checkbox>
                     </v-row>
-                  </v-expansion-panel-content>
+                  </v-expansion-panel-text>
                 </v-expansion-panel>
 
                 <!-- FILTER VIDEO ENCODERS -->
@@ -2553,7 +2547,7 @@
                     $shared.loadingFilter === 'filterVideoEncoders'
                   "
                 >
-                  <v-expansion-panel-header style="padding: 8px !important">
+                  <v-expansion-panel-title style="padding: 8px !important">
                     <div
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
@@ -2596,22 +2590,22 @@
                         $expand
                       </v-icon>
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
                       </v-tooltip>
                     </template>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
                     <v-row>
                       <v-spacer />
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -2628,9 +2622,9 @@
                         }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterVideoEncoders(false)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterVideoEncoders(false)">
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2638,9 +2632,9 @@
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterVideoEncoders(true)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterVideoEncoders(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2668,7 +2662,7 @@
                         color="mk-dark-grey"
                       ></v-checkbox>
                     </v-row>
-                  </v-expansion-panel-content>
+                  </v-expansion-panel-text>
                 </v-expansion-panel>
 
                 <!-- FILTER AUDIO FORMATS -->
@@ -2681,7 +2675,7 @@
                     $shared.loadingFilter === 'filterAudioFormats'
                   "
                 >
-                  <v-expansion-panel-header style="padding: 8px !important">
+                  <v-expansion-panel-title style="padding: 8px !important">
                     <div
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
@@ -2724,22 +2718,22 @@
                         $expand
                       </v-icon>
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-switch v-model="filterGroup.visible" dense style="margin-top: 0px"></v-switch>
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
                       </v-tooltip>
                     </template>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
                     <v-row>
                       <v-spacer />
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="switchFilterSort(filterGroup)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -2756,9 +2750,9 @@
                         }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterAudioFormats(false)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterAudioFormats(false)">
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2766,9 +2760,9 @@
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
                       <v-tooltip bottom style="z-index: 21">
-                        <template v-slot:activator="{ on }">
-                          <span v-on="on">
-                            <v-btn class="mk-filter-action-btn" text v-on:click="setAllFilterAudioFormats(true)">
+                        <template v-slot:activator="{ props }">
+                          <span v-bind="props">
+                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterAudioFormats(true)">
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2796,7 +2790,7 @@
                         color="mk-dark-grey"
                       ></v-checkbox>
                     </v-row>
-                  </v-expansion-panel-content>
+                  </v-expansion-panel-text>
                 </v-expansion-panel>
               </div>
             </div>
@@ -2851,9 +2845,9 @@
       </v-row>
 
       <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <span v-on="on">
-            <v-btn text style="margin-left: 16px; margin-right: -8px" v-on:click="toggleFullScreen">
+        <template v-slot:activator="{ props }">
+          <span v-bind="props">
+            <v-btn variant="text" style="margin-left: 16px; margin-right: -8px" v-on:click="toggleFullScreen">
               <v-icon v-show="isFullScreen">mdi-fullscreen-exit</v-icon>
               <v-icon v-show="!isFullScreen">mdi-fullscreen</v-icon>
             </v-btn>
@@ -2986,7 +2980,7 @@
               </p>
             </div>
             <!-- <div class="flex-grow-1"></div> -->
-            <v-btn text v-on:click="cancelRescan" v-bind:disabled="store.doAbortRescan" style="flex: 0 0 80px">
+            <v-btn variant="text" v-on:click="cancelRescan" v-bind:disabled="store.doAbortRescan" style="flex: 0 0 80px">
               <v-icon v-if="!store.doAbortRescan">mdi-cancel</v-icon>
               <span v-if="store.doAbortRescan">{{ $t("Cancelling___") }}</span>
             </v-btn>
@@ -3016,7 +3010,7 @@
           >
             {{ $t("Show Details") }}
           </v-btn>
-          <v-btn dark text @click="snackbar.show = false">{{ $t("Close") }}</v-btn>
+          <v-btn dark variant="text" @click="snackbar.show = false">{{ $t("Close") }}</v-btn>
         </div>
       </div>
     </v-snackbar>
@@ -3124,8 +3118,8 @@ export default {
       show: false,
       item: null,
       deleteFunction: null,
-      Title: "",
-      Message: "",
+      Title: "placeholder",
+      Message: "placeholder",
       ItemName: "",
     },
 
@@ -5071,7 +5065,7 @@ a {
 }
 
 /* ### Vuetify overrides ### */
-.v-expansion-panel-header {
+.v-expansion-panel-title {
   font-size: 16px;
 }
 

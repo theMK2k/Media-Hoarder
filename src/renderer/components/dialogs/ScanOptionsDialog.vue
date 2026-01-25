@@ -15,7 +15,7 @@
         </div>
       </v-card-title>
       <v-card-text>
-        <v-alert type="warning" colored-border border="left" v-if="showMediaInfoWarning" dense>
+        <v-alert type="warning" colored-border border="start" v-if="showMediaInfoWarning" density="compact">
           {{ $t("Warning: Mediainfo CLI Path cannot be found_ Please go to") }}
           <a v-on:click="openSettings">{{ $t("Settings") }}</a>
           {{ $t("and provide one_ You can get Mediainfo CLI from") }}
@@ -65,16 +65,16 @@
 
         <v-expansion-panels accordion style="margin-top: 16px">
           <v-expansion-panel style="padding: 0px !important">
-            <v-expansion-panel-header style="padding: 8px !important"
-              >{{ $t("IMDB Scraper Options") }} {{ imdbOptionsTitle }}</v-expansion-panel-header
+            <v-expansion-panel-title style="padding: 8px !important"
+              >{{ $t("IMDB Scraper Options") }} {{ imdbOptionsTitle }}</v-expansion-panel-title
             >
-            <v-expansion-panel-content>
+            <v-expansion-panel-text>
               <div style="display: flex">
                 <v-spacer></v-spacer>
                 <v-tooltip bottom style="z-index: 21">
-                  <template v-slot:activator="{ on }">
+                  <template v-slot:activator="{ props }">
                     <span v-on="on">
-                      <v-btn class="mk-filter-action-btn" text v-on:click="setAllIMDBScraperOptions(false)">
+                      <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllIMDBScraperOptions(false)">
                         <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                       </v-btn>
                     </span>
@@ -82,9 +82,9 @@
                   <span>{{ $t("Clear Selection") }}</span>
                 </v-tooltip>
                 <v-tooltip bottom style="z-index: 21">
-                  <template v-slot:activator="{ on }">
+                  <template v-slot:activator="{ props }">
                     <span v-on="on">
-                      <v-btn class="mk-filter-action-btn" text v-on:click="setAllIMDBScraperOptions(true)">
+                      <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllIMDBScraperOptions(true)">
                         <v-icon>mdi-check-box-multiple-outline</v-icon>
                       </v-btn>
                     </span>
@@ -103,12 +103,12 @@
                   color="mk-dark-grey"
                 ></v-checkbox>
               </v-col>
-            </v-expansion-panel-content>
+            </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
 
         <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
+          <template v-slot:activator="{ props }">
             <span v-on="on">
               <v-checkbox
                 v-model="performCheck"
@@ -130,9 +130,9 @@
         <v-alert
           type="warning"
           colored-border
-          border="left"
+          border="start"
           v-if="missingSourcePaths && missingSourcePaths.length > 0"
-          dense
+          density="compact"
         >
           {{
             $t(

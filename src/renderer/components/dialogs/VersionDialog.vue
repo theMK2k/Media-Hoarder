@@ -16,7 +16,7 @@
           </div>
           <v-spacer></v-spacer>
 
-          <v-btn text v-on:click="$emit('close')">{{ $t("Close") }}</v-btn>
+          <v-btn variant="text" v-on:click="$emit('close')">{{ $t("Close") }}</v-btn>
         </v-row>
 
         <v-row
@@ -40,8 +40,8 @@
             v-if="!isLoadingHistory"
             v-bind:type="isNewVersionAvailable ? 'info' : isUpToDate ? 'success' : 'warning'"
             colored-border
-            border="left"
-            dense
+            border="start"
+            density="compact"
             style="margin-top: 12px"
           >
             <span v-if="isNewVersionAvailable">
@@ -87,7 +87,7 @@
             <span v-if="showHistory">
               <v-btn
                 v-if="showHistory"
-                text
+                variant="text"
                 class="xs-fullwidth"
                 style="margin-right: 8px"
                 v-bind:disabled="infoPosition + 1 >= history.length"
@@ -96,7 +96,7 @@
               >
               v{{ history[infoPosition].version }} -
               {{ history[infoPosition].name }}
-              <v-btn text class="xs-fullwidth" v-bind:disabled="infoPosition === 0" v-on:click="infoPosition--"
+              <v-btn variant="text" class="xs-fullwidth" v-bind:disabled="infoPosition === 0" v-on:click="infoPosition--"
                 >&gt;</v-btn
               >
             </span>
@@ -131,7 +131,7 @@ import * as store from "@/store.js";
 export default {
   props: ["show"],
 
-  emits: ["update:show"],
+  emits: ["update:show", "close"],
 
   data() {
     return {

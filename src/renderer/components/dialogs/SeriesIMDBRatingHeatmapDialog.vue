@@ -55,9 +55,9 @@
                   transition="scale-transition"
                   origin="top left"
                 >
-                  <template v-slot:activator="{ on }">
+                  <template v-slot:activator="{ props }">
                     <div
-                      v-on="on"
+                      v-bind="props"
                       v-on:click="
                         onShowMediaItemDetails(data.mediaItems[season.season][`B${bonusEpisode.bonusEpisode}`])
                       "
@@ -120,9 +120,9 @@
                   transition="scale-transition"
                   origin="top left"
                 >
-                  <template v-slot:activator="{ on }">
+                  <template v-slot:activator="{ props }">
                     <div
-                      v-on="on"
+                      v-bind="props"
                       v-on:click="onShowMediaItemDetails(data.mediaItems[season.season][episode.episode])"
                       v-on:mouseenter="setHoveredSeasonEpisode(season.season, `E${episode.episode}`)"
                       v-on:mouseleave="debouncedSetHoveredSeasonEpisode(null, null)"

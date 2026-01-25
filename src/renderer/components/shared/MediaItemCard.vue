@@ -81,8 +81,8 @@
                 <div style="display: flex; min-height: 30px">
                   <div v-if="mediaItem.last_access_at">
                     <v-tooltip bottom>
-                      <template v-slot:activator="{ on }">
-                        <span v-on="on">
+                      <template v-slot:activator="{ props }">
+                        <span v-bind="props">
                           <v-icon style="margin-right: 8px; margin-bottom: 3px">mdi-eye-check-outline</v-icon>
                         </span>
                       </template>
@@ -115,8 +115,8 @@
                   <!-- all the edit buttons -->
                   <div v-if="allowEditButtons">
                     <v-tooltip bottom>
-                      <template v-slot:activator="{ on }">
-                        <span v-on="on">
+                      <template v-slot:activator="{ props }">
+                        <span v-bind="props">
                           <v-icon
                             v-show="mediaItem.nameHovered || mediaItem.selected"
                             class="mk-clickable"
@@ -130,8 +130,8 @@
                     </v-tooltip>
 
                     <v-tooltip bottom>
-                      <template v-slot:activator="{ on }">
-                        <span v-on="on">
+                      <template v-slot:activator="{ props }">
+                        <span v-bind="props">
                           <v-icon
                             v-show="mediaItem.nameHovered || mediaItem.selected"
                             class="mk-clickable"
@@ -152,8 +152,8 @@
                     </v-tooltip>
 
                     <v-tooltip bottom>
-                      <template v-slot:activator="{ on }">
-                        <span v-on="on">
+                      <template v-slot:activator="{ props }">
+                        <span v-bind="props">
                           <v-icon
                             v-show="mediaItem.nameHovered || mediaItem.selected"
                             class="mk-clickable"
@@ -174,8 +174,8 @@
                     </v-tooltip>
 
                     <v-tooltip bottom>
-                      <template v-slot:activator="{ on }">
-                        <span v-on="on">
+                      <template v-slot:activator="{ props }">
+                        <span v-bind="props">
                           <v-icon
                             v-show="mediaItem.nameHovered || mediaItem.selected"
                             class="mk-clickable-red"
@@ -526,11 +526,11 @@
     </v-list-item>
 
     <v-row v-if="mediaItem.scanErrors && Object.keys(mediaItem.scanErrors).length" style="margin: 8px">
-      <v-alert type="warning" dense colored-border border="left">
+      <v-alert type="warning" density="compact" colored-border border="start">
         <span class="mk-clickable" v-on:click.stop="mediaItem.showScanErrors = !mediaItem.showScanErrors"
           >{{ $t("Errors were encountered during the scan, consider a re-scan_") }}
         </span>
-        <v-btn small text color="primary" v-on:click.stop="emitMediaItemEvent('clearScanErrors', { mediaItem })">{{
+        <v-btn size="small" variant="text" color="primary" v-on:click.stop="emitMediaItemEvent('clearScanErrors', { mediaItem })">{{
           $t("Clear this message")
         }}</v-btn>
         <v-row v-if="mediaItem.showScanErrors" style="margin: 0px">
@@ -571,8 +571,8 @@
         >
         <v-col class="detailContent">
           <v-tooltip right>
-            <template v-slot:activator="{ on }">
-              <span v-on="on">{{ createdHumanized(mediaItem) }}</span>
+            <template v-slot:activator="{ props }">
+              <span v-bind="props">{{ createdHumanized(mediaItem) }}</span>
             </template>
             <span>{{ createdDisplayText(mediaItem) }}</span>
           </v-tooltip>
@@ -584,8 +584,8 @@
         >
         <v-col class="detailContent">
           <v-tooltip right>
-            <template v-slot:activator="{ on }">
-              <span v-on="on">{{ lastAccessHumanized(mediaItem) }}</span>
+            <template v-slot:activator="{ props }">
+              <span v-bind="props">{{ lastAccessHumanized(mediaItem) }}</span>
             </template>
             <span>{{ lastAccessDisplayText(mediaItem) }}</span>
           </v-tooltip>
@@ -946,7 +946,7 @@
         style="margin-left: 8px"
         >{{ $t("Close") }}</v-btn
       >
-      <v-btn text color="primary" v-on:click.stop="emitMediaItemEvent('copyInfo', { mediaItem })">{{
+      <v-btn variant="text" color="primary" v-on:click.stop="emitMediaItemEvent('copyInfo', { mediaItem })">{{
         $t("Copy Info")
       }}</v-btn>
       <v-btn

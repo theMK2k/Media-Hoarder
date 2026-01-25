@@ -82,9 +82,9 @@
               transition="scale-transition"
               origin="top left"
             >
-              <template v-slot:activator="{ on }">
+              <template v-slot:activator="{ props }">
                 <mk-compact-movie-list-row
-                  v-on="on"
+                  v-bind="props"
                   v-on:click="onShowMediaItemDetails(trailerShow.current)"
                   v-bind:movie="trailerShow.current"
                   v-bind:isClickable="true"
