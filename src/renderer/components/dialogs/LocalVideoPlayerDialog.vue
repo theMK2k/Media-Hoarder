@@ -65,7 +65,7 @@
         v-on:mouseover="controlsHovered = true"
         v-on:mouseleave="controlsHovered = false"
       >
-        <v-list-item-content
+        <div
           v-if="trailerShow"
           class="align-self-start"
           style="padding-top: 6px; padding-bottom: 6px; padding-left: 8px"
@@ -103,7 +103,7 @@
               </v-card>
             </v-menu>
           </div>
-        </v-list-item-content>
+        </div>
 
         <v-row style="max-width: 100%; margin-top: 8px; padding-left: 8px">
           <v-btn

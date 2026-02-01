@@ -50,7 +50,7 @@
       <v-card-text>
         <v-list-item three-line style="padding-left: 0px; align-items: flex-start">
           <div v-if="propertyTypeKey === 'person'">
-            <v-list-item-avatar tile style="margin: 6px; height: 150px; width: 120px">
+            <div style="margin: 6px; height: 150px; width: 120px; border-radius: 0">
               <!-- v-if="!isScraping" -->
               <v-img
                 v-if="detailData.Image_URL"
@@ -68,9 +68,9 @@
                 size="32"
                 width="5"
               ></v-progress-circular>
-            </v-list-item-avatar>
+            </div>
           </div>
-          <v-list-item-content class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
+          <div class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
             <v-col style="padding: 0px 0px 0px 4px !important" sm="12">
               <v-row v-if="propertyTypeKey === 'person'" style="margin: 0px 6px 8px 0px">
                 <div
@@ -213,7 +213,7 @@
                 </div>
               </div>
             </v-col>
-          </v-list-item-content>
+          </div>
         </v-list-item>
       </v-card-text>
 

@@ -2801,9 +2801,9 @@
         <v-divider style="margin-top: 4px"></v-divider>
 
         <v-list-item @click="quit">
-          <v-list-item-action>
+          <div>
             <v-icon>mdi-power</v-icon>
-          </v-list-item-action>
+          </div>
           <v-list-item-title>{{ $t("Quit") }}</v-list-item-title>
         </v-list-item>
       </v-list>

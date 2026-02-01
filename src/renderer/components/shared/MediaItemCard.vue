@@ -13,9 +13,8 @@
         v-on:mouseover="emitMediaItemEvent('setItemHovered', { mediaItem, section: 'avatar', value: true })"
         v-on:mouseleave="emitMediaItemEvent('setItemHovered', { mediaItem, section: 'avatar', value: false })"
       >
-        <v-list-item-avatar
-          tile
-          style="margin: 6px; height: 190px; width: 130px; cursor: pointer"
+        <div
+          style="margin: 6px; height: 190px; width: 130px; cursor: pointer; position: relative; border-radius: 0"
           v-on:click.stop="emitMediaItemEvent('launch', { mediaItem })"
         >
           <img
@@ -61,10 +60,10 @@
           <div class="duration-overlay-container" v-if="mediaItem.specificMediaType !== 'Series' && mediaItem.Duration">
             <span class="text-overlay">{{ mediaItem.Duration }}</span>
           </div>
-        </v-list-item-avatar>
+        </div>
       </div>
 
-      <v-list-item-content class="align-self-start" style="padding: 0px">
+      <div class="align-self-start" style="padding: 0px">
         <v-col style="padding: 0px !important; margin-top: 16px">
           <v-row style="margin: 0px">
             <div style="margin-left: 4px; max-width: -webkit-fill-available">
@@ -522,7 +521,7 @@
             </div>
           </v-row>
         </v-col>
-      </v-list-item-content>
+      </div>
     </v-list-item>
 
     <v-row v-if="mediaItem.scanErrors && Object.keys(mediaItem.scanErrors).length" style="margin: 8px">

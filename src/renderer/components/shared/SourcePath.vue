@@ -3,7 +3,7 @@
     <v-row style="margin: 0px">
       <v-card style="width: 100%">
         <v-list-item two-line>
-          <v-list-item-content>
+          <div>
             <v-list-item-title>
               {{ value.Description }}
               <v-icon class="mk-clickable" v-show="isHovered" small v-on:click="onEditDescription">mdi-pencil</v-icon>
@@ -22,7 +22,7 @@
               style="margin-top: 0px"
               v-on:click.native="toggleCheckRemovedFiles"
             ></v-checkbox>
-          </v-list-item-content>
+          </div>
         </v-list-item>
       </v-card>
     </v-row>
