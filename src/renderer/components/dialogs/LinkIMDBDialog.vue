@@ -101,11 +101,11 @@
               >
                 <v-list-item style="padding-left: 0px">
                   <div>
-                    <v-list-item-avatar tile style="margin: 6px; height: 100px; width: 80px">
+                    <div style="margin: 6px; height: 100px; width: 80px; border-radius: 0">
                       <v-img contain v-if="item.imageURL" v-bind:src="item.imageURL" style="border-radius: 6px"></v-img>
-                    </v-list-item-avatar>
+                    </div>
                   </div>
-                  <v-list-item-content class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
+                  <div class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
                     <v-col style="padding: 0px !important">
                       <v-row style="margin-bottom: 8px">
                         <v-list-item-title
@@ -135,7 +135,7 @@
                         >
                       </v-row>
                     </v-col>
-                  </v-list-item-content>
+                  </div>
                 </v-list-item>
               </v-card>
             </v-col>

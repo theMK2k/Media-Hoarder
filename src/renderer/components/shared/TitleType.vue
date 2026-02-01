@@ -3,7 +3,7 @@
     <v-row style="margin: 0px">
       <v-card style="width: 100%">
         <v-list-item two-line>
-          <v-list-item-content>
+          <div>
             <v-list-item-title>
               {{ value.TitleType }} ({{ $t("seen in {count} of 20M+", { count: value.Count }) }})
               <v-btn
@@ -40,7 +40,7 @@
                 }}
               </p>
             </v-list-item-subtitle>
-          </v-list-item-content>
+          </div>
         </v-list-item>
       </v-card>
     </v-row>
