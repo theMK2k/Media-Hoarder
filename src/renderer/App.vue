@@ -2810,7 +2810,7 @@
     </v-navigation-drawer>
 
     <!-- TOP BAR -->
-    <v-app-bar app clipped-left color="red" dense>
+    <v-app-bar app color="red" density="compact">
       <v-app-bar-nav-icon @click.stop="$shared.sidenav = !$shared.sidenav"></v-app-bar-nav-icon>
       <v-toolbar-title class="mr-12 align-center justify-center mk-noshrink">
         <span class="title" style="text-align: center">
@@ -3016,7 +3016,7 @@
     </v-snackbar>
 
     <!-- MAIN LOADING OVERLAY -->
-    <v-overlay style="z-index: 1000" v-bind:value="showLoadingOverlay">
+    <v-overlay style="z-index: 1000" :model-value="showLoadingOverlay">
       <div style="text-align: center">
         <!-- <p style="text-shadow: 0 0 4px #FFFFFF; margin: 0px">loading</p> -->
         <v-progress-circular indeterminate color="red" size="70" width="7"></v-progress-circular>

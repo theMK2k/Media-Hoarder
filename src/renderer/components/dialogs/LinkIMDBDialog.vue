@@ -42,11 +42,11 @@
         <!--
         <v-expansion-panels>
           <v-expansion-panel style="padding: 0px !important; margin-bottom: 24px">
-            <v-expansion-panel-header style="padding: 16px !important">{{ $t("Media Types") }} {{ titleTypesTitle() }}</v-expansion-panel-header>
-            <v-expansion-panel-content>
+            <v-expansion-panel-title style="padding: 16px !important">{{ $t("Media Types") }} {{ titleTypesTitle() }}</v-expansion-panel-title>
+            <v-expansion-panel-text>
               <v-row style="margin-bottom: 8px">
-                <v-btn text v-on:click="setAllTitleTypes(false)">{{ $t("NONE") }}</v-btn>
-                <v-btn text v-on:click="setAllTitleTypes(true)">{{ $t("ALL") }}</v-btn>
+                <v-btn variant="text" v-on:click="setAllTitleTypes(false)">{{ $t("NONE") }}</v-btn>
+                <v-btn variant="text" v-on:click="setAllTitleTypes(true)">{{ $t("ALL") }}</v-btn>
               </v-row>
               <v-checkbox
                 v-for="titleType in titleTypes"
@@ -56,7 +56,7 @@
                 style="margin: 0px"
                 color="mk-dark-grey"
               ></v-checkbox>
-            </v-expansion-panel-content>
+            </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
       -->

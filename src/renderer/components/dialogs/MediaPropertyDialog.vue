@@ -48,7 +48,7 @@
       </v-card-title>
 
       <v-card-text>
-        <v-list-item three-line style="padding-left: 0px; align-items: flex-start">
+        <v-list-item style="padding-left: 0px; align-items: flex-start">
           <div v-if="propertyTypeKey === 'person'">
             <div style="margin: 6px; height: 150px; width: 120px; border-radius: 0">
               <!-- v-if="!isScraping" -->
@@ -141,7 +141,7 @@
                           />
                         </template>
                         <v-card>
-                          <v-list-item three-line style="padding-left: 0px; padding-right: 0px">
+                          <v-list-item style="padding-left: 0px; padding-right: 0px">
                             <mk-media-item-card
                               v-bind:mediaItem="mediaItem"
                               v-bind:isScanning="false"
@@ -194,7 +194,7 @@
                               />
                             </template>
                             <v-card>
-                              <v-list-item three-line style="padding-left: 0px; padding-right: 0px">
+                              <v-list-item style="padding-left: 0px; padding-right: 0px">
                                 <mk-media-item-card
                                   v-bind:mediaItem="episode"
                                   v-bind:isScanning="false"

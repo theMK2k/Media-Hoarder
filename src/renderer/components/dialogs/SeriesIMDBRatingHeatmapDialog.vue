@@ -76,7 +76,7 @@
                     </div>
                   </template>
                   <v-card>
-                    <v-list-item three-line style="padding-left: 0px; padding-right: 0px">
+                    <v-list-item style="padding-left: 0px; padding-right: 0px">
                       <mk-media-item-card
                         v-bind:mediaItem="data.mediaItems[season.season][`B${bonusEpisode.bonusEpisode}`]"
                         v-bind:isScanning="false"
@@ -136,7 +136,7 @@
                     </div>
                   </template>
                   <v-card>
-                    <v-list-item three-line style="padding-left: 0px; padding-right: 0px">
+                    <v-list-item style="padding-left: 0px; padding-right: 0px">
                       <mk-media-item-card
                         v-bind:mediaItem="data.mediaItems[season.season][episode.episode]"
                         v-bind:isScanning="false"
