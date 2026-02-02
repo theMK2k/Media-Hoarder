@@ -7,7 +7,7 @@
     v-on:click="allowMediaItemClick && emitMediaItemEvent('selectMediaItem', { mediaItem })"
     v-bind:style="{ cursor: allowMediaItemClick ? 'pointer' : 'default!important' }"
   >
-    <v-list-item three-line style="padding-left: 0px; padding-right: 0px">
+    <v-list-item style="padding-left: 0px; padding-right: 0px">
       <!-- Poster -->
       <div
         v-on:mouseover="emitMediaItemEvent('setItemHovered', { mediaItem, section: 'avatar', value: true })"

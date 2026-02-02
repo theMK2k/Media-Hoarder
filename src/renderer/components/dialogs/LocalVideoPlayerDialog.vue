@@ -90,7 +90,7 @@
                 />
               </template>
               <v-card>
-                <v-list-item three-line style="padding-left: 0px; padding-right: 0px">
+                <v-list-item style="padding-left: 0px; padding-right: 0px">
                   <mk-media-item-card
                     v-bind:mediaItem="trailerShow.current"
                     v-bind:isScanning="false"
@@ -108,7 +108,7 @@
         <v-row style="max-width: 100%; margin-top: 8px; padding-left: 8px">
           <v-btn
             class="xs-fullwidth"
-            outlined
+            variant="outlined"
             color="white"
             v-on:click.native="$emit('close')"
             style="margin-left: 8px"
@@ -153,7 +153,7 @@
             </button>
             <v-btn
               class="xs-fullwidth"
-              outlined
+              variant="outlined"
               color="primary"
               v-on:click.native="$emit('trailer-show-add-movie-to-list')"
               style="margin-left: 8px"
@@ -161,7 +161,7 @@
             >
             <v-btn
               class="xs-fullwidth"
-              outlined
+              variant="outlined"
               color="primary"
               v-on:click.native="$emit('trailer-show-close-and-search-movie')"
               style="margin-left: 8px"

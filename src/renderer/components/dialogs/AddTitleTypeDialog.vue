@@ -24,7 +24,7 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" small v-on:click.native="onCloseClick()">{{ $t("Close") }}</v-btn>
+        <v-btn class="xs-fullwidth" color="secondary" size="small" v-on:click.native="onCloseClick()">{{ $t("Close") }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

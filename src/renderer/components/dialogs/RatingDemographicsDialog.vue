@@ -16,7 +16,7 @@
         <a v-on:click="openSettings">{{ $t("Settings") }}</a
         >.
 
-        <v-alert type="info" colored-border border="start" v-if="!isLoading && !ratingDemographics" dense
+        <v-alert type="info" colored-border border="start" v-if="!isLoading && !ratingDemographics" density="compact"
           >{{ $t("No rating demographics found for") }} {{ title }}</v-alert
         >
         <div v-if="ratingDemographics">

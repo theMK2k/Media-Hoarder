@@ -77,8 +77,8 @@
                 <template v-slot:activator="{ props }">
                   <v-btn
                     color="primary"
-                    text
-                    small
+                    variant="text"
+                    size="small"
                     style="margin-left: 12px; margin-right: 4px; margin-bottom: 4px; margin-top: 8px"
                     v-bind="props"
                     v-on:click="onShowAddVideoQualityDialog"
@@ -108,7 +108,7 @@
                 v-for="(quality, index) in mediaItem.MI_Qualities"
                 v-bind:key="index"
                 label
-                outlined
+                variant="outlined"
                 draggable
                 close
                 close-icon="mdi-delete"
@@ -141,8 +141,8 @@
                 <template v-slot:activator="{ props }">
                   <v-btn
                     color="primary"
-                    text
-                    small
+                    variant="text"
+                    size="small"
                     style="margin-left: 12px; margin-right: 4px; margin-bottom: 4px; margin-top: 8px"
                     v-bind="props"
                     v-on:click="onShowAddAudioLanguageDialog"
@@ -177,7 +177,7 @@
                 v-for="(audioLanguage, index) in mediaItem.AudioLanguages"
                 v-bind:key="index"
                 label
-                outlined
+                variant="outlined"
                 draggable
                 close
                 close-icon="mdi-delete"
@@ -210,8 +210,8 @@
                 <template v-slot:activator="{ props }">
                   <v-btn
                     color="primary"
-                    text
-                    small
+                    variant="text"
+                    size="small"
                     style="margin-left: 12px; margin-right: 4px; margin-bottom: 4px; margin-top: 8px"
                     v-bind="props"
                     v-on:click="onShowAddSubtitleLanguageDialog"
@@ -246,7 +246,7 @@
                 v-for="(subtitleLanguage, index) in mediaItem.SubtitleLanguages"
                 v-bind:key="index"
                 label
-                outlined
+                variant="outlined"
                 draggable
                 close
                 close-icon="mdi-delete"
@@ -278,8 +278,8 @@
               <template v-slot:activator="{ props }">
                 <v-btn
                   color="primary"
-                  text
-                  small
+                  variant="text"
+                  size="small"
                   style="margin-left: 12px; margin-right: 4px; margin-bottom: 4px; margin-top: 8px"
                   v-bind="props"
                   v-on:click="onShowAddGenreDialog"
@@ -312,7 +312,7 @@
               v-for="(genre, index) in mediaItem.Genres"
               v-bind:key="index"
               label
-              outlined
+              variant="outlined"
               draggable
               close
               close-icon="mdi-delete"
@@ -343,8 +343,8 @@
               <template v-slot:activator="{ props }">
                 <v-btn
                   color="primary"
-                  text
-                  small
+                  variant="text"
+                  size="small"
                   style="margin-left: 12px; margin-right: 4px; margin-bottom: 4px; margin-top: 8px"
                   v-bind="props"
                   v-on:click="onShowAddReleaseAttributeDialog"
@@ -379,7 +379,7 @@
               v-for="(raSearchTerm, index) in arrayReleaseAttributesSearchTerms"
               v-bind:key="index"
               label
-              outlined
+              variant="outlined"
               draggable
               close
               close-icon="mdi-delete"
