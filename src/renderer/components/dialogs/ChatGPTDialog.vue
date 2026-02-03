@@ -82,6 +82,7 @@
           v-if="numMovies"
           v-bind:label="$t('List Title')"
           v-model="listTitle"
+          variant="underlined"
           style="margin-left: 16px"
         ></v-text-field>
       </v-card-actions>

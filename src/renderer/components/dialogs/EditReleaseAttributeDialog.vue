@@ -13,8 +13,8 @@
       </v-card-title>
 
       <div style="margin-left: 24px">
-        <v-text-field v-model="searchTerm" v-bind:label="$t('Search Term')" v-bind:disabled="isEdit"></v-text-field>
-        <v-text-field v-model="displayAs" v-bind:label="$t('Display As')"></v-text-field>
+        <v-text-field v-model="searchTerm" v-bind:label="$t('Search Term')" v-bind:disabled="isEdit" variant="underlined"></v-text-field>
+        <v-text-field v-model="displayAs" v-bind:label="$t('Display As')" variant="underlined"></v-text-field>
       </div>
 
       <v-card-actions>

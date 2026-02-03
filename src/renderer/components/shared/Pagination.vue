@@ -26,6 +26,7 @@
       class="mk-v-select-dynamic-width"
       solo
       dense
+      variant="underlined"
       v-bind:items="pages"
       item-title="displayText"
       item-value="page"

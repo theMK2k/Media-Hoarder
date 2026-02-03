@@ -1,10 +1,5 @@
 <template>
-  <v-dialog
-    :model-value="show"
-    @update:model-value="$emit('update:show', $event)"
-    persistent
-    max-width="1000px"
-  >
+  <v-dialog :model-value="show" @update:model-value="$emit('update:show', $event)" persistent max-width="1000px">
     <v-card>
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">
@@ -15,10 +10,11 @@
       <v-card-text>
         {{ question }}
         <v-text-field
-          autofocus
           v-if="enterTextValue"
           v-bind:label="textValueCaption"
           v-model="textValueLocal"
+          variant="underlined"
+          autofocus
         ></v-text-field>
 
         <v-alert v-if="alertText" v-bind:type="alertType" style="margin-top: 16px">

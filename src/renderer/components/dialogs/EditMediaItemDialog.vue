@@ -21,7 +21,7 @@
               {{ $t("Primary Title") }}
             </div>
           </v-row>
-          <v-text-field v-model="mediaItem.Name"></v-text-field>
+          <v-text-field v-model="mediaItem.Name" variant="underlined"></v-text-field>
 
           <!-- Secondary Title -->
           <v-row style="margin-top: 8px; margin-left: 0px; margin-bottom: -16px">
@@ -29,7 +29,7 @@
               {{ $t("Secondary Title") }}
             </div>
           </v-row>
-          <v-text-field v-model="mediaItem.Name2"></v-text-field>
+          <v-text-field v-model="mediaItem.Name2" variant="underlined"></v-text-field>
 
           <!-- Release Year -->
           <v-row style="margin-top: 8px; margin-left: 0px; margin-bottom: -16px">
@@ -37,7 +37,7 @@
               {{ $t("Release Year") }}
             </div>
           </v-row>
-          <v-text-field v-model="mediaItem.startYear"></v-text-field>
+          <v-text-field v-model="mediaItem.startYear" variant="underlined"></v-text-field>
 
           <!-- Description -->
           <v-row style="margin-top: 8px; margin-left: 0px; margin-bottom: -16px">
@@ -90,7 +90,11 @@
                     {{ $t("Add Video Quality") }}
                   </v-card-title>
                   <v-card-text>
-                    <v-select v-bind:items="videoQualities" v-model="selectedVideoQuality"></v-select>
+                    <v-select
+                      variant="underlined"
+                      v-bind:items="videoQualities"
+                      v-model="selectedVideoQuality"
+                    ></v-select>
                   </v-card-text>
                   <v-card-actions>
                     <v-spacer></v-spacer>
@@ -155,6 +159,7 @@
                   </v-card-title>
                   <v-card-text>
                     <v-select
+                      variant="underlined"
                       v-bind:items="audioLanguages"
                       v-model="selectedAudioLanguage"
                       item-title="displayText"
@@ -224,6 +229,7 @@
                   </v-card-title>
                   <v-card-text>
                     <v-select
+                      variant="underlined"
                       v-bind:items="subtitleLanguages"
                       v-model="selectedSubtitleLanguage"
                       item-title="displayText"
@@ -292,6 +298,7 @@
                 </v-card-title>
                 <v-card-text>
                   <v-select
+                    variant="underlined"
                     v-bind:items="genres"
                     v-model="selectedGenre"
                     item-title="Name"
@@ -357,6 +364,7 @@
                 </v-card-title>
                 <v-card-text>
                   <v-select
+                    variant="underlined"
                     v-bind:items="releaseAttributes"
                     v-model="selectedReleaseAttribute"
                     item-title="displayAs"

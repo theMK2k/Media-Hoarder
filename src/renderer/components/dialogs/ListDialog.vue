@@ -24,6 +24,7 @@
               <v-col cols="12" sm="7">
                 <v-select
                   solo
+                  variant="underlined"
                   v-bind:items="lists"
                   item-title="Name"
                   item-value="id_Lists"
@@ -47,6 +48,7 @@
               <v-col cols="12" sm="7">
                 <v-text-field
                   v-model="newListName"
+                  variant="underlined"
                   v-bind:disabled="chosenMethod != 'createNewList'"
                   v-on:keydown.enter="onListNameEnter"
                   style="margin-top: -12px; width: 400px"

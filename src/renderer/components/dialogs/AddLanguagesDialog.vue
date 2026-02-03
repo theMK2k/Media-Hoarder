@@ -16,6 +16,7 @@
         <v-text-field
           :append-icon-cb="() => {}"
           v-bind:placeholder="`${$t('Search')}...`"
+          variant="underlined"
           single-line
           append-icon="mdi-magnify"
           color="white"
