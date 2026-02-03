@@ -30,6 +30,7 @@
             :append-icon-cb="() => {}"
             v-bind:placeholder="`${$t('Enter a title')}...`"
             single-line
+            variant="underlined"
             color="white"
             hide-details
             v-model="searchText"

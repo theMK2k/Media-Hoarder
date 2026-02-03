@@ -93,7 +93,9 @@
             <v-btn v-if="editFilters.isEditFilters" variant="text" color="primary" v-on:click="onEditFiltersOK">{{
               $t("OK")
             }}</v-btn>
-            <v-btn v-if="editFilters.isEditFilters" variant="text" v-on:click="onEditFiltersCancel">{{ $t("Cancel") }}</v-btn>
+            <v-btn v-if="editFilters.isEditFilters" variant="text" v-on:click="onEditFiltersCancel">{{
+              $t("Cancel")
+            }}</v-btn>
           </v-list-subheader>
           <div v-if="!$shared.isLoadingFilter" style="height: 3px; width: 100%"></div>
           <v-progress-linear
@@ -163,7 +165,11 @@
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
+                            <v-switch
+                              v-model="filterGroup.visible"
+                              density="compact"
+                              style="margin-top: 0px"
+                            ></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -176,7 +182,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="switchFilterSort(filterGroup)"
+                            >
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -195,7 +205,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterSourcePaths(false)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="setAllFilterSourcePaths(false)"
+                            >
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -205,7 +219,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterSourcePaths(true)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="setAllFilterSourcePaths(true)"
+                            >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -278,7 +296,11 @@
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
+                            <v-switch
+                              v-model="filterGroup.visible"
+                              density="compact"
+                              style="margin-top: 0px"
+                            ></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -291,7 +313,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="switchFilterSort(filterGroup)"
+                            >
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -310,7 +336,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterQualities(false)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="setAllFilterQualities(false)"
+                            >
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -396,7 +426,11 @@
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
+                            <v-switch
+                              v-model="filterGroup.visible"
+                              density="compact"
+                              style="margin-top: 0px"
+                            ></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -409,7 +443,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="switchFilterSort(filterGroup)"
+                            >
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -428,7 +466,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterAudioLanguages(false)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="setAllFilterAudioLanguages(false)"
+                            >
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -438,7 +480,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterAudioLanguages(true)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="setAllFilterAudioLanguages(true)"
+                            >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -523,7 +569,11 @@
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
+                            <v-switch
+                              v-model="filterGroup.visible"
+                              density="compact"
+                              style="margin-top: 0px"
+                            ></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -536,7 +586,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="switchFilterSort(filterGroup)"
+                            >
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -555,7 +609,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterSubtitleLanguages(false)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="setAllFilterSubtitleLanguages(false)"
+                            >
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -565,7 +623,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterSubtitleLanguages(true)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="setAllFilterSubtitleLanguages(true)"
+                            >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -655,7 +717,11 @@
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
+                            <v-switch
+                              v-model="filterGroup.visible"
+                              density="compact"
+                              style="margin-top: 0px"
+                            ></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -668,7 +734,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="switchFilterSort(filterGroup)"
+                            >
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -687,7 +757,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterReleaseAttributes(false)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="setAllFilterReleaseAttributes(false)"
+                            >
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -697,7 +771,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterReleaseAttributes(true)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="setAllFilterReleaseAttributes(true)"
+                            >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -793,7 +871,11 @@
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
+                            <v-switch
+                              v-model="filterGroup.visible"
+                              density="compact"
+                              style="margin-top: 0px"
+                            ></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -806,7 +888,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="switchFilterSort(filterGroup)"
+                            >
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -924,7 +1010,11 @@
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
+                            <v-switch
+                              v-model="filterGroup.visible"
+                              density="compact"
+                              style="margin-top: 0px"
+                            ></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -1032,7 +1122,11 @@
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
+                            <v-switch
+                              v-model="filterGroup.visible"
+                              density="compact"
+                              style="margin-top: 0px"
+                            ></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -1115,7 +1209,11 @@
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
+                            <v-switch
+                              v-model="filterGroup.visible"
+                              density="compact"
+                              style="margin-top: 0px"
+                            ></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -1293,7 +1391,11 @@
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
+                            <v-switch
+                              v-model="filterGroup.visible"
+                              density="compact"
+                              style="margin-top: 0px"
+                            ></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -1306,7 +1408,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="switchFilterSort(filterGroup)"
+                            >
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -1437,7 +1543,11 @@
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
+                            <v-switch
+                              v-model="filterGroup.visible"
+                              density="compact"
+                              style="margin-top: 0px"
+                            ></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -1450,7 +1560,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterAgeRatings(false)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="setAllFilterAgeRatings(false)"
+                            >
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -1460,7 +1574,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterAgeRatings(true)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="setAllFilterAgeRatings(true)"
+                            >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -1541,7 +1659,11 @@
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
+                            <v-switch
+                              v-model="filterGroup.visible"
+                              density="compact"
+                              style="margin-top: 0px"
+                            ></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -1690,7 +1812,11 @@
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
+                            <v-switch
+                              v-model="filterGroup.visible"
+                              density="compact"
+                              style="margin-top: 0px"
+                            ></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -1703,7 +1829,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="switchFilterSort(filterGroup)"
+                            >
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -1844,7 +1974,11 @@
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
+                            <v-switch
+                              v-model="filterGroup.visible"
+                              density="compact"
+                              style="margin-top: 0px"
+                            ></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -1857,7 +1991,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="switchFilterSort(filterGroup)"
+                            >
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -1876,7 +2014,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterCompanies(false)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="setAllFilterCompanies(false)"
+                            >
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -1996,7 +2138,11 @@
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
+                            <v-switch
+                              v-model="filterGroup.visible"
+                              density="compact"
+                              style="margin-top: 0px"
+                            ></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -2009,7 +2155,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="switchFilterSort(filterGroup)"
+                            >
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -2145,7 +2295,11 @@
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
+                            <v-switch
+                              v-model="filterGroup.visible"
+                              density="compact"
+                              style="margin-top: 0px"
+                            ></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -2158,7 +2312,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="switchFilterSort(filterGroup)"
+                            >
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -2177,7 +2335,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllIFilterMDBPlotKeywords(false)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="setAllIFilterMDBPlotKeywords(false)"
+                            >
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2187,7 +2349,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllIFilterMDBPlotKeywords(true)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="setAllIFilterMDBPlotKeywords(true)"
+                            >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2306,7 +2472,11 @@
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
+                            <v-switch
+                              v-model="filterGroup.visible"
+                              density="compact"
+                              style="margin-top: 0px"
+                            ></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -2319,7 +2489,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="switchFilterSort(filterGroup)"
+                            >
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -2479,7 +2653,11 @@
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
+                            <v-switch
+                              v-model="filterGroup.visible"
+                              density="compact"
+                              style="margin-top: 0px"
+                            ></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -2492,7 +2670,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterDataQuality(false)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="setAllFilterDataQuality(false)"
+                            >
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2502,7 +2684,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterDataQuality(true)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="setAllFilterDataQuality(true)"
+                            >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2592,7 +2778,11 @@
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
+                            <v-switch
+                              v-model="filterGroup.visible"
+                              density="compact"
+                              style="margin-top: 0px"
+                            ></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -2605,7 +2795,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="switchFilterSort(filterGroup)"
+                            >
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -2624,7 +2818,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterVideoEncoders(false)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="setAllFilterVideoEncoders(false)"
+                            >
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2634,7 +2832,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterVideoEncoders(true)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="setAllFilterVideoEncoders(true)"
+                            >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2720,7 +2922,11 @@
                       <v-tooltip bottom v-if="editFilters.isEditFilters" style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
+                            <v-switch
+                              v-model="filterGroup.visible"
+                              density="compact"
+                              style="margin-top: 0px"
+                            ></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -2733,7 +2939,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="switchFilterSort(filterGroup)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="switchFilterSort(filterGroup)"
+                            >
                               <v-icon v-if="filterGroup.sort === enmFilterSortModes.numMovies">mdi-sort-numeric</v-icon>
                               <v-icon v-else>mdi-sort-alphabetical</v-icon>
                             </v-btn>
@@ -2752,7 +2962,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterAudioFormats(false)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="setAllFilterAudioFormats(false)"
+                            >
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2762,7 +2976,11 @@
                       <v-tooltip bottom style="z-index: 21">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterAudioFormats(true)">
+                            <v-btn
+                              class="mk-filter-action-btn"
+                              variant="text"
+                              v-on:click="setAllFilterAudioFormats(true)"
+                            >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
                             </v-btn>
                           </span>
@@ -2835,6 +3053,7 @@
           :append-icon-cb="() => {}"
           v-show="currentRoute && currentRoute.name === 'medialist'"
           v-bind:placeholder="$t('Search') + '...'"
+          variant="underlined"
           single-line
           clearable
           append-icon="mdi-magnify"
@@ -2980,7 +3199,12 @@
               </p>
             </div>
             <!-- <div class="flex-grow-1"></div> -->
-            <v-btn variant="text" v-on:click="cancelRescan" v-bind:disabled="store.doAbortRescan" style="flex: 0 0 80px">
+            <v-btn
+              variant="text"
+              v-on:click="cancelRescan"
+              v-bind:disabled="store.doAbortRescan"
+              style="flex: 0 0 80px"
+            >
               <v-icon v-if="!store.doAbortRescan">mdi-cancel</v-icon>
               <span v-if="store.doAbortRescan">{{ $t("Cancelling___") }}</span>
             </v-btn>

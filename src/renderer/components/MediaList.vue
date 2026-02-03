@@ -61,6 +61,7 @@
           solo
           clearable
           dense
+          variant="underlined"
           v-bind:items="sortAblesFiltered"
           item-title="DescriptionTranslated"
           item-value="Field"
@@ -240,6 +241,7 @@
             solo
             clearable
             dense
+            variant="underlined"
             v-bind:items="sortAblesFiltered"
             item-title="DescriptionTranslated"
             item-value="Field"

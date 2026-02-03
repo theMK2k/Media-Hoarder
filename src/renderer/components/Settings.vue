@@ -43,6 +43,7 @@
             readonly
             v-bind:label="$t('Media Player Path')"
             v-model="MediaplayerPath"
+            variant="underlined"
             style="margin-left: 16px"
           ></v-text-field>
 
@@ -83,6 +84,7 @@
             readonly
             v-bind:label="$t('Mediainfo CLI Path')"
             v-model="MediainfoPath"
+            variant="underlined"
             style="margin-left: 16px"
           ></v-text-field>
 
@@ -118,6 +120,7 @@
             type="number"
             v-bind:label="$t('Last Access Grace Period')"
             v-model="minimumWaitForSetAccess"
+            variant="underlined"
             style="margin-left: 16px"
           ></v-text-field>
         </v-row>
@@ -163,6 +166,7 @@
 
           <v-select
             class="mk-v-select-dynamic-width"
+            variant="underlined"
             v-bind:label="$t('Log Level')"
             item-title="name"
             item-value="level"
@@ -439,6 +443,7 @@
         <v-row class="settings-row">
           <v-select
             class="mk-v-select-dynamic-width"
+            variant="underlined"
             item-title="name"
             item-value="code"
             v-model="$shared.uiLanguage"

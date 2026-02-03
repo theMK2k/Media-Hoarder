@@ -16,6 +16,7 @@
             :append-icon-cb="() => {}"
             v-bind:placeholder="$t(`Search___ (use '*' to list all)`)"
             single-line
+            variant="underlined"
             color="white"
             hide-details
             v-model="searchText"

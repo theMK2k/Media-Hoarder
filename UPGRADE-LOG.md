@@ -250,27 +250,62 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 
 ---
 
-## Phase 4: Vue 2 → Vue 3 Migration (Days 19-35)
+## Phase 4: Vue 2 → Vue 3 + Vuetify 3 Migration
 
-**Status:** Not Started
+**Status:** 🚧 In Progress (Phase 4c)
+**Date Started:** 2026-01-XX
 
-### Planned Changes
-- Vue 2.6.14 → Vue 3.5.26
-- Vue Router 3 → 4
-- Vue i18n 8 → 11
-- Event bus migration (mitt)
-- 28 component updates
+### Phase 4a: Core Framework Upgrades
 
----
+**Status:** ✅ Complete
 
-## Phase 5: Vuetify 2 → Vuetify 3 Migration (Days 36-48)
+- ✅ Vue 2.6.14 → Vue 3.5.x
+- ✅ Vue Router 3 → 4
+- ✅ vue-i18n 8 → 9 (legacy mode)
+- ✅ Event bus: Custom → mitt
+- ✅ Vuetify 2.5.9 → Vuetify 3.x
 
-**Status:** Not Started
+### Phase 4b: electron-vite Migration
 
-### Planned Changes
-- Vuetify 2.5.9 → 3.11.6
-- Update all 28 components
-- Visual regression testing
+**Status:** ✅ Complete
+
+- ✅ Migrated from vue-cli-plugin-electron-builder to electron-vite
+- ✅ Created `electron.vite.config.js` with main, preload, renderer sections
+- ✅ Updated project structure for electron-vite conventions
+
+### Phase 4c: Vue 3 / Vuetify 3 Compatibility Fixes
+
+**Status:** 🚧 In Progress
+
+#### Completed
+
+- ✅ Vue 3 `emits` declarations added to all 20 components
+- ✅ Vuetify 3 v-select: `item-text` → `item-title` prop rename
+- ✅ Vuetify 3 v-select slots: `item.Property` → `item.raw.Property`
+- ✅ Vuetify 3 v-tabs: `v-tab-item` → `v-window-item` migration
+- ✅ vue-i18n 9: `this.$i18n._vm.messages` → `this.$i18n.getLocaleMessage()`
+- ✅ v-text-field: Added `variant="underlined"` to all instances
+- ✅ word-highlighter: Wrapped in span for class attribute (fragment component)
+- ✅ Passive event listener hack added for Vuetify 3 touch/wheel warnings
+
+#### In Progress
+
+- 🔄 Testing for remaining console warnings/errors
+
+### Key Files Modified (Phase 4c)
+
+- `src/renderer/main.js` - Passive event listener override
+- `src/renderer/components/Settings.vue` - v-tabs migration, vue-i18n fix
+- `src/renderer/components/MediaList.vue` - v-select fixes
+- `src/renderer/components/shared/Pagination.vue` - v-select fixes
+- `src/renderer/components/shared/MediaItemCard.vue` - word-highlighter fix
+- Multiple dialog components - emits declarations, v-text-field variant
+
+### Known Workarounds (see CLAUDE.md)
+
+- Passive event listener override in main.js
+- vuedraggable disabled (incompatible with Vue 3.4+)
+- HTML warning suppression in vue-i18n
 
 ---
 
