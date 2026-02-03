@@ -62,7 +62,7 @@
           clearable
           dense
           v-bind:items="sortAblesFiltered"
-          item-text="DescriptionTranslated"
+          item-title="DescriptionTranslated"
           item-value="Field"
           v-model="$shared.sortField"
           v-bind:label="$t('Sort')"
@@ -71,7 +71,7 @@
         >
           <template v-slot:selection="{ item }">
             <span class="grey--text caption" style="margin-right: 8px">{{ $t("Sort by") }}</span>
-            <span>{{ $t(item.Description) }}</span>
+            <span>{{ $t(item.raw.Description) }}</span>
           </template>
         </v-select>
 
@@ -241,7 +241,7 @@
             clearable
             dense
             v-bind:items="sortAblesFiltered"
-            item-text="DescriptionTranslated"
+            item-title="DescriptionTranslated"
             item-value="Field"
             v-model="$shared.sortField"
             v-bind:label="$t('Sort')"
@@ -250,7 +250,7 @@
           >
             <template v-slot:selection="{ item }">
               <span class="grey--text caption" style="margin-right: 8px">{{ $t("Sort by") }}</span>
-              <span>{{ $t(item.Description) }}</span>
+              <span>{{ $t(item.raw.Description) }}</span>
             </template>
           </v-select>
 

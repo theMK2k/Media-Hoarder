@@ -529,9 +529,13 @@
         <span class="mk-clickable" v-on:click.stop="mediaItem.showScanErrors = !mediaItem.showScanErrors"
           >{{ $t("Errors were encountered during the scan, consider a re-scan_") }}
         </span>
-        <v-btn size="small" variant="text" color="primary" v-on:click.stop="emitMediaItemEvent('clearScanErrors', { mediaItem })">{{
-          $t("Clear this message")
-        }}</v-btn>
+        <v-btn
+          size="small"
+          variant="text"
+          color="primary"
+          v-on:click.stop="emitMediaItemEvent('clearScanErrors', { mediaItem })"
+          >{{ $t("Clear this message") }}</v-btn
+        >
         <v-row v-if="mediaItem.showScanErrors" style="margin: 0px">
           <ul style="font-size: 0.875rem; margin-left: 4px; margin-top: 8px">
             <li
@@ -553,12 +557,13 @@
           ><strong>{{ $t("Full Path") }}:</strong></v-col
         >
         <v-col class="detailContent">
-          <word-highlighter
-            v-bind:query="searchText || ''"
+          <span
             v-bind:class="{
               'mk-search-highlight': $shared.filterSourcePathsActive,
             }"
-            >{{ mediaItem.SourcePath }}{{ pathSeparator }}</word-highlighter
+            ><word-highlighter v-bind:query="searchText || ''"
+              >{{ mediaItem.SourcePath }}{{ pathSeparator }}</word-highlighter
+            ></span
           ><word-highlighter v-bind:query="searchText || ''">{{ mediaItem.RelativePath }}</word-highlighter></v-col
         >
       </v-row>

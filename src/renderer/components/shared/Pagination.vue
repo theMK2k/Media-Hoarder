@@ -27,7 +27,7 @@
       solo
       dense
       v-bind:items="pages"
-      item-text="displayText"
+      item-title="displayText"
       item-value="page"
       label="Page"
       v-model="$shared.currentPage"
@@ -35,18 +35,18 @@
     >
       <!-- v-bind:style="selectStyle" -->
       <template v-slot:item="{ item }">
-        <div>{{ item.page + " / " + item.numPages }}</div>
+        <div>{{ item.raw.page + " / " + item.raw.numPages }}</div>
         <div style="width: 16px"></div>
-        <div v-if="item.detailInfo" class="grey--text caption">
-          {{ " " + item.detailInfo }}
+        <div v-if="item.raw.detailInfo" class="grey--text caption">
+          {{ " " + item.raw.detailInfo }}
         </div>
         <!-- <span v-if="index === 1" class="grey--text caption">(+{{ value.length - 1 }} others)</span> -->
       </template>
       <template v-slot:selection="{ item }">
-        <div>{{ item.page + " / " + item.numPages }}</div>
+        <div>{{ item.raw.page + " / " + item.raw.numPages }}</div>
         <div style="width: 16px"></div>
-        <div v-if="item.detailInfo" class="grey--text caption">
-          {{ " " + item.detailInfo }}
+        <div v-if="item.raw.detailInfo" class="grey--text caption">
+          {{ " " + item.raw.detailInfo }}
         </div>
         <!-- <span v-if="index === 1" class="grey--text caption">(+{{ value.length - 1 }} others)</span> -->
       </template>

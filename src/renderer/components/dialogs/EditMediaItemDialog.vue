@@ -157,7 +157,7 @@
                     <v-select
                       v-bind:items="audioLanguages"
                       v-model="selectedAudioLanguage"
-                      item-text="displayText"
+                      item-title="displayText"
                       item-value="languageCodeUpperCase"
                     ></v-select>
                   </v-card-text>
@@ -226,7 +226,7 @@
                     <v-select
                       v-bind:items="subtitleLanguages"
                       v-model="selectedSubtitleLanguage"
-                      item-text="displayText"
+                      item-title="displayText"
                       item-value="languageCodeUpperCase"
                     ></v-select>
                   </v-card-text>
@@ -294,7 +294,7 @@
                   <v-select
                     v-bind:items="genres"
                     v-model="selectedGenre"
-                    item-text="Name"
+                    item-title="Name"
                     item-value="GenreID"
                   ></v-select>
                 </v-card-text>
@@ -359,7 +359,7 @@
                   <v-select
                     v-bind:items="releaseAttributes"
                     v-model="selectedReleaseAttribute"
-                    item-text="displayAs"
+                    item-title="displayAs"
                     item-value="searchTerm"
                   ></v-select>
                 </v-card-text>
