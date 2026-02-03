@@ -1,10 +1,5 @@
 <template>
-  <v-dialog
-    :model-value="show"
-    @update:model-value="$emit('update:show', $event)"
-    persistent
-    max-width="1000px"
-  >
+  <v-dialog :model-value="show" @update:model-value="$emit('update:show', $event)" persistent max-width="1000px">
     <v-card>
       <v-card-title>
         <div class="headline" style="width: 100%; font-size: 1.17em">
@@ -30,7 +25,7 @@
                 <v-select
                   solo
                   v-bind:items="lists"
-                  item-text="Name"
+                  item-title="Name"
                   item-value="id_Lists"
                   v-bind:disabled="chosenMethod != 'useExistingLists'"
                   v-model="chosen_id_Lists"

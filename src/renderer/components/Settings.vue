@@ -7,19 +7,21 @@
       {{ $t("Settings") }}
     </h1>
 
-    <v-tabs color="white">
-      <v-tab>{{ $t("General") }}</v-tab>
-      <v-tab>{{ $t("Movies") }}</v-tab>
-      <v-tab>{{ $t("Series") }}</v-tab>
-      <v-tab>{{ $t("Duplicates") }}</v-tab>
-      <v-tab>{{ $t("Regions") }}</v-tab>
-      <v-tab>{{ $t("Languages") }}</v-tab>
-      <v-tab>{{ $t("Title Types") }}</v-tab>
-      <v-tab>{{ $t("Release Attributes") }}</v-tab>
-      <v-tab v-on:click="loadScanProcesses">{{ $t("Scan History") }}</v-tab>
+    <v-tabs v-model="activeTab" color="white">
+      <v-tab value="general">{{ $t("General") }}</v-tab>
+      <v-tab value="movies">{{ $t("Movies") }}</v-tab>
+      <v-tab value="series">{{ $t("Series") }}</v-tab>
+      <v-tab value="duplicates">{{ $t("Duplicates") }}</v-tab>
+      <v-tab value="regions">{{ $t("Regions") }}</v-tab>
+      <v-tab value="languages">{{ $t("Languages") }}</v-tab>
+      <v-tab value="titletypes">{{ $t("Title Types") }}</v-tab>
+      <v-tab value="releaseattributes">{{ $t("Release Attributes") }}</v-tab>
+      <v-tab value="scanhistory" v-on:click="loadScanProcesses">{{ $t("Scan History") }}</v-tab>
+    </v-tabs>
 
+    <v-window v-model="activeTab">
       <!-- GENERAL -->
-      <v-tab-item style="padding: 8px">
+      <v-window-item value="general" style="padding: 8px">
         <v-row class="settings-row">
           <h3>{{ $t("Media Player Path") }}</h3>
 
@@ -44,12 +46,22 @@
             style="margin-left: 16px"
           ></v-text-field>
 
-          <v-btn v-on:click="browseMediaplayerPath()" variant="text" size="small" color="primary" style="margin-top: 16px">{{
-            $t("Browse")
-          }}</v-btn>
-          <v-btn v-on:click="showEditMediaplayerPathDialog()" variant="text" size="small" color="primary" style="margin-top: 16px">{{
-            $t("Edit")
-          }}</v-btn>
+          <v-btn
+            v-on:click="browseMediaplayerPath()"
+            variant="text"
+            size="small"
+            color="primary"
+            style="margin-top: 16px"
+            >{{ $t("Browse") }}</v-btn
+          >
+          <v-btn
+            v-on:click="showEditMediaplayerPathDialog()"
+            variant="text"
+            size="small"
+            color="primary"
+            style="margin-top: 16px"
+            >{{ $t("Edit") }}</v-btn
+          >
         </v-row>
 
         <v-row class="settings-row">
@@ -74,12 +86,22 @@
             style="margin-left: 16px"
           ></v-text-field>
 
-          <v-btn v-on:click="browseMediainfoPath()" variant="text" size="small" color="primary" style="margin-top: 16px">{{
-            $t("Browse")
-          }}</v-btn>
-          <v-btn v-on:click="showEditMediainfoPathDialog()" variant="text" size="small" color="primary" style="margin-top: 16px">{{
-            $t("Edit")
-          }}</v-btn>
+          <v-btn
+            v-on:click="browseMediainfoPath()"
+            variant="text"
+            size="small"
+            color="primary"
+            style="margin-top: 16px"
+            >{{ $t("Browse") }}</v-btn
+          >
+          <v-btn
+            v-on:click="showEditMediainfoPathDialog()"
+            variant="text"
+            size="small"
+            color="primary"
+            style="margin-top: 16px"
+            >{{ $t("Edit") }}</v-btn
+          >
         </v-row>
 
         <v-row class="settings-row">
@@ -142,7 +164,7 @@
           <v-select
             class="mk-v-select-dynamic-width"
             v-bind:label="$t('Log Level')"
-            item-text="name"
+            item-title="name"
             item-value="level"
             v-model="$shared.logLevel"
             v-bind:items="logLevels"
@@ -150,13 +172,17 @@
           ></v-select>
         </v-row>
 
-        <v-btn variant="text" size="small" color="primary" v-on:click="openVersionDialog">{{ $t("Show Version Info") }}</v-btn>
-        <v-btn variant="text" size="small" color="primary" v-on:click="openCheckIMDBScraperDialog">{{ $t("Check IMDB Scraper") }}</v-btn>
+        <v-btn variant="text" size="small" color="primary" v-on:click="openVersionDialog">{{
+          $t("Show Version Info")
+        }}</v-btn>
+        <v-btn variant="text" size="small" color="primary" v-on:click="openCheckIMDBScraperDialog">{{
+          $t("Check IMDB Scraper")
+        }}</v-btn>
         <v-btn variant="text" size="small" color="primary" v-on:click="openDevTools">{{ $t("Open DevTools") }}</v-btn>
-      </v-tab-item>
+      </v-window-item>
 
       <!-- MOVIES -->
-      <v-tab-item style="padding: 8px">
+      <v-window-item value="movies" style="padding: 8px">
         <h3>{{ $t("Movies") }} - {{ $t("Source Paths") }}</h3>
         <v-alert type="warning" colored-border border="start" v-if="moviesSourcePaths.length == 0">{{
           $t("no paths defined")
@@ -171,11 +197,13 @@
           ></mk-sourcepath>
         </div>
 
-        <v-btn variant="text" size="small" color="primary" v-on:click="addSource('movies')">{{ $t("Add Source Path") }}</v-btn>
-      </v-tab-item>
+        <v-btn variant="text" size="small" color="primary" v-on:click="addSource('movies')">{{
+          $t("Add Source Path")
+        }}</v-btn>
+      </v-window-item>
 
       <!-- SERIES -->
-      <v-tab-item style="padding: 8px">
+      <v-window-item value="series" style="padding: 8px">
         <h3>{{ $t("Series") }} - {{ $t("Source Paths") }}</h3>
         <v-alert type="warning" colored-border border="start" v-if="tvSourcePaths.length == 0">{{
           $t("no paths defined")
@@ -195,11 +223,13 @@
           ></mk-sourcepath>
         </div>
 
-        <v-btn variant="text" size="small" color="primary" v-on:click="addSource('series')">{{ $t("Add Source Path") }}</v-btn>
-      </v-tab-item>
+        <v-btn variant="text" size="small" color="primary" v-on:click="addSource('series')">{{
+          $t("Add Source Path")
+        }}</v-btn>
+      </v-window-item>
 
       <!-- DUPLICATES -->
-      <v-tab-item style="padding: 8px">
+      <v-window-item value="duplicates" style="padding: 8px">
         <v-card-text class="mk-light-grey">
           <p>
             {{ $t("These settings describe how {appName} should handle duplicates", { appName: $shared.appName }) }}
@@ -342,10 +372,10 @@
             ></v-checkbox>
           </div>
         </v-card>
-      </v-tab-item>
+      </v-window-item>
 
       <!-- REGIONS -->
-      <v-tab-item style="padding: 8px">
+      <v-window-item value="regions" style="padding: 8px">
         <v-card-text class="mk-light-grey">
           <p>
             {{
@@ -394,11 +424,13 @@
           </div>
         </div>
 
-        <v-btn variant="text" size="small" color="primary" v-on:click="openAddRegionsDialog">{{ $t("Add Regions") }}</v-btn>
-      </v-tab-item>
+        <v-btn variant="text" size="small" color="primary" v-on:click="openAddRegionsDialog">{{
+          $t("Add Regions")
+        }}</v-btn>
+      </v-window-item>
 
       <!-- LANGUAGES -->
-      <v-tab-item style="padding: 8px">
+      <v-window-item value="languages" style="padding: 8px">
         <h3>{{ $t("Language of the Application") }}</h3>
         <v-card-text class="mk-light-grey">
           <p>{{ $t("Change the language of the application here_") }}</p>
@@ -407,7 +439,7 @@
         <v-row class="settings-row">
           <v-select
             class="mk-v-select-dynamic-width"
-            item-text="name"
+            item-title="name"
             item-value="code"
             v-model="$shared.uiLanguage"
             v-bind:items="availableLanguages"
@@ -477,9 +509,13 @@
           </div>
         </div>
 
-        <v-btn variant="text" size="small" color="primary" v-on:click="openAddLanguagesDialog('languagesPrimaryTitle')">{{
-          $t("Add Languages")
-        }}</v-btn>
+        <v-btn
+          variant="text"
+          size="small"
+          color="primary"
+          v-on:click="openAddLanguagesDialog('languagesPrimaryTitle')"
+          >{{ $t("Add Languages") }}</v-btn
+        >
 
         <div style="height: 16px"></div>
 
@@ -541,13 +577,17 @@
           </div>
         </div>
 
-        <v-btn variant="text" size="small" color="primary" v-on:click="openAddLanguagesDialog('languagesAudioSubtitles')">{{
-          $t("Add Languages")
-        }}</v-btn>
-      </v-tab-item>
+        <v-btn
+          variant="text"
+          size="small"
+          color="primary"
+          v-on:click="openAddLanguagesDialog('languagesAudioSubtitles')"
+          >{{ $t("Add Languages") }}</v-btn
+        >
+      </v-window-item>
 
       <!-- TITLE TYPES -->
-      <v-tab-item style="padding: 8px">
+      <v-window-item value="titletypes" style="padding: 8px">
         <v-card-text class="mk-light-grey">
           <p>
             {{
@@ -571,13 +611,18 @@
           v-on:removeTitleType="openRemoveTitleTypeDialog"
         ></mk-title-type>
 
-        <v-btn variant="text" size="small" color="primary" v-on:click="openAddTitleTypeDialog" style="margin-top: 16px">{{
-          $t("Add Title Type")
-        }}</v-btn>
-      </v-tab-item>
+        <v-btn
+          variant="text"
+          size="small"
+          color="primary"
+          v-on:click="openAddTitleTypeDialog"
+          style="margin-top: 16px"
+          >{{ $t("Add Title Type") }}</v-btn
+        >
+      </v-window-item>
 
       <!-- RELEASE ATTRIBUTES -->
-      <v-tab-item style="padding: 8px">
+      <v-window-item value="releaseattributes" style="padding: 8px">
         <v-card-text class="mk-light-grey">
           <p>
             {{
@@ -627,13 +672,18 @@
           </template>
           <!-- <template v-slot:item.actions="{ item }"> </template> -->
         </v-data-table>
-        <v-btn v-on:click="onAddReleaseAttribute()" variant="text" size="small" color="primary" style="margin-top: 16px">{{
-          $t("Add")
-        }}</v-btn>
-      </v-tab-item>
+        <v-btn
+          v-on:click="onAddReleaseAttribute()"
+          variant="text"
+          size="small"
+          color="primary"
+          style="margin-top: 16px"
+          >{{ $t("Add") }}</v-btn
+        >
+      </v-window-item>
 
       <!-- SCAN HISTORY -->
-      <v-tab-item style="padding: 8px">
+      <v-window-item value="scanhistory" style="padding: 8px">
         <div style="display: flex">
           <v-spacer></v-spacer>
           <v-btn variant="text" v-on:click="loadScanProcesses" style="margin-right: 8px">
@@ -683,8 +733,8 @@
             </div>
           </v-card-text>
         </v-card>
-      </v-tab-item>
-    </v-tabs>
+      </v-window-item>
+    </v-window>
 
     <mk-sourcepath-description-dialog
       ref="sourcePathDescriptionDialog"
@@ -923,6 +973,8 @@ export default {
   },
 
   data: () => ({
+    activeTab: "general",
+
     logLevels: [
       {
         level: 0,
@@ -1908,7 +1960,9 @@ export default {
     this.availableLanguages = this.$i18n.availableLocales.map((locale) => {
       return {
         code: locale,
-        name: this.$i18n._vm.messages[locale].LanguageNames[languageCodeNameMapping[helpers.uppercaseEachWord(locale)]],
+        name: this.$i18n.getLocaleMessage(locale).LanguageNames[
+          languageCodeNameMapping[helpers.uppercaseEachWord(locale)]
+        ],
       };
     });
 
