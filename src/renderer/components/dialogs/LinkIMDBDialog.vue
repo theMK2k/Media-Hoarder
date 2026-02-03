@@ -180,7 +180,7 @@ import { eventBus } from "@/eventBus.js";
 export default {
   props: ["show", "showUnlink"],
 
-  emits: ["update:show"],
+  emits: ["update:show", "close", "selected", "unlink"],
 
   data() {
     return {

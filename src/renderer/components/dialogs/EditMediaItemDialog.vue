@@ -419,7 +419,7 @@ import { deepDiffMapper } from "@helpers/deep-diff-mapper.js";
 export default {
   props: ["show", "type", "caption", "mediaItem"],
 
-  emits: ["update:show"],
+  emits: ["update:show", "ok", "cancel"],
 
   data() {
     return {

@@ -54,6 +54,7 @@
 
 export default {
   props: ["value", "showAdd", "showRemove"],
+  emits: ["addTitleType", "removeTitleType"],
 
   data: () => ({
     isHovered: false,

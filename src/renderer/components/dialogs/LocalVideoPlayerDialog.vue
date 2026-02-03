@@ -192,7 +192,7 @@ export default {
 
   props: ["show", "videoURL", "mimeType", "slateURL", "trailerShow", "showActualPlayer", "isLoading"],
 
-  emits: ["update:show"],
+  emits: ["update:show", "close", "mediaItemEvent"],
 
   data: () => ({
     controlsHovered: false,

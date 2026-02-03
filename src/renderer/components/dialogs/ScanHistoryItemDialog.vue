@@ -81,7 +81,7 @@ import logger from "@helpers/logger.js";
 export default {
   props: ["show", "id_Scan_Processes"],
 
-  emits: ["update:show"],
+  emits: ["update:show", "close"],
 
   components: {},
 

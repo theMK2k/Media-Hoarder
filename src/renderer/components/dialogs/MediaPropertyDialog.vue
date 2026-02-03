@@ -285,7 +285,7 @@ export default {
     "Series_Year_Display",
   ],
 
-  emits: ["update:show"],
+  emits: ["update:show", "close", "mediaItemEvent"],
 
   components: {
     "mk-compact-movie-list-row": CompactMovieListRow,

@@ -42,7 +42,7 @@ import TitleType from "@/components/shared/TitleType.vue";
 export default {
   props: ["show"],
 
-  emits: ["update:show"],
+  emits: ["update:show", "close", "addTitleType"],
 
   components: {
     "mk-title-type": TitleType,

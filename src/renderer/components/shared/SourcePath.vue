@@ -37,6 +37,7 @@ import { eventBus } from "@/eventBus.js";
 
 export default {
   props: ["value"],
+  emits: ["edit-description", "delete", "edit-path"],
 
   data: () => ({
     isHovered: false,

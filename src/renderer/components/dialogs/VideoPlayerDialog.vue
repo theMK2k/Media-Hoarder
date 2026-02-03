@@ -178,7 +178,7 @@ export default {
 
   props: ["show", "src", "trailerShow", "showActualPlayer", "isLoading"],
 
-  emits: ["update:show"],
+  emits: ["update:show", "close", "mediaItemEvent"],
 
   data: () => ({
     controlsHovered: false,

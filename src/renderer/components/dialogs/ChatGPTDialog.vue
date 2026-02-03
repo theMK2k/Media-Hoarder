@@ -102,7 +102,7 @@ import MediaItemCard from "@/components/shared/MediaItemCard.vue";
 export default {
   props: ["show"],
 
-  emits: ["update:show"],
+  emits: ["update:show", "close", "mediaItemEvent"],
 
   components: {
     "mk-compact-movie-list-row": CompactMovieListRow,
