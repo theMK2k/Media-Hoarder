@@ -85,7 +85,7 @@ import * as imdbScraperTests from "@/tests/imdb-scraper-tests.js";
 export default {
   props: ["show"],
 
-  emits: ["update:show"],
+  emits: ["update:show", "close", "ok"],
 
   data() {
     return {

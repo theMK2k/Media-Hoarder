@@ -64,7 +64,7 @@
 export default {
   props: ["show"],
 
-  emits: ["update:show"],
+  emits: ["update:show", "cancel", "ok"],
 
   data() {
     return {

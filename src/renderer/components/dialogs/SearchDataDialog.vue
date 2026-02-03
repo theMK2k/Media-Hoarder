@@ -67,7 +67,7 @@ import { eventBus } from "@/eventBus.js";
 export default {
   props: ["show", "title", "searchMode", "mediaType", "Series_id_Movies_Owner"],
 
-  emits: ["update:show"],
+  emits: ["update:show", "ok", "cancel"],
 
   data() {
     return {

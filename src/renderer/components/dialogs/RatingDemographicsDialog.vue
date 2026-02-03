@@ -223,7 +223,7 @@ import * as store from "@/store.js";
 export default {
   props: ["show", "id_Movies", "title"],
 
-  emits: ["update:show"],
+  emits: ["update:show", "close"],
 
   data() {
     return {

@@ -1015,6 +1015,7 @@ import * as store from "@/store.js";
 
 export default {
   props: ["mediaItem", "isScanning", "showCloseButton", "allowMediaItemClick", "allowEditButtons", "isInDialog"],
+  emits: ["close", "mediaItemEvent"],
   components: { "word-highlighter": WordHighlighter, "star-rating": StarRating },
   data() {
     return {};

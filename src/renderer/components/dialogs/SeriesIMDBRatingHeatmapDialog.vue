@@ -183,7 +183,7 @@ export default {
 
   props: ["show", "isLoading", "data", "title"],
 
-  emits: ["update:show"],
+  emits: ["update:show", "close", "mediaItemEvent"],
 
   data() {
     return {

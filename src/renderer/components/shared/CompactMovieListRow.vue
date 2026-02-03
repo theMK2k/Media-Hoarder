@@ -53,6 +53,7 @@ import * as helpers from "@helpers/helpers";
 
 export default {
   props: ["movie", "isClickable", "showExpandIndicator", "isCollapsed"],
+  emits: ["click"],
   computed: {
     helpers() {
       return helpers;
