@@ -23,8 +23,7 @@
               </v-col>
               <v-col cols="12" sm="7">
                 <v-select
-                  solo
-                  variant="underlined"
+                  variant="solo"
                   v-bind:items="lists"
                   item-title="Name"
                   item-value="id_Lists"
