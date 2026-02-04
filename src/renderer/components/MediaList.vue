@@ -58,16 +58,16 @@
         </h1>
         <v-select
           class="mk-v-select-dynamic-width"
-          solo
+          variant="solo"
           clearable
-          dense
-          variant="underlined"
+          density="compact"
+          hide-details
           v-bind:items="sortAblesFiltered"
           item-title="DescriptionTranslated"
           item-value="Field"
           v-model="$shared.sortField"
-          v-bind:label="$t('Sort')"
-          style="margin-left: 8px; margin-top: 8px; max-width: 320px; height: 40px"
+          v-bind:placeholder="$t('Sort')"
+          style="margin-left: 8px; margin-top: 8px; max-width: 320px"
           v-on:change="onSortChanged"
         >
           <template v-slot:selection="{ item }">
@@ -93,17 +93,28 @@
                 <template v-slot:activator="{ props: tooltipProps }">
                   <button
                     type="button"
-                    class="v-pagination__navigation"
                     v-bind="{ ...menuProps, ...tooltipProps }"
+                    class="v-btn"
                     style="
                       height: 38px !important;
                       width: 38px !important;
-                      margin: 10px 8px 0px 0px !important;
-                      background-color: #424242;
+                      margin: 12px 8px 0px 0px !important;
+                      display: inline-block;
+                      font-size: x-large;
                     "
                   >
-                    <i aria-hidden="true" class="v-icon notranslate mdi mdi-dots-vertical theme--dark"></i>
+                    <span class="v-btn__overlay"></span><span class="v-btn__underlay"></span
+                    ><span class="v-btn__content" data-no-activator=""
+                      ><i class="v-icon notranslate mdi mdi-dots-vertical theme--dark" aria-hidden="true"></i
+                    ></span>
                   </button>
+                  <!-- <v-btn
+                    variant="text"
+                    v-bind="{ ...menuProps, ...tooltipProps }"
+                    style="height: 38px !important; width: 38px !important; margin: 8px 8px 0px 0px !important"
+                  >
+                    <i aria-hidden="true" class="v-icon notranslate mdi mdi-dots-vertical theme--dark"></i>
+                  </v-btn> -->
                 </template>
                 <span>{{ $t("List Actions") }}</span>
               </v-tooltip>
@@ -238,16 +249,16 @@
         <div style="width: 100%; display: flex">
           <v-select
             class="mk-v-select-dynamic-width"
-            solo
+            variant="solo"
+            density="compact"
             clearable
-            dense
-            variant="underlined"
+            hide-details
             v-bind:items="sortAblesFiltered"
             item-title="DescriptionTranslated"
             item-value="Field"
             v-model="$shared.sortField"
-            v-bind:label="$t('Sort')"
-            style="margin-left: 150px; margin-top: 8px; max-width: 320px; height: 40px"
+            v-bind:placeholder="$t('Sort')"
+            style="margin-left: 150px; margin-top: 8px; max-width: 320px"
             v-on:change="onSortChanged"
           >
             <template v-slot:selection="{ item }">

@@ -1477,7 +1477,7 @@
                           <span v-bind="props">
                             <v-switch
                               color="red"
-                              dense
+                              density="compact"
                               style="margin-top: 0px"
                               v-model="genre.Excluded"
                               hide-details
@@ -5347,7 +5347,7 @@ a {
 /* ### Vuetify fixes ### */
 
 /* this is part of v-select and makes it unneccessarily high */
-.v-text-field__details {
+.v-input__details {
   display: none !important;
 }
 

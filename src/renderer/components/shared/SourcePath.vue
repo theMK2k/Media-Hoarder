@@ -15,7 +15,7 @@
             </v-list-item-subtitle>
 
             <v-checkbox
-              dense
+              density="compact"
               v-model="value.checkRemovedFiles"
               color="mk-dark-grey"
               v-bind:label="$t('remove missing entries on (re-)scan')"
