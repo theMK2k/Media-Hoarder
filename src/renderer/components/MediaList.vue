@@ -72,7 +72,7 @@
         >
           <template v-slot:selection="{ item }">
             <span class="grey--text caption" style="margin-right: 8px">{{ $t("Sort by") }}</span>
-            <span>{{ $t(item.raw.Description) }}</span>
+            <span>{{ item.raw?.Description ? $t(item.raw.Description) : '' }}</span>
           </template>
         </v-select>
 
@@ -263,7 +263,7 @@
           >
             <template v-slot:selection="{ item }">
               <span class="grey--text caption" style="margin-right: 8px">{{ $t("Sort by") }}</span>
-              <span>{{ $t(item.raw.Description) }}</span>
+              <span>{{ item.raw?.Description ? $t(item.raw.Description) : '' }}</span>
             </template>
           </v-select>
 
@@ -1010,6 +1010,21 @@ export default {
 
       // eventBus.refetchMedia();
       this.refetchMedia({});
+    },
+
+    specificMediaType(newValue, oldValue) {
+      logger.log("[MediaList.specificMediaType] newValue:", newValue, "oldValue:", oldValue);
+
+      // Reset sortField if it's no longer valid for the new view type
+      if (this.$shared.sortField) {
+        const isValidSortField = this.sortAblesFiltered.some(
+          (item) => item.Field === this.$shared.sortField
+        );
+        if (!isValidSortField) {
+          logger.log("[MediaList.specificMediaType] Resetting invalid sortField:", this.$shared.sortField);
+          this.$shared.sortField = null;
+        }
+      }
     },
 
     currentPage(newValue, oldValue) {
