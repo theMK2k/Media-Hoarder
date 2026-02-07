@@ -8,7 +8,7 @@
   >
     <v-card style="min-height: 500px">
       <v-card-title>
-        <v-row class="headline" style="width: 100%; font-size: 1.17em">
+        <v-row class="text-h5" style="width: 100%; font-size: 1.17em">
           {{ $t("IMDB Scraper Check") }}
           <v-spacer></v-spacer>
 

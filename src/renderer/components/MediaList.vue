@@ -173,7 +173,7 @@
           "
         >
           <div style="flex: 0 1 auto; flex-grow: 1; flex-shrink: 1; flex-basis: auto">
-            <v-list-item-title class="headline mb-2" style="margin-bottom: 0px !important; margin-top: 8px">
+            <v-list-item-title class="text-h5 mb-2" style="margin-bottom: 0px !important; margin-top: 8px">
               <div style="display: flex; min-height: 30px">
                 <div style="overflow: hidden; text-overflow: ellipsis">
                   {{ series.item.Name }}
@@ -196,13 +196,13 @@
           <v-spacer></v-spacer>
           <div>
             <div
-              class="headline mb-2"
+              class="text-h5 mb-2"
               style="margin-right: 16px; margin-left: 0px; margin-bottom: 0px !important"
               v-if="series.item.IMDB_rating_defaultDisplay"
             >
               <v-icon small color="amber" style="padding-bottom: 4px">mdi-star</v-icon>
               <a
-                class="headline mb-2 mk-clickable"
+                class="text-h5 mb-2 mk-clickable"
                 v-on:click.stop="onShowSeriesIMDBRatingHeatmapDialog(series.item)"
                 >{{ series.item.IMDB_rating_defaultDisplay }}</a
               >

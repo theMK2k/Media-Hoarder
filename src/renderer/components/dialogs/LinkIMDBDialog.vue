@@ -8,7 +8,7 @@
   >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title style="padding-bottom: 0px">
-        <div class="headline" style="width: 100%; font-size: 1.17em">
+        <div class="text-h5" style="width: 100%; font-size: 1.17em">
           <v-row style="margin: 0px">
             {{ $t("Link with IMDB entry") }}
             <v-spacer />

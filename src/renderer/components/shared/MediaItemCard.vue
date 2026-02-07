@@ -70,7 +70,7 @@
           <v-row style="margin: 0px">
             <div style="margin-left: 4px; max-width: -webkit-fill-available">
               <v-list-item-title
-                class="headline mb-2"
+                class="text-h5 mb-2"
                 style="margin-bottom: 0px !important"
                 v-on:mouseover="
                   allowEditButtons && emitMediaItemEvent('setItemHovered', { mediaItem, section: 'name', value: true })
@@ -379,21 +379,21 @@
             <div class="flex-grow-1"></div>
             <div>
               <div
-                class="headline mb-2"
+                class="text-h5 mb-2"
                 style="margin-right: 16px; margin-left: 0px; margin-bottom: 0px !important"
                 v-if="mediaItem.IMDB_rating_defaultDisplay"
               >
                 <v-icon small color="amber" style="padding-bottom: 4px">mdi-star</v-icon>
                 <!--
                           #rip-rating-demographics
-                          <a class="headline mb-2 mk-clickable" v-on:click.stop="emitMediaItemEvent('showRatingDemographicsDialog', { mediaItem })">{{ mediaItem.IMDB_rating_defaultDisplay }}</a>
+                          <a class="text-h5 mb-2 mk-clickable" v-on:click.stop="emitMediaItemEvent('showRatingDemographicsDialog', { mediaItem })">{{ mediaItem.IMDB_rating_defaultDisplay }}</a>
                         -->
-                <span v-if="mediaItem.specificMediaType !== 'Series'" class="headline mb-2">{{
+                <span v-if="mediaItem.specificMediaType !== 'Series'" class="text-h5 mb-2">{{
                   mediaItem.IMDB_rating_defaultDisplay
                 }}</span>
                 <a
                   v-if="mediaItem.specificMediaType == 'Series'"
-                  class="headline mb-2 mk-clickable"
+                  class="text-h5 mb-2 mk-clickable"
                   v-on:click.stop="emitMediaItemEvent('showSeriesIMDBRatingHeatmapDialog', { mediaItem })"
                   >{{ mediaItem.IMDB_rating_defaultDisplay }}</a
                 >

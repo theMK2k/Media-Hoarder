@@ -9,8 +9,8 @@
   >
     <v-card>
       <v-card-title>
-        <v-row class="headline" style="width: 100%; font-size: 1.17em; margin-left: 0px">
-          <div class="headline mk-clickable" v-on:click="showQuote = !showQuote">
+        <v-row class="text-h5" style="width: 100%; font-size: 1.17em; margin-left: 0px">
+          <div class="text-h5 mk-clickable" v-on:click="showQuote = !showQuote">
             {{ $shared.appName }} v{{ $shared.currentVersion }} -
             {{ $shared.currentName }}
           </div>
