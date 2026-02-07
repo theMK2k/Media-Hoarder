@@ -8,7 +8,7 @@
             <!-- :color="item.color" -->
             <div class="d-flex flex-no-wrap justify-space-between">
               <div>
-                <v-card-title class="headline" style="padding-bottom: 8px">
+                <v-card-title class="text-h5" style="padding-bottom: 8px">
                   <v-icon left>{{ item.icon }}</v-icon>
                   {{ $t(`${item.text}`) }}
                   <v-progress-linear

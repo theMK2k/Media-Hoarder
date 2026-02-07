@@ -7,7 +7,7 @@
   >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
-        <div class="headline" style="width: 100%; font-size: 1.17em">{{ $t("IMDB Ratings for") }} {{ title }}</div>
+        <div class="text-h5" style="width: 100%; font-size: 1.17em">{{ $t("IMDB Ratings for") }} {{ title }}</div>
         <v-progress-linear v-if="isLoading" color="red accent-0" indeterminate rounded height="3"></v-progress-linear>
       </v-card-title>
       <v-card-text>

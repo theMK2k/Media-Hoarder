@@ -8,7 +8,7 @@
   >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
-        <div class="headline" style="width: 100%; font-size: 1.17em">
+        <div class="text-h5" style="width: 100%; font-size: 1.17em">
           {{ title }}
         </div>
         <v-row style="margin-top: 8px">
