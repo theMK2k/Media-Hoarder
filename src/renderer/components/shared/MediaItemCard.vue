@@ -53,7 +53,8 @@
           <v-icon
             v-if="!(mediaItem.IMDB_posterSmall_URL || mediaItem.SeriesOwner_IMDB_posterSmall_URL)"
             disabled
-            x-large
+            size="48"
+            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"
           >
             mdi-filmstrip
           </v-icon>
