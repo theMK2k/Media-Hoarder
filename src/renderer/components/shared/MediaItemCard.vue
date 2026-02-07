@@ -7,9 +7,10 @@
     v-on:click="allowMediaItemClick && emitMediaItemEvent('selectMediaItem', { mediaItem })"
     v-bind:style="{ cursor: allowMediaItemClick ? 'pointer' : 'default!important' }"
   >
-    <v-list-item style="padding-left: 0px; padding-right: 0px">
+    <div style="display: flex; flex-direction: row; align-items: flex-start">
       <!-- Poster -->
       <div
+        style="flex-shrink: 0"
         v-on:mouseover="emitMediaItemEvent('setItemHovered', { mediaItem, section: 'avatar', value: true })"
         v-on:mouseleave="emitMediaItemEvent('setItemHovered', { mediaItem, section: 'avatar', value: false })"
       >
@@ -63,7 +64,7 @@
         </div>
       </div>
 
-      <div class="align-self-start" style="padding: 0px">
+      <div class="align-self-start" style="padding: 0px; flex: 1; min-width: 0">
         <v-col style="padding: 0px !important; margin-top: 16px">
           <v-row style="margin: 0px">
             <div style="margin-left: 4px; max-width: -webkit-fill-available">
@@ -522,7 +523,7 @@
           </v-row>
         </v-col>
       </div>
-    </v-list-item>
+    </div>
 
     <v-row v-if="mediaItem.scanErrors && Object.keys(mediaItem.scanErrors).length" style="margin: 8px">
       <v-alert type="warning" density="compact" colored-border border="start">
