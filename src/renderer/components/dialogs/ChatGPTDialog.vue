@@ -17,7 +17,7 @@
           <strong>{{ $t("It is recommended to also ask for the release year_") }}</strong>
         </p>
 
-        <v-btn class="xs-fullwidth" color="primary" v-on:click.native="onStartConversation" style="margin-left: 8px">
+        <v-btn class="xs-fullwidth" color="primary" v-on:click="onStartConversation" style="margin-left: 8px">
           {{ $t("Start Conversation") }}
         </v-btn>
 
@@ -65,7 +65,7 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCloseClick" style="margin-left: 8px">{{
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click="onCloseClick" style="margin-left: 8px">{{
           $t("Close")
         }}</v-btn>
         <v-btn
@@ -73,7 +73,7 @@
           v-bind:disabled="!listTitle"
           class="xs-fullwidth"
           color="primary"
-          v-on:click.native="onFilterClick"
+          v-on:click="onFilterClick"
           style="margin-left: 8px"
         >
           {{ $t("Create and filter by this list") }}

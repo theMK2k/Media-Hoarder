@@ -9,15 +9,15 @@
               <v-btn
                 v-show="showAdd && isHovered"
                 v-on:click="onAddTitleTypeClicked"
-                text
-                small
+                variant="text"
+                size="small"
                 color="primary"
                 style="height: 16px"
                 >{{ $t("Add this Title Type") }}</v-btn
               >
               <v-icon
                 v-show="showRemove && isHovered"
-                small
+                size="small"
                 class="mk-clickable-red"
                 style="align-items: flex-start"
                 v-on:click="onRemoveTitleTypeClicked"

@@ -42,7 +42,7 @@
           v-if="cancel"
           v-bind:color="cancelColor"
           v-bind:loading="loading"
-          v-on:click.native="onButtonClick('cancel')"
+          v-on:click="onButtonClick('cancel')"
           >{{ cancel }}</v-btn
         >
         <v-btn
@@ -50,7 +50,7 @@
           v-if="no"
           v-bind:loading="loading"
           v-bind:color="noColor"
-          v-on:click.native="onButtonClick('no')"
+          v-on:click="onButtonClick('no')"
           >{{ no }}</v-btn
         >
         <v-btn
@@ -59,7 +59,7 @@
           v-bind:disabled="enterTextValue && !textValueEmptyAllowed && !textValueLocal"
           v-bind:color="yesColor ? yesColor : 'primary'"
           v-bind:loading="loading"
-          v-on:click.native="onButtonClick('yes')"
+          v-on:click="onButtonClick('yes')"
           >{{ yes }}</v-btn
         >
         <v-btn
@@ -68,7 +68,7 @@
           v-bind:disabled="enterTextValue && !textValueEmptyAllowed && !textValueLocal"
           v-bind:color="okColor ? okColor : 'primary'"
           v-bind:loading="loading"
-          v-on:click.native="onButtonClick('ok')"
+          v-on:click="onButtonClick('ok')"
           >{{ ok }}</v-btn
         >
         <!-- </v-row> -->

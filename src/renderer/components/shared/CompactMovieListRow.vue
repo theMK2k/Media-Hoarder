@@ -32,7 +32,7 @@
       <!-- Rating (right) -->
       <div id="rating" style="flex-shrink: 0; margin-left: 16px">
         <span v-if="movie.IMDB_rating_defaultDisplay">
-          <v-icon small color="amber" style="padding-bottom: 4px; width: 12px; height: 12px">mdi-star</v-icon>
+          <v-icon size="small" color="amber" style="padding-bottom: 4px; width: 12px; height: 12px">mdi-star</v-icon>
           {{ movie.IMDB_rating_defaultDisplay }}</span
         >
         <span

@@ -269,7 +269,7 @@
               color="mk-dark-grey"
               density="compact"
               v-model="$shared.duplicatesHandling.actualDuplicate.relinkIMDB"
-              v-on:click.native="duplicatesHandlingChanged"
+              v-on:click="duplicatesHandlingChanged"
             ></v-checkbox>
             <v-checkbox
               v-bind:label="$t('re-use already scraped IMDB metadata')"
@@ -277,7 +277,7 @@
               color="mk-dark-grey"
               density="compact"
               v-model="$shared.duplicatesHandling.actualDuplicate.reuseIMDBMetaData"
-              v-on:click.native="duplicatesHandlingChanged"
+              v-on:click="duplicatesHandlingChanged"
             ></v-checkbox>
             <v-checkbox
               v-bind:label="$t('add to list')"
@@ -285,7 +285,7 @@
               color="mk-dark-grey"
               density="compact"
               v-model="$shared.duplicatesHandling.actualDuplicate.addToList"
-              v-on:click.native="duplicatesHandlingChanged"
+              v-on:click="duplicatesHandlingChanged"
             ></v-checkbox>
             <v-checkbox
               v-bind:label="$t('update primary title')"
@@ -293,7 +293,7 @@
               color="mk-dark-grey"
               density="compact"
               v-model="$shared.duplicatesHandling.actualDuplicate.updateTitle"
-              v-on:click.native="duplicatesHandlingChanged"
+              v-on:click="duplicatesHandlingChanged"
             ></v-checkbox>
             <v-checkbox
               v-bind:label="$t('update secondary title')"
@@ -301,7 +301,7 @@
               color="mk-dark-grey"
               density="compact"
               v-model="$shared.duplicatesHandling.actualDuplicate.updateSubTitle"
-              v-on:click.native="duplicatesHandlingChanged"
+              v-on:click="duplicatesHandlingChanged"
             ></v-checkbox>
             <v-checkbox
               v-bind:label="$t('update rating')"
@@ -309,7 +309,7 @@
               color="mk-dark-grey"
               density="compact"
               v-model="$shared.duplicatesHandling.actualDuplicate.updateRating"
-              v-on:click.native="duplicatesHandlingChanged"
+              v-on:click="duplicatesHandlingChanged"
             ></v-checkbox>
             <v-checkbox
               v-bind:label="$t('update last access')"
@@ -317,7 +317,7 @@
               color="mk-dark-grey"
               density="compact"
               v-model="$shared.duplicatesHandling.actualDuplicate.updateLastAccess"
-              v-on:click.native="duplicatesHandlingChanged"
+              v-on:click="duplicatesHandlingChanged"
             ></v-checkbox>
             <v-checkbox
               v-bind:label="$t('update description')"
@@ -325,7 +325,7 @@
               color="mk-dark-grey"
               density="compact"
               v-model="$shared.duplicatesHandling.actualDuplicate.updateDescription"
-              v-on:click.native="duplicatesHandlingChanged"
+              v-on:click="duplicatesHandlingChanged"
             ></v-checkbox>
             <v-checkbox
               v-bind:label="$t('update release attributes')"
@@ -333,7 +333,7 @@
               color="mk-dark-grey"
               density="compact"
               v-model="$shared.duplicatesHandling.actualDuplicate.updateReleaseAttributes"
-              v-on:click.native="duplicatesHandlingChanged"
+              v-on:click="duplicatesHandlingChanged"
             ></v-checkbox>
           </div>
         </v-card>
@@ -364,7 +364,7 @@
               color="mk-dark-grey"
               density="compact"
               v-model="$shared.duplicatesHandling.metaDuplicate.addToList"
-              v-on:click.native="duplicatesHandlingChanged"
+              v-on:click="duplicatesHandlingChanged"
             ></v-checkbox>
             <v-checkbox
               v-bind:label="$t('update rating')"
@@ -372,7 +372,7 @@
               color="mk-dark-grey"
               density="compact"
               v-model="$shared.duplicatesHandling.metaDuplicate.updateRating"
-              v-on:click.native="duplicatesHandlingChanged"
+              v-on:click="duplicatesHandlingChanged"
             ></v-checkbox>
           </div>
         </v-card>
@@ -644,12 +644,12 @@
         <v-data-table
           ref="releaseAttributesTable"
           v-bind:headers="[
-            { text: $t('Search Term'), value: 'searchTerm', sortable: false },
-            { text: $t('Display As'), value: 'displayAs', sortable: false },
-            { text: '', value: 'actions', sortable: false },
+            { title: $t('Search Term'), key: 'searchTerm', sortable: false },
+            { title: $t('Display As'), key: 'displayAs', sortable: false },
+            { title: '', key: 'actions', sortable: false },
             {
-              text: '',
-              value: 'deleted',
+              title: '',
+              key: 'deleted',
               visible: false,
               filter: releaseAttributesFilter,
               align: 'd-none',
@@ -667,8 +667,8 @@
                 <td>{{ item.searchTerm }}</td>
                 <td>{{ item.displayAs }}</td>
                 <td>
-                  <v-icon small class="mr-2 mk-clickable" @click="onEditReleaseAttribute(item)">mdi-pencil</v-icon>
-                  <v-icon small class="mr-2 mk-clickable-red" @click="openRemoveReleaseAttributeDialog(item)"
+                  <v-icon size="small" class="mr-2 mk-clickable" @click="onEditReleaseAttribute(item)">mdi-pencil</v-icon>
+                  <v-icon size="small" class="mr-2 mk-clickable-red" @click="openRemoveReleaseAttributeDialog(item)"
                     >mdi-delete</v-icon
                   >
                 </td>

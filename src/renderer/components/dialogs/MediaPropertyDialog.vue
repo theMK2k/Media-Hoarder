@@ -219,7 +219,7 @@
 
       <v-card-actions>
         <!-- Button: Close -->
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCloseClick" style="margin-left: 8px">{{
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click="onCloseClick" style="margin-left: 8px">{{
           $t("Close")
         }}</v-btn>
 
@@ -231,7 +231,7 @@
           v-on:click.stop="openIMDB()"
           style="margin-left: 8px"
         >
-          <v-icon small>mdi-web</v-icon>&nbsp;IMDB
+          <v-icon size="small">mdi-web</v-icon>&nbsp;IMDB
         </v-btn>
         <!-- Button: Filter by this... -->
         <v-btn
@@ -241,7 +241,7 @@
           "
           class="xs-fullwidth"
           color="primary"
-          v-on:click.native="onFilterClick"
+          v-on:click="onFilterClick"
           style="margin-left: 8px"
         >
           {{ $t(propertyType.filterButtonText) }}

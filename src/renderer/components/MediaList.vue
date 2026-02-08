@@ -15,7 +15,7 @@
       "
     >
       <!-- Button: "<-" (go back) -->
-      <v-tooltip bottom>
+      <v-tooltip location="bottom">
         <template v-slot:activator="{ props }">
           <span v-bind="props">
             <v-btn variant="text" v-on:click="$router.go(-1)" style="padding: 0px; margin-top: 6px; margin-left: 8px">
@@ -27,7 +27,7 @@
       </v-tooltip>
 
       <!-- Button: "Reload List" -->
-      <v-tooltip bottom>
+      <v-tooltip location="bottom">
         <template v-slot:activator="{ props }">
           <span v-bind="props">
             <v-btn variant="text" v-on:click="onReload" style="padding: 0px; margin-top: 6px; margin-left: 8px">
@@ -200,7 +200,7 @@
               style="margin-right: 16px; margin-left: 0px; margin-bottom: 0px !important"
               v-if="series.item.IMDB_rating_defaultDisplay"
             >
-              <v-icon small color="amber" style="padding-bottom: 4px">mdi-star</v-icon>
+              <v-icon size="small" color="amber" style="padding-bottom: 4px">mdi-star</v-icon>
               <a
                 class="text-h5 mb-2 mk-clickable"
                 v-on:click.stop="onShowSeriesIMDBRatingHeatmapDialog(series.item)"
@@ -278,15 +278,14 @@
             ></mk-pagination>
 
             <!-- LIST MENU -->
-            <v-menu bottom right offset-y>
-              <template v-slot:activator="{ on: menu, attrs }">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on: tooltip }">
+            <v-menu location="bottom end" offset="4">
+              <template v-slot:activator="{ props: menuProps }">
+                <v-tooltip location="bottom">
+                  <template v-slot:activator="{ props: tooltipProps }">
                     <button
                       type="button"
                       class="v-pagination__navigation"
-                      v-bind="attrs"
-                      v-on="{ ...tooltip, ...menu }"
+                      v-bind="{ ...menuProps, ...tooltipProps }"
                       style="
                         height: 38px !important;
                         width: 38px !important;
@@ -305,7 +304,7 @@
                 <!-- <v-list-item v-if="!isScanning" v-bind:disabled="isScanning" v-on:click="rescanCurrentListDialog.show = true">
                   {{ $t("Rescan Meta Data") }}
                 </v-list-item> -->
-                <v-tooltip left v-bind:disabled="!isScanning">
+                <v-tooltip location="start" v-bind:disabled="!isScanning">
                   <template v-slot:activator="{ props }">
                     <span v-bind="props">
                       <v-list-item v-bind:disabled="isScanning" v-on:click="rescanCurrentListDialog.show = true">

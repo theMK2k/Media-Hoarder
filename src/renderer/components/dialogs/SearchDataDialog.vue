@@ -13,9 +13,7 @@
         </div>
         <v-row style="margin-top: 8px">
           <v-text-field
-            :append-icon-cb="() => {}"
             v-bind:placeholder="$t(`Search___ (use '*' to list all)`)"
-            single-line
             variant="underlined"
             color="white"
             hide-details
@@ -49,7 +47,7 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCancelClick()">{{ $t("Close") }}</v-btn>
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click="onCancelClick()">{{ $t("Close") }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

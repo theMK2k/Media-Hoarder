@@ -6,12 +6,12 @@
           <div>
             <v-list-item-title>
               {{ value.Description }}
-              <v-icon class="mk-clickable" v-show="isHovered" small v-on:click="onEditDescription">mdi-pencil</v-icon>
-              <v-icon class="mk-clickable-red" v-show="isHovered" small v-on:click="onDelete">mdi-delete</v-icon>
+              <v-icon class="mk-clickable" v-show="isHovered" size="small" v-on:click="onEditDescription">mdi-pencil</v-icon>
+              <v-icon class="mk-clickable-red" v-show="isHovered" size="small" v-on:click="onDelete">mdi-delete</v-icon>
             </v-list-item-title>
             <v-list-item-subtitle style="min-height: 28px">
               {{ value.Path }}
-              <v-icon class="mk-clickable" v-show="isHovered" small v-on:click="onEditPath">mdi-pencil</v-icon>
+              <v-icon class="mk-clickable" v-show="isHovered" size="small" v-on:click="onEditPath">mdi-pencil</v-icon>
             </v-list-item-subtitle>
 
             <v-checkbox
@@ -20,7 +20,7 @@
               color="mk-dark-grey"
               v-bind:label="$t('remove missing entries on (re-)scan')"
               style="margin-top: 0px"
-              v-on:click.native="toggleCheckRemovedFiles"
+              v-on:click="toggleCheckRemovedFiles"
             ></v-checkbox>
           </div>
         </v-list-item>

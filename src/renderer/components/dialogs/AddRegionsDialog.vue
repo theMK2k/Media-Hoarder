@@ -14,10 +14,8 @@
       </v-card-title>
       <v-card-text>
         <v-text-field
-          :append-icon-cb="() => {}"
           v-bind:placeholder="`${$t('Search')}...`"
           variant="underlined"
-          single-line
           append-icon="mdi-magnify"
           color="white"
           hide-details
@@ -35,8 +33,8 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCancelClick()">{{ $t("Cancel") }}</v-btn>
-        <v-btn v-bind:disabled="!canConfirm" class="xs-fullwidth" color="primary" v-on:click.native="onOKClick()">{{
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click="onCancelClick()">{{ $t("Cancel") }}</v-btn>
+        <v-btn v-bind:disabled="!canConfirm" class="xs-fullwidth" color="primary" v-on:click="onOKClick()">{{
           $t("OK")
         }}</v-btn>
       </v-card-actions>
