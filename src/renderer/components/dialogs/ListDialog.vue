@@ -59,14 +59,14 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onButtonClick('cancel')">{{
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click="onButtonClick('cancel')">{{
           $t("Cancel")
         }}</v-btn>
         <v-btn
           v-bind:disabled="!canConfirm"
           class="xs-fullwidth"
           color="primary"
-          v-on:click.native="onButtonClick('ok')"
+          v-on:click="onButtonClick('ok')"
           >{{ $t("OK") }}</v-btn
         >
         <!-- v-bind:disabled="enterTextValue && !textValueEmptyAllowed && !textValueLocal" -->

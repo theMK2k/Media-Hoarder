@@ -65,7 +65,7 @@
           >
             {{ $t("Filters") }}
             <v-spacer></v-spacer>
-            <v-tooltip v-if="!editFilters.isEditFilters" bottom>
+            <v-tooltip v-if="!editFilters.isEditFilters" location="bottom">
               <template v-slot:activator="{ props }">
                 <span v-bind="props">
                   <v-btn variant="text" v-on:click="onResetFilters"><v-icon>mdi-restore</v-icon></v-btn>
@@ -73,7 +73,7 @@
               </template>
               <span>{{ $t("Reset Filters") }}</span>
             </v-tooltip>
-            <v-tooltip v-if="!editFilters.isEditFilters" bottom>
+            <v-tooltip v-if="!editFilters.isEditFilters" location="bottom">
               <template v-slot:activator="{ props }">
                 <span v-bind="props">
                   <v-btn variant="text" v-on:click="onEditFilters"><v-icon>mdi-pencil</v-icon></v-btn>
@@ -81,7 +81,7 @@
               </template>
               <span>{{ $t("Edit Filters") }}</span>
             </v-tooltip>
-            <v-tooltip v-if="!editFilters.isEditFilters" bottom>
+            <v-tooltip v-if="!editFilters.isEditFilters" location="bottom">
               <template v-slot:activator="{ props }">
                 <span v-bind="props">
                   <v-btn variant="text" v-on:click="onOpenChatGPTDialog"><v-icon>mdi-robot</v-icon></v-btn>
@@ -3063,7 +3063,7 @@
         ></v-text-field>
       </v-row>
 
-      <v-tooltip bottom>
+      <v-tooltip location="bottom">
         <template v-slot:activator="{ props }">
           <span v-bind="props">
             <v-btn variant="text" style="margin-left: 16px; margin-right: -8px" v-on:click="toggleFullScreen">

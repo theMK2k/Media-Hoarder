@@ -404,7 +404,7 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCancelClick" style="margin-left: 8px">{{
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click="onCancelClick" style="margin-left: 8px">{{
           $t("Cancel")
         }}</v-btn>
         <v-btn class="xs-fullwidth" color="primary" v-on:click.stop="onOKClick" style="margin-left: 8px"> OK </v-btn>

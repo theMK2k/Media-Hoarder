@@ -69,9 +69,9 @@
             <v-expansion-panel-text>
               <div style="display: flex">
                 <v-spacer></v-spacer>
-                <v-tooltip bottom style="z-index: 21">
+                <v-tooltip location="bottom" style="z-index: 21">
                   <template v-slot:activator="{ props }">
-                    <span v-on="on">
+                    <span v-bind="props">
                       <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllIMDBScraperOptions(false)">
                         <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
                       </v-btn>
@@ -79,9 +79,9 @@
                   </template>
                   <span>{{ $t("Clear Selection") }}</span>
                 </v-tooltip>
-                <v-tooltip bottom style="z-index: 21">
+                <v-tooltip location="bottom" style="z-index: 21">
                   <template v-slot:activator="{ props }">
-                    <span v-on="on">
+                    <span v-bind="props">
                       <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllIMDBScraperOptions(true)">
                         <v-icon>mdi-check-box-multiple-outline</v-icon>
                       </v-btn>
@@ -105,9 +105,9 @@
           </v-expansion-panel>
         </v-expansion-panels>
 
-        <v-tooltip bottom>
+        <v-tooltip location="bottom">
           <template v-slot:activator="{ props }">
-            <span v-on="on">
+            <span v-bind="props">
               <v-checkbox
                 v-model="performCheck"
                 v-bind:label="$t('Perform an IMDB Scraper Check before Scan')"
@@ -148,13 +148,13 @@
       <v-card-actions>
         <v-col sm="12">
           <v-row style="margin-top: 8px">
-            <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCloseClick" style="margin-left: 8px">{{
+            <v-btn class="xs-fullwidth" color="secondary" v-on:click="onCloseClick" style="margin-left: 8px">{{
               $t("Cancel")
             }}</v-btn>
             <v-btn
               class="xs-fullwidth"
               v-bind:color="missingSourcePaths && missingSourcePaths.length > 0 ? 'red' : 'primary'"
-              v-on:click.native="onOKClick"
+              v-on:click="onOKClick"
               v-bind:loading="isLoading"
               style="margin-left: 8px"
             >

@@ -110,7 +110,7 @@
             class="xs-fullwidth"
             variant="outlined"
             color="white"
-            v-on:click.native="$emit('close')"
+            v-on:click="$emit('close')"
             style="margin-left: 8px"
             >{{ $t("Close") }}</v-btn
           >
@@ -155,7 +155,7 @@
               class="xs-fullwidth"
               variant="outlined"
               color="primary"
-              v-on:click.native="$emit('trailer-show-add-movie-to-list')"
+              v-on:click="$emit('trailer-show-add-movie-to-list')"
               style="margin-left: 8px"
               >{{ $t("Add Movie to List") }}</v-btn
             >
@@ -163,7 +163,7 @@
               class="xs-fullwidth"
               variant="outlined"
               color="primary"
-              v-on:click.native="$emit('trailer-show-close-and-search-movie')"
+              v-on:click="$emit('trailer-show-close-and-search-movie')"
               style="margin-left: 8px"
               >{{ $t("Close and Search Movie") }}</v-btn
             >

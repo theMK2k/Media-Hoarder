@@ -12,7 +12,7 @@
           <v-row style="margin: 0px">
             {{ $t("Link with IMDB entry") }}
             <v-spacer />
-            <v-tooltip bottom>
+            <v-tooltip location="bottom">
               <template v-slot:activator="{ props }">
                 <span v-bind="props">
                   <v-btn v-if="showUnlink" variant="text" color="error" v-on:click.stop="onUnlinkClick()">{{
@@ -27,9 +27,7 @@
 
         <v-row style="padding-left: 16px; margin-top: 16px; margin-bottom: 24px; width: 100%; align-items: flex-end">
           <v-text-field
-            :append-icon-cb="() => {}"
             v-bind:placeholder="`${$t('Enter a title')}...`"
-            single-line
             variant="underlined"
             color="white"
             hide-details
@@ -37,7 +35,7 @@
             v-on:keydown.enter="onSearchClick"
           ></v-text-field>
 
-          <v-btn variant="text" v-bind:loading="isLoading" v-on:click.native="onSearchClick">{{ $t("Search") }}</v-btn>
+          <v-btn variant="text" v-bind:loading="isLoading" v-on:click="onSearchClick">{{ $t("Search") }}</v-btn>
         </v-row>
 
         <!--
@@ -63,7 +61,7 @@
       -->
 
         <!-- <v-row style="margin-bottom: 16px">
-          <v-btn variant="text" v-bind:loading="isLoading" v-on:click.native="onSearchClick">{{ $t("Search") }}</v-btn>
+          <v-btn variant="text" v-bind:loading="isLoading" v-on:click="onSearchClick">{{ $t("Search") }}</v-btn>
         </v-row> -->
       </v-card-title>
 
@@ -163,7 +161,7 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click.native="onCancelClick()">{{ $t("Close") }}</v-btn>
+        <v-btn class="xs-fullwidth" color="secondary" v-on:click="onCancelClick()">{{ $t("Close") }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

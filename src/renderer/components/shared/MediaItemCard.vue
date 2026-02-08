@@ -81,7 +81,7 @@
               >
                 <div style="display: flex; min-height: 30px">
                   <div v-if="mediaItem.last_access_at">
-                    <v-tooltip bottom>
+                    <v-tooltip location="bottom">
                       <template v-slot:activator="{ props }">
                         <span v-bind="props">
                           <v-icon style="margin-right: 8px; margin-bottom: 3px">mdi-eye-check-outline</v-icon>
@@ -115,7 +115,7 @@
 
                   <!-- all the edit buttons -->
                   <div v-if="allowEditButtons">
-                    <v-tooltip bottom>
+                    <v-tooltip location="bottom">
                       <template v-slot:activator="{ props }">
                         <span v-bind="props">
                           <v-icon
@@ -130,7 +130,7 @@
                       <span style="margin-left:">{{ $t("Edit Movie") }}</span>
                     </v-tooltip>
 
-                    <v-tooltip bottom>
+                    <v-tooltip location="bottom">
                       <template v-slot:activator="{ props }">
                         <span v-bind="props">
                           <v-icon
@@ -152,7 +152,7 @@
                       </span>
                     </v-tooltip>
 
-                    <v-tooltip bottom>
+                    <v-tooltip location="bottom">
                       <template v-slot:activator="{ props }">
                         <span v-bind="props">
                           <v-icon
@@ -174,7 +174,7 @@
                       </span>
                     </v-tooltip>
 
-                    <v-tooltip bottom>
+                    <v-tooltip location="bottom">
                       <template v-slot:activator="{ props }">
                         <span v-bind="props">
                           <v-icon
@@ -288,7 +288,7 @@
 
                 <span v-if="mediaItem.AudioLanguages">
                   |
-                  <v-icon small>mdi-comment-outline</v-icon>
+                  <v-icon size="small">mdi-comment-outline</v-icon>
                   <span v-for="(lang, index) in mediaItem.AudioLanguages" v-bind:key="lang">
                     <span>{{ index > 0 ? ", " : " " }}</span>
                     <span
@@ -308,7 +308,7 @@
 
                 <span v-if="mediaItem.SubtitleLanguages">
                   |
-                  <v-icon small style="margin-top: -3px">mdi-subtitles-outline</v-icon>
+                  <v-icon size="small" style="margin-top: -3px">mdi-subtitles-outline</v-icon>
                   <span v-for="(lang, index) in mediaItem.SubtitleLanguages" v-bind:key="lang">
                     <span>{{ index > 0 ? ", " : " " }}</span>
                     <span
@@ -383,7 +383,7 @@
                 style="margin-right: 16px; margin-left: 0px; margin-bottom: 0px !important"
                 v-if="mediaItem.IMDB_rating_defaultDisplay"
               >
-                <v-icon small color="amber" style="padding-bottom: 4px">mdi-star</v-icon>
+                <v-icon size="small" color="amber" style="padding-bottom: 4px">mdi-star</v-icon>
                 <!--
                           #rip-rating-demographics
                           <a class="text-h5 mb-2 mk-clickable" v-on:click.stop="emitMediaItemEvent('showRatingDemographicsDialog', { mediaItem })">{{ mediaItem.IMDB_rating_defaultDisplay }}</a>
@@ -576,7 +576,7 @@
           ></v-col
         >
         <v-col class="detailContent">
-          <v-tooltip right>
+          <v-tooltip location="end">
             <template v-slot:activator="{ props }">
               <span v-bind="props">{{ createdHumanized(mediaItem) }}</span>
             </template>
@@ -589,7 +589,7 @@
           ><strong>{{ $t("Last Access") }}:</strong></v-col
         >
         <v-col class="detailContent">
-          <v-tooltip right>
+          <v-tooltip location="end">
             <template v-slot:activator="{ props }">
               <span v-bind="props">{{ lastAccessHumanized(mediaItem) }}</span>
             </template>
@@ -622,12 +622,12 @@
           <v-btn
             v-if="mediaItem.IMDB_tconst"
             class="mk-btn-small"
-            text
-            small
+            variant="text"
+            size="small"
             color="primary"
             v-on:click.stop="emitMediaItemEvent('copyImdbTconst', { mediaItem })"
             style="margin-top: -1px"
-            ><v-icon small>mdi-content-copy</v-icon></v-btn
+            ><v-icon size="small">mdi-content-copy</v-icon></v-btn
           >
         </v-col>
       </v-row>
@@ -650,8 +650,8 @@
           <span v-if="!mediaItem.lists || mediaItem.lists.length === 0">&lt;{{ $t("not in any list") }}&gt;</span>
           <v-btn
             class="mk-btn-small"
-            text
-            small
+            variant="text"
+            size="small"
             color="primary"
             v-on:click.stop="emitMediaItemEvent('addToList', { mediaItem })"
             style="margin-top: -1px"
@@ -660,8 +660,8 @@
           <v-btn
             v-if="mediaItem.lists && mediaItem.lists.length > 0"
             class="mk-btn-small"
-            text
-            small
+            variant="text"
+            size="small"
             color="primary"
             v-on:click.stop="emitMediaItemEvent('removeFromList', { mediaItem })"
             style="margin-top: -1px"
@@ -948,7 +948,7 @@
         v-if="showCloseButton"
         class="xs-fullwidth"
         color="secondary"
-        v-on:click.native.stop="$emit('close')"
+        v-on:click.stop="$emit('close')"
         style="margin-left: 8px"
         >{{ $t("Close") }}</v-btn
       >
@@ -957,21 +957,21 @@
       }}</v-btn>
       <v-btn
         v-if="mediaItem.IMDB_Trailer_URL"
-        text
+        variant="text"
         color="primary"
         v-on:click.stop="emitMediaItemEvent('showTrailer', { mediaItem })"
         >{{ $t("Trailer") }}</v-btn
       >
       <v-btn
-        text
+        variant="text"
         v-bind:disabled="!mediaItem.IMDB_tconst"
         color="primary"
         v-on:click.stop="emitMediaItemEvent('openIMDB', { mediaItem })"
       >
-        <v-icon small>mdi-web</v-icon>&nbsp;IMDB
+        <v-icon size="small">mdi-web</v-icon>&nbsp;IMDB
       </v-btn>
       <v-btn
-        text
+        variant="text"
         v-if="mediaItem.specificMediaType == 'Series' || mediaItem.specificMediaType == 'Episodes'"
         v-bind:disabled="
           (mediaItem.specificMediaType == 'Series' && !mediaItem.IMDB_tconst) ||
@@ -980,24 +980,24 @@
         color="primary"
         v-on:click.stop="emitMediaItemEvent('openWhatToWatchOnTV', { mediaItem })"
       >
-        <v-icon small>mdi-web</v-icon>&nbsp;w2wTV
+        <v-icon size="small">mdi-web</v-icon>&nbsp;w2wTV
       </v-btn>
       <v-btn
-        text
+        variant="text"
         v-if="mediaItem.specificMediaType == 'Movies'"
         v-bind:disabled="!mediaItem.IMDB_tconst"
         color="primary"
         v-on:click.stop="emitMediaItemEvent('openLetterboxd', { mediaItem })"
       >
-        <v-icon small>mdi-web</v-icon>&nbsp;Letterboxd
+        <v-icon size="small">mdi-web</v-icon>&nbsp;Letterboxd
       </v-btn>
       <v-btn
-        text
+        variant="text"
         v-bind:disabled="!mediaItem.IMDB_tconst"
         color="primary"
         v-on:click.stop="emitMediaItemEvent('openMovieChat', { mediaItem })"
       >
-        <v-icon small>mdi-web</v-icon>&nbsp;MovieChat
+        <v-icon size="small">mdi-web</v-icon>&nbsp;MovieChat
       </v-btn>
     </v-card-actions>
   </v-card>
