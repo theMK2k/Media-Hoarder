@@ -413,7 +413,7 @@
                     v-bind:increment="0.5"
                     v-bind:max-rating="5"
                     v-bind:star-size="16"
-                    v-model="mediaItem.Rating"
+                    v-model:rating="mediaItem.Rating"
                     v-bind:clearable="true"
                     v-bind:show-rating="false"
                     inactive-color="grey"
@@ -421,7 +421,7 @@
                     style="margin-right: 26px; padding: 0px !important"
                     v-bind:star-points="[7, 3, 6, 6, 2, 6, 5, 8, 4, 12, 7, 10, 10, 12, 9, 8, 12, 6, 8, 6]"
                     v-bind:glow="1"
-                    v-on:rating-selected="emitMediaItemEvent('changeRating', { mediaItem })"
+                    v-on:update:rating="emitMediaItemEvent('changeRating', { mediaItem })"
                   ></star-rating>
                 </div>
               </v-row>

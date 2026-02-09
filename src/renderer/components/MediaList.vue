@@ -72,7 +72,7 @@
         >
           <template v-slot:selection="{ item }">
             <span class="grey--text caption" style="margin-right: 8px">{{ $t("Sort by") }}</span>
-            <span>{{ item.raw?.Description ? $t(item.raw.Description) : '' }}</span>
+            <span>{{ item.raw?.Description ? $t(item.raw.Description) : "" }}</span>
           </template>
         </v-select>
 
@@ -201,11 +201,9 @@
               v-if="series.item.IMDB_rating_defaultDisplay"
             >
               <v-icon size="small" color="amber" style="padding-bottom: 4px">mdi-star</v-icon>
-              <a
-                class="text-h5 mb-2 mk-clickable"
-                v-on:click.stop="onShowSeriesIMDBRatingHeatmapDialog(series.item)"
-                >{{ series.item.IMDB_rating_defaultDisplay }}</a
-              >
+              <a class="text-h5 mb-2 mk-clickable" v-on:click.stop="onShowSeriesIMDBRatingHeatmapDialog(series.item)">{{
+                series.item.IMDB_rating_defaultDisplay
+              }}</a>
               <span
                 v-if="series.item.IMDB_metacriticScore"
                 v-bind:class="helpers.getMetaCriticClass(series.item.IMDB_metacriticScore)"
@@ -229,7 +227,7 @@
                   style="margin-right: 26px; padding: 0px !important"
                   v-bind:star-points="[7, 3, 6, 6, 2, 6, 5, 8, 4, 12, 7, 10, 10, 12, 9, 8, 12, 6, 8, 6]"
                   v-bind:glow="1"
-                  v-on:rating-selected="changeRating(series.item)"
+                  @update:rating="changeRating($event, series.item)"
                 ></star-rating>
               </div>
             </v-row>
@@ -263,7 +261,7 @@
           >
             <template v-slot:selection="{ item }">
               <span class="grey--text caption" style="margin-right: 8px">{{ $t("Sort by") }}</span>
-              <span>{{ item.raw?.Description ? $t(item.raw.Description) : '' }}</span>
+              <span>{{ item.raw?.Description ? $t(item.raw.Description) : "" }}</span>
             </template>
           </v-select>
 
@@ -1016,9 +1014,7 @@ export default {
 
       // Reset sortField if it's no longer valid for the new view type
       if (this.$shared.sortField) {
-        const isValidSortField = this.sortAblesFiltered.some(
-          (item) => item.Field === this.$shared.sortField
-        );
+        const isValidSortField = this.sortAblesFiltered.some((item) => item.Field === this.$shared.sortField);
         if (!isValidSortField) {
           logger.log("[MediaList.specificMediaType] Resetting invalid sortField:", this.$shared.sortField);
           this.$shared.sortField = null;
@@ -1348,8 +1344,8 @@ export default {
       }
     },
 
-    changeRating(movie) {
-      logger.log("[changeRating] movie:", movie, " movie.Rating:", movie.Rating);
+    changeRating(movie, event) {
+      logger.log("[changeRating] movie:", movie, "event:", event, "movie.Rating:", movie.Rating);
 
       const rating = movie.Rating;
 
