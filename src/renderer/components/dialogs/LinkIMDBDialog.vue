@@ -74,12 +74,12 @@
             v-if="Math.ceil(searchResults.length / searchResultsPerPage) > 1"
             style="margin-bottom: 24px; color: white"
           >
-            <v-btn size="small" v-bind:disabled="currentPage == 1" v-on:click="onPrevClicked" style="margin-right: 16px"
+            <v-btn variant="tonal" size="small" v-bind:disabled="currentPage == 1" v-on:click="onPrevClicked" style="margin-right: 16px"
               >&lt;</v-btn
             >
             {{ currentPage }} / {{ Math.ceil(searchResults.length / searchResultsPerPage) }}
             <v-btn
-              size="small"
+              variant="tonal" size="small"
               v-bind:disabled="currentPage >= Math.ceil(searchResults.length / searchResultsPerPage)"
               v-on:click="onNextClicked"
               style="margin-left: 16px"
@@ -145,12 +145,12 @@
             v-if="Math.ceil(searchResults.length / searchResultsPerPage) > 1"
             style="margin-top: 16px; margin-bottom: 24px; color: white"
           >
-            <v-btn size="small" v-bind:disabled="currentPage == 1" v-on:click="onPrevClicked" style="margin-right: 16px"
+            <v-btn variant="tonal" size="small" v-bind:disabled="currentPage == 1" v-on:click="onPrevClicked" style="margin-right: 16px"
               >&lt;</v-btn
             >
             {{ currentPage }} / {{ Math.ceil(searchResults.length / searchResultsPerPage) }}
             <v-btn
-              size="small"
+              variant="tonal" size="small"
               v-bind:disabled="currentPage >= Math.ceil(searchResults.length / searchResultsPerPage)"
               v-on:click="onNextClicked"
               style="margin-left: 16px"
@@ -161,7 +161,7 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click="onCancelClick()">{{ $t("Close") }}</v-btn>
+        <v-btn class="xs-fullwidth" variant="tonal" color="secondary" v-on:click="onCancelClick()">{{ $t("Close") }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

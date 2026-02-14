@@ -98,10 +98,10 @@
                   </v-card-text>
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="secondary" v-on:click.stop="showAddVideoQualityDialog = false">{{
+                    <v-btn variant="tonal" color="secondary" v-on:click.stop="showAddVideoQualityDialog = false">{{
                       $t("Cancel")
                     }}</v-btn>
-                    <v-btn color="primary" v-on:click.stop="onAddVideoQualityDialogOK">{{ $t("OK") }}</v-btn>
+                    <v-btn variant="tonal" color="primary" v-on:click.stop="onAddVideoQualityDialogOK">{{ $t("OK") }}</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-menu>
@@ -168,10 +168,10 @@
                   </v-card-text>
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="secondary" v-on:click.stop="showAddAudioLanguageDialog = false">{{
+                    <v-btn variant="tonal" color="secondary" v-on:click.stop="showAddAudioLanguageDialog = false">{{
                       $t("Cancel")
                     }}</v-btn>
-                    <v-btn color="primary" v-on:click.stop="onAddAudioLanguageDialogOK">{{ $t("OK") }}</v-btn>
+                    <v-btn variant="tonal" color="primary" v-on:click.stop="onAddAudioLanguageDialogOK">{{ $t("OK") }}</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-menu>
@@ -238,10 +238,10 @@
                   </v-card-text>
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="secondary" v-on:click.stop="showAddSubtitleLanguageDialog = false">{{
+                    <v-btn variant="tonal" color="secondary" v-on:click.stop="showAddSubtitleLanguageDialog = false">{{
                       $t("Cancel")
                     }}</v-btn>
-                    <v-btn color="primary" v-on:click.stop="onAddSubtitleLanguageDialogOK">{{ $t("OK") }}</v-btn>
+                    <v-btn variant="tonal" color="primary" v-on:click.stop="onAddSubtitleLanguageDialogOK">{{ $t("OK") }}</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-menu>
@@ -307,8 +307,8 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="secondary" v-on:click.stop="showAddGenreDialog = false">{{ $t("Cancel") }}</v-btn>
-                  <v-btn color="primary" v-on:click.stop="onAddGenreDialogOK">{{ $t("OK") }}</v-btn>
+                  <v-btn variant="tonal" color="secondary" v-on:click.stop="showAddGenreDialog = false">{{ $t("Cancel") }}</v-btn>
+                  <v-btn variant="tonal" color="primary" v-on:click.stop="onAddGenreDialogOK">{{ $t("OK") }}</v-btn>
                 </v-card-actions>
               </v-card>
             </v-menu>
@@ -373,10 +373,10 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="secondary" v-on:click.stop="showAddReleaseAttributeDialog = false">{{
+                  <v-btn variant="tonal" color="secondary" v-on:click.stop="showAddReleaseAttributeDialog = false">{{
                     $t("Cancel")
                   }}</v-btn>
-                  <v-btn color="primary" v-on:click.stop="onAddReleaseAttributeDialogOK">{{ $t("OK") }}</v-btn>
+                  <v-btn variant="tonal" color="primary" v-on:click.stop="onAddReleaseAttributeDialogOK">{{ $t("OK") }}</v-btn>
                 </v-card-actions>
               </v-card>
             </v-menu>
@@ -404,10 +404,10 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click="onCancelClick" style="margin-left: 8px">{{
+        <v-btn class="xs-fullwidth" variant="tonal" color="secondary" v-on:click="onCancelClick" style="margin-left: 8px">{{
           $t("Cancel")
         }}</v-btn>
-        <v-btn class="xs-fullwidth" color="primary" v-on:click.stop="onOKClick" style="margin-left: 8px"> OK </v-btn>
+        <v-btn class="xs-fullwidth" variant="tonal" color="primary" v-on:click.stop="onOKClick" style="margin-left: 8px"> OK </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

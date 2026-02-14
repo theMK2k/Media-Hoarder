@@ -148,12 +148,12 @@
       <v-card-actions>
         <v-col sm="12">
           <v-row style="margin-top: 8px">
-            <v-btn class="xs-fullwidth" color="secondary" v-on:click="onCloseClick" style="margin-left: 8px">{{
+            <v-btn class="xs-fullwidth" variant="tonal" color="secondary" v-on:click="onCloseClick" style="margin-left: 8px">{{
               $t("Cancel")
             }}</v-btn>
             <v-btn
               class="xs-fullwidth"
-              v-bind:color="missingSourcePaths && missingSourcePaths.length > 0 ? 'red' : 'primary'"
+              variant="tonal" v-bind:color="missingSourcePaths && missingSourcePaths.length > 0 ? 'red' : 'primary'"
               v-on:click="onOKClick"
               v-bind:loading="isLoading"
               style="margin-left: 8px"

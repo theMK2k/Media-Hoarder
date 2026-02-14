@@ -17,7 +17,7 @@
           <strong>{{ $t("It is recommended to also ask for the release year_") }}</strong>
         </p>
 
-        <v-btn class="xs-fullwidth" color="primary" v-on:click="onStartConversation" style="margin-left: 8px">
+        <v-btn class="xs-fullwidth" variant="tonal" color="primary" v-on:click="onStartConversation" style="margin-left: 8px">
           {{ $t("Start Conversation") }}
         </v-btn>
 
@@ -65,14 +65,14 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click="onCloseClick" style="margin-left: 8px">{{
+        <v-btn class="xs-fullwidth" variant="tonal" color="secondary" v-on:click="onCloseClick" style="margin-left: 8px">{{
           $t("Close")
         }}</v-btn>
         <v-btn
           v-if="numMovies > 0"
           v-bind:disabled="!listTitle"
           class="xs-fullwidth"
-          color="primary"
+          variant="tonal" color="primary"
           v-on:click="onFilterClick"
           style="margin-left: 8px"
         >

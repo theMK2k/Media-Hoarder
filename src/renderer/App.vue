@@ -1711,7 +1711,7 @@
                                 <span v-bind="props">
                                   <v-btn
                                     class="mk-filter-action-btn"
-                                    text
+                                    variant="text"
                                     v-on:click="setAllFilterParentalAdvisory(category, false)"
                                   >
                                     <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
@@ -1725,7 +1725,7 @@
                                 <span v-bind="props">
                                   <v-btn
                                     class="mk-filter-action-btn"
-                                    text
+                                    variant="text"
                                     v-on:click="setAllFilterParentalAdvisory(category, true)"
                                   >
                                     <v-icon>mdi-check-box-multiple-outline</v-icon>
@@ -2514,7 +2514,7 @@
                           <span v-bind="props">
                             <v-btn
                               class="mk-filter-action-btn"
-                              text
+                              variant="text"
                               v-on:click="setAllFilterIMDBFilmingLocations(false)"
                             >
                               <v-icon>mdi-checkbox-multiple-blank-outline</v-icon>
@@ -2528,7 +2528,7 @@
                           <span v-bind="props">
                             <v-btn
                               class="mk-filter-action-btn"
-                              text
+                              variant="text"
                               v-on:click="setAllFilterIMDBFilmingLocations(true)"
                             >
                               <v-icon>mdi-check-box-multiple-outline</v-icon>
@@ -3229,12 +3229,12 @@
           <v-btn
             v-if="snackbar.id_Scan_Processes"
             dark
-            text
+            variant="text"
             @click="openScanHistoryItemDialog(snackbar.id_Scan_Processes)"
           >
             {{ $t("Show Details") }}
           </v-btn>
-          <v-btn dark variant="text" @click="snackbar.show = false">{{ $t("Close") }}</v-btn>
+          <v-btn variant="text" @click="snackbar.show = false">{{ $t("Close") }}</v-btn>
         </div>
       </div>
     </v-snackbar>

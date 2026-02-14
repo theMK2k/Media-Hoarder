@@ -40,7 +40,7 @@
         <v-btn
           class="xs-fullwidth"
           v-if="cancel"
-          v-bind:color="cancelColor"
+          variant="tonal" v-bind:color="cancelColor"
           v-bind:loading="loading"
           v-on:click="onButtonClick('cancel')"
           >{{ cancel }}</v-btn
@@ -49,7 +49,7 @@
           class="xs-fullwidth"
           v-if="no"
           v-bind:loading="loading"
-          v-bind:color="noColor"
+          variant="tonal" v-bind:color="noColor"
           v-on:click="onButtonClick('no')"
           >{{ no }}</v-btn
         >
@@ -57,7 +57,7 @@
           class="xs-fullwidth"
           v-if="yes"
           v-bind:disabled="enterTextValue && !textValueEmptyAllowed && !textValueLocal"
-          v-bind:color="yesColor ? yesColor : 'primary'"
+          variant="tonal" v-bind:color="yesColor ? yesColor : 'primary'"
           v-bind:loading="loading"
           v-on:click="onButtonClick('yes')"
           >{{ yes }}</v-btn
@@ -66,7 +66,7 @@
           class="xs-fullwidth"
           v-if="ok"
           v-bind:disabled="enterTextValue && !textValueEmptyAllowed && !textValueLocal"
-          v-bind:color="okColor ? okColor : 'primary'"
+          variant="tonal" v-bind:color="okColor ? okColor : 'primary'"
           v-bind:loading="loading"
           v-on:click="onButtonClick('ok')"
           >{{ ok }}</v-btn

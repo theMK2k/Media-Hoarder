@@ -947,7 +947,7 @@
       <v-btn
         v-if="showCloseButton"
         class="xs-fullwidth"
-        color="secondary"
+        variant="tonal" color="secondary"
         v-on:click.stop="$emit('close')"
         style="margin-left: 8px"
         >{{ $t("Close") }}</v-btn
