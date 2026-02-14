@@ -33,8 +33,8 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click="onCancelClick()">{{ $t("Cancel") }}</v-btn>
-        <v-btn v-bind:disabled="!canConfirm" class="xs-fullwidth" color="primary" v-on:click="onOKClick()">{{
+        <v-btn class="xs-fullwidth" variant="tonal" color="secondary" v-on:click="onCancelClick()">{{ $t("Cancel") }}</v-btn>
+        <v-btn v-bind:disabled="!canConfirm" class="xs-fullwidth" variant="tonal" color="primary" v-on:click="onOKClick()">{{
           $t("OK")
         }}</v-btn>
       </v-card-actions>

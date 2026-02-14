@@ -13,7 +13,11 @@
       "Bash(timeout 180 npm run electron:serve:*)",
       "Bash(timeout 90 npm run:*)",
       "Bash(timeout 120 npm run:*)",
-      "Bash(npm search:*)"
+      "Bash(npm search:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(python -c \"import os,re;os.chdir\\(r''c:\\\\Data\\\\Code\\\\WebApps\\\\Media-Hoarder\\\\src\\\\renderer''\\);files=[''components/MediaList.vue'',''components/Settings.vue''];[print\\(f''{f}:{content[:m.start\\(\\)].count\\(chr\\(10\\)\\)+1}: {m.group\\(0\\).split\\(chr\\(10\\)\\)[0].strip\\(\\)}''\\) for f in files if os.path.exists\\(f\\) for content in [open\\(f\\).read\\(\\)] for m in re.finditer\\(r''<v-btn\\\\b\\([^>]*?\\)\\(?:>|/>\\)'',content,re.DOTALL\\) if ''variant='' not in m.group\\(1\\)]\")",
+      "Bash(python:*)"
     ]
   }
 }

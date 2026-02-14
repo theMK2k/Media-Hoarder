@@ -47,10 +47,10 @@
       <v-card-actions>
         <v-col sm="12">
           <v-row style="margin-top: 8px">
-            <v-btn class="xs-fullwidth" color="secondary" v-on:click="onCloseClick" style="margin-left: 8px">{{
+            <v-btn class="xs-fullwidth" variant="tonal" color="secondary" v-on:click="onCloseClick" style="margin-left: 8px">{{
               $t("Cancel")
             }}</v-btn>
-            <v-btn class="xs-fullwidth" color="primary" v-on:click="onOKClick" style="margin-left: 8px">
+            <v-btn class="xs-fullwidth" variant="tonal" color="primary" v-on:click="onOKClick" style="margin-left: 8px">
               {{ $t("Rescan Meta Data") }}
             </v-btn>
           </v-row>

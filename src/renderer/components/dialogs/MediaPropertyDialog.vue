@@ -219,7 +219,7 @@
 
       <v-card-actions>
         <!-- Button: Close -->
-        <v-btn class="xs-fullwidth" color="secondary" v-on:click="onCloseClick" style="margin-left: 8px">{{
+        <v-btn class="xs-fullwidth" variant="tonal" color="secondary" v-on:click="onCloseClick" style="margin-left: 8px">{{
           $t("Close")
         }}</v-btn>
 
@@ -227,7 +227,7 @@
         <v-btn
           v-if="['company', 'person'].includes(propertyTypeKey)"
           class="xs-fullwidth"
-          color="primary"
+          variant="tonal" color="primary"
           v-on:click.stop="openIMDB()"
           style="margin-left: 8px"
         >
@@ -240,7 +240,7 @@
             !isInDialog
           "
           class="xs-fullwidth"
-          color="primary"
+          variant="tonal" color="primary"
           v-on:click="onFilterClick"
           style="margin-left: 8px"
         >
