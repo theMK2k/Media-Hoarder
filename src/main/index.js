@@ -127,7 +127,9 @@ function createWindow() {
       fullscreenable: false,
       preload: path.join(__dirname, "../preload/index.js"), // electron-vite handles this path
     },
-    icon: helpers.getStaticPath("icon.png"),
+    icon: isDevelopment
+      ? path.join(process.cwd(), "public", "icon.png")
+      : path.join(__dirname, "..", "renderer", "icon.png"),
   });
 
   // Let us register listeners on the window, so we can update the state
