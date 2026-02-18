@@ -6,6 +6,7 @@
     max-width="90%"
     transition="fab-transition"
     scrollable
+    max-height="90vh"
   >
     <v-card>
       <v-card-title>

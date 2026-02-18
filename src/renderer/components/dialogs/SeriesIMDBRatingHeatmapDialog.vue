@@ -3,6 +3,7 @@
     :model-value="show"
     @update:model-value="$emit('update:show', $event)"
     scrollable
+    max-height="90vh"
     persistent
   >
     <v-card dark flat v-bind:ripple="false">
