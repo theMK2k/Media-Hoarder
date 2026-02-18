@@ -420,7 +420,7 @@
                 <v-list-item>
                   <v-list-item-title>
                     {{ region.nameTranslated }}
-                    <v-icon class="mk-clickable-red" v-on:click="openRemoveRegionDialog(region)">mdi-delete</v-icon>
+                    <v-icon class="mk-clickable-red" size="16" v-on:click="openRemoveRegionDialog(region)">mdi-delete</v-icon>
                   </v-list-item-title>
                 </v-list-item>
               </v-card>
@@ -504,6 +504,7 @@
                     {{ language.DisplayText }}
                     <v-icon
                       class="mk-clickable-red"
+                      size="16"
                       v-on:click="openRemoveLanguageDialog(language, 'languagesPrimaryTitle')"
                       >mdi-delete</v-icon
                     >
@@ -572,6 +573,7 @@
                     {{ language.DisplayText }}
                     <v-icon
                       class="mk-clickable-red"
+                      size="16"
                       v-on:click="openRemoveLanguageDialog(language, 'languagesAudioSubtitles')"
                       >mdi-delete</v-icon
                     >
@@ -643,6 +645,7 @@
 
         <v-data-table
           ref="releaseAttributesTable"
+          density="comfortable"
           v-bind:headers="[
             { title: $t('Search Term'), key: 'searchTerm', sortable: false },
             { title: $t('Display As'), key: 'displayAs', sortable: false },
@@ -663,12 +666,12 @@
           <template v-slot:body="{ items }">
             <!-- TODO: draggable temporarily replaced with tbody -->
             <tbody>
-              <tr v-for="(item, index) in items" v-bind:key="index">
-                <td>{{ item.searchTerm }}</td>
-                <td>{{ item.displayAs }}</td>
+              <tr v-for="(item, index) in items" v-bind:key="index" style="height: 40px">
+                <td style="padding: 0 16px">{{ item.searchTerm }}</td>
+                <td style="padding: 0 16px">{{ item.displayAs }}</td>
                 <td>
-                  <v-icon size="small" class="mr-2 mk-clickable" @click="onEditReleaseAttribute(item)">mdi-pencil</v-icon>
-                  <v-icon size="small" class="mr-2 mk-clickable-red" @click="openRemoveReleaseAttributeDialog(item)"
+                  <v-icon size="16" class="mr-2 mk-clickable" @click="onEditReleaseAttribute(item)">mdi-pencil</v-icon>
+                  <v-icon size="16" class="mr-2 mk-clickable-red" @click="openRemoveReleaseAttributeDialog(item)"
                     >mdi-delete</v-icon
                   >
                 </td>

@@ -6,12 +6,12 @@
           <div>
             <v-list-item-title>
               {{ value.Description }}
-              <v-icon class="mk-clickable" v-show="isHovered" size="small" v-on:click="onEditDescription">mdi-pencil</v-icon>
-              <v-icon class="mk-clickable-red" v-show="isHovered" size="small" v-on:click="onDelete">mdi-delete</v-icon>
+              <v-icon class="mk-clickable" v-show="isHovered" size="16" v-on:click="onEditDescription">mdi-pencil</v-icon>
+              <v-icon class="mk-clickable-red" v-show="isHovered" size="16" v-on:click="onDelete">mdi-delete</v-icon>
             </v-list-item-title>
             <v-list-item-subtitle style="min-height: 28px">
               {{ value.Path }}
-              <v-icon class="mk-clickable" v-show="isHovered" size="small" v-on:click="onEditPath">mdi-pencil</v-icon>
+              <v-icon class="mk-clickable" v-show="isHovered" size="16" v-on:click="onEditPath">mdi-pencil</v-icon>
             </v-list-item-subtitle>
 
             <v-checkbox
