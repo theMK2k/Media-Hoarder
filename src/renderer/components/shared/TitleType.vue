@@ -17,7 +17,7 @@
               >
               <v-icon
                 v-show="showRemove && isHovered"
-                size="small"
+                size="16"
                 class="mk-clickable-red"
                 style="align-items: flex-start"
                 v-on:click="onRemoveTitleTypeClicked"
