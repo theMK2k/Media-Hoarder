@@ -13,7 +13,7 @@
         </div>
       </v-card-title>
       <v-card-text>
-        <v-alert type="warning" colored-border border="start" v-if="showMediaInfoWarning" density="compact">
+        <v-alert type="warning" variant="tonal" border="start" v-if="showMediaInfoWarning" density="compact">
           {{ $t("Warning: Mediainfo CLI Path cannot be found_ Please go to") }}
           <a v-on:click="openSettings">{{ $t("Settings") }}</a>
           {{ $t("and provide one_ You can get Mediainfo CLI from") }}
@@ -127,7 +127,7 @@
 
         <v-alert
           type="warning"
-          colored-border
+          variant="tonal"
           border="start"
           v-if="missingSourcePaths && missingSourcePaths.length > 0"
           density="compact"
