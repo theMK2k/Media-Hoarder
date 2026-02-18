@@ -52,7 +52,7 @@
     "jsonfile": "6.2.0",
     "lodash": "4.17.21",
     "loglevel": "1.9.2",
-    "marked": "4.0.10",
+    "marked": "17.0.3",
     "minimist": "1.2.8",
     "mitt": "3.0.1",
     "mkdirp": "1.0.4",
