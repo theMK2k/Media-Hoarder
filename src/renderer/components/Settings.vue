@@ -188,7 +188,7 @@
       <!-- MOVIES -->
       <v-window-item value="movies" style="padding: 8px">
         <h3>{{ $t("Movies") }} - {{ $t("Source Paths") }}</h3>
-        <v-alert type="warning" colored-border border="start" v-if="moviesSourcePaths.length == 0">{{
+        <v-alert type="warning" variant="tonal" border="start" v-if="moviesSourcePaths.length == 0">{{
           $t("no paths defined")
         }}</v-alert>
 
@@ -209,7 +209,7 @@
       <!-- SERIES -->
       <v-window-item value="series" style="padding: 8px">
         <h3>{{ $t("Series") }} - {{ $t("Source Paths") }}</h3>
-        <v-alert type="warning" colored-border border="start" v-if="tvSourcePaths.length == 0">{{
+        <v-alert type="warning" variant="tonal" border="start" v-if="tvSourcePaths.length == 0">{{
           $t("no paths defined")
         }}</v-alert>
 
@@ -397,7 +397,7 @@
           </p>
         </v-card-text>
 
-        <v-alert type="warning" colored-border border="start" v-if="$shared.regions.length === 0">
+        <v-alert type="warning" variant="tonal" border="start" v-if="$shared.regions.length === 0">
           <span v-if="$shared.regions.length === 0 && $shared.fallbackRegion"
             >{{
               $t("You currently don't have a region set up_ {appName} will fall back to your system's locale", {
@@ -470,7 +470,7 @@
 
         <v-alert
           type="warning"
-          colored-border
+          variant="tonal"
           border="start"
           v-if="!$shared.languagesPrimaryTitle || $shared.languagesPrimaryTitle.length === 0"
         >
@@ -539,7 +539,7 @@
 
         <v-alert
           type="warning"
-          colored-border
+          variant="tonal"
           border="start"
           v-if="!$shared.languagesAudioSubtitles || $shared.languagesAudioSubtitles.length === 0"
         >
@@ -606,7 +606,7 @@
           </p>
         </v-card-text>
 
-        <v-alert colored-border border="start" v-if="$shared.imdbTitleTypesWhitelist.length === 0">{{
+        <v-alert variant="tonal" border="start" v-if="$shared.imdbTitleTypesWhitelist.length === 0">{{
           $t("No title types added, this is fine_")
         }}</v-alert>
 

@@ -3,13 +3,13 @@
     :model-value="show"
     @update:model-value="$emit('update:show', $event)"
     persistent
-    max-width="1000px"
+    max-width="90%"
     transition="fab-transition"
     scrollable
   >
     <v-card>
       <v-card-title>
-        <v-row class="text-h5" style="width: 100%; font-size: 1.17em; margin-left: 0px">
+        <v-row style="margin: 0px">
           <div class="text-h5 mk-clickable" v-on:click="showQuote = !showQuote">
             {{ $shared.appName }} v{{ $shared.currentVersion }} -
             {{ $shared.currentName }}
@@ -39,7 +39,7 @@
           <v-alert
             v-if="!isLoadingHistory"
             v-bind:type="isNewVersionAvailable ? 'info' : isUpToDate ? 'success' : 'warning'"
-            colored-border
+            variant="tonal"
             border="start"
             density="compact"
             style="margin-top: 12px"
@@ -61,7 +61,7 @@
             }}</span>
           </v-alert>
 
-          <div class="mk-light-grey">
+          <div class="mk-light-grey" style="margin-top: 16px">
             {{ $t("Visit") }}
             <a href="https://media.hoarder.software" target="_blank" rel="noreferrer noopener nofollow"
               >https://media.hoarder.software</a
@@ -96,7 +96,11 @@
               >
               v{{ history[infoPosition].version }} -
               {{ history[infoPosition].name }}
-              <v-btn variant="text" class="xs-fullwidth" v-bind:disabled="infoPosition === 0" v-on:click="infoPosition--"
+              <v-btn
+                variant="text"
+                class="xs-fullwidth"
+                v-bind:disabled="infoPosition === 0"
+                v-on:click="infoPosition--"
                 >&gt;</v-btn
               >
             </span>
@@ -108,7 +112,7 @@
         </div>
       </v-card-title>
 
-      <v-card-text v-if="!isLoadingVersionInfo && showHistory">
+      <v-card-text v-if="!isLoadingVersionInfo && showHistory" style="color: hsla(0, 0%, 100%, 0.7)">
         <div v-html="versionInfo"></div>
       </v-card-text>
     </v-card>

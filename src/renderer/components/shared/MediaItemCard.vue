@@ -527,7 +527,7 @@
     </div>
 
     <v-row v-if="mediaItem.scanErrors && Object.keys(mediaItem.scanErrors).length" style="margin: 8px">
-      <v-alert type="warning" density="compact" colored-border border="start">
+      <v-alert type="warning" density="compact" variant="tonal" border="start">
         <span class="mk-clickable" v-on:click.stop="mediaItem.showScanErrors = !mediaItem.showScanErrors"
           >{{ $t("Errors were encountered during the scan, consider a re-scan_") }}
         </span>

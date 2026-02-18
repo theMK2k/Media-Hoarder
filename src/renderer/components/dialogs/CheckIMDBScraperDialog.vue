@@ -48,16 +48,16 @@
         </v-row>
 
         <div v-if="!isRunning" style="margin-left: -14px">
-          <v-alert type="success" colored-border border="start" v-if="checkResult === 0">{{
+          <v-alert type="success" variant="tonal" border="start" v-if="checkResult === 0">{{
             $t("All checks successful!")
           }}</v-alert>
-          <v-alert type="warning" colored-border border="start" v-if="checkResult === 1">{{
+          <v-alert type="warning" variant="tonal" border="start" v-if="checkResult === 1">{{
             $t("Checks with warning detected!")
           }}</v-alert>
-          <v-alert type="error" colored-border border="start" v-if="checkResult === 2">{{
+          <v-alert type="error" variant="tonal" border="start" v-if="checkResult === 2">{{
             $t("Checks with error detected!")
           }}</v-alert>
-          <v-alert type="error" colored-border border="start" v-if="checkResult === 3">{{
+          <v-alert type="error" variant="tonal" border="start" v-if="checkResult === 3">{{
             $t("Checks with exceptions detected!")
           }}</v-alert>
         </div>
