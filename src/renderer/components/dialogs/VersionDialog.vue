@@ -113,7 +113,7 @@
       </v-card-title>
 
       <v-card-text v-if="!isLoadingVersionInfo && showHistory" style="color: hsla(0, 0%, 100%, 0.7)">
-        <div v-html="versionInfo"></div>
+        <div class="version-info-content" v-html="versionInfo"></div>
       </v-card-text>
     </v-card>
   </v-dialog>
@@ -190,7 +190,7 @@ export default {
 
           logger.log("[updateVersionInfo] loadLocalHistory localVersionInfoMD:", localVersionInfoMD);
 
-          this.versionInfo = marked(localVersionInfoMD);
+          this.versionInfo = marked.parse(localVersionInfoMD);
           logger.log("[updateVersionInfo] this.versionInfo:", this.versionInfo);
         } else {
           logger.log("[updateVersionInfo] loadLocalHistory NO localVersionInfo found!");
@@ -216,7 +216,7 @@ export default {
 
           logger.log("[updateVersionInfo] fetchRemoteHistory remoteVersionInfoText:", remoteVersionInfoText);
 
-          this.versionInfo = marked(remoteVersionInfo);
+          this.versionInfo = marked.parse(remoteVersionInfo);
         } catch (e) {
           logger.error(e);
         }
@@ -280,39 +280,40 @@ export default {
 
   // ### Lifecycle Hooks ###
   created() {
-    // add target="_blank" to external links so that they are opened with the browser and not the app itself (see also background.js Ctrl+F "win.webContents")
-    const renderer = new marked.Renderer();
-    const linkRenderer = renderer.link;
-    renderer.link = (href, title, text) => {
-      const localLink = href.startsWith(`${location.protocol}//${location.hostname}`);
-      const html = linkRenderer.call(renderer, href, title, text);
-      return localLink ? html : html.replace(/^<a /, `<a target="_blank" rel="noreferrer noopener nofollow" `);
-    };
+    marked.use({
+      renderer: {
+        // add target="_blank" to external links so that they are opened with the browser and not the app itself (see also background.js Ctrl+F "win.webContents")
+        link({ tokens, href, title }) {
+          const text = this.parser.parseInline(tokens);
+          const titleAttr = title ? ` title="${title}"` : "";
+          const localLink = href.startsWith(`${location.protocol}//${location.hostname}`);
+          if (localLink) {
+            return `<a href="${href}"${titleAttr}>${text}</a>`;
+          }
+          return `<a href="${href}"${titleAttr} target="_blank" rel="noreferrer noopener nofollow">${text}</a>`;
+        },
 
-    // insert a blank line after (un)ordered lists
-    const listRenderer = renderer.list;
-    renderer.list = (body, ordered, start) => {
-      const html = listRenderer.call(renderer, body, ordered, start);
-      return html.replace(/<\/ul>/, `</ul><p />`).replace(/<\/ol>/, `</ol><p />`);
-    };
+        // insert a blank line after (un)ordered lists
+        list({ items, ordered, start }) {
+          const tag = ordered ? "ol" : "ul";
+          const startAttr = ordered && start !== 1 ? ` start="${start}"` : "";
+          const body = items.map((item) => `<li>${this.parser.parse(item.tokens, !!item.loose)}</li>`).join("\n");
+          return `<${tag}${startAttr}>\n${body}\n</${tag}><p />`;
+        },
 
-    const headingRenderer = renderer.heading;
-    renderer.heading = (text, level, raw, slugger) => {
-      // remove level 1 header (this is already part of blog-articles.json)
-      if (level === 1) {
-        return "";
-      }
+        heading({ tokens, depth }) {
+          // remove level 1 header (this is already part of blog-articles.json)
+          if (depth === 1) {
+            return "";
+          }
 
-      // don't render "##" as <h2>, instead render it as <h3>
-      if (level === 2) {
-        return headingRenderer.call(renderer, text, 3, raw, slugger);
-      }
+          const text = this.parser.parseInline(tokens);
 
-      return headingRenderer.call(renderer, text, level, raw, slugger);
-    };
-
-    marked.setOptions({
-      renderer: renderer,
+          // don't render "##" as <h2>, instead render it as <h3>
+          const level = depth === 2 ? 3 : depth;
+          return `<h${level}>${text}</h${level}>`;
+        },
+      },
     });
   },
 };
@@ -333,5 +334,39 @@ export default {
     padding-left: 16px;
     padding-top: 0px;
   }
+}
+
+.version-info-content {
+  font-size: 16px;
+}
+
+.version-info-content :deep(ul),
+.version-info-content :deep(ol) {
+  padding-left: 24px;
+  margin-bottom: 4px;
+}
+
+.version-info-content :deep(ul) {
+  list-style-type: disc;
+}
+
+.version-info-content :deep(ul ul) {
+  list-style-type: circle;
+}
+
+.version-info-content :deep(ul ul ul) {
+  list-style-type: square;
+}
+
+.version-info-content :deep(ol) {
+  list-style-type: decimal;
+}
+
+.version-info-content :deep(li) {
+  display: list-item;
+}
+
+.version-info-content :deep(p) {
+  margin-bottom: 8px;
 }
 </style>
