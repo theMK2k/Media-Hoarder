@@ -5,6 +5,7 @@
     @update:model-value="$emit('update:show', $event)"
     max-width="1000px"
     scrollable
+    max-height="90vh"
     persistent
     style="z-index: 300 !important"
   >

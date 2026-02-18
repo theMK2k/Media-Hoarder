@@ -5,6 +5,7 @@
     persistent
     max-width="1000px"
     scrollable
+    max-height="90vh"
   >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
