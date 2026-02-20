@@ -17,8 +17,8 @@
     "electron:build-mac": "check-node-version --node ^22 && bash check-killme.sh && bash check-package.json.sh && npx mkdirp RELEASE && node set-portable --portable=false && electron-vite build && electron-builder build --mac dmg && mv dist/*.dmg RELEASE/media-hoarder-VERSION-mac.dmg && node set-release-version.js && rimraf dist",
     "electron:build-win-portable": "check-node-version --node ^22 && bash check-killme.sh && bash check-package.json.sh && npx mkdirp RELEASE && node set-portable --portable=true && npx dotenv-cli -e .env electron-vite build && electron-builder build --win && mv dist/win-unpacked media-hoarder-portable && npx bestzip RELEASE/media-hoarder-VERSION-win-x64-portable.zip media-hoarder-portable && npx rimraf media-hoarder-portable && node set-portable --portable=false && node set-release-version.js && rimraf dist",
     "electron:build-win-portable-beta": "check-node-version --node ^22 && bash check-killme.sh && bash check-package.json.sh && npx mkdirp RELEASE && node set-portable --portable=true && npx dotenv-cli -e .env.beta electron-vite build && electron-builder build --win && mv dist/win-unpacked media-hoarder-portable && npx bestzip RELEASE/media-hoarder-VERSION-win-x64-portable.zip media-hoarder-portable && npx rimraf media-hoarder-portable && node set-portable --portable=false && node set-release-version.js && rimraf dist",
-    "electron:build-win-setup": "check-node-version --node ^22 && bash check-killme.sh && bash check-package.json.sh && npx mkdirp RELEASE && node set-portable --portable=false && npx dotenv-cli -e .env electron-vite build && electron-builder build --win && mv dist/*.exe RELEASE/media-hoarder-VERSION-win-x64-setup.exe && node set-release-version.js && rimraf dist",
-    "electron:build-win-setup-beta": "check-node-version --node ^22 && bash check-killme.sh && bash check-package.json.sh && npx mkdirp RELEASE && node set-portable --portable=false && npx dotenv-cli -e .env.beta electron-vite build && electron-builder build --win && mv dist/*.exe RELEASE/media-hoarder-VERSION-win-x64-setup.exe && node set-release-version.js && rimraf dist",
+    "electron:build-win-setup": "check-node-version --node ^22 && bash check-killme.sh && bash check-package.json.sh && npx mkdirp RELEASE && node set-portable --portable=false && npx dotenv-cli -e .env electron-vite build && electron-builder build --win nsis && mv dist/*.exe RELEASE/media-hoarder-VERSION-win-x64-setup.exe && node set-release-version.js && rimraf dist",
+    "electron:build-win-setup-beta": "check-node-version --node ^22 && bash check-killme.sh && bash check-package.json.sh && npx mkdirp RELEASE && node set-portable --portable=false && npx dotenv-cli -e .env.beta electron-vite build && electron-builder build --win nsis && mv dist/*.exe RELEASE/media-hoarder-VERSION-win-x64-setup.exe && node set-release-version.js && rimraf dist",
     "electron:generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten",
     "find-imdb-tconst-tests": "node ./src/tests/find-imdb-tconst-tests.js",
     "format": "npx prettier --write \"./**/*.{js,vue}\"",
@@ -32,6 +32,59 @@
     "update-imdb-interests": "node ./update-imdb-interests.js"
   },
   "main": "dist/main/index.js",
+  "build": {
+    "appId": "com.electron.media-hoarder",
+    "productName": "Media Hoarder",
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "files": [
+      "dist/main/**/*",
+      "dist/preload/**/*",
+      "dist/renderer/**/*"
+    ],
+    "win": {
+      "icon": "build/icons/icon.ico",
+      "target": [
+        "dir"
+      ]
+    },
+    "linux": {
+      "icon": "build/icons",
+      "target": [
+        "dir"
+      ]
+    },
+    "mac": {
+      "icon": "build/icons/icon.icns",
+      "target": [
+        "dir"
+      ]
+    },
+    "extraResources": [
+      {
+        "from": "data/easylist.txt",
+        "to": "data/easylist.txt"
+      },
+      {
+        "from": "data/media-hoarder.db_initial",
+        "to": "data/media-hoarder.db_initial"
+      },
+      {
+        "from": "data/imdb-interests.json",
+        "to": "data/imdb-interests.json"
+      },
+      {
+        "from": "bin/",
+        "to": "bin/"
+      },
+      {
+        "from": "public/history/",
+        "to": "public/history/"
+      }
+    ]
+  },
   "dependencies": {
     "@babel/polyfill": "7.4.4",
     "@electron/remote": "2.1.3",
@@ -57,7 +110,6 @@
     "mitt": "3.0.1",
     "mkdirp": "1.0.4",
     "moment": "2.30.1",
-    "os-locale": "4.0.0",
     "regenerator-runtime": "0.14.1",
     "request": "2.88.2",
     "requestretry": "7.0.0",
@@ -70,21 +122,21 @@
     "vue": "3.4.38",
     "vue-i18n": "9.14.2",
     "vue-router": "4.4.5",
-    "vue-star-rating": "^2.1.0",
+    "vue-star-rating": "2.1.0",
     "vue-word-highlighter": "1.2.6",
     "vuedraggable": "4.1.0",
     "vuetify": "3.7.6",
     "xml2js": "0.6.2"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.2.3",
+    "@vitejs/plugin-vue": "5.2.3",
     "@vue/eslint-config-prettier": "8.0.0",
     "check-node-version": "4.2.1",
     "electron": "39.2.7",
-    "electron-builder": "^25.1.8",
+    "electron-builder": "25.1.8",
     "electron-devtools-installer": "3.2.0",
     "electron-icon-builder": "2.0.1",
-    "electron-vite": "^3.1.0",
+    "electron-vite": "3.1.0",
     "eslint": "8.57.1",
     "eslint-plugin-prettier": "5.2.1",
     "eslint-plugin-vue": "9.33.0",
@@ -92,9 +144,9 @@
     "nodemailer": "6.6.5",
     "prettier": "3.4.2",
     "sass": "1.32.13",
-    "vite": "^6.0.11",
-    "vite-plugin-electron-renderer": "^0.14.6",
-    "vite-plugin-vuetify": "^2.0.4"
+    "vite": "6.0.11",
+    "vite-plugin-electron-renderer": "0.14.6",
+    "vite-plugin-vuetify": "2.0.4"
   },
   "engineStrict": true,
   "engines": {

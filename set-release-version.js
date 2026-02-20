@@ -5,11 +5,7 @@
  */
 const fs = require("fs");
 
-const logger = require("./src/helpers/logger");
-
 const version = require("./package.json").version;
-
-logger.setLevel(0);
 
 const files = fs.readdirSync("RELEASE");
 

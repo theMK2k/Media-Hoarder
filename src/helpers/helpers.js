@@ -44,11 +44,12 @@ function setIMDBScraperWatchdogUseDumps(value) {
  * @param {string} relativePath
  */
 function getDataPath(relativePath) {
-  if (isDevelopment || isPORTABLE) {
-    return path.join(getStaticPath("data"), relativePath);
-  }
-
-  return path.join(os.homedir(), ".media-hoarder", relativePath);
+  // DEBUG: Log path resolution details (temporary)
+  const result = (isDevelopment || isPORTABLE)
+    ? path.join(getStaticPath("data"), relativePath)
+    : path.join(os.homedir(), ".media-hoarder", relativePath);
+  console.log(`[DEBUG:getDataPath] isDevelopment=${isDevelopment}, isPORTABLE=${isPORTABLE}, relativePath="${relativePath}" => "${result}"`);
+  return result;
 }
 
 /**
@@ -63,9 +64,9 @@ function getStaticPath(relativePath) {
     // process.cwd() gives us the project root when running electron-vite dev
     return path.join(process.cwd(), relativePath);
   } else {
-    // In production, static files are in the resources directory
-    // __dirname points to dist/main, so go up to find resources
-    return path.join(__dirname, "../../", relativePath);
+    // In production, static files are in the resources directory (via extraResources)
+    // process.resourcesPath is set by Electron to the app's resources directory
+    return path.join(process.resourcesPath, relativePath);
   }
 }
 

@@ -6,6 +6,9 @@ import { resolve } from "path";
 
 export default defineConfig({
   main: {
+    define: {
+      "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV || "production"),
+    },
     build: {
       outDir: "dist/main",
       commonjsOptions: {
@@ -59,24 +62,6 @@ export default defineConfig({
         input: {
           index: resolve(__dirname, "src/renderer/index.html"),
         },
-        // Externalize native modules and their dependencies
-        external: [
-          "sqlite3",
-          "better-sqlite3",
-          "@mapbox/node-pre-gyp",
-          "mock-aws-s3",
-          "aws-sdk",
-          "nock",
-          // requestretry and its problematic dependencies
-          "requestretry",
-          "request",
-          "http-signature",
-          "assert-plus",
-          // Other CommonJS modules that don't work with Vite
-          "xml2js",
-          "fs-extra",
-          "graceful-fs",
-        ],
       },
     },
     resolve: {
@@ -100,11 +85,18 @@ export default defineConfig({
       electronRenderer({
         nodeIntegration: true,
         // Handle native modules and problematic CommonJS packages
+        // These get transformed to require() calls instead of bare ESM imports
         resolve: {
           sqlite3: { type: "cjs" },
           "better-sqlite3": { type: "cjs" },
+          "@mapbox/node-pre-gyp": { type: "cjs" },
           requestretry: { type: "cjs" },
           request: { type: "cjs" },
+          "http-signature": { type: "cjs" },
+          "assert-plus": { type: "cjs" },
+          xml2js: { type: "cjs" },
+          "fs-extra": { type: "cjs" },
+          "graceful-fs": { type: "cjs" },
         },
       }),
     ],
