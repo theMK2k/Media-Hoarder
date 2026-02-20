@@ -2,7 +2,7 @@
 // Note: @electron/remote initialization moved to app.on('ready') - see below
 
 import { app, protocol, BrowserWindow, session, shell, net } from "electron";
-import { pathToFileURL, URL } from "url";
+import { pathToFileURL } from "url";
 import path from "path";
 import fs from "fs";
 import _ from "lodash";
@@ -17,83 +17,19 @@ console.log(asciiLogo);
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
+// DEBUG: Log environment details for diagnosing data path issues
+console.log("[DEBUG:main] process.env.NODE_ENV:", JSON.stringify(process.env.NODE_ENV));
+console.log("[DEBUG:main] isDevelopment:", isDevelopment);
+console.log("[DEBUG:main] __dirname:", __dirname);
+console.log("[DEBUG:main] process.cwd():", process.cwd());
+console.log("[DEBUG:main] process.resourcesPath:", process.resourcesPath);
+console.log("[DEBUG:main] Intl.DateTimeFormat().resolvedOptions().locale:", Intl.DateTimeFormat().resolvedOptions().locale);
+
 // Use a separate userData directory in development to avoid conflicts with installed version
 if (isDevelopment) {
   const devUserData = path.join(app.getPath("appData"), "media-hoarder-dev");
   app.setPath("userData", devUserData);
   console.log("Development mode: using userData path:", devUserData);
-}
-
-// MIME types for createProtocol (used in production)
-const mimeTypes = {
-  ".html": "text/html",
-  ".htm": "text/html",
-  ".js": "text/javascript",
-  ".mjs": "text/javascript",
-  ".css": "text/css",
-  ".json": "application/json",
-  ".png": "image/png",
-  ".jpg": "image/jpeg",
-  ".jpeg": "image/jpeg",
-  ".gif": "image/gif",
-  ".svg": "image/svg+xml",
-  ".ico": "image/vnd.microsoft.icon",
-  ".woff": "font/woff",
-  ".woff2": "font/woff2",
-  ".ttf": "font/ttf",
-  ".eot": "application/vnd.ms-fontobject",
-  ".mp3": "audio/mpeg",
-  ".mp4": "video/mp4",
-  ".webm": "video/webm",
-  ".webp": "image/webp",
-  ".pdf": "application/pdf",
-  ".txt": "text/plain",
-  ".xml": "application/xml",
-};
-
-function getMimeType(filename) {
-  const ext = path.extname(filename || "").toLowerCase();
-  return mimeTypes[ext] || "application/octet-stream";
-}
-
-function getCharset(mimeType) {
-  return ["text/html", "text/javascript", "text/css", "application/json"].includes(mimeType) ? "utf-8" : null;
-}
-
-// Local implementation of createProtocol for production builds
-function createProtocol(scheme, baseDir) {
-  const protocolDir = baseDir || path.join(__dirname, "../renderer");
-
-  protocol.registerBufferProtocol(scheme, (req, callback) => {
-    const reqUrl = new URL(req.url);
-
-    // Security: path must start with /
-    if (!reqUrl.pathname.startsWith("/")) {
-      return callback({ mimeType: null, charset: null, data: null });
-    }
-
-    let reqPath = path.normalize(reqUrl.pathname);
-    if (reqPath === "/" || reqPath === "\\") {
-      reqPath = "/index.html";
-    }
-
-    const reqFilename = path.basename(reqPath);
-    const fullPath = path.join(protocolDir, reqPath);
-
-    fs.readFile(fullPath, (err, data) => {
-      const mimeType = getMimeType(reqFilename);
-      if (!err) {
-        callback({
-          mimeType: mimeType,
-          charset: getCharset(mimeType),
-          data: data,
-        });
-      } else {
-        console.error("createProtocol error:", err.message, "path:", fullPath);
-        callback({ mimeType: null, charset: null, data: null });
-      }
-    });
-  });
 }
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -102,7 +38,6 @@ let win;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
-  { scheme: "app", privileges: { secure: true, standard: true } },
   { scheme: "local-resource", privileges: { secure: true, standard: true, supportFetchAPI: true } },
 ]);
 
@@ -179,9 +114,11 @@ function createWindow() {
       win.webContents.openDevTools();
     }
   } else {
-    createProtocol("app");
-    // Load the index.html when not in development
-    win.loadURL("app://./index.html");
+    // Load the index.html directly from the asar in production
+    win.loadFile(path.join(__dirname, "../renderer/index.html"));
+
+    // DEBUG: Open DevTools in production to diagnose data path issues
+    win.webContents.openDevTools();
   }
 
   win.on("resize", _.debounce(mainWindowState.saveState, 500));
@@ -249,6 +186,11 @@ app.on("activate", () => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 app.on("ready", async () => {
+  // DEBUG: These APIs require app to be ready
+  console.log("[DEBUG:main] app.getLocale():", app.getLocale());
+  console.log("[DEBUG:main] app.getSystemLocale():", app.getSystemLocale());
+  console.log("[DEBUG:main] app.getPreferredSystemLanguages():", app.getPreferredSystemLanguages());
+
   // Initialize @electron/remote (must be done after app is ready in Electron 39+)
   remoteMain.initialize();
 

@@ -6,7 +6,6 @@ import child_process from "child_process";
 import _ from "lodash";
 import moment from "moment";
 import levenshtein from "fast-levenshtein";
-import osLocale from "os-locale";
 import path from "path";
 import sqlString from "sqlstring-sqlite";
 import * as Humanize from "humanize-plus";
@@ -38,6 +37,15 @@ import * as definedError from "@helpers/defined-error.js";
 import imdbDataDefinition from "./object-definitions/imdb-data.js";
 
 const isBuild = process.env.NODE_ENV === "production";
+
+// DEBUG: Log environment details for diagnosing data path issues
+console.log("[DEBUG:renderer] process.env.NODE_ENV:", JSON.stringify(process.env.NODE_ENV));
+console.log("[DEBUG:renderer] isBuild:", isBuild);
+console.log("[DEBUG:renderer] helpers.isPORTABLE:", helpers.isPORTABLE);
+console.log("[DEBUG:renderer] getDataPath(''):", helpers.getDataPath(""));
+console.log("[DEBUG:renderer] getDataPath('media-hoarder.db'):", helpers.getDataPath("media-hoarder.db"));
+console.log("[DEBUG:renderer] getStaticPath('data'):", helpers.getStaticPath("data"));
+console.log("[DEBUG:renderer] os.homedir():", require("os").homedir());
 
 const SUPPORTED_MEDIA_FILE_EXTENSIONS = [".avi", ".mp4", ".mkv", ".m2ts", ".rar", ".webm"];
 
@@ -166,7 +174,12 @@ dbsync.runSync(
 
         await loadSettingDuplicatesHandling();
 
-        shared.currentLocale = await osLocale();
+        // Detect system locale from browser APIs (replaces os-locale which is broken in newer Electron builds)
+        // Prefer a language tag with region (e.g. "de-DE") for fallback region/language detection
+        shared.currentLocale =
+          (navigator.languages || []).find((lang) => lang.includes("-")) ||
+          navigator.language ||
+          null;
 
         logger.log("[Initialization] shared.currentLocale:", shared.currentLocale);
 

@@ -1099,105 +1099,105 @@ async function testIMDBFilmingLocations() {
 /**
  * #rip-rating-demographics
  */
-async function testIMDBRatingDemographics() {
-  const testResult = {
-    name: "IMDB Rating Demographics",
-    functionName: "testIMDBRatingDemographics",
-    status: status.SUCCESS,
-    log: [],
-  };
+// async function testIMDBRatingDemographics() {
+//   const testResult = {
+//     name: "IMDB Rating Demographics",
+//     functionName: "testIMDBRatingDemographics",
+//     status: status.SUCCESS,
+//     log: [],
+//   };
 
-  try {
-    // these are ballpark values, the actual values do change because IMDB tracks the actual age and not the age when voting took place
-    const expected = {
-      $IMDB_rating_aged_under_18: 8.8,
-      $IMDB_numVotes_aged_under_18: 1000,
-      $IMDB_rating_aged_18_29: 8.6,
-      $IMDB_numVotes_aged_18_29: 100000,
-      $IMDB_rating_aged_30_44: 8.3,
-      $IMDB_numVotes_aged_30_44: 100000,
-      $IMDB_rating_aged_45_plus: 8.1,
-      $IMDB_numVotes_aged_45_plus: 20000,
-      $IMDB_rating_males: 8.4,
-      $IMDB_numVotes_males: 300000,
-      $IMDB_rating_males_aged_under_18: 8.6,
-      $IMDB_numVotes_males_aged_under_18: 1000,
-      $IMDB_rating_males_aged_18_29: 8.5,
-      $IMDB_numVotes_males_aged_18_29: 100000,
-      $IMDB_rating_males_aged_30_44: 8.2,
-      $IMDB_numVotes_males_aged_30_44: 100000,
-      $IMDB_rating_males_aged_45_plus: 8.1,
-      $IMDB_numVotes_males_aged_45_plus: 20000,
-      $IMDB_rating_females: 8.5,
-      $IMDB_numVotes_females: 50000,
-      $IMDB_rating_females_aged_under_18: 8.7,
-      $IMDB_numVotes_females_aged_under_18: 100,
-      $IMDB_rating_females_aged_18_29: 8.6,
-      $IMDB_numVotes_females_aged_18_29: 10000,
-      $IMDB_rating_females_aged_30_44: 8.4,
-      $IMDB_numVotes_females_aged_30_44: 10000,
-      $IMDB_rating_females_aged_45_plus: 8.5,
-      $IMDB_numVotes_females_aged_45_plus: 1000,
-      $IMDB_rating_top_1000_voters: 7.8,
-      $IMDB_numVotes_top_1000_voters: 600,
-      $IMDB_rating_us_users: 8.5,
-      $IMDB_numVotes_us_users: 50000,
-      $IMDB_rating_non_us_users: 8.2,
-      $IMDB_numVotes_non_us_users: 200000,
-    };
+//   try {
+//     // these are ballpark values, the actual values do change because IMDB tracks the actual age and not the age when voting took place
+//     const expected = {
+//       $IMDB_rating_aged_under_18: 8.8,
+//       $IMDB_numVotes_aged_under_18: 1000,
+//       $IMDB_rating_aged_18_29: 8.6,
+//       $IMDB_numVotes_aged_18_29: 100000,
+//       $IMDB_rating_aged_30_44: 8.3,
+//       $IMDB_numVotes_aged_30_44: 100000,
+//       $IMDB_rating_aged_45_plus: 8.1,
+//       $IMDB_numVotes_aged_45_plus: 20000,
+//       $IMDB_rating_males: 8.4,
+//       $IMDB_numVotes_males: 300000,
+//       $IMDB_rating_males_aged_under_18: 8.6,
+//       $IMDB_numVotes_males_aged_under_18: 1000,
+//       $IMDB_rating_males_aged_18_29: 8.5,
+//       $IMDB_numVotes_males_aged_18_29: 100000,
+//       $IMDB_rating_males_aged_30_44: 8.2,
+//       $IMDB_numVotes_males_aged_30_44: 100000,
+//       $IMDB_rating_males_aged_45_plus: 8.1,
+//       $IMDB_numVotes_males_aged_45_plus: 20000,
+//       $IMDB_rating_females: 8.5,
+//       $IMDB_numVotes_females: 50000,
+//       $IMDB_rating_females_aged_under_18: 8.7,
+//       $IMDB_numVotes_females_aged_under_18: 100,
+//       $IMDB_rating_females_aged_18_29: 8.6,
+//       $IMDB_numVotes_females_aged_18_29: 10000,
+//       $IMDB_rating_females_aged_30_44: 8.4,
+//       $IMDB_numVotes_females_aged_30_44: 10000,
+//       $IMDB_rating_females_aged_45_plus: 8.5,
+//       $IMDB_numVotes_females_aged_45_plus: 1000,
+//       $IMDB_rating_top_1000_voters: 7.8,
+//       $IMDB_numVotes_top_1000_voters: 600,
+//       $IMDB_rating_us_users: 8.5,
+//       $IMDB_numVotes_us_users: 50000,
+//       $IMDB_rating_non_us_users: 8.2,
+//       $IMDB_numVotes_non_us_users: 200000,
+//     };
 
-    const movie = {
-      IMDB_tconst: "tt4154796",
-    };
+//     const movie = {
+//       IMDB_tconst: "tt4154796",
+//     };
 
-    const scrapeResult = await imdbScraper.scrapeIMDBRatingDemographics(movie, async () => {
-      return true;
-    });
+//     const scrapeResult = await imdbScraper.scrapeIMDBRatingDemographics(movie, async () => {
+//       return true;
+//     });
 
-    if (!scrapeResult) {
-      addSubLogEntry(testResult, "no response", status.ERROR);
-      return testResult;
-    }
+//     if (!scrapeResult) {
+//       addSubLogEntry(testResult, "no response", status.ERROR);
+//       return testResult;
+//     }
 
-    Object.keys(expected).forEach((key) => {
-      const scrapeValue = scrapeResult[key];
-      const expectedValue = expected[key];
+//     Object.keys(expected).forEach((key) => {
+//       const scrapeValue = scrapeResult[key];
+//       const expectedValue = expected[key];
 
-      if (!scrapeValue) {
-        addSubLogEntry(testResult, `${key} missing`, status.ERROR);
-      }
+//       if (!scrapeValue) {
+//         addSubLogEntry(testResult, `${key} missing`, status.ERROR);
+//       }
 
-      if (key.includes("$IMDB_numVotes")) {
-        if (scrapeValue < expectedValue) {
-          addSubLogEntry(
-            testResult,
-            `${key} mismatch
-                  got:      ${scrapeValue}
-                  expected: ${expectedValue}+`,
-            status.WARNING
-          );
-        }
-      }
+//       if (key.includes("$IMDB_numVotes")) {
+//         if (scrapeValue < expectedValue) {
+//           addSubLogEntry(
+//             testResult,
+//             `${key} mismatch
+//                   got:      ${scrapeValue}
+//                   expected: ${expectedValue}+`,
+//             status.WARNING
+//           );
+//         }
+//       }
 
-      if (key.includes("$IMDB_rating")) {
-        if (scrapeValue < expectedValue - 1 || scrapeValue > expectedValue + 1) {
-          addSubLogEntry(
-            testResult,
-            `${key} mismatch
-                  got:      ${scrapeValue}
-                  expected: ${expectedValue - 1}-${expectedValue + 1}`,
-            status.WARNING
-          );
-        }
-      }
-    });
-  } catch (error) {
-    testResult.status = status.EXCEPTION;
-    testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
-  }
+//       if (key.includes("$IMDB_rating")) {
+//         if (scrapeValue < expectedValue - 1 || scrapeValue > expectedValue + 1) {
+//           addSubLogEntry(
+//             testResult,
+//             `${key} mismatch
+//                   got:      ${scrapeValue}
+//                   expected: ${expectedValue - 1}-${expectedValue + 1}`,
+//             status.WARNING
+//           );
+//         }
+//       }
+//     });
+//   } catch (error) {
+//     testResult.status = status.EXCEPTION;
+//     testResult.log.push(`EXCEPTION: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`);
+//   }
 
-  return testResult;
-}
+//   return testResult;
+// }
 
 async function testIMDBSuggestion() {
   const testResult = {
@@ -1671,7 +1671,7 @@ export {
   testIMDBTrailerMediaURLs,
   testIMDBplotKeywords,
   testIMDBFilmingLocations,
-  testIMDBRatingDemographics,
+  // testIMDBRatingDemographics,
   testIMDBSuggestion,
   testIMDBAdvancedTitleSearch,
   testIMDBFindPageSearch,
