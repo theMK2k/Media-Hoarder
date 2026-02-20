@@ -3,10 +3,13 @@
     <!-- SIDEBAR -->
     <v-navigation-drawer v-model="$shared.sidenav" v-bind:width="320">
       <!-- SIDEBAR OVERLAY -->
-      <v-overlay style="z-index: 1000" v-model="showSidebarLoadingOverlay">
-        <div style="text-align: center">
-          <v-progress-circular indeterminate color="red" size="70" width="7"></v-progress-circular>
-        </div>
+      <v-overlay
+        style="z-index: 1000"
+        v-model="showSidebarLoadingOverlay"
+        class="align-center justify-center"
+        scrim="rgb(255 255 255 / 44%)"
+      >
+        <v-progress-circular indeterminate color="red" size="70" width="7"></v-progress-circular>
       </v-overlay>
 
       <v-list density="compact">
@@ -3048,6 +3051,8 @@
       </v-toolbar-title>
       <!-- <div class="flex-grow-1"></div> -->
       <v-spacer></v-spacer>
+
+      <!-- Search Field -->
       <v-row align-content="end" justify="end" style="text-align: right !important">
         <v-text-field
           :append-icon-cb="() => {}"
@@ -3060,6 +3065,7 @@
           color="white"
           hide-details
           v-model="searchText"
+          style="margin-bottom: 12px"
         ></v-text-field>
       </v-row>
 
@@ -3240,11 +3246,13 @@
     </v-snackbar>
 
     <!-- MAIN LOADING OVERLAY -->
-    <v-overlay style="z-index: 1000" :model-value="showLoadingOverlay">
-      <div style="text-align: center">
-        <!-- <p style="text-shadow: 0 0 4px #FFFFFF; margin: 0px">loading</p> -->
-        <v-progress-circular indeterminate color="red" size="70" width="7"></v-progress-circular>
-      </div>
+    <v-overlay
+      style="z-index: 1000"
+      :model-value="showLoadingOverlay"
+      class="align-center justify-center"
+      scrim="rgb(255 255 255 / 44%)"
+    >
+      <v-progress-circular indeterminate color="red" size="70" width="7"></v-progress-circular>
     </v-overlay>
   </v-app>
 </template>
