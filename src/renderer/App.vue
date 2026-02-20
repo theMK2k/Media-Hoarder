@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <!-- SIDEBAR -->
-    <v-navigation-drawer v-model="$shared.sidenav" style="z-index: 20" v-bind:width="320">
+    <v-navigation-drawer v-model="$shared.sidenav" v-bind:width="320">
       <!-- SIDEBAR OVERLAY -->
       <v-overlay style="z-index: 1000" v-model="showSidebarLoadingOverlay">
         <div style="text-align: center">
