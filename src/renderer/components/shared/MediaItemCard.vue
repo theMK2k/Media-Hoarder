@@ -84,7 +84,7 @@
                     <v-tooltip location="bottom">
                       <template v-slot:activator="{ props }">
                         <span v-bind="props">
-                          <v-icon style="margin-right: 8px; margin-bottom: 3px">mdi-eye-check-outline</v-icon>
+                          <v-icon size="small" style="margin-right: 8px; margin-bottom: 3px">mdi-eye-check-outline</v-icon>
                         </span>
                       </template>
                       <span>{{ $t("Last Access") }}: {{ lastAccessHumanized(mediaItem) }}</span>
