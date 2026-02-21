@@ -18,12 +18,12 @@ console.log(asciiLogo);
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 // DEBUG: Log environment details for diagnosing data path issues
-console.log("[DEBUG:main] process.env.NODE_ENV:", JSON.stringify(process.env.NODE_ENV));
-console.log("[DEBUG:main] isDevelopment:", isDevelopment);
-console.log("[DEBUG:main] __dirname:", __dirname);
-console.log("[DEBUG:main] process.cwd():", process.cwd());
-console.log("[DEBUG:main] process.resourcesPath:", process.resourcesPath);
-console.log("[DEBUG:main] Intl.DateTimeFormat().resolvedOptions().locale:", Intl.DateTimeFormat().resolvedOptions().locale);
+// console.log("[DEBUG:main] process.env.NODE_ENV:", JSON.stringify(process.env.NODE_ENV));
+// console.log("[DEBUG:main] isDevelopment:", isDevelopment);
+// console.log("[DEBUG:main] __dirname:", __dirname);
+// console.log("[DEBUG:main] process.cwd():", process.cwd());
+// console.log("[DEBUG:main] process.resourcesPath:", process.resourcesPath);
+// console.log("[DEBUG:main] Intl.DateTimeFormat().resolvedOptions().locale:", Intl.DateTimeFormat().resolvedOptions().locale);
 
 // Use a separate userData directory in development to avoid conflicts with installed version
 if (isDevelopment) {
@@ -187,9 +187,9 @@ app.on("activate", () => {
 // initialization and is ready to create browser windows.
 app.on("ready", async () => {
   // DEBUG: These APIs require app to be ready
-  console.log("[DEBUG:main] app.getLocale():", app.getLocale());
-  console.log("[DEBUG:main] app.getSystemLocale():", app.getSystemLocale());
-  console.log("[DEBUG:main] app.getPreferredSystemLanguages():", app.getPreferredSystemLanguages());
+  // console.log("[DEBUG:main] app.getLocale():", app.getLocale());
+  // console.log("[DEBUG:main] app.getSystemLocale():", app.getSystemLocale());
+  // console.log("[DEBUG:main] app.getPreferredSystemLanguages():", app.getPreferredSystemLanguages());
 
   // Initialize @electron/remote (must be done after app is ready in Electron 39+)
   remoteMain.initialize();

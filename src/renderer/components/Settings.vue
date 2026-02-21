@@ -412,10 +412,9 @@
           }}</span>
         </v-alert>
 
-        <!-- TODO: draggable temporarily replaced with div due to Vue 3.4+ incompatibility -->
-        <div>
-          <div v-for="region in $shared.regions" v-bind:key="region.code">
-            <v-row style="margin: 8px">
+        <Sortable :list="$shared.regions" item-key="code" @end="onRegionsDragEnd">
+          <template #item="{ element: region }">
+            <v-row class="mk-draggable-item" style="margin: 8px">
               <v-card style="width: 100%">
                 <v-list-item>
                   <v-list-item-title>
@@ -425,8 +424,8 @@
                 </v-list-item>
               </v-card>
             </v-row>
-          </div>
-        </div>
+          </template>
+        </Sortable>
 
         <v-btn variant="text" size="small" color="primary" v-on:click="openAddRegionsDialog">{{
           $t("Add Regions")
@@ -494,10 +493,9 @@
           }}</span>
         </v-alert>
 
-        <!-- TODO: draggable temporarily replaced with div -->
-        <div>
-          <div v-for="language in $shared.languagesPrimaryTitle" v-bind:key="language.code">
-            <v-row style="margin: 8px">
+        <Sortable :list="$shared.languagesPrimaryTitle" item-key="code" @end="onLanguagesDragEnd('languagesPrimaryTitle', $event)">
+          <template #item="{ element: language }">
+            <v-row class="mk-draggable-item" style="margin: 8px">
               <v-card style="width: 100%">
                 <v-list-item>
                   <v-list-item-title>
@@ -512,8 +510,8 @@
                 </v-list-item>
               </v-card>
             </v-row>
-          </div>
-        </div>
+          </template>
+        </Sortable>
 
         <v-btn
           variant="text"
@@ -563,10 +561,9 @@
           }}</span>
         </v-alert>
 
-        <!-- TODO: draggable temporarily replaced with div -->
-        <div>
-          <div v-for="language in $shared.languagesAudioSubtitles" v-bind:key="language.code">
-            <v-row style="margin: 8px">
+        <Sortable :list="$shared.languagesAudioSubtitles" item-key="code" @end="onLanguagesDragEnd('languagesAudioSubtitles', $event)">
+          <template #item="{ element: language }">
+            <v-row class="mk-draggable-item" style="margin: 8px">
               <v-card style="width: 100%">
                 <v-list-item>
                   <v-list-item-title>
@@ -581,8 +578,8 @@
                 </v-list-item>
               </v-card>
             </v-row>
-          </div>
-        </div>
+          </template>
+        </Sortable>
 
         <v-btn
           variant="text"
@@ -664,19 +661,20 @@
           v-bind:items-per-page="1000"
         >
           <template v-slot:body="{ items }">
-            <!-- TODO: draggable temporarily replaced with tbody -->
-            <tbody>
-              <tr v-for="(item, index) in items" v-bind:key="index" style="height: 40px">
-                <td style="padding: 0 16px">{{ item.searchTerm }}</td>
-                <td style="padding: 0 16px">{{ item.displayAs }}</td>
-                <td>
-                  <v-icon size="16" class="mr-2 mk-clickable" @click="onEditReleaseAttribute(item)">mdi-pencil</v-icon>
-                  <v-icon size="16" class="mr-2 mk-clickable-red" @click="openRemoveReleaseAttributeDialog(item)"
-                    >mdi-delete</v-icon
-                  >
-                </td>
-              </tr>
-            </tbody>
+            <Sortable :list="items" item-key="searchTerm" tag="tbody" @end="onReleaseAttributesDragEnd">
+              <template #item="{ element: item, index }">
+                <tr v-bind:key="index" class="mk-draggable-item" style="height: 40px">
+                  <td style="padding: 0 16px">{{ item.searchTerm }}</td>
+                  <td style="padding: 0 16px">{{ item.displayAs }}</td>
+                  <td>
+                    <v-icon size="16" class="mr-2 mk-clickable" @click="onEditReleaseAttribute(item)">mdi-pencil</v-icon>
+                    <v-icon size="16" class="mr-2 mk-clickable-red" @click="openRemoveReleaseAttributeDialog(item)"
+                      >mdi-delete</v-icon
+                    >
+                  </td>
+                </tr>
+              </template>
+            </Sortable>
           </template>
           <!-- <template v-slot:item.actions="{ item }"> </template> -->
         </v-data-table>
@@ -901,9 +899,7 @@
 <script>
 import { dialog, BrowserWindow } from "@electron/remote";
 import * as _ from "lodash";
-// TODO: vuedraggable is temporarily disabled due to Vue 3.4+ incompatibility
-// import draggable from "vuedraggable";
-// See: https://github.com/SortableJS/vue.draggable.next/issues/238
+import { Sortable } from "sortablejs-vue3";
 import moment from "moment";
 import * as Humanize from "humanize-plus";
 
@@ -962,7 +958,7 @@ import { languageCodeNameMapping } from "@/languages.js";
 
 export default {
   components: {
-    // draggable, // TODO: temporarily disabled
+    Sortable,
     "mk-sourcepath": SourcePath,
     "mk-sourcepath-description-dialog": Dialog,
     "mk-remove-sourcepath-dialog": Dialog,
@@ -1587,32 +1583,35 @@ export default {
       await store.setSetting(languageType, JSON.stringify(languages));
     },
 
-    async onRegionsDragEnd() {
+    async onRegionsDragEnd(event) {
+      const { oldIndex, newIndex } = event;
+      if (oldIndex !== undefined && newIndex !== undefined && oldIndex !== newIndex) {
+        const item = this.$shared.regions.splice(oldIndex, 1)[0];
+        this.$shared.regions.splice(newIndex, 0, item);
+      }
       await store.setSetting("regions", JSON.stringify(this.$shared.regions));
     },
 
-    async onReleaseAttributesDragEnd() {
-      // We use the internal data from the data table (they hold the current sequence but don't contain items marked as deleted)
-      const releaseAttributes = JSON.parse(
-        JSON.stringify(this.$refs.releaseAttributesTable._data.internalCurrentItems)
-      );
-
-      this.$shared.releaseAttributes.forEach((ra) => {
-        if (!releaseAttributes.find((ra2) => ra2.searchTerm === ra.searchTerm && ra2.displayAs === ra.displayAs)) {
-          releaseAttributes.push(ra);
-        }
-      });
-
-      this.$shared.releaseAttributes = releaseAttributes;
-
-      await store.setSetting("ReleaseAttributes", JSON.stringify(releaseAttributes));
+    async onReleaseAttributesDragEnd(event) {
+      const { oldIndex, newIndex } = event;
+      if (oldIndex !== undefined && newIndex !== undefined && oldIndex !== newIndex) {
+        const item = this.$shared.releaseAttributes.splice(oldIndex, 1)[0];
+        this.$shared.releaseAttributes.splice(newIndex, 0, item);
+      }
+      await store.setSetting("ReleaseAttributes", JSON.stringify(this.$shared.releaseAttributes));
     },
 
-    async onLanguagesDragEnd(languageType) {
+    async onLanguagesDragEnd(languageType, event) {
       const languages =
         languageType === "languagesPrimaryTitle"
           ? this.$shared.languagesPrimaryTitle
           : this.$shared.languagesAudioSubtitles;
+
+      const { oldIndex, newIndex } = event;
+      if (oldIndex !== undefined && newIndex !== undefined && oldIndex !== newIndex) {
+        const item = languages.splice(oldIndex, 1)[0];
+        languages.splice(newIndex, 0, item);
+      }
 
       await store.setSetting(languageType, JSON.stringify(languages));
     },
@@ -1995,5 +1994,9 @@ export default {
 
 .settings-row {
   margin: 0px 0px 16px 0px;
+}
+
+.mk-draggable-item {
+  cursor: grab !important;
 }
 </style>
