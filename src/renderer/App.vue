@@ -74,7 +74,7 @@
             <v-tooltip v-if="!editFilters.isEditFilters" location="bottom">
               <template v-slot:activator="{ props }">
                 <span v-bind="props">
-                  <v-btn variant="text" v-on:click="onResetFilters"><v-icon>mdi-restore</v-icon></v-btn>
+                  <v-btn variant="text" v-on:click="onResetFilters"><v-icon size="x-large">mdi-restore</v-icon></v-btn>
                 </span>
               </template>
               <span>{{ $t("Reset Filters") }}</span>
@@ -82,7 +82,7 @@
             <v-tooltip v-if="!editFilters.isEditFilters" location="bottom">
               <template v-slot:activator="{ props }">
                 <span v-bind="props">
-                  <v-btn variant="text" v-on:click="onEditFilters"><v-icon>mdi-pencil</v-icon></v-btn>
+                  <v-btn variant="text" v-on:click="onEditFilters"><v-icon size="x-large">mdi-pencil</v-icon></v-btn>
                 </span>
               </template>
               <span>{{ $t("Edit Filters") }}</span>
@@ -90,7 +90,7 @@
             <v-tooltip v-if="!editFilters.isEditFilters" location="bottom">
               <template v-slot:activator="{ props }">
                 <span v-bind="props">
-                  <v-btn variant="text" v-on:click="onOpenChatGPTDialog"><v-icon>mdi-robot</v-icon></v-btn>
+                  <v-btn variant="text" v-on:click="onOpenChatGPTDialog"><v-icon size="x-large">mdi-robot</v-icon></v-btn>
                 </span>
               </template>
               <span>{{ $t("Let an AI recommend some movies") }}</span>
@@ -173,7 +173,7 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip bottom v-if="editFilters.isEditFilters">
+                      <v-tooltip location="bottom" v-if="editFilters.isEditFilters">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-switch
@@ -190,7 +190,7 @@
                   <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -213,7 +213,7 @@
                           )
                         }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -227,7 +227,7 @@
                         </template>
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -304,7 +304,7 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip bottom v-if="editFilters.isEditFilters">
+                      <v-tooltip location="bottom" v-if="editFilters.isEditFilters">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-switch
@@ -321,7 +321,7 @@
                   <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -344,7 +344,7 @@
                           )
                         }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -358,7 +358,7 @@
                         </template>
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterQualities(true)">
@@ -434,7 +434,7 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip bottom v-if="editFilters.isEditFilters">
+                      <v-tooltip location="bottom" v-if="editFilters.isEditFilters">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-switch
@@ -451,7 +451,7 @@
                   <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -474,7 +474,7 @@
                           )
                         }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -488,7 +488,7 @@
                         </template>
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -577,7 +577,7 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip bottom v-if="editFilters.isEditFilters">
+                      <v-tooltip location="bottom" v-if="editFilters.isEditFilters">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-switch
@@ -594,7 +594,7 @@
                   <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -617,7 +617,7 @@
                           )
                         }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -631,7 +631,7 @@
                         </template>
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -725,7 +725,7 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip bottom v-if="editFilters.isEditFilters">
+                      <v-tooltip location="bottom" v-if="editFilters.isEditFilters">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-switch
@@ -742,7 +742,7 @@
                   <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -765,7 +765,7 @@
                           )
                         }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -779,7 +779,7 @@
                         </template>
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -879,7 +879,7 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip bottom v-if="editFilters.isEditFilters">
+                      <v-tooltip location="bottom" v-if="editFilters.isEditFilters">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-switch
@@ -896,7 +896,7 @@
                   <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -919,7 +919,7 @@
                           )
                         }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterLists(false)">
@@ -929,7 +929,7 @@
                         </template>
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterLists(true)">
@@ -1018,7 +1018,7 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip bottom v-if="editFilters.isEditFilters">
+                      <v-tooltip location="bottom" v-if="editFilters.isEditFilters">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-switch
@@ -1036,7 +1036,7 @@
                   <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterRatings(false)">
@@ -1046,7 +1046,7 @@
                         </template>
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterRatings(true)">
@@ -1130,7 +1130,7 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip bottom v-if="editFilters.isEditFilters">
+                      <v-tooltip location="bottom" v-if="editFilters.isEditFilters">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-switch
@@ -1217,7 +1217,7 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip bottom v-if="editFilters.isEditFilters">
+                      <v-tooltip location="bottom" v-if="editFilters.isEditFilters">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-switch
@@ -1310,7 +1310,7 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip bottom v-if="editFilters.isEditFilters">
+                      <v-tooltip location="bottom" v-if="editFilters.isEditFilters">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
@@ -1399,7 +1399,7 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip bottom v-if="editFilters.isEditFilters">
+                      <v-tooltip location="bottom" v-if="editFilters.isEditFilters">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-switch
@@ -1416,7 +1416,7 @@
                   <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -1439,7 +1439,7 @@
                           )
                         }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterGenres(false)">
@@ -1449,7 +1449,7 @@
                         </template>
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterGenres(true)">
@@ -1483,7 +1483,7 @@
                         v-on:mousedown="filterCheckboxMousedown('filterGenres', genre, setAllFilterGenres)"
                         v-bind:color="genre.Excluded ? 'red' : 'mk-dark-grey'"
                       ></v-checkbox>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-switch
@@ -1551,7 +1551,7 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip bottom v-if="editFilters.isEditFilters">
+                      <v-tooltip location="bottom" v-if="editFilters.isEditFilters">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-switch
@@ -1568,7 +1568,7 @@
                   <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -1582,7 +1582,7 @@
                         </template>
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -1667,7 +1667,7 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip bottom v-if="editFilters.isEditFilters">
+                      <v-tooltip location="bottom" v-if="editFilters.isEditFilters">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-switch
@@ -1717,7 +1717,7 @@
                         <v-expansion-panel-text>
                           <v-row style="margin-bottom: 8px">
                             <v-spacer />
-                            <v-tooltip bottom>
+                            <v-tooltip location="bottom">
                               <template v-slot:activator="{ props }">
                                 <span v-bind="props">
                                   <v-btn
@@ -1731,7 +1731,7 @@
                               </template>
                               <span>{{ $t("Clear Selection") }}</span>
                             </v-tooltip>
-                            <v-tooltip bottom>
+                            <v-tooltip location="bottom">
                               <template v-slot:activator="{ props }">
                                 <span v-bind="props">
                                   <v-btn
@@ -1820,7 +1820,7 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip bottom v-if="editFilters.isEditFilters">
+                      <v-tooltip location="bottom" v-if="editFilters.isEditFilters">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-switch
@@ -1837,7 +1837,7 @@
                   <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -1860,7 +1860,7 @@
                           )
                         }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterPersons(false)">
@@ -1870,7 +1870,7 @@
                         </template>
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterPersons(true)">
@@ -1880,7 +1880,7 @@
                         </template>
                         <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn class="mk-filter-action-btn" variant="text" v-on:click="addPerson()">
@@ -1982,7 +1982,7 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip bottom v-if="editFilters.isEditFilters">
+                      <v-tooltip location="bottom" v-if="editFilters.isEditFilters">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-switch
@@ -1999,7 +1999,7 @@
                   <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -2022,7 +2022,7 @@
                           )
                         }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -2036,7 +2036,7 @@
                         </template>
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterCompanies(true)">
@@ -2046,7 +2046,7 @@
                         </template>
                         <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn class="mk-filter-action-btn" variant="text" v-on:click="addCompany()">
@@ -2146,7 +2146,7 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip bottom v-if="editFilters.isEditFilters">
+                      <v-tooltip location="bottom" v-if="editFilters.isEditFilters">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-switch
@@ -2163,7 +2163,7 @@
                   <v-expansion-panel-text>
                     <v-row style="margin-bottom: 8px">
                       <v-spacer />
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -2186,7 +2186,7 @@
                           )
                         }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterYears(false)">
@@ -2196,7 +2196,7 @@
                         </template>
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn class="mk-filter-action-btn" variant="text" v-on:click="setAllFilterYears(true)">
@@ -2206,7 +2206,7 @@
                         </template>
                         <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn class="mk-filter-action-btn" variant="text" v-on:click="showYearsRangeInput()">
@@ -2303,7 +2303,7 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip bottom v-if="editFilters.isEditFilters">
+                      <v-tooltip location="bottom" v-if="editFilters.isEditFilters">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-switch
@@ -2320,7 +2320,7 @@
                   <v-expansion-panel-text>
                     <v-row>
                       <v-spacer />
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -2343,7 +2343,7 @@
                           )
                         }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -2357,7 +2357,7 @@
                         </template>
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -2371,7 +2371,7 @@
                         </template>
                         <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn class="mk-filter-action-btn" variant="text" v-on:click="addIMDBPlotKeyword()">
@@ -2480,7 +2480,7 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip bottom v-if="editFilters.isEditFilters">
+                      <v-tooltip location="bottom" v-if="editFilters.isEditFilters">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-switch
@@ -2497,7 +2497,7 @@
                   <v-expansion-panel-text>
                     <v-row>
                       <v-spacer />
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -2520,7 +2520,7 @@
                           )
                         }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -2534,7 +2534,7 @@
                         </template>
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -2548,7 +2548,7 @@
                         </template>
                         <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn class="mk-filter-action-btn" variant="text" v-on:click="addIMDBFilmingLocation()">
@@ -2661,7 +2661,7 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip bottom v-if="editFilters.isEditFilters">
+                      <v-tooltip location="bottom" v-if="editFilters.isEditFilters">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-switch
@@ -2678,7 +2678,7 @@
                   <v-expansion-panel-text>
                     <v-row>
                       <v-spacer />
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -2692,7 +2692,7 @@
                         </template>
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -2786,7 +2786,7 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip bottom v-if="editFilters.isEditFilters">
+                      <v-tooltip location="bottom" v-if="editFilters.isEditFilters">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-switch
@@ -2803,7 +2803,7 @@
                   <v-expansion-panel-text>
                     <v-row>
                       <v-spacer />
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -2826,7 +2826,7 @@
                           )
                         }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -2840,7 +2840,7 @@
                         </template>
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -2930,7 +2930,7 @@
                       >
                         $expand
                       </v-icon>
-                      <v-tooltip bottom v-if="editFilters.isEditFilters">
+                      <v-tooltip location="bottom" v-if="editFilters.isEditFilters">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-switch
@@ -2947,7 +2947,7 @@
                   <v-expansion-panel-text>
                     <v-row>
                       <v-spacer />
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -2970,7 +2970,7 @@
                           )
                         }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -2984,7 +2984,7 @@
                         </template>
                         <span>{{ $t("Clear Selection") }}</span>
                       </v-tooltip>
-                      <v-tooltip bottom>
+                      <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
                             <v-btn
@@ -5126,6 +5126,7 @@ export default {
 .filter-subheader {
   color: rgba(255, 255, 255, 0.87) !important;
   opacity: 1 !important;
+  padding-right: 0 !important;
 }
 
 .filter-subheader .v-list-subheader__text {
@@ -5425,13 +5426,10 @@ div.v-messages {
   max-width: 268px;
 }
 
-.mk-filter-action-btn.v-btn:not(.v-btn--round).v-size--default {
-  margin-right: -3px;
-  margin-left: 3px;
-  margin-top: 8px;
-  margin-bottom: 0px;
+.mk-filter-action-btn.v-btn {
+  margin: 0px;
+  padding: 0px;
   height: 30px;
-  padding: 0 0px;
   min-width: 30px;
   max-width: 30px;
   width: 30px;
