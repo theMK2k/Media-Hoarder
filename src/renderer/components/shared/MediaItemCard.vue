@@ -383,7 +383,7 @@
                 style="margin-right: 16px; margin-left: 0px; margin-bottom: 0px !important"
                 v-if="mediaItem.IMDB_rating_defaultDisplay"
               >
-                <v-icon size="small" color="amber" style="padding-bottom: 4px">mdi-star</v-icon>
+                <v-icon size="x-small" color="amber" style="padding-bottom: 4px">mdi-star</v-icon>
                 <!--
                           #rip-rating-demographics
                           <a class="text-h5 mb-2 mk-clickable" v-on:click.stop="emitMediaItemEvent('showRatingDemographicsDialog', { mediaItem })">{{ mediaItem.IMDB_rating_defaultDisplay }}</a>
