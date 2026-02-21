@@ -1144,12 +1144,16 @@
                       v-model="$shared.filters.filterMetacriticScore"
                       :max="100"
                       :min="0"
+                      :step="1"
+                      thumb-label="hover"
                       hide-details
                       class="align-center"
-                      v-on:change="filtersChanged('filterMetacriticScore')"
+                      v-on:update:modelValue="filtersChanged('filterMetacriticScore')"
                     >
-                      <template v-slot:prepend>{{ $shared.filters.filterMetacriticScore[0] }}</template>
-                      <template v-slot:append>{{ $shared.filters.filterMetacriticScore[1] }}</template>
+                    <!--
+                      <template v-slot:prepend><span style="display: inline-block; min-width: 1.7em; text-align: right">{{ $shared.filters.filterMetacriticScore[0] }}</span></template>
+                      <template v-slot:append><span style="display: inline-block; min-width: 1.7em">{{ $shared.filters.filterMetacriticScore[1] }}</span></template>
+                    -->
                     </v-range-slider>
                     <v-checkbox
                       v-bind:label="$t('include entries with no Metacritic score')"
@@ -1232,16 +1236,15 @@
                       :max="10"
                       :min="0"
                       :step="0.1"
+                      thumb-label="hover"
                       hide-details
                       class="align-center"
-                      v-on:change="filtersChanged('filterIMDBRating')"
+                      v-on:update:modelValue="filtersChanged('filterIMDBRating')"
                     >
-                      <template v-slot:prepend>{{
-                        $shared.filters.filterIMDBRating[0].toLocaleString($shared.uiLanguage)
-                      }}</template>
-                      <template v-slot:append>{{
-                        $shared.filters.filterIMDBRating[1].toLocaleString($shared.uiLanguage)
-                      }}</template>
+                    <!--  
+                      <template v-slot:prepend><span style="display: inline-block; min-width: 1.7em; text-align: right">{{ $shared.filters.filterIMDBRating[0].toLocaleString($shared.uiLanguage) }}</span></template>
+                      <template v-slot:append><span style="display: inline-block; min-width: 1.7em">{{ $shared.filters.filterIMDBRating[1].toLocaleString($shared.uiLanguage) }}</span></template>
+                    -->
                     </v-range-slider>
                     <v-checkbox
                       v-bind:label="$t('include entries with no IMDB rating')"
@@ -1321,16 +1324,15 @@
                       :max="10"
                       :min="0"
                       :step="0.1"
+                      thumb-label="hover"
                       hide-details
                       class="align-center"
-                      v-on:change="filtersChanged('filterIMDBRating')"
+                      v-on:update:modelValue="filtersChanged('filterIMDBRating')"
                     >
-                      <template v-slot:prepend>{{
-                        $shared.filters.filterIMDBRating[0].toLocaleString($shared.uiLanguage)
-                      }}</template>
-                      <template v-slot:append>{{
-                        $shared.filters.filterIMDBRating[1].toLocaleString($shared.uiLanguage)
-                      }}</template>
+                    <!- -
+                      <template v-slot:prepend><span style="display: inline-block; min-width: 2.5em; text-align: right">{{ $shared.filters.filterIMDBRating[0].toLocaleString($shared.uiLanguage) }}</span></template>
+                      <template v-slot:append><span style="display: inline-block; min-width: 2.5em">{{ $shared.filters.filterIMDBRating[1].toLocaleString($shared.uiLanguage) }}</span></template>
+                    - ->
                     </v-range-slider>
                     <v-checkbox
                       v-bind:label="$t('include entries with no IMDB rating')"
@@ -2226,6 +2228,7 @@
                           v-model="yearsRangeInput.range"
                           :max="yearsRangeInput.max"
                           :min="yearsRangeInput.min"
+                          :step="1"
                           hide-details
                           class="align-center"
                         >
