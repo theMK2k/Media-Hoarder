@@ -68,6 +68,7 @@ export default defineConfig({
       alias: {
         "@": resolve(__dirname, "src/renderer"),
         "@helpers": resolve(__dirname, "src/helpers"),
+        "@electron/remote": resolve(__dirname, "src/renderer/electron-remote-shim.js"),
       },
     },
     plugins: [

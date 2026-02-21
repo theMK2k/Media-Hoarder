@@ -289,6 +289,7 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 - ✅ Passive event listener hack added for Vuetify 3 touch/wheel warnings
 - ✅ Vuetify 3 input height: Overrode `--v-input-control-height: 46px` (was 56px) globally for `.v-input--density-default` — Vuetify 3 adopted Material Design 3 spacing which made filter checkboxes/switches consume too much vertical space
 - ✅ Vuetify 3 label line-height: Added `.mk-filter-checkbox .v-label { line-height: 1.2 }` — Vuetify 3 changed `v-label` line-height from ~1.2 to 1.5 (MD3 typography), causing excessive spacing on wrapped checkbox labels
+- ✅ `@electron/remote` default import fix: Vite's CJS interop resolved named imports (`{ dialog }`, `{ shell }`, etc.) but failed on default imports (`import remote from "@electron/remote"`), causing `quit()`, `toggleFullScreen()`, and `setProgressBar()` to throw `Cannot read properties of undefined`. Fixed by creating `src/renderer/electron-remote-shim.js` that uses `require()` directly and re-exports as ESM, aliased via `electron.vite.config.js`
 
 #### In Progress
 
@@ -302,6 +303,8 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 - `src/renderer/components/shared/Pagination.vue` - v-select fixes
 - `src/renderer/components/shared/MediaItemCard.vue` - word-highlighter fix
 - Multiple dialog components - emits declarations, v-text-field variant
+- `src/renderer/electron-remote-shim.js` - New shim for @electron/remote CJS interop
+- `electron.vite.config.js` - Added @electron/remote alias to shim
 
 ### Known Workarounds (see CLAUDE.md)
 
