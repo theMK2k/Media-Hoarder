@@ -111,9 +111,8 @@
           ></v-progress-linear>
 
           <v-expansion-panels accordion multiple v-model="expandedFilterGroups">
-            <!-- TODO: draggable temporarily replaced with div due to Vue 3.4+ incompatibility -->
-            <div>
-              <div v-for="filterGroup in $shared.filterGroups" v-bind:key="filterGroup.name">
+            <Sortable :list="$shared.filterGroups" item-key="name" @end="onFilterDragEnd" :options="{ disabled: !editFilters.isEditFilters }" :class="{ 'mk-grab-sortable': editFilters.isEditFilters }">
+              <template #item="{ element: filterGroup }">
                 <!-- FILTER SOURCE PATHS -->
                 <v-expansion-panel
                   v-bind:readonly="editFilters.isEditFilters"
@@ -3013,9 +3012,8 @@
                     </v-row>
                   </v-expansion-panel-text>
                 </v-expansion-panel>
-              </div>
-            </div>
-            <!-- END TODO: draggable temporarily replaced -->
+              </template>
+            </Sortable>
           </v-expansion-panels>
         </div>
 
@@ -3261,9 +3259,7 @@
 import * as _ from "lodash";
 import remote from "@electron/remote";
 import moment from "moment";
-// TODO: vuedraggable is temporarily disabled due to Vue 3.4+ incompatibility
-// import draggable from "vuedraggable";
-// See: https://github.com/SortableJS/vue.draggable.next/issues/238
+import { Sortable } from "sortablejs-vue3";
 import logger from "@helpers/logger.js";
 
 import * as store from "@/store.js";
@@ -3283,7 +3279,7 @@ import ScanHistoryItemDialog from "@/components/dialogs/ScanHistoryItemDialog.vu
 
 export default {
   components: {
-    // draggable, // TODO: temporarily disabled
+    Sortable,
     "mk-delete-filteritem-dialog": Dialog,
     "mk-search-companies-dialog": SearchDataDialog,
     "mk-search-persons-dialog": SearchDataDialog,
@@ -4836,11 +4832,16 @@ export default {
       }
     },
 
-    onFilterDragEnd() {
+    onFilterDragEnd(event) {
       logger.log(
         "[onFilterDragEnd] this.editFilters.oldExpandedFilterGroups:",
         this.editFilters.oldExpandedFilterGroups
       );
+      const { oldIndex, newIndex } = event;
+      if (oldIndex !== undefined && newIndex !== undefined && oldIndex !== newIndex) {
+        const item = this.$shared.filterGroups.splice(oldIndex, 1)[0];
+        this.$shared.filterGroups.splice(newIndex, 0, item);
+      }
     },
 
     async switchFilterSort(filterGroup) {
@@ -5224,6 +5225,18 @@ a {
 
 .mk-grab {
   cursor: grab !important;
+}
+
+.mk-grab-sortable .v-expansion-panel-title {
+  cursor: grab !important;
+}
+
+.mk-grab-sortable .v-expansion-panel-title__icon {
+  cursor: pointer !important;
+}
+
+.mk-grab-sortable .v-expansion-panel-title__icon * {
+  cursor: pointer !important;
 }
 
 .mk-item-detailcategory-header-row {
