@@ -63,10 +63,13 @@
 
           <v-list-subheader
             style="margin: 0px !important; font-size: 16px"
+            class="filter-subheader"
             v-on:mouseover="filterHeaderHovered = true"
             v-on:mouseleave="filterHeaderHovered = false"
           >
-            {{ $t("Filters") }}
+            <div>
+              {{ $t("Filters") }}
+            </div>
             <v-spacer></v-spacer>
             <v-tooltip v-if="!editFilters.isEditFilters" location="bottom">
               <template v-slot:activator="{ props }">
@@ -111,7 +114,13 @@
           ></v-progress-linear>
 
           <v-expansion-panels accordion multiple v-model="expandedFilterGroups">
-            <Sortable :list="$shared.filterGroups" item-key="name" @end="onFilterDragEnd" :options="{ disabled: !editFilters.isEditFilters }" :class="{ 'mk-grab-sortable': editFilters.isEditFilters }">
+            <Sortable
+              :list="$shared.filterGroups"
+              item-key="name"
+              @end="onFilterDragEnd"
+              :options="{ disabled: !editFilters.isEditFilters }"
+              :class="{ 'mk-grab-sortable': editFilters.isEditFilters }"
+            >
               <template #item="{ element: filterGroup }">
                 <!-- FILTER SOURCE PATHS -->
                 <v-expansion-panel
@@ -3019,10 +3028,7 @@
 
         <v-divider style="margin-top: 4px"></v-divider>
 
-        <v-list-item @click="quit">
-          <div>
-            <v-icon>mdi-power</v-icon>
-          </div>
+        <v-list-item @click="quit" prepend-icon="mdi-power">
           <v-list-item-title>{{ $t("Quit") }}</v-list-item-title>
         </v-list-item>
       </v-list>
@@ -5117,6 +5123,17 @@ export default {
 };
 </script>
 <style>
+.filter-subheader {
+  color: rgba(255, 255, 255, 0.87) !important;
+  opacity: 1 !important;
+}
+
+.filter-subheader .v-list-subheader__text {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
 h1 {
   margin-bottom: 16px;
 }
