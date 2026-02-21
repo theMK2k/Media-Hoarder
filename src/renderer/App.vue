@@ -90,7 +90,9 @@
             <v-tooltip v-if="!editFilters.isEditFilters" location="bottom">
               <template v-slot:activator="{ props }">
                 <span v-bind="props">
-                  <v-btn variant="text" v-on:click="onOpenChatGPTDialog"><v-icon size="x-large">mdi-robot</v-icon></v-btn>
+                  <v-btn variant="text" v-on:click="onOpenChatGPTDialog"
+                    ><v-icon size="x-large">mdi-robot</v-icon></v-btn
+                  >
                 </span>
               </template>
               <span>{{ $t("Let an AI recommend some movies") }}</span>
@@ -830,7 +832,7 @@
                   </v-expansion-panel-text>
                 </v-expansion-panel>
 
-                <!-- FILTER LISTS -->
+                <!-- FILTER MY LISTS -->
                 <v-expansion-panel
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterLists'"
@@ -940,7 +942,7 @@
                         <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                     </v-row>
-                    <v-row v-for="list in filterLists" v-bind:key="list.id_Lists">
+                    <v-row v-for="list in filterLists" v-bind:key="list.id_Lists" style="align-items: center">
                       <v-checkbox
                         class="mk-filter-checkbox mk-filter-removable"
                         v-bind:label="list.Name + ' (' + list.NumMoviesFormatted + ')'"
@@ -951,9 +953,9 @@
                       ></v-checkbox>
                       <v-spacer></v-spacer>
                       <v-icon
+                        size="20"
                         class="mk-clickable-red"
                         v-if="list.id_Lists"
-                        style="align-items: flex-start; padding-top: 4px"
                         v-on:click="
                           showDeleteFilterItemDialog(
                             list,
@@ -1067,13 +1069,6 @@
                       v-on:mousedown="filterCheckboxMousedown('filterRatings', rating, setAllFilterRatings)"
                       color="mk-dark-grey"
                     >
-                      <v-icon
-                        small
-                        v-for="i in 5"
-                        v-bind:key="i"
-                        v-bind:color="rating.Rating > i - 1 ? 'amber' : rating.Rating > 0 ? 'white' : 'grey'"
-                        >mdi-star</v-icon
-                      >
                     </v-checkbox>
                   </v-expansion-panel-text>
                 </v-expansion-panel>
@@ -1473,7 +1468,7 @@
                     <div
                       v-for="genre in filterGenres"
                       v-bind:key="genre.id_Genres"
-                      style="display: flex; justify-content: space-between"
+                      style="display: flex; justify-content: space-between; height: 42px; align-items: center"
                     >
                       <v-checkbox
                         class="mk-filter-checkbox"
@@ -1902,7 +1897,11 @@
                       v-on:click.native="filtersChanged('filterPersons')"
                       style="margin-bottom: 8px; margin-left: -10px"
                     ></v-switch>
-                    <v-row v-for="person in filterPersons" v-bind:key="person.IMDB_Person_ID">
+                    <v-row
+                      v-for="person in filterPersons"
+                      v-bind:key="person.IMDB_Person_ID"
+                      style="height: 42px; align-items: center"
+                    >
                       <v-checkbox
                         class="mk-filter-checkbox mk-filter-removable"
                         v-bind:label="person.Person_Name + ' (' + person.NumMoviesFormatted + ')'"
@@ -1913,8 +1912,8 @@
                       ></v-checkbox>
                       <v-spacer></v-spacer>
                       <v-icon
+                        size="20"
                         class="mk-clickable-red"
-                        style="align-items: flex-start; padding-top: 4px"
                         v-if="person.id_Filter_Persons"
                         v-on:click="
                           showDeleteFilterItemDialog(
@@ -2068,7 +2067,11 @@
                       v-on:click.native="filtersChanged('filterCompanies')"
                       style="margin-bottom: 8px; margin-left: -10px"
                     ></v-switch>
-                    <v-row v-for="company in filterCompanies" v-bind:key="company.Company_Name">
+                    <v-row
+                      v-for="company in filterCompanies"
+                      v-bind:key="company.Company_Name"
+                      style="height: 42px; align-items: center"
+                    >
                       <v-checkbox
                         class="mk-filter-checkbox mk-filter-removable"
                         v-bind:label="company.Company_Name + ' (' + company.NumMoviesFormatted + ')'"
@@ -2079,8 +2082,8 @@
                       ></v-checkbox>
                       <v-spacer></v-spacer>
                       <v-icon
+                        size="20"
                         class="mk-clickable-red"
-                        style="align-items: flex-start; padding-top: 4px"
                         v-if="company.id_Filter_Companies"
                         v-on:click="
                           showDeleteFilterItemDialog(
@@ -2409,8 +2412,8 @@
                       ></v-checkbox>
                       <v-spacer></v-spacer>
                       <v-icon
+                        size="20"
                         class="mk-clickable-red"
-                        style="align-items: flex-start; padding-top: 4px"
                         v-if="plotKeyword.id_Filter_IMDB_Plot_Keywords"
                         v-on:click="
                           showDeleteFilterItemDialog(
@@ -2590,8 +2593,8 @@
                       ></v-checkbox>
                       <v-spacer></v-spacer>
                       <v-icon
+                        size="20"
                         class="mk-clickable-red"
-                        style="align-items: flex-start; padding-top: 4px"
                         v-if="filmingLocation.id_Filter_IMDB_Filming_Locations"
                         v-on:click="
                           showDeleteFilterItemDialog(
@@ -5123,6 +5126,10 @@ export default {
 };
 </script>
 <style>
+.v-input--density-default {
+  --v-input-control-height: 46px;
+}
+
 .filter-subheader {
   color: rgba(255, 255, 255, 0.87) !important;
   opacity: 1 !important;
@@ -5422,6 +5429,10 @@ div.v-messages {
   margin: 0px;
 }
 
+.mk-filter-checkbox .v-label {
+  line-height: 1.2;
+}
+
 .mk-filter-removable {
   max-width: 268px;
 }
@@ -5433,6 +5444,10 @@ div.v-messages {
   min-width: 30px;
   max-width: 30px;
   width: 30px;
+}
+
+.v-navigation-drawer .v-expansion-panel-text__wrapper {
+  padding-right: 16px !important;
 }
 
 .mk-search-highlight {
