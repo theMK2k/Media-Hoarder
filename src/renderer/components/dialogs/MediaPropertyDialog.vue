@@ -7,7 +7,6 @@
     scrollable
     max-height="90vh"
     persistent
-    style="z-index: 300 !important"
   >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title v-on:mouseover="isTitleHovered = true" v-on:mouseleave="isTitleHovered = false">
