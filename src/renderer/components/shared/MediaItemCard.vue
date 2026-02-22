@@ -65,8 +65,9 @@
         </div>
       </div>
 
+      <!-- Media Item Content -->
       <div class="align-self-start" style="padding: 0px; flex: 1; min-width: 0">
-        <v-col style="padding: 0px !important; margin-top: 16px">
+        <v-col style="padding: 0px !important; margin-top: 8px">
           <v-row style="margin: 0px">
             <div style="margin-left: 4px; max-width: -webkit-fill-available">
               <v-list-item-title
@@ -79,18 +80,21 @@
                   allowEditButtons && emitMediaItemEvent('setItemHovered', { mediaItem, section: 'name', value: false })
                 "
               >
+                <!-- First Row: "Seen" Icon, Primary Title, Ratings -->
                 <div style="display: flex; min-height: 30px">
+                  <!-- "Seen" Icon -->
                   <div v-if="mediaItem.last_access_at">
                     <v-tooltip location="bottom">
                       <template v-slot:activator="{ props }">
                         <span v-bind="props">
-                          <v-icon size="small" style="margin-right: 8px; margin-bottom: 3px">mdi-eye-check-outline</v-icon>
+                          <v-icon size="24" style="margin-right: 8px; margin-bottom: 3px">mdi-eye-check-outline</v-icon>
                         </span>
                       </template>
                       <span>{{ $t("Last Access") }}: {{ lastAccessHumanized(mediaItem) }}</span>
                     </v-tooltip>
                   </div>
 
+                  <!-- Primary Title -->
                   <div style="overflow: hidden; text-overflow: ellipsis">
                     <span v-if="mediaItem.Series_Season_Displaytext" style="font-weight: 400; color: lightgray">
                       {{ mediaItem.Series_Season_Displaytext
@@ -123,6 +127,7 @@
                             class="mk-clickable"
                             v-on:click.stop="emitMediaItemEvent('openEditMediaItemDialog', { mediaItem })"
                             style="margin-left: 8px; margin-bottom: 3px"
+                            size="20"
                             >mdi-pencil</v-icon
                           >
                         </span>
@@ -139,6 +144,7 @@
                             v-on:click.stop="emitMediaItemEvent('rescanItem', { mediaItem })"
                             style="margin-left: 8px; margin-bottom: 3px"
                             v-bind:disabled="isScanning"
+                            size="20"
                             >mdi-reload-alert</v-icon
                           >
                         </span>
@@ -161,6 +167,7 @@
                             v-on:click.stop="emitMediaItemEvent('openLinkIMDBDialog', { mediaItem })"
                             style="margin-left: 8px; margin-bottom: 3px"
                             v-bind:disabled="isScanning"
+                            size="20"
                             >mdi-link</v-icon
                           >
                         </span>
@@ -183,6 +190,7 @@
                             v-on:click.stop="emitMediaItemEvent('showDeleteMediaDialog', { mediaItem })"
                             style="margin-left: 8px; margin-bottom: 3px"
                             v-bind:disabled="isScanning"
+                            size="20"
                             >mdi-delete</v-icon
                           >
                         </span>
@@ -200,7 +208,7 @@
               </v-list-item-title>
 
               <v-list-item-subtitle
-                style="margin-bottom: 4px; min-height: 18px"
+                style="min-height: 18px"
                 v-on:mouseover="
                   allowEditButtons && emitMediaItemEvent('setItemHovered', { mediaItem, section: 'name2', value: true })
                 "
@@ -380,7 +388,7 @@
             <div>
               <div
                 class="text-h5 mb-2"
-                style="margin-right: 16px; margin-left: 0px; margin-bottom: 0px !important"
+                style="margin-right: 8px; margin-left: 0px; margin-bottom: 0px !important"
                 v-if="mediaItem.IMDB_rating_defaultDisplay"
               >
                 <v-icon size="x-small" color="amber" style="padding-bottom: 4px">mdi-star</v-icon>
@@ -405,7 +413,7 @@
                   >{{ mediaItem.IMDB_metacriticScore }}</span
                 >
               </div>
-              <v-row style="margin: 0px -12px 0px 0px">
+              <v-row style="margin: 2px -20px 0px 0px">
                 <div class="flex-grow-1"></div>
 
                 <div v-on:click.stop="">
@@ -428,7 +436,7 @@
             </div>
           </v-row>
 
-          <v-row v-if="mediaItem.plotSummary" style="margin: 4px 6px 8px 4px">
+          <v-row v-if="mediaItem.plotSummary" style="margin: 0px 6px 8px 4px">
             <div v-show="!mediaItem.selected" style="font-size: 0.875rem; font-weight: normal">
               <word-highlighter v-bind:query="searchText || ''">
                 {{ mediaItem.plotSummary }}
@@ -439,7 +447,7 @@
             </div>
           </v-row>
 
-          <v-row v-if="mediaItem.IMDB_Top_Directors" class="mk-main-detail-row">
+          <v-row v-if="mediaItem.IMDB_Top_Directors" class="mk-main-detail-row" style="margin-top: -4px !important">
             <div style="font-size: 0.875rem; font-weight: normal">
               <div style="float: left; width: 100px; overflow: hidden">
                 <strong class="CreditCategory">{{ $t("Directed by") }}:</strong>
@@ -460,7 +468,7 @@
             </div>
           </v-row>
 
-          <v-row v-if="mediaItem.IMDB_Top_Writers" class="mk-main-detail-row">
+          <v-row v-if="mediaItem.IMDB_Top_Writers" class="mk-main-detail-row" style="margin-top: -4px !important">
             <div style="font-size: 0.875rem; font-weight: normal">
               <div style="float: left; width: 100px; overflow: hidden">
                 <strong class="CreditCategory">{{ $t("Written by") }}:</strong>
@@ -481,7 +489,7 @@
             </div>
           </v-row>
 
-          <v-row v-if="mediaItem.IMDB_Top_Cast" class="mk-main-detail-row">
+          <v-row v-if="mediaItem.IMDB_Top_Cast" class="mk-main-detail-row" style="margin-top: -4px !important">
             <div style="font-size: 0.875rem; font-weight: normal">
               <div style="float: left; width: 100px; overflow: hidden">
                 <strong class="CreditCategory">{{ $t("Cast") }}:</strong>
@@ -502,7 +510,11 @@
             </div>
           </v-row>
 
-          <v-row v-if="mediaItem.IMDB_Top_Production_Companies" class="mk-main-detail-row">
+          <v-row
+            v-if="mediaItem.IMDB_Top_Production_Companies"
+            class="mk-main-detail-row"
+            style="margin-top: -4px !important"
+          >
             <div style="font-size: 0.875rem; font-weight: normal">
               <div style="float: left; width: 100px; overflow: hidden">
                 <strong class="CreditCategory">{{ $t("Production") }}:</strong>
@@ -947,7 +959,8 @@
       <v-btn
         v-if="showCloseButton"
         class="xs-fullwidth"
-        variant="tonal" color="secondary"
+        variant="tonal"
+        color="secondary"
         v-on:click.stop="$emit('close')"
         style="margin-left: 8px"
         >{{ $t("Close") }}</v-btn
