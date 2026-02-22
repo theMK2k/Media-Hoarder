@@ -2,7 +2,7 @@
   <div style="width: 100%; margin-left: 8px">
     <h1>
       <v-btn variant="text" v-on:click="$router.go(-1)">
-        <v-icon>mdi-arrow-left</v-icon>
+        <v-icon size="24">mdi-arrow-left</v-icon>
       </v-btn>
       {{ $t("Settings") }}
     </h1>
