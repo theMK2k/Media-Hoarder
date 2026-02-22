@@ -7,7 +7,6 @@
     max-width="90%"
     scrollable
     max-height="90vh"
-    style="z-index: 300 !important"
   >
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
