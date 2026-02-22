@@ -1,13 +1,14 @@
 <template>
   <div style="display: flex; flex-direction: column; width: 100%" ref="mainContainer">
+    <!-- TOP NAV -->
     <v-row
       style="
         margin-bottom: 0px;
         margin-top: 0px;
         margin-right: 0px;
         margin-left: 0px;
-        padding-bottom: 8px;
         padding-top: 8px;
+        padding-bottom: 4px;
         position: fixed;
         width: 100% !important;
         z-index: 10;
@@ -56,6 +57,7 @@
             </span>
           </v-tooltip>
         </h1>
+
         <v-select
           class="mk-v-select-dynamic-width"
           variant="solo"
@@ -67,11 +69,11 @@
           item-value="Field"
           v-model="$shared.sortField"
           v-bind:placeholder="$t('Sort')"
-          style="margin-left: 8px; margin-top: 8px; max-width: 320px"
+          style="margin-left: 8px; margin-top: 4px; max-width: 320px"
           v-on:change="onSortChanged"
         >
           <template v-slot:selection="{ item }">
-            <span class="grey--text caption" style="margin-right: 8px">{{ $t("Sort by") }}</span>
+            <span style="color: #929292; font-size: 14px; margin-right: 8px">{{ $t("Sort by") }}</span>
             <span>{{ item.raw?.Description ? $t(item.raw.Description) : "" }}</span>
           </template>
         </v-select>
@@ -79,7 +81,8 @@
         <v-spacer></v-spacer>
 
         <!-- TOP PAGINATION -->
-        <div v-if="numPages" style="display: flex; align-items: flex-start">
+        <div v-if="numPages" style="margin-top: -4px; flex-grow: 1; display: flex; align-items: flex-start">
+          <v-spacer></v-spacer>
           <mk-pagination
             v-bind:length="numPages"
             v-bind:pages="paginationItems"
@@ -98,7 +101,7 @@
                     style="
                       height: 38px !important;
                       width: 38px !important;
-                      margin: 12px 8px 0px 0px !important;
+                      margin: 10px 8px 0px 0px !important;
                       display: inline-block;
                       font-size: x-large;
                     "
@@ -260,7 +263,7 @@
             v-on:change="onSortChanged"
           >
             <template v-slot:selection="{ item }">
-              <span class="grey--text caption" style="margin-right: 8px">{{ $t("Sort by") }}</span>
+              <span style="color: #929292; font-size: 14px; margin-right: 8px">{{ $t("Sort by") }}</span>
               <span>{{ item.raw?.Description ? $t(item.raw.Description) : "" }}</span>
             </template>
           </v-select>
@@ -340,10 +343,10 @@
     <v-container
       class="pa-2"
       style="max-width: 100% !important"
-      v-bind:style="{ 'margin-top': Series_id_Movies_Owner ? '122px' : '60px' }"
+      v-bind:style="{ 'margin-top': Series_id_Movies_Owner ? '134px' : '68px' }"
     >
       <v-row v-for="(mediaItem, i) in itemsFilteredPaginated" v-bind:key="i">
-        <v-col style="padding-bottom: 0px">
+        <v-col style="padding-bottom: 0px; padding-top: 8px">
           <mk-media-item-card
             v-bind:mediaItem="mediaItem"
             v-bind:isScanning="isScanning"
