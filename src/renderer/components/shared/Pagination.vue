@@ -7,7 +7,7 @@
   >
     <!-- THE NEW PAGINATION BUTTONS -->
     <ul class="v-pagination__list">
-      <li class="v-pagination__prev">
+      <li class="v-pagination__prev" style="margin-top: 2px">
         <button
           type="button"
           v-bind:class="prevClass"
@@ -30,7 +30,7 @@
         </button>
       </li>
 
-      <li class="v-pagination__prev">
+      <li class="v-pagination__prev" style="margin-top: 2px">
         <button
           type="button"
           v-bind:class="prevClass"
@@ -67,7 +67,7 @@
         <template v-slot:item="{ item }">
           <div>{{ item.raw.page + " / " + item.raw.numPages }}</div>
           <div style="width: 16px"></div>
-          <div v-if="item.raw.detailInfo" class="grey--text caption">
+          <div v-if="item.raw.detailInfo" style="color: #929292; font-size: 14px">
             {{ " " + item.raw.detailInfo }}
           </div>
           <!-- <span v-if="index === 1" class="grey--text caption">(+{{ value.length - 1 }} others)</span> -->
@@ -75,14 +75,14 @@
         <template v-slot:selection="{ item }">
           <div>{{ item.raw.page + " / " + item.raw.numPages }}</div>
           <div style="width: 16px"></div>
-          <div v-if="item.raw.detailInfo" class="grey--text caption">
+          <div v-if="item.raw.detailInfo" style="color: #929292; font-size: 14px">
             {{ " " + item.raw.detailInfo }}
           </div>
           <!-- <span v-if="index === 1" class="grey--text caption">(+{{ value.length - 1 }} others)</span> -->
         </template>
       </v-select>
 
-      <li class="v-pagination__next">
+      <li class="v-pagination__next" style="margin-top: 2px">
         <button
           type="button"
           v-bind:class="nextClass"
@@ -105,7 +105,7 @@
         </button>
       </li>
 
-      <li class="v-pagination__next">
+      <li class="v-pagination__next" style="margin-top: 2px">
         <button
           type="button"
           v-bind:class="nextClass"

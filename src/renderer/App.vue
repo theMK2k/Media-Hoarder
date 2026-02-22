@@ -1150,7 +1150,7 @@
                       class="align-center"
                       v-on:update:modelValue="filtersChanged('filterMetacriticScore')"
                     >
-                    <!--
+                      <!--
                       <template v-slot:prepend><span style="display: inline-block; min-width: 1.7em; text-align: right">{{ $shared.filters.filterMetacriticScore[0] }}</span></template>
                       <template v-slot:append><span style="display: inline-block; min-width: 1.7em">{{ $shared.filters.filterMetacriticScore[1] }}</span></template>
                     -->
@@ -1241,7 +1241,7 @@
                       class="align-center"
                       v-on:update:modelValue="filtersChanged('filterIMDBRating')"
                     >
-                    <!--  
+                      <!--  
                       <template v-slot:prepend><span style="display: inline-block; min-width: 1.7em; text-align: right">{{ $shared.filters.filterIMDBRating[0].toLocaleString($shared.uiLanguage) }}</span></template>
                       <template v-slot:append><span style="display: inline-block; min-width: 1.7em">{{ $shared.filters.filterIMDBRating[1].toLocaleString($shared.uiLanguage) }}</span></template>
                     -->
@@ -5337,25 +5337,6 @@ a {
   margin: 8px 6px 8px 0px;
 }
 
-/* ### Vuetify overrides ### */
-.v-expansion-panel-title {
-  font-size: 16px;
-}
-
-.v-alert {
-  font-size: 14px;
-}
-
-.v-list-item__title {
-  font-size: 16px !important;
-  overflow: initial;
-  white-space: initial;
-}
-
-.v-image__image--contain {
-  background-size: cover !important;
-}
-
 /* ### MetaCritic ### */
 .MetaCriticRed {
   background-color: red;
@@ -5394,6 +5375,29 @@ a {
 }
 
 /* ### Vuetify fixes ### */
+/* vertically center the selected text in v-select boxes */
+.v-field__input {
+  padding-top: 8px;
+  padding-bottom: 4px;
+}
+
+.v-expansion-panel-title {
+  font-size: 16px;
+}
+
+.v-alert {
+  font-size: 14px;
+}
+
+.v-list-item__title {
+  font-size: 16px !important;
+  overflow: initial;
+  white-space: initial;
+}
+
+.v-image__image--contain {
+  background-size: cover !important;
+}
 
 /* this is part of v-select and makes it unneccessarily high */
 .v-input__details {
