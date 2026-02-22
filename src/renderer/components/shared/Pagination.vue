@@ -64,13 +64,16 @@
         style="height: 40px; margin-top: 8px; display: inline-block"
       >
         <!-- v-bind:style="selectStyle" -->
-        <template v-slot:item="{ item }">
-          <div>{{ item.raw.page + " / " + item.raw.numPages }}</div>
-          <div style="width: 16px"></div>
-          <div v-if="item.raw.detailInfo" style="color: #929292; font-size: 14px">
-            {{ " " + item.raw.detailInfo }}
-          </div>
-          <!-- <span v-if="index === 1" class="grey--text caption">(+{{ value.length - 1 }} others)</span> -->
+        <template v-slot:item="{ item, props }">
+          <v-list-item v-bind="props" :title="undefined">
+            <div style="display: flex; align-items: center">
+              <div>{{ item.raw.page + " / " + item.raw.numPages }}</div>
+              <div style="width: 16px"></div>
+              <div v-if="item.raw.detailInfo" style="color: #929292; font-size: 14px">
+                {{ " " + item.raw.detailInfo }}
+              </div>
+            </div>
+          </v-list-item>
         </template>
         <template v-slot:selection="{ item }">
           <div>{{ item.raw.page + " / " + item.raw.numPages }}</div>

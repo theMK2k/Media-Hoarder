@@ -19,8 +19,8 @@
       <v-tooltip location="bottom">
         <template v-slot:activator="{ props }">
           <span v-bind="props">
-            <v-btn variant="text" v-on:click="$router.go(-1)" style="padding: 0px; margin-top: 6px; margin-left: 8px">
-              <v-icon>mdi-arrow-left</v-icon>
+            <v-btn variant="text" v-on:click="$router.go(-1)" style="margin-top: 6px; margin-left: 8px">
+              <v-icon size="24">mdi-arrow-left</v-icon>
             </v-btn>
           </span>
         </template>
@@ -31,8 +31,8 @@
       <v-tooltip location="bottom">
         <template v-slot:activator="{ props }">
           <span v-bind="props">
-            <v-btn variant="text" v-on:click="onReload" style="padding: 0px; margin-top: 6px; margin-left: 8px">
-              <v-icon>mdi-reload</v-icon>
+            <v-btn variant="text" v-on:click="onReload" style="margin-top: 6px; margin-left: 8px">
+              <v-icon size="24">mdi-reload</v-icon>
             </v-btn>
           </span>
         </template>
@@ -343,7 +343,7 @@
     <v-container
       class="pa-2"
       style="max-width: 100% !important"
-      v-bind:style="{ 'margin-top': Series_id_Movies_Owner ? '134px' : '68px' }"
+      v-bind:style="{ 'margin-top': Series_id_Movies_Owner ? '132px' : '66px' }"
     >
       <v-row v-for="(mediaItem, i) in itemsFilteredPaginated" v-bind:key="i">
         <v-col style="padding-bottom: 0px; padding-top: 8px">
