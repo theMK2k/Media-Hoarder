@@ -5410,6 +5410,11 @@ div.v-messages {
   visibility: hidden;
 }
 
+/* left navbar expansion panels */
+.v-expansion-panel--active {
+  margin-top: 2px !important;
+}
+
 /* this is part of v-switch and makes it unneccessarily high */
 /* .v-input
   .v-input--dense
