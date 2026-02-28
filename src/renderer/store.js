@@ -5586,6 +5586,7 @@ async function fetchFilterDataQuality(
 
   logger.log("[fetchFilterDataQuality] fetchFilterDataQuality result:", results);
 
+  results.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterDataQuality = results;
   shared.loadingFilter = "";
 }
@@ -5664,6 +5665,7 @@ async function fetchFilterSourcePaths(
 
   logger.log("[fetchFilterSourcePaths] result:", results);
 
+  results.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterSourcePaths = results;
   shared.loadingFilter = "";
 
@@ -5765,6 +5767,7 @@ async function fetchFilterGenres(
   logger.log("[fetchFilterGenres] filterValues:", filterValues);
   logger.log("[fetchFilterGenres] resultsFiltered:", resultsFiltered);
 
+  resultsFiltered.forEach((result) => { result.Selected = !!result.Selected; result.Excluded = !!result.Excluded; });
   shared.filters.filterGenres = resultsFiltered.sort((a, b) => helpers.compare(a.Name, b.Name, false));
   shared.loadingFilter = "";
 
@@ -5887,6 +5890,7 @@ async function fetchFilterAgeRatings(
 
   logger.log("[fetchFilterAgeRatings] resultsFiltered:", resultsFiltered);
 
+  resultsFiltered.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterAgeRatings = resultsFiltered;
   shared.loadingFilter = "";
 
@@ -6118,6 +6122,7 @@ async function fetchFilterRatings(
 
   logger.log("[fetchFilterRatings] results:", results);
 
+  results.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterRatings = results;
   shared.loadingFilter = "";
 
@@ -6325,6 +6330,8 @@ async function fetchFilterParentalAdvisoryCategory(
 
   logger.log(`[fetchFilterParentalAdvisory${PA_Category}] results:`, results);
 
+  results.forEach((result) => { result.Selected = !!result.Selected; });
+
   //#region Caching
   shared.filterCache[cacheHash()] = {
     metaData: {
@@ -6436,6 +6443,7 @@ async function fetchFilterPersons(
 
   logger.log("[fetchFilterPersons] result:", results);
 
+  results.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterPersons = results;
   shared.loadingFilter = "";
 
@@ -6551,6 +6559,7 @@ async function fetchFilterCompanies(
 
   logger.log("[fetchFilterCompanies] result:", results);
 
+  results.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterCompanies = results;
   shared.loadingFilter = "";
 
@@ -6670,6 +6679,7 @@ async function fetchFilterIMDBPlotKeywords(
 
   logger.log("[fetchFilterIMDBPlotKeywords] result:", results);
 
+  results.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterIMDBPlotKeywords = results;
   shared.loadingFilter = "";
 
@@ -6787,6 +6797,7 @@ async function fetchFilterIMDBFilmingLocations(
 
   logger.log("[fetchFilterIMDBFilmingLocations] result:", results);
 
+  results.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterIMDBFilmingLocations = results;
   shared.loadingFilter = "";
 
@@ -6865,6 +6876,7 @@ async function fetchFilterYears($MediaType, $SpecificMediaType, loadFilterValues
 
   logger.log("[fetchFilterYears] resultsFiltered:", resultsFiltered);
 
+  resultsFiltered.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterYears = resultsFiltered;
   shared.loadingFilter = "";
 }
@@ -6945,6 +6957,7 @@ async function fetchFilterQualities(
 
   logger.log("[fetchFilterQualities] resultsFiltered:", resultsFiltered);
 
+  resultsFiltered.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterQualities = resultsFiltered;
   shared.loadingFilter = "";
 
@@ -7148,6 +7161,7 @@ async function fetchFilterLists(
 
   logger.log("[fetchFilterLists] result:", results);
 
+  results.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterLists = results;
   shared.loadingFilter = "";
 
@@ -7305,6 +7319,7 @@ async function fetchFilterLanguages(
     }
   });
 
+  resultsFiltered.forEach((result) => { result.Selected = !!result.Selected; });
   if ($LanguageType === "audio") {
     shared.filters.filterAudioLanguages = resultsFiltered;
   } else {
@@ -8762,6 +8777,7 @@ async function fetchFilterReleaseAttributes(
 
   logger.log("[fetchFilterReleaseAttributes] results:", results);
 
+  results.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterReleaseAttributes = results;
   shared.loadingFilter = "";
 
@@ -8865,6 +8881,7 @@ FROM (	SELECT DISTINCT
   };
   //#endregion Caching
 
+  results.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterVideoEncoders = results;
   shared.loadingFilter = "";
 }
@@ -8948,6 +8965,7 @@ FROM (	SELECT DISTINCT
 
   logger.log("[fetchFilterAudioFormats] results:", results);
 
+  results.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterAudioFormats = results;
 
   shared.loadingFilter = "";
