@@ -14,12 +14,14 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 **Date Started:** 2026-01-12
 
 ### Environment Setup
+
 - **Current Node.js:** 14.17.5
 - **Target Node.js:** 22.x.x (will switch after dependencies are compatible)
 - **Git Branch:** update-dependencies
 - **Initial Tag:** phase-0-start
 
 ### Actions Taken
+
 1. ✅ Confirmed nvm-windows 1.1.10 installed
 2. ✅ Confirmed Node.js 22 already available via nvm
 3. ✅ Created git branch: update-dependencies
@@ -27,6 +29,7 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 5. ✅ Created UPGRADE-LOG.md (this file)
 
 ### Notes
+
 - Decided to **stay on Node.js 14** for Phases 0-3 to avoid breaking current dependencies
 - Will switch to Node.js 22 after dependencies are upgraded in Phase 4+
 
@@ -48,7 +51,7 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
   - moment 2.29.1 → 2.30.1
   - semver 7.3.5 → 7.7.3
   - xml2js 0.4.23 → 0.6.2
-- ✅ Fixed roboto-fontface wildcard version: "*" → "0.10.0"
+- ✅ Fixed roboto-fontface wildcard version: "\*" → "0.10.0"
 - ✅ sqlite3: Kept at 5.1.6 (5.1.7 lacks prebuilt binaries for Electron 13)
 - ✅ cheerio: Kept at 1.0.0-rc.10 (newer versions require Node 18+)
 - ✅ Removed version pinning violations (^) from package.json
@@ -112,6 +115,7 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 #### Breaking Changes Addressed
 
 **1. Protocol Handler Migration (src/background.js)**
+
 - Changed from callback-based `protocol.registerFileProtocol()` to Promise-based `protocol.handle()`
 - Added `net` import from electron
 - Registered `local-resource` scheme with `supportFetchAPI: true`
@@ -123,6 +127,7 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
   - Use `pathToFileURL()` for proper file:// URL creation
 
 **2. Windows 7/8 Support Dropped (Electron 23+)**
+
 - Updated README.md to remove Windows 7/8 references
 
 #### Notes
@@ -218,21 +223,25 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 ### Breaking Changes Addressed
 
 **1. ESLint Configuration (.eslintrc.js)**
+
 - Changed parser from `babel-eslint` to `@babel/eslint-parser`
 - Added `requireConfigFile: false` to parserOptions
 - Disabled `vue/multi-word-component-names` rule (too strict for existing components)
 - Disabled `vue/no-mutating-props` rule (existing code patterns)
 
 **2. Prettier 3.x Formatting**
+
 - Ran `npm run format` to fix all formatting differences
 - Minor whitespace/line break changes across codebase
 
 **3. Node.js Version**
+
 - Updated `.nvmrc`: 14.17.5 → 22
 - Updated `engines` in package.json: `>=14.17.5 <15.0.0` → `>=22.0.0 <23.0.0`
 - Updated all npm scripts: `check-node-version --node ^14.17` → `^22`
 
 **4. Adblocker Package Renamed**
+
 - @cliqz/adblocker-electron → @ghostery/adblocker-electron
 - Updated import in src/background.js
 - Fixes preload script absolute path error on Electron 39
@@ -291,6 +300,7 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 - ✅ Vuetify 3 label line-height: Added `.mk-filter-checkbox .v-label { line-height: 1.2 }` — Vuetify 3 changed `v-label` line-height from ~1.2 to 1.5 (MD3 typography), causing excessive spacing on wrapped checkbox labels
 - ✅ `@electron/remote` default import fix: Vite's CJS interop resolved named imports (`{ dialog }`, `{ shell }`, etc.) but failed on default imports (`import remote from "@electron/remote"`), causing `quit()`, `toggleFullScreen()`, and `setProgressBar()` to throw `Cannot read properties of undefined`. Fixed by creating `src/renderer/electron-remote-shim.js` that uses `require()` directly and re-exports as ESM, aliased via `electron.vite.config.js`
 - ✅ Vuetify 3 dialog z-index fix: Removed `z-index: 300 !important` from `MediaPropertyDialog` and `ScanHistoryItemDialog` — these were Vuetify 2 overrides that forced dialogs below Vuetify 3's layout-managed navigation drawer (~z-index 1002). Vuetify 3's overlay system automatically assigns `z-index: 2000+` to dialogs, so the explicit low values caused the sidebar to render on top of dialogs
+- ✅ Vuetify 3 filter checkbox boolean fix: All 17 `fetchFilter*()` functions in `store.js` returned `1 AS Selected` (integer) from SQLite. Vuetify 3's `v-checkbox` uses strict comparison (`deepEqual`) against `true` (boolean), so checkboxes appeared unchecked despite the title correctly showing "(All)" (which uses JavaScript truthy evaluation). Fixed by adding `!!result.Selected` coercion in each fetch function. Also refactored all fetch functions to use a single `forEach` loop: unconditional coercion + formatting first, then conditional merge of saved filter values
 
 #### In Progress
 
@@ -320,6 +330,7 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 **Status:** Not Started
 
 ### Planned Changes
+
 - video.js 7 → 8
 - Electron IPC security migration
 - Remove @electron/remote
@@ -331,17 +342,20 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 ## Breaking Changes Encountered
 
 ### Phase 1: fs-extra requires transpilation
+
 - **Issue**: fs-extra 11.3.3 uses modern JS syntax (nullish coalescing `??`)
 - **Impact**: Webpack 4 (Vue CLI 4) fails to compile without transpilation
 - **Solution**: Added `"fs-extra"` to `transpileDependencies` in vue.config.js
 
 ### Phase 1: sqlite3 5.1.7 lacks prebuilt binaries for Electron 13
+
 - **Issue**: sqlite3 5.1.7 has no prebuilt N-API v36 binaries for Electron 13, requires Python to build from source
 - **Impact**: Application fails at runtime with "Could not locate the bindings file" error
 - **Solution**: Rolled back to sqlite3 5.1.6 which has working prebuilt binaries (napi-v6)
 - **Note**: Will upgrade to newer sqlite3 in Phase 2 when upgrading Electron
 
 ### Phase 1: axios migration blocked by app architecture
+
 - **Issue**: Attempted to replace deprecated `request`/`requestretry` with `axios`
 - **Impact**: IMDB scraping broke due to CORS - app runs HTTP requests in renderer process, axios is blocked by browser CORS policy
 - **Root Cause**: App architecture has IMDB scraping in renderer process (store.js, Vue components), not main process
@@ -352,13 +366,13 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 
 ## Workarounds Applied
 
-*None needed for Phase 1 (simplified scope)*
+_None needed for Phase 1 (simplified scope)_
 
 ---
 
 ## Testing Notes
 
-*This section will track testing results for each phase*
+_This section will track testing results for each phase_
 
 ---
 
@@ -367,39 +381,45 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 **Initial Count:** 36 vulnerabilities (3 critical, 10 high, 11 moderate, 12 low)
 
 ### Phase 1 Resolutions
-- *To be documented*
+
+- _To be documented_
 
 ### Phase 2 Resolutions
-- *To be documented*
+
+- _To be documented_
 
 ### Phase 3 Resolutions
-- *To be documented*
+
+- _To be documented_
 
 ### Phase 4 Resolutions
-- *To be documented*
+
+- _To be documented_
 
 ### Phase 5 Resolutions
-- *To be documented*
+
+- _To be documented_
 
 ### Phase 6 Resolutions
-- *To be documented*
+
+- _To be documented_
 
 ---
 
 ## Timeline
 
-| Phase | Start Date | End Date | Actual Duration | Notes |
-|-------|-----------|----------|----------------|-------|
-| 0 | 2026-01-12 | - | - | In Progress |
-| 1 | - | - | - | |
-| 2 | - | - | - | |
-| 3 | - | - | - | |
-| 4 | - | - | - | |
-| 5 | - | - | - | |
-| 6 | - | - | - | |
+| Phase | Start Date | End Date | Actual Duration | Notes       |
+| ----- | ---------- | -------- | --------------- | ----------- |
+| 0     | 2026-01-12 | -        | -               | In Progress |
+| 1     | -          | -        | -               |             |
+| 2     | -          | -        | -               |             |
+| 3     | -          | -        | -               |             |
+| 4     | -          | -        | -               |             |
+| 5     | -          | -        | -               |             |
+| 6     | -          | -        | -               |             |
 
 ---
 
 ## Lessons Learned
 
-*This section will capture key insights and lessons from the upgrade process*
+_This section will capture key insights and lessons from the upgrade process_
