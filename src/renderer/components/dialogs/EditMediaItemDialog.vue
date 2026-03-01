@@ -97,8 +97,7 @@
                       v-model="selectedVideoQuality"
                     ></v-select>
                   </v-card-text>
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
+                  <v-card-actions style="justify-content: flex-end">
                     <v-btn variant="tonal" color="secondary" v-on:click.stop="showAddVideoQualityDialog = false">{{
                       $t("Cancel")
                     }}</v-btn>
@@ -167,8 +166,7 @@
                       item-value="languageCodeUpperCase"
                     ></v-select>
                   </v-card-text>
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
+                  <v-card-actions style="justify-content: flex-end">
                     <v-btn variant="tonal" color="secondary" v-on:click.stop="showAddAudioLanguageDialog = false">{{
                       $t("Cancel")
                     }}</v-btn>
@@ -237,8 +235,7 @@
                       item-value="languageCodeUpperCase"
                     ></v-select>
                   </v-card-text>
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
+                  <v-card-actions style="justify-content: flex-end">
                     <v-btn variant="tonal" color="secondary" v-on:click.stop="showAddSubtitleLanguageDialog = false">{{
                       $t("Cancel")
                     }}</v-btn>
@@ -306,8 +303,7 @@
                     item-value="GenreID"
                   ></v-select>
                 </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
+                <v-card-actions style="justify-content: flex-end">
                   <v-btn variant="tonal" color="secondary" v-on:click.stop="showAddGenreDialog = false">{{ $t("Cancel") }}</v-btn>
                   <v-btn variant="tonal" color="primary" v-on:click.stop="onAddGenreDialogOK">{{ $t("OK") }}</v-btn>
                 </v-card-actions>
@@ -372,8 +368,7 @@
                     item-value="searchTerm"
                   ></v-select>
                 </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
+                <v-card-actions style="justify-content: flex-end">
                   <v-btn variant="tonal" color="secondary" v-on:click.stop="showAddReleaseAttributeDialog = false">{{
                     $t("Cancel")
                   }}</v-btn>
