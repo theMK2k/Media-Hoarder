@@ -213,6 +213,11 @@ dbsync.runSync(
 
         shared.uiLanguage = await fetchUILanguage();
 
+        // Load all supported locale data via require() so they register on the
+        // same CJS moment instance used throughout the app (see electron.vite.config.js).
+        // Static ESM imports of locale files fail in Vite's strict-mode ESM context.
+        require("moment/locale/de");
+        require("moment/locale/fr");
         moment.locale(shared.uiLanguage);
 
         eventBus.dbInitialized();
