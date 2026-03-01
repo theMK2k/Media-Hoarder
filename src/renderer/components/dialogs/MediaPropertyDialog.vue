@@ -224,7 +224,6 @@
           variant="tonal"
           color="secondary"
           v-on:click="onCloseClick"
-          style="margin-left: 8px"
           >{{ $t("Close") }}</v-btn
         >
 
@@ -235,7 +234,6 @@
           variant="tonal"
           color="primary"
           v-on:click.stop="openIMDB()"
-          style="margin-left: 8px"
         >
           <v-icon size="small">mdi-web</v-icon>&nbsp;IMDB
         </v-btn>
@@ -249,7 +247,6 @@
           variant="tonal"
           color="primary"
           v-on:click="onFilterClick"
-          style="margin-left: 8px"
         >
           {{ $t(propertyType.filterButtonText) }}
         </v-btn>
