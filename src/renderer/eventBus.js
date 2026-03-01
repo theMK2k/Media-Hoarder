@@ -68,6 +68,7 @@ export const eventBus = {
   rescanFinished: ({ hasChanges }) => emitter.emit("rescanFinished", { hasChanges }),
   openChatGPTDialog: () => emitter.emit("openChatGPTDialog"),
   lastAccessUpdated: () => emitter.emit("lastAccessUpdated"),
+  closeAllPropertyDialogs: () => emitter.emit("closeAllPropertyDialogs"),
 
   // Progress bar
   setProgressBar,

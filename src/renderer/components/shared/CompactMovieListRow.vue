@@ -21,7 +21,7 @@
           <span v-for="(detail, index) in movie.propertyDetails" v-bind:key="index">
             <span v-if="index > 0"> | </span>
             <span v-if="detail.Category || detail.CategoryToTranslate">
-              {{ detail.CategoryToTranslate ? $t(detail.CategoryToTranslate) : detail.Category
+              {{ detail.CategoryToTranslate ? $t(`CreditCategories.${detail.CategoryToTranslate}`) : detail.Category
               }}<span v-if="detail.Value">: </span>
             </span>
             <span v-if="detail.Value">{{ detail.Value }}</span>

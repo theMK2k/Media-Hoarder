@@ -256,9 +256,26 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+  <!-- Child property dialog for stacked navigation (same-type dialogs within dialogs) -->
+  <mk-media-property-dialog
+    v-if="childDialog.show"
+    v-bind:show="childDialog.show"
+    v-bind:propertyTypeKey="childDialog.propertyTypeKey"
+    v-bind:propertyValue="childDialog.propertyValue"
+    v-bind:propertyValueDisplayText="childDialog.propertyValueDisplayText"
+    v-bind:imdbTconst="childDialog.imdbTconst"
+    v-bind:mediaType="childDialog.mediaType"
+    v-bind:Series_id_Movies_Owner="childDialog.Series_id_Movies_Owner"
+    v-bind:Series_Name="childDialog.Series_Name"
+    v-bind:Series_Year_Display="childDialog.Series_Year_Display"
+    v-on:close="childDialog.show = false"
+    v-on:mediaItemEvent="onChildMediaItemEvent"
+  ></mk-media-property-dialog>
 </template>
 
 <script>
+import { defineAsyncComponent } from "vue";
 import sqlString from "sqlstring-sqlite";
 import { shell } from "@electron/remote";
 
@@ -297,6 +314,7 @@ export default {
   components: {
     "mk-compact-movie-list-row": CompactMovieListRow,
     "mk-media-item-card": MediaItemCard,
+    "mk-media-property-dialog": defineAsyncComponent(() => import("@/components/dialogs/MediaPropertyDialog.vue")),
   },
 
   computed: {
@@ -323,6 +341,11 @@ export default {
     },
     Series_id_Movies_Owner: function () {
       this.debouncedInit(this.propertyValue);
+    },
+    show(newVal) {
+      if (!newVal) {
+        this.childDialog.show = false;
+      }
     },
   },
 
@@ -412,6 +435,18 @@ export default {
         DescriptionLong: null,
       },
       showDescriptionLong: false,
+
+      childDialog: {
+        show: false,
+        propertyTypeKey: null,
+        propertyValue: null,
+        propertyValueDisplayText: null,
+        imdbTconst: null,
+        mediaType: null,
+        Series_id_Movies_Owner: null,
+        Series_Name: null,
+        Series_Year_Display: null,
+      },
     };
   },
 
@@ -740,7 +775,9 @@ export default {
 
       eventBus.refetchSpecificFilter(setFilter);
 
+      // Close this dialog; also signal any stacked parent dialogs to close
       this.$emit("close");
+      eventBus.closeAllPropertyDialogs();
     },
 
     openIMDB() {
@@ -1098,6 +1135,101 @@ export default {
 
     async onMICmediaItemEvent(payload) {
       logger.log("[MediaPropertyDialog.onMICmediaItemEvent] payload:", payload);
+
+      const propertyEventNames = [
+        "ageRatingClicked", "audioFormatClicked", "languageClicked",
+        "companyClicked", "filmingLocationClicked", "genreClicked",
+        "creditClicked", "plotKeywordClicked", "releaseAttributeClicked",
+        "videoEncoderClicked", "videoQualityClicked",
+      ];
+
+      if (propertyEventNames.includes(payload.eventName)) {
+        this.openChildPropertyDialog(payload);
+      } else {
+        this.$emit("mediaItemEvent", payload);
+      }
+    },
+
+    openChildPropertyDialog(payload) {
+      const cd = this.childDialog;
+      cd.mediaType = this.mediaType;
+      cd.Series_id_Movies_Owner = payload.mediaItem?.Series_id_Movies_Owner ?? null;
+      cd.Series_Name = null;
+      cd.Series_Year_Display = null;
+
+      switch (payload.eventName) {
+        case "ageRatingClicked":
+          cd.propertyTypeKey = "age-rating";
+          cd.propertyValue = payload.AgeRating;
+          cd.propertyValueDisplayText = payload.AgeRating;
+          cd.imdbTconst = null;
+          break;
+        case "audioFormatClicked":
+          cd.propertyTypeKey = "audio-format";
+          cd.propertyValue = payload.audioFormat;
+          cd.propertyValueDisplayText = payload.audioFormat;
+          cd.imdbTconst = null;
+          break;
+        case "languageClicked":
+          cd.propertyTypeKey = payload.type === "audio" ? "audio-language" : "subtitle-language";
+          cd.propertyValue = payload.code;
+          cd.propertyValueDisplayText = payload.code;
+          cd.imdbTconst = null;
+          break;
+        case "companyClicked":
+          cd.propertyTypeKey = "company";
+          cd.propertyValue = payload.company.name;
+          cd.propertyValueDisplayText = payload.company.name;
+          cd.imdbTconst = payload.company.id;
+          break;
+        case "filmingLocationClicked":
+          cd.propertyTypeKey = "filming-location";
+          cd.propertyValue = payload.filmingLocation.id_IMDB_Filming_Locations;
+          cd.propertyValueDisplayText = payload.filmingLocation.Location;
+          cd.imdbTconst = null;
+          break;
+        case "genreClicked":
+          cd.propertyTypeKey = "genre";
+          cd.propertyValue = payload.genre.name;
+          cd.propertyValueDisplayText = payload.genre.translated;
+          cd.imdbTconst = null;
+          break;
+        case "creditClicked":
+          cd.propertyTypeKey = "person";
+          cd.propertyValue = payload.credit.id;
+          cd.propertyValueDisplayText = payload.credit.name;
+          cd.imdbTconst = payload.credit.id;
+          break;
+        case "plotKeywordClicked":
+          cd.propertyTypeKey = "plot-keyword";
+          cd.propertyValue = payload.plotKeyword.id_IMDB_Plot_Keywords;
+          cd.propertyValueDisplayText = payload.plotKeyword.Keyword;
+          cd.imdbTconst = null;
+          break;
+        case "releaseAttributeClicked":
+          cd.propertyTypeKey = "release-attribute";
+          cd.propertyValue = payload.releaseAttribute;
+          cd.propertyValueDisplayText = payload.releaseAttribute;
+          cd.imdbTconst = null;
+          break;
+        case "videoEncoderClicked":
+          cd.propertyTypeKey = "video-encoder";
+          cd.propertyValue = payload.videoEncoder;
+          cd.propertyValueDisplayText = payload.videoEncoder;
+          cd.imdbTconst = null;
+          break;
+        case "videoQualityClicked":
+          cd.propertyTypeKey = "video-quality";
+          cd.propertyValue = payload.MI_Qualities_Item;
+          cd.propertyValueDisplayText = payload.MI_Qualities_Item?.MI_Quality ?? null;
+          cd.imdbTconst = null;
+          break;
+      }
+
+      cd.show = true;
+    },
+
+    async onChildMediaItemEvent(payload) {
       this.$emit("mediaItemEvent", payload);
     },
   },
@@ -1106,6 +1238,14 @@ export default {
   created() {
     // lodash debounced functions
     this.debouncedInit = _.debounce(this.init, 10);
+  },
+
+  mounted() {
+    // When mounted via v-if with a pre-set propertyValue (child dialog case),
+    // the watcher won't fire for the initial value, so we call init() explicitly.
+    if (this.propertyValue) {
+      this.debouncedInit(this.propertyValue);
+    }
   },
 };
 </script>

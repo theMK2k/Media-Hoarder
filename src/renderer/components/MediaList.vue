@@ -2202,6 +2202,21 @@ export default {
       movie.showCompanies = true;
     },
 
+    closeAllPropertyDialogs() {
+      this.ageRatingDialog.show = false;
+      this.audioFormatDialog.show = false;
+      this.audioLanguageDialog.show = false;
+      this.companyDialog.show = false;
+      this.filmingLocationDialog.show = false;
+      this.genreDialog.show = false;
+      this.personDialog.show = false;
+      this.plotKeywordDialog.show = false;
+      this.releaseAttributeDialog.show = false;
+      this.subtitleLanguageDialog.show = false;
+      this.videoEncoderDialog.show = false;
+      this.videoQualityDialog.show = false;
+    },
+
     onPersonDialogClose() {
       this.personDialog.show = false;
     },
@@ -3186,6 +3201,10 @@ export default {
     eventBus.on("openChatGPTDialog", () => {
       this.openChatGPTDialog();
     });
+
+    eventBus.on("closeAllPropertyDialogs", () => {
+      this.closeAllPropertyDialogs();
+    });
     // #endregion
 
     (async () => {
@@ -3223,6 +3242,7 @@ export default {
     eventBus.off("showPlotKeywordDialog");
     eventBus.off("showFilmingLocationDialog");
     eventBus.off("showCompanyDialog");
+    eventBus.off("closeAllPropertyDialogs");
   },
 };
 </script>
