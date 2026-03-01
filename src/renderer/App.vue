@@ -5359,7 +5359,6 @@ a {
 .mk-compact-movie-list-metacritic-block {
   display: inline-block;
   text-align: center;
-  padding: 3px;
   margin-top: -2px;
   margin-left: 4px;
   width: 30px;
