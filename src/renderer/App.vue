@@ -1,7 +1,9 @@
 <template>
   <v-app>
     <!-- SIDEBAR -->
-    <v-navigation-drawer v-model="$shared.sidenav" v-bind:width="320">
+    <v-navigation-drawer v-model="$shared.sidenav" v-bind:width="sidenavWidth">
+      <!-- Resize Handle -->
+      <div class="sidenav-resize-handle" @mousedown="onSidenavResizeStart"></div>
       <!-- SIDEBAR OVERLAY -->
       <v-overlay
         style="z-index: 1000"
@@ -112,7 +114,7 @@
             color="white accent-0"
             rounded
             height="3"
-            style="margin-left: 8px; width: 298px"
+            style="margin-left: 8px; width: calc(100% - 16px)"
           ></v-progress-linear>
 
           <v-expansion-panels accordion multiple v-model="expandedFilterGroups">
@@ -129,7 +131,7 @@
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterSourcePaths'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
-                  style="padding: 0px !important; width: 316px"
+                  style="padding: 0px !important; width: 100%"
                   xxx-v-bind:disabled="
                     $shared.loadingFilter === 'filterSourcePaths'
                   "
@@ -262,7 +264,7 @@
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterQualities'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
-                  style="padding: 0px !important; width: 316px"
+                  style="padding: 0px !important; width: 100%"
                   xxx-v-bind:disabled="$shared.loadingFilter === 'filterQualities'"
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
@@ -389,7 +391,7 @@
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterAudioLanguages'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
-                  style="padding: 0px !important; width: 316px"
+                  style="padding: 0px !important; width: 100%"
                   xxx-v-bind:disabled="
                     $shared.loadingFilter === 'filterAudioLanguages'
                   "
@@ -532,7 +534,7 @@
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterSubtitleLanguages'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
-                  style="padding: 0px !important; width: 316px"
+                  style="padding: 0px !important; width: 100%"
                   xxx-v-bind:disabled="
                     $shared.loadingFilter === 'filterSubtitleLanguages'
                   "
@@ -679,7 +681,7 @@
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterReleaseAttributes'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
-                  style="padding: 0px !important; width: 316px"
+                  style="padding: 0px !important; width: 100%"
                   xxx-v-bind:disabled="
                     $shared.loadingFilter === 'filterReleaseAttributes'
                   "
@@ -837,7 +839,7 @@
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterLists'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
-                  style="padding: 0px !important; width: 316px"
+                  style="padding: 0px !important; width: 100%"
                   xxx-v-bind:disabled="$shared.loadingFilter === 'filterLists'"
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
@@ -953,7 +955,7 @@
                       ></v-checkbox>
                       <v-spacer></v-spacer>
                       <v-icon
-                        size="20"
+                        size="24"
                         class="mk-clickable-red"
                         v-if="list.id_Lists"
                         v-on:click="
@@ -976,7 +978,7 @@
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterRatings'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
-                  style="padding: 0px !important; width: 316px"
+                  style="padding: 0px !important; width: 100%"
                   xxx-v-bind:disabled="$shared.loadingFilter === 'filterRatings'"
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
@@ -1078,7 +1080,7 @@
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterMetacriticScore'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
-                  style="padding: 0px !important; width: 316px"
+                  style="padding: 0px !important; width: 100%"
                   xxx-v-bind:disabled="
                     $shared.loadingFilter === 'filterMetacriticScore'
                   "
@@ -1170,7 +1172,7 @@
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterIMDBRating'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
-                  style="padding: 0px !important; width: 316px"
+                  style="padding: 0px !important; width: 100%"
                   xxx-v-bind:disabled="
                     $shared.loadingFilter === 'filterIMDBRatings'
                   "
@@ -1262,7 +1264,7 @@
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterIMDBNumVotes'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
-                  style="padding: 0px !important; width: 316px"
+                  style="padding: 0px !important; width: 100%"
                   xxx-v-bind:disabled="
                     $shared.loadingFilter === 'filterIMDBRatings'
                   "
@@ -1350,7 +1352,7 @@
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterGenres'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
-                  style="padding: 0px !important; width: 316px"
+                  style="padding: 0px !important; width: 100%"
                   xxx-v-bind:disabled="$shared.loadingFilter === 'filterGenres'"
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
@@ -1504,7 +1506,7 @@
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterAgeRatings'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
-                  style="padding: 0px !important; width: 316px"
+                  style="padding: 0px !important; width: 100%"
                   xxx-v-bind:disabled="$shared.loadingFilter === 'filterAgeRatings'"
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
@@ -1617,7 +1619,7 @@
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterParentalAdvisory'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
-                  style="padding: 0px !important; width: 316px"
+                  style="padding: 0px !important; width: 100%"
                   xxx-v-bind:disabled="
                     $shared.loadingFilter === 'filterParentalAdvisory'
                   "
@@ -1687,7 +1689,7 @@
                           $shared.filters.filterParentalAdvisory[category.Name] &&
                           $shared.filters.filterParentalAdvisory[category.Name].length > 0
                         "
-                        style="padding: 0px !important; width: 316px"
+                        style="padding: 0px !important; width: 100%"
                       >
                         <v-expansion-panel-title
                           style="padding: 8px !important"
@@ -1771,7 +1773,7 @@
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterPersons'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
-                  style="padding: 0px !important; width: 316px"
+                  style="padding: 0px !important; width: 100%"
                   xxx-v-bind:disabled="$shared.loadingFilter === 'filterPersons'"
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
@@ -1914,7 +1916,7 @@
                       ></v-checkbox>
                       <v-spacer></v-spacer>
                       <v-icon
-                        size="20"
+                        size="24"
                         class="mk-clickable-red"
                         v-if="person.id_Filter_Persons"
                         v-on:click="
@@ -1937,7 +1939,7 @@
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterCompanies'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
-                  style="padding: 0px !important; width: 316px"
+                  style="padding: 0px !important; width: 100%"
                   xxx-v-bind:disabled="$shared.loadingFilter === 'filterCompanies'"
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
@@ -2084,7 +2086,7 @@
                       ></v-checkbox>
                       <v-spacer></v-spacer>
                       <v-icon
-                        size="20"
+                        size="24"
                         class="mk-clickable-red"
                         v-if="company.id_Filter_Companies"
                         v-on:click="
@@ -2107,7 +2109,7 @@
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterYears'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
-                  style="padding: 0px !important; width: 316px"
+                  style="padding: 0px !important; width: 100%"
                   xxx-v-bind:disabled="$shared.loadingFilter === 'filterYears'"
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
@@ -2261,7 +2263,7 @@
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterIMDBPlotKeywords'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
-                  style="padding: 0px !important; width: 316px"
+                  style="padding: 0px !important; width: 100%"
                   xxx-v-bind:disabled="
                     $shared.loadingFilter === 'filterIMDBPlotKeywords'
                   "
@@ -2415,7 +2417,7 @@
                       ></v-checkbox>
                       <v-spacer></v-spacer>
                       <v-icon
-                        size="20"
+                        size="24"
                         class="mk-clickable-red"
                         v-if="plotKeyword.id_Filter_IMDB_Plot_Keywords"
                         v-on:click="
@@ -2438,7 +2440,7 @@
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterIMDBFilmingLocations'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
-                  style="padding: 0px !important; width: 316px"
+                  style="padding: 0px !important; width: 100%"
                   xxx-v-bind:disabled="
                     $shared.loadingFilter === 'filterIMDBFilmingLocations'
                   "
@@ -2596,7 +2598,7 @@
                       ></v-checkbox>
                       <v-spacer></v-spacer>
                       <v-icon
-                        size="20"
+                        size="24"
                         class="mk-clickable-red"
                         v-if="filmingLocation.id_Filter_IMDB_Filming_Locations"
                         v-on:click="
@@ -2619,7 +2621,7 @@
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterDataQuality'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
-                  style="padding: 0px !important; width: 316px"
+                  style="padding: 0px !important; width: 100%"
                   xxx-v-bind:disabled="
                     $shared.loadingFilter === 'filterDataQuality'
                   "
@@ -2745,7 +2747,7 @@
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterVideoEncoders'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
-                  style="padding: 0px !important; width: 316px"
+                  style="padding: 0px !important; width: 100%"
                   xxx-v-bind:disabled="
                     $shared.loadingFilter === 'filterVideoEncoders'
                   "
@@ -2889,7 +2891,7 @@
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterAudioFormats'"
                   v-show="editFilters.isEditFilters || filterGroup.visible"
-                  style="padding: 0px !important; width: 316px"
+                  style="padding: 0px !important; width: 100%"
                   xxx-v-bind:disabled="
                     $shared.loadingFilter === 'filterAudioFormats'
                   "
@@ -3311,6 +3313,8 @@ export default {
     isFullScreen: true,
     showLoadingOverlay: false,
     showSidebarLoadingOverlay: false,
+    sidenavWidth: 320,
+    sidenavResizing: false,
     filterHeaderHovered: false,
     isolateFilterItemTimeout: null,
     editFilters: {
@@ -4114,6 +4118,28 @@ export default {
   },
 
   methods: {
+    onSidenavResizeStart(e) {
+      e.preventDefault();
+      this.sidenavResizing = true;
+      document.body.style.cursor = "col-resize";
+      document.body.style.userSelect = "none";
+      const onMouseMove = (e) => {
+        const newWidth = e.clientX;
+        if (newWidth >= 320) {
+          this.sidenavWidth = newWidth;
+        }
+      };
+      const onMouseUp = () => {
+        this.sidenavResizing = false;
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
+        document.removeEventListener("mousemove", onMouseMove);
+        document.removeEventListener("mouseup", onMouseUp);
+      };
+      document.addEventListener("mousemove", onMouseMove);
+      document.addEventListener("mouseup", onMouseUp);
+    },
+
     $local_t(key, payload) {
       return this.$t(key, payload);
     },
@@ -5446,7 +5472,19 @@ div.v-messages {
 }
 
 .mk-filter-removable {
-  max-width: 268px;
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.mk-filter-removable .v-label {
+  white-space: normal;
+  word-break: break-word;
+}
+
+.v-expansion-panel-text .v-row:has(.mk-filter-removable) {
+  flex-wrap: nowrap;
+  align-items: center;
 }
 
 .mk-filter-action-btn.v-btn {
@@ -5456,6 +5494,30 @@ div.v-messages {
   min-width: 30px;
   max-width: 30px;
   width: 30px;
+}
+
+.sidenav-resize-handle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 4px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 1001;
+  transition: background-color 0.15s;
+}
+
+.sidenav-resize-handle:hover,
+.sidenav-resize-handle:active {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.v-navigation-drawer .v-expansion-panels {
+  max-width: 100% !important;
+}
+
+.v-navigation-drawer .v-expansion-panels > div {
+  width: 100%;
 }
 
 .v-navigation-drawer .v-expansion-panel-text__wrapper {
