@@ -5155,6 +5155,13 @@ export default {
 };
 </script>
 <style>
+/* Vuetify 3 defaults dialog v-card-actions to flex-end (right-aligned).
+   Restore Vuetify 2 behavior (left-aligned); use <v-spacer> to right-align explicitly. */
+.v-dialog > .v-overlay__content > .v-card > .v-card-actions,
+.v-dialog > .v-overlay__content > form > .v-card > .v-card-actions {
+  justify-content: flex-start;
+}
+
 .v-input--density-default {
   --v-input-control-height: 46px;
 }
