@@ -147,23 +147,19 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-col sm="12">
-          <v-row style="margin-top: 8px">
-            <v-btn class="xs-fullwidth" variant="tonal" color="secondary" v-on:click="onCloseClick" style="margin-left: 8px">{{
-              $t("Cancel")
-            }}</v-btn>
-            <v-btn
-              class="xs-fullwidth"
-              variant="tonal" v-bind:color="missingSourcePaths && missingSourcePaths.length > 0 ? 'red' : 'primary'"
-              v-on:click="onOKClick"
-              v-bind:loading="isLoading"
-              style="margin-left: 8px"
-            >
-              <span v-if="!missingSourcePaths || missingSourcePaths.length == 0">{{ $t("OK") }}</span>
-              <span v-if="missingSourcePaths && missingSourcePaths.length > 0">{{ $t("OK, I take the risk") }}</span>
-            </v-btn>
-          </v-row>
-        </v-col>
+        <v-btn class="xs-fullwidth" variant="tonal" color="secondary" v-on:click="onCloseClick">{{
+          $t("Cancel")
+        }}</v-btn>
+        <v-btn
+          class="xs-fullwidth"
+          variant="tonal"
+          v-bind:color="missingSourcePaths && missingSourcePaths.length > 0 ? 'red' : 'primary'"
+          v-on:click="onOKClick"
+          v-bind:loading="isLoading"
+        >
+          <span v-if="!missingSourcePaths || missingSourcePaths.length == 0">{{ $t("OK") }}</span>
+          <span v-if="missingSourcePaths && missingSourcePaths.length > 0">{{ $t("OK, I take the risk") }}</span>
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

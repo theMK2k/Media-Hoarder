@@ -1,10 +1,5 @@
 <template>
-  <v-dialog
-    :model-value="show"
-    @update:model-value="$emit('update:show', $event)"
-    persistent
-    max-width="500"
-  >
+  <v-dialog :model-value="show" @update:model-value="$emit('update:show', $event)" persistent max-width="500">
     <v-card dark flat v-bind:ripple="false">
       <v-card-title>
         <div class="text-h5" style="width: 100%; font-size: 1.17em">
@@ -45,16 +40,12 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-col sm="12">
-          <v-row style="margin-top: 8px">
-            <v-btn class="xs-fullwidth" variant="tonal" color="secondary" v-on:click="onCloseClick" style="margin-left: 8px">{{
-              $t("Cancel")
-            }}</v-btn>
-            <v-btn class="xs-fullwidth" variant="tonal" color="primary" v-on:click="onOKClick" style="margin-left: 8px">
-              {{ $t("Rescan Meta Data") }}
-            </v-btn>
-          </v-row>
-        </v-col>
+        <v-btn class="xs-fullwidth" variant="tonal" color="secondary" v-on:click="onCloseClick">{{
+          $t("Cancel")
+        }}</v-btn>
+        <v-btn class="xs-fullwidth" variant="tonal" color="primary" v-on:click="onOKClick">
+          {{ $t("Rescan Meta Data") }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
