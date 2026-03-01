@@ -13,6 +13,7 @@
         top: 48px;
         z-index: 10;
         background: rgb(48, 48, 48);
+        flex: 0 0 auto;
       "
     >
       <!-- Button: "<-" (go back) -->
