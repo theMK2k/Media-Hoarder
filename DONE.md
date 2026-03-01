@@ -5,6 +5,7 @@
 ### Features
 
 - [x] Side Navigation containing the filters can now be resized by the user
+- [x] Media property dialogs can now stack indefinitely on top of each other (e.g. actor on top of another actor on top of a director), filtering by the property is possible at any level
 
 ### Optimizations
 
