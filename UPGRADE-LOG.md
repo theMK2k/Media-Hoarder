@@ -308,6 +308,8 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 
 - ✅ MediaPropertyDialog recursive stacking: Property dialogs (person, genre, company, etc.) can now stack indefinitely. Previously, clicking a person inside a person dialog replaced the first dialog. Now `MediaPropertyDialog` intercepts all property-click events internally via `onMICmediaItemEvent` and opens a recursive `mk-media-property-dialog` child (registered via `defineAsyncComponent` to avoid circular import). The `show` prop watcher resets child state on close. A new `closeAllPropertyDialogs` eventBus event closes the full stack when "Filter by..." is clicked at any nesting level — `onFilterClick` emits both `this.$emit("close")` (existing path) and `eventBus.closeAllPropertyDialogs()` so MediaList's `closeAllPropertyDialogs()` method sets all property dialog shows to false
 
+- ✅ moment.js locale translations restored: `fromNow()` now returns translated strings (e.g. German "vor 3 Monaten") instead of always falling back to English. Root cause: Vite pre-bundles `moment` as an isolated ESM chunk; locale files internally call `require('../moment')` at runtime which hits Node's CJS module cache — a completely separate instance, so locale registrations were lost. Fixed by adding `moment: { type: "cjs" }` to `electronRenderer` resolve in `electron.vite.config.js` (forces all `import moment` to use `require()`, unifying the instance) and loading locale data via `require("moment/locale/de")` / `require("moment/locale/fr")` calls in `store.js` init (static ESM imports of locale sub-paths crash in Vite's strict-mode ESM context because `this` is `undefined` at the top level of an ES module)
+
 #### In Progress
 
 - 🔄 Testing for remaining console warnings/errors

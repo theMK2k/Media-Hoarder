@@ -98,6 +98,12 @@ export default defineConfig({
           xml2js: { type: "cjs" },
           "fs-extra": { type: "cjs" },
           "graceful-fs": { type: "cjs" },
+          // moment has no ESM build; without this, Vite pre-bundles it as a
+          // separate ESM chunk. moment locale files call require('../moment')
+          // at runtime, which hits Node's CJS cache — a different instance.
+          // Marking moment as CJS forces all imports to use require() so that
+          // the locale files and the app share the exact same instance.
+          moment: { type: "cjs" },
         },
       }),
     ],
