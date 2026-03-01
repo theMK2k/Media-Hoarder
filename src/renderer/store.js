@@ -177,9 +177,7 @@ dbsync.runSync(
         // Detect system locale from browser APIs (replaces os-locale which is broken in newer Electron builds)
         // Prefer a language tag with region (e.g. "de-DE") for fallback region/language detection
         shared.currentLocale =
-          (navigator.languages || []).find((lang) => lang.includes("-")) ||
-          navigator.language ||
-          null;
+          (navigator.languages || []).find((lang) => lang.includes("-")) || navigator.language || null;
 
         logger.log("[Initialization] shared.currentLocale:", shared.currentLocale);
 
@@ -5572,21 +5570,21 @@ async function fetchFilterDataQuality(
     { $MediaType, $Series_id_Movies_Owner }
   );
 
-  if (filterValues && filterValues.filterDataQuality) {
-    results.forEach((result) => {
+  results.forEach((result) => {
+    result.Selected = !!result.Selected;
+    result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
+
+    if (filterValues && filterValues.filterDataQuality) {
       const filterValue = filterValues.filterDataQuality.find((value) => value.Name === result.Name);
 
       if (filterValue) {
-        result.Selected = filterValue.Selected;
+        result.Selected = !!filterValue.Selected;
       }
-
-      result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
-    });
-  }
+    }
+  });
 
   logger.log("[fetchFilterDataQuality] fetchFilterDataQuality result:", results);
 
-  results.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterDataQuality = results;
   shared.loadingFilter = "";
 }
@@ -5651,21 +5649,20 @@ async function fetchFilterSourcePaths(
     { $MediaType, $Series_id_Movies_Owner }
   );
 
-  if (filterValues && filterValues.filterSourcePaths) {
-    results.forEach((result) => {
+  results.forEach((result) => {
+    result.Selected = !!result.Selected;
+    result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
+
+    if (filterValues && filterValues.filterSourcePaths) {
       const filterValue = filterValues.filterSourcePaths.find((value) => value.Description === result.Description);
-
       if (filterValue) {
-        result.Selected = filterValue.Selected;
+        result.Selected = !!filterValue.Selected;
       }
-
-      result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
-    });
-  }
+    }
+  });
 
   logger.log("[fetchFilterSourcePaths] result:", results);
 
-  results.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterSourcePaths = results;
   shared.loadingFilter = "";
 
@@ -5742,32 +5739,29 @@ async function fetchFilterGenres(
 
   const resultsFiltered = results; // results.filter((result) => result.NumMovies > 0); // we should not filter out, because "AND" can quickly result in an empty set
 
-  if (filterValues && filterValues.filterGenres) {
-    resultsFiltered.forEach((result) => {
-      const filterValue = filterValues.filterGenres.find((value) => value.GenreID === result.GenreID);
-
-      if (filterValue) {
-        result.Selected = filterValue.Selected;
-        result.Excluded = !!filterValue.Excluded;
-      }
-    });
-  }
-
-  // Format and Translate
   resultsFiltered.forEach((result) => {
+    result.Selected = !!result.Selected;
+    result.Excluded = !!result.Excluded;
+
     result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
 
     const genreNameTranslated = $t(`GenreNames.${result.Name}`);
-
     if (genreNameTranslated && !genreNameTranslated.includes(".")) {
       result.Name = genreNameTranslated;
+    }
+
+    if (filterValues && filterValues.filterGenres) {
+      const filterValue = filterValues.filterGenres.find((value) => value.GenreID === result.GenreID);
+      if (filterValue) {
+        result.Selected = !!filterValue.Selected;
+        result.Excluded = !!filterValue.Excluded;
+      }
     }
   });
 
   logger.log("[fetchFilterGenres] filterValues:", filterValues);
   logger.log("[fetchFilterGenres] resultsFiltered:", resultsFiltered);
 
-  resultsFiltered.forEach((result) => { result.Selected = !!result.Selected; result.Excluded = !!result.Excluded; });
   shared.filters.filterGenres = resultsFiltered.sort((a, b) => helpers.compare(a.Name, b.Name, false));
   shared.loadingFilter = "";
 
@@ -5876,21 +5870,20 @@ async function fetchFilterAgeRatings(
 
   const resultsFiltered = results; // results.filter((result) => result.NumMovies > 0);  // we should not filter out, because "AND" can quickly result in an empty set
 
-  if (filterValues && filterValues.filterAgeRatings) {
-    resultsFiltered.forEach((result) => {
+  resultsFiltered.forEach((result) => {
+    result.Selected = !!result.Selected;
+    result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
+
+    if (filterValues && filterValues.filterAgeRatings) {
       const filterValue = filterValues.filterAgeRatings.find((value) => value.Age === result.Age);
-
       if (filterValue) {
-        result.Selected = filterValue.Selected;
+        result.Selected = !!filterValue.Selected;
       }
-
-      result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
-    });
-  }
+    }
+  });
 
   logger.log("[fetchFilterAgeRatings] resultsFiltered:", resultsFiltered);
 
-  resultsFiltered.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterAgeRatings = resultsFiltered;
   shared.loadingFilter = "";
 
@@ -6108,21 +6101,20 @@ async function fetchFilterRatings(
     { $MediaType, $Series_id_Movies_Owner }
   );
 
-  if (filterValues && filterValues.filterRatings) {
-    results.forEach((result) => {
+  results.forEach((result) => {
+    result.Selected = !!result.Selected;
+    result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
+
+    if (filterValues && filterValues.filterRatings) {
       const filterValue = filterValues.filterRatings.find((value) => value.Rating === result.Rating);
-
       if (filterValue) {
-        result.Selected = filterValue.Selected;
+        result.Selected = !!filterValue.Selected;
       }
-
-      result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
-    });
-  }
+    }
+  });
 
   logger.log("[fetchFilterRatings] results:", results);
 
-  results.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterRatings = results;
   shared.loadingFilter = "";
 
@@ -6314,23 +6306,21 @@ async function fetchFilterParentalAdvisoryCategory(
     { $MediaType, $Series_id_Movies_Owner }
   );
 
-  if (filterValues && filterValues.filterParentalAdvisory && filterValues.filterParentalAdvisory[PA_Category]) {
-    results.forEach((result) => {
+  results.forEach((result) => {
+    result.Selected = !!result.Selected;
+    result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
+
+    if (filterValues && filterValues.filterParentalAdvisory && filterValues.filterParentalAdvisory[PA_Category]) {
       const filterValue = filterValues.filterParentalAdvisory[PA_Category].find(
         (value) => value.Severity === result.Severity
       );
-
       if (filterValue) {
-        result.Selected = filterValue.Selected;
+        result.Selected = !!filterValue.Selected;
       }
-
-      result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
-    });
-  }
+    }
+  });
 
   logger.log(`[fetchFilterParentalAdvisory${PA_Category}] results:`, results);
-
-  results.forEach((result) => { result.Selected = !!result.Selected; });
 
   //#region Caching
   shared.filterCache[cacheHash()] = {
@@ -6427,23 +6417,22 @@ async function fetchFilterPersons(
 
   // logger.log('[fetchFilterPersons] QUERY:', )
 
-  if (filterValues && filterValues.filterPersons) {
-    results.forEach((result) => {
+  results.forEach((result) => {
+    result.Selected = !!result.Selected;
+    result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
+
+    if (filterValues && filterValues.filterPersons) {
       const filterValue = filterValues.filterPersons.find(
         (value) => value.id_Filter_Persons === result.id_Filter_Persons
       );
-
       if (filterValue) {
-        result.Selected = filterValue.Selected;
+        result.Selected = !!filterValue.Selected;
       }
-
-      result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
-    });
-  }
+    }
+  });
 
   logger.log("[fetchFilterPersons] result:", results);
 
-  results.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterPersons = results;
   shared.loadingFilter = "";
 
@@ -6543,23 +6532,22 @@ async function fetchFilterCompanies(
 
   // logger.log('[fetchFilterCompanies] QUERY:', )
 
-  if (filterValues && filterValues.filterCompanies) {
-    results.forEach((result) => {
+  results.forEach((result) => {
+    result.Selected = !!result.Selected;
+    result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
+
+    if (filterValues && filterValues.filterCompanies) {
       const filterValue = filterValues.filterCompanies.find(
         (value) => value.id_Filter_Companies === result.id_Filter_Companies
       );
-
       if (filterValue) {
-        result.Selected = filterValue.Selected;
+        result.Selected = !!filterValue.Selected;
       }
-
-      result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
-    });
-  }
+    }
+  });
 
   logger.log("[fetchFilterCompanies] result:", results);
 
-  results.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterCompanies = results;
   shared.loadingFilter = "";
 
@@ -6663,23 +6651,22 @@ async function fetchFilterIMDBPlotKeywords(
 
   // logger.log('[fetchFilterIMDBPlotKeywords] QUERY:', )
 
-  if (filterValues && filterValues.filterIMDBPlotKeywords) {
-    results.forEach((result) => {
+  results.forEach((result) => {
+    result.Selected = !!result.Selected;
+    result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
+
+    if (filterValues && filterValues.filterIMDBPlotKeywords) {
       const filterValue = filterValues.filterIMDBPlotKeywords.find(
         (value) => value.id_Filter_IMDB_Plot_Keywords === result.id_Filter_IMDB_Plot_Keywords
       );
-
       if (filterValue) {
-        result.Selected = filterValue.Selected;
+        result.Selected = !!filterValue.Selected;
       }
-
-      result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
-    });
-  }
+    }
+  });
 
   logger.log("[fetchFilterIMDBPlotKeywords] result:", results);
 
-  results.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterIMDBPlotKeywords = results;
   shared.loadingFilter = "";
 
@@ -6781,23 +6768,22 @@ async function fetchFilterIMDBFilmingLocations(
     { $MediaType, $any: $t("<any other filming location>"), $Series_id_Movies_Owner }
   );
 
-  if (filterValues && filterValues.filterIMDBFilmingLocations) {
-    results.forEach((result) => {
+  results.forEach((result) => {
+    result.Selected = !!result.Selected;
+    result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
+
+    if (filterValues && filterValues.filterIMDBFilmingLocations) {
       const filterValue = filterValues.filterIMDBFilmingLocations.find(
         (value) => value.id_Filter_IMDB_Filming_Locations === result.id_Filter_IMDB_Filming_Locations
       );
-
       if (filterValue) {
-        result.Selected = filterValue.Selected;
+        result.Selected = !!filterValue.Selected;
       }
-
-      result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
-    });
-  }
+    }
+  });
 
   logger.log("[fetchFilterIMDBFilmingLocations] result:", results);
 
-  results.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterIMDBFilmingLocations = results;
   shared.loadingFilter = "";
 
@@ -6858,25 +6844,21 @@ async function fetchFilterYears($MediaType, $SpecificMediaType, loadFilterValues
 
   const resultsFiltered = results; // results.filter((result) => result.NumMovies > 0); // we should not filter out, because "AND" can quickly result in an empty set
 
-  results.forEach((result) => {
+  resultsFiltered.forEach((result) => {
     result.startYear = parseInt(result.startYear);
-  });
+    result.Selected = !!result.Selected;
+    result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
 
-  if (filterValues && filterValues.filterYears) {
-    resultsFiltered.forEach((result) => {
+    if (filterValues && filterValues.filterYears) {
       const filterValue = filterValues.filterYears.find((value) => value.startYear == result.startYear);
-
       if (filterValue) {
-        result.Selected = filterValue.Selected;
+        result.Selected = !!filterValue.Selected;
       }
-
-      result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
-    });
-  }
+    }
+  });
 
   logger.log("[fetchFilterYears] resultsFiltered:", resultsFiltered);
 
-  resultsFiltered.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterYears = resultsFiltered;
   shared.loadingFilter = "";
 }
@@ -6943,21 +6925,20 @@ async function fetchFilterQualities(
 
   const resultsFiltered = results; // results.filter((result) => result.NumMovies > 0);  // we should not filter out, because "AND" can quickly result in an empty set
 
-  if (filterValues && filterValues.filterQualities) {
-    resultsFiltered.forEach((result) => {
+  resultsFiltered.forEach((result) => {
+    result.Selected = !!result.Selected;
+    result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
+
+    if (filterValues && filterValues.filterQualities) {
       const filterValue = filterValues.filterQualities.find((value) => value.MI_Quality == result.MI_Quality);
-
       if (filterValue) {
-        result.Selected = filterValue.Selected;
+        result.Selected = !!filterValue.Selected;
       }
-
-      result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
-    });
-  }
+    }
+  });
 
   logger.log("[fetchFilterQualities] resultsFiltered:", resultsFiltered);
 
-  resultsFiltered.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterQualities = resultsFiltered;
   shared.loadingFilter = "";
 
@@ -7147,21 +7128,20 @@ async function fetchFilterLists(
     { $MediaType, $any: $t("<not in any list>"), $Series_id_Movies_Owner }
   );
 
-  if (filterValues && filterValues.filterLists) {
-    results.forEach((result) => {
+  results.forEach((result) => {
+    result.Selected = !!result.Selected;
+    result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
+
+    if (filterValues && filterValues.filterLists) {
       const filterValue = filterValues.filterLists.find((value) => value.Name === result.Name);
-
       if (filterValue) {
-        result.Selected = filterValue.Selected;
+        result.Selected = !!filterValue.Selected;
       }
-
-      result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
-    });
-  }
+    }
+  });
 
   logger.log("[fetchFilterLists] result:", results);
 
-  results.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterLists = results;
   shared.loadingFilter = "";
 
@@ -7287,14 +7267,7 @@ async function fetchFilterLanguages(
   }
 
   resultsFiltered.forEach((result) => {
-    if (filterValuesLanguages) {
-      const filterValue = filterValuesLanguages.find((value) => value.Language === result.Language);
-
-      if (filterValue) {
-        result.Selected = filterValue.Selected;
-      }
-    }
-
+    result.Selected = !!result.Selected;
     result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
 
     result.DisplayText = result.Language;
@@ -7302,24 +7275,22 @@ async function fetchFilterLanguages(
       result.DisplayText = `${result.Language} - ${languageCodeNameMapping[result.Language]}`;
       result.LanguageFull = languageCodeNameMapping[result.Language];
     }
+    if (result.LanguageFull) {
+      const LanguageFullTranslated = $t(`LanguageNames.${result.LanguageFull}`);
+      if (LanguageFullTranslated && !LanguageFullTranslated.includes(".")) {
+        result.DisplayText = `${result.Language} - ${LanguageFullTranslated}`;
+      }
+    }
+    if (filterValuesLanguages) {
+      const filterValue = filterValuesLanguages.find((value) => value.Language === result.Language);
+      if (filterValue) {
+        result.Selected = !!filterValue.Selected;
+      }
+    }
   });
 
   logger.log("[fetchFilterLanguages] resultsFiltered:", resultsFiltered);
 
-  // Translate
-  resultsFiltered.forEach((language) => {
-    if (!language.LanguageFull) {
-      return;
-    }
-
-    const LanguageFullTranslated = $t(`LanguageNames.${language.LanguageFull}`);
-
-    if (LanguageFullTranslated && !LanguageFullTranslated.includes(".")) {
-      language.DisplayText = `${language.Language} - ${LanguageFullTranslated}`;
-    }
-  });
-
-  resultsFiltered.forEach((result) => { result.Selected = !!result.Selected; });
   if ($LanguageType === "audio") {
     shared.filters.filterAudioLanguages = resultsFiltered;
   } else {
@@ -8761,23 +8732,22 @@ async function fetchFilterReleaseAttributes(
     ...results.sort((a, b) => (a.ReleaseAttribute.toLowerCase() < b.ReleaseAttribute.toLowerCase() ? -1 : 1)),
   ];
 
-  if (filterValues && filterValues.filterReleaseAttributes) {
-    results.forEach((result) => {
+  results.forEach((result) => {
+    result.Selected = !!result.Selected;
+    result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
+
+    if (filterValues && filterValues.filterReleaseAttributes) {
       const filterReleaseAttribute = filterValues.filterReleaseAttributes.find(
         (value) => value.ReleaseAttribute == result.ReleaseAttribute
       );
-
       if (filterReleaseAttribute) {
-        result.Selected = filterReleaseAttribute.Selected;
+        result.Selected = !!filterReleaseAttribute.Selected;
       }
-
-      result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
-    });
-  }
+    }
+  });
 
   logger.log("[fetchFilterReleaseAttributes] results:", results);
 
-  results.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterReleaseAttributes = results;
   shared.loadingFilter = "";
 
@@ -8857,17 +8827,17 @@ FROM (	SELECT DISTINCT
 
   results = await db.fireProcedureReturnAll(sql, { $MediaType, $Series_id_Movies_Owner });
 
-  if (filterValues && filterValues.filterVideoEncoders) {
-    results.forEach((result) => {
+  results.forEach((result) => {
+    result.Selected = !!result.Selected;
+    result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
+
+    if (filterValues && filterValues.filterVideoEncoders) {
       const filterVideoEncoder = filterValues.filterVideoEncoders.find((value) => value.Name == result.Name);
-
       if (filterVideoEncoder) {
-        result.Selected = filterVideoEncoder.Selected;
+        result.Selected = !!filterVideoEncoder.Selected;
       }
-
-      result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
-    });
-  }
+    }
+  });
 
   logger.log("[fetchFilterVideoEncoders] results:", results);
 
@@ -8881,7 +8851,6 @@ FROM (	SELECT DISTINCT
   };
   //#endregion Caching
 
-  results.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterVideoEncoders = results;
   shared.loadingFilter = "";
 }
@@ -8951,21 +8920,20 @@ FROM (	SELECT DISTINCT
 
   results = await db.fireProcedureReturnAll(sql, { $MediaType, $Series_id_Movies_Owner });
 
-  if (filterValues && filterValues.filterAudioFormats) {
-    results.forEach((result) => {
+  results.forEach((result) => {
+    result.Selected = !!result.Selected;
+    result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
+
+    if (filterValues && filterValues.filterAudioFormats) {
       const filterAudioFormat = filterValues.filterAudioFormats.find((value) => value.Name == result.Name);
-
       if (filterAudioFormat) {
-        result.Selected = filterAudioFormat.Selected;
+        result.Selected = !!filterAudioFormat.Selected;
       }
-
-      result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
-    });
-  }
+    }
+  });
 
   logger.log("[fetchFilterAudioFormats] results:", results);
 
-  results.forEach((result) => { result.Selected = !!result.Selected; });
   shared.filters.filterAudioFormats = results;
 
   shared.loadingFilter = "";
