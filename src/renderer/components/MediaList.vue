@@ -9,8 +9,8 @@
         margin-left: 0px;
         padding-top: 8px;
         padding-bottom: 4px;
-        position: fixed;
-        width: 100% !important;
+        position: sticky;
+        top: 48px;
         z-index: 10;
         background: rgb(48, 48, 48);
       "
@@ -150,13 +150,6 @@
           </v-menu>
         </div>
 
-        <!-- workaround - else the mk-pagination would fuck off to the right when sidenav is shown -->
-        <div
-          v-if="$shared.sidenav"
-          v-bind:style="{
-            width: `${$shared.sidenav ? '320px!important' : '0px!important'}`,
-          }"
-        ></div>
       </template>
 
       <!-- Top Row for Series Episodes - showing the series title -->
@@ -236,13 +229,6 @@
             </v-row>
           </div>
         </div>
-        <!-- workaround - else the mk-pagination would fuck off to the right when sidenav is shown -->
-        <div
-          v-if="$shared.sidenav"
-          v-bind:style="{
-            width: `${$shared.sidenav ? '320px!important' : '0px!important'}`,
-          }"
-        ></div>
       </template>
 
       <!-- Second Top Row for Series Episodes - showing Sort-Select and Navigation -->
@@ -328,13 +314,6 @@
             </v-menu>
           </div>
 
-          <!-- workaround - else the mk-pagination would fuck off to the right when sidenav is shown -->
-          <div
-            v-if="$shared.sidenav"
-            v-bind:style="{
-              width: `${$shared.sidenav ? '320px!important' : '0px!important'}`,
-            }"
-          ></div>
         </div>
       </template>
     </v-row>
@@ -343,7 +322,6 @@
     <v-container
       class="pa-2"
       style="max-width: 100% !important"
-      v-bind:style="{ 'margin-top': Series_id_Movies_Owner ? '132px' : '66px' }"
     >
       <v-row v-for="(mediaItem, i) in itemsFilteredPaginated" v-bind:key="i">
         <v-col style="padding-bottom: 0px; padding-top: 8px">

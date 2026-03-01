@@ -302,6 +302,8 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 - ✅ Vuetify 3 dialog z-index fix: Removed `z-index: 300 !important` from `MediaPropertyDialog` and `ScanHistoryItemDialog` — these were Vuetify 2 overrides that forced dialogs below Vuetify 3's layout-managed navigation drawer (~z-index 1002). Vuetify 3's overlay system automatically assigns `z-index: 2000+` to dialogs, so the explicit low values caused the sidebar to render on top of dialogs
 - ✅ Vuetify 3 filter checkbox boolean fix: All 17 `fetchFilter*()` functions in `store.js` returned `1 AS Selected` (integer) from SQLite. Vuetify 3's `v-checkbox` uses strict comparison (`deepEqual`) against `true` (boolean), so checkboxes appeared unchecked despite the title correctly showing "(All)" (which uses JavaScript truthy evaluation). Fixed by adding `!!result.Selected` coercion in each fetch function. Also refactored all fetch functions to use a single `forEach` loop: unconditional coercion + formatting first, then conditional merge of saved filter values
 
+- ✅ Vuetify 3 sidebar resize vs fixed pagination: MediaList.vue top nav used `position: fixed; width: 100%` which broke out of Vuetify's layout flow, causing pagination to overflow when the resizable sidebar changed width. The three hardcoded 320px spacer divs were a workaround that no longer matched the dynamic width. Fixed by switching to `position: sticky; top: 48px` which keeps the element in the document flow and automatically respects the sidebar width managed by `v-main`. Removed the spacer divs and the now-unnecessary `margin-top` offset on the content container
+
 #### In Progress
 
 - 🔄 Testing for remaining console warnings/errors
