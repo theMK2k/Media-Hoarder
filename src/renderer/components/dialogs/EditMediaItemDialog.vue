@@ -115,7 +115,7 @@
                 label
                 variant="outlined"
                 draggable
-                close
+                closable
                 close-icon="mdi-delete"
                 style="margin-right: 4px; margin-bottom: 4px"
                 v-on:click:close="onRemoveVideoQuality(index)"
@@ -185,7 +185,7 @@
                 label
                 variant="outlined"
                 draggable
-                close
+                closable
                 close-icon="mdi-delete"
                 style="margin-right: 4px; margin-bottom: 4px"
                 v-on:click:close="onRemoveAudioLanguage(index)"
@@ -255,7 +255,7 @@
                 label
                 variant="outlined"
                 draggable
-                close
+                closable
                 close-icon="mdi-delete"
                 style="margin-right: 4px; margin-bottom: 4px"
                 v-on:click:close="onRemoveSubtitleLanguage(index)"
@@ -322,7 +322,7 @@
               label
               variant="outlined"
               draggable
-              close
+              closable
               close-icon="mdi-delete"
               style="margin-right: 4px; margin-bottom: 4px"
               v-on:click:close="onRemoveGenre(index)"
@@ -390,7 +390,7 @@
               label
               variant="outlined"
               draggable
-              close
+              closable
               close-icon="mdi-delete"
               style="margin-right: 4px; margin-bottom: 4px"
               v-on:click:close="onRemoveReleaseAttribute(index)"
