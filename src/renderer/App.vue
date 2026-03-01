@@ -3458,6 +3458,8 @@ export default {
       logger.log("[shared_uiLanguage] this.$root.$i18n.locale:", this.$root.$i18n.locale);
 
       moment.locale(newValue);
+      logger.log("[moment-test] relative time (vor 2 Jahren):", moment("2021-01-01").fromNow());
+      logger.log("[moment-test] duration (5 Minuten):", moment.duration(moment().diff(moment("2024-01-01"))).humanize());
     },
   },
 
@@ -4908,9 +4910,6 @@ export default {
 
   // ### LifeCycleHooks ###
   created() {
-    logger.log("[moment-test] relative time (vor 2 Jahren):", moment("2021-01-01").fromNow());
-    logger.log("[moment-test] duration (5 Minuten):", moment.duration(moment().diff(moment("2024-01-01"))).humanize());
-
     document.onkeydown = this.onKeyDown;
 
     this.$vuetify.theme.dark = true;
