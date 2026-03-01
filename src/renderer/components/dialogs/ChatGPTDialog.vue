@@ -66,7 +66,7 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn class="xs-fullwidth" variant="tonal" color="secondary" v-on:click="onCloseClick" style="margin-left: 8px">{{
+        <v-btn class="xs-fullwidth" variant="tonal" color="secondary" v-on:click="onCloseClick">{{
           $t("Close")
         }}</v-btn>
         <v-btn
@@ -75,7 +75,6 @@
           class="xs-fullwidth"
           variant="tonal" color="primary"
           v-on:click="onFilterClick"
-          style="margin-left: 8px"
         >
           {{ $t("Create and filter by this list") }}
         </v-btn>
