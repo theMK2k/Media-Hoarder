@@ -46,7 +46,7 @@
               {{ $t("Description") }}
             </div>
           </v-row>
-          <v-textarea v-model="mediaItem.plotSummaryFull" variant="underlined" style="margin-top: -16px"></v-textarea>
+          <v-textarea v-model="mediaItem.plotSummaryFull" variant="underlined" style="margin-top: -16px" auto-grow :rows="3"></v-textarea>
 
           <!-- Video Quality (Movie or Episode) -->
           <!--
