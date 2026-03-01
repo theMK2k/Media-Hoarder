@@ -41,12 +41,12 @@
           <v-text-field v-model="mediaItem.startYear" variant="underlined"></v-text-field>
 
           <!-- Description -->
-          <v-row style="margin-top: 8px; margin-left: 0px; margin-bottom: -16px">
+          <v-row style="margin-top: 8px; margin-left: 0px; margin-bottom: 0px">
             <div style="font-size: 14px; margin-top: 10px">
               {{ $t("Description") }}
             </div>
           </v-row>
-          <v-textarea v-model="mediaItem.plotSummaryFull"> </v-textarea>
+          <v-textarea v-model="mediaItem.plotSummaryFull" variant="underlined" style="margin-top: -16px"></v-textarea>
 
           <!-- Video Quality (Movie or Episode) -->
           <!--

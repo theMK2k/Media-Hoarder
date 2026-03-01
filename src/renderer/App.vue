@@ -5407,7 +5407,7 @@ a {
 
 /* ### Vuetify fixes ### */
 /* vertically center the selected text in v-select boxes */
-.v-field__input {
+.v-select .v-field__input {
   padding-top: 8px;
   padding-bottom: 4px;
 }
