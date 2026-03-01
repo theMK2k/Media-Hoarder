@@ -306,6 +306,8 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 
 - ✅ Vuetify 3 MediaPropertyDialog person layout: `v-list-item` no longer creates horizontal layout in Vuetify 3. Replaced with explicit flexbox (`display: flex; align-items: flex-start; gap: 12px`) so the person photo stays left and description + movie/series lists flow to the right. Photo container uses `flex-shrink: 0; width: 120px` with `position: sticky; top: 0` to stay visible during scrolling. Added `border-radius: 8px` for rounded corners, centered the loading spinner and placeholder icon with flexbox, and switched `v-img` from `contain` to `cover` for proper photo fill
 
+- ✅ MediaPropertyDialog recursive stacking: Property dialogs (person, genre, company, etc.) can now stack indefinitely. Previously, clicking a person inside a person dialog replaced the first dialog. Now `MediaPropertyDialog` intercepts all property-click events internally via `onMICmediaItemEvent` and opens a recursive `mk-media-property-dialog` child (registered via `defineAsyncComponent` to avoid circular import). The `show` prop watcher resets child state on close. A new `closeAllPropertyDialogs` eventBus event closes the full stack when "Filter by..." is clicked at any nesting level — `onFilterClick` emits both `this.$emit("close")` (existing path) and `eventBus.closeAllPropertyDialogs()` so MediaList's `closeAllPropertyDialogs()` method sets all property dialog shows to false
+
 #### In Progress
 
 - 🔄 Testing for remaining console warnings/errors
