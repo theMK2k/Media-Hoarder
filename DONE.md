@@ -2,6 +2,10 @@
 
 ## Next (1.5.0)
 
+### Features
+
+- [x] Side Navigation containing the filters can now be resized by the user
+
 ### Optimizations
 
 - [x] Rescan specific media item: if it is a tv series, let the user decide if the episodes should be rescanned as well or just the series
