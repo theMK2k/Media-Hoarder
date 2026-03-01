@@ -48,19 +48,19 @@
       </v-card-title>
 
       <v-card-text>
-        <v-list-item style="padding-left: 0px; align-items: flex-start">
-          <div v-if="propertyTypeKey === 'person'">
-            <div style="margin: 6px; height: 150px; width: 120px; border-radius: 0">
-              <!-- v-if="!isScraping" -->
+        <div :style="propertyTypeKey === 'person' ? 'display: flex; align-items: flex-start; gap: 12px' : ''">
+          <div
+            v-if="propertyTypeKey === 'person'"
+            style="flex-shrink: 0; width: 120px; position: sticky; top: 0; align-self: flex-start"
+          >
+            <div style="height: 150px; width: 120px; display: flex; align-items: center; justify-content: center">
               <v-img
                 v-if="detailData.Image_URL"
-                contain
                 v-bind:src="detailData.Image_URL"
-                style="border-radius: 6px"
+                style="border-radius: 8px; height: 150px; width: 120px"
+                cover
               ></v-img>
-              <v-icon v-if="!detailData.Image_URL && !isScraping" disabled x-large loading>
-                mdi-account-outline
-              </v-icon>
+              <v-icon v-if="!detailData.Image_URL && !isScraping" disabled size="x-large"> mdi-account-outline </v-icon>
               <v-progress-circular
                 v-if="isScraping"
                 indeterminate
@@ -70,7 +70,7 @@
               ></v-progress-circular>
             </div>
           </div>
-          <div class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
+          <div style="flex: 1; min-width: 0">
             <v-col style="padding: 0px 0px 0px 4px !important" sm="12">
               <v-row v-if="propertyTypeKey === 'person'" style="margin: 0px 6px 8px 0px">
                 <div
@@ -214,20 +214,26 @@
               </div>
             </v-col>
           </div>
-        </v-list-item>
+        </div>
       </v-card-text>
 
       <v-card-actions>
         <!-- Button: Close -->
-        <v-btn class="xs-fullwidth" variant="tonal" color="secondary" v-on:click="onCloseClick" style="margin-left: 8px">{{
-          $t("Close")
-        }}</v-btn>
+        <v-btn
+          class="xs-fullwidth"
+          variant="tonal"
+          color="secondary"
+          v-on:click="onCloseClick"
+          style="margin-left: 8px"
+          >{{ $t("Close") }}</v-btn
+        >
 
         <!-- Button: IMDB -->
         <v-btn
           v-if="['company', 'person'].includes(propertyTypeKey)"
           class="xs-fullwidth"
-          variant="tonal" color="primary"
+          variant="tonal"
+          color="primary"
           v-on:click.stop="openIMDB()"
           style="margin-left: 8px"
         >
@@ -240,7 +246,8 @@
             !isInDialog
           "
           class="xs-fullwidth"
-          variant="tonal" color="primary"
+          variant="tonal"
+          color="primary"
           v-on:click="onFilterClick"
           style="margin-left: 8px"
         >

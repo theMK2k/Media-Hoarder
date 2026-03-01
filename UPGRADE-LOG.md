@@ -304,6 +304,8 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 
 - ✅ Vuetify 3 sidebar resize vs fixed pagination: MediaList.vue top nav used `position: fixed; width: 100%` which broke out of Vuetify's layout flow, causing pagination to overflow when the resizable sidebar changed width. The three hardcoded 320px spacer divs were a workaround that no longer matched the dynamic width. Fixed by switching to `position: sticky; top: 48px` which keeps the element in the document flow and automatically respects the sidebar width managed by `v-main`. Removed the spacer divs and the now-unnecessary `margin-top` offset on the content container
 
+- ✅ Vuetify 3 MediaPropertyDialog person layout: `v-list-item` no longer creates horizontal layout in Vuetify 3. Replaced with explicit flexbox (`display: flex; align-items: flex-start; gap: 12px`) so the person photo stays left and description + movie/series lists flow to the right. Photo container uses `flex-shrink: 0; width: 120px` with `position: sticky; top: 0` to stay visible during scrolling. Added `border-radius: 8px` for rounded corners, centered the loading spinner and placeholder icon with flexbox, and switched `v-img` from `contain` to `cover` for proper photo fill
+
 #### In Progress
 
 - 🔄 Testing for remaining console warnings/errors
