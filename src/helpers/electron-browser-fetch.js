@@ -1,4 +1,4 @@
-import { BrowserWindow } from "@electron/remote";
+import { BrowserWindow, session } from "@electron/remote";
 
 import logger from "@helpers/logger.js";
 import * as helpers from "@helpers/helpers.js";
@@ -6,10 +6,18 @@ import * as helpers from "@helpers/helpers.js";
 async function electronBrowserFetch(url) {
   logger.log("[electronBrowserFetch] START, url:", url);
 
+  // Use a temporary session so we can set Accept-Language without affecting other windows.
+  const ses = session.fromPartition(`temp:ebf-${Date.now()}`, { cache: false });
+  ses.webRequest.onBeforeSendHeaders((details, callback) => {
+    details.requestHeaders["Accept-Language"] = "en-GB,en;q=0.9";
+    callback({ requestHeaders: details.requestHeaders });
+  });
+
   const bw = new BrowserWindow({
     show: false,
     webPreferences: {
       offscreen: true,
+      session: ses,
     },
   });
 
