@@ -299,7 +299,7 @@ async function testIMDBmainPageData3() {
       $IMDB_posterSmall_URL: "extras/tt0092455_posterSmall.jpg",
       $IMDB_posterLarge_URL: "extras/tt0092455_posterLarge.jpg",
       $IMDB_plotSummary:
-        "Set almost 100 years after Captain Kirk's 5-year mission, a new generation of Starfleet officers sets off in the U.S.S. Enterprise-D",
+        "Set almost 100 years after Captain Kirk's five-year mission, a new generation of Starfleet officers sets off in the U.S.S. Enterprise-D on its own mission to go where no one has gone before.",
       $IMDB_Trailer_URL: "vi71221529",
       $IMDB_startYear: 1987,
       $IMDB_endYear: 1994,

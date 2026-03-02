@@ -6,6 +6,8 @@ import htmlToText from "html-to-text";
 import logger from "@helpers/logger.js";
 import * as helpers from "@helpers/helpers.js";
 
+import { electronBrowserFetch } from "@helpers/electron-browser-fetch";
+
 import graphqlURLsDefault from "./data/imdb-graphql-urls.json";
 
 // Mutable copy of graphqlURLs that can be updated at runtime
@@ -197,13 +199,16 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback, db, actualDup
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}`;
     logger.log("[scrapeIMDBmainPageData] url:", url);
 
-    const response = await helpers.requestAsync(url);
+    // NEW: electron's browser window
+    const html = await electronBrowserFetch(url);
 
-    if (response.statusCode > 399) {
-      throw new Error(`ERROR: IMDB Main Page gave HTTP status code ${response.statusCode}. URL used: ${url}`);
-    }
+    // const response = await helpers.requestAsync(url);
 
-    const html = response.body;
+    // if (response.statusCode > 399) {
+    //   throw new Error(`ERROR: IMDB Main Page gave HTTP status code ${response.statusCode}. URL used: ${url}`);
+    // }
+
+    // const html = response.body;
 
     // V2: we partially use the application/ld+json data, too
     const jsonData = /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.test(html)
@@ -491,8 +496,13 @@ async function scrapeIMDBplotSummary(movie, shortSummary, actualDuplicate) {
   //#endregion Copy from duplicate
 
   const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/plotsummary`;
-  const response = await helpers.requestAsync(url);
-  const html = response.body;
+
+  // NEW: electronBrowserFetch
+  const html = await electronBrowserFetch(url);
+
+  // OLD: requrestretry approach
+  // const response = await helpers.requestAsync(url);
+  // const html = response.body;
 
   if (/styleguide/.test(html)) {
     return await scrapeIMDBplotSummaryV1(movie, shortSummary, html);
@@ -600,8 +610,11 @@ async function scrapeIMDBposterURLs(posterMediaViewerURL) {
 
   const url = `https://www.imdb.com${posterMediaViewerURL}`;
 
-  const response = await helpers.requestAsync(url);
+  // NEW: electronBrowserFetch
+  //const html = await electronBrowserFetch(url);
 
+  // OLD: requestretry approach
+  const response = await helpers.requestAsync(url);
   const html = response.body;
 
   const rxID = /(rm\d*).*?\?ref/;
@@ -679,8 +692,14 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes, actualDu
 
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/releaseinfo`;
     logger.log("[scrapeIMDBreleaseinfo] url:", url, "allowedTitleTypes:", allowedTitleTypes);
-    const response = await helpers.requestAsync(url);
-    const html = response.body;
+
+    // NEW: electronBrowserFetch
+    const html = await electronBrowserFetch(url);
+
+    // OLD: requesretry
+    // const response = await helpers.requestAsync(url);
+    // const html = response.body;
+
     // logger.log('[scrapeIMDBreleaseinfo] imdbReleaseinfoHTML', imdbReleaseinfoHTML);
 
     const version = /aka-item__name/.test(html) ? 1 : 2;
@@ -983,8 +1002,13 @@ async function scrapeIMDBtechnicalData(movie, actualDuplicate) {
 
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/technical`;
     logger.log("[scrapeIMDBtechnicalData] scrapeIMDBtechnicalData url:", url);
-    const response = await helpers.requestAsync(url);
-    const html = response.body;
+
+    // NEW: electronBrowserFetch
+    const html = await electronBrowserFetch(url);
+
+    // OLD: requestretry
+    // const response = await helpers.requestAsync(url);
+    // const html = response.body;
 
     const rxRuntimeValue = /<td class="label"> Runtime <\/td>[\s\S]*?<td>([\s\S]*?)<\/td>/;
 
@@ -1109,8 +1133,13 @@ async function scrapeIMDBParentalGuideData(
 
   const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/parentalguide`;
   logger.log("[scrapeIMDBParentalGuideData] url:", url);
-  const response = await helpers.requestAsync(url);
-  const html = response.body;
+
+  // NEW: electronBrowserFetch
+  const html = await electronBrowserFetch(url);
+
+  // OLD: requestretry
+  // const response = await helpers.requestAsync(url);
+  // const html = response.body;
 
   const jsonDataNext = JSON.parse(
     (html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/) || [null, null])[1]
@@ -1629,8 +1658,13 @@ async function scrapeIMDBFullCreditsData(movie, db, actualDuplicate) {
   try {
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/fullcredits`;
     logger.log("[scrapeIMDBFullCreditsData] url:", url);
-    const response = await helpers.requestAsync(url);
-    const html = response.body;
+
+    // NEW: electronBrowserFetch
+    const html = await electronBrowserFetch(url);
+
+    // OLD: requestretry
+    // const response = await helpers.requestAsync(url);
+    // const html = response.body;
 
     if (/__NEXT_DATA__/.test(html)) {
       // V3
@@ -2116,8 +2150,13 @@ async function scrapeIMDBCompaniesDataV1(movie) {
   try {
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/companycredits`;
     logger.log("[scrapeIMDBCompaniesData] url:", url);
-    const response = await helpers.requestAsync(url);
-    const html = response.body;
+
+    // NEW: electronBrowserFetch
+    const html = await electronBrowserFetch(url);
+
+    // OLD: requestretry
+    // const response = await helpers.requestAsync(url);
+    // const html = response.body;
 
     const topMax = 5;
 
@@ -2236,8 +2275,13 @@ function parseCreditsCategory(html, tableHeader, credits) {
 
 async function scrapeIMDBPersonData($IMDB_Person_ID, downloadFileCallback) {
   const url = `https://www.imdb.com/name/${$IMDB_Person_ID}`;
-  const response = await helpers.requestAsync(url);
-  const html = response.body;
+
+  // NEW: electronBrowserFetch
+  const html = await electronBrowserFetch(url);
+
+  // OLD: requestretry
+  // const response = await helpers.requestAsync(url);
+  // const html = response.body;
 
   logger.log("[scrapeIMDBPersonData] url:", url);
 
@@ -2292,8 +2336,13 @@ async function scrapeIMDBPersonDataV1($IMDB_Person_ID, downloadFileCallback, htm
   }
 
   const urlBio = `https://www.imdb.com/name/${$IMDB_Person_ID}/bio`;
-  const responseBio = await helpers.requestAsync(urlBio);
-  const htmlBio = responseBio.body;
+
+  // NEW: electronBrowserFetch
+  const htmlBio = await electronBrowserFetch(urlBio);
+
+  // OLD: requestretry
+  // const responseBio = await helpers.requestAsync(urlBio);
+  // const htmlBio = responseBio.body;
 
   const rxLongBio = /<h4 class="li_group">Mini Bio[\s\S]*?(<div[\s\S]*?)<\/div>/;
 
@@ -2383,8 +2432,13 @@ async function scrapeIMDBAdvancedTitleSearch(title, titleTypes) {
 
   logger.log("[scrapeIMDBAdvancedTitleSearch] url:", url);
 
-  const response = await helpers.requestAsync(url);
-  const html = response.body;
+  // NEW: electronBrowserFetch
+  const html = await electronBrowserFetch(url);
+
+  // OLD: requestretry
+  // const response = await helpers.requestAsync(url);
+  // const html = response.body;
+
   const $ = cheerio.load(html);
 
   const items = $(".lister-item.mode-advanced");
@@ -2570,8 +2624,13 @@ async function scrapeIMDBFind(searchTerm, type) {
 
   logger.log("[scrapeIMDBFind] url:", url);
 
-  const response = await helpers.requestAsync(url);
-  const html = response.body;
+  // NEW: electronBrowserFetch
+  const html = await electronBrowserFetch(url);
+
+  // OLD: requestretry
+  // const response = await helpers.requestAsync(url);
+  // const html = response.body;
+
   const $ = cheerio.load(html);
 
   const items = $("tr.findResult");
@@ -2791,23 +2850,27 @@ async function scrapeIMDBTrailerMediaURLs(trailerURL) {
 
     logger.log("[scrapeIMDBTrailerMediaURLs] trailerURL:", trailerURL);
 
-    const response = await helpers.requestAsync({
-      uri: trailerURL,
-      headers: {
-        "user-agent":
-          "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
-      },
-    });
+    // NEW: electronBrowserFetch
+    const html = await electronBrowserFetch(trailerURL);
 
-    logger.log("[scrapeIMDBTrailerMediaURLs] response.statusCode:", response.statusCode);
+    // OLD: requestretry
+    // const response = await helpers.requestAsync({
+    //   uri: trailerURL,
+    //   headers: {
+    //     "user-agent":
+    //       "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
+    //   },
+    // });
 
-    if (response.statusCode !== 200) {
-      return {
-        errorcode: response.statusCode,
-      };
-    }
+    // logger.log("[scrapeIMDBTrailerMediaURLs] response.statusCode:", response.statusCode);
 
-    const html = response.body;
+    // if (response.statusCode !== 200) {
+    //   return {
+    //     errorcode: response.statusCode,
+    //   };
+    // }
+
+    // const html = response.body;
 
     let result = await scrapeIMDBTrailerMediaURLsV3(html);
     logger.debug("[scrapeIMDBTrailerMediaURLs] V3 result:", result);
@@ -2885,8 +2948,12 @@ async function scrapeIMDBplotKeywords(movie) {
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/keywords`;
     logger.log("[scrapeIMDBplotKeywords] url:", url);
 
-    const response = await helpers.requestAsync(url);
-    const html = response.body;
+    // NEW: electronBrowserFetch
+    const html = await electronBrowserFetch(url);
+
+    // OLD: requestretry
+    // const response = await helpers.requestAsync(url);
+    // const html = response.body;
 
     const rxPlotKeywords = /<a href="\/search\/keyword\?[\s\S]*?>(.*?)<\/a>[\s\S]*?>(.*?relevant)/g;
 
@@ -2997,8 +3064,12 @@ async function scrapeIMDBFilmingLocations(movie) {
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/locations`;
     logger.log("[scrapeIMDBFilmingLocations] url:", url);
 
-    const response = await helpers.requestAsync(url);
-    const html = response.body;
+    // NEW: electronBrowserFetch
+    const html = await electronBrowserFetch(url);
+
+    // OLD: requestretry
+    // const response = await helpers.requestAsync(url);
+    // const html = response.body;
 
     `
   <a href="/search/title?locations=Atlanta,%20Georgia,%20USA&ref_=ttloc_loc_2"
@@ -3062,8 +3133,12 @@ async function scrapeIMDBRatingDemographics(movie) {
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/ratings`;
     logger.log("[scrapeIMDBRatingDemographics] url:", url);
 
-    const response = await helpers.requestAsync(url);
-    const html = response.body;
+    // NEW: electronBrowserFetch
+    const html = await electronBrowserFetch(url);
+
+    // OLD: requestretry
+    // const response = await helpers.requestAsync(url);
+    // const html = response.body;
 
     /*
       <td class="ratingTable" align="center">
@@ -3168,15 +3243,22 @@ async function scrapeIMDBSeriesEpisodes(Series_IMDB_tconst, Series_Season) {
  * @param {String} Series_IMDB_tconst
  */
 async function scrapeIMDBSeriesSeasons(Series_IMDB_tconst) {
-  const options = {
-    uri: `https://www.imdb.com/title/${Series_IMDB_tconst}/episodes/`,
-    method: "GET",
-  };
+  const url = `https://www.imdb.com/title/${Series_IMDB_tconst}/episodes/`;
 
-  logger.log("[scrapeIMDBSeriesSeasons] fetching", options.uri);
-  const responseSeasons = await helpers.requestAsync(options);
+  logger.log("[scrapeIMDBSeriesSeasons] fetching", url);
 
-  const $ = cheerio.load(responseSeasons.body);
+  // NEW: electronBrowserFetch
+  const html = await electronBrowserFetch(url);
+
+  // OLD: requestretry
+  // const options = {
+  //   uri: `https://www.imdb.com/title/${Series_IMDB_tconst}/episodes/`,
+  //   method: "GET",
+  // };
+  // const responseSeasons = await helpers.requestAsync(options);
+  // const html = responseSeasons.body;
+
+  const $ = cheerio.load(html);
 
   const seasons = [];
 

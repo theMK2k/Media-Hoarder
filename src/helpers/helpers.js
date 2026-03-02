@@ -30,6 +30,10 @@ function setRequestAsyncDumpToFile(value) {
   requestAsyncDumpToFile = value;
 }
 
+function getRequestAsyncDumpToFile() {
+  return requestAsyncDumpToFile;
+}
+
 let imdbScraperWatchdogUseDumps = false;
 
 function setIMDBScraperWatchdogUseDumps(value) {
@@ -45,10 +49,13 @@ function setIMDBScraperWatchdogUseDumps(value) {
  */
 function getDataPath(relativePath) {
   // DEBUG: Log path resolution details (temporary)
-  const result = (isDevelopment || isPORTABLE)
-    ? path.join(getStaticPath("data"), relativePath)
-    : path.join(os.homedir(), ".media-hoarder", relativePath);
-  console.log(`[DEBUG:getDataPath] isDevelopment=${isDevelopment}, isPORTABLE=${isPORTABLE}, relativePath="${relativePath}" => "${result}"`);
+  const result =
+    isDevelopment || isPORTABLE
+      ? path.join(getStaticPath("data"), relativePath)
+      : path.join(os.homedir(), ".media-hoarder", relativePath);
+  console.log(
+    `[DEBUG:getDataPath] isDevelopment=${isDevelopment}, isPORTABLE=${isPORTABLE}, relativePath="${relativePath}" => "${result}"`
+  );
   return result;
 }
 
@@ -619,6 +626,7 @@ export {
   getDirectoryName,
   downloadFile,
   setRequestAsyncDumpToFile,
+  getRequestAsyncDumpToFile,
   requestAsync,
   cleanupFileName,
   cleanupDirectoryName,
