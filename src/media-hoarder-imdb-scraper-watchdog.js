@@ -172,24 +172,24 @@ function addLogEntry(testResult) {
 
 async function checkSendMail() {
   try {
-    logger.info("checkSendMail log.maxLevel:", log.maxLevel, "config.smtpSendLevel:", config.smtpSendLevel);
+    logger.info("[checkSendMail] log.maxLevel:", log.maxLevel, "config.smtpSendLevel:", config.smtpSendLevel);
 
     if (log.maxLevel < config.smtpSendLevel) {
       return;
     }
 
-    logger.info("we should send a mail");
+    logger.info("[checkSendMail] we should send a mail");
 
     if (!config.smtpHost) {
-      logger.warn("ERROR: smtpHost not defined");
+      logger.warn("[checkSendMail] ERROR: smtpHost not defined");
       return;
     }
     if (!config.smtpPort) {
-      logger.warn("ERROR: smtpPort not defined");
+      logger.warn("[checkSendMail] ERROR: smtpPort not defined");
       return;
     }
     if (!config.smtpReceiver) {
-      logger.warn("ERROR: smtpReceiver not defined");
+      logger.warn("[checkSendMail] ERROR: smtpReceiver not defined");
       return;
     }
 
@@ -209,7 +209,7 @@ async function checkSendMail() {
       from: '"Media Hoarder IMDB Scraper Watchdog" <imdb-scraper-watchdog@hoarder.software>', // sender address
       to: config.smtpReceiver, // "bar@example.com, baz@example.com", // list of receivers
       subject: `IMDB Scraper Watchdog: ${log.maxLevel === 2 ? "ERROR" : log.maxLevel === 1 ? "WARNING" : "SUCCESS"}`, // Subject line
-      text: JSON.stringify(log.messages, null, 2),
+      text: JSON.stringify(log.messages, null, 2).replace(/\\u001b\[\d+m/g, ""),
     });
 
     logger.info("mail sent.");
