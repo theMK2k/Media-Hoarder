@@ -610,7 +610,7 @@ async function scrapeIMDBposterURLs(posterMediaViewerURL) {
 
   const url = `https://www.imdb.com${posterMediaViewerURL}`;
 
-  // NEW: electronBrowserFetch
+  // NEW: electronBrowserFetch (somehow posters aren't fetched here)
   //const html = await electronBrowserFetch(url);
 
   // OLD: requestretry approach
