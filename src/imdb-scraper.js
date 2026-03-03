@@ -9,6 +9,15 @@ const helpers = require("./helpers/helpers");
 
 let graphqlURLs = require("./data/imdb-graphql-urls.json");
 
+// lazy-loaded to avoid crashing in non-Electron environments (e.g. babel-node watchdog)
+let _electronBrowserFetchModule = null;
+function electronBrowserFetch(url) {
+  if (!_electronBrowserFetchModule) {
+    _electronBrowserFetchModule = require("./helpers/electron-browser-fetch");
+  }
+  return _electronBrowserFetchModule.electronBrowserFetch(url);
+}
+
 const graphQLqueries = {
   releaseNumber: () => graphqlURLs.releaseNumber,
 
@@ -139,13 +148,17 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}`;
     logger.log("[scrapeIMDBmainPageData] url:", url);
 
-    const response = await helpers.requestAsync(url);
+    // NEW: electron's browser window
+    const html = await electronBrowserFetch(url);
 
-    if (response.statusCode > 399) {
-      throw new Error(`ERROR: IMDB Main Page gave HTTP status code ${response.statusCode}. URL used: ${url}`);
-    }
+    // OLD: requestretry approach
+    // const response = await helpers.requestAsync(url);
 
-    const html = response.body;
+    // if (response.statusCode > 399) {
+    //   throw new Error(`ERROR: IMDB Main Page gave HTTP status code ${response.statusCode}. URL used: ${url}`);
+    // }
+
+    // const html = response.body;
 
     // V2: we partially use the application/ld+json data, too
     const jsonData = /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.test(html)
@@ -416,8 +429,13 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback) {
 
 async function scrapeIMDBplotSummary(movie, shortSummary) {
   const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/plotsummary`;
-  const response = await helpers.requestAsync(url);
-  const html = response.body;
+
+  // NEW: electronBrowserFetch
+  const html = await electronBrowserFetch(url);
+
+  // OLD: requrestretry approach
+  // const response = await helpers.requestAsync(url);
+  // const html = response.body;
 
   if (/styleguide/.test(html)) {
     return await scrapeIMDBplotSummaryV1(movie, shortSummary, html);
@@ -525,8 +543,11 @@ async function scrapeIMDBposterURLs(posterMediaViewerURL) {
 
   const url = `https://www.imdb.com${posterMediaViewerURL}`;
 
-  const response = await helpers.requestAsync(url);
+  // NEW: electronBrowserFetch (somehow posters aren't fetched here)
+  //const html = await electronBrowserFetch(url);
 
+  // OLD: requestretry approach
+  const response = await helpers.requestAsync(url);
   const html = response.body;
 
   const rxID = /(rm\d*).*?\?ref/;
@@ -579,8 +600,14 @@ async function scrapeIMDBreleaseinfo(movie, regions, allowedTitleTypes) {
   try {
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/releaseinfo`;
     logger.log("[scrapeIMDBreleaseinfo] url:", url, "allowedTitleTypes:", allowedTitleTypes);
-    const response = await helpers.requestAsync(url);
-    const html = response.body;
+
+    // NEW: electronBrowserFetch
+    const html = await electronBrowserFetch(url);
+
+    // OLD: requesretry
+    // const response = await helpers.requestAsync(url);
+    // const html = response.body;
+
     // logger.log('[scrapeIMDBreleaseinfo] imdbReleaseinfoHTML', imdbReleaseinfoHTML);
 
     const version = /aka-item__name/.test(html) ? 1 : 2;
@@ -864,8 +891,13 @@ async function scrapeIMDBtechnicalData(movie) {
   try {
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/technical`;
     logger.log("[scrapeIMDBtechnicalData] scrapeIMDBtechnicalData url:", url);
-    const response = await helpers.requestAsync(url);
-    const html = response.body;
+
+    // NEW: electronBrowserFetch
+    const html = await electronBrowserFetch(url);
+
+    // OLD: requestretry
+    // const response = await helpers.requestAsync(url);
+    // const html = response.body;
 
     let $IMDB_runtimeMinutes = null;
     const rxRuntimeValue = /<td class="label"> Runtime <\/td>[\s\S]*?<td>([\s\S]*?)<\/td>/;
@@ -954,8 +986,13 @@ async function scrapeIMDBParentalGuideData(
 
   const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/parentalguide`;
   logger.log("[scrapeIMDBParentalGuideData] url:", url);
-  const response = await helpers.requestAsync(url);
-  const html = response.body;
+
+  // NEW: electronBrowserFetch
+  const html = await electronBrowserFetch(url);
+
+  // OLD: requestretry
+  // const response = await helpers.requestAsync(url);
+  // const html = response.body;
 
   const jsonDataNext = JSON.parse(
     (html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/) || [null, null])[1]
@@ -1431,8 +1468,13 @@ async function scrapeIMDBFullCreditsData(movie) {
   try {
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/fullcredits`;
     logger.log("[scrapeIMDBFullCreditsData] url:", url);
-    const response = await helpers.requestAsync(url);
-    const html = response.body;
+
+    // NEW: electronBrowserFetch
+    const html = await electronBrowserFetch(url);
+
+    // OLD: requestretry
+    // const response = await helpers.requestAsync(url);
+    // const html = response.body;
 
     if (/__NEXT_DATA__/.test(html)) {
       // V3
@@ -1880,8 +1922,13 @@ async function scrapeIMDBCompaniesDataV1(movie) {
   try {
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/companycredits`;
     logger.log("[scrapeIMDBCompaniesData] url:", url);
-    const response = await helpers.requestAsync(url);
-    const html = response.body;
+
+    // NEW: electronBrowserFetch
+    const html = await electronBrowserFetch(url);
+
+    // OLD: requestretry
+    // const response = await helpers.requestAsync(url);
+    // const html = response.body;
 
     const topMax = 5;
 
@@ -2000,8 +2047,13 @@ function parseCreditsCategory(html, tableHeader, credits) {
 
 async function scrapeIMDBPersonData($IMDB_Person_ID, downloadFileCallback) {
   const url = `https://www.imdb.com/name/${$IMDB_Person_ID}`;
-  const response = await helpers.requestAsync(url);
-  const html = response.body;
+
+  // NEW: electronBrowserFetch
+  const html = await electronBrowserFetch(url);
+
+  // OLD: requestretry
+  // const response = await helpers.requestAsync(url);
+  // const html = response.body;
 
   logger.log("[scrapeIMDBPersonData] url:", url);
 
@@ -2056,8 +2108,13 @@ async function scrapeIMDBPersonDataV1($IMDB_Person_ID, downloadFileCallback, htm
   }
 
   const urlBio = `https://www.imdb.com/name/${$IMDB_Person_ID}/bio`;
-  const responseBio = await helpers.requestAsync(urlBio);
-  const htmlBio = responseBio.body;
+
+  // NEW: electronBrowserFetch
+  const htmlBio = await electronBrowserFetch(urlBio);
+
+  // OLD: requestretry
+  // const responseBio = await helpers.requestAsync(urlBio);
+  // const htmlBio = responseBio.body;
 
   const rxLongBio = /<h4 class="li_group">Mini Bio[\s\S]*?(<div[\s\S]*?)<\/div>/;
 
@@ -2147,8 +2204,13 @@ async function scrapeIMDBAdvancedTitleSearch(title, titleTypes) {
 
   logger.log("[scrapeIMDBAdvancedTitleSearch] url:", url);
 
-  const response = await helpers.requestAsync(url);
-  const html = response.body;
+  // NEW: electronBrowserFetch
+  const html = await electronBrowserFetch(url);
+
+  // OLD: requestretry
+  // const response = await helpers.requestAsync(url);
+  // const html = response.body;
+
   const $ = cheerio.load(html);
 
   const items = $(".lister-item.mode-advanced");
@@ -2334,8 +2396,13 @@ async function scrapeIMDBFind(searchTerm, type) {
 
   logger.log("[scrapeIMDBFind] url:", url);
 
-  const response = await helpers.requestAsync(url);
-  const html = response.body;
+  // NEW: electronBrowserFetch
+  const html = await electronBrowserFetch(url);
+
+  // OLD: requestretry
+  // const response = await helpers.requestAsync(url);
+  // const html = response.body;
+
   const $ = cheerio.load(html);
 
   const items = $("tr.findResult");
@@ -2555,23 +2622,27 @@ async function scrapeIMDBTrailerMediaURLs(trailerURL) {
 
     logger.log("[scrapeIMDBTrailerMediaURLs] trailerURL:", trailerURL);
 
-    const response = await helpers.requestAsync({
-      uri: trailerURL,
-      headers: {
-        "user-agent":
-          "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
-      },
-    });
+    // NEW: electronBrowserFetch
+    const html = await electronBrowserFetch(trailerURL);
 
-    logger.log("[scrapeIMDBTrailerMediaURLs] response.statusCode:", response.statusCode);
+    // OLD: requestretry
+    // const response = await helpers.requestAsync({
+    //   uri: trailerURL,
+    //   headers: {
+    //     "user-agent":
+    //       "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
+    //   },
+    // });
 
-    if (response.statusCode !== 200) {
-      return {
-        errorcode: response.statusCode,
-      };
-    }
+    // logger.log("[scrapeIMDBTrailerMediaURLs] response.statusCode:", response.statusCode);
 
-    const html = response.body;
+    // if (response.statusCode !== 200) {
+    //   return {
+    //     errorcode: response.statusCode,
+    //   };
+    // }
+
+    // const html = response.body;
 
     let result = await scrapeIMDBTrailerMediaURLsV3(html);
     logger.debug("[scrapeIMDBTrailerMediaURLs] V3 result:", result);
@@ -2614,7 +2685,7 @@ async function scrapeIMDBplotKeywordsV3(movie) {
     logger.error(error);
 
     if (movie.scanErrors) {
-      movie.scanErrors["IMDB Release Info"] = error.message;
+      movie.scanErrors["IMDB Plot Keywords"] = error.message;
     }
 
     throw error;
@@ -2637,8 +2708,12 @@ async function scrapeIMDBplotKeywords(movie) {
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/keywords`;
     logger.log("[scrapeIMDBplotKeywords] url:", url);
 
-    const response = await helpers.requestAsync(url);
-    const html = response.body;
+    // NEW: electronBrowserFetch
+    const html = await electronBrowserFetch(url);
+
+    // OLD: requestretry
+    // const response = await helpers.requestAsync(url);
+    // const html = response.body;
 
     const rxPlotKeywords = /<a href="\/search\/keyword\?[\s\S]*?>(.*?)<\/a>[\s\S]*?>(.*?relevant)/g;
 
@@ -2723,8 +2798,12 @@ async function scrapeIMDBFilmingLocations(movie) {
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/locations`;
     logger.log("[scrapeIMDBFilmingLocations] url:", url);
 
-    const response = await helpers.requestAsync(url);
-    const html = response.body;
+    // NEW: electronBrowserFetch
+    const html = await electronBrowserFetch(url);
+
+    // OLD: requestretry
+    // const response = await helpers.requestAsync(url);
+    // const html = response.body;
 
     `
   <a href="/search/title?locations=Atlanta,%20Georgia,%20USA&ref_=ttloc_loc_2"
@@ -2788,8 +2867,12 @@ async function scrapeIMDBRatingDemographics(movie) {
     const url = `https://www.imdb.com/title/${movie.IMDB_tconst}/ratings`;
     logger.log("[scrapeIMDBRatingDemographics] url:", url);
 
-    const response = await helpers.requestAsync(url);
-    const html = response.body;
+    // NEW: electronBrowserFetch
+    const html = await electronBrowserFetch(url);
+
+    // OLD: requestretry
+    // const response = await helpers.requestAsync(url);
+    // const html = response.body;
 
     /*
       <td class="ratingTable" align="center">
@@ -2894,15 +2977,22 @@ async function scrapeIMDBSeriesEpisodes(Series_IMDB_tconst, Series_Season) {
  * @param {String} Series_IMDB_tconst
  */
 async function scrapeIMDBSeriesSeasons(Series_IMDB_tconst) {
-  const options = {
-    uri: `https://www.imdb.com/title/${Series_IMDB_tconst}/episodes/`,
-    method: "GET",
-  };
+  const url = `https://www.imdb.com/title/${Series_IMDB_tconst}/episodes/`;
 
-  logger.log("[scrapeIMDBSeriesSeasons] fetching", options.uri);
-  const responseSeasons = await helpers.requestAsync(options);
+  logger.log("[scrapeIMDBSeriesSeasons] fetching", url);
 
-  const $ = cheerio.load(responseSeasons.body);
+  // NEW: electronBrowserFetch
+  const html = await electronBrowserFetch(url);
+
+  // OLD: requestretry
+  // const options = {
+  //   uri: `https://www.imdb.com/title/${Series_IMDB_tconst}/episodes/`,
+  //   method: "GET",
+  // };
+  // const responseSeasons = await helpers.requestAsync(options);
+  // const html = responseSeasons.body;
+
+  const $ = cheerio.load(html);
 
   const seasons = [];
 
@@ -2940,45 +3030,70 @@ async function scrapeGraphQLPaginated(uri, innerPath, resultArray = null, endCur
 
   logger.log("[scrapeGraphQLPaginated] uriUsed:", uriUsed);
 
-  const newResult = JSON.parse(
-    (
-      await helpers.requestAsync({
-        uri: uriUsed,
-        headers: { "content-type": "application/json" },
-      })
-    ).body
-  );
+  let res = null;
 
   try {
-    handleGraphQLErrors(newResult);
-  } catch (error) {
-    if (retry > 3) {
-      throw error;
+    res = await helpers.requestAsync({
+      uri: uriUsed,
+      headers: { "content-type": "application/json" },
+    });
+
+    if (res.statusCode >= 400) {
+      const parsedBody = helpers.tryParseJSON(res.body);
+      const cleanBody = res.body
+        ? htmlToText
+            .fromString(res.body, {
+              wordwrap: null,
+              ignoreImage: true,
+              ignoreHref: true,
+            })
+            .trim()
+        : null;
+
+      throw new Error(
+        `HTTP error ${res.statusCode}${
+          parsedBody ? `: ${JSON.stringify(parsedBody)}` : cleanBody ? `: ${cleanBody}` : ""
+        }`
+      );
     }
 
-    return scrapeGraphQLPaginated(uri, innerPath, resultArray, endCursor, retry + 1);
+    const newResult = JSON.parse(res.body);
+
+    try {
+      handleGraphQLErrors(newResult);
+    } catch (error) {
+      if (retry > 3) {
+        throw error;
+      }
+
+      return scrapeGraphQLPaginated(uri, innerPath, resultArray, endCursor, retry + 1);
+    }
+
+    const newResult_pageInfo = _.get(newResult, `${innerPath}.pageInfo`, null);
+    const newResult_Array = _.get(newResult, `${innerPath}.edges`, null);
+
+    // logger.log("[scrapeGraphQLPaginated] newResult_Array.length:", newResult_Array.length);
+
+    if (!newResult_pageInfo) {
+      throw new Error("[scrapeGraphQLPaginated] pageInfo missing in result");
+    }
+
+    if (resultArray) {
+      resultArray = resultArray.concat(newResult_Array);
+    } else {
+      resultArray = newResult_Array;
+    }
+
+    if (!newResult_pageInfo.hasNextPage) {
+      return resultArray;
+    }
+
+    return scrapeGraphQLPaginated(uri, innerPath, resultArray, newResult_pageInfo.endCursor);
+  } catch (error) {
+    logger.error("[scrapeGraphQLPaginated] ERROR during request, res.statusCode:", res.statusCode);
+    logger.error(error);
+    throw error;
   }
-
-  const newResult_pageInfo = _.get(newResult, `${innerPath}.pageInfo`, null);
-  const newResult_Array = _.get(newResult, `${innerPath}.edges`, null);
-
-  // logger.log("[scrapeGraphQLPaginated] newResult_Array.length:", newResult_Array.length);
-
-  if (!newResult_pageInfo) {
-    throw new Error("[scrapeGraphQLPaginated] pageInfo missing in result");
-  }
-
-  if (resultArray) {
-    resultArray = resultArray.concat(newResult_Array);
-  } else {
-    resultArray = newResult_Array;
-  }
-
-  if (!newResult_pageInfo.hasNextPage) {
-    return resultArray;
-  }
-
-  return scrapeGraphQLPaginated(uri, innerPath, resultArray, newResult_pageInfo.endCursor);
 }
 
 const deprecated = {

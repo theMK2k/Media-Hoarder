@@ -7,7 +7,7 @@ const filenamify = require("filenamify");
 const hash = require("string-hash-64");
 const _ = require("lodash");
 
-const logger = require("./logger");
+import logger from "./logger.js";
 
 const isBuild = process.env.NODE_ENV === "production";
 const isDevelopment = !isBuild;
@@ -30,6 +30,10 @@ function setRequestAsyncDumpToFile(value) {
   requestAsyncDumpToFile = value;
 }
 
+function getRequestAsyncDumpToFile() {
+  return requestAsyncDumpToFile;
+}
+
 let imdbScraperWatchdogUseDumps = false;
 
 function setIMDBScraperWatchdogUseDumps(value) {
@@ -44,21 +48,33 @@ function setIMDBScraperWatchdogUseDumps(value) {
  * @param {string} relativePath
  */
 function getDataPath(relativePath) {
-  if (isDevelopment || isPORTABLE) {
-    return path.join(getStaticPath("data"), relativePath);
-  }
-
-  return path.join(os.homedir(), ".media-hoarder", relativePath);
+  // DEBUG: Log path resolution details (temporary)
+  const result =
+    isDevelopment || isPORTABLE
+      ? path.join(getStaticPath("data"), relativePath)
+      : path.join(os.homedir(), ".media-hoarder", relativePath);
+  console.log(
+    `[DEBUG:getDataPath] isDevelopment=${isDevelopment}, isPORTABLE=${isPORTABLE}, relativePath="${relativePath}" => "${result}"`
+  );
+  return result;
 }
 
 /**
- * get absolute path for a given relative path from APPDIR/data depending on isBuild
+ * get absolute path for a given relative path from APPDIR depending on isBuild
+ * In development: uses the project root directory
+ * In production: uses the resources directory where static files are bundled
  * @param {string} relativePath
  */
 function getStaticPath(relativePath) {
-  /* eslint-disable no-undef */
-  return path.join(isBuild ? __dirname : __static, "../", relativePath);
-  /* eslint-enable no-undef */
+  if (isDevelopment) {
+    // In development, files are at the project root
+    // process.cwd() gives us the project root when running electron-vite dev
+    return path.join(process.cwd(), relativePath);
+  } else {
+    // In production, static files are in the resources directory (via extraResources)
+    // process.resourcesPath is set by Electron to the app's resources directory
+    return path.join(process.resourcesPath, relativePath);
+  }
 }
 
 /**
@@ -328,7 +344,7 @@ async function requestAsync(options) {
   }
 
   optionsDerived.headers["User-Agent"] =
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0";
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:144.0) Gecko/20100101 Firefox/144.0";
 
   optionsDerived.timeout = 10000; // we set a 10s timeout
 
@@ -576,6 +592,22 @@ function getSpecificMediaType(mediaItem) {
   return "Movies";
 }
 
+function tryParseJSON(jsonString) {
+  try {
+    const obj = JSON.parse(jsonString);
+    if (obj && typeof obj === "object") {
+      return obj;
+    }
+  } catch (e) {
+    // ignore
+  }
+  return null;
+}
+
+async function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export {
   isWindows,
   isPORTABLE,
@@ -594,6 +626,7 @@ export {
   getDirectoryName,
   downloadFile,
   setRequestAsyncDumpToFile,
+  getRequestAsyncDumpToFile,
   requestAsync,
   cleanupFileName,
   cleanupDirectoryName,
@@ -612,4 +645,6 @@ export {
   randomizeArray,
   getSeriesEpisodeSeasonAndEpisodeNumbersFromName,
   getSpecificMediaType,
+  tryParseJSON,
+  sleep,
 };

@@ -129,6 +129,13 @@ const log = {
     addLogEntry(await imdbScraperTests.testIMDBSeriesSeasons());
 
   await checkSendMail();
+
+  // Exit Electron if running as main process
+  try {
+    require("electron").app.quit();
+  } catch (e) {
+    // not running in Electron (e.g. babel-node), ignore
+  }
 })();
 
 function addLogEntry(testResult) {
