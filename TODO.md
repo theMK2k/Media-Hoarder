@@ -2,12 +2,12 @@
 
 ## Prio 0
 
-- [ ] BUG: rescan specific media leads to removal of "last access at"
+- [ ] make use of [imdbapi.dev](https://imdbapi.dev/) in case fetching from IMDB is unsuccessful
 
+- [ ] BUG: rescan specific media leads to removal of "last access at"
   - "last access at" (on the series - not the episode) is gone if a media moved
 
 - [WIP] introduce caching for the filters (uses shared.featureFlags)
-
   - [x] fetchFilterReleaseAttributes
   - [x] Source Paths
   - [x] Video Quality
@@ -35,31 +35,29 @@
 - [WIP] Add "number of votes" filter
 
 - [ ] rescan: track times for each step:
-
   - [ ] filescan
   - [ ] mediainfo
   - [ ] imdb scraping
   - [ ] db updates
 
 - [ ] DB Backup
-
   - [ ] Settings:
     - [ ] set backup interval (every X scans, default = 5)
     - [ ] set retention volume (default = 3 db copies)
     - [ ] use data/backups folder to store the files
 
 - [ ] Delete/Remove Media
-
   - provide choice between "Delete the media" and "Remove from library"
 
 - [ ] house keeping
-
   - [ ] VACUUM after scan
   - [ ] look into PRAMGA OPTIMIZE <https://sqlite.org/pragma.html#pragma_optimize>
 
 - [ ] create a top-list scoring
   - see https://chatgpt.com/c/680d6f2e-7be8-8012-9fcc-ee3b839a892e
   - https://help.imdb.com/article/imdb/featured-content/why-doesn-t-a-title-with-the-average-user-vote-of-9-4-appear-in-your-top-250-movies-or-tv-list/GTU67Q5QQ8W53RJT#
+
+- [ ] mac build: try to build a universal binary (arm64 + x64) in order to support both Intel and Apple Silicon based Macs with one download
 
 ```text
       (WR) = (v ÷ (v+m)) × R + (m ÷ (v+m)) × C
@@ -84,7 +82,6 @@
 - [ ] BUG: with a multi-episode, when clicking the episode in the IMDB Rating Dialog, the episode is opened multiple times (see: Star Trek Prodigy S01E01-E02)
 
 - [ ] Episodes Heatmap:
-
   - [x] highlight watched episodes with a discreet background pattern
   - [x] highlight season and episode "headers" when hovering over the heatmap
 
@@ -106,7 +103,6 @@
 ### Series: Link IMDB Dialog
 
 - [ ] for episodes:
-
   - [ ] provide all entries for the current series (Series_id_Movies_Owner's IMDB_tconst)
     - [ ] new imdb scraper: scrapeSeriesSeasons(tconst) -> `https://www.imdb.com/title/tt0206512/episodes/` -> dropdown
   - [ ] allow a fallback to standard imdb search
@@ -120,7 +116,6 @@
 - [ ] BUG: subtitles in .rar files are added to the media list
 
 - [ ] BUG: rescanning a specific series does not run mediainfo on its episodes
-
   - store.rescanItems
 
 - [ ] Edit Episode: select season, episode number / bonus number
@@ -295,13 +290,11 @@ Router.prototype.push = function push(location) {
 - [ ] have individual lists of "my lists" clickable, show dialog (analog to genres, people, companies etc.) and thus "filter by this list"
 
 - [ ] create a MediaInfo watchdog
-
   - autodownload latest mediainfo
   - check for expected fields (error on fail)
   - check for new fields (warning on fail)
 
 - [ ] Test mediainfo and VLC in Linux/MacOS (we now use "" in the exec)
-
   - [x] Win: OK
   - [x] Linux: OK
   - [ ] MacOS: ??
