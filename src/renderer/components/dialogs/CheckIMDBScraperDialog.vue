@@ -9,14 +9,16 @@
   >
     <v-card style="min-height: 500px">
       <v-card-title>
-        <v-row class="text-h5" style="width: 100%; font-size: 1.17em">
+        <v-row class="text-h5" style="width: 100%; font-size: 1.17em; margin-top: 0px; margin-left: 0px">
           {{ $t("IMDB Scraper Check") }}
           <v-spacer></v-spacer>
 
           <v-btn variant="text" v-on:click="onRunChecksPressed" v-bind:loading="isRunning" v-if="!settings">{{
             $t("Run Checks")
           }}</v-btn>
-          <v-btn variant="text" v-if="!settings" v-bind:disabled="isRunning" v-on:click="$emit('close')">{{ $t("Close") }}</v-btn>
+          <v-btn variant="text" v-if="!settings" v-bind:disabled="isRunning" v-on:click="$emit('close')">{{
+            $t("Close")
+          }}</v-btn>
         </v-row>
       </v-card-title>
 
@@ -28,7 +30,12 @@
             )
           }}
         </div>
-        <v-row v-for="check in imdbScraperChecksFiltered" v-bind:key="check.key" style="align-items: center">
+
+        <v-row
+          v-for="check in imdbScraperChecksFiltered"
+          v-bind:key="check.key"
+          style="align-items: center; margin-top: 0px"
+        >
           <v-btn
             class="ma-2"
             v-bind:ripple="false"
@@ -48,7 +55,7 @@
           </div>
         </v-row>
 
-        <div v-if="!isRunning" style="margin-left: -14px">
+        <div v-if="!isRunning" style="margin-left: -18px; margin-top: 12px; margin-right: -16px">
           <v-alert type="success" variant="tonal" border="start" v-if="checkResult === 0">{{
             $t("All checks successful!")
           }}</v-alert>
