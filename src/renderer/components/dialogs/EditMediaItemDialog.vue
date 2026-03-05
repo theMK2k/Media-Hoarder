@@ -46,7 +46,13 @@
               {{ $t("Description") }}
             </div>
           </v-row>
-          <v-textarea v-model="mediaItem.plotSummaryFull" variant="underlined" style="margin-top: -16px" auto-grow :rows="3"></v-textarea>
+          <v-textarea
+            v-model="mediaItem.plotSummaryFull"
+            variant="underlined"
+            style="margin-top: -16px"
+            auto-grow
+            :rows="3"
+          ></v-textarea>
 
           <!-- Video Quality (Movie or Episode) -->
           <!--
@@ -86,7 +92,7 @@
                     >{{ $t("Add") }}</v-btn
                   >
                 </template>
-                <v-card>
+                <v-card style="min-width: 260px">
                   <v-card-title>
                     {{ $t("Add Video Quality") }}
                   </v-card-title>
@@ -101,7 +107,9 @@
                     <v-btn variant="tonal" color="secondary" v-on:click.stop="showAddVideoQualityDialog = false">{{
                       $t("Cancel")
                     }}</v-btn>
-                    <v-btn variant="tonal" color="primary" v-on:click.stop="onAddVideoQualityDialogOK">{{ $t("OK") }}</v-btn>
+                    <v-btn variant="tonal" color="primary" v-on:click.stop="onAddVideoQualityDialogOK">{{
+                      $t("OK")
+                    }}</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-menu>
@@ -153,7 +161,7 @@
                     >{{ $t("Add") }}</v-btn
                   >
                 </template>
-                <v-card>
+                <v-card style="min-width: 260px">
                   <v-card-title>
                     {{ $t("Add Audio Language") }}
                   </v-card-title>
@@ -170,7 +178,9 @@
                     <v-btn variant="tonal" color="secondary" v-on:click.stop="showAddAudioLanguageDialog = false">{{
                       $t("Cancel")
                     }}</v-btn>
-                    <v-btn variant="tonal" color="primary" v-on:click.stop="onAddAudioLanguageDialogOK">{{ $t("OK") }}</v-btn>
+                    <v-btn variant="tonal" color="primary" v-on:click.stop="onAddAudioLanguageDialogOK">{{
+                      $t("OK")
+                    }}</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-menu>
@@ -222,7 +232,7 @@
                     >{{ $t("Add") }}</v-btn
                   >
                 </template>
-                <v-card>
+                <v-card style="min-width: 260px">
                   <v-card-title>
                     {{ $t("Add Subtitle Language") }}
                   </v-card-title>
@@ -239,7 +249,9 @@
                     <v-btn variant="tonal" color="secondary" v-on:click.stop="showAddSubtitleLanguageDialog = false">{{
                       $t("Cancel")
                     }}</v-btn>
-                    <v-btn variant="tonal" color="primary" v-on:click.stop="onAddSubtitleLanguageDialogOK">{{ $t("OK") }}</v-btn>
+                    <v-btn variant="tonal" color="primary" v-on:click.stop="onAddSubtitleLanguageDialogOK">{{
+                      $t("OK")
+                    }}</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-menu>
@@ -290,7 +302,7 @@
                   >{{ $t("Add") }}</v-btn
                 >
               </template>
-              <v-card>
+              <v-card style="min-width: 260px">
                 <v-card-title>
                   {{ $t("Add Genre") }}
                 </v-card-title>
@@ -304,7 +316,9 @@
                   ></v-select>
                 </v-card-text>
                 <v-card-actions style="justify-content: flex-end">
-                  <v-btn variant="tonal" color="secondary" v-on:click.stop="showAddGenreDialog = false">{{ $t("Cancel") }}</v-btn>
+                  <v-btn variant="tonal" color="secondary" v-on:click.stop="showAddGenreDialog = false">{{
+                    $t("Cancel")
+                  }}</v-btn>
                   <v-btn variant="tonal" color="primary" v-on:click.stop="onAddGenreDialogOK">{{ $t("OK") }}</v-btn>
                 </v-card-actions>
               </v-card>
@@ -355,7 +369,7 @@
                   >{{ $t("Add") }}</v-btn
                 >
               </template>
-              <v-card>
+              <v-card style="min-width: 260px">
                 <v-card-title>
                   {{ $t("Add Release Attribute") }}
                 </v-card-title>
@@ -372,7 +386,9 @@
                   <v-btn variant="tonal" color="secondary" v-on:click.stop="showAddReleaseAttributeDialog = false">{{
                     $t("Cancel")
                   }}</v-btn>
-                  <v-btn variant="tonal" color="primary" v-on:click.stop="onAddReleaseAttributeDialogOK">{{ $t("OK") }}</v-btn>
+                  <v-btn variant="tonal" color="primary" v-on:click.stop="onAddReleaseAttributeDialogOK">{{
+                    $t("OK")
+                  }}</v-btn>
                 </v-card-actions>
               </v-card>
             </v-menu>
