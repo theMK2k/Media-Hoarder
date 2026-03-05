@@ -26,40 +26,46 @@
           <v-radio v-bind:label="$t('Complete Rescan')" v-bind:value="2" color="mk-dark-grey"></v-radio>
         </v-radio-group>
 
-        <div v-if="radioGroup == 1">
-          <ul>
-            <li>{{ $t("Filescan in every Source Path") }}</li>
-            <li>
-              {{
-                $t("If a file is missing, remove it from the collection (depending on the setting of the Source Path)")
-              }}
-            </li>
-            <li>
-              <strong>{{ $t("If a new file is found, gather IMDB and mediainfo metadata") }}</strong>
-            </li>
-            <li>
-              <strong>{{
-                $t("If a file is already known, don't gather any metadata (except the previous scan had errors)")
-              }}</strong>
-            </li>
-          </ul>
-        </div>
+        <div style="margin-left: 32px; margin-top: 8px">
+          <div v-if="radioGroup == 1">
+            <ul>
+              <li>{{ $t("Filescan in every Source Path") }}</li>
+              <li>
+                {{
+                  $t(
+                    "If a file is missing, remove it from the collection (depending on the setting of the Source Path)"
+                  )
+                }}
+              </li>
+              <li>
+                <strong>{{ $t("If a new file is found, gather IMDB and mediainfo metadata") }}</strong>
+              </li>
+              <li>
+                <strong>{{
+                  $t("If a file is already known, don't gather any metadata (except the previous scan had errors)")
+                }}</strong>
+              </li>
+            </ul>
+          </div>
 
-        <div v-if="radioGroup == 2">
-          <ul>
-            <li>{{ $t("Filescan in every Source Path") }}</li>
-            <li>
-              {{
-                $t("If a file is missing, remove it from the collection (depending on the setting of the Source Path)")
-              }}
-            </li>
-            <li>
-              <strong>{{ $t("If a file is new or already known, gather IMDB and mediainfo metadata") }}</strong>
-            </li>
-            <li>
-              <strong>{{ $t("This can take a while depending on your collection and internet connection") }}</strong>
-            </li>
-          </ul>
+          <div v-if="radioGroup == 2">
+            <ul>
+              <li>{{ $t("Filescan in every Source Path") }}</li>
+              <li>
+                {{
+                  $t(
+                    "If a file is missing, remove it from the collection (depending on the setting of the Source Path)"
+                  )
+                }}
+              </li>
+              <li>
+                <strong>{{ $t("If a file is new or already known, gather IMDB and mediainfo metadata") }}</strong>
+              </li>
+              <li>
+                <strong>{{ $t("This can take a while depending on your collection and internet connection") }}</strong>
+              </li>
+            </ul>
+          </div>
         </div>
 
         <v-expansion-panels accordion style="margin-top: 16px">
