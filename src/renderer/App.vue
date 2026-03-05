@@ -3209,7 +3209,7 @@
               style="margin-bottom: 4px"
             ></v-progress-linear>
             <div v-if="scanInfo.show" style="flex: 1">
-              <p style="margin: 0px !important">
+              <p style="margin: 0px !important; font-size: 1rem">
                 {{ scanInfo.header }}
               </p>
               <p style="margin: 0px !important; font-size: 12px">
@@ -3219,9 +3219,10 @@
             <!-- <div class="flex-grow-1"></div> -->
             <v-btn
               variant="text"
+              :stacked="false"
               v-on:click="cancelRescan"
               v-bind:disabled="store.doAbortRescan"
-              style="flex: 0 0 80px"
+              style="flex: 0 0 auto"
             >
               <v-icon v-if="!store.doAbortRescan">mdi-cancel</v-icon>
               <span v-if="store.doAbortRescan">{{ $t("Cancelling___") }}</span>
@@ -3459,7 +3460,10 @@ export default {
 
       moment.locale(newValue);
       logger.log("[moment-test] relative time (vor 2 Jahren):", moment("2021-01-01").fromNow());
-      logger.log("[moment-test] duration (5 Minuten):", moment.duration(moment().diff(moment("2024-01-01"))).humanize());
+      logger.log(
+        "[moment-test] duration (5 Minuten):",
+        moment.duration(moment().diff(moment("2024-01-01"))).humanize()
+      );
     },
   },
 
