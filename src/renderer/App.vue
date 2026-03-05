@@ -4681,9 +4681,9 @@ export default {
 
     addPerson() {
       this.searchPersonsDialog.show = true;
-      this.searchPersonsDialog.mediaType = this.$router.history.current.params.mediatype || "movies";
+      this.searchPersonsDialog.mediaType = this.$route.params.mediatype || "movies";
       this.searchPersonsDialog.Series_id_Movies_Owner =
-        this.$router.history.current.params.Series_id_Movies_Owner || null;
+        this.$route.params.Series_id_Movies_Owner || null;
       this.$refs.searchPersonsDialog.init();
     },
 
@@ -4692,9 +4692,9 @@ export default {
     },
 
     addCompany() {
-      this.searchCompaniesDialog.mediaType = this.$router.history.current.params.mediatype || "movies";
+      this.searchCompaniesDialog.mediaType = this.$route.params.mediatype || "movies";
       this.searchCompaniesDialog.Series_id_Movies_Owner =
-        this.$router.history.current.params.Series_id_Movies_Owner || null;
+        this.$route.params.Series_id_Movies_Owner || null;
       this.searchCompaniesDialog.show = true;
       this.$refs.searchCompaniesDialog.init();
     },
@@ -4705,9 +4705,9 @@ export default {
 
     addIMDBPlotKeyword() {
       this.searchPlotKeywordsDialog.show = true;
-      this.searchPlotKeywordsDialog.mediaType = this.$router.history.current.params.mediatype || "movies";
+      this.searchPlotKeywordsDialog.mediaType = this.$route.params.mediatype || "movies";
       this.searchPlotKeywordsDialog.Series_id_Movies_Owner =
-        this.$router.history.current.params.Series_id_Movies_Owner || null;
+        this.$route.params.Series_id_Movies_Owner || null;
       this.$refs.searchPlotKeywordsDialog.init();
     },
 
@@ -4717,9 +4717,9 @@ export default {
 
     addIMDBFilmingLocation() {
       this.searchFilmingLocationsDialog.show = true;
-      this.searchFilmingLocationsDialog.mediaType = this.$router.history.current.params.mediatype || "movies";
+      this.searchFilmingLocationsDialog.mediaType = this.$route.params.mediatype || "movies";
       this.searchFilmingLocationsDialog.Series_id_Movies_Owner =
-        this.$router.history.current.params.Series_id_Movies_Owner || null;
+        this.$route.params.Series_id_Movies_Owner || null;
       this.$refs.searchFilmingLocationsDialog.init();
     },
 
