@@ -3196,7 +3196,7 @@
           fixed
           dark
           v-show="scanInfo.show"
-          style="height: auto; padding: 4px 8px 4px 8px; z-index: 100"
+          style="height: auto; padding: 4px 8px 4px 8px; z-index: 1010"
         >
           <v-row align-content="start" justify="start" style="margin-top: 0px; margin-bottom: 0px; max-width: 100%">
             <v-progress-linear
