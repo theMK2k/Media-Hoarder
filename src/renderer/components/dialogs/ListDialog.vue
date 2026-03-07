@@ -8,7 +8,7 @@
         <div class="subtitle">{{ movieName }}</div>
       </v-card-title>
 
-      <v-card-text style="padding: 0px">
+      <v-card-text style="padding: 16px 0px 16px 0px">
         <v-radio-group v-model="chosenMethod">
           <div style="width: 600px; margin-left: 12px">
             <!-- LISTS COMBOBOX -->
@@ -29,7 +29,7 @@
                   item-value="id_Lists"
                   v-bind:disabled="chosenMethod != 'useExistingLists'"
                   v-model="chosen_id_Lists"
-                  style="margin-top: -16px; width: max-content"
+                  style="margin-top: -10px; width: max-content; min-width: 200px"
                 ></v-select>
               </v-col>
             </v-row>
