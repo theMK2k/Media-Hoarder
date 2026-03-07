@@ -14,7 +14,7 @@
         <v-progress-linear v-if="isLoading" color="red accent-0" indeterminate rounded height="3"></v-progress-linear>
       </v-card-title>
 
-      <v-card-text v-if="scanProcessData.scanProcessDetailsArray">
+      <v-card-text v-if="scanProcessData.scanProcessDetailsArray" style="padding-top: 0px; font-size: 0.875rem">
         <div v-if="scanProcessData.scanProcessDetailsArray.length === 0">
           {{ $t("no changes") }}
         </div>
