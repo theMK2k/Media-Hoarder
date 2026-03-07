@@ -248,8 +248,8 @@
         </v-card-text>
 
         <v-card style="width: 100%; margin-top: 8px">
-          <h3>{{ $t("Actual Duplicates") }}</h3>
-          <v-card-text>
+          <h3 style="margin: 16px 0px 0px 16px">{{ $t("Actual Duplicates") }}</h3>
+          <v-card-text class="mk-light-grey">
             <p>
               {{ $t("An actual duplicate is identified by the same filename and filesize") }}
             </p>
@@ -339,7 +339,7 @@
         </v-card>
 
         <v-card style="width: 100%; margin-top: 8px">
-          <h3>{{ $t("Meta Duplicates") }}</h3>
+          <h3 style="margin: 16px 0px 0px 16px">{{ $t("Meta Duplicates") }}</h3>
           <v-card-text class="mk-light-grey">
             <p>
               {{
@@ -1199,11 +1199,13 @@ export default {
           ]
         : [{ name: this.$t("All Files"), extensions: ["*"] }];
 
+      logger.log('with message?')
+
       const path = await dialog.showOpenDialog({
         title: this.$t("Path to mediainfo (get it from mediaarea_net)"),
         properties: ["openFile"],
         filters,
-        defaultPath: this.MediainfoPath || "",
+        defaultPath: this.MediainfoPath || ""
       });
 
       if (path.canceled) {
