@@ -22,10 +22,10 @@
     <v-window v-model="activeTab">
       <!-- GENERAL -->
       <v-window-item value="general" style="padding: 8px">
-        <v-row class="settings-row">
+        <v-col class="settings-row">
           <h3>{{ $t("Media Player Path") }}</h3>
 
-          <v-card-text class="mk-light-grey">
+          <v-card-text class="mk-light-grey" style="padding-left: 4px">
             {{
               $t(
                 "{appName} needs the path to a media player of your choice for media playback_ We recommend the VLC media player, you can get it at:",
@@ -39,36 +39,38 @@
             >
           </v-card-text>
 
-          <v-text-field
-            readonly
-            v-bind:label="$t('Media Player Path')"
-            v-model="MediaplayerPath"
-            variant="underlined"
-            style="margin-left: 16px"
-          ></v-text-field>
+          <v-row>
+            <v-text-field
+              readonly
+              v-bind:label="$t('Media Player Path')"
+              v-model="MediaplayerPath"
+              variant="underlined"
+              style="margin-left: 16px"
+            ></v-text-field>
+  
+            <v-btn
+              v-on:click="browseMediaplayerPath()"
+              variant="text"
+              size="small"
+              color="primary"
+              style="margin-top: 16px"
+              >{{ $t("Browse") }}</v-btn
+            >
+            <v-btn
+              v-on:click="showEditMediaplayerPathDialog()"
+              variant="text"
+              size="small"
+              color="primary"
+              style="margin-top: 16px"
+              >{{ $t("Edit") }}</v-btn
+            >
+          </v-row>
+        </v-col>
 
-          <v-btn
-            v-on:click="browseMediaplayerPath()"
-            variant="text"
-            size="small"
-            color="primary"
-            style="margin-top: 16px"
-            >{{ $t("Browse") }}</v-btn
-          >
-          <v-btn
-            v-on:click="showEditMediaplayerPathDialog()"
-            variant="text"
-            size="small"
-            color="primary"
-            style="margin-top: 16px"
-            >{{ $t("Edit") }}</v-btn
-          >
-        </v-row>
-
-        <v-row class="settings-row">
+        <v-col class="settings-row">
           <h3>{{ $t("Mediainfo CLI Path") }}</h3>
 
-          <v-card-text class="mk-light-grey">
+          <v-card-text class="mk-light-grey" style="padding-left: 4px">
             {{
               $t(
                 "{appName} needs the path to Mediainfo CLI in order to determine duration, video resolution and languages of your media_ You can get Mediainfo CLI at:",
@@ -80,36 +82,38 @@
             >
           </v-card-text>
 
-          <v-text-field
-            readonly
-            v-bind:label="$t('Mediainfo CLI Path')"
-            v-model="MediainfoPath"
-            variant="underlined"
-            style="margin-left: 16px"
-          ></v-text-field>
+          <v-row>
+            <v-text-field
+              readonly
+              v-bind:label="$t('Mediainfo CLI Path')"
+              v-model="MediainfoPath"
+              variant="underlined"
+              style="margin-left: 16px"
+            ></v-text-field>
+  
+            <v-btn
+              v-on:click="browseMediainfoPath()"
+              variant="text"
+              size="small"
+              color="primary"
+              style="margin-top: 16px"
+              >{{ $t("Browse") }}</v-btn
+            >
+            <v-btn
+              v-on:click="showEditMediainfoPathDialog()"
+              variant="text"
+              size="small"
+              color="primary"
+              style="margin-top: 16px"
+              >{{ $t("Edit") }}</v-btn
+            >
+          </v-row>
+        </v-col>
 
-          <v-btn
-            v-on:click="browseMediainfoPath()"
-            variant="text"
-            size="small"
-            color="primary"
-            style="margin-top: 16px"
-            >{{ $t("Browse") }}</v-btn
-          >
-          <v-btn
-            v-on:click="showEditMediainfoPathDialog()"
-            variant="text"
-            size="small"
-            color="primary"
-            style="margin-top: 16px"
-            >{{ $t("Edit") }}</v-btn
-          >
-        </v-row>
-
-        <v-row class="settings-row">
+        <v-col class="settings-row">
           <h3>{{ $t("Last Access Grace Period") }}</h3>
 
-          <v-card-text class="mk-light-grey">{{
+          <v-card-text class="mk-light-grey"  style="padding-left: 4px">{{
             $t(
               "{appName} provides the date and time of the last access for any medium_ In order to prevent unwanted updates, you can define a grace period in seconds where a medium can be played until the update is performed_",
               { appName: $shared.appName }
@@ -121,9 +125,9 @@
             v-bind:label="$t('Last Access Grace Period')"
             v-model="minimumWaitForSetAccess"
             variant="underlined"
-            style="margin-left: 16px"
+            style="margin-left: 4px"
           ></v-text-field>
-        </v-row>
+        </v-col>
 
         <!--
           #rip-rating-demographics
@@ -154,7 +158,7 @@
           </v-row>
         -->
 
-        <v-row class="settings-row">
+        <v-col class="settings-row">
           <h3>{{ $t("Log Level") }}</h3>
 
           <v-card-text class="mk-light-grey">{{
@@ -174,7 +178,7 @@
             v-bind:items="logLevels"
             style="margin-left: 16px"
           ></v-select>
-        </v-row>
+        </v-col>
 
         <v-btn variant="text" size="small" color="primary" v-on:click="openVersionDialog">{{
           $t("Show Version Info")
