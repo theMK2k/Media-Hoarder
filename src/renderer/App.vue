@@ -5158,6 +5158,13 @@ export default {
 };
 </script>
 <style>
+/* Vuetify 3 sets html { line-height: 1.5 } and bumped body font from 14px/1.425 to 16px/1.5.
+   Restore Vuetify 2 body-2 defaults globally. */
+html {
+  line-height: 1.425;
+  font-size: 0.875rem;
+}
+
 /* Vuetify 3 defaults dialog v-card-actions to flex-end (right-aligned).
    Restore Vuetify 2 behavior (left-aligned); use <v-spacer> to right-align explicitly. */
 .v-dialog > .v-overlay__content > .v-card > .v-card-actions,
