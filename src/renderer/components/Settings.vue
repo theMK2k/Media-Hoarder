@@ -640,44 +640,29 @@
           </p>
         </v-card-text>
 
-        <v-data-table
-          ref="releaseAttributesTable"
-          density="comfortable"
-          v-bind:headers="[
-            { title: $t('Search Term'), key: 'searchTerm', sortable: false },
-            { title: $t('Display As'), key: 'displayAs', sortable: false },
-            { title: '', key: 'actions', sortable: false },
-            {
-              title: '',
-              key: 'deleted',
-              visible: false,
-              filter: releaseAttributesFilter,
-              align: 'd-none',
-            },
-          ]"
-          v-bind:items="$shared.releaseAttributes"
-          class="elevation-1"
-          hide-default-footer
-          v-bind:items-per-page="1000"
-        >
-          <template v-slot:body="{ items }">
-            <Sortable :list="items" item-key="searchTerm" tag="tbody" @end="onReleaseAttributesDragEnd">
-              <template #item="{ element: item, index }">
-                <tr v-bind:key="index" class="mk-draggable-item" style="height: 40px">
-                  <td style="padding: 0 16px">{{ item.searchTerm }}</td>
-                  <td style="padding: 0 16px">{{ item.displayAs }}</td>
-                  <td>
-                    <v-icon size="16" class="mr-2 mk-clickable" @click="onEditReleaseAttribute(item)">mdi-pencil</v-icon>
-                    <v-icon size="16" class="mr-2 mk-clickable-red" @click="openRemoveReleaseAttributeDialog(item)"
-                      >mdi-delete</v-icon
-                    >
-                  </td>
-                </tr>
-              </template>
-            </Sortable>
-          </template>
-          <!-- <template v-slot:item.actions="{ item }"> </template> -->
-        </v-data-table>
+        <table class="elevation-1" style="width: 100%; border-collapse: collapse">
+          <thead>
+            <tr style="background: rgba(0,0,0,0.05)">
+              <th style="padding: 0 16px; text-align: left; height: 48px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.0333em; text-transform: uppercase; width: 500px">{{ $t('Search Term') }}</th>
+              <th style="padding: 0 16px; text-align: left; height: 48px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.0333em; text-transform: uppercase">{{ $t('Display As') }}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <Sortable :list="releaseAttributesVisible" item-key="searchTerm" tag="tbody" @end="onReleaseAttributesDragEnd">
+            <template #item="{ element: item, index }">
+              <tr v-bind:key="index" class="mk-draggable-item mk-highlightable-row" style="height: 40px">
+                <td style="padding: 0 16px">{{ item.searchTerm }}</td>
+                <td style="padding: 0 16px">{{ item.displayAs }}</td>
+                <td>
+                  <v-icon size="16" class="mr-2 mk-clickable" @click="onEditReleaseAttribute(item)">mdi-pencil</v-icon>
+                  <v-icon size="16" class="mr-2 mk-clickable-red" @click="openRemoveReleaseAttributeDialog(item)"
+                    >mdi-delete</v-icon
+                  >
+                </td>
+              </tr>
+            </template>
+          </Sortable>
+        </table>
         <v-btn
           v-on:click="onAddReleaseAttribute()"
           variant="text"
@@ -1153,6 +1138,10 @@ export default {
 
     shared_logLevel() {
       return this.$shared.logLevel;
+    },
+
+    releaseAttributesVisible() {
+      return (this.$shared.releaseAttributes || []).filter((item) => !item.deleted);
     },
   },
 
@@ -1780,10 +1769,6 @@ export default {
       } catch (e) {
         eventBus.showSnackbar("error", e);
       }
-    },
-
-    releaseAttributesFilter(value /*, search, item*/) {
-      return !value;
     },
 
     async loadScanProcesses() {
