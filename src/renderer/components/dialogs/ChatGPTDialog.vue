@@ -18,7 +18,7 @@
           <strong>{{ $t("It is recommended to also ask for IMDB IDs_") }}</strong>
         </p>
 
-        <v-btn class="xs-fullwidth" variant="tonal" color="primary" v-on:click="onStartConversation" style="margin-left: 8px">
+        <v-btn class="xs-fullwidth" variant="tonal" color="primary" v-on:click="onStartConversation" style="margin-top: 8px">
           {{ $t("Start Conversation") }}
         </v-btn>
 
