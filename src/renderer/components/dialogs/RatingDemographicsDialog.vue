@@ -17,181 +17,185 @@
         >
         <div v-if="ratingDemographics">
           <table style="margin-left: auto; margin-right: auto">
-            <tr>
-              <td></td>
-              <td>
-                <div class="rating-demographics-header">
-                  {{ $t("All Ages") }}
-                </div>
-              </td>
-              <td><div class="rating-demographics-header">&lt;18</div></td>
-              <td><div class="rating-demographics-header">18-29</div></td>
-              <td><div class="rating-demographics-header">30-44</div></td>
-              <td><div class="rating-demographics-header">45+</div></td>
-            </tr>
-            <tr>
-              <td>
-                <div class="rating-demographics-header">{{ $t("All") }}</div>
-              </td>
-              <td>
-                <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating">
-                  {{ ratingDemographics.IMDB_rating_formatted }}<br />{{ ratingDemographics.IMDB_numVotes_formatted }}
-                </div>
-              </td>
-              <td>
-                <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_aged_under_18">
-                  {{ ratingDemographics.IMDB_rating_aged_under_18_formatted }}<br />{{
-                    ratingDemographics.IMDB_numVotes_aged_under_18_formatted
-                  }}
-                </div>
-              </td>
-              <td>
-                <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_aged_18_29">
-                  {{ ratingDemographics.IMDB_rating_aged_18_29_formatted }}<br />{{
-                    ratingDemographics.IMDB_numVotes_aged_18_29_formatted
-                  }}
-                </div>
-              </td>
-              <td>
-                <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_aged_30_44">
-                  {{ ratingDemographics.IMDB_rating_aged_30_44_formatted }}<br />{{
-                    ratingDemographics.IMDB_numVotes_aged_30_44_formatted
-                  }}
-                </div>
-              </td>
-              <td>
-                <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_aged_45_plus">
-                  {{ ratingDemographics.IMDB_rating_aged_45_plus_formatted }}<br />{{
-                    ratingDemographics.IMDB_numVotes_aged_45_plus_formatted
-                  }}
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="rating-demographics-header">
-                  {{ $t("Females") }}
-                </div>
-              </td>
-              <td>
-                <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_females">
-                  {{ ratingDemographics.IMDB_rating_females_formatted }}<br />{{
-                    ratingDemographics.IMDB_numVotes_females_formatted
-                  }}
-                </div>
-              </td>
-              <td>
-                <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_females_aged_under_18">
-                  {{ ratingDemographics.IMDB_rating_females_aged_under_18_formatted }}<br />{{
-                    ratingDemographics.IMDB_numVotes_females_aged_under_18_formatted
-                  }}
-                </div>
-              </td>
-              <td>
-                <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_females_aged_18_29">
-                  {{ ratingDemographics.IMDB_rating_females_aged_18_29_formatted }}<br />{{
-                    ratingDemographics.IMDB_numVotes_females_aged_18_29_formatted
-                  }}
-                </div>
-              </td>
-              <td>
-                <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_females_aged_30_44">
-                  {{ ratingDemographics.IMDB_rating_females_aged_30_44_formatted }}<br />{{
-                    ratingDemographics.IMDB_numVotes_females_aged_30_44_formatted
-                  }}
-                </div>
-              </td>
-              <td>
-                <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_females_aged_45_plus">
-                  {{ ratingDemographics.IMDB_rating_females_aged_45_plus_formatted }}<br />{{
-                    ratingDemographics.IMDB_numVotes_females_aged_45_plus_formatted
-                  }}
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="rating-demographics-header">{{ $t("Males") }}</div>
-              </td>
-              <td>
-                <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_males">
-                  {{ ratingDemographics.IMDB_rating_males_formatted }}<br />{{
-                    ratingDemographics.IMDB_numVotes_males_formatted
-                  }}
-                </div>
-              </td>
-              <td>
-                <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_males_aged_under_18">
-                  {{ ratingDemographics.IMDB_rating_males_aged_under_18_formatted }}<br />{{
-                    ratingDemographics.IMDB_numVotes_males_aged_under_18_formatted
-                  }}
-                </div>
-              </td>
-              <td>
-                <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_males_aged_18_29">
-                  {{ ratingDemographics.IMDB_rating_males_aged_18_29_formatted }}<br />{{
-                    ratingDemographics.IMDB_numVotes_males_aged_18_29_formatted
-                  }}
-                </div>
-              </td>
-              <td>
-                <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_males_aged_30_44">
-                  {{ ratingDemographics.IMDB_rating_males_aged_30_44_formatted }}<br />{{
-                    ratingDemographics.IMDB_numVotes_males_aged_30_44_formatted
-                  }}
-                </div>
-              </td>
-              <td>
-                <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_males_aged_45_plus">
-                  {{ ratingDemographics.IMDB_rating_males_aged_45_plus_formatted }}<br />{{
-                    ratingDemographics.IMDB_numVotes_males_aged_45_plus_formatted
-                  }}
-                </div>
-              </td>
-            </tr>
+            <tbody>
+              <tr>
+                <td></td>
+                <td>
+                  <div class="rating-demographics-header">
+                    {{ $t("All Ages") }}
+                  </div>
+                </td>
+                <td><div class="rating-demographics-header">&lt;18</div></td>
+                <td><div class="rating-demographics-header">18-29</div></td>
+                <td><div class="rating-demographics-header">30-44</div></td>
+                <td><div class="rating-demographics-header">45+</div></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="rating-demographics-header">{{ $t("All") }}</div>
+                </td>
+                <td>
+                  <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating">
+                    {{ ratingDemographics.IMDB_rating_formatted }}<br />{{ ratingDemographics.IMDB_numVotes_formatted }}
+                  </div>
+                </td>
+                <td>
+                  <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_aged_under_18">
+                    {{ ratingDemographics.IMDB_rating_aged_under_18_formatted }}<br />{{
+                      ratingDemographics.IMDB_numVotes_aged_under_18_formatted
+                    }}
+                  </div>
+                </td>
+                <td>
+                  <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_aged_18_29">
+                    {{ ratingDemographics.IMDB_rating_aged_18_29_formatted }}<br />{{
+                      ratingDemographics.IMDB_numVotes_aged_18_29_formatted
+                    }}
+                  </div>
+                </td>
+                <td>
+                  <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_aged_30_44">
+                    {{ ratingDemographics.IMDB_rating_aged_30_44_formatted }}<br />{{
+                      ratingDemographics.IMDB_numVotes_aged_30_44_formatted
+                    }}
+                  </div>
+                </td>
+                <td>
+                  <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_aged_45_plus">
+                    {{ ratingDemographics.IMDB_rating_aged_45_plus_formatted }}<br />{{
+                      ratingDemographics.IMDB_numVotes_aged_45_plus_formatted
+                    }}
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="rating-demographics-header">
+                    {{ $t("Females") }}
+                  </div>
+                </td>
+                <td>
+                  <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_females">
+                    {{ ratingDemographics.IMDB_rating_females_formatted }}<br />{{
+                      ratingDemographics.IMDB_numVotes_females_formatted
+                    }}
+                  </div>
+                </td>
+                <td>
+                  <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_females_aged_under_18">
+                    {{ ratingDemographics.IMDB_rating_females_aged_under_18_formatted }}<br />{{
+                      ratingDemographics.IMDB_numVotes_females_aged_under_18_formatted
+                    }}
+                  </div>
+                </td>
+                <td>
+                  <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_females_aged_18_29">
+                    {{ ratingDemographics.IMDB_rating_females_aged_18_29_formatted }}<br />{{
+                      ratingDemographics.IMDB_numVotes_females_aged_18_29_formatted
+                    }}
+                  </div>
+                </td>
+                <td>
+                  <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_females_aged_30_44">
+                    {{ ratingDemographics.IMDB_rating_females_aged_30_44_formatted }}<br />{{
+                      ratingDemographics.IMDB_numVotes_females_aged_30_44_formatted
+                    }}
+                  </div>
+                </td>
+                <td>
+                  <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_females_aged_45_plus">
+                    {{ ratingDemographics.IMDB_rating_females_aged_45_plus_formatted }}<br />{{
+                      ratingDemographics.IMDB_numVotes_females_aged_45_plus_formatted
+                    }}
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="rating-demographics-header">{{ $t("Males") }}</div>
+                </td>
+                <td>
+                  <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_males">
+                    {{ ratingDemographics.IMDB_rating_males_formatted }}<br />{{
+                      ratingDemographics.IMDB_numVotes_males_formatted
+                    }}
+                  </div>
+                </td>
+                <td>
+                  <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_males_aged_under_18">
+                    {{ ratingDemographics.IMDB_rating_males_aged_under_18_formatted }}<br />{{
+                      ratingDemographics.IMDB_numVotes_males_aged_under_18_formatted
+                    }}
+                  </div>
+                </td>
+                <td>
+                  <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_males_aged_18_29">
+                    {{ ratingDemographics.IMDB_rating_males_aged_18_29_formatted }}<br />{{
+                      ratingDemographics.IMDB_numVotes_males_aged_18_29_formatted
+                    }}
+                  </div>
+                </td>
+                <td>
+                  <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_males_aged_30_44">
+                    {{ ratingDemographics.IMDB_rating_males_aged_30_44_formatted }}<br />{{
+                      ratingDemographics.IMDB_numVotes_males_aged_30_44_formatted
+                    }}
+                  </div>
+                </td>
+                <td>
+                  <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_males_aged_45_plus">
+                    {{ ratingDemographics.IMDB_rating_males_aged_45_plus_formatted }}<br />{{
+                      ratingDemographics.IMDB_numVotes_males_aged_45_plus_formatted
+                    }}
+                  </div>
+                </td>
+              </tr>
+            </tbody>
           </table>
 
           <table style="margin-left: auto; margin-right: auto">
-            <tr>
-              <td>
-                <div class="rating-demographics-header three-columns">
-                  {{ $t("Top 1000 Voters") }}
-                </div>
-              </td>
-              <td>
-                <div class="rating-demographics-header three-columns">
-                  {{ $t("Non-US Users") }}
-                </div>
-              </td>
-              <td>
-                <div class="rating-demographics-header three-columns">
-                  {{ $t("US Users") }}
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_top_1000_voters">
-                  {{ ratingDemographics.IMDB_rating_top_1000_voters_formatted }}<br />{{
-                    ratingDemographics.IMDB_numVotes_top_1000_voters_formatted
-                  }}
-                </div>
-              </td>
-              <td>
-                <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_non_us_users">
-                  {{ ratingDemographics.IMDB_rating_non_us_users_formatted }}<br />{{
-                    ratingDemographics.IMDB_numVotes_non_us_users_formatted
-                  }}
-                </div>
-              </td>
-              <td>
-                <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_us_users">
-                  {{ ratingDemographics.IMDB_rating_us_users_formatted }}<br />{{
-                    ratingDemographics.IMDB_numVotes_us_users_formatted
-                  }}
-                </div>
-              </td>
-            </tr>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="rating-demographics-header three-columns">
+                    {{ $t("Top 1000 Voters") }}
+                  </div>
+                </td>
+                <td>
+                  <div class="rating-demographics-header three-columns">
+                    {{ $t("Non-US Users") }}
+                  </div>
+                </td>
+                <td>
+                  <div class="rating-demographics-header three-columns">
+                    {{ $t("US Users") }}
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_top_1000_voters">
+                    {{ ratingDemographics.IMDB_rating_top_1000_voters_formatted }}<br />{{
+                      ratingDemographics.IMDB_numVotes_top_1000_voters_formatted
+                    }}
+                  </div>
+                </td>
+                <td>
+                  <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_non_us_users">
+                    {{ ratingDemographics.IMDB_rating_non_us_users_formatted }}<br />{{
+                      ratingDemographics.IMDB_numVotes_non_us_users_formatted
+                    }}
+                  </div>
+                </td>
+                <td>
+                  <div class="rating-demographics-content" v-if="ratingDemographics.IMDB_rating_us_users">
+                    {{ ratingDemographics.IMDB_rating_us_users_formatted }}<br />{{
+                      ratingDemographics.IMDB_numVotes_us_users_formatted
+                    }}
+                  </div>
+                </td>
+              </tr>
+            </tbody>
           </table>
         </div>
       </v-card-text>
