@@ -436,7 +436,7 @@
             </div>
           </v-row>
 
-          <v-row v-if="mediaItem.plotSummary" style="margin: 0px 6px 8px 4px">
+          <v-row v-if="mediaItem.plotSummary" class="mk-compact-text" style="margin: 0px 6px 8px 4px">
             <div v-show="!mediaItem.selected" style="font-size: 0.875rem; font-weight: normal">
               <word-highlighter v-bind:query="searchText || ''">
                 {{ mediaItem.plotSummary }}
@@ -565,7 +565,7 @@
       </v-alert>
     </v-row>
 
-    <v-col v-if="mediaItem.selected" style="min-width: 100%">
+    <v-col v-if="mediaItem.selected" style="min-width: 100%; padding-top: 0px">
       <v-row class="mk-detail-row">
         <v-col class="detailLabel"
           ><strong>{{ $t("Full Path") }}:</strong></v-col
@@ -698,8 +698,10 @@
         >
       </div>
 
+      <v-divider style="margin-top: 12px; margin-bottom: 6px"></v-divider>
+
       <!-- FULL CREDITS -->
-      <div style="margin-top: 16px">
+      <div>
         <v-row
           class="mk-item-detailcategory-header-row mk-clickable"
           v-bind:class="{
@@ -726,7 +728,7 @@
             v-bind:key="creditCategory.Category"
             style="margin-left: 24px"
           >
-            <v-row style="margin-top: 12px">
+            <v-row class="mk-item-detailcategory-subcategory-header">
               <strong>{{ $t(`CreditCategories.${creditCategory.category}`) }}</strong>
             </v-row>
             <v-row
@@ -784,7 +786,7 @@
             v-bind:key="companyCategory.Category"
             style="margin-left: 24px"
           >
-            <v-row style="margin-top: 12px">
+            <v-row class="mk-item-detailcategory-subcategory-header">
               <strong>{{ $t(`CompanyCategories.${companyCategory.category}`) }}</strong>
             </v-row>
             <v-row

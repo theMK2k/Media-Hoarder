@@ -5160,8 +5160,8 @@ export default {
 <style>
 /* Vuetify 3 sets html { line-height: 1.5 } and bumped body font from 14px/1.425 to 16px/1.5.
    Restore Vuetify 2 body-2 defaults globally. */
-html {
-  line-height: 1.425;
+.mk-compact-text>* {
+  line-height: 1.2;
   font-size: 0.875rem;
 }
 
@@ -5320,7 +5320,13 @@ a {
 }
 
 .mk-item-detailcategory-header {
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.mk-item-detailcategory-subcategory-header {
+  margin-top: 12px;
+  font-size: 14px
 }
 
 .mk-btn-small {
@@ -5333,11 +5339,12 @@ a {
 .mk-main-detail-row {
   margin-top: 8px !important;
   margin-right: 6px !important;
-  margin-bottom: 8px !important;
+  margin-bottom: 4px !important;
   margin-left: 4px !important;
 }
 
 .mk-detail-row {
+  margin-top: 8px!important;
   margin-bottom: -6px;
 }
 

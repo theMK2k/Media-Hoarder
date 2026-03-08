@@ -70,7 +70,7 @@
               ></v-progress-circular>
             </div>
           </div>
-          <div style="flex: 1; min-width: 0">
+          <div style="flex: 1; min-width: 0" class="mk-compact-text">
             <v-col style="padding: 0px 0px 0px 4px !important" sm="12">
               <v-row v-if="propertyTypeKey === 'person'" style="margin: 0px 6px 8px 0px">
                 <div
