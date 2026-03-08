@@ -96,21 +96,22 @@
 
                   <!-- Primary Title -->
                   <div style="overflow: hidden; text-overflow: ellipsis">
-                    <span v-if="mediaItem.Series_Season_Displaytext" style="font-weight: 400; color: lightgray; margin-right: 8px;">
+                    <span
+                      v-if="mediaItem.Series_Season_Displaytext"
+                      style="font-weight: 400; color: lightgray; margin-right: 8px"
+                    >
                       {{ mediaItem.Series_Season_Displaytext
                       }}{{
                         `${mediaItem.Series_Season_Displaytext ? "." : ""}${mediaItem.Series_Episodes_Displaytext}`
                       }}
                     </span>
-                    <word-highlighter v-bind:query="searchText || ''">
-                      {{ mediaItem.Name }}
-                    </word-highlighter>
-                    <span>
-                      <span
-                        v-bind:class="{
-                          'mk-search-highlight': $shared.filterYearsActive,
-                        }"
-                      >
+                    <span style="margin-right: 8px">
+                      <word-highlighter v-bind:query="searchText || ''">
+                        {{ mediaItem.Name }}
+                      </word-highlighter>
+                    </span>
+                    <span style="margin-right: 8px">
+                      <span v-bind:class="{ 'mk-search-highlight': $shared.filterYearsActive }">
                         {{ mediaItem.yearDisplay }}
                       </span>
                       <span v-show="mediaItem.NumExtras">+{{ mediaItem.NumExtras }}</span>
@@ -256,11 +257,7 @@
                         'mk-search-highlight': $shared.filterQualitiesAppliedContains(MI_Qualities_Item.MI_Quality),
                       }"
                       v-on:click.stop="
-                        emitMediaItemEvent('videoQualityClicked', {
-                          mediaItem,
-                          MI_Qualities_Item,
-                          isInDialog,
-                        })
+                        emitMediaItemEvent('videoQualityClicked', { mediaItem, MI_Qualities_Item, isInDialog })
                       "
                       >{{ MI_Qualities_Item.MI_Quality }}</span
                     >
@@ -270,9 +267,7 @@
                   <span v-if="mediaItem.MI_Qualities"> | </span>
                   <span
                     class="mk-clickable"
-                    v-bind:class="{
-                      'mk-search-highlight': $shared.filterAgeRatingsActive,
-                    }"
+                    v-bind:class="{ 'mk-search-highlight': $shared.filterAgeRatingsActive }"
                     v-on:click.stop="
                       emitMediaItemEvent('ageRatingClicked', { mediaItem, AgeRating: mediaItem.AgeRating, isInDialog })
                     "
@@ -285,9 +280,7 @@
                     <span>{{ index > 0 ? ", " : "" }}</span>
                     <span
                       class="mk-clickable"
-                      v-bind:class="{
-                        'mk-search-highlight': $shared.filterGenresAppliedContains(genre.translated),
-                      }"
+                      v-bind:class="{ 'mk-search-highlight': $shared.filterGenresAppliedContains(genre.translated) }"
                       v-on:click.stop="emitMediaItemEvent('genreClicked', { mediaItem, genre, isInDialog })"
                       >{{ genre.translated }}</span
                     >
@@ -340,9 +333,7 @@
                     <span>{{ index > 0 ? ", " : " " }}</span>
                     <span
                       class="mk-clickable"
-                      v-bind:class="{
-                        'mk-search-highlight': $shared.filterVideoEncodersAppliedContains(videoEncoder),
-                      }"
+                      v-bind:class="{ 'mk-search-highlight': $shared.filterVideoEncodersAppliedContains(videoEncoder) }"
                       v-on:click.stop="
                         emitMediaItemEvent('videoEncoderClicked', { mediaItem, videoEncoder, isInDialog })
                       "
@@ -357,9 +348,7 @@
                     <span>{{ index > 0 ? ", " : " " }}</span>
                     <span
                       class="mk-clickable"
-                      v-bind:class="{
-                        'mk-search-highlight': $shared.filterAudioFormatsAppliedContains(audioFormat),
-                      }"
+                      v-bind:class="{ 'mk-search-highlight': $shared.filterAudioFormatsAppliedContains(audioFormat) }"
                       v-on:click.stop="emitMediaItemEvent('audioFormatClicked', { mediaItem, audioFormat, isInDialog })"
                       >{{ audioFormat }}</span
                     >
@@ -457,9 +446,7 @@
                   <span v-if="i > 0">,&nbsp;</span>
                   <a
                     class="mk-clickable"
-                    v-bind:class="{
-                      'mk-search-highlight': $shared.filterPersonsAppliedContains(credit),
-                    }"
+                    v-bind:class="{ 'mk-search-highlight': $shared.filterPersonsAppliedContains(credit) }"
                     v-on:click.stop="emitMediaItemEvent('creditClicked', { mediaItem, credit, isInDialog })"
                     >{{ credit.name }}</a
                   >
@@ -478,9 +465,7 @@
                   <span v-if="i > 0">,&nbsp;</span>
                   <a
                     class="mk-clickable"
-                    v-bind:class="{
-                      'mk-search-highlight': $shared.filterPersonsAppliedContains(credit),
-                    }"
+                    v-bind:class="{ 'mk-search-highlight': $shared.filterPersonsAppliedContains(credit) }"
                     v-on:click.stop="emitMediaItemEvent('creditClicked', { mediaItem, credit, isInDialog })"
                     >{{ credit.name }}</a
                   >
@@ -499,9 +484,7 @@
                   <span v-if="i > 0">,&nbsp;</span>
                   <a
                     class="mk-clickable"
-                    v-bind:class="{
-                      'mk-search-highlight': $shared.filterPersonsAppliedContains(credit),
-                    }"
+                    v-bind:class="{ 'mk-search-highlight': $shared.filterPersonsAppliedContains(credit) }"
                     v-on:click.stop="emitMediaItemEvent('creditClicked', { mediaItem, credit, isInDialog })"
                     >{{ credit.name }}</a
                   >
@@ -524,9 +507,7 @@
                   <span v-if="i > 0">,&nbsp;</span>
                   <a
                     class="mk-clickable"
-                    v-bind:class="{
-                      'mk-search-highlight': $shared.filterCompaniesAppliedContains(company),
-                    }"
+                    v-bind:class="{ 'mk-search-highlight': $shared.filterCompaniesAppliedContains(company) }"
                     v-on:click.stop="emitMediaItemEvent('companyClicked', { mediaItem, company, isInDialog })"
                     >{{ company.name }}</a
                   >
@@ -571,10 +552,7 @@
           ><strong>{{ $t("Full Path") }}:</strong></v-col
         >
         <v-col class="detailContent">
-          <span
-            v-bind:class="{
-              'mk-search-highlight': $shared.filterSourcePathsActive,
-            }"
+          <span v-bind:class="{ 'mk-search-highlight': $shared.filterSourcePathsActive }"
             ><word-highlighter v-bind:query="searchText || ''"
               >{{ mediaItem.SourcePath }}{{ pathSeparator }}</word-highlighter
             ></span
@@ -651,12 +629,9 @@
           <span v-if="mediaItem.lists && mediaItem.lists.length > 0">
             <span v-for="(list, index) in mediaItem.lists" v-bind:key="index">
               <span v-if="index > 0">,&nbsp;</span>
-              <span
-                v-bind:class="{
-                  'mk-search-highlight': $shared.filterListsAppliedContains(list.Name),
-                }"
-                >{{ list.Name }}</span
-              >
+              <span v-bind:class="{ 'mk-search-highlight': $shared.filterListsAppliedContains(list.Name) }">{{
+                list.Name
+              }}</span>
             </span>
           </span>
           <span v-if="!mediaItem.lists || mediaItem.lists.length === 0">&lt;{{ $t("not in any list") }}&gt;</span>
@@ -704,9 +679,7 @@
       <div>
         <v-row
           class="mk-item-detailcategory-header-row mk-clickable"
-          v-bind:class="{
-            'mk-search-highlight': $shared.filterPersonsActive,
-          }"
+          v-bind:class="{ 'mk-search-highlight': $shared.filterPersonsActive }"
           v-on:click.stop="emitMediaItemEvent('showCredits', { mediaItem, value: !mediaItem.showCredits })"
         >
           <span class="mk-item-detailcategory-header"
@@ -739,9 +712,7 @@
               <v-col sm="4" class="creditsLabel">
                 <a
                   class="mk-clickable"
-                  v-bind:class="{
-                    'mk-search-highlight': $shared.filterPersonsAppliedContains(credit),
-                  }"
+                  v-bind:class="{ 'mk-search-highlight': $shared.filterPersonsAppliedContains(credit) }"
                   v-on:click.stop="emitMediaItemEvent('creditClicked', { mediaItem, credit, isInDialog })"
                   >{{ credit.name }}</a
                 >
@@ -759,9 +730,7 @@
       <div style="margin-top: 4px">
         <v-row
           class="mk-item-detailcategory-header-row mk-clickable"
-          v-bind:class="{
-            'mk-search-highlight': $shared.filterCompaniesActive,
-          }"
+          v-bind:class="{ 'mk-search-highlight': $shared.filterCompaniesActive }"
           v-on:click.stop="emitMediaItemEvent('showCompanies', { mediaItem, value: !mediaItem.showCompanies })"
         >
           <span class="mk-item-detailcategory-header"
@@ -797,9 +766,7 @@
               <v-col sm="4" class="creditsLabel">
                 <a
                   class="mk-clickable"
-                  v-bind:class="{
-                    'mk-search-highlight': $shared.filterCompaniesAppliedContains(company),
-                  }"
+                  v-bind:class="{ 'mk-search-highlight': $shared.filterCompaniesAppliedContains(company) }"
                   v-on:click.stop="emitMediaItemEvent('companyClicked', { mediaItem, company, isInDialog })"
                   >{{ company.name }}</a
                 >
@@ -817,9 +784,7 @@
       <div style="margin-top: 4px">
         <v-row
           class="mk-item-detailcategory-header-row mk-clickable"
-          v-bind:class="{
-            'mk-search-highlight': $shared.filterParentalAdvisoryActive,
-          }"
+          v-bind:class="{ 'mk-search-highlight': $shared.filterParentalAdvisoryActive }"
           v-on:click.stop="
             emitMediaItemEvent('showContentAdvisory', { mediaItem, value: !mediaItem.showContentAdvisory })
           "
@@ -865,9 +830,7 @@
       <div style="margin-top: 4px">
         <v-row
           class="mk-item-detailcategory-header-row mk-clickable"
-          v-bind:class="{
-            'mk-search-highlight': $shared.filterIMDBPlotKeywordsActive,
-          }"
+          v-bind:class="{ 'mk-search-highlight': $shared.filterIMDBPlotKeywordsActive }"
           v-on:click.stop="emitMediaItemEvent('showPlotKeywords', { mediaItem, value: !mediaItem.showPlotKeywords })"
         >
           <span class="mk-item-detailcategory-header"
@@ -913,9 +876,7 @@
       <div style="margin-top: 4px">
         <v-row
           class="mk-item-detailcategory-header-row mk-clickable"
-          v-bind:class="{
-            'mk-search-highlight': $shared.filterIMDBFilmingLocationsActive,
-          }"
+          v-bind:class="{ 'mk-search-highlight': $shared.filterIMDBFilmingLocationsActive }"
           v-on:click.stop="
             emitMediaItemEvent('showFilmingLocations', { mediaItem, value: !mediaItem.showFilmingLocations })
           "

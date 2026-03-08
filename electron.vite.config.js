@@ -55,6 +55,10 @@ export default defineConfig({
     },
   },
   renderer: {
+    define: {
+      __VUE_I18N_FULL_INSTALL__: true,
+      __VUE_I18N_LEGACY_API__: true,
+    },
     root: resolve(__dirname, "src/renderer"),
     build: {
       outDir: resolve(__dirname, "dist/renderer"),

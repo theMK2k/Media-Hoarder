@@ -75,7 +75,7 @@
         >
           <template v-slot:selection="{ item }">
             <span style="color: #929292; font-size: 14px; margin-right: 8px">{{ $t("Sort by") }}</span>
-            <span>{{ item.raw?.Description ? $t(item.raw.Description) : "" }}</span>
+            <span>{{ item?.Description ? $t(item.Description) : "" }}</span>
           </template>
         </v-select>
 
@@ -251,7 +251,7 @@
           >
             <template v-slot:selection="{ item }">
               <span style="color: #929292; font-size: 14px; margin-right: 8px">{{ $t("Sort by") }}</span>
-              <span>{{ item.raw?.Description ? $t(item.raw.Description) : "" }}</span>
+              <span>{{ item?.Description ? $t(item.Description) : "" }}</span>
             </template>
           </v-select>
 

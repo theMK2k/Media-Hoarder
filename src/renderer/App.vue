@@ -5250,6 +5250,17 @@ a {
   color: #2196f3 !important;
 }
 
+.mk-clickable-light-grey {
+  font-size: 0.875rem;
+  font-weight: normal;
+  color: lightgrey !important;
+  cursor: pointer;
+}
+
+.mk-clickable-light-grey:hover {
+  color: #2196f3 !important;
+}
+
 .mk-clickable-red {
   font-size: 0.875rem;
   font-weight: normal;

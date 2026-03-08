@@ -72,11 +72,11 @@
           </div>
           <div style="flex: 1; min-width: 0" class="mk-compact-text">
             <v-col style="padding: 0px 0px 0px 4px !important" sm="12">
-              <v-row v-if="propertyTypeKey === 'person'" style="margin: 0px 6px 8px 0px">
+              <v-row v-if="propertyTypeKey === 'person'" class="person-bio mk-light-grey" style="margin: 0px 6px 8px 0px">
                 <div
                   v-if="!showDescriptionLong"
                   style="font-size: 0.875rem; font-weight: normal"
-                  v-bind:class="{ 'mk-clickable': detailData.DescriptionShort !== detailData.DescriptionLong }"
+                  v-bind:class="{ 'mk-clickable-light-grey': detailData.DescriptionShort !== detailData.DescriptionLong }"
                   v-on:click.stop="
                     showDescriptionLong = detailData.DescriptionShort !== detailData.DescriptionLong ? true : false
                   "
@@ -1250,6 +1250,10 @@ export default {
 <style scoped>
 .btn {
   margin: 2px;
+}
+
+.person-bio p {
+  margin-top: 4px;
 }
 
 .input-group--text-field {

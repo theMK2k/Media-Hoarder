@@ -310,6 +310,23 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 
 - ✅ moment.js locale translations restored: `fromNow()` now returns translated strings (e.g. German "vor 3 Monaten") instead of always falling back to English. Root cause: Vite pre-bundles `moment` as an isolated ESM chunk; locale files internally call `require('../moment')` at runtime which hits Node's CJS module cache — a completely separate instance, so locale registrations were lost. Fixed by adding `moment: { type: "cjs" }` to `electronRenderer` resolve in `electron.vite.config.js` (forces all `import moment` to use `require()`, unifying the instance) and loading locale data via `require("moment/locale/de")` / `require("moment/locale/fr")` calls in `store.js` init (static ESM imports of locale sub-paths crash in Vite's strict-mode ESM context because `this` is `undefined` at the top level of an ES module)
 
+#### Dependency Bulk Update (2026-03-08)
+
+- ✅ Ran `npm outdated` and upgraded all outdated packages to latest
+- ✅ Version-pinned all dependencies in package.json (no `^` or `~`)
+- ✅ cheerio 1.0.0-rc.10 → 1.2.0: Changed `import cheerio from "cheerio"` → `import { load as cheerioLoad } from "cheerio"` (default export removed)
+- ✅ html-to-text 5.1.1 → 9.0.5: Changed `import htmlToText from "html-to-text"` → `import { convert as htmlToTextConvert } from "html-to-text"` (default export removed, `fromString` renamed to `convert`, options changed: `wordwrap: null` → `wordwrap: false`, `ignoreImage`/`ignoreHref` → selectors-based config)
+- ✅ requestretry 7 → 8: Added `postman-request` as explicit dependency (requestretry 8 switched from `request` to `postman-request`)
+- ✅ Vuetify 3 v-select slots: `item.raw.Property` → `item.Property` (Vuetify 3.12 passes raw object directly to slots)
+- ✅ Home.vue: `dense` → `density="comfortable"` (deprecated prop)
+- ✅ Added `__VUE_I18N_FULL_INSTALL__` and `__VUE_I18N_LEGACY_API__` build-time defines in electron.vite.config.js
+
+#### Deliberately Held Back Versions
+
+- **vue-router@4.6.4** (not 5.x): vue-router 5 emits `next()` deprecation warnings from its own internals (not fixable in app code). Staying on 4.x until vue-router 5 stabilizes.
+- **vuetify@3.12.2** (not 4.x): Vuetify 4 requires significant layout/component API changes beyond the current scope. Will revisit in a dedicated phase.
+- **vue-i18n@10.0.8** (not 11.x): vue-i18n 11 deprecated legacy API mode which this app uses extensively (Options API with `$t()`). Migrating to Composition API mode would require rewriting all components. Staying on 10.x which supports legacy mode without warnings.
+
 #### In Progress
 
 - 🔄 Testing for remaining console warnings/errors
