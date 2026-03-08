@@ -5,10 +5,9 @@
   "description": "Media Hoarder - THE media frontend for data hoarders and movie lovers",
   "author": "mk2k <npm@hoarder.software> (https://media.hoarder.software)",
   "scripts": {
-    "dev": "electron-vite dev",
-    "dev:lite": "electron-vite dev",
-    "build": "electron-vite build",
-    "preview": "electron-vite preview",
+    "dev": "check-node-version --node ^24 && electron-vite dev",
+    "build": "check-node-version --node ^24 && electron-vite build",
+    "preview": "check-node-version --node ^24 && electron-vite preview",
     "lint": "eslint . --ext .vue,.js --fix --ignore-path .gitignore",
     "audit": "npm audit --production",
     "electron:build": "electron-vite build && electron-builder build --publish never",
