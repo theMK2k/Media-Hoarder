@@ -8,7 +8,7 @@
       </v-card-title>
 
       <v-card-text>
-        {{ question }}
+        <div class="mk-light-grey">{{ question }}</div>
         <v-text-field
           v-if="enterTextValue"
           v-bind:label="textValueCaption"
