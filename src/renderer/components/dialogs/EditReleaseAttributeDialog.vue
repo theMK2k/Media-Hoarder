@@ -12,7 +12,7 @@
         </div>
       </v-card-title>
 
-      <div style="margin-left: 24px">
+      <div style="margin: 12px 24px 12px 24px; display: flex; flex-direction: column; gap: 16px">
         <v-text-field v-model="searchTerm" v-bind:label="$t('Search Term')" v-bind:disabled="isEdit" variant="underlined"></v-text-field>
         <v-text-field v-model="displayAs" v-bind:label="$t('Display As')" variant="underlined"></v-text-field>
       </div>
