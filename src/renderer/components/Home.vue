@@ -3,7 +3,7 @@
     <div style="width: 100%; height: 100%; display: flex; flex-direction: column">
       <h1 style="margin-left: 8px">{{ $t("Home") }}</h1>
       <v-row density="comfortable" style="margin-left: 4px; margin-right: 4px; flex-grow: 0">
-        <v-col v-for="item in items" v-bind:key="item.id" v-on:click="onItemClick(item.id)" cols="12" lg="4" md="6">
+        <v-col v-for="item in items" v-bind:key="item.id" v-on:click="onItemClick(item.id)" cols="12" lg="4" md="6" style="padding: 4px">
           <v-card dark flat hover class="mk-clickable" style="min-height: 130px">
             <!-- :color="item.color" -->
             <div class="d-flex flex-no-wrap justify-space-between">

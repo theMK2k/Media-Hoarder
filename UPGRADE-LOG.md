@@ -317,7 +317,9 @@ This document tracks all dependency upgrades, breaking changes, and workarounds 
 - ✅ cheerio 1.0.0-rc.10 → 1.2.0: Changed `import cheerio from "cheerio"` → `import { load as cheerioLoad } from "cheerio"` (default export removed)
 - ✅ html-to-text 5.1.1 → 9.0.5: Changed `import htmlToText from "html-to-text"` → `import { convert as htmlToTextConvert } from "html-to-text"` (default export removed, `fromString` renamed to `convert`, options changed: `wordwrap: null` → `wordwrap: false`, `ignoreImage`/`ignoreHref` → selectors-based config)
 - ✅ requestretry 7 → 8: Added `postman-request` as explicit dependency (requestretry 8 switched from `request` to `postman-request`)
-- ✅ Vuetify 3 v-select slots: `item.raw.Property` → `item.Property` (Vuetify 3.12 passes raw object directly to slots)
+- ✅ Vuetify 3 v-select slots: Updated to use `item.raw.Property` in custom slots (Vuetify 3 wraps items in an internal object; original data is at `.raw`)
+- ✅ Vuetify 3 v-select events: `v-on:change` → `v-on:update:model-value` (Vuetify 3 dropped `change` event)
+- ✅ **@mdi/font reverted to 4.3.95**: Later versions deprecated icons still used in the app. Pinned to 4.3.95 until icon references are updated
 - ✅ Home.vue: `dense` → `density="comfortable"` (deprecated prop)
 - ✅ Added `__VUE_I18N_FULL_INSTALL__` and `__VUE_I18N_LEGACY_API__` build-time defines in electron.vite.config.js
 

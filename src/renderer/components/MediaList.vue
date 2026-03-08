@@ -70,7 +70,7 @@
           item-value="Field"
           v-model="$shared.sortField"
           v-bind:placeholder="$t('Sort')"
-          style="margin-left: 8px; margin-top: 4px; max-width: 320px"
+          style="margin: 4px 0px 4px 8px; max-width: 320px"
           v-on:update:model-value="onSortChanged"
         >
           <template v-slot:selection="{ item }">
@@ -322,7 +322,7 @@
     <!-- mk-scrollcontainer -->
     <v-container
       class="pa-2"
-      style="max-width: 100% !important"
+      style="max-width: 100% !important; margin-top: 4px"
     >
       <v-row v-for="(mediaItem, i) in itemsFilteredPaginated" v-bind:key="i">
         <v-col style="padding-bottom: 0px; padding-top: 8px">
@@ -1687,6 +1687,7 @@ export default {
       if (!this.$refs.chatGPTDialog) {
         console.error("[openChatGPTDialog] this.$refs.chatGPTDialog is not available");
       } else {
+        console.log('[openChatGPTDialog] initializing chatGPTDialog')
         this.$refs.chatGPTDialog.init();
       }
       this.chatGPTDialog.show = true;
