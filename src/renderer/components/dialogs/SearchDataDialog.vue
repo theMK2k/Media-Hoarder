@@ -12,7 +12,7 @@
         <div class="text-h5" style="width: 100%; font-size: 1.17em">
           {{ title }}
         </div>
-        <v-row style="margin-top: 8px">
+        <v-row style="margin-top: 8px; margin-bottom: 8px">
           <v-text-field
             v-bind:placeholder="$t(`Search___ (use '*' to list all)`)"
             variant="underlined"
@@ -21,12 +21,12 @@
             v-model="searchText"
             v-bind:loading="isLoading"
             v-on:keydown.enter="runSearch"
-            style="padding-top: 0px; margin-left: 12px"
+            style="padding-top: 0px!important; margin-left: 12px"
           ></v-text-field>
-          <v-btn variant="text" v-on:click="runSearch">{{ $t("Search") }}</v-btn>
+          <v-btn variant="text" v-on:click="runSearch" style="margin-top: 12px">{{ $t("Search") }}</v-btn>
         </v-row>
       </v-card-title>
-      <v-card-text>
+      <v-card-text style="padding-top: 0px; padding-left: 4px">
         <v-checkbox
           v-model="sortByNumMovies"
           v-bind:label="
@@ -39,7 +39,7 @@
 
         <v-row
           class="item mk-clickable"
-          style="width: 100%; margin-bottom: 4px"
+          style="width: 100%; margin-bottom: 4px; margin-left: 12px"
           v-for="item in items"
           v-bind:key="item.id"
           v-on:click.stop="onItemClicked(item)"
