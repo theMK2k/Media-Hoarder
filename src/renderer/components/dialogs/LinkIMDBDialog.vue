@@ -99,9 +99,9 @@
                 v-on:mouseover="setItemHovered(item, 'item', true)"
                 v-on:mouseleave="setItemHovered(item, 'item', false)"
               >
-                <v-list-item style="padding-left: 0px">
+                <div style="display: flex; flex-direction: row; padding-left: 0px">
                   <div>
-                    <div style="margin: 6px; height: 100px; width: 80px; border-radius: 0">
+                    <div style="margin: 6px; height: 120px; width: 100px; border-radius: 0">
                       <v-img contain v-if="item.imageURL" v-bind:src="item.imageURL" style="border-radius: 6px"></v-img>
                     </div>
                   </div>
@@ -136,7 +136,7 @@
                       </v-row>
                     </v-col>
                   </div>
-                </v-list-item>
+                </div>
               </v-card>
             </v-col>
           </v-row>
