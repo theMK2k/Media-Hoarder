@@ -96,7 +96,7 @@
 
                   <!-- Primary Title -->
                   <div style="overflow: hidden; text-overflow: ellipsis">
-                    <span v-if="mediaItem.Series_Season_Displaytext" style="font-weight: 400; color: lightgray">
+                    <span v-if="mediaItem.Series_Season_Displaytext" style="font-weight: 400; color: lightgray; margin-right: 8px;">
                       {{ mediaItem.Series_Season_Displaytext
                       }}{{
                         `${mediaItem.Series_Season_Displaytext ? "." : ""}${mediaItem.Series_Episodes_Displaytext}`
