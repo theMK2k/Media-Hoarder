@@ -28,6 +28,7 @@
           v-bind:key="item.code"
           v-bind:label="item.nameTranslated"
           v-model="item.selected"
+          v-bind:disabled="item.disabled"
           style="margin: 0px"
           color="mk-dark-grey"
         ></v-checkbox>
@@ -74,15 +75,17 @@ export default {
   computed: {
     filteredItems() {
       return this.items.filter((item) => {
-        if (this.$shared.regions.findIndex((used) => used.code === item.code) !== -1) {
-          return false;
-        }
-
         if (!this.filter) {
           return true;
         }
 
         return item.nameTranslated.toLowerCase().includes(this.filter.toLowerCase());
+      }).map((item) => {
+        const disabled = (this.$shared.regions.findIndex((used) => used.code === item.code) !== -1);
+
+        return Object.assign({}, item, {
+          disabled,
+        });
       });
     },
 
