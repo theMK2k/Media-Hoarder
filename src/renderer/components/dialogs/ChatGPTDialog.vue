@@ -348,8 +348,10 @@ export default {
             that.browserWindow.webContents
           );
 
-          const content = await that.browserWindow.webContents.executeJavaScript(
-            "document.getElementsByTagName('body')[0].innerHTML"
+          const { body: content, title: docTitle } = JSON.parse(
+            await that.browserWindow.webContents.executeJavaScript(
+              "JSON.stringify({ body: document.getElementsByTagName('body')[0].innerHTML, title: document.title })"
+            )
           );
 
           logger.log("[onStartConversation] content:", content);
@@ -400,8 +402,8 @@ export default {
           that.movies = await that.loadMovies(arr_IMDB_tconst, true);
           that.numMovies = that.movies.length;
 
-          if (/<h1 .*?>(.*?)<\/h1>/s.test(content)) {
-            that.listTitle = "AI: " + content.match(/<h1 .*?>(.*?)<\/h1>/s)[1];
+          if (docTitle && docTitle !== "ChatGPT") {
+            that.listTitle = "AI: " + docTitle;
           }
 
           return;
