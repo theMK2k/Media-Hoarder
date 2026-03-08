@@ -90,7 +90,7 @@
                 v-if="showHistory"
                 variant="text"
                 class="xs-fullwidth"
-                style="margin-right: 8px"
+                style="margin-left: 8px; margin-right: 8px"
                 v-bind:disabled="infoPosition + 1 >= history.length"
                 v-on:click="infoPosition++"
                 >&lt;</v-btn
@@ -113,7 +113,7 @@
         </div>
       </v-card-title>
 
-      <v-card-text v-if="!isLoadingVersionInfo && showHistory" style="color: hsla(0, 0%, 100%, 0.7)">
+      <v-card-text v-if="!isLoadingVersionInfo && showHistory" style="color: hsla(0, 0%, 100%, 0.9)">
         <div class="version-info-content" v-html="versionInfo"></div>
       </v-card-text>
     </v-card>
@@ -338,7 +338,7 @@ export default {
 }
 
 .version-info-content {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .version-info-content :deep(ul),
@@ -369,5 +369,10 @@ export default {
 
 .version-info-content :deep(p) {
   margin-bottom: 8px;
+}
+
+.version-info-content :deep(img) {
+  max-width: 100%;
+  height: auto;
 }
 </style>
