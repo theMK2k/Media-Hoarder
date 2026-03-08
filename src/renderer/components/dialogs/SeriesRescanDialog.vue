@@ -18,24 +18,26 @@
           ></v-radio>
         </v-radio-group>
 
-        <div v-if="radioGroup == 1">
-          <ul>
-            <li>{{ $t("Only updates the series metadata from IMDB") }}</li>
-            <li>{{ $t("Episodes remain unchanged") }}</li>
-            <li>
-              <strong>{{ $t("Faster") }}</strong>
-            </li>
-          </ul>
-        </div>
-
-        <div v-if="radioGroup == 2">
-          <ul>
-            <li>{{ $t("Updates the series metadata from IMDB") }}</li>
-            <li>{{ $t("Also rescans all episodes") }}</li>
-            <li>
-              <strong>{{ $t("This can take a while depending on the number of episodes") }}</strong>
-            </li>
-          </ul>
+        <div class="mk-light-grey" style="margin-left: 12px; margin-top: 12px">
+          <div v-if="radioGroup == 1">
+            <ul>
+              <li>{{ $t("Only updates the series metadata from IMDB") }}</li>
+              <li>{{ $t("Episodes remain unchanged") }}</li>
+              <li>
+                <strong>{{ $t("Faster") }}</strong>
+              </li>
+            </ul>
+          </div>
+  
+          <div v-if="radioGroup == 2">
+            <ul>
+              <li>{{ $t("Updates the series metadata from IMDB") }}</li>
+              <li>{{ $t("Also rescans all episodes") }}</li>
+              <li>
+                <strong>{{ $t("This can take a while depending on the number of episodes") }}</strong>
+              </li>
+            </ul>
+          </div>
         </div>
       </v-card-text>
 
