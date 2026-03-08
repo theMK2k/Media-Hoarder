@@ -5378,6 +5378,7 @@ a {
   text-align: center;
   margin-top: -2px;
   margin-left: 4px;
+  padding-top: 2px;
   width: 30px;
   height: 20px;
 }
