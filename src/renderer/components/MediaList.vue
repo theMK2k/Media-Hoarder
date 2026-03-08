@@ -66,16 +66,16 @@
           density="compact"
           hide-details
           v-bind:items="sortAblesFiltered"
-          item-title="DescriptionTranslated"
+          item-title="Description"
           item-value="Field"
           v-model="$shared.sortField"
           v-bind:placeholder="$t('Sort')"
           style="margin-left: 8px; margin-top: 4px; max-width: 320px"
-          v-on:change="onSortChanged"
+          v-on:update:model-value="onSortChanged"
         >
           <template v-slot:selection="{ item }">
             <span style="color: #929292; font-size: 14px; margin-right: 8px">{{ $t("Sort by") }}</span>
-            <span>{{ item?.Description ? $t(item.Description) : "" }}</span>
+            <span>{{ item?.raw?.Description ? $t(item.raw.Description) : "" }}</span>
           </template>
         </v-select>
 
@@ -242,16 +242,16 @@
             clearable
             hide-details
             v-bind:items="sortAblesFiltered"
-            item-title="DescriptionTranslated"
+            item-title="Description"
             item-value="Field"
             v-model="$shared.sortField"
             v-bind:placeholder="$t('Sort')"
             style="margin-left: 150px; margin-top: 8px; max-width: 320px"
-            v-on:change="onSortChanged"
+            v-on:update:model-value="onSortChanged"
           >
             <template v-slot:selection="{ item }">
               <span style="color: #929292; font-size: 14px; margin-right: 8px">{{ $t("Sort by") }}</span>
-              <span>{{ item?.Description ? $t(item.Description) : "" }}</span>
+              <span>{{ item?.raw?.Description ? $t(item.raw.Description) : "" }}</span>
             </template>
           </v-select>
 
