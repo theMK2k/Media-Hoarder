@@ -15,7 +15,7 @@
       <v-card-text>
         <p>
           {{ $t("Click the button below and ask the AI to list movies according to your criteria_") }}
-          <strong>{{ $t("It is recommended to also ask for the release year_") }}</strong>
+          <strong>{{ $t("It is recommended to also ask for IMDB IDs_") }}</strong>
         </p>
 
         <v-btn class="xs-fullwidth" variant="tonal" color="primary" v-on:click="onStartConversation" style="margin-left: 8px">
