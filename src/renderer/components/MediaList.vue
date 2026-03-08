@@ -1570,7 +1570,7 @@ export default {
 
         logger.log("[showTrailer] trailerMediaURLs:", trailerMediaURLs);
 
-        const dontUseLocalPlayer = false; // set this to true in order to force an iframe player
+        const dontUseLocalPlayer = false; // DEBUG: set this to true in order to force an iframe player
 
         this.trailerShow = trailerShow;
 
