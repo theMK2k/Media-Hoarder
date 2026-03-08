@@ -46,7 +46,7 @@ const log = {
   maxLevel: 0,
 };
 
-(async () => {
+module.exports = (async () => {
   logger.info("Syntax: media-hoarder-imdb-scraper-watchdog [options]");
   logger.info("");
   logger.info("options:");

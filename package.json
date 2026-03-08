@@ -22,8 +22,8 @@
     "find-imdb-tconst-tests": "node ./src/tests/find-imdb-tconst-tests.js",
     "format": "npx prettier --write \"./**/*.{js,vue}\"",
     "format:check": "npx prettier --check \"./**/*.{js,vue}\"",
-    "imdb-scraper-watchdog": "electron ./src/media-hoarder-imdb-scraper-watchdog.js",
-    "imdb-scraper-watchdog-local": "electron ./src/media-hoarder-imdb-scraper-watchdog.js --useDumps --dumpScrapedHTML",
+    "imdb-scraper-watchdog": "electron ./src/media-hoarder-imdb-scraper-watchdog-electron.js",
+    "imdb-scraper-watchdog-local": "electron ./src/media-hoarder-imdb-scraper-watchdog-electron.js --useDumps --dumpScrapedHTML",
     "mediainfo-watchdog": "node ./src/media-hoarder-mediainfo-watchdog.js",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
@@ -129,8 +129,12 @@
     "xml2js": "0.6.2"
   },
   "devDependencies": {
+    "@babel/preset-env": "7.29.0",
+    "@babel/register": "7.28.6",
     "@vitejs/plugin-vue": "5.2.3",
     "@vue/eslint-config-prettier": "8.0.0",
+    "babel-plugin-add-module-exports": "1.0.4",
+    "babel-plugin-module-resolver": "5.0.2",
     "check-node-version": "4.2.1",
     "electron": "39.2.7",
     "electron-builder": "25.1.8",

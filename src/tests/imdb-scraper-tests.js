@@ -1,4 +1,4 @@
-const imdbScraper = require("../imdb-scraper");
+const imdbScraper = require("../renderer/imdb-scraper");
 
 const logger = require("../helpers/logger");
 
