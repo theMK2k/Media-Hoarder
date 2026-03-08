@@ -1672,7 +1672,7 @@ export {
   testIMDBTrailerMediaURLs,
   testIMDBplotKeywords,
   testIMDBFilmingLocations,
-  testIMDBRatingDemographics,
+  // testIMDBRatingDemographics,
   testIMDBSuggestion,
   testIMDBAdvancedTitleSearch,
   testIMDBFindPageSearch,
