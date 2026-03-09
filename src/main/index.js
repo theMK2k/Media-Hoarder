@@ -118,7 +118,7 @@ function createWindow() {
     win.loadFile(path.join(__dirname, "../renderer/index.html"));
 
     // DEBUG: Open DevTools in production to diagnose data path issues
-    win.webContents.openDevTools();
+    // win.webContents.openDevTools();
   }
 
   win.on("resize", _.debounce(mainWindowState.saveState, 500));
