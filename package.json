@@ -47,6 +47,11 @@
       "icon": "build/icons/icon.ico",
       "target": [
         "dir"
+      ],
+      "signExts": [
+        "!\\bin\\win\\mediainfo-cli\\MediaInfo.exe",
+        "!\\bin\\win\\vlc\\vlc.exe",
+        "!\\bin\\win\\vlc\\vlc-cache-gen.exe"
       ]
     },
     "linux": {
