@@ -2,7 +2,7 @@
 
 ## Prio 0
 
-- [ ] on build: download a fresh easylist.txt and include it in the build (see: https://easylist.to/easylist/easylist.txt)
+- [ ] BUG: release years filter: "deselect all" leads to 48 selected years
 
 - [ ] make use of [imdbapi.dev](https://imdbapi.dev/) in case fetching from IMDB is unsuccessful
 
