@@ -187,10 +187,16 @@ npm start
 npm run electron:build
 ```
 
-### Compiles and creates .deb and .AppImage packages for Linux
+### Compiles and creates packages for Linux and FreeBSD
+
+**Note**: for flatpak and pacman packages you need to have the following tools installed:
+
+- flatpak
+- flatpak-builder
+- fakeroot (for pacman)
 
 ```bash
-npm run electron:build-linux
+./build-linux.sh
 ```
 
 ### Compiles and creates .deb package for Raspberry Pi (armhf architecture)
