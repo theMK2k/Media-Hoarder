@@ -195,6 +195,7 @@ npm start
 - flatpak
 - flatpak-builder
 - fakeroot (for pacman)
+- libarchive-tools (for bsdtar, pacman)
 
 ```bash
 ./build-linux.sh

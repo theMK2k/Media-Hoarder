@@ -37,9 +37,9 @@ mv dist/*.AppImage RELEASE/media-hoarder-VERSION-linux-x64.AppImage && \
 mv dist/*.snap RELEASE/media-hoarder-VERSION-linux-x64.snap && \
 mv dist/*.rpm RELEASE/media-hoarder-VERSION-linux-x64.rpm && \
 mv dist/*.flatpak RELEASE/media-hoarder-VERSION-linux-x64.flatpak && \
-mv dist/*.pkg.tar.zst RELEASE/media-hoarder-VERSION-linux-x64.pkg.tar.zst && \
 mv dist/*.apk RELEASE/media-hoarder-VERSION-linux-x64.apk && \
 mv dist/*.freebsd RELEASE/media-hoarder-VERSION-linux-x64.freebsd && \
+mv dist/*.pacman RELEASE/media-hoarder-VERSION-linux-x64.pacman && \
 node set-release-version.js && \
 rimraf dist
 
