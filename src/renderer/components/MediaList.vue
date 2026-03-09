@@ -666,6 +666,7 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from "vue";
 import StarRating from "vue-star-rating";
 
 // Use window.require for CommonJS modules that don't work with Vite
@@ -690,7 +691,7 @@ import RatingDemographicsDialog from "@/components/dialogs/RatingDemographicsDia
 import Dialog from "@/components/dialogs/Dialog.vue";
 import ChatGPTDialog from "@/components/dialogs/ChatGPTDialog.vue";
 
-import MediaPropertyDialog from "@/components/dialogs/MediaPropertyDialog.vue";
+const MediaPropertyDialog = defineAsyncComponent(() => import("@/components/dialogs/MediaPropertyDialog.vue"));
 import SeriesIMDBRatingHeatmapDialog from "@/components/dialogs/SeriesIMDBRatingHeatmapDialog.vue";
 import SeriesRescanDialog from "@/components/dialogs/SeriesRescanDialog.vue";
 
