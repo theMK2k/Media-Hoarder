@@ -7,10 +7,7 @@ echo "IMPORTANT: BUILDING STABLE VERSION"
 
 rm ./RELEASE/*
 
-npx browserslist@latest --update-db
-
-#npm run electron:build-win-portable
-#npm run electron:build-win-setup
+npx update-browserslist-db@latest
 
 # Build Windows Portable
 check-node-version --node  ^24 && \

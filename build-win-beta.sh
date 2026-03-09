@@ -6,8 +6,32 @@ rm ./RELEASE/*
 
 npx browserslist@latest --update-db
 
-npm run electron:build-win-portable-beta
-npm run electron:build-win-setup-beta
+# Build Windows BETA Portable
+check-node-version --node  ^24 && \
+bash check-killme.sh&& \
+bash check-package.json.sh&& \
+npx mkdirp RELEASE&& \
+node set-portable --portable=true&& \
+npx dotenv-cli -e .env.beta electron-vite build&& \
+electron-builder build --win&& \
+mv dist/win-unpacked media-hoarder-portable&& \
+npx bestzip RELEASE/media-hoarder-VERSION-win-x64-portable.zip media-hoarder-portable&& \
+npx rimraf media-hoarder-portable&& \
+node set-portable --portable=false&& \
+node set-release-version.js&& \
+rimraf dist
+
+# Build Windows BETA Setup
+check-node-version --node  ^24&& \
+bash check-killme.sh&& \
+bash check-package.json.sh&& \
+npx mkdirp RELEASE&& \
+node set-portable --portable=false&& \
+npx dotenv-cli -e .env.beta electron-vite build&& \
+electron-builder build --win nsis&& \
+mv dist/*.exe RELEASE/media-hoarder-VERSION-win-x64-setup.exe&& \
+node set-release-version.js&& \
+rimraf dist
 
 cd RELEASE
 

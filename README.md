@@ -54,7 +54,6 @@ _Details of an actor and their involvement in series / episodes_
 - Tons of metadata from imdb.com including poster images
 - Metadata from mediainfo analysis
 - Filter by multiple criteria
-
   - Source Paths (e.g. distinguish between files on your NAS and locally available ones)
   - Video Quality (e.g. 720p, HD, 4k etc.)
   - Audio Languages
@@ -184,7 +183,9 @@ npm start
 ### Compiles and minifies for production
 
 ```bash
-npm run electron:build
+./build-linux.sh
+./build-mac.sh
+./build-win-stable.sh
 ```
 
 ### Compiles and creates packages for Linux and FreeBSD
@@ -205,10 +206,10 @@ npm run electron:build
 npm run electron:build-rpi
 ```
 
-### Compiles and creates .zip and .dmg packages for MacOS
+### Compiles and creates .dmg packages for MacOS
 
 ```bash
-npm run electron:build-mac
+./build-mac.sh
 ```
 
 ## Known Issues

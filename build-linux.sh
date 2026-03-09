@@ -5,11 +5,9 @@ export PATH="$(pwd)/node_modules/.bin:$PATH"
 
 rm ./RELEASE/*
 
-npx browserslist@latest --update-db
+npx update-browserslist-db@latest
 
 npm i
-
-#npm run electron:build-linux-portable; npm run electron:build-linux-setup
 
 # Build Linux Portable
 check-node-version --node ^24 && \
