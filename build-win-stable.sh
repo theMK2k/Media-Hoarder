@@ -7,6 +7,8 @@ echo "IMPORTANT: BUILDING STABLE VERSION"
 
 rm ./RELEASE/*
 
+bash fetch-easylist.sh
+
 npx update-browserslist-db@latest
 
 # Build Windows Portable

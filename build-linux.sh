@@ -7,6 +7,8 @@ rm ./RELEASE/*
 
 npx update-browserslist-db@latest
 
+bash fetch-easylist.sh
+
 npm i
 
 # Build Linux Portable

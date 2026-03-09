@@ -7,6 +7,8 @@ rm ./RELEASE/*
 
 npx update-browserslist-db@latest
 
+bash fetch-easylist.sh
+
 npm i
 
 # Build for Mac
@@ -16,8 +18,8 @@ bash check-package.json.sh && \
 npx mkdirp RELEASE && \
 node set-portable --portable=false && \
 electron-vite build && \
-electron-builder build --mac dmg && \
-mv dist/*.dmg RELEASE/media-hoarder-VERSION-mac.dmg && \
+electron-builder build --mac dmg --universal && \
+mv dist/*.dmg RELEASE/media-hoarder-VERSION-mac-universal.dmg && \
 node set-release-version.js && \
 rimraf dist
 

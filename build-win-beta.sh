@@ -4,6 +4,8 @@ echo "IMPORTANT: BUILDING BETA VERSION"
 
 rm ./RELEASE/*
 
+bash fetch-easylist.sh
+
 npx browserslist@latest --update-db
 
 # Build Windows BETA Portable
