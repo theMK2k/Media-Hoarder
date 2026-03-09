@@ -48,9 +48,14 @@
     },
     "linux": {
       "icon": "build/icons",
+      "category": "AudioVideo",
       "target": [
         "dir"
       ]
+    },
+    "flatpak": {
+      "runtimeVersion": "24.08",
+      "baseVersion": "24.08"
     },
     "mac": {
       "icon": "build/icons/icon.icns",
