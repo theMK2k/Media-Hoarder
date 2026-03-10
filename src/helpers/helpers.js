@@ -379,8 +379,13 @@ async function requestAsync(options) {
 }
 
 function ensureDirectorySync(path) {
-  if (!fs.existsSync(path)) {
-    fs.mkdirSync(path);
+  try {
+
+    if (!fs.existsSync(path)) {
+      fs.mkdirSync(path);
+    }
+  } catch(err) {
+    
   }
 }
 
