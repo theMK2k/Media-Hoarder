@@ -2,8 +2,6 @@
 
 ## Prio 0
 
-- [ ] BUG: release years filter: "deselect all" leads to 48 selected years
-
 - [ ] make use of [imdbapi.dev](https://imdbapi.dev/) in case fetching from IMDB is unsuccessful
 
 - [ ] open series from compact view (e.g. series list in person dialog)
