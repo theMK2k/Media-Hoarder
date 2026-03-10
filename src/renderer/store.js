@@ -4836,7 +4836,7 @@ async function fetchMedia({
     throw new Error("[fetchMedia] $MediaType missing");
   }
 
-  logger.log("[fetchMedia] filters:", filters);
+  logger.log("[fetchMedia] filters:", JSON.parse(JSON.stringify(filters)));
 
   const filterQuery = generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst);
 

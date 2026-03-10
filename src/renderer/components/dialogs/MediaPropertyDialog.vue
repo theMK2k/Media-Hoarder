@@ -72,11 +72,17 @@
           </div>
           <div style="flex: 1; min-width: 0" class="mk-compact-text">
             <v-col style="padding: 0px 0px 0px 4px !important" sm="12">
-              <v-row v-if="propertyTypeKey === 'person'" class="person-bio mk-light-grey" style="margin: 0px 6px 8px 0px">
+              <v-row
+                v-if="propertyTypeKey === 'person'"
+                class="person-bio mk-light-grey"
+                style="margin: 0px 6px 8px 0px"
+              >
                 <div
                   v-if="!showDescriptionLong"
                   style="font-size: 0.875rem; font-weight: normal"
-                  v-bind:class="{ 'mk-clickable-light-grey': detailData.DescriptionShort !== detailData.DescriptionLong }"
+                  v-bind:class="{
+                    'mk-clickable-light-grey': detailData.DescriptionShort !== detailData.DescriptionLong,
+                  }"
                   v-on:click.stop="
                     showDescriptionLong = detailData.DescriptionShort !== detailData.DescriptionLong ? true : false
                   "
@@ -219,13 +225,9 @@
 
       <v-card-actions>
         <!-- Button: Close -->
-        <v-btn
-          class="xs-fullwidth"
-          variant="tonal"
-          color="secondary"
-          v-on:click="onCloseClick"
-          >{{ $t("Close") }}</v-btn
-        >
+        <v-btn class="xs-fullwidth" variant="tonal" color="secondary" v-on:click="onCloseClick">{{
+          $t("Close")
+        }}</v-btn>
 
         <!-- Button: IMDB -->
         <v-btn
@@ -398,6 +400,10 @@ export default {
         person: {
           title: "Person",
           filterButtonText: "Filter by this person",
+        },
+        list: {
+          title: "List",
+          filterButtonText: "Filter by this list",
         },
       },
 
@@ -578,6 +584,9 @@ export default {
         case "person":
           queryParams.$IMDB_Person_ID = this.propertyValue;
           break;
+        case "list":
+          queryParams.$id_Lists = this.propertyValue;
+          break;
       }
 
       const query = `
@@ -659,11 +668,17 @@ export default {
                       ? `AND (MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_MI_Qualities MOVQ WHERE MOVQ.MI_Quality = $Video_Quality AND MOVQ.deleted = 0))`
                       : ""
                   }
+                  ${
+                    this.propertyTypeKey === "list"
+                      ? `AND (MOV.id_Movies IN (SELECT id_Movies FROM tbl_Lists_Movies LM WHERE LM.id_Lists = $id_Lists))`
+                      : ""
+                  }
                   ${this.propertyTypeKey === "person" ? `AND MC.IMDB_Person_ID = $IMDB_Person_ID` : ""}
           )
         `;
 
       logger.log(`[MediaPropertyDialog ${this.propertyTypeKey} init] queryParams:`, queryParams);
+      logger.log(`[MediaPropertyDialog ${this.propertyTypeKey} init] query:`, query);
 
       try {
         if (this.propertyTypeKey === "person") {
@@ -767,6 +782,9 @@ export default {
           await store.addFilterPerson(this.propertyValue, this.propertyValueDisplayText);
           setFilter.filterPersons = [this.propertyValue];
           eventBus.personDialogConfirm(setFilter);
+          break;
+        case "list":
+          setFilter.filterLists = [this.propertyValueDisplayText];
           break;
       }
 
@@ -983,7 +1001,19 @@ export default {
                 IMDB_Person_ID: this.propertyValue,
               },
             ];
+            break;
+          case "list":
+            filters.filterLists = [
+              { id_Lists: 0, Selected: false },
+              {
+                id_Lists: this.propertyValue,
+                Selected: true,
+              },
+            ];
+            break;
         }
+
+        logger.log("[fetchMediaItems] filters:", filters);
 
         const options = {
           $MediaType: type === "episodes" ? "series" : type,
@@ -1134,10 +1164,17 @@ export default {
       logger.log("[MediaPropertyDialog.onMICmediaItemEvent] payload:", payload);
 
       const propertyEventNames = [
-        "ageRatingClicked", "audioFormatClicked", "languageClicked",
-        "companyClicked", "filmingLocationClicked", "genreClicked",
-        "creditClicked", "plotKeywordClicked", "releaseAttributeClicked",
-        "videoEncoderClicked", "videoQualityClicked",
+        "ageRatingClicked",
+        "audioFormatClicked",
+        "languageClicked",
+        "companyClicked",
+        "filmingLocationClicked",
+        "genreClicked",
+        "creditClicked",
+        "plotKeywordClicked",
+        "releaseAttributeClicked",
+        "videoEncoderClicked",
+        "videoQualityClicked",
       ];
 
       if (propertyEventNames.includes(payload.eventName)) {

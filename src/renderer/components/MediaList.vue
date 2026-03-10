@@ -150,7 +150,6 @@
             </v-list>
           </v-menu>
         </div>
-
       </template>
 
       <!-- Top Row for Series Episodes - showing the series title -->
@@ -314,16 +313,12 @@
               </v-list>
             </v-menu>
           </div>
-
         </div>
       </template>
     </v-row>
 
     <!-- mk-scrollcontainer -->
-    <v-container
-      class="pa-2"
-      style="max-width: 100% !important; margin-top: 4px"
-    >
+    <v-container class="pa-2" style="max-width: 100% !important; margin-top: 4px">
       <v-row v-for="(mediaItem, i) in itemsFilteredPaginated" v-bind:key="i">
         <v-col style="padding-bottom: 0px; padding-top: 8px">
           <mk-media-item-card
@@ -488,6 +483,21 @@
       v-on:close="releaseAttributeDialog.show = false"
       v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-release-attribute-dialog>
+
+    <mk-property-list-dialog
+      ref="propertyListDialog"
+      v-bind:mediaType="mediatype"
+      v-bind:show="propertyListDialog.show"
+      v-bind:isInDialog="propertyListDialog.isInDialog"
+      v-bind:Series_id_Movies_Owner="MediaPropertyDialog_Series_id_Movies_Owner"
+      v-bind:Series_Name="series.item.Name"
+      v-bind:Series_Year_Display="series.item.yearDisplay"
+      propertyTypeKey="list"
+      v-bind:propertyValue="propertyListDialog.list?.id_Lists"
+      v-bind:propertyValueDisplayText="propertyListDialog.list?.Name"
+      v-on:close="propertyListDialog.show = false"
+      v-on:mediaItemEvent="onMICmediaItemEvent"
+    ></mk-property-list-dialog>
 
     <mk-subtitle-language-dialog
       ref="subtitleLanguageDialog"
@@ -728,6 +738,7 @@ export default {
     "mk-subtitle-language-dialog": MediaPropertyDialog,
     "mk-video-encoder-dialog": MediaPropertyDialog,
     "mk-video-quality-dialog": MediaPropertyDialog,
+    "mk-property-list-dialog": MediaPropertyDialog,
 
     "mk-series-imdb-rating-heatmap-dialog": SeriesIMDBRatingHeatmapDialog,
     "mk-series-rescan-dialog": SeriesRescanDialog,
@@ -859,6 +870,14 @@ export default {
     releaseAttributeDialog: {
       show: false,
       ReleaseAttribute: null,
+      movie: null,
+      Series_id_Movies_Owner: null,
+      isInDialog: false,
+    },
+
+    propertyListDialog: {
+      show: false,
+      list: null,
       movie: null,
       Series_id_Movies_Owner: null,
       isInDialog: false,
@@ -1687,7 +1706,7 @@ export default {
       if (!this.$refs.chatGPTDialog) {
         console.error("[openChatGPTDialog] this.$refs.chatGPTDialog is not available");
       } else {
-        console.log('[openChatGPTDialog] initializing chatGPTDialog')
+        console.log("[openChatGPTDialog] initializing chatGPTDialog");
         this.$refs.chatGPTDialog.init();
       }
       this.chatGPTDialog.show = true;
@@ -2116,6 +2135,16 @@ export default {
       this.$refs.releaseAttributeDialog.init(releaseAttribute);
 
       this.releaseAttributeDialog.show = true;
+    },
+
+    mpdShowListDialog(list, movie, isInDialog) {
+      this.propertyListDialog.list = list;
+      this.propertyListDialog.movie = movie;
+      this.propertyListDialog.isInDialog = !!isInDialog;
+
+      this.$refs.propertyListDialog.init(list);
+
+      this.propertyListDialog.show = true;
     },
 
     mpdShowVideoEncoderDialog(videoEncoder, isInDialog) {
@@ -3069,6 +3098,10 @@ export default {
         case "videoQualityClicked":
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
           await this.mpdShowVideoQualityDialog(payload.MI_Qualities_Item, payload.isInDialog);
+          break;
+        case "listClicked":
+          this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
+          await this.mpdShowListDialog(payload.list, payload.mediaItem, payload.isInDialog);
           break;
 
         default:

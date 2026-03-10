@@ -956,6 +956,13 @@
                       <v-spacer></v-spacer>
                       <v-icon
                         size="24"
+                        class="mk-clickable"
+                        v-if="list.id_Lists"
+                        v-on:click=""
+                        >mdi-eye-outline</v-icon
+                      >
+                      <v-icon
+                        size="24"
                         class="mk-clickable-red"
                         v-if="list.id_Lists"
                         v-on:click="
@@ -5063,6 +5070,8 @@ export default {
       if (!setFilter) {
         return;
       }
+
+      logger.log('[eventBus setFilter] setFilter:', setFilter);
 
       if (setFilter.filterLists) {
         this.setAllFilterLists(false, setFilter.filterLists);

@@ -2,6 +2,13 @@
 
 ## Prio 0
 
+- [WIP] show dialog when a list is clicked
+  - [ ] what about onMICmediaItemEvent?
+- [ ] sidebar filters: a button per item to open the filter dialog (e.g. My Lists - SciFi Classics)
+  - on click, fire a new eventBus event that trigger MediaList's onMICmediaItemEvent
+
+
+
 - [ ] make use of [imdbapi.dev](https://imdbapi.dev/) in case fetching from IMDB is unsuccessful
 
 - [ ] open series from compact view (e.g. series list in person dialog)
@@ -49,9 +56,6 @@
     - [ ] set retention volume (default = 3 db copies)
     - [ ] use data/backups folder to store the files
 
-- [ ] Delete/Remove Media
-  - provide choice between "Delete the media" and "Remove from library"
-
 - [ ] house keeping
   - [ ] VACUUM after scan
   - [ ] look into PRAMGA OPTIMIZE <https://sqlite.org/pragma.html#pragma_optimize>
@@ -59,8 +63,6 @@
 - [ ] create a top-list scoring
   - see https://chatgpt.com/c/680d6f2e-7be8-8012-9fcc-ee3b839a892e
   - https://help.imdb.com/article/imdb/featured-content/why-doesn-t-a-title-with-the-average-user-vote-of-9-4-appear-in-your-top-250-movies-or-tv-list/GTU67Q5QQ8W53RJT#
-
-- [ ] mac build: try to build a universal binary (arm64 + x64) in order to support both Intel and Apple Silicon based Macs with one download
 
 ```text
       (WR) = (v ÷ (v+m)) × R + (m ÷ (v+m)) × C
@@ -75,10 +77,6 @@
 - [ ] Scraper: scrapeIMDBCompaniesDataV3 - use the page to identify the categories (e.g. <https://www.imdb.com/title/tt0095327/companycredits/>)
 
 - [ ] Scraper - Fix Trailer URL expectation
-
-- [ ] BUG: "filter by this Language" does not work
-
-- [ ] sidebar filters: a button per item to open the filter dialog (e.g. My Lists - SciFi Classics)
 
 - [ ] series card doesn't show all release attributes (e.g. it should show "BD, WEB", but only shows "WEB" - see House of the Dragon)
 

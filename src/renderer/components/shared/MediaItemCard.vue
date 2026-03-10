@@ -629,9 +629,12 @@
           <span v-if="mediaItem.lists && mediaItem.lists.length > 0">
             <span v-for="(list, index) in mediaItem.lists" v-bind:key="index">
               <span v-if="index > 0">,&nbsp;</span>
-              <span v-bind:class="{ 'mk-search-highlight': $shared.filterListsAppliedContains(list.Name) }">{{
-                list.Name
-              }}</span>
+              <span
+                class="mk-clickable"
+                v-bind:class="{ 'mk-search-highlight': $shared.filterListsAppliedContains(list.Name) }"
+                v-on:click.stop="emitMediaItemEvent('listClicked', { mediaItem, list, isInDialog })"
+                >{{ list.Name }}</span
+              >
             </span>
           </span>
           <span v-if="!mediaItem.lists || mediaItem.lists.length === 0">&lt;{{ $t("not in any list") }}&gt;</span>
