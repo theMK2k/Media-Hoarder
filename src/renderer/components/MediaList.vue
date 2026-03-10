@@ -330,7 +330,6 @@
             v-bind:mediaItem="mediaItem"
             v-bind:isScanning="isScanning"
             v-bind:isInDialog="false"
-            v-bind:allowMediaItemClick="true"
             v-bind:allowEditButtons="true"
             v-on:mediaItemEvent="onMICmediaItemEvent"
           ></mk-media-item-card>

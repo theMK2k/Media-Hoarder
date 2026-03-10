@@ -2,7 +2,12 @@
 
 ## Prio 0
 
+- [ ] on build: download a fresh easylist.txt and include it in the build (see: https://easylist.to/easylist/easylist.txt)
+
 - [ ] make use of [imdbapi.dev](https://imdbapi.dev/) in case fetching from IMDB is unsuccessful
+
+- [ ] open series from compact view (e.g. series list in person dialog)
+  -> clicking the series however, expands the episodes list
 
 - [ ] BUG: rescan specific media leads to removal of "last access at"
   - "last access at" (on the series - not the episode) is gone if a media moved

@@ -4,8 +4,8 @@
     flat
     hover
     v-bind:ripple="false"
-    v-on:click="allowMediaItemClick && emitMediaItemEvent('selectMediaItem', { mediaItem })"
-    v-bind:style="{ cursor: allowMediaItemClick ? 'pointer' : 'default!important' }"
+    v-on:click="emitMediaItemEvent('selectMediaItem', { mediaItem })"
+    v-bind:style="{ cursor: 'pointer' }"
   >
     <div style="display: flex; flex-direction: row; align-items: flex-start">
       <!-- Poster -->
@@ -992,7 +992,7 @@ import * as helpers from "@helpers/helpers.js";
 import * as store from "@/store.js";
 
 export default {
-  props: ["mediaItem", "isScanning", "showCloseButton", "allowMediaItemClick", "allowEditButtons", "isInDialog"],
+  props: ["mediaItem", "isScanning", "showCloseButton", "allowEditButtons", "isInDialog"],
   emits: ["close", "mediaItemEvent"],
   components: { "word-highlighter": WordHighlighter, "star-rating": StarRating },
   data() {
