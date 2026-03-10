@@ -2,6 +2,9 @@
 
 echo "IMPORTANT: BUILDING BETA VERSION"
 
+# allow also running npm installed tools
+export PATH="$(pwd)/node_modules/.bin:$PATH"
+
 rm ./RELEASE/*
 
 bash fetch-easylist.sh
