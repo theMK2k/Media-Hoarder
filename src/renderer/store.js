@@ -4903,8 +4903,8 @@ async function fetchMedia({
         , NULL AS MI_Subtitle_Languages
         , NULL AS IMDB_posterSmall_URL
         , NULL AS SeriesOwner_IMDB_posterSmall_URL
-        , NULL AS SeriesOwner_IMDB_tconst
-        , NULL AS IMDB_posterLarge_URL
+        , MOV.IMDB_posterSmall_URL
+        , MOV_SeriesOwner.IMDB_posterSmall_URL AS SeriesOwner_IMDB_posterSmall_URL
         , IFNULL(MOV.plotSummaryFull, IFNULL(MOV.IMDB_plotSummaryFull_Translated, MOV.IMDB_plotSummaryFull)) AS plotSummaryFull
         , NULL AS Genres
         , NULL AS IMDB_Parental_Advisory_Nudity
