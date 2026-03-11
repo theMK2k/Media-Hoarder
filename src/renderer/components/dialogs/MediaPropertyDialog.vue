@@ -16,7 +16,9 @@
             ? Language
               ? `${$t(`LanguageNames.${Language}`)} (${propertyValueDisplayText})`
               : propertyValueDisplayText
-            : propertyValueDisplayText
+            : propertyTypeKey == "content-advisory" && propertyValue
+              ? `${$t(`ParentalAdvisoryCategories.${propertyValue.category}`)}: ${$t(contentAdvisorySeverityText)}`
+              : propertyValueDisplayText
         }}
         <v-tooltip v-if="propertyTypeKey == 'person' && isTitleHovered" bottom>
           <template v-slot:activator="{ props }">
@@ -321,6 +323,13 @@ export default {
       return this.propertyTypes[this.propertyTypeKey];
     },
 
+    // Content Advisory Dialog
+    contentAdvisorySeverityText() {
+      if (this.propertyTypeKey !== "content-advisory" || !this.propertyValue) return "";
+      const severityTexts = { "-1": "<not available>", 0: "None", 1: "Mild", 2: "Moderate", 3: "Severe" };
+      return severityTexts[this.propertyValue.severity] || "<not available>";
+    },
+
     // Language Dialog
     Language() {
       if (this.propertyTypeKey !== "audio-language" && this.propertyTypeKey !== "subtitle-language") {
@@ -388,6 +397,10 @@ export default {
         "release-attribute": {
           title: "Release Attribute",
           filterButtonText: "Filter by this release attribute",
+        },
+        "content-advisory": {
+          title: "Content Advisory",
+          filterButtonText: "Filter by this content advisory",
         },
         "my-rating": {
           title: "My Ratings",
@@ -583,6 +596,11 @@ export default {
         case "plot-keyword":
           queryParams.$id_IMDB_Plot_Keywords = this.propertyValue;
           break;
+        case "content-advisory":
+          if (this.propertyValue.severity >= 0) {
+            queryParams.$PA_Severity = this.propertyValue.severity;
+          }
+          break;
         case "my-rating":
           if (this.propertyValue) {
             queryParams.$Rating = this.propertyValue;
@@ -679,6 +697,7 @@ export default {
                          }, "")})`
                       : ""
                   }
+                  ${this.propertyTypeKey === "content-advisory" ? (this.propertyValue.severity >= 0 ? `AND MOV.IMDB_Parental_Advisory_${this.propertyValue.category} = $PA_Severity` : `AND MOV.IMDB_Parental_Advisory_${this.propertyValue.category} IS NULL`) : ""}
                   ${this.propertyTypeKey === "my-rating" ? (this.propertyValue ? `AND MOV.Rating = $Rating` : `AND (MOV.Rating IS NULL OR MOV.Rating = 0)`) : ""}
                   ${this.propertyTypeKey === "release-year" ? `AND MOV.startYear = $startYear` : ""}
                   ${
@@ -789,6 +808,13 @@ export default {
           break;
         case "release-attribute":
           setFilter.filterReleaseAttributes = [this.propertyValue];
+          break;
+        case "content-advisory":
+          setFilter.filterParentalAdvisory = {};
+          setFilter.filterParentalAdvisory[this.propertyValue.category] =
+            this.$shared.filters.filterParentalAdvisory[this.propertyValue.category].filter((pa) => {
+              return pa.Severity === this.propertyValue.severity;
+            });
           break;
         case "my-rating":
           setFilter.filterRatings = this.$shared.filters.filterRatings.filter((rating) => {
@@ -996,6 +1022,16 @@ export default {
                 isAny: false,
                 Selected: true,
                 ReleaseAttribute: this.propertyValue,
+              },
+            ];
+            break;
+          case "content-advisory":
+            filters.filterParentalAdvisory = {};
+            filters.filterParentalAdvisory[this.propertyValue.category] = [
+              { Severity: -999, Selected: false },
+              {
+                Severity: this.propertyValue.severity,
+                Selected: true,
               },
             ];
             break;
@@ -1223,6 +1259,7 @@ export default {
         "videoQualityClicked",
         "releaseYearClicked",
         "myRatingClicked",
+        "contentAdvisoryClicked",
       ];
 
       if (propertyEventNames.includes(payload.eventName)) {
@@ -1316,6 +1353,12 @@ export default {
           cd.propertyTypeKey = "my-rating";
           cd.propertyValue = payload.rating;
           cd.propertyValueDisplayText = payload.rating ? helpers.getStarRatingString(payload.rating) : `<${this.$local_t("not yet rated")}>`;
+          cd.imdbTconst = null;
+          break;
+        case "contentAdvisoryClicked":
+          cd.propertyTypeKey = "content-advisory";
+          cd.propertyValue = { category: payload.category, severity: payload.severity };
+          cd.propertyValueDisplayText = null;
           cd.imdbTconst = null;
           break;
       }

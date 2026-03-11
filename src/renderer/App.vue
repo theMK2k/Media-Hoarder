@@ -1832,6 +1832,7 @@
                             </v-tooltip>
                           </v-row>
                           <v-row
+                            style="align-items: center"
                             v-for="paItem in $shared.filters.filterParentalAdvisory[category.Name]"
                             v-bind:key="paItem.Severity"
                           >
@@ -1847,6 +1848,18 @@
                               "
                               color="mk-dark-grey"
                             ></v-checkbox>
+                            <v-spacer></v-spacer>
+                            <v-icon
+                              size="24"
+                              class="mk-clickable"
+                              v-on:click="
+                                eventBus.showContentAdvisoryDialog({
+                                  category: category.Name,
+                                  severity: paItem.Severity,
+                                })
+                              "
+                              >mdi-eye-outline</v-icon
+                            >
                           </v-row>
                         </v-expansion-panel-text>
                       </v-expansion-panel>
@@ -4468,8 +4481,14 @@ export default {
       this.filtersChanged("filterLists");
     },
 
-    setAllFilterParentalAdvisory: function (category, value) {
-      this.$shared.filters.filterParentalAdvisory[category.Name].forEach((paItem) => {
+    setAllFilterParentalAdvisory: function (category, value, exclusionList) {
+      const categoryName = category.Name || category;
+      this.$shared.filters.filterParentalAdvisory[categoryName].forEach((paItem) => {
+        if (exclusionList && exclusionList.find((val) => val.Severity === paItem.Severity)) {
+          paItem.Selected = !value;
+          return;
+        }
+
         paItem.Selected = value;
       });
 
@@ -5287,6 +5306,13 @@ export default {
       if (setFilter.filterReleaseAttributes) {
         this.setAllFilterReleaseAttributes(false, setFilter.filterReleaseAttributes);
         this.$shared.filterGroups.find((fg) => fg.name === "filterReleaseAttributes").visible = true;
+      }
+
+      if (setFilter.filterParentalAdvisory) {
+        Object.keys(setFilter.filterParentalAdvisory).forEach((categoryName) => {
+          this.setAllFilterParentalAdvisory(categoryName, false, setFilter.filterParentalAdvisory[categoryName]);
+        });
+        this.$shared.filterGroups.find((fg) => fg.name === "filterParentalAdvisory").visible = true;
       }
 
       if (setFilter.filterRatings) {

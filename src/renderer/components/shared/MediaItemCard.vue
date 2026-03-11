@@ -820,13 +820,22 @@
               <!-- <span v-if="company.role">...</span> -->
             </v-col>
             <v-col
-              class="creditsContent"
+              class="creditsContent mk-clickable"
               v-bind:class="{
                 'mk-search-highlight': $shared.filterParentalAdvisoryAppliedContains(
                   category.Name,
                   mediaItem[`IMDB_Parental_Advisory_${category.Name}`]
                 ),
               }"
+              v-on:click.stop="
+                emitMediaItemEvent('contentAdvisoryClicked', {
+                  mediaItem,
+                  category: category.Name,
+                  severity: mediaItem[`IMDB_Parental_Advisory_${category.Name}`] != null ? mediaItem[`IMDB_Parental_Advisory_${category.Name}`] : -1,
+                  severityDisplayText: contentAdvisorySeverityDisplayText(mediaItem[`IMDB_Parental_Advisory_${category.Name}`]),
+                  isInDialog,
+                })
+              "
               >{{ contentAdvisorySeverityDisplayText(mediaItem[`IMDB_Parental_Advisory_${category.Name}`]) }}</v-col
             >
           </v-row>

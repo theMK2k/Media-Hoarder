@@ -484,6 +484,21 @@
       v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-release-attribute-dialog>
 
+    <mk-content-advisory-dialog
+      ref="contentAdvisoryDialog"
+      v-bind:mediaType="mediatype"
+      v-bind:show="contentAdvisoryDialog.show"
+      v-bind:isInDialog="contentAdvisoryDialog.isInDialog"
+      v-bind:Series_id_Movies_Owner="MediaPropertyDialog_Series_id_Movies_Owner"
+      v-bind:Series_Name="series.item.Name"
+      v-bind:Series_Year_Display="series.item.yearDisplay"
+      propertyTypeKey="content-advisory"
+      v-bind:propertyValue="contentAdvisoryDialog.contentAdvisory"
+      v-bind:propertyValueDisplayText="contentAdvisoryDialog.displayText"
+      v-on:close="contentAdvisoryDialog.show = false"
+      v-on:mediaItemEvent="onMICmediaItemEvent"
+    ></mk-content-advisory-dialog>
+
     <mk-my-rating-dialog
       ref="myRatingDialog"
       v-bind:mediaType="mediatype"
@@ -759,6 +774,7 @@ export default {
     "mk-age-rating-dialog": MediaPropertyDialog,
     "mk-audio-format-dialog": MediaPropertyDialog,
     "mk-audio-language-dialog": MediaPropertyDialog,
+    "mk-content-advisory-dialog": MediaPropertyDialog,
     "mk-company-dialog": MediaPropertyDialog,
     "mk-filming-location-dialog": MediaPropertyDialog,
     "mk-genre-dialog": MediaPropertyDialog,
@@ -904,6 +920,13 @@ export default {
       ReleaseAttribute: null,
       movie: null,
       Series_id_Movies_Owner: null,
+      isInDialog: false,
+    },
+
+    contentAdvisoryDialog: {
+      show: false,
+      contentAdvisory: null,
+      displayText: null,
       isInDialog: false,
     },
 
@@ -2207,6 +2230,16 @@ export default {
 
       return;
     },
+    mpdShowContentAdvisoryDialog(contentAdvisory, isInDialog) {
+      logger.log("[mpdShowContentAdvisoryDialog]:", contentAdvisory);
+
+      this.contentAdvisoryDialog.show = true;
+      this.contentAdvisoryDialog.contentAdvisory = contentAdvisory;
+      this.contentAdvisoryDialog.displayText = null; // will be computed by the dialog
+      this.contentAdvisoryDialog.isInDialog = !!isInDialog;
+
+      return;
+    },
     mpdShowMyRatingDialog(rating, isInDialog) {
       logger.log("[mpdShowMyRatingDialog]:", rating);
 
@@ -3168,6 +3201,13 @@ export default {
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
           await this.mpdShowMyRatingDialog(payload.rating, payload.isInDialog);
           break;
+        case "contentAdvisoryClicked":
+          this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
+          await this.mpdShowContentAdvisoryDialog(
+            { category: payload.category, severity: payload.severity },
+            payload.isInDialog
+          );
+          break;
         case "listClicked":
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
           await this.mpdShowPropertyListDialog(payload.list, payload.mediaItem, payload.isInDialog);
@@ -3297,6 +3337,10 @@ export default {
       this.mpdShowReleaseAttributeDialog(value, null);
     });
 
+    eventBus.on("showContentAdvisoryDialog", (value) => {
+      this.mpdShowContentAdvisoryDialog(value);
+    });
+
     eventBus.on("showMyRatingDialog", (value) => {
       this.mpdShowMyRatingDialog(value);
     });
@@ -3390,6 +3434,7 @@ export default {
     eventBus.off("showAudioLanguageDialog");
     eventBus.off("showSubtitleLanguageDialog");
     eventBus.off("showReleaseAttributeDialog");
+    eventBus.off("showContentAdvisoryDialog");
     eventBus.off("showMyRatingDialog");
     eventBus.off("showReleaseYearDialog");
     eventBus.off("showGenreDialog");
