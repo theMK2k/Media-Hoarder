@@ -2439,6 +2439,13 @@
                       <v-spacer></v-spacer>
                       <v-icon
                         size="24"
+                        class="mk-clickable"
+                        v-if="plotKeyword.id_Filter_IMDB_Plot_Keywords"
+                        v-on:click="eventBus.showPlotKeywordDialog(plotKeyword)"
+                        >mdi-eye-outline</v-icon
+                      >
+                      <v-icon
+                        size="24"
                         class="mk-clickable-red"
                         v-if="plotKeyword.id_Filter_IMDB_Plot_Keywords"
                         v-on:click="
