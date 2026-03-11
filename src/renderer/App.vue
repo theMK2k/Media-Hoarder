@@ -1603,21 +1603,32 @@
                         <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                     </v-row>
-                    <v-checkbox
-                      class="mk-filter-checkbox"
+                    <v-row
                       v-for="ageRating in $shared.filters.filterAgeRatings"
                       v-bind:key="ageRating.Age"
-                      v-bind:label="
-                        (ageRating.Age === -1 ? `<${$t('undetermined')}>` : ageRating.Age) +
-                        ' (' +
-                        ageRating.NumMoviesFormatted +
-                        ')'
-                      "
-                      v-model="ageRating.Selected"
-                      v-on:mouseup="filterCheckboxMouseup('filterAgeRatings')"
-                      v-on:mousedown="filterCheckboxMousedown('filterAgeRatings', ageRating, setAllFilterAgeRatings)"
-                      color="mk-dark-grey"
-                    ></v-checkbox>
+                    >
+                      <v-checkbox
+                        class="mk-filter-checkbox"
+                        v-bind:label="
+                          (ageRating.Age === -1 ? `<${$t('undetermined')}>` : ageRating.Age) +
+                          ' (' +
+                          ageRating.NumMoviesFormatted +
+                          ')'
+                        "
+                        v-model="ageRating.Selected"
+                        v-on:mouseup="filterCheckboxMouseup('filterAgeRatings')"
+                        v-on:mousedown="filterCheckboxMousedown('filterAgeRatings', ageRating, setAllFilterAgeRatings)"
+                        color="mk-dark-grey"
+                      ></v-checkbox>
+                      <v-spacer></v-spacer>
+                      <v-icon
+                        size="24"
+                        class="mk-clickable"
+                        v-if="ageRating.Age !== -1"
+                        v-on:click="eventBus.showAgeRatingDialog('' + ageRating.Age)"
+                        >mdi-eye-outline</v-icon
+                      >
+                    </v-row>
                   </v-expansion-panel-text>
                 </v-expansion-panel>
 

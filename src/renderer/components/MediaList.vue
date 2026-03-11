@@ -3205,6 +3205,10 @@ export default {
       this.listDialog.useExistingLists = !value;
     });
 
+    eventBus.on("showAgeRatingDialog", (value) => {
+      this.mpdShowAgeRatingDialog(value);
+    });
+
     eventBus.on("showPersonDialog", (value) => {
       this.mpdShowPersonDialog(value);
     });
@@ -3277,6 +3281,7 @@ export default {
     eventBus.off("refetchFilters");
     eventBus.off("listDialogSetUseExistingLists");
     eventBus.off("listDialogSetCreateNewList");
+    eventBus.off("showAgeRatingDialog");
     eventBus.off("showPersonDialog");
     eventBus.off("showPlotKeywordDialog");
     eventBus.off("showFilmingLocationDialog");
