@@ -777,7 +777,24 @@
     "Second Unit Director or Assistant Director": "Assistant réalisateur",
     "Second Unit Directors or Assistant Directors": "Assistant réalisateur",
     "Special Effects": "Effets spéciaux",
-    "Visual Effects": "Effets visuels"
+    "Visual Effects": "Effets visuels",
+    "Production Manager": "Directeur de production",
+    "Casting": "Casting",
+    "Color Department": "Département des couleurs",
+    "Legal": "Département juridique",
+    "Property Department": "Département des accessoires",
+    "Craft Services": "Services de restauration",
+    "Production Finance and Accounting": "Finances et comptabilité de la production",
+    "Choreography": "Chorégraphie",
+    "Health and Safety Department": "Département santé et sécurité",
+    "Puppetry": "Marionnettes",
+    "Intimacy Coordination": "Coordination de l'intimité",
+    "Publicity": "Relations publiques",
+    "Costume Department": "Département des costumes",
+    "Electrical Department": "Département électrique",
+    "Second Unit or Assistant Director": "Deuxième unité ou assistant réalisateur",
+    "Voice Actor - Dubbing": "Doubleur",
+    "Voice Actors - Dubbing": "Doubleurs"
   },
   "CompanyCategories": {
     "Distributors": "Distributeur",
@@ -1068,5 +1085,6 @@
   "Total Size": "Volume total",
   "placeholder": "Espace réservé",
   "List": "Liste",
-  "Filter by this list": "Filtrer par cette liste"
+  "Filter by this list": "Filtrer par cette liste",
+  "Filter by this release year": "Filtrer par cette année de sortie"
 }
