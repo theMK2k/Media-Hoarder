@@ -160,6 +160,10 @@ export default {
 
   // Lifecycle Hooks
   created() {
+    if (store.db) {
+      this.fetchNumMovies();
+    }
+
     eventBus.on("dbInitialized", () => {
       this.fetchNumMovies();
     });

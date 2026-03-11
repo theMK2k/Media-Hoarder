@@ -155,12 +155,22 @@ function initSQLite(callback) {
 }
 
 function sqliteFireProcedureCB(query, vars, callback) {
+  if (!_db) {
+    logger.log("[db] Database not initialized yet!");
+    return;
+  }
+
   _db.run(query, vars, (err) => {
     return callback(err);
   });
 }
 
 function sqlitefireProcedureReturnScalarCB(query, vars, callback) {
+  if (!_db) {
+    logger.log("[db] Database not initialized yet!");
+    return;
+  }
+
   _db.get(query, vars, (err, row) => {
     let result = null;
     if (!err) {
@@ -175,6 +185,11 @@ function sqlitefireProcedureReturnScalarCB(query, vars, callback) {
 }
 
 function sqlitefireProcedureReturnAllCB(query, vars, callback) {
+  if (!_db) {
+    logger.log("[db] Database not initialized yet!");
+    return;
+  }
+
   _db.all(query, vars, (err, all) => {
     return callback(err, all);
   });

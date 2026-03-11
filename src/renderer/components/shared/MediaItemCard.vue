@@ -111,7 +111,11 @@
                       </word-highlighter>
                     </span>
                     <span style="margin-right: 8px">
-                      <span v-bind:class="{ 'mk-search-highlight': $shared.filterYearsActive }">
+                      <span
+                        class="mk-clickable"
+                        v-bind:class="{ 'mk-search-highlight': $shared.filterYearsActive }"
+                        v-on:click.stop="emitMediaItemEvent('releaseYearClicked', { mediaItem, startYear: mediaItem.startYear, isInDialog })"
+                      >
                         {{ mediaItem.yearDisplay }}
                       </span>
                       <span v-show="mediaItem.NumExtras">+{{ mediaItem.NumExtras }}</span>
@@ -714,7 +718,7 @@
             >
               <v-col sm="4" class="creditsLabel">
                 <a
-                  class="mk-clickable"
+                  class="mk-clickable mk-smalltext"
                   v-bind:class="{ 'mk-search-highlight': $shared.filterPersonsAppliedContains(credit) }"
                   v-on:click.stop="emitMediaItemEvent('creditClicked', { mediaItem, credit, isInDialog })"
                   >{{ credit.name }}</a
@@ -848,6 +852,7 @@
         >
           <v-row
             v-if="!mediaItem.plotKeywords || mediaItem.plotKeywords.length === 0"
+            class="mk-smalltext"
             style="margin-top: 8px; margin-left: 16px"
           >
             {{ $t("none provided") }}
@@ -855,6 +860,7 @@
 
           <v-row
             v-for="plotKeyword in mediaItem.plotKeywords"
+            class="mk-smalltext"
             v-bind:key="plotKeyword.Keyword"
             style="margin-top: 12px; margin-left: 24px"
           >
@@ -896,6 +902,7 @@
         >
           <v-row
             v-if="!mediaItem.filmingLocations || mediaItem.filmingLocations.length === 0"
+            class="mk-smalltext"
             style="margin-top: 8px; margin-left: 16px"
           >
             {{ $t("none provided") }}
@@ -903,6 +910,7 @@
 
           <v-row
             v-for="filmingLocation in mediaItem.filmingLocations"
+            class="mk-smalltext"
             v-bind:key="filmingLocation.id_IMDB_Filming_Locations"
             style="margin-top: 12px; margin-left: 24px"
           >
@@ -1182,10 +1190,10 @@ export default {
 }
 
 .creditsContent {
-  font-size: 14px;
+  font-size: 0.875rem;
   padding-left: 0px;
   padding-right: 0px;
-  padding-top: 0px;
+  padding-top: 2px;
   padding-bottom: 0px;
 }
 

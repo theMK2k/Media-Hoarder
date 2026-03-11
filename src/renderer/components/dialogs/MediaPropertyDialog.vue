@@ -389,6 +389,10 @@ export default {
           title: "Release Attribute",
           filterButtonText: "Filter by this release attribute",
         },
+        "release-year": {
+          title: "Release Year",
+          filterButtonText: "Filter by this release year",
+        },
         "video-encoder": {
           title: "Video Encoder",
           filterButtonText: "Filter by this video encoder",
@@ -575,6 +579,9 @@ export default {
         case "plot-keyword":
           queryParams.$id_IMDB_Plot_Keywords = this.propertyValue;
           break;
+        case "release-year":
+          queryParams.$startYear = this.propertyValue;
+          break;
         case "video-encoder":
           queryParams.$Video_Encoder = this.propertyValue;
           break;
@@ -663,6 +670,7 @@ export default {
                          }, "")})`
                       : ""
                   }
+                  ${this.propertyTypeKey === "release-year" ? `AND MOV.startYear = $startYear` : ""}
                   ${
                     this.propertyTypeKey === "video-quality"
                       ? `AND (MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_MI_Qualities MOVQ WHERE MOVQ.MI_Quality = $Video_Quality AND MOVQ.deleted = 0))`
@@ -771,6 +779,11 @@ export default {
           break;
         case "release-attribute":
           setFilter.filterReleaseAttributes = [this.propertyValue];
+          break;
+        case "release-year":
+          setFilter.filterYears = this.$shared.filters.filterYears.filter((year) => {
+            return year.startYear === this.propertyValue;
+          });
           break;
         case "video-encoder":
           setFilter.filterVideoEncoders = [this.propertyValue];
@@ -968,6 +981,15 @@ export default {
                 isAny: false,
                 Selected: true,
                 ReleaseAttribute: this.propertyValue,
+              },
+            ];
+            break;
+          case "release-year":
+            filters.filterYears = [
+              { startYear: -1, Selected: false },
+              {
+                startYear: this.propertyValue,
+                Selected: true,
               },
             ];
             break;
@@ -1175,6 +1197,7 @@ export default {
         "releaseAttributeClicked",
         "videoEncoderClicked",
         "videoQualityClicked",
+        "releaseYearClicked",
       ];
 
       if (propertyEventNames.includes(payload.eventName)) {
@@ -1256,6 +1279,12 @@ export default {
           cd.propertyTypeKey = "video-quality";
           cd.propertyValue = payload.MI_Qualities_Item;
           cd.propertyValueDisplayText = payload.MI_Qualities_Item?.MI_Quality ?? null;
+          cd.imdbTconst = null;
+          break;
+        case "releaseYearClicked":
+          cd.propertyTypeKey = "release-year";
+          cd.propertyValue = payload.startYear;
+          cd.propertyValueDisplayText = payload.startYear;
           cd.imdbTconst = null;
           break;
       }

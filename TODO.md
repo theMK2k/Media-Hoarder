@@ -18,7 +18,16 @@
   - [x] mpdShowPlotKeywordDialog -> showPlotKeywordDialog
   - [x] mpdShowReleaseAttributeDialog
   - [x] mpdShowVideoEncoderDialog
-  - [ ] mpdShowVideoQualityDialog
+  - [x] mpdShowVideoQualityDialog
+  - [x] Release Years
+  - [ ] My Ratings
+  - [ ] Content Advisories
+   - [ ] Sex & Nudity
+   - [ ] Violence & Gore
+   - [ ] Profanity
+   - [ ] Alcohol, Drugs & Smoking
+   - [ ] Frightening & Intense Scenes
+  - [ ] Data Quality
 
 
 

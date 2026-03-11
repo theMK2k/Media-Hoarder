@@ -2334,16 +2334,24 @@
                       </v-row>
                     </div>
 
-                    <v-checkbox
-                      class="mk-filter-checkbox"
-                      v-for="year in filterYears"
-                      v-bind:key="year.startYear"
-                      v-bind:label="getFilterYearLabel(year.startYear, year.NumMoviesFormatted)"
-                      v-model="year.Selected"
-                      v-on:mouseup="filterCheckboxMouseup('filterYears')"
-                      v-on:mousedown="filterCheckboxMousedown('filterYears', year, setAllFilterYears)"
-                      color="mk-dark-grey"
-                    ></v-checkbox>
+                    <v-row v-for="year in filterYears" v-bind:key="year.startYear" style="align-items: center">
+                      <v-checkbox
+                        class="mk-filter-checkbox"
+                        v-bind:label="getFilterYearLabel(year.startYear, year.NumMoviesFormatted)"
+                        v-model="year.Selected"
+                        v-on:mouseup="filterCheckboxMouseup('filterYears')"
+                        v-on:mousedown="filterCheckboxMousedown('filterYears', year, setAllFilterYears)"
+                        color="mk-dark-grey"
+                      ></v-checkbox>
+                      <v-spacer></v-spacer>
+                      <v-icon
+                        size="24"
+                        class="mk-clickable"
+                        v-if="year.startYear !== -1"
+                        v-on:click="eventBus.showReleaseYearDialog(year.startYear)"
+                        >mdi-eye-outline</v-icon
+                      >
+                    </v-row>
                   </v-expansion-panel-text>
                 </v-expansion-panel>
 
@@ -2968,7 +2976,11 @@
                         <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                     </v-row>
-                    <v-row v-for="filterVideoEncoder in filterVideoEncoders" v-bind:key="filterVideoEncoder.Name" style="align-items: center">
+                    <v-row
+                      v-for="filterVideoEncoder in filterVideoEncoders"
+                      v-bind:key="filterVideoEncoder.Name"
+                      style="align-items: center"
+                    >
                       <v-checkbox
                         class="mk-filter-checkbox"
                         v-bind:key="filterVideoEncoder.Name"
@@ -4414,8 +4426,13 @@ export default {
       this.filtersChanged("filterRatings");
     },
 
-    setAllFilterYears: function (value) {
+    setAllFilterYears: function (value, exclusionList) {
       this.$shared.filters.filterYears.forEach((year) => {
+        if (exclusionList && exclusionList.find((val) => val.startYear === year.startYear)) {
+          year.Selected = !value;
+          return;
+        }
+
         year.Selected = value;
       });
 
@@ -5255,6 +5272,11 @@ export default {
         this.setAllFilterReleaseAttributes(false, setFilter.filterReleaseAttributes);
         this.$shared.filterGroups.find((fg) => fg.name === "filterReleaseAttributes").visible = true;
       }
+
+      if (setFilter.filterYears) {
+        this.setAllFilterYears(false, setFilter.filterYears);
+        this.$shared.filterGroups.find((fg) => fg.name === "filterYears").visible = true;
+      }
     });
 
     eventBus.on("openVersionDialog", () => {
@@ -5345,6 +5367,10 @@ a {
   background-color: #646464 !important; /* color of the scroll thumb */
 }
 
+.mk-smalltext {
+  font-size: 0.875rem;
+}
+
 .mk-scrollcontainer {
   overflow-y: auto;
   overflow-x: hidden;
@@ -5367,7 +5393,6 @@ a {
 }
 
 .mk-clickable {
-  font-size: 0.875rem;
   font-weight: normal;
   color: white !important;
   cursor: pointer;
@@ -5378,7 +5403,6 @@ a {
 }
 
 .mk-clickable-light-grey {
-  font-size: 0.875rem;
   font-weight: normal;
   color: lightgrey !important;
   cursor: pointer;
@@ -5389,7 +5413,6 @@ a {
 }
 
 .mk-clickable-red {
-  font-size: 0.875rem;
   font-weight: normal;
   color: white !important;
   cursor: pointer;
@@ -5400,7 +5423,6 @@ a {
 }
 
 .mk-clickable-dark-grey {
-  font-size: 0.875rem;
   font-weight: normal;
   color: darkgrey !important;
   cursor: pointer;
@@ -5411,7 +5433,6 @@ a {
 }
 
 .mk-clickable-white {
-  font-size: 0.875rem;
   font-weight: normal;
   color: white !important;
   cursor: pointer;
@@ -5422,7 +5443,6 @@ a {
 }
 
 .mk-clickable-lightgrey-white {
-  font-size: 0.875rem;
   font-weight: normal;
   color: #e3e3e3 !important;
   cursor: pointer;
@@ -5503,6 +5523,7 @@ a {
 }
 
 .mk-compact-movie-list-row {
+  font-size: 0.875rem;
   margin-top: 8px;
   margin-left: 16px;
   margin-right: 6px;
@@ -5514,7 +5535,7 @@ a {
 .mk-compact-movie-list-metacritic-block {
   display: inline-block;
   text-align: center;
-  margin-top: -2px;
+  margin-top: 0px;
   margin-left: 4px;
   padding-top: 2px;
   width: 30px;

@@ -192,12 +192,12 @@
           <v-spacer></v-spacer>
           <div>
             <div
-              class="text-h5 mb-2"
+              class="mk-smalltext mb-2"
               style="margin-right: 16px; margin-left: 0px; margin-bottom: 0px !important"
               v-if="series.item.IMDB_rating_defaultDisplay"
             >
               <v-icon size="small" color="amber" style="padding-bottom: 4px">mdi-star</v-icon>
-              <a class="text-h5 mb-2 mk-clickable" v-on:click.stop="onShowSeriesIMDBRatingHeatmapDialog(series.item)">{{
+              <a class="mk-smalltext mb-2 mk-clickable" v-on:click.stop="onShowSeriesIMDBRatingHeatmapDialog(series.item)">{{
                 series.item.IMDB_rating_defaultDisplay
               }}</a>
               <span
@@ -484,6 +484,21 @@
       v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-release-attribute-dialog>
 
+    <mk-release-year-dialog
+      ref="releaseYearDialog"
+      v-bind:mediaType="mediatype"
+      v-bind:show="releaseYearDialog.show"
+      v-bind:isInDialog="releaseYearDialog.isInDialog"
+      v-bind:Series_id_Movies_Owner="MediaPropertyDialog_Series_id_Movies_Owner"
+      v-bind:Series_Name="series.item.Name"
+      v-bind:Series_Year_Display="series.item.yearDisplay"
+      propertyTypeKey="release-year"
+      v-bind:propertyValue="releaseYearDialog.startYear"
+      v-bind:propertyValueDisplayText="'' + releaseYearDialog.startYear"
+      v-on:close="releaseYearDialog.show = false"
+      v-on:mediaItemEvent="onMICmediaItemEvent"
+    ></mk-release-year-dialog>
+
     <mk-property-list-dialog
       ref="propertyListDialog"
       v-bind:mediaType="mediatype"
@@ -735,6 +750,7 @@ export default {
     "mk-person-dialog": MediaPropertyDialog,
     "mk-plot-keyword-dialog": MediaPropertyDialog,
     "mk-release-attribute-dialog": MediaPropertyDialog,
+    "mk-release-year-dialog": MediaPropertyDialog,
     "mk-subtitle-language-dialog": MediaPropertyDialog,
     "mk-video-encoder-dialog": MediaPropertyDialog,
     "mk-video-quality-dialog": MediaPropertyDialog,
@@ -872,6 +888,12 @@ export default {
       ReleaseAttribute: null,
       movie: null,
       Series_id_Movies_Owner: null,
+      isInDialog: false,
+    },
+
+    releaseYearDialog: {
+      show: false,
+      startYear: null,
       isInDialog: false,
     },
 
@@ -2162,6 +2184,15 @@ export default {
 
       return;
     },
+    mpdShowReleaseYearDialog(startYear, isInDialog) {
+      logger.log("[mpdShowReleaseYearDialog]:", startYear);
+
+      this.releaseYearDialog.show = true;
+      this.releaseYearDialog.startYear = startYear;
+      this.releaseYearDialog.isInDialog = !!isInDialog;
+
+      return;
+    },
     // ### End MediaPropertyDialog based methods
 
     async updateCurrentTime() {
@@ -3096,6 +3127,10 @@ export default {
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
           await this.mpdShowVideoQualityDialog(payload.MI_Qualities_Item, payload.isInDialog);
           break;
+        case "releaseYearClicked":
+          this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
+          await this.mpdShowReleaseYearDialog(payload.startYear, payload.isInDialog);
+          break;
         case "listClicked":
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
           await this.mpdShowPropertyListDialog(payload.list, payload.mediaItem, payload.isInDialog);
@@ -3225,6 +3260,10 @@ export default {
       this.mpdShowReleaseAttributeDialog(value, null);
     });
 
+    eventBus.on("showReleaseYearDialog", (value) => {
+      this.mpdShowReleaseYearDialog(value);
+    });
+
     eventBus.on("showPersonDialog", (value) => {
       this.mpdShowPersonDialog(value);
     });
@@ -3310,6 +3349,7 @@ export default {
     eventBus.off("showAudioLanguageDialog");
     eventBus.off("showSubtitleLanguageDialog");
     eventBus.off("showReleaseAttributeDialog");
+    eventBus.off("showReleaseYearDialog");
     eventBus.off("showGenreDialog");
     eventBus.off("showPersonDialog");
     eventBus.off("showPlotKeywordDialog");
