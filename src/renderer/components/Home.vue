@@ -5,7 +5,6 @@
       <v-row density="comfortable" style="margin-left: 4px; margin-right: 4px; flex-grow: 0">
         <v-col v-for="item in items" v-bind:key="item.id" v-on:click="onItemClick(item.id)" cols="12" lg="4" md="6" style="padding: 4px">
           <v-card dark flat hover class="mk-clickable" style="min-height: 130px">
-            <!-- :color="item.color" -->
             <div class="d-flex flex-no-wrap justify-space-between">
               <div>
                 <v-card-title class="text-h5" style="padding-bottom: 8px">
@@ -154,17 +153,13 @@ export default {
         this.items.find((item) => item.id === "series").size = collectionSizes.Size_Series;
         logger.log("[fetchNumMovies] this.items:", this.items);
       } catch (e) {
-        logger.log("[fetchNumMovies] ERROR:", e);
+        logger.error("[fetchNumMovies] ERROR:", e);
       }
     },
   },
 
   // Lifecycle Hooks
   created() {
-    if (store.db) {
-      this.fetchNumMovies();
-    }
-
     eventBus.on("dbInitialized", () => {
       this.fetchNumMovies();
     });
