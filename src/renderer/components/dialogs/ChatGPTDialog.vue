@@ -399,8 +399,15 @@ export default {
           logger.log("[onStartConversation] imdbIDs:", arr_IMDB_tconst, "movieNamesAndYears:", movieNamesAndYears);
 
           that.updateLists(arr_IMDB_tconst, movieNamesAndYears);
-          that.movies = await that.loadMovies(arr_IMDB_tconst, true);
-          that.numMovies = that.movies.length;
+          
+          const old_id_Movies = JSON.stringify(that.movies?.map((movie) => movie.id_Movies));
+          const newMovies = await that.loadMovies(arr_IMDB_tconst, true);
+          
+          if (old_id_Movies !== JSON.stringify(newMovies?.map((movie) => movie.id_Movies))) {
+            logger.log('[ChatGPTDialog] movies updated', newMovies);
+            that.movies = newMovies;
+            that.numMovies = that.movies.length;
+          }
 
           if (docTitle && docTitle !== "ChatGPT") {
             that.listTitle = "AI: " + docTitle;
