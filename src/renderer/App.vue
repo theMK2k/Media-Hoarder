@@ -507,25 +507,37 @@
                         <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                     </v-row>
-                    <v-checkbox
-                      class="mk-filter-checkbox"
+                    <v-row
                       v-for="audioLanguage in filterAudioLanguages"
                       v-bind:key="audioLanguage.Language"
-                      v-bind:label="
-                        (audioLanguage.DisplayText === '<not available>'
-                          ? $t('<not available>')
-                          : audioLanguage.DisplayText) +
-                        ' (' +
-                        audioLanguage.NumMoviesFormatted +
-                        ')'
-                      "
-                      v-model="audioLanguage.Selected"
-                      v-on:mouseup="filterCheckboxMouseup('filterAudioLanguages')"
-                      v-on:mousedown="
-                        filterCheckboxMousedown('filterAudioLanguages', audioLanguage, setAllFilterAudioLanguages)
-                      "
-                      color="mk-dark-grey"
-                    ></v-checkbox>
+                      style="align-items: center"
+                    >
+                      <v-checkbox
+                        class="mk-filter-checkbox"
+                        v-bind:label="
+                          (audioLanguage.DisplayText === '<not available>'
+                            ? $t('<not available>')
+                            : audioLanguage.DisplayText) +
+                          ' (' +
+                          audioLanguage.NumMoviesFormatted +
+                          ')'
+                        "
+                        v-model="audioLanguage.Selected"
+                        v-on:mouseup="filterCheckboxMouseup('filterAudioLanguages')"
+                        v-on:mousedown="
+                          filterCheckboxMousedown('filterAudioLanguages', audioLanguage, setAllFilterAudioLanguages)
+                        "
+                        color="mk-dark-grey"
+                      ></v-checkbox>
+                      <v-spacer></v-spacer>
+                      <v-icon
+                        size="24"
+                        class="mk-clickable"
+                        v-if="audioLanguage.Language"
+                        v-on:click="eventBus.showAudioLanguageDialog(audioLanguage.Language.toUpperCase())"
+                        >mdi-eye-outline</v-icon
+                      >
+                    </v-row>
                   </v-expansion-panel-text>
                 </v-expansion-panel>
 
@@ -650,29 +662,41 @@
                         <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                     </v-row>
-                    <v-checkbox
-                      class="mk-filter-checkbox"
+                    <v-row
                       v-for="subtitleLanguage in filterSubtitleLanguages"
                       v-bind:key="subtitleLanguage.Language"
-                      v-bind:label="
-                        (subtitleLanguage.DisplayText === '<not available>'
-                          ? $t('<not available>')
-                          : subtitleLanguage.DisplayText) +
-                        ' (' +
-                        subtitleLanguage.NumMoviesFormatted +
-                        ')'
-                      "
-                      v-model="subtitleLanguage.Selected"
-                      v-on:mouseup="filterCheckboxMouseup('filterSubtitleLanguages')"
-                      v-on:mousedown="
-                        filterCheckboxMousedown(
-                          'filterSubtitleLanguages',
-                          subtitleLanguage,
-                          setAllFilterSubtitleLanguages
-                        )
-                      "
-                      color="mk-dark-grey"
-                    ></v-checkbox>
+                      style="align-items: center"
+                    >
+                      <v-checkbox
+                        class="mk-filter-checkbox"
+                        v-bind:label="
+                          (subtitleLanguage.DisplayText === '<not available>'
+                            ? $t('<not available>')
+                            : subtitleLanguage.DisplayText) +
+                          ' (' +
+                          subtitleLanguage.NumMoviesFormatted +
+                          ')'
+                        "
+                        v-model="subtitleLanguage.Selected"
+                        v-on:mouseup="filterCheckboxMouseup('filterSubtitleLanguages')"
+                        v-on:mousedown="
+                          filterCheckboxMousedown(
+                            'filterSubtitleLanguages',
+                            subtitleLanguage,
+                            setAllFilterSubtitleLanguages
+                          )
+                        "
+                        color="mk-dark-grey"
+                      ></v-checkbox>
+                      <v-spacer></v-spacer>
+                      <v-icon
+                        size="24"
+                        class="mk-clickable"
+                        v-if="subtitleLanguage.Language"
+                        v-on:click="eventBus.showSubtitleLanguageDialog(subtitleLanguage.Language.toUpperCase())"
+                        >mdi-eye-outline</v-icon
+                      >
+                    </v-row>
                   </v-expansion-panel-text>
                 </v-expansion-panel>
 
@@ -1489,6 +1513,7 @@
                         v-on:mousedown="filterCheckboxMousedown('filterGenres', genre, setAllFilterGenres)"
                         v-bind:color="genre.Excluded ? 'red' : 'mk-dark-grey'"
                       ></v-checkbox>
+                      <v-spacer></v-spacer>
                       <v-tooltip location="bottom">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
@@ -1504,6 +1529,13 @@
                         </template>
                         <span>{{ $t("Exclude this genre") }}</span>
                       </v-tooltip>
+                      <v-icon
+                        size="24"
+                        class="mk-clickable"
+                        style="margin-left: 8px"
+                        v-on:click="eventBus.showGenreDialog({ name: genre.Name, translated: $t(genre.Name) })"
+                        >mdi-eye-outline</v-icon
+                      >
                     </div>
                   </v-expansion-panel-text>
                 </v-expansion-panel>
@@ -1606,6 +1638,7 @@
                     <v-row
                       v-for="ageRating in $shared.filters.filterAgeRatings"
                       v-bind:key="ageRating.Age"
+                      style="align-items: center"
                     >
                       <v-checkbox
                         class="mk-filter-checkbox"
@@ -2114,7 +2147,7 @@
                         size="24"
                         class="mk-clickable"
                         v-if="company.id_Filter_Companies"
-                        v-on:click="eventBus.showCompanyDialog({ name: company.Company_Name})"
+                        v-on:click="eventBus.showCompanyDialog({ name: company.Company_Name })"
                         >mdi-eye-outline</v-icon
                       >
                       <v-icon
@@ -2436,6 +2469,7 @@
                     <v-row
                       v-for="plotKeyword in filterIMDBPlotKeywords"
                       v-bind:key="plotKeyword.id_Filter_IMDB_Plot_Keywords"
+                      style="align-items: center"
                     >
                       <v-checkbox
                         class="mk-filter-checkbox mk-filter-removable"
@@ -2620,6 +2654,7 @@
                     <v-row
                       v-for="filmingLocation in filterIMDBFilmingLocations"
                       v-bind:key="filmingLocation.id_Filter_IMDB_Filming_Locations"
+                      style="align-items: center"
                     >
                       <v-checkbox
                         class="mk-filter-checkbox mk-filter-removable"
@@ -3053,7 +3088,11 @@
                         <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                     </v-row>
-                    <v-row v-for="filterAudioFormat in filterAudioFormats" v-bind:key="filterAudioFormat.Name">
+                    <v-row
+                      v-for="filterAudioFormat in filterAudioFormats"
+                      v-bind:key="filterAudioFormat.Name"
+                      style="align-items: center"
+                    >
                       <v-checkbox
                         class="mk-filter-checkbox"
                         v-bind:key="filterAudioFormat.Name"
@@ -3072,6 +3111,14 @@
                         "
                         color="mk-dark-grey"
                       ></v-checkbox>
+                      <v-spacer></v-spacer>
+                      <v-icon
+                        size="24"
+                        class="mk-clickable"
+                        v-if="filterAudioFormat.Name !== '<not available>'"
+                        v-on:click="eventBus.showAudioFormatDialog(filterAudioFormat.Name)"
+                        >mdi-eye-outline</v-icon
+                      >
                     </v-row>
                   </v-expansion-panel-text>
                 </v-expansion-panel>

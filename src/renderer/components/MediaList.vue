@@ -3209,6 +3209,22 @@ export default {
       this.mpdShowAgeRatingDialog(value);
     });
 
+    eventBus.on("showAudioFormatDialog", (value) => {
+      this.mpdShowAudioFormatDialog(value);
+    });
+
+    eventBus.on("showAudioLanguageDialog", (value) => {
+      this.mpdShowLanguageDialog(value, "audio");
+    });
+
+    eventBus.on("showSubtitleLanguageDialog", (value) => {
+      this.mpdShowLanguageDialog(value, "subtitle");
+    });
+
+    eventBus.on("showGenreDialog", (value) => {
+      this.mpdShowGenreDialog(value);
+    });
+
     eventBus.on("showPersonDialog", (value) => {
       this.mpdShowPersonDialog(value);
     });
@@ -3282,6 +3298,10 @@ export default {
     eventBus.off("listDialogSetUseExistingLists");
     eventBus.off("listDialogSetCreateNewList");
     eventBus.off("showAgeRatingDialog");
+    eventBus.off("showAudioFormatDialog");
+    eventBus.off("showAudioLanguageDialog");
+    eventBus.off("showSubtitleLanguageDialog");
+    eventBus.off("showGenreDialog");
     eventBus.off("showPersonDialog");
     eventBus.off("showPlotKeywordDialog");
     eventBus.off("showFilmingLocationDialog");

@@ -8,14 +8,14 @@
 - [ ] sidebar filters: a button per item to open the filter dialog (e.g. My Lists - SciFi Classics)
   - on click, fire a new eventBus event that trigger MediaList's `this.mpdShowListDialog(payload.list, payload.mediaItem, payload.isInDialog)`
   - [x] Property List Dialog -> showPropertyListDialog
-  - [ ] mpdShowAgeRatingDialog
-  - [ ] mpdShowAudioFormatDialog
+  - [x] mpdShowAgeRatingDialog
+  - [x] mpdShowAudioFormatDialog
   - [x] mpdShowCompanyDialog -> showCompanyDialog
   - [x] mpdShowFilmingLocationDialog -> showFilmingLocationDialog
-  - [ ] mpdShowGenreDialog
-  - [ ] mpdShowLanguageDialog
+  - [x] mpdShowGenreDialog
+  - [x] mpdShowLanguageDialog
   - [x] mpdShowPersonDialog -> showPersonDialog
-  - [ ] mpdShowPlotKeywordDialog -> showPlotKeywordDialog
+  - [x] mpdShowPlotKeywordDialog -> showPlotKeywordDialog
   - [ ] mpdShowReleaseAttributeDialog
   - [ ] mpdShowVideoEncoderDialog
   - [ ] mpdShowVideoQualityDialog
