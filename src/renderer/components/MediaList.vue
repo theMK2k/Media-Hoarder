@@ -2137,9 +2137,9 @@ export default {
       this.releaseAttributeDialog.show = true;
     },
 
-    mpdShowListDialog(list, movie, isInDialog) {
+    mpdShowPropertyListDialog(list, mediaItem, isInDialog) {
       this.propertyListDialog.list = list;
-      this.propertyListDialog.movie = movie;
+      this.propertyListDialog.movie = mediaItem;
       this.propertyListDialog.isInDialog = !!isInDialog;
 
       this.$refs.propertyListDialog.init(list);
@@ -2245,6 +2245,7 @@ export default {
       this.subtitleLanguageDialog.show = false;
       this.videoEncoderDialog.show = false;
       this.videoQualityDialog.show = false;
+      this.propertyListDialog.show = false;
     },
 
     onPersonDialogClose() {
@@ -3101,7 +3102,7 @@ export default {
           break;
         case "listClicked":
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
-          await this.mpdShowListDialog(payload.list, payload.mediaItem, payload.isInDialog);
+          await this.mpdShowPropertyListDialog(payload.list, payload.mediaItem, payload.isInDialog);
           break;
 
         default:
@@ -3221,6 +3222,10 @@ export default {
       this.mpdShowCompanyDialog(value);
     });
 
+    eventBus.on("showPropertyListDialog", (value) => {
+      this.mpdShowPropertyListDialog(value);
+    });
+
     eventBus.on("rescanFinished", ({ hasChanges }) => {
       if (hasChanges) {
         (async () => {
@@ -3276,6 +3281,7 @@ export default {
     eventBus.off("showPlotKeywordDialog");
     eventBus.off("showFilmingLocationDialog");
     eventBus.off("showCompanyDialog");
+    eventBus.off("showPropertyListDialog");
     eventBus.off("closeAllPropertyDialogs");
   },
 };

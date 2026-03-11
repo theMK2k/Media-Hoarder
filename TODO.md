@@ -2,10 +2,23 @@
 
 ## Prio 0
 
-- [WIP] show dialog when a list is clicked
-  - [ ] what about onMICmediaItemEvent?
+- [x] show dialog when a list is clicked
+  - [x] onMICmediaItemEvent handles the click on a list
+
 - [ ] sidebar filters: a button per item to open the filter dialog (e.g. My Lists - SciFi Classics)
-  - on click, fire a new eventBus event that trigger MediaList's onMICmediaItemEvent
+  - on click, fire a new eventBus event that trigger MediaList's `this.mpdShowListDialog(payload.list, payload.mediaItem, payload.isInDialog)`
+  - [x] Property List Dialog -> showPropertyListDialog
+  - [ ] mpdShowAgeRatingDialog
+  - [ ] mpdShowAudioFormatDialog
+  - [x] mpdShowCompanyDialog -> showCompanyDialog
+  - [ ] mpdShowFilmingLocationDialog -> showFilmingLocationDialog
+  - [ ] mpdShowGenreDialog
+  - [ ] mpdShowLanguageDialog
+  - [ ] mpdShowPersonDialog -> showPersonDialog
+  - [ ] mpdShowPlotKeywordDialog -> showPlotKeywordDialog
+  - [ ] mpdShowReleaseAttributeDialog
+  - [ ] mpdShowVideoEncoderDialog
+  - [ ] mpdShowVideoQualityDialog
 
 
 

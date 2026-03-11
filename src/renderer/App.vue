@@ -958,7 +958,7 @@
                         size="24"
                         class="mk-clickable"
                         v-if="list.id_Lists"
-                        v-on:click=""
+                        v-on:click="eventBus.showPropertyListDialog(list)"
                         >mdi-eye-outline</v-icon
                       >
                       <v-icon
@@ -2092,6 +2092,13 @@
                         color="mk-dark-grey"
                       ></v-checkbox>
                       <v-spacer></v-spacer>
+                      <v-icon
+                        size="24"
+                        class="mk-clickable"
+                        v-if="company.id_Filter_Companies"
+                        v-on:click="eventBus.showCompanyDialog({ name: company.Company_Name})"
+                        >mdi-eye-outline</v-icon
+                      >
                       <v-icon
                         size="24"
                         class="mk-clickable-red"
@@ -3475,6 +3482,10 @@ export default {
   },
 
   computed: {
+    eventBus() {
+      return eventBus;
+    },
+
     enmFilterSortModes() {
       return enmFilterSortModes;
     },
@@ -4689,8 +4700,7 @@ export default {
     addPerson() {
       this.searchPersonsDialog.show = true;
       this.searchPersonsDialog.mediaType = this.$route.params.mediatype || "movies";
-      this.searchPersonsDialog.Series_id_Movies_Owner =
-        this.$route.params.Series_id_Movies_Owner || null;
+      this.searchPersonsDialog.Series_id_Movies_Owner = this.$route.params.Series_id_Movies_Owner || null;
       this.$refs.searchPersonsDialog.init();
     },
 
@@ -4700,8 +4710,7 @@ export default {
 
     addCompany() {
       this.searchCompaniesDialog.mediaType = this.$route.params.mediatype || "movies";
-      this.searchCompaniesDialog.Series_id_Movies_Owner =
-        this.$route.params.Series_id_Movies_Owner || null;
+      this.searchCompaniesDialog.Series_id_Movies_Owner = this.$route.params.Series_id_Movies_Owner || null;
       this.searchCompaniesDialog.show = true;
       this.$refs.searchCompaniesDialog.init();
     },
@@ -4713,8 +4722,7 @@ export default {
     addIMDBPlotKeyword() {
       this.searchPlotKeywordsDialog.show = true;
       this.searchPlotKeywordsDialog.mediaType = this.$route.params.mediatype || "movies";
-      this.searchPlotKeywordsDialog.Series_id_Movies_Owner =
-        this.$route.params.Series_id_Movies_Owner || null;
+      this.searchPlotKeywordsDialog.Series_id_Movies_Owner = this.$route.params.Series_id_Movies_Owner || null;
       this.$refs.searchPlotKeywordsDialog.init();
     },
 
@@ -4725,8 +4733,7 @@ export default {
     addIMDBFilmingLocation() {
       this.searchFilmingLocationsDialog.show = true;
       this.searchFilmingLocationsDialog.mediaType = this.$route.params.mediatype || "movies";
-      this.searchFilmingLocationsDialog.Series_id_Movies_Owner =
-        this.$route.params.Series_id_Movies_Owner || null;
+      this.searchFilmingLocationsDialog.Series_id_Movies_Owner = this.$route.params.Series_id_Movies_Owner || null;
       this.$refs.searchFilmingLocationsDialog.init();
     },
 
@@ -5071,7 +5078,7 @@ export default {
         return;
       }
 
-      logger.log('[eventBus setFilter] setFilter:', setFilter);
+      logger.log("[eventBus setFilter] setFilter:", setFilter);
 
       if (setFilter.filterLists) {
         this.setAllFilterLists(false, setFilter.filterLists);
@@ -5169,7 +5176,7 @@ export default {
 <style>
 /* Vuetify 3 sets html { line-height: 1.5 } and bumped body font from 14px/1.425 to 16px/1.5.
    Restore Vuetify 2 body-2 defaults globally. */
-.mk-compact-text>* {
+.mk-compact-text > * {
   line-height: 1.2;
   font-size: 0.875rem;
 }
@@ -5346,7 +5353,7 @@ a {
 
 .mk-item-detailcategory-subcategory-header {
   margin-top: 12px;
-  font-size: 14px
+  font-size: 14px;
 }
 
 .mk-btn-small {
@@ -5364,7 +5371,7 @@ a {
 }
 
 .mk-detail-row {
-  margin-top: 8px!important;
+  margin-top: 8px !important;
   margin-bottom: -6px;
 }
 
