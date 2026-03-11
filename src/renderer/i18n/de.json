@@ -1085,5 +1085,6 @@
   "placeholder": "Platzhalter",
   "List": "Liste",
   "Filter by this list": "Nach dieser Liste filtern",
-  "Filter by this release year": "Nach diesem Erscheinungsjahr filtern"
+  "Filter by this release year": "Nach diesem Erscheinungsjahr filtern",
+  "Filter by this rating": "Nach dieser Bewertung filtern"
 }

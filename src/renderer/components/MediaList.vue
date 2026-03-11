@@ -484,6 +484,21 @@
       v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-release-attribute-dialog>
 
+    <mk-my-rating-dialog
+      ref="myRatingDialog"
+      v-bind:mediaType="mediatype"
+      v-bind:show="myRatingDialog.show"
+      v-bind:isInDialog="myRatingDialog.isInDialog"
+      v-bind:Series_id_Movies_Owner="MediaPropertyDialog_Series_id_Movies_Owner"
+      v-bind:Series_Name="series.item.Name"
+      v-bind:Series_Year_Display="series.item.yearDisplay"
+      propertyTypeKey="my-rating"
+      v-bind:propertyValue="myRatingDialog.rating"
+      v-bind:propertyValueDisplayText="myRatingDialog.ratingDisplayText"
+      v-on:close="myRatingDialog.show = false"
+      v-on:mediaItemEvent="onMICmediaItemEvent"
+    ></mk-my-rating-dialog>
+
     <mk-release-year-dialog
       ref="releaseYearDialog"
       v-bind:mediaType="mediatype"
@@ -750,6 +765,7 @@ export default {
     "mk-person-dialog": MediaPropertyDialog,
     "mk-plot-keyword-dialog": MediaPropertyDialog,
     "mk-release-attribute-dialog": MediaPropertyDialog,
+    "mk-my-rating-dialog": MediaPropertyDialog,
     "mk-release-year-dialog": MediaPropertyDialog,
     "mk-subtitle-language-dialog": MediaPropertyDialog,
     "mk-video-encoder-dialog": MediaPropertyDialog,
@@ -888,6 +904,13 @@ export default {
       ReleaseAttribute: null,
       movie: null,
       Series_id_Movies_Owner: null,
+      isInDialog: false,
+    },
+
+    myRatingDialog: {
+      show: false,
+      rating: null,
+      ratingDisplayText: null,
       isInDialog: false,
     },
 
@@ -2184,6 +2207,16 @@ export default {
 
       return;
     },
+    mpdShowMyRatingDialog(rating, isInDialog) {
+      logger.log("[mpdShowMyRatingDialog]:", rating);
+
+      this.myRatingDialog.show = true;
+      this.myRatingDialog.rating = rating;
+      this.myRatingDialog.ratingDisplayText = rating ? helpers.getStarRatingString(rating) : `<${this.$local_t("not yet rated")}>`;
+      this.myRatingDialog.isInDialog = !!isInDialog;
+
+      return;
+    },
     mpdShowReleaseYearDialog(startYear, isInDialog) {
       logger.log("[mpdShowReleaseYearDialog]:", startYear);
 
@@ -3131,6 +3164,10 @@ export default {
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
           await this.mpdShowReleaseYearDialog(payload.startYear, payload.isInDialog);
           break;
+        case "myRatingClicked":
+          this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
+          await this.mpdShowMyRatingDialog(payload.rating, payload.isInDialog);
+          break;
         case "listClicked":
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
           await this.mpdShowPropertyListDialog(payload.list, payload.mediaItem, payload.isInDialog);
@@ -3260,6 +3297,10 @@ export default {
       this.mpdShowReleaseAttributeDialog(value, null);
     });
 
+    eventBus.on("showMyRatingDialog", (value) => {
+      this.mpdShowMyRatingDialog(value);
+    });
+
     eventBus.on("showReleaseYearDialog", (value) => {
       this.mpdShowReleaseYearDialog(value);
     });
@@ -3349,6 +3390,7 @@ export default {
     eventBus.off("showAudioLanguageDialog");
     eventBus.off("showSubtitleLanguageDialog");
     eventBus.off("showReleaseAttributeDialog");
+    eventBus.off("showMyRatingDialog");
     eventBus.off("showReleaseYearDialog");
     eventBus.off("showGenreDialog");
     eventBus.off("showPersonDialog");

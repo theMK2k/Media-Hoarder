@@ -1116,17 +1116,28 @@
                         <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                     </v-row>
-                    <v-checkbox
-                      class="mk-filter-checkbox"
+                    <v-row
+                      style="align-items: center"
                       v-for="rating in $shared.filters.filterRatings"
                       v-bind:key="rating.Rating"
-                      v-bind:label="getFilterRatingLabel(rating.Rating, rating.NumMoviesFormatted)"
-                      v-model="rating.Selected"
-                      v-on:mouseup="filterCheckboxMouseup('filterRatings')"
-                      v-on:mousedown="filterCheckboxMousedown('filterRatings', rating, setAllFilterRatings)"
-                      color="mk-dark-grey"
                     >
-                    </v-checkbox>
+                      <v-checkbox
+                        class="mk-filter-checkbox"
+                        v-bind:label="getFilterRatingLabel(rating.Rating, rating.NumMoviesFormatted)"
+                        v-model="rating.Selected"
+                        v-on:mouseup="filterCheckboxMouseup('filterRatings')"
+                        v-on:mousedown="filterCheckboxMousedown('filterRatings', rating, setAllFilterRatings)"
+                        color="mk-dark-grey"
+                      >
+                      </v-checkbox>
+                      <v-spacer></v-spacer>
+                      <v-icon
+                        size="24"
+                        class="mk-clickable"
+                        v-on:click="eventBus.showMyRatingDialog(rating.Rating)"
+                        >mdi-eye-outline</v-icon
+                      >
+                    </v-row>
                   </v-expansion-panel-text>
                 </v-expansion-panel>
 
@@ -4418,8 +4429,13 @@ export default {
       this.filtersChanged("filterAgeRatings");
     },
 
-    setAllFilterRatings: function (value) {
+    setAllFilterRatings: function (value, exclusionList) {
       this.$shared.filters.filterRatings.forEach((rating) => {
+        if (exclusionList && exclusionList.find((val) => val.Rating === rating.Rating)) {
+          rating.Selected = !value;
+          return;
+        }
+
         rating.Selected = value;
       });
 
@@ -5271,6 +5287,11 @@ export default {
       if (setFilter.filterReleaseAttributes) {
         this.setAllFilterReleaseAttributes(false, setFilter.filterReleaseAttributes);
         this.$shared.filterGroups.find((fg) => fg.name === "filterReleaseAttributes").visible = true;
+      }
+
+      if (setFilter.filterRatings) {
+        this.setAllFilterRatings(false, setFilter.filterRatings);
+        this.$shared.filterGroups.find((fg) => fg.name === "filterRatings").visible = true;
       }
 
       if (setFilter.filterYears) {

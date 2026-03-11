@@ -389,6 +389,10 @@ export default {
           title: "Release Attribute",
           filterButtonText: "Filter by this release attribute",
         },
+        "my-rating": {
+          title: "My Ratings",
+          filterButtonText: "Filter by this rating",
+        },
         "release-year": {
           title: "Release Year",
           filterButtonText: "Filter by this release year",
@@ -537,7 +541,7 @@ export default {
       this.detailData = {};
       this.showDescriptionLong = false;
 
-      if (!this.propertyValue) {
+      if (!this.propertyValue && this.propertyTypeKey !== "my-rating") {
         return;
       }
 
@@ -578,6 +582,11 @@ export default {
           break;
         case "plot-keyword":
           queryParams.$id_IMDB_Plot_Keywords = this.propertyValue;
+          break;
+        case "my-rating":
+          if (this.propertyValue) {
+            queryParams.$Rating = this.propertyValue;
+          }
           break;
         case "release-year":
           queryParams.$startYear = this.propertyValue;
@@ -670,6 +679,7 @@ export default {
                          }, "")})`
                       : ""
                   }
+                  ${this.propertyTypeKey === "my-rating" ? (this.propertyValue ? `AND MOV.Rating = $Rating` : `AND (MOV.Rating IS NULL OR MOV.Rating = 0)`) : ""}
                   ${this.propertyTypeKey === "release-year" ? `AND MOV.startYear = $startYear` : ""}
                   ${
                     this.propertyTypeKey === "video-quality"
@@ -779,6 +789,11 @@ export default {
           break;
         case "release-attribute":
           setFilter.filterReleaseAttributes = [this.propertyValue];
+          break;
+        case "my-rating":
+          setFilter.filterRatings = this.$shared.filters.filterRatings.filter((rating) => {
+            return rating.Rating === this.propertyValue;
+          });
           break;
         case "release-year":
           setFilter.filterYears = this.$shared.filters.filterYears.filter((year) => {
@@ -981,6 +996,15 @@ export default {
                 isAny: false,
                 Selected: true,
                 ReleaseAttribute: this.propertyValue,
+              },
+            ];
+            break;
+          case "my-rating":
+            filters.filterRatings = [
+              { Rating: -1, Selected: false },
+              {
+                Rating: this.propertyValue,
+                Selected: true,
               },
             ];
             break;
@@ -1198,6 +1222,7 @@ export default {
         "videoEncoderClicked",
         "videoQualityClicked",
         "releaseYearClicked",
+        "myRatingClicked",
       ];
 
       if (propertyEventNames.includes(payload.eventName)) {
@@ -1285,6 +1310,12 @@ export default {
           cd.propertyTypeKey = "release-year";
           cd.propertyValue = payload.startYear;
           cd.propertyValueDisplayText = payload.startYear;
+          cd.imdbTconst = null;
+          break;
+        case "myRatingClicked":
+          cd.propertyTypeKey = "my-rating";
+          cd.propertyValue = payload.rating;
+          cd.propertyValueDisplayText = payload.rating ? helpers.getStarRatingString(payload.rating) : `<${this.$local_t("not yet rated")}>`;
           cd.imdbTconst = null;
           break;
       }
