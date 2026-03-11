@@ -373,16 +373,28 @@
                         <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                     </v-row>
-                    <v-checkbox
-                      class="mk-filter-checkbox"
+                    <v-row
                       v-for="quality in filterQualities"
                       v-bind:key="quality.MI_Quality"
-                      v-bind:label="getFilterQualityLabel(quality.MI_Quality, quality.NumMoviesFormatted)"
-                      v-model="quality.Selected"
-                      v-on:mouseup="filterCheckboxMouseup('filterQualities')"
-                      v-on:mousedown="filterCheckboxMousedown('filterQualities', quality, setAllFilterQualities)"
-                      color="mk-dark-grey"
-                    ></v-checkbox>
+                      style="align-items: center"
+                    >
+                      <v-checkbox
+                        class="mk-filter-checkbox"
+                        v-bind:label="getFilterQualityLabel(quality.MI_Quality, quality.NumMoviesFormatted)"
+                        v-model="quality.Selected"
+                        v-on:mouseup="filterCheckboxMouseup('filterQualities')"
+                        v-on:mousedown="filterCheckboxMousedown('filterQualities', quality, setAllFilterQualities)"
+                        color="mk-dark-grey"
+                      ></v-checkbox>
+                      <v-spacer></v-spacer>
+                      <v-icon
+                        size="24"
+                        class="mk-clickable"
+                        v-if="quality.MI_Quality"
+                        v-on:click="eventBus.showVideoQualityDialog(quality)"
+                        >mdi-eye-outline</v-icon
+                      >
+                    </v-row>
                   </v-expansion-panel-text>
                 </v-expansion-panel>
 
@@ -2956,7 +2968,7 @@
                         <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                     </v-row>
-                    <v-row v-for="filterVideoEncoder in filterVideoEncoders" v-bind:key="filterVideoEncoder.Name">
+                    <v-row v-for="filterVideoEncoder in filterVideoEncoders" v-bind:key="filterVideoEncoder.Name" style="align-items: center">
                       <v-checkbox
                         class="mk-filter-checkbox"
                         v-bind:key="filterVideoEncoder.Name"
@@ -2975,6 +2987,14 @@
                         "
                         color="mk-dark-grey"
                       ></v-checkbox>
+                      <v-spacer></v-spacer>
+                      <v-icon
+                        size="24"
+                        class="mk-clickable"
+                        v-if="filterVideoEncoder.Name !== '<not available>'"
+                        v-on:click="eventBus.showVideoEncoderDialog(filterVideoEncoder.Name)"
+                        >mdi-eye-outline</v-icon
+                      >
                     </v-row>
                   </v-expansion-panel-text>
                 </v-expansion-panel>

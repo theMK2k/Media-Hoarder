@@ -3229,6 +3229,14 @@ export default {
       this.mpdShowPersonDialog(value);
     });
 
+    eventBus.on("showVideoEncoderDialog", (value) => {
+      this.mpdShowVideoEncoderDialog(value);
+    });
+
+    eventBus.on("showVideoQualityDialog", (value) => {
+      this.mpdShowVideoQualityDialog(value);
+    });
+
     eventBus.on("showPlotKeywordDialog", (value) => {
       // this.onIMDBPlotKeywordClicked(value);
       this.mpdShowPlotKeywordDialog(value);
@@ -3307,6 +3315,8 @@ export default {
     eventBus.off("showPlotKeywordDialog");
     eventBus.off("showFilmingLocationDialog");
     eventBus.off("showCompanyDialog");
+    eventBus.off("showVideoEncoderDialog");
+    eventBus.off("showVideoQualityDialog");
     eventBus.off("showPropertyListDialog");
     eventBus.off("closeAllPropertyDialogs");
   },

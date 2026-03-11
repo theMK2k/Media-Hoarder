@@ -17,7 +17,7 @@
   - [x] mpdShowPersonDialog -> showPersonDialog
   - [x] mpdShowPlotKeywordDialog -> showPlotKeywordDialog
   - [x] mpdShowReleaseAttributeDialog
-  - [ ] mpdShowVideoEncoderDialog
+  - [x] mpdShowVideoEncoderDialog
   - [ ] mpdShowVideoQualityDialog
 
 
