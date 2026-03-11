@@ -832,29 +832,41 @@
                       v-model="$shared.filters.filterSettings.filterReleaseAttributesAND"
                       v-on:click.native="filtersChanged('filterReleaseAttributes')"
                     ></v-switch>
-                    <v-checkbox
-                      class="mk-filter-checkbox"
+                    <v-row
                       v-for="filterReleaseAttribute in filterReleaseAttributes"
                       v-bind:key="filterReleaseAttribute.ReleaseAttribute"
-                      v-bind:label="
-                        (filterReleaseAttribute.ReleaseAttribute === '<not available>'
-                          ? $t('<not available>')
-                          : filterReleaseAttribute.ReleaseAttribute) +
-                        ' (' +
-                        filterReleaseAttribute.NumMoviesFormatted +
-                        ')'
-                      "
-                      v-model="filterReleaseAttribute.Selected"
-                      v-on:mouseup="filterCheckboxMouseup('filterReleaseAttributes')"
-                      v-on:mousedown="
-                        filterCheckboxMousedown(
-                          'filterReleaseAttributes',
-                          filterReleaseAttribute,
-                          setAllFilterReleaseAttributes
-                        )
-                      "
-                      color="mk-dark-grey"
-                    ></v-checkbox>
+                      style="align-items: center"
+                    >
+                      <v-checkbox
+                        class="mk-filter-checkbox"
+                        v-bind:label="
+                          (filterReleaseAttribute.ReleaseAttribute === '<not available>'
+                            ? $t('<not available>')
+                            : filterReleaseAttribute.ReleaseAttribute) +
+                          ' (' +
+                          filterReleaseAttribute.NumMoviesFormatted +
+                          ')'
+                        "
+                        v-model="filterReleaseAttribute.Selected"
+                        v-on:mouseup="filterCheckboxMouseup('filterReleaseAttributes')"
+                        v-on:mousedown="
+                          filterCheckboxMousedown(
+                            'filterReleaseAttributes',
+                            filterReleaseAttribute,
+                            setAllFilterReleaseAttributes
+                          )
+                        "
+                        color="mk-dark-grey"
+                      ></v-checkbox>
+                      <v-spacer></v-spacer>
+                      <v-icon
+                        size="24"
+                        class="mk-clickable"
+                        v-if="filterReleaseAttribute.ReleaseAttribute !== '<not available>'"
+                        v-on:click="eventBus.showReleaseAttributeDialog(filterReleaseAttribute.ReleaseAttribute)"
+                        >mdi-eye-outline</v-icon
+                      >
+                    </v-row>
                   </v-expansion-panel-text>
                 </v-expansion-panel>
 

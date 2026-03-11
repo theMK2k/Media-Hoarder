@@ -2132,8 +2132,6 @@ export default {
       this.releaseAttributeDialog.movie = movie;
       this.releaseAttributeDialog.isInDialog = !!isInDialog;
 
-      this.$refs.releaseAttributeDialog.init(releaseAttribute);
-
       this.releaseAttributeDialog.show = true;
     },
 
@@ -2141,8 +2139,6 @@ export default {
       this.propertyListDialog.list = list;
       this.propertyListDialog.movie = mediaItem;
       this.propertyListDialog.isInDialog = !!isInDialog;
-
-      this.$refs.propertyListDialog.init(list);
 
       this.propertyListDialog.show = true;
     },
@@ -3225,6 +3221,10 @@ export default {
       this.mpdShowGenreDialog(value);
     });
 
+    eventBus.on("showReleaseAttributeDialog", (value) => {
+      this.mpdShowReleaseAttributeDialog(value, null);
+    });
+
     eventBus.on("showPersonDialog", (value) => {
       this.mpdShowPersonDialog(value);
     });
@@ -3301,6 +3301,7 @@ export default {
     eventBus.off("showAudioFormatDialog");
     eventBus.off("showAudioLanguageDialog");
     eventBus.off("showSubtitleLanguageDialog");
+    eventBus.off("showReleaseAttributeDialog");
     eventBus.off("showGenreDialog");
     eventBus.off("showPersonDialog");
     eventBus.off("showPlotKeywordDialog");
