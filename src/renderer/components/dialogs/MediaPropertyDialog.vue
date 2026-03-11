@@ -422,6 +422,10 @@ export default {
           title: "Person",
           filterButtonText: "Filter by this person",
         },
+        "source-path": {
+          title: "Source Path",
+          filterButtonText: "Filter by this source path",
+        },
         list: {
           title: "List",
           filterButtonText: "Filter by this list",
@@ -618,6 +622,9 @@ export default {
         case "person":
           queryParams.$IMDB_Person_ID = this.propertyValue;
           break;
+        case "source-path":
+          queryParams.$SourcePathDescription = this.propertyValue;
+          break;
         case "list":
           queryParams.$id_Lists = this.propertyValue;
           break;
@@ -711,6 +718,7 @@ export default {
                       : ""
                   }
                   ${this.propertyTypeKey === "person" ? `AND MC.IMDB_Person_ID = $IMDB_Person_ID` : ""}
+                  ${this.propertyTypeKey === "source-path" ? `AND SP.Description = $SourcePathDescription` : ""}
           )
         `;
 
@@ -836,6 +844,9 @@ export default {
           await store.addFilterPerson(this.propertyValue, this.propertyValueDisplayText);
           setFilter.filterPersons = [this.propertyValue];
           eventBus.personDialogConfirm(setFilter);
+          break;
+        case "source-path":
+          setFilter.filterSourcePaths = [{ Description: this.propertyValue }];
           break;
         case "list":
           setFilter.filterLists = [this.propertyValueDisplayText];
@@ -1084,6 +1095,15 @@ export default {
               },
             ];
             break;
+          case "source-path":
+            filters.filterSourcePaths = [
+              { Description: "<none>", Selected: false },
+              {
+                Description: this.propertyValue,
+                Selected: true,
+              },
+            ];
+            break;
           case "list":
             filters.filterLists = [
               { id_Lists: 0, Selected: false },
@@ -1260,6 +1280,7 @@ export default {
         "releaseYearClicked",
         "myRatingClicked",
         "contentAdvisoryClicked",
+        "sourcePathClicked",
       ];
 
       if (propertyEventNames.includes(payload.eventName)) {
@@ -1359,6 +1380,12 @@ export default {
           cd.propertyTypeKey = "content-advisory";
           cd.propertyValue = { category: payload.category, severity: payload.severity };
           cd.propertyValueDisplayText = null;
+          cd.imdbTconst = null;
+          break;
+        case "sourcePathClicked":
+          cd.propertyTypeKey = "source-path";
+          cd.propertyValue = payload.sourcePath;
+          cd.propertyValueDisplayText = payload.sourcePath;
           cd.imdbTconst = null;
           break;
       }

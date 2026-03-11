@@ -9,6 +9,7 @@
   "Series": "Serien",
   "SERIES": "SERIEN",
   "Source Paths": "Quellpfade",
+  "Source Path": "Quellpfad",
   "Home": "Übersicht",
   "Go Back": "Zurück",
   "Add": "Hinzufügen",
@@ -1087,5 +1088,6 @@
   "Filter by this list": "Nach dieser Liste filtern",
   "Filter by this release year": "Nach diesem Erscheinungsjahr filtern",
   "Filter by this rating": "Nach dieser Bewertung filtern",
-  "Filter by this content advisory": "Nach dieser Inhaltsbewertung filtern"
+  "Filter by this content advisory": "Nach dieser Inhaltsbewertung filtern",
+  "Filter by this source path": "Nach diesem Quellpfad filtern"
 }

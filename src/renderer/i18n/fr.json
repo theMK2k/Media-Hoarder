@@ -9,6 +9,7 @@
   "Series": "Series",
   "SERIES": "SERIES",
   "Source Paths": "Chemin Source",
+  "Source Path": "Chemin Source",
   "Home": "Aperçu",
   "Go Back": "Retour",
   "Add": "Ajouter",
@@ -1088,5 +1089,6 @@
   "Filter by this list": "Filtrer par cette liste",
   "Filter by this release year": "Filtrer par cette année de sortie",
   "Filter by this rating": "Filtrer par cette note",
-  "Filter by this content advisory": "Filtrer par cet avis de contenu"
+  "Filter by this content advisory": "Filtrer par cet avis de contenu",
+  "Filter by this source path": "Filtrer par ce chemin source"
 }

@@ -556,7 +556,10 @@
           ><strong>{{ $t("Full Path") }}:</strong></v-col
         >
         <v-col class="detailContent">
-          <span v-bind:class="{ 'mk-search-highlight': $shared.filterSourcePathsActive }"
+          <span
+            class="mk-clickable"
+            v-bind:class="{ 'mk-search-highlight': $shared.filterSourcePathsActive }"
+            v-on:click.stop="emitMediaItemEvent('sourcePathClicked', { mediaItem, sourcePath: mediaItem.SourcePath, isInDialog })"
             ><word-highlighter v-bind:query="searchText || ''"
               >{{ mediaItem.SourcePath }}{{ pathSeparator }}</word-highlighter
             ></span

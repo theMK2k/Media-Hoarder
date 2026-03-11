@@ -246,16 +246,27 @@
                         <span>{{ $t("Select All") }}</span>
                       </v-tooltip>
                     </v-row>
-                    <v-checkbox
-                      class="mk-filter-checkbox"
+                    <v-row
                       v-for="sourcePath in filterSourcePaths"
                       v-bind:key="sourcePath.Description"
-                      v-bind:label="sourcePath.Description + ' (' + sourcePath.NumMoviesFormatted + ')'"
-                      v-model="sourcePath.Selected"
-                      v-on:mouseup="filterCheckboxMouseup('filterSourcePaths')"
-                      v-on:mousedown="filterCheckboxMousedown('filterSourcePaths', sourcePath, setAllFilterSourcePaths)"
-                      color="mk-dark-grey"
-                    ></v-checkbox>
+                      style="align-items: center"
+                    >
+                      <v-checkbox
+                        class="mk-filter-checkbox"
+                        v-bind:label="sourcePath.Description + ' (' + sourcePath.NumMoviesFormatted + ')'"
+                        v-model="sourcePath.Selected"
+                        v-on:mouseup="filterCheckboxMouseup('filterSourcePaths')"
+                        v-on:mousedown="filterCheckboxMousedown('filterSourcePaths', sourcePath, setAllFilterSourcePaths)"
+                        color="mk-dark-grey"
+                      ></v-checkbox>
+                      <v-spacer></v-spacer>
+                      <v-icon
+                        size="24"
+                        class="mk-clickable"
+                        v-on:click="eventBus.showSourcePathDialog(sourcePath.Description)"
+                        >mdi-eye-outline</v-icon
+                      >
+                    </v-row>
                   </v-expansion-panel-text>
                 </v-expansion-panel>
 
@@ -5323,6 +5334,11 @@ export default {
       if (setFilter.filterYears) {
         this.setAllFilterYears(false, setFilter.filterYears);
         this.$shared.filterGroups.find((fg) => fg.name === "filterYears").visible = true;
+      }
+
+      if (setFilter.filterSourcePaths) {
+        this.setAllFilterSourcePaths(false, setFilter.filterSourcePaths);
+        this.$shared.filterGroups.find((fg) => fg.name === "filterSourcePaths").visible = true;
       }
     });
 

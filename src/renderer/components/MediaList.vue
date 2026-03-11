@@ -529,6 +529,21 @@
       v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-release-year-dialog>
 
+    <mk-source-path-dialog
+      ref="sourcePathDialog"
+      v-bind:mediaType="mediatype"
+      v-bind:show="sourcePathDialog.show"
+      v-bind:isInDialog="sourcePathDialog.isInDialog"
+      v-bind:Series_id_Movies_Owner="MediaPropertyDialog_Series_id_Movies_Owner"
+      v-bind:Series_Name="series.item.Name"
+      v-bind:Series_Year_Display="series.item.yearDisplay"
+      propertyTypeKey="source-path"
+      v-bind:propertyValue="sourcePathDialog.Description"
+      v-bind:propertyValueDisplayText="sourcePathDialog.Description"
+      v-on:close="sourcePathDialog.show = false"
+      v-on:mediaItemEvent="onMICmediaItemEvent"
+    ></mk-source-path-dialog>
+
     <mk-property-list-dialog
       ref="propertyListDialog"
       v-bind:mediaType="mediatype"
@@ -786,6 +801,7 @@ export default {
     "mk-subtitle-language-dialog": MediaPropertyDialog,
     "mk-video-encoder-dialog": MediaPropertyDialog,
     "mk-video-quality-dialog": MediaPropertyDialog,
+    "mk-source-path-dialog": MediaPropertyDialog,
     "mk-property-list-dialog": MediaPropertyDialog,
 
     "mk-series-imdb-rating-heatmap-dialog": SeriesIMDBRatingHeatmapDialog,
@@ -969,6 +985,12 @@ export default {
       show: false,
       MI_Qualities_Item: null,
       Series_id_Movies_Owner: null,
+      isInDialog: false,
+    },
+
+    sourcePathDialog: {
+      show: false,
+      Description: null,
       isInDialog: false,
     },
 
@@ -2259,6 +2281,15 @@ export default {
 
       return;
     },
+    mpdShowSourcePathDialog(sourcePath, isInDialog) {
+      logger.log("[mpdShowSourcePathDialog]:", sourcePath);
+
+      this.sourcePathDialog.show = true;
+      this.sourcePathDialog.Description = sourcePath;
+      this.sourcePathDialog.isInDialog = !!isInDialog;
+
+      return;
+    },
     // ### End MediaPropertyDialog based methods
 
     async updateCurrentTime() {
@@ -2338,6 +2369,7 @@ export default {
       this.subtitleLanguageDialog.show = false;
       this.videoEncoderDialog.show = false;
       this.videoQualityDialog.show = false;
+      this.sourcePathDialog.show = false;
       this.propertyListDialog.show = false;
     },
 
@@ -3212,6 +3244,10 @@ export default {
           this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
           await this.mpdShowPropertyListDialog(payload.list, payload.mediaItem, payload.isInDialog);
           break;
+        case "sourcePathClicked":
+          this.MediaPropertyDialog_Series_id_Movies_Owner = payload.mediaItem.Series_id_Movies_Owner;
+          await this.mpdShowSourcePathDialog(payload.sourcePath, payload.isInDialog);
+          break;
 
         default:
           logger.error("[onMICmediaItemEvent] unknown eventName:", payload.eventName);
@@ -3374,6 +3410,10 @@ export default {
       this.mpdShowCompanyDialog(value);
     });
 
+    eventBus.on("showSourcePathDialog", (value) => {
+      this.mpdShowSourcePathDialog(value);
+    });
+
     eventBus.on("showPropertyListDialog", (value) => {
       this.mpdShowPropertyListDialog(value);
     });
@@ -3444,6 +3484,7 @@ export default {
     eventBus.off("showCompanyDialog");
     eventBus.off("showVideoEncoderDialog");
     eventBus.off("showVideoQualityDialog");
+    eventBus.off("showSourcePathDialog");
     eventBus.off("showPropertyListDialog");
     eventBus.off("closeAllPropertyDialogs");
   },
