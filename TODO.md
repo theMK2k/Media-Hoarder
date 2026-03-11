@@ -11,10 +11,10 @@
   - [ ] mpdShowAgeRatingDialog
   - [ ] mpdShowAudioFormatDialog
   - [x] mpdShowCompanyDialog -> showCompanyDialog
-  - [ ] mpdShowFilmingLocationDialog -> showFilmingLocationDialog
+  - [x] mpdShowFilmingLocationDialog -> showFilmingLocationDialog
   - [ ] mpdShowGenreDialog
   - [ ] mpdShowLanguageDialog
-  - [ ] mpdShowPersonDialog -> showPersonDialog
+  - [x] mpdShowPersonDialog -> showPersonDialog
   - [ ] mpdShowPlotKeywordDialog -> showPlotKeywordDialog
   - [ ] mpdShowReleaseAttributeDialog
   - [ ] mpdShowVideoEncoderDialog

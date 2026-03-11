@@ -1924,6 +1924,13 @@
                       <v-spacer></v-spacer>
                       <v-icon
                         size="24"
+                        class="mk-clickable"
+                        v-if="person.id_Filter_Persons"
+                        v-on:click="eventBus.showPersonDialog({ id: person.IMDB_Person_ID, name: person.Person_Name })"
+                        >mdi-eye-outline</v-icon
+                      >
+                      <v-icon
+                        size="24"
                         class="mk-clickable-red"
                         v-if="person.id_Filter_Persons"
                         v-on:click="
@@ -2611,6 +2618,13 @@
                         color="mk-dark-grey"
                       ></v-checkbox>
                       <v-spacer></v-spacer>
+                      <v-icon
+                        size="24"
+                        class="mk-clickable"
+                        v-if="filmingLocation.id_Filter_IMDB_Filming_Locations"
+                        v-on:click="eventBus.showFilmingLocationDialog(filmingLocation)"
+                        >mdi-eye-outline</v-icon
+                      >
                       <v-icon
                         size="24"
                         class="mk-clickable-red"
