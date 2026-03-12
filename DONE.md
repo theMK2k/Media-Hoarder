@@ -4,7 +4,8 @@
 
 ### Features
 
-- [x] Side Navigation containing the filters can now be resized by the user
+- [x] Sidebar Navigation containing the filters can now be resized by the user
+- [x] Sidebar filters: introduction of eye icon, which when clicked shows the dialog listing the movies and series that contain the value (e.g. year 2023, action genre, rated 3 stars by you)
 - [x] Media property dialogs can now stack indefinitely on top of each other (e.g. actor on top of another actor on top of a director), filtering by the property is possible at any level
 - [x] Media item cards can now also be expanded if they are popped in from dialogs (e.g. series heatmap)
 
