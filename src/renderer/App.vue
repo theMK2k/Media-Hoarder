@@ -715,7 +715,6 @@
                       <v-icon
                         size="24"
                         class="mk-clickable"
-                        v-if="subtitleLanguage.Language"
                         v-on:click="eventBus.showSubtitleLanguageDialog(subtitleLanguage.Language.toUpperCase())"
                         >mdi-eye-outline</v-icon
                       >
@@ -885,7 +884,6 @@
                       <v-icon
                         size="24"
                         class="mk-clickable"
-                        v-if="filterReleaseAttribute.ReleaseAttribute !== '<not available>'"
                         v-on:click="eventBus.showReleaseAttributeDialog(filterReleaseAttribute.ReleaseAttribute)"
                         >mdi-eye-outline</v-icon
                       >
@@ -1703,7 +1701,6 @@
                       <v-icon
                         size="24"
                         class="mk-clickable"
-                        v-if="ageRating.Age !== -1"
                         v-on:click="eventBus.showAgeRatingDialog('' + ageRating.Age)"
                         >mdi-eye-outline</v-icon
                       >
@@ -2382,7 +2379,6 @@
                       <v-icon
                         size="24"
                         class="mk-clickable"
-                        v-if="year.startYear !== -1"
                         v-on:click="eventBus.showReleaseYearDialog(year.startYear)"
                         >mdi-eye-outline</v-icon
                       >
@@ -2874,7 +2870,11 @@
                       v-on:click.native="filtersChanged('filterDataQuality')"
                       style="margin-bottom: 8px; margin-left: -10px"
                     ></v-switch>
-                    <v-row v-for="dataQuality in $shared.filters.filterDataQuality" v-bind:key="dataQuality.Name">
+                    <v-row
+                      v-for="dataQuality in $shared.filters.filterDataQuality"
+                      v-bind:key="dataQuality.Name"
+                      style="align-items: center"
+                    >
                       <v-checkbox
                         class="mk-filter-checkbox"
                         v-bind:key="dataQuality.Name"
@@ -2886,6 +2886,13 @@
                         "
                         color="mk-dark-grey"
                       ></v-checkbox>
+                      <v-spacer></v-spacer>
+                      <v-icon
+                        size="24"
+                        class="mk-clickable"
+                        v-on:click="eventBus.showDataQualityDialog(dataQuality)"
+                        >mdi-eye-outline</v-icon
+                      >
                     </v-row>
                   </v-expansion-panel-text>
                 </v-expansion-panel>
@@ -3038,7 +3045,6 @@
                       <v-icon
                         size="24"
                         class="mk-clickable"
-                        v-if="filterVideoEncoder.Name !== '<not available>'"
                         v-on:click="eventBus.showVideoEncoderDialog(filterVideoEncoder.Name)"
                         >mdi-eye-outline</v-icon
                       >
@@ -5339,6 +5345,11 @@ export default {
       if (setFilter.filterSourcePaths) {
         this.setAllFilterSourcePaths(false, setFilter.filterSourcePaths);
         this.$shared.filterGroups.find((fg) => fg.name === "filterSourcePaths").visible = true;
+      }
+
+      if (setFilter.filterDataQuality) {
+        this.setAllFilterDataQuality(false, setFilter.filterDataQuality);
+        this.$shared.filterGroups.find((fg) => fg.name === "filterDataQuality").visible = true;
       }
     });
 

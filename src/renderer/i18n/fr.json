@@ -1090,5 +1090,6 @@
   "Filter by this release year": "Filtrer par cette année de sortie",
   "Filter by this rating": "Filtrer par cette note",
   "Filter by this content advisory": "Filtrer par cet avis de contenu",
-  "Filter by this source path": "Filtrer par ce chemin source"
+  "Filter by this source path": "Filtrer par ce chemin source",
+  "Filter by this data quality": "Filtrer par cette qualité de données"
 }

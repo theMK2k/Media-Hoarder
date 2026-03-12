@@ -1089,5 +1089,6 @@
   "Filter by this release year": "Nach diesem Erscheinungsjahr filtern",
   "Filter by this rating": "Nach dieser Bewertung filtern",
   "Filter by this content advisory": "Nach dieser Inhaltsbewertung filtern",
-  "Filter by this source path": "Nach diesem Quellpfad filtern"
+  "Filter by this source path": "Nach diesem Quellpfad filtern",
+  "Filter by this data quality": "Nach dieser Datenqualität filtern"
 }

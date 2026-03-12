@@ -18,7 +18,9 @@
               : propertyValueDisplayText
             : propertyTypeKey == "content-advisory" && propertyValue
               ? `${$t(`ParentalAdvisoryCategories.${propertyValue.category}`)}: ${$t(contentAdvisorySeverityText)}`
-              : propertyValueDisplayText
+              : propertyTypeKey == "data-quality" && propertyValueDisplayText
+                ? $t(propertyValueDisplayText)
+                : propertyValueDisplayText
         }}
         <v-tooltip v-if="propertyTypeKey == 'person' && isTitleHovered" bottom>
           <template v-slot:activator="{ props }">
@@ -426,6 +428,10 @@ export default {
           title: "Source Path",
           filterButtonText: "Filter by this source path",
         },
+        "data-quality": {
+          title: "Data Quality",
+          filterButtonText: "Filter by this data quality",
+        },
         list: {
           title: "List",
           filterButtonText: "Filter by this list",
@@ -508,6 +514,45 @@ export default {
       return ageRating;
     },
 
+    // data-quality: get SQL subquery for a data quality filter name
+    getDataQualitySubquery() {
+      switch (this.propertyValue) {
+        case "<noAnomalies>":
+          return `SELECT id_Movies FROM tbl_Movies WHERE (
+            IMDB_tconst IS NOT NULL
+            AND scanErrors IS NULL
+            AND Name2 IS NOT NULL
+            AND IMDB_posterSmall_URL IS NOT NULL
+            AND IMDB_plotSummary IS NOT NULL
+            AND (
+              IMDB_Top_Directors IS NOT NULL
+              OR IMDB_Top_Writers IS NOT NULL
+              OR IMDB_Top_Producers IS NOT NULL
+              OR IMDB_Top_Cast IS NOT NULL
+            )
+          )`;
+        case "missingIMDBLink":
+          return `SELECT id_Movies FROM tbl_Movies WHERE IMDB_tconst IS NULL`;
+        case "hasScanErrors":
+          return `SELECT id_Movies FROM tbl_Movies WHERE scanErrors IS NOT NULL`;
+        case "missingSecondaryTitle":
+          return `SELECT id_Movies FROM tbl_Movies WHERE Name2 IS NULL`;
+        case "missingPoster":
+          return `SELECT id_Movies FROM tbl_Movies WHERE IMDB_posterSmall_URL IS NULL`;
+        case "missingPlotSummary":
+          return `SELECT id_Movies FROM tbl_Movies WHERE IMDB_plotSummary IS NULL`;
+        case "missingCredits":
+          return `SELECT id_Movies FROM tbl_Movies WHERE (
+            IMDB_Top_Directors IS NULL
+            AND IMDB_Top_Writers IS NULL
+            AND IMDB_Top_Producers IS NULL
+            AND IMDB_Top_Cast IS NULL
+          )`;
+        default:
+          return `SELECT id_Movies FROM tbl_Movies WHERE 1=0`;
+      }
+    },
+
     // person: scrape data
     async scrapeData() {
       if (this.propertyTypeKey === "person") {
@@ -576,8 +621,10 @@ export default {
 
       switch (this.propertyTypeKey) {
         case "age-rating":
-          queryParams.$MinAge = this.getMinAge(this.propertyValue);
-          queryParams.$MaxAge = this.getMaxAge(this.propertyValue);
+          if (+this.propertyValue !== -1) {
+            queryParams.$MinAge = this.getMinAge(this.propertyValue);
+            queryParams.$MaxAge = this.getMaxAge(this.propertyValue);
+          }
           break;
         case "audio-format":
           queryParams.$Audio_Format = this.propertyValue;
@@ -595,7 +642,9 @@ export default {
           queryParams.$Language = this.propertyValue;
           break;
         case "subtitle-language":
-          queryParams.$Language = this.propertyValue;
+          if (this.propertyValue !== "<NOT AVAILABLE>") {
+            queryParams.$Language = this.propertyValue;
+          }
           break;
         case "plot-keyword":
           queryParams.$id_IMDB_Plot_Keywords = this.propertyValue;
@@ -611,10 +660,14 @@ export default {
           }
           break;
         case "release-year":
-          queryParams.$startYear = this.propertyValue;
+          if (this.propertyValue !== -1) {
+            queryParams.$startYear = this.propertyValue;
+          }
           break;
         case "video-encoder":
-          queryParams.$Video_Encoder = this.propertyValue;
+          if (this.propertyValue !== "<not available>") {
+            queryParams.$Video_Encoder = this.propertyValue;
+          }
           break;
         case "video-quality":
           queryParams.$Video_Quality = this.propertyValue.MI_Quality;
@@ -624,6 +677,9 @@ export default {
           break;
         case "source-path":
           queryParams.$SourcePathDescription = this.propertyValue;
+          break;
+        case "data-quality":
+          // no query params needed - conditions are hardcoded in SQL
           break;
         case "list":
           queryParams.$id_Lists = this.propertyValue;
@@ -648,13 +704,15 @@ export default {
                       ? `INNER JOIN tbl_Movies_IMDB_Filming_Locations MFL ON MFL.id_Movies = MOV.id_Movies`
                       : this.propertyTypeKey === "plot-keyword"
                         ? `INNER JOIN tbl_Movies_IMDB_Plot_Keywords MPK ON MPK.id_Movies = MOV.id_Movies`
-                        : this.propertyTypeKey === "release-attribute"
+                        : this.propertyTypeKey === "release-attribute" && ra
                           ? `INNER JOIN tbl_Movies_Release_Attributes MRA ON MRA.id_Movies = MOV.id_Movies`
-                          : this.propertyTypeKey === "video-encoder"
+                          : this.propertyTypeKey === "video-encoder" && this.propertyValue !== "<not available>"
                             ? `INNER JOIN tbl_Movies_MI_Tracks MITVIDEO ON MITVIDEO.type = "video" AND MITVIDEO.id_Movies = MOV.id_Movies AND MITVIDEO.Encoded_Library_Name_Trimmed = $Video_Encoder`
-                            : this.propertyTypeKey === "person"
-                              ? `INNER JOIN tbl_Movies_IMDB_Credits MC ON MC.id_Movies = MOV.id_Movies`
-                              : ``
+                            : this.propertyTypeKey === "video-encoder" && this.propertyValue === "<not available>"
+                              ? `INNER JOIN tbl_Movies_MI_Tracks MITVIDEO ON MITVIDEO.type = "video" AND MITVIDEO.id_Movies = MOV.id_Movies AND MITVIDEO.Encoded_Library_Name_Trimmed IS NULL`
+                              : this.propertyTypeKey === "person"
+                                ? `INNER JOIN tbl_Movies_IMDB_Credits MC ON MC.id_Movies = MOV.id_Movies`
+                                : ``
             }
 
             WHERE SP.MediaType = $MediaType
@@ -662,7 +720,9 @@ export default {
                   AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                   ${
                     this.propertyTypeKey === "age-rating"
-                      ? `AND (
+                      ? +this.propertyValue === -1
+                        ? `AND (AR.Age IS NULL AND MOV.IMDB_id_AgeRating_Chosen_Country IS NULL AND MOV.IMDB_MinAge IS NULL AND MOV.IMDB_MaxAge IS NULL)`
+                        : `AND (
                               AR.Age BETWEEN $MinAge AND $MaxAge
                               OR (
                                     MOV.IMDB_id_AgeRating_Chosen_Country IS NULL AND MOV.IMDB_MinAge >= $MinAge AND MOV.IMDB_MaxAge <= $MaxAge
@@ -688,7 +748,9 @@ export default {
                   }
                   ${
                     this.propertyTypeKey === "subtitle-language"
-                      ? `AND MOV.id_Movies IN (SELECT ML.id_Movies FROM tbl_Movies_Languages ML WHERE ML.Type = "subtitle" AND UPPER(ML.Language) = $Language)`
+                      ? this.propertyValue === "<NOT AVAILABLE>"
+                        ? `AND MOV.id_Movies NOT IN (SELECT ML.id_Movies FROM tbl_Movies_Languages ML WHERE ML.Type = "subtitle")`
+                        : `AND MOV.id_Movies IN (SELECT ML.id_Movies FROM tbl_Movies_Languages ML WHERE ML.Type = "subtitle" AND UPPER(ML.Language) = $Language)`
                       : ""
                   }
                   ${
@@ -698,15 +760,17 @@ export default {
                   }
                   ${
                     this.propertyTypeKey === "release-attribute"
-                      ? `AND MRA.deleted = 0
-                         AND MRA.Release_Attributes_searchTerm IN (${ra.searchTerms.reduce((prev, current) => {
-                           return prev + (prev ? ", " : "") + `${sqlString.escape(current)}`;
-                         }, "")})`
+                      ? ra
+                        ? `AND MRA.deleted = 0
+                           AND MRA.Release_Attributes_searchTerm IN (${ra.searchTerms.reduce((prev, current) => {
+                             return prev + (prev ? ", " : "") + `${sqlString.escape(current)}`;
+                           }, "")})`
+                        : `AND MOV.id_Movies NOT IN (SELECT MRA2.id_Movies FROM tbl_Movies_Release_Attributes MRA2 WHERE MRA2.deleted = 0)`
                       : ""
                   }
                   ${this.propertyTypeKey === "content-advisory" ? (this.propertyValue.severity >= 0 ? `AND MOV.IMDB_Parental_Advisory_${this.propertyValue.category} = $PA_Severity` : `AND MOV.IMDB_Parental_Advisory_${this.propertyValue.category} IS NULL`) : ""}
                   ${this.propertyTypeKey === "my-rating" ? (this.propertyValue ? `AND MOV.Rating = $Rating` : `AND (MOV.Rating IS NULL OR MOV.Rating = 0)`) : ""}
-                  ${this.propertyTypeKey === "release-year" ? `AND MOV.startYear = $startYear` : ""}
+                  ${this.propertyTypeKey === "release-year" ? (this.propertyValue === -1 ? `AND MOV.startYear IS NULL` : `AND MOV.startYear = $startYear`) : ""}
                   ${
                     this.propertyTypeKey === "video-quality"
                       ? `AND (MOV.id_Movies IN (SELECT id_Movies FROM tbl_Movies_MI_Qualities MOVQ WHERE MOVQ.MI_Quality = $Video_Quality AND MOVQ.deleted = 0))`
@@ -719,6 +783,7 @@ export default {
                   }
                   ${this.propertyTypeKey === "person" ? `AND MC.IMDB_Person_ID = $IMDB_Person_ID` : ""}
                   ${this.propertyTypeKey === "source-path" ? `AND SP.Description = $SourcePathDescription` : ""}
+                  ${this.propertyTypeKey === "data-quality" ? `AND MOV.id_Movies IN (${this.getDataQualitySubquery()})` : ""}
           )
         `;
 
@@ -847,6 +912,9 @@ export default {
           break;
         case "source-path":
           setFilter.filterSourcePaths = [{ Description: this.propertyValue }];
+          break;
+        case "data-quality":
+          setFilter.filterDataQuality = [this.propertyValue];
           break;
         case "list":
           setFilter.filterLists = [this.propertyValueDisplayText];
@@ -1003,13 +1071,17 @@ export default {
           case "subtitle-language":
             filters.filterSubtitleLanguages = [
               {
-                Language: "<none>",
-                Selected: false,
+                Language: "<not available>",
+                Selected: this.propertyValue === "<NOT AVAILABLE>",
               },
-              {
-                Language: helpers.uppercaseEachWord(this.propertyValue.toLowerCase()),
-                Selected: true,
-              },
+              ...(this.propertyValue !== "<NOT AVAILABLE>"
+                ? [
+                    {
+                      Language: helpers.uppercaseEachWord(this.propertyValue.toLowerCase()),
+                      Selected: true,
+                    },
+                  ]
+                : []),
             ];
             break;
           case "plot-keyword":
@@ -1027,14 +1099,21 @@ export default {
             ];
             break;
           case "release-attribute":
-            filters.filterReleaseAttributes = [
-              { isAny: true, Selected: false },
-              {
-                isAny: false,
-                Selected: true,
-                ReleaseAttribute: this.propertyValue,
-              },
-            ];
+            if (this.propertyValue === "<not available>") {
+              filters.filterReleaseAttributes = [
+                { isAny: true, Selected: true },
+                { isAny: false, Selected: false, ReleaseAttribute: "_dummy_" },
+              ];
+            } else {
+              filters.filterReleaseAttributes = [
+                { isAny: true, Selected: false },
+                {
+                  isAny: false,
+                  Selected: true,
+                  ReleaseAttribute: this.propertyValue,
+                },
+              ];
+            }
             break;
           case "content-advisory":
             filters.filterParentalAdvisory = {};
@@ -1102,6 +1181,17 @@ export default {
                 Description: this.propertyValue,
                 Selected: true,
               },
+            ];
+            break;
+          case "data-quality":
+            filters.filterDataQuality = [
+              { Name: "<noAnomalies>", Selected: this.propertyValue === "<noAnomalies>" },
+              { Name: "missingIMDBLink", Selected: this.propertyValue === "missingIMDBLink" },
+              { Name: "hasScanErrors", Selected: this.propertyValue === "hasScanErrors" },
+              { Name: "missingSecondaryTitle", Selected: this.propertyValue === "missingSecondaryTitle" },
+              { Name: "missingPoster", Selected: this.propertyValue === "missingPoster" },
+              { Name: "missingPlotSummary", Selected: this.propertyValue === "missingPlotSummary" },
+              { Name: "missingCredits", Selected: this.propertyValue === "missingCredits" },
             ];
             break;
           case "list":
@@ -1301,7 +1391,7 @@ export default {
         case "ageRatingClicked":
           cd.propertyTypeKey = "age-rating";
           cd.propertyValue = payload.AgeRating;
-          cd.propertyValueDisplayText = payload.AgeRating;
+          cd.propertyValueDisplayText = +payload.AgeRating === -1 ? `<${this.$local_t("undetermined")}>` : payload.AgeRating;
           cd.imdbTconst = null;
           break;
         case "audioFormatClicked":
@@ -1367,7 +1457,7 @@ export default {
         case "releaseYearClicked":
           cd.propertyTypeKey = "release-year";
           cd.propertyValue = payload.startYear;
-          cd.propertyValueDisplayText = payload.startYear;
+          cd.propertyValueDisplayText = payload.startYear === -1 ? `<${this.$local_t("none provided")}>` : payload.startYear;
           cd.imdbTconst = null;
           break;
         case "myRatingClicked":

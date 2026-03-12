@@ -357,7 +357,7 @@
       v-bind:show="ageRatingDialog.show"
       v-bind:isInDialog="ageRatingDialog.isInDialog"
       v-bind:propertyValue="ageRatingDialog.Age_Rating"
-      v-bind:propertyValueDisplayText="ageRatingDialog.Age_Rating"
+      v-bind:propertyValueDisplayText="'' + ageRatingDialog.Age_Rating === '-1' ? `<${$t('undetermined')}>` : ageRatingDialog.Age_Rating"
       v-on:close="onAgeRatingDialogClose"
       v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-age-rating-dialog>
@@ -524,7 +524,7 @@
       v-bind:Series_Year_Display="series.item.yearDisplay"
       propertyTypeKey="release-year"
       v-bind:propertyValue="releaseYearDialog.startYear"
-      v-bind:propertyValueDisplayText="'' + releaseYearDialog.startYear"
+      v-bind:propertyValueDisplayText="releaseYearDialog.startYear === -1 ? `<${$t('none provided')}>` : '' + releaseYearDialog.startYear"
       v-on:close="releaseYearDialog.show = false"
       v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-release-year-dialog>
@@ -543,6 +543,21 @@
       v-on:close="sourcePathDialog.show = false"
       v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-source-path-dialog>
+
+    <mk-data-quality-dialog
+      ref="dataQualityDialog"
+      v-bind:mediaType="mediatype"
+      v-bind:show="dataQualityDialog.show"
+      v-bind:isInDialog="dataQualityDialog.isInDialog"
+      v-bind:Series_id_Movies_Owner="MediaPropertyDialog_Series_id_Movies_Owner"
+      v-bind:Series_Name="series.item.Name"
+      v-bind:Series_Year_Display="series.item.yearDisplay"
+      propertyTypeKey="data-quality"
+      v-bind:propertyValue="dataQualityDialog.Name"
+      v-bind:propertyValueDisplayText="dataQualityDialog.DisplayText"
+      v-on:close="dataQualityDialog.show = false"
+      v-on:mediaItemEvent="onMICmediaItemEvent"
+    ></mk-data-quality-dialog>
 
     <mk-property-list-dialog
       ref="propertyListDialog"
@@ -802,6 +817,7 @@ export default {
     "mk-video-encoder-dialog": MediaPropertyDialog,
     "mk-video-quality-dialog": MediaPropertyDialog,
     "mk-source-path-dialog": MediaPropertyDialog,
+    "mk-data-quality-dialog": MediaPropertyDialog,
     "mk-property-list-dialog": MediaPropertyDialog,
 
     "mk-series-imdb-rating-heatmap-dialog": SeriesIMDBRatingHeatmapDialog,
@@ -991,6 +1007,13 @@ export default {
     sourcePathDialog: {
       show: false,
       Description: null,
+      isInDialog: false,
+    },
+
+    dataQualityDialog: {
+      show: false,
+      Name: null,
+      DisplayText: null,
       isInDialog: false,
     },
 
@@ -2290,6 +2313,16 @@ export default {
 
       return;
     },
+    mpdShowDataQualityDialog(dataQuality, isInDialog) {
+      logger.log("[mpdShowDataQualityDialog]:", dataQuality);
+
+      this.dataQualityDialog.show = true;
+      this.dataQualityDialog.Name = dataQuality.Name;
+      this.dataQualityDialog.DisplayText = dataQuality.DisplayText;
+      this.dataQualityDialog.isInDialog = !!isInDialog;
+
+      return;
+    },
     // ### End MediaPropertyDialog based methods
 
     async updateCurrentTime() {
@@ -2370,6 +2403,7 @@ export default {
       this.videoEncoderDialog.show = false;
       this.videoQualityDialog.show = false;
       this.sourcePathDialog.show = false;
+      this.dataQualityDialog.show = false;
       this.propertyListDialog.show = false;
     },
 
@@ -3414,6 +3448,10 @@ export default {
       this.mpdShowSourcePathDialog(value);
     });
 
+    eventBus.on("showDataQualityDialog", (value) => {
+      this.mpdShowDataQualityDialog(value);
+    });
+
     eventBus.on("showPropertyListDialog", (value) => {
       this.mpdShowPropertyListDialog(value);
     });
@@ -3485,6 +3523,7 @@ export default {
     eventBus.off("showVideoEncoderDialog");
     eventBus.off("showVideoQualityDialog");
     eventBus.off("showSourcePathDialog");
+    eventBus.off("showDataQualityDialog");
     eventBus.off("showPropertyListDialog");
     eventBus.off("closeAllPropertyDialogs");
   },
