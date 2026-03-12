@@ -2,17 +2,6 @@
 
 ## Prio 0
 
-- [x] show dialog when a list is clicked
-  - [x] onMICmediaItemEvent handles the click on a list
-
-- [ ] make use of [imdbapi.dev](https://imdbapi.dev/) in case fetching from IMDB is unsuccessful
-
-- [ ] open series from compact view (e.g. series list in person dialog)
-  -> clicking the series however, expands the episodes list
-
-- [ ] BUG: rescan specific media leads to removal of "last access at"
-  - "last access at" (on the series - not the episode) is gone if a media moved
-
 - [WIP] introduce caching for the filters (uses shared.featureFlags)
   - [x] fetchFilterReleaseAttributes
   - [x] Source Paths
@@ -38,6 +27,11 @@
   - [ ] check with all implementations if possibly new fields for the hash key are necessary
   - [ ] find a strategy to invalidate the cache (completely or for single filters)
 
+- [ ] open series from compact view (e.g. series list in person dialog)
+  -> clicking the series however, expands the episodes list
+
+- [ ] BUG: rescan specific media leads to removal of "last access at"
+  - "last access at" (on the series - not the episode) is gone if a media moved
 - [WIP] Add "number of votes" filter
 
 - [ ] rescan: track times for each step:
@@ -87,6 +81,8 @@
   - [ ] highlight watched episodes, maybe highlight last watched episode differently as well
 
 ## LATER
+
+- [ ] make use of [imdbapi.dev](https://imdbapi.dev/) in case fetching from IMDB is unsuccessful
 
 ### IMDB Interests
 

@@ -15,7 +15,7 @@ const state = reactive({
   currentName: null,
 
   featureFlags: {
-    useFilterCache: false, // set to true to use the filterCache feature
+    useFilterCache: true, // set to true to use the filterCache feature
   },
 
   sidenav: null,

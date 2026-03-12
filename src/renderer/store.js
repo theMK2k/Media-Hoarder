@@ -137,7 +137,7 @@ let dbsync = dbsyncSQLite;
 helpers.ensureDirectorySync(helpers.getDataPath(""));
 helpers.ensureDirectorySync(helpers.getDataPath("extras"));
 
-logger.info(asciiLogo);
+console.info(asciiLogo);
 
 //logger.group("[Initialization]");
 dbsync.runSync(

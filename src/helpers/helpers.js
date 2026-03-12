@@ -53,9 +53,6 @@ function getDataPath(relativePath) {
     isDevelopment || isPORTABLE
       ? path.join(getStaticPath("data"), relativePath)
       : path.join(os.homedir(), ".media-hoarder", relativePath);
-  console.log(
-    `[DEBUG:getDataPath] isDevelopment=${isDevelopment}, isPORTABLE=${isPORTABLE}, relativePath="${relativePath}" => "${result}"`
-  );
   return result;
 }
 
