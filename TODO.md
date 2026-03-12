@@ -2,7 +2,7 @@
 
 ## Prio 0
 
-- [WIP] introduce caching for the filters (uses shared.featureFlags)
+- [WIP] introduce caching for the filters (uses shareld.featureFlags)
   - [x] fetchFilterReleaseAttributes
   - [x] Source Paths
   - [x] Video Quality
@@ -20,6 +20,7 @@
   - [x] Subtitle Languages
   - [x] Audio Formats
   - [ ] Filming Locations
+  - [ ] Data Quality
 
   - [ ] we might have an issue with fetchFilterValues and saveFilterValues in the complete chain
 
@@ -28,7 +29,7 @@
   - [ ] find a strategy to invalidate the cache (completely or for single filters)
 
 - [ ] open series from compact view (e.g. series list in person dialog)
-  -> clicking the series however, expands the episodes list
+      -> clicking the series however, expands the episodes list
 
 - [ ] BUG: rescan specific media leads to removal of "last access at"
   - "last access at" (on the series - not the episode) is gone if a media moved

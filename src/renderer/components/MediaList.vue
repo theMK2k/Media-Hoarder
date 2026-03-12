@@ -197,9 +197,11 @@
               v-if="series.item.IMDB_rating_defaultDisplay"
             >
               <v-icon size="small" color="amber" style="padding-bottom: 4px">mdi-star</v-icon>
-              <a class="mk-smalltext mb-2 mk-clickable" v-on:click.stop="onShowSeriesIMDBRatingHeatmapDialog(series.item)">{{
-                series.item.IMDB_rating_defaultDisplay
-              }}</a>
+              <a
+                class="mk-smalltext mb-2 mk-clickable"
+                v-on:click.stop="onShowSeriesIMDBRatingHeatmapDialog(series.item)"
+                >{{ series.item.IMDB_rating_defaultDisplay }}</a
+              >
               <span
                 v-if="series.item.IMDB_metacriticScore"
                 v-bind:class="helpers.getMetaCriticClass(series.item.IMDB_metacriticScore)"
@@ -357,7 +359,9 @@
       v-bind:show="ageRatingDialog.show"
       v-bind:isInDialog="ageRatingDialog.isInDialog"
       v-bind:propertyValue="ageRatingDialog.Age_Rating"
-      v-bind:propertyValueDisplayText="'' + ageRatingDialog.Age_Rating === '-1' ? `<${$t('undetermined')}>` : ageRatingDialog.Age_Rating"
+      v-bind:propertyValueDisplayText="
+        '' + ageRatingDialog.Age_Rating === '-1' ? `<${$t('undetermined')}>` : ageRatingDialog.Age_Rating
+      "
       v-on:close="onAgeRatingDialogClose"
       v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-age-rating-dialog>
@@ -524,7 +528,9 @@
       v-bind:Series_Year_Display="series.item.yearDisplay"
       propertyTypeKey="release-year"
       v-bind:propertyValue="releaseYearDialog.startYear"
-      v-bind:propertyValueDisplayText="releaseYearDialog.startYear === -1 ? `<${$t('none provided')}>` : '' + releaseYearDialog.startYear"
+      v-bind:propertyValueDisplayText="
+        releaseYearDialog.startYear === -1 ? `<${$t('none provided')}>` : '' + releaseYearDialog.startYear
+      "
       v-on:close="releaseYearDialog.show = false"
       v-on:mediaItemEvent="onMICmediaItemEvent"
     ></mk-release-year-dialog>
@@ -2134,6 +2140,9 @@ export default {
           return;
         }
 
+        // now that all filters have been loaded, it makes sense to store them in the cache
+        store.writeFilterCaches(this.mediatype, this.specificMediaType, this.Series_id_Movies_Owner);
+
         this.$shared.loadingFilterProgress = 100;
 
         // eventBus.showSidebarLoadingOverlay(false);
@@ -2290,7 +2299,9 @@ export default {
 
       this.myRatingDialog.show = true;
       this.myRatingDialog.rating = rating;
-      this.myRatingDialog.ratingDisplayText = rating ? helpers.getStarRatingString(rating) : `<${this.$local_t("not yet rated")}>`;
+      this.myRatingDialog.ratingDisplayText = rating
+        ? helpers.getStarRatingString(rating)
+        : `<${this.$local_t("not yet rated")}>`;
       this.myRatingDialog.isInDialog = !!isInDialog;
 
       return;

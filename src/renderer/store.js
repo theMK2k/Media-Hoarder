@@ -5395,8 +5395,12 @@ async function launchMovie(movie) {
   logger.log("[launchMovie] launching END task:", task);
 }
 
+/**
+ * Get stored filter values - especially we want to retain which filters were selected last time in order to restore this
+ */
 async function fetchFilterValues($SpecificMediaType, loadFilterValuesFromStorage) {
   logger.log("[fetchFilterValues]", $SpecificMediaType, loadFilterValuesFromStorage);
+
   if (loadFilterValuesFromStorage) {
     logger.log("[fetchFilterValues] loading from db for", $SpecificMediaType);
     const result = await getSetting(`filtersSpecificMediaType_${$SpecificMediaType}`);
@@ -7170,13 +7174,13 @@ async function fetchFilterLanguages(
   $Series_id_Movies_Owner
 ) {
   shared.loadingFilter = `filter${helpers.uppercaseEachWord($LanguageType)}Languages`;
-  logger.log("[fetchFilterLanguages] MediaType:", $MediaType);
+  logger.log(`[fetchFilterLanguages_${$LanguageType}] MediaType:`, $MediaType);
 
   const filterValues = await fetchFilterValues($SpecificMediaType, loadFilterValuesFromStorage);
 
-  logger.log("[fetchFilterLanguages] filterValues:", filterValues);
-
   //#region Caching
+  logger.log(`[fetchFilterLanguages_${$LanguageType}] shared.filters:`, JSON.parse(JSON.stringify(shared.filters)));
+
   const cacheHash = () =>
     getFilterCacheKey(
       `filterLanguages_${$LanguageType}`,
@@ -7187,10 +7191,10 @@ async function fetchFilterLanguages(
     );
 
   if (shared.featureFlags.useFilterCache) {
-    logger.log("[fetchFilterLanguages] cacheHash:", cacheHash());
+    logger.log(`[fetchFilterLanguages_${$LanguageType}] cacheHash:`, cacheHash());
 
     if (shared.filterCache[cacheHash()]) {
-      logger.log(`[fetchFilterLanguages] cache hit!`);
+      logger.log(`[fetchFilterLanguages_${$LanguageType}] cache hit!`);
 
       if ($LanguageType === "audio") {
         shared.filters.filterAudioLanguages = JSON.parse(shared.filterCache[cacheHash()].data);
@@ -7202,7 +7206,7 @@ async function fetchFilterLanguages(
       return;
     }
 
-    logger.log(`[fetchFilterLanguages] cache miss`);
+    logger.log(`[fetchFilterLanguages_${$LanguageType}] cache miss`);
   }
   //#endregion Caching
 
@@ -7294,7 +7298,7 @@ async function fetchFilterLanguages(
     }
   });
 
-  logger.log("[fetchFilterLanguages] resultsFiltered:", resultsFiltered);
+  logger.log(`[fetchFilterLanguages_${$LanguageType}] resultsFiltered:`, resultsFiltered);
 
   if ($LanguageType === "audio") {
     shared.filters.filterAudioLanguages = resultsFiltered;
@@ -7304,6 +7308,8 @@ async function fetchFilterLanguages(
   shared.loadingFilter = "";
 
   //#region Caching
+  logger.log(`[fetchFilterLanguages_${$LanguageType}] shared.filters:`, JSON.parse(JSON.stringify(shared.filters)));
+  logger.log(`[fetchFilterLanguages_${$LanguageType}] caching results with hash:`, cacheHash());
   shared.filterCache[cacheHash()] = {
     metaData: {
       createdAt: new Date(),
@@ -10469,6 +10475,132 @@ async function getScanProcessDetails($id_Scan_Processes) {
   return { scanProcess, scanProcessDetailsArray };
 }
 
+function writeFilterCache($MediaType, $SpecificMediaType, $Series_id_Movies_Owner, filterName, filterValues) {
+  const hash = getFilterCacheKey(filterName, $MediaType, $SpecificMediaType, $Series_id_Movies_Owner, shared.filters);
+  logger.log(`[writeFilterCache] storing ${filterName} with hash:`, hash);
+  shared.filterCache[hash] = {
+    metaData: {
+      createdAt: new Date(),
+      size: JSON.stringify(filterValues).length,
+    },
+    data: JSON.stringify(filterValues),
+  };
+}
+
+function writeFilterCaches($MediaType, $SpecificMediaType, $Series_id_Movies_Owner) {
+  // TODO: Data Quality
+
+  writeFilterCache(
+    $MediaType,
+    $SpecificMediaType,
+    $Series_id_Movies_Owner,
+    "filterSourcePaths",
+    shared.filters.filterSourcePaths
+  );
+  writeFilterCache(
+    $MediaType,
+    $SpecificMediaType,
+    $Series_id_Movies_Owner,
+    "filterGenres",
+    shared.filters.filterGenres
+  );
+  writeFilterCache(
+    $MediaType,
+    $SpecificMediaType,
+    $Series_id_Movies_Owner,
+    "filterAgeRatings",
+    shared.filters.filterAgeRatings
+  );
+  writeFilterCache(
+    $MediaType,
+    $SpecificMediaType,
+    $Series_id_Movies_Owner,
+    "filterRatings",
+    shared.filters.filterRatings
+  );
+
+  // TODO: fetchFilterParentalAdvisory (categories)
+  writeFilterCache(
+    $MediaType,
+    $SpecificMediaType,
+    $Series_id_Movies_Owner,
+    "filterPersons",
+    shared.filters.filterPersons
+  );
+  writeFilterCache(
+    $MediaType,
+    $SpecificMediaType,
+    $Series_id_Movies_Owner,
+    "filterCompanies",
+    shared.filters.filterCompanies
+  );
+  writeFilterCache(
+    $MediaType,
+    $SpecificMediaType,
+    $Series_id_Movies_Owner,
+    "filterIMDBPlotKeywords",
+    shared.filters.filterIMDBPlotKeywords
+  );
+  writeFilterCache(
+    $MediaType,
+    $SpecificMediaType,
+    $Series_id_Movies_Owner,
+    "filterIMDBFilmingLocations",
+    shared.filters.filterIMDBFilmingLocations
+  );
+  writeFilterCache($MediaType, $SpecificMediaType, $Series_id_Movies_Owner, "filterYears", shared.filters.filterYears);
+  writeFilterCache(
+    $MediaType,
+    $SpecificMediaType,
+    $Series_id_Movies_Owner,
+    "filterQualities",
+    shared.filters.filterQualities
+  );
+  writeFilterCache($MediaType, $SpecificMediaType, $Series_id_Movies_Owner, "filterLists", shared.filters.filterLists);
+  writeFilterCache(
+    $MediaType,
+    $SpecificMediaType,
+    $Series_id_Movies_Owner,
+    "filterAudioLanguages",
+    shared.filters.filterAudioLanguages
+  );
+  writeFilterCache(
+    $MediaType,
+    $SpecificMediaType,
+    $Series_id_Movies_Owner,
+    "filterSubtitleLanguages",
+    shared.filters.filterSubtitleLanguages
+  );
+  writeFilterCache(
+    $MediaType,
+    $SpecificMediaType,
+    $Series_id_Movies_Owner,
+    "filterIMDBRating",
+    shared.filters.filterIMDBRating
+  );
+  writeFilterCache(
+    $MediaType,
+    $SpecificMediaType,
+    $Series_id_Movies_Owner,
+    "filterReleaseAttributes",
+    shared.filters.filterReleaseAttributes
+  );
+  writeFilterCache(
+    $MediaType,
+    $SpecificMediaType,
+    $Series_id_Movies_Owner,
+    "filterVideoEncoders",
+    shared.filters.filterVideoEncoders
+  );
+  writeFilterCache(
+    $MediaType,
+    $SpecificMediaType,
+    $Series_id_Movies_Owner,
+    "filterAudioFormats",
+    shared.filters.filterAudioFormats
+  );
+}
+
 export {
   db,
   doAbortRescan,
@@ -10578,4 +10710,5 @@ export {
   getCollectionsSizes,
   getScanProcessDetails,
   getScanProcesses,
+  writeFilterCaches,
 };

@@ -8,7 +8,7 @@ const logger = loglevel;
 logger.maxLogSize = 1024;
 
 // Array of string or regular expresions which, when the first 200 characters of the logged item match, the full log item is provided
-logger.logFullPatternss = [];
+logger.logFullPatterns = [];
 
 const originalFactory = logger.methodFactory;
 logger.methodFactory = (methodName, logLevel, loggerName) => {
