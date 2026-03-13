@@ -40,6 +40,7 @@ export default defineConfig({
       alias: {
         // Allow main process to import from src/ directory
         "@": resolve(__dirname, "src"),
+        "@helpers": resolve(__dirname, "src/helpers"),
       },
     },
   },
