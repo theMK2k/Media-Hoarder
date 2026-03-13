@@ -5751,6 +5751,7 @@ async function fetchFilterGenres(
 
     result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
 
+    // directly store the translated name so that we can dynamically sort with it
     const genreNameTranslated = $t(`GenreNames.${result.Name}`);
     result.nameTranslated =
       genreNameTranslated && !genreNameTranslated.includes(".") ? genreNameTranslated : result.Name;
