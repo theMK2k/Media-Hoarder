@@ -16,7 +16,6 @@ const statAsync = util.promisify(fs.stat);
 const execAsync = util.promisify(child_process.exec);
 const readFileAsync = util.promisify(fs.readFile);
 
-import { asciiLogo } from "@helpers/ascii-logo.js";
 import { eventBus } from "@/eventBus.js";
 
 import logger from "@helpers/logger.js";
@@ -39,13 +38,13 @@ import imdbDataDefinition from "./object-definitions/imdb-data.js";
 const isBuild = process.env.NODE_ENV === "production";
 
 // DEBUG: Log environment details for diagnosing data path issues
-console.log("[DEBUG:renderer] process.env.NODE_ENV:", JSON.stringify(process.env.NODE_ENV));
-console.log("[DEBUG:renderer] isBuild:", isBuild);
-console.log("[DEBUG:renderer] helpers.isPORTABLE:", helpers.isPORTABLE);
-console.log("[DEBUG:renderer] getDataPath(''):", helpers.getDataPath(""));
-console.log("[DEBUG:renderer] getDataPath('media-hoarder.db'):", helpers.getDataPath("media-hoarder.db"));
-console.log("[DEBUG:renderer] getStaticPath('data'):", helpers.getStaticPath("data"));
-console.log("[DEBUG:renderer] os.homedir():", require("os").homedir());
+logger.log("[DEBUG:renderer] process.env.NODE_ENV:", JSON.stringify(process.env.NODE_ENV));
+logger.log("[DEBUG:renderer] isBuild:", isBuild);
+logger.log("[DEBUG:renderer] helpers.isPORTABLE:", helpers.isPORTABLE);
+logger.log("[DEBUG:renderer] getDataPath(''):", helpers.getDataPath(""));
+logger.log("[DEBUG:renderer] getDataPath('media-hoarder.db'):", helpers.getDataPath("media-hoarder.db"));
+logger.log("[DEBUG:renderer] getStaticPath('data'):", helpers.getStaticPath("data"));
+logger.log("[DEBUG:renderer] os.homedir():", require("os").homedir());
 
 const SUPPORTED_MEDIA_FILE_EXTENSIONS = [".avi", ".mp4", ".mkv", ".m2ts", ".rar", ".webm"];
 
@@ -136,8 +135,6 @@ let dbsync = dbsyncSQLite;
 // ensure standard paths
 helpers.ensureDirectorySync(helpers.getDataPath(""));
 helpers.ensureDirectorySync(helpers.getDataPath("extras"));
-
-console.info(asciiLogo);
 
 //logger.group("[Initialization]");
 dbsync.runSync(
@@ -5755,9 +5752,8 @@ async function fetchFilterGenres(
     result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
 
     const genreNameTranslated = $t(`GenreNames.${result.Name}`);
-    if (genreNameTranslated && !genreNameTranslated.includes(".")) {
-      result.Name = genreNameTranslated;
-    }
+    result.nameTranslated =
+      genreNameTranslated && !genreNameTranslated.includes(".") ? genreNameTranslated : result.Name;
 
     if (filterValues && filterValues.filterGenres) {
       const filterValue = filterValues.filterGenres.find((value) => value.GenreID === result.GenreID);
@@ -5771,7 +5767,7 @@ async function fetchFilterGenres(
   logger.log("[fetchFilterGenres] filterValues:", filterValues);
   logger.log("[fetchFilterGenres] resultsFiltered:", resultsFiltered);
 
-  shared.filters.filterGenres = resultsFiltered.sort((a, b) => helpers.compare(a.Name, b.Name, false));
+  shared.filters.filterGenres = resultsFiltered.sort((a, b) => helpers.compare(a.nameTranslated, b.nameTranslated, false));
   shared.loadingFilter = "";
 
   //#region Caching

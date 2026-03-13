@@ -11,14 +11,14 @@ async function runMigrations(db) {
   }
 
   for (let module of modules) {
-    logger.info(`checking migration: ${module.getName()}`);
+    logger.log(`checking migration: ${module.getName()}`);
 
     if (
       await db.fireProcedureReturnScalar(`SELECT COUNT(*) FROM tbl_DB_Migrations WHERE Name = $Name`, {
         $Name: module.getName(),
       })
     ) {
-      logger.info(`  migration was already applied, skip`);
+      logger.log(`  migration was already applied, skip`);
       continue;
     }
 
@@ -29,7 +29,7 @@ async function runMigrations(db) {
     });
   }
 
-  logger.info("all migrations completed");
+  logger.log("all migrations completed");
 }
 
 export { runMigrations };

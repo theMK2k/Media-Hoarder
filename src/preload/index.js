@@ -8,4 +8,4 @@
 // This file exists primarily for future migration to a more secure setup
 // with contextIsolation: true, where we would expose specific APIs via contextBridge.
 
-console.log('Preload script loaded');
+// console.log('Preload script loaded');
