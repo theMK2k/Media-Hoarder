@@ -1840,7 +1840,7 @@ export default {
     },
 
     $local_t(key, payload) {
-      return this.$t(key, payload);
+      return this?.$t(key, payload);
     },
 
     /**

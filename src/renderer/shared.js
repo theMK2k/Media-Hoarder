@@ -1333,7 +1333,7 @@ const methods = {
   },
 
   filterGenresAppliedContains(genreName) {
-    return !!computedProps.filterGenresApplied.value.find((fga) => fga.Name === genreName);
+    return !!computedProps.filterGenresApplied.value.find((fga) => fga.nameTranslated === genreName);
   },
 
   filterParentalAdvisoryAppliedContains(categoryName, severity) {

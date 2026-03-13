@@ -20,9 +20,13 @@
             <v-icon v-show="!isScanning">mdi-reload-alert</v-icon>
             <v-icon v-show="isScanning">mdi-cancel</v-icon>
           </template>
-          <v-list-item-title v-show="!isScanning">{{ $t("Scan Media") }}</v-list-item-title>
-          <v-list-item-title v-show="isScanning && !store.doAbortRescan">{{ $t("Cancel Scan") }}</v-list-item-title>
-          <v-list-item-title v-show="isScanning && store.doAbortRescan">{{ $t("Cancelling___") }}</v-list-item-title>
+          <v-list-item-title class="mk-navbar-main-item" v-show="!isScanning">{{ $t("Scan Media") }}</v-list-item-title>
+          <v-list-item-title class="mk-navbar-main-item" v-show="isScanning && !store.doAbortRescan">{{
+            $t("Cancel Scan")
+          }}</v-list-item-title>
+          <v-list-item-title class="mk-navbar-main-item" v-show="isScanning && store.doAbortRescan">{{
+            $t("Cancelling___")
+          }}</v-list-item-title>
         </v-list-item>
 
         <v-divider></v-divider>
@@ -32,7 +36,7 @@
           <template v-slot:prepend>
             <v-icon>mdi-home</v-icon>
           </template>
-          <v-list-item-title>{{ $t("Home") }}</v-list-item-title>
+          <v-list-item-title class="mk-navbar-main-item">{{ $t("Home") }}</v-list-item-title>
         </v-list-item>
 
         <v-divider></v-divider>
@@ -41,7 +45,7 @@
           <template v-slot:prepend>
             <v-icon>mdi-settings</v-icon>
           </template>
-          <v-list-item-title style="height: 18px">{{ $t("Settings") }}</v-list-item-title>
+          <v-list-item-title class="mk-navbar-main-item">{{ $t("Settings") }}</v-list-item-title>
         </v-list-item>
 
         <v-divider></v-divider>
@@ -56,7 +60,7 @@
           <template v-slot:prepend>
             <v-icon>{{ appSection.icon }}</v-icon>
           </template>
-          <v-list-item-title>{{ $t(`${appSection.text}`) }}</v-list-item-title>
+          <v-list-item-title class="mk-navbar-main-item">{{ $t(`${appSection.text}`) }}</v-list-item-title>
         </v-list-item>
 
         <!-- Filters -->
@@ -64,19 +68,25 @@
           <v-divider></v-divider>
 
           <v-list-subheader
-            style="margin: 0px !important; font-size: 16px"
+            style="margin: 4px 0px 0px 0px !important; font-size: 16px"
             class="filter-subheader"
             v-on:mouseover="filterHeaderHovered = true"
             v-on:mouseleave="filterHeaderHovered = false"
           >
-            <div>
+            <div style="margin-left: 2px; margin-top: 2px">
               {{ $t("Filters") }}
             </div>
             <v-spacer></v-spacer>
             <v-tooltip v-if="!editFilters.isEditFilters" location="bottom">
               <template v-slot:activator="{ props }">
                 <span v-bind="props">
-                  <v-btn variant="text" v-on:click="onResetFilters"><v-icon size="x-large">mdi-restore</v-icon></v-btn>
+                  <v-btn
+                    variant="text"
+                    density="compact"
+                    v-on:click="onResetFilters"
+                    style="padding-left: 0px; padding-right: 0px; width: 48px; min-width: 48px"
+                    ><v-icon size="large">mdi-restore</v-icon></v-btn
+                  >
                 </span>
               </template>
               <span>{{ $t("Reset Filters") }}</span>
@@ -84,7 +94,13 @@
             <v-tooltip v-if="!editFilters.isEditFilters" location="bottom">
               <template v-slot:activator="{ props }">
                 <span v-bind="props">
-                  <v-btn variant="text" v-on:click="onEditFilters"><v-icon size="x-large">mdi-pencil</v-icon></v-btn>
+                  <v-btn
+                    variant="text"
+                    density="compact"
+                    v-on:click="onEditFilters"
+                    style="padding-left: 0px; padding-right: 0px; width: 48px; min-width: 48px"
+                    ><v-icon size="large">mdi-pencil</v-icon></v-btn
+                  >
                 </span>
               </template>
               <span>{{ $t("Edit Filters") }}</span>
@@ -92,8 +108,12 @@
             <v-tooltip v-if="!editFilters.isEditFilters" location="bottom">
               <template v-slot:activator="{ props }">
                 <span v-bind="props">
-                  <v-btn variant="text" v-on:click="onOpenChatGPTDialog"
-                    ><v-icon size="x-large">mdi-robot</v-icon></v-btn
+                  <v-btn
+                    variant="text"
+                    density="compact"
+                    v-on:click="onOpenChatGPTDialog"
+                    style="padding-left: 0px; padding-right: 0px; width: 48px; min-width: 48px"
+                    ><v-icon size="large">mdi-robot</v-icon></v-btn
                   >
                 </span>
               </template>
@@ -138,12 +158,13 @@
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
                     <div
+                      class="mk-navbar-filter-category"
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
                         'mk-search-highlight': $shared.filterSourcePathsActive,
                       }"
-                      style="display: flex; align-items: center"
+                      style="display: flex; align-items: center; padding-left: 7px"
                     >
                       <span class="mk-filter-icon-container">
                         <v-icon
@@ -256,7 +277,9 @@
                         v-bind:label="sourcePath.Description + ' (' + sourcePath.NumMoviesFormatted + ')'"
                         v-model="sourcePath.Selected"
                         v-on:mouseup="filterCheckboxMouseup('filterSourcePaths')"
-                        v-on:mousedown="filterCheckboxMousedown('filterSourcePaths', sourcePath, setAllFilterSourcePaths)"
+                        v-on:mousedown="
+                          filterCheckboxMousedown('filterSourcePaths', sourcePath, setAllFilterSourcePaths)
+                        "
                         color="mk-dark-grey"
                       ></v-checkbox>
                       <v-spacer></v-spacer>
@@ -280,6 +303,7 @@
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
                     <div
+                      class="mk-navbar-filter-category"
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
@@ -421,6 +445,7 @@
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
                     <div
+                      class="mk-navbar-filter-category"
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
@@ -576,6 +601,7 @@
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
                     <div
+                      class="mk-navbar-filter-category"
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
@@ -734,6 +760,7 @@
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
                     <div
+                      class="mk-navbar-filter-category"
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
@@ -901,6 +928,7 @@
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
                     <div
+                      class="mk-navbar-filter-category"
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
@@ -1047,6 +1075,7 @@
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
                     <div
+                      class="mk-navbar-filter-category"
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
@@ -1140,10 +1169,7 @@
                       >
                       </v-checkbox>
                       <v-spacer></v-spacer>
-                      <v-icon
-                        size="24"
-                        class="mk-clickable"
-                        v-on:click="eventBus.showMyRatingDialog(rating.Rating)"
+                      <v-icon size="24" class="mk-clickable" v-on:click="eventBus.showMyRatingDialog(rating.Rating)"
                         >mdi-eye-outline</v-icon
                       >
                     </v-row>
@@ -1162,6 +1188,7 @@
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
                     <div
+                      class="mk-navbar-filter-category"
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
@@ -1254,6 +1281,7 @@
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
                     <div
+                      class="mk-navbar-filter-category"
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
@@ -1346,6 +1374,7 @@
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
                     <div
+                      class="mk-navbar-filter-category"
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
@@ -1432,6 +1461,7 @@
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
                     <div
+                      class="mk-navbar-filter-category"
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
@@ -1551,7 +1581,7 @@
                     >
                       <v-checkbox
                         class="mk-filter-checkbox"
-                        v-bind:label="genre.Name + ' (' + genre.NumMoviesFormatted + ')'"
+                        v-bind:label="genre.nameTranslated + ' (' + genre.NumMoviesFormatted + ')'"
                         v-model="genre.Selected"
                         v-on:mouseup="filterCheckboxMouseup('filterGenres')"
                         v-on:mousedown="filterCheckboxMousedown('filterGenres', genre, setAllFilterGenres)"
@@ -1577,7 +1607,7 @@
                         size="24"
                         class="mk-clickable"
                         style="margin-left: 8px"
-                        v-on:click="eventBus.showGenreDialog({ name: genre.Name, translated: $t(genre.Name) })"
+                        v-on:click="eventBus.showGenreDialog({ name: genre.Name, translated: genre.nameTranslated })"
                         >mdi-eye-outline</v-icon
                       >
                     </div>
@@ -1594,6 +1624,7 @@
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
                     <div
+                      class="mk-navbar-filter-category"
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
@@ -1720,6 +1751,7 @@
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
                     <div
+                      class="mk-navbar-filter-category"
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
@@ -1885,6 +1917,7 @@
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
                     <div
+                      class="mk-navbar-filter-category"
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
@@ -2058,6 +2091,7 @@
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
                     <div
+                      class="mk-navbar-filter-category"
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
@@ -2235,6 +2269,7 @@
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
                     <div
+                      class="mk-navbar-filter-category"
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
@@ -2376,10 +2411,7 @@
                         color="mk-dark-grey"
                       ></v-checkbox>
                       <v-spacer></v-spacer>
-                      <v-icon
-                        size="24"
-                        class="mk-clickable"
-                        v-on:click="eventBus.showReleaseYearDialog(year.startYear)"
+                      <v-icon size="24" class="mk-clickable" v-on:click="eventBus.showReleaseYearDialog(year.startYear)"
                         >mdi-eye-outline</v-icon
                       >
                     </v-row>
@@ -2398,6 +2430,7 @@
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
                     <div
+                      class="mk-navbar-filter-category"
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
@@ -2583,6 +2616,7 @@
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
                     <div
+                      class="mk-navbar-filter-category"
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
@@ -2772,6 +2806,7 @@
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
                     <div
+                      class="mk-navbar-filter-category"
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
@@ -2887,10 +2922,7 @@
                         color="mk-dark-grey"
                       ></v-checkbox>
                       <v-spacer></v-spacer>
-                      <v-icon
-                        size="24"
-                        class="mk-clickable"
-                        v-on:click="eventBus.showDataQualityDialog(dataQuality)"
+                      <v-icon size="24" class="mk-clickable" v-on:click="eventBus.showDataQualityDialog(dataQuality)"
                         >mdi-eye-outline</v-icon
                       >
                     </v-row>
@@ -2909,6 +2941,7 @@
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
                     <div
+                      class="mk-navbar-filter-category"
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
@@ -3064,6 +3097,7 @@
                 >
                   <v-expansion-panel-title style="padding: 8px !important">
                     <div
+                      class="mk-navbar-filter-category"
                       v-bind:class="{
                         'mk-grab': editFilters.isEditFilters,
                         'mk-dark-grey': !filterGroup.visible,
@@ -3215,7 +3249,7 @@
         <v-divider style="margin-top: 4px"></v-divider>
 
         <v-list-item @click="quit" prepend-icon="mdi-power">
-          <v-list-item-title>{{ $t("Quit") }}</v-list-item-title>
+          <v-list-item-title class="mk-navbar-main-item">{{ $t("Quit") }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -4433,7 +4467,7 @@ export default {
 
     setAllFilterGenres: function (value, exclusionList) {
       this.$shared.filters.filterGenres.forEach((genre) => {
-        if (exclusionList && exclusionList.find((val) => genre.Name === val.translated)) {
+        if (exclusionList && exclusionList.find((val) => genre.nameTranslated === val.translated)) {
           genre.Selected = !value;
           return;
         }
@@ -5381,6 +5415,17 @@ export default {
 };
 </script>
 <style>
+.mk-navbar-main-item {
+  height: 20px;
+  margin-top: -2px;
+}
+
+.mk-navbar-filter-category {
+  display: flex;
+  align-items: center;
+  padding-left: 7px;
+}
+
 /* Vuetify 3 sets html { line-height: 1.5 } and bumped body font from 14px/1.425 to 16px/1.5.
    Restore Vuetify 2 body-2 defaults globally. */
 .mk-compact-text > * {
@@ -5672,7 +5717,7 @@ a {
   font-size: 14px;
 }
 
-.v-list-item__title {
+.v-list-item-title {
   font-size: 16px !important;
   overflow: initial;
   white-space: initial;
