@@ -69,6 +69,7 @@
       <div class="align-self-start" style="padding: 0px; flex: 1; min-width: 0">
         <v-col style="padding: 0px !important; margin-top: 8px">
           <v-row style="margin: 0px">
+            <!-- Title, Secondary Title, Attributes -->
             <div style="margin-left: 4px; max-width: -webkit-fill-available">
               <v-list-item-title
                 class="text-h5 mb-2"
@@ -114,7 +115,13 @@
                       <span
                         class="mk-clickable"
                         v-bind:class="{ 'mk-search-highlight': $shared.filterYearsActive }"
-                        v-on:click.stop="emitMediaItemEvent('releaseYearClicked', { mediaItem, startYear: mediaItem.startYear, isInDialog })"
+                        v-on:click.stop="
+                          emitMediaItemEvent('releaseYearClicked', {
+                            mediaItem,
+                            startYear: mediaItem.startYear,
+                            isInDialog,
+                          })
+                        "
                       >
                         {{ mediaItem.yearDisplay }}
                       </span>
@@ -378,7 +385,9 @@
               </div>
             </div>
             <div class="flex-grow-1"></div>
-            <div>
+
+            <!-- IMDB Rating, Number of Votes, Metacritic Score, User Rating -->
+            <div style="margin-left: auto">
               <div
                 class="text-h5 mb-2"
                 style="margin-right: 8px; margin-left: 0px; margin-bottom: 0px !important"
@@ -559,7 +568,9 @@
           <span
             class="mk-clickable"
             v-bind:class="{ 'mk-search-highlight': $shared.filterSourcePathsActive }"
-            v-on:click.stop="emitMediaItemEvent('sourcePathClicked', { mediaItem, sourcePath: mediaItem.SourcePath, isInDialog })"
+            v-on:click.stop="
+              emitMediaItemEvent('sourcePathClicked', { mediaItem, sourcePath: mediaItem.SourcePath, isInDialog })
+            "
             ><word-highlighter v-bind:query="searchText || ''"
               >{{ mediaItem.SourcePath }}{{ pathSeparator }}</word-highlighter
             ></span
@@ -834,8 +845,13 @@
                 emitMediaItemEvent('contentAdvisoryClicked', {
                   mediaItem,
                   category: category.Name,
-                  severity: mediaItem[`IMDB_Parental_Advisory_${category.Name}`] != null ? mediaItem[`IMDB_Parental_Advisory_${category.Name}`] : -1,
-                  severityDisplayText: contentAdvisorySeverityDisplayText(mediaItem[`IMDB_Parental_Advisory_${category.Name}`]),
+                  severity:
+                    mediaItem[`IMDB_Parental_Advisory_${category.Name}`] != null
+                      ? mediaItem[`IMDB_Parental_Advisory_${category.Name}`]
+                      : -1,
+                  severityDisplayText: contentAdvisorySeverityDisplayText(
+                    mediaItem[`IMDB_Parental_Advisory_${category.Name}`]
+                  ),
                   isInDialog,
                 })
               "
