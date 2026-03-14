@@ -31,29 +31,31 @@
           }}
         </div>
 
-        <v-row
+        <div
           v-for="check in imdbScraperChecksFiltered"
           v-bind:key="check.key"
-          style="align-items: center; margin-top: 0px"
+          style="display: flex; align-items: flex-start; margin-top: 0px"
         >
           <v-btn
-            class="ma-2"
             v-bind:ripple="false"
             variant="text"
+            density="compact"
             v-bind:loading="check.isRunning"
             icon
             v-bind:color="check.color || 'blue lighten-2'"
-            style="margin: 4px 8px 4px 8px !important; cursor: default"
+            style="margin: 4px 8px 4px 8px; cursor: default; flex-shrink: 0"
           >
             <v-icon>{{ check.icon }}</v-icon>
           </v-btn>
-          <span style="color: white">{{ $t(check.description) }}</span>
-          <div v-if="check.result && check.result.log">
-            <li v-for="(logEntry, index) in check.result.log" v-bind:key="index" style="margin-left: 52px">
-              {{ logEntry }}
-            </li>
+          <div style="min-width: 0; padding-top: 8px">
+            <span style="color: white">{{ $t(check.description) }}</span>
+            <div class="mk-smalltext" v-if="check.result && check.result.log" style="margin-left: 16px">
+              <li v-for="(logEntry, index) in check.result.log" v-bind:key="index">
+                {{ logEntry }}
+              </li>
+            </div>
           </div>
-        </v-row>
+        </div>
 
         <div v-if="!isRunning" style="margin-left: -18px; margin-top: 12px; margin-right: -16px">
           <v-alert type="success" variant="tonal" border="start" v-if="checkResult === 0">{{
