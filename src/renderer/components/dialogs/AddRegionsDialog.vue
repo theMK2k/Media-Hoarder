@@ -48,6 +48,8 @@
 import * as _ from "lodash";
 
 import * as store from "@/store.js";
+import i18n from "@/i18n.js";
+const $t = i18n.global.t;
 // import * as helpers from "@helpers/helpers.js";
 import logger from "@helpers/logger.js";
 
@@ -123,7 +125,7 @@ export default {
           this.items = await store.getIMDBRegions();
 
           this.items.forEach((item) => {
-            item.nameTranslated = this.$t(`RegionNames.${item.name.replace(/[.']/g, "_")}`);
+            item.nameTranslated = $t(`RegionNames.${item.name.replace(/[.']/g, "_")}`);
           });
 
           this.items = this.items.sort((a, b) => (a.nameTranslated > b.nameTranslated ? 0 : -1));

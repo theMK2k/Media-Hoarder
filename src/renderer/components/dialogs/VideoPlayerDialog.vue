@@ -165,6 +165,8 @@
 <script>
 import logger from "@helpers/logger.js";
 import * as store from "@/store.js";
+import i18n from "@/i18n.js";
+const $t = i18n.global.t;
 
 // import { eventBus } from "@/main";
 import CompactMovieListRow from "@/components/shared/CompactMovieListRow.vue";
@@ -219,10 +221,6 @@ export default {
       this.$emit("close");
     },
 
-    $local_t(key, payload) {
-      return this.$t(key, payload);
-    },
-
     async onShowMediaItemDetails(mediaItem) {
       logger.log("[onShowMediaItemDetails] mediaItem:", mediaItem);
 
@@ -231,7 +229,6 @@ export default {
         $MediaType: mediaItem.MediaType,
         arr_id_Movies: [mediaItem.id_Movies],
         minimumResultSet: false,
-        $t: this.$local_t,
         filters: { filterSettings: {} },
         arr_IMDB_tconst: null,
         Series_id_Movies_Owner: mediaItem.Series_id_Movies_Owner,

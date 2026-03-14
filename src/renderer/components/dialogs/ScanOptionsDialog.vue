@@ -176,6 +176,8 @@ import logger from "@helpers/logger.js";
 
 import * as helpers from "@helpers/helpers.js";
 import * as store from "@/store.js";
+import i18n from "@/i18n.js";
+const $t = i18n.global.t;
 
 import { shell } from "@electron/remote";
 
@@ -199,11 +201,11 @@ export default {
   computed: {
     imdbOptionsTitle() {
       if (this.$shared.userScanOptions.findIndex((scanOption) => !scanOption.enabled) === -1) {
-        return `(${this.$t("ALL")})`;
+        return `(${$t("ALL")})`;
       }
 
       if (this.$shared.userScanOptions.findIndex((scanOption) => scanOption.enabled) === -1) {
-        return `(${this.$t("NONE")})`;
+        return `(${$t("NONE")})`;
       }
 
       return (

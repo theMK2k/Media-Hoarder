@@ -89,6 +89,8 @@ import * as imdbScraperTests from "@/tests/imdb-scraper-tests.js";
 // import * as store from "@/store.js";
 
 // import { eventBus } from "@/main";
+import i18n from "@/i18n.js";
+const $t = i18n.global.t;
 
 export default {
   props: ["show"],
@@ -114,7 +116,7 @@ export default {
     init(settings) {
       this.settings = settings;
       this.isRunning = false;
-      this.okButtonText = this.$t("OK");
+      this.okButtonText = $t("OK");
       this.checkResult = null;
 
       this.$shared.imdbScraperChecks.forEach((check) => {
@@ -165,7 +167,7 @@ export default {
 
           if (!this.checkResult) {
             this.checkResult = imdbScraperTests.status.SUCCESS;
-            this.okButtonText = this.$t("OK - Scan Media Now");
+            this.okButtonText = $t("OK - Scan Media Now");
           }
         }
         if (check.result.status === imdbScraperTests.status.WARNING) {
@@ -174,7 +176,7 @@ export default {
 
           if (this.checkResult !== imdbScraperTests.status.ERROR) {
             this.checkResult = imdbScraperTests.status.WARNING;
-            this.okButtonText = this.$t("Ignore Warning - Scan Media Now");
+            this.okButtonText = $t("Ignore Warning - Scan Media Now");
           }
         }
         if (check.result.status === imdbScraperTests.status.ERROR) {
@@ -182,14 +184,14 @@ export default {
           check.icon = "mdi-alert-circle-outline";
 
           this.checkResult = imdbScraperTests.status.ERROR;
-          this.okButtonText = this.$t("Ignore Error - Scan Media Now");
+          this.okButtonText = $t("Ignore Error - Scan Media Now");
         }
         if (check.result.status === imdbScraperTests.status.EXCEPTION) {
           check.color = "red";
           check.icon = "mdi-alert-circle-outline";
 
           this.checkResult = imdbScraperTests.status.EXCEPTION;
-          this.okButtonText = this.$t("Ignore Exception - Scan Media Now");
+          this.okButtonText = $t("Ignore Exception - Scan Media Now");
         }
 
         check.isRunning = false;

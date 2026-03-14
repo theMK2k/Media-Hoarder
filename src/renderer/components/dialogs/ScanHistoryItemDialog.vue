@@ -130,10 +130,6 @@ export default {
       this.onCloseClick();
     },
 
-    $local_t(key, payload) {
-      return this.$t(key, payload);
-    },
-
     toggleBoolean(item, key) {
       logger.log(`[ScanHistoryItemDialog toggleBoolean]`, { item, key });
       item[key] = !item[key];

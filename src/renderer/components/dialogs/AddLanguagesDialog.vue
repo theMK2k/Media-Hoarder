@@ -48,6 +48,8 @@
 import * as _ from "lodash";
 
 import * as store from "@/store.js";
+import i18n from "@/i18n.js";
+const $t = i18n.global.t;
 // import * as helpers from "@helpers/helpers.js";
 import logger from "@helpers/logger.js";
 
@@ -128,7 +130,7 @@ export default {
           this.items = await store.getIMDBLanguages();
 
           this.items.forEach((item) => {
-            item.nameTranslated = this.$t(`LanguageNames.${item.name.replace(/[.']/g, "_")}`);
+            item.nameTranslated = $t(`LanguageNames.${item.name.replace(/[.']/g, "_")}`);
             item.DisplayText = `${item.nameTranslated} (${item.code})`;
           });
 

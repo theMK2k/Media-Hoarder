@@ -432,6 +432,8 @@ import * as _ from "lodash";
 import * as helpers from "@helpers/helpers.js";
 import * as store from "@/store.js";
 import { eventBus } from "@/eventBus.js";
+import i18n from "@/i18n.js";
+const $t = i18n.global.t;
 
 import { languageCodeNameMapping } from "@/languages.js";
 import { deepDiffMapper } from "@helpers/deep-diff-mapper.js";
@@ -470,7 +472,7 @@ export default {
       return Object.keys(languageCodeNameMapping)
         .map((languageCode) => {
           return {
-            displayText: `${this.$t(
+            displayText: `${$t(
               `LanguageNames.${languageCodeNameMapping[languageCode].replace(/\./g, "_").replace(/'/g, "_")}`
             )} (${languageCode.toUpperCase()})`,
             languageCode,
@@ -563,10 +565,10 @@ export default {
     async onOKClick() {
       // Check some fields
       if (!this.mediaItem.Name) {
-        return eventBus.showSnackbar("error", this.$t("Primary Title is missing_"));
+        return eventBus.showSnackbar("error", $t("Primary Title is missing_"));
       }
       if (this.mediaItem.startYear && !/\d\d\d\d/.test(this.mediaItem.startYear)) {
-        return eventBus.showSnackbar("error", this.$t("Year is malformed_"));
+        return eventBus.showSnackbar("error", $t("Year is malformed_"));
       }
 
       let hasChanges = false;

@@ -287,6 +287,8 @@ import * as _ from "lodash";
 import MediaItemCard from "@/components/shared/MediaItemCard.vue";
 
 import * as store from "@/store.js";
+import i18n from "@/i18n.js";
+const $t = i18n.global.t;
 import * as helpers from "@helpers/helpers.js";
 import logger from "@helpers/logger.js";
 
@@ -1211,7 +1213,6 @@ export default {
           $MediaType: type === "episodes" ? "series" : type,
           arr_id_Movies: null,
           minimumResultSet: true,
-          $t: this.$t,
           filters,
           Series_id_Movies_Owner,
           dontStoreFilters: true,
@@ -1324,10 +1325,6 @@ export default {
       }
     },
 
-    $local_t(key, payload) {
-      return this.$t(key, payload);
-    },
-
     async onShowMediaItemDetails(mediaItem) {
       logger.log("[onShowMediaItemDetails] mediaItem:", mediaItem);
 
@@ -1336,7 +1333,6 @@ export default {
         $MediaType: mediaItem.MediaType,
         arr_id_Movies: [mediaItem.id_Movies],
         minimumResultSet: false,
-        $t: this.$local_t,
         filters: { filterSettings: {} },
         arr_IMDB_tconst: null,
         Series_id_Movies_Owner: mediaItem.Series_id_Movies_Owner,
@@ -1391,7 +1387,7 @@ export default {
         case "ageRatingClicked":
           cd.propertyTypeKey = "age-rating";
           cd.propertyValue = payload.AgeRating;
-          cd.propertyValueDisplayText = +payload.AgeRating === -1 ? `<${this.$local_t("undetermined")}>` : payload.AgeRating;
+          cd.propertyValueDisplayText = +payload.AgeRating === -1 ? `<${$t("undetermined")}>` : payload.AgeRating;
           cd.imdbTconst = null;
           break;
         case "audioFormatClicked":
@@ -1457,13 +1453,13 @@ export default {
         case "releaseYearClicked":
           cd.propertyTypeKey = "release-year";
           cd.propertyValue = payload.startYear;
-          cd.propertyValueDisplayText = payload.startYear === -1 ? `<${this.$local_t("none provided")}>` : payload.startYear;
+          cd.propertyValueDisplayText = payload.startYear === -1 ? `<${$t("none provided")}>` : payload.startYear;
           cd.imdbTconst = null;
           break;
         case "myRatingClicked":
           cd.propertyTypeKey = "my-rating";
           cd.propertyValue = payload.rating;
-          cd.propertyValueDisplayText = payload.rating ? helpers.getStarRatingString(payload.rating) : `<${this.$local_t("not yet rated")}>`;
+          cd.propertyValueDisplayText = payload.rating ? helpers.getStarRatingString(payload.rating) : `<${$t("not yet rated")}>`;
           cd.imdbTconst = null;
           break;
         case "contentAdvisoryClicked":

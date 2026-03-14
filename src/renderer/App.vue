@@ -3490,6 +3490,8 @@ import { Sortable } from "sortablejs-vue3";
 import logger from "@helpers/logger.js";
 
 import * as store from "@/store.js";
+import i18n from "@/i18n.js";
+const $t = i18n.global.t;
 import { shared } from "@/shared.js";
 import { eventBus } from "@/eventBus.js";
 import * as helpers from "@helpers/helpers.js";
@@ -3711,11 +3713,11 @@ export default {
     },
     filterSourcePathsTitle() {
       if (!this.$shared.filters.filterSourcePaths.find((filter) => !filter.Selected)) {
-        return `(${this.$t("ALL")})`;
+        return `(${$t("ALL")})`;
       }
 
       if (!this.$shared.filters.filterSourcePaths.find((filter) => filter.Selected)) {
-        return `(${this.$t("NONE")})`;
+        return `(${$t("NONE")})`;
       }
 
       return (
@@ -3729,11 +3731,11 @@ export default {
 
     filterDataQualityTitle() {
       if (!this.$shared.filters.filterDataQuality.find((filter) => !filter.Selected)) {
-        return `(${this.$t("ALL")})`;
+        return `(${$t("ALL")})`;
       }
 
       if (!this.$shared.filters.filterDataQuality.find((filter) => filter.Selected)) {
-        return `(${this.$t("NONE")})`;
+        return `(${$t("NONE")})`;
       }
 
       return (
@@ -3760,11 +3762,11 @@ export default {
     },
     filterVideoEncodersTitle() {
       if (!this.$shared.filters.filterVideoEncoders.find((filter) => !filter.Selected)) {
-        return `(${this.$t("ALL")})`;
+        return `(${$t("ALL")})`;
       }
 
       if (!this.$shared.filters.filterVideoEncoders.find((filter) => filter.Selected)) {
-        return `(${this.$t("NONE")})`;
+        return `(${$t("NONE")})`;
       }
 
       return (
@@ -3791,11 +3793,11 @@ export default {
     },
     filterAudioFormatsTitle() {
       if (!this.$shared.filters.filterAudioFormats.find((filter) => !filter.Selected)) {
-        return `(${this.$t("ALL")})`;
+        return `(${$t("ALL")})`;
       }
 
       if (!this.$shared.filters.filterAudioFormats.find((filter) => filter.Selected)) {
-        return `(${this.$t("NONE")})`;
+        return `(${$t("NONE")})`;
       }
 
       return (
@@ -3824,13 +3826,13 @@ export default {
       let result = "(";
 
       if (!this.$shared.filters.filterGenres.find((filter) => !filter.Selected && !filter.Excluded)) {
-        result += this.$t("ALL");
+        result += $t("ALL");
         if (this.$shared.filters.filterGenres.find((filter) => filter.Selected && filter.Excluded)) {
           result +=
             " - " + this.$shared.filters.filterGenres.filter((filter) => filter.Selected && filter.Excluded).length;
         }
       } else if (!this.$shared.filters.filterGenres.find((filter) => filter.Selected && !filter.Excluded)) {
-        result += this.$t("NONE");
+        result += $t("NONE");
         if (this.$shared.filters.filterGenres.find((filter) => filter.Selected && filter.Excluded)) {
           result +=
             " - " + this.$shared.filters.filterGenres.filter((filter) => filter.Selected && filter.Excluded).length;
@@ -3852,11 +3854,11 @@ export default {
 
     filterAgeRatingsTitle() {
       if (!this.$shared.filters.filterAgeRatings.find((filter) => !filter.Selected)) {
-        return `(${this.$t("ALL")})`;
+        return `(${$t("ALL")})`;
       }
 
       if (!this.$shared.filters.filterAgeRatings.find((filter) => filter.Selected)) {
-        return `(${this.$t("NONE")})`;
+        return `(${$t("NONE")})`;
       }
 
       return (
@@ -3870,11 +3872,11 @@ export default {
 
     filterRatingsTitle() {
       if (!this.$shared.filters.filterRatings.find((filter) => !filter.Selected)) {
-        return `(${this.$t("ALL")})`;
+        return `(${$t("ALL")})`;
       }
 
       if (!this.$shared.filters.filterRatings.find((filter) => filter.Selected)) {
-        return `(${this.$t("NONE")})`;
+        return `(${$t("NONE")})`;
       }
 
       return (
@@ -3901,11 +3903,11 @@ export default {
     },
     filterYearsTitle() {
       if (!this.$shared.filters.filterYears.find((filter) => !filter.Selected)) {
-        return `(${this.$t("ALL")})`;
+        return `(${$t("ALL")})`;
       }
 
       if (!this.$shared.filters.filterYears.find((filter) => filter.Selected)) {
-        return `(${this.$t("NONE")})`;
+        return `(${$t("NONE")})`;
       }
 
       return (
@@ -3932,11 +3934,11 @@ export default {
     },
     filterQualitiesTitle() {
       if (!this.$shared.filters.filterQualities.find((filter) => !filter.Selected)) {
-        return `(${this.$t("ALL")})`;
+        return `(${$t("ALL")})`;
       }
 
       if (!this.$shared.filters.filterQualities.find((filter) => filter.Selected)) {
-        return `(${this.$t("NONE")})`;
+        return `(${$t("NONE")})`;
       }
 
       return (
@@ -3963,11 +3965,11 @@ export default {
     },
     filterListsTitle() {
       if (!this.$shared.filters.filterLists.find((filter) => !filter.Selected)) {
-        return `(${this.$t("ALL")})`;
+        return `(${$t("ALL")})`;
       }
 
       if (!this.$shared.filters.filterLists.find((filter) => filter.Selected)) {
-        return `(${this.$t("NONE")})`;
+        return `(${$t("NONE")})`;
       }
 
       return (
@@ -3999,7 +4001,7 @@ export default {
             !filter.Selected && (!this.$shared.filters.filterSettings.filterPersonsAND || filter.IMDB_Person_ID)
         )
       ) {
-        return `(${this.$t("ALL")})`;
+        return `(${$t("ALL")})`;
       }
 
       if (
@@ -4008,7 +4010,7 @@ export default {
             filter.Selected && (!this.$shared.filters.filterSettings.filterPersonsAND || filter.IMDB_Person_ID)
         )
       ) {
-        return `(${this.$t("NONE")})`;
+        return `(${$t("NONE")})`;
       }
 
       return (
@@ -4045,7 +4047,7 @@ export default {
             !filter.Selected && (!this.$shared.filters.filterSettings.filterCompaniesAND || filter.id_Filter_Companies)
         )
       ) {
-        return `(${this.$t("ALL")})`;
+        return `(${$t("ALL")})`;
       }
 
       if (
@@ -4054,7 +4056,7 @@ export default {
             filter.Selected && (!this.$shared.filters.filterSettings.filterCompaniesAND || filter.id_Filter_Companies)
         )
       ) {
-        return `(${this.$t("NONE")})`;
+        return `(${$t("NONE")})`;
       }
 
       return (
@@ -4094,7 +4096,7 @@ export default {
             (!this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND || filter.id_Filter_IMDB_Plot_Keywords)
         )
       ) {
-        return `(${this.$t("ALL")})`;
+        return `(${$t("ALL")})`;
       }
 
       if (
@@ -4104,7 +4106,7 @@ export default {
             (!this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND || filter.id_Filter_IMDB_Plot_Keywords)
         )
       ) {
-        return `(${this.$t("NONE")})`;
+        return `(${$t("NONE")})`;
       }
 
       return (
@@ -4148,7 +4150,7 @@ export default {
               filter.id_Filter_IMDB_Filming_Locations)
         )
       ) {
-        return `(${this.$t("ALL")})`;
+        return `(${$t("ALL")})`;
       }
 
       if (
@@ -4159,7 +4161,7 @@ export default {
               filter.id_Filter_IMDB_Filming_Locations)
         )
       ) {
-        return `(${this.$t("NONE")})`;
+        return `(${$t("NONE")})`;
       }
 
       return (
@@ -4195,11 +4197,11 @@ export default {
     },
     filterReleaseAttributesTitle() {
       if (!this.$shared.filters.filterReleaseAttributes.find((filter) => !filter.Selected)) {
-        return `(${this.$t("ALL")})`;
+        return `(${$t("ALL")})`;
       }
 
       if (!this.$shared.filters.filterReleaseAttributes.find((filter) => filter.Selected)) {
-        return `(${this.$t("NONE")})`;
+        return `(${$t("NONE")})`;
       }
 
       return (
@@ -4226,11 +4228,11 @@ export default {
     },
     filterAudioLanguagesTitle() {
       if (!this.$shared.filters.filterAudioLanguages.find((filter) => !filter.Selected)) {
-        return `(${this.$t("ALL")})`;
+        return `(${$t("ALL")})`;
       }
 
       if (!this.$shared.filters.filterAudioLanguages.find((filter) => filter.Selected)) {
-        return `(${this.$t("NONE")})`;
+        return `(${$t("NONE")})`;
       }
 
       return (
@@ -4257,11 +4259,11 @@ export default {
     },
     filterSubtitleLanguagesTitle() {
       if (!this.$shared.filters.filterSubtitleLanguages.find((filter) => !filter.Selected)) {
-        return `(${this.$t("ALL")})`;
+        return `(${$t("ALL")})`;
       }
 
       if (!this.$shared.filters.filterSubtitleLanguages.find((filter) => filter.Selected)) {
-        return `(${this.$t("NONE")})`;
+        return `(${$t("NONE")})`;
       }
 
       return (
@@ -4275,7 +4277,7 @@ export default {
 
     filterMetacriticScoreTitle() {
       if (this.$shared.filters.filterMetacriticScore[0] == 0 && this.$shared.filters.filterMetacriticScore[1] == 100) {
-        return `(${this.$t("ALL")}${this.$shared.filters.filterMetacriticScoreNone ? "" : "*"})`;
+        return `(${$t("ALL")}${this.$shared.filters.filterMetacriticScoreNone ? "" : "*"})`;
       }
 
       return `(${this.$shared.filters.filterMetacriticScore[0]} - ${this.$shared.filters.filterMetacriticScore[1]}${
@@ -4285,7 +4287,7 @@ export default {
 
     filterIMDBRatingTitle() {
       if (this.$shared.filters.filterIMDBRating[0] == 0 && this.$shared.filters.filterIMDBRating[1] == 10) {
-        return `(${this.$t("ALL")}${this.$shared.filters.filterIMDBRatingNone ? "" : "*"})`;
+        return `(${$t("ALL")}${this.$shared.filters.filterIMDBRatingNone ? "" : "*"})`;
       }
 
       return `(${this.$shared.filters.filterIMDBRating[0].toLocaleString(
@@ -4301,7 +4303,7 @@ export default {
           this.$shared.filters.filterParentalAdvisory[category].find((filter) => !filter.Selected)
         )
       ) {
-        return `(${this.$t("ALL")})`;
+        return `(${$t("ALL")})`;
       }
 
       if (
@@ -4309,7 +4311,7 @@ export default {
           this.$shared.filters.filterParentalAdvisory[category].find((filter) => filter.Selected)
         )
       ) {
-        return `(${this.$t("NONE")})`;
+        return `(${$t("NONE")})`;
       }
 
       let numSelected = 0;
@@ -4360,10 +4362,6 @@ export default {
       };
       document.addEventListener("mousemove", onMouseMove);
       document.addEventListener("mouseup", onMouseUp);
-    },
-
-    $local_t(key, payload) {
-      return this.$t(key, payload);
     },
 
     appSectionClass(itemId) {
@@ -4713,7 +4711,7 @@ export default {
         //   }
         // }
       } else {
-        label += `<${this.$t("not yet rated")}>`;
+        label += `<${$t("not yet rated")}>`;
       }
 
       label += " (" + numMovies + ")";
@@ -4723,7 +4721,7 @@ export default {
 
     getFilterYearLabel(startYear, NumMovies) {
       if (startYear < 0) {
-        return `<${this.$t("none provided")}> (${NumMovies})`;
+        return `<${$t("none provided")}> (${NumMovies})`;
       }
 
       return `${startYear} (${NumMovies})`;
@@ -4731,7 +4729,7 @@ export default {
 
     getFilterQualityLabel(quality, NumMovies) {
       if (!quality) {
-        return `<${this.$t("none provided")}> (${NumMovies})`;
+        return `<${$t("none provided")}> (${NumMovies})`;
       }
 
       return `${quality} (${NumMovies})`;
@@ -4776,7 +4774,7 @@ export default {
 
           eventBus.showSnackbar(
             "success",
-            `${this.$t("List '{name}' deleted_", {
+            `${$t("List '{name}' deleted_", {
               name: this.deleteFilterItemDialog.ItemName,
             })}`
           );
@@ -4790,7 +4788,7 @@ export default {
       await store.deleteFilterPerson(person.id_Filter_Persons);
       eventBus.showSnackbar(
         "success",
-        `${this.$t("Person '{name}' removed_", {
+        `${$t("Person '{name}' removed_", {
           name: this.deleteFilterItemDialog.ItemName,
         })}`
       );
@@ -4807,7 +4805,7 @@ export default {
       await store.deleteFilterIMDBPlotKeyword(filterIMDBPlotKeyword.id_Filter_IMDB_Plot_Keywords);
       eventBus.showSnackbar(
         "success",
-        `${this.$t("Plot Keyword '{name}' removed_", {
+        `${$t("Plot Keyword '{name}' removed_", {
           name: this.deleteFilterItemDialog.ItemName,
         })}`
       );
@@ -4825,7 +4823,7 @@ export default {
       await store.deleteFilterIMDBFilmingLocation(filterIMDBFilmingLocation.id_Filter_IMDB_Filming_Locations);
       eventBus.showSnackbar(
         "success",
-        `${this.$t("Filming Location '{name}' removed_", {
+        `${$t("Filming Location '{name}' removed_", {
           name: this.deleteFilterItemDialog.ItemName,
         })}`
       );
@@ -4844,7 +4842,7 @@ export default {
       await store.deleteFilterCompany(filterCompany.id_Filter_Companies);
       eventBus.showSnackbar(
         "success",
-        `${this.$t("Company '{name}' removed_", {
+        `${$t("Company '{name}' removed_", {
           name: this.deleteFilterItemDialog.ItemName,
         })}`
       );
@@ -4881,7 +4879,7 @@ export default {
 
       if (!performCheck) {
         // just rescan without IMDB Scraper Check
-        store.rescan(onlyNew, this.$local_t);
+        store.rescan(onlyNew);
         return;
       }
 
@@ -4897,10 +4895,10 @@ export default {
 
     filterParentalAdvisoryCategoryTitle(category) {
       if (!this.$shared.filters.filterParentalAdvisory[category.Name].find((filter) => !filter.Selected)) {
-        return `(${this.$t("ALL")})`;
+        return `(${$t("ALL")})`;
       }
       if (!this.$shared.filters.filterParentalAdvisory[category.Name].find((filter) => filter.Selected)) {
-        return `(${this.$t("NONE")})`;
+        return `(${$t("NONE")})`;
       }
       return (
         "(" +
@@ -4982,7 +4980,7 @@ export default {
 
     onCheckIMDBScraperDialogOK() {
       this.checkIMDBScraperDialog.show = false;
-      store.rescan(this.scanOptions.onlyNew, this.$local_t);
+      store.rescan(this.scanOptions.onlyNew);
       return;
     },
 
@@ -5189,7 +5187,7 @@ export default {
       logger.log("[showScanProcessFinishedSnackbar] id_Scan_Processes:", id_Scan_Processes, "details:", details);
 
       this.snackbar.color = "success";
-      this.snackbar.text = this.$t("Rescan Finished");
+      this.snackbar.text = $t("Rescan Finished");
       this.snackbar.timeout = 0;
       this.snackbar.id_Scan_Processes = id_Scan_Processes;
       this.snackbar.details = [];
@@ -5209,7 +5207,7 @@ export default {
       if (typeof textOrErrorObject === "string" || textOrErrorObject instanceof String) {
         this.snackbar.text = textOrErrorObject;
       } else if (textOrErrorObject.translateMe) {
-        this.snackbar.text = this.$t(textOrErrorObject.translateMe.text, textOrErrorObject.translateMe.payload);
+        this.snackbar.text = $t(textOrErrorObject.translateMe.text, textOrErrorObject.translateMe.payload);
       } else if (textOrErrorObject.syscall && textOrErrorObject.code) {
         // fetch error
         this.snackbar.text =
@@ -5241,7 +5239,7 @@ export default {
       } else if (textOrErrorObject.message) {
         this.snackbar.text = textOrErrorObject.message;
       } else {
-        this.snackbar.text = `<${this.$t("unknown text")}>`;
+        this.snackbar.text = `<${$t("unknown text")}>`;
       }
 
       this.snackbar.show = true;

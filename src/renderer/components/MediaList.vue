@@ -766,6 +766,8 @@ import { shell } from "@electron/remote";
 import moment from "moment";
 
 import * as store from "@/store.js";
+import i18n from "@/i18n.js";
+const $t = i18n.global.t;
 import { eventBus } from "@/eventBus.js";
 import { scrapeIMDBTrailerMediaURLs, scrapeIMDBmainPageData } from "@/imdb-scraper.js";
 
@@ -1271,70 +1273,70 @@ export default {
       const filtersList = [];
 
       if (this.$shared.searchText) {
-        filtersList.push(this.$t("Search"));
+        filtersList.push($t("Search"));
       }
 
       if (this.$shared.filterSourcePathsActive) {
-        filtersList.push(this.$t("Source Paths"));
+        filtersList.push($t("Source Paths"));
       }
 
       if (this.$shared.filterGenresActive) {
-        filtersList.push(`${this.$t("Genres")}${this.$shared.filters.filterSettings.filterGenresAND ? " ߷" : ""}`);
+        filtersList.push(`${$t("Genres")}${this.$shared.filters.filterSettings.filterGenresAND ? " ߷" : ""}`);
       }
 
       if (this.$shared.filterAgeRatingsActive) {
-        filtersList.push(this.$t("Age Ratings"));
+        filtersList.push($t("Age Ratings"));
       }
 
       if (this.$shared.filterRatingsActive) {
-        filtersList.push(this.$t("My Ratings"));
+        filtersList.push($t("My Ratings"));
       }
 
       if (this.$shared.filterListsActive) {
-        filtersList.push(this.$t("My Lists"));
+        filtersList.push($t("My Lists"));
       }
 
       if (this.$shared.filterParentalAdvisoryActive) {
-        filtersList.push(this.$t("Content Advisories"));
+        filtersList.push($t("Content Advisories"));
       }
 
       if (this.$shared.filterPersonsActive) {
-        filtersList.push(`${this.$t("People")}${this.$shared.filters.filterSettings.filterPersonsAND ? " ߷" : ""}`);
+        filtersList.push(`${$t("People")}${this.$shared.filters.filterSettings.filterPersonsAND ? " ߷" : ""}`);
       }
 
       if (this.$shared.filterYearsActive) {
-        filtersList.push(this.$t("Release Years"));
+        filtersList.push($t("Release Years"));
       }
 
       if (this.$shared.filterQualitiesActive) {
-        filtersList.push(this.$t("Video Quality"));
+        filtersList.push($t("Video Quality"));
       }
 
       if (this.$shared.filterVideoEncodersActive) {
-        filtersList.push(this.$t("Video Encoders"));
+        filtersList.push($t("Video Encoders"));
       }
 
       if (this.$shared.filterCompaniesActive) {
         filtersList.push(
-          `${this.$t("Companies")}${this.$shared.filters.filterSettings.filterCompaniesAND ? " ߷" : ""}`
+          `${$t("Companies")}${this.$shared.filters.filterSettings.filterCompaniesAND ? " ߷" : ""}`
         );
       }
 
       if (this.$shared.filterAudioLanguagesActive) {
-        filtersList.push(this.$t("Audio Languages"));
+        filtersList.push($t("Audio Languages"));
       }
 
       if (this.$shared.filterAudioFormatsActive) {
-        filtersList.push(this.$t("Audio Formats"));
+        filtersList.push($t("Audio Formats"));
       }
 
       if (this.$shared.filterSubtitleLanguagesActive) {
-        filtersList.push(this.$t("Subtitle Languages"));
+        filtersList.push($t("Subtitle Languages"));
       }
 
       if (this.$shared.filterReleaseAttributesActive) {
         filtersList.push(
-          `${this.$t("Release Attributes")}${
+          `${$t("Release Attributes")}${
             this.$shared.filters.filterSettings.filterReleaseAttributesAND ? " ߷" : ""
           }`
         );
@@ -1342,29 +1344,29 @@ export default {
 
       if (this.$shared.filterIMDBPlotKeywordsActive) {
         filtersList.push(
-          `${this.$t("Plot Keywords")}${this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND ? " ߷" : ""}`
+          `${$t("Plot Keywords")}${this.$shared.filters.filterSettings.filterIMDBPlotKeywordsAND ? " ߷" : ""}`
         );
       }
 
       if (this.$shared.filterIMDBFilmingLocationsActive) {
         filtersList.push(
-          `${this.$t("Filming Locations")}${
+          `${$t("Filming Locations")}${
             this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND ? " ߷" : ""
           }`
         );
       }
 
       if (this.$shared.filterMetacriticScoreActive) {
-        filtersList.push(this.$t("Metacritic Score"));
+        filtersList.push($t("Metacritic Score"));
       }
 
       if (this.$shared.filterIMDBRatingsActive) {
-        filtersList.push(this.$t("IMDB Ratings"));
+        filtersList.push($t("IMDB Ratings"));
       }
 
       if (this.$shared.filterDataQualityActive) {
         filtersList.push(
-          `${this.$t("Data Quality")}${this.$shared.filters.filterSettings.filterDataQualityAND ? " ߷" : ""}`
+          `${$t("Data Quality")}${this.$shared.filters.filterSettings.filterDataQualityAND ? " ߷" : ""}`
         );
       }
 
@@ -1448,7 +1450,7 @@ export default {
               $MediaType: "series",
               arr_id_Movies: [Series_id_Movies_Owner],
               minimumResultSet: false,
-              $t: this.$local_t,
+
               filters: { filterSettings: {} },
               arr_IMDB_tconst: null,
               Series_id_Movies_Owner: null,
@@ -1604,7 +1606,7 @@ export default {
       document.execCommand("copy");
       document.body.removeChild(el);
 
-      eventBus.showSnackbar("info", this.$t("Info copied to clipboard"));
+      eventBus.showSnackbar("info", $t("Info copied to clipboard"));
     },
 
     copyImdbTconst(mediaItem) {
@@ -1618,7 +1620,7 @@ export default {
       document.execCommand("copy");
       document.body.removeChild(el);
 
-      eventBus.showSnackbar("info", this.$t("Info copied to clipboard"));
+      eventBus.showSnackbar("info", $t("Info copied to clipboard"));
     },
 
     addToList(item) {
@@ -1649,7 +1651,7 @@ export default {
 
         this.listDialog.allowCreateNewList = true;
 
-        this.listDialog.title = this.$t("Add to List");
+        this.listDialog.title = $t("Add to List");
         this.listDialog.movie = item;
         this.listDialog.show = true;
       })();
@@ -1754,7 +1756,7 @@ export default {
         this.listDialog.allowCreateNewList = false;
         this.listDialog.allowUseExistingLists = true;
         this.listDialog.lists = item.lists;
-        this.listDialog.title = this.$t("Remove from List");
+        this.listDialog.title = $t("Remove from List");
         this.listDialog.movie = item;
         this.listDialog.show = true;
         this.listDialog.lastChosenListID = null;
@@ -1771,7 +1773,7 @@ export default {
       (async () => {
         try {
           if (!data.chosen_id_Lists && !data.newListName) {
-            eventBus.showSnackbar("error", this.$t("list is missing"));
+            eventBus.showSnackbar("error", $t("list is missing"));
             return;
           }
 
@@ -1789,7 +1791,7 @@ export default {
 
             this.listDialog.lastChosenListID = data.chosen_id_Lists;
 
-            eventBus.showSnackbar("success", this.$t("item added to list"));
+            eventBus.showSnackbar("success", $t("item added to list"));
 
             this.$shared.lastChangedFilter = "filterLists";
             await this.fetchFilters();
@@ -1798,7 +1800,7 @@ export default {
           // Remove from list
           if (this.listDialog.mode == "remove") {
             if (!data.chosen_id_Lists) {
-              eventBus.showSnackbar("error", this.$t("list is missing"));
+              eventBus.showSnackbar("error", $t("list is missing"));
               return;
             }
 
@@ -1809,7 +1811,7 @@ export default {
             // eventBus.refetchMedia(this.$shared.currentPage);
             this.refetchMedia({ setPage: this.$shared.currentPage });
 
-            eventBus.showSnackbar("success", this.$t("item removed from list"));
+            eventBus.showSnackbar("success", $t("item removed from list"));
           }
         } catch (err) {
           eventBus.showSnackbar("error", err);
@@ -1837,10 +1839,6 @@ export default {
 
     onChatGPTDialogOK() {
       this.chatGPTDialog.show = false;
-    },
-
-    $local_t(key, payload) {
-      return this?.$t(key, payload);
     },
 
     /**
@@ -1966,7 +1964,6 @@ export default {
               await store.fetchFilterGenres(
                 this.mediatype,
                 this.specificMediaType,
-                this.$local_t,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
               );
@@ -1991,7 +1988,6 @@ export default {
               await store.fetchFilterLists(
                 this.mediatype,
                 this.specificMediaType,
-                this.$local_t,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
               );
@@ -2008,7 +2004,6 @@ export default {
               await store.fetchFilterPersons(
                 this.mediatype,
                 this.specificMediaType,
-                this.$local_t,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
               );
@@ -2017,7 +2012,6 @@ export default {
               await store.fetchFilterCompanies(
                 this.mediatype,
                 this.specificMediaType,
-                this.$local_t,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
               );
@@ -2026,7 +2020,6 @@ export default {
               await store.fetchFilterIMDBPlotKeywords(
                 this.mediatype,
                 this.specificMediaType,
-                this.$local_t,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
               );
@@ -2035,7 +2028,6 @@ export default {
               await store.fetchFilterIMDBFilmingLocations(
                 this.mediatype,
                 this.specificMediaType,
-                this.$local_t,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
               );
@@ -2062,7 +2054,6 @@ export default {
                 this.mediatype,
                 this.specificMediaType,
                 "audio",
-                this.$local_t,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
               );
@@ -2072,7 +2063,6 @@ export default {
                 this.mediatype,
                 this.specificMediaType,
                 "subtitle",
-                this.$local_t,
                 this.loadFilterValuesFromStorage,
                 this.Series_id_Movies_Owner
               );
@@ -2301,7 +2291,7 @@ export default {
       this.myRatingDialog.rating = rating;
       this.myRatingDialog.ratingDisplayText = rating
         ? helpers.getStarRatingString(rating)
-        : `<${this.$local_t("not yet rated")}>`;
+        : `<${$t("not yet rated")}>`;
       this.myRatingDialog.isInDialog = !!isInDialog;
 
       return;
@@ -2480,7 +2470,7 @@ export default {
       let moviesWithTrailers = movies.filter((movie) => movie.IMDB_Trailer_URL);
 
       if (!moviesWithTrailers || moviesWithTrailers.length === 0) {
-        eventBus.showSnackbar("warning", this.$t("the list does not contain any movies with trailers"));
+        eventBus.showSnackbar("warning", $t("the list does not contain any movies with trailers"));
         return;
       }
 
@@ -2591,7 +2581,6 @@ export default {
           $IMDB_tconst: tconst,
           isHandlingDuplicates: false,
           mediaItem: null,
-          $t: this.$local_t,
           isIMDB_tconst_userDefined: true,
         });
 
@@ -2600,7 +2589,7 @@ export default {
         // eventBus.refetchMedia(this.$shared.currentPage);
         this.refetchMedia({ setPage: this.$shared.currentPage });
 
-        eventBus.showSnackbar("success", this.$t("entry linked successfully"));
+        eventBus.showSnackbar("success", $t("entry linked successfully"));
 
         this.onLinkIMDBDialogClose();
       } catch (err) {
@@ -2620,7 +2609,6 @@ export default {
           const episodes = await store.fetchMedia({
             $MediaType: "series",
             Series_id_Movies_Owner: this.linkIMDBDialog.item.id_Movies,
-            $t: this.$local_t,
             filters: { filterSettings: {} },
             arr_IMDB_tconst: null,
             arr_id_Movies: null,
@@ -2651,7 +2639,7 @@ export default {
         // eventBus.refetchMedia(this.$shared.currentPage);
         this.refetchMedia({ setPage: this.$shared.currentPage });
 
-        eventBus.showSnackbar("success", this.$t("entry unlinked successfully"));
+        eventBus.showSnackbar("success", $t("entry unlinked successfully"));
 
         this.onLinkIMDBDialogClose();
       } catch (err) {
@@ -2662,12 +2650,11 @@ export default {
 
     async onRescanItems(items, seriesOnly) {
       try {
-        await store.rescanItems(items, this.$local_t, seriesOnly);
+        await store.rescanItems(items, seriesOnly);
 
-        // eventBus.refetchMedia(this.$shared.currentPage, this.$local_t);
-        this.refetchMedia({ setPage: this.$shared.currentPage, $t: this.$local_t });
+        this.refetchMedia({ setPage: this.$shared.currentPage });
 
-        eventBus.showSnackbar("success", this.$t(`${items.length === 1 ? "entry" : "entries"} successfully rescanned`));
+        eventBus.showSnackbar("success", $t(`${items.length === 1 ? "entry" : "entries"} successfully rescanned`));
       } catch (err) {
         logger.log("[onRescanItem] error:", JSON.stringify(err));
         eventBus.showSnackbar("error", err);
@@ -2756,7 +2743,7 @@ export default {
               $MediaType: this.mediatype,
               arr_id_Movies: arr_id_Movies,
               minimumResultSet: false,
-              $t: this.$local_t,
+
               filters: this.$shared.filters,
               arr_IMDB_tconst: null,
               Series_id_Movies_Owner: null,
@@ -2766,7 +2753,7 @@ export default {
               $MediaType: this.mediatype,
               arr_id_Movies: arr_id_Movies,
               minimumResultSet: false,
-              $t: this.$local_t,
+
               filters: { filterSettings: {} },
               arr_IMDB_tconst: null,
               Series_id_Movies_Owner: this.Series_id_Movies_Owner,
@@ -2821,7 +2808,7 @@ export default {
       this.deleteMediaDialog.location =
         item.isDirectoryBased && item.specificMediaType !== "Series" ? item.fullDirectory : item.fullPath;
       this.deleteMediaDialog.additionalTextBlocks = [
-        this.$t("storage location:") + " " + this.deleteMediaDialog.location,
+        $t("storage location:") + " " + this.deleteMediaDialog.location,
       ];
 
       this.deleteMediaDialog.show = true;
@@ -2850,7 +2837,7 @@ export default {
       this.editMediaItemDialog.show = false;
 
       if (hasChanges) {
-        eventBus.showSnackbar("success", this.$t("Your changes have been saved_"));
+        eventBus.showSnackbar("success", $t("Your changes have been saved_"));
 
         this.onReload();
       }
@@ -2868,7 +2855,7 @@ export default {
         if (!dontThrowError) {
           logger.log("[checkPathExistence] throwing error");
           throw new Error(
-            this.$t('The path "{path}" cannot be found_', {
+            $t('The path "{path}" cannot be found_', {
               path: fullPath,
             })
           );
@@ -2934,7 +2921,7 @@ export default {
 
         eventBus.showSnackbar(
           "success",
-          this.$t("'{ItemName}' has been deleted_", {
+          $t("'{ItemName}' has been deleted_", {
             ItemName: this.deleteMediaDialog.item.Name,
           })
         );
@@ -2979,7 +2966,6 @@ export default {
         const mediaItems = await store.fetchMedia({
           $MediaType: "series",
           Series_id_Movies_Owner: mediaItem.id_Movies,
-          $t: this.$local_t,
           filters: { filterSettings: {} },
           arr_IMDB_tconst: null,
           arr_id_Movies: null,
@@ -3300,7 +3286,7 @@ export default {
       }
     },
 
-    async refetchMedia({ setPage, $t, setFilter, dontStoreFilters, dontLoadFiltersFromDb }) {
+    async refetchMedia({ setPage, setFilter, dontStoreFilters, dontLoadFiltersFromDb }) {
       logger.log("[refetchMedia] START", { setPage, setFilter, dontStoreFilters, dontLoadFiltersFromDb });
       logger.log("[refetchMedia] this.specificMediaType:", this.specificMediaType);
       logger.log("[refetchMedia] this.$shared.filters:", JSON.stringify(this.$shared.filters, null, 2));
@@ -3319,7 +3305,7 @@ export default {
             $MediaType: this.mediatype,
             arr_id_Movies: null,
             minimumResultSet: true,
-            $t: $t || this.$local_t,
+
             filters: this.$shared.filters,
             arr_IMDB_tconst: null,
             Series_id_Movies_Owner: null,
@@ -3330,7 +3316,7 @@ export default {
             $MediaType: this.mediatype,
             arr_id_Movies: null,
             minimumResultSet: true,
-            $t: $t || this.$local_t,
+
             filters: { filterSettings: {} },
             arr_IMDB_tconst: null,
             Series_id_Movies_Owner: this.Series_id_Movies_Owner,
@@ -3365,11 +3351,11 @@ export default {
       this.completelyFetchMedia();
     });
 
-    eventBus.on("refetchMedia", ({ setPage, $t, setFilter, dontLoadFiltersFromDb }) => {
+    eventBus.on("refetchMedia", ({ setPage, setFilter, dontLoadFiltersFromDb }) => {
       logger.log("[MediaList] eventBus.on(refetchMedia)");
       //logger.group("[Fetch Media List]");
       (async () => {
-        await this.refetchMedia({ setPage, $t, setFilter, dontLoadFiltersFromDb });
+        await this.refetchMedia({ setPage, setFilter, dontLoadFiltersFromDb });
       })();
       //logger.groupEnd();
     });
@@ -3497,7 +3483,7 @@ export default {
     })();
 
     this.sortAbles.forEach((sortAble) => {
-      sortAble.DescriptionTranslated = this.$t(sortAble.Description);
+      sortAble.DescriptionTranslated = $t(sortAble.Description);
     });
 
     this.updateCurrentTime();

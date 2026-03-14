@@ -28,6 +28,8 @@ import { languageNameCodeMapping, languageCodeNameMapping } from "./languages.js
 import * as mediainfo from "./mediainfo.js";
 
 import { shared } from "./shared.js";
+import i18n from "@/i18n.js";
+const $t = i18n.global.t;
 
 import * as imdbScraper from "./imdb-scraper.js";
 
@@ -335,10 +337,9 @@ async function fetchSourcePaths() {
 /**
  * Rescan meta data of the given items
  * @param {Array} mediaItems the items to rescan
- * @param {function} $t the i18n translate function
  * @param {boolean} seriesOnly if true, only rescan series metadata without episodes
  */
-async function rescanItems(mediaItems, $t, seriesOnly) {
+async function rescanItems(mediaItems, seriesOnly) {
   rescanETA = {
     show: false,
     counter: 0,
@@ -390,7 +391,6 @@ async function rescanItems(mediaItems, $t, seriesOnly) {
       $IMDB_tconst: mediaItem.IMDB_tconst,
       isHandlingDuplicates: null,
       mediaItem,
-      $t,
       isIMDB_tconst_userDefined: false,
       seriesOnly: seriesOnly && mediaItem.MediaType === "series" && !mediaItem.Series_id_Movies_Owner,
     });
@@ -415,9 +415,8 @@ async function rescanItems(mediaItems, $t, seriesOnly) {
 /**
  * Rescan media based on the given source paths
  * @param {boolean} onlyNew if true, only new media will be scanned
- * @param {object} $t the i18n translate function
  */
-async function rescan(onlyNew, $t) {
+async function rescan(onlyNew) {
   rescanETA = {
     show: false,
     counter: null,
@@ -440,15 +439,15 @@ async function rescan(onlyNew, $t) {
   shared.isScanning = true;
   eventBus.rescanStarted();
 
-  if (shared.scanOptions.filescanMovies) await filescanMovies(onlyNew, $t);
+  if (shared.scanOptions.filescanMovies) await filescanMovies(onlyNew);
 
-  if (shared.scanOptions.filescanSeries) await filescanSeries(onlyNew, $t);
+  if (shared.scanOptions.filescanSeries) await filescanSeries(onlyNew);
 
   if (shared.scanOptions.mergeExtras) await mergeExtras(onlyNew);
 
-  if (shared.scanOptions.rescanMoviesMetaData) await rescanMediaItemsMetaData(onlyNew, null, $t, false, false);
+  if (shared.scanOptions.rescanMoviesMetaData) await rescanMediaItemsMetaData(onlyNew, null, false, false);
 
-  // TODO:   if (shared.scanOptions.rescanSeriesMetaData) await rescanSeriesMetaData(onlyNew, null, $t);
+  // TODO:   if (shared.scanOptions.rescanSeriesMetaData) await rescanSeriesMetaData(onlyNew, null);
 
   if (shared.scanOptions.handleDuplicates) await rescanHandleDuplicates(); // TODO: series?
 
@@ -785,7 +784,7 @@ async function rescan(onlyNew, $t) {
   //   {
   //     info: {
   //       message: "rescan finished",
-  //       details: createScanProcessSummaryTexts(scanProcessSummary, $t),
+  //       details: createScanProcessSummaryTexts(scanProcessSummary),
   //     },
   //   },
   //   0
@@ -793,7 +792,7 @@ async function rescan(onlyNew, $t) {
 
   eventBus.showScanProcessFinishedSnackbar(
     shared.current_id_Scan_Processes,
-    createScanProcessSummaryTexts(scanProcessSummary, $t)
+    createScanProcessSummaryTexts(scanProcessSummary)
   );
 }
 
@@ -802,7 +801,7 @@ async function rescan(onlyNew, $t) {
  * @param {*} scanProcessSummary
  * @returns
  */
-function createScanProcessSummaryTexts(scanProcessSummary, $t) {
+function createScanProcessSummaryTexts(scanProcessSummary) {
   const hasChanges = !!Object.keys(scanProcessSummary).find((key) => {
     return key.startsWith("Stats_") && !isNaN(scanProcessSummary[key]) && scanProcessSummary[key] != 0;
   });
@@ -1332,7 +1331,7 @@ async function assignExtra(parent, child, $extraname) {
 }
 
 // ### Scan MOVIES ###
-async function filescanMovies(onlyNew, $t) {
+async function filescanMovies(onlyNew) {
   logger.log("[filescanMovies] START");
 
   eventBus.scanInfoShow($t("Rescanning Movies"), $t("Rescan started"));
@@ -1462,9 +1461,8 @@ async function filescanMoviesPath(onlyNew, moviesHave, movieSourcePath, scanPath
  * IMPORTANT: as direct sub-directories of the source paths, Media Hoarder expects directories named after the series, e.g. "Game of Thrones"
  *            anything within the sub-directories is expected to belong to the series itself, e.g. "Season 01\Game of Thrones S01E01.mkv" - these files/directories will be handled like movies (file- or directory-based)
  * @param {*} onlyNew
- * @param {*} $t
  */
-async function filescanSeries(onlyNew, $t) {
+async function filescanSeries(onlyNew) {
   logger.log("[filescanSeries] START");
 
   eventBus.scanInfoShow($t("Rescanning Series"), $t("Rescan started"));
@@ -2457,10 +2455,9 @@ async function applyMetaData(onlyNew, id_Movies) {
  * Rescans the meta data of media items (movies, series, episodes)
  * @param {boolean} onlyNew
  * @param {string} id_Movies (optional)
- * @param {Object} $t i18n instance
  * @param {boolean} ignoreDuplicates ignore duplicates and scrape metadata from IMDB
  */
-async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t, resetRescanETA, ignoreDuplicates, seriesOnly) {
+async function rescanMediaItemsMetaData(onlyNew, id_Movies, resetRescanETA, ignoreDuplicates, seriesOnly) {
   logger.log("[rescanMediaItemsMetaData] START", { onlyNew, id_Movies });
 
   // NOTE: if WHERE clause gets enhanced, please also enhance the code below "Filter mediaItems that only have..."
@@ -2612,7 +2609,7 @@ async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t, resetRescanETA, 
       break;
     }
 
-    await rescanMediaItemMetaData(onlyNew, mediaItem, $t, !id_Movies, ignoreDuplicates);
+    await rescanMediaItemMetaData(onlyNew, mediaItem, !id_Movies, ignoreDuplicates);
 
     if (mediaItems.length > 1) {
       rescanETA.endTime = new Date().getTime();
@@ -2635,11 +2632,10 @@ async function rescanMediaItemsMetaData(onlyNew, id_Movies, $t, resetRescanETA, 
  * Rescan the metadata (MediaInfo, IMDB) for the given media item
  * @param {boolean} onlyNew
  * @param {Object} mediaItem
- * @param {Object} $t
  * @param {boolean} optRescanMediaInfo whether to rescan MediaInfo
  * @param {boolean} ignoreDuplicates ignore duplicates and scrape metadata from IMDB
  */
-async function rescanMediaItemMetaData(onlyNew, mediaItem, $t, optRescanMediaInfo, ignoreDuplicates) {
+async function rescanMediaItemMetaData(onlyNew, mediaItem, optRescanMediaInfo, ignoreDuplicates) {
   logger.log("[rescanMediaItemMetaData] START, mediaItem:", mediaItem);
 
   // eventBus.scanInfoOff();
@@ -2681,7 +2677,7 @@ async function rescanMediaItemMetaData(onlyNew, mediaItem, $t, optRescanMediaInf
     );
 
     if (!mediaItem.isUnlinkedIMDB) {
-      await findIMDBtconst({ mediaItem, onlyNew, $t, forced: false });
+      await findIMDBtconst({ mediaItem, onlyNew, forced: false });
     }
   }
 
@@ -2692,7 +2688,7 @@ async function rescanMediaItemMetaData(onlyNew, mediaItem, $t, optRescanMediaInf
       rescanETA
     );
 
-    await fetchIMDBMetaData($t, mediaItem, onlyNew, actualDuplicate);
+    await fetchIMDBMetaData(mediaItem, onlyNew, actualDuplicate);
   }
 
   if (shared.scanOptions.rescanMoviesMetaData_findReleaseAttributes) {
@@ -2726,7 +2722,7 @@ async function rescanMediaItemMetaData(onlyNew, mediaItem, $t, optRescanMediaInf
       rescanETA
     );
 
-    await verifyIMDBtconst(mediaItem.id_Movies, $t);
+    await verifyIMDBtconst(mediaItem.id_Movies);
   }
 
   if (mediaItem.Series_id_Movies_Owner) {
@@ -2915,7 +2911,6 @@ async function applyMediaInfo(movie, onlyNew) {
 async function findIMDBtconst({
   mediaItem,
   onlyNew,
-  $t,
   forced, // also try to find IMDB tconst if it is already set
 }) {
   // find IMDB tconst
@@ -2984,7 +2979,7 @@ async function findIMDBtconst({
     if (!tconst && isSeriesEpisode) {
       // tconst not found yet, in case of a series episode, we can determine it from the series' IMDB tconst and the episode's season and episode number
       logger.log("[findIMDBtconst] this is a series episode, calling findSeriesEpisodeIMDBtconst");
-      tconst = await findSeriesEpisodeIMDBtconst(mediaItem, onlyNew, $t);
+      tconst = await findSeriesEpisodeIMDBtconst(mediaItem, onlyNew);
     }
 
     if (!tconst && !isSeriesEpisode) {
@@ -3115,14 +3110,13 @@ function getSeriesEpisodeTconstFromCache(seriesIMDBtconst, Series_Season, Series
  * We also cache the vital data we fetched
  * @param {Object} mediaItem
  * @param {boolean} onlyNew
- * @param {Object} $t
  */
-async function findSeriesEpisodeIMDBtconst(mediaItem, onlyNew, $t) {
+async function findSeriesEpisodeIMDBtconst(mediaItem, onlyNew) {
   // TODO: build up scan errors
   // TODO: decide what to do with multiple episodes in one medium
 
   try {
-    logger.log("[findSeriesEpisodeIMDBtconst] START:", { mediaItem, onlyNew, $t });
+    logger.log("[findSeriesEpisodeIMDBtconst] START:", { mediaItem, onlyNew });
 
     if (isNaN(mediaItem.Series_Season)) {
       // TODO: add to scanErrors? just use series' IMDB tconst?
@@ -3226,7 +3220,7 @@ async function findSeriesEpisodeIMDBtconst(mediaItem, onlyNew, $t) {
   }
 }
 
-async function fetchIMDBMetaData($t, mediaItem, onlyNew, actualDuplicate) {
+async function fetchIMDBMetaData(mediaItem, onlyNew, actualDuplicate) {
   logger.log("[fetchIMDBMetaData] movie:", mediaItem);
 
   // fetch IMDB data from imdb.com (incl. images)
@@ -4812,7 +4806,6 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
  * @param {string} $MediaType either 'movies' or 'series'
  * @param {Array<string>} arr_id_Movies optional: an array containing specific id_Movies
  * @param {boolean} minimumResultSet true: only fetch minimal data, false: fetch all data
- * @param {Object} $t the vue-i18n object
  * @param {*} filters
  * @param {*} arr_IMDB_tconst
  * @param {*} Series_id_Movies_Owner if set, then only fetch episodes of this series
@@ -4822,7 +4815,6 @@ async function fetchMedia({
   $MediaType,
   arr_id_Movies,
   minimumResultSet,
-  $t,
   filters,
   arr_IMDB_tconst,
   Series_id_Movies_Owner,
@@ -5686,7 +5678,6 @@ async function fetchFilterSourcePaths(
 async function fetchFilterGenres(
   $MediaType,
   $SpecificMediaType,
-  $t,
   loadFilterValuesFromStorage,
   $Series_id_Movies_Owner
 ) {
@@ -6344,7 +6335,6 @@ async function fetchFilterParentalAdvisoryCategory(
 async function fetchFilterPersons(
   $MediaType,
   $SpecificMediaType,
-  $t,
   loadFilterValuesFromStorage,
   $Series_id_Movies_Owner
 ) {
@@ -6456,7 +6446,6 @@ async function fetchFilterPersons(
 async function fetchFilterCompanies(
   $MediaType,
   $SpecificMediaType,
-  $t,
   loadFilterValuesFromStorage,
   $Series_id_Movies_Owner
 ) {
@@ -6571,7 +6560,6 @@ async function fetchFilterCompanies(
 async function fetchFilterIMDBPlotKeywords(
   $MediaType,
   $SpecificMediaType,
-  $t,
   loadFilterValuesFromStorage,
   $Series_id_Movies_Owner
 ) {
@@ -6690,7 +6678,6 @@ async function fetchFilterIMDBPlotKeywords(
 async function fetchFilterIMDBFilmingLocations(
   $MediaType,
   $SpecificMediaType,
-  $t,
   loadFilterValuesFromStorage,
   $Series_id_Movies_Owner
 ) {
@@ -7068,7 +7055,6 @@ async function fetchLists() {
 async function fetchFilterLists(
   $MediaType,
   $SpecificMediaType,
-  $t,
   loadFilterValuesFromStorage,
   $Series_id_Movies_Owner
 ) {
@@ -7166,7 +7152,6 @@ async function fetchFilterLanguages(
   $MediaType,
   $SpecificMediaType,
   $LanguageType,
-  $t,
   loadFilterValuesFromStorage,
   $Series_id_Movies_Owner
 ) {
@@ -7720,7 +7705,6 @@ async function assignIMDBAndScrape({
   $IMDB_tconst,
   isHandlingDuplicates,
   mediaItem,
-  $t,
   isIMDB_tconst_userDefined,
   seriesOnly,
 }) {
@@ -7742,7 +7726,6 @@ async function assignIMDBAndScrape({
     $IMDB_tconst = await findIMDBtconst({
       mediaItem,
       onlyNew: false,
-      $t,
       forced: false,
     });
   }
@@ -7756,7 +7739,7 @@ async function assignIMDBAndScrape({
     $IMDB_tconst,
   });
 
-  await rescanMediaItemsMetaData(false, $id_Movies, $t, true, true, seriesOnly);
+  await rescanMediaItemsMetaData(false, $id_Movies, true, true, seriesOnly);
 
   await applyMetaData(false, $id_Movies);
 
@@ -7772,7 +7755,6 @@ async function assignIMDBAndScrape({
       $IMDB_tconst,
       isHandlingDuplicates: true,
       mediaItem: null,
-      $t,
       isIMDB_tconst_userDefined,
     });
   }
@@ -10358,11 +10340,11 @@ async function addScanProcessItem(
   }
 }
 
-async function getScanProcesses($t) {
+async function getScanProcesses() {
   const scanProcesses = await db.fireProcedureReturnAll(`SELECT * FROM tbl_Scan_Processes ORDER BY Start DESC`);
 
   for (const scanProcess of scanProcesses) {
-    scanProcess.summary = createScanProcessSummaryTexts(scanProcess, $t);
+    scanProcess.summary = createScanProcessSummaryTexts(scanProcess);
 
     if (scanProcess.End !== "<unknown>") {
       scanProcess.duration =

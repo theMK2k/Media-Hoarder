@@ -35,6 +35,8 @@
 // const logger = require("../../helpers/logger");
 
 import { eventBus } from "@/eventBus";
+import i18n from "@/i18n.js";
+const $t = i18n.global.t;
 
 export default {
   props: ["show", "title"],
@@ -68,11 +70,11 @@ export default {
     onButtonClick(eventName) {
       if (eventName === "ok") {
         if (!this.searchTerm) {
-          eventBus.showSnackbar("error", this.$t("Search Term is missing_"));
+          eventBus.showSnackbar("error", $t("Search Term is missing_"));
           return;
         }
         if (!this.displayAs) {
-          eventBus.showSnackbar("error", this.$t('"Display As" is missing_'));
+          eventBus.showSnackbar("error", $t('"Display As" is missing_'));
           return;
         }
       }

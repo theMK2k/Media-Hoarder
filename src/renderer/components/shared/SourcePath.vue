@@ -33,6 +33,8 @@
 import logger from "@helpers/logger.js";
 
 import * as store from "@/store.js";
+import i18n from "@/i18n.js";
+const $t = i18n.global.t;
 import { eventBus } from "@/eventBus.js";
 
 export default {
@@ -69,12 +71,12 @@ export default {
       if (this.value.checkRemovedFiles) {
         eventBus.showSnackbar(
           "success",
-          this.$t("OK, during (re-)scan, any missing file in the source path will lead to removal of the entry")
+          $t("OK, during (re-)scan, any missing file in the source path will lead to removal of the entry")
         );
       } else {
         eventBus.showSnackbar(
           "success",
-          this.$t("OK, during (re-)scan, no entry removal is performed - regardless if the file is available or not")
+          $t("OK, during (re-)scan, no entry removal is performed - regardless if the file is available or not")
         );
       }
     },

@@ -92,6 +92,8 @@
 
 <script>
 import * as store from "@/store.js";
+import i18n from "@/i18n.js";
+const $t = i18n.global.t;
 import logger from "@helpers/logger.js";
 import { BrowserWindow } from "@electron/remote";
 import * as helpers from "@helpers/helpers.js";
@@ -270,7 +272,6 @@ export default {
           $MediaType: "movies",
           arr_id_Movies: null,
           minimumResultSet: true,
-          $t: this.$t,
           filters: {
             filterSettings: {},
           },
@@ -445,10 +446,6 @@ export default {
       this.browserWindow.loadURL("https://chat.openai.com");
     },
 
-    $local_t(key, payload) {
-      return this.$t(key, payload);
-    },
-
     async onShowMediaItemDetails(mediaItem) {
       logger.log("[onShowMediaItemDetails] mediaItem:", mediaItem);
 
@@ -457,7 +454,6 @@ export default {
         $MediaType: mediaItem.MediaType,
         arr_id_Movies: [mediaItem.id_Movies],
         minimumResultSet: false,
-        $t: this.$local_t,
         filters: { filterSettings: {} },
         arr_IMDB_tconst: null,
         Series_id_Movies_Owner: mediaItem.Series_id_Movies_Owner,

@@ -176,6 +176,8 @@ import { scrapeIMDBAdvancedTitleSearchV3, scrapeIMDBFindPageSearchV3 } from "@/i
 import logger from "@helpers/logger.js";
 
 import { eventBus } from "@/eventBus.js";
+import i18n from "@/i18n.js";
+const $t = i18n.global.t;
 
 export default {
   props: ["show", "showUnlink"],
@@ -266,7 +268,7 @@ export default {
       this.isLoading = false;
       this.isLinking = false;
 
-      this.titleTypes.forEach((titleType) => (titleType.nameTranslated = this.$t(`IMDBTitleTypes.${titleType.name}`)));
+      this.titleTypes.forEach((titleType) => (titleType.nameTranslated = $t(`IMDBTitleTypes.${titleType.name}`)));
     },
 
     setAllTitleTypes(value) {
@@ -281,11 +283,11 @@ export default {
 
     titleTypesTitle() {
       if (!this.titleTypes.find((titleType) => titleType.checked)) {
-        return `(${this.$t("NONE")})`;
+        return `(${$t("NONE")})`;
       }
 
       if (!this.titleTypes.find((titleType) => !titleType.checked)) {
-        return `(${this.$t("ALL")})`;
+        return `(${$t("ALL")})`;
       }
 
       return `(${this.titleTypes.filter((titleType) => titleType.checked).length}/${this.titleTypes.length})`;
@@ -301,7 +303,7 @@ export default {
       this.currentPage = 1;
 
       if (!this.searchText) {
-        eventBus.showSnackbar("error", this.$t("title is missing"));
+        eventBus.showSnackbar("error", $t("title is missing"));
         this.isLoading = false;
         return;
       }
@@ -345,7 +347,7 @@ export default {
       logger.log("[onSelectClick]  item:", item);
 
       if (!item.tconst) {
-        return eventBus.showSnackbar("error", this.$t("identifier missing"));
+        return eventBus.showSnackbar("error", $t("identifier missing"));
       }
 
       this.searchResults = [item];

@@ -933,6 +933,8 @@ import logger from "@helpers/logger.js";
 
 import { eventBus } from "@/eventBus.js";
 import * as store from "@/store.js";
+import i18n from "@/i18n.js";
+const $t = i18n.global.t;
 import SourcePath from "@/components/shared/SourcePath.vue";
 import Dialog from "@/components/dialogs/Dialog.vue";
 import AddRegionsDialog from "@/components/dialogs/AddRegionsDialog.vue";
@@ -1099,7 +1101,7 @@ export default {
       (async () => {
         await store.setSetting("uiLanguage", newValue);
 
-        eventBus.showSnackbar("success", this.$t("Application Language saved_"));
+        eventBus.showSnackbar("success", $t("Application Language saved_"));
       })();
     },
 
@@ -1154,20 +1156,16 @@ export default {
       return moment;
     },
 
-    $local_t(key, payload) {
-      return this.$t(key, payload);
-    },
-
     async browseMediaplayerPath() {
       const filters = helpers.isWindows
         ? [
-            { name: this.$t("Executables"), extensions: ["exe"] },
-            { name: this.$t("All Files"), extensions: ["*"] },
+            { name: $t("Executables"), extensions: ["exe"] },
+            { name: $t("All Files"), extensions: ["*"] },
           ]
-        : [{ name: this.$t("All Files"), extensions: ["*"] }];
+        : [{ name: $t("All Files"), extensions: ["*"] }];
 
       const path = await dialog.showOpenDialog({
-        title: this.$t("Path to your media player (e_g_ VLC)"),
+        title: $t("Path to your media player (e_g_ VLC)"),
         properties: ["openFile"],
         filters,
         defaultPath: this.MediaplayerPath || "",
@@ -1187,15 +1185,15 @@ export default {
     async browseMediainfoPath() {
       const filters = helpers.isWindows
         ? [
-            { name: this.$t("Executables"), extensions: ["exe"] },
-            { name: this.$t("All Files"), extensions: ["*"] },
+            { name: $t("Executables"), extensions: ["exe"] },
+            { name: $t("All Files"), extensions: ["*"] },
           ]
-        : [{ name: this.$t("All Files"), extensions: ["*"] }];
+        : [{ name: $t("All Files"), extensions: ["*"] }];
 
       logger.log('with message?')
 
       const path = await dialog.showOpenDialog({
-        title: this.$t("Path to mediainfo (get it from mediaarea_net)"),
+        title: $t("Path to mediainfo (get it from mediaarea_net)"),
         properties: ["openFile"],
         filters,
         defaultPath: this.MediainfoPath || ""
@@ -1234,7 +1232,7 @@ export default {
       });
 
       if (isAlreadyInUse) {
-        return eventBus.showSnackbar("error", this.$t("The chosen path is already in use_"));
+        return eventBus.showSnackbar("error", $t("The chosen path is already in use_"));
       }
 
       this.sourcePathDescriptionDialog.id_SourcePaths = null;
@@ -1275,7 +1273,7 @@ export default {
       });
 
       if (isAlreadyInUse) {
-        return eventBus.showSnackbar("error", this.$t("The chosen path is already in use_"));
+        return eventBus.showSnackbar("error", $t("The chosen path is already in use_"));
       }
 
       try {
@@ -1286,7 +1284,7 @@ export default {
 
         await this.fetchSourcePaths();
 
-        eventBus.showSnackbar("success", this.$t("Path updated_"));
+        eventBus.showSnackbar("success", $t("Path updated_"));
       } catch (err) {
         eventBus.showSnackbar("error", err);
       }
@@ -1301,7 +1299,7 @@ export default {
       if (!(await helpers.existsAsync(result.textValue))) {
         eventBus.showSnackbar(
           "error",
-          this.$t(`The path "{path}" cannot be found_`, {
+          $t(`The path "{path}" cannot be found_`, {
             path: result.textValue,
           })
         );
@@ -1317,7 +1315,7 @@ export default {
 
       eventBus.showSnackbar(
         "success",
-        this.$t(`Media Player path changed to "{path}"_`, {
+        $t(`Media Player path changed to "{path}"_`, {
           path: result.textValue,
         })
       );
@@ -1336,7 +1334,7 @@ export default {
       if (!(await helpers.existsAsync(result.textValue))) {
         eventBus.showSnackbar(
           "error",
-          this.$t(`The path "{path}" cannot be found_`, {
+          $t(`The path "{path}" cannot be found_`, {
             path: result.textValue,
           })
         );
@@ -1352,7 +1350,7 @@ export default {
 
       eventBus.showSnackbar(
         "success",
-        this.$t(`MediaInfo CLI path changed to "{path}"_`, {
+        $t(`MediaInfo CLI path changed to "{path}"_`, {
           path: result.textValue,
         })
       );
@@ -1421,7 +1419,7 @@ export default {
 
           eventBus.showLoadingOverlay(false);
 
-          eventBus.showSnackbar("success", this.$t("Source path removed_"));
+          eventBus.showSnackbar("success", $t("Source path removed_"));
         } catch (err) {
           eventBus.showSnackbar("error", err);
         }
@@ -1455,7 +1453,7 @@ export default {
 
           await this.fetchSourcePaths();
 
-          eventBus.showSnackbar("success", this.$t("Description updated_"));
+          eventBus.showSnackbar("success", $t("Description updated_"));
         } catch (err) {
           eventBus.showSnackbar("error", err);
         }
@@ -1478,9 +1476,9 @@ export default {
 
           eventBus.showSnackbar(
             "success",
-            this.$t("{Path} added to {MediaTypeUpper} source directories_", {
+            $t("{Path} added to {MediaTypeUpper} source directories_", {
               Path: this.sourcePathDescriptionDialog.Path,
-              MediaTypeUpper: this.$t(this.sourcePathDescriptionDialog.MediaTypeUpper),
+              MediaTypeUpper: $t(this.sourcePathDescriptionDialog.MediaTypeUpper),
             })
           );
         } catch (err) {
@@ -1521,7 +1519,7 @@ export default {
     onRemoveRegionDialogOK() {
       this.removeRegion(this.removeRegionDialog.item);
       this.removeRegionDialog.show = false;
-      eventBus.showSnackbar("success", this.$t("Region removed_"));
+      eventBus.showSnackbar("success", $t("Region removed_"));
     },
 
     onRemoveRegionDialogCancel() {
@@ -1621,7 +1619,7 @@ export default {
     onRemoveLanguageDialogOK() {
       this.removeLanguage(this.removeLanguageDialog.item, this.removeLanguageDialog.type);
       this.removeLanguageDialog.show = false;
-      eventBus.showSnackbar("success", this.$t("Language removed_"));
+      eventBus.showSnackbar("success", $t("Language removed_"));
     },
 
     onRemoveLanguageDialogCancel() {
@@ -1646,7 +1644,7 @@ export default {
 
       eventBus.showSnackbar(
         "success",
-        this.$t(`Title Type "{TitleType}" added_`, {
+        $t(`Title Type "{TitleType}" added_`, {
           TitleType: titleType.TitleType,
         })
       );
@@ -1679,7 +1677,7 @@ export default {
 
       eventBus.showSnackbar(
         "success",
-        this.$t(`Title Type "{TitleType}" removed_`, {
+        $t(`Title Type "{TitleType}" removed_`, {
           TitleType: titleType.TitleType,
         })
       );
@@ -1694,14 +1692,14 @@ export default {
     },
 
     onEditReleaseAttribute(item) {
-      this.editReleaseAttributeDialog.title = this.$t("Edit Release Attribute");
+      this.editReleaseAttributeDialog.title = $t("Edit Release Attribute");
       this.editReleaseAttributeDialog.oldItem = item;
       this.$refs.editReleaseAttributeDialog.init(item.searchTerm, item.displayAs);
       this.editReleaseAttributeDialog.show = true;
     },
 
     onAddReleaseAttribute() {
-      this.editReleaseAttributeDialog.title = this.$t("Add Release Attribute");
+      this.editReleaseAttributeDialog.title = $t("Add Release Attribute");
       this.editReleaseAttributeDialog.oldItem = null;
       this.$refs.editReleaseAttributeDialog.init("", "");
       this.editReleaseAttributeDialog.show = true;
@@ -1735,7 +1733,7 @@ export default {
 
         await store.setSetting("ReleaseAttributes", JSON.stringify(this.$shared.releaseAttributes));
 
-        eventBus.showSnackbar("success", this.$t("Release Attribute saved successfully_"));
+        eventBus.showSnackbar("success", $t("Release Attribute saved successfully_"));
       } catch (e) {
         eventBus.showSnackbar("error", e);
       }
@@ -1769,14 +1767,14 @@ export default {
         this.$shared.releaseAttributes = null;
         this.$shared.releaseAttributes = temp;
 
-        eventBus.showSnackbar("success", this.$t("Release Attribute removed successfully_"));
+        eventBus.showSnackbar("success", $t("Release Attribute removed successfully_"));
       } catch (e) {
         eventBus.showSnackbar("error", e);
       }
     },
 
     async loadScanProcesses() {
-      this.scanProcesses = await store.getScanProcesses(this.$local_t);
+      this.scanProcesses = await store.getScanProcesses();
       logger.log("[loadScanProcesses] this.scanProcesses:", this.scanProcesses);
 
       requestAnimationFrame(() => {
@@ -1809,7 +1807,7 @@ export default {
           datasets: [
             {
               // TV Series as a stacked area chart
-              label: this.$t("Series"),
+              label: $t("Series"),
               type: "line",
               data: scanProcessesReverseOrder.map((scan) => scan.Size_After_Series || 0),
               cubicInterpolationMode: "monotone",
@@ -1823,7 +1821,7 @@ export default {
             },
             {
               // Movies as a stacked area chart
-              label: this.$t("Movies"),
+              label: $t("Movies"),
               type: "line",
               data: scanProcessesReverseOrder.map((scan) => scan.Size_After_Movies || 0),
               cubicInterpolationMode: "monotone",
@@ -1837,7 +1835,7 @@ export default {
             },
             {
               // Total Size is shown as a regular line (not filled)
-              label: this.$t("Total Size"),
+              label: $t("Total Size"),
               type: "line",
               data: scanProcessesReverseOrder.map((scan) => scan.Size_After_Total || 0),
               cubicInterpolationMode: "monotone",
@@ -1911,7 +1909,7 @@ export default {
   async created() {
     //logger.group("[Initialize Settings]");
     this.$shared.imdbRatingDemographics.forEach((demographic) => {
-      demographic.long_translated = this.$t(`RatingDemographics.${demographic.long}`);
+      demographic.long_translated = $t(`RatingDemographics.${demographic.long}`);
     });
 
     logger.log("[created] Settings this.$shared.imdbRatingDemographics:", this.$shared.imdbRatingDemographics);
@@ -1924,7 +1922,7 @@ export default {
       this.$shared.regions = JSON.parse(regions);
 
       this.$shared.regions.forEach((item) => {
-        item.nameTranslated = this.$t(`RegionNames.${item.name.replace(/\./g, "_")}`);
+        item.nameTranslated = $t(`RegionNames.${item.name.replace(/\./g, "_")}`);
       });
     }
 
@@ -1944,13 +1942,13 @@ export default {
     // translate language names
     if (this.$shared.languagesPrimaryTitle) {
       this.$shared.languagesPrimaryTitle.forEach((item) => {
-        item.nameTranslated = this.$t(`LanguageNames.${item.name.replace(/\./g, "_")}`);
+        item.nameTranslated = $t(`LanguageNames.${item.name.replace(/\./g, "_")}`);
         item.DisplayText = `${item.nameTranslated} (${item.code})`;
       });
     }
     if (this.$shared.languagesAudioSubtitles) {
       this.$shared.languagesAudioSubtitles.forEach((item) => {
-        item.nameTranslated = this.$t(`LanguageNames.${item.name.replace(/\./g, "_")}`);
+        item.nameTranslated = $t(`LanguageNames.${item.name.replace(/\./g, "_")}`);
         item.DisplayText = `${item.nameTranslated} (${item.code})`;
       });
     }

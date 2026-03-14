@@ -1013,6 +1013,8 @@ import * as Humanize from "humanize-plus";
 
 import * as helpers from "@helpers/helpers.js";
 import * as store from "@/store.js";
+import i18n from "@/i18n.js";
+const $t = i18n.global.t;
 
 export default {
   props: ["mediaItem", "isScanning", "showCloseButton", "allowEditButtons", "isInDialog"],
@@ -1040,7 +1042,7 @@ export default {
 
     notAvailableText() {
       // we can't use "<" or ">" in template without irritating the formatter/linter
-      return this.$t("<not available>");
+      return $t("<not available>");
     },
   },
   methods: {
@@ -1131,16 +1133,16 @@ export default {
 
     contentAdvisorySeverityDisplayText(severity) {
       if (severity == 0) {
-        return this.$t("None");
+        return $t("None");
       } else if (severity == 1) {
-        return this.$t("Mild");
+        return $t("Mild");
       } else if (severity == 2) {
-        return this.$t("Moderate");
+        return $t("Moderate");
       } else if (severity == 3) {
-        return this.$t("Severe");
+        return $t("Severe");
       }
 
-      return this.$t("<not available>");
+      return $t("<not available>");
     },
 
     async onLanguageClicked(mediaItem, lang, type, isInDialog) {
