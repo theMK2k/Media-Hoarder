@@ -389,9 +389,12 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback, db, actualDup
     if (rxPlotSummaryChosen) {
       result.$IMDB_plotSummary = unescape(
         htmlToTextConvert(html.match(rxPlotSummaryChosen)[1], {
-            wordwrap: false,
-            selectors: [{ selector: "img", format: "skip" }, { selector: "a", options: { ignoreHref: true } }],
-          })
+          wordwrap: false,
+          selectors: [
+            { selector: "img", format: "skip" },
+            { selector: "a", options: { ignoreHref: true } },
+          ],
+        })
           .replace("See full summary»", "")
           .replace(/ Read all$/, "")
           .trim()
@@ -426,9 +429,12 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback, db, actualDup
       if (rxYearRange.test(html)) {
         const yearRange = unescape(
           htmlToTextConvert(html.match(rxYearRange)[1], {
-              wordwrap: false,
-              selectors: [{ selector: "img", format: "skip" }, { selector: "a", options: { ignoreHref: true } }],
-            })
+            wordwrap: false,
+            selectors: [
+              { selector: "img", format: "skip" },
+              { selector: "a", options: { ignoreHref: true } },
+            ],
+          })
             .replace("–", "-")
             .replace("â€“", "-")
             .trim()
@@ -539,10 +545,12 @@ async function scrapeIMDBplotSummaryV1(movie, shortSummary, html) {
     while ((match = rxPlotSummaryChosen.exec(html))) {
       const plotSummaryFull = unescape(
         htmlToTextConvert(match[1], {
-            wordwrap: false,
-            selectors: [{ selector: "img", format: "skip" }, { selector: "a", options: { ignoreHref: true } }],
-          })
-          .trim()
+          wordwrap: false,
+          selectors: [
+            { selector: "img", format: "skip" },
+            { selector: "a", options: { ignoreHref: true } },
+          ],
+        }).trim()
       );
 
       if (plotSummaryFull.includes(shortSummaryClean)) {
@@ -818,28 +826,34 @@ async function scrapeIMDBreleaseinfoV1(movie, regions, allowedTitleTypes, html) 
     if ($IMDB_originalTitle) {
       $IMDB_originalTitle = unescape(
         htmlToTextConvert($IMDB_originalTitle, {
-            wordwrap: false,
-            selectors: [{ selector: "img", format: "skip" }, { selector: "a", options: { ignoreHref: true } }],
-          })
-          .trim()
+          wordwrap: false,
+          selectors: [
+            { selector: "img", format: "skip" },
+            { selector: "a", options: { ignoreHref: true } },
+          ],
+        }).trim()
       );
     }
     if ($IMDB_localTitle) {
       $IMDB_localTitle = unescape(
         htmlToTextConvert($IMDB_localTitle, {
-            wordwrap: false,
-            selectors: [{ selector: "img", format: "skip" }, { selector: "a", options: { ignoreHref: true } }],
-          })
-          .trim()
+          wordwrap: false,
+          selectors: [
+            { selector: "img", format: "skip" },
+            { selector: "a", options: { ignoreHref: true } },
+          ],
+        }).trim()
       );
     }
     if ($IMDB_primaryTitle) {
       $IMDB_primaryTitle = unescape(
         htmlToTextConvert($IMDB_primaryTitle, {
-            wordwrap: false,
-            selectors: [{ selector: "img", format: "skip" }, { selector: "a", options: { ignoreHref: true } }],
-          })
-          .trim()
+          wordwrap: false,
+          selectors: [
+            { selector: "img", format: "skip" },
+            { selector: "a", options: { ignoreHref: true } },
+          ],
+        }).trim()
       );
     }
 
@@ -1702,10 +1716,12 @@ async function scrapeIMDBFullCreditsDataV1(movie, html) {
         id: match[1],
         name: unescape(
           htmlToTextConvert(match[2], {
-              wordwrap: false,
-              selectors: [{ selector: "img", format: "skip" }, { selector: "a", options: { ignoreHref: true } }],
-            })
-            .trim()
+            wordwrap: false,
+            selectors: [
+              { selector: "img", format: "skip" },
+              { selector: "a", options: { ignoreHref: true } },
+            ],
+          }).trim()
         ),
         credit: null,
       };
@@ -1714,10 +1730,12 @@ async function scrapeIMDBFullCreditsDataV1(movie, html) {
       if (rx_character.test(match[0])) {
         entry.credit = unescape(
           htmlToTextConvert(match[0].match(rx_character)[1], {
-              wordwrap: false,
-              selectors: [{ selector: "img", format: "skip" }, { selector: "a", options: { ignoreHref: true } }],
-            })
-            .trim()
+            wordwrap: false,
+            selectors: [
+              { selector: "img", format: "skip" },
+              { selector: "a", options: { ignoreHref: true } },
+            ],
+          }).trim()
         );
       }
 
@@ -1737,7 +1755,10 @@ async function scrapeIMDBFullCreditsDataV1(movie, html) {
     const creditsCategory = unescape(
       htmlToTextConvert(ccMatch[1], {
         wordwrap: false,
-        selectors: [{ selector: "img", format: "skip" }, { selector: "a", options: { ignoreHref: true } }],
+        selectors: [
+          { selector: "img", format: "skip" },
+          { selector: "a", options: { ignoreHref: true } },
+        ],
       })
     )
       .split("(")[0]
@@ -2294,9 +2315,12 @@ async function scrapeIMDBPersonDataV1($IMDB_Person_ID, downloadFileCallback, htm
     logger.log("[scrapeIMDBPersonData] bio found");
     result.$ShortBio = unescape(
       htmlToTextConvert(html.match(rxShortBio)[1], {
-          wordwrap: false,
-          selectors: [{ selector: "img", format: "skip" }, { selector: "a", options: { ignoreHref: true } }],
-        })
+        wordwrap: false,
+        selectors: [
+          { selector: "img", format: "skip" },
+          { selector: "a", options: { ignoreHref: true } },
+        ],
+      })
         .replace("See full bio", "")
         .trim()
     );
@@ -2333,10 +2357,12 @@ async function scrapeIMDBPersonDataV1($IMDB_Person_ID, downloadFileCallback, htm
     });
     result.$LongBio = unescape(
       htmlToTextConvert(htmlBio.match(rxLongBio)[1], {
-          wordwrap: false,
-          selectors: [{ selector: "img", format: "skip" }, { selector: "a", options: { ignoreHref: true } }],
-        })
-        .trim()
+        wordwrap: false,
+        selectors: [
+          { selector: "img", format: "skip" },
+          { selector: "a", options: { ignoreHref: true } },
+        ],
+      }).trim()
     );
   }
 
@@ -2361,10 +2387,12 @@ async function scrapeIMDBPersonDataV3($IMDB_Person_ID, downloadFileCallback, htm
   result.$LongBio = _.get(jsonDataNext, "props.pageProps.aboveTheFold.bio.text.plaidHtml", null);
   result.$LongBio = unescape(
     htmlToTextConvert(result.$LongBio, {
-        wordwrap: false,
-        selectors: [{ selector: "img", format: "skip" }, { selector: "a", options: { ignoreHref: true } }],
-      })
-      .trim()
+      wordwrap: false,
+      selectors: [
+        { selector: "img", format: "skip" },
+        { selector: "a", options: { ignoreHref: true } },
+      ],
+    }).trim()
   );
   result.$ShortBio = _.truncate(result.$LongBio, {
     length: 356,
@@ -3285,10 +3313,12 @@ async function scrapeGraphQLPaginated(uri, innerPath, resultArray = null, endCur
       const parsedBody = helpers.tryParseJSON(res.body);
       const cleanBody = res.body
         ? htmlToTextConvert(res.body, {
-              wordwrap: false,
-              selectors: [{ selector: "img", format: "skip" }, { selector: "a", options: { ignoreHref: true } }],
-            })
-            .trim()
+            wordwrap: false,
+            selectors: [
+              { selector: "img", format: "skip" },
+              { selector: "a", options: { ignoreHref: true } },
+            ],
+          }).trim()
         : null;
 
       throw new Error(
