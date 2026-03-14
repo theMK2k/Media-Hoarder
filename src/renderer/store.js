@@ -5675,12 +5675,7 @@ async function fetchFilterSourcePaths(
   //#endregion Caching
 }
 
-async function fetchFilterGenres(
-  $MediaType,
-  $SpecificMediaType,
-  loadFilterValuesFromStorage,
-  $Series_id_Movies_Owner
-) {
+async function fetchFilterGenres($MediaType, $SpecificMediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
   logger.log("[fetchFilterGenres] MediaType:", $MediaType);
   shared.loadingFilter = "filterGenres";
 
@@ -5759,7 +5754,9 @@ async function fetchFilterGenres(
   logger.log("[fetchFilterGenres] filterValues:", filterValues);
   logger.log("[fetchFilterGenres] resultsFiltered:", resultsFiltered);
 
-  shared.filters.filterGenres = resultsFiltered.sort((a, b) => helpers.compare(a.nameTranslated, b.nameTranslated, false));
+  shared.filters.filterGenres = resultsFiltered.sort((a, b) =>
+    helpers.compare(a.nameTranslated, b.nameTranslated, false)
+  );
   shared.loadingFilter = "";
 
   //#region Caching
@@ -7052,12 +7049,7 @@ async function fetchLists() {
 	`);
 }
 
-async function fetchFilterLists(
-  $MediaType,
-  $SpecificMediaType,
-  loadFilterValuesFromStorage,
-  $Series_id_Movies_Owner
-) {
+async function fetchFilterLists($MediaType, $SpecificMediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
   shared.loadingFilter = "filterLists";
   const filterValues = await fetchFilterValues($SpecificMediaType, loadFilterValuesFromStorage);
 
@@ -8633,17 +8625,17 @@ async function fetchFilterReleaseAttributes(
     );
 
   if (shared.featureFlags.useFilterCache) {
-    logger.log("[fetchFilterReleaseAttributes] cacheHash:", cacheHash());
+    logger.log("[fetchFilterReleaseAttributes] #filtercache cacheHash:", cacheHash());
 
     if (shared.filterCache[cacheHash()]) {
-      logger.log(`[fetchFilterReleaseAttributes] cache hit!`);
+      logger.log(`[fetchFilterReleaseAttributes] #filtercache cache hit!`);
       shared.filters.filterReleaseAttributes = JSON.parse(shared.filterCache[cacheHash()].data);
       shared.loadingFilter = "";
       return;
     }
 
-    logger.log(`[fetchFilterReleaseAttributes] cache miss, cacheHash:`, cacheHash());
-    logger.log(`[fetchFilterReleaseAttributes] cache miss`, JSON.stringify(shared.filters));
+    logger.log(`[fetchFilterReleaseAttributes] #filtercache cache miss, cacheHash:`, cacheHash());
+    logger.log(`[fetchFilterReleaseAttributes] #filtercache cache miss, shared.filters:`, JSON.parse(JSON.stringify(shared.filters)));
   }
   //#endregion Caching
 
@@ -8678,11 +8670,11 @@ async function fetchFilterReleaseAttributes(
     )
 `;
 
-    logger.log("[fetchFilterReleaseAttributes] sql:", sql);
+    // logger.log("[fetchFilterReleaseAttributes] sql:", sql);
 
     const NumMovies = await db.fireProcedureReturnScalar(sql, { $MediaType, $Series_id_Movies_Owner });
 
-    logger.log("[fetchFilterReleaseAttributes] NumMovies:", NumMovies);
+    // logger.log("[fetchFilterReleaseAttributes] NumMovies:", NumMovies);
 
     if (NumMovies) {
       results.push({
@@ -8722,10 +8714,9 @@ async function fetchFilterReleaseAttributes(
     ...results.sort((a, b) => (a.ReleaseAttribute.toLowerCase() < b.ReleaseAttribute.toLowerCase() ? -1 : 1)),
   ];
 
-  results.forEach((result) => {
-    result.Selected = !!result.Selected;
-    result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
+  logger.log('[fetchFilterReleaseAttributes] #filtercache results before data cleanup:', JSON.parse(JSON.stringify(results)));
 
+  results.forEach((result) => {
     if (filterValues && filterValues.filterReleaseAttributes) {
       const filterReleaseAttribute = filterValues.filterReleaseAttributes.find(
         (value) => value.ReleaseAttribute == result.ReleaseAttribute
@@ -8734,6 +8725,10 @@ async function fetchFilterReleaseAttributes(
         result.Selected = !!filterReleaseAttribute.Selected;
       }
     }
+
+    result.Selected = !!result.Selected;
+    result.isAny = !!result.isAny;
+    result.NumMoviesFormatted = result.NumMovies.toLocaleString(shared.uiLanguage);
   });
 
   logger.log("[fetchFilterReleaseAttributes] results:", results);
@@ -8742,8 +8737,8 @@ async function fetchFilterReleaseAttributes(
   shared.loadingFilter = "";
 
   //#region Caching
-  logger.log(`[fetchFilterReleaseAttributes] cache miss, caching with cacheHash:`, cacheHash());
-  logger.log(`[fetchFilterReleaseAttributes] cache miss, caching with filters:`, JSON.stringify(shared.filters));
+  logger.log(`[fetchFilterReleaseAttributes] #filtercache caching with cacheHash:`, cacheHash());
+  logger.log(`[fetchFilterReleaseAttributes] #filtercache caching with shared.filters:`, JSON.parse(JSON.stringify(shared.filters)));
 
   shared.filterCache[cacheHash()] = {
     metaData: {
@@ -10456,7 +10451,7 @@ async function getScanProcessDetails($id_Scan_Processes) {
 
 function writeFilterCache($MediaType, $SpecificMediaType, $Series_id_Movies_Owner, filterName, filterValues) {
   const hash = getFilterCacheKey(filterName, $MediaType, $SpecificMediaType, $Series_id_Movies_Owner, shared.filters);
-  logger.log(`[writeFilterCache] storing ${filterName} with hash:`, hash);
+  logger.log(`[writeFilterCache] #filtercache storing ${filterName} with hash:`, hash);
   shared.filterCache[hash] = {
     metaData: {
       createdAt: new Date(),

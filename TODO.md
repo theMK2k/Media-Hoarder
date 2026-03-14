@@ -4,7 +4,7 @@
 
 - [WIP] introduce caching for the filters (uses shareld.featureFlags)
   - [x] fetchFilterReleaseAttributes
-  - [x] Source Paths
+    - [ ] remove "#filtercache" from logging
   - [x] Video Quality
   - [x] Video Encoders
   - [x] My Lists
