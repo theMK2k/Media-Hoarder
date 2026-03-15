@@ -1317,9 +1317,7 @@ export default {
       }
 
       if (this.$shared.filterCompaniesActive) {
-        filtersList.push(
-          `${$t("Companies")}${this.$shared.filters.filterSettings.filterCompaniesAND ? " ߷" : ""}`
-        );
+        filtersList.push(`${$t("Companies")}${this.$shared.filters.filterSettings.filterCompaniesAND ? " ߷" : ""}`);
       }
 
       if (this.$shared.filterAudioLanguagesActive) {
@@ -1336,9 +1334,7 @@ export default {
 
       if (this.$shared.filterReleaseAttributesActive) {
         filtersList.push(
-          `${$t("Release Attributes")}${
-            this.$shared.filters.filterSettings.filterReleaseAttributesAND ? " ߷" : ""
-          }`
+          `${$t("Release Attributes")}${this.$shared.filters.filterSettings.filterReleaseAttributesAND ? " ߷" : ""}`
         );
       }
 
@@ -1350,9 +1346,7 @@ export default {
 
       if (this.$shared.filterIMDBFilmingLocationsActive) {
         filtersList.push(
-          `${$t("Filming Locations")}${
-            this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND ? " ߷" : ""
-          }`
+          `${$t("Filming Locations")}${this.$shared.filters.filterSettings.filterIMDBFilmingLocationsAND ? " ߷" : ""}`
         );
       }
 
@@ -2289,9 +2283,7 @@ export default {
 
       this.myRatingDialog.show = true;
       this.myRatingDialog.rating = rating;
-      this.myRatingDialog.ratingDisplayText = rating
-        ? helpers.getStarRatingString(rating)
-        : `<${$t("not yet rated")}>`;
+      this.myRatingDialog.ratingDisplayText = rating ? helpers.getStarRatingString(rating) : `<${$t("not yet rated")}>`;
       this.myRatingDialog.isInDialog = !!isInDialog;
 
       return;
@@ -2807,9 +2799,7 @@ export default {
 
       this.deleteMediaDialog.location =
         item.isDirectoryBased && item.specificMediaType !== "Series" ? item.fullDirectory : item.fullPath;
-      this.deleteMediaDialog.additionalTextBlocks = [
-        $t("storage location:") + " " + this.deleteMediaDialog.location,
-      ];
+      this.deleteMediaDialog.additionalTextBlocks = [$t("storage location:") + " " + this.deleteMediaDialog.location];
 
       this.deleteMediaDialog.show = true;
     },
@@ -3296,7 +3286,8 @@ export default {
       await store.fetchSortValues(this.specificMediaType);
 
       if (!dontLoadFiltersFromDb) {
-        this.$shared.filters = (await store.fetchFilterValues(this.specificMediaType, true)) || this.$shared.filters; // always fetch filter values cached in db
+        // fetch entire filter values objects containing the filters, if they're selected and which number of movies they affect, from cache in db
+        this.$shared.filters = (await store.fetchFilterValues(this.specificMediaType, true)) || this.$shared.filters;
       }
 
       this.items = [];
