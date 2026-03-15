@@ -334,6 +334,45 @@ async function fetchSourcePaths() {
   return result;
 }
 
+async function updateSourcePathPath($id_SourcePaths, $Path) {
+  shared.clearFilterCache();
+  await db.fireProcedure(`UPDATE tbl_SourcePaths SET Path = $Path WHERE id_SourcePaths = $id_SourcePaths`, {
+    $id_SourcePaths,
+    $Path,
+  });
+}
+
+async function updateSourcePathDescription($id_SourcePaths, $Description) {
+  shared.clearFilterCache();
+  await db.fireProcedure(
+    `UPDATE tbl_SourcePaths SET Description = $Description WHERE id_SourcePaths = $id_SourcePaths`,
+    { $id_SourcePaths, $Description }
+  );
+}
+
+async function addSourcePath($MediaType, $Path, $Description) {
+  shared.clearFilterCache();
+  await db.fireProcedure(
+    `INSERT INTO tbl_SourcePaths (MediaType, Path, Description, checkRemovedFiles, created_at) VALUES ($MediaType, $Path, $Description, 1, DATETIME('now'))`,
+    { $MediaType, $Path, $Description }
+  );
+}
+
+async function removeSourcePath($id_SourcePaths) {
+  shared.clearFilterCache();
+  await db.fireProcedure(`DELETE FROM tbl_SourcePaths WHERE id_SourcePaths = $id_SourcePaths`, { $id_SourcePaths });
+  await db.fireProcedure(`DELETE FROM tbl_Movies WHERE id_SourcePaths NOT IN (SELECT id_SourcePaths FROM tbl_SourcePaths)`, []);
+  await ensureMovieDeleted();
+}
+
+async function updateSourcePathCheckRemovedFiles($id_SourcePaths, $checkRemovedFiles) {
+  shared.clearFilterCache();
+  await db.fireProcedure(
+    `UPDATE tbl_SourcePaths SET checkRemovedFiles = $checkRemovedFiles WHERE id_SourcePaths = $id_SourcePaths`,
+    { $id_SourcePaths, $checkRemovedFiles }
+  );
+}
+
 /**
  * Rescan meta data of the given items
  * @param {Array} mediaItems the items to rescan
@@ -7049,6 +7088,14 @@ async function clearList($id_Lists) {
   return await db.fireProcedureReturnScalar(`DELETE FROM tbl_Lists_Movies WHERE id_Lists = $id_Lists`, { $id_Lists });
 }
 
+async function deleteList($id_Lists) {
+  shared.clearFilterCache();
+
+  logger.log("[deleteList] $id_Lists:", $id_Lists);
+  await db.fireProcedure(`DELETE FROM tbl_Lists WHERE id_Lists = $id_Lists`, { $id_Lists });
+  await db.fireProcedure(`DELETE FROM tbl_Lists_Movies WHERE id_Lists NOT IN (SELECT id_Lists FROM tbl_Lists)`, []);
+}
+
 async function removeFromList($id_Lists, $id_Movies) {
   shared.clearFilterCache();
 
@@ -10639,6 +10686,11 @@ export {
   definedError,
   existsAsync,
   fetchSourcePaths,
+  updateSourcePathPath,
+  updateSourcePathDescription,
+  addSourcePath,
+  removeSourcePath,
+  updateSourcePathCheckRemovedFiles,
   rescan,
   rescanItems,
   fetchMedia,
@@ -10675,6 +10727,7 @@ export {
   addToList,
   removeFromList,
   clearList,
+  deleteList,
   fetchLists,
   getMovieDetails,
   setLastAccess,

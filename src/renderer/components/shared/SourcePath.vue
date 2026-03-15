@@ -60,13 +60,7 @@ export default {
 
     async toggleCheckRemovedFiles() {
       logger.log("[toggleCheckRemovedFiles] checkRemovedFiles:", this.value.checkRemovedFiles);
-      await store.db.fireProcedure(
-        `UPDATE tbl_SourcePaths SET checkRemovedFiles = $checkRemovedFiles WHERE id_SourcePaths = $id_SourcePaths`,
-        {
-          $checkRemovedFiles: this.value.checkRemovedFiles,
-          $id_SourcePaths: this.value.id_SourcePaths,
-        }
-      );
+      await store.updateSourcePathCheckRemovedFiles(this.value.id_SourcePaths, this.value.checkRemovedFiles);
 
       if (this.value.checkRemovedFiles) {
         eventBus.showSnackbar(

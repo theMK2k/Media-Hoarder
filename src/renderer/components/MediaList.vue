@@ -2895,6 +2895,7 @@ export default {
         }
 
         // remove media entries from DB (use isRemoved?)
+        this.$shared.clearFilterCache();
         for (const extra of this.deleteMediaDialog.item.extras || []) {
           await store.db.fireProcedure(`UPDATE tbl_Movies SET isRemoved = 1 WHERE id_Movies = $id_Movies`, {
             $id_Movies: extra.id_Movies,

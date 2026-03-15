@@ -4758,19 +4758,7 @@ export default {
         try {
           logger.log("[deleteList] START");
 
-          await store.db.fireProcedure(`DELETE FROM tbl_Lists WHERE id_Lists = $id_Lists`, {
-            $id_Lists: this.deleteFilterItemDialog.item.id_Lists,
-          });
-
-          logger.log("[deleteList] delete list entries");
-
-          await store.db.fireProcedure(
-            `DELETE FROM tbl_Lists_Movies WHERE id_Lists NOT IN (SELECT id_Lists FROM tbl_Lists)`,
-            []
-          );
-
-          // eventBus.refetchFilters({ filterLists: null });
-          eventBus.refetchMedia({ setPage: this.$shared.currentPage, dontLoadFiltersFromDb: true });
+          await store.deleteList(this.deleteFilterItemDialog.item.id_Lists);
 
           eventBus.showSnackbar(
             "success",
@@ -4778,6 +4766,15 @@ export default {
               name: this.deleteFilterItemDialog.ItemName,
             })}`
           );
+
+          this.$shared.filters.filterLists.splice(
+            this.$shared.filters.filterLists.findIndex(
+              (filterList) => filterList.id_Lists === this.deleteFilterItemDialog.item.id_Lists
+            ),
+            1
+          );
+
+          eventBus.refetchMedia({ setFilter: { filterLists: null }, dontLoadFiltersFromDb: true });
         } catch (err) {
           eventBus.showSnackbar("error", err);
         }

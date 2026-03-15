@@ -1277,10 +1277,7 @@ export default {
       }
 
       try {
-        await store.db.fireProcedure(`UPDATE tbl_SourcePaths SET Path = $Path WHERE id_SourcePaths = $id_SourcePaths`, {
-          $id_SourcePaths: sourcePath.id_SourcePaths,
-          $Path: chosenPath,
-        });
+        await store.updateSourcePathPath(sourcePath.id_SourcePaths, chosenPath);
 
         await this.fetchSourcePaths();
 
@@ -1404,16 +1401,7 @@ export default {
 
           this.removeSourcePathDialog.show = false;
 
-          await store.db.fireProcedure(`DELETE FROM tbl_SourcePaths WHERE id_SourcePaths = $id_SourcePaths`, {
-            $id_SourcePaths: this.removeSourcePathDialog.id_SourcePaths,
-          });
-
-          await store.db.fireProcedure(
-            `DELETE FROM tbl_Movies WHERE id_SourcePaths NOT IN (SELECT id_SourcePaths FROM tbl_SourcePaths)`,
-            []
-          );
-
-          await store.ensureMovieDeleted();
+          await store.removeSourcePath(this.removeSourcePathDialog.id_SourcePaths);
 
           await this.fetchSourcePaths();
 
@@ -1443,13 +1431,7 @@ export default {
     saveSourcePathDescriptionEdit(dialogResult) {
       (async () => {
         try {
-          await store.db.fireProcedure(
-            `UPDATE tbl_SourcePaths SET Description = $Description WHERE id_SourcePaths = $id_SourcePaths`,
-            {
-              $id_SourcePaths: this.sourcePathDescriptionDialog.id_SourcePaths,
-              $Description: dialogResult.textValue,
-            }
-          );
+          await store.updateSourcePathDescription(this.sourcePathDescriptionDialog.id_SourcePaths, dialogResult.textValue);
 
           await this.fetchSourcePaths();
 
@@ -1463,14 +1445,7 @@ export default {
     saveNewSourcePath(dialogResult) {
       (async () => {
         try {
-          await store.db.fireProcedure(
-            `INSERT INTO tbl_SourcePaths (MediaType, Path, Description, checkRemovedFiles, created_at) VALUES ($MediaType, $Path, $Description, 1, DATETIME('now'))`,
-            {
-              $MediaType: this.sourcePathDescriptionDialog.MediaType,
-              $Path: this.sourcePathDescriptionDialog.Path,
-              $Description: dialogResult.textValue,
-            }
-          );
+          await store.addSourcePath(this.sourcePathDescriptionDialog.MediaType, this.sourcePathDescriptionDialog.Path, dialogResult.textValue);
 
           await this.fetchSourcePaths();
 
