@@ -340,6 +340,8 @@ async function fetchSourcePaths() {
  * @param {boolean} seriesOnly if true, only rescan series metadata without episodes
  */
 async function rescanItems(mediaItems, seriesOnly) {
+  shared.clearFilterCache();
+
   rescanETA = {
     show: false,
     counter: 0,
@@ -417,6 +419,8 @@ async function rescanItems(mediaItems, seriesOnly) {
  * @param {boolean} onlyNew if true, only new media will be scanned
  */
 async function rescan(onlyNew) {
+  shared.clearFilterCache();
+
   rescanETA = {
     show: false,
     counter: null,
@@ -3500,6 +3504,8 @@ async function fetchIMDBMetaData(mediaItem, onlyNew, actualDuplicate) {
  * @param {Object} mediaItem
  */
 async function deleteIMDBData(mediaItem) {
+  shared.clearFilterCache();
+
   logger.log("[deleteIMDBData] mediaItem:", mediaItem);
 
   const $id_Movies = mediaItem.id_Movies;
@@ -5282,6 +5288,8 @@ function generateLanguageArray(languages, maxLangDisplay) {
 }
 
 async function clearRating($id_Movies, isHandlingDuplicates) {
+  shared.clearFilterCache();
+
   await db.fireProcedure(`UPDATE tbl_Movies SET Rating = NULL WHERE id_Movies = $id_Movies`, { $id_Movies });
 
   if (!isHandlingDuplicates) {
@@ -5300,6 +5308,8 @@ async function clearRating($id_Movies, isHandlingDuplicates) {
 }
 
 async function setRating($id_Movies, $Rating, isHandlingDuplicates) {
+  shared.clearFilterCache();
+
   logger.log("[setRating] id_Movies:", $id_Movies, "Rating:", $Rating);
   try {
     await db.fireProcedure(`UPDATE tbl_Movies SET Rating = $Rating WHERE id_Movies = $id_Movies`, {
@@ -6970,6 +6980,8 @@ function saveFilterValues($SpecificMediaType) {
 }
 
 async function createList($Name, noErrorOnDuplicateName) {
+  shared.clearFilterCache();
+
   const id_Lists = await db.fireProcedureReturnScalar(`SELECT id_Lists FROM tbl_Lists WHERE Name = $Name`, { $Name });
   if (id_Lists) {
     if (noErrorOnDuplicateName) {
@@ -6991,6 +7003,8 @@ async function createList($Name, noErrorOnDuplicateName) {
  * @returns
  */
 async function addToList($id_Lists, $id_Movies, isHandlingDuplicates, dontThrowErrorOnDuplicate) {
+  shared.clearFilterCache();
+
   const id_Lists_Movies = await db.fireProcedureReturnScalar(
     `SELECT id_Lists_Movies FROM tbl_Lists_Movies WHERE id_Lists = $id_Lists AND id_Movies = $id_Movies`,
     { $id_Lists, $id_Movies }
@@ -7030,10 +7044,14 @@ async function addToList($id_Lists, $id_Movies, isHandlingDuplicates, dontThrowE
  * @param {Integer} $id_Lists
  */
 async function clearList($id_Lists) {
+  shared.clearFilterCache();
+
   return await db.fireProcedureReturnScalar(`DELETE FROM tbl_Lists_Movies WHERE id_Lists = $id_Lists`, { $id_Lists });
 }
 
 async function removeFromList($id_Lists, $id_Movies) {
+  shared.clearFilterCache();
+
   logger.log("[removeFromList] $id_Lists:", $id_Lists, "$id_Movies:", $id_Movies);
   return await db.fireProcedureReturnScalar(
     `DELETE FROM tbl_Lists_Movies WHERE id_Lists = $id_Lists AND id_Movies = $id_Movies`,
@@ -7598,6 +7616,8 @@ async function fetchNumMoviesForPerson($IMDB_Person_ID) {
 }
 
 async function addFilterPerson($IMDB_Person_ID, $Person_Name) {
+  shared.clearFilterCache();
+
   const id_Filter_Persons = await db.fireProcedureReturnScalar(
     `SELECT id_Filter_Persons FROM tbl_Filter_Persons WHERE IMDB_Person_ID = $IMDB_Person_ID`,
     {
@@ -7618,6 +7638,8 @@ async function addFilterPerson($IMDB_Person_ID, $Person_Name) {
 }
 
 async function deleteFilterPerson($id_Filter_Persons) {
+  shared.clearFilterCache();
+
   return await db.fireProcedureReturnScalar(
     `DELETE FROM tbl_Filter_Persons WHERE id_Filter_Persons = $id_Filter_Persons`,
     { $id_Filter_Persons }
@@ -7625,6 +7647,8 @@ async function deleteFilterPerson($id_Filter_Persons) {
 }
 
 async function addFilterIMDBPlotKeyword($id_IMDB_Plot_Keywords, $Keyword) {
+  shared.clearFilterCache();
+
   const id_Filter_IMDB_Plot_Keywords = await db.fireProcedureReturnScalar(
     `SELECT id_Filter_IMDB_Plot_Keywords FROM tbl_Filter_IMDB_Plot_Keywords WHERE id_IMDB_Plot_Keywords = $id_IMDB_Plot_Keywords`,
     { $id_IMDB_Plot_Keywords }
@@ -7640,6 +7664,8 @@ async function addFilterIMDBPlotKeyword($id_IMDB_Plot_Keywords, $Keyword) {
 }
 
 async function addFilterIMDBFilmingLocation($id_IMDB_Filming_Locations, $Location) {
+  shared.clearFilterCache();
+
   const id_Filter_IMDB_Filming_Locations = await db.fireProcedureReturnScalar(
     `SELECT id_Filter_IMDB_Filming_Locations FROM tbl_Filter_IMDB_Filming_Locations WHERE id_IMDB_Filming_Locations = $id_IMDB_Filming_Locations`,
     { $id_IMDB_Filming_Locations }
@@ -7655,6 +7681,8 @@ async function addFilterIMDBFilmingLocation($id_IMDB_Filming_Locations, $Locatio
 }
 
 async function deleteFilterIMDBPlotKeyword($id_Filter_IMDB_Plot_Keywords) {
+  shared.clearFilterCache();
+
   return await db.fireProcedureReturnScalar(
     `DELETE FROM tbl_Filter_IMDB_Plot_Keywords WHERE id_Filter_IMDB_Plot_Keywords = $id_Filter_IMDB_Plot_Keywords`,
     {
@@ -7664,6 +7692,8 @@ async function deleteFilterIMDBPlotKeyword($id_Filter_IMDB_Plot_Keywords) {
 }
 
 async function deleteFilterIMDBFilmingLocation($id_Filter_IMDB_Filming_Locations) {
+  shared.clearFilterCache();
+
   return await db.fireProcedureReturnScalar(
     `DELETE FROM tbl_Filter_IMDB_Filming_Locations WHERE id_Filter_IMDB_Filming_Locations = $id_Filter_IMDB_Filming_Locations`,
     { $id_Filter_IMDB_Filming_Locations }
@@ -7671,6 +7701,8 @@ async function deleteFilterIMDBFilmingLocation($id_Filter_IMDB_Filming_Locations
 }
 
 async function addFilterCompany($Company_Name) {
+  shared.clearFilterCache();
+
   const id_Filter_Companies = await db.fireProcedureReturnScalar(
     `SELECT id_Filter_Companies FROM tbl_Filter_Companies WHERE Company_Name = $Company_Name`,
     {
@@ -7688,6 +7720,8 @@ async function addFilterCompany($Company_Name) {
 }
 
 async function deleteFilterCompany($id_Filter_Companies) {
+  shared.clearFilterCache();
+
   return await db.fireProcedureReturnScalar(
     `DELETE FROM tbl_Filter_Companies WHERE id_Filter_Companies = $id_Filter_Companies`,
     { $id_Filter_Companies }
@@ -7955,6 +7989,8 @@ async function updateMovieAttribute(
   useMetaDuplicates,
   isHandlingDuplicates
 ) {
+  shared.clearFilterCache();
+
   await db.fireProcedure(`UPDATE tbl_Movies SET ${attributeName} = $value WHERE id_Movies = $id_Movies`, {
     $value,
     $id_Movies,
@@ -9018,6 +9054,8 @@ function resetFilters(objFilter) {
 }
 
 async function removeReleaseAttributeFromMovie($id_Movies, releaseAttribute) {
+  shared.clearFilterCache();
+
   const releaseAttributesHierarchy = getReleaseAttributesHierarchy();
 
   const ra = releaseAttributesHierarchy.find((r) => r.displayAs === releaseAttribute);
@@ -9211,6 +9249,8 @@ async function fetchNumSeriesAndEpisodes() {
 }
 
 async function updateMediaRecordField($id_Movies, FieldName, $Value) {
+  shared.clearFilterCache();
+
   const query = `UPDATE tbl_Movies SET ${FieldName} = $Value WHERE id_Movies = $id_Movies`;
   await db.fireProcedure(query, { $id_Movies, $Value });
 }
@@ -9221,6 +9261,8 @@ async function updateMediaRecordField($id_Movies, FieldName, $Value) {
  * @param {Array<String>} genres e.g. ['action', 'adventure', 'sci-fi']
  */
 async function updateMovieGenres($id_Movies, genres) {
+  shared.clearFilterCache();
+
   const availableGenres = await db.fireProcedureReturnAll("SELECT id_Genres, GenreID, Name FROM tbl_Genres", []);
 
   const movieGenres = await db.fireProcedureReturnAll(
@@ -9284,6 +9326,8 @@ async function updateMovieGenres($id_Movies, genres) {
  * @param {Array<String>} languageCodes e.g. ['De', 'En', 'Es']
  */
 async function updateMovieLanguages($id_Movies, $Type, languageCodes) {
+  shared.clearFilterCache();
+
   logger.log("[updateMovieLanguages] START, $id_Movies:", $id_Movies, "$Type:", $Type, "languageCodes:", languageCodes);
 
   const movieLanguages = await db.fireProcedureReturnAll(
@@ -9330,6 +9374,8 @@ async function updateMovieLanguages($id_Movies, $Type, languageCodes) {
  * @param {Array<String>} videoQualities e.g. ['action', 'adventure', 'sci-fi']
  */
 async function updateMovieVideoQualities($id_Movies, videoQualities) {
+  shared.clearFilterCache();
+
   logger.log("[updateMovieVideoQualities] START, $id_Movies:", $id_Movies, "videoQualities:", videoQualities);
 
   const mediaItemVideoQualities = await db.fireProcedureReturnAll(
@@ -9425,6 +9471,8 @@ async function updateMovieVideoQualities($id_Movies, videoQualities) {
  * @param {String} searchTermsString Semicolon separated list of search terms
  */
 async function updateMovieReleaseAttribues($id_Movies, searchTermsString) {
+  shared.clearFilterCache();
+
   const searchTerms = searchTermsString.split(";");
   const searchTermsHave = (
     await db.fireProcedureReturnAll(
@@ -9651,6 +9699,8 @@ async function verifyIMDBtconst($id_Movies) {
  * @param {*} id_Movies the id_Movies of the series
  */
 async function updateSeriesMetadataFromEpisodes($id_Movies) {
+  shared.clearFilterCache();
+
   logger.log("[updateSeriesMetadataFromEpisodes] START, id_Movies:", $id_Movies);
 
   await updateSeriesAudioFormatsFromEpisodes($id_Movies);
