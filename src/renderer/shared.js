@@ -1348,6 +1348,12 @@ const methods = {
     return !!computedProps.filterIMDBFilmingLocationsApplied.value.find((ffla) => ffla.Location === location);
   },
 
+  /**
+   * Filter Caches need to be cleared as soon as the underlying data changed, this is the case when media is
+   * - rescanned
+   * - edited
+   * - deleted
+   */
   clearFilterCache(identifier) {
     if (!identifier) {
       state.filterCache = {};
