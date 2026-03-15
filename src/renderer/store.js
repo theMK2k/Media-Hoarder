@@ -8625,17 +8625,20 @@ async function fetchFilterReleaseAttributes(
     );
 
   if (shared.featureFlags.useFilterCache) {
-    logger.log("[fetchFilterReleaseAttributes] #filtercache cacheHash:", cacheHash());
+    logger.log("[fetchFilterReleaseAttributes] cacheHash:", cacheHash());
 
     if (shared.filterCache[cacheHash()]) {
-      logger.log(`[fetchFilterReleaseAttributes] #filtercache cache hit!`);
+      logger.log(`[fetchFilterReleaseAttributes] cache hit!`);
       shared.filters.filterReleaseAttributes = JSON.parse(shared.filterCache[cacheHash()].data);
       shared.loadingFilter = "";
       return;
     }
 
-    logger.log(`[fetchFilterReleaseAttributes] #filtercache cache miss, cacheHash:`, cacheHash());
-    logger.log(`[fetchFilterReleaseAttributes] #filtercache cache miss, shared.filters:`, JSON.parse(JSON.stringify(shared.filters)));
+    logger.log(`[fetchFilterReleaseAttributes] cache miss, cacheHash:`, cacheHash());
+    logger.log(
+      `[fetchFilterReleaseAttributes] cache miss, shared.filters:`,
+      JSON.parse(JSON.stringify(shared.filters))
+    );
   }
   //#endregion Caching
 
@@ -8714,7 +8717,7 @@ async function fetchFilterReleaseAttributes(
     ...results.sort((a, b) => (a.ReleaseAttribute.toLowerCase() < b.ReleaseAttribute.toLowerCase() ? -1 : 1)),
   ];
 
-  logger.log('[fetchFilterReleaseAttributes] #filtercache results before data cleanup:', JSON.parse(JSON.stringify(results)));
+  logger.log("[fetchFilterReleaseAttributes] results before data cleanup:", JSON.parse(JSON.stringify(results)));
 
   results.forEach((result) => {
     if (filterValues && filterValues.filterReleaseAttributes) {
@@ -8737,8 +8740,8 @@ async function fetchFilterReleaseAttributes(
   shared.loadingFilter = "";
 
   //#region Caching
-  logger.log(`[fetchFilterReleaseAttributes] #filtercache caching with cacheHash:`, cacheHash());
-  logger.log(`[fetchFilterReleaseAttributes] #filtercache caching with shared.filters:`, JSON.parse(JSON.stringify(shared.filters)));
+  logger.log(`[fetchFilterReleaseAttributes] caching with cacheHash:`, cacheHash());
+  logger.log(`[fetchFilterReleaseAttributes] caching with shared.filters:`, JSON.parse(JSON.stringify(shared.filters)));
 
   shared.filterCache[cacheHash()] = {
     metaData: {
@@ -8998,6 +9001,10 @@ function resetFilters(objFilter) {
     }
 
     if (_.isBoolean(objFilter[key])) {
+      if (key === "isAny") {
+        logger.log('  is "isAny" -> keep original value');
+        return;
+      }
       logger.log('  is Boolean -> reset to "true"');
       objFilter[key] = true;
     }
@@ -10451,7 +10458,6 @@ async function getScanProcessDetails($id_Scan_Processes) {
 
 function writeFilterCache($MediaType, $SpecificMediaType, $Series_id_Movies_Owner, filterName, filterValues) {
   const hash = getFilterCacheKey(filterName, $MediaType, $SpecificMediaType, $Series_id_Movies_Owner, shared.filters);
-  logger.log(`[writeFilterCache] #filtercache storing ${filterName} with hash:`, hash);
   shared.filterCache[hash] = {
     metaData: {
       createdAt: new Date(),
