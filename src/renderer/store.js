@@ -5385,7 +5385,9 @@ async function launchMovie(movie) {
 }
 
 /**
- * Get stored filter values - especially we want to retain which filters were selected last time in order to restore this
+ * Get stored filter values
+ * - the entire objects are loaded in their entirety when MediaList is created (for providing the content quickly to the filter sidebar)
+ * - when each filter category is refetched, the isSelected value is taken from the cached filter values
  */
 async function fetchFilterValues($SpecificMediaType, loadFilterValuesFromStorage) {
   logger.log("[fetchFilterValues]", $SpecificMediaType, loadFilterValuesFromStorage);
