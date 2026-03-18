@@ -1841,8 +1841,9 @@ export default {
      *                 key has values: the filter items will be enabled
      * @param {Boolean} specificBySetFilter (optional) ONLY refetch the filter specified in setFilter
      * @param {Array} specificFilterNames (optional) yet another way to tell which filters to fetch; if truthy, ONLY refetch the filters specified by their name in this array
+     * @param {Boolean} dontStoreFilters (optional) if true, the fetched filters will not be stored in the shared cache per specificMediaType
      */
-    async fetchFilters(setFilter, specificBySetFilter, specificFilterNames) {
+    async fetchFilters(setFilter, specificBySetFilter, specificFilterNames, dontStoreFilters) {
       // TODO: set a context (movies, series, episodes incl. id_series)
       //       also have this context in shared objects
       //       in the for-loop check if both contexts are the same, if not, cancel the filter fetch
@@ -2124,8 +2125,13 @@ export default {
           return;
         }
 
-        // now that all filters have been loaded, it makes sense to store them in the cache
+        // now that all filters have been loaded, it makes sense to store them in the individual caches
         store.writeFilterCaches(this.mediatype, this.specificMediaType, this.Series_id_Movies_Owner);
+
+        // store them in the specificMediaType's cache as well
+        if (!dontStoreFilters) {
+          store.saveFilterValues(this.specificMediaType);
+        }
 
         this.$shared.loadingFilterProgress = 100;
 
@@ -3324,7 +3330,7 @@ export default {
 
       eventBus.showLoadingOverlay(false);
 
-      await this.fetchFilters(setFilter);
+      await this.fetchFilters(setFilter, null, null, !!dontStoreFilters);
 
       this.loadFilterValuesFromStorage = false; // only load filter values from storage initially
 

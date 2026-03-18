@@ -15,7 +15,7 @@ const state = reactive({
   currentName: null,
 
   featureFlags: {
-    useFilterCache: true, // set to true to use the filterCache feature
+    useFilterCache: true, // set to true to use the filterCache2 feature
   },
 
   sidenav: null,
@@ -1355,6 +1355,8 @@ const methods = {
    * - deleted
    */
   clearFilterCache(identifier) {
+    logger.log('[clearFilterCache] #filtercache CLEAR with identifier:', identifier);
+    
     if (!identifier) {
       state.filterCache = {};
       return;

@@ -3,8 +3,9 @@
 ## Prio 0
 
 - [WIP] introduce caching for the filters (uses shareld.featureFlags)
+  - `#filtercache`
+  - [WIP] use the complete query as an item for the hash
   - [x] fetchFilterReleaseAttributes
-    - [ ] remove "#filtercache" from logging
   - [x] Video Quality
   - [x] Video Encoders
   - [x] My Lists
@@ -15,12 +16,12 @@
   - [x] People
   - [x] Companies
   - [x] Plot Keywords
-  - [ ] Release Years ??
+  - [x] Release Years
   - [x] Audio Languages
   - [x] Subtitle Languages
   - [x] Audio Formats
-  - [ ] Filming Locations
-  - [ ] Data Quality
+  - [x] Filming Locations
+  - [x] Data Quality
 
   - [ ] we might have an issue with fetchFilterValues and saveFilterValues in the complete chain
 

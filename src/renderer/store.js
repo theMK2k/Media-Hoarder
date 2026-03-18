@@ -361,7 +361,10 @@ async function addSourcePath($MediaType, $Path, $Description) {
 async function removeSourcePath($id_SourcePaths) {
   shared.clearFilterCache();
   await db.fireProcedure(`DELETE FROM tbl_SourcePaths WHERE id_SourcePaths = $id_SourcePaths`, { $id_SourcePaths });
-  await db.fireProcedure(`DELETE FROM tbl_Movies WHERE id_SourcePaths NOT IN (SELECT id_SourcePaths FROM tbl_SourcePaths)`, []);
+  await db.fireProcedure(
+    `DELETE FROM tbl_Movies WHERE id_SourcePaths NOT IN (SELECT id_SourcePaths FROM tbl_SourcePaths)`,
+    []
+  );
   await ensureMovieDeleted();
 }
 
@@ -5502,8 +5505,7 @@ async function fetchFilterDataQuality(
   }
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
-  const results = await db.fireProcedureReturnAll(
-    `
+  const query = `
       SELECT
         1 AS Selected
         , '<noAnomalies>' AS Name
@@ -5615,9 +5617,11 @@ async function fetchFilterDataQuality(
                 )
                 ${additionalFilterQuery}
       ) AS NumMovies
-    `,
-    { $MediaType, $Series_id_Movies_Owner }
-  );
+    `;
+
+  const params = { $MediaType, $Series_id_Movies_Owner };
+
+  const results = await queryFilterHashed("filterDataQuality", query, params);
 
   results.forEach((result) => {
     result.Selected = !!result.Selected;
@@ -5651,30 +5655,11 @@ async function fetchFilterSourcePaths(
 
   logger.log("[fetchFilterSourcePaths] filterValues:", filterValues);
 
-  //#region Caching
-  const cacheHash = () =>
-    getFilterCacheKey("filterSourcePaths", $MediaType, $SpecificMediaType, $Series_id_Movies_Owner, shared.filters);
-
-  if (shared.featureFlags.useFilterCache) {
-    logger.log("[fetchFilterSourcePaths] cacheHash:", cacheHash());
-
-    if (shared.filterCache[cacheHash()]) {
-      logger.log(`[fetchFilterSourcePaths] cache hit!`);
-      shared.filters.filterSourcePaths = JSON.parse(shared.filterCache[cacheHash()].data);
-      shared.loadingFilter = "";
-      return;
-    }
-
-    logger.log(`[fetchFilterSourcePaths] cache miss`);
-  }
-  //#endregion Caching
-
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   delete currentFilters.filterSourcePaths;
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
-  const results = await db.fireProcedureReturnAll(
-    `
+  const query = `
 			SELECT DISTINCT
 			1 AS Selected
 			, SP.Description
@@ -5694,9 +5679,11 @@ async function fetchFilterSourcePaths(
         ) AS NumMovies
 		FROM tbl_SourcePaths SP
     WHERE MediaType = $MediaType
-    `,
-    { $MediaType, $Series_id_Movies_Owner }
-  );
+    `;
+
+  const params = { $MediaType, $Series_id_Movies_Owner };
+
+  const results = await queryFilterHashed("filterSourcePaths", query, params);
 
   results.forEach((result) => {
     result.Selected = !!result.Selected;
@@ -5714,16 +5701,6 @@ async function fetchFilterSourcePaths(
 
   shared.filters.filterSourcePaths = results;
   shared.loadingFilter = "";
-
-  //#region Caching
-  shared.filterCache[cacheHash()] = {
-    metaData: {
-      createdAt: new Date(),
-      size: JSON.stringify(results).length,
-    },
-    data: JSON.stringify(results),
-  };
-  //#endregion Caching
 }
 
 async function fetchFilterGenres($MediaType, $SpecificMediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
@@ -5734,32 +5711,13 @@ async function fetchFilterGenres($MediaType, $SpecificMediaType, loadFilterValue
 
   logger.log("[fetchFilterGenres] filterValues:", filterValues);
 
-  //#region Caching
-  const cacheHash = () =>
-    getFilterCacheKey("filterGenres", $MediaType, $SpecificMediaType, $Series_id_Movies_Owner, shared.filters);
-
-  if (shared.featureFlags.useFilterCache) {
-    logger.log("[fetchFilterGenres] cacheHash:", cacheHash());
-
-    if (shared.filterCache[cacheHash()]) {
-      logger.log(`[fetchFilterGenres] cache hit!`);
-      shared.filters.filterGenres = JSON.parse(shared.filterCache[cacheHash()].data);
-      shared.loadingFilter = "";
-      return;
-    }
-
-    logger.log(`[fetchFilterGenres] cache miss`);
-  }
-  //#endregion Caching
-
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   if (!shared.filters.filterGenresAND) {
     delete currentFilters.filterSettings.filterGenres;
   }
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
-  const results = await db.fireProcedureReturnAll(
-    `
+  const query = `
 			SELECT
 			id_Genres
 			, GenreID
@@ -5776,9 +5734,11 @@ async function fetchFilterGenres($MediaType, $SpecificMediaType, loadFilterValue
               ${additionalFilterQuery}
 			) AS NumMovies
 		FROM tbl_Genres G
-		ORDER BY Name`,
-    { $MediaType, $Series_id_Movies_Owner }
-  );
+		ORDER BY Name`;
+
+  const params = { $MediaType, $Series_id_Movies_Owner };
+
+  const results = await queryFilterHashed("filterGenres", query, params);
 
   const resultsFiltered = results; // results.filter((result) => result.NumMovies > 0); // we should not filter out, because "AND" can quickly result in an empty set
 
@@ -5809,16 +5769,38 @@ async function fetchFilterGenres($MediaType, $SpecificMediaType, loadFilterValue
     helpers.compare(a.nameTranslated, b.nameTranslated, false)
   );
   shared.loadingFilter = "";
+}
 
-  //#region Caching
-  shared.filterCache[cacheHash()] = {
-    metaData: {
-      createdAt: new Date(),
-      size: JSON.stringify(shared.filters.filterGenres).length,
-    },
-    data: JSON.stringify(shared.filters.filterGenres),
+/**
+ * Creates the hash (key) for a filter chache entry
+ * @param {*} filterCategory - a unique identifier for the filter (e.g. "filterReleaseAttributes")
+ * @param {*} query
+ * @param {*} params
+ * @returns
+ */
+async function queryFilterHashed(filterCategory, query, params) {
+  const hashObject = {
+    query,
+    params,
   };
-  //#endregion Caching
+
+  const hash = `${filterCategory}-${crypto.createHash("sha256").update(JSON.stringify(hashObject)).digest("hex")}`;
+
+  if (shared.featureFlags.useFilterCache && shared.filterCache[hash]) {
+    logger.log(`[${filterCategory}] #filtercache cache hit!`);
+
+    // found: return cached value
+    return JSON.parse(shared.filterCache[hash]);
+  }
+
+  logger.log(`[${filterCategory}] #filtercache cache miss!`);
+
+  // not found: query the db and store in cache
+  const results = await db.fireProcedureReturnAll(query, params);
+
+  shared.filterCache[hash] = JSON.stringify(results);
+
+  return results;
 }
 
 async function fetchFilterAgeRatings(
@@ -5834,31 +5816,11 @@ async function fetchFilterAgeRatings(
 
   logger.log("[fetchFilterAgeRatings] filterValues:", filterValues);
 
-  //#region Caching
-  const cacheHash = () =>
-    getFilterCacheKey("fetchFilterAgeRatings", $MediaType, $SpecificMediaType, $Series_id_Movies_Owner, shared.filters);
-
-  if (shared.featureFlags.useFilterCache) {
-    logger.log("[fetchFilterAgeRatings] cacheHash:", cacheHash());
-
-    if (shared.filterCache[cacheHash()]) {
-      logger.log(`[fetchFilterAgeRatings] cache hit!`);
-      shared.filters.filterAgeRatings = JSON.parse(shared.filterCache[cacheHash()].data);
-      shared.loadingFilter = "";
-      return;
-    }
-
-    logger.log(`[fetchFilterAgeRatings] cache miss`);
-  }
-
-  //#endregion Caching
-
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   delete currentFilters.filterAgeRatings;
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
-  const results = await db.fireProcedureReturnAll(
-    `
+  const query = `
 		SELECT
 			-1 AS Age
 			, (
@@ -5909,9 +5871,11 @@ async function fetchFilterAgeRatings(
       SELECT IMDB_MaxAge FROM tbl_Movies MOV WHERE MOV.IMDB_MinAge IS NOT NULL
     )) Ages
     WHERE NumMovies > 0
-    `,
-    { $MediaType, $Series_id_Movies_Owner }
-  );
+    `;
+
+  const params = { $MediaType, $Series_id_Movies_Owner };
+
+  const results = await queryFilterHashed("filterAgeRatings", query, params);
 
   const resultsFiltered = results; // results.filter((result) => result.NumMovies > 0);  // we should not filter out, because "AND" can quickly result in an empty set
 
@@ -5931,16 +5895,6 @@ async function fetchFilterAgeRatings(
 
   shared.filters.filterAgeRatings = resultsFiltered;
   shared.loadingFilter = "";
-
-  //#region Caching
-  shared.filterCache[cacheHash()] = {
-    metaData: {
-      createdAt: new Date(),
-      size: JSON.stringify(resultsFiltered).length,
-    },
-    data: JSON.stringify(resultsFiltered),
-  };
-  //#endregion Caching
 }
 
 async function fetchFilterRatings(
@@ -5956,30 +5910,11 @@ async function fetchFilterRatings(
 
   logger.log("[fetchFilterRatings] filterValues:", filterValues);
 
-  //#region Caching
-  const cacheHash = () =>
-    getFilterCacheKey("filterRatings", $MediaType, $SpecificMediaType, $Series_id_Movies_Owner, shared.filters);
-
-  if (shared.featureFlags.useFilterCache) {
-    logger.log("[fetchFilterRatings] cacheHash:", cacheHash());
-
-    if (shared.filterCache[cacheHash()]) {
-      logger.log(`[fetchFilterRatings] cache hit!`);
-      shared.filters.filterRatings = JSON.parse(shared.filterCache[cacheHash()].data);
-      shared.loadingFilter = "";
-      return;
-    }
-
-    logger.log(`[fetchFilterRatings] cache miss`);
-  }
-  //#endregion Caching
-
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   delete currentFilters.filterRatings;
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
-  const results = await db.fireProcedureReturnAll(
-    `
+  const query = `
     SELECT
     0 AS Rating
     , 1 AS Selected
@@ -6142,9 +6077,11 @@ async function fetchFilterRatings(
               AND MOV.Rating = 5
               ${additionalFilterQuery}
       ) AS NumMovies
-				`,
-    { $MediaType, $Series_id_Movies_Owner }
-  );
+				`;
+
+  const params = { $MediaType, $Series_id_Movies_Owner };
+
+  const results = await queryFilterHashed("filterRatings", query, params);
 
   results.forEach((result) => {
     result.Selected = !!result.Selected;
@@ -6162,16 +6099,6 @@ async function fetchFilterRatings(
 
   shared.filters.filterRatings = results;
   shared.loadingFilter = "";
-
-  //#region Caching
-  shared.filterCache[cacheHash()] = {
-    metaData: {
-      createdAt: new Date(),
-      size: JSON.stringify(results).length,
-    },
-    data: JSON.stringify(results),
-  };
-  //#endregion Caching
 }
 
 async function fetchFilterParentalAdvisory(
@@ -6240,34 +6167,11 @@ async function fetchFilterParentalAdvisoryCategory(
 
   logger.log(`[fetchFilterParentalAdvisory${PA_Category}] filterValues:`, filterValues);
 
-  //#region Caching
-  const cacheHash = () =>
-    getFilterCacheKey(
-      `filterParentalAdvisory_${PA_Category}`,
-      $MediaType,
-      $SpecificMediaType,
-      $Series_id_Movies_Owner,
-      shared.filters
-    );
-
-  if (shared.featureFlags.useFilterCache) {
-    logger.log("[fetchFilterParentalAdvisory] cacheHash:", cacheHash());
-
-    if (shared.filterCache[cacheHash()]) {
-      logger.log(`[fetchFilterParentalAdvisory] cache hit!`);
-      return JSON.parse(shared.filterCache[cacheHash()].data);
-    }
-
-    logger.log(`[fetchFilterParentalAdvisory] cache miss`);
-  }
-  //#endregion Caching
-
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   delete currentFilters.filterParentalAdvisory;
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
-  const results = await db.fireProcedureReturnAll(
-    `
+  const query = `
 			SELECT
 				-1 AS Severity
 				, '<not available>' AS DisplayText
@@ -6347,9 +6251,10 @@ async function fetchFilterParentalAdvisoryCategory(
                 AND MOV.IMDB_Parental_Advisory_${PA_Category} = 3
                 ${additionalFilterQuery}
 				) AS NumMovies
-				`,
-    { $MediaType, $Series_id_Movies_Owner }
-  );
+				`;
+  const params = { $MediaType, $Series_id_Movies_Owner };
+
+  const results = await queryFilterHashed(`fetchFilterParentalAdvisory_${PA_Category}`, query, params);
 
   results.forEach((result) => {
     result.Selected = !!result.Selected;
@@ -6367,16 +6272,6 @@ async function fetchFilterParentalAdvisoryCategory(
 
   logger.log(`[fetchFilterParentalAdvisory${PA_Category}] results:`, results);
 
-  //#region Caching
-  shared.filterCache[cacheHash()] = {
-    metaData: {
-      createdAt: new Date(),
-      size: JSON.stringify(results).length,
-    },
-    data: JSON.stringify(results),
-  };
-  //#endregion Caching
-
   return results;
 }
 
@@ -6389,32 +6284,13 @@ async function fetchFilterPersons(
   shared.loadingFilter = "filterPersons";
   const filterValues = await fetchFilterValues($SpecificMediaType, loadFilterValuesFromStorage);
 
-  //#region Caching
-  const cacheHash = () =>
-    getFilterCacheKey("filterPersons", $MediaType, $SpecificMediaType, $Series_id_Movies_Owner, shared.filters);
-
-  if (shared.featureFlags.useFilterCache) {
-    logger.log("[fetchFilterPersons] cacheHash:", cacheHash());
-
-    if (shared.filterCache[cacheHash()]) {
-      logger.log(`[fetchFilterPersons] cache hit!`);
-      shared.filters.filterPersons = JSON.parse(shared.filterCache[cacheHash()].data);
-      shared.loadingFilter = "";
-      return;
-    }
-
-    logger.log(`[fetchFilterPersons] cache miss`);
-  }
-  //#endregion Caching
-
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   if (!shared.filters.filterSettings.filterPersonsAND) {
     delete currentFilters.filterPersons;
   }
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
-  const results = await db.fireProcedureReturnAll(
-    `
+  const query = `
 		SELECT
 			0 AS id_Filter_Persons
 			, NULL AS IMDB_Person_ID
@@ -6455,9 +6331,11 @@ async function fetchFilterPersons(
 					)
         ) AS NumMovies
 		FROM tbl_Filter_Persons FILTERPERSON
-	`,
-    { $MediaType, $any: $t("<any other person>"), $Series_id_Movies_Owner }
-  );
+	`;
+
+  const params = { $MediaType, $any: $t("<any other person>"), $Series_id_Movies_Owner };
+
+  const results = await queryFilterHashed("filterPersons", query, params);
 
   // logger.log('[fetchFilterPersons] QUERY:', )
 
@@ -6479,16 +6357,6 @@ async function fetchFilterPersons(
 
   shared.filters.filterPersons = results;
   shared.loadingFilter = "";
-
-  //#region Caching
-  shared.filterCache[cacheHash()] = {
-    metaData: {
-      createdAt: new Date(),
-      size: JSON.stringify(results).length,
-    },
-    data: JSON.stringify(results),
-  };
-  //#endregion Caching
 }
 
 async function fetchFilterCompanies(
@@ -6500,32 +6368,13 @@ async function fetchFilterCompanies(
   shared.loadingFilter = "filterCompanies";
   const filterValues = await fetchFilterValues($SpecificMediaType, loadFilterValuesFromStorage);
 
-  //#region Caching
-  const cacheHash = () =>
-    getFilterCacheKey("filterCompanies", $MediaType, $SpecificMediaType, $Series_id_Movies_Owner, shared.filters);
-
-  if (shared.featureFlags.useFilterCache) {
-    logger.log("[fetchFilterCompanies] cacheHash:", cacheHash());
-
-    if (shared.filterCache[cacheHash()]) {
-      logger.log(`[fetchFilterCompanies] cache hit!`);
-      shared.filters.filterCompanies = JSON.parse(shared.filterCache[cacheHash()].data);
-      shared.loadingFilter = "";
-      return;
-    }
-
-    logger.log(`[fetchFilterCompanies] cache miss`);
-  }
-  //#endregion Caching
-
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   if (!shared.filters.filterSettings.filterCompaniesAND) {
     delete currentFilters.filterCompanies;
   }
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
-  const results = await db.fireProcedureReturnAll(
-    `
+  const query = `
 		SELECT
 			0 AS id_Filter_Companies
 			, $any AS Company_Name
@@ -6569,9 +6418,11 @@ async function fetchFilterCompanies(
 					)
 			) AS NumMovies
 		FROM tbl_Filter_Companies FILTERCOMPANY
-	`,
-    { $MediaType, $any: $t("<any other company>"), $Series_id_Movies_Owner }
-  );
+	`;
+
+  const params = { $MediaType, $any: $t("<any other company>"), $Series_id_Movies_Owner };
+
+  const results = await queryFilterHashed("filterCompanies", query, params);
 
   // logger.log('[fetchFilterCompanies] QUERY:', )
 
@@ -6593,16 +6444,6 @@ async function fetchFilterCompanies(
 
   shared.filters.filterCompanies = results;
   shared.loadingFilter = "";
-
-  //#region Caching
-  shared.filterCache[cacheHash()] = {
-    metaData: {
-      createdAt: new Date(),
-      size: JSON.stringify(results).length,
-    },
-    data: JSON.stringify(results),
-  };
-  //#endregion Caching
 }
 
 async function fetchFilterIMDBPlotKeywords(
@@ -6614,38 +6455,13 @@ async function fetchFilterIMDBPlotKeywords(
   shared.loadingFilter = "filterIMDBPlotKeywords";
   const filterValues = await fetchFilterValues($SpecificMediaType, loadFilterValuesFromStorage);
 
-  //#region Caching
-  const cacheHash = () =>
-    getFilterCacheKey(
-      "filterIMDBPlotKeywords",
-      $MediaType,
-      $SpecificMediaType,
-      $Series_id_Movies_Owner,
-      shared.filters
-    );
-
-  if (shared.featureFlags.useFilterCache) {
-    logger.log("[fetchFilterIMDBPlotKeywords] cacheHash:", cacheHash());
-
-    if (shared.filterCache[cacheHash()]) {
-      logger.log(`[fetchFilterIMDBPlotKeywords] cache hit!`);
-      shared.filters.filterIMDBPlotKeywords = JSON.parse(shared.filterCache[cacheHash()].data);
-      shared.loadingFilter = "";
-      return;
-    }
-
-    logger.log(`[fetchFilterIMDBPlotKeywords] cache miss`);
-  }
-  //#endregion Caching
-
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   if (!shared.filters.filterSettings.filterIMDBPlotKeywordsAND) {
     delete currentFilters.filterIMDBPlotKeywords;
   }
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
-  const results = await db.fireProcedureReturnAll(
-    `
+  const query = `
 		SELECT
 			0 AS id_Filter_IMDB_Plot_Keywords
 			, NULL AS id_IMDB_Plot_Keywords
@@ -6687,9 +6503,11 @@ async function fetchFilterIMDBPlotKeywords(
         )
 			) AS NumMovies
 		FROM tbl_Filter_IMDB_Plot_Keywords FILTERPLOTKEYWORDS
-	`,
-    { $MediaType, $any: $t("<any other plot keyword>"), $Series_id_Movies_Owner }
-  );
+	`;
+
+  const params = { $MediaType, $any: $t("<any other plot keyword>"), $Series_id_Movies_Owner };
+
+  const results = await queryFilterHashed("filterIMDBPlotKeywords", query, params);
 
   // logger.log('[fetchFilterIMDBPlotKeywords] QUERY:', )
 
@@ -6711,16 +6529,6 @@ async function fetchFilterIMDBPlotKeywords(
 
   shared.filters.filterIMDBPlotKeywords = results;
   shared.loadingFilter = "";
-
-  //#region Caching
-  shared.filterCache[cacheHash()] = {
-    metaData: {
-      createdAt: new Date(),
-      size: JSON.stringify(results).length,
-    },
-    data: JSON.stringify(results),
-  };
-  //#endregion Caching
 }
 
 async function fetchFilterIMDBFilmingLocations(
@@ -6732,38 +6540,13 @@ async function fetchFilterIMDBFilmingLocations(
   shared.loadingFilter = "filterIMDBFilmingLocations";
   const filterValues = await fetchFilterValues($SpecificMediaType, loadFilterValuesFromStorage);
 
-  //#region Caching
-  const cacheHash = () =>
-    getFilterCacheKey(
-      "filterIMDBFilmingLocations",
-      $MediaType,
-      $SpecificMediaType,
-      $Series_id_Movies_Owner,
-      shared.filters
-    );
-
-  if (shared.featureFlags.useFilterCache) {
-    logger.log("[fetchFilterIMDBFilmingLocations] cacheHash:", cacheHash());
-
-    if (shared.filterCache[cacheHash()]) {
-      logger.log(`[fetchFilterIMDBFilmingLocations] cache hit!`);
-      shared.filters.filterIMDBFilmingLocations = JSON.parse(shared.filterCache[cacheHash()].data);
-      shared.loadingFilter = "";
-      return;
-    }
-
-    logger.log(`[fetchFilterIMDBFilmingLocations] cache miss`);
-  }
-  //#endregion Caching
-
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   if (!shared.filters.filterSettings.filterIMDBFilmingLocationsAND) {
     delete currentFilters.filterIMDBFilmingLocations;
   }
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
-  const results = await db.fireProcedureReturnAll(
-    `
+  const query = `
 		SELECT
 			0 AS id_Filter_IMDB_Filming_Locations
 			, NULL AS id_IMDB_Filming_Locations
@@ -6805,9 +6588,11 @@ async function fetchFilterIMDBFilmingLocations(
         )
 			) AS NumMovies
 		FROM tbl_Filter_IMDB_Filming_Locations FILTERFILMINGLOCATIONS
-	`,
-    { $MediaType, $any: $t("<any other filming location>"), $Series_id_Movies_Owner }
-  );
+	`;
+
+  const params = { $MediaType, $any: $t("<any other filming location>"), $Series_id_Movies_Owner };
+
+  const results = await queryFilterHashed("filterIMDBFilmingLocations", query, params);
 
   results.forEach((result) => {
     result.Selected = !!result.Selected;
@@ -6827,16 +6612,6 @@ async function fetchFilterIMDBFilmingLocations(
 
   shared.filters.filterIMDBFilmingLocations = results;
   shared.loadingFilter = "";
-
-  //#region Caching
-  shared.filterCache[cacheHash()] = {
-    metaData: {
-      createdAt: new Date(),
-      size: JSON.stringify(results).length,
-    },
-    data: JSON.stringify(results),
-  };
-  //#endregion Caching
 }
 
 async function fetchFilterYears($MediaType, $SpecificMediaType, loadFilterValuesFromStorage, $Series_id_Movies_Owner) {
@@ -6851,8 +6626,7 @@ async function fetchFilterYears($MediaType, $SpecificMediaType, loadFilterValues
   delete currentFilters.filterYears;
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
-  const results = await db.fireProcedureReturnAll(
-    `
+  const query = `
 		SELECT
 			'-1' AS startYear
 			, COUNT(1) AS NumMovies
@@ -6879,9 +6653,11 @@ async function fetchFilterYears($MediaType, $SpecificMediaType, loadFilterValues
           AND MOV.startYear IS NOT NULL
           ${additionalFilterQuery}
 		GROUP BY (startYear)
-		ORDER BY startYear DESC`,
-    { $MediaType, $Series_id_Movies_Owner }
-  );
+		ORDER BY startYear DESC`;
+
+  const params = { $MediaType, $Series_id_Movies_Owner };
+
+  const results = await queryFilterHashed(fetchFilterYears, query, params);
 
   const resultsFiltered = results; // results.filter((result) => result.NumMovies > 0); // we should not filter out, because "AND" can quickly result in an empty set
 
@@ -6918,30 +6694,11 @@ async function fetchFilterQualities(
 
   logger.log("[fetchFilterQualities] filterValues:", filterValues);
 
-  //#region Caching
-  const cacheHash = () =>
-    getFilterCacheKey("filterQualities", $MediaType, $SpecificMediaType, $Series_id_Movies_Owner, shared.filters);
-
-  if (shared.featureFlags.useFilterCache) {
-    logger.log("[fetchFilterQualities] cacheHash:", cacheHash());
-
-    if (shared.filterCache[cacheHash()]) {
-      logger.log(`[fetchFilterQualities] cache hit!`);
-      shared.filters.filterQualities = JSON.parse(shared.filterCache[cacheHash()].data);
-      shared.loadingFilter = "";
-      return;
-    }
-
-    logger.log(`[fetchFilterQualities] cache miss`);
-  }
-  //#endregion Caching
-
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   delete currentFilters.filterQualities;
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
-  const results = await db.fireProcedureReturnAll(
-    `
+  const query = `
     SELECT
             MI_Quality
             , COUNT(1) AS NumMovies
@@ -6960,9 +6717,11 @@ async function fetchFilterQualities(
                       ${additionalFilterQuery}
     ) SubQ
     GROUP BY (MI_Quality)
-    `,
-    { $MediaType, $Series_id_Movies_Owner }
-  );
+    `;
+
+  const params = { $MediaType, $Series_id_Movies_Owner };
+
+  const results = await queryFilterHashed("filterQualities", query, params);
 
   const resultsFiltered = results; // results.filter((result) => result.NumMovies > 0);  // we should not filter out, because "AND" can quickly result in an empty set
 
@@ -6982,16 +6741,6 @@ async function fetchFilterQualities(
 
   shared.filters.filterQualities = resultsFiltered;
   shared.loadingFilter = "";
-
-  //#region Caching
-  shared.filterCache[cacheHash()] = {
-    metaData: {
-      createdAt: new Date(),
-      size: JSON.stringify(shared.filters.filterQualities).length,
-    },
-    data: JSON.stringify(shared.filters.filterQualities),
-  };
-  //#endregion Caching
 }
 
 function abortRescan() {
@@ -7120,30 +6869,12 @@ async function fetchFilterLists($MediaType, $SpecificMediaType, loadFilterValues
   shared.loadingFilter = "filterLists";
   const filterValues = await fetchFilterValues($SpecificMediaType, loadFilterValuesFromStorage);
 
-  //#region Caching
-  const cacheHash = () =>
-    getFilterCacheKey("filterLists", $MediaType, $SpecificMediaType, $Series_id_Movies_Owner, shared.filters);
-
-  if (shared.featureFlags.useFilterCache) {
-    logger.log("[fetchFilterLists] cacheHash:", cacheHash());
-
-    if (shared.filterCache[cacheHash()]) {
-      logger.log(`[fetchFilterLists] cache hit!`);
-      shared.filters.filterLists = JSON.parse(shared.filterCache[cacheHash()].data);
-      shared.loadingFilter = "";
-      return;
-    }
-
-    logger.log(`[fetchFilterLists] cache miss`);
-  }
-  //#endregion Caching
-
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   delete currentFilters.filterLists;
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
-  const results = await db.fireProcedureReturnAll(
-    `
+  //fetchFilterLists
+  const query = `
 		SELECT
 			0 AS id_Lists
 			, $any AS Name
@@ -7175,9 +6906,11 @@ async function fetchFilterLists($MediaType, $SpecificMediaType, loadFilterValues
 			) AS NumMovies
 		FROM tbl_Lists LISTS
 		ORDER BY Name
-	`,
-    { $MediaType, $any: $t("<not in any list>"), $Series_id_Movies_Owner }
-  );
+	`;
+
+  const params = { $MediaType, $any: $t("<not in any list>"), $Series_id_Movies_Owner };
+
+  const results = await queryFilterHashed("filterLists", query, params);
 
   results.forEach((result) => {
     result.Selected = !!result.Selected;
@@ -7195,16 +6928,6 @@ async function fetchFilterLists($MediaType, $SpecificMediaType, loadFilterValues
 
   shared.filters.filterLists = results;
   shared.loadingFilter = "";
-
-  //#region Caching
-  shared.filterCache[cacheHash()] = {
-    metaData: {
-      createdAt: new Date(),
-      size: JSON.stringify(results).length,
-    },
-    data: JSON.stringify(results),
-  };
-  //#endregion Caching
 }
 
 async function fetchFilterLanguages(
@@ -7219,44 +6942,11 @@ async function fetchFilterLanguages(
 
   const filterValues = await fetchFilterValues($SpecificMediaType, loadFilterValuesFromStorage);
 
-  //#region Caching
-  logger.log(`[fetchFilterLanguages_${$LanguageType}] shared.filters:`, JSON.parse(JSON.stringify(shared.filters)));
-
-  const cacheHash = () =>
-    getFilterCacheKey(
-      `filterLanguages_${$LanguageType}`,
-      $MediaType,
-      $SpecificMediaType,
-      $Series_id_Movies_Owner,
-      shared.filters
-    );
-
-  if (shared.featureFlags.useFilterCache) {
-    logger.log(`[fetchFilterLanguages_${$LanguageType}] cacheHash:`, cacheHash());
-
-    if (shared.filterCache[cacheHash()]) {
-      logger.log(`[fetchFilterLanguages_${$LanguageType}] cache hit!`);
-
-      if ($LanguageType === "audio") {
-        shared.filters.filterAudioLanguages = JSON.parse(shared.filterCache[cacheHash()].data);
-      } else {
-        shared.filters.filterSubtitleLanguages = JSON.parse(shared.filterCache[cacheHash()].data);
-      }
-
-      shared.loadingFilter = "";
-      return;
-    }
-
-    logger.log(`[fetchFilterLanguages_${$LanguageType}] cache miss`);
-  }
-  //#endregion Caching
-
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   delete currentFilters[`filter${helpers.uppercaseEachWord($LanguageType)}Languages`];
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
-  const results = await db.fireProcedureReturnAll(
-    `
+  const query = `
 		SELECT 
 			'<not available>' AS Language
 			, '<not available>' AS DisplayText
@@ -7301,9 +6991,11 @@ async function fetchFilterLanguages(
             AND MOV.Extra_id_Movies_Owner IS NULL
 		)
 		GROUP BY Language
-		ORDER BY NumMovies DESC`,
-    { $MediaType, $LanguageType, $Series_id_Movies_Owner }
-  );
+		ORDER BY NumMovies DESC`;
+
+  const params = { $MediaType, $LanguageType, $Series_id_Movies_Owner };
+
+  const results = await queryFilterHashed(`filterLanguages_${$LanguageType}`, query, params);
 
   const resultsFiltered = results; //results.filter((result) => result.NumMovies > 0); // we should not filter out, because "AND" can quickly result in an empty set
 
@@ -7347,18 +7039,6 @@ async function fetchFilterLanguages(
     shared.filters.filterSubtitleLanguages = resultsFiltered;
   }
   shared.loadingFilter = "";
-
-  //#region Caching
-  logger.log(`[fetchFilterLanguages_${$LanguageType}] shared.filters:`, JSON.parse(JSON.stringify(shared.filters)));
-  logger.log(`[fetchFilterLanguages_${$LanguageType}] caching results with hash:`, cacheHash());
-  shared.filterCache[cacheHash()] = {
-    metaData: {
-      createdAt: new Date(),
-      size: JSON.stringify(results).length,
-    },
-    data: JSON.stringify(results),
-  };
-  //#endregion Caching
 }
 
 async function fetchFilterIMDBRating($MediaType, $SpecificMediaType, loadFilterValuesFromStorage) {
@@ -8669,21 +8349,43 @@ function getReleaseAttributesHierarchy() {
 
 /**
  * Creates the hash (key) for a filter chache entry
+ * @param {*} filterCategory - a unique identifier for the filter (e.g. "filterReleaseAttributes")
  * @param {*} $MediaType
  * @param {*} $SpecificMediaType
  * @param {*} $Series_id_Movies_Owner
  * @param {*} filters
  * @returns
  */
-function getFilterCacheKey(identifier, $MediaType, $SpecificMediaType, $Series_id_Movies_Owner, filters) {
+function getFilterCacheKey(filterCategory, $MediaType, $SpecificMediaType, $Series_id_Movies_Owner, filters) {
+  function stripNumMoviesFormatted(obj) {
+    if (Array.isArray(obj)) {
+      return obj.map(stripNumMoviesFormatted);
+    }
+    if (obj !== null && typeof obj === "object") {
+      const result = {};
+      for (const key of Object.keys(obj)) {
+        if (key === "NumMoviesFormatted") continue;
+        if (key === "NumMovies") continue;
+        result[key] = stripNumMoviesFormatted(obj[key]);
+      }
+      return result;
+    }
+    return obj;
+  }
+
+  const filtersWithoutNumMovies = stripNumMoviesFormatted(filters);
+
+  // remove the own filterCategory - TODO: this is contraproductive in some cases - INVESTIGATE!
+  delete filtersWithoutNumMovies[filterCategory];
+
   const hashObject = {
     $MediaType,
     $SpecificMediaType,
     $Series_id_Movies_Owner,
-    filters,
+    filters: filtersWithoutNumMovies,
   };
 
-  return `${identifier}-${crypto.createHash("sha256").update(JSON.stringify(hashObject)).digest("hex")}`;
+  return `${filterCategory}-${crypto.createHash("sha256").update(JSON.stringify(hashObject)).digest("hex")}`;
 }
 
 async function fetchFilterReleaseAttributes(
@@ -8699,34 +8401,6 @@ async function fetchFilterReleaseAttributes(
 
   logger.log("[fetchFilterReleaseAttributes] filterValues:", filterValues);
 
-  //#region Caching
-  const cacheHash = () =>
-    getFilterCacheKey(
-      "filterReleaseAttributes",
-      $MediaType,
-      $SpecificMediaType,
-      $Series_id_Movies_Owner,
-      shared.filters
-    );
-
-  if (shared.featureFlags.useFilterCache) {
-    logger.log("[fetchFilterReleaseAttributes] cacheHash:", cacheHash());
-
-    if (shared.filterCache[cacheHash()]) {
-      logger.log(`[fetchFilterReleaseAttributes] cache hit!`);
-      shared.filters.filterReleaseAttributes = JSON.parse(shared.filterCache[cacheHash()].data);
-      shared.loadingFilter = "";
-      return;
-    }
-
-    logger.log(`[fetchFilterReleaseAttributes] cache miss, cacheHash:`, cacheHash());
-    logger.log(
-      `[fetchFilterReleaseAttributes] cache miss, shared.filters:`,
-      JSON.parse(JSON.stringify(shared.filters))
-    );
-  }
-  //#endregion Caching
-
   const releaseAttributesHierarchy = getReleaseAttributesHierarchy();
 
   logger.log("[fetchFilterReleaseAttributes] releaseAttributesHierarchy:", releaseAttributesHierarchy);
@@ -8734,16 +8408,19 @@ async function fetchFilterReleaseAttributes(
   let results = [];
 
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
+
   if (!shared.filters.filterSettings.filterReleaseAttributesAND) {
     delete currentFilters.filterReleaseAttributes;
   }
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
+  const params = { $MediaType, $Series_id_Movies_Owner };
+
   for (let i = 0; i < releaseAttributesHierarchy.length; i++) {
     const ra = releaseAttributesHierarchy[i];
 
-    const sql = `
-    SELECT COUNT(1) FROM (
+    const query = `
+    SELECT COUNT(1) AS NumMovies FROM (
       SELECT DISTINCT MRA.id_Movies
       FROM tbl_Movies_Release_Attributes MRA
       INNER JOIN tbl_Movies MOV ON MRA.id_Movies = MOV.id_Movies AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
@@ -8760,7 +8437,8 @@ async function fetchFilterReleaseAttributes(
 
     // logger.log("[fetchFilterReleaseAttributes] sql:", sql);
 
-    const NumMovies = await db.fireProcedureReturnScalar(sql, { $MediaType, $Series_id_Movies_Owner });
+    // const NumMovies = await db.fireProcedureReturnScalar(query, { $MediaType, $Series_id_Movies_Owner });
+    const NumMovies = (await queryFilterHashed(`filterReleaseAttributes_${i}`, query, params))[0].NumMovies;
 
     // logger.log("[fetchFilterReleaseAttributes] NumMovies:", NumMovies);
 
@@ -8795,7 +8473,7 @@ async function fetchFilterReleaseAttributes(
         ) AS NumMovies
     `;
 
-  const anyResults = await db.fireProcedureReturnAll(sqlAny, { $MediaType, $Series_id_Movies_Owner });
+  const anyResults = await queryFilterHashed("filterReleaseAttributes_any", sqlAny, params); // await db.fireProcedureReturnAll(sqlAny, { $MediaType, $Series_id_Movies_Owner });
 
   results = [
     anyResults[0],
@@ -8823,19 +8501,6 @@ async function fetchFilterReleaseAttributes(
 
   shared.filters.filterReleaseAttributes = results;
   shared.loadingFilter = "";
-
-  //#region Caching
-  logger.log(`[fetchFilterReleaseAttributes] caching with cacheHash:`, cacheHash());
-  logger.log(`[fetchFilterReleaseAttributes] caching with shared.filters:`, JSON.parse(JSON.stringify(shared.filters)));
-
-  shared.filterCache[cacheHash()] = {
-    metaData: {
-      createdAt: new Date(),
-      size: JSON.stringify(results).length,
-    },
-    data: JSON.stringify(results),
-  };
-  //#endregion Caching
 }
 
 async function fetchFilterVideoEncoders(
@@ -8851,31 +8516,13 @@ async function fetchFilterVideoEncoders(
 
   logger.log("[fetchFilterVideoEncoders] filterValues:", filterValues);
 
-  //#region Caching
-  const cacheHash = () =>
-    getFilterCacheKey("filterVideoEncoders", $MediaType, $SpecificMediaType, $Series_id_Movies_Owner, shared.filters);
-
-  if (shared.featureFlags.useFilterCache) {
-    logger.log("[fetchFilterVideoEncoders] cacheHash:", cacheHash());
-
-    if (shared.filterCache[cacheHash()]) {
-      logger.log(`[fetchFilterVideoEncoders] cache hit!`);
-      shared.filters.filterVideoEncoders = JSON.parse(shared.filterCache[cacheHash()].data);
-      shared.loadingFilter = "";
-      return;
-    }
-
-    logger.log(`[fetchFilterVideoEncoders] cache miss`);
-  }
-  //#endregion Caching
-
   let results = [];
 
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   delete currentFilters.filterVideoEncoders;
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
-  const sql = `
+  const query = `
   SELECT 1 AS Selected
   , IFNULL(Name, '<not available>') AS Name
   , (
@@ -8896,9 +8543,11 @@ FROM (	SELECT DISTINCT
 ) SubQ
 `;
 
-  logger.log("[fetchFilterVideoEncoders] sql:", sql);
+  logger.log("[fetchFilterVideoEncoders] sql:", query);
 
-  results = await db.fireProcedureReturnAll(sql, { $MediaType, $Series_id_Movies_Owner });
+  const params = { $MediaType, $Series_id_Movies_Owner };
+
+  results = await queryFilterHashed("filterVideoEncoders", query, params);
 
   results.forEach((result) => {
     result.Selected = !!result.Selected;
@@ -8913,16 +8562,6 @@ FROM (	SELECT DISTINCT
   });
 
   logger.log("[fetchFilterVideoEncoders] results:", results);
-
-  //#region Caching
-  shared.filterCache[cacheHash()] = {
-    metaData: {
-      createdAt: new Date(),
-      size: JSON.stringify(results).length,
-    },
-    data: JSON.stringify(results),
-  };
-  //#endregion Caching
 
   shared.filters.filterVideoEncoders = results;
   shared.loadingFilter = "";
@@ -8941,31 +8580,13 @@ async function fetchFilterAudioFormats(
 
   logger.log("[fetchFilterAudioFormats] filterValues:", filterValues);
 
-  //#region Caching
-  const cacheHash = () =>
-    getFilterCacheKey("filterAudioFormats", $MediaType, $SpecificMediaType, $Series_id_Movies_Owner, shared.filters);
-
-  if (shared.featureFlags.useFilterCache) {
-    logger.log("[fetchFilterAudioFormats] cacheHash:", cacheHash());
-
-    if (shared.filterCache[cacheHash()]) {
-      logger.log(`[fetchFilterAudioFormats] cache hit!`);
-      shared.filters.filterAudioFormats = JSON.parse(shared.filterCache[cacheHash()].data);
-      shared.loadingFilter = "";
-      return;
-    }
-
-    logger.log(`[fetchFilterAudioFormats] cache miss`);
-  }
-  //#endregion Caching
-
   let results = [];
 
   let currentFilters = JSON.parse(JSON.stringify(shared.filters));
   delete currentFilters.filterAudioFormats;
   const additionalFilterQuery = generateFilterQuery(currentFilters);
 
-  const sql = `
+  const query = `
   SELECT 1 AS Selected
   , IFNULL(Name, '<not available>') AS Name
   , (
@@ -8989,9 +8610,11 @@ FROM (	SELECT DISTINCT
 ) SubQ
 `;
 
-  logger.log("[fetchFilterAudioFormats] sql:", sql);
+  logger.log("[fetchFilterAudioFormats] sql:", query);
 
-  results = await db.fireProcedureReturnAll(sql, { $MediaType, $Series_id_Movies_Owner });
+  const params = { $MediaType, $Series_id_Movies_Owner };
+
+  results = await queryFilterHashed("filterAudioFormats", query, params);
 
   results.forEach((result) => {
     result.Selected = !!result.Selected;
@@ -9010,16 +8633,6 @@ FROM (	SELECT DISTINCT
   shared.filters.filterAudioFormats = results;
 
   shared.loadingFilter = "";
-
-  //#region Caching
-  shared.filterCache[cacheHash()] = {
-    metaData: {
-      createdAt: new Date(),
-      size: JSON.stringify(results).length,
-    },
-    data: JSON.stringify(results),
-  };
-  //#endregion Caching
 }
 
 function resetFilters(objFilter) {
