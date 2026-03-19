@@ -4,13 +4,8 @@
 
 - [ ] BUG: rescan specific media leads to removal of "last access at"
   - "last access at" (on the series - not the episode) is gone if a media moved
-- [WIP] Add "number of votes" filter
 
-- [ ] rescan: track times for each step:
-  - [ ] filescan
-  - [ ] mediainfo
-  - [ ] imdb scraping
-  - [ ] db updates
+- [WIP] Add "number of votes" filter
 
 - [ ] DB Backup
   - [ ] Settings:
@@ -40,13 +35,12 @@
 
 - [ ] Scraper - Fix Trailer URL expectation
 
-- [ ] series card doesn't show all release attributes (e.g. it should show "BD, WEB", but only shows "WEB" - see House of the Dragon)
+- [ ] BUG: series card doesn't show all release attributes (e.g. it should show "BD, WEB", but only shows "WEB" - see House of the Dragon)
 
 - [ ] BUG: with a multi-episode, when clicking the episode in the IMDB Rating Dialog, the episode is opened multiple times (see: Star Trek Prodigy S01E01-E02)
 
-- [ ] Episodes Heatmap:
-  - [x] highlight watched episodes with a discreet background pattern
-  - [x] highlight season and episode "headers" when hovering over the heatmap
+- [ ] Episodes Heatmap
+  - [ ] allow to customize colors
 
 - [ ] series episodes list
   - [ ] when sort by season and episode, provide button to scroll to last watched episode
@@ -73,8 +67,6 @@
   - [ ] allow a fallback to standard imdb search
 
 ### Series
-
-- [ ] Heatmap: allow to customize the colors
 
 - [ ] support for date based series (`2023-01-31`)
 
