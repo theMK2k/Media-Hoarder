@@ -2,9 +2,6 @@
 
 ## Prio 0
 
-- [ ] open series from compact view (e.g. series list in person dialog)
-      -> clicking the series however, expands the episodes list
-
 - [ ] BUG: rescan specific media leads to removal of "last access at"
   - "last access at" (on the series - not the episode) is gone if a media moved
 - [WIP] Add "number of votes" filter

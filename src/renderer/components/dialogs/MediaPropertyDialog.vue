@@ -130,7 +130,7 @@
                         v-on:click="toggleSeriesEpisodes(mediaItem)"
                       />
 
-                      <!-- Movies Item -->
+                      <!-- Movies Item/Card -->
                       <v-menu
                         v-if="mic.type == 'movies'"
                         v-model="mediaItem.showDetails"
@@ -164,6 +164,41 @@
                         </v-card>
                       </v-menu>
 
+                      <!-- Series Item/Card -->
+                      <v-menu
+                        v-if="mic.type == 'series' && mediaItem.showSeriesEpisodes"
+                        v-model="mediaItem.showDetails"
+                        v-bind:close-on-click="false"
+                        v-bind:close-on-content-click="false"
+                        bottom
+                        right
+                        transition="scale-transition"
+                        origin="top left"
+                      >
+                        <template v-slot:activator="{ props }">
+                          <div
+                            v-bind="props"
+                            class="mk-smalltext mk-clickable"
+                            v-on:click="onShowMediaItemDetails(mediaItem)"
+                            style="margin: 4px 0px 8px 32px"
+                          >
+                            {{ $t("Click here to show the series") }}
+                          </div>
+                        </template>
+                        <v-card>
+                          <v-list-item style="padding-left: 0px; padding-right: 0px">
+                            <mk-media-item-card
+                              v-bind:mediaItem="mediaItem"
+                              v-bind:isScanning="false"
+                              v-bind:isInDialog="true"
+                              v-bind:showCloseButton="true"
+                              v-on:close="mediaItem.showDetails = false"
+                              v-on:mediaItemEvent="onMICmediaItemEvent"
+                            ></mk-media-item-card>
+                          </v-list-item>
+                        </v-card>
+                      </v-menu>
+
                       <!-- Episodes (after clicking a series)-->
                       <div
                         v-if="mediaItem.showSeriesEpisodes"
@@ -176,9 +211,11 @@
                           rounded
                           height="3"
                         ></v-progress-linear>
+
                         <div v-if="!mediaItem.isLoadingSeriesEpisodes">
                           {{ mediaItem.seriesEpisodesCount }} / {{ mediaItem.seriesEpisodesTotal }} {{ $t("episodes") }}
                         </div>
+
                         <!-- <mk-compact-movie-list-row
                           v-for="(episode, index) in mediaItem.seriesEpisodesMediaItems"
                           v-bind:key="index"
@@ -186,6 +223,7 @@
                           v-bind:isClickable="false"
                         ></mk-compact-movie-list-row> -->
                         <div v-for="(episode, index) in mediaItem.seriesEpisodesMediaItems" v-bind:key="index">
+                          <!-- Episode Item/Card -->
                           <v-menu
                             v-model="episode.showDetails"
                             v-bind:close-on-click="false"
@@ -886,10 +924,11 @@ export default {
           break;
         case "content-advisory":
           setFilter.filterParentalAdvisory = {};
-          setFilter.filterParentalAdvisory[this.propertyValue.category] =
-            this.$shared.filters.filterParentalAdvisory[this.propertyValue.category].filter((pa) => {
-              return pa.Severity === this.propertyValue.severity;
-            });
+          setFilter.filterParentalAdvisory[this.propertyValue.category] = this.$shared.filters.filterParentalAdvisory[
+            this.propertyValue.category
+          ].filter((pa) => {
+            return pa.Severity === this.propertyValue.severity;
+          });
           break;
         case "my-rating":
           setFilter.filterRatings = this.$shared.filters.filterRatings.filter((rating) => {
@@ -1459,7 +1498,9 @@ export default {
         case "myRatingClicked":
           cd.propertyTypeKey = "my-rating";
           cd.propertyValue = payload.rating;
-          cd.propertyValueDisplayText = payload.rating ? helpers.getStarRatingString(payload.rating) : `<${$t("not yet rated")}>`;
+          cd.propertyValueDisplayText = payload.rating
+            ? helpers.getStarRatingString(payload.rating)
+            : `<${$t("not yet rated")}>`;
           cd.imdbTconst = null;
           break;
         case "contentAdvisoryClicked":
