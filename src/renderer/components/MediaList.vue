@@ -2125,10 +2125,7 @@ export default {
           return;
         }
 
-        // now that all filters have been loaded, it makes sense to store them in the individual caches
-        store.writeFilterCaches(this.mediatype, this.specificMediaType, this.Series_id_Movies_Owner);
-
-        // store them in the specificMediaType's cache as well
+        // now that all filters have been loaded, store them in the specificMediaType's cache
         if (!dontStoreFilters) {
           store.saveFilterValues(this.specificMediaType);
         }
@@ -2901,7 +2898,7 @@ export default {
         }
 
         // remove media entries from DB (use isRemoved?)
-        this.$shared.clearFilterCache();
+        this.store.clearFilterCache();
         for (const extra of this.deleteMediaDialog.item.extras || []) {
           await store.db.fireProcedure(`UPDATE tbl_Movies SET isRemoved = 1 WHERE id_Movies = $id_Movies`, {
             $id_Movies: extra.id_Movies,

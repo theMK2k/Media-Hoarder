@@ -335,7 +335,7 @@ async function fetchSourcePaths() {
 }
 
 async function updateSourcePathPath($id_SourcePaths, $Path) {
-  shared.clearFilterCache();
+  await clearFilterCache();
   await db.fireProcedure(`UPDATE tbl_SourcePaths SET Path = $Path WHERE id_SourcePaths = $id_SourcePaths`, {
     $id_SourcePaths,
     $Path,
@@ -343,7 +343,7 @@ async function updateSourcePathPath($id_SourcePaths, $Path) {
 }
 
 async function updateSourcePathDescription($id_SourcePaths, $Description) {
-  shared.clearFilterCache();
+  await clearFilterCache();
   await db.fireProcedure(
     `UPDATE tbl_SourcePaths SET Description = $Description WHERE id_SourcePaths = $id_SourcePaths`,
     { $id_SourcePaths, $Description }
@@ -351,7 +351,7 @@ async function updateSourcePathDescription($id_SourcePaths, $Description) {
 }
 
 async function addSourcePath($MediaType, $Path, $Description) {
-  shared.clearFilterCache();
+  await clearFilterCache();
   await db.fireProcedure(
     `INSERT INTO tbl_SourcePaths (MediaType, Path, Description, checkRemovedFiles, created_at) VALUES ($MediaType, $Path, $Description, 1, DATETIME('now'))`,
     { $MediaType, $Path, $Description }
@@ -359,7 +359,7 @@ async function addSourcePath($MediaType, $Path, $Description) {
 }
 
 async function removeSourcePath($id_SourcePaths) {
-  shared.clearFilterCache();
+  await clearFilterCache();
   await db.fireProcedure(`DELETE FROM tbl_SourcePaths WHERE id_SourcePaths = $id_SourcePaths`, { $id_SourcePaths });
   await db.fireProcedure(
     `DELETE FROM tbl_Movies WHERE id_SourcePaths NOT IN (SELECT id_SourcePaths FROM tbl_SourcePaths)`,
@@ -369,7 +369,7 @@ async function removeSourcePath($id_SourcePaths) {
 }
 
 async function updateSourcePathCheckRemovedFiles($id_SourcePaths, $checkRemovedFiles) {
-  shared.clearFilterCache();
+  await clearFilterCache();
   await db.fireProcedure(
     `UPDATE tbl_SourcePaths SET checkRemovedFiles = $checkRemovedFiles WHERE id_SourcePaths = $id_SourcePaths`,
     { $id_SourcePaths, $checkRemovedFiles }
@@ -382,7 +382,7 @@ async function updateSourcePathCheckRemovedFiles($id_SourcePaths, $checkRemovedF
  * @param {boolean} seriesOnly if true, only rescan series metadata without episodes
  */
 async function rescanItems(mediaItems, seriesOnly) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   rescanETA = {
     show: false,
@@ -461,7 +461,7 @@ async function rescanItems(mediaItems, seriesOnly) {
  * @param {boolean} onlyNew if true, only new media will be scanned
  */
 async function rescan(onlyNew) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   rescanETA = {
     show: false,
@@ -3546,7 +3546,7 @@ async function fetchIMDBMetaData(mediaItem, onlyNew, actualDuplicate) {
  * @param {Object} mediaItem
  */
 async function deleteIMDBData(mediaItem) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   logger.log("[deleteIMDBData] mediaItem:", mediaItem);
 
@@ -5330,7 +5330,7 @@ function generateLanguageArray(languages, maxLangDisplay) {
 }
 
 async function clearRating($id_Movies, isHandlingDuplicates) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   await db.fireProcedure(`UPDATE tbl_Movies SET Rating = NULL WHERE id_Movies = $id_Movies`, { $id_Movies });
 
@@ -5350,7 +5350,7 @@ async function clearRating($id_Movies, isHandlingDuplicates) {
 }
 
 async function setRating($id_Movies, $Rating, isHandlingDuplicates) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   logger.log("[setRating] id_Movies:", $id_Movies, "Rating:", $Rating);
   try {
@@ -5786,11 +5786,17 @@ async function queryFilterHashed(filterCategory, query, params) {
 
   const hash = `${filterCategory}-${crypto.createHash("sha256").update(JSON.stringify(hashObject)).digest("hex")}`;
 
-  if (shared.featureFlags.useFilterCache && shared.filterCache[hash]) {
-    logger.log(`[${filterCategory}] #filtercache cache hit!`);
+  if (shared.featureFlags.useFilterCache) {
+    const filterCache = await db.fireProcedureReturnScalar("SELECT Value FROM tbl_Filter_Cache WHERE Key = $key", {
+      $key: hash,
+    });
 
-    // found: return cached value
-    return JSON.parse(shared.filterCache[hash]);
+    if (filterCache) {
+      logger.log(`[${filterCategory}] #filtercache cache hit!`);
+
+      // found: return cached value
+      return JSON.parse(filterCache);
+    }
   }
 
   logger.log(`[${filterCategory}] #filtercache cache miss!`);
@@ -5798,7 +5804,10 @@ async function queryFilterHashed(filterCategory, query, params) {
   // not found: query the db and store in cache
   const results = await db.fireProcedureReturnAll(query, params);
 
-  shared.filterCache[hash] = JSON.stringify(results);
+  await db.fireProcedure("INSERT INTO tbl_Filter_Cache (Key, Value) VALUES ($key, $value) ON CONFLICT(Key) DO UPDATE SET Value = excluded.Value", {
+    $key: hash,
+    $value: JSON.stringify(results),
+  });
 
   return results;
 }
@@ -6768,7 +6777,7 @@ function saveFilterValues($SpecificMediaType) {
 }
 
 async function createList($Name, noErrorOnDuplicateName) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   const id_Lists = await db.fireProcedureReturnScalar(`SELECT id_Lists FROM tbl_Lists WHERE Name = $Name`, { $Name });
   if (id_Lists) {
@@ -6791,7 +6800,7 @@ async function createList($Name, noErrorOnDuplicateName) {
  * @returns
  */
 async function addToList($id_Lists, $id_Movies, isHandlingDuplicates, dontThrowErrorOnDuplicate) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   const id_Lists_Movies = await db.fireProcedureReturnScalar(
     `SELECT id_Lists_Movies FROM tbl_Lists_Movies WHERE id_Lists = $id_Lists AND id_Movies = $id_Movies`,
@@ -6832,13 +6841,13 @@ async function addToList($id_Lists, $id_Movies, isHandlingDuplicates, dontThrowE
  * @param {Integer} $id_Lists
  */
 async function clearList($id_Lists) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   return await db.fireProcedureReturnScalar(`DELETE FROM tbl_Lists_Movies WHERE id_Lists = $id_Lists`, { $id_Lists });
 }
 
 async function deleteList($id_Lists) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   logger.log("[deleteList] $id_Lists:", $id_Lists);
   await db.fireProcedure(`DELETE FROM tbl_Lists WHERE id_Lists = $id_Lists`, { $id_Lists });
@@ -6846,7 +6855,7 @@ async function deleteList($id_Lists) {
 }
 
 async function removeFromList($id_Lists, $id_Movies) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   logger.log("[removeFromList] $id_Lists:", $id_Lists, "$id_Movies:", $id_Movies);
   return await db.fireProcedureReturnScalar(
@@ -7343,7 +7352,7 @@ async function fetchNumMoviesForPerson($IMDB_Person_ID) {
 }
 
 async function addFilterPerson($IMDB_Person_ID, $Person_Name) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   const id_Filter_Persons = await db.fireProcedureReturnScalar(
     `SELECT id_Filter_Persons FROM tbl_Filter_Persons WHERE IMDB_Person_ID = $IMDB_Person_ID`,
@@ -7365,7 +7374,7 @@ async function addFilterPerson($IMDB_Person_ID, $Person_Name) {
 }
 
 async function deleteFilterPerson($id_Filter_Persons) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   return await db.fireProcedureReturnScalar(
     `DELETE FROM tbl_Filter_Persons WHERE id_Filter_Persons = $id_Filter_Persons`,
@@ -7374,7 +7383,7 @@ async function deleteFilterPerson($id_Filter_Persons) {
 }
 
 async function addFilterIMDBPlotKeyword($id_IMDB_Plot_Keywords, $Keyword) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   const id_Filter_IMDB_Plot_Keywords = await db.fireProcedureReturnScalar(
     `SELECT id_Filter_IMDB_Plot_Keywords FROM tbl_Filter_IMDB_Plot_Keywords WHERE id_IMDB_Plot_Keywords = $id_IMDB_Plot_Keywords`,
@@ -7391,7 +7400,7 @@ async function addFilterIMDBPlotKeyword($id_IMDB_Plot_Keywords, $Keyword) {
 }
 
 async function addFilterIMDBFilmingLocation($id_IMDB_Filming_Locations, $Location) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   const id_Filter_IMDB_Filming_Locations = await db.fireProcedureReturnScalar(
     `SELECT id_Filter_IMDB_Filming_Locations FROM tbl_Filter_IMDB_Filming_Locations WHERE id_IMDB_Filming_Locations = $id_IMDB_Filming_Locations`,
@@ -7408,7 +7417,7 @@ async function addFilterIMDBFilmingLocation($id_IMDB_Filming_Locations, $Locatio
 }
 
 async function deleteFilterIMDBPlotKeyword($id_Filter_IMDB_Plot_Keywords) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   return await db.fireProcedureReturnScalar(
     `DELETE FROM tbl_Filter_IMDB_Plot_Keywords WHERE id_Filter_IMDB_Plot_Keywords = $id_Filter_IMDB_Plot_Keywords`,
@@ -7419,7 +7428,7 @@ async function deleteFilterIMDBPlotKeyword($id_Filter_IMDB_Plot_Keywords) {
 }
 
 async function deleteFilterIMDBFilmingLocation($id_Filter_IMDB_Filming_Locations) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   return await db.fireProcedureReturnScalar(
     `DELETE FROM tbl_Filter_IMDB_Filming_Locations WHERE id_Filter_IMDB_Filming_Locations = $id_Filter_IMDB_Filming_Locations`,
@@ -7428,7 +7437,7 @@ async function deleteFilterIMDBFilmingLocation($id_Filter_IMDB_Filming_Locations
 }
 
 async function addFilterCompany($Company_Name) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   const id_Filter_Companies = await db.fireProcedureReturnScalar(
     `SELECT id_Filter_Companies FROM tbl_Filter_Companies WHERE Company_Name = $Company_Name`,
@@ -7447,7 +7456,7 @@ async function addFilterCompany($Company_Name) {
 }
 
 async function deleteFilterCompany($id_Filter_Companies) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   return await db.fireProcedureReturnScalar(
     `DELETE FROM tbl_Filter_Companies WHERE id_Filter_Companies = $id_Filter_Companies`,
@@ -7716,7 +7725,7 @@ async function updateMovieAttribute(
   useMetaDuplicates,
   isHandlingDuplicates
 ) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   await db.fireProcedure(`UPDATE tbl_Movies SET ${attributeName} = $value WHERE id_Movies = $id_Movies`, {
     $value,
@@ -8714,7 +8723,7 @@ function resetFilters(objFilter) {
 }
 
 async function removeReleaseAttributeFromMovie($id_Movies, releaseAttribute) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   const releaseAttributesHierarchy = getReleaseAttributesHierarchy();
 
@@ -8909,7 +8918,7 @@ async function fetchNumSeriesAndEpisodes() {
 }
 
 async function updateMediaRecordField($id_Movies, FieldName, $Value) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   const query = `UPDATE tbl_Movies SET ${FieldName} = $Value WHERE id_Movies = $id_Movies`;
   await db.fireProcedure(query, { $id_Movies, $Value });
@@ -8921,7 +8930,7 @@ async function updateMediaRecordField($id_Movies, FieldName, $Value) {
  * @param {Array<String>} genres e.g. ['action', 'adventure', 'sci-fi']
  */
 async function updateMovieGenres($id_Movies, genres) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   const availableGenres = await db.fireProcedureReturnAll("SELECT id_Genres, GenreID, Name FROM tbl_Genres", []);
 
@@ -8986,7 +8995,7 @@ async function updateMovieGenres($id_Movies, genres) {
  * @param {Array<String>} languageCodes e.g. ['De', 'En', 'Es']
  */
 async function updateMovieLanguages($id_Movies, $Type, languageCodes) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   logger.log("[updateMovieLanguages] START, $id_Movies:", $id_Movies, "$Type:", $Type, "languageCodes:", languageCodes);
 
@@ -9034,7 +9043,7 @@ async function updateMovieLanguages($id_Movies, $Type, languageCodes) {
  * @param {Array<String>} videoQualities e.g. ['action', 'adventure', 'sci-fi']
  */
 async function updateMovieVideoQualities($id_Movies, videoQualities) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   logger.log("[updateMovieVideoQualities] START, $id_Movies:", $id_Movies, "videoQualities:", videoQualities);
 
@@ -9131,7 +9140,7 @@ async function updateMovieVideoQualities($id_Movies, videoQualities) {
  * @param {String} searchTermsString Semicolon separated list of search terms
  */
 async function updateMovieReleaseAttribues($id_Movies, searchTermsString) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   const searchTerms = searchTermsString.split(";");
   const searchTermsHave = (
@@ -9359,7 +9368,7 @@ async function verifyIMDBtconst($id_Movies) {
  * @param {*} id_Movies the id_Movies of the series
  */
 async function updateSeriesMetadataFromEpisodes($id_Movies) {
-  shared.clearFilterCache();
+  await clearFilterCache();
 
   logger.log("[updateSeriesMetadataFromEpisodes] START, id_Movies:", $id_Movies);
 
@@ -10168,129 +10177,21 @@ async function getScanProcessDetails($id_Scan_Processes) {
   return { scanProcess, scanProcessDetailsArray };
 }
 
-function writeFilterCache($MediaType, $SpecificMediaType, $Series_id_Movies_Owner, filterName, filterValues) {
-  const hash = getFilterCacheKey(filterName, $MediaType, $SpecificMediaType, $Series_id_Movies_Owner, shared.filters);
-  shared.filterCache[hash] = {
-    metaData: {
-      createdAt: new Date(),
-      size: JSON.stringify(filterValues).length,
-    },
-    data: JSON.stringify(filterValues),
-  };
-}
+/**
+ * Filter Caches need to be cleared as soon as the underlying data changed, this is the case when media is
+ * - rescanned
+ * - edited
+ * - deleted
+ */
+async function clearFilterCache(identifier) {
+  logger.log("[clearFilterCache] #filtercache CLEAR with identifier:", identifier);
 
-function writeFilterCaches($MediaType, $SpecificMediaType, $Series_id_Movies_Owner) {
-  // TODO: Data Quality
+  if (!identifier) {
+    await db.fireProcedure("DELETE FROM tbl_Filter_Cache");
+    return;
+  }
 
-  writeFilterCache(
-    $MediaType,
-    $SpecificMediaType,
-    $Series_id_Movies_Owner,
-    "filterSourcePaths",
-    shared.filters.filterSourcePaths
-  );
-  writeFilterCache(
-    $MediaType,
-    $SpecificMediaType,
-    $Series_id_Movies_Owner,
-    "filterGenres",
-    shared.filters.filterGenres
-  );
-  writeFilterCache(
-    $MediaType,
-    $SpecificMediaType,
-    $Series_id_Movies_Owner,
-    "filterAgeRatings",
-    shared.filters.filterAgeRatings
-  );
-  writeFilterCache(
-    $MediaType,
-    $SpecificMediaType,
-    $Series_id_Movies_Owner,
-    "filterRatings",
-    shared.filters.filterRatings
-  );
-
-  // TODO: fetchFilterParentalAdvisory (categories)
-  writeFilterCache(
-    $MediaType,
-    $SpecificMediaType,
-    $Series_id_Movies_Owner,
-    "filterPersons",
-    shared.filters.filterPersons
-  );
-  writeFilterCache(
-    $MediaType,
-    $SpecificMediaType,
-    $Series_id_Movies_Owner,
-    "filterCompanies",
-    shared.filters.filterCompanies
-  );
-  writeFilterCache(
-    $MediaType,
-    $SpecificMediaType,
-    $Series_id_Movies_Owner,
-    "filterIMDBPlotKeywords",
-    shared.filters.filterIMDBPlotKeywords
-  );
-  writeFilterCache(
-    $MediaType,
-    $SpecificMediaType,
-    $Series_id_Movies_Owner,
-    "filterIMDBFilmingLocations",
-    shared.filters.filterIMDBFilmingLocations
-  );
-  writeFilterCache($MediaType, $SpecificMediaType, $Series_id_Movies_Owner, "filterYears", shared.filters.filterYears);
-  writeFilterCache(
-    $MediaType,
-    $SpecificMediaType,
-    $Series_id_Movies_Owner,
-    "filterQualities",
-    shared.filters.filterQualities
-  );
-  writeFilterCache($MediaType, $SpecificMediaType, $Series_id_Movies_Owner, "filterLists", shared.filters.filterLists);
-  writeFilterCache(
-    $MediaType,
-    $SpecificMediaType,
-    $Series_id_Movies_Owner,
-    "filterAudioLanguages",
-    shared.filters.filterAudioLanguages
-  );
-  writeFilterCache(
-    $MediaType,
-    $SpecificMediaType,
-    $Series_id_Movies_Owner,
-    "filterSubtitleLanguages",
-    shared.filters.filterSubtitleLanguages
-  );
-  writeFilterCache(
-    $MediaType,
-    $SpecificMediaType,
-    $Series_id_Movies_Owner,
-    "filterIMDBRating",
-    shared.filters.filterIMDBRating
-  );
-  writeFilterCache(
-    $MediaType,
-    $SpecificMediaType,
-    $Series_id_Movies_Owner,
-    "filterReleaseAttributes",
-    shared.filters.filterReleaseAttributes
-  );
-  writeFilterCache(
-    $MediaType,
-    $SpecificMediaType,
-    $Series_id_Movies_Owner,
-    "filterVideoEncoders",
-    shared.filters.filterVideoEncoders
-  );
-  writeFilterCache(
-    $MediaType,
-    $SpecificMediaType,
-    $Series_id_Movies_Owner,
-    "filterAudioFormats",
-    shared.filters.filterAudioFormats
-  );
+  await db.fireProcedure("DELETE FROM tbl_Filter_Cache WHERE Key LIKE '%$identifier'", { $identifier: identifier });
 }
 
 export {
@@ -10408,5 +10309,5 @@ export {
   getCollectionsSizes,
   getScanProcessDetails,
   getScanProcesses,
-  writeFilterCaches,
+  clearFilterCache,
 };

@@ -954,13 +954,6 @@ const state = reactive({
       name: "HDR10+",
     },
   },
-
-  /**
-   * A simple cache for filters so querying the database is not necessary every time
-   * key = `${filterName}-${hashOfAppliedFilters}`
-   * value = { metaData: {createdAt: Date, size: Number}, data: <result of the filter query (the cache value)> }
-   */
-  filterCache: {},
 });
 
 // Computed properties (replaces Vue 2 computed)
@@ -1346,27 +1339,6 @@ const methods = {
 
   filterIMDBFilmingLocationsAppliedContains(location) {
     return !!computedProps.filterIMDBFilmingLocationsApplied.value.find((ffla) => ffla.Location === location);
-  },
-
-  /**
-   * Filter Caches need to be cleared as soon as the underlying data changed, this is the case when media is
-   * - rescanned
-   * - edited
-   * - deleted
-   */
-  clearFilterCache(identifier) {
-    logger.log('[clearFilterCache] #filtercache CLEAR with identifier:', identifier);
-    
-    if (!identifier) {
-      state.filterCache = {};
-      return;
-    }
-
-    const keys = Object.keys(state.filterCache).filter((key) => key.startsWith(identifier));
-
-    for (const key of keys) {
-      delete state.filterCache[key];
-    }
   },
 };
 

@@ -2,33 +2,6 @@
 
 ## Prio 0
 
-- [WIP] introduce caching for the filters (uses shareld.featureFlags)
-  - `#filtercache`
-  - [WIP] use the complete query as an item for the hash
-  - [x] fetchFilterReleaseAttributes
-  - [x] Video Quality
-  - [x] Video Encoders
-  - [x] My Lists
-  - [x] My Ratings
-  - [x] Genres
-  - [x] Age Ratings
-  - [x] Content Advisories
-  - [x] People
-  - [x] Companies
-  - [x] Plot Keywords
-  - [x] Release Years
-  - [x] Audio Languages
-  - [x] Subtitle Languages
-  - [x] Audio Formats
-  - [x] Filming Locations
-  - [x] Data Quality
-
-  - [ ] we might have an issue with fetchFilterValues and saveFilterValues in the complete chain
-
-  - [ ] probably filterValues is not the correct item for the hash (use shared.filters... instead)
-  - [ ] check with all implementations if possibly new fields for the hash key are necessary
-  - [ ] find a strategy to invalidate the cache (completely or for single filters)
-
 - [ ] open series from compact view (e.g. series list in person dialog)
       -> clicking the series however, expands the episodes list
 
