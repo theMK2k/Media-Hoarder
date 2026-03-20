@@ -2,6 +2,8 @@
 
 ## Prio 0
 
+- [ ] update README screnshots
+
 - [ ] BUG: rescan specific media leads to removal of "last access at"
   - "last access at" (on the series - not the episode) is gone if a media moved
 

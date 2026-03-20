@@ -2,6 +2,12 @@
 
 ## Next (1.5.0)
 
+- [x] new Linux builds: Snap, Flatpak, Apk, FreeBSD, Pacman
+- [x] updated MacOS build: universal build (x64 + Apple Silicon)
+
+- [x] updated Theme (more darker, higher contrast)
+- [x] updated layouts, unified font sizes
+
 ### Features
 
 - [x] Sidebar Navigation containing the filters can now be resized by the user
@@ -28,9 +34,10 @@
 
 ### Fixes
 
-- [x] fix #94 IMDB detection for TV Series preferred movies
-- [x] fix broken loading of other filters (Source Paths, Genres and Data Quality) with an active filter on age ratings
-- [x] fix during scan the last added file info stayed in the footer even when the addition was already finished and other files are scanned
+- [ ] fix #94 IMDB detection for TV Series preferred movies
+- [ ] fix broken loading of other filters (Source Paths, Genres and Data Quality) with an active filter on age ratings
+- [ ] fix during scan the last added file info stayed in the footer even when the addition was already finished and other files are scanned
+- [ ] SCRAPER: poster URLs needed an updated logic
 
 ## v1.4.5
 
