@@ -11,6 +11,10 @@ This document describes the steps necessary to get a new release done.
 - [ ] Test using `npm run dev[:beta]` - it should show the new version incl. history
 - [ ] git push
 
+## Create Release Draft on GitHub
+
+Go to <github.com> and create a release draft, prepare the **tag** `v1.x.y` and the release notes. Save the draft.
+
 ## Build Packs
 
 ### Windows Build
@@ -22,6 +26,10 @@ git pull
 git checkout release-next
 npm i
 ./build-win.sh
+
+cd RELEASE
+gh release list
+gh release upload vX.Y.Z *
 ```
 
 find properly named `*-portable.zip` and `*-setup.exe` in `RELEASE` directory
@@ -35,6 +43,10 @@ git pull
 git checkout release-next
 npm i
 ./build-linux.sh
+
+cd RELEASE
+gh release list
+gh release upload vX.Y.Z *
 ```
 
 - find properly named `*.deb`, `*.rpm`, `*.snap`, `*.AppImage` and `*-portable.zip` in `RELEASE` directory
@@ -50,6 +62,10 @@ git checkout release-next
 git pull
 npm i
 ./build-mac.sh
+
+cd RELEASE
+gh release list
+gh release upload vX.Y.Z *
 ```
 
 - find properly named `*.dmg` in `RELEASE` directory
@@ -58,15 +74,15 @@ npm i
 
 - [ ] on RPi run `npm run electron:build-rpi`
 
-## Create Release on GitHub
-
-- upload all files from Build Packs
+## Download everything from Github
 
 ```shell
-cd /d/Data/Code/WebApps/media-hoarder/RELEASES/media-hoarder-$version
-gh release list
-gh release upload vX.Y.Z *
+gh release download --skip-existing --dir /path/to/release/backup/dir v1.x.y
 ```
+
+## Check the SHA256 of every file
+
+
 
 ## Update Website
 
