@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const chalk = require("chalk");
+const chalk = require("chalk").default;
 const minimist = require("minimist");
 const nodemailer = require("nodemailer");
 

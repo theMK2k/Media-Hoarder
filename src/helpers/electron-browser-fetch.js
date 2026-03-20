@@ -117,9 +117,9 @@ async function electronBrowserFetch(url, retryCount = 0) {
     }
 
     if (helpers.getRequestAsyncDumpToFile()) {
-      const filename = `${filenamifyExt(url)}.html`;
+      const filename = `${helpers.filenamifyExt(url)}.html`;
       logger.log("[electronBrowserFetch] dumping to", filename);
-      await writeFileAsync(`./${filename}`, html);
+      await helpers.writeFileAsync(`./${filename}`, html);
     }
 
     await helpers.sleep(INTER_REQUEST_DELAY_MS);

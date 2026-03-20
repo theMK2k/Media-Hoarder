@@ -11,9 +11,6 @@ import { ElectronBlocker } from "@ghostery/adblocker-electron";
 import remoteMain from "@electron/remote/main";
 
 import * as helpers from "@/helpers/helpers";
-import { asciiLogo } from "@/helpers/ascii-logo";
-
-console.log(asciiLogo);
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
