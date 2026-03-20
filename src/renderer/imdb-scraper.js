@@ -651,9 +651,28 @@ async function scrapeIMDBposterURLs(posterMediaViewerURL) {
       logger.log("[scrapeIMDBposterURLs] Variant 2 found");
 
       return {
-        $IMDB_posterSmall_URL: matches2[2],
         $IMDB_posterLarge_URL: matches2[1],
+        $IMDB_posterSmall_URL: matches2[2],
       };
+    }
+
+    // Variant 3: new IMDB format with data-image-id attribute and srcset (lowercase)
+    const rxString3 = `<img\\s+src="([^"]*)"[^>]*?srcset="([^\\s]*)[^>]*?data-image-id="${ID}`;
+    const rxURLs3 = new RegExp(rxString3, "i");
+
+    const matches3 = html.match(rxURLs3);
+
+    if (matches3 && matches3.length === 3) {
+      logger.log("[scrapeIMDBposterURLs] Variant 3 found");
+
+      const result = {
+        $IMDB_posterLarge_URL: matches3[1],
+        $IMDB_posterSmall_URL: matches3[2],
+      };
+
+      logger.log("[scrapeIMDBposterURLs] result:", result);
+
+      return result;
     }
 
     logger.warn("[scrapeIMDBposterURLs] NO URLs found!");
