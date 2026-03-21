@@ -1,17 +1,7 @@
-// Use electron directly in main process, fall back to @electron/remote in renderer
-let BrowserWindow;
-let session;
-try {
-  BrowserWindow = require("electron").BrowserWindow;
-  session = require("electron").session;
-  if (!BrowserWindow) throw new Error("not in main process");
-} catch (e) {
-  BrowserWindow = require("@electron/remote").BrowserWindow;
-  session = require("@electron/remote").session;
-}
+import { BrowserWindow, session } from "@electron/remote";
 
-import logger from "./logger.js";
-import * as helpers from "./helpers.js";
+import logger from "@helpers/logger.js";
+import * as helpers from "@helpers/helpers.js";
 
 // Module-level state for session reuse
 let sharedSession = null;

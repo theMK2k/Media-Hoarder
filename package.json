@@ -1,119 +1,164 @@
 {
   "name": "media-hoarder",
-  "version": "1.4.8",
+  "version": "1.5.0",
   "private": true,
   "description": "Media Hoarder - THE media frontend for data hoarders and movie lovers",
   "author": "mk2k <npm@hoarder.software> (https://media.hoarder.software)",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
+    "start": "check-node-version --node ^24 && electron-vite dev",
+    "start:beta": "check-node-version --node ^24 && npx dotenv-cli -e .env.beta electron-vite dev",
+    "build": "check-node-version --node ^24 && electron-vite build",
+    "preview": "check-node-version --node ^24 && electron-vite preview",
+    "lint": "eslint . --ext .vue,.js --fix --ignore-path .gitignore",
     "audit": "npm audit --production",
-    "dev:beta": "check-node-version --node ^14.17 && bash ./apply-monkeypatches.sh && vue invoke electron-builder && npx dotenv-cli -e .env.beta vue-cli-service electron:serve",
-    "dev:lite": "check-node-version --node ^14.17 && bash ./apply-monkeypatches.sh && vue-cli-service electron:serve",
-    "dev:stable": "check-node-version --node ^14.17 && bash ./apply-monkeypatches.sh && vue invoke electron-builder && npx dotenv-cli -e .env vue-cli-service electron:serve",
-    "electron:build": "vue-cli-service electron:build",
-    "electron:build-linux-portable": "check-node-version --node ^14.17 && bash check-killme.sh && bash check-package.json.sh && bash ./apply-monkeypatches.sh && npx mkdirp RELEASE && node set-portable --portable=true && vue-cli-service electron:build --linux && mv dist_electron/linux-unpacked media-hoarder-portable && npx bestzip RELEASE/media-hoarder-VERSION-linux-x64-portable.zip media-hoarder-portable && npx rimraf media-hoarder-portable && node set-portable --portable=false && node set-release-version.js && rimraf dist_electron",
-    "electron:build-linux-setup": "check-node-version --node ^14.17 && bash check-killme.sh && bash check-package.json.sh && bash ./apply-monkeypatches.sh && npx mkdirp RELEASE && node set-portable --portable=false && vue-cli-service electron:build --linux deb appimage snap rpm && mv dist_electron/*.deb RELEASE/media-hoarder-VERSION-linux-x64.deb && mv dist_electron/*.AppImage RELEASE/media-hoarder-VERSION-linux-x64.AppImage && mv dist_electron/*.snap RELEASE/media-hoarder-VERSION-linux-x64.snap && mv dist_electron/*.rpm RELEASE/media-hoarder-VERSION-linux-x64.rpm && node set-release-version.js && rimraf dist_electron",
-    "electron:build-mac": "check-node-version --node ^14.17 && bash check-killme.sh && bash check-package.json.sh && bash ./apply-monkeypatches.sh && npx mkdirp RELEASE && node set-portable --portable=false && vue-cli-service electron:build --mac dmg && mv dist_electron/*.dmg RELEASE/media-hoarder-VERSION-mac.dmg && node set-release-version.js && rimraf dist_electron",
-    "electron:build-rpi": "check-node-version --node ^14.17 && bash check-killme.sh && bash check-package.json.sh && bash ./apply-monkeypatches.sh && vue-cli-service electron:build --dir --linux --armv7l deb appimage",
-    "electron:build-win-portable": "check-node-version --node ^14.17 && bash check-killme.sh && bash check-package.json.sh && bash ./apply-monkeypatches.sh && npx mkdirp RELEASE && node set-portable --portable=true && npx dotenv-cli -e .env vue-cli-service electron:build --win && mv dist_electron/win-unpacked media-hoarder-portable && npx bestzip RELEASE/media-hoarder-VERSION-win-x64-portable.zip media-hoarder-portable && npx rimraf media-hoarder-portable && node set-portable --portable=false && node set-release-version.js && rimraf dist_electron",
-    "electron:build-win-portable-beta": "check-node-version --node ^14.17 && bash check-killme.sh && bash check-package.json.sh && bash ./apply-monkeypatches.sh && npx mkdirp RELEASE && node set-portable --portable=true && npx dotenv-cli -e .env.beta vue-cli-service electron:build --win && mv dist_electron/win-unpacked media-hoarder-portable && npx bestzip RELEASE/media-hoarder-VERSION-win-x64-portable.zip media-hoarder-portable && npx rimraf media-hoarder-portable && node set-portable --portable=false && node set-release-version.js && rimraf dist_electron",
-    "electron:build-win-setup": "check-node-version --node ^14.17 && bash check-killme.sh && bash check-package.json.sh && bash ./apply-monkeypatches.sh && npx mkdirp RELEASE && node set-portable --portable=false && npx dotenv-cli -e .env vue-cli-service electron:build --win && mv dist_electron/*.exe RELEASE/media-hoarder-VERSION-win-x64-setup.exe && node set-release-version.js && rimraf dist_electron",
-    "electron:build-win-setup-beta": "check-node-version --node ^14.17 && bash check-killme.sh && bash check-package.json.sh && bash ./apply-monkeypatches.sh && npx mkdirp RELEASE && node set-portable --portable=false && npx dotenv-cli -e .env.beta vue-cli-service electron:build --win && mv dist_electron/*.exe RELEASE/media-hoarder-VERSION-win-x64-setup.exe && node set-release-version.js && rimraf dist_electron",
-    "electron:buildremote": "check-node-version --node ^14.17 && vue-cli-service electron:build --win --linux --mac",
     "electron:generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten",
-    "electron:serve": "vue-cli-service electron:serve",
-    "find-imdb-tconst-tests": "babel-node --presets es2015 ./src/tests/find-imdb-tconst-tests.js",
+    "find-imdb-tconst-tests": "node ./src/tests/find-imdb-tconst-tests.js",
     "format": "npx prettier --write \"./**/*.{js,vue}\"",
     "format:check": "npx prettier --check \"./**/*.{js,vue}\"",
-    "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/i18n/**/*.json'",
     "imdb-scraper-watchdog": "electron ./src/media-hoarder-imdb-scraper-watchdog-electron.js",
     "imdb-scraper-watchdog-local": "electron ./src/media-hoarder-imdb-scraper-watchdog-electron.js --useDumps --dumpScrapedHTML",
-    "invokebuilder": "vue invoke electron-builder",
-    "mediainfo-watchdog": "babel-node --presets es2015 ./src/media-hoarder-mediainfo-watchdog.js",
-    "move-test": "mv dist_electron/*.exe RELEASE/media-hoarder-VERSION-win-x64-setup.exe",
+    "mediainfo-watchdog": "node ./src/media-hoarder-mediainfo-watchdog.js",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
-    "publish": "vue-cli-service electron:build -p always",
     "test": "jest",
-    "update-imdb-interests": "babel-node --presets es2015 ./update-imdb-interests.js"
+    "update-imdb-interests": "node ./update-imdb-interests.js"
   },
-  "main": "background.js",
+  "main": "dist/main/index.js",
+  "build": {
+    "appId": "com.electron.media-hoarder",
+    "productName": "Media Hoarder",
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "files": [
+      "dist/main/**/*",
+      "dist/preload/**/*",
+      "dist/renderer/**/*"
+    ],
+    "win": {
+      "icon": "build/icons/icon.ico",
+      "target": [
+        "dir"
+      ],
+      "signExts": [
+        "!\\bin\\win\\mediainfo-cli\\MediaInfo.exe",
+        "!\\bin\\win\\vlc\\vlc.exe",
+        "!\\bin\\win\\vlc\\vlc-cache-gen.exe"
+      ]
+    },
+    "linux": {
+      "icon": "build/icons",
+      "category": "AudioVideo",
+      "target": [
+        "dir"
+      ]
+    },
+    "flatpak": {
+      "runtimeVersion": "24.08",
+      "baseVersion": "24.08"
+    },
+    "mac": {
+      "icon": "build/icons/icon.icns",
+      "target": [
+        "dir"
+      ]
+    },
+    "extraResources": [
+      {
+        "from": "data/easylist.txt",
+        "to": "data/easylist.txt"
+      },
+      {
+        "from": "data/media-hoarder.db_initial",
+        "to": "data/media-hoarder.db_initial"
+      },
+      {
+        "from": "data/imdb-interests.json",
+        "to": "data/imdb-interests.json"
+      },
+      {
+        "from": "bin/",
+        "to": "bin/"
+      },
+      {
+        "from": "public/history/",
+        "to": "public/history/"
+      }
+    ]
+  },
   "dependencies": {
-    "@babel/polyfill": "7.4.4",
-    "@cliqz/adblocker-electron": "1.22.7",
-    "@electron/remote": "2.0.1",
+    "@babel/polyfill": "7.12.1",
+    "@electron/remote": "2.1.3",
+    "@ghostery/adblocker-electron": "2.14.1",
     "@mdi/font": "4.3.95",
-    "@vue/composition-api": "1.3.3",
-    "async": "3.2.2",
-    "chalk": "4.1.2",
-    "chart.js": "4.4.8",
+    "async": "3.2.6",
+    "chalk": "5.6.2",
+    "chart.js": "4.5.1",
     "chartjs-adapter-moment": "1.0.1",
-    "cheerio": "1.0.0-rc.10",
-    "core-js": "3.18.1",
+    "cheerio": "1.2.0",
+    "core-js": "3.48.0",
     "electron-window-state": "5.0.3",
     "fast-levenshtein": "3.0.0",
-    "filenamify": "4.3.0",
-    "fs-extra": "10.1.0",
-    "html-to-text": "5.1.1",
+    "filenamify": "7.0.1",
+    "fs-extra": "11.3.4",
+    "html-to-text": "9.0.5",
     "humanize-plus": "1.8.2",
-    "jsonfile": "6.1.0",
-    "lodash": "4.17.21",
-    "loglevel": "1.7.1",
-    "marked": "4.0.10",
-    "minimist": "1.2.6",
-    "mkdirp": "1.0.4",
-    "moment": "2.29.4",
-    "os-locale": "4.0.0",
+    "jsonfile": "6.2.0",
+    "lodash": "4.17.23",
+    "loglevel": "1.9.2",
+    "marked": "17.0.4",
+    "minimist": "1.2.8",
+    "mitt": "3.0.1",
+    "mkdirp": "3.0.1",
+    "moment": "2.30.1",
+    "postman-request": "2.88.1-postman.48",
+    "regenerator-runtime": "0.14.1",
     "request": "2.88.2",
-    "requestretry": "7.0.0",
-    "roboto-fontface": "*",
-    "semver": "7.3.5",
-    "sqlite3": "5.1.6",
+    "requestretry": "8.0.0",
+    "roboto-fontface": "0.10.0",
+    "semver": "7.7.4",
+    "sortablejs": "1.15.7",
+    "sortablejs-vue3": "1.3.0",
+    "sqlite3": "5.1.7",
     "sqlstring-sqlite": "0.1.1",
     "string-hash-64": "1.0.3",
-    "video.js": "7.15.4",
-    "vue": "2.6.14",
-    "vue-i18n": "8.26.3",
-    "vue-router": "3.5.2",
-    "vue-star-rating": "1.7.0",
-    "vue-word-highlighter": "1.0.4",
-    "vuedraggable": "2.24.3",
-    "vuetify": "2.5.9",
-    "xml2js": "0.4.23"
+    "video.js": "8.23.7",
+    "vue": "3.5.29",
+    "vue-i18n": "10.0.8",
+    "vue-router": "4.6.4",
+    "vue-star-rating": "2.1.0",
+    "vue-word-highlighter": "1.2.6",
+    "vuetify": "3.12.2",
+    "xml2js": "0.6.2"
   },
   "devDependencies": {
-    "@oshell/vue-cli-plugin-electron-builder-notarize": "1.0.2",
-    "@vue/cli-plugin-babel": "4.5.13",
-    "@vue/cli-plugin-eslint": "4.5.13",
-    "@vue/cli-plugin-router": "4.5.13",
-    "@vue/cli-service": "4.5.13",
-    "@vue/eslint-config-prettier": "6.0.0",
-    "@vue/runtime-dom": "3.4.18",
-    "babel-cli": "6.26.0",
-    "babel-eslint": "10.1.0",
-    "babel-preset-es2015": "6.24.1",
+    "@babel/preset-env": "7.29.0",
+    "@babel/register": "7.28.6",
+    "@vitejs/plugin-vue": "6.0.4",
+    "@vue/eslint-config-prettier": "10.2.0",
+    "babel-plugin-add-module-exports": "1.0.4",
+    "babel-plugin-module-resolver": "5.0.2",
     "check-node-version": "4.2.1",
-    "electron": "13.6.6",
-    "electron-devtools-installer": "3.2.0",
+    "electron": "40.8.0",
+    "electron-builder": "26.8.1",
+    "electron-devtools-installer": "4.0.0",
     "electron-icon-builder": "2.0.1",
-    "eslint": "6.8.0",
-    "eslint-plugin-prettier": "3.4.1",
-    "eslint-plugin-vue": "6.2.2",
-    "jest": "29.7.0",
-    "nodemailer": "6.6.5",
-    "prettier": "2.4.1",
-    "sass": "1.32.13",
-    "sass-loader": "10.2.0",
-    "vue-cli-plugin-electron-builder": "2.1.1",
-    "vue-cli-plugin-vuetify": "2.4.2",
-    "vue-template-compiler": "2.6.14",
-    "vuetify-loader": "1.7.3"
+    "electron-vite": "5.0.0",
+    "eslint": "10.0.3",
+    "eslint-plugin-prettier": "5.5.5",
+    "eslint-plugin-vue": "10.8.0",
+    "jest": "30.2.0",
+    "nodemailer": "8.0.1",
+    "prettier": "3.8.1",
+    "sass": "1.97.3",
+    "vite": "7.3.1",
+    "vite-plugin-electron-renderer": "0.14.6",
+    "vite-plugin-vuetify": "2.1.3"
   },
   "engineStrict": true,
   "engines": {
-    "node": ">=14.17.5 <15.0.0"
+    "node": ">=24.0.0 <25.0.0"
   },
   "unused-dependencies": {
     "core-js": "2.6.5",

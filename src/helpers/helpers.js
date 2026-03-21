@@ -1,11 +1,11 @@
-const util = require("util");
-const path = require("path");
-const fs = require("fs");
-const requestretry = require("requestretry");
-const os = require("os");
-const filenamify = require("filenamify");
-const hash = require("string-hash-64");
-const _ = require("lodash");
+import util from "util";
+import path from "path";
+import fs from "fs";
+import requestretry from "requestretry";
+import os from "os";
+import filenamify from "filenamify";
+import hash from "string-hash-64";
+import _ from "lodash";
 
 import logger from "./logger.js";
 
@@ -53,9 +53,6 @@ function getDataPath(relativePath) {
     isDevelopment || isPORTABLE
       ? path.join(getStaticPath("data"), relativePath)
       : path.join(os.homedir(), ".media-hoarder", relativePath);
-  console.log(
-    `[DEBUG:getDataPath] isDevelopment=${isDevelopment}, isPORTABLE=${isPORTABLE}, relativePath="${relativePath}" => "${result}"`
-  );
   return result;
 }
 
@@ -379,8 +376,13 @@ async function requestAsync(options) {
 }
 
 function ensureDirectorySync(path) {
-  if (!fs.existsSync(path)) {
-    fs.mkdirSync(path);
+  try {
+
+    if (!fs.existsSync(path)) {
+      fs.mkdirSync(path);
+    }
+  } catch(err) {
+    
   }
 }
 

@@ -1,12 +1,27 @@
 #!/bin/sh
 
+# allow also running npm installed tools
+export PATH="$(pwd)/node_modules/.bin:$PATH"
+
 rm ./RELEASE/*
 
-npx browserslist@latest --update-db
+npx update-browserslist-db@latest
+
+bash fetch-easylist.sh
 
 npm i
 
-npm run electron:build-mac
+# Build for Mac
+check-node-version --node  ^24 && \
+bash check-killme.sh && \
+bash check-package.json.sh && \
+npx mkdirp RELEASE && \
+node set-portable --portable=false && \
+electron-vite build && \
+electron-builder build --mac dmg --universal && \
+mv dist/*.dmg RELEASE/media-hoarder-VERSION-mac-universal.dmg && \
+node set-release-version.js && \
+rimraf dist
 
 cd RELEASE
 

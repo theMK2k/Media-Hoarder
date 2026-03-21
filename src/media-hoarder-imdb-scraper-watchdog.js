@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const chalk = require("chalk");
+const chalk = require("chalk").default;
 const minimist = require("minimist");
 const nodemailer = require("nodemailer");
 
@@ -46,7 +46,7 @@ const log = {
   maxLevel: 0,
 };
 
-(async () => {
+module.exports = (async () => {
   logger.info("Syntax: media-hoarder-imdb-scraper-watchdog [options]");
   logger.info("");
   logger.info("options:");
@@ -145,10 +145,10 @@ function addLogEntry(testResult) {
       testResult.status === status.SUCCESS
         ? chalk.green("OK")
         : testResult.status === status.WARNING
-        ? chalk.yellow("WARN")
-        : testResult.status === status.ERROR
-        ? chalk.red("FAIL")
-        : chalk.red("EXCEPTION")
+          ? chalk.yellow("WARN")
+          : testResult.status === status.ERROR
+            ? chalk.red("FAIL")
+            : chalk.red("EXCEPTION")
     }${chalk.white("]")} ${testResult.name} (${testResult.functionName})`,
   };
 

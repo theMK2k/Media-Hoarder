@@ -2,13 +2,31 @@
 // Electron main-process entry point for the IMDB scraper watchdog.
 // Boots the Electron app (headless) then runs the regular watchdog script.
 
-// Enable babel transpilation (same as babel-node --presets es2015)
-require("babel-register")({ presets: ["es2015"] });
+const path = require("path");
+
+require("@babel/register")({
+  presets: ["@babel/preset-env"],
+  plugins: [
+    [
+      "module-resolver",
+      {
+        alias: {
+          "@helpers": path.resolve(__dirname, "helpers"),
+          "@electron/remote": "electron",
+        },
+      },
+    ],
+    "add-module-exports",
+  ],
+  configFile: false,
+  babelrc: false,
+});
 
 const { app } = require("electron");
 
-app.on("ready", () => {
-  require("./media-hoarder-imdb-scraper-watchdog");
+app.on("ready", async () => {
+  await require("./media-hoarder-imdb-scraper-watchdog");
+  app.quit();
 });
 
 app.on("window-all-closed", () => {

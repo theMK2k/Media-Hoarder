@@ -3,14 +3,14 @@
  *
  * Database interface and functions for sqlite access and management
  */
+import fs from "fs";
+import logger from "./logger.js";
+import * as helpers from "./helpers.js";
+
+// Use window.require for native CommonJS modules in Electron renderer
+// This works because Electron exposes require globally when nodeIntegration is enabled
+const sqlite3 = window.require("sqlite3").verbose();
 const LOG_ALL_DB = false; // set to true to log all db queries
-const logger = require("./logger");
-const fs = require("fs");
-const sqlite3 = require("sqlite3").verbose();
-
-const helpers = require("./helpers");
-
-// import * as helpers from '@/helpers/helpers';
 
 /**
  * our main connection to the database
@@ -155,12 +155,22 @@ function initSQLite(callback) {
 }
 
 function sqliteFireProcedureCB(query, vars, callback) {
+  if (!_db) {
+    logger.log("[db] Database not initialized yet!");
+    return;
+  }
+
   _db.run(query, vars, (err) => {
     return callback(err);
   });
 }
 
 function sqlitefireProcedureReturnScalarCB(query, vars, callback) {
+  if (!_db) {
+    logger.log("[db] Database not initialized yet!");
+    return;
+  }
+
   _db.get(query, vars, (err, row) => {
     let result = null;
     if (!err) {
@@ -175,6 +185,11 @@ function sqlitefireProcedureReturnScalarCB(query, vars, callback) {
 }
 
 function sqlitefireProcedureReturnAllCB(query, vars, callback) {
+  if (!_db) {
+    logger.log("[db] Database not initialized yet!");
+    return;
+  }
+
   _db.all(query, vars, (err, all) => {
     return callback(err, all);
   });

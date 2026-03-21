@@ -1,6 +1,45 @@
 # DONE
 
-## Next (current: 1.4.4)
+## Next (1.5.0)
+
+- [x] new Linux builds: Snap, Flatpak, Apk, FreeBSD, Pacman
+- [x] updated MacOS build: universal build (x64 + Apple Silicon)
+
+- [x] updated Theme (more darker, higher contrast)
+- [x] updated layouts, unified font sizes
+
+### Features
+
+- [x] Sidebar Navigation containing the filters can now be resized by the user
+- [x] Sidebar filters: introduction of eye icon, which when clicked shows the dialog listing the movies and series that contain the value (e.g. year 2023, action genre, rated 3 stars by you)
+- [x] Media property dialogs can now stack indefinitely on top of each other (e.g. actor on top of another actor on top of a director), filtering by the property is possible at any level
+- [x] series in compact lists (e.g. in person dialog) now allow to show the series
+
+- [x] Media item cards can now also be expanded if they are popped in from dialogs (e.g. series heatmap)
+
+### Optimizations
+
+- [x] loading filters heavily optimized for speed (when filter and media did not change, subsequential loading of the filters is very fast now)
+- [x] Rescan specific media item: if it is a tv series, let the user decide if the episodes should be rescanned as well or just the series
+- [x] Rescan Metadata from Action List: let user decide if they also want to rescan the episodes or just the series
+- [x] Apply "is already viewed" style on an episode in the heatmap dialog after watching long enough
+
+- [x] SCANNING: use actualDuplicate to detect moved media and re-use metadata
+
+  - [x] also check with moved movie
+  - [x] "rescan metadata" should ignore duplicates completely
+  - [x] add "re-use already scraped IMDB metadata" option to rescan dialog (default: activated) or add it to Settings | Duplicates
+
+- [x] Settings: series source paths are now sorted by their name
+
+### Fixes
+
+- [ ] fix #94 IMDB detection for TV Series preferred movies
+- [ ] fix broken loading of other filters (Source Paths, Genres and Data Quality) with an active filter on age ratings
+- [ ] fix during scan the last added file info stayed in the footer even when the addition was already finished and other files are scanned
+- [ ] SCRAPER: poster URLs needed an updated logic
+
+## v1.4.5
 
 ### Features
 

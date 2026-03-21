@@ -1,0 +1,396 @@
+<template>
+  <v-dialog
+    :model-value="show"
+    @update:model-value="$emit('update:show', $event)"
+    persistent
+    max-width="1000px"
+    scrollable
+    max-height="90vh"
+  >
+    <v-card dark flat v-bind:ripple="false">
+      <v-card-title style="padding-bottom: 0px">
+        <div class="text-h5" style="width: 100%; font-size: 1.17em">
+          <v-row style="margin: 0px">
+            {{ $t("Link with IMDB entry") }}
+            <v-spacer />
+            <v-tooltip location="bottom">
+              <template v-slot:activator="{ props }">
+                <span v-bind="props">
+                  <v-btn v-if="showUnlink" variant="text" color="error" v-on:click.stop="onUnlinkClick()">{{
+                    $t("UNLINK")
+                  }}</v-btn>
+                </span>
+              </template>
+              <span>{{ $t("Remove the link to the current IMDB entry for this medium_") }}</span>
+            </v-tooltip>
+          </v-row>
+        </div>
+
+        <v-row style="padding-left: 16px; margin-top: 16px; margin-bottom: 24px; width: 100%; align-items: flex-end">
+          <v-text-field
+            v-bind:placeholder="`${$t('Enter a title')}...`"
+            variant="underlined"
+            color="white"
+            hide-details
+            v-model="searchText"
+            v-on:keydown.enter="onSearchClick"
+          ></v-text-field>
+
+          <v-btn variant="text" v-bind:loading="isLoading" v-on:click="onSearchClick">{{ $t("Search") }}</v-btn>
+        </v-row>
+
+        <!--
+        <v-expansion-panels>
+          <v-expansion-panel style="padding: 0px !important; margin-bottom: 24px">
+            <v-expansion-panel-title style="padding: 16px !important">{{ $t("Media Types") }} {{ titleTypesTitle() }}</v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <v-row style="margin-bottom: 8px">
+                <v-btn variant="text" v-on:click="setAllTitleTypes(false)">{{ $t("NONE") }}</v-btn>
+                <v-btn variant="text" v-on:click="setAllTitleTypes(true)">{{ $t("ALL") }}</v-btn>
+              </v-row>
+              <v-checkbox
+                v-for="titleType in titleTypes"
+                v-bind:key="titleType.id"
+                v-model="titleType.checked"
+                v-bind:label="titleType.nameTranslated"
+                style="margin: 0px"
+                color="mk-dark-grey"
+              ></v-checkbox>
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      -->
+
+        <!-- <v-row style="margin-bottom: 16px">
+          <v-btn variant="text" v-bind:loading="isLoading" v-on:click="onSearchClick">{{ $t("Search") }}</v-btn>
+        </v-row> -->
+      </v-card-title>
+
+      <!-- Results -->
+      <v-card-text v-if="firstSearchCompleted" style="padding-right: 28px">
+        <div v-if="searchResults.length === 0" style="margin-left: 5px">{{ $t("No Results") }}</div>
+        <div v-if="searchResults.length > 0">
+          <!-- Top Pagination -->
+          <div
+            v-if="Math.ceil(searchResults.length / searchResultsPerPage) > 1"
+            style="margin-bottom: 24px; color: white"
+          >
+            <v-btn variant="tonal" size="small" v-bind:disabled="currentPage == 1" v-on:click="onPrevClicked" style="margin-right: 16px"
+              >&lt;</v-btn
+            >
+            {{ currentPage }} / {{ Math.ceil(searchResults.length / searchResultsPerPage) }}
+            <v-btn
+              variant="tonal" size="small"
+              v-bind:disabled="currentPage >= Math.ceil(searchResults.length / searchResultsPerPage)"
+              v-on:click="onNextClicked"
+              style="margin-left: 16px"
+              >&gt;</v-btn
+            >
+          </div>
+
+          <!-- Result Items -->
+          <v-row v-for="(item, i) in searchResultsPaginated" :key="i" style="margin: 0px">
+            <v-col style="padding: 2px; margin-left: 0px">
+              <v-card
+                dark
+                flat
+                hover
+                v-bind:ripple="false"
+                v-on:mouseover="setItemHovered(item, 'item', true)"
+                v-on:mouseleave="setItemHovered(item, 'item', false)"
+              >
+                <div style="display: flex; flex-direction: row; padding-left: 0px">
+                  <div>
+                    <div style="margin: 6px; height: 120px; width: 100px; border-radius: 0">
+                      <v-img contain v-if="item.imageURL" v-bind:src="item.imageURL" style="border-radius: 6px"></v-img>
+                    </div>
+                  </div>
+                  <div class="align-self-start" style="padding-top: 6px; padding-bottom: 6px">
+                    <v-col style="padding: 0px !important">
+                      <v-row style="margin-bottom: 8px">
+                        <v-list-item-title
+                          style="margin-bottom: 4px !important; font-size: 16px; margin-left: 12px; margin-top: 8px"
+                          >{{ item.title }} <span v-if="item.year">({{ item.year }})</span></v-list-item-title
+                        >
+                      </v-row>
+
+                      <v-list-item-subtitle v-if="item.mediaType" style="margin-top: -8px; margin-bottom: 12px">
+                        {{ item.mediaType }}
+                      </v-list-item-subtitle>
+
+                      <v-list-item-subtitle v-if="item.detailInfo" style="margin-top: -8px; margin-bottom: 4px">{{
+                        item.detailInfo
+                      }}</v-list-item-subtitle>
+
+                      <v-list-item-subtitle> {{ `${$t("IMDB ID")}:` }} {{ item.tconst }} </v-list-item-subtitle>
+
+                      <v-row style="margin-top: 8px">
+                        <v-btn
+                          v-show="item.itemHovered || isLinking"
+                          variant="text"
+                          color="primary"
+                          v-bind:loading="isLinking"
+                          v-on:click.stop="onSelectClick(item)"
+                          >{{ $t("Select for linking") }}</v-btn
+                        >
+                      </v-row>
+                    </v-col>
+                  </div>
+                </div>
+              </v-card>
+            </v-col>
+          </v-row>
+
+          <!-- Bottom Pagination -->
+          <div
+            v-if="Math.ceil(searchResults.length / searchResultsPerPage) > 1"
+            style="margin-top: 16px; margin-bottom: 24px; color: white"
+          >
+            <v-btn variant="tonal" size="small" v-bind:disabled="currentPage == 1" v-on:click="onPrevClicked" style="margin-right: 16px"
+              >&lt;</v-btn
+            >
+            {{ currentPage }} / {{ Math.ceil(searchResults.length / searchResultsPerPage) }}
+            <v-btn
+              variant="tonal" size="small"
+              v-bind:disabled="currentPage >= Math.ceil(searchResults.length / searchResultsPerPage)"
+              v-on:click="onNextClicked"
+              style="margin-left: 16px"
+              >&gt;</v-btn
+            >
+          </div>
+        </div>
+      </v-card-text>
+
+      <v-card-actions>
+        <v-btn class="xs-fullwidth" variant="tonal" color="secondary" v-on:click="onCancelClick()">{{ $t("Close") }}</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+</template>
+
+<script>
+// import * as store from "@/store.js";
+import { scrapeIMDBAdvancedTitleSearchV3, scrapeIMDBFindPageSearchV3 } from "@/imdb-scraper.js";
+
+// import * as helpers from "@helpers/helpers.js";
+import logger from "@helpers/logger.js";
+
+import { eventBus } from "@/eventBus.js";
+import i18n from "@/i18n.js";
+const $t = i18n.global.t;
+
+export default {
+  props: ["show", "showUnlink"],
+
+  emits: ["update:show", "close", "selected", "unlink"],
+
+  data() {
+    return {
+      firstSearchCompleted: false,
+      searchResultsPerPage: 20,
+      currentPage: 1,
+      searchResults: [],
+      searchText: "",
+      showTitleTypes: false,
+      isLoading: false,
+      isLinking: false,
+
+      titleTypes: [
+        {
+          id: "feature",
+          name: "Feature Film",
+          checked: true,
+        },
+        {
+          id: "tv_movie",
+          name: "TV Movie",
+          checked: true,
+        },
+        {
+          id: "tv_series",
+          name: "TV Series",
+          checked: true,
+        },
+        {
+          id: "tv_episode",
+          name: "TV Episode",
+          checked: true,
+        },
+        {
+          id: "tv_special",
+          name: "TV Special",
+          checked: true,
+        },
+        {
+          id: "tv_miniseries",
+          name: "Mini-Series",
+          checked: true,
+        },
+        {
+          id: "documentary",
+          name: "Documentary",
+          checked: true,
+        },
+        {
+          id: "short",
+          name: "Short Film",
+          checked: true,
+        },
+        {
+          id: "video",
+          name: "Video",
+          checked: true,
+        },
+        {
+          id: "tv_short",
+          name: "TV Short",
+          checked: true,
+        },
+      ],
+    };
+  },
+
+  computed: {
+    searchResultsPaginated() {
+      return this.searchResults.slice(
+        (this.currentPage - 1) * this.searchResultsPerPage,
+        this.currentPage * this.searchResultsPerPage
+      );
+    },
+  },
+
+  methods: {
+    async init() {
+      this.items = [];
+      this.searchText = "";
+      this.showTitleTypes = false;
+      this.searchResults = [];
+      this.isLoading = false;
+      this.isLinking = false;
+
+      this.titleTypes.forEach((titleType) => (titleType.nameTranslated = $t(`IMDBTitleTypes.${titleType.name}`)));
+    },
+
+    setAllTitleTypes(value) {
+      this.titleTypes.forEach((titleType) => {
+        titleType.checked = value;
+      });
+    },
+
+    onCancelClick() {
+      this.$emit("close");
+    },
+
+    titleTypesTitle() {
+      if (!this.titleTypes.find((titleType) => titleType.checked)) {
+        return `(${$t("NONE")})`;
+      }
+
+      if (!this.titleTypes.find((titleType) => !titleType.checked)) {
+        return `(${$t("ALL")})`;
+      }
+
+      return `(${this.titleTypes.filter((titleType) => titleType.checked).length}/${this.titleTypes.length})`;
+    },
+
+    /**
+     * We merge the results of the advanced title search and the find search
+     */
+    async onSearchClick() {
+      logger.log("[onSearchClick] START");
+
+      this.isLoading = true;
+      this.currentPage = 1;
+
+      if (!this.searchText) {
+        eventBus.showSnackbar("error", $t("title is missing"));
+        this.isLoading = false;
+        return;
+      }
+
+      // 天気の子
+      let advancedTitleSearchResults = null;
+      try {
+        advancedTitleSearchResults = await scrapeIMDBAdvancedTitleSearchV3(this.searchText, this.titleTypes);
+      } catch (err) {
+        logger.error("[onSearchClick] scrapeIMDBAdvancedTitleSearchV3 ERROR:", err);
+      }
+
+      let findResults = null;
+      try {
+        findResults = await scrapeIMDBFindPageSearchV3(this.searchText, null);
+      } catch (err) {
+        logger.error(err);
+      }
+
+      logger.log("[onSearchClick] advancedTitleSearchResults:", advancedTitleSearchResults);
+      logger.log("[onSearchClick] findResults:", findResults);
+
+      this.searchResults = advancedTitleSearchResults || [];
+
+      if (findResults) {
+        findResults.forEach((result) => {
+          if (result.type !== "Title") {
+            return;
+          }
+          if (!this.searchResults.find((result2) => result.tconst === result2.tconst)) {
+            this.searchResults.push(result);
+          }
+        });
+      }
+
+      this.isLoading = false;
+      this.firstSearchCompleted = true;
+    },
+
+    onSelectClick(item) {
+      logger.log("[onSelectClick]  item:", item);
+
+      if (!item.tconst) {
+        return eventBus.showSnackbar("error", $t("identifier missing"));
+      }
+
+      this.searchResults = [item];
+
+      this.isLinking = true;
+
+      this.$emit("selected", item.tconst);
+
+      this.$emit("close");
+    },
+
+    onUnlinkClick() {
+      logger.log("[onUnlinkClick]");
+
+      this.isLinking = true;
+
+      this.$emit("unlink");
+    },
+
+    setItemHovered(item, section, value) {
+      item[`${section}Hovered`] = value;
+    },
+
+    onPrevClicked() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    },
+
+    onNextClicked() {
+      if (this.currentPage < Math.ceil(this.searchResults.length / this.searchResultsPerPage)) {
+        this.currentPage++;
+      }
+    },
+  },
+
+  created() {},
+};
+</script>
+
+<style scoped>
+.item {
+  margin-left: 0px;
+  margin-top: 4px;
+}
+</style>

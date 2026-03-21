@@ -54,7 +54,6 @@ _Details of an actor and their involvement in series / episodes_
 - Tons of metadata from imdb.com including poster images
 - Metadata from mediainfo analysis
 - Filter by multiple criteria
-
   - Source Paths (e.g. distinguish between files on your NAS and locally available ones)
   - Video Quality (e.g. 720p, HD, 4k etc.)
   - Audio Languages
@@ -127,7 +126,7 @@ Downloads are available at [releases](https://github.com/theMK2k/Media-Hoarder/r
 
 Currently **Media Hoarder** comes as:
 
-- Windows 7/8/10/11 x64 Setup and Portable (.zip)
+- Windows 10/11 x64 Setup and Portable (.zip)
 - Linux x64 Setup (.deb, .appimage, .snap, .rpm) and Portable (.tar.gz)
 - MacOS X .dmg (Intel and Apple Silicon)
 
@@ -184,13 +183,22 @@ npm start
 ### Compiles and minifies for production
 
 ```bash
-npm run electron:build
+./build-linux.sh
+./build-mac.sh
+./build-win-stable.sh
 ```
 
-### Compiles and creates .deb and .AppImage packages for Linux
+### Compiles and creates packages for Linux and FreeBSD
+
+**Note**: for flatpak and pacman packages you need to have the following tools installed:
+
+- flatpak
+- flatpak-builder
+- fakeroot (for pacman)
+- libarchive-tools (for bsdtar, pacman)
 
 ```bash
-npm run electron:build-linux
+./build-linux.sh
 ```
 
 ### Compiles and creates .deb package for Raspberry Pi (armhf architecture)
@@ -199,10 +207,10 @@ npm run electron:build-linux
 npm run electron:build-rpi
 ```
 
-### Compiles and creates .zip and .dmg packages for MacOS
+### Compiles and creates .dmg packages for MacOS
 
 ```bash
-npm run electron:build-mac
+./build-mac.sh
 ```
 
 ## Known Issues
