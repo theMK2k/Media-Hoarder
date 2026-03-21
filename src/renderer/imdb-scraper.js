@@ -13,15 +13,6 @@ import graphqlURLsDefault from "./data/imdb-graphql-urls.json";
 // Mutable copy of graphqlURLs that can be updated at runtime
 let graphqlURLs = graphqlURLsDefault;
 
-// lazy-loaded to avoid crashing in non-Electron environments (e.g. babel-node watchdog)
-let _electronBrowserFetchModule = null;
-function electronBrowserFetch(url) {
-  if (!_electronBrowserFetchModule) {
-    _electronBrowserFetchModule = require("./helpers/electron-browser-fetch");
-  }
-  return _electronBrowserFetchModule.electronBrowserFetch(url);
-}
-
 const graphQLqueries = {
   releaseNumber: () => graphqlURLs.releaseNumber,
 
