@@ -5185,7 +5185,7 @@ export default {
 
       this.snackbar.color = "success";
       this.snackbar.text = $t("Rescan Finished");
-      this.snackbar.timeout = 0;
+      this.snackbar.timeout = -1;
       this.snackbar.id_Scan_Processes = id_Scan_Processes;
       this.snackbar.details = [];
       details.forEach((detail) => {
