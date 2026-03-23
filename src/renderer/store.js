@@ -319,7 +319,7 @@ async function manageIndexes(db) {
 async function fetchSourcePaths() {
   const result = await db.fireProcedureReturnAll(
     `
-			SELECT 
+			SELECT
 			id_SourcePaths
 			, MediaType
 			, Path
@@ -330,6 +330,10 @@ async function fetchSourcePaths() {
     `,
     []
   );
+
+  for (const sp of result) {
+    sp.checkRemovedFiles = !!sp.checkRemovedFiles;
+  }
 
   return result;
 }
