@@ -20,7 +20,7 @@
               color="mk-dark-grey"
               v-bind:label="$t('remove missing entries on (re-)scan')"
               style="margin-top: 0px"
-              v-on:click="toggleCheckRemovedFiles"
+              v-on:update:model-value="toggleCheckRemovedFiles"
             ></v-checkbox>
           </div>
         </v-list-item>
