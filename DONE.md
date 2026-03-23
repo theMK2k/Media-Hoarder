@@ -1,6 +1,13 @@
 # DONE
 
-## Next (1.5.0)
+## Next (1.5.1)
+
+### Fixes
+
+- [x] BUG: Settings Movies/Series Sourcepath checkboxes do not bind correctly!
+- [x] BUG: rescan snackbar disappears automatically
+
+## v1.5.0
 
 - [x] new Linux builds: Snap, Flatpak, Apk, FreeBSD, Pacman
 - [x] updated MacOS build: universal build (x64 + Apple Silicon)
