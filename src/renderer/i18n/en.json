@@ -1093,5 +1093,7 @@
   "Filter by this content advisory": "Filter by this content advisory",
   "Filter by this source path": "Filter by this source path",
   "Filter by this data quality": "Filter by this data quality",
-  "Click here to show the series": "Click here to show the series"
+  "Click here to show the series": "Click here to show the series",
+  "Clear Filter Cache": "Clear Filter Cache",
+  "Filter cache cleared_": "Filter cache cleared."
 }

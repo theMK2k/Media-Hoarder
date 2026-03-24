@@ -1093,5 +1093,7 @@
   "Filter by this content advisory": "Nach dieser Inhaltsbewertung filtern",
   "Filter by this source path": "Nach diesem Quellpfad filtern",
   "Filter by this data quality": "Nach dieser Datenqualität filtern",
-  "Click here to show the series": "Klicke hier, um die Serie anzuzeigen"
+  "Click here to show the series": "Klicke hier, um die Serie anzuzeigen",
+  "Clear Filter Cache": "Filter-Cache leeren",
+  "Filter cache cleared_": "Filter-Cache geleert."
 }

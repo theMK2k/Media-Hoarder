@@ -1094,5 +1094,7 @@
   "Filter by this content advisory": "Filtrer par cet avis de contenu",
   "Filter by this source path": "Filtrer par ce chemin source",
   "Filter by this data quality": "Filtrer par cette qualité de données",
-  "Click here to show the series": "Cliquer ici pour afficher la série"
+  "Click here to show the series": "Cliquer ici pour afficher la série",
+  "Clear Filter Cache": "Vider le cache des filtres",
+  "Filter cache cleared_": "Cache des filtres vidé."
 }

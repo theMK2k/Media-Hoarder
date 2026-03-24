@@ -186,6 +186,9 @@
         <v-btn variant="text" size="small" color="primary" v-on:click="openCheckIMDBScraperDialog">{{
           $t("Check IMDB Scraper")
         }}</v-btn>
+        <v-btn variant="text" size="small" color="primary" v-on:click="clearFilterCache">{{
+          $t("Clear Filter Cache")
+        }}</v-btn>
         <v-btn variant="text" size="small" color="primary" v-on:click="openDevTools">{{ $t("Open DevTools") }}</v-btn>
       </v-window-item>
 
@@ -1359,6 +1362,15 @@ export default {
 
     openDevTools() {
       BrowserWindow.getFocusedWindow().webContents.openDevTools();
+    },
+
+    async clearFilterCache() {
+      try {
+        await store.clearFilterCache();
+        eventBus.showSnackbar("success", $t("Filter cache cleared_"));
+      } catch (err) {
+        eventBus.showSnackbar("error", err);
+      }
     },
 
     async fetchSourcePaths() {
