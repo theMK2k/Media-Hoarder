@@ -5,6 +5,8 @@
 ### Features
 
 - [x] Add "IMDB Votes" filter
+- [x] Add "Scroll to last watched episode" item in the list menu if a series has been opened (and its episodes are shown in the list)
+  - automatically scroll to last watched episode when a series is opened
 - [x] Settings -> Clear Filter Cache button (in case of filter issues)
 - [x] peform database house keeping after rescans
 
