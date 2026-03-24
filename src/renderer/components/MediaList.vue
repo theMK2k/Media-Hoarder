@@ -293,6 +293,9 @@
                 <!-- <v-list-item v-if="!isScanning" v-bind:disabled="isScanning" v-on:click="rescanCurrentListDialog.show = true">
                   {{ $t("Rescan Meta Data") }}
                 </v-list-item> -->
+                <v-list-item v-if="canScrollToLastWatchedEpisode" v-on:click="scrollToLastWatchedEpisode">
+                  {{ $t("Scroll to last watched Episode") }}
+                </v-list-item>
                 <v-tooltip location="start" v-bind:disabled="!isScanning">
                   <template v-slot:activator="{ props }">
                     <span v-bind="props">
@@ -321,7 +324,7 @@
 
     <!-- mk-scrollcontainer -->
     <v-container class="pa-2" style="max-width: 100% !important; margin-top: 4px">
-      <v-row v-for="(mediaItem, i) in itemsFilteredPaginated" v-bind:key="i">
+      <v-row v-for="(mediaItem, i) in itemsFilteredPaginated" v-bind:key="i" v-bind:data-media-row-id="mediaItem.id_Movies">
         <v-col style="padding-bottom: 0px; padding-top: 8px">
           <mk-media-item-card
             v-bind:mediaItem="mediaItem"
@@ -1105,6 +1108,8 @@ export default {
       mediaItem: null,
       isListRescan: false,
     },
+
+    autoScrollToLastWatchedEpisodeRequested: false,
   }),
 
   watch: {
@@ -1124,6 +1129,8 @@ export default {
 
     async Series_id_Movies_Owner(newValue, oldValue) {
       logger.log("[MediaList.Series_id_Movies_Owner] newValue:", newValue, "oldValue:", oldValue);
+
+      this.autoScrollToLastWatchedEpisodeRequested = !!newValue;
 
       await this.fetchSeriesOwner(newValue);
 
@@ -1189,6 +1196,10 @@ export default {
 
     sortField() {
       return this.$shared.sortField;
+    },
+
+    canScrollToLastWatchedEpisode() {
+      return this.specificMediaType === "Episodes" && this.$shared.sortField === "Season_and_Episode";
     },
 
     sortAblesFiltered() {
@@ -2719,6 +2730,111 @@ export default {
       store.saveSortValues(this.specificMediaType);
     },
 
+    getLastAccessTimestamp(lastAccessAt) {
+      if (!lastAccessAt) {
+        return null;
+      }
+
+      const hasTimezone = /(?:Z|[+-]\d\d:?\d\d)$/i.test(lastAccessAt);
+
+      const parsedMoment = hasTimezone
+        ? moment.parseZone(lastAccessAt)
+        : moment.utc(lastAccessAt, ["YYYY-MM-DD HH:mm:ss", moment.ISO_8601], true);
+
+      if (parsedMoment.isValid()) {
+        return parsedMoment.valueOf();
+      }
+
+      const fallbackMoment = moment(lastAccessAt);
+      return fallbackMoment.isValid() ? fallbackMoment.valueOf() : null;
+    },
+
+    async waitForMediaRowElement(idMovies, maxAttempts = 20) {
+      const selector = `[data-media-row-id="${idMovies}"]`;
+
+      for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        await this.$nextTick();
+
+        const rowElement = this.$el?.querySelector(selector);
+        if (rowElement) {
+          return rowElement;
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      }
+
+      return null;
+    },
+
+    async scrollToLastWatchedEpisode({ silent }) {
+      logger.log('[scrollToLastWatchedEpisode] START');
+      
+      if (!this.canScrollToLastWatchedEpisode) {
+        logger.log('[scrollToLastWatchedEpisode] not possible to scroll, abort');
+        return;
+      }
+
+      const latestWatchedEpisode = this.itemsFiltered.reduce((latest, episode) => {
+        const timestamp = this.getLastAccessTimestamp(episode.last_access_at);
+
+        if (timestamp == null) {
+          return latest;
+        }
+
+        if (!latest || timestamp > latest.timestamp) {
+          return {
+            episode,
+            timestamp,
+          };
+        }
+
+        return latest;
+      }, null);
+
+      logger.log('[scrollToLastWatchedEpisode] latestWatchedEpisode:', latestWatchedEpisode);
+
+      if (!latestWatchedEpisode) {
+        logger.log('[scrollToLastWatchedEpisode] latestWatchedEpisode not found, abort');
+
+        if (!silent) {
+          eventBus.showSnackbar("info", $t("No watched episodes found in this series_"));
+        }
+
+        return;
+      }
+
+      const targetIndex = this.itemsFiltered.findIndex(
+        (item) => item.id_Movies === latestWatchedEpisode.episode.id_Movies
+      );
+
+      if (targetIndex < 0) {
+        if (!silent) {
+          eventBus.showSnackbar("warning", $t("Could not scroll to the last watched episode_"));
+        }
+        return;
+      }
+
+      const targetPage = Math.floor(targetIndex / this.itemsPerPage) + 1;
+
+      if (targetPage !== this.$shared.currentPage) {
+        this.$shared.currentPage = targetPage;
+      }
+
+      const rowElement = await this.waitForMediaRowElement(latestWatchedEpisode.episode.id_Movies);
+
+      if (!rowElement) {
+        if (!silent) {
+          eventBus.showSnackbar("warning", $t("Could not scroll to the last watched episode_"));
+        }
+        return;
+      }
+
+      rowElement.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    },
+
     onReload() {
       logger.log("[onReload]");
       // eventBus.refetchMedia();
@@ -3360,6 +3476,11 @@ export default {
 
       await this.fetchFilters(setFilter, null, null, !!dontStoreFilters);
 
+      if (this.autoScrollToLastWatchedEpisodeRequested) {
+        this.autoScrollToLastWatchedEpisodeRequested = false;
+        await this.scrollToLastWatchedEpisode({ silent: true });
+      }
+
       this.loadFilterValuesFromStorage = false; // only load filter values from storage initially
 
       //logger.groupEnd();
@@ -3501,6 +3622,8 @@ export default {
 
     (async () => {
       await this.fetchSeriesOwner(this.Series_id_Movies_Owner);
+
+      this.autoScrollToLastWatchedEpisodeRequested = !!this.Series_id_Movies_Owner;
 
       // eventBus.refetchMedia();
       this.refetchMedia({});
