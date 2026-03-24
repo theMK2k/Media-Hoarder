@@ -5,11 +5,13 @@
 ### Features
 
 - [x] Add "IMDB Votes" filter
+- [x] Settings -> Clear Filter Cache button (in case of filter issues)
 
 ### Fixes
 
 - [x] BUG: Settings Movies/Series Sourcepath checkboxes do not bind correctly!
 - [x] BUG: rescan snackbar disappears automatically
+- [x] BUG: Source path is clickable in media card, but needs to be translated to the path's name in order to work in the property dialog
 
 ## v1.5.0
 

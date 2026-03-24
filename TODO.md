@@ -2,10 +2,6 @@
 
 ## Prio 0
 
-- [ ] Settings -> Clear Filter Caches button (in case of filter issues)
-
-- [ ] BUG: Source path is clickable in media card, but needs to be translated to the path's name in order to work in the dialog
-
 - [ ] update README screenshots
 
 - [ ] BUG: rescan specific media leads to removal of "last access at"
