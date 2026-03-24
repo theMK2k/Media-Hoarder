@@ -569,7 +569,7 @@
             class="mk-clickable"
             v-bind:class="{ 'mk-search-highlight': $shared.filterSourcePathsActive }"
             v-on:click.stop="
-              emitMediaItemEvent('sourcePathClicked', { mediaItem, sourcePath: mediaItem.SourcePath, isInDialog })
+              emitMediaItemEvent('sourcePathClicked', { mediaItem, sourcePath: mediaItem.SourcePathDescription, isInDialog })
             "
             ><word-highlighter v-bind:query="searchText || ''"
               >{{ mediaItem.SourcePath }}{{ pathSeparator }}</word-highlighter

@@ -4936,6 +4936,7 @@ async function fetchMedia({
       , MOV.IMDB_MaxAge
       , MOV.isDirectoryBased
       , SP.Path AS SourcePath
+      , SP.Description AS SourcePathDescription
       , MOV.IMDB_tconst
       , SP.id_SourcePaths
       , MOV.IMDB_Trailer_URL
