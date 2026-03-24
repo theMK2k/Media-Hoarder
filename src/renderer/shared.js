@@ -84,6 +84,10 @@ const state = reactive({
       visible: true,
     },
     {
+      name: "filterIMDBNumVotes",
+      visible: true,
+    },
+    {
       name: "filterGenres",
       visible: true,
       sort: enmFilterSortModes.alphabetically,
@@ -141,6 +145,10 @@ const state = reactive({
     filterMetacriticScoreNone: true,
     filterIMDBRating: [0, 10],
     filterIMDBRatingNone: true,
+    filterIMDBNumVotes: [0, 0],
+    filterIMDBNumVotesNone: true,
+    filterIMDBNumVotesMax: 0,
+    filterIMDBNumVotesAll: true,
     filterGenres: [],
     filterAgeRatings: [],
     filterParentalAdvisory: {
@@ -1217,6 +1225,14 @@ const computedProps = {
       state.filters.filterIMDBRating[0] !== 0 ||
       state.filters.filterIMDBRating[1] !== 10 ||
       !state.filters.filterIMDBRatingNone
+    );
+  }),
+
+  filterIMDBNumVotesActive: computed(() => {
+    return (
+      state.filters.filterIMDBNumVotes &&
+      (!state.filters.filterIMDBNumVotesAll ||
+        !state.filters.filterIMDBNumVotesNone)
     );
   }),
 

@@ -2,12 +2,14 @@
 
 ## Prio 0
 
-- [ ] update README screnshots
+- [ ] Settings -> Clear Filter Caches button (in case of filter issues)
+
+- [ ] BUG: Source path is clickable in media card, but needs to be translated to the path's name in order to work in the dialog
+
+- [ ] update README screenshots
 
 - [ ] BUG: rescan specific media leads to removal of "last access at"
   - "last access at" (on the series - not the episode) is gone if a media moved
-
-- [WIP] Add "number of votes" filter
 
 - [ ] DB Backup
   - [ ] Settings:

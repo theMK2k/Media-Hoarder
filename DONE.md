@@ -2,6 +2,10 @@
 
 ## Next (1.5.1)
 
+### Features
+
+- [x] Add "IMDB Votes" filter
+
 ### Fixes
 
 - [x] BUG: Settings Movies/Series Sourcepath checkboxes do not bind correctly!

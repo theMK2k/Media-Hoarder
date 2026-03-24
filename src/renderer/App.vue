@@ -1362,7 +1362,6 @@
                 </v-expansion-panel>
 
                 <!-- FILTER IMDB Number of Votes -->
-                <!--
                 <v-expansion-panel
                   v-bind:readonly="editFilters.isEditFilters"
                   v-if="filterGroup.name === 'filterIMDBNumVotes'"
@@ -1426,30 +1425,29 @@
                   </v-expansion-panel-title>
                   <v-expansion-panel-text>
                     <v-range-slider
-                      v-model="$shared.filters.filterIMDBRating"
-                      :max="10"
+                      v-model="$shared.filters.filterIMDBNumVotes"
+                      :max="$shared.filters.filterIMDBNumVotesMax"
                       :min="0"
-                      :step="0.1"
+                      :step="filterIMDBNumVotesStep"
                       thumb-label
                       hide-details
                       class="align-center"
-                      v-on:update:modelValue="filtersChanged('filterIMDBRating')"
+                      v-on:update:modelValue="onFilterIMDBNumVotesChanged"
                     >
-                    <!- -
-                      <template v-slot:prepend><span style="display: inline-block; min-width: 2.5em; text-align: right">{{ $shared.filters.filterIMDBRating[0].toLocaleString($shared.uiLanguage) }}</span></template>
-                      <template v-slot:append><span style="display: inline-block; min-width: 2.5em">{{ $shared.filters.filterIMDBRating[1].toLocaleString($shared.uiLanguage) }}</span></template>
-                    - ->
+                    <!--
+                      <template v-slot:prepend><span style="display: inline-block; min-width: 4em; text-align: right">{{ $shared.filters.filterIMDBNumVotes[0].toLocaleString($shared.uiLanguage) }}</span></template>
+                      <template v-slot:append><span style="display: inline-block; min-width: 4em">{{ $shared.filters.filterIMDBNumVotes[1].toLocaleString($shared.uiLanguage) }}</span></template>
+                    -->
                     </v-range-slider>
                     <v-checkbox
-                      v-bind:label="$t('include entries with no IMDB rating')"
-                      v-model="$shared.filters.filterIMDBRatingNone"
-                      v-on:click.native="filtersChanged('filterIMDBRating')"
+                      v-bind:label="$t('include entries with no IMDB number of votes')"
+                      v-model="$shared.filters.filterIMDBNumVotesNone"
+                      v-on:click.native="filtersChanged('filterIMDBNumVotes')"
                       style="margin: 0px"
                       color="mk-dark-grey"
                     ></v-checkbox>
                   </v-expansion-panel-text>
                 </v-expansion-panel>
-                -->
 
                 <!-- FILTER GENRES -->
                 <v-expansion-panel
@@ -4297,6 +4295,30 @@ export default {
       })`;
     },
 
+    filterIMDBNumVotesStep() {
+      const max = this.$shared.filters.filterIMDBNumVotesMax || 0;
+      if (max <= 1000) return 10;
+      if (max <= 10000) return 100;
+      if (max <= 100000) return 1000;
+      return 1000;
+    },
+
+    filterIMDBNumVotesTitle() {
+      if (!this.$shared.filters.filterIMDBNumVotes) {
+        return `(${$t("ALL")})`;
+      }
+
+      if (this.$shared.filters.filterIMDBNumVotesAll) {
+        return `(${$t("ALL")}${this.$shared.filters.filterIMDBNumVotesNone ? "" : "*"})`;
+      }
+
+      return `(${this.$shared.filters.filterIMDBNumVotes[0].toLocaleString(
+        this.$shared.uiLanguage
+      )} - ${this.$shared.filters.filterIMDBNumVotes[1].toLocaleString(this.$shared.uiLanguage)}${
+        this.$shared.filters.filterIMDBNumVotesNone ? "" : "*"
+      })`;
+    },
+
     filterContentAdvisoryTitle() {
       if (
         !Object.keys(this.$shared.filters.filterParentalAdvisory).find((category) =>
@@ -4441,6 +4463,13 @@ export default {
         this.isolateFilterItemTimeout = null;
       }
       this.filtersChanged(filterName);
+    },
+
+    onFilterIMDBNumVotesChanged: function () {
+      this.$shared.filters.filterIMDBNumVotesAll =
+        this.$shared.filters.filterIMDBNumVotes[0] === 0 &&
+        this.$shared.filters.filterIMDBNumVotes[1] === this.$shared.filters.filterIMDBNumVotesMax;
+      this.filtersChanged("filterIMDBNumVotes");
     },
 
     filtersChanged: function (lastChangedFilter) {

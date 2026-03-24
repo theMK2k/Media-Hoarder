@@ -4604,6 +4604,25 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
     filterIMDBRating += ")";
   }
 
+  // IMDB Number of Votes
+  let filterIMDBNumVotes = "";
+  if (
+    filters.filterIMDBNumVotes &&
+    !(filters.filterIMDBNumVotesAll && filters.filterIMDBNumVotesNone)
+  ) {
+    if (!filters.filterIMDBNumVotesNone) {
+      filterIMDBNumVotes = "AND (MOV.IMDB_numVotes IS NOT NULL";
+    } else {
+      filterIMDBNumVotes = "AND (MOV.IMDB_numVotes IS NULL OR ";
+    }
+
+    if (!filters.filterIMDBNumVotesAll) {
+      filterIMDBNumVotes += `${!filters.filterIMDBNumVotesNone ? " AND " : ""}(MOV.IMDB_numVotes >= ${filters.filterIMDBNumVotes[0]} AND MOV.IMDB_numVotes <= ${filters.filterIMDBNumVotes[1]})`;
+    }
+
+    filterIMDBNumVotes += ")";
+  }
+
   // Release Attributes
   let filterReleaseAttributes = "";
   const releaseAttributesHierarchy = getReleaseAttributesHierarchy();
@@ -4844,6 +4863,7 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
   ${filterSubtitleLanguages}
   ${filterMetacriticScore}
   ${filterIMDBRating}
+  ${filterIMDBNumVotes}
   ${filterReleaseAttributes}
   ${filterDataQuality}
   ${filterVideoEncoders}
@@ -7068,6 +7088,40 @@ async function fetchFilterIMDBRating($MediaType, $SpecificMediaType, loadFilterV
   shared.loadingFilter = "";
 }
 
+async function fetchFilterIMDBNumVotes($MediaType, $SpecificMediaType, loadFilterValuesFromStorage) {
+  shared.loadingFilter = "filterIMDBNumVotes";
+
+  // determine the actual max from the data
+  const maxNumVotes = helpers.nz(
+    await db.fireProcedureReturnScalar(`SELECT MAX(IMDB_numVotes) FROM tbl_Movies WHERE isRemoved IS NULL OR isRemoved = 0`),
+    0
+  );
+  shared.filters.filterIMDBNumVotesMax = maxNumVotes;
+
+  const filterValues = await fetchFilterValues($SpecificMediaType, loadFilterValuesFromStorage);
+
+  if (filterValues && filterValues.filterIMDBNumVotesAll != null) {
+    shared.filters.filterIMDBNumVotesAll = filterValues.filterIMDBNumVotesAll;
+  }
+
+  if (shared.filters.filterIMDBNumVotesAll) {
+    // user has "all" selected — always snap to full range
+    shared.filters.filterIMDBNumVotes = [0, maxNumVotes];
+  } else if (filterValues && filterValues.filterIMDBNumVotes && filterValues.filterIMDBNumVotes.length > 0) {
+    shared.filters.filterIMDBNumVotes = [
+      filterValues.filterIMDBNumVotes[0],
+      Math.min(filterValues.filterIMDBNumVotes[1], maxNumVotes),
+    ];
+  } else {
+    shared.filters.filterIMDBNumVotes = [0, maxNumVotes];
+  }
+
+  if (filterValues && filterValues.filterIMDBNumVotesNone != null && filterValues.filterIMDBNumVotesNone != undefined) {
+    shared.filters.filterIMDBNumVotesNone = filterValues.filterIMDBNumVotesNone;
+  }
+  shared.loadingFilter = "";
+}
+
 async function fetchFilterMetacriticScore($MediaType, $SpecificMediaType, loadFilterValuesFromStorage) {
   const filterValues = await fetchFilterValues($SpecificMediaType, loadFilterValuesFromStorage);
 
@@ -8696,6 +8750,13 @@ function resetFilters(objFilter) {
       return;
     }
 
+    if (key === "filterIMDBNumVotes") {
+      logger.log('  is "filterIMDBNumVotes" -> reset to [0, max]');
+      objFilter[key] = [0, shared.filters.filterIMDBNumVotesMax || 0];
+      shared.filters.filterIMDBNumVotesAll = true;
+      return;
+    }
+
     if (_.isPlainObject(objFilter[key])) {
       logger.log("  is Object -> recurse");
       resetFilters(objFilter[key]);
@@ -10233,6 +10294,7 @@ export {
   fetchFilterCompanies,
   fetchFilterLanguages,
   fetchFilterIMDBRating,
+  fetchFilterIMDBNumVotes,
   fetchFilterMetacriticScore,
   fetchFilterReleaseAttributes,
   fetchFilterDataQuality,

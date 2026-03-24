@@ -1358,6 +1358,10 @@ export default {
         filtersList.push($t("IMDB Ratings"));
       }
 
+      if (this.$shared.filterIMDBNumVotesActive) {
+        filtersList.push($t("IMDB Votes"));
+      }
+
       if (this.$shared.filterDataQualityActive) {
         filtersList.push(
           `${$t("Data Quality")}${this.$shared.filters.filterSettings.filterDataQualityAND ? " ߷" : ""}`
@@ -2064,6 +2068,14 @@ export default {
               break;
             case "filterIMDBRating":
               await store.fetchFilterIMDBRating(
+                this.mediatype,
+                this.specificMediaType,
+                this.loadFilterValuesFromStorage,
+                this.Series_id_Movies_Owner
+              );
+              break;
+            case "filterIMDBNumVotes":
+              await store.fetchFilterIMDBNumVotes(
                 this.mediatype,
                 this.specificMediaType,
                 this.loadFilterValuesFromStorage,
@@ -2895,15 +2907,20 @@ export default {
             recursive: true,
             force: true,
           });
+        } else {
+          logger.log(`[onDeleteMediaDialogYes] path '${this.deleteMediaDialog.location}' does not exist!`);
+          throw new Error(`path '${this.deleteMediaDialog.location}' does not exist!`)
         }
 
+        await store.clearFilterCache();
+
         // remove media entries from DB (use isRemoved?)
-        this.store.clearFilterCache();
         for (const extra of this.deleteMediaDialog.item.extras || []) {
           await store.db.fireProcedure(`UPDATE tbl_Movies SET isRemoved = 1 WHERE id_Movies = $id_Movies`, {
             $id_Movies: extra.id_Movies,
           });
         }
+
         await store.db.fireProcedure(`UPDATE tbl_Movies SET isRemoved = 1 WHERE id_Movies = $id_Movies`, {
           $id_Movies: this.deleteMediaDialog.item.id_Movies,
         });
@@ -3292,6 +3309,20 @@ export default {
       if (!dontLoadFiltersFromDb) {
         // fetch entire filter values objects containing the filters, if they're selected and which number of movies they affect, from cache in db
         this.$shared.filters = (await store.fetchFilterValues(this.specificMediaType, true)) || this.$shared.filters;
+
+        // ensure defaults for newly added filters (stored data may not have them)
+        if (!this.$shared.filters.filterIMDBNumVotes) {
+          this.$shared.filters.filterIMDBNumVotes = [0, 0];
+        }
+        if (this.$shared.filters.filterIMDBNumVotesNone == null) {
+          this.$shared.filters.filterIMDBNumVotesNone = true;
+        }
+        if (this.$shared.filters.filterIMDBNumVotesMax == null) {
+          this.$shared.filters.filterIMDBNumVotesMax = 0;
+        }
+        if (this.$shared.filters.filterIMDBNumVotesAll == null) {
+          this.$shared.filters.filterIMDBNumVotesAll = true;
+        }
       }
 
       this.items = [];
