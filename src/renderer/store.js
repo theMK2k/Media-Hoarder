@@ -774,6 +774,8 @@ async function rescan(onlyNew) {
   }
 
   // FINALLY remove all the items that are marked as removed
+  eventBus.scanInfoShow("Finalizing...", "");
+
   await db.fireProcedure(`DELETE FROM tbl_Movies WHERE isRemoved = 1`, []); // movies, series and episodes (and their extras)
 
   await ensureMovieDeleted();
@@ -826,6 +828,10 @@ async function rescan(onlyNew) {
     return key.startsWith("Stats_") && !isNaN(scanProcessSummary[key]) && scanProcessSummary[key] != 0;
   });
 
+  await runDatabaseHousekeeping(true);
+
+  eventBus.scanInfoOff();
+
   eventBus.rescanStopped();
   eventBus.rescanFinished({ hasChanges });
 
@@ -844,6 +850,34 @@ async function rescan(onlyNew) {
     shared.current_id_Scan_Processes,
     createScanProcessSummaryTexts(scanProcessSummary)
   );
+}
+
+/**
+ * Run SQLite maintenance after a global rescan.
+ * PRAGMA optimize refreshes planner statistics cheaply; VACUUM reclaims free pages.
+ * @param {boolean} doVacuum
+ */
+async function runDatabaseHousekeeping(doVacuum) {
+  logger.log("[runDatabaseHousekeeping] START, doVacuum:", doVacuum);
+
+  try {
+    const optimizeResult = await db.fireProcedureReturnAll("PRAGMA optimize", {});
+    logger.log("[runDatabaseHousekeeping] PRAGMA optimize result:", optimizeResult);
+  } catch (error) {
+    logger.warn("[runDatabaseHousekeeping] PRAGMA optimize failed:", error);
+  }
+
+  if (!doVacuum) {
+    logger.log("[runDatabaseHousekeeping] skipping VACUUM");
+    return;
+  }
+
+  try {
+    await db.fireProcedure("VACUUM", {});
+    logger.log("[runDatabaseHousekeeping] VACUUM done");
+  } catch (error) {
+    logger.warn("[runDatabaseHousekeeping] VACUUM failed:", error);
+  }
 }
 
 /**

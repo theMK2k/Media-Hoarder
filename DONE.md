@@ -6,6 +6,7 @@
 
 - [x] Add "IMDB Votes" filter
 - [x] Settings -> Clear Filter Cache button (in case of filter issues)
+- [x] peform database house keeping after rescans
 
 ### Fixes
 

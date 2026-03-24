@@ -2,6 +2,8 @@
 
 ## Prio 0
 
+- [ ] BUG: Source Path filters for movies are shown for series
+ 
 - [ ] update README screenshots
 
 - [ ] BUG: rescan specific media leads to removal of "last access at"
@@ -12,10 +14,6 @@
     - [ ] set backup interval (every X scans, default = 5)
     - [ ] set retention volume (default = 3 db copies)
     - [ ] use data/backups folder to store the files
-
-- [ ] house keeping
-  - [ ] VACUUM after scan
-  - [ ] look into PRAMGA OPTIMIZE <https://sqlite.org/pragma.html#pragma_optimize>
 
 - [ ] create a top-list scoring
   - see https://chatgpt.com/c/680d6f2e-7be8-8012-9fcc-ee3b839a892e
