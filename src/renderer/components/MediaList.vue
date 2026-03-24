@@ -331,6 +331,7 @@
             v-bind:isScanning="isScanning"
             v-bind:isInDialog="false"
             v-bind:allowEditButtons="true"
+            v-bind:flashHighlight="mediaItem.id_Movies === flashEpisodeId"
             v-on:mediaItemEvent="onMICmediaItemEvent"
           ></mk-media-item-card>
         </v-col>
@@ -1109,7 +1110,9 @@ export default {
       isListRescan: false,
     },
 
-    autoScrollToLastWatchedEpisodeRequested: false,
+    autoScrollToLastWatchedEpisodeRequestedForSeriesId: null,
+    flashEpisodeId: null,
+    flashEpisodeTimer: null,
   }),
 
   watch: {
@@ -1130,7 +1133,7 @@ export default {
     async Series_id_Movies_Owner(newValue, oldValue) {
       logger.log("[MediaList.Series_id_Movies_Owner] newValue:", newValue, "oldValue:", oldValue);
 
-      this.autoScrollToLastWatchedEpisodeRequested = !!newValue;
+      this.autoScrollToLastWatchedEpisodeRequestedForSeriesId = newValue || null;
 
       await this.fetchSeriesOwner(newValue);
 
@@ -2766,7 +2769,64 @@ export default {
       return null;
     },
 
-    async scrollToLastWatchedEpisode({ silent }) {
+    async waitForWindowScrollToSettle({ timeoutMs = 1800, stableFrames = 8 } = {}) {
+      if (typeof window === "undefined") {
+        return;
+      }
+
+      await new Promise((resolve) => {
+        const startTime = performance.now();
+        let lastScrollY = window.scrollY;
+        let settledFrameCount = 0;
+
+        const tick = () => {
+          const elapsed = performance.now() - startTime;
+          const currentScrollY = window.scrollY;
+
+          if (Math.abs(currentScrollY - lastScrollY) < 0.5) {
+            settledFrameCount++;
+          } else {
+            settledFrameCount = 0;
+            lastScrollY = currentScrollY;
+          }
+
+          if (settledFrameCount >= stableFrames || elapsed >= timeoutMs) {
+            resolve();
+            return;
+          }
+
+          window.requestAnimationFrame(tick);
+        };
+
+        window.requestAnimationFrame(tick);
+      });
+    },
+
+    triggerEpisodeFlash(idMovies) {
+      if (!idMovies) {
+        return;
+      }
+
+      if (this.flashEpisodeTimer) {
+        clearTimeout(this.flashEpisodeTimer);
+        this.flashEpisodeTimer = null;
+      }
+
+      // Reset first so selecting the same episode repeatedly restarts the animation.
+      this.flashEpisodeId = null;
+
+      this.$nextTick(() => {
+        this.flashEpisodeId = idMovies;
+
+        this.flashEpisodeTimer = setTimeout(() => {
+          this.flashEpisodeId = null;
+          this.flashEpisodeTimer = null;
+        }, 1700);
+      });
+    },
+
+    async scrollToLastWatchedEpisode(options = {}) {
+      const silent = !!options?.silent;
       logger.log('[scrollToLastWatchedEpisode] START');
       
       if (!this.canScrollToLastWatchedEpisode) {
@@ -2833,6 +2893,9 @@ export default {
         behavior: "smooth",
         block: "center",
       });
+
+      await this.waitForWindowScrollToSettle();
+      this.triggerEpisodeFlash(latestWatchedEpisode.episode.id_Movies);
     },
 
     onReload() {
@@ -3417,6 +3480,7 @@ export default {
       logger.log("[refetchMedia] START", { setPage, setFilter, dontStoreFilters, dontLoadFiltersFromDb });
       logger.log("[refetchMedia] this.specificMediaType:", this.specificMediaType);
       logger.log("[refetchMedia] this.$shared.filters:", JSON.stringify(this.$shared.filters, null, 2));
+      const refetchSeriesId = this.Series_id_Movies_Owner || null;
 
       eventBus.showLoadingOverlay(true);
 
@@ -3466,20 +3530,54 @@ export default {
             dontStoreFilters: !!dontStoreFilters,
           });
 
+      const shouldAutoScrollCurrentSeries =
+        refetchSeriesId &&
+        this.autoScrollToLastWatchedEpisodeRequestedForSeriesId === refetchSeriesId &&
+        this.Series_id_Movies_Owner === refetchSeriesId;
+
       const lastCurrentPage = await store.loadCurrentPage(this.specificMediaType, this.Series_id_Movies_Owner);
-      this.$shared.currentPage = lastCurrentPage && lastCurrentPage <= this.numPages ? lastCurrentPage : 1;
+      let targetCurrentPage = lastCurrentPage && lastCurrentPage <= this.numPages ? lastCurrentPage : 1;
+
+      if (shouldAutoScrollCurrentSeries && this.canScrollToLastWatchedEpisode) {
+        const latestWatchedEpisode = this.itemsFiltered.reduce((latest, episode) => {
+          const timestamp = this.getLastAccessTimestamp(episode.last_access_at);
+
+          if (timestamp == null) {
+            return latest;
+          }
+
+          if (!latest || timestamp > latest.timestamp) {
+            return {
+              episode,
+              timestamp,
+            };
+          }
+
+          return latest;
+        }, null);
+
+        if (latestWatchedEpisode) {
+          const targetIndex = this.itemsFiltered.findIndex((item) => item.id_Movies === latestWatchedEpisode.episode.id_Movies);
+
+          if (targetIndex >= 0) {
+            targetCurrentPage = Math.floor(targetIndex / this.itemsPerPage) + 1;
+          }
+        }
+      }
+
+      this.$shared.currentPage = targetCurrentPage;
       store.saveCurrentPage(this.specificMediaType, this.Series_id_Movies_Owner);
 
       await this.completelyFetchMedia();
 
       eventBus.showLoadingOverlay(false);
 
-      await this.fetchFilters(setFilter, null, null, !!dontStoreFilters);
-
-      if (this.autoScrollToLastWatchedEpisodeRequested) {
-        this.autoScrollToLastWatchedEpisodeRequested = false;
+      if (shouldAutoScrollCurrentSeries) {
+        this.autoScrollToLastWatchedEpisodeRequestedForSeriesId = null;
         await this.scrollToLastWatchedEpisode({ silent: true });
       }
+
+      await this.fetchFilters(setFilter, null, null, !!dontStoreFilters);
 
       this.loadFilterValuesFromStorage = false; // only load filter values from storage initially
 
@@ -3623,7 +3721,7 @@ export default {
     (async () => {
       await this.fetchSeriesOwner(this.Series_id_Movies_Owner);
 
-      this.autoScrollToLastWatchedEpisodeRequested = !!this.Series_id_Movies_Owner;
+      this.autoScrollToLastWatchedEpisodeRequestedForSeriesId = this.Series_id_Movies_Owner || null;
 
       // eventBus.refetchMedia();
       this.refetchMedia({});
@@ -3647,6 +3745,12 @@ export default {
 
   beforeDestroy() {
     logger.log("[beforeDestroy] MediaList beforeDestroy START");
+
+    if (this.flashEpisodeTimer) {
+      clearTimeout(this.flashEpisodeTimer);
+      this.flashEpisodeTimer = null;
+    }
+
     this.items = [];
     eventBus.off("searchTextChanged");
     eventBus.off("refetchMedia");

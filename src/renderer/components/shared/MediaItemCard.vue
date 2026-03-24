@@ -4,6 +4,7 @@
     flat
     hover
     v-bind:ripple="false"
+    v-bind:class="{ 'mk-last-watched-episode-flash': flashHighlight }"
     v-on:click="emitMediaItemEvent('selectMediaItem', { mediaItem })"
     v-bind:style="{ cursor: 'pointer' }"
   >
@@ -1033,7 +1034,7 @@ import i18n from "@/i18n.js";
 const $t = i18n.global.t;
 
 export default {
-  props: ["mediaItem", "isScanning", "showCloseButton", "allowEditButtons", "isInDialog"],
+  props: ["mediaItem", "isScanning", "showCloseButton", "allowEditButtons", "isInDialog", "flashHighlight"],
   emits: ["close", "mediaItemEvent"],
   components: { "word-highlighter": WordHighlighter, "star-rating": StarRating },
   data() {
@@ -1186,6 +1187,29 @@ export default {
 </script>
 
 <style scoped>
+.mk-last-watched-episode-flash {
+  animation: mk-last-watched-episode-flash 0.8s ease-in-out 1;
+  will-change: box-shadow;
+}
+
+@keyframes mk-last-watched-episode-flash {
+  0% {
+    box-shadow:
+      inset 0 0 0 0 rgba(255, 255, 255, 0),
+      0 0 0 0 rgba(255, 255, 255, 0);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 0 9999px rgba(255, 255, 255, 0.34),
+      0 0 0 1px rgba(255, 255, 255, 0.24);
+  }
+  100% {
+    box-shadow:
+      inset 0 0 0 0 rgba(255, 255, 255, 0),
+      0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
 .CreditCategory {
   display: block;
   float: left;
