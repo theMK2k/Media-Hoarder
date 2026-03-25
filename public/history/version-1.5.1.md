@@ -24,10 +24,42 @@ The theme has been updated to a more darker one with higher contrast, the layout
 
 ## Updates in 1.5.1
 
+### Features
+
+<details>
+
+  <br/>
+
+  <summary>Added "IMDB Votes" filter - you can now filter movies and series by their popularity</summary>
+
+<img alt="image" src="https://github.com/user-attachments/assets/12a24b68-106f-4061-b5b1-ce4f479a5c3a" />
+
+</details>
+
+<br/>
+
+<details>
+
+  <br/>
+
+  <summary>Media Hoarder now scrolls to the last watched episode and flashes it for a short time when a series is opened (this is also accessible via the list menu)</summary>
+
+![media-hoarder-scroll-to-last-watched-episode](https://github.com/user-attachments/assets/360b982c-01b2-4c44-96dd-f009770a6c53)
+
+</details>
+
+<br/>
+
+- Added "Clear Filter Cache" button to Settings | General (in case of filter issues)
+- Media Hoarder now peforms database house keeping after rescans
+
 ### Fixes
 
-- Settings | Movies/Series Sourcepath checkboxes did not represent the correct values
-- Rescan completion message disappeared automatically
+- FIX: Settings Movies/Series Sourcepath checkboxes did not bind correctly
+- FIX: rescan snackbar disappeared automatically
+- FIX: Source path is clickable in media card, but needs to be translated to the path's name in order to work in the property dialog
+- FIX: path handling for poster images on Linux
+- FIX: remove "Open" functionality on series if shown as popup
 
 ## Updates in 1.5.0
 
