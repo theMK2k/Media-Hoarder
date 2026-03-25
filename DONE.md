@@ -16,6 +16,7 @@
 - [x] FIX: rescan snackbar disappeared automatically
 - [x] FIX: Source path is clickable in media card, but needs to be translated to the path's name in order to work in the property dialog
 - [x] FIX: path handling for poster images on Linux
+- [x] FIX: remove "Open" functionality on series if shown as popup
 
 ## v1.5.0
 

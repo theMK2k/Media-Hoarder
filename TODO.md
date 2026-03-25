@@ -2,8 +2,6 @@
 
 ## Prio 0
 
-- [ ] remove "Open" functionality on series if shown as popup
-
 - [ ] BUG: Source Path filters for movies are sometimes shown for series
   - possibly due to hot reload
  

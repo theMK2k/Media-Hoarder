@@ -17,7 +17,7 @@
       >
         <div
           style="margin: 6px; height: 190px; width: 130px; cursor: pointer; position: relative; border-radius: 0"
-          v-on:click.stop="emitMediaItemEvent('launch', { mediaItem })"
+          v-on:click.stop="handlePosterClick(mediaItem)"
         >
           <img
             v-show="mediaItem.specificMediaType !== 'Series' && mediaItem.avatarHovered"
@@ -40,7 +40,7 @@
             "
           >
             <!-- <v-btn>open</v-btn> -->
-            <div class="series-open-overlay-container">
+            <div v-if="!isInDialog" class="series-open-overlay-container">
               <span class="text-overlay">{{ $t("Open") }}</span>
             </div>
           </div>
@@ -570,7 +570,11 @@
             class="mk-clickable"
             v-bind:class="{ 'mk-search-highlight': $shared.filterSourcePathsActive }"
             v-on:click.stop="
-              emitMediaItemEvent('sourcePathClicked', { mediaItem, sourcePath: mediaItem.SourcePathDescription, isInDialog })
+              emitMediaItemEvent('sourcePathClicked', {
+                mediaItem,
+                sourcePath: mediaItem.SourcePathDescription,
+                isInDialog,
+              })
             "
             ><word-highlighter v-bind:query="searchText || ''"
               >{{ mediaItem.SourcePath }}{{ pathSeparator }}</word-highlighter
@@ -1181,6 +1185,15 @@ export default {
       } else {
         item.SubtitleLanguages = store.generateLanguageArray(item.Subtitle_Languages, 9999);
       }
+    },
+
+    handlePosterClick(mediaItem) {
+      if (mediaItem.specificMediaType == 'Series' && this.isInDialog) {
+        // don't fire the event if the media item card shows the series (aka: don't "open the series" if the media item card is popped up)
+        return;
+      }
+      
+      this.emitMediaItemEvent("launch", { mediaItem });
     },
   },
 };
