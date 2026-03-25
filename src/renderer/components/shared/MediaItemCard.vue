@@ -17,7 +17,7 @@
       >
         <div
           style="margin: 6px; height: 190px; width: 130px; cursor: pointer; position: relative; border-radius: 0"
-          v-on:click="handlePosterClick(mediaItem)"
+          v-on:click="handlePosterClick($event, mediaItem)"
         >
           <img
             v-show="mediaItem.specificMediaType !== 'Series' && mediaItem.avatarHovered"
@@ -1187,12 +1187,13 @@ export default {
       }
     },
 
-    handlePosterClick(mediaItem) {
+    handlePosterClick(event, mediaItem) {
       if (mediaItem.specificMediaType == 'Series' && this.isInDialog) {
         // don't fire the event if the media item card shows the series (aka: don't "open the series" if the media item card is popped up)
         return;
       }
-      
+
+      event.stopPropagation();
       this.emitMediaItemEvent("launch", { mediaItem });
     },
   },
