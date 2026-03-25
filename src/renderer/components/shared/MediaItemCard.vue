@@ -17,7 +17,7 @@
       >
         <div
           style="margin: 6px; height: 190px; width: 130px; cursor: pointer; position: relative; border-radius: 0"
-          v-on:click.stop="handlePosterClick(mediaItem)"
+          v-on:click="handlePosterClick(mediaItem)"
         >
           <img
             v-show="mediaItem.specificMediaType !== 'Series' && mediaItem.avatarHovered"
