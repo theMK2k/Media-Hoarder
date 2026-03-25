@@ -3,6 +3,7 @@
 ## Prio 0
 
 - [ ] BUG: Source Path filters for movies are sometimes shown for series
+  - possibly due to hot reload
  
 - [ ] update README screenshots
 
