@@ -147,11 +147,21 @@ function registerLocalResourceProtocol() {
     // Fix double slashes that result from escaped backslashes in URLs
     filePath = filePath.replace(/\/\//g, "/");
 
-    // Add colon after drive letter if missing (Windows paths)
-    filePath = filePath.replace(/^([a-zA-Z])\//, "$1:/");
+    if (process.platform === "win32") {
+      // Add colon after drive letter if missing (Windows paths)
+      filePath = filePath.replace(/^([a-zA-Z])\//, "$1:/");
 
-    // Convert forward slashes to backslashes for Windows
-    filePath = filePath.replace(/\//g, "\\");
+      // Convert forward slashes to backslashes for Windows
+      filePath = filePath.replace(/\//g, "\\");
+    } else {
+      // On Linux/Mac, Chromium's standard URL parser treats the first path
+      // segment of local-resource:///home/... as the hostname, normalizing
+      // the URL to local-resource://home/... The leading slash is lost.
+      // Restore it.
+      if (!filePath.startsWith("/")) {
+        filePath = "/" + filePath;
+      }
+    }
 
     try {
       const fileUrl = pathToFileURL(filePath).href;

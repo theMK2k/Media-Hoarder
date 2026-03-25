@@ -15,6 +15,7 @@
 - [x] BUG: Settings Movies/Series Sourcepath checkboxes do not bind correctly!
 - [x] BUG: rescan snackbar disappears automatically
 - [x] BUG: Source path is clickable in media card, but needs to be translated to the path's name in order to work in the property dialog
+- [x] BUG: path handling for poster images on Linux
 
 ## v1.5.0
 
