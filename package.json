@@ -140,7 +140,7 @@
     "babel-plugin-add-module-exports": "1.0.4",
     "babel-plugin-module-resolver": "5.0.2",
     "check-node-version": "4.2.1",
-    "electron": "40.8.0",
+    "electron": "40.8.5",
     "electron-builder": "26.8.1",
     "electron-devtools-installer": "4.0.0",
     "electron-icon-builder": "2.0.1",
