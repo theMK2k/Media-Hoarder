@@ -1,6 +1,15 @@
 # DONE
 
-## Next (1.5.1)
+## Next (v1.5.2)
+
+### Features
+
+- [x] support zoom levels
+  - 50% - 300%
+  - adjust in Settings or everywhere with CTRL + `+` / `-` or mousewheel `up` / `down`
+  - zoom levels are stored and survive restarts
+
+## v1.5.1
 
 ### Features
 
