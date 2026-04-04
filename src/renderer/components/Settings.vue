@@ -159,6 +159,27 @@
         -->
 
         <v-col class="settings-row">
+          <h3>{{ $t("Zoom Level") }}</h3>
+
+          <v-card-text class="mk-light-grey" style="padding-left: 4px">{{
+            $t("Adjust the zoom level to increase or decrease the size of all content_ This is useful for visually impaired users_")
+          }}</v-card-text>
+
+          <v-row align="center" style="margin-left: 4px">
+            <v-btn icon variant="text" size="small" v-on:click="decreaseZoom" :disabled="$shared.zoomLevel <= 0.5">
+              <v-icon>mdi-minus</v-icon>
+            </v-btn>
+            <span style="min-width: 60px; text-align: center">{{ Math.round($shared.zoomLevel * 100) }}%</span>
+            <v-btn icon variant="text" size="small" v-on:click="increaseZoom" :disabled="$shared.zoomLevel >= 3.0">
+              <v-icon>mdi-plus</v-icon>
+            </v-btn>
+            <v-btn variant="text" size="small" color="primary" v-on:click="resetZoom" style="margin-left: 8px">{{
+              $t("Reset")
+            }}</v-btn>
+          </v-row>
+        </v-col>
+
+        <v-col class="settings-row">
           <h3>{{ $t("Log Level") }}</h3>
 
           <v-card-text class="mk-light-grey">{{
@@ -1157,6 +1178,18 @@ export default {
   methods: {
     moment() {
       return moment;
+    },
+
+    increaseZoom() {
+      store.increaseZoomLevel();
+    },
+
+    decreaseZoom() {
+      store.decreaseZoomLevel();
+    },
+
+    resetZoom() {
+      store.resetZoomLevel();
     },
 
     async browseMediaplayerPath() {

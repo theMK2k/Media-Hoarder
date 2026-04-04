@@ -4,6 +4,10 @@
 const _origAEL = EventTarget.prototype.addEventListener;
 EventTarget.prototype.addEventListener = function (type, listener, options) {
   if (type === "touchstart" || type === "touchmove" || type === "wheel" || type === "mousewheel") {
+    // Respect explicit passive: false (e.g. zoom ctrl+wheel needs preventDefault)
+    if (typeof options === "object" && options.passive === false) {
+      return _origAEL.call(this, type, listener, options);
+    }
     const opts = typeof options === "object" ? { ...options, passive: true } : { capture: !!options, passive: true };
     return _origAEL.call(this, type, listener, opts);
   }

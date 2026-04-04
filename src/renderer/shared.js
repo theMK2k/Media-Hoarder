@@ -21,6 +21,7 @@ const state = reactive({
   sidenav: null,
   searchText: null,
   logLevel: 0,
+  zoomLevel: 1.0,
 
   isScanning: false,
 

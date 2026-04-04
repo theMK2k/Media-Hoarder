@@ -1411,12 +1411,16 @@
                           'mk-search-highlight': $shared.filterIMDBNumVotesActive,
                         }"
                       >
-                        {{ expanded ? '$collapse' : '$expand' }}
+                        {{ expanded ? "$collapse" : "$expand" }}
                       </v-icon>
                       <v-tooltip location="bottom" v-if="editFilters.isEditFilters">
                         <template v-slot:activator="{ props }">
                           <span v-bind="props">
-                            <v-switch v-model="filterGroup.visible" density="compact" style="margin-top: 0px"></v-switch>
+                            <v-switch
+                              v-model="filterGroup.visible"
+                              density="compact"
+                              style="margin-top: 0px"
+                            ></v-switch>
                           </span>
                         </template>
                         <span>{{ $t("Show/Hide this filter") }}</span>
@@ -1434,7 +1438,7 @@
                       class="align-center"
                       v-on:update:modelValue="onFilterIMDBNumVotesChanged"
                     >
-                    <!--
+                      <!--
                       <template v-slot:prepend><span style="display: inline-block; min-width: 4em; text-align: right">{{ $shared.filters.filterIMDBNumVotes[0].toLocaleString($shared.uiLanguage) }}</span></template>
                       <template v-slot:append><span style="display: inline-block; min-width: 4em">{{ $shared.filters.filterIMDBNumVotes[1].toLocaleString($shared.uiLanguage) }}</span></template>
                     -->
@@ -3271,25 +3275,20 @@
           >
         </span>
       </v-toolbar-title>
-      <!-- <div class="flex-grow-1"></div> -->
-      <v-spacer></v-spacer>
-
       <!-- Search Field -->
-      <v-row align-content="end" justify="end" style="text-align: right !important">
-        <v-text-field
-          :append-icon-cb="() => {}"
-          v-show="currentRoute && currentRoute.name === 'medialist'"
-          v-bind:placeholder="$t('Search') + '...'"
-          variant="underlined"
-          single-line
-          clearable
-          append-icon="mdi-magnify"
-          color="white"
-          hide-details
-          v-model="searchText"
-          style="margin-bottom: 12px"
-        ></v-text-field>
-      </v-row>
+      <v-text-field
+        :append-icon-cb="() => {}"
+        v-show="currentRoute && currentRoute.name === 'medialist'"
+        v-bind:placeholder="$t('Search') + '...'"
+        variant="underlined"
+        single-line
+        clearable
+        append-icon="mdi-magnify"
+        color="white"
+        hide-details
+        v-model="searchText"
+        style="margin-bottom: 12px; max-width: 300px; flex-shrink: 0"
+      ></v-text-field>
 
       <v-tooltip location="bottom">
         <template v-slot:activator="{ props }">
@@ -3405,7 +3404,7 @@
         <v-bottom-navigation
           fixed
           dark
-          v-show="scanInfo.show"
+          v-if="scanInfo.show"
           style="height: auto; padding: 4px 8px 4px 8px; z-index: 1010"
         >
           <v-row align-content="start" justify="start" style="margin-top: 0px; margin-bottom: 0px; max-width: 100%">
@@ -5126,6 +5125,32 @@ export default {
         logger.log("[onKeyDown] toggleFullScreen requested (F11)");
         this.toggleFullScreen();
       }
+
+      if (e.ctrlKey && (e.key === "+" || e.key === "=")) {
+        e.preventDefault();
+        store.increaseZoomLevel();
+      }
+
+      if (e.ctrlKey && e.key === "-") {
+        e.preventDefault();
+        store.decreaseZoomLevel();
+      }
+
+      if (e.ctrlKey && e.key === "0") {
+        e.preventDefault();
+        store.resetZoomLevel();
+      }
+    },
+
+    onWheel(e) {
+      if (e.ctrlKey) {
+        e.preventDefault();
+        if (e.deltaY < 0) {
+          store.increaseZoomLevel();
+        } else if (e.deltaY > 0) {
+          store.decreaseZoomLevel();
+        }
+      }
     },
 
     onFilterDragEnd(event) {
@@ -5167,6 +5192,7 @@ export default {
   // ### LifeCycleHooks ###
   created() {
     document.onkeydown = this.onKeyDown;
+    document.addEventListener("wheel", this.onWheel, { passive: false });
 
     this.$vuetify.theme.dark = true;
 
@@ -5439,6 +5465,9 @@ export default {
 };
 </script>
 <style>
+/*
+*  ### our own css classes
+*/
 .mk-navbar-main-item {
   height: 20px;
   margin-top: -2px;
@@ -5457,37 +5486,6 @@ export default {
   font-size: 0.875rem;
 }
 
-/* Vuetify 3 defaults dialog v-card-actions to flex-end (right-aligned).
-   Restore Vuetify 2 behavior (left-aligned); use <v-spacer> to right-align explicitly. */
-.v-dialog > .v-overlay__content > .v-card > .v-card-actions,
-.v-dialog > .v-overlay__content > form > .v-card > .v-card-actions {
-  justify-content: flex-start;
-}
-
-.v-input--density-default {
-  --v-input-control-height: 46px;
-}
-
-.filter-subheader {
-  color: rgba(255, 255, 255, 0.87) !important;
-  opacity: 1 !important;
-  padding-right: 0 !important;
-}
-
-.filter-subheader .v-list-subheader__text {
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-
-h1 {
-  margin-bottom: 16px;
-}
-
-a {
-  text-decoration: none;
-}
-
 .mk-light-grey {
   color: lightgrey !important;
 }
@@ -5498,6 +5496,10 @@ a {
 
 .mk-noshrink {
   flex-shrink: 0 !important;
+}
+
+.mk-grow {
+  flex-grow: 1 !important;
 }
 
 *::-webkit-scrollbar {
@@ -5726,7 +5728,39 @@ a {
   background-color: darkgreen;
 }
 
+/* ### Global ### */
+h1 {
+  margin-bottom: 16px;
+}
+
+a {
+  text-decoration: none;
+}
+
 /* ### Vuetify fixes ### */
+/* Vuetify 3 defaults dialog v-card-actions to flex-end (right-aligned).
+   Restore Vuetify 2 behavior (left-aligned); use <v-spacer> to right-align explicitly. */
+.v-dialog > .v-overlay__content > .v-card > .v-card-actions,
+.v-dialog > .v-overlay__content > form > .v-card > .v-card-actions {
+  justify-content: flex-start;
+}
+
+.v-input--density-default {
+  --v-input-control-height: 46px;
+}
+
+.filter-subheader {
+  color: rgba(255, 255, 255, 0.87) !important;
+  opacity: 1 !important;
+  padding-right: 0 !important;
+}
+
+.filter-subheader .v-list-subheader__text {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
 /* vertically center the selected text in v-select boxes */
 .v-select .v-field__input {
   padding-top: 8px;

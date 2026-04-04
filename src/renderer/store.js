@@ -219,6 +219,8 @@ dbsync.runSync(
         require("moment/locale/fr");
         moment.locale(shared.uiLanguage);
 
+        await applyZoomLevel();
+
         eventBus.dbInitialized();
 
         //logger.groupEnd();
@@ -5464,6 +5466,52 @@ async function setSetting($Key, $Value) {
   }
 }
 
+async function applyZoomLevel() {
+  try {
+    const zoomLevel = await getSetting("ZoomLevel");
+    if (zoomLevel !== null && zoomLevel !== undefined) {
+      const factor = parseFloat(zoomLevel);
+      if (factor >= 0.5 && factor <= 3.0) {
+        require("electron").webFrame.setZoomFactor(factor);
+        shared.zoomLevel = factor;
+      }
+    }
+  } catch (err) {
+    logger.error("[applyZoomLevel] error:", err);
+  }
+}
+
+function setZoomLevel(factor) {
+  require("electron").webFrame.setZoomFactor(factor);
+  shared.zoomLevel = factor;
+}
+
+function getZoomLevel() {
+  return require("electron").webFrame.getZoomFactor();
+}
+
+async function increaseZoomLevel() {
+  const current = getZoomLevel();
+  const newLevel = Math.min(3.0, Math.round((current + 0.1) * 10) / 10);
+  setZoomLevel(newLevel);
+  await setSetting("ZoomLevel", newLevel.toString());
+  eventBus.showSnackbar("info", $t("Zoom: {level}%", { level: Math.round(newLevel * 100) }), 1500);
+}
+
+async function decreaseZoomLevel() {
+  const current = getZoomLevel();
+  const newLevel = Math.max(0.5, Math.round((current - 0.1) * 10) / 10);
+  setZoomLevel(newLevel);
+  await setSetting("ZoomLevel", newLevel.toString());
+  eventBus.showSnackbar("info", $t("Zoom: {level}%", { level: Math.round(newLevel * 100) }), 1500);
+}
+
+async function resetZoomLevel() {
+  setZoomLevel(1.0);
+  await setSetting("ZoomLevel", "1.0");
+  eventBus.showSnackbar("info", $t("Zoom: {level}%", { level: 100 }), 1500);
+}
+
 async function launchMovie(movie) {
   const MediaplayerPath = await getSetting("MediaplayerPath");
 
@@ -10411,4 +10459,9 @@ export {
   getScanProcessDetails,
   getScanProcesses,
   clearFilterCache,
+  setZoomLevel,
+  getZoomLevel,
+  increaseZoomLevel,
+  decreaseZoomLevel,
+  resetZoomLevel,
 };
