@@ -64,7 +64,7 @@
         </v-list-item>
 
         <!-- Filters -->
-        <div v-show="currentRoute && currentRoute.name === 'medialist'">
+        <div v-show="currentRoute?.name?.startsWith('medialist')">
           <v-divider></v-divider>
 
           <v-list-subheader
@@ -3278,7 +3278,7 @@
       <!-- Search Field -->
       <v-text-field
         :append-icon-cb="() => {}"
-        v-show="currentRoute && currentRoute.name === 'medialist'"
+        v-show="currentRoute?.name?.startsWith('medialist')"
         v-bind:placeholder="$t('Search') + '...'"
         variant="underlined"
         single-line

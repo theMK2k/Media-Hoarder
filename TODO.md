@@ -2,6 +2,11 @@
 
 ## Prio 0
 
+- [ ] allow searching in episodes list
+  - [x] enable search also in episodes list
+  - [x] highlight search results in the media item cards
+  - [ ] allow for other filters to be applied as well (currently the filters from series are used which is the wrong approach)
+
 - [ ] BUG: Source Path filters for movies are sometimes shown for series
   - possibly due to hot reload
  

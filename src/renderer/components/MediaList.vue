@@ -44,7 +44,7 @@
       <template v-if="!Series_id_Movies_Owner">
         <h1 style="margin-bottom: 0px; margin-top: 0px; margin-left: 9px">
           {{ $t(mediatype.toUpperCase()) }} ({{ itemsFiltered.length.toLocaleString($shared.uiLanguage) }})
-          <v-tooltip bottom v-if="filtersList.length > 0">
+          <v-tooltip location="bottom" v-if="filtersList.length > 0">
             <template v-slot:activator="{ props }">
               <span v-bind="props">*</span>
             </template>
@@ -182,6 +182,19 @@
                       {{ series.item.yearDisplay }}
                     </span>
                   </span>
+                  <v-tooltip location="bottom" v-if="filtersList.length > 0">
+                    <template v-slot:activator="{ props }">
+                      <span v-bind="props">*</span>
+                    </template>
+                    <span>
+                      {{ $t("Applied Filters") }}:
+                      <ul>
+                        <li v-for="filter in filtersList" v-bind:key="filter">
+                          {{ filter }}
+                        </li>
+                      </ul>
+                    </span>
+                  </v-tooltip>
                 </div>
               </div>
             </v-list-item-title>
@@ -324,7 +337,11 @@
 
     <!-- mk-scrollcontainer -->
     <v-container class="pa-2" style="max-width: 100% !important; margin-top: 4px">
-      <v-row v-for="(mediaItem, i) in itemsFilteredPaginated" v-bind:key="i" v-bind:data-media-row-id="mediaItem.id_Movies">
+      <v-row
+        v-for="(mediaItem, i) in itemsFilteredPaginated"
+        v-bind:key="i"
+        v-bind:data-media-row-id="mediaItem.id_Movies"
+      >
         <v-col style="padding-bottom: 0px; padding-top: 8px">
           <mk-media-item-card
             v-bind:mediaItem="mediaItem"
@@ -1186,10 +1203,10 @@ export default {
     },
 
     searchText() {
-      if (this.specificMediaType == "Episodes") {
-        // we don't filter and don't highlight searchText if we're listing Episodes
-        return null;
-      }
+      // we now allow searching in episodes
+      // if (this.specificMediaType == "Episodes") {
+      //   return null;
+      // }
       return this.$shared.searchText;
     },
 
@@ -1386,6 +1403,7 @@ export default {
     },
 
     itemsFiltered() {
+      logger.log("[computed.itemsFiltered] this.searchText:", this.searchText);
       return this.items
         .filter((item) => {
           let isGood = true;
@@ -2827,10 +2845,10 @@ export default {
 
     async scrollToLastWatchedEpisode(options = {}) {
       const silent = !!options?.silent;
-      logger.log('[scrollToLastWatchedEpisode] START');
-      
+      logger.log("[scrollToLastWatchedEpisode] START");
+
       if (!this.canScrollToLastWatchedEpisode) {
-        logger.log('[scrollToLastWatchedEpisode] not possible to scroll, abort');
+        logger.log("[scrollToLastWatchedEpisode] not possible to scroll, abort");
         return;
       }
 
@@ -2851,10 +2869,10 @@ export default {
         return latest;
       }, null);
 
-      logger.log('[scrollToLastWatchedEpisode] latestWatchedEpisode:', latestWatchedEpisode);
+      logger.log("[scrollToLastWatchedEpisode] latestWatchedEpisode:", latestWatchedEpisode);
 
       if (!latestWatchedEpisode) {
-        logger.log('[scrollToLastWatchedEpisode] latestWatchedEpisode not found, abort');
+        logger.log("[scrollToLastWatchedEpisode] latestWatchedEpisode not found, abort");
 
         if (!silent) {
           eventBus.showSnackbar("info", $t("No watched episodes found in this series_"));
@@ -3088,7 +3106,7 @@ export default {
           });
         } else {
           logger.log(`[onDeleteMediaDialogYes] path '${this.deleteMediaDialog.location}' does not exist!`);
-          throw new Error(`path '${this.deleteMediaDialog.location}' does not exist!`)
+          throw new Error(`path '${this.deleteMediaDialog.location}' does not exist!`);
         }
 
         await store.clearFilterCache();
@@ -3557,7 +3575,9 @@ export default {
         }, null);
 
         if (latestWatchedEpisode) {
-          const targetIndex = this.itemsFiltered.findIndex((item) => item.id_Movies === latestWatchedEpisode.episode.id_Movies);
+          const targetIndex = this.itemsFiltered.findIndex(
+            (item) => item.id_Movies === latestWatchedEpisode.episode.id_Movies
+          );
 
           if (targetIndex >= 0) {
             targetCurrentPage = Math.floor(targetIndex / this.itemsPerPage) + 1;

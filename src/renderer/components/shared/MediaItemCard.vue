@@ -1054,10 +1054,10 @@ export default {
     },
 
     searchText() {
-      if (this.mediaItem && this.mediaItem.specificMediaType == "Episodes") {
-        // we don't filter and don't highlight searchText if we're listing Episodes
-        return null;
-      }
+      // we now support search in episodes listing
+      // if (this.mediaItem && this.mediaItem.specificMediaType == "Episodes") {
+      //   return null;
+      // }
       return this.$shared.searchText;
     },
 
