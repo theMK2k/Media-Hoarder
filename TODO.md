@@ -2,6 +2,9 @@
 
 ## Prio 0
 
+- [ ] BUG: go to Series, manipulate in Sourcepaths filter -> somehow, filters for Movies are shown
+  - [ ] go to Movies (even after just clearing the filter cache) -> change Source Paths filters -> somehow "Series" filters are shown
+
 - [ ] allow searching in episodes list
   - [x] enable search also in episodes list
   - [x] highlight search results in the media item cards

@@ -1,8 +1,8 @@
-# Media Hoarder v1.5.2-beta.1 Changelog
+# Media Hoarder v1.5.2-beta Changelog
 
-Fixes and changes of v1.5.2-beta.1:
+Fixes and changes of **v1.5.2-beta.1**:
 
-### Features
+## Features
 
 - [x] support of zoom levels
   - range: 50% - 300%
