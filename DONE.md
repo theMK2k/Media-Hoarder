@@ -9,6 +9,10 @@
   - adjust in Settings or everywhere with CTRL + `+` / `-` or mousewheel `up` / `down`
   - zoom levels are stored and survive restarts
 
+### Fixes
+
+- [x] FIX: don't show an error if IMDB does not provide parental guide for a medium (#114)
+
 ## v1.5.1
 
 ### Features

@@ -1407,6 +1407,10 @@ function getParentalGuideSeverityNumber(severity) {
 }
 
 function scrapeIMDBParentalGuideDataV3_getParentalGuideSeverityFromCategory(parentsGuideCategoriesData, categoryId) {
+  if (!parentsGuideCategoriesData) {
+    return null;
+  }
+  
   const parentsGuideData = parentsGuideCategoriesData.find((category) => category.category.id === categoryId);
 
   if (!parentsGuideData) {
