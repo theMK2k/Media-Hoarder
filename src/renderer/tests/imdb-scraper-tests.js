@@ -466,13 +466,13 @@ async function testIMDBreleaseinfo() {
 
   try {
     const expected = {
-      $IMDB_originalTitle: "Star Wars",
-      $IMDB_localTitle: "Star Wars: Episode IV - Eine neue Hoffnung",
-      $IMDB_primaryTitle: "Star Wars: Episode IV - A New Hope",
+      $IMDB_originalTitle: "Il buono, il brutto, il cattivo",
+      $IMDB_localTitle: "Zwei glorreiche Halunken",
+      $IMDB_primaryTitle: "The Good, the Bad and the Ugly",
     };
 
     const movie = {
-      IMDB_tconst: "tt0076759",
+      IMDB_tconst: "tt0060196",
     };
 
     const scrapeResult = await imdbScraper.scrapeIMDBreleaseinfo(movie, [{ name: "Germany" }], []);
