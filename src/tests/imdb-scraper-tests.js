@@ -1,6 +1,5 @@
-const imdbScraper = require("../renderer/imdb-scraper");
-
-const logger = require("../helpers/logger");
+import * as imdbScraper from "../renderer/imdb-scraper.js";
+import logger from "../helpers/logger.js";
 
 const status = {
   SUCCESS: 0,

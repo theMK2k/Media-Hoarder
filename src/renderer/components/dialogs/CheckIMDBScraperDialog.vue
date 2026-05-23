@@ -86,7 +86,7 @@
 // import router from "@/router"; // workaround in order to access router.app.$t
 
 import logger from "@helpers/logger.js";
-import * as imdbScraperTests from "@/tests/imdb-scraper-tests.js";
+import * as imdbScraperTests from "../../../tests/imdb-scraper-tests.js";
 
 // import * as store from "@/store.js";
 
