@@ -9,7 +9,13 @@ const logger = loglevel;
 
 // Large object filtering: objects exceeding this char size get truncated to a shallow preview.
 // Tunable at runtime via DevTools console: logger.maxLogSize = 5000
-logger.maxLogSize = 1024;
+// Watchdog processes (detected via process.argv) always get Infinity — full output, no truncation.
+const isWatchdog =
+  typeof process !== "undefined" &&
+  Array.isArray(process.argv) &&
+  process.argv.some((arg) => typeof arg === "string" && arg.toLowerCase().includes("watchdog"));
+
+logger.maxLogSize = isWatchdog ? Infinity : 1024;
 
 // Array of string or regular expressions which, when the first 200 characters of the logged item match, the full log item is provided.
 // Persisted to localStorage so patterns survive restarts.
