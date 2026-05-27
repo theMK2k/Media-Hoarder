@@ -2,6 +2,8 @@
 
 ## Prio 0
 
+- [ ] Grid view for media (#121)
+
 - [ ] BUG: go to Series, manipulate in Sourcepaths filter -> somehow, filters for Movies are shown
   - [ ] go to Movies (even after just clearing the filter cache) -> change Source Paths filters -> somehow "Series" filters are shown
 
