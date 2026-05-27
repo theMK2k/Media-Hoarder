@@ -5,8 +5,6 @@ const nodemailer = require("nodemailer");
 
 const logger = require("./helpers/logger");
 const helpers = require("./helpers/helpers");
-const imdbScraperTests = require("./tests/imdb-scraper-tests");
-
 const cmdArguments = minimist(process.argv.slice(2));
 
 const config = {
@@ -47,6 +45,8 @@ const log = {
 };
 
 module.exports = (async () => {
+  const imdbScraperTests = await import("./tests/imdb-scraper-tests.js");
+
   logger.info("Syntax: media-hoarder-imdb-scraper-watchdog [options]");
   logger.info("");
   logger.info("options:");

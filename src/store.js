@@ -16,7 +16,7 @@ const statAsync = util.promisify(fs.stat);
 const execAsync = util.promisify(child_process.exec);
 const readFileAsync = util.promisify(fs.readFile);
 
-import { eventBus } from "@/eventBus.js";
+import { eventBus } from "@renderer/eventBus.js";
 
 import logger from "@helpers/logger.js";
 import * as db from "@helpers/db.js";
@@ -27,8 +27,8 @@ import { findIMDBtconstIncluded, findIMDBtconstInNFO, findIMDBtconstByFileOrDirn
 import { languageNameCodeMapping, languageCodeNameMapping } from "./languages.js";
 import * as mediainfo from "./mediainfo.js";
 
-import { shared } from "./shared.js";
-import i18n from "@/i18n.js";
+import { shared } from "@renderer/shared.js";
+import i18n from "@renderer/i18n.js";
 const $t = i18n.global.t;
 
 import * as imdbScraper from "./imdb-scraper.js";
@@ -218,6 +218,8 @@ dbsync.runSync(
         require("moment/locale/de");
         require("moment/locale/fr");
         moment.locale(shared.uiLanguage);
+
+        await applyZoomLevel();
 
         eventBus.dbInitialized();
 
@@ -5464,6 +5466,52 @@ async function setSetting($Key, $Value) {
   }
 }
 
+async function applyZoomLevel() {
+  try {
+    const zoomLevel = await getSetting("ZoomLevel");
+    if (zoomLevel !== null && zoomLevel !== undefined) {
+      const factor = parseFloat(zoomLevel);
+      if (factor >= 0.5 && factor <= 3.0) {
+        require("electron").webFrame.setZoomFactor(factor);
+        shared.zoomLevel = factor;
+      }
+    }
+  } catch (err) {
+    logger.error("[applyZoomLevel] error:", err);
+  }
+}
+
+function setZoomLevel(factor) {
+  require("electron").webFrame.setZoomFactor(factor);
+  shared.zoomLevel = factor;
+}
+
+function getZoomLevel() {
+  return require("electron").webFrame.getZoomFactor();
+}
+
+async function increaseZoomLevel() {
+  const current = getZoomLevel();
+  const newLevel = Math.min(3.0, Math.round((current + 0.1) * 10) / 10);
+  setZoomLevel(newLevel);
+  await setSetting("ZoomLevel", newLevel.toString());
+  eventBus.showSnackbar("info", $t("Zoom: {level}%", { level: Math.round(newLevel * 100) }), 1500);
+}
+
+async function decreaseZoomLevel() {
+  const current = getZoomLevel();
+  const newLevel = Math.max(0.5, Math.round((current - 0.1) * 10) / 10);
+  setZoomLevel(newLevel);
+  await setSetting("ZoomLevel", newLevel.toString());
+  eventBus.showSnackbar("info", $t("Zoom: {level}%", { level: Math.round(newLevel * 100) }), 1500);
+}
+
+async function resetZoomLevel() {
+  setZoomLevel(1.0);
+  await setSetting("ZoomLevel", "1.0");
+  eventBus.showSnackbar("info", $t("Zoom: {level}%", { level: 100 }), 1500);
+}
+
 async function launchMovie(movie) {
   const MediaplayerPath = await getSetting("MediaplayerPath");
 
@@ -10411,4 +10459,9 @@ export {
   getScanProcessDetails,
   getScanProcesses,
   clearFilterCache,
+  setZoomLevel,
+  getZoomLevel,
+  increaseZoomLevel,
+  decreaseZoomLevel,
+  resetZoomLevel,
 };

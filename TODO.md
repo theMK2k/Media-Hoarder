@@ -2,6 +2,16 @@
 
 ## Prio 0
 
+- [ ] Grid view for media (#121)
+
+- [ ] BUG: go to Series, manipulate in Sourcepaths filter -> somehow, filters for Movies are shown
+  - [ ] go to Movies (even after just clearing the filter cache) -> change Source Paths filters -> somehow "Series" filters are shown
+
+- [ ] allow searching in episodes list
+  - [x] enable search also in episodes list
+  - [x] highlight search results in the media item cards
+  - [ ] allow for other filters to be applied as well (currently the filters from series are used which is the wrong approach)
+
 - [ ] BUG: Source Path filters for movies are sometimes shown for series
   - possibly due to hot reload
  

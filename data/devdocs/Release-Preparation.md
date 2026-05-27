@@ -25,7 +25,7 @@ Go to <github.com> and create a release draft, prepare the **tag** `v1.x.y` and 
 git pull
 git checkout release-next
 npm i
-./build-win.sh
+./build-win-stable.sh
 
 cd RELEASE
 gh release list

@@ -1,7 +1,7 @@
-import { reactive, computed } from "vue";
+﻿import { reactive, computed } from "vue";
 import * as helpers from "@helpers/helpers.js";
-import * as imdbScraperTests from "./tests/imdb-scraper-tests.js";
-import { enmFilterSortModes } from "./enums/enmFilterSortModes.js";
+import * as imdbScraperTests from "@/tests/imdb-scraper-tests.js";
+import { enmFilterSortModes } from "@/enums/enmFilterSortModes.js";
 
 // Reactive state (replaces Vue 2 data)
 const state = reactive({
@@ -21,6 +21,7 @@ const state = reactive({
   sidenav: null,
   searchText: null,
   logLevel: 0,
+  zoomLevel: 1.0,
 
   isScanning: false,
 

@@ -1,14 +1,15 @@
-const child_process = require("child_process");
-const util = require("util");
+import child_process from "child_process";
+import util from "util";
 
-const xml2js = require("xml2js");
+import logger from "@helpers/logger.js";
 
-const logger = require("./helpers/logger");
-const helpers = require("./helpers/helpers");
-const mediainfoTrackDefinition = require("./object-definitions/mediainfo-track");
-const { languageNameCodeMapping } = require("./languages");
+// Use window.require for CommonJS modules that don't work with Vite
+const xml2js = window.require("xml2js");
+import * as helpers from "@helpers/helpers.js";
+import mediainfoTrackDefinition from "./object-definitions/mediainfo-track.js";
+import { languageNameCodeMapping } from "./languages.js";
 
-const { shared } = require("./shared");
+import { shared } from "@renderer/shared.js";
 
 const execAsync = util.promisify(child_process.exec);
 

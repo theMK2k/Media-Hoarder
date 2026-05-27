@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <v-dialog
     :model-value="show"
     @update:model-value="$emit('update:show', $event)"
@@ -122,7 +122,7 @@
 
 <script>
 // import Vue from "vue";
-// import router from "@/router"; // workaround in order to access router.app.$t
+// import router from "@renderer/router.js"; // workaround in order to access router.app.$t
 // import * as marked from "marked";
 import { marked } from "marked";
 

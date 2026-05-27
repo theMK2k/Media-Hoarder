@@ -160,4 +160,4 @@ const mediainfoTrackDefinition = {
   $Encoded_Library_Name_Trimmed: null,
 };
 
-module.exports = mediainfoTrackDefinition;
+export default mediainfoTrackDefinition;

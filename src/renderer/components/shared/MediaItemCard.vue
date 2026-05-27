@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <v-card
     dark
     flat
@@ -1034,7 +1034,7 @@ import * as Humanize from "humanize-plus";
 
 import * as helpers from "@helpers/helpers.js";
 import * as store from "@/store.js";
-import i18n from "@/i18n.js";
+import i18n from "@renderer/i18n.js";
 const $t = i18n.global.t;
 
 export default {
@@ -1054,10 +1054,10 @@ export default {
     },
 
     searchText() {
-      if (this.mediaItem && this.mediaItem.specificMediaType == "Episodes") {
-        // we don't filter and don't highlight searchText if we're listing Episodes
-        return null;
-      }
+      // we now support search in episodes listing
+      // if (this.mediaItem && this.mediaItem.specificMediaType == "Episodes") {
+      //   return null;
+      // }
       return this.$shared.searchText;
     },
 

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <v-dialog
     v-if="mediaItem"
     :model-value="show"
@@ -431,8 +431,8 @@ import * as _ from "lodash";
 
 import * as helpers from "@helpers/helpers.js";
 import * as store from "@/store.js";
-import { eventBus } from "@/eventBus.js";
-import i18n from "@/i18n.js";
+import { eventBus } from "@renderer/eventBus.js";
+import i18n from "@renderer/i18n.js";
 const $t = i18n.global.t;
 
 import { languageCodeNameMapping } from "@/languages.js";

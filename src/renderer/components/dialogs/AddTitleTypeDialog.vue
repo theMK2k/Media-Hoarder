@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <v-dialog
     :model-value="show"
     @update:model-value="$emit('update:show', $event)"
@@ -36,9 +36,9 @@ import * as store from "@/store";
 // import * as helpers from "@helpers/helpers";
 // const logger = require("../helpers/logger");
 
-import { eventBus } from "@/eventBus";
+import { eventBus } from "@renderer/eventBus.js";
 
-import TitleType from "@/components/shared/TitleType.vue";
+import TitleType from "@renderer/components/shared/TitleType.vue";
 
 export default {
   props: ["show"],

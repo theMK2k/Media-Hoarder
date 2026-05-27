@@ -1,4 +1,4 @@
-<!-- This is a generalized dialog for properties like age rating, audio format, genre etc. -->
+﻿<!-- This is a generalized dialog for properties like age rating, audio format, genre etc. -->
 <template>
   <v-dialog
     :model-value="show"
@@ -322,10 +322,10 @@ import { shell } from "@electron/remote";
 
 import * as _ from "lodash";
 
-import MediaItemCard from "@/components/shared/MediaItemCard.vue";
+import MediaItemCard from "@renderer/components/shared/MediaItemCard.vue";
 
 import * as store from "@/store.js";
-import i18n from "@/i18n.js";
+import i18n from "@renderer/i18n.js";
 const $t = i18n.global.t;
 import * as helpers from "@helpers/helpers.js";
 import logger from "@helpers/logger.js";
@@ -334,9 +334,9 @@ import { languageCodeNameMapping } from "@/languages.js";
 
 import { scrapeIMDBPersonData } from "@/imdb-scraper.js";
 
-import { eventBus } from "@/eventBus.js";
+import { eventBus } from "@renderer/eventBus.js";
 
-import CompactMovieListRow from "@/components/shared/CompactMovieListRow.vue";
+import CompactMovieListRow from "@renderer/components/shared/CompactMovieListRow.vue";
 
 export default {
   props: [
@@ -357,7 +357,7 @@ export default {
   components: {
     "mk-compact-movie-list-row": CompactMovieListRow,
     "mk-media-item-card": MediaItemCard,
-    "mk-media-property-dialog": defineAsyncComponent(() => import("@/components/dialogs/MediaPropertyDialog.vue")),
+    "mk-media-property-dialog": defineAsyncComponent(() => import("@renderer/components/dialogs/MediaPropertyDialog.vue")),
   },
 
   computed: {

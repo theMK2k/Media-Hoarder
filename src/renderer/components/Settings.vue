@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div style="width: 100%; margin-left: 8px">
     <h1>
       <v-btn variant="text" v-on:click="$router.go(-1)">
@@ -157,6 +157,27 @@
             ></v-select>
           </v-row>
         -->
+
+        <v-col class="settings-row">
+          <h3>{{ $t("Zoom Level") }}</h3>
+
+          <v-card-text class="mk-light-grey" style="padding-left: 4px">{{
+            $t("Adjust the zoom level to increase or decrease the size of all content_ This is useful for visually impaired users_")
+          }}</v-card-text>
+
+          <v-row align="center" style="margin-left: 4px">
+            <v-btn icon variant="text" size="small" v-on:click="decreaseZoom" :disabled="$shared.zoomLevel <= 0.5">
+              <v-icon>mdi-minus</v-icon>
+            </v-btn>
+            <span style="min-width: 60px; text-align: center">{{ Math.round($shared.zoomLevel * 100) }}%</span>
+            <v-btn icon variant="text" size="small" v-on:click="increaseZoom" :disabled="$shared.zoomLevel >= 3.0">
+              <v-icon>mdi-plus</v-icon>
+            </v-btn>
+            <v-btn variant="text" size="small" color="primary" v-on:click="resetZoom" style="margin-left: 8px">{{
+              $t("Reset")
+            }}</v-btn>
+          </v-row>
+        </v-col>
 
         <v-col class="settings-row">
           <h3>{{ $t("Log Level") }}</h3>
@@ -934,18 +955,18 @@ Chart.register(
 
 import logger from "@helpers/logger.js";
 
-import { eventBus } from "@/eventBus.js";
+import { eventBus } from "@renderer/eventBus.js";
 import * as store from "@/store.js";
-import i18n from "@/i18n.js";
+import i18n from "@renderer/i18n.js";
 const $t = i18n.global.t;
-import SourcePath from "@/components/shared/SourcePath.vue";
-import Dialog from "@/components/dialogs/Dialog.vue";
-import AddRegionsDialog from "@/components/dialogs/AddRegionsDialog.vue";
-import AddLanguagesDialog from "@/components/dialogs/AddLanguagesDialog.vue";
-import AddTitleTypeDialog from "@/components/dialogs/AddTitleTypeDialog.vue";
-import EditReleaseAttributeDialog from "@/components/dialogs/EditReleaseAttributeDialog.vue";
-import ScanHistoryItemDialog from "@/components/dialogs/ScanHistoryItemDialog.vue";
-import TitleType from "@/components/shared/TitleType.vue";
+import SourcePath from "@renderer/components/shared/SourcePath.vue";
+import Dialog from "@renderer/components/dialogs/Dialog.vue";
+import AddRegionsDialog from "@renderer/components/dialogs/AddRegionsDialog.vue";
+import AddLanguagesDialog from "@renderer/components/dialogs/AddLanguagesDialog.vue";
+import AddTitleTypeDialog from "@renderer/components/dialogs/AddTitleTypeDialog.vue";
+import EditReleaseAttributeDialog from "@renderer/components/dialogs/EditReleaseAttributeDialog.vue";
+import ScanHistoryItemDialog from "@renderer/components/dialogs/ScanHistoryItemDialog.vue";
+import TitleType from "@renderer/components/shared/TitleType.vue";
 
 import * as helpers from "@helpers/helpers.js";
 import { languageCodeNameMapping } from "@/languages.js";
@@ -1157,6 +1178,18 @@ export default {
   methods: {
     moment() {
       return moment;
+    },
+
+    increaseZoom() {
+      store.increaseZoomLevel();
+    },
+
+    decreaseZoom() {
+      store.decreaseZoomLevel();
+    },
+
+    resetZoom() {
+      store.resetZoomLevel();
     },
 
     async browseMediaplayerPath() {

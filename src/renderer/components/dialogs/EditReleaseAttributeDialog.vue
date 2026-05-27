@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <v-dialog
     :model-value="show"
     @update:model-value="$emit('update:show', $event)"
@@ -31,11 +31,11 @@
 
 <script>
 // import Vue from "vue";
-// import router from "@/router"; // workaround in order to access router.app.$t
+// import router from "@renderer/router.js"; // workaround in order to access router.app.$t
 // const logger = require("../../helpers/logger");
 
-import { eventBus } from "@/eventBus";
-import i18n from "@/i18n.js";
+import { eventBus } from "@renderer/eventBus.js";
+import i18n from "@renderer/i18n.js";
 const $t = i18n.global.t;
 
 export default {
