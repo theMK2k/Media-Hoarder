@@ -1,4 +1,4 @@
-// HACK: Suppress Chromium passive event listener warnings caused by Vuetify 3 internals.
+﻿// HACK: Suppress Chromium passive event listener warnings caused by Vuetify 3 internals.
 // This forces passive: true on touch/wheel events. If scroll-prevention breaks in dialogs
 // or menus, this is the likely culprit. See CLAUDE.md for details.
 const _origAEL = EventTarget.prototype.addEventListener;
@@ -15,18 +15,18 @@ EventTarget.prototype.addEventListener = function (type, listener, options) {
 };
 
 import { createApp } from "vue";
-import App from "@/App.vue";
+import App from "@renderer/App.vue";
 
-import router from "@/router";
-import { shared } from "@/shared";
+import router from "@renderer/router.js";
+import { shared } from "@renderer/shared.js";
 import i18n from "./i18n";
-import vuetify from "@/plugins/vuetify";
+import vuetify from "@renderer/plugins/vuetify";
 
 import "roboto-fontface/css/roboto/roboto-fontface.css";
 import "@mdi/font/css/materialdesignicons.css";
 
 // Re-export eventBus for backward compatibility with existing imports
-export { eventBus } from "@/eventBus";
+export { eventBus } from "@renderer/eventBus.js";
 
 // Create Vue 3 app
 const app = createApp(App);

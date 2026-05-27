@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div style="display: flex; flex-direction: column; width: 100%" ref="mainContainer">
     <!-- TOP NAV -->
     <v-row
@@ -787,26 +787,26 @@ import { shell } from "@electron/remote";
 import moment from "moment";
 
 import * as store from "@/store.js";
-import i18n from "@/i18n.js";
+import i18n from "@renderer/i18n.js";
 const $t = i18n.global.t;
-import { eventBus } from "@/eventBus.js";
+import { eventBus } from "@renderer/eventBus.js";
 import { scrapeIMDBTrailerMediaURLs, scrapeIMDBmainPageData } from "@/imdb-scraper.js";
 
-import MediaItemCard from "@/components/shared/MediaItemCard.vue";
+import MediaItemCard from "@renderer/components/shared/MediaItemCard.vue";
 
-import EditMediaItemDialog from "@/components/dialogs/EditMediaItemDialog.vue";
-import ListDialog from "@/components/dialogs/ListDialog.vue";
-import VideoPlayerDialog from "@/components/dialogs/VideoPlayerDialog.vue";
-import LocalVideoPlayerDialog from "@/components/dialogs/LocalVideoPlayerDialog.vue";
-import LinkIMDBDialog from "@/components/dialogs/LinkIMDBDialog.vue";
-import Pagination from "@/components/shared/Pagination.vue";
-import RatingDemographicsDialog from "@/components/dialogs/RatingDemographicsDialog.vue";
-import Dialog from "@/components/dialogs/Dialog.vue";
-import ChatGPTDialog from "@/components/dialogs/ChatGPTDialog.vue";
+import EditMediaItemDialog from "@renderer/components/dialogs/EditMediaItemDialog.vue";
+import ListDialog from "@renderer/components/dialogs/ListDialog.vue";
+import VideoPlayerDialog from "@renderer/components/dialogs/VideoPlayerDialog.vue";
+import LocalVideoPlayerDialog from "@renderer/components/dialogs/LocalVideoPlayerDialog.vue";
+import LinkIMDBDialog from "@renderer/components/dialogs/LinkIMDBDialog.vue";
+import Pagination from "@renderer/components/shared/Pagination.vue";
+import RatingDemographicsDialog from "@renderer/components/dialogs/RatingDemographicsDialog.vue";
+import Dialog from "@renderer/components/dialogs/Dialog.vue";
+import ChatGPTDialog from "@renderer/components/dialogs/ChatGPTDialog.vue";
 
-const MediaPropertyDialog = defineAsyncComponent(() => import("@/components/dialogs/MediaPropertyDialog.vue"));
-import SeriesIMDBRatingHeatmapDialog from "@/components/dialogs/SeriesIMDBRatingHeatmapDialog.vue";
-import SeriesRescanDialog from "@/components/dialogs/SeriesRescanDialog.vue";
+const MediaPropertyDialog = defineAsyncComponent(() => import("@renderer/components/dialogs/MediaPropertyDialog.vue"));
+import SeriesIMDBRatingHeatmapDialog from "@renderer/components/dialogs/SeriesIMDBRatingHeatmapDialog.vue";
+import SeriesRescanDialog from "@renderer/components/dialogs/SeriesRescanDialog.vue";
 
 import * as helpers from "@helpers/helpers.js";
 import logger from "@helpers/logger.js";

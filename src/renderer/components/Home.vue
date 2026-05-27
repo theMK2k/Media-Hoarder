@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div style="width: 100%; height: 100%; display: flex; flex-direction: column">
     <div style="width: 100%; height: 100%; display: flex; flex-direction: column">
       <h1 style="margin-left: 8px">{{ $t("Home") }}</h1>
@@ -66,7 +66,7 @@
 
 <script>
 import * as store from "@/store";
-import { eventBus } from "@/eventBus.js";
+import { eventBus } from "@renderer/eventBus.js";
 
 import * as Humanize from "humanize-plus";
 

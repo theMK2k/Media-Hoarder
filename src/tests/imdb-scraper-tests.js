@@ -1,4 +1,4 @@
-import * as imdbScraper from "../renderer/imdb-scraper.js";
+﻿import * as imdbScraper from "../imdb-scraper.js";
 import logger from "../helpers/logger.js";
 
 const status = {

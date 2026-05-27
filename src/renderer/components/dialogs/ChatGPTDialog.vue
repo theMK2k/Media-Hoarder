@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <v-dialog
     :model-value="show"
     @update:model-value="$emit('update:show', $event)"
@@ -92,15 +92,15 @@
 
 <script>
 import * as store from "@/store.js";
-import i18n from "@/i18n.js";
+import i18n from "@renderer/i18n.js";
 const $t = i18n.global.t;
 import logger from "@helpers/logger.js";
 import { BrowserWindow } from "@electron/remote";
 import * as helpers from "@helpers/helpers.js";
-import { eventBus } from "@/eventBus.js";
+import { eventBus } from "@renderer/eventBus.js";
 
-import CompactMovieListRow from "@/components/shared/CompactMovieListRow.vue";
-import MediaItemCard from "@/components/shared/MediaItemCard.vue";
+import CompactMovieListRow from "@renderer/components/shared/CompactMovieListRow.vue";
+import MediaItemCard from "@renderer/components/shared/MediaItemCard.vue";
 
 export default {
   props: ["show"],

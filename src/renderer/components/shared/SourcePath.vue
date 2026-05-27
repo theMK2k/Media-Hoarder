@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div v-on:mouseover="isHovered = true" v-on:mouseleave="isHovered = false">
     <v-row style="margin: 0px">
       <v-card style="width: 100%">
@@ -33,9 +33,9 @@
 import logger from "@helpers/logger.js";
 
 import * as store from "@/store.js";
-import i18n from "@/i18n.js";
+import i18n from "@renderer/i18n.js";
 const $t = i18n.global.t;
-import { eventBus } from "@/eventBus.js";
+import { eventBus } from "@renderer/eventBus.js";
 
 export default {
   props: ["value"],

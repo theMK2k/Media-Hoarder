@@ -17,7 +17,12 @@
       "Bash(ls:*)",
       "Bash(grep:*)",
       "Bash(python -c \"import os,re;os.chdir\\(r''c:\\\\Data\\\\Code\\\\WebApps\\\\Media-Hoarder\\\\src\\\\renderer''\\);files=[''components/MediaList.vue'',''components/Settings.vue''];[print\\(f''{f}:{content[:m.start\\(\\)].count\\(chr\\(10\\)\\)+1}: {m.group\\(0\\).split\\(chr\\(10\\)\\)[0].strip\\(\\)}''\\) for f in files if os.path.exists\\(f\\) for content in [open\\(f\\).read\\(\\)] for m in re.finditer\\(r''<v-btn\\\\b\\([^>]*?\\)\\(?:>|/>\\)'',content,re.DOTALL\\) if ''variant='' not in m.group\\(1\\)]\")",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(Remove-Item -Force \"c:\\\\Data\\\\Code\\\\WebApps\\\\Media-Hoarder\\\\src\\\\find-imdb-tconst.js\")",
+      "Bash(Remove-Item -Force \"c:\\\\Data\\\\Code\\\\WebApps\\\\Media-Hoarder\\\\src\\\\mediainfo.js\")",
+      "Bash(Remove-Item -Force \"c:\\\\Data\\\\Code\\\\WebApps\\\\Media-Hoarder\\\\src\\\\db-migrations\\\\db-migrations.js\")",
+      "Bash(Remove-Item -Force \"c:\\\\Data\\\\Code\\\\WebApps\\\\Media-Hoarder\\\\src\\\\db-migrations\\\\2024-06-02 migrate to tbl_Movies_MI_Qualities.js\")",
+      "Bash(Remove-Item -Force \"c:\\\\Data\\\\Code\\\\WebApps\\\\Media-Hoarder\\\\src\\\\object-definitions\\\\imdb-data.js\")"
     ]
   }
 }

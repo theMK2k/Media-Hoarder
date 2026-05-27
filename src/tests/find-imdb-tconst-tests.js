@@ -6,8 +6,8 @@ const minimist = require("minimist");
 const readFileAsync = util.promisify(fs.readFile);
 
 const logger = require("../helpers/logger");
-const findIMDBtconst = require("../find-imdb-tconst");
-const { scrapeIMDBtechnicalData } = require("../imdb-scraper");
+let findIMDBtconst;
+let scrapeIMDBtechnicalData;
 
 const cmdArguments = minimist(process.argv.slice(2));
 
@@ -38,6 +38,10 @@ if (!config.mediatype) {
 }
 
 (async () => {
+  findIMDBtconst = await import("../find-imdb-tconst.js");
+  const imdbScraperModule = await import("../imdb-scraper.js");
+  scrapeIMDBtechnicalData = imdbScraperModule.scrapeIMDBtechnicalData;
+
   if (config.name) {
     const movie = {
       isDirectoryBased: false,

@@ -1,8 +1,8 @@
-import { createRouter, createWebHashHistory } from "vue-router";
+﻿import { createRouter, createWebHashHistory } from "vue-router";
 
-import Home from "@/components/Home.vue";
-import MediaList from "@/components/MediaList.vue";
-import Settings from "@/components/Settings.vue";
+import Home from "@renderer/components/Home.vue";
+import MediaList from "@renderer/components/MediaList.vue";
+import Settings from "@renderer/components/Settings.vue";
 
 // const logger = require('loglevel')
 

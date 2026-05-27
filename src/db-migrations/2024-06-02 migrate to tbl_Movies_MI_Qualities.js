@@ -1,4 +1,4 @@
-const logger = require("../helpers/logger");
+import logger from "@helpers/logger.js";
 
 function getName() {
   return "2024-06-02 migrate to tbl_Movies_MI_Qualities";

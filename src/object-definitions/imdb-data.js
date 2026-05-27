@@ -12,4 +12,4 @@ const imdbDataDefinition = {
   IMDB_Done: true,
 };
 
-module.exports = imdbDataDefinition;
+export default imdbDataDefinition;

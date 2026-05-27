@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <v-app>
     <!-- SIDEBAR -->
     <v-navigation-drawer v-model="$shared.sidenav" v-bind:width="sidenavWidth">
@@ -3487,21 +3487,21 @@ import { Sortable } from "sortablejs-vue3";
 import logger from "@helpers/logger.js";
 
 import * as store from "@/store.js";
-import i18n from "@/i18n.js";
+import i18n from "@renderer/i18n.js";
 const $t = i18n.global.t;
-import { shared } from "@/shared.js";
-import { eventBus } from "@/eventBus.js";
+import { shared } from "@renderer/shared.js";
+import { eventBus } from "@renderer/eventBus.js";
 import * as helpers from "@helpers/helpers.js";
 
-import { enmFilterSortModes } from "./enums/enmFilterSortModes.js";
+import { enmFilterSortModes } from "@/enums/enmFilterSortModes.js";
 
-import Dialog from "@/components/dialogs/Dialog.vue";
-import SearchDataDialog from "@/components/dialogs/SearchDataDialog.vue";
-import ScanOptionsDialog from "@/components/dialogs/ScanOptionsDialog.vue";
-import VersionDialog from "@/components/dialogs/VersionDialog.vue";
-import CheckIMDBScraperDialog from "@/components/dialogs/CheckIMDBScraperDialog.vue";
-import ChatGPTDialog from "@/components/dialogs/ChatGPTDialog.vue";
-import ScanHistoryItemDialog from "@/components/dialogs/ScanHistoryItemDialog.vue";
+import Dialog from "@renderer/components/dialogs/Dialog.vue";
+import SearchDataDialog from "@renderer/components/dialogs/SearchDataDialog.vue";
+import ScanOptionsDialog from "@renderer/components/dialogs/ScanOptionsDialog.vue";
+import VersionDialog from "@renderer/components/dialogs/VersionDialog.vue";
+import CheckIMDBScraperDialog from "@renderer/components/dialogs/CheckIMDBScraperDialog.vue";
+import ChatGPTDialog from "@renderer/components/dialogs/ChatGPTDialog.vue";
+import ScanHistoryItemDialog from "@renderer/components/dialogs/ScanHistoryItemDialog.vue";
 
 export default {
   components: {

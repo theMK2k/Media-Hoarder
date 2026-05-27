@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <v-dialog :model-value="show" @update:model-value="$emit('update:show', $event)" persistent max-width="1000px">
     <v-card>
       <v-card-title>
@@ -78,10 +78,10 @@
 
 <script>
 // import Vue from "vue";
-// import router from "@/router"; // workaround in order to access router.app.$t
+// import router from "@renderer/router.js"; // workaround in order to access router.app.$t
 import logger from "@helpers/logger.js";
 
-import { eventBus } from "@/eventBus.js";
+import { eventBus } from "@renderer/eventBus.js";
 
 export default {
   props: ["show", "title", "movie", "lists", "allowUseExistingLists", "allowCreateNewList"],

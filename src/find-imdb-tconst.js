@@ -1,8 +1,8 @@
-const path = require("path");
+import path from "path";
 
-const logger = require("./helpers/logger");
-const helpers = require("./helpers/helpers");
-const { scrapeIMDBFindPageSearchV3, scrapeIMDBtechnicalData } = require("./imdb-scraper");
+import logger from "@helpers/logger.js";
+import * as helpers from "@helpers/helpers.js";
+import { scrapeIMDBFindPageSearchV3, scrapeIMDBtechnicalData } from "./imdb-scraper.js";
 
 /**
  * Extract the IMDB tconst if it is included in the file or directory name, e.g. A Movie (2009)[tt123456789]

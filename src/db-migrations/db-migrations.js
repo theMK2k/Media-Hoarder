@@ -1,7 +1,9 @@
 /* eslint-disable no-unreachable */
-const logger = require("../helpers/logger");
+import logger from "@helpers/logger.js";
 
-const modules = [require("./2024-06-02 migrate to tbl_Movies_MI_Qualities")];
+import * as migration20240602 from "./2024-06-02 migrate to tbl_Movies_MI_Qualities.js";
+
+const modules = [migration20240602];
 
 async function runMigrations(db) {
   for (const module of modules) {

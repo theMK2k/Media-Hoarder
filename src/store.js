@@ -16,7 +16,7 @@ const statAsync = util.promisify(fs.stat);
 const execAsync = util.promisify(child_process.exec);
 const readFileAsync = util.promisify(fs.readFile);
 
-import { eventBus } from "@/eventBus.js";
+import { eventBus } from "@renderer/eventBus.js";
 
 import logger from "@helpers/logger.js";
 import * as db from "@helpers/db.js";
@@ -27,8 +27,8 @@ import { findIMDBtconstIncluded, findIMDBtconstInNFO, findIMDBtconstByFileOrDirn
 import { languageNameCodeMapping, languageCodeNameMapping } from "./languages.js";
 import * as mediainfo from "./mediainfo.js";
 
-import { shared } from "./shared.js";
-import i18n from "@/i18n.js";
+import { shared } from "@renderer/shared.js";
+import i18n from "@renderer/i18n.js";
 const $t = i18n.global.t;
 
 import * as imdbScraper from "./imdb-scraper.js";

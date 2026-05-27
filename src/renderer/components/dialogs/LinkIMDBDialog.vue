@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <v-dialog
     :model-value="show"
     @update:model-value="$emit('update:show', $event)"
@@ -175,8 +175,8 @@ import { scrapeIMDBAdvancedTitleSearchV3, scrapeIMDBFindPageSearchV3 } from "@/i
 // import * as helpers from "@helpers/helpers.js";
 import logger from "@helpers/logger.js";
 
-import { eventBus } from "@/eventBus.js";
-import i18n from "@/i18n.js";
+import { eventBus } from "@renderer/eventBus.js";
+import i18n from "@renderer/i18n.js";
 const $t = i18n.global.t;
 
 export default {
