@@ -15,6 +15,7 @@
     "find-imdb-tconst-tests": "node ./src/tests/find-imdb-tconst-tests.js",
     "format": "npx prettier --write \"./**/*.{js,vue}\"",
     "format:check": "npx prettier --check \"./**/*.{js,vue}\"",
+    "imdb-automator": "electron ./src/media-hoarder-imdb-automator-electron.js",
     "imdb-scraper-watchdog": "electron ./src/media-hoarder-imdb-scraper-watchdog-electron.js",
     "imdb-scraper-watchdog-local": "electron ./src/media-hoarder-imdb-scraper-watchdog-electron.js --useDumps --dumpScrapedHTML",
     "mediainfo-watchdog": "node ./src/media-hoarder-mediainfo-watchdog.js",
