@@ -2,6 +2,9 @@
 
 ## Prio 0
 
+- [WIP] IMDB Automator Scripts
+  - [WIP] visit an imdb page and interact, observe the network traffic to find the relevant graphql query
+
 - [ ] Grid view for media (#121)
 
 - [ ] BUG: go to Series, manipulate in Sourcepaths filter -> somehow, filters for Movies are shown
