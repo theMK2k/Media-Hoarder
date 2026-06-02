@@ -208,7 +208,7 @@ async function checkSendMail() {
     await transporter.sendMail({
       from: '"Media Hoarder IMDB Scraper Watchdog" <imdb-scraper-watchdog@hoarder.software>', // sender address
       to: config.smtpReceiver, // "bar@example.com, baz@example.com", // list of receivers
-      subject: `IMDB Scraper Watchdog: ${log.maxLevel === 2 ? "ERROR" : log.maxLevel === 1 ? "WARNING" : "SUCCESS"}`, // Subject line
+      subject: `IMDB Scraper Watchdog: ${log.maxLevel >= 3 ? "EXCEPTION" : log.maxLevel === 2 ? "ERROR" : log.maxLevel === 1 ? "WARNING" : "SUCCESS"}`, // Subject line
       text: JSON.stringify(log.messages, null, 2).replace(/\\u001b\[\d+m/g, ""),
     });
 
