@@ -1,6 +1,10 @@
 # DONE
 
-## Next (v1.5.2)
+## Next (v1.5.3)
+
+- [ ] SCRAPER: fix graphql request header
+
+## v1.5.2
 
 ### Features
 
