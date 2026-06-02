@@ -8,7 +8,7 @@ import * as helpers from "@helpers/helpers.js";
 
 import { electronBrowserFetch } from "@helpers/electron-browser-fetch";
 
-import graphqlURLsDefault from "../data/imdb-graphql-urls.json";
+import graphqlURLsDefault from "./data/imdb-graphql-urls.json";
 
 // Mutable copy of graphqlURLs that can be updated at runtime
 let graphqlURLs = graphqlURLsDefault;
