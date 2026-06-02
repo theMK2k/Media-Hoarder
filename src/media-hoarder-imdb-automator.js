@@ -4,17 +4,19 @@ const minimist = require("minimist");
 const logger = require("./helpers/logger");
 
 const cmdArguments = minimist(process.argv.slice(2));
-const searchTerm = cmdArguments.searchTerm || "xxx";
 
 logger.setLevel(cmdArguments.logLevel != undefined ? cmdArguments.logLevel : 2);
 
 module.exports = (async () => {
-  const { getFindPageSearchGraphqlURL } = await import("./helpers/imdb-automator.js");
+  const { getFindPageSearchGraphqlURL, getAdvancedTitleSearchGraphqlURL } = await import("./helpers/imdb-automator.js");
 
-  logger.info(`[imdb-automator] running getFindPageSearchGraphqlURL, searchTerm: ${searchTerm}`);
-
-  const graphqlURL = await getFindPageSearchGraphqlURL(searchTerm);
-
+  logger.info("[imdb-automator] running getFindPageSearchGraphqlURL");
+  const findPageSearchURL = await getFindPageSearchGraphqlURL();
   console.log("[imdb-automator] FindPageSearch GraphQL URL:");
-  console.log(graphqlURL);
+  console.log(findPageSearchURL);
+
+  logger.info("[imdb-automator] running getAdvancedTitleSearchGraphqlURL");
+  const advancedTitleSearchURL = await getAdvancedTitleSearchGraphqlURL();
+  console.log("[imdb-automator] AdvancedTitleSearch GraphQL URL:");
+  console.log(advancedTitleSearchURL);
 })();

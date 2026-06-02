@@ -2540,7 +2540,7 @@ async function scrapeIMDBAdvancedTitleSearchV3(title, titleTypes) {
     logger.log("[scrapeIMDBAdvancedTitleSearchV3] uri:", uri);
 
     const gqlTitles = JSON.parse(
-      (await helpers.requestAsync({ uri, headers: { "content-type": "application/json" } })).body
+      (await helpers.requestAsync({ uri, headers: { "content-type": "application/json", "X-Imdb-Client-Name": "imdb-web-next-localized" } })).body
     );
     handleGraphQLErrors(gqlTitles);
 
@@ -2731,7 +2731,7 @@ async function scrapeIMDBFindPageSearchV3(title) {
     logger.log("[scrapeIMDBFindPageSearchV3] uri:", uri);
 
     const gqlTitles = JSON.parse(
-      (await helpers.requestAsync({ uri, headers: { "content-type": "application/json" } })).body
+      (await helpers.requestAsync({ uri, headers: { "content-type": "application/json", "X-Imdb-Client-Name": "imdb-web-next-localized" } })).body
     );
     handleGraphQLErrors(gqlTitles);
 
@@ -3331,7 +3331,7 @@ async function scrapeGraphQLPaginated(uri, innerPath, resultArray = null, endCur
   try {
     res = await helpers.requestAsync({
       uri: uriUsed,
-      headers: { "content-type": "application/json" },
+      headers: { "content-type": "application/json", "X-Imdb-Client-Name": "imdb-web-next-localized" },
     });
 
     if (res.statusCode >= 400) {

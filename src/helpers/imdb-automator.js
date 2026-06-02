@@ -96,11 +96,10 @@ function watchForGraphqlRequest(ses, operationName, timeoutMs = GRAPHQL_CAPTURE_
   });
 }
 
-async function clickMorePopularMatches(bw) {
+async function clickButton(bw, selector, description) {
   const clicked = await bw.webContents.executeJavaScript(`
     (() => {
-      const btn = Array.from(document.querySelectorAll('button'))
-        .find(b => b.textContent.includes('More popular matches'));
+      const btn = document.querySelector(${JSON.stringify(selector)});
       if (!btn) return false;
       btn.scrollIntoView({ block: 'center' });
       btn.click();
@@ -108,8 +107,8 @@ async function clickMorePopularMatches(bw) {
     })()
   `);
 
-  if (!clicked) throw new Error('"More popular matches" button not found on page');
-  logger.log('[imdbAutomator] clicked "More popular matches"');
+  if (!clicked) throw new Error(`"${description}" button not found on page (selector: ${selector})`);
+  logger.log(`[imdbAutomator] clicked "${description}"`);
 }
 
 async function getFindPageSearchGraphqlURL() {
@@ -128,7 +127,7 @@ async function getFindPageSearchGraphqlURL() {
     await waitForRealPage(bw);
 
     const urlPromise = watchForGraphqlRequest(ses, "FindPageSearch");
-    await clickMorePopularMatches(bw);
+    await clickButton(bw, "button.ipc-see-more__button", "More popular matches");
 
     const graphqlURL = decodeURIComponent(await urlPromise);
     logger.log("[imdbAutomator] FindPageSearch URL:", graphqlURL);
@@ -138,4 +137,30 @@ async function getFindPageSearchGraphqlURL() {
   }
 }
 
-export { getFindPageSearchGraphqlURL };
+async function getAdvancedTitleSearchGraphqlURL() {
+  logger.log("[imdbAutomator] getAdvancedTitleSearchGraphqlURL");
+
+  const ses = getOrCreateSession();
+  const bw = new BrowserWindow({
+    show: false,
+    webPreferences: {
+      session: ses,
+    },
+  });
+
+  try {
+    await bw.loadURL(`https://www.imdb.com/search/title/?title=xxx`);
+    await waitForRealPage(bw);
+
+    const urlPromise = watchForGraphqlRequest(ses, "AdvancedTitleSearch");
+    await clickButton(bw, "button.ipc-see-more__button", "50 more");
+
+    const graphqlURL = decodeURIComponent(await urlPromise);
+    logger.log("[imdbAutomator] AdvancedTitleSearch URL:", graphqlURL);
+    return graphqlURL;
+  } finally {
+    if (!bw.isDestroyed()) bw.destroy();
+  }
+}
+
+export { getFindPageSearchGraphqlURL, getAdvancedTitleSearchGraphqlURL };
