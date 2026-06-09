@@ -9,10 +9,18 @@ import _ from "lodash";
 import windowStateKeeper from "@/helpers/electron-window-state";
 import { ElectronBlocker } from "@ghostery/adblocker-electron";
 import remoteMain from "@electron/remote/main";
+import _contextMenu from "electron-context-menu";
+const contextMenu = _contextMenu.default ?? _contextMenu;
 
 import * as helpers from "@/helpers/helpers";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
+
+// initialize global context menu
+contextMenu({
+  showSearchWithGoogle: false,
+  showInspectElement: false,
+});
 
 // DEBUG: Log environment details for diagnosing data path issues
 // console.log("[DEBUG:main] process.env.NODE_ENV:", JSON.stringify(process.env.NODE_ENV));

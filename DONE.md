@@ -1,6 +1,10 @@
 # DONE
 
-## Next (v1.5.3)
+## v1.5.4
+
+- [ ] add global context menu (Copy/Paste) for the entire app (#125, #126)
+
+## v1.5.3
 
 - [ ] SCRAPER: fix graphql request header
 
