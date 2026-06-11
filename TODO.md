@@ -1,6 +1,11 @@
 # TODO
 
-## Prio 0
+- [ ] IMDB now offers categorized keywords:
+  - Subgenres
+  - Franchise
+  - Plot Details (these are already used by us as Plot Keywords)
+  - Other
+  - see: https://www.imdb.com/title/tt0076759/keywords/ 
 
 - [WIP] IMDB Automator Scripts
   - [WIP] visit an imdb page and interact, observe the network traffic to find the relevant graphql query

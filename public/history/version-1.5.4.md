@@ -22,11 +22,15 @@ The theme has been updated to a more darker one with higher contrast, the layout
 
 <img alt="screenshot of Media Hoarder with its darker theme" src="https://github.com/user-attachments/assets/d24c1a44-542b-4857-8f9e-4506ca8488f0" />
 
-## Updates in 1.5.4 beta
+## Updates in 1.5.4
 
 ### Features
 
-- add context menu (Copy/Paste) for the entire app
+- add context menu (Copy/Paste) for the entire app (#126)
+
+### Fixes
+
+- SCRAPER: a major change in IMDB plot keywords needed to be addressed, our scraper has been updated accordingly
 
 ## Updates in 1.5.3
 
