@@ -2939,7 +2939,7 @@ async function scrapeIMDBplotKeywordsV3(movie, actualDuplicate) {
 
     const gqlPlotKeywordsEdges = await scrapeGraphQLPaginated(
       graphQLqueries.plotKeywords(movie.IMDB_tconst),
-      "data.title.keywords"
+      "data.title.keywordItemCategories[0].keywords"
     );
 
     gqlPlotKeywordsEdges.forEach((edge) => {

@@ -1,3 +1,9 @@
+/**
+ * IMDB Automator
+ * 
+ * Uses Electron to programatically browse IMDB pages in order to analyze the network traffic and ultimately
+ * find the caching.graphql in use
+**/
 import { BrowserWindow, session } from "@electron/remote";
 
 import logger from "@helpers/logger.js";
@@ -163,4 +169,30 @@ async function getAdvancedTitleSearchGraphqlURL() {
   }
 }
 
-export { getFindPageSearchGraphqlURL, getAdvancedTitleSearchGraphqlURL };
+async function getIMDBPlotKeywordsGraphqlURL() {
+  logger.log("[imdbAutomator] getIMDBPlotKeywordsGraphqlURL");
+
+  const ses = getOrCreateSession();
+  const bw = new BrowserWindow({
+    show: false,
+    webPreferences: {
+      session: ses,
+    },
+  });
+
+  try {
+    await bw.loadURL(`https://www.imdb.com/title/tt0076759/keywords/`);
+    await waitForRealPage(bw);
+
+    const urlPromise = watchForGraphqlRequest(ses, "TitleKeywordCategoryPagination");
+    await clickButton(bw, "button.ipc-see-more__button", "50 more");
+
+    const graphqlURL = decodeURIComponent(await urlPromise);
+    logger.log("[imdbAutomator] TitleKeywordCategoryPagination URL:", graphqlURL);
+    return graphqlURL;
+  } finally {
+    if (!bw.isDestroyed()) bw.destroy();
+  }
+}
+
+export { getFindPageSearchGraphqlURL, getAdvancedTitleSearchGraphqlURL, getIMDBPlotKeywordsGraphqlURL };
