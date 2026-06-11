@@ -82,8 +82,6 @@ gh release download --skip-existing --dir /path/to/release/backup/dir v1.x.y
 
 ## Check the SHA256 of every file
 
-
-
 ## Update Website
 
 - [ ] create new set of download locations in `downloads.json`
