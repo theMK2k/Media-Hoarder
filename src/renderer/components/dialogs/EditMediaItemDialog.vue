@@ -16,6 +16,52 @@
 
       <v-card-text style="padding-top: 0px; padding-bottom: 0px">
         <div>
+          <!-- Poster -->
+          <div>
+            <v-row style="margin-top: 8px; margin-left: 0px; margin-bottom: 0px">
+              <div style="font-size: 14px; margin-top: 10px">
+                {{ $t("Poster") }}
+              </div>
+            </v-row>
+            <div style="margin-top: 8px; margin-bottom: 8px">
+              <div
+                style="position: relative; height: 150px; width: 100px; cursor: pointer"
+                v-on:click="onShowFullPoster(displayedPosterLargeUrl || displayedPosterSmallUrl)"
+              >
+                <v-img
+                  v-if="displayedPosterSmallUrl"
+                  cover
+                  v-bind:src="displayedPosterSmallUrl"
+                  style="border-radius: 6px; height: 150px; width: 100px"
+                ></v-img>
+                <v-icon
+                  v-else
+                  disabled
+                  size="48"
+                  style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"
+                >
+                  mdi-filmstrip
+                </v-icon>
+                <v-tooltip
+                  v-if="displayedPosterSmallUrl && !displayedPosterLargeUrl"
+                  location="top"
+                >
+                  <template v-slot:activator="{ props }">
+                    <v-icon
+                      v-bind="props"
+                      color="warning"
+                      size="20"
+                      style="position: absolute; top: 4px; right: 4px; background-color: rgba(0,0,0,0.55); border-radius: 50%; padding: 2px"
+                    >
+                      mdi-alert
+                    </v-icon>
+                  </template>
+                  <span>{{ $t("The high resolution variant of this poster is missing_") }}</span>
+                </v-tooltip>
+              </div>
+            </div>
+          </div>
+
           <!-- Primary Title -->
           <v-row style="margin-top: 8px; margin-left: 0px; margin-bottom: -16px">
             <div style="font-size: 14px; margin-top: 10px">
@@ -422,6 +468,21 @@
         <v-btn class="xs-fullwidth" variant="tonal" color="primary" v-on:click.stop="onOKClick"> OK </v-btn>
       </v-card-actions>
     </v-card>
+
+    <mk-poster-preview-dialog
+      v-bind:show="posterPreviewDialog.show"
+      v-bind:posterUrl="posterPreviewDialog.fullPosterUrl"
+      v-on:update:show="posterPreviewDialog.show = $event"
+      v-on:request-add-replace="onAddReplacePoster"
+    ></mk-poster-preview-dialog>
+
+    <mk-poster-input-dialog
+      v-bind:show="posterInputDialog.show"
+      v-bind:hasCurrentPoster="!!posterInputDialog.fullPosterUrl"
+      v-on:update:show="posterInputDialog.show = $event"
+      v-on:confirm="onPosterInputConfirm"
+      v-on:cancel="posterInputDialog.show = false"
+    ></mk-poster-input-dialog>
   </v-dialog>
 </template>
 
@@ -438,7 +499,15 @@ const $t = i18n.global.t;
 import { languageCodeNameMapping } from "@/languages.js";
 import { deepDiffMapper } from "@helpers/deep-diff-mapper.js";
 
+import PosterInputDialog from "@renderer/components/dialogs/PosterInputDialog.vue";
+import PosterPreviewDialog from "@renderer/components/dialogs/PosterPreviewDialog.vue";
+
 export default {
+  components: {
+    "mk-poster-input-dialog": PosterInputDialog,
+    "mk-poster-preview-dialog": PosterPreviewDialog,
+  },
+
   props: ["show", "type", "caption", "mediaItem"],
 
   emits: ["update:show", "ok", "cancel"],
@@ -456,6 +525,15 @@ export default {
       selectedAudioLanguage: null,
       showAddSubtitleLanguageDialog: false,
       selectedSubtitleLanguage: null,
+      posterPreviewDialog: {
+        show: false,
+        fullPosterUrl: null,
+      },
+      posterInputDialog: {
+        show: false,
+        fullPosterUrl: null,
+      },
+      stagedPoster: null,
     };
   },
 
@@ -464,10 +542,19 @@ export default {
       logger.log("[mediaItem] changed:", newValue);
 
       this.mediaItemBackup = newValue ? JSON.parse(JSON.stringify(newValue)) : {};
+      this.stagedPoster = null;
     },
   },
 
   computed: {
+    displayedPosterSmallUrl() {
+      return (this.stagedPoster && this.stagedPoster.previewUrl) || this.mediaItem.IMDB_posterSmall_URL;
+    },
+
+    displayedPosterLargeUrl() {
+      return (this.stagedPoster && this.stagedPoster.previewUrl) || this.mediaItem.IMDB_posterLarge_URL;
+    },
+
     languages() {
       return Object.keys(languageCodeNameMapping)
         .map((languageCode) => {
@@ -572,6 +659,7 @@ export default {
       }
 
       let hasChanges = false;
+      const stagedPosterFields = [];
       const diff = deepDiffMapper.prune(deepDiffMapper.map(this.mediaItem, this.mediaItemBackup));
 
       logger.log("[MediaItemDialog.onOKClick] diff:", diff);
@@ -645,6 +733,53 @@ export default {
         await store.updateMediaRecordField(this.mediaItem.id_Movies, "plotSummaryFull", plotSummaryFull);
       }
 
+      if (this.stagedPoster) {
+        if (!this.mediaItem.IMDB_tconst) {
+          return eventBus.showSnackbar("error", $t("Cannot save poster_ No IMDB ID is linked to this item_"));
+        }
+
+        const largePath = `extras/${this.mediaItem.IMDB_tconst}_posterLarge.jpg`;
+        const smallPath = `extras/${this.mediaItem.IMDB_tconst}_posterSmall.jpg`;
+
+        try {
+          let largeBuffer;
+          let largeForCanvas;
+
+          if (this.stagedPoster.source.type === "data") {
+            const base64 = this.stagedPoster.source.dataUrl.split(",")[1] || "";
+            largeBuffer = Buffer.from(base64, "base64");
+            largeForCanvas = this.stagedPoster.source.dataUrl;
+          } else if (this.stagedPoster.source.type === "url") {
+            const response = await helpers.requestAsync({ url: this.stagedPoster.source.url, encoding: null });
+            largeBuffer = response.body;
+            largeForCanvas = "data:image/jpeg;base64," + largeBuffer.toString("base64");
+          }
+
+          const smallDataUrl = await this.resizeImageToDataUrl(largeForCanvas, 300, 400);
+          const smallBuffer = Buffer.from(smallDataUrl.split(",")[1] || "", "base64");
+
+          await helpers.writeBinaryFileToDataPath(largePath, largeBuffer);
+          await helpers.writeBinaryFileToDataPath(smallPath, smallBuffer);
+        } catch (err) {
+          logger.error("[onOKClick] failed to write poster:", err);
+          return eventBus.showSnackbar("error", $t("Failed to save poster_"));
+        }
+
+        await store.updateMediaRecordField(this.mediaItem.id_Movies, "IMDB_posterLarge_URL", largePath);
+        await store.updateMediaRecordField(this.mediaItem.id_Movies, "IMDB_posterSmall_URL", smallPath);
+
+        const ts = Date.now();
+        this.mediaItem.IMDB_posterLarge_URL =
+          "local-resource://" + helpers.getDataPath(largePath).replace(/\\/g, "\\\\") + "?t=" + ts;
+        this.mediaItem.IMDB_posterSmall_URL =
+          "local-resource://" + helpers.getDataPath(smallPath).replace(/\\/g, "\\\\") + "?t=" + ts;
+
+        stagedPosterFields.push("IMDB_posterLarge_URL", "IMDB_posterSmall_URL");
+        hasChanges = true;
+
+        this.stagedPoster = null;
+      }
+
       // /!\ Important /!\
       // If new fields are added to this dialog, also enhance store.deleteIMDBData
 
@@ -654,7 +789,7 @@ export default {
 
       logger.log("[MediaItemDialog.onOKClick] definedByUser (from db):", definedByUser);
 
-      Object.keys(diff).forEach((key) => {
+      [...Object.keys(diff), ...stagedPosterFields].forEach((key) => {
         if (!definedByUser.find((item) => item === key)) {
           definedByUser.push(key);
         }
@@ -687,6 +822,56 @@ export default {
       this.mediaItem.Genres.splice(index, 1);
 
       logger.log("[onRemoveGenre] genre array (after):", this.mediaItem.Genres);
+    },
+
+    onShowFullPoster(url) {
+      this.posterPreviewDialog.fullPosterUrl = url;
+      this.posterPreviewDialog.show = true;
+    },
+
+    onAddReplacePoster() {
+      logger.log("[onAddReplacePoster] currentUrl:", this.posterPreviewDialog.fullPosterUrl);
+      this.posterInputDialog.fullPosterUrl = this.posterPreviewDialog.fullPosterUrl;
+      this.posterInputDialog.show = true;
+    },
+
+    onPosterInputConfirm(payload) {
+      logger.log("[onPosterInputConfirm] payload:", payload);
+
+      const { source } = payload;
+      if (!source) {
+        this.posterInputDialog.show = false;
+        return;
+      }
+
+      const previewUrl = source.type === "data" ? source.dataUrl : source.url;
+
+      this.stagedPoster = { source, previewUrl };
+      this.posterPreviewDialog.fullPosterUrl = previewUrl;
+      this.posterInputDialog.show = false;
+    },
+
+    resizeImageToDataUrl(sourceUrl, maxWidth, maxHeight) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+          const scale = Math.min(maxWidth / img.naturalWidth, maxHeight / img.naturalHeight, 1);
+          const w = Math.max(1, Math.round(img.naturalWidth * scale));
+          const h = Math.max(1, Math.round(img.naturalHeight * scale));
+          const canvas = document.createElement("canvas");
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, w, h);
+          try {
+            resolve(canvas.toDataURL("image/jpeg", 0.85));
+          } catch (err) {
+            reject(err);
+          }
+        };
+        img.onerror = (err) => reject(err || new Error("Image load failed"));
+        img.src = sourceUrl;
+      });
     },
 
     onShowAddGenreDialog() {

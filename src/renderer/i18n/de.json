@@ -28,6 +28,24 @@
   "Add Audio Language": "Audiosprache Hinzufügen",
   "Subtitle Languages": "Untertitelsprachen",
   "Add Subtitle Language": "Untertitelsprache Hinzufügen",
+  "Poster": "Poster",
+  "ADD": "HINZUFÜGEN",
+  "REPLACE": "ERSETZEN",
+  "Add Poster": "Poster hinzufügen",
+  "Replace Poster": "Poster ersetzen",
+  "Load": "Laden",
+  "Preview": "Vorschau",
+  "Or load from URL": "Oder von URL laden",
+  "Drag & drop an image, click to browse, or paste with Ctrl+V": "Bild per Drag & Drop hierhin ziehen, klicken zum Durchsuchen oder mit Strg+V einfügen",
+  "No image is currently available for this poster_": "Für dieses Poster ist derzeit kein Bild verfügbar.",
+  "Cannot save poster_ No IMDB ID is linked to this item_": "Poster kann nicht gespeichert werden. Mit diesem Eintrag ist keine IMDB-ID verknüpft.",
+  "Failed to save poster_": "Poster konnte nicht gespeichert werden.",
+  "File is not an image_": "Datei ist kein Bild.",
+  "Failed to read file_": "Datei konnte nicht gelesen werden.",
+  "Failed to load image_": "Bild konnte nicht geladen werden.",
+  "The poster is shown in media item cards in the media list and in full screen view modes_ When replacing, provide the highest possible resolution_ A low-res variant will be derived automatically for the media list_": "Das Posterbild wird auf den Karten in der Medienliste und in Vollbild-Ansichten angezeigt. Beim Ersetzen die höchstmögliche Auflösung bereitstellen. Eine niedrig aufgelöste Variante wird für die Medienliste automatisch abgeleitet.",
+  "The high resolution variant of this poster is missing_": "Die hochauflösende Variante dieses Posters fehlt.",
+  "Provide the highest possible resolution_ A low-res variant will be derived automatically for the media list_": "Die höchstmögliche Auflösung bereitstellen. Eine niedrig aufgelöste Variante wird für die Medienliste automatisch abgeleitet.",
   "My Lists": "Meine Listen",
   "My Ratings": "Meine Bewertungen",
   "Metacritic Scores": "Metacritic Bewertungen",
@@ -1036,7 +1054,6 @@
   "Duration": "Dauer",
   "Media Scan Details": "Details zum Medienscan",
   "global re-scan": "Globales Einlesen der Medien",
-
   "movies added: {amount}": "Hinzugefügte Filme: {amount}",
   "{amount} extra": "{amount} Extra",
   "{amount} extra added": "{amount} Extra hinzugefügt",
@@ -1047,18 +1064,15 @@
   "movie extras added: {amount}": "Hinzugefügte Film-Extras: {amount}",
   "movies removed: {amount}": "Entfernte Filme: {amount}",
   "movie extras removed: {amount}": "Entfernte Film-Extras: {amount}",
-
   "series added: {amount}": "Hinzugefügte Serien: {amount}",
   "series removed: {amount}": "Entfernte Serien: {amount}",
   "series updated: {amount}": "Aktualisierte Serien: {amount}",
-
   "{amountEpisodes} episode": "{amountEpisodes} Episode",
   "{amountEpisodes} episode added": "{amountEpisodes} Episode hinzugefügt",
   "{amountEpisodes} episode removed": "{amountEpisodes} Episode entfernt",
   "{amountEpisodes} episodes": "{amountEpisodes} Episoden",
   "{amountEpisodes} episodes added": "{amountEpisodes} Episoden hinzugefügt",
   "{amountEpisodes} episodes removed": "{amountEpisodes} Episoden entfernt",
-
   "{amountEpisodes} episode with {amountExtras} extra": "{amountEpisodes} Episode mit {amountExtras} Extra",
   "{amountEpisodes} episode added with {amountExtras} extra": "{amountEpisodes} Episode hinzugefügt mit {amountExtras} Extra",
   "{amountEpisodes} episode removed with {amountExtras} extra": "{amountEpisodes} Episode entfernt mit {amountExtras} Extra",
@@ -1071,10 +1085,8 @@
   "{amountEpisodes} episodes with {amountExtras} extras": "{amountEpisodes} Episoden mit {amountExtras} Extras",
   "{amountEpisodes} episodes added with {amountExtras} extras": "{amountEpisodes} Episoden hinzugefügt mit {amountExtras} Extras",
   "{amountEpisodes} episodes removed with {amountExtras} extras": "{amountEpisodes} Episoden entfernt mit {amountExtras} Extras",
-
   "collection size grew by {amount}": "Sammlung ist um {amount} gewachsen",
   "collection size shrank by {amount}": "Sammlung ist um {amount} geschrumpft",
-
   "ScanProcessSummaryCategories": {
     "ADD_MOVIE": "Hinzugefügte Filme",
     "REMOVE_MOVIE": "Entfernte Filme",
@@ -1084,7 +1096,6 @@
     "UPDATE_SERIES": "Aktualisierte Serien",
     "REMOVE_SERIES": "Entfernte Serien"
   },
-
   "Rescan Finished": "Einlesen Abgeschlossen",
   "Show Details": "Details Anzeigen",
   "no changes": "keine Änderungen",

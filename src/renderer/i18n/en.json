@@ -28,6 +28,24 @@
   "Add Audio Language": "Add Audio Language",
   "Subtitle Languages": "Subtitle Languages",
   "Add Subtitle Language": "Add Subtitle Language",
+  "Poster": "Poster",
+  "ADD": "ADD",
+  "REPLACE": "REPLACE",
+  "Add Poster": "Add Poster",
+  "Replace Poster": "Replace Poster",
+  "Load": "Load",
+  "Preview": "Preview",
+  "Or load from URL": "Or load from URL",
+  "Drag & drop an image, click to browse, or paste with Ctrl+V": "Drag & drop an image, click to browse, or paste with Ctrl+V",
+  "No image is currently available for this poster_": "No image is currently available for this poster.",
+  "Cannot save poster_ No IMDB ID is linked to this item_": "Cannot save poster. No IMDB ID is linked to this item.",
+  "Failed to save poster_": "Failed to save poster.",
+  "File is not an image_": "File is not an image.",
+  "Failed to read file_": "Failed to read file.",
+  "Failed to load image_": "Failed to load image.",
+  "The poster is shown in media item cards in the media list and in full screen view modes_ When replacing, provide the highest possible resolution_ A low-res variant will be derived automatically for the media list_": "The poster is shown in media item cards in the media list and in full screen view modes. When replacing, provide the highest possible resolution. A low-res variant will be derived automatically for the media list.",
+  "The high resolution variant of this poster is missing_": "The high resolution variant of this poster is missing.",
+  "Provide the highest possible resolution_ A low-res variant will be derived automatically for the media list_": "Provide the highest possible resolution. A low-res variant will be derived automatically for the media list.",
   "My Lists": "My Lists",
   "My Ratings": "My Ratings",
   "Metacritic Scores": "Metacritic Scores",
@@ -1036,7 +1054,6 @@
   "Duration": "Duration",
   "Media Scan Details": "Media Scan Details",
   "global re-scan": "Global Media Re-Scan",
-
   "movies added: {amount}": "movies added: {amount}",
   "{amount} extra": "{amount} extra",
   "{amount} extra added": "{amount} extra added",
@@ -1047,18 +1064,15 @@
   "movie extras added: {amount}": "movie extras added: {amount}",
   "movies removed: {amount}": "movies removed: {amount}",
   "movie extras removed: {amount}": "movie extras removed: {amount}",
-
   "series added: {amount}": "series added: {amount}",
   "series removed: {amount}": "series removed: {amount}",
   "series updated: {amount}": "series updated: {amount}",
-
   "{amountEpisodes} episode": "{amountEpisodes} episode",
   "{amountEpisodes} episode added": "{amountEpisodes} episode added",
   "{amountEpisodes} episode removed": "{amountEpisodes} episode removed",
   "{amountEpisodes} episodes": "{amountEpisodes} episodes",
   "{amountEpisodes} episodes added": "{amountEpisodes} episodes added",
   "{amountEpisodes} episodes removed": "{amountEpisodes} episodes removed",
-
   "{amountEpisodes} episode with {amountExtras} extra": "{amountEpisodes} episode with {amountExtras} extra",
   "{amountEpisodes} episode added with {amountExtras} extra": "{amountEpisodes} episode added with {amountExtras} extra",
   "{amountEpisodes} episode removed with {amountExtras} extra": "{amountEpisodes} episode added with {amountExtras} extra",
@@ -1071,10 +1085,8 @@
   "{amountEpisodes} episodes with {amountExtras} extras": "{amountEpisodes} episodes with {amountExtras} extras",
   "{amountEpisodes} episodes added with {amountExtras} extras": "{amountEpisodes} episodes added with {amountExtras} extras",
   "{amountEpisodes} episodes removed with {amountExtras} extras": "{amountEpisodes} episodes removed with {amountExtras} extras",
-
   "collection size grew by {amount}": "collection size grew by {amount}",
   "collection size shrank by {amount}": "collection size shrank by {amount}",
-
   "ScanProcessSummaryCategories": {
     "ADD_MOVIE": "Added Movies",
     "REMOVE_MOVIE": "Removed Movies",
@@ -1084,7 +1096,6 @@
     "REMOVE_SERIES": "Removed Series",
     "UPDATE_SERIES": "Updated Series"
   },
-
   "Rescan Finished": "Rescan Finished",
   "Show Details": "Show Details",
   "no changes": "no change",

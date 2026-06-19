@@ -28,6 +28,24 @@
   "Add Audio Language": "Ajoute langue audio",
   "Subtitle Languages": "Langue des sous-titres",
   "Add Subtitle Language": "Ajoute langue des sous-titres",
+  "Poster": "Affiche",
+  "ADD": "AJOUTER",
+  "REPLACE": "REMPLACER",
+  "Add Poster": "Ajouter une affiche",
+  "Replace Poster": "Remplacer l'affiche",
+  "Load": "Charger",
+  "Preview": "Aperçu",
+  "Or load from URL": "Ou charger depuis une URL",
+  "Drag & drop an image, click to browse, or paste with Ctrl+V": "Glissez-déposez une image, cliquez pour parcourir ou collez avec Ctrl+V",
+  "No image is currently available for this poster_": "Aucune image n'est actuellement disponible pour cette affiche.",
+  "Cannot save poster_ No IMDB ID is linked to this item_": "Impossible d'enregistrer l'affiche. Aucun identifiant IMDB n'est lié à cet élément.",
+  "Failed to save poster_": "Échec de l'enregistrement de l'affiche.",
+  "File is not an image_": "Le fichier n'est pas une image.",
+  "Failed to read file_": "Échec de la lecture du fichier.",
+  "Failed to load image_": "Échec du chargement de l'image.",
+  "The poster is shown in media item cards in the media list and in full screen view modes_ When replacing, provide the highest possible resolution_ A low-res variant will be derived automatically for the media list_": "L'affiche est affichée sur les cartes de la liste des médias et dans les modes d'affichage en plein écran. Lors du remplacement, fournissez la résolution la plus élevée possible. Une variante basse résolution sera dérivée automatiquement pour la liste des médias.",
+  "The high resolution variant of this poster is missing_": "La variante haute résolution de cette affiche est manquante.",
+  "Provide the highest possible resolution_ A low-res variant will be derived automatically for the media list_": "Fournissez la résolution la plus élevée possible. Une variante basse résolution sera dérivée automatiquement pour la liste des médias.",
   "My Lists": "Mes Listes",
   "My Ratings": "Mes Evaluations",
   "Metacritic Scores": "Evaluations Metacritic",
@@ -1037,7 +1055,6 @@
   "Duration": "Durée",
   "Media Scan Details": "Détails de la recherche de média",
   "global re-scan": "Recherche globale des médias",
-
   "movies added: {amount}": "Films ajoutés: {amount}",
   "{amount} extra": "{amount} Extra",
   "{amount} extra added": "{amount} Extra ajouté",
@@ -1048,18 +1065,15 @@
   "movie extras added: {amount}": "Extras de film ajoutés: {amount}",
   "movies removed: {amount}": "Films supprimés: {amount}",
   "movie extras removed: {amount}": "Extras de film supprimés: {amount}",
-
   "series added: {amount}": "Séries ajoutées: {amount}",
   "series removed: {amount}": "Séries supprimées: {amount}",
   "series updated: {amount}": "Séries mises à jour: {amount}",
-
   "{amountEpisodes} episode": "{amountEpisodes} Épisode",
   "{amountEpisodes} episode added": "{amountEpisodes} Épisode ajouté",
   "{amountEpisodes} episode removed": "{amountEpisodes} Épisode supprimé",
   "{amountEpisodes} episodes": "{amountEpisodes} Épisodes",
   "{amountEpisodes} episodes added": "{amountEpisodes} Épisodes ajoutés",
   "{amountEpisodes} episodes removed": "{amountEpisodes} Épisodes supprimés",
-
   "{amountEpisodes} episode with {amountExtras} extra": "{amountEpisodes} Épisode avec {amountExtras} Extra",
   "{amountEpisodes} episode added with {amountExtras} extra": "{amountEpisodes} Épisode ajouté avec {amountExtras} Extra",
   "{amountEpisodes} episode removed with {amountExtras} extra": "{amountEpisodes} Épisode supprimé avec {amountExtras} Extra",
@@ -1072,10 +1086,8 @@
   "{amountEpisodes} episodes with {amountExtras} extras": "{amountEpisodes} Épisodes avec {amountExtras} Extras",
   "{amountEpisodes} episodes added with {amountExtras} extras": "{amountEpisodes} Épisodes ajoutés avec {amountExtras} Extras",
   "{amountEpisodes} episodes removed with {amountExtras} extras": "{amountEpisodes} Épisodes supprimés avec {amountExtras} Extras",
-
   "collection size grew by {amount}": "La collection a augmenté de {amount}",
   "collection size shrank by {amount}": "La collection a diminué de {amount}",
-
   "ScanProcessSummaryCategories": {
     "ADD_MOVIE": "Films ajoutés",
     "REMOVE_MOVIE": "Films supprimés",
@@ -1085,7 +1097,6 @@
     "UPDATE_SERIES": "Séries mises à jour",
     "REMOVE_SERIES": "Séries supprimées"
   },
-
   "Rescan Finished": "Nouvelle recherche terminée",
   "Show Details": "Afficher les détails",
   "no changes": "Aucun changement",

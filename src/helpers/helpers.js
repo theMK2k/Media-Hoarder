@@ -252,6 +252,12 @@ function getDirectoryName(pathString) {
   return "";
 }
 
+async function writeBinaryFileToDataPath(targetPath, buffer) {
+  const fullPath = getDataPath(targetPath);
+  await writeFileAsync(fullPath, buffer);
+  return true;
+}
+
 async function downloadFile(url, targetPath, redownload) {
   try {
     logger.log("[downloadFile] url:", url);
@@ -627,6 +633,7 @@ export {
   getYearsFromFileName,
   getDirectoryName,
   downloadFile,
+  writeBinaryFileToDataPath,
   setRequestAsyncDumpToFile,
   getRequestAsyncDumpToFile,
   requestAsync,

@@ -1,5 +1,13 @@
 # TODO
 
+- [ ] Poster Editor
+  - [X] show poster in EditMediaItemDialog
+  - [x] when poster is clicked, a preview dialog is shown with the poster in a bigger size
+  - [x] in the preview dialog, provide an "Add" / "Replace" button which opens a file / URL dialog to select a new poster
+  - [ ] currently only media with an IMDB tconst can have their poster saved, we should also allow this for media without IMDB tconst, maybe use the id_Movies but also tconst?
+  - [ ] decide what should happen on a rescan (currently any user-provided poster is replaced by the IMDB poster)
+  - [ ] BUG: after an existing poster has been replaced, the media list doesn't update the poster
+
 - [ ] IMDB now offers categorized keywords:
   - Subgenres
   - Franchise
