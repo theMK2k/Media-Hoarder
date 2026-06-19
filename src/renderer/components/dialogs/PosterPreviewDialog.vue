@@ -7,12 +7,7 @@
   >
     <v-card dark flat style="display: flex; flex-direction: column; height: 100%">
       <v-card-title style="display: flex; justify-content: space-between; align-items: center; flex: 0 0 auto">
-        <div style="display: flex; align-items: center; gap: 12px">
-          <span>{{ $t("Poster") }}</span>
-          <v-btn variant="tonal" color="primary" size="small" v-on:click="$emit('request-add-replace')">
-            {{ posterUrl ? $t("REPLACE") : $t("ADD") }}
-          </v-btn>
-        </div>
+        <span>{{ $t("Poster") }}</span>
         <v-btn icon="mdi-close" variant="text" v-on:click="onClose"></v-btn>
       </v-card-title>
       <div style="padding: 0 24px 12px 24px; font-size: 13px; opacity: 0.75; flex: 0 0 auto">
@@ -32,6 +27,9 @@
       <v-card-actions style="flex: 0 0 auto">
         <v-btn variant="tonal" color="secondary" v-on:click="onClose">
           {{ $t("Close") }}
+        </v-btn>
+        <v-btn variant="tonal" color="primary" v-on:click="$emit('request-add-replace')">
+          {{ posterUrl ? $t("REPLACE") : $t("ADD") }}
         </v-btn>
         <v-spacer></v-spacer>
       </v-card-actions>
