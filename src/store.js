@@ -23,6 +23,20 @@ import * as db from "@helpers/db.js";
 import * as dbsyncSQLite from "@helpers/dbsync-sqlite.js";
 import * as dbMigrations from "./db-migrations/db-migrations.js";
 import * as helpers from "@helpers/helpers.js";
+
+// Builds a local-resource:// URL with the file's mtime appended as a cache-bust suffix.
+// Same file = same URL = browser caches normally. Changed file = new URL = browser refetches.
+function buildPosterUrl(relativePath) {
+  if (!relativePath) return relativePath;
+  const absPath = helpers.getDataPath(relativePath);
+  let suffix = "";
+  try {
+    suffix = "?t=" + Math.floor(fs.statSync(absPath).mtimeMs);
+  } catch (e) {
+    // File missing; the URL will 404, but keep the original shape so the consumer's null-checks still work.
+  }
+  return "local-resource://" + absPath.replace(/\\/g, "\\\\") + suffix;
+}
 import { findIMDBtconstIncluded, findIMDBtconstInNFO, findIMDBtconstByFileOrDirname } from "./find-imdb-tconst.js";
 import { languageNameCodeMapping, languageCodeNameMapping } from "./languages.js";
 import * as mediainfo from "./mediainfo.js";
@@ -5116,17 +5130,9 @@ async function fetchMedia({
       // logger.log("[fetchMedia] item.Name:", item.Name);
       mediaItem.specificMediaType = helpers.getSpecificMediaType(mediaItem);
 
-      mediaItem.IMDB_posterSmall_URL = mediaItem.IMDB_posterSmall_URL
-        ? "local-resource://" + helpers.getDataPath(mediaItem.IMDB_posterSmall_URL).replace(/\\/g, "\\\\")
-        : mediaItem.IMDB_posterSmall_URL;
-
-      mediaItem.SeriesOwner_IMDB_posterSmall_URL = mediaItem.SeriesOwner_IMDB_posterSmall_URL
-        ? "local-resource://" + helpers.getDataPath(mediaItem.SeriesOwner_IMDB_posterSmall_URL).replace(/\\/g, "\\\\")
-        : mediaItem.SeriesOwner_IMDB_posterSmall_URL;
-
-      mediaItem.IMDB_posterLarge_URL = mediaItem.IMDB_posterLarge_URL
-        ? "local-resource://" + helpers.getDataPath(mediaItem.IMDB_posterLarge_URL).replace(/\\/g, "\\\\")
-        : mediaItem.IMDB_posterLarge_URL;
+      mediaItem.IMDB_posterSmall_URL = buildPosterUrl(mediaItem.IMDB_posterSmall_URL);
+      mediaItem.SeriesOwner_IMDB_posterSmall_URL = buildPosterUrl(mediaItem.SeriesOwner_IMDB_posterSmall_URL);
+      mediaItem.IMDB_posterLarge_URL = buildPosterUrl(mediaItem.IMDB_posterLarge_URL);
 
       mediaItem.yearDisplay = "";
       if (mediaItem.startYear) {

@@ -149,6 +149,12 @@ function registerLocalResourceProtocol() {
   protocol.handle("local-resource", async (request) => {
     let filePath = request.url.replace(/^local-resource:\/\//, "");
 
+    // Strip query string (used by the renderer for mtime-based cache busting)
+    const queryIndex = filePath.indexOf("?");
+    if (queryIndex >= 0) {
+      filePath = filePath.substring(0, queryIndex);
+    }
+
     // Decode URL to prevent errors when loading filenames with UTF-8 chars or chars like "#"
     filePath = decodeURI(filePath);
 
