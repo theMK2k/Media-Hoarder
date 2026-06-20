@@ -1,5 +1,16 @@
 # DONE
 
+## Next (v1.6.0)
+
+- [x] Poster Editor
+  - [x] show poster in EditMediaItemDialog
+  - [x] when poster is clicked, a menu is shown (Add, Replace, Remove, Show Preview)
+  - [x] a poster preview dialog allows to view the poster in full size incl. zoom option
+  - [x] Add/Replace allows browse, drag & drop and pasting of images
+  - [x] user-defined image is stored as id_Movies_01234_posterSmall/Large.jpg
+  - [x] low-res images are generated from high res images
+
+
 ## v1.5.4
 
 - [ ] add global context menu (Copy/Paste) for the entire app (#125, #126)
