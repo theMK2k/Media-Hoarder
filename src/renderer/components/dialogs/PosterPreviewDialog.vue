@@ -25,12 +25,6 @@
         </v-alert>
       </v-card-text>
       <v-card-actions style="flex: 0 0 auto">
-        <v-btn variant="tonal" color="primary" v-on:click="$emit('request-add-replace')">
-          {{ posterUrl ? $t("REPLACE") : $t("ADD") }}
-        </v-btn>
-        <v-btn v-if="canRemove" variant="tonal" color="error" v-on:click="$emit('request-remove')">
-          {{ $t("REMOVE") }}
-        </v-btn>
         <v-btn variant="tonal" color="secondary" v-on:click="onClose">
           {{ $t("Close") }}
         </v-btn>
@@ -45,10 +39,9 @@ export default {
   props: {
     show: { type: Boolean, default: false },
     posterUrl: { type: String, default: null },
-    canRemove: { type: Boolean, default: false },
   },
 
-  emits: ["update:show", "request-add-replace", "request-remove"],
+  emits: ["update:show"],
 
   data() {
     return {

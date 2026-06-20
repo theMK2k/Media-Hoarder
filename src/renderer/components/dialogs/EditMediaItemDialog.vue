@@ -25,12 +25,14 @@
               </div>
             </v-row>
             <div style="margin-top: 8px; margin-bottom: 8px">
-              <div
-                style="position: relative; height: 180px; width: 120px; cursor: pointer"
-                v-on:mouseenter="posterHovered = true"
-                v-on:mouseleave="posterHovered = false"
-                v-on:click="onShowFullPoster(displayedPosterLargeUrl || displayedPosterSmallUrl)"
-              >
+              <v-menu v-model="posterMenu.show" location="bottom start" transition="scale-transition">
+                <template v-slot:activator="{ props: menuProps }">
+                  <div
+                    style="position: relative; height: 180px; width: 120px; cursor: pointer"
+                    v-on:mouseenter="posterHovered = true"
+                    v-on:mouseleave="posterHovered = false"
+                    v-bind="menuProps"
+                  >
                 <v-img
                   v-if="displayedPosterSmallUrl"
                   cover
@@ -72,7 +74,7 @@
                       text-shadow: #000 0 0 2px, #000 0 0 2px;
                     "
                   >
-                    {{ $t("show / edit") }}
+                    {{ $t("click for menu") }}
                   </span>
                 </div>
                 <v-tooltip
@@ -91,7 +93,25 @@
                   </template>
                   <span>{{ $t("The high resolution variant of this poster is missing_") }}</span>
                 </v-tooltip>
-              </div>
+                  </div>
+                </template>
+                <v-list dark>
+                  <v-list-item
+                    v-if="displayedPosterLargeUrl || displayedPosterSmallUrl"
+                    v-on:click="onPosterMenuShowPreview"
+                  >
+                    <v-list-item-title>{{ $t("Show Preview") }}</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item v-on:click="onPosterMenuAddReplace">
+                    <v-list-item-title>
+                      {{ displayedPosterLargeUrl || displayedPosterSmallUrl ? $t("Replace Poster") : $t("Add Poster") }}
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item v-if="isUserPoster" v-on:click="onPosterMenuRemove">
+                    <v-list-item-title>{{ $t("Remove Poster") }}</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
             </div>
           </div>
 
@@ -509,10 +529,7 @@
     <mk-poster-preview-dialog
       v-bind:show="posterPreviewDialog.show"
       v-bind:posterUrl="posterPreviewDialog.fullPosterUrl"
-      v-bind:canRemove="isUserPoster"
       v-on:update:show="posterPreviewDialog.show = $event"
-      v-on:request-add-replace="onAddReplacePoster"
-      v-on:request-remove="onRequestRemovePoster"
     ></mk-poster-preview-dialog>
 
     <mk-poster-input-dialog
@@ -592,6 +609,9 @@ export default {
       removePosterDialog: {
         show: false,
         question: null,
+      },
+      posterMenu: {
+        show: false,
       },
       stagedPoster: null,
       removeUserPoster: false,
@@ -913,10 +933,17 @@ export default {
       this.posterPreviewDialog.show = true;
     },
 
-    onAddReplacePoster() {
-      logger.log("[onAddReplacePoster] currentUrl:", this.posterPreviewDialog.fullPosterUrl);
-      this.posterInputDialog.fullPosterUrl = this.posterPreviewDialog.fullPosterUrl;
+    onPosterMenuShowPreview() {
+      this.onShowFullPoster(this.displayedPosterLargeUrl || this.displayedPosterSmallUrl);
+    },
+
+    onPosterMenuAddReplace() {
+      this.posterInputDialog.fullPosterUrl = this.displayedPosterLargeUrl || this.displayedPosterSmallUrl;
       this.posterInputDialog.show = true;
+    },
+
+    onPosterMenuRemove() {
+      this.onRequestRemovePoster();
     },
 
     onRequestRemovePoster() {
