@@ -20,16 +20,16 @@
           <v-btn variant="text" v-on:click="$emit('close')">{{ $t("Close") }}</v-btn>
         </v-row>
 
-        <v-row
+        <div
           v-if="showQuote"
           class="mk-clickable-dark-grey"
-          style="line-height: 1.5; margin-left: 0px; margin-bottom: 0px; word-break: initial"
+          style="line-height: 1.5; margin-bottom: 0px; white-space: normal; overflow-wrap: break-word"
           v-on:click="showQuote = false"
         >
           <i>{{ quote }}</i>
           <br />
           -- {{ quoteSource }}
-        </v-row>
+        </div>
 
         <div class="v-card__text" style="padding: 0px">
           <div v-if="isLoadingHistory" style="margin-bottom: 16px">
