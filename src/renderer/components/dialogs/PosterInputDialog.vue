@@ -37,22 +37,6 @@
           v-on:change="onFileChange"
         />
 
-        <div style="margin-top: 16px">
-          <div style="font-size: 14px">{{ $t("Or load from URL") }}</div>
-          <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px">
-            <v-text-field
-              v-model="urlInput"
-              variant="underlined"
-              hide-details
-              placeholder="https://..."
-              v-on:keydown.enter="onLoadUrl"
-            ></v-text-field>
-            <v-btn variant="tonal" color="primary" v-on:click="onLoadUrl">
-              {{ $t("Load") }}
-            </v-btn>
-          </div>
-        </div>
-
         <div v-if="previewSrc" style="margin-top: 20px">
           <div style="font-size: 14px">{{ $t("Preview") }}</div>
           <div style="display: flex; gap: 12px; margin-top: 8px; align-items: flex-start">
@@ -105,7 +89,6 @@ export default {
   data() {
     return {
       isDragOver: false,
-      urlInput: "",
       stagedSource: null,
       previewSrc: null,
       sourceInfo: null,
@@ -143,7 +126,6 @@ export default {
   methods: {
     resetState() {
       this.isDragOver = false;
-      this.urlInput = "";
       this.stagedSource = null;
       this.previewSrc = null;
       this.sourceInfo = null;
@@ -218,17 +200,6 @@ export default {
         this.loadError = this.$t("Failed to read file_");
       };
       reader.readAsDataURL(file);
-    },
-
-    onLoadUrl() {
-      const url = (this.urlInput || "").trim();
-      if (!url) return;
-
-      this.stagedSource = { type: "url", url };
-      this.previewSrc = url;
-      this.loadError = null;
-      this.isImageLoaded = false;
-      this.sourceInfo = url;
     },
 
     onImageError() {

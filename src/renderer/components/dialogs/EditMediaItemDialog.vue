@@ -26,6 +26,8 @@
             <div style="margin-top: 8px; margin-bottom: 8px">
               <div
                 style="position: relative; height: 150px; width: 100px; cursor: pointer"
+                v-on:mouseenter="posterHovered = true"
+                v-on:mouseleave="posterHovered = false"
                 v-on:click="onShowFullPoster(displayedPosterLargeUrl || displayedPosterSmallUrl)"
               >
                 <v-img
@@ -42,6 +44,36 @@
                 >
                   mdi-filmstrip
                 </v-icon>
+                <div
+                  v-show="posterHovered"
+                  style="
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    height: 150px;
+                    width: 100px;
+                    border-radius: 6px;
+                    background-color: rgba(0, 0, 0, 0.55);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    pointer-events: none;
+                  "
+                >
+                  <span
+                    style="
+                      color: #fff;
+                      font-size: 13px;
+                      font-weight: 500;
+                      letter-spacing: 0.5px;
+                      text-align: center;
+                      padding: 0 6px;
+                      text-shadow: #000 0 0 2px, #000 0 0 2px;
+                    "
+                  >
+                    {{ $t("show / edit") }}
+                  </span>
+                </div>
                 <v-tooltip
                   v-if="displayedPosterSmallUrl && !displayedPosterLargeUrl"
                   location="top"
@@ -472,8 +504,10 @@
     <mk-poster-preview-dialog
       v-bind:show="posterPreviewDialog.show"
       v-bind:posterUrl="posterPreviewDialog.fullPosterUrl"
+      v-bind:canRemove="isUserPoster"
       v-on:update:show="posterPreviewDialog.show = $event"
       v-on:request-add-replace="onAddReplacePoster"
+      v-on:request-remove="onRequestRemovePoster"
     ></mk-poster-preview-dialog>
 
     <mk-poster-input-dialog
@@ -483,10 +517,25 @@
       v-on:confirm="onPosterInputConfirm"
       v-on:cancel="posterInputDialog.show = false"
     ></mk-poster-input-dialog>
+
+    <mk-remove-poster-dialog
+      v-bind:show="removePosterDialog.show"
+      v-bind:title="$t('Remove poster')"
+      v-bind:question="removePosterDialog.question"
+      v-bind:yes="$t('YES, REMOVE')"
+      v-bind:no="$t('No')"
+      yesColor="error"
+      noColor="secondary"
+      v-on:update:show="removePosterDialog.show = $event"
+      v-on:yes="onConfirmRemovePoster"
+      v-on:no="removePosterDialog.show = false"
+    ></mk-remove-poster-dialog>
   </v-dialog>
 </template>
 
 <script>
+import fs from "fs";
+
 import logger from "@helpers/logger.js";
 import * as _ from "lodash";
 
@@ -501,11 +550,13 @@ import { deepDiffMapper } from "@helpers/deep-diff-mapper.js";
 
 import PosterInputDialog from "@renderer/components/dialogs/PosterInputDialog.vue";
 import PosterPreviewDialog from "@renderer/components/dialogs/PosterPreviewDialog.vue";
+import Dialog from "@renderer/components/dialogs/Dialog.vue";
 
 export default {
   components: {
     "mk-poster-input-dialog": PosterInputDialog,
     "mk-poster-preview-dialog": PosterPreviewDialog,
+    "mk-remove-poster-dialog": Dialog,
   },
 
   props: ["show", "type", "caption", "mediaItem"],
@@ -533,7 +584,13 @@ export default {
         show: false,
         fullPosterUrl: null,
       },
+      removePosterDialog: {
+        show: false,
+        question: null,
+      },
       stagedPoster: null,
+      removeUserPoster: false,
+      posterHovered: false,
     };
   },
 
@@ -543,16 +600,26 @@ export default {
 
       this.mediaItemBackup = newValue ? JSON.parse(JSON.stringify(newValue)) : {};
       this.stagedPoster = null;
+      this.removeUserPoster = false;
     },
   },
 
   computed: {
     displayedPosterSmallUrl() {
-      return (this.stagedPoster && this.stagedPoster.previewUrl) || this.mediaItem.IMDB_posterSmall_URL;
+      if (this.stagedPoster) return this.stagedPoster.previewUrl;
+      if (this.removeUserPoster) return this.mediaItem.IMDB_posterSmall_URL;
+      return this.mediaItem.posterSmall_URL || this.mediaItem.IMDB_posterSmall_URL;
     },
 
     displayedPosterLargeUrl() {
-      return (this.stagedPoster && this.stagedPoster.previewUrl) || this.mediaItem.IMDB_posterLarge_URL;
+      if (this.stagedPoster) return this.stagedPoster.previewUrl;
+      if (this.removeUserPoster) return this.mediaItem.IMDB_posterLarge_URL;
+      return this.mediaItem.posterLarge_URL || this.mediaItem.IMDB_posterLarge_URL;
+    },
+
+    isUserPoster() {
+      if (this.removeUserPoster) return false;
+      return !!(this.mediaItem.posterSmall_URL || this.mediaItem.posterLarge_URL);
     },
 
     languages() {
@@ -659,7 +726,6 @@ export default {
       }
 
       let hasChanges = false;
-      const stagedPosterFields = [];
       const diff = deepDiffMapper.prune(deepDiffMapper.map(this.mediaItem, this.mediaItemBackup));
 
       logger.log("[MediaItemDialog.onOKClick] diff:", diff);
@@ -733,29 +799,42 @@ export default {
         await store.updateMediaRecordField(this.mediaItem.id_Movies, "plotSummaryFull", plotSummaryFull);
       }
 
-      if (this.stagedPoster) {
-        if (!this.mediaItem.IMDB_tconst) {
-          return eventBus.showSnackbar("error", $t("Cannot save poster_ No IMDB ID is linked to this item_"));
-        }
-
-        const largePath = `extras/${this.mediaItem.IMDB_tconst}_posterLarge.jpg`;
-        const smallPath = `extras/${this.mediaItem.IMDB_tconst}_posterSmall.jpg`;
+      if (this.removeUserPoster) {
+        const userSmallRel = `extras/id_Movies_${this.mediaItem.id_Movies}_posterSmall.jpg`;
+        const userLargeRel = `extras/id_Movies_${this.mediaItem.id_Movies}_posterLarge.jpg`;
 
         try {
-          let largeBuffer;
-          let largeForCanvas;
+          const userSmallAbs = helpers.getDataPath(userSmallRel);
+          const userLargeAbs = helpers.getDataPath(userLargeRel);
+          if (fs.existsSync(userSmallAbs)) fs.unlinkSync(userSmallAbs);
+          if (fs.existsSync(userLargeAbs)) fs.unlinkSync(userLargeAbs);
+        } catch (err) {
+          logger.error("[onOKClick] failed to delete user poster files:", err);
+        }
 
-          if (this.stagedPoster.source.type === "data") {
-            const base64 = this.stagedPoster.source.dataUrl.split(",")[1] || "";
-            largeBuffer = Buffer.from(base64, "base64");
-            largeForCanvas = this.stagedPoster.source.dataUrl;
-          } else if (this.stagedPoster.source.type === "url") {
-            const response = await helpers.requestAsync({ url: this.stagedPoster.source.url, encoding: null });
-            largeBuffer = response.body;
-            largeForCanvas = "data:image/jpeg;base64," + largeBuffer.toString("base64");
-          }
+        await store.updateMediaRecordField(this.mediaItem.id_Movies, "posterSmall_URL", null);
+        await store.updateMediaRecordField(this.mediaItem.id_Movies, "posterLarge_URL", null);
 
-          const smallDataUrl = await this.resizeImageToDataUrl(largeForCanvas, 300, 400);
+        this.mediaItem.posterSmall_URL = null;
+        this.mediaItem.posterLarge_URL = null;
+
+        this.removeUserPoster = false;
+        hasChanges = true;
+      }
+
+      if (this.stagedPoster) {
+        if (!this.mediaItem.id_Movies) {
+          return eventBus.showSnackbar("error", $t("Cannot save poster_ this item has no identifier_"));
+        }
+
+        const largePath = this.posterRelativePath("Large");
+        const smallPath = this.posterRelativePath("Small");
+
+        try {
+          const base64 = this.stagedPoster.source.dataUrl.split(",")[1] || "";
+          const largeBuffer = Buffer.from(base64, "base64");
+
+          const smallDataUrl = await this.resizeImageToDataUrl(this.stagedPoster.source.dataUrl, 300, 400);
           const smallBuffer = Buffer.from(smallDataUrl.split(",")[1] || "", "base64");
 
           await helpers.writeBinaryFileToDataPath(largePath, largeBuffer);
@@ -765,16 +844,15 @@ export default {
           return eventBus.showSnackbar("error", $t("Failed to save poster_"));
         }
 
-        await store.updateMediaRecordField(this.mediaItem.id_Movies, "IMDB_posterLarge_URL", largePath);
-        await store.updateMediaRecordField(this.mediaItem.id_Movies, "IMDB_posterSmall_URL", smallPath);
+        await store.updateMediaRecordField(this.mediaItem.id_Movies, "posterLarge_URL", largePath);
+        await store.updateMediaRecordField(this.mediaItem.id_Movies, "posterSmall_URL", smallPath);
 
         const ts = Date.now();
-        this.mediaItem.IMDB_posterLarge_URL =
+        this.mediaItem.posterLarge_URL =
           "local-resource://" + helpers.getDataPath(largePath).replace(/\\/g, "\\\\") + "?t=" + ts;
-        this.mediaItem.IMDB_posterSmall_URL =
+        this.mediaItem.posterSmall_URL =
           "local-resource://" + helpers.getDataPath(smallPath).replace(/\\/g, "\\\\") + "?t=" + ts;
 
-        stagedPosterFields.push("IMDB_posterLarge_URL", "IMDB_posterSmall_URL");
         hasChanges = true;
 
         this.stagedPoster = null;
@@ -789,7 +867,7 @@ export default {
 
       logger.log("[MediaItemDialog.onOKClick] definedByUser (from db):", definedByUser);
 
-      [...Object.keys(diff), ...stagedPosterFields].forEach((key) => {
+      Object.keys(diff).forEach((key) => {
         if (!definedByUser.find((item) => item === key)) {
           definedByUser.push(key);
         }
@@ -835,6 +913,27 @@ export default {
       this.posterInputDialog.show = true;
     },
 
+    onRequestRemovePoster() {
+      let question = $t("Are you sure you want to remove the user-provided poster_");
+
+      if (this.mediaItem.IMDB_posterSmall_URL || this.mediaItem.IMDB_posterLarge_URL) {
+        question += " " + $t("This will recover the IMDB-provided poster_");
+      }
+
+      this.removePosterDialog.question = question;
+      this.removePosterDialog.show = true;
+    },
+
+    onConfirmRemovePoster() {
+      logger.log("[onConfirmRemovePoster] staging removal for id_Movies:", this.mediaItem.id_Movies);
+
+      this.removePosterDialog.show = false;
+      this.stagedPoster = null;
+      this.removeUserPoster = true;
+
+      this.posterPreviewDialog.fullPosterUrl = this.displayedPosterLargeUrl || this.displayedPosterSmallUrl;
+    },
+
     onPosterInputConfirm(payload) {
       logger.log("[onPosterInputConfirm] payload:", payload);
 
@@ -844,11 +943,15 @@ export default {
         return;
       }
 
-      const previewUrl = source.type === "data" ? source.dataUrl : source.url;
-
-      this.stagedPoster = { source, previewUrl };
-      this.posterPreviewDialog.fullPosterUrl = previewUrl;
+      this.stagedPoster = { source, previewUrl: source.dataUrl };
+      this.removeUserPoster = false;
+      this.posterPreviewDialog.fullPosterUrl = source.dataUrl;
       this.posterInputDialog.show = false;
+      this.posterPreviewDialog.show = false;
+    },
+
+    posterRelativePath(variant) {
+      return `extras/id_Movies_${this.mediaItem.id_Movies}_poster${variant}.jpg`;
     },
 
     resizeImageToDataUrl(sourceUrl, maxWidth, maxHeight) {

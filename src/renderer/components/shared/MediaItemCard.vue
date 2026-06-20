@@ -47,12 +47,29 @@
 
           <v-img
             cover
-            v-if="mediaItem.IMDB_posterSmall_URL || mediaItem.SeriesOwner_IMDB_posterSmall_URL"
-            v-bind:src="mediaItem.IMDB_posterSmall_URL || mediaItem.SeriesOwner_IMDB_posterSmall_URL"
+            v-if="
+              mediaItem.posterSmall_URL ||
+              mediaItem.IMDB_posterSmall_URL ||
+              mediaItem.SeriesOwner_posterSmall_URL ||
+              mediaItem.SeriesOwner_IMDB_posterSmall_URL
+            "
+            v-bind:src="
+              mediaItem.posterSmall_URL ||
+              mediaItem.IMDB_posterSmall_URL ||
+              mediaItem.SeriesOwner_posterSmall_URL ||
+              mediaItem.SeriesOwner_IMDB_posterSmall_URL
+            "
             style="border-radius: 6px; height: 190px; width: 130px"
           ></v-img>
           <v-icon
-            v-if="!(mediaItem.IMDB_posterSmall_URL || mediaItem.SeriesOwner_IMDB_posterSmall_URL)"
+            v-if="
+              !(
+                mediaItem.posterSmall_URL ||
+                mediaItem.IMDB_posterSmall_URL ||
+                mediaItem.SeriesOwner_posterSmall_URL ||
+                mediaItem.SeriesOwner_IMDB_posterSmall_URL
+              )
+            "
             disabled
             size="48"
             style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"

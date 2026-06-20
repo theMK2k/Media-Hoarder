@@ -4749,7 +4749,7 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
           IMDB_tconst IS NOT NULL
           AND scanErrors IS NULL
           AND Name2 IS NOT NULL
-          AND IMDB_posterSmall_URL IS NOT NULL
+          AND (IMDB_posterSmall_URL IS NOT NULL OR posterSmall_URL IS NOT NULL)
           AND IMDB_plotSummary IS NOT NULL
           AND (
             IMDB_Top_Directors IS NOT NULL
@@ -4765,7 +4765,7 @@ function generateFilterQuery(filters, arr_id_Movies, arr_IMDB_tconst) {
       case "missingSecondaryTitle":
         return `SELECT id_Movies FROM tbl_Movies WHERE Name2 IS NULL`;
       case "missingPoster":
-        return `SELECT id_Movies FROM tbl_Movies WHERE IMDB_posterSmall_URL IS NULL`;
+        return `SELECT id_Movies FROM tbl_Movies WHERE IMDB_posterSmall_URL IS NULL AND posterSmall_URL IS NULL`;
       case "missingPlotSummary":
         return `SELECT id_Movies FROM tbl_Movies WHERE IMDB_plotSummary IS NULL`;
       case "missingCredits":
@@ -5014,9 +5014,13 @@ async function fetchMedia({
         , NULL AS MI_Audio_Languages
         , NULL AS MI_Subtitle_Languages
         , NULL AS IMDB_posterSmall_URL
+        , NULL AS IMDB_posterLarge_URL
         , NULL AS SeriesOwner_IMDB_posterSmall_URL
-        , MOV.IMDB_posterSmall_URL
-        , MOV_SeriesOwner.IMDB_posterSmall_URL AS SeriesOwner_IMDB_posterSmall_URL
+        , NULL AS SeriesOwner_IMDB_posterLarge_URL
+        , NULL AS posterSmall_URL
+        , NULL AS posterLarge_URL
+        , NULL AS SeriesOwner_posterSmall_URL
+        , NULL AS SeriesOwner_posterLarge_URL
         , IFNULL(MOV.plotSummaryFull, IFNULL(MOV.IMDB_plotSummaryFull_Translated, MOV.IMDB_plotSummaryFull)) AS plotSummaryFull
         , NULL AS Genres
         , NULL AS IMDB_Parental_Advisory_Nudity
@@ -5049,9 +5053,14 @@ async function fetchMedia({
         , MOV.MI_Audio_Languages
         , MOV.MI_Subtitle_Languages
         , MOV.IMDB_posterSmall_URL
-        , MOV_SeriesOwner.IMDB_posterSmall_URL AS SeriesOwner_IMDB_posterSmall_URL
-        , MOV_SeriesOwner.IMDB_tconst AS SeriesOwner_IMDB_tconst
         , MOV.IMDB_posterLarge_URL
+        , MOV_SeriesOwner.IMDB_posterSmall_URL AS SeriesOwner_IMDB_posterSmall_URL
+        , MOV_SeriesOwner.IMDB_posterLarge_URL AS SeriesOwner_IMDB_posterLarge_URL
+        , MOV_SeriesOwner.IMDB_tconst AS SeriesOwner_IMDB_tconst
+        , MOV.posterSmall_URL
+        , MOV.posterLarge_URL
+        , MOV_SeriesOwner.posterSmall_URL AS SeriesOwner_posterSmall_URL
+        , MOV_SeriesOwner.posterLarge_URL AS SeriesOwner_posterLarge_URL
         , IFNULL(MOV.plotSummaryFull, IFNULL(MOV.IMDB_plotSummaryFull_Translated, MOV.IMDB_plotSummaryFull)) AS plotSummaryFull
         , (SELECT GROUP_CONCAT(GQ.Name, ', ') FROM
             (
@@ -5115,7 +5124,7 @@ async function fetchMedia({
 
     const result = await db.fireProcedureReturnAll(query, { $MediaType });
 
-    // logger.log("[fetchMedia] result:", result);
+    logger.log("[fetchMedia] result:", result); // KILLME
 
     result.forEach((movie) => {
       ensureMediaFullPath(movie);
@@ -5133,6 +5142,10 @@ async function fetchMedia({
       mediaItem.IMDB_posterSmall_URL = buildPosterUrl(mediaItem.IMDB_posterSmall_URL);
       mediaItem.SeriesOwner_IMDB_posterSmall_URL = buildPosterUrl(mediaItem.SeriesOwner_IMDB_posterSmall_URL);
       mediaItem.IMDB_posterLarge_URL = buildPosterUrl(mediaItem.IMDB_posterLarge_URL);
+      mediaItem.posterSmall_URL = buildPosterUrl(mediaItem.posterSmall_URL);
+      mediaItem.posterLarge_URL = buildPosterUrl(mediaItem.posterLarge_URL);
+      mediaItem.SeriesOwner_posterSmall_URL = buildPosterUrl(mediaItem.SeriesOwner_posterSmall_URL);
+      mediaItem.SeriesOwner_posterLarge_URL = buildPosterUrl(mediaItem.SeriesOwner_posterLarge_URL);
 
       mediaItem.yearDisplay = "";
       if (mediaItem.startYear) {
@@ -5635,7 +5648,7 @@ async function fetchFilterDataQuality(
                     MOV.IMDB_tconst IS NOT NULL
                     AND MOV.scanErrors IS NULL
                     AND MOV.Name2 IS NOT NULL
-                    AND MOV.IMDB_posterSmall_URL IS NOT NULL
+                    AND (MOV.IMDB_posterSmall_URL IS NOT NULL OR MOV.posterSmall_URL IS NOT NULL)
                     AND MOV.IMDB_plotSummary IS NOT NULL
                   )
                   ${additionalFilterQuery}
@@ -5695,6 +5708,7 @@ async function fetchFilterDataQuality(
                 AND CASE WHEN $Series_id_Movies_Owner IS NOT NULL THEN MOV.Series_id_Movies_Owner = $Series_id_Movies_Owner ELSE MOV.Series_id_Movies_Owner IS NULL END
                 AND MOV.Extra_id_Movies_Owner IS NULL
                 AND MOV.IMDB_posterSmall_URL IS NULL
+                AND MOV.posterSmall_URL IS NULL
                 ${additionalFilterQuery}
       ) AS NumMovies
       UNION ALL
