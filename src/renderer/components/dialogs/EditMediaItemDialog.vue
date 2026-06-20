@@ -16,8 +16,9 @@
 
       <v-card-text style="padding-top: 0px; padding-bottom: 0px">
         <div>
-          <!-- Poster -->
-          <div>
+          <div style="display: flex; gap: 24px; align-items: flex-start">
+            <!-- Poster (left column) -->
+            <div style="flex: 0 0 auto">
             <v-row style="margin-top: 8px; margin-left: 0px; margin-bottom: 0px">
               <div style="font-size: 14px; margin-top: 10px">
                 {{ $t("Poster") }}
@@ -25,7 +26,7 @@
             </v-row>
             <div style="margin-top: 8px; margin-bottom: 8px">
               <div
-                style="position: relative; height: 150px; width: 100px; cursor: pointer"
+                style="position: relative; height: 180px; width: 120px; cursor: pointer"
                 v-on:mouseenter="posterHovered = true"
                 v-on:mouseleave="posterHovered = false"
                 v-on:click="onShowFullPoster(displayedPosterLargeUrl || displayedPosterSmallUrl)"
@@ -34,7 +35,7 @@
                   v-if="displayedPosterSmallUrl"
                   cover
                   v-bind:src="displayedPosterSmallUrl"
-                  style="border-radius: 6px; height: 150px; width: 100px"
+                  style="border-radius: 6px; height: 180px; width: 120px"
                 ></v-img>
                 <v-icon
                   v-else
@@ -50,8 +51,8 @@
                     position: absolute;
                     top: 0;
                     left: 0;
-                    height: 150px;
-                    width: 100px;
+                    height: 180px;
+                    width: 120px;
                     border-radius: 6px;
                     background-color: rgba(0, 0, 0, 0.55);
                     display: flex;
@@ -94,29 +95,33 @@
             </div>
           </div>
 
-          <!-- Primary Title -->
-          <v-row style="margin-top: 8px; margin-left: 0px; margin-bottom: -16px">
-            <div style="font-size: 14px; margin-top: 10px">
-              {{ $t("Primary Title") }}
-            </div>
-          </v-row>
-          <v-text-field v-model="mediaItem.Name" variant="underlined"></v-text-field>
+            <!-- Titles (right column) -->
+            <div style="flex: 1 1 auto; min-width: 0">
+              <!-- Primary Title -->
+              <v-row style="margin-top: 8px; margin-left: 0px; margin-bottom: -16px">
+                <div style="font-size: 14px; margin-top: 10px">
+                  {{ $t("Primary Title") }}
+                </div>
+              </v-row>
+              <v-text-field v-model="mediaItem.Name" variant="underlined"></v-text-field>
 
-          <!-- Secondary Title -->
-          <v-row style="margin-top: 8px; margin-left: 0px; margin-bottom: -16px">
-            <div style="font-size: 14px; margin-top: 10px">
-              {{ $t("Secondary Title") }}
-            </div>
-          </v-row>
-          <v-text-field v-model="mediaItem.Name2" variant="underlined"></v-text-field>
+              <!-- Secondary Title -->
+              <v-row style="margin-top: 8px; margin-left: 0px; margin-bottom: -16px">
+                <div style="font-size: 14px; margin-top: 10px">
+                  {{ $t("Secondary Title") }}
+                </div>
+              </v-row>
+              <v-text-field v-model="mediaItem.Name2" variant="underlined"></v-text-field>
 
-          <!-- Release Year -->
-          <v-row style="margin-top: 8px; margin-left: 0px; margin-bottom: -16px">
-            <div style="font-size: 14px; margin-top: 10px">
-              {{ $t("Release Year") }}
+              <!-- Release Year -->
+              <v-row style="margin-top: 8px; margin-left: 0px; margin-bottom: -16px">
+                <div style="font-size: 14px; margin-top: 10px">
+                  {{ $t("Release Year") }}
+                </div>
+              </v-row>
+              <v-text-field v-model="mediaItem.startYear" variant="underlined"></v-text-field>
             </div>
-          </v-row>
-          <v-text-field v-model="mediaItem.startYear" variant="underlined"></v-text-field>
+          </div>
 
           <!-- Description -->
           <v-row style="margin-top: 8px; margin-left: 0px; margin-bottom: 0px">
@@ -618,6 +623,7 @@ export default {
     },
 
     isUserPoster() {
+      if (this.stagedPoster) return true;
       if (this.removeUserPoster) return false;
       return !!(this.mediaItem.posterSmall_URL || this.mediaItem.posterLarge_URL);
     },
@@ -932,6 +938,7 @@ export default {
       this.removeUserPoster = true;
 
       this.posterPreviewDialog.fullPosterUrl = this.displayedPosterLargeUrl || this.displayedPosterSmallUrl;
+      this.posterPreviewDialog.show = false;
     },
 
     onPosterInputConfirm(payload) {
