@@ -10,7 +10,6 @@
   - [x] user-defined image is stored as id_Movies_01234_posterSmall/Large.jpg
   - [x] low-res images are generated from high res images
 
-
 ## v1.5.4
 
 - [ ] add global context menu (Copy/Paste) for the entire app (#125, #126)

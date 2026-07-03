@@ -1,7 +1,10 @@
 # TODO
 
+- [WIP] FIX: don't show an error if IMDB does not provide plot keywords
+
 - [ ] Poster Editor
   - [ ] check rescan with actual duplicate having user-defined poster
+  - [ ] look into fanart.tv API for poster alternatives
 
 - [ ] IMDB now offers categorized keywords:
   - Subgenres
