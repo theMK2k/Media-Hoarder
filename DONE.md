@@ -1,6 +1,8 @@
 # DONE
 
-## Next (v1.6.0)
+## Next (v1.6.0-beta.1)
+
+### Features
 
 - [x] Poster Editor
   - [x] show poster in EditMediaItemDialog
@@ -9,6 +11,10 @@
   - [x] Add/Replace allows browse, drag & drop and pasting of images
   - [x] user-defined image is stored as id_Movies_01234_posterSmall/Large.jpg
   - [x] low-res images are generated from high res images
+
+### Fixes
+
+- [x] FIX: don't show an error if IMDB does not provide plot keywords
 
 ## v1.5.4
 

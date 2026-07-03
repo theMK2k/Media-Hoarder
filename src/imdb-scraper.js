@@ -3370,8 +3370,13 @@ async function scrapeGraphQLPaginated(uri, innerPath, resultArray = null, endCur
 
     // logger.log("[scrapeGraphQLPaginated] newResult_Array.length:", newResult_Array.length);
 
-    if (!newResult_pageInfo) {
-      throw new Error("[scrapeGraphQLPaginated] pageInfo missing in result");
+    if (!newResult.data) {
+      throw new Error("[scrapeGraphQLPaginated] data object missing in result");
+    }
+    
+    if (!newResult_Array && !newResult_pageInfo) {
+      // without pageInfo and without array we can assume that there is no result data available (e.g. the query is fine but the media has no plot keywords - as is the case with tt28234754)
+      return [];
     }
 
     if (resultArray) {

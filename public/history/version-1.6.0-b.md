@@ -19,3 +19,7 @@ This is the BETA release of Media Hoarder v1.6.0
 </details>
 
 <br/>
+
+### Fixes
+
+- FIX: don't show an error if IMDB does not provide plot keywords (#136)
