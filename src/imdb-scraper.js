@@ -406,12 +406,12 @@ async function scrapeIMDBmainPageData(movie, downloadFileCallback, db, actualDup
 
     if (jsonData.trailer && jsonData.trailer.embedUrl) {
       // V2
-      result.$IMDB_Trailer_URL = jsonData.trailer.embedUrl.replace("https://www.imdb.com", "");
+      result.$IMDB_Trailer_URL = jsonData.trailer.embedUrl.replace("https://www.imdb.com", "").match(/(vi\d+)/)[1];
     } else {
       const rxTrailerUrl =
         /href="(\/video\/vi\d*)\?playlistId=tt\d*&amp;ref_=tt_ov_vi"[\s\S]*?aria-label="Watch {VideoTitle}"/;
       if (rxTrailerUrl.test(html)) {
-        result.$IMDB_Trailer_URL = html.match(rxTrailerUrl)[1];
+        result.$IMDB_Trailer_URL = html.match(rxTrailerUrl)[1].match(/(vi\d+)/)[1];
       }
     }
 
@@ -3264,7 +3264,7 @@ async function scrapeIMDBSeriesEpisodes(Series_IMDB_tconst, Series_Season) {
     return results;
   } catch (error) {
     logger.error("[scrapeIMDBSeriesEpisodes] ERROR:", error);
-    return [];
+    throw error;
   }
 }
 

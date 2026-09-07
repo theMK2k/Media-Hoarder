@@ -15,6 +15,15 @@
 ### Fixes
 
 - [x] FIX: don't show an error if IMDB does not provide plot keywords
+## v1.5.5
+
+- [x] Fix IMDB Scraper
+  - [x] WARN: IMDB Main Page Data (testIMDBmainPageData)
+    $IMDB_Trailer_URL mismatch
+    got:      "/video/vi3769027097/"
+    expected: "vi2163260441"
+  - [x] WARN: IMDB Full Credits Data (testIMDBFullCreditsData)
+  - [x] FAIL: IMDB Series Episodes (testIMDBSeriesEpisodes)
 
 ## v1.5.4
 
