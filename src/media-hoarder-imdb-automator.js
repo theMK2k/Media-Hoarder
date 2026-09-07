@@ -7,21 +7,18 @@ const cmdArguments = minimist(process.argv.slice(2));
 
 logger.setLevel(cmdArguments.logLevel != undefined ? cmdArguments.logLevel : 2);
 
+async function runAutomatorFunction(name, func) {
+  logger.info(`[imdb-automator] running ${name}`);
+  const url = await func();
+  console.log(`[imdb-automator] ${name} GraphQL URL:`);
+  console.log(url);
+}
+
 module.exports = (async () => {
-  const { getFindPageSearchGraphqlURL, getAdvancedTitleSearchGraphqlURL, getIMDBPlotKeywordsGraphqlURL } = await import("./helpers/imdb-automator.js");
+  const { getFindPageSearchGraphqlURL, getAdvancedTitleSearchGraphqlURL, getIMDBPlotKeywordsGraphqlURL, getSeriesEpisodesGraphqlURL } = await import("./helpers/imdb-automator.js");
 
-  logger.info("[imdb-automator] running getFindPageSearchGraphqlURL");
-  const findPageSearchURL = await getFindPageSearchGraphqlURL();
-  console.log("[imdb-automator] FindPageSearch GraphQL URL:");
-  console.log(findPageSearchURL);
-
-  logger.info("[imdb-automator] running getAdvancedTitleSearchGraphqlURL");
-  const advancedTitleSearchURL = await getAdvancedTitleSearchGraphqlURL();
-  console.log("[imdb-automator] AdvancedTitleSearch GraphQL URL:");
-  console.log(advancedTitleSearchURL);
-
-  logger.info("[imdb-automator] running getIMDBPlotKeywordsGraphqlURL");
-  const plotKeywordsURL = await getIMDBPlotKeywordsGraphqlURL();
-  console.log("[imdb-automator] PlotKeywords GraphQL URL:");
-  console.log(plotKeywordsURL);
+  await runAutomatorFunction("FindPageSearch", getFindPageSearchGraphqlURL);
+  await runAutomatorFunction("AdvancedTitleSearch", getAdvancedTitleSearchGraphqlURL);
+  await runAutomatorFunction("IMDBPlotKeywords", getIMDBPlotKeywordsGraphqlURL);
+  await runAutomatorFunction("SeriesEpisodes", getSeriesEpisodesGraphqlURL);
 })();

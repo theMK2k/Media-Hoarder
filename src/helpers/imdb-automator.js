@@ -195,4 +195,34 @@ async function getIMDBPlotKeywordsGraphqlURL() {
   }
 }
 
-export { getFindPageSearchGraphqlURL, getAdvancedTitleSearchGraphqlURL, getIMDBPlotKeywordsGraphqlURL };
+async function getSeriesEpisodesGraphqlURL() {
+  logger.log("[imdbAutomator] getSeriesEpisodesGraphqlURL");
+
+  const ses = getOrCreateSession();
+  const bw = new BrowserWindow({
+    show: false,
+    webPreferences: {
+      session: ses,
+    },
+  });
+
+  try {
+    await bw.loadURL(`https://www.imdb.com/title/tt7678620/episodes/`);
+    await waitForRealPage(bw);
+
+    const urlPromise = watchForGraphqlRequest(ses, "TitleEpisodesSubPagePagination");
+    await clickButton(bw, "button.ipc-see-more__button", "3 more");
+
+    const graphqlURL = decodeURIComponent(await urlPromise);
+    logger.log("[imdbAutomator] SeriesEpisodes URL:", graphqlURL);
+    return graphqlURL;
+  } finally {
+    if (!bw.isDestroyed()) bw.destroy();
+  }
+}
+
+
+// https://www.imdb.com/title/tt7678620/episodes/
+// ipc-btn__text
+
+export { getFindPageSearchGraphqlURL, getAdvancedTitleSearchGraphqlURL, getIMDBPlotKeywordsGraphqlURL, getSeriesEpisodesGraphqlURL };

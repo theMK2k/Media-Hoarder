@@ -1,5 +1,15 @@
 # DONE
 
+## v1.5.5
+
+- [x] Fix IMDB Scraper
+  - [x] WARN: IMDB Main Page Data (testIMDBmainPageData)
+    $IMDB_Trailer_URL mismatch
+    got:      "/video/vi3769027097/"
+    expected: "vi2163260441"
+  - [x] WARN: IMDB Full Credits Data (testIMDBFullCreditsData)
+  - [x] FAIL: IMDB Series Episodes (testIMDBSeriesEpisodes)
+
 ## v1.5.4
 
 - [ ] add global context menu (Copy/Paste) for the entire app (#125, #126)

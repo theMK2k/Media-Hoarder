@@ -107,7 +107,7 @@ async function testIMDBmainPageData() {
       $IMDB_posterLarge_URL: "extras/tt4154796_posterLarge.jpg",
       $IMDB_plotSummary:
         "After the devastating events of Avengers: Infinity War (2018), the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe.",
-      $IMDB_Trailer_URL: "vi2163260441",
+      $IMDB_Trailer_URL: "vi3769027097",
       $IMDB_startYear: 2019,
       $IMDB_endYear: null,
     };
@@ -708,14 +708,10 @@ async function testIMDBFullCreditsData() {
       },
 
       topCreditsV3: {
-        $IMDB_Top_Directors:
-          '[{"category":"Directors","id":"nm0751577","name":"Anthony Russo","credit":null},{"category":"Directors","id":"nm0751648","name":"Joe Russo","credit":null}]',
-        $IMDB_Top_Writers:
-          '[{"category":"Writers","id":"nm1321655","name":"Christopher Markus","credit":"screenplay by"},{"category":"Writers","id":"nm1321656","name":"Stephen McFeely","credit":"screenplay by"},{"category":"Writers","id":"nm0498278","name":"Stan Lee","credit":"based on the Marvel comics by / Groot created by"},{"category":"Writers","id":"nm0456158","name":"Jack Kirby","credit":"based on the Marvel comics by / Captain America created by / Groot created by"},{"category":"Writers","id":"nm0800209","name":"Joe Simon","credit":"Captain America created by"}]',
-        $IMDB_Top_Producers:
-          '[{"category":"Producers","id":"nm0022285","name":"Victoria Alonso","credit":"executive producer"},{"category":"Producers","id":"nm0068416","name":"Mitchell Bell","credit":"co-producer (as Mitch Bell)"},{"category":"Producers","id":"nm2753152","name":"Ari Costa","credit":"associate producer"},{"category":"Producers","id":"nm0195669","name":"Louis D\'Esposito","credit":"executive producer"},{"category":"Producers","id":"nm0269463","name":"Jon Favreau","credit":"executive producer"}]',
-        $IMDB_Top_Cast:
-          '[{"category":"Cast","id":"nm0000375","name":"Robert Downey Jr.","credit":"Tony Stark / Iron Man"},{"category":"Cast","id":"nm0262635","name":"Chris Evans","credit":"Steve Rogers / Captain America"},{"category":"Cast","id":"nm0749263","name":"Mark Ruffalo","credit":"Bruce Banner / Hulk"},{"category":"Cast","id":"nm1165110","name":"Chris Hemsworth","credit":"Thor"},{"category":"Cast","id":"nm0424060","name":"Scarlett Johansson","credit":"Natasha Romanoff / Black Widow"}]',
+        $IMDB_Top_Directors: '[{"category":"Directors","id":"nm0751577","name":"Anthony Russo","credit":null},{"category":"Directors","id":"nm0751648","name":"Joe Russo","credit":null}]',
+        $IMDB_Top_Writers: '[{"category":"Writers","id":"nm1321655","name":"Christopher Markus","credit":"screenplay by"},{"category":"Writers","id":"nm1321656","name":"Stephen McFeely","credit":"screenplay by"},{"category":"Writers","id":"nm0498278","name":"Stan Lee","credit":"based on the Marvel comics by / Groot created by"},{"category":"Writers","id":"nm0456158","name":"Jack Kirby","credit":"based on the Marvel comics by / Captain America created by / Groot created by"},{"category":"Writers","id":"nm0800209","name":"Joe Simon","credit":"Captain America created by"}]',
+        $IMDB_Top_Producers: `[{"category":"Producers","id":"nm0270559","name":"Kevin Feige","credit":"produced by (p.g.a.)"},{"category":"Producers","id":"nm0022285","name":"Victoria Alonso","credit":"executive producer"},{"category":"Producers","id":"nm0195669","name":"Louis D'Esposito","credit":"executive producer"},{"category":"Producers","id":"nm0269463","name":"Jon Favreau","credit":"executive producer"},{"category":"Producers","id":"nm0342045","name":"Michael Grillo","credit":"executive producer"}]`,
+        $IMDB_Top_Cast: '[{"category":"Cast","id":"nm0000375","name":"Robert Downey Jr.","credit":"Tony Stark / Iron Man"},{"category":"Cast","id":"nm0262635","name":"Chris Evans","credit":"Steve Rogers / Captain America"},{"category":"Cast","id":"nm0749263","name":"Mark Ruffalo","credit":"Bruce Banner / Hulk"},{"category":"Cast","id":"nm1165110","name":"Chris Hemsworth","credit":"Thor"},{"category":"Cast","id":"nm0424060","name":"Scarlett Johansson","credit":"Natasha Romanoff / Black Widow"}]'
       },
 
       credits0: { category: "Directors", id: "nm0751577", name: "Anthony Russo", credit: null },
