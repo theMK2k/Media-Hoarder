@@ -1,4 +1,4 @@
-# Media Hoarder v1.6.0 Changelog
+# Media Hoarder v1.6.0-beta.2 Changelog
 
 This is the BETA release of Media Hoarder v1.6.0
 
@@ -22,4 +22,5 @@ This is the BETA release of Media Hoarder v1.6.0
 
 ### Fixes
 
+- (since 1.6.0-beta.2) SCRAPER: Main Page Data (Trailer URL), Full Credits Data, and Series Episodes
 - FIX: don't show an error if IMDB does not provide plot keywords (#136)
