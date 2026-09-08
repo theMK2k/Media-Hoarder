@@ -42,6 +42,12 @@
       "target": [
         "dir"
       ],
+      "extraResources": [
+        {
+          "from": "bin/win/",
+          "to": "bin/win/"
+        }
+      ],
       "signExts": [
         "!\\bin\\win\\mediainfo-cli\\MediaInfo.exe",
         "!\\bin\\win\\vlc\\vlc.exe",
@@ -77,10 +83,6 @@
       {
         "from": "data/imdb-interests.json",
         "to": "data/imdb-interests.json"
-      },
-      {
-        "from": "bin/",
-        "to": "bin/"
       },
       {
         "from": "public/history/",

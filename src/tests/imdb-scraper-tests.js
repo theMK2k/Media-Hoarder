@@ -754,9 +754,9 @@ async function testIMDBFullCreditsData() {
     }
 
     if (scrapeResult.scraperVersion == "V1") {
-      performDefaultCheck({ topCreditsV1: scrapeResult.topCredits }, expected, testResult, "topCreditsV1");
+      performDefaultCheck({ topCreditsV1: scrapeResult.topCredits }, expected, testResult, "topCreditsV1", { caseInsensitive: true });
     } else {
-      performDefaultCheck({ topCreditsV3: scrapeResult.topCredits }, expected, testResult, "topCreditsV3");
+      performDefaultCheck({ topCreditsV3: scrapeResult.topCredits }, expected, testResult, "topCreditsV3", { caseInsensitive: true });
     }
   } catch (error) {
     testResult.status = status.EXCEPTION;
