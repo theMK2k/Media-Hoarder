@@ -15,10 +15,11 @@ async function runAutomatorFunction(name, func) {
 }
 
 module.exports = (async () => {
-  const { getFindPageSearchGraphqlURL, getAdvancedTitleSearchGraphqlURL, getIMDBPlotKeywordsGraphqlURL, getSeriesEpisodesGraphqlURL } = await import("./helpers/imdb-automator.js");
+  const automator = await import("./helpers/imdb-automator.js");
 
-  await runAutomatorFunction("FindPageSearch", getFindPageSearchGraphqlURL);
-  await runAutomatorFunction("AdvancedTitleSearch", getAdvancedTitleSearchGraphqlURL);
-  await runAutomatorFunction("IMDBPlotKeywords", getIMDBPlotKeywordsGraphqlURL);
-  await runAutomatorFunction("SeriesEpisodes", getSeriesEpisodesGraphqlURL);
+  await runAutomatorFunction("FindPageSearch", automator.getFindPageSearchGraphqlURL);
+  await runAutomatorFunction("AdvancedTitleSearch", automator.getAdvancedTitleSearchGraphqlURL);
+  await runAutomatorFunction("IMDBPlotKeywords", automator.getIMDBPlotKeywordsGraphqlURL);
+  await runAutomatorFunction("SeriesEpisodes", automator.getSeriesEpisodesGraphqlURL);
+  await runAutomatorFunction("FullCredits", automator.getCreditsGraphqlURL);
 })();

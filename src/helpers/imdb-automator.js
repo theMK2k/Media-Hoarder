@@ -117,7 +117,7 @@ async function clickButton(bw, selector, description) {
   logger.log(`[imdbAutomator] clicked "${description}"`);
 }
 
-async function getFindPageSearchGraphqlURL() {
+export async function getFindPageSearchGraphqlURL() {
   logger.log("[imdbAutomator] getFindPageSearchGraphqlURL");
 
   const ses = getOrCreateSession();
@@ -143,7 +143,7 @@ async function getFindPageSearchGraphqlURL() {
   }
 }
 
-async function getAdvancedTitleSearchGraphqlURL() {
+export async function getAdvancedTitleSearchGraphqlURL() {
   logger.log("[imdbAutomator] getAdvancedTitleSearchGraphqlURL");
 
   const ses = getOrCreateSession();
@@ -169,7 +169,7 @@ async function getAdvancedTitleSearchGraphqlURL() {
   }
 }
 
-async function getIMDBPlotKeywordsGraphqlURL() {
+export async function getIMDBPlotKeywordsGraphqlURL() {
   logger.log("[imdbAutomator] getIMDBPlotKeywordsGraphqlURL");
 
   const ses = getOrCreateSession();
@@ -195,7 +195,9 @@ async function getIMDBPlotKeywordsGraphqlURL() {
   }
 }
 
-async function getSeriesEpisodesGraphqlURL() {
+// https://www.imdb.com/title/tt7678620/episodes/
+// ipc-btn__text
+export async function getSeriesEpisodesGraphqlURL() {
   logger.log("[imdbAutomator] getSeriesEpisodesGraphqlURL");
 
   const ses = getOrCreateSession();
@@ -221,8 +223,32 @@ async function getSeriesEpisodesGraphqlURL() {
   }
 }
 
+//https://www.imdb.com/title/tt4154796/fullcredits
+export async function getCreditsGraphqlURL() {
+  logger.log("[imdbAutomator] getCreditsGraphqlURL");
 
-// https://www.imdb.com/title/tt7678620/episodes/
-// ipc-btn__text
+  const ses = getOrCreateSession();
+  const bw = new BrowserWindow({
+    show: false,
+    webPreferences: {
+      session: ses,
+    },
+  });
 
-export { getFindPageSearchGraphqlURL, getAdvancedTitleSearchGraphqlURL, getIMDBPlotKeywordsGraphqlURL, getSeriesEpisodesGraphqlURL };
+  try {
+    await bw.loadURL(`https://www.imdb.com/title/tt4154796/fullcredits`);
+    await waitForRealPage(bw);
+
+    const urlPromise = watchForGraphqlRequest(ses, "TitleCreditPaginationV2WithLocale");
+
+    //await clickButton(bw, "button.ipc-see-more__button", "3 more");
+
+    const graphqlURL = decodeURIComponent(await urlPromise);
+    logger.log("[imdbAutomator] FullCredits URL:", graphqlURL);
+    return graphqlURL;
+  } finally {
+    if (!bw.isDestroyed()) bw.destroy();
+  }
+}
+
+// export { getFindPageSearchGraphqlURL, getAdvancedTitleSearchGraphqlURL, getIMDBPlotKeywordsGraphqlURL, getSeriesEpisodesGraphqlURL, getCreditsGraphqlURL };
