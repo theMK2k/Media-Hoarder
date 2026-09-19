@@ -54,13 +54,3 @@ Media Hoarder is an Electron desktop app for managing movie/series collections w
 npm run dev        # Start dev server (electron-vite)
 npm run build      # Production build
 ```
-
-## Migration Progress
-
-**IMPORTANT:** See `UPGRADE-LOG.md` for detailed migration progress. Update it after completing any migration task to ensure continuity across sessions.
-
-- Phase 1-2: Electron upgrade ✅
-- Phase 3: Vue CLI 4 -> 5, Webpack 5, Node 22 ✅
-- Phase 4a: Vue 2 -> Vue 3, Vuetify 2 -> 3, vue-router 3 -> 4, vue-i18n 8 -> 9 ✅
-- Phase 4b: electron-vite migration ✅
-- Phase 4c: Vuetify 3 / Vue 3 compatibility fixes 🚧 (in progress)
