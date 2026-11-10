@@ -132,29 +132,25 @@ Currently **Media Hoarder** comes as:
 
 ## For Developers: Getting started from source
 
-Please read [Dev-Setup.md](data/devdocs/Dev-Setup.md).
-
-### Install Node.js
-
-Visit <https://nodejs.org> and download/install it for your OS. **Media Hoarder** is developed with Node.js v14.
-
-### Install vue-cli
-
-```bash
-[sudo] npm install -g @vue/cli
-```
-
-### Clone the repository
+Install [Node.js 24](https://nodejs.org/) with npm, then run:
 
 ```bash
 git clone https://github.com/theMK2k/Media-Hoarder.git
+cd Media-Hoarder
+npm install
+npm start
 ```
 
-### Project setup
+`npm install` downloads Electron and rebuilds the native SQLite dependency. `npm start` opens the app with hot reload.
+
+Run the unit tests and create a production build from the repository root:
 
 ```bash
-npm install
+npm test
+npm run build
 ```
+
+See [Dev Setup](data/devdocs/Dev-Setup.md) for the optional pre-push hook.
 
 ### Generate Application Icons
 
@@ -164,19 +160,7 @@ To regenerate the release icons from `public/icon.png`, run:
 npm run electron:generate-icons
 ```
 
-### Invoke Builder
-
-```bash
-npm run invokebuilder
-```
-
-### Compiles and hot-reloads for development
-
-```bash
-npm start
-```
-
-### Compiles and minifies for production
+### Package a release
 
 ```bash
 ./build-linux.sh
@@ -197,29 +181,16 @@ npm start
 ./build-linux.sh
 ```
 
-### Compiles and creates .deb package for Raspberry Pi (armhf architecture)
-
-```bash
-npm run electron:build-rpi
-```
-
 ### Compiles and creates .dmg packages for MacOS
 
 ```bash
 ./build-mac.sh
 ```
 
-## Known Issues
+### Rebuild native dependencies
 
-- if sqlite3 has issues on installing/building perform:
-
-```bash
-npm uninstall sqlite3
-npm install --save sqlite3
-```
-
-White screen on Raspberry Pi:
+If SQLite needs to be rebuilt for Electron, rerun the install hook:
 
 ```bash
-sudo npm install -g electron@7.3.3 --unsafe-perm=true --allow-root
+npm run postinstall
 ```
