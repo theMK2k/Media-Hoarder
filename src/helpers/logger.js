@@ -1,7 +1,7 @@
 import util from "util";
 import loglevel from "loglevel";
 
-import { asciiLogo } from "@helpers/ascii-logo.js";
+import { asciiLogo } from "./ascii-logo.js";
 
 console.info(asciiLogo);
 

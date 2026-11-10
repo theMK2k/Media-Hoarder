@@ -21,7 +21,7 @@
     "mediainfo-watchdog": "node ./src/media-hoarder-mediainfo-watchdog.js",
     "postinstall": "install-electron && electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
-    "test": "jest",
+    "test": "node --test \"src/**/*.test.js\"",
     "update-imdb-interests": "node ./update-imdb-interests.js"
   },
   "main": "dist/main/index.js",
@@ -150,7 +150,6 @@
     "eslint": "10.0.3",
     "eslint-plugin-prettier": "5.5.5",
     "eslint-plugin-vue": "10.8.0",
-    "jest": "30.2.0",
     "nodemailer": "10.5.0",
     "prettier": "3.8.1",
     "sass": "1.97.3",

@@ -1,8 +1,10 @@
-const helpers = require("./helpers");
+const assert = require("node:assert/strict");
+const { describe, test } = require("node:test");
+const helpers = require("./helpers.js");
 
 describe("getSeriesEpisodeSeasonAndEpisodeNumbersFromName", () => {
   test("parse 'My Series S01E01'", () => {
-    expect(helpers.getSeriesEpisodeSeasonAndEpisodeNumbersFromName("My Series S01E01")).toEqual({
+    assert.deepEqual(helpers.getSeriesEpisodeSeasonAndEpisodeNumbersFromName("My Series S01E01"), {
       $Series_Season: 1,
       $Series_Episodes_First: 1,
       $Series_Episodes_Complete: [1],
@@ -11,7 +13,7 @@ describe("getSeriesEpisodeSeasonAndEpisodeNumbersFromName", () => {
   });
 
   test("parse 'My Series S01E01 Some Episode Name 1337'", () => {
-    expect(helpers.getSeriesEpisodeSeasonAndEpisodeNumbersFromName("My Series S01E01")).toEqual({
+    assert.deepEqual(helpers.getSeriesEpisodeSeasonAndEpisodeNumbersFromName("My Series S01E01"), {
       $Series_Season: 1,
       $Series_Episodes_First: 1,
       $Series_Episodes_Complete: [1],
@@ -20,7 +22,7 @@ describe("getSeriesEpisodeSeasonAndEpisodeNumbersFromName", () => {
   });
 
   test("parse 'My Series S01E01E02E05'", () => {
-    expect(helpers.getSeriesEpisodeSeasonAndEpisodeNumbersFromName("My Series S01E01E02E05")).toEqual({
+    assert.deepEqual(helpers.getSeriesEpisodeSeasonAndEpisodeNumbersFromName("My Series S01E01E02E05"), {
       $Series_Season: 1,
       $Series_Episodes_First: 1,
       $Series_Episodes_Complete: [1, 2, 5],
@@ -29,7 +31,7 @@ describe("getSeriesEpisodeSeasonAndEpisodeNumbersFromName", () => {
   });
 
   test("parse 'My Series S05E03-E06'", () => {
-    expect(helpers.getSeriesEpisodeSeasonAndEpisodeNumbersFromName("My Series S05E03-E06")).toEqual({
+    assert.deepEqual(helpers.getSeriesEpisodeSeasonAndEpisodeNumbersFromName("My Series S05E03-E06"), {
       $Series_Season: 5,
       $Series_Episodes_First: 3,
       $Series_Episodes_Complete: [3, 4, 5, 6],
@@ -38,7 +40,7 @@ describe("getSeriesEpisodeSeasonAndEpisodeNumbersFromName", () => {
   });
 
   test("parse 'My Series S5E3-6'", () => {
-    expect(helpers.getSeriesEpisodeSeasonAndEpisodeNumbersFromName("My Series S5E3-6")).toEqual({
+    assert.deepEqual(helpers.getSeriesEpisodeSeasonAndEpisodeNumbersFromName("My Series S5E3-6"), {
       $Series_Season: 5,
       $Series_Episodes_First: 3,
       $Series_Episodes_Complete: [3, 4, 5, 6],
@@ -47,7 +49,7 @@ describe("getSeriesEpisodeSeasonAndEpisodeNumbersFromName", () => {
   });
 
   test("parse 'My Series E004'", () => {
-    expect(helpers.getSeriesEpisodeSeasonAndEpisodeNumbersFromName("My Series E004")).toEqual({
+    assert.deepEqual(helpers.getSeriesEpisodeSeasonAndEpisodeNumbersFromName("My Series E004"), {
       $Series_Season: 1,
       $Series_Episodes_First: 4,
       $Series_Episodes_Complete: [4],
@@ -56,7 +58,7 @@ describe("getSeriesEpisodeSeasonAndEpisodeNumbersFromName", () => {
   });
 
   test("parse 'My Series Ep07'", () => {
-    expect(helpers.getSeriesEpisodeSeasonAndEpisodeNumbersFromName("My Series Ep07")).toEqual({
+    assert.deepEqual(helpers.getSeriesEpisodeSeasonAndEpisodeNumbersFromName("My Series Ep07"), {
       $Series_Season: 1,
       $Series_Episodes_First: 7,
       $Series_Episodes_Complete: [7],
@@ -65,7 +67,7 @@ describe("getSeriesEpisodeSeasonAndEpisodeNumbersFromName", () => {
   });
 
   test("parse 'My Series 9x6'", () => {
-    expect(helpers.getSeriesEpisodeSeasonAndEpisodeNumbersFromName("My Series 9x6")).toEqual({
+    assert.deepEqual(helpers.getSeriesEpisodeSeasonAndEpisodeNumbersFromName("My Series 9x6"), {
       $Series_Season: 9,
       $Series_Episodes_First: 6,
       $Series_Episodes_Complete: [6],
@@ -74,7 +76,7 @@ describe("getSeriesEpisodeSeasonAndEpisodeNumbersFromName", () => {
   });
 
   test("parse 'My Series S03B02'", () => {
-    expect(helpers.getSeriesEpisodeSeasonAndEpisodeNumbersFromName("My Series S03B02")).toEqual({
+    assert.deepEqual(helpers.getSeriesEpisodeSeasonAndEpisodeNumbersFromName("My Series S03B02"), {
       $Series_Season: 3,
       $Series_Episodes_First: null,
       $Series_Episodes_Complete: null,
@@ -83,7 +85,7 @@ describe("getSeriesEpisodeSeasonAndEpisodeNumbersFromName", () => {
   });
 
   test("parse 'My Series B05'", () => {
-    expect(helpers.getSeriesEpisodeSeasonAndEpisodeNumbersFromName("My Series B05")).toEqual({
+    assert.deepEqual(helpers.getSeriesEpisodeSeasonAndEpisodeNumbersFromName("My Series B05"), {
       $Series_Season: 1,
       $Series_Episodes_First: null,
       $Series_Episodes_Complete: null,
@@ -94,15 +96,15 @@ describe("getSeriesEpisodeSeasonAndEpisodeNumbersFromName", () => {
 
 describe("compare", () => {
   test("compare null with null", () => {
-    expect(helpers.compare(null, null)).toBe(0);
+    assert.equal(helpers.compare(null, null), 0);
   });
   test("compare undefined with null", () => {
-    expect(helpers.compare(undefined, null)).toBe(0);
+    assert.equal(helpers.compare(undefined, null), 0);
   });
   test("compare 123 with null", () => {
-    expect(helpers.compare(123, null)).toBe(1);
+    assert.equal(helpers.compare(123, null), 1);
   });
   test("compare 123 with null (reverse)", () => {
-    expect(helpers.compare(123, null, true)).toBe(-1);
+    assert.equal(helpers.compare(123, null, true), -1);
   });
 });
