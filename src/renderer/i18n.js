@@ -104,11 +104,8 @@ function validateMessages(messages) {
   });
 }
 
-// vue-i18n 9 uses createI18n instead of new VueI18n
-// legacy: false enables Composition API mode, but we use legacy: true for Options API compatibility
 export default createI18n({
-  legacy: true, // Use legacy mode for Options API ($t, $tc, etc.)
-  allowComposition: true, // Suppress legacy mode deprecation warning in v11
+  legacy: true, // The Options API components read and set $i18n.locale.
   globalInjection: true, // Enable $t in templates
   locale: process.env.VUE_APP_I18N_LOCALE || "en",
   fallbackLocale: process.env.VUE_APP_I18N_FALLBACK_LOCALE || "en",
