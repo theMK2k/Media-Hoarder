@@ -144,12 +144,6 @@ Visit <https://nodejs.org> and download/install it for your OS. **Media Hoarder*
 [sudo] npm install -g @vue/cli
 ```
 
-### (only on armhf architecture / Raspberry Pi): Install phantomjs globally
-
-```bash
-sudo apt -y install phantomjs
-```
-
 ### Clone the repository
 
 ```bash
@@ -163,6 +157,8 @@ npm install
 ```
 
 ### Generate Application Icons
+
+To regenerate the release icons from `public/icon.png`, run:
 
 ```bash
 npm run electron:generate-icons
@@ -220,21 +216,6 @@ npm run electron:build-rpi
 ```bash
 npm uninstall sqlite3
 npm install --save sqlite3
-```
-
-- on armhf (Raspberry Pi) PhantomJS must be manually installed before running `npm install`
-
-```bash
-sudo apt -y install phantomjs
-```
-
-else you get the following error:
-
-```bash
-PhantomJS not found on PATH
-Unexpected platform or architecture: linux/arm
-It seems there is no binary available for your platform/architecture
-Try to install PhantomJS globally
 ```
 
 White screen on Raspberry Pi:
