@@ -16,6 +16,9 @@
 
 - [ ] Grid view for media (#121)
 
+- [ ] Games
+  - [ ] "IMDB score comparison game" (in context of the current list?)
+
 - [ ] BUG: go to Series, manipulate in Sourcepaths filter -> somehow, filters for Movies are shown
   - [ ] go to Movies (even after just clearing the filter cache) -> change Source Paths filters -> somehow "Series" filters are shown
 
@@ -147,7 +150,6 @@
 - [ ] include find-imdb-tconst-tests in imdb scraper watchdog
 - [ ] fix file/dirbased name when IMDB tconst detection has no result: if the medium is directory-based, then show the directory name and not the file-based name
 - [ ] new filter: min. IMDB votes
-- [ ] "IMDB score comparison game" (in context of the current list?)
 - [ ] curl/wget easylist.txt automatically before build <https://easylist.to/easylist/easylist.txt>
 - [ ] later: properly differentiate V1, V2 and V3 mainPageData handling
 - [ ] later: async db funcs (initDb, syncSqlite)
