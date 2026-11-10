@@ -118,7 +118,6 @@
     "moment": "2.30.1",
     "postman-request": "2.88.1-postman.48",
     "regenerator-runtime": "0.14.1",
-    "request": "2.88.2",
     "requestretry": "8.0.0",
     "roboto-fontface": "0.10.0",
     "semver": "7.7.4",
