@@ -4,7 +4,7 @@
   - [ ] check rescan with actual duplicate having user-defined poster
   - [ ] look into fanart.tv API for poster alternatives
 
-- [ ] IMDB now offers categorized keywords:
+- [WIP] IMDB now offers categorized keywords:
   - Subgenres
   - Franchise
   - Plot Details (these are already used by us as Plot Keywords)

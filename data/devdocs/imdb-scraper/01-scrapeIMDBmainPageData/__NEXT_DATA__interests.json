@@ -1,0 +1,430 @@
+{
+  "props": {
+    "pageProps": {
+
+      "aboveTheFoldData": {
+
+        "interests": {
+          "edges": [
+            {
+              "node": {
+                "id": "in0000243",
+                "primaryText": {
+                  "text": "Star Wars",
+                  "__typename": "InterestText"
+                },
+                "description": {
+                  "value": {
+                    "plainText": "George Lucas's 1977 space opera expanded into a multigenerational saga spanning films, series, animation, and games exploring the eternal struggle between light and dark. Its mythic scope and cultural ubiquity define modern franchise storytelling at its most expansive.",
+                    "__typename": "Markdown"
+                  },
+                  "__typename": "LocalizedMarkdown"
+                },
+                "primaryImage": {
+                  "url": "https://m.media-amazon.com/images/M/MV5BMTY5MjUyODUxOF5BMl5BanBnXkFtZTcwNTMxMzA4NA@@._V1_.jpg",
+                  "width": 1536,
+                  "height": 1027,
+                  "caption": {
+                    "plainText": "Harrison Ford, Carrie Fisher, and Mark Hamill in Star Wars: Episode IV - A New Hope (1977)",
+                    "__typename": "Markdown"
+                  },
+                  "__typename": "Image"
+                },
+                "engagementStatistics": {
+                  "followerStatistics": {
+                    "displayableCount": {
+                      "text": "Added by 13.4K users",
+                      "__typename": "LocalizedDisplayableCount"
+                    },
+                    "__typename": "FollowerStatistics"
+                  },
+                  "__typename": "EngagementStatistics"
+                },
+                "secondaryText": {
+                  "text": "Franchise",
+                  "__typename": "InterestText"
+                },
+                "__typename": "Interest"
+              },
+              "__typename": "InterestEdge"
+            },
+            {
+              "node": {
+                "id": "in0000015",
+                "primaryText": {
+                  "text": "Adventure Epic",
+                  "__typename": "InterestText"
+                },
+                "description": {
+                  "value": {
+                    "plainText": "The adventure epic subgenre features grand scope, sweeping landscapes, heroic journeys, and often historical or mythological elements. Epic adventure stories transport audiences to different worlds, eras, or fantastical realms, immersing them in narratives that encompass vast territories and significant challenges.",
+                    "__typename": "Markdown"
+                  },
+                  "__typename": "LocalizedMarkdown"
+                },
+                "primaryImage": {
+                  "url": "https://m.media-amazon.com/images/M/MV5BNGE4NjIwMGYtYWQ4MC00NGIyLWI1YjQtNjJmZjllYjFjMDgzXkEyXkFqcGc@._V1_.jpg",
+                  "width": 1280,
+                  "height": 720,
+                  "caption": {
+                    "plainText": "Peter O'Toole and Omar Sharif in Lawrence of Arabia (1962)",
+                    "__typename": "Markdown"
+                  },
+                  "__typename": "Image"
+                },
+                "engagementStatistics": {
+                  "followerStatistics": {
+                    "displayableCount": {
+                      "text": "Added by 31.4K users",
+                      "__typename": "LocalizedDisplayableCount"
+                    },
+                    "__typename": "FollowerStatistics"
+                  },
+                  "__typename": "EngagementStatistics"
+                },
+                "secondaryText": {
+                  "text": "Subgenre",
+                  "__typename": "InterestText"
+                },
+                "__typename": "Interest"
+              },
+              "__typename": "InterestEdge"
+            },
+            {
+              "node": {
+                "id": "in0000077",
+                "primaryText": { "text": "Epic", "__typename": "InterestText" },
+                "description": {
+                  "value": {
+                    "plainText": "The epic subgenre features grand and sweeping stories often set against significant historical, cultural, or societal backdrops. Epic dramas are characterized by their scope, scale, and often lengthy runtime, as they aim to capture the grandeur of human experiences, events, and emotions.",
+                    "__typename": "Markdown"
+                  },
+                  "__typename": "LocalizedMarkdown"
+                },
+                "primaryImage": {
+                  "url": "https://m.media-amazon.com/images/M/MV5BZmZkMzI4YWEtMmIxMi00ZDA2LTk3MDMtNzVmOGQ1NzI5OTU2XkEyXkFqcGc@._V1_.jpg",
+                  "width": 1200,
+                  "height": 900,
+                  "caption": {
+                    "plainText": "Orson Welles in Citizen Kane (1941)",
+                    "__typename": "Markdown"
+                  },
+                  "__typename": "Image"
+                },
+                "engagementStatistics": {
+                  "followerStatistics": {
+                    "displayableCount": {
+                      "text": "Added by 14.2K users",
+                      "__typename": "LocalizedDisplayableCount"
+                    },
+                    "__typename": "FollowerStatistics"
+                  },
+                  "__typename": "EngagementStatistics"
+                },
+                "secondaryText": {
+                  "text": "Subgenre",
+                  "__typename": "InterestText"
+                },
+                "__typename": "Interest"
+              },
+              "__typename": "InterestEdge"
+            },
+            {
+              "node": {
+                "id": "in0000096",
+                "primaryText": {
+                  "text": "Fantasy Epic",
+                  "__typename": "InterestText"
+                },
+                "description": {
+                  "value": {
+                    "plainText": "The fantasy epic subgenre features grand, sweeping narratives set in vast, imaginary worlds. These stories involve heroic quests, epic battles, intricate magic systems, and richly developed cultures and histories. They are known for their scope, depth, and immersive world-building.",
+                    "__typename": "Markdown"
+                  },
+                  "__typename": "LocalizedMarkdown"
+                },
+                "primaryImage": {
+                  "url": "https://m.media-amazon.com/images/M/MV5BNDY5ZTkyYTQtNTZmMC00YTU2LTg1NjItMjE4MDZhYmNiZTRiXkEyXkFqcGc@._V1_.jpg",
+                  "width": 6240,
+                  "height": 4160,
+                  "caption": {
+                    "plainText": "Dev Patel in The Green Knight (2021)",
+                    "__typename": "Markdown"
+                  },
+                  "__typename": "Image"
+                },
+                "engagementStatistics": {
+                  "followerStatistics": {
+                    "displayableCount": {
+                      "text": "Added by 17.8K users",
+                      "__typename": "LocalizedDisplayableCount"
+                    },
+                    "__typename": "FollowerStatistics"
+                  },
+                  "__typename": "EngagementStatistics"
+                },
+                "secondaryText": {
+                  "text": "Subgenre",
+                  "__typename": "InterestText"
+                },
+                "__typename": "Interest"
+              },
+              "__typename": "InterestEdge"
+            },
+            {
+              "node": {
+                "id": "in0000019",
+                "primaryText": {
+                  "text": "Quest",
+                  "__typename": "InterestText"
+                },
+                "description": {
+                  "value": {
+                    "plainText": "The quest subgenre features characters who embark on journeys with a clear and often epic objective or goal. These quests drive the narrative forward and provide a structured framework for the characters to encounter challenges, obstacles, and personal growth as they strive to achieve their mission.",
+                    "__typename": "Markdown"
+                  },
+                  "__typename": "LocalizedMarkdown"
+                },
+                "primaryImage": {
+                  "url": "https://m.media-amazon.com/images/M/MV5BMTg2MTIzMTIwNV5BMl5BanBnXkFtZTcwNDM5NTkxNA@@._V1_.jpg",
+                  "width": 2048,
+                  "height": 1494,
+                  "caption": {
+                    "plainText": "Judy Garland, Ray Bolger, Jack Haley, and Bert Lahr in The Wizard of Oz (1939)",
+                    "__typename": "Markdown"
+                  },
+                  "__typename": "Image"
+                },
+                "engagementStatistics": {
+                  "followerStatistics": {
+                    "displayableCount": {
+                      "text": "Added by 10.0K users",
+                      "__typename": "LocalizedDisplayableCount"
+                    },
+                    "__typename": "FollowerStatistics"
+                  },
+                  "__typename": "EngagementStatistics"
+                },
+                "secondaryText": {
+                  "text": "Subgenre",
+                  "__typename": "InterestText"
+                },
+                "__typename": "Interest"
+              },
+              "__typename": "InterestEdge"
+            },
+            {
+              "node": {
+                "id": "in0000163",
+                "primaryText": {
+                  "text": "Sci-Fi Epic",
+                  "__typename": "InterestText"
+                },
+                "description": {
+                  "value": {
+                    "plainText": "The sci-fi epic subgenre features grand narratives set in expansive and imaginative worlds. Sci-fi epics often span vast time periods, multiple locations, and involve intricate plots that explore complex themes, societal changes, technology, and the evolution of civilizations.",
+                    "__typename": "Markdown"
+                  },
+                  "__typename": "LocalizedMarkdown"
+                },
+                "primaryImage": {
+                  "url": "https://m.media-amazon.com/images/M/MV5BODhjMDQ5MWMtMTFkMi00MjMyLTkyM2ItOTZmNzJkZjMyODg3XkEyXkFqcGc@._V1_.jpg",
+                  "width": 2865,
+                  "height": 1200,
+                  "caption": {
+                    "plainText": "Timothée Chalamet in Dune (2021)",
+                    "__typename": "Markdown"
+                  },
+                  "__typename": "Image"
+                },
+                "engagementStatistics": {
+                  "followerStatistics": {
+                    "displayableCount": {
+                      "text": "Added by 20.5K users",
+                      "__typename": "LocalizedDisplayableCount"
+                    },
+                    "__typename": "FollowerStatistics"
+                  },
+                  "__typename": "EngagementStatistics"
+                },
+                "secondaryText": {
+                  "text": "Subgenre",
+                  "__typename": "InterestText"
+                },
+                "__typename": "Interest"
+              },
+              "__typename": "InterestEdge"
+            },
+            {
+              "node": {
+                "id": "in0000164",
+                "primaryText": {
+                  "text": "Space Sci-Fi",
+                  "__typename": "InterestText"
+                },
+                "description": {
+                  "value": {
+                    "plainText": "The space sci-fi subgenre features stories set primarily in outer space or involving space travel, exploration, and interstellar adventures. Space sci-fi often emphasizes the wonders and challenges of space travel, as well as the exploration of unknown frontiers, advanced technology, and encounters with extraterrestrial life.",
+                    "__typename": "Markdown"
+                  },
+                  "__typename": "LocalizedMarkdown"
+                },
+                "primaryImage": {
+                  "url": "https://m.media-amazon.com/images/M/MV5BOTY2NjMzNDk3NV5BMl5BanBnXkFtZTgwODI5Nzg0OTE@._V1_.jpg",
+                  "width": 900,
+                  "height": 600,
+                  "caption": {
+                    "plainText": "Leonard Nimoy and William Shatner in Star Trek (1966)",
+                    "__typename": "Markdown"
+                  },
+                  "__typename": "Image"
+                },
+                "engagementStatistics": {
+                  "followerStatistics": {
+                    "displayableCount": {
+                      "text": "Added by 21.9K users",
+                      "__typename": "LocalizedDisplayableCount"
+                    },
+                    "__typename": "FollowerStatistics"
+                  },
+                  "__typename": "EngagementStatistics"
+                },
+                "secondaryText": {
+                  "text": "Subgenre",
+                  "__typename": "InterestText"
+                },
+                "__typename": "Interest"
+              },
+              "__typename": "InterestEdge"
+            },
+            {
+              "node": {
+                "id": "in0000100",
+                "primaryText": {
+                  "text": "Sword \u0026 Sorcery",
+                  "__typename": "InterestText"
+                },
+                "description": {
+                  "value": {
+                    "plainText": "The sword and sorcery subgenre features heroic warriors wielding swords and engaging in battles, while also incorporating elements of magic and sorcery. This subgenre is known for its fast-paced, swashbuckling narratives that center on individual heroes or small groups of characters navigating dangerous and magical worlds.",
+                    "__typename": "Markdown"
+                  },
+                  "__typename": "LocalizedMarkdown"
+                },
+                "primaryImage": {
+                  "url": "https://m.media-amazon.com/images/M/MV5BM2JkN2M5YjQtNTcwMC00NGU2LWE3MTAtYTQ4ZTRmZDljZGRiXkEyXkFqcGc@._V1_.jpg",
+                  "width": 1200,
+                  "height": 788,
+                  "caption": {
+                    "plainText": "Arnold Schwarzenegger, Sandahl Bergman, and Gerry Lopez in Conan the Barbarian (1982)",
+                    "__typename": "Markdown"
+                  },
+                  "__typename": "Image"
+                },
+                "engagementStatistics": {
+                  "followerStatistics": {
+                    "displayableCount": {
+                      "text": "Added by 12.5K users",
+                      "__typename": "LocalizedDisplayableCount"
+                    },
+                    "__typename": "FollowerStatistics"
+                  },
+                  "__typename": "EngagementStatistics"
+                },
+                "secondaryText": {
+                  "text": "Subgenre",
+                  "__typename": "InterestText"
+                },
+                "__typename": "Interest"
+              },
+              "__typename": "InterestEdge"
+            },
+            {
+              "node": {
+                "id": "in0000012",
+                "primaryText": {
+                  "text": "Adventure",
+                  "__typename": "InterestText"
+                },
+                "description": {
+                  "value": {
+                    "plainText": "The adventure genre features exciting journeys, quests, or expeditions undertaken by characters who often face challenges, obstacles, and risks in pursuit of a goal. Adventures can take place in a wide range of settings, from exotic and fantastical locations to historical or even everyday environments.",
+                    "__typename": "Markdown"
+                  },
+                  "__typename": "LocalizedMarkdown"
+                },
+                "primaryImage": {
+                  "url": "https://m.media-amazon.com/images/M/MV5BMTlmNjQxNGItMmM1My00YTk2LTk2NjYtNTc4YWFjYTgxNTRiXkEyXkFqcGc@._V1_.jpg",
+                  "width": 1920,
+                  "height": 816,
+                  "caption": {
+                    "plainText": "Still frame",
+                    "__typename": "Markdown"
+                  },
+                  "__typename": "Image"
+                },
+                "engagementStatistics": {
+                  "followerStatistics": {
+                    "displayableCount": {
+                      "text": "Added by 62.5K users",
+                      "__typename": "LocalizedDisplayableCount"
+                    },
+                    "__typename": "FollowerStatistics"
+                  },
+                  "__typename": "EngagementStatistics"
+                },
+                "secondaryText": {
+                  "text": "Genre",
+                  "__typename": "InterestText"
+                },
+                "__typename": "Interest"
+              },
+              "__typename": "InterestEdge"
+            },
+            {
+              "node": {
+                "id": "in0000162",
+                "primaryText": {
+                  "text": "Sci-Fi",
+                  "__typename": "InterestText"
+                },
+                "description": {
+                  "value": {
+                    "plainText": "The sci-fi genre, short for science fiction, features imaginative and futuristic concepts that are often rooted in scientific principles, technology, and possibilities. These stories delve into \"what if\" questions and can serve as a platform to address contemporary social, political, and ethical issues by projecting them onto future or alternate settings.",
+                    "__typename": "Markdown"
+                  },
+                  "__typename": "LocalizedMarkdown"
+                },
+                "primaryImage": {
+                  "url": "https://m.media-amazon.com/images/M/MV5BOTkxMzc0MDg5MV5BMl5BanBnXkFtZTcwNjUxMzA4NA@@._V1_.jpg",
+                  "width": 1536,
+                  "height": 1035,
+                  "caption": {
+                    "plainText": "James Earl Jones and David Prowse in Star Wars: Episode V - The Empire Strikes Back (1980)",
+                    "__typename": "Markdown"
+                  },
+                  "__typename": "Image"
+                },
+                "engagementStatistics": {
+                  "followerStatistics": {
+                    "displayableCount": {
+                      "text": "Added by 70.5K users",
+                      "__typename": "LocalizedDisplayableCount"
+                    },
+                    "__typename": "FollowerStatistics"
+                  },
+                  "__typename": "EngagementStatistics"
+                },
+                "secondaryText": {
+                  "text": "Genre",
+                  "__typename": "InterestText"
+                },
+                "__typename": "Interest"
+              },
+              "__typename": "InterestEdge"
+            }
+          ],
+          "__typename": "InterestConnection"
+        }
+  }
+}
